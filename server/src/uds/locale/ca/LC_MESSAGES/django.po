@@ -5,11 +5,12 @@
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018
+#: auths/AzureAD_enterprise/AzureAD.py:92
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 10:51+0100\n"
+"POT-Creation-Date: 2018-09-10 11:05+0200\n"
 "PO-Revision-Date: 2018-03-23 09:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -85,7 +86,7 @@ msgstr "Etiqueta"
 #: REST/methods/authenticators.py:64 reports/stats/login.py:108
 #: reports/stats/login.py:381 reports/stats/pool_performance.py:110
 #: reports/stats/pool_performance.py:377
-#: services/RDS_enterprise/RDSProvider.py:44
+#: services/RDS_enterprise/RDSProvider.py:42
 #: templates/uds/admin/tmpl/authenticators.html:31
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/group-info.html:5
@@ -232,8 +233,8 @@ msgstr "Serveis"
 msgid "User Services"
 msgstr "Serveis d'usuari"
 
-#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:258
-#: dispatchers/wyse_enterprise/views.py:261 web/errors.py:74
+#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:262
+#: dispatchers/wyse_enterprise/views.py:265 web/errors.py:74
 msgid "Service not found"
 msgstr "Servei no trobat"
 
@@ -243,10 +244,10 @@ msgstr "Informes disponibles"
 
 #: REST/methods/reports.py:57 REST/methods/users_groups.py:261
 #: REST/methods/users_groups.py:268
-#: auths/ActiveDirectory_enterprise/Authenticator.py:56
+#: auths/ActiveDirectory_enterprise/Authenticator.py:58
+#: auths/AzureAD_enterprise/AzureAD.py:84
 #: auths/EDirectory_enterprise/Authenticator.py:81
 #: auths/RegexLdap/Authenticator.py:85 auths/SAML_enterprise/SAML.py:116
-#: auths/SimpleLDAP/Authenticator.py:83
 #: templates/uds/admin/tmpl/pool_add_group.html:17
 #: templates/uds/admin/tmpl/user-info.html:15
 msgid "Group"
@@ -726,9 +727,9 @@ msgid "Current users"
 msgstr "Usuaris actuals"
 
 #: REST/methods/users_groups.py:112
-#: auths/ActiveDirectory_enterprise/Authenticator.py:54
+#: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:79
-#: auths/RegexLdap/Authenticator.py:83 auths/SimpleLDAP/Authenticator.py:81
+#: auths/RegexLdap/Authenticator.py:83
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
@@ -737,7 +738,7 @@ msgstr "Usuaris actuals"
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
-#: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
+#: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:74
 #: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
@@ -829,7 +830,7 @@ msgstr "Mètode no trobat a {}: {}"
 msgid "Item not found"
 msgstr "Element no trobat"
 
-#: REST/model.py:276 web/errors.py:75
+#: REST/model.py:276 web/errors.py:75 web/views/login.py:119
 msgid "Access denied"
 msgstr "Accés denegat"
 
@@ -859,7 +860,7 @@ msgstr "Llista d'usuaris per a  {}"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:35
 #: auths/EDirectory_enterprise/Authenticator.py:62
-#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:57
+#: auths/RegexLdap/Authenticator.py:57
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
@@ -877,8 +878,8 @@ msgstr "Nom de host o IP del servidor de Directori Actiu"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 #: auths/EDirectory_enterprise/Authenticator.py:64
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:59
-#: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
+#: auths/RegexLdap/Authenticator.py:59 services/OpenNebula/Provider.py:100
+#: services/OpenStack/Provider.py:100
 msgid "Use SSL"
 msgstr "Utilitza SSL"
 
@@ -898,6 +899,7 @@ msgstr ""
 "posteriors)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
+#: auths/AzureAD_enterprise/AzureAD.py:83
 #: auths/EDirectory_enterprise/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:60 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
@@ -915,10 +917,9 @@ msgstr ""
 "format USUARI@DOMINI.DOM)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
-#: auths/ActiveDirectory_enterprise/Authenticator.py:58
+#: auths/ActiveDirectory_enterprise/Authenticator.py:60
 #: auths/EDirectory_enterprise/Authenticator.py:66
 #: auths/RegexLdap/Authenticator.py:61 auths/RegexLdap/Authenticator.py:87
-#: auths/SimpleLDAP/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:85
 #: core/auths/BaseAuthenticator.py:140
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
@@ -931,7 +932,7 @@ msgstr ""
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:83
-#: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
+#: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:75
 #: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
@@ -943,13 +944,14 @@ msgstr "Contrasenya"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/EDirectory_enterprise/Authenticator.py:66
-#: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:61
+#: auths/RegexLdap/Authenticator.py:61
 msgid "Password of the ldap user"
 msgstr "Contrasenya de l'usuari LDAP"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:41
 #: auths/EDirectory_enterprise/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:62
+#: services/Azure_enterprise/ServiceProviderAzure.py:43
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
@@ -965,62 +967,138 @@ msgid "Timeout in seconds of connection to Active Directory"
 msgstr "Temps d'espera de la connexió amb el Directori Actiu en segons"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:43
+msgid "Override Base"
+msgstr ""
+
+#: auths/ActiveDirectory_enterprise/Authenticator.py:43
+msgid ""
+"If not empty, will override AD search base with this value (format: dc=..., "
+"dc=...)"
+msgstr ""
+
+#: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
 msgstr "Autenticador del Directori Actiu"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:45
+#: auths/ActiveDirectory_enterprise/Authenticator.py:47
 msgid "Authenticate against Active Directory"
 msgstr "Autenticar sobre Directori Actiu"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:73
-#: auths/ActiveDirectory_enterprise/Authenticator.py:469
+#: auths/ActiveDirectory_enterprise/Authenticator.py:75
+#: auths/ActiveDirectory_enterprise/Authenticator.py:474
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Cal especificar el nom d'usuari en format USUARI@DOMINI.DOM"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:177
+#: auths/ActiveDirectory_enterprise/Authenticator.py:185
 msgid "Active directory connection error: "
 msgstr "Error de connexió del Directori Actiu:"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:364
-#: auths/ActiveDirectory_enterprise/Authenticator.py:412
+#: auths/ActiveDirectory_enterprise/Authenticator.py:371
+#: auths/ActiveDirectory_enterprise/Authenticator.py:419
+#: auths/AzureAD_enterprise/AzureAD.py:214
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
 #: auths/RegexLdap/Authenticator.py:366 auths/RegexLdap/Authenticator.py:407
-#: auths/SimpleLDAP/Authenticator.py:281 auths/SimpleLDAP/Authenticator.py:324
 msgid "Username not found"
 msgstr "Nom d'usuari no trobat"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:397
-#: auths/SimpleLDAP/Authenticator.py:314
+#: auths/ActiveDirectory_enterprise/Authenticator.py:404
 msgid "Group not found"
 msgstr "Grup no trobat"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:432
-#: auths/ActiveDirectory_enterprise/Authenticator.py:451
+#: auths/ActiveDirectory_enterprise/Authenticator.py:439
+#: auths/ActiveDirectory_enterprise/Authenticator.py:458
 #: auths/EDirectory_enterprise/Authenticator.py:305
-#: auths/RegexLdap/Authenticator.py:429 auths/SimpleLDAP/Authenticator.py:341
-#: auths/SimpleLDAP/Authenticator.py:357
+#: auths/RegexLdap/Authenticator.py:429
 msgid "Too many results, be more specific"
 msgstr "Massa resultats, especifiqueu més"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:478
+#: auths/ActiveDirectory_enterprise/Authenticator.py:483
 msgid "Domain seems to be incorrect, please check it"
 msgstr "El Domini sembla ser incorrecte, si us plau verifiqueu-ho"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:483
+#: auths/ActiveDirectory_enterprise/Authenticator.py:488
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "El servidor sembla no ser un Directori Actiu (no té objectes d'usuari)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:491
+#: auths/ActiveDirectory_enterprise/Authenticator.py:496
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "El servidor sembla no ser un Directori Actiu (no té objectes de grup)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:496
+#: auths/ActiveDirectory_enterprise/Authenticator.py:501
 #: auths/EDirectory_enterprise/Authenticator.py:360
-#: auths/RegexLdap/Authenticator.py:488 auths/SimpleLDAP/Authenticator.py:435
+#: auths/RegexLdap/Authenticator.py:488
 msgid "Connection params seem correct, test was succesfully executed"
+msgstr ""
+"Els paràmetres de connexió semblen correctes, les proves s'han executat "
+"correctament"
+
+#: auths/AzureAD_enterprise/AzureAD.py:68
+#, fuzzy
+#| msgid "SAML Authenticator"
+msgid "Azure AD Authenticator"
+msgstr "Autenticador SAML"
+
+#: auths/AzureAD_enterprise/AzureAD.py:70
+#, fuzzy
+#| msgid "Active Directory Authenticator"
+msgid "Azure Active Directory Authenticator"
+msgstr "Autenticador del Directori Actiu"
+
+#: auths/AzureAD_enterprise/AzureAD.py:86
+#: services/Azure_enterprise/ServiceProviderAzure.py:35
+msgid "Tenant ID"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:86
+#: services/Azure_enterprise/ServiceProviderAzure.py:35
+msgid "Obtained from Azure Active Directory - Properties - Directory ID"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:87
+#: services/Azure_enterprise/ServiceProviderAzure.py:36
+msgid "Client ID"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:87
+#: services/Azure_enterprise/ServiceProviderAzure.py:36
+msgid "Obtained from App created on Azure for UDS Enterprise"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:88
+#: services/Azure_enterprise/ServiceProviderAzure.py:37
+msgid "Client Secret"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:88
+#: services/Azure_enterprise/ServiceProviderAzure.py:37
+msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:94
+msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:226
+#: auths/AzureAD_enterprise/AzureAD.py:249
+#: auths/AzureAD_enterprise/AzureAD.py:261
+#, fuzzy
+#| msgid "Authenticator not found"
+msgid "Authenticator exception:"
+msgstr "No s'ha trobat l'autenticador"
+
+#: auths/AzureAD_enterprise/AzureAD.py:291
+#, fuzzy
+#| msgid "Ldap connection error: "
+msgid "Connection error: "
+msgstr "Error de connexió al LDAP:"
+
+#: auths/AzureAD_enterprise/AzureAD.py:292
+#, fuzzy
+#| msgid "Connection params seem correct, test was succesfully executed"
+msgid "Connection params seems correct, test was succesfully executed"
 msgstr ""
 "Els paràmetres de connexió semblen correctes, les proves s'han executat "
 "correctament"
@@ -1030,7 +1108,7 @@ msgid "EDirectory Server IP or Hostname"
 msgstr "IP del servidor EDirectory o nom de host"
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
@@ -1042,13 +1120,13 @@ msgid "Port"
 msgstr "Port"
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
 msgstr ""
 "Port LDAP (generalment el 636 per a connexions SSL i el 389 per a no SSL)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:64
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:59
+#: auths/RegexLdap/Authenticator.py:59
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr ""
 "Si està seleccionat, s'utilitzarà una connexió SSL, utilitzant el port 636 "
@@ -1059,7 +1137,7 @@ msgid "Username with read privileges on the eDirectory"
 msgstr "Nom d'usuari amb privilegis de lectura sobre l'eDirectory"
 
 #: auths/EDirectory_enterprise/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:62
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "Temps d'espera de la connexió amb el LDAP en segons"
 
@@ -1072,24 +1150,23 @@ msgid "Authenticate against eDirectory"
 msgstr "Autentiqueu sobre eDirectory"
 
 #: auths/EDirectory_enterprise/Authenticator.py:125
-#: auths/RegexLdap/Authenticator.py:254 auths/SimpleLDAP/Authenticator.py:171
+#: auths/RegexLdap/Authenticator.py:254
 msgid "Ldap connection error: "
 msgstr "Error de connexió al LDAP:"
 
 #: auths/EDirectory_enterprise/Authenticator.py:325
-#: auths/RegexLdap/Authenticator.py:449 auths/SimpleLDAP/Authenticator.py:377
+#: auths/RegexLdap/Authenticator.py:449
 msgid "Ldap search base is incorrect"
 msgstr "La base de cerca LDAP no és correcta"
 
 #: auths/EDirectory_enterprise/Authenticator.py:330
-#: auths/RegexLdap/Authenticator.py:454 auths/SimpleLDAP/Authenticator.py:382
+#: auths/RegexLdap/Authenticator.py:454
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "La classe d'usuari LDAP sembla no ser correcta (no s'ha trobat cap usuari "
 "amb aquesta classe)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:338
-#: auths/SimpleLDAP/Authenticator.py:398
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
@@ -1170,48 +1247,45 @@ msgstr "Tot sembla correcte a l'autenticador"
 msgid "Ldap Server Host"
 msgstr "Host servidor LDAP"
 
-#: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:60
+#: auths/RegexLdap/Authenticator.py:60
 msgid "Username with read privileges on the base selected"
 msgstr "Nom d'usuari amb privilegis de lectura sobre la base seleccionada"
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:64
 msgid "Base"
 msgstr "Base"
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:64
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr "Base de cerca comuna (utilitzada per a \"usuaris\" i \"grups\")"
 
 #: auths/RegexLdap/Authenticator.py:64 auths/RegexLdap/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:66 auths/RegexLdap/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:63
-#: auths/SimpleLDAP/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:65
-#: auths/SimpleLDAP/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:67
-#: auths/SimpleLDAP/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:69
+#: auths/RegexLdap/Authenticator.py:68
 msgid "Ldap info"
 msgstr "Informació del LDAP"
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:65
 msgid "User class"
 msgstr "Classe d'usuari"
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:65
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "Classe per a usuaris LDAP (normalment posixAccount)"
 
-#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:66
 msgid "User Id Attr"
 msgstr "Atribut ID d'usuari"
 
-#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:66
 msgid "Attribute that contains the user id"
 msgstr "Atribut que conté l'ID d'usuari"
 
-#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67
 msgid "User Name Attr"
 msgstr "Atribut Nom d'usuari"
 
-#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr ""
 "Atribut que conté el nom d'usuari (llista de valors separats per comes)"
@@ -1252,7 +1326,7 @@ msgstr ""
 "L'atribut d'ID d'usuari de LDAP probablement és incorrecte (no es pot trobar "
 "cap usuari que compleixi les dues condicions)"
 
-#: auths/RegexLdap/Authenticator.py:477 auths/SimpleLDAP/Authenticator.py:406
+#: auths/RegexLdap/Authenticator.py:477
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1421,77 +1495,11 @@ msgstr "Grups"
 msgid "We need more than two items!"
 msgstr "Es necessiten més de dos elements"
 
-#: auths/SimpleLDAP/Authenticator.py:57
-msgid "Ldap Server IP or Hostname"
-msgstr "Nom de host o IP del servidor LDAP"
-
-#: auths/SimpleLDAP/Authenticator.py:60
-msgid "Ldap User"
-msgstr "Usuari LDAP"
-
-#: auths/SimpleLDAP/Authenticator.py:67
-msgid "Group class"
-msgstr "Classe de grup"
-
-#: auths/SimpleLDAP/Authenticator.py:67
-msgid "Class for LDAP groups (normally poxisGroup)"
-msgstr "Classe per a grups LDAP (normalment poxisGroup)"
-
-#: auths/SimpleLDAP/Authenticator.py:68
-msgid "Group Id Attr"
-msgstr "Atribut ID de grup"
-
-#: auths/SimpleLDAP/Authenticator.py:68
-msgid "Attribute that contains the group id"
-msgstr "Atribut que conté l'ID de grup"
-
-#: auths/SimpleLDAP/Authenticator.py:69
-msgid "Group membership attr"
-msgstr "Atribut membre de grup"
-
-#: auths/SimpleLDAP/Authenticator.py:69
-msgid "Attribute of the group that contains the users belonging to it"
-msgstr "Atribut del grup que conté els usuaris que hi pertanyen"
-
-#: auths/SimpleLDAP/Authenticator.py:71
-msgid "SimpleLDAP Authenticator"
-msgstr "Autenticador SimpleLDAP"
-
-#: auths/SimpleLDAP/Authenticator.py:73
-msgid "Simple LDAP authenticator"
-msgstr "Autenticador LDAP Simple"
-
-#: auths/SimpleLDAP/Authenticator.py:390
-msgid "Ldap group class seems to be incorrect (no group found by that class)"
-msgstr ""
-"La classe de grup de LDAP sembla incorrecta (no s'ha trobat cap grup amb "
-"aquesta classe)"
-
-#: auths/SimpleLDAP/Authenticator.py:415
-msgid ""
-"Ldap user class or user id attr is probably wrong (can't find any user with "
-"both conditions)"
-msgstr ""
-"L'atribut d'ID d'usuari o la clase d'usuari de LDAP probablement són "
-"incorrectes (no s'ha trobat cap usuari que compleixi les dues condicions)"
-
-#: auths/SimpleLDAP/Authenticator.py:424
-msgid ""
-"Ldap group class or group id attr is probably wrong (can't find any group "
-"with both conditions)"
-msgstr ""
-"L'atribut d'ID de grup o la classe de grup LDAP probablement són incorrectes "
-"(no s'ha trobat cap grup que compleixi les dues condicions)"
-
-#: auths/SimpleLDAP/Authenticator.py:431
-msgid "Can't locate any group with the membership attribute specified"
-msgstr "No es pot localitzar cap grup amb l'atribut de pertinença especificat"
-
 #: core/BaseModule.py:197
 msgid "No connection checking method is implemented."
 msgstr "No s'ha implementat cap mètode de verificació de connexió"
 
-#: core/BaseModule.py:266
+#: core/BaseModule.py:267
 msgid "No check method provided."
 msgstr "No s'ha proporcionat cap mètode de verificació"
 
@@ -1519,30 +1527,30 @@ msgstr "Administrador del sistema"
 msgid "Forbidden"
 msgstr "Prohibit"
 
-#: core/managers/PublicationManager.py:215
+#: core/managers/PublicationManager.py:216
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Ja s'està publicant. Espereu que la publicació anterior acabi i torneu-ho a "
 "provar"
 
-#: core/managers/PublicationManager.py:218
+#: core/managers/PublicationManager.py:219
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr "El servei està en mode manteniment i no es permeten publicacions noves"
 
-#: core/managers/PublicationManager.py:251
+#: core/managers/PublicationManager.py:252
 msgid "Can't cancel non running publication"
 msgstr "No es pot cancel·lar una publicació que no s'està executant"
 
-#: core/managers/PublicationManager.py:273
+#: core/managers/PublicationManager.py:274
 msgid "Can't unpublish non usable publication"
 msgstr "No es pot anul·lar una publicació que no es pot utilitzar"
 
-#: core/managers/PublicationManager.py:276
+#: core/managers/PublicationManager.py:277
 msgid "Can't unpublish publications with services in process"
 msgstr "No es poden anul·lar publicacions amb serveis en procés"
 
-#: core/managers/UserPrefsManager.py:293 transports/RDP/BaseRDPTransport.py:75
+#: core/managers/UserPrefsManager.py:293 transports/RDP/BaseRDPTransport.py:85
 msgid "Screen Size"
 msgstr "Mida de pantalla"
 
@@ -1617,8 +1625,8 @@ msgstr "Servei base"
 
 #: core/services/BaseService.py:122 core/services/BaseService.py:131
 #: models/Permissions.py:79 models/Permissions.py:83
-#: services/OpenStack/helpers.py:35 services/Sample/SampleService.py:92
-#: services/Sample/SampleService.py:98
+#: services/Azure_enterprise/Helpers.py:93 services/OpenStack/helpers.py:35
+#: services/Sample/SampleService.py:92 services/Sample/SampleService.py:98
 #: services/TestService_enterprise/TestService.py:29
 msgid "None"
 msgstr "Cap"
@@ -1767,55 +1775,55 @@ msgstr ""
 "Rang mac no vàlid. El rang mac ha de ser en format XX:XX:XX:XX:XX:XX-XX:XX:"
 "XX:XX:XX:XX"
 
-#: dispatchers/wyse_enterprise/views.py:114
+#: dispatchers/wyse_enterprise/views.py:117
 msgid "There are no authenticators available for login"
 msgstr "No hi ha autenticadors disponibles per a iniciar sessió"
 
-#: dispatchers/wyse_enterprise/views.py:128
+#: dispatchers/wyse_enterprise/views.py:130
 #, python-brace-format
 msgid "The authenticator {0} is not usable"
 msgstr "L'autenticador {0} no es pot utilitzar"
 
-#: dispatchers/wyse_enterprise/views.py:135 web/views/login.py:119
+#: dispatchers/wyse_enterprise/views.py:137
 msgid "Invalid credentials"
 msgstr "Credencials no vàlides"
 
-#: dispatchers/wyse_enterprise/views.py:143
+#: dispatchers/wyse_enterprise/views.py:144
 #, python-brace-format
 msgid "The domain {0} does not exists"
 msgstr "El domini {0} no existeix"
 
-#: dispatchers/wyse_enterprise/views.py:204
+#: dispatchers/wyse_enterprise/views.py:207
 msgid "No services available"
 msgstr "No hi ha serveis disponibles"
 
-#: dispatchers/wyse_enterprise/views.py:219
-#: dispatchers/wyse_enterprise/views.py:313
+#: dispatchers/wyse_enterprise/views.py:223
+#: dispatchers/wyse_enterprise/views.py:317
 msgid "Invalid session"
 msgstr "Sessió no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:223
-#: dispatchers/wyse_enterprise/views.py:317
+#: dispatchers/wyse_enterprise/views.py:227
+#: dispatchers/wyse_enterprise/views.py:321
 msgid "Invalid authorization"
 msgstr "Autorització no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:234
-#: dispatchers/wyse_enterprise/views.py:323
+#: dispatchers/wyse_enterprise/views.py:238
+#: dispatchers/wyse_enterprise/views.py:327
 msgid "Invalid request"
 msgstr "Petició no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:237
-#: dispatchers/wyse_enterprise/views.py:326
+#: dispatchers/wyse_enterprise/views.py:241
+#: dispatchers/wyse_enterprise/views.py:330
 msgid "Invalid credentials used"
 msgstr "Credencials utilitzades no vàlides"
 
-#: dispatchers/wyse_enterprise/views.py:275 web/errors.py:73
+#: dispatchers/wyse_enterprise/views.py:279 web/errors.py:73
 msgid "Transport not found"
 msgstr "Transport no trobat"
 
-#: dispatchers/wyse_enterprise/views.py:279
-#: dispatchers/wyse_enterprise/views.py:286
-#: dispatchers/wyse_enterprise/views.py:291
+#: dispatchers/wyse_enterprise/views.py:283
+#: dispatchers/wyse_enterprise/views.py:289
+#: dispatchers/wyse_enterprise/views.py:294
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "Servei no disponible en aquest moment. Si us plau, provau-ho més tard."
 
@@ -2036,8 +2044,8 @@ msgid "Os Manager to control windows machines with domain."
 msgstr "Gestor de SO per a controlar màquines Windows amb domini"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
-#: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:76
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
+#: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 #: transports/RDP/BaseRDPTransport.py:64
 #: transports/RDS_enterprise/BaseRDSTransport.py:67
@@ -2111,50 +2119,50 @@ msgstr "El format DOM\\USUARI no està permès!"
 msgid "Must provide a password for the account!"
 msgstr "Cal indicar una contrasenya per al compte!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:234
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:244
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:247
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:257
 #, python-brace-format
 msgid "Check error: {0}"
 msgstr "Comproveu l'error: {0}"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:236
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:249
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr ""
 "No s'han trobat els paràmetres del servidor (_ldap._tcp. {0} no es pot "
 "resoldre)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:249
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:262
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
 msgstr ""
 "Comproveu l'error: no s'ha trobat el grup {0} (utilitzeu \"cn\" per a "
 "localitzar-lo)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:252
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:264
 msgid "Server check was successful"
 msgstr "Servidor verificat amb èxit"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:263
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:275
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
 msgstr "No es pot accedir al Directori Actiu utilitzant LDAP ({0})"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:275
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:287
 #, python-brace-format
 msgid "The default path {0} for computers was not found!!!"
 msgstr "No s'ha trobat la ruta per defecte {0} dels ordinadors!!!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:277
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:289
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
 msgstr "No s'ha trobat la ruta de l'UO {0}!!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:279
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:291
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr "No s'han verificat els paràmetres (_ldap._tcp. {0} no es pot resoldre)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:284
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:296
 msgid "All parameters seem to work fine."
 msgstr "Tots els paràmetres semblen funcionar correctament."
 
@@ -2442,6 +2450,269 @@ msgstr "Resum d'ús de pools"
 msgid "Generates a report with the summary of a pool usage"
 msgstr "Genera un informe amb el resum d'ús d'un pool"
 
+#: services/Azure_enterprise/AzureCloneService.py:29
+#, fuzzy
+#| msgid "Parent Service"
+msgid "Azure Clone Service"
+msgstr "Servei primari"
+
+#: services/Azure_enterprise/AzureCloneService.py:31
+#, fuzzy
+#| msgid "This service provides access to vApp based VDI"
+msgid "This service provides access to Azure VMs based VDI"
+msgstr "Aquest servei proporciona accés a vApp basat en VDI"
+
+#: services/Azure_enterprise/AzureCloneService.py:37
+#, fuzzy
+#| msgid "Number of desired vApps to keep running waiting for an user"
+msgid "Number of desired VMs to keep running waiting for an user"
+msgstr ""
+"Nombre desitjat de vApps que es mantenen en execució esperant un usuari"
+
+#: services/Azure_enterprise/AzureCloneService.py:39
+#, fuzzy
+#| msgid "Number of desired vApps to keep suspended waiting for use"
+msgid "Number of desired VMs to keep suspended waiting for use"
+msgstr ""
+"Nombre desitjat de vApps que es mantenen en suspens esperant per a ser "
+"utilitzades"
+
+#: services/Azure_enterprise/AzureCloneService.py:53
+#, fuzzy
+#| msgid "Resource Pool"
+msgid "Resource Group"
+msgstr "Pool de recursos"
+
+#: services/Azure_enterprise/AzureCloneService.py:54
+#, fuzzy
+#| msgid "Base machine for this service"
+msgid "Resource group container of this VDI service"
+msgstr "Màquina base per a aquest servei"
+
+#: services/Azure_enterprise/AzureCloneService.py:65
+#, fuzzy
+#| msgid "Virtual Datacenter"
+msgid "Virtual Machine"
+msgstr "Datacenter Virtual"
+
+#: services/Azure_enterprise/AzureCloneService.py:66
+#, fuzzy
+#| msgid "Base Machine"
+msgid "Base virtual machine"
+msgstr "Màquina base"
+
+#: services/Azure_enterprise/AzureCloneService.py:78
+#, fuzzy
+#| msgid "Cache size"
+msgid "Machine size"
+msgstr "Mida de la memòria cau"
+
+#: services/Azure_enterprise/AzureCloneService.py:79
+#, fuzzy
+#| msgid "Memory for machines deployed from this service"
+msgid "Size for machines created from this service."
+msgstr "Memòria per a les màquines desplegades des d'aquest servei"
+
+#: services/Azure_enterprise/AzureCloneService.py:84
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
+#: services/HyperV_enterprise/HyperVLinkedService.py:149
+#: services/Nutanix_enterprise/NutanixService.py:72
+#: services/OVirt/OVirtLinkedService.py:191
+#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:125
+#: services/VCloud_enterprise/VCloudCloneService.py:76
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Xen/XenLinkedService.py:158
+msgid "Machine Names"
+msgstr "Noms de màquina"
+
+#: services/Azure_enterprise/AzureCloneService.py:84
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
+#: services/HyperV_enterprise/HyperVLinkedService.py:152
+#: services/OpenNebula/LiveService.py:115 services/OpenStack/LiveService.py:128
+#: services/VCloud_enterprise/VCloudCloneService.py:76
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+msgid "Base name for clones from this machine"
+msgstr "Nom base per als clons d'aquesta màquina"
+
+#: services/Azure_enterprise/AzureCloneService.py:85
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
+#: services/HyperV_enterprise/HyperVLinkedService.py:159
+#: services/Nutanix_enterprise/NutanixService.py:81
+#: services/OVirt/OVirtLinkedService.py:201
+#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:135
+#: services/VCloud_enterprise/VCloudCloneService.py:77
+#: services/Vmware_enterprise/VCLinkedCloneService.py:94
+#: services/Xen/XenLinkedService.py:168
+msgid "Name Length"
+msgstr "Longitud del nom"
+
+#: services/Azure_enterprise/AzureCloneService.py:86
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
+#: services/HyperV_enterprise/HyperVLinkedService.py:162
+#: services/Nutanix_enterprise/NutanixService.py:84
+#: services/OVirt/OVirtLinkedService.py:204
+#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:138
+#: services/VCloud_enterprise/VCloudCloneService.py:78
+#: services/Vmware_enterprise/VCLinkedCloneService.py:95
+msgid "Size of numeric part for the names of these machines (between 3 and 6)"
+msgstr "Mida de la part numèrica dels noms d'aquestes màquines (entre 3 i 6)"
+
+#: services/Azure_enterprise/AzureCloneService.py:90
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
+#: services/HyperV_enterprise/HyperVLinkedService.py:129
+#: services/Nutanix_enterprise/NutanixService.py:65
+#: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
+msgid "Network"
+msgstr "Xarxa"
+
+#: services/Azure_enterprise/AzureCloneService.py:91
+#, fuzzy
+#| msgid "Network on which the machine will be deployed"
+msgid "Network where the clones will be attached"
+msgstr "Xarxa sobre la que la màquina serà desplegada"
+
+#: services/Azure_enterprise/AzureCloneService.py:104
+msgid "Subnet"
+msgstr ""
+
+#: services/Azure_enterprise/AzureCloneService.py:105
+msgid "Subnet where the clones will be attached"
+msgstr ""
+
+#: services/Azure_enterprise/AzureCloneService.py:113
+#, fuzzy
+#| msgid "Security Groups"
+msgid "Security Group"
+msgstr "Grups de seguretat"
+
+#: services/Azure_enterprise/AzureCloneService.py:114
+#, fuzzy
+#| msgid "Fields from where to extract the real name"
+msgid "Security group where to attach the virtual machine"
+msgstr "Camps d'on treure el nom real"
+
+#: services/Azure_enterprise/AzureCloneService.py:122
+msgid "Caching policy"
+msgstr ""
+
+#: services/Azure_enterprise/AzureCloneService.py:123
+#, fuzzy
+#| msgid "Disk Cache"
+msgid "Disk Caching policy"
+msgstr "Memòria cau de disc"
+
+#: services/Azure_enterprise/AzureCloneService.py:131
+msgid "Pricing tier"
+msgstr ""
+
+#: services/Azure_enterprise/AzureCloneService.py:132
+msgid "SKU (pricing tier)"
+msgstr ""
+
+#: services/Azure_enterprise/AzureCloneService.py:140
+msgid "Accelerated network"
+msgstr ""
+
+#: services/Azure_enterprise/AzureCloneService.py:141
+msgid ""
+"Activate this option to use accelerated networking on vm. Ensure that your "
+"machine and machine size supports this option before activating."
+msgstr ""
+
+#: services/Azure_enterprise/AzureCloneService.py:156
+#, fuzzy
+#| msgid "vApp template for the service"
+msgid "You must select a network for the service"
+msgstr "Plantilla vApp per a aquest servei"
+
+#: services/Azure_enterprise/Helpers.py:76
+msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
+msgstr ""
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:38
+#, fuzzy
+#| msgid "Description"
+msgid "Subscription ID"
+msgstr "Descripció"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:38
+msgid "Obtained from subscriptions"
+msgstr ""
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:41
+#: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
+#: services/Vmware_enterprise/ServiceProviderVC.py:84
+#: services/Xen/XenProvider.py:102
+msgid "Creation concurrency"
+msgstr "Creació concurrent"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:41
+#: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
+#: services/Xen/XenProvider.py:102
+msgid "Maximum number of concurrently creating VMs"
+msgstr "Nombre màxim de màquines virtuals creant-se simultàniament "
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:42
+#: services/HyperV_enterprise/HyperVProvider.py:89
+#: services/Nutanix_enterprise/NutanixProvider.py:39
+#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:85
+#: services/Xen/XenProvider.py:103
+msgid "Removal concurrency"
+msgstr "Eliminació concurrent"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:42
+#: services/HyperV_enterprise/HyperVProvider.py:89
+#: services/Nutanix_enterprise/NutanixProvider.py:39
+#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Xen/XenProvider.py:103
+msgid "Maximum number of concurrently removing VMs"
+msgstr "Nombre màxim de màquines virtuals eliminant-se simultàniament "
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:43
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
+msgid "Timeout in seconds of connection to vCloud"
+msgstr "Temps d'espera de la connexió a vCloud en segons"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:48
+#, fuzzy
+#| msgid "RDS Platform Provider"
+msgid "Azure Platform Provider"
+msgstr "Proveïdor de plataforma RDS"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:50
+#, fuzzy
+#| msgid "Provides connection to vCloud Director platform"
+msgid "Provides connection to Azure Platform"
+msgstr "Proporciona connexió a la plataforma vCloud Director"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:93
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:80
+msgid "Connection parameters seems correct"
+msgstr "Els paràmetres de connexió semblen correctes"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:231
+#, fuzzy
+#| msgid "VmwareVC Provider: "
+msgid "Azure Provider: "
+msgstr "Proveïdor VMWare VCenter:"
+
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
 msgstr "Clúster HyperV Linked Clone (experimental)"
@@ -2489,13 +2760,6 @@ msgstr "Màquina base"
 msgid "Service base machine"
 msgstr "Màquina base de servei"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
-#: services/HyperV_enterprise/HyperVLinkedService.py:129
-#: services/Nutanix_enterprise/NutanixService.py:65
-#: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
-msgid "Network"
-msgstr "Xarxa"
-
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:132
 msgid ""
@@ -2528,46 +2792,6 @@ msgstr "Unitats d'emmagatzematge de dades"
 #: services/HyperV_enterprise/HyperVLinkedService.py:107
 msgid "Datastores where to put incrementals & publications"
 msgstr "Unitats d'emmagatzematge on guardar incrementals i publicacions"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:149
-#: services/Nutanix_enterprise/NutanixService.py:72
-#: services/OVirt/OVirtLinkedService.py:191
-#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:125
-#: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
-#: services/Xen/XenLinkedService.py:158
-msgid "Machine Names"
-msgstr "Noms de màquina"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:152
-#: services/OpenNebula/LiveService.py:115 services/OpenStack/LiveService.py:128
-#: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
-msgid "Base name for clones from this machine"
-msgstr "Nom base per als clons d'aquesta màquina"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
-#: services/HyperV_enterprise/HyperVLinkedService.py:159
-#: services/Nutanix_enterprise/NutanixService.py:81
-#: services/OVirt/OVirtLinkedService.py:201
-#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:135
-#: services/VCloud_enterprise/VCloudCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:94
-#: services/Xen/XenLinkedService.py:168
-msgid "Name Length"
-msgstr "Longitud del nom"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
-#: services/HyperV_enterprise/HyperVLinkedService.py:162
-#: services/Nutanix_enterprise/NutanixService.py:84
-#: services/OVirt/OVirtLinkedService.py:204
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:138
-#: services/VCloud_enterprise/VCloudCloneService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:95
-msgid "Size of numeric part for the names of these machines (between 3 and 6)"
-msgstr "Mida de la part numèrica dels noms d'aquestes màquines (entre 3 i 6)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:177
@@ -2723,48 +2947,6 @@ msgstr "Proveïdor de plataforma HyperV (experimental)"
 #: services/HyperV_enterprise/HyperVProvider.py:68
 msgid "HyperV platform service provider (experimental)"
 msgstr "Proveïdor del servei de plataforma HyperV (experimental)"
-
-#: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:38
-#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:37
-#: services/Vmware_enterprise/ServiceProviderVC.py:84
-#: services/Xen/XenProvider.py:102
-msgid "Creation concurrency"
-msgstr "Creació concurrent"
-
-#: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:38
-#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:37
-#: services/Xen/XenProvider.py:102
-msgid "Maximum number of concurrently creating VMs"
-msgstr "Nombre màxim de màquines virtuals creant-se simultàniament "
-
-#: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:39
-#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
-#: services/Vmware_enterprise/ServiceProviderVC.py:85
-#: services/Xen/XenProvider.py:103
-msgid "Removal concurrency"
-msgstr "Eliminació concurrent"
-
-#: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:39
-#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
-#: services/Xen/XenProvider.py:103
-msgid "Maximum number of concurrently removing VMs"
-msgstr "Nombre màxim de màquines virtuals eliminant-se simultàniament "
 
 #: services/Nutanix_enterprise/NutanixProvider.py:27
 msgid "Nutanix Acropolis Platform Provider"
@@ -3212,11 +3394,11 @@ msgstr "Temps d'espera de la connexió a OpenStack en segons"
 msgid "OpenStack test connection passed"
 msgstr "La prova de connexió amb OpenStack s'ha realitzat correctament"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:550
+#: services/OpenStack/openStack/UDSOpenStackClient.py:553
 msgid "Authentication error"
 msgstr "Error d'autenticació"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:552
+#: services/OpenStack/openStack/UDSOpenStackClient.py:555
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3252,23 +3434,23 @@ msgstr "IP simple estàtica"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "Aquest servei proporciona accés  per IP a màquines engegades"
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:32
 msgid "RDS Platform Provider"
 msgstr "Proveïdor de plataforma RDS"
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:34
 msgid "Microsoft RDS based provider"
 msgstr "ProveÏdor basat en Microsoft RDS"
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:38
 msgid "List of servers"
 msgstr "Llistat de servidors"
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:40
 msgid "User mapping"
 msgstr "\"Mapping\" d'usuaris"
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:40
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -3276,17 +3458,17 @@ msgstr ""
 "Si està activat, es farà \"mapping\" d'usuari. Sinó, les credencials "
 "d'usuari es redirigiran al servidor RDS."
 
-#: services/RDS_enterprise/RDSProvider.py:44
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
 "Llista d'usuaris per a \"mapping\" (no s'utilitza si el \"mapping\" d'usuari "
 "està deshabilitat)."
 
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/RDSProvider.py:43
 msgid "User's password"
 msgstr "Contrasenya d'usuari"
 
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/RDSProvider.py:43
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3294,23 +3476,23 @@ msgstr ""
 "Contrasenya per defecte per a usuaris de la llista de \"mapping\" (no "
 "s'utilitza si el \"mapping\" d'usuari està deshabilitat)."
 
-#: services/RDS_enterprise/RDSProvider.py:48
+#: services/RDS_enterprise/RDSProvider.py:46
 msgid "Server Checking"
 msgstr "Verificació del servidor"
 
-#: services/RDS_enterprise/RDSProvider.py:49
+#: services/RDS_enterprise/RDSProvider.py:47
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr ""
 "Si està seleccionat, es verificarà el servidor abans d'assignar-lo o "
 "utilitzar-lo"
 
-#: services/RDS_enterprise/RDSProvider.py:74
+#: services/RDS_enterprise/RDSProvider.py:72
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Error: L'usuari {} o el host {} està en ús i no es pot eliminar en aquests "
 "moments"
 
-#: services/RDS_enterprise/RDSProvider.py:104
+#: services/RDS_enterprise/RDSProvider.py:102
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -3500,10 +3682,6 @@ msgstr "Usuari amb privilegis vàlids sobre vCloud"
 msgid "Password of the user of vCloud"
 msgstr "Contrasenya de l'usuari de vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
-msgid "Timeout in seconds of connection to vCloud"
-msgstr "Temps d'espera de la connexió a vCloud en segons"
-
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:42
 msgid "VCloud Director Platform Provider"
 msgstr "Proveïdor de plataforma vCloud Director"
@@ -3511,10 +3689,6 @@ msgstr "Proveïdor de plataforma vCloud Director"
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:44
 msgid "Provides connection to vCloud Director platform"
 msgstr "Proporciona connexió a la plataforma vCloud Director"
-
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:80
-msgid "Connection parameters seems correct"
-msgstr "Els paràmetres de connexió semblen correctes"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:192
 msgid "vCloud Provider: "
@@ -4006,7 +4180,7 @@ msgid "Close"
 msgstr "Tanca"
 
 #: templates/uds/admin/tmpl/comp/modal.html:26
-#: templates/uds/admin/tmpl/configuration.html:80
+#: templates/uds/admin/tmpl/configuration.html:84
 msgid "Save"
 msgstr "Desa"
 
@@ -4014,7 +4188,7 @@ msgstr "Desa"
 msgid "UDS Configuration"
 msgstr "Configuració UDS"
 
-#: templates/uds/admin/tmpl/configuration.html:51
+#: templates/uds/admin/tmpl/configuration.html:54
 #: templates/uds/admin/tmpl/fld/checkbox.html:6
 #: templates/uds/admin/tmpl/pool_add_action.html:27
 #: templates/uds/admin/tmpl/user-info.html:75
@@ -4022,7 +4196,7 @@ msgstr "Configuració UDS"
 msgid "Yes"
 msgstr "Sí"
 
-#: templates/uds/admin/tmpl/configuration.html:51
+#: templates/uds/admin/tmpl/configuration.html:54
 #: templates/uds/admin/tmpl/fld/checkbox.html:7
 #: templates/uds/admin/tmpl/pool_add_action.html:28
 #: templates/uds/admin/tmpl/user-info.html:75
@@ -4487,7 +4661,7 @@ msgstr "Agent d'usuari"
 msgid "OS"
 msgstr "SO"
 
-#: templates/uds/html5/index.html:381 templates/uds/html5/index.html:391
+#: templates/uds/html5/index.html:388 templates/uds/html5/index.html:398
 msgid ""
 "Are you sure that you want to release this service. Its current content will "
 "be lost!"
@@ -4495,7 +4669,7 @@ msgstr ""
 "Esteu segur que voleu alliberar aquest servei?. El seu contingut actual es "
 "perdrà!"
 
-#: templates/uds/html5/index.html:401
+#: templates/uds/html5/index.html:408
 msgid "Are you sure that you want to reset this service. USE WITH CAUTION!"
 msgstr "Esteu segur que voleu reiniciar aquest servei?. UTILICE AMB PRECAUCIÓ!"
 
@@ -4762,21 +4936,21 @@ msgstr "Linux basat en Suse"
 msgid "Generic .tar.gz Linux"
 msgstr ".tar .gz linux genèric"
 
-#: transports/HTML5RDP/HTML5RDP.py:61
+#: transports/HTML5RDP/HTML5RDP.py:62
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
 
-#: transports/HTML5RDP/HTML5RDP.py:63
+#: transports/HTML5RDP/HTML5RDP.py:64
 msgid "RDP protocol using HTML5 client"
 msgstr "Protocol RDP utilitzant client HTML5"
 
-#: transports/HTML5RDP/HTML5RDP.py:71
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:73
+#: transports/HTML5RDP/HTML5RDP.py:72
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
 msgid "Tunnel Server"
 msgstr "Servidor de túnel"
 
-#: transports/HTML5RDP/HTML5RDP.py:71
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:73
+#: transports/HTML5RDP/HTML5RDP.py:72
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -4784,8 +4958,8 @@ msgstr ""
 "Host del servidor de túnel (utilitzeu http/https i port si escau) com "
 "accessible pels usuaris"
 
-#: transports/HTML5RDP/HTML5RDP.py:72
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
 #: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
@@ -4794,8 +4968,8 @@ msgstr ""
 msgid "Empty creds"
 msgstr "Credencials buides"
 
-#: transports/HTML5RDP/HTML5RDP.py:72
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
 #: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
@@ -4807,7 +4981,7 @@ msgstr ""
 "Si està seleccionat, les credencials utilitzades per a connectar-se estaran "
 "buïdes"
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:64
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:64
 #: transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
@@ -4818,7 +4992,7 @@ msgstr ""
 msgid "If not empty, this username will be always used as credential"
 msgstr "Si no està buit, el nom d'usuari s'utilitzarà sempre a les credencials"
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:65
+#: transports/HTML5RDP/HTML5RDP.py:75 transports/NX/NXTransport.py:65
 #: transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
@@ -4829,15 +5003,15 @@ msgid "If not empty, this password will be always used as credential"
 msgstr ""
 "Si no està buit, aquesta contrasenya s'utilitzarà sempre a les credencials"
 
-#: transports/HTML5RDP/HTML5RDP.py:75
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
+#: transports/HTML5RDP/HTML5RDP.py:76
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
 #: transports/RDP/BaseRDPTransport.py:63
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid "Without Domain"
 msgstr "Fora domini"
 
-#: transports/HTML5RDP/HTML5RDP.py:75
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
+#: transports/HTML5RDP/HTML5RDP.py:76
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
@@ -4846,8 +5020,8 @@ msgstr ""
 "Si està seleccionat, la part del domini sempre estarà buida (es necessari "
 "per exemple per a connexions XRDP)"
 
-#: transports/HTML5RDP/HTML5RDP.py:76
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
+#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
 #: transports/RDP/BaseRDPTransport.py:64
 #: transports/RDS_enterprise/BaseRDSTransport.py:67
 #: transports/RGS_enterprise/RGSTransport.py:48
@@ -4859,14 +5033,14 @@ msgstr ""
 "Si no està buit, aquest domini s'utilitzarà sempre per a les credencials (en "
 "forma DOMINI\\usuari)"
 
-#: transports/HTML5RDP/HTML5RDP.py:77
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
+#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
 msgid "Show wallpaper"
 msgstr "Mostrar el fons de pantalla"
 
-#: transports/HTML5RDP/HTML5RDP.py:77
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
-#: transports/RDP/BaseRDPTransport.py:100
+#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
+#: transports/RDP/BaseRDPTransport.py:110
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -4874,40 +5048,40 @@ msgstr ""
 "Si està seleccionat, el fons de pantalla i els temes es mostraran a la "
 "màquina (millor experiència d'usuari, major amplària de banda)"
 
-#: transports/HTML5RDP/HTML5RDP.py:78
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:102
+#: transports/HTML5RDP/HTML5RDP.py:79
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
+#: transports/RDP/BaseRDPTransport.py:112
 msgid "Allow Desk.Comp."
 msgstr "Permet composició d'escriptori"
 
-#: transports/HTML5RDP/HTML5RDP.py:78
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:102
+#: transports/HTML5RDP/HTML5RDP.py:79
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
+#: transports/RDP/BaseRDPTransport.py:112
 msgid "If checked, desktop composition will be allowed"
 msgstr "Si està seleccionat, es permet la composició d'escriptori"
 
-#: transports/HTML5RDP/HTML5RDP.py:79
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:103
-#: transports/RDS_enterprise/BaseRDSTransport.py:87
+#: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/RDP/BaseRDPTransport.py:113
+#: transports/RDS_enterprise/BaseRDSTransport.py:97
 msgid "Font Smoothing"
 msgstr "Suavització de fonts"
 
-#: transports/HTML5RDP/HTML5RDP.py:79
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:87
+#: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:97
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Si està seleccionat, es permet la suavització de fonts (només per a clients "
 "de Windows)"
 
-#: transports/HTML5RDP/HTML5RDP.py:80
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
 msgid "Enable Audio"
 msgstr "Activar l'àudio"
 
-#: transports/HTML5RDP/HTML5RDP.py:80
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
@@ -4915,13 +5089,13 @@ msgstr ""
 "Si està seleccionat, l'àudio es redirigirà al client (si el navegador del "
 "client ho suporta)"
 
-#: transports/HTML5RDP/HTML5RDP.py:81
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
+#: transports/HTML5RDP/HTML5RDP.py:82
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
 msgid "Enable Printing"
 msgstr "Activa la impressió"
 
-#: transports/HTML5RDP/HTML5RDP.py:81
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
+#: transports/HTML5RDP/HTML5RDP.py:82
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
 msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
@@ -4929,13 +5103,13 @@ msgstr ""
 "Si està seleccionat, la impressió es redirigirà al client (si el navegador "
 "del client ho suporta)"
 
-#: transports/HTML5RDP/HTML5RDP.py:82
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
+#: transports/HTML5RDP/HTML5RDP.py:83
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:83
 msgid "Enable File Sharing"
 msgstr "Activa la compartició de fitxers"
 
-#: transports/HTML5RDP/HTML5RDP.py:82
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
+#: transports/HTML5RDP/HTML5RDP.py:83
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:83
 msgid ""
 "If checked, the user will be able to upload/download files (if client "
 "browser supports it)"
@@ -4943,69 +5117,69 @@ msgstr ""
 "Si està seleccionat, l'usuari podrà carregar/descarregar fitxers (si el "
 "navegador del client ho suporta)"
 
-#: transports/HTML5RDP/HTML5RDP.py:84
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:84
+#: transports/HTML5RDP/HTML5RDP.py:85
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:85
 msgid "Layout"
 msgstr "Distribució"
 
-#: transports/HTML5RDP/HTML5RDP.py:85
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:85
+#: transports/HTML5RDP/HTML5RDP.py:86
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:86
 msgid "Keyboards Layout of server"
 msgstr "Distribució de teclats del servidor"
 
-#: transports/HTML5RDP/HTML5RDP.py:88
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:88
+#: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:89
 msgid "English (US) keyboard"
 msgstr "Teclat anglès (Estats Units)"
 
-#: transports/HTML5RDP/HTML5RDP.py:89
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:89
+#: transports/HTML5RDP/HTML5RDP.py:90
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:90
 msgid "German keyboard (qwertz)"
 msgstr "Teclat alemany (qwertz)"
 
-#: transports/HTML5RDP/HTML5RDP.py:90
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:90
+#: transports/HTML5RDP/HTML5RDP.py:91
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:91
 msgid "French keyboard (azerty)"
 msgstr "Teclat francès (azerty)"
 
-#: transports/HTML5RDP/HTML5RDP.py:91
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:91
+#: transports/HTML5RDP/HTML5RDP.py:92
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:92
 msgid "Italian keyboard"
 msgstr "Teclat italià"
 
-#: transports/HTML5RDP/HTML5RDP.py:92
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:92
+#: transports/HTML5RDP/HTML5RDP.py:93
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:93
 msgid "Swedish keyboard"
 msgstr "Teclat suec"
 
-#: transports/HTML5RDP/HTML5RDP.py:93
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:93
+#: transports/HTML5RDP/HTML5RDP.py:94
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:94
 msgid "Failsafe"
 msgstr "A prova de fallades"
 
-#: transports/HTML5RDP/HTML5RDP.py:99
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:99
+#: transports/HTML5RDP/HTML5RDP.py:100
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:100
 msgid "Security"
 msgstr "Seguretat"
 
-#: transports/HTML5RDP/HTML5RDP.py:100
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:100
+#: transports/HTML5RDP/HTML5RDP.py:101
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:101
 msgid "Connection security mode for Guacamole RDP connection"
 msgstr "Mode de seguretat de connexió per a la connexió RDP de Guacamole"
 
-#: transports/HTML5RDP/HTML5RDP.py:103
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:103
+#: transports/HTML5RDP/HTML5RDP.py:104
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:104
 msgid "Any (Allow the server to choose the type of auth)"
 msgstr "Qualsevol (permet al servidor triar el tipus d'autenticació)"
 
-#: transports/HTML5RDP/HTML5RDP.py:104
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:104
+#: transports/HTML5RDP/HTML5RDP.py:105
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:105
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
 msgstr ""
 "RDP (xifrat RDP estàndard. Hauria de ser compatible amb tots els servidors)"
 
-#: transports/HTML5RDP/HTML5RDP.py:105
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:105
+#: transports/HTML5RDP/HTML5RDP.py:106
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:106
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
@@ -5013,18 +5187,18 @@ msgstr ""
 "NLA (autenticació de capa de xarxa. Requereix un usuari i contrasenya "
 "vàlids, o la connexió fallarà)"
 
-#: transports/HTML5RDP/HTML5RDP.py:106
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:106
+#: transports/HTML5RDP/HTML5RDP.py:107
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:107
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (xifrat de capa de seguretat de transport)"
 
-#: transports/HTML5RDP/HTML5RDP.py:114
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+#: transports/HTML5RDP/HTML5RDP.py:115
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:115
 msgid "Ticket Validity"
 msgstr "Validesa del ticket"
 
-#: transports/HTML5RDP/HTML5RDP.py:117
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+#: transports/HTML5RDP/HTML5RDP.py:118
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:118
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -5032,13 +5206,13 @@ msgstr ""
 "Temps permès, en segons, al client HTML5 per a recarregar dades del UDS "
 "Broker. Es recomana el valor predeterminat de 60."
 
-#: transports/HTML5RDP/HTML5RDP.py:128
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
+#: transports/HTML5RDP/HTML5RDP.py:129
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:129
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
 
-#: transports/HTML5RDP/HTML5RDP.py:130
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
+#: transports/HTML5RDP/HTML5RDP.py:131
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:131
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5046,11 +5220,11 @@ msgstr ""
 "Credencials buides (a la pestanya de Credencials) només es permeten amb el "
 "nivell de seguretat (a la pestanya Paràmetres) establert a \"RDP\""
 
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:61
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:62
 msgid "HTML5 RDS for vApps"
 msgstr "HTML5 RDS per a vApps"
 
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:63
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:64
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "Protocol RDP utilitzant client HTML5 per a vApps"
 
@@ -5139,7 +5313,7 @@ msgstr ""
 "Si no està buit, aquest servidor s'utilitzarà per a verificar si el servei "
 "funciona abans d'assignar-lo a l'usuari (utilitzeu el format HOST:PORT)."
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:106
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:107
 #: transports/RDS_enterprise/TRDSTransport.py:94
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5194,79 +5368,79 @@ msgstr "Permet Impressores"
 msgid "If checked, this transport will allow the use of user printers"
 msgstr "Si està seleccionat, aquest transport permetrà utilitzar impressores"
 
-#: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
+#: transports/RDP/BaseRDPTransport.py:69
+#: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "Allow Drives"
 msgstr "Permet Unitats"
 
-#: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
-msgid "If checked, this transport will allow the use of user drives"
-msgstr "Si està seleccionat, aquest transport permetrà utilitzar unitats"
+#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Local drives redirection allowed"
+msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid "Allow Serials"
 msgstr "Permet Sèries"
 
-#: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Si està seleccionat, aquest transport permetrà utilitzar ports sèrie d'usuari"
 
-#: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:82
 msgid "Enable clipboard"
 msgstr "Habilita portapapers"
 
-#: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:82
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "Si està seleccionat, es permetran funcions de copiar-aferrar"
 
-#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:81
 #: transports/X2GO/BaseX2GOTransport.py:103
 msgid "Enable sound"
 msgstr "Activa el so"
 
-#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:81
 msgid "If checked, sound will be redirected."
 msgstr "Si està seleccionat, es redirigirà el so."
 
-#: transports/RDP/BaseRDPTransport.py:72
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:82
+#: transports/RDS_enterprise/BaseRDSTransport.py:83
 msgid "Credssp Support"
 msgstr "Support Credssp"
 
-#: transports/RDP/BaseRDPTransport.py:72
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:82
+#: transports/RDS_enterprise/BaseRDSTransport.py:83
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Si està seleccionat, s'activarà el suport de proveïdor de credencials"
 
-#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:87
 msgid "Screen size for this transport"
 msgstr "Mida de pantalla per a aquest transport"
 
-#: transports/RDP/BaseRDPTransport.py:89
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:99
+#: transports/RDS_enterprise/BaseRDSTransport.py:86
 msgid "Color depth"
 msgstr "Profunditat de color"
 
-#: transports/RDP/BaseRDPTransport.py:91
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:101
+#: transports/RDS_enterprise/BaseRDSTransport.py:88
 msgid "Color depth for this connection"
 msgstr "Profunditat de color per a aquesta connexió"
 
-#: transports/RDP/BaseRDPTransport.py:100
+#: transports/RDP/BaseRDPTransport.py:110
 msgid "Wallpaper/theme"
 msgstr "Fons de pantalla/tema"
 
-#: transports/RDP/BaseRDPTransport.py:101
+#: transports/RDP/BaseRDPTransport.py:111
 msgid "Multiple monitors"
 msgstr "Monitors múltiples"
 
-#: transports/RDP/BaseRDPTransport.py:101
+#: transports/RDP/BaseRDPTransport.py:111
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -5274,79 +5448,95 @@ msgstr ""
 "Si està seleccionat, s'utilitzaran tots els monitors del client (només "
 "funciona en clients de Windows)"
 
-#: transports/RDP/BaseRDPTransport.py:103
+#: transports/RDP/BaseRDPTransport.py:113
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Si està seleccionat, es permet la suavització de fonts."
 
-#: transports/RDP/BaseRDPTransport.py:105
-#: transports/RDS_enterprise/BaseRDSTransport.py:89
+#: transports/RDP/BaseRDPTransport.py:114
+#, fuzzy
+#| msgid "Connection"
+msgid "Connection Bar"
+msgstr "Connexió"
+
+#: transports/RDP/BaseRDPTransport.py:114
+#, fuzzy
+#| msgid ""
+#| "If checked, all client monitors will be used for displaying (only works "
+#| "on windows clients)"
+msgid "If checked, connection bar will be shown (only on Windows clients)"
+msgstr ""
+"Si està seleccionat, s'utilitzaran tots els monitors del client (només "
+"funciona en clients de Windows)"
+
+#: transports/RDP/BaseRDPTransport.py:116
+#: transports/RDS_enterprise/BaseRDSTransport.py:99
 msgid "Multimedia sync"
 msgstr "Sincronització multimèdia"
 
-#: transports/RDP/BaseRDPTransport.py:105
-#: transports/RDS_enterprise/BaseRDSTransport.py:89
+#: transports/RDP/BaseRDPTransport.py:116
+#: transports/RDS_enterprise/BaseRDSTransport.py:99
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Si està seleccionat, el client Linux utilitzarà el paràmetre multimèdia per "
 "a xfreerdp"
 
-#: transports/RDP/BaseRDPTransport.py:106
-#: transports/RDS_enterprise/BaseRDSTransport.py:90
+#: transports/RDP/BaseRDPTransport.py:117
+#: transports/RDS_enterprise/BaseRDSTransport.py:100
 msgid "Use Alsa"
 msgstr "Utilitza ALSA"
 
-#: transports/RDP/BaseRDPTransport.py:106
-#: transports/RDS_enterprise/BaseRDSTransport.py:90
+#: transports/RDP/BaseRDPTransport.py:117
+#: transports/RDS_enterprise/BaseRDSTransport.py:100
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Si està seleccionat, el client Linux intentarà utilitzar ALSA, d'altra "
 "manera s'utilitzarà PULSE"
 
-#: transports/RDP/BaseRDPTransport.py:107
-#: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/RDP/BaseRDPTransport.py:118
+#: transports/RDS_enterprise/BaseRDSTransport.py:101
 #: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect home folder"
 msgstr "Redirigeix a la carpeta arrel"
 
-#: transports/RDP/BaseRDPTransport.py:107
-#: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/RDP/BaseRDPTransport.py:118
+#: transports/RDS_enterprise/BaseRDSTransport.py:101
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
 "Si està seleccionat, el client Linux intentarà la redirecció al directori "
 "local /home"
 
-#: transports/RDP/BaseRDPTransport.py:108
-#: transports/RDS_enterprise/BaseRDSTransport.py:92
+#: transports/RDP/BaseRDPTransport.py:119
+#: transports/RDS_enterprise/BaseRDSTransport.py:102
 msgid "Printer string"
 msgstr "Cadena d'impressora"
 
-#: transports/RDP/BaseRDPTransport.py:108
-#: transports/RDS_enterprise/BaseRDSTransport.py:92
+#: transports/RDP/BaseRDPTransport.py:119
+#: transports/RDS_enterprise/BaseRDSTransport.py:102
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si Impressora està seleccionat, la cadena d'impressora utilitzada amb el "
 "client xfreerdp"
 
-#: transports/RDP/BaseRDPTransport.py:109
-#: transports/RDS_enterprise/BaseRDSTransport.py:93
+#: transports/RDP/BaseRDPTransport.py:120
+#: transports/RDS_enterprise/BaseRDSTransport.py:103
 msgid "Smartcard string"
 msgstr "Cadena de targeta intel·ligent"
 
-#: transports/RDP/BaseRDPTransport.py:109
-#: transports/RDS_enterprise/BaseRDSTransport.py:93
+#: transports/RDP/BaseRDPTransport.py:120
+#: transports/RDS_enterprise/BaseRDSTransport.py:103
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si Targeta intel·ligent està seleccionat, la cadena de targeta intel·ligent "
 "utilitzada amb el client xfreerdp"
 
-#: transports/RDP/BaseRDPTransport.py:110
-#: transports/RDS_enterprise/BaseRDSTransport.py:94
+#: transports/RDP/BaseRDPTransport.py:121
+#: transports/RDS_enterprise/BaseRDSTransport.py:104
 msgid "Custom parameters"
 msgstr "Paràmetres personalitzats"
 
-#: transports/RDP/BaseRDPTransport.py:110
-#: transports/RDS_enterprise/BaseRDSTransport.py:94
+#: transports/RDP/BaseRDPTransport.py:121
+#: transports/RDS_enterprise/BaseRDSTransport.py:104
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5707,7 +5897,7 @@ msgstr "Accés al servei denegat per calendaris"
 msgid "authenticator"
 msgstr "autenticador"
 
-#: web/views/auth.py:140
+#: web/views/auth.py:142
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 
