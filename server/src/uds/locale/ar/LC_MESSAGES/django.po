@@ -4,11 +4,12 @@
 #
 # Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
+#: auths/AzureAD_enterprise/AzureAD.py:92
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 10:51+0100\n"
+"POT-Creation-Date: 2018-09-10 11:05+0200\n"
 "PO-Revision-Date: 2018-03-23 09:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -85,7 +86,7 @@ msgstr "التسمية"
 #: REST/methods/authenticators.py:64 reports/stats/login.py:108
 #: reports/stats/login.py:381 reports/stats/pool_performance.py:110
 #: reports/stats/pool_performance.py:377
-#: services/RDS_enterprise/RDSProvider.py:44
+#: services/RDS_enterprise/RDSProvider.py:42
 #: templates/uds/admin/tmpl/authenticators.html:31
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/group-info.html:5
@@ -232,8 +233,8 @@ msgstr "الخدمات"
 msgid "User Services"
 msgstr "خدمات المستخدم"
 
-#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:258
-#: dispatchers/wyse_enterprise/views.py:261 web/errors.py:74
+#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:262
+#: dispatchers/wyse_enterprise/views.py:265 web/errors.py:74
 msgid "Service not found"
 msgstr "لم يتم العثور على الخدمة"
 
@@ -243,10 +244,10 @@ msgstr "التقارير المتوفرة"
 
 #: REST/methods/reports.py:57 REST/methods/users_groups.py:261
 #: REST/methods/users_groups.py:268
-#: auths/ActiveDirectory_enterprise/Authenticator.py:56
+#: auths/ActiveDirectory_enterprise/Authenticator.py:58
+#: auths/AzureAD_enterprise/AzureAD.py:84
 #: auths/EDirectory_enterprise/Authenticator.py:81
 #: auths/RegexLdap/Authenticator.py:85 auths/SAML_enterprise/SAML.py:116
-#: auths/SimpleLDAP/Authenticator.py:83
 #: templates/uds/admin/tmpl/pool_add_group.html:17
 #: templates/uds/admin/tmpl/user-info.html:15
 msgid "Group"
@@ -717,9 +718,9 @@ msgid "Current users"
 msgstr "المستخدمون الحاليون"
 
 #: REST/methods/users_groups.py:112
-#: auths/ActiveDirectory_enterprise/Authenticator.py:54
+#: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:79
-#: auths/RegexLdap/Authenticator.py:83 auths/SimpleLDAP/Authenticator.py:81
+#: auths/RegexLdap/Authenticator.py:83
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
@@ -728,7 +729,7 @@ msgstr "المستخدمون الحاليون"
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
-#: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
+#: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:74
 #: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
@@ -818,7 +819,7 @@ msgstr "تعذر العثور على الأسلوب في {}: {}"
 msgid "Item not found"
 msgstr "تعذر العثور على عنصر"
 
-#: REST/model.py:276 web/errors.py:75
+#: REST/model.py:276 web/errors.py:75 web/views/login.py:119
 msgid "Access denied"
 msgstr "تم رفض الوصول"
 
@@ -848,7 +849,7 @@ msgstr "قائمة المستخدمين ل {}"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:35
 #: auths/EDirectory_enterprise/Authenticator.py:62
-#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:57
+#: auths/RegexLdap/Authenticator.py:57
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
@@ -866,8 +867,8 @@ msgstr "ملقم Active directory IP أو اسم المضيف"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 #: auths/EDirectory_enterprise/Authenticator.py:64
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:59
-#: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
+#: auths/RegexLdap/Authenticator.py:59 services/OpenNebula/Provider.py:100
+#: services/OpenStack/Provider.py:100
 msgid "Use SSL"
 msgstr "استخدام SSL"
 
@@ -884,6 +885,7 @@ msgid "Compatibility of AD connection (Usually windows 2000 and later)"
 msgstr "التوافق للاتصال الإعلاني (عادة windows 2000 والإصدارات الأحدث)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
+#: auths/AzureAD_enterprise/AzureAD.py:83
 #: auths/EDirectory_enterprise/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:60 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
@@ -901,10 +903,9 @@ msgstr ""
 "دوم لذلك)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
-#: auths/ActiveDirectory_enterprise/Authenticator.py:58
+#: auths/ActiveDirectory_enterprise/Authenticator.py:60
 #: auths/EDirectory_enterprise/Authenticator.py:66
 #: auths/RegexLdap/Authenticator.py:61 auths/RegexLdap/Authenticator.py:87
-#: auths/SimpleLDAP/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:85
 #: core/auths/BaseAuthenticator.py:140
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
@@ -917,7 +918,7 @@ msgstr ""
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:83
-#: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
+#: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:75
 #: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
@@ -929,13 +930,14 @@ msgstr "كلمة المرور"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/EDirectory_enterprise/Authenticator.py:66
-#: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:61
+#: auths/RegexLdap/Authenticator.py:61
 msgid "Password of the ldap user"
 msgstr "كلمة مرور المستخدم ldap"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:41
 #: auths/EDirectory_enterprise/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:62
+#: services/Azure_enterprise/ServiceProviderAzure.py:43
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
@@ -951,70 +953,141 @@ msgid "Timeout in seconds of connection to Active Directory"
 msgstr "المهلة بالثواني للاتصال بخدمة Active Directory"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:43
+msgid "Override Base"
+msgstr "تجاوز قاعدة"
+
+#: auths/ActiveDirectory_enterprise/Authenticator.py:43
+msgid ""
+"If not empty, will override AD search base with this value (format: dc=..., "
+"dc=...)"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1630"
+"dc =...)"
+
+#: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
 msgstr "مصادق Active Directory"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:45
+#: auths/ActiveDirectory_enterprise/Authenticator.py:47
 msgid "Authenticate against Active Directory"
 msgstr "المصادقة بالمقابلة مع خدمة Active Directory"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:73
-#: auths/ActiveDirectory_enterprise/Authenticator.py:469
+#: auths/ActiveDirectory_enterprise/Authenticator.py:75
+#: auths/ActiveDirectory_enterprise/Authenticator.py:474
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "يجب تحديد اسم المستخدم في النموذج USERNAME@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:177
+#: auths/ActiveDirectory_enterprise/Authenticator.py:185
 msgid "Active directory connection error: "
 msgstr "خطأ في الاتصال بخدمة active directory: "
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:364
-#: auths/ActiveDirectory_enterprise/Authenticator.py:412
+#: auths/ActiveDirectory_enterprise/Authenticator.py:371
+#: auths/ActiveDirectory_enterprise/Authenticator.py:419
+#: auths/AzureAD_enterprise/AzureAD.py:214
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
 #: auths/RegexLdap/Authenticator.py:366 auths/RegexLdap/Authenticator.py:407
-#: auths/SimpleLDAP/Authenticator.py:281 auths/SimpleLDAP/Authenticator.py:324
 msgid "Username not found"
 msgstr "لم يتم العثور على اسم المستخدم"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:397
-#: auths/SimpleLDAP/Authenticator.py:314
+#: auths/ActiveDirectory_enterprise/Authenticator.py:404
 msgid "Group not found"
 msgstr "لم يتم العثور على المجموعة"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:432
-#: auths/ActiveDirectory_enterprise/Authenticator.py:451
+#: auths/ActiveDirectory_enterprise/Authenticator.py:439
+#: auths/ActiveDirectory_enterprise/Authenticator.py:458
 #: auths/EDirectory_enterprise/Authenticator.py:305
-#: auths/RegexLdap/Authenticator.py:429 auths/SimpleLDAP/Authenticator.py:341
-#: auths/SimpleLDAP/Authenticator.py:357
+#: auths/RegexLdap/Authenticator.py:429
 msgid "Too many results, be more specific"
 msgstr "الكثير من النتائج، كن أكثر تحديداً"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:478
+#: auths/ActiveDirectory_enterprise/Authenticator.py:483
 msgid "Domain seems to be incorrect, please check it"
 msgstr "المجال غير صحيح، الرجاء التحقق من ذلك"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:483
+#: auths/ActiveDirectory_enterprise/Authenticator.py:488
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنات المستخدم)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:491
+#: auths/ActiveDirectory_enterprise/Authenticator.py:496
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنات المجموعة)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:496
+#: auths/ActiveDirectory_enterprise/Authenticator.py:501
 #: auths/EDirectory_enterprise/Authenticator.py:360
-#: auths/RegexLdap/Authenticator.py:488 auths/SimpleLDAP/Authenticator.py:435
+#: auths/RegexLdap/Authenticator.py:488
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "يبدو الاتصال params  صحيحا، تم تنفيذ الأختبار بنجاح"
+
+#: auths/AzureAD_enterprise/AzureAD.py:68
+#| msgid "SAML Authenticator"
+msgid "Azure AD Authenticator"
+msgstr "أزور الإعلانية المصادق"
+
+#: auths/AzureAD_enterprise/AzureAD.py:70
+#| msgid "Active Directory Authenticator"
+msgid "Azure Active Directory Authenticator"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1650"
+
+#: auths/AzureAD_enterprise/AzureAD.py:86
+#: services/Azure_enterprise/ServiceProviderAzure.py:35
+msgid "Tenant ID"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1655"
+
+#: auths/AzureAD_enterprise/AzureAD.py:86
+#: services/Azure_enterprise/ServiceProviderAzure.py:35
+msgid "Obtained from Azure Active Directory - Properties - Directory ID"
+msgstr "التي تم الحصول عليها من معرف الدليل Active Directory أزور--خصائص-"
+
+#: auths/AzureAD_enterprise/AzureAD.py:87
+#: services/Azure_enterprise/ServiceProviderAzure.py:36
+msgid "Client ID"
+msgstr "TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E2738"
+
+#: auths/AzureAD_enterprise/AzureAD.py:87
+#: services/Azure_enterprise/ServiceProviderAzure.py:36
+msgid "Obtained from App created on Azure for UDS Enterprise"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1676"
+
+#: auths/AzureAD_enterprise/AzureAD.py:88
+#: services/Azure_enterprise/ServiceProviderAzure.py:37
+msgid "Client Secret"
+msgstr "العميل السري"
+
+#: auths/AzureAD_enterprise/AzureAD.py:88
+#: services/Azure_enterprise/ServiceProviderAzure.py:37
+msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
+msgstr "TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E2755"
+
+#: auths/AzureAD_enterprise/AzureAD.py:94
+msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
+msgstr "TranslateApiException: AppId is over the quota : ID=0756.V2_Json.Translate.142CD6FE"
+
+#: auths/AzureAD_enterprise/AzureAD.py:226
+#: auths/AzureAD_enterprise/AzureAD.py:249
+#: auths/AzureAD_enterprise/AzureAD.py:261
+#| msgid "Authenticator not found"
+msgid "Authenticator exception:"
+msgstr "TranslateApiException: AppId is over the quota : ID=0756.V2_Json.Translate.142CD704"
+
+#: auths/AzureAD_enterprise/AzureAD.py:291
+#| msgid "Ldap connection error: "
+msgid "Connection error: "
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C16A5"
+
+#: auths/AzureAD_enterprise/AzureAD.py:292
+#| msgid "Connection params seem correct, test was succesfully executed"
+msgid "Connection params seems correct, test was succesfully executed"
+msgstr "يبدو params الاتصال الصحيح، واختبار تم تنفيذها بنجاح"
 
 #: auths/EDirectory_enterprise/Authenticator.py:62
 msgid "EDirectory Server IP or Hostname"
 msgstr "EDirectory Server IP أو اسم المضيف"
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
@@ -1026,12 +1099,12 @@ msgid "Port"
 msgstr "منفذ"
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
 msgstr "منفذ Ldap (عادة 389 ل ssl غير) و 636 ل ssl"
 
 #: auths/EDirectory_enterprise/Authenticator.py:64
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:59
+#: auths/RegexLdap/Authenticator.py:59
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr "إذا كانت محددة، يكون الاتصال ssl, باستخدام منفذ 636 بدلاً من 389"
 
@@ -1040,7 +1113,7 @@ msgid "Username with read privileges on the eDirectory"
 msgstr "اسم المستخدم امتيازات القراءة على eDirectory"
 
 #: auths/EDirectory_enterprise/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:62
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "المهلة بالثواني لاتصال LDAP"
 
@@ -1053,23 +1126,22 @@ msgid "Authenticate against eDirectory"
 msgstr "مصادقة ضد eDirectory"
 
 #: auths/EDirectory_enterprise/Authenticator.py:125
-#: auths/RegexLdap/Authenticator.py:254 auths/SimpleLDAP/Authenticator.py:171
+#: auths/RegexLdap/Authenticator.py:254
 msgid "Ldap connection error: "
 msgstr "خطأ اتصال Ldap: "
 
 #: auths/EDirectory_enterprise/Authenticator.py:325
-#: auths/RegexLdap/Authenticator.py:449 auths/SimpleLDAP/Authenticator.py:377
+#: auths/RegexLdap/Authenticator.py:449
 msgid "Ldap search base is incorrect"
 msgstr "قاعدة البحث Ldap غير صحيح"
 
 #: auths/EDirectory_enterprise/Authenticator.py:330
-#: auths/RegexLdap/Authenticator.py:454 auths/SimpleLDAP/Authenticator.py:382
+#: auths/RegexLdap/Authenticator.py:454
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:338
-#: auths/SimpleLDAP/Authenticator.py:398
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
@@ -1146,48 +1218,45 @@ msgstr "كل شيء يبدو بشكل جيد في المصادق."
 msgid "Ldap Server Host"
 msgstr "المضيف ملقم Ldap"
 
-#: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:60
+#: auths/RegexLdap/Authenticator.py:60
 msgid "Username with read privileges on the base selected"
 msgstr "اسم المستخدم مع امتيازات القراءة على القاعدة المحددة "
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:64
 msgid "Base"
 msgstr "قاعدة"
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:64
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr "قاعدة البحث المشترك (المستخدم ل \"المستخدمين\" و \"مجموعات\")"
 
 #: auths/RegexLdap/Authenticator.py:64 auths/RegexLdap/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:66 auths/RegexLdap/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:63
-#: auths/SimpleLDAP/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:65
-#: auths/SimpleLDAP/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:67
-#: auths/SimpleLDAP/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:69
+#: auths/RegexLdap/Authenticator.py:68
 msgid "Ldap info"
 msgstr "معلومات Ldap"
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:65
 msgid "User class"
 msgstr "فئة المستخدم"
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:65
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "فئة المستخدمين LDAP (عادة Posix account)"
 
-#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:66
 msgid "User Id Attr"
 msgstr "User Id Attr"
 
-#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:66
 msgid "Attribute that contains the user id"
 msgstr "السمة تحتوي على معرف المستخدم"
 
-#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67
 msgid "User Name Attr"
 msgstr "User Name Attr"
 
-#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr "السمات التي تحتوي على اسم المستخدم (قائمة قيم مفصولة بفاصلة)"
 
@@ -1225,7 +1294,7 @@ msgid ""
 msgstr ""
 "ربما Ldap user id attr خاطئ (لا يمكن العثور على أي مستخدم مع كل الشروط)"
 
-#: auths/RegexLdap/Authenticator.py:477 auths/SimpleLDAP/Authenticator.py:406
+#: auths/RegexLdap/Authenticator.py:477
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1390,75 +1459,11 @@ msgstr "المجموعات"
 msgid "We need more than two items!"
 msgstr "بحاجة إلى اثنين أو أكثر من العناصر!"
 
-#: auths/SimpleLDAP/Authenticator.py:57
-msgid "Ldap Server IP or Hostname"
-msgstr "ملقم Ldap IP أو اسم المضيف"
-
-#: auths/SimpleLDAP/Authenticator.py:60
-msgid "Ldap User"
-msgstr "Ldap المستخدم"
-
-#: auths/SimpleLDAP/Authenticator.py:67
-msgid "Group class"
-msgstr "فئة المجموعة"
-
-#: auths/SimpleLDAP/Authenticator.py:67
-msgid "Class for LDAP groups (normally poxisGroup)"
-msgstr "فئة لمجموعات LDAP (عادة PoxisGroup)"
-
-#: auths/SimpleLDAP/Authenticator.py:68
-msgid "Group Id Attr"
-msgstr "Attr معرف المجموعة"
-
-#: auths/SimpleLDAP/Authenticator.py:68
-msgid "Attribute that contains the group id"
-msgstr "يحتوي على معرف المجموعة"
-
-#: auths/SimpleLDAP/Authenticator.py:69
-msgid "Group membership attr"
-msgstr "Attr عضوية المجموعة"
-
-#: auths/SimpleLDAP/Authenticator.py:69
-msgid "Attribute of the group that contains the users belonging to it"
-msgstr "سمة للمجموعة التي تحتوي على المستخدمين الذين ينتمون إليها"
-
-#: auths/SimpleLDAP/Authenticator.py:71
-msgid "SimpleLDAP Authenticator"
-msgstr "مصادق SimpleLDAP"
-
-#: auths/SimpleLDAP/Authenticator.py:73
-msgid "Simple LDAP authenticator"
-msgstr "مصادق Simple LDAP"
-
-#: auths/SimpleLDAP/Authenticator.py:390
-msgid "Ldap group class seems to be incorrect (no group found by that class)"
-msgstr "يبدو أن فئة المجموعة Ldap غير صحيحة (العثور على 0 مجموعة من تلك الفئة)"
-
-#: auths/SimpleLDAP/Authenticator.py:415
-msgid ""
-"Ldap user class or user id attr is probably wrong (can't find any user with "
-"both conditions)"
-msgstr ""
-"ربما فئة المستخدم Ldap أو فئة id attr  خاطئة (لا يمكن العثور على أي مستخدم "
-"مع هذه الشروط)"
-
-#: auths/SimpleLDAP/Authenticator.py:424
-msgid ""
-"Ldap group class or group id attr is probably wrong (can't find any group "
-"with both conditions)"
-msgstr ""
-"ربما فئة المجموعة Ldap أو فئة id attr  خاطئة (لا يمكن العثور على أي مجموعة "
-"مع هذه الشروط)"
-
-#: auths/SimpleLDAP/Authenticator.py:431
-msgid "Can't locate any group with the membership attribute specified"
-msgstr "لا يمكن تحديد موقع أي مجموعة مع السمة العضوية المحددة"
-
 #: core/BaseModule.py:197
 msgid "No connection checking method is implemented."
 msgstr "لم ينفذ أي اتصال بالتحقق من الأسلوب."
 
-#: core/BaseModule.py:266
+#: core/BaseModule.py:267
 msgid "No check method provided."
 msgstr "لم يقدم  أسلوب الاختيار ."
 
@@ -1486,28 +1491,28 @@ msgstr "مسؤول النظام"
 msgid "Forbidden"
 msgstr "ممنوع"
 
-#: core/managers/PublicationManager.py:215
+#: core/managers/PublicationManager.py:216
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr "سبق نشرها. انتظر انتهاء منشور سابق و حاول مرة أخرى"
 
-#: core/managers/PublicationManager.py:218
+#: core/managers/PublicationManager.py:219
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr "الخدمة في وضع الصيانة وغير مسموح بالمنشورات الجديدة"
 
-#: core/managers/PublicationManager.py:251
+#: core/managers/PublicationManager.py:252
 msgid "Can't cancel non running publication"
 msgstr "لا يمكن إلغاء منشور ليس قيد التشغيل"
 
-#: core/managers/PublicationManager.py:273
+#: core/managers/PublicationManager.py:274
 msgid "Can't unpublish non usable publication"
 msgstr "لا يمكن إلغاء نشر منشور غير صالح للاستعمال"
 
-#: core/managers/PublicationManager.py:276
+#: core/managers/PublicationManager.py:277
 msgid "Can't unpublish publications with services in process"
 msgstr "لا يمكن إلغاء نشر المنشورات مع خدمات في طور الإستعمال"
 
-#: core/managers/UserPrefsManager.py:293 transports/RDP/BaseRDPTransport.py:75
+#: core/managers/UserPrefsManager.py:293 transports/RDP/BaseRDPTransport.py:85
 msgid "Screen Size"
 msgstr "حجم الشاشة"
 
@@ -1582,8 +1587,8 @@ msgstr "خدمة قاعدة"
 
 #: core/services/BaseService.py:122 core/services/BaseService.py:131
 #: models/Permissions.py:79 models/Permissions.py:83
-#: services/OpenStack/helpers.py:35 services/Sample/SampleService.py:92
-#: services/Sample/SampleService.py:98
+#: services/Azure_enterprise/Helpers.py:93 services/OpenStack/helpers.py:35
+#: services/Sample/SampleService.py:92 services/Sample/SampleService.py:98
 #: services/TestService_enterprise/TestService.py:29
 msgid "None"
 msgstr "لا شيء"
@@ -1732,55 +1737,55 @@ msgstr ""
 "مجموعة ماك غير صالحة. يجب أن يكون نطاق Mac في تنسيق XX:XX:XX:XX:XX:XX-XX:XX:"
 "XX:XX:XX:XX"
 
-#: dispatchers/wyse_enterprise/views.py:114
+#: dispatchers/wyse_enterprise/views.py:117
 msgid "There are no authenticators available for login"
 msgstr "لا يتوفر أي مصادق لتسجيل الدخول"
 
-#: dispatchers/wyse_enterprise/views.py:128
+#: dispatchers/wyse_enterprise/views.py:130
 #, python-brace-format
 msgid "The authenticator {0} is not usable"
 msgstr "{0} مصادق غير قابل للاستخدام"
 
-#: dispatchers/wyse_enterprise/views.py:135 web/views/login.py:119
+#: dispatchers/wyse_enterprise/views.py:137
 msgid "Invalid credentials"
 msgstr "بيانات اعتماد غير صالحة"
 
-#: dispatchers/wyse_enterprise/views.py:143
+#: dispatchers/wyse_enterprise/views.py:144
 #, python-brace-format
 msgid "The domain {0} does not exists"
 msgstr "{0} المجال غير موجود"
 
-#: dispatchers/wyse_enterprise/views.py:204
+#: dispatchers/wyse_enterprise/views.py:207
 msgid "No services available"
 msgstr "لا توجد خدمة متاحة"
 
-#: dispatchers/wyse_enterprise/views.py:219
-#: dispatchers/wyse_enterprise/views.py:313
+#: dispatchers/wyse_enterprise/views.py:223
+#: dispatchers/wyse_enterprise/views.py:317
 msgid "Invalid session"
 msgstr "جلسة غير صالحة"
 
-#: dispatchers/wyse_enterprise/views.py:223
-#: dispatchers/wyse_enterprise/views.py:317
+#: dispatchers/wyse_enterprise/views.py:227
+#: dispatchers/wyse_enterprise/views.py:321
 msgid "Invalid authorization"
 msgstr "إذن غير صالح"
 
-#: dispatchers/wyse_enterprise/views.py:234
-#: dispatchers/wyse_enterprise/views.py:323
+#: dispatchers/wyse_enterprise/views.py:238
+#: dispatchers/wyse_enterprise/views.py:327
 msgid "Invalid request"
 msgstr "طلب غير صالح"
 
-#: dispatchers/wyse_enterprise/views.py:237
-#: dispatchers/wyse_enterprise/views.py:326
+#: dispatchers/wyse_enterprise/views.py:241
+#: dispatchers/wyse_enterprise/views.py:330
 msgid "Invalid credentials used"
 msgstr "بيانات الاعتماد غير صحيحة"
 
-#: dispatchers/wyse_enterprise/views.py:275 web/errors.py:73
+#: dispatchers/wyse_enterprise/views.py:279 web/errors.py:73
 msgid "Transport not found"
 msgstr "نقل غير موجود"
 
-#: dispatchers/wyse_enterprise/views.py:279
-#: dispatchers/wyse_enterprise/views.py:286
-#: dispatchers/wyse_enterprise/views.py:291
+#: dispatchers/wyse_enterprise/views.py:283
+#: dispatchers/wyse_enterprise/views.py:289
+#: dispatchers/wyse_enterprise/views.py:294
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "الخدمة ليست على استعداد في هذه اللحظة. من فضلك، حاول مرة أخرى في حين."
 
@@ -1998,8 +2003,8 @@ msgid "Os Manager to control windows machines with domain."
 msgstr "مدير نظام التشغيل للسيطرة على أجهزة ويندوز مع المجال."
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
-#: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:76
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
+#: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 #: transports/RDP/BaseRDPTransport.py:64
 #: transports/RDS_enterprise/BaseRDSTransport.py:67
@@ -2073,47 +2078,47 @@ msgstr "لا يسمح شكل DOM/USER"
 msgid "Must provide a password for the account!"
 msgstr "يجب توفير كلمة مرور لحساب!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:234
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:244
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:247
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:257
 #, python-brace-format
 msgid "Check error: {0}"
 msgstr "الاختيار خطأ: {0}"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:236
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:249
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr "لا يمكن إيجاد معلمات الخادم (}ldap._tcp.{0} لا يمكن حلها"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:249
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:262
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
 msgstr ""
 "الاختيار الخطأ: مجموعة \"{}\" لم يتم العثور على (باستخدام \"cn\" للعثور عليه)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:252
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:264
 msgid "Server check was successful"
 msgstr " اختيار الخادم كان ناجحا"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:263
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:275
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
 msgstr "لا يمكن الوصول إلى AD باستخدام LDAP ({0})"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:275
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:287
 #, python-brace-format
 msgid "The default path {0} for computers was not found!!!"
 msgstr "لم يتم العثور على المسار الافتراضي {0} لأجهزة الكمبيوتر !!!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:277
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:289
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
 msgstr "لم يتم العثور على مسار OU {0} !!!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:279
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:291
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr "لا يمكن أن تحقق المعلمات (_ldap._tcp.{0} can'r be resolved)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:284
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:296
 msgid "All parameters seem to work fine."
 msgstr "يبدو أن جميع المعلمات تعمل بشكل جيد"
 
@@ -2401,6 +2406,249 @@ msgstr "ملخص استخدام تجمعات"
 msgid "Generates a report with the summary of a pool usage"
 msgstr "يقوم بإنشاء تقرير مع ملخص استخدام تجمع"
 
+#: services/Azure_enterprise/AzureCloneService.py:29
+#| msgid "Parent Service"
+msgid "Azure Clone Service"
+msgstr "خدمة استنساخ أزور"
+
+#: services/Azure_enterprise/AzureCloneService.py:31
+#| msgid "This service provides access to vApp based VDI"
+msgid "This service provides access to Azure VMs based VDI"
+msgstr "توفر هذه الخدمة إمكانية الوصول إلى \"نظام رصد السفن أزور\" أساس VDI"
+
+#: services/Azure_enterprise/AzureCloneService.py:37
+#| msgid "Number of desired vApps to keep running waiting for an user"
+msgid "Number of desired VMs to keep running waiting for an user"
+msgstr "TranslateApiException: AppId is over the quota : ID=0756.V2_Json.Translate.142CD751"
+
+#: services/Azure_enterprise/AzureCloneService.py:39
+#| msgid "Number of desired vApps to keep suspended waiting for use"
+msgid "Number of desired VMs to keep suspended waiting for use"
+msgstr "TranslateApiException: AppId is over the quota : ID=0756.V2_Json.Translate.142CD759"
+
+#: services/Azure_enterprise/AzureCloneService.py:53
+#| msgid "Resource Pool"
+msgid "Resource Group"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C16ED"
+
+#: services/Azure_enterprise/AzureCloneService.py:54
+#| msgid "Base machine for this service"
+msgid "Resource group container of this VDI service"
+msgstr "حاوية مجموعة الموارد هذه الخدمة VDI"
+
+#: services/Azure_enterprise/AzureCloneService.py:65
+#| msgid "Virtual Datacenter"
+msgid "Virtual Machine"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1702"
+
+#: services/Azure_enterprise/AzureCloneService.py:66
+#| msgid "Base Machine"
+msgid "Base virtual machine"
+msgstr "TranslateApiException: AppId is over the quota : ID=0756.V2_Json.Translate.142CD782"
+
+#: services/Azure_enterprise/AzureCloneService.py:78
+#| msgid "Cache size"
+msgid "Machine size"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C170E"
+
+#: services/Azure_enterprise/AzureCloneService.py:79
+#| msgid "Memory for machines deployed from this service"
+msgid "Size for machines created from this service."
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1715"
+
+#: services/Azure_enterprise/AzureCloneService.py:84
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
+#: services/HyperV_enterprise/HyperVLinkedService.py:149
+#: services/Nutanix_enterprise/NutanixService.py:72
+#: services/OVirt/OVirtLinkedService.py:191
+#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:125
+#: services/VCloud_enterprise/VCloudCloneService.py:76
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Xen/XenLinkedService.py:158
+msgid "Machine Names"
+msgstr "أسماء الأجهزة"
+
+#: services/Azure_enterprise/AzureCloneService.py:84
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
+#: services/HyperV_enterprise/HyperVLinkedService.py:152
+#: services/OpenNebula/LiveService.py:115 services/OpenStack/LiveService.py:128
+#: services/VCloud_enterprise/VCloudCloneService.py:76
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+msgid "Base name for clones from this machine"
+msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
+
+#: services/Azure_enterprise/AzureCloneService.py:85
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
+#: services/HyperV_enterprise/HyperVLinkedService.py:159
+#: services/Nutanix_enterprise/NutanixService.py:81
+#: services/OVirt/OVirtLinkedService.py:201
+#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:135
+#: services/VCloud_enterprise/VCloudCloneService.py:77
+#: services/Vmware_enterprise/VCLinkedCloneService.py:94
+#: services/Xen/XenLinkedService.py:168
+msgid "Name Length"
+msgstr "طول الاسم "
+
+#: services/Azure_enterprise/AzureCloneService.py:86
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
+#: services/HyperV_enterprise/HyperVLinkedService.py:162
+#: services/Nutanix_enterprise/NutanixService.py:84
+#: services/OVirt/OVirtLinkedService.py:204
+#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:138
+#: services/VCloud_enterprise/VCloudCloneService.py:78
+#: services/Vmware_enterprise/VCLinkedCloneService.py:95
+msgid "Size of numeric part for the names of these machines (between 3 and 6)"
+msgstr "حجم جزء رقمية عن أسماء هذه الآلات (بين 3 و 6)"
+
+#: services/Azure_enterprise/AzureCloneService.py:90
+#: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
+#: services/HyperV_enterprise/HyperVLinkedService.py:129
+#: services/Nutanix_enterprise/NutanixService.py:65
+#: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
+msgid "Network"
+msgstr "شبكة الاتصال"
+
+#: services/Azure_enterprise/AzureCloneService.py:91
+#| msgid "Network on which the machine will be deployed"
+msgid "Network where the clones will be attached"
+msgstr "شبكة الاتصال حيث سيتم إرفاق المستنسخين"
+
+#: services/Azure_enterprise/AzureCloneService.py:104
+msgid "Subnet"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1730"
+
+#: services/Azure_enterprise/AzureCloneService.py:105
+msgid "Subnet where the clones will be attached"
+msgstr "TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E27E4"
+
+#: services/Azure_enterprise/AzureCloneService.py:113
+#| msgid "Security Groups"
+msgid "Security Group"
+msgstr "TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E27EC"
+
+#: services/Azure_enterprise/AzureCloneService.py:114
+#| msgid "Fields from where to extract the real name"
+msgid "Security group where to attach the virtual machine"
+msgstr "TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E27F6"
+
+#: services/Azure_enterprise/AzureCloneService.py:122
+msgid "Caching policy"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1748"
+
+#: services/Azure_enterprise/AzureCloneService.py:123
+#| msgid "Disk Cache"
+msgid "Disk Caching policy"
+msgstr "TranslateApiException: AppId is over the quota : ID=0756.V2_Json.Translate.142CD7D5"
+
+#: services/Azure_enterprise/AzureCloneService.py:131
+msgid "Pricing tier"
+msgstr "TranslateApiException: AppId is over the quota : ID=0261.V2_Json.Translate.17B3E7C3"
+
+#: services/Azure_enterprise/AzureCloneService.py:132
+msgid "SKU (pricing tier)"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1762"
+
+#: services/Azure_enterprise/AzureCloneService.py:140
+msgid "Accelerated network"
+msgstr "TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E281F"
+
+#: services/Azure_enterprise/AzureCloneService.py:141
+msgid ""
+"Activate this option to use accelerated networking on vm. Ensure that your "
+"machine and machine size supports this option before activating."
+msgstr "TranslateApiException: AppId is over the quota : ID=0261.V2_Json.Translate.17B3E7D5"
+"TranslateApiException: AppId is over the quota : ID=0261.V2_Json.Translate.17B3E7DC"
+"TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E2873"
+
+#: services/Azure_enterprise/AzureCloneService.py:156
+#| msgid "vApp template for the service"
+msgid "You must select a network for the service"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C177F"
+
+#: services/Azure_enterprise/Helpers.py:76
+msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
+msgstr "TranslateApiException: AppId is over the quota : ID=0650.V2_Json.Translate.144E2883"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:38
+#| msgid "Description"
+msgid "Subscription ID"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C178D"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:38
+msgid "Obtained from subscriptions"
+msgstr "TranslateApiException: AppId is over the quota : ID=0261.V2_Json.Translate.17B3E806"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:41
+#: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
+#: services/Vmware_enterprise/ServiceProviderVC.py:84
+#: services/Xen/XenProvider.py:102
+msgid "Creation concurrency"
+msgstr "تزامن الخلق"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:41
+#: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
+#: services/Xen/XenProvider.py:102
+msgid "Maximum number of concurrently creating VMs"
+msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة الظاهرية."
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:42
+#: services/HyperV_enterprise/HyperVProvider.py:89
+#: services/Nutanix_enterprise/NutanixProvider.py:39
+#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:85
+#: services/Xen/XenProvider.py:103
+msgid "Removal concurrency"
+msgstr "تزامن الإزالة."
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:42
+#: services/HyperV_enterprise/HyperVProvider.py:89
+#: services/Nutanix_enterprise/NutanixProvider.py:39
+#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Xen/XenProvider.py:103
+msgid "Maximum number of concurrently removing VMs"
+msgstr "الحد الأقصى لعدد الأجهزة الافتراضية إزالة في وقت واحد"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:43
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
+msgid "Timeout in seconds of connection to vCloud"
+msgstr "المهلة بالثواني لاتصال vCloud"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:48
+#| msgid "RDS Platform Provider"
+msgid "Azure Platform Provider"
+msgstr "TranslateApiException: AppId is over the quota : ID=0261.V2_Json.Translate.17B3E811"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:50
+#| msgid "Provides connection to vCloud Director platform"
+msgid "Provides connection to Azure Platform"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C17AE"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:93
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:80
+msgid "Connection parameters seems correct"
+msgstr "يبدو أن معلمات التوصيل صحيحة"
+
+#: services/Azure_enterprise/ServiceProviderAzure.py:231
+#| msgid "VmwareVC Provider: "
+msgid "Azure Provider: "
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C17F0"
+
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
 msgstr "HyperV استنساخ العنقودية المرتبطة (تجريبي)"
@@ -2444,13 +2692,6 @@ msgstr "آلة الأساس"
 msgid "Service base machine"
 msgstr "آلة قاعدة الخدمة"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
-#: services/HyperV_enterprise/HyperVLinkedService.py:129
-#: services/Nutanix_enterprise/NutanixService.py:65
-#: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
-msgid "Network"
-msgstr "شبكة الاتصال"
-
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:132
 msgid ""
@@ -2483,46 +2724,6 @@ msgstr "محركات مخزن البيانات"
 #: services/HyperV_enterprise/HyperVLinkedService.py:107
 msgid "Datastores where to put incrementals & publications"
 msgstr "مخازن البيانات لوضع تدريجيات والمطبوعات"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:149
-#: services/Nutanix_enterprise/NutanixService.py:72
-#: services/OVirt/OVirtLinkedService.py:191
-#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:125
-#: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
-#: services/Xen/XenLinkedService.py:158
-msgid "Machine Names"
-msgstr "أسماء الأجهزة"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:152
-#: services/OpenNebula/LiveService.py:115 services/OpenStack/LiveService.py:128
-#: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
-msgid "Base name for clones from this machine"
-msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
-#: services/HyperV_enterprise/HyperVLinkedService.py:159
-#: services/Nutanix_enterprise/NutanixService.py:81
-#: services/OVirt/OVirtLinkedService.py:201
-#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:135
-#: services/VCloud_enterprise/VCloudCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:94
-#: services/Xen/XenLinkedService.py:168
-msgid "Name Length"
-msgstr "طول الاسم "
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
-#: services/HyperV_enterprise/HyperVLinkedService.py:162
-#: services/Nutanix_enterprise/NutanixService.py:84
-#: services/OVirt/OVirtLinkedService.py:204
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:138
-#: services/VCloud_enterprise/VCloudCloneService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:95
-msgid "Size of numeric part for the names of these machines (between 3 and 6)"
-msgstr "حجم جزء رقمية عن أسماء هذه الآلات (بين 3 و 6)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:177
@@ -2677,48 +2878,6 @@ msgstr "مزود منصة HyperV (التجريبية)."
 #: services/HyperV_enterprise/HyperVProvider.py:68
 msgid "HyperV platform service provider (experimental)"
 msgstr "مزود خدمة منصة HyperV (تجريبي)"
-
-#: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:38
-#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:37
-#: services/Vmware_enterprise/ServiceProviderVC.py:84
-#: services/Xen/XenProvider.py:102
-msgid "Creation concurrency"
-msgstr "تزامن الخلق"
-
-#: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:38
-#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:37
-#: services/Xen/XenProvider.py:102
-msgid "Maximum number of concurrently creating VMs"
-msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة الظاهرية."
-
-#: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:39
-#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
-#: services/Vmware_enterprise/ServiceProviderVC.py:85
-#: services/Xen/XenProvider.py:103
-msgid "Removal concurrency"
-msgstr "تزامن الإزالة."
-
-#: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:39
-#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
-#: services/Xen/XenProvider.py:103
-msgid "Maximum number of concurrently removing VMs"
-msgstr "الحد الأقصى لعدد الأجهزة الافتراضية إزالة في وقت واحد"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:27
 msgid "Nutanix Acropolis Platform Provider"
@@ -3160,11 +3319,11 @@ msgstr "المهلة بالثواني لاتصال Openstack"
 msgid "OpenStack test connection passed"
 msgstr "مر اختبار الاتصال Openstack."
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:550
+#: services/OpenStack/openStack/UDSOpenStackClient.py:553
 msgid "Authentication error"
 msgstr "خطأ مصادقة"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:552
+#: services/OpenStack/openStack/UDSOpenStackClient.py:555
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3200,23 +3359,23 @@ msgstr "IP ثابت واحد"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى الجهاز عن طريق IP"
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:32
 msgid "RDS Platform Provider"
 msgstr "مزود منصة RDS "
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:34
 msgid "Microsoft RDS based provider"
 msgstr "مايكروسوفت RDS مزود قاعدة."
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:38
 msgid "List of servers"
 msgstr "قائمة ملقمات"
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:40
 msgid "User mapping"
 msgstr "وصل المستخدمين"
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:40
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -3224,15 +3383,15 @@ msgstr ""
 "إذا كان نشيطا، سيتم  وصل المستخدمين. إن لم يكن، سيتم إعادة توجيه الاعتماد من "
 "المستخدم إلى خادم RDS."
 
-#: services/RDS_enterprise/RDSProvider.py:44
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr "قائمة المستخدم لرسم الخرائط. (لا يستخدم إذا تم تعطيل تعيين المستخدم)"
 
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/RDSProvider.py:43
 msgid "User's password"
 msgstr "كلمة مرور المستخدم"
 
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/RDSProvider.py:43
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3240,19 +3399,19 @@ msgstr ""
 "كلمة المرور الافتراضية للمستخدمين في قائمة وصل المستخدمين. (لا تستخدم إذا تم "
 "تعطيل وصل المستخدمين)"
 
-#: services/RDS_enterprise/RDSProvider.py:48
+#: services/RDS_enterprise/RDSProvider.py:46
 msgid "Server Checking"
 msgstr " التحقق من الملقم"
 
-#: services/RDS_enterprise/RDSProvider.py:49
+#: services/RDS_enterprise/RDSProvider.py:47
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr "إذا كانت محددة، سيتم التحقق من الملقم قبل تعيين أو استخدامه."
 
-#: services/RDS_enterprise/RDSProvider.py:74
+#: services/RDS_enterprise/RDSProvider.py:72
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "الخطأ: العضو {} على المضيف {} يستخدم ولا يمكن إزالتها في الوقت الحالي"
 
-#: services/RDS_enterprise/RDSProvider.py:104
+#: services/RDS_enterprise/RDSProvider.py:102
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -3442,10 +3601,6 @@ msgstr "مستخدم لديه امتيازات صالحة على vCloud"
 msgid "Password of the user of vCloud"
 msgstr "كلمة المرور للمستخدم ل vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
-msgid "Timeout in seconds of connection to vCloud"
-msgstr "المهلة بالثواني لاتصال vCloud"
-
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:42
 msgid "VCloud Director Platform Provider"
 msgstr "VCloud مدير موفر منصة"
@@ -3453,10 +3608,6 @@ msgstr "VCloud مدير موفر منصة"
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:44
 msgid "Provides connection to vCloud Director platform"
 msgstr "يوفر الاتصال بمنصة vCloud المدير"
-
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:80
-msgid "Connection parameters seems correct"
-msgstr "يبدو أن معلمات التوصيل صحيحة"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:192
 msgid "vCloud Provider: "
@@ -3938,7 +4089,7 @@ msgid "Close"
 msgstr "قم بإغلاق"
 
 #: templates/uds/admin/tmpl/comp/modal.html:26
-#: templates/uds/admin/tmpl/configuration.html:80
+#: templates/uds/admin/tmpl/configuration.html:84
 msgid "Save"
 msgstr "حفظ"
 
@@ -3946,7 +4097,7 @@ msgstr "حفظ"
 msgid "UDS Configuration"
 msgstr "ترتيب UDS"
 
-#: templates/uds/admin/tmpl/configuration.html:51
+#: templates/uds/admin/tmpl/configuration.html:54
 #: templates/uds/admin/tmpl/fld/checkbox.html:6
 #: templates/uds/admin/tmpl/pool_add_action.html:27
 #: templates/uds/admin/tmpl/user-info.html:75
@@ -3954,7 +4105,7 @@ msgstr "ترتيب UDS"
 msgid "Yes"
 msgstr "نعم"
 
-#: templates/uds/admin/tmpl/configuration.html:51
+#: templates/uds/admin/tmpl/configuration.html:54
 #: templates/uds/admin/tmpl/fld/checkbox.html:7
 #: templates/uds/admin/tmpl/pool_add_action.html:28
 #: templates/uds/admin/tmpl/user-info.html:75
@@ -4410,13 +4561,13 @@ msgstr "وكيل المستخدم."
 msgid "OS"
 msgstr "نظام التشغيل"
 
-#: templates/uds/html5/index.html:381 templates/uds/html5/index.html:391
+#: templates/uds/html5/index.html:388 templates/uds/html5/index.html:398
 msgid ""
 "Are you sure that you want to release this service. Its current content will "
 "be lost!"
 msgstr "هل أنت متأكد من أنك تريد تحرير هذه الخدمة. سيتم فقدان المحتوى الحالي!"
 
-#: templates/uds/html5/index.html:401
+#: templates/uds/html5/index.html:408
 msgid "Are you sure that you want to reset this service. USE WITH CAUTION!"
 msgstr "هل أنت متأكد من رغبتك في إعادة تعيين هذه الخدمة. استخدام بحذر!"
 
@@ -4677,21 +4828,21 @@ msgstr "Suse based Linux"
 msgid "Generic .tar.gz Linux"
 msgstr "Generic .tar.gz Linux"
 
-#: transports/HTML5RDP/HTML5RDP.py:61
+#: transports/HTML5RDP/HTML5RDP.py:62
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
 
-#: transports/HTML5RDP/HTML5RDP.py:63
+#: transports/HTML5RDP/HTML5RDP.py:64
 msgid "RDP protocol using HTML5 client"
 msgstr "بروتوكول RDP باستخدام عميل HTML5"
 
-#: transports/HTML5RDP/HTML5RDP.py:71
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:73
+#: transports/HTML5RDP/HTML5RDP.py:72
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
 msgid "Tunnel Server"
 msgstr "نفق خادم."
 
-#: transports/HTML5RDP/HTML5RDP.py:71
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:73
+#: transports/HTML5RDP/HTML5RDP.py:72
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -4699,8 +4850,8 @@ msgstr ""
 "مضيف خادم نفق (تستخدم http / https و المنفذ إذا لزم الأمر)، ويمكن الوصول "
 "إليها من المستخدمين."
 
-#: transports/HTML5RDP/HTML5RDP.py:72
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
 #: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
@@ -4709,8 +4860,8 @@ msgstr ""
 msgid "Empty creds"
 msgstr "أوراق الاعتماد فارغة."
 
-#: transports/HTML5RDP/HTML5RDP.py:72
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
 #: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
@@ -4720,7 +4871,7 @@ msgstr "أوراق الاعتماد فارغة."
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدمة للاتصال أن تكون فارغة."
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:64
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:64
 #: transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
@@ -4731,7 +4882,7 @@ msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدم�
 msgid "If not empty, this username will be always used as credential"
 msgstr "إن لم يكن فارغا، هذا المستخدم سيستخدم دائما الاعتماد."
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:65
+#: transports/HTML5RDP/HTML5RDP.py:75 transports/NX/NXTransport.py:65
 #: transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
@@ -4741,15 +4892,15 @@ msgstr "إن لم يكن فارغا، هذا المستخدم سيستخدم د�
 msgid "If not empty, this password will be always used as credential"
 msgstr "إن لم يكن فارغا، سيتم كلمة المرور هذه يستخدم دائما الاعتماد."
 
-#: transports/HTML5RDP/HTML5RDP.py:75
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
+#: transports/HTML5RDP/HTML5RDP.py:76
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
 #: transports/RDP/BaseRDPTransport.py:63
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid "Without Domain"
 msgstr "دون المجال"
 
-#: transports/HTML5RDP/HTML5RDP.py:75
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
+#: transports/HTML5RDP/HTML5RDP.py:76
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
@@ -4758,8 +4909,8 @@ msgstr ""
 "إذا تم، سيكون دائما يتم تفريغ جزء المجال (للاتصال xrdp لهو مطلوب سبيل "
 "المثال)."
 
-#: transports/HTML5RDP/HTML5RDP.py:76
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
+#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
 #: transports/RDP/BaseRDPTransport.py:64
 #: transports/RDS_enterprise/BaseRDSTransport.py:67
 #: transports/RGS_enterprise/RGSTransport.py:48
@@ -4771,14 +4922,14 @@ msgstr ""
 "إن لم يكن فارغا، وهذا مجال وسوف تستخدم دائما الاعتماد (كما تستخدم المجال \\ "
 "المستخدم)"
 
-#: transports/HTML5RDP/HTML5RDP.py:77
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
+#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
 msgid "Show wallpaper"
 msgstr "اظهر خلفية."
 
-#: transports/HTML5RDP/HTML5RDP.py:77
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
-#: transports/RDP/BaseRDPTransport.py:100
+#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
+#: transports/RDP/BaseRDPTransport.py:110
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -4786,64 +4937,64 @@ msgstr ""
 "إذا تم، سيكون ليتم عرض خلفية والمواضيع على الجهاز (تجربة أفضل للمستخدم، "
 "والمزيد من عرض النطاق الترددي)"
 
-#: transports/HTML5RDP/HTML5RDP.py:78
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:102
+#: transports/HTML5RDP/HTML5RDP.py:79
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
+#: transports/RDP/BaseRDPTransport.py:112
 msgid "Allow Desk.Comp."
 msgstr "السماح Desk.Comp."
 
-#: transports/HTML5RDP/HTML5RDP.py:78
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:102
+#: transports/HTML5RDP/HTML5RDP.py:79
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
+#: transports/RDP/BaseRDPTransport.py:112
 msgid "If checked, desktop composition will be allowed"
 msgstr "إذا تم، سيكون يسمح تكوين سطح المكتب."
 
-#: transports/HTML5RDP/HTML5RDP.py:79
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:103
-#: transports/RDS_enterprise/BaseRDSTransport.py:87
+#: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/RDP/BaseRDPTransport.py:113
+#: transports/RDS_enterprise/BaseRDSTransport.py:97
 msgid "Font Smoothing"
 msgstr "تجانس الخطوط"
 
-#: transports/HTML5RDP/HTML5RDP.py:79
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:87
+#: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:97
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "في حالة تحديد تجانس الخطوط سيتم السماح (عملاء windows فقط)"
 
-#: transports/HTML5RDP/HTML5RDP.py:80
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
 msgid "Enable Audio"
 msgstr "تمكين الصوت"
 
-#: transports/HTML5RDP/HTML5RDP.py:80
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
+#: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
 "إذا تحققت، سيتم إعادة توجيه الصوت إلى العميل (إذا مستعرض العميل يعتمد عليه)"
 
-#: transports/HTML5RDP/HTML5RDP.py:81
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
+#: transports/HTML5RDP/HTML5RDP.py:82
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
 msgid "Enable Printing"
 msgstr "تمكين الطباعة"
 
-#: transports/HTML5RDP/HTML5RDP.py:81
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
+#: transports/HTML5RDP/HTML5RDP.py:82
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
 msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
 "إذا تحققت، سيتم إعادة توجيه الطباعة إلى العميل (إذا مستعرض العميل يعتمد عليه)"
 
-#: transports/HTML5RDP/HTML5RDP.py:82
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
+#: transports/HTML5RDP/HTML5RDP.py:83
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:83
 msgid "Enable File Sharing"
 msgstr "تمكين مشاركة الملفات"
 
-#: transports/HTML5RDP/HTML5RDP.py:82
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
+#: transports/HTML5RDP/HTML5RDP.py:83
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:83
 msgid ""
 "If checked, the user will be able to upload/download files (if client "
 "browser supports it)"
@@ -4851,68 +5002,68 @@ msgstr ""
 "إذا كانت نشطة، المستخدم سوف تكون قادرة على تحميل/تنزيل الملفات (إذا كان "
 "العميل مستعرض يدعم ذلك)"
 
-#: transports/HTML5RDP/HTML5RDP.py:84
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:84
+#: transports/HTML5RDP/HTML5RDP.py:85
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:85
 msgid "Layout"
 msgstr "نسق"
 
-#: transports/HTML5RDP/HTML5RDP.py:85
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:85
+#: transports/HTML5RDP/HTML5RDP.py:86
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:86
 msgid "Keyboards Layout of server"
 msgstr "لوحات مفاتيح الخادم."
 
-#: transports/HTML5RDP/HTML5RDP.py:88
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:88
+#: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:89
 msgid "English (US) keyboard"
 msgstr "الإنجليزية (الولايات المتحدة) لوحة المفاتيح"
 
-#: transports/HTML5RDP/HTML5RDP.py:89
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:89
+#: transports/HTML5RDP/HTML5RDP.py:90
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:90
 msgid "German keyboard (qwertz)"
 msgstr "لوحة المفاتيح الألمانية (QWERTZ)"
 
-#: transports/HTML5RDP/HTML5RDP.py:90
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:90
+#: transports/HTML5RDP/HTML5RDP.py:91
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:91
 msgid "French keyboard (azerty)"
 msgstr "لوحة المفاتيح الفرنسية (AZERTY)"
 
-#: transports/HTML5RDP/HTML5RDP.py:91
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:91
+#: transports/HTML5RDP/HTML5RDP.py:92
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:92
 msgid "Italian keyboard"
 msgstr "لوحة المفاتيح الإيطالية"
 
-#: transports/HTML5RDP/HTML5RDP.py:92
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:92
+#: transports/HTML5RDP/HTML5RDP.py:93
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:93
 msgid "Swedish keyboard"
 msgstr "لوحة المفاتيح السويدية"
 
-#: transports/HTML5RDP/HTML5RDP.py:93
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:93
+#: transports/HTML5RDP/HTML5RDP.py:94
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:94
 msgid "Failsafe"
 msgstr "فشل آمن"
 
-#: transports/HTML5RDP/HTML5RDP.py:99
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:99
+#: transports/HTML5RDP/HTML5RDP.py:100
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:100
 msgid "Security"
 msgstr "الأمن"
 
-#: transports/HTML5RDP/HTML5RDP.py:100
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:100
+#: transports/HTML5RDP/HTML5RDP.py:101
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:101
 msgid "Connection security mode for Guacamole RDP connection"
 msgstr "وضع أمن الاتصال لاتصال RDP Guacamole"
 
-#: transports/HTML5RDP/HTML5RDP.py:103
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:103
+#: transports/HTML5RDP/HTML5RDP.py:104
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:104
 msgid "Any (Allow the server to choose the type of auth)"
 msgstr "أي (السماح للملقم باختيار نوع المصادقة)"
 
-#: transports/HTML5RDP/HTML5RDP.py:104
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:104
+#: transports/HTML5RDP/HTML5RDP.py:105
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:105
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
 msgstr "RDP (التشفير \"RDP\". ينبغي أن تدعم كافة الملقمات)"
 
-#: transports/HTML5RDP/HTML5RDP.py:105
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:105
+#: transports/HTML5RDP/HTML5RDP.py:106
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:106
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
@@ -4920,18 +5071,18 @@ msgstr ""
 "NLA (مصادقة \"طبقة شبكة الاتصال\". يتطلب اسم مستخدم صالح & كلمة المرور، أو "
 "سيفشل الاتصال)"
 
-#: transports/HTML5RDP/HTML5RDP.py:106
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:106
+#: transports/HTML5RDP/HTML5RDP.py:107
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:107
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (تشفير طبقة النقل الأمن)"
 
-#: transports/HTML5RDP/HTML5RDP.py:114
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+#: transports/HTML5RDP/HTML5RDP.py:115
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:115
 msgid "Ticket Validity"
 msgstr "صلاحية التذكرة"
 
-#: transports/HTML5RDP/HTML5RDP.py:117
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+#: transports/HTML5RDP/HTML5RDP.py:118
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:118
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -4939,13 +5090,13 @@ msgstr ""
 "يسمح الوقت، بالثواني، للعميل HTML5 لإعادة تحميل البيانات من \"وسيط مصغراً\". "
 "ويوصي بالقيمة الافتراضية ل 60."
 
-#: transports/HTML5RDP/HTML5RDP.py:128
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
+#: transports/HTML5RDP/HTML5RDP.py:129
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:129
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
-#: transports/HTML5RDP/HTML5RDP.py:130
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
+#: transports/HTML5RDP/HTML5RDP.py:131
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:131
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -4953,11 +5104,11 @@ msgstr ""
 "بيانات الاعتماد فارغة (اعتمادبيانات علامة التبويب) مسموح فقط مع مستوى الأمان "
 "(معلمات علامة التبويب) بتعيين \"RDP\""
 
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:61
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:62
 msgid "HTML5 RDS for vApps"
 msgstr "RDS HTML5 Vapps"
 
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:63
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:64
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "بروتوكول RDS باستخدام عميل HTML5 vApps"
 
@@ -5046,7 +5197,7 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:106
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:107
 #: transports/RDS_enterprise/TRDSTransport.py:94
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5096,151 +5247,163 @@ msgstr "السماح للطابعات."
 msgid "If checked, this transport will allow the use of user printers"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام طابعات المستخدم."
 
-#: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
+#: transports/RDP/BaseRDPTransport.py:69
+#: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "Allow Drives"
 msgstr "تسمح محركات الأقراص."
 
-#: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
-msgid "If checked, this transport will allow the use of user drives"
-msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام محركات أقراص المستخدم."
+#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Local drives redirection allowed"
+msgstr "TranslateApiException: AppId is over the quota : ID=0756.V2_Json.Translate.142CD881"
 
-#: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid "Allow Serials"
 msgstr "السماح للمنافذ التسلسلية"
 
-#: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام المنافذ التسلسلية المستخدم"
 
-#: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:82
 msgid "Enable clipboard"
 msgstr "تمكين الحافظة"
 
-#: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:82
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "إذا تم تحديدها، فسيتم السماح بوظائف النسخ واللصق."
 
-#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:81
 #: transports/X2GO/BaseX2GOTransport.py:103
 msgid "Enable sound"
 msgstr "تمكين الصوت"
 
-#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:81
 msgid "If checked, sound will be redirected."
 msgstr "إذا تم تحديدها، ستتم إعادة توجيه الصوت."
 
-#: transports/RDP/BaseRDPTransport.py:72
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:82
+#: transports/RDS_enterprise/BaseRDSTransport.py:83
 msgid "Credssp Support"
 msgstr "دعم Credssp"
 
-#: transports/RDP/BaseRDPTransport.py:72
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:82
+#: transports/RDS_enterprise/BaseRDSTransport.py:83
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "إذا راجعت، سيمكن دعم موفر بيانات الاعتماد)"
 
-#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:87
 msgid "Screen size for this transport"
 msgstr "حجم الشاشة لهذا النقل"
 
-#: transports/RDP/BaseRDPTransport.py:89
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:99
+#: transports/RDS_enterprise/BaseRDSTransport.py:86
 msgid "Color depth"
 msgstr "عمق اللون"
 
-#: transports/RDP/BaseRDPTransport.py:91
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:101
+#: transports/RDS_enterprise/BaseRDSTransport.py:88
 msgid "Color depth for this connection"
 msgstr "عمق الألوان لهذا الاتصال"
 
-#: transports/RDP/BaseRDPTransport.py:100
+#: transports/RDP/BaseRDPTransport.py:110
 msgid "Wallpaper/theme"
 msgstr "خلفية/الموضوع"
 
-#: transports/RDP/BaseRDPTransport.py:101
+#: transports/RDP/BaseRDPTransport.py:111
 msgid "Multiple monitors"
 msgstr "أجهزة عرض متعددة"
 
-#: transports/RDP/BaseRDPTransport.py:101
+#: transports/RDP/BaseRDPTransport.py:111
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr ""
 "إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
 
-#: transports/RDP/BaseRDPTransport.py:103
+#: transports/RDP/BaseRDPTransport.py:113
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "إذا راجعت، سيسمح لتجانس الخطوط"
 
-#: transports/RDP/BaseRDPTransport.py:105
-#: transports/RDS_enterprise/BaseRDSTransport.py:89
+#: transports/RDP/BaseRDPTransport.py:114
+#| msgid "Connection"
+msgid "Connection Bar"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C17FC"
+
+#: transports/RDP/BaseRDPTransport.py:114
+#| msgid ""
+#| "If checked, all client monitors will be used for displaying (only works "
+#| "on windows clients)"
+msgid "If checked, connection bar will be shown (only on Windows clients)"
+msgstr "TranslateApiException: AppId is over the quota : ID=0759.V2_Json.Translate.144C1805"
+
+#: transports/RDP/BaseRDPTransport.py:116
+#: transports/RDS_enterprise/BaseRDSTransport.py:99
 msgid "Multimedia sync"
 msgstr "تزامن الوسائط المتعددة"
 
-#: transports/RDP/BaseRDPTransport.py:105
-#: transports/RDS_enterprise/BaseRDSTransport.py:89
+#: transports/RDP/BaseRDPTransport.py:116
+#: transports/RDS_enterprise/BaseRDSTransport.py:99
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
 
-#: transports/RDP/BaseRDPTransport.py:106
-#: transports/RDS_enterprise/BaseRDSTransport.py:90
+#: transports/RDP/BaseRDPTransport.py:117
+#: transports/RDS_enterprise/BaseRDSTransport.py:100
 msgid "Use Alsa"
 msgstr "استخدام ALSA"
 
-#: transports/RDP/BaseRDPTransport.py:106
-#: transports/RDS_enterprise/BaseRDSTransport.py:90
+#: transports/RDP/BaseRDPTransport.py:117
+#: transports/RDS_enterprise/BaseRDSTransport.py:100
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
-#: transports/RDP/BaseRDPTransport.py:107
-#: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/RDP/BaseRDPTransport.py:118
+#: transports/RDS_enterprise/BaseRDSTransport.py:101
 #: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect home folder"
 msgstr "إعادة توجيه المجلد الرئيسي"
 
-#: transports/RDP/BaseRDPTransport.py:107
-#: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/RDP/BaseRDPTransport.py:118
+#: transports/RDS_enterprise/BaseRDSTransport.py:101
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr "إذا تم تحديدها، سيحاول عميل Linux إعادة توجيه مجلد محلي منزلي"
 
-#: transports/RDP/BaseRDPTransport.py:108
-#: transports/RDS_enterprise/BaseRDSTransport.py:92
+#: transports/RDP/BaseRDPTransport.py:119
+#: transports/RDS_enterprise/BaseRDSTransport.py:102
 msgid "Printer string"
 msgstr "سلسلة الطابعة"
 
-#: transports/RDP/BaseRDPTransport.py:108
-#: transports/RDS_enterprise/BaseRDSTransport.py:92
+#: transports/RDP/BaseRDPTransport.py:119
+#: transports/RDS_enterprise/BaseRDSTransport.py:102
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "إذا تم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل XFreeRDP"
 
-#: transports/RDP/BaseRDPTransport.py:109
-#: transports/RDS_enterprise/BaseRDSTransport.py:93
+#: transports/RDP/BaseRDPTransport.py:120
+#: transports/RDS_enterprise/BaseRDSTransport.py:103
 msgid "Smartcard string"
 msgstr "سلسلة البطاقة الذكية"
 
-#: transports/RDP/BaseRDPTransport.py:109
-#: transports/RDS_enterprise/BaseRDSTransport.py:93
+#: transports/RDP/BaseRDPTransport.py:120
+#: transports/RDS_enterprise/BaseRDSTransport.py:103
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "إذا تم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع العميل "
 "XFreeRDP"
 
-#: transports/RDP/BaseRDPTransport.py:110
-#: transports/RDS_enterprise/BaseRDSTransport.py:94
+#: transports/RDP/BaseRDPTransport.py:121
+#: transports/RDS_enterprise/BaseRDSTransport.py:104
 msgid "Custom parameters"
 msgstr "معلمات مخصصة"
 
-#: transports/RDP/BaseRDPTransport.py:110
-#: transports/RDS_enterprise/BaseRDSTransport.py:94
+#: transports/RDP/BaseRDPTransport.py:121
+#: transports/RDS_enterprise/BaseRDSTransport.py:104
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5583,7 +5746,7 @@ msgstr "وصول خدمة رفض من قبل التقويمات."
 msgid "authenticator"
 msgstr "الموثق"
 
-#: web/views/auth.py:140
+#: web/views/auth.py:142
 msgid "Authenticator does not provide information"
 msgstr "الموثق لا يوفر المعلومات"
 
