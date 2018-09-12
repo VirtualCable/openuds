@@ -2,20 +2,28 @@
 <html lang="{{ LANGUAGE_CODE }}">
 
 <head>
-<!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
   <meta charset="utf-8">
   <title>Uds</title>
-  <base href="/modern">
+  <base href="/uds/page">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
+  <!-- just in case translations cannot be loaded, provide a fallback -->
+  <script type="text/javascript">
+  django = {
+    gettext: function(s) {
+      return s;
+    }
+  }
+  </script>
   <script type="text/javascript" src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script><script type="text/javascript" src="{% url 'uds.js' %}"></script>
 
-<link rel="stylesheet" href="/static/modern/styles.css"></head>
+<link rel="stylesheet" href="/uds/res/modern/styles.css"></head>
 
 <body>
   <uds-root></uds-root>
-<script type="text/javascript" src="/static/modern/runtime.js"></script><script type="text/javascript" src="/static/modern/polyfills.js"></script><script type="text/javascript" src="/static/modern/scripts.js"></script><script type="text/javascript" src="/static/modern/main.js"></script></body>
+<script type="text/javascript" src="/uds/res/modern/runtime.js"></script><script type="text/javascript" src="/uds/res/modern/polyfills.js"></script><script type="text/javascript" src="/uds/res/modern/scripts.js"></script><script type="text/javascript" src="/uds/res/modern/main.js"></script></body>
 
 </html>

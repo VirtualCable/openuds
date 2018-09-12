@@ -105,7 +105,7 @@ class IPAuth(Authenticator):
     def check(self):
         return _("All seems to be fine.")
 
-    def getHtml(self, request):
+    def getJavascript(self, request):
         # doAutoLogin = Config.section('IPAUTH').value('autoLogin', '0').getBool()
         ip = self.getIp()
         gm = GroupsManager(self.dbAuthenticator())

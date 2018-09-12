@@ -48,7 +48,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2018-08-30'
+__updated__ = '2018-09-12'
 
 
 # Allow cross-domain login
@@ -92,25 +92,6 @@ def login(request, tag=None):
     getUDSCookie(request, response)
 
     return response
-
-
-# Gets the html from the custom authtenticator
-def customAuth(request, idAuth):
-    res = ''
-    try:
-        try:
-            auth = Authenticator.objects.get(uuid=processUuid(idAuth))
-        except Authenticator.DoesNotExist:
-            auth = Authenticator.objects.get(pk=idAuth)
-        res = auth.getInstance().getHtml(request)
-        if res is None:
-            res = ''
-    except Exception:
-        logger.exception('customAuth')
-        res = 'error'
-    return HttpResponse(res, content_type='text/html')
-
-# Gets the list of authenticators
 
 
 @webLoginRequired(admin=False)

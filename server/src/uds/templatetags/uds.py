@@ -105,13 +105,14 @@ def udsJs(context):
         'csrf': csrf_token,
         'urls': {
             'changeLang': reverse('set_language'),
-            'login': reverse('modern.login'),
-            'logout': reverse('modern.logout'),
+            'login': reverse('page.login'),
+            'logout': reverse('page.logout'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
-            'services': reverse('modern.services'),
+            'services': reverse('webapi.services'),
             'enabler': reverse('ClientAccessEnabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
-            'galleryImage': reverse('galleryImage', kwargs={ 'idImage': 'param1' }),
-            'transportIcon': reverse('uds.web.views.transportIcon', kwargs={'idTrans': 'param1'})
+            'galleryImage': reverse('webapi.galleryImage', kwargs={ 'idImage': 'param1' }),
+            'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
+            'static': static(''),
         }
     }
 
@@ -121,12 +122,12 @@ def udsJs(context):
             'description': description,
             'name': name
         } for url, description, name in (
-            ('clients/UDSClientSetup-{version}.exe', gettext('Windows plugin'), 'Windows'),
-            ('clients/UDSClient-{version}.pkg', gettext('Mac OS X plugin'), 'MacOS'),
-            ('udsclient_{version}_all.deb', gettext('Debian based Linux') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
-            ('udsclient-{version}-1.noarch.rpm', gettext('Red Hat based Linux (RH, Fedora, Centos, ...)') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
-            ('udsclient-opensuse-{version}-1.noarch.rpm', gettext('Suse based Linux') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
-            ('udsclient-{version}.tar.gz', gettext('Generic .tar.gz Linux') + ' ' + gettext('(requires Python-2.7)'), 'Linux')
+            ('clients/UDSClientSetup-{version}.exe', gettext('Windows client'), 'Windows'),
+            ('clients/UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS'),
+            ('udsclient_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+            ('udsclient-{version}-1.noarch.rpm', gettext('Red Hat based Linux client (RH, Fedora, Centos, ...)') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+            ('udsclient-opensuse-{version}-1.noarch.rpm', gettext('Suse based Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+            ('udsclient-{version}.tar.gz', gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux')
         )
     ]
 

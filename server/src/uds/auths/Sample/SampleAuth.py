@@ -36,7 +36,7 @@ from uds.core import auths
 
 import logging
 
-__updated__ = '2015-02-02'
+__updated__ = '2018-09-12'
 
 logger = logging.getLogger(__name__)
 
@@ -222,7 +222,7 @@ class SampleAuth(auths.Authenticator):
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
-    def getHtml(self, request):
+    def getJavascript(self, request):
         """
         If we override this method from the base one, we are telling UDS
         that we want to draw our own authenticator.

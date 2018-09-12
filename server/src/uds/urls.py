@@ -34,6 +34,8 @@ from django.urls import re_path, path
 from django.conf.urls import include
 from uds.core.util.modfinder import loadModulesUrls
 from django.views.i18n import JavaScriptCatalog
+from django.views.generic.base import RedirectView
+
 from uds import REST
 import uds.web.views
 
@@ -43,21 +45,63 @@ js_info_dict = {
 }
 
 urlpatterns = [
-    re_path(r'^$', uds.web.views.index, name='uds.web.views.index'),
-    re_path(r'^login/$', uds.web.views.login, name='uds.web.views.login'),
-    re_path(r'^login/(?P<tag>.+)$', uds.web.views.login, name='uds.web.views.login'),
+    # Root url placeholder
+    path('', RedirectView.as_view(pattern_name='page.index', permanent=False), name='page.index.placeholder'),
+
+    # Compat redirections
+    path('login/', RedirectView.as_view(pattern_name='page.login', permanent=False), name='page.login.placeholder'),
+
+    # Javascript
+    path('uds/js', uds.web.views.modern.js, name="uds.js"),
+
+    # Index
+    path(r'uds/page/services/', uds.web.views.modern.index, name='page.index'),
+    path(r'uds/page/login/', uds.web.views.modern.login, name='page.login'),
+    re_path(r'^uds/page/login/(?P<tag>.+)$', uds.web.views.modern.login, name='page.login.tag'),
+
+    path(r'uds/page/logout/', uds.web.views.logout, name='page.logout'),
+
+    # This must be the last, so any patition will be managed by client in fact
+    re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.plageholder'),
+
+    # WEB API path (not REST api, frontend)
+    re_path(r'^uds/webapi/img/transport/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
+    re_path(r'^uds/webapi/img/gallery/(?P<idImage>.+)$', uds.web.views.image, name='webapi.galleryImage'),
+
+    # Services list, ...
+    path(r'uds/webapi/services', uds.web.views.modern.servicesData, name='webapi.services'),
+
+    # Transport own link processor
+    re_path(r'^uds/webapi/trans/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.transportOwnLink, name='TransportOwnLink'),
+    # Authenticators custom html
+    re_path(r'^uds/webapi/customAuth/(?P<idAuth>.*)$', uds.web.views.customAuth, name='uds.web.views.customAuth'),
+
+    # REST Api
+    re_path(r'^uds/rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
+    # Backwards compatibility with REST API path
+    re_path(r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST.compat"),
+
+    # Web admin GUI
+    re_path(r'^uds/adm/', include('uds.admin.urls')),
+
+    # old part, remove
+    # re_path(r'^$', uds.web.views.index, name='uds.web.views.index'),
+    # re_path(r'^login/$', uds.web.views.login, name='uds.web.views.login'),
+    # re_path(r'^login/(?P<tag>.+)$', uds.web.views.login, name='uds.web.views.login'),
     re_path(r'^logout$', uds.web.views.logout, name='uds.web.views.logout'),
+
     # Icons
-    re_path(r'^transicon/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='uds.web.views.transportIcon'),
+    # re_path(r'^transicon/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='uds.web.views.transportIcon'),
     # Images
-    re_path(r'^srvimg/(?P<idImage>.+)$', uds.web.views.serviceImage, name='uds.web.views.serviceImage'),
-    re_path(r'^galimg/(?P<idImage>.+)$', uds.web.views.image, name='galleryImage'),
+    # re_path(r'^srvimg/(?P<idImage>.+)$', uds.web.views.serviceImage, name='uds.web.views.serviceImage'),
+    # re_path(r'^galimg/(?P<idImage>.+)$', uds.web.views.image, name='galleryImage'),
     # Error URL
     re_path(r'^error/(?P<idError>.+)$', uds.web.views.error, name='uds.web.views.error'),
+
     # Transport own link processor
-    re_path(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.transportOwnLink, name='TransportOwnLink'),
+    # re_path(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.transportOwnLink, name='TransportOwnLink'),
     # Authenticators custom html
-    re_path(r'^customAuth/(?P<idAuth>.*)$', uds.web.views.customAuth, name='uds.web.views.customAuth'),
+    # re_path(r'^customAuth/(?P<idAuth>.*)$', uds.web.views.customAuth, name='uds.web.views.customAuth'),
     # Preferences
     re_path(r'^prefs$', uds.web.views.prefs, name='uds.web.views.prefs'),
     # Change Language
@@ -82,10 +126,10 @@ urlpatterns = [
     re_path(r'^tkauth/(?P<ticketId>.+)$', uds.web.views.ticketAuth, name='TicketAuth'),
 
     # REST Api
-    re_path(r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
+    # re_path(r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
 
     # Web admin GUI
-    re_path(r'^adm/', include('uds.admin.urls')),
+    # re_path(r'^adm/', include('uds.admin.urls')),
 
     # Files
     re_path(r'^files/(?P<uuid>.+)', uds.web.views.file_storage, name='uds.web.views.file_storage'),
@@ -94,12 +138,6 @@ urlpatterns = [
     # Javascript catalog. In fact, lang is not used, but it is maintanied for "backward" user templates compatibility
     re_path(r'^jsi18n/(?P<lang>[a-z]*)$', JavaScriptCatalog.as_view(), name='uds.web.views.jsCatalog'),
 
-    # Modern
-    path('js', uds.web.views.modern.js, name="uds.js"),
-    path(r'modern/login/', uds.web.views.modern.login, name='modern.login'),
-    path(r'modern/logout/', uds.web.views.logout, name='modern.logout'),
-    path(r'modern/services/', uds.web.views.modern.services, name='modern.services'),
-    re_path('^modern.*', uds.web.views.modern.index, name='modern.index'),
 ]
 
 # Append urls from special dispatchers

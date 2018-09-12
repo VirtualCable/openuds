@@ -39,7 +39,7 @@ from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths.Exceptions import InvalidUserException
 import logging
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-09-12'
 
 logger = logging.getLogger(__name__)
 
@@ -222,9 +222,9 @@ class Authenticator(Module):
     @classmethod
     def isCustom(cls):
         """
-        Helper to query if a class is custom (implements getHtml method)
+        Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.getHtml != Authenticator.getHtml
+        return cls.getJavascript != Authenticator.getJavascript
 
     @classmethod
     def canCheckUserPassword(cls):
@@ -364,7 +364,7 @@ class Authenticator(Module):
         """
         Invoked whenever an user logs out.
 
-        Notice that authenticators that provides getHtml method are considered "custom", and
+        Notice that authenticators that provides getJavascript method are considered "custom", and
         these authenticators will never be used to allow an user to access administration interface
         (they will be filtered out)
 
@@ -414,7 +414,7 @@ class Authenticator(Module):
         """
         pass
 
-    def getHtml(self, request):
+    def getJavascript(self, request):
         """
         If you override this method, and returns something different of None,
         UDS will consider your authenticator as "Owner draw", that is, that it
@@ -433,7 +433,7 @@ class Authenticator(Module):
             * The id of the login form is **loginform**
             * The id of the "back to login" link is **backToLogin**
 
-        This is what happens when an authenticator that has getHtml method is
+        This is what happens when an authenticator that has getJavascript method is
         selected in the front end (from the combo shown):
 
             * The div with id **login** is hidden.

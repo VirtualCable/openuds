@@ -88,6 +88,10 @@ def getServicesData(request):
                     }
                 )
 
+        # If empty transports, do not include it on list
+        if not trans:
+            continue
+
         servicePool = svr.deployed_service
 
         if servicePool.image is not None:
@@ -138,6 +142,11 @@ def getServicesData(request):
                         'priority': t.priority
                     }
                 )
+
+        # If empty transports, do not include it on list
+        if not trans:
+            continue
+
         if svr.image is not None:
             imageId = svr.image.uuid
         else:

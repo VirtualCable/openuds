@@ -48,12 +48,13 @@ from uds.core.ui import theme
 from uds.core.util import OsDetector
 from uds.core.util import html
 from uds.core.util.State import State
+from uds.core.util.model import processUuid
 from uds.models import Authenticator, DeployedService
 from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-08-31'
+__updated__ = '2018-09-12'
 
 
 @csrf_exempt
@@ -135,6 +136,24 @@ def authInfo(request, authName):
         return HttpResponse(info)
     except Exception:
         return HttpResponse(_('Authenticator does not provide information'))
+
+
+# Gets the javascript from the custom authtenticator
+@never_cache
+def customAuth(request, idAuth):
+    res = ''
+    try:
+        try:
+            auth = Authenticator.objects.get(uuid=processUuid(idAuth))
+        except Authenticator.DoesNotExist:
+            auth = Authenticator.objects.get(pk=idAuth)
+        res = auth.getInstance().getHtml(request)
+        if res is None:
+            res = ''
+    except Exception:
+        logger.exception('customAuth')
+        res = 'error'
+    return HttpResponse(res, content_type='text/javascript')
 
 
 @never_cache

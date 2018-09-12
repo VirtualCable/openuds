@@ -80,7 +80,7 @@ class ServicesPools(ModelHandler):
 
     save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id',
                    'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs',
-                   'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports',
+                   'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports', 'visible',
                    'allow_users_remove', 'allow_users_reset', 'ignores_unused', 'account_id']
 
     remove_fields = ['osmanager_id', 'service_id']

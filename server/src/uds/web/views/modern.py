@@ -66,7 +66,7 @@ def login(request, tag=None):
         form = LoginForm(request.POST, tag=tag)
         user, data = checkLogin(request, form, tag)
         if user:
-            response = HttpResponseRedirect(reverse('modern.index'))
+            response = HttpResponseRedirect(reverse('page.index'))
             webLogin(request, response, user, data)  # data is user password here
         else:
             # If error is numeric, redirect...
@@ -84,7 +84,7 @@ def js(request):
 
 
 @denyNonAuthenticated
-def services(request):
+def servicesData(request):
     data = getServicesData(request)
 
     return HttpResponse(content=json.dumps(data), content_type='application/json')
