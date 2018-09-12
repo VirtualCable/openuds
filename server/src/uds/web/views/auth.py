@@ -147,7 +147,7 @@ def customAuth(request, idAuth):
             auth = Authenticator.objects.get(uuid=processUuid(idAuth))
         except Authenticator.DoesNotExist:
             auth = Authenticator.objects.get(pk=idAuth)
-        res = auth.getInstance().getHtml(request)
+        res = auth.getInstance().getJavascript(request)
         if res is None:
             res = ''
     except Exception:
