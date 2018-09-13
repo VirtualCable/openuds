@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2018-05-16'
+__updated__ = '2018-09-13'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -142,6 +142,12 @@ class UserServiceManager(object):
         '''
         Creates a new assigned deployed service for the publication and user indicated
         '''
+        # First, honor maxPreparingServices
+        if self.canInitiateServiceFromDeployedService(ds) is False:
+            # Cannot create new
+            logger.warn('Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).')
+            raise ServiceNotReadyError()
+
         if ds.service.getType().publicationType is not None:
             dsp = ds.activePublication()
             logger.debug('Creating a new assigned element for user {0} por publication {1}'.format(user, dsp))
