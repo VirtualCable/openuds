@@ -56,10 +56,14 @@ urlpatterns = [
 
     # Index
     path(r'uds/page/services/', uds.web.views.modern.index, name='page.index'),
+
+    # Login/logout
     path(r'uds/page/login/', uds.web.views.modern.login, name='page.login'),
     re_path(r'^uds/page/login/(?P<tag>.+)$', uds.web.views.modern.login, name='page.login.tag'),
-
     path(r'uds/page/logout/', uds.web.views.logout, name='page.logout'),
+
+    # Error URL
+    re_path(r'^uds/page/error/(?P<error>.+)$', uds.web.views.error, name='page.error'),
 
     # This must be the last, so any patition will be managed by client in fact
     re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.plageholder'),
@@ -96,7 +100,7 @@ urlpatterns = [
     # re_path(r'^srvimg/(?P<idImage>.+)$', uds.web.views.serviceImage, name='uds.web.views.serviceImage'),
     # re_path(r'^galimg/(?P<idImage>.+)$', uds.web.views.image, name='galleryImage'),
     # Error URL
-    re_path(r'^error/(?P<idError>.+)$', uds.web.views.error, name='uds.web.views.error'),
+    # re_path(r'^error/(?P<idError>.+)$', uds.web.views.error, name='uds.web.views.error'),
 
     # Transport own link processor
     # re_path(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.transportOwnLink, name='TransportOwnLink'),

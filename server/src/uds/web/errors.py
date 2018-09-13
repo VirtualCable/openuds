@@ -34,16 +34,12 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
-from django.template import RequestContext
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .transformers import scrambleId, transformId
 
+from uds.core.util import encoders
 from uds.models import DeployedService, Transport, UserService, Authenticator
-from uds.core.auths.Exceptions import InvalidUserException, InvalidAuthenticatorException
-from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedError, ServiceInMaintenanceMode, ServiceNotReadyError
-from uds.core.ui import theme
 
 import traceback
 import logging
@@ -66,7 +62,6 @@ SERVICE_IN_MAINTENANCE = 12
 SERVICE_NOT_READY = 13
 SERVICE_IN_PREPARATION = 14
 SERVICE_CALENDAR_DENIED = 15
-
 
 strings = [
     _('Unknown error'),
@@ -95,14 +90,26 @@ def errorString(errorId):
     return strings[0]
 
 
-def errorView(request, idError):
-    return HttpResponseRedirect(reverse('uds.web.views.error', kwargs={'idError': scrambleId(request, idError)}))
+def errorView(request, error):
+    idError = int(error)
+    code = (error >> 8) & 0xFF
+
+    errStr = errorString(idError)
+    if code != 0:
+        errStr += ' (code {0:04X})'.format(code)
+
+    errStr = encoders.encode(str(errStr), 'base64', asText=True)[:-3]
+
+    return HttpResponseRedirect(reverse('page.error', kwargs={'error': errStr}))
 
 
 def exceptionView(request, exception):
     """
     Tries to render an error page with error information
     """
+    from uds.core.auths.Exceptions import InvalidUserException, InvalidAuthenticatorException
+    from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedError, ServiceInMaintenanceMode, ServiceNotReadyError
+
     logger.error(traceback.format_exc())
 
     try:
@@ -133,19 +140,20 @@ def exceptionView(request, exception):
         raise e
 
 
-@transformId
-def error(request, idError):
+def error(request, error):
     """
     Error view, responsible of error display
     :param request:
     :param idError:
     """
-    idError = int(idError)
-    code = idError >> 8
-    idError &= 0xFF
+    return render(request, 'uds/modern/index.html', {})
 
-    errStr = errorString(idError)
-    if code != 0:
-        errStr += ' (code {0:04X})'.format(code)
+    # idError = int(idError)
+    # code = idError >> 8
+    # idError &= 0xFF
 
-    return render(request, theme.template('error.html'), {'errorString': errStr})
+    # errStr = errorString(idError)
+    # if code != 0:
+    #     errStr += ' (code {0:04X})'.format(code)
+
+    # return render(request, theme.template('error.html'), {'errorString': errStr})

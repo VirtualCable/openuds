@@ -44,6 +44,9 @@ logger = logging.getLogger(__name__)
 
 
 def index(request):
+    from uds.web.errors import errorView
+    return errorView(request, 1)
+
     response = render(request, 'uds/modern/index.html', {})
 
     logger.debug('Session expires at %s', request.session.get_expiry_date())
