@@ -34,9 +34,13 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse
+from uds.web.errors import errorView
 from uds.core.auths.auth import (
     getUDSCookie,
-    denyNonAuthenticated
+    denyNonAuthenticated,
+    webLoginRequired,
+    authLogLogout,
+    webLogout,
 )
 from uds.web.services import getServicesData
 
@@ -44,8 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 def index(request):
-    from uds.web.errors import errorView
-    return errorView(request, 1)
+    # return errorView(request, 1)
 
     response = render(request, 'uds/modern/index.html', {})
 
@@ -74,12 +77,24 @@ def login(request, tag=None):
         else:
             # If error is numeric, redirect...
             # Error, set error on session for process for js
-            request.session['errors'] = data
-            return HttpResponse(data);
+            if isinstance(data, int):
+                return errorView(request, data)
+
+            request.session['errors'] = [data]
+            return index(request)
     else:
         response = index(request)
 
     return response
+
+
+@webLoginRequired(admin=False)
+def logout(request):
+    authLogLogout(request)
+    logoutUrl = request.user.logout()
+    if logoutUrl is None:
+        logoutUrl = request.session.get('logouturl', None)
+    return webLogout(request, logoutUrl)
 
 
 def js(request):

@@ -62,6 +62,8 @@ SERVICE_IN_MAINTENANCE = 12
 SERVICE_NOT_READY = 13
 SERVICE_IN_PREPARATION = 14
 SERVICE_CALENDAR_DENIED = 15
+PAGE_NOT_FOUND = 16
+INTERNAL_SERVER_ERROR = 17
 
 strings = [
     _('Unknown error'),
@@ -79,7 +81,9 @@ strings = [
     _('The requested service is in maintenance mode'),
     _('The service is not ready.\nPlease, try again in a few moments.'),
     _('Preparing service'),
-    _('Service access denied by calendars')
+    _('Service access denied by calendars'),
+    _('Page not found'),
+    _('Unexpected error'),
 ]
 
 
@@ -98,7 +102,7 @@ def errorView(request, error):
     if code != 0:
         errStr += ' (code {0:04X})'.format(code)
 
-    errStr = encoders.encode(str(errStr), 'base64', asText=True)[:-3]
+    errStr = encoders.encode(str(errStr), 'base64', asText=True)[:-1]
 
     return HttpResponseRedirect(reverse('page.error', kwargs={'error': errStr}))
 

@@ -32,7 +32,7 @@ from __future__ import unicode_literals
 
 import logging
 
-from .login import login, logout
+# from .login import login, logout
 from .index import index, about
 from .prefs import prefs
 from .service import transportOwnLink, transportIcon, clientEnabler, serviceImage, release, reset
@@ -44,6 +44,6 @@ from .images import image
 from .file_storage import file_storage
 from . import modern
 
-__updated__ = '2018-09-12'
+__updated__ = '2018-09-14'
 
 logger = logging.getLogger(__name__)

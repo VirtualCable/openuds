@@ -46,13 +46,14 @@ js_info_dict = {
 
 urlpatterns = [
     # Root url placeholder
-    path('', RedirectView.as_view(pattern_name='page.index', permanent=False), name='page.index.placeholder'),
+    path(r'', RedirectView.as_view(pattern_name='page.index', permanent=False), name='page.index.placeholder'),
 
     # Compat redirections
-    path('login/', RedirectView.as_view(pattern_name='page.login', permanent=False), name='page.login.placeholder'),
+    path(r'login/', RedirectView.as_view(pattern_name='page.login', permanent=False), name='page.login.compat'),
+    path(r'logout/', RedirectView.as_view(pattern_name='page.logut'), name='page.logout.compat'),
 
     # Javascript
-    path('uds/js', uds.web.views.modern.js, name="uds.js"),
+    path(r'uds/js', uds.web.views.modern.js, name="uds.js"),
 
     # Index
     path(r'uds/page/services/', uds.web.views.modern.index, name='page.index'),
@@ -60,13 +61,13 @@ urlpatterns = [
     # Login/logout
     path(r'uds/page/login/', uds.web.views.modern.login, name='page.login'),
     re_path(r'^uds/page/login/(?P<tag>.+)$', uds.web.views.modern.login, name='page.login.tag'),
-    path(r'uds/page/logout/', uds.web.views.logout, name='page.logout'),
+    path(r'uds/page/logout/', uds.web.views.modern.logout, name='page.logout'),
 
     # Error URL
     re_path(r'^uds/page/error/(?P<error>.+)$', uds.web.views.error, name='page.error'),
 
     # This must be the last, so any patition will be managed by client in fact
-    re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.plageholder'),
+    re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.placeholder'),
 
     # WEB API path (not REST api, frontend)
     re_path(r'^uds/webapi/img/transport/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
@@ -92,7 +93,7 @@ urlpatterns = [
     # re_path(r'^$', uds.web.views.index, name='uds.web.views.index'),
     # re_path(r'^login/$', uds.web.views.login, name='uds.web.views.login'),
     # re_path(r'^login/(?P<tag>.+)$', uds.web.views.login, name='uds.web.views.login'),
-    re_path(r'^logout$', uds.web.views.logout, name='uds.web.views.logout'),
+    # re_path(r'^logout$', uds.web.views.logout, name='uds.web.views.logout'),
 
     # Icons
     # re_path(r'^transicon/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='uds.web.views.transportIcon'),

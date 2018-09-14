@@ -8,6 +8,7 @@ gettext("Please wait");
 gettext("Remember that UDS Plugin is required in order for this service to be launched");
 gettext("Warning");
 gettext("Service is in maintenance and cannot be executed");
+gettext("Invalid error string");
 gettext("seconds");
 gettext("Launcher");
 gettext("Service is in maintenance and cannot be launched");

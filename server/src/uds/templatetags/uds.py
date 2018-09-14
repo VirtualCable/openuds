@@ -142,11 +142,17 @@ def udsJs(context):
         # Update bypass configuration with user information
         config['bypassPluginDetection'] = prefs.get('bypassPluginDetection') == '1'
 
+    errors = []
+    if 'errors' in request.session:
+        errors = request.session['errors']
+        del request.session['errors']
+
     uds = {
         'profile': profile,
         'config': config,
         'plugins': plugins,
         'actors': actors,
+        'errors': errors
     }
 
     javascript = 'var udsData = ' + json.dumps(uds) + ';\n';
