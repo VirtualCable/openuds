@@ -45,7 +45,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2018-03-02'
+__updated__ = '2018-09-17'
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +54,7 @@ class DelayedTaskThread(threading.Thread):
     """
     Class responsible of executing a delayed task in its own thread
     """
+
     def __init__(self, taskInstance):
         super(DelayedTaskThread, self).__init__()
         self._taskInstance = taskInstance
@@ -104,15 +105,19 @@ class DelayedTaskRunner(object):
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
         try:
             with transaction.atomic():  # Encloses
+                # Throws exception if no delayed task is avilable
                 task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
                     logger.warning('EXecuted {} due to insert_date being in the future!'.format(task.type))
                 taskInstanceDump = encoders.decode(task.instance, 'base64')
                 task.delete()
             taskInstance = loads(taskInstanceDump)
+        except IndexError:
+            return  # No problem, there is no waiting delayed task
         except Exception:
             # Transaction have been rolled back using the "with atomic", so here just return
             # Note that is taskInstance can't be loaded, this task will not be retried
+            logger.exception('Executing one task')
             return
 
         if taskInstance is not None:
@@ -124,7 +129,7 @@ class DelayedTaskRunner(object):
         now = getSqlDatetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
-        instanceDump = encoders.encode(dumps(instance), 'base64')
+        instanceDump = encoders.encode(dumps(instance), 'base64', asText=True)
         typeName = str(cls.__module__ + '.' + cls.__name__)
 
         logger.debug('Inserting delayed task {0} with {1} bytes ({2})'.format(typeName, len(instanceDump), exec_time))

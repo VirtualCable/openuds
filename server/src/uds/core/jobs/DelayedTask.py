@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from uds.core.Environment import Environmentable
 import logging
 
-__updated__ = '2014-11-11'
+__updated__ = '2018-09-17'
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +45,7 @@ class DelayedTask(Environmentable):
     This class represents a single delayed task object.
     This is an object that represents an execution to be done "later"
     """
+
     def __init__(self):
         """
         Remember to invoke parent init in derived clases using super(myClass,self).__init__() to let this initialize its own variables
@@ -67,7 +68,7 @@ class DelayedTask(Environmentable):
         """
         Utility method that allows to register a Delayedtask
         """
-        from DelayedTaskRunner import DelayedTaskRunner
+        from .DelayedTaskRunner import DelayedTaskRunner
 
         if check is True and DelayedTaskRunner.runner().checkExists(tag):
             return

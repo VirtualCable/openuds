@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2018-06-21'
+__updated__ = '2018-09-17'
 
 logger = logging.getLogger(__name__)
 
@@ -181,7 +181,7 @@ class DeployedService(UUIDModel, TaggingMixin):
             return six.text_type(self.short_name)
         return six.text_type(self.name)
 
-    def isRestrained(self):
+    def isRestrained(self) -> bool:
         """
         Maybe this deployed service is having problems, and that may block some task in some
         situations.
@@ -206,28 +206,25 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         return False
 
-    def isInMaintenance(self):
+    def isInMaintenance(self) -> bool:
         return self.service is not None and self.service.isInMaintenance()
 
-    def isVisible(self):
+    def isVisible(self) -> bool :
         return self.visible
 
-    def toBeReplaced(self):
+    def toBeReplaced(self, forUser) -> datetime:
         activePub = self.activePublication()
-        if activePub is None or activePub.revision <= self.current_pub_revision - 1:
-            return None
-
-        # Return the date
         try:
-            ret = self.recoverValue('toBeReplacedIn')
-            if ret is not None:
-                return pickle.loads(ret)
+            if activePub and activePub.id != self.assignedUserServices().filter(user=forUser)[0].publication.id:
+                ret = self.recoverValue('toBeReplacedIn')
+                if ret is not None:
+                    return pickle.loads(ret)
         except Exception:
             logger.exception('Recovering publication death line')
 
         return None
 
-    def isAccessAllowed(self, chkDateTime=None):
+    def isAccessAllowed(self, chkDateTime=None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
@@ -452,6 +449,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     def cachedUserServices(self):
         """
+        ':rtype uds.models.UserService.UserService'
         Utility method to access the cached user services (level 1 and 2)
 
         Returns:
@@ -460,6 +458,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         return self.userServices.exclude(cache_level=0)
 
     def assignedUserServices(self):
+        ':rtype uds.models.UserService.UserService'
         """
         Utility method to access the assigned user services
 
@@ -480,6 +479,11 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     def testServer(self, host, port, timeout=4):
         return self.service.testServer(host, port, timeout)
+
+    # parent accessors
+    @property
+    def proxy(self):
+        return self.service.proxy;
 
     # Utility for logging
     def log(self, message, level=log.INFO):

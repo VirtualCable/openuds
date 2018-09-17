@@ -53,9 +53,11 @@ from uds.models.User import User
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
+from uds.core.services import UserDeployment
+
 import logging
 
-__updated__ = '2018-09-12'
+__updated__ = '2018-09-17'
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +117,7 @@ class UserService(UUIDModel):
         """
         return "{}\\{}".format(self.deployed_service.name, self.friendly_name)
 
-    def getEnvironment(self):
+    def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents.
 
@@ -137,7 +139,7 @@ class UserService(UUIDModel):
             }
         )
 
-    def getInstance(self):
+    def getInstance(self) -> UserDeployment:
         """
         Instantiates the object this record contains. In this case, the instantiated object needs also
         the os manager and the publication, so we also instantiate those here.

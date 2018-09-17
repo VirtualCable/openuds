@@ -62,12 +62,10 @@ def __init__():
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         __import__('uds.services.' + name, globals(), locals(), [])
 
-    for p in [services.ServiceProvider, services.ClusteredServiceProvider]:
+    for p in [services.ServiceProvider]:
         # This is marked as error in IDE, but it's not (__subclasses__)
         for cls in p.__subclasses__():
             # Skip ClusteredServiceProvider
-            if cls is services.ClusteredServiceProvider:
-                continue
             services.factory().insert(cls)
 
 

@@ -161,8 +161,8 @@ def getServicesData(request):
 
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
 
-        tbr = svr.toBeReplaced()
-        if tbr is not None:
+        tbr = svr.toBeReplaced(request.user)
+        if tbr:
             tbr = formats.date_format(tbr, "SHORT_DATETIME_FORMAT")
             tbrt = ugettext('This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.').format(tbr)
         else:

@@ -97,13 +97,15 @@ def errorString(errorId):
 def errorView(request, error):
     idError = int(error)
     code = (error >> 8) & 0xFF
+    idError = idError & 0xFF;
 
     errStr = errorString(idError)
     if code != 0:
         errStr += ' (code {0:04X})'.format(code)
 
-    errStr = encoders.encode(str(errStr), 'base64', asText=True)[:-1]
+    errStr = encoders.encode(str(errStr), 'base64', asText=True).replace('\n', '')
 
+    logger.debug('Redirection to error view with {}'.format(errStr))
     return HttpResponseRedirect(reverse('page.error', kwargs={'error': errStr}))
 
 
@@ -114,7 +116,7 @@ def exceptionView(request, exception):
     from uds.core.auths.Exceptions import InvalidUserException, InvalidAuthenticatorException
     from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedError, ServiceInMaintenanceMode, ServiceNotReadyError
 
-    logger.error(traceback.format_exc())
+    logger.debug(traceback.format_exc())
 
     try:
         raise exception
@@ -141,7 +143,8 @@ def exceptionView(request, exception):
         return errorView(request, e.code << 8 | SERVICE_NOT_READY)
     except Exception as e:
         logger.exception('Exception cautgh at view!!!')
-        raise e
+        return errorView(request, UNKNOWN_ERROR)
+        # raise e
 
 
 def error(request, error):

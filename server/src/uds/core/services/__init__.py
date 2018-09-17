@@ -39,16 +39,11 @@ from .BaseService import Service
 from .BasePublication import Publication
 from .BaseDeployed import UserDeployment
 
-from .ClusteredServiceProvider import ClusteredServiceProvider
-from .ClusteredService import ClusteredService
-from .ClusteredPublication import ClusteredPublication
-from .ClusteredUserDeployment import ClusteredUserDeployment
-
 from . import types
 
 import uds.core.services.Exceptions
 
-__updated__ = '2015-05-29'
+__updated__ = '2018-09-17'
 
 
 def factory():

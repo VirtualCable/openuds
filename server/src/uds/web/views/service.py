@@ -53,7 +53,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-10'
+__updated__ = '2018-09-17'
 
 
 @webLoginRequired(admin=False)
@@ -64,13 +64,7 @@ def transportOwnLink(request, idService, idTransport):
         # This returns a response object in fact
         return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
     except ServiceNotReadyError as e:
-        return render(request,
-            theme.template('service_not_ready.html'),
-            {
-                'fromLauncher': False,
-                'code': e.code
-            }
-        )
+        return errors.exceptionView(request, e)
     except Exception as e:
         logger.exception("Exception")
         return errors.exceptionView(request, e)
