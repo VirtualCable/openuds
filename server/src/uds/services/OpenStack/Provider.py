@@ -44,7 +44,7 @@ from . import openStack
 
 import logging
 
-__updated__ = '2016-04-25'
+__updated__ = '2018-09-18'
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ INTERFACE_VALUES = [
     gui.choiceItem('private', 'private'),
     gui.choiceItem('admin', 'admin'),
 ]
+
 
 class Provider(ServiceProvider):
     '''
@@ -97,9 +98,10 @@ class Provider(ServiceProvider):
     # "random"
     host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenStack Host'), required=True)
     port = gui.NumericField(length=5, label=_('Port'), defvalue='5000', order=2, tooltip=_('OpenStack Port'), required=True)
-    ssl = gui.CheckBoxField(label=_('Use SSL'), order=3, tooltip=_('If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'))
+    newVersion = gui.CheckBoxField(label=_('Newer Openstack'), order=3, tooltip=_('Check this if your openstack is newer than OCATA'))
+    ssl = gui.CheckBoxField(label=_('Use SSL'), order=4, tooltip=_('If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'))
 
-    access = gui.ChoiceField(label=_('Access interface'), order=4, tooltip=_('Access interface to be used'), values=INTERFACE_VALUES, defvalue='public')
+    access = gui.ChoiceField(label=_('Access interface'), order=5, tooltip=_('Access interface to be used'), values=INTERFACE_VALUES, defvalue='public')
 
     domain = gui.TextField(length=64, label=_('Domain'), order=8, tooltip=_('Domain name (default is Default)'), required=True, defvalue='Default')
     username = gui.TextField(length=64, label=_('Username'), order=9, tooltip=_('User with valid privileges on OpenStack'), required=True, defvalue='admin')
@@ -109,7 +111,6 @@ class Provider(ServiceProvider):
     maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
 
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', minValue=1, maxValue=128, order=99, tooltip=_('Timeout in seconds of connection to OpenStack'), required=True, tab=gui.ADVANCED_TAB)
-
 
     # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
     # region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='RegionOne')
@@ -129,6 +130,7 @@ class Provider(ServiceProvider):
     def api(self, projectId=None, region=None):
         return openStack.Client(self.host.value, self.port.value,
                                      self.domain.value, self.username.value, self.password.value,
+                                     newVersion=self.newVersion.isTrue(),
                                      useSSL=self.ssl.isTrue(),
                                      projectId=projectId,
                                      region=region,
