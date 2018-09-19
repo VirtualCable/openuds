@@ -39,7 +39,7 @@ import json
 import dateutil.parser
 import six
 
-__updated__ = '2018-06-29'
+__updated__ = '2018-09-18'
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +117,8 @@ class Client(object):
     PRIVATE = 'private'
     INTERNAL = 'url'
 
-    def __init__(self, host, port, domain, username, password, useSSL=False, projectId=None, region=None, access=None):
+    # NewVersion is True for versions >= Ocata
+    def __init__(self, host, port, domain, username, password, newVersion=False, useSSL=False, projectId=None, region=None, access=None):
         self._authenticated = False
         self._tokenId = None
         self._catalog = None
@@ -131,7 +132,7 @@ class Client(object):
         self._region = region
         self._timeout = 10
 
-        self._authUrl = 'http{}://{}:{}/'.format('s' if useSSL else '', host, port)
+        self._authUrl = 'http{}://{}:{}/{}'.format('s' if useSSL else '', host, port, 'identity/' if newVersion else '')
 
     def _getEndpointFor(self, type_):  # If no region is indicatad, first endpoint is returned
         for i in self._catalog:
@@ -543,13 +544,18 @@ class Client(object):
         except Exception:
             raise Exception('Connection error')
 
-        for v in r.json()['versions']['values']:
-            if v['id'] >= 'v3.2':
-                # Tries to authenticate
-                try:
-                    self.authPassword()
-                    return True
-                except Exception:
-                    raise Exception(_('Authentication error'))
+        try:
+            for v in r.json()['versions']['values']:
+                if v['id'] >= 'v3.1':
+                    # Tries to authenticate
+                    try:
+                        self.authPassword()
+                        return True
+                    except Exception:
+                        logger.exception('Authenticating')
+                        raise Exception(_('Authentication error'))
+        except Exception:  # Not json
+            # logger.exception('xx')
+            raise Exception('Invalid endpoint (maybe invalid version selected?)')
 
         raise Exception(_('Openstack does not support identity API 3.2 or newer. This OpenStack server is not compatible with UDS.'))
