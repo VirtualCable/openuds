@@ -109,7 +109,7 @@ def udsJs(context):
             'logout': reverse('page.logout'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('webapi.services'),
-            'enabler': reverse('ClientAccessEnabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
+            'enabler': reverse('webapi.enabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
             'galleryImage': reverse('webapi.galleryImage', kwargs={ 'idImage': 'param1' }),
             'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
             'static': static(''),
@@ -134,7 +134,7 @@ def udsJs(context):
     actors = []
 
     if profile['role'] == 'staff':  # Add staff things
-        actors = [{'url': reverse('uds.web.views.download', kwargs={'idDownload': key}), 'name': val['name'], 'description': gettext(val['comment'])} for key, val in downloadsManager().getDownloadables().items()]
+        actors = [{'url': reverse('utility.downloader', kwargs={'idDownload': key}), 'name': val['name'], 'description': gettext(val['comment'])} for key, val in downloadsManager().getDownloadables().items()]
         config['urls']['admin'] = reverse('uds.admin.views.index')
 
     if request.user:
@@ -152,7 +152,8 @@ def udsJs(context):
         'config': config,
         'plugins': plugins,
         'actors': actors,
-        'errors': errors
+        'errors': errors,
+        'data': request.session.get('data')
     }
 
     javascript = 'var udsData = ' + json.dumps(uds) + ';\n';

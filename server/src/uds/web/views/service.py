@@ -30,17 +30,14 @@
 """
 from __future__ import unicode_literals
 
-from django.urls import reverse
 from django.utils.translation import ugettext as _
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
 from uds.core.managers import userServiceManager, cryptoManager
 from uds.models import TicketStore
 from uds.core.ui.images import DEFAULT_IMAGE
-from uds.core.ui import theme
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
 from uds.core.util import html, log
@@ -53,7 +50,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-17'
+__updated__ = '2018-09-20'
 
 
 @webLoginRequired(admin=False)
@@ -79,7 +76,7 @@ def transportIcon(request, idTrans):
         icon = Transport.objects.get(uuid=processUuid(idTrans)).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
-        return HttpResponseRedirect('/static/img/unknown.png')
+        return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
@@ -160,7 +157,7 @@ def release(request, idService):
         userServiceManager().requestLogoff(userService)
         userService.release()
 
-    return HttpResponseRedirect(reverse('Index'))
+    return HttpResponse('"ok"', content_type="application/json")
 
 
 @webLoginRequired(admin=False)
@@ -180,5 +177,5 @@ def reset(request, idService):
         # userServiceManager().requestLogoff(userService)
         userServiceManager().reset(userService)
 
-    return HttpResponseRedirect(reverse('Index'))
+    return HttpResponse('"ok"', content_type="application/json")
 

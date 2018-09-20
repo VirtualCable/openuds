@@ -54,7 +54,7 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-12'
+__updated__ = '2018-09-20'
 
 
 @csrf_exempt
@@ -117,6 +117,7 @@ def authInfo(request, authName):
     """
     from uds.core import auths
     try:
+        logger.debug('Getting info for %s', authName)
         authenticator = Authenticator.objects.get(name=authName)
         authInstance = authenticator.getInstance()
         if authInstance.getInfo == auths.Authenticator.getInfo:
@@ -135,6 +136,7 @@ def authInfo(request, authName):
 
         return HttpResponse(info)
     except Exception:
+        logger.exception('got')
         return HttpResponse(_('Authenticator does not provide information'))
 
 
@@ -220,40 +222,24 @@ def ticketAuth(request, ticketId):
             else:
                 link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 
-            response = render(
-                request,
-                theme.template('simpleLauncher.html'),
-                {
-                    'link': link
-                }
-            )
+            request.session['data'] = link;
+            response = HttpResponseRedirect(reverse('page.index'))
         else:
-            response = HttpResponsePermanentRedirect(reverse('uds.web.views.index'))
+            response = HttpResponsePermanentRedirect(reverse('page.index'))
 
         # Now ensure uds cookie is at response
         getUDSCookie(request, response, True)
         return response
     except ServiceNotReadyError as e:
-        return render(
-            request,
-            theme.template('service_not_ready.html'),
-            {
-                'fromLauncher': True,
-                'code': e.code
-            }
-        )
-
+        return errors.errorView(request, errors.SERVICE_NOT_READY)
     except TicketStore.InvalidTicket:
-        return render(
-            request,
-            theme.template('simpleLauncherAlreadyLaunched.html')
-        )
+        return errors.errorView(request, errors.RELOAD_NOT_SUPPORTED)
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
-        return errors.exceptionView(request, InvalidUserException())
+        return errors.errorView(request, errors.ACCESS_DENIED)
     except DeployedService.DoesNotExist:
         logger.error('Ticket has an invalid Service Pool')
-        return errors.exceptionView(request, InvalidServiceException())
+        return errors.errorView(request, errors.SERVICE_NOT_FOUND)
     except Exception as e:
         logger.exception('Exception')
         return errors.exceptionView(request, e)

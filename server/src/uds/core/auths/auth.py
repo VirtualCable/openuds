@@ -54,7 +54,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2018-08-31'
+__updated__ = '2018-09-20'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -262,7 +262,7 @@ def authCallbackUrl(authenticator):
     """
     Helper method, so we can get the auth call back url for an authenticator
     """
-    return reverse('uds.web.views.authCallback', kwargs={'authName': authenticator.name})
+    return reverse('page.auth.callback', kwargs={'authName': authenticator.name})
 
 
 def authInfoUrl(authenticator):
@@ -274,7 +274,7 @@ def authInfoUrl(authenticator):
     else:
         name = authenticator.name
 
-    return reverse('uds.web.views.authInfo', kwargs={'authName': name})
+    return reverse('page.auth.info', kwargs={'authName': name})
 
 
 def webLogin(request, response, user, password):

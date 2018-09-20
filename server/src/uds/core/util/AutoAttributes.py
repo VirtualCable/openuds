@@ -36,8 +36,10 @@ from __future__ import unicode_literals
 from uds.core.Serializable import Serializable
 from uds.core.util import encoders
 import pickle
-import timeit
 import six
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Attribute(object):
@@ -95,7 +97,7 @@ class AutoAttributes(Serializable):
         self.dict = d
 
     def marshal(self):
-        return encoders.encode('\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.items()]), 'bz2')
+        return encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8') if isinstance(k, str) else k, pickle.dumps(v)) for k, v in self.dict.items()]), 'bz2')
 
     def unmarshal(self, data):
         if data == b'':  # Can be empty
@@ -105,8 +107,10 @@ class AutoAttributes(Serializable):
             data = encoders.decode(data, 'bz2')
         except Exception:  # With old zip encoding
             data = encoders.decode(data, 'zip')
+        # logger.debug('DATA: %s', data)
         for pair in data.split(b'\2'):
             k, v = pair.split(b'\1')
+            # logger.debug('k: %s  ---   v: %s', k, v)
             self.dict[k] = pickle.loads(v)
 
     def __str__(self):

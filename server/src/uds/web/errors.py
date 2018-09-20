@@ -64,6 +64,7 @@ SERVICE_IN_PREPARATION = 14
 SERVICE_CALENDAR_DENIED = 15
 PAGE_NOT_FOUND = 16
 INTERNAL_SERVER_ERROR = 17
+RELOAD_NOT_SUPPORTED = 18
 
 strings = [
     _('Unknown error'),
@@ -84,6 +85,7 @@ strings = [
     _('Service access denied by calendars'),
     _('Page not found'),
     _('Unexpected error'),
+    _('Reloading this page is not supported. Please, reopen service from origin.')
 ]
 
 

@@ -54,7 +54,7 @@ logger = logging.getLogger(__name__)
 class FileStorage(Storage):
 
     def __init__(self, *args, **kwargs):
-        self._base_url = getattr(settings, 'FILE_STORAGE', '/files')
+        self._base_url = getattr(settings, 'FILE_STORAGE', '/uds/utility/files')
         if self._base_url[-1] != '/':
             self._base_url += '/'
 

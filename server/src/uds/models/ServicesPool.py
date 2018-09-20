@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2018-09-17'
+__updated__ = '2018-09-20'
 
 logger = logging.getLogger(__name__)
 
@@ -220,7 +220,8 @@ class DeployedService(UUIDModel, TaggingMixin):
                 if ret is not None:
                     return pickle.loads(ret)
         except Exception:
-            logger.exception('Recovering publication death line')
+            # logger.exception('Recovering publication death line')
+            pass
 
         return None
 
