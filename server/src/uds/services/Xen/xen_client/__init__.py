@@ -384,7 +384,7 @@ class XenServer(object):
         try:
             if targetSR:
                 if 'copy' not in operations:
-                    raise XenException('Clone is not supported for this machine')
+                    raise XenException('Copy is not supported for this machine')
                 task = self.Async.VM.copy(vmId, targetName, targetSR)
             else:
                 if 'clone' not in operations:

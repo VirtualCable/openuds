@@ -49,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-09-21'
 
 CACHE_TIME_FOR_SERVER = 1800
 
@@ -76,11 +76,11 @@ class Provider(ServiceProvider):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('Xenserver Platform Provider')
+    typeName = _('Xenserver/XCP-NG Platforms Provider')
     # : Type used internally to identify this provider
     typeType = 'XenPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _('XenServer platform service provider')
+    typeDescription = _('XenServer and XCP-NG platforms service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)

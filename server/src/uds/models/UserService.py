@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2018-03-02'
+__updated__ = '2018-09-19'
 
 logger = logging.getLogger(__name__)
 
@@ -297,7 +297,7 @@ class UserService(UUIDModel):
             An array of two elements, first is transformed username, second is
             transformed password.
 
-        :note: This method MUST be invoked by transport before using credentials passed to getHtml.
+        :note: This method MUST be invoked by transports before using credentials.
         '''
         ds = self.deployed_service
         serviceInstance = ds.service.getInstance()
