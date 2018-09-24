@@ -4,13 +4,12 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
-#: auths/AzureAD_enterprise/AzureAD.py:92
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-10 11:05+0200\n"
-"PO-Revision-Date: 2018-03-23 09:41+0000\n"
+"POT-Creation-Date: 2018-09-24 11:14+0200\n"
+"PO-Revision-Date: 2018-09-10 09:10+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -50,7 +49,7 @@ msgstr "Identificação"
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:81 REST/methods/transports.py:57
-#: REST/methods/user_services.py:235 REST/methods/user_services.py:270
+#: REST/methods/user_services.py:249 REST/methods/user_services.py:285
 #: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
@@ -64,7 +63,7 @@ msgstr "Nome"
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
 #: REST/methods/providers.py:72 REST/methods/services.py:191
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
-#: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
+#: REST/methods/user_services.py:287 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
@@ -73,7 +72,7 @@ msgstr "Comentários"
 
 #: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:269 REST/model.py:157
+#: REST/methods/user_services.py:284 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Prioridade"
@@ -246,7 +245,7 @@ msgstr "Relatórios disponíveis"
 #: REST/methods/reports.py:57 REST/methods/users_groups.py:261
 #: REST/methods/users_groups.py:268
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
-#: auths/AzureAD_enterprise/AzureAD.py:84
+#: auths/AzureAD_enterprise/AzureAD.py:88
 #: auths/EDirectory_enterprise/Authenticator.py:81
 #: auths/RegexLdap/Authenticator.py:85 auths/SAML_enterprise/SAML.py:116
 #: templates/uds/admin/tmpl/pool_add_group.html:17
@@ -280,7 +279,7 @@ msgstr "Serviços atuais"
 msgid "Service name"
 msgstr "Nome do serviço"
 
-#: REST/methods/services.py:192 REST/methods/user_services.py:271
+#: REST/methods/services.py:192 REST/methods/user_services.py:286
 msgid "Type"
 msgstr "Tipo"
 
@@ -370,7 +369,7 @@ msgstr "Imagem assocciated com este serviço"
 msgid "Service Pools"
 msgstr "Piscinas de serviço"
 
-#: REST/methods/services_pools.py:82 REST/methods/user_services.py:132
+#: REST/methods/services_pools.py:82 REST/methods/user_services.py:129
 msgid "status"
 msgstr "status"
 
@@ -534,8 +533,8 @@ msgstr "Serviço de base não existe mais"
 msgid "This service requires an OS Manager"
 msgstr "Este serviço requer um gestor de sistema operacional"
 
-#: REST/methods/services_usage.py:92 REST/methods/user_services.py:80
-#: REST/methods/user_services.py:81
+#: REST/methods/services_usage.py:92 REST/methods/user_services.py:77
+#: REST/methods/user_services.py:78
 msgid "unknown"
 msgstr "desconhecido"
 
@@ -543,7 +542,7 @@ msgstr "desconhecido"
 msgid "Services Usage"
 msgstr "Uso de serviços"
 
-#: REST/methods/services_usage.py:119 REST/methods/user_services.py:137
+#: REST/methods/services_usage.py:119 REST/methods/user_services.py:134
 msgid "Owner"
 msgstr "Proprietário"
 
@@ -561,30 +560,30 @@ msgstr "Serviço"
 msgid "Pool"
 msgstr "Piscina"
 
-#: REST/methods/services_usage.py:123 REST/methods/user_services.py:130
-#: REST/methods/user_services.py:198 auths/IP/Authenticator.py:60
+#: REST/methods/services_usage.py:123 REST/methods/user_services.py:127
+#: REST/methods/user_services.py:211 auths/IP/Authenticator.py:60
 #: templates/uds/admin/tmpl/user-info.html:66
 msgid "IP"
 msgstr "IP"
 
-#: REST/methods/services_usage.py:124 REST/methods/user_services.py:131
-#: REST/methods/user_services.py:199
+#: REST/methods/services_usage.py:124 REST/methods/user_services.py:128
+#: REST/methods/user_services.py:212
 msgid "Friendly name"
 msgstr "Nome amigável"
 
-#: REST/methods/services_usage.py:125 REST/methods/user_services.py:136
+#: REST/methods/services_usage.py:125 REST/methods/user_services.py:133
 msgid "Src Ip"
 msgstr "src Ip"
 
-#: REST/methods/services_usage.py:126 REST/methods/user_services.py:135
+#: REST/methods/services_usage.py:126 REST/methods/user_services.py:132
 msgid "Src Host"
 msgstr "Src Host"
 
-#: REST/methods/services_usage.py:148 REST/methods/user_services.py:165
+#: REST/methods/services_usage.py:148 REST/methods/user_services.py:162
 msgid "Item already being removed"
 msgstr "Item já está sendo removido"
 
-#: REST/methods/services_usage.py:150 REST/methods/user_services.py:167
+#: REST/methods/services_usage.py:150 REST/methods/user_services.py:164
 msgid "Item is not removable"
 msgstr "Item não é removível"
 
@@ -634,38 +633,38 @@ msgstr ""
 "este transporte. Senão, serão permitidos somente dispositivos compatíveis "
 "com valores selecionados"
 
-#: REST/methods/user_services.py:123
+#: REST/methods/user_services.py:120
 #: templates/uds/admin/tmpl/services_pool.html:31
 msgid "Assigned services"
 msgstr "Serviços atribuídos"
 
-#: REST/methods/user_services.py:127 REST/methods/user_services.py:195
+#: REST/methods/user_services.py:124 REST/methods/user_services.py:208
 msgid "Creation date"
 msgstr "Data de criação"
 
-#: REST/methods/user_services.py:128 REST/methods/user_services.py:196
-#: REST/methods/user_services.py:338 REST/methods/user_services.py:367
+#: REST/methods/user_services.py:125 REST/methods/user_services.py:209
+#: REST/methods/user_services.py:353 REST/methods/user_services.py:383
 msgid "Revision"
 msgstr "Revisão"
 
-#: REST/methods/user_services.py:133
+#: REST/methods/user_services.py:130
 msgid "Status date"
 msgstr "Data de estado"
 
-#: REST/methods/user_services.py:134 templates/uds/admin/tmpl/user-info.html:65
+#: REST/methods/user_services.py:131 templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr "Em uso"
 
-#: REST/methods/user_services.py:138 REST/methods/user_services.py:202
+#: REST/methods/user_services.py:135 REST/methods/user_services.py:215
 msgid "Actor version"
 msgstr "Versão do ator"
 
-#: REST/methods/user_services.py:191
+#: REST/methods/user_services.py:204
 msgid "Cached services"
 msgstr "Serviços em cache"
 
-#: REST/methods/user_services.py:200 REST/methods/user_services.py:237
-#: REST/methods/user_services.py:340
+#: REST/methods/user_services.py:213 REST/methods/user_services.py:251
+#: REST/methods/user_services.py:355
 #: templates/uds/admin/tmpl/group-info.html:18
 #: templates/uds/admin/tmpl/group-info.html:45
 #: templates/uds/admin/tmpl/group.html:54
@@ -675,41 +674,41 @@ msgstr "Serviços em cache"
 msgid "State"
 msgstr "Estado"
 
-#: REST/methods/user_services.py:201
+#: REST/methods/user_services.py:214
 msgid "Cache level"
 msgstr "Nível de cache"
 
-#: REST/methods/user_services.py:230
+#: REST/methods/user_services.py:244
 msgid "Assigned groups"
 msgstr "Grupos atribuídos"
 
-#: REST/methods/user_services.py:236 templates/uds/admin/tmpl/group.html:46
+#: REST/methods/user_services.py:250 templates/uds/admin/tmpl/group.html:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Comentários"
 
-#: REST/methods/user_services.py:265
+#: REST/methods/user_services.py:280
 msgid "Assigned transports"
 msgstr "Transportes atribuídos"
 
-#: REST/methods/user_services.py:334
+#: REST/methods/user_services.py:349
 #: templates/uds/admin/tmpl/services_pool.html:35
 msgid "Publications"
 msgstr "Publicações"
 
-#: REST/methods/user_services.py:339 REST/methods/user_services.py:368
+#: REST/methods/user_services.py:354 REST/methods/user_services.py:384
 msgid "Publish date"
 msgstr "Data de publicação"
 
-#: REST/methods/user_services.py:341 templates/uds/admin/tmpl/publish.html:5
+#: REST/methods/user_services.py:356 templates/uds/admin/tmpl/publish.html:5
 msgid "Reason"
 msgstr "Razão"
 
-#: REST/methods/user_services.py:363
+#: REST/methods/user_services.py:379
 msgid "Changelog"
 msgstr "Changelog"
 
-#: REST/methods/user_services.py:369
+#: REST/methods/user_services.py:385
 #: templates/uds/admin/tmpl/group-info.html:87
 msgid "Comment"
 msgstr "Comentário"
@@ -731,7 +730,7 @@ msgstr "Usuários atuais"
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
-#: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:105
+#: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:107
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
@@ -862,7 +861,7 @@ msgstr "Lista de usuários por {}"
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
-#: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:98
+#: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:99
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:27
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:98
@@ -876,7 +875,7 @@ msgstr "Active Directory Server IP ou nome do host"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 #: auths/EDirectory_enterprise/Authenticator.py:64
 #: auths/RegexLdap/Authenticator.py:59 services/OpenNebula/Provider.py:100
-#: services/OpenStack/Provider.py:100
+#: services/OpenStack/Provider.py:102
 msgid "Use SSL"
 msgstr "Uso SSL"
 
@@ -893,12 +892,13 @@ msgid "Compatibility of AD connection (Usually windows 2000 and later)"
 msgstr "Compatibilidade de conexão AD (geralmente windows 2000 e posterior)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
-#: auths/AzureAD_enterprise/AzureAD.py:83
+#: auths/AzureAD_enterprise/AzureAD.py:87
 #: auths/EDirectory_enterprise/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:60 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
 #: reports/stats/usage_summary_pool.py:73
 #: reports/stats/usage_summary_pool.py:207
+#: templates/uds/admin/tmpl/pool_edit_assigned.html:17
 msgid "User"
 msgstr "Usuário"
 
@@ -921,7 +921,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:86
 #: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
-#: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:106
+#: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:108
 #: services/Sample/SampleService.py:131
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
@@ -950,7 +950,7 @@ msgstr "Senha do usuário ldap"
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
-#: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:111
+#: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:113
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout"
@@ -969,8 +969,8 @@ msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
-"Se não está vazio, substituirá pesquisa AD base com esse valor (formato: dc =..., "
-"DC =...)"
+"Se não está vazio, substituirá pesquisa AD base com esse valor (formato: dc "
+"=..., DC =...)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
@@ -980,113 +980,114 @@ msgstr "Autenticador do Active Directory"
 msgid "Authenticate against Active Directory"
 msgstr "Autenticar no Active Directory"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:75
-#: auths/ActiveDirectory_enterprise/Authenticator.py:474
+#: auths/ActiveDirectory_enterprise/Authenticator.py:76
+#: auths/ActiveDirectory_enterprise/Authenticator.py:481
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Deve especificar o nome de usuário na forma USERNAME@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:185
+#: auths/ActiveDirectory_enterprise/Authenticator.py:192
 msgid "Active directory connection error: "
 msgstr "Erro de conexão do Active directory: "
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:371
-#: auths/ActiveDirectory_enterprise/Authenticator.py:419
-#: auths/AzureAD_enterprise/AzureAD.py:214
+#: auths/ActiveDirectory_enterprise/Authenticator.py:378
+#: auths/ActiveDirectory_enterprise/Authenticator.py:426
+#: auths/AzureAD_enterprise/AzureAD.py:218
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
 #: auths/RegexLdap/Authenticator.py:366 auths/RegexLdap/Authenticator.py:407
 msgid "Username not found"
 msgstr "Nome de usuário não encontrado"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:404
+#: auths/ActiveDirectory_enterprise/Authenticator.py:411
 msgid "Group not found"
 msgstr "Grupo não encontrado"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:439
-#: auths/ActiveDirectory_enterprise/Authenticator.py:458
+#: auths/ActiveDirectory_enterprise/Authenticator.py:446
+#: auths/ActiveDirectory_enterprise/Authenticator.py:465
 #: auths/EDirectory_enterprise/Authenticator.py:305
 #: auths/RegexLdap/Authenticator.py:429
 msgid "Too many results, be more specific"
 msgstr "Muitos resultados, seja mais específico"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:483
+#: auths/ActiveDirectory_enterprise/Authenticator.py:490
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Domínio parece ser incorreta, por favor verifique-"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:488
+#: auths/ActiveDirectory_enterprise/Authenticator.py:495
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "Servidor não parece um Active Directory (não tem objetos de usuário)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:496
+#: auths/ActiveDirectory_enterprise/Authenticator.py:503
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "Servidor não parece um Active Directory (não tem objetos de grupo)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:501
+#: auths/ActiveDirectory_enterprise/Authenticator.py:508
 #: auths/EDirectory_enterprise/Authenticator.py:360
 #: auths/RegexLdap/Authenticator.py:488
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "Conexão params parecer corretas, teste foi com êxito executado"
 
-#: auths/AzureAD_enterprise/AzureAD.py:68
-#| msgid "SAML Authenticator"
+#: auths/AzureAD_enterprise/AzureAD.py:72
 msgid "Azure AD Authenticator"
 msgstr "Autenticador de AD azul"
 
-#: auths/AzureAD_enterprise/AzureAD.py:70
-#| msgid "Active Directory Authenticator"
+#: auths/AzureAD_enterprise/AzureAD.py:74
 msgid "Azure Active Directory Authenticator"
 msgstr "Autenticador de azul do Active Directory"
 
-#: auths/AzureAD_enterprise/AzureAD.py:86
+#: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Tenant ID"
 msgstr "ID do inquilino"
 
-#: auths/AzureAD_enterprise/AzureAD.py:86
+#: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "Obtidos de ID de diretório do Active Directory azul - Propriedades-"
 
-#: auths/AzureAD_enterprise/AzureAD.py:87
+#: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Client ID"
 msgstr "ID do cliente"
 
-#: auths/AzureAD_enterprise/AzureAD.py:87
+#: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr "Obtidos de App criado no Azure para UDS Enterprise"
 
-#: auths/AzureAD_enterprise/AzureAD.py:88
+#: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Client Secret"
 msgstr "Segredo de cliente"
 
-#: auths/AzureAD_enterprise/AzureAD.py:88
+#: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr "Obtidos de App criado no Azure para UDS Enteprise - chaves"
 
-#: auths/AzureAD_enterprise/AzureAD.py:94
-msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
-msgstr "Url de retorno de chamada (preenchido por UDS, consertar isso somente se for necessário!!!!)"
+#: auths/AzureAD_enterprise/AzureAD.py:96
+msgid "Callback"
+msgstr "Retorno de chamada"
 
-#: auths/AzureAD_enterprise/AzureAD.py:226
-#: auths/AzureAD_enterprise/AzureAD.py:249
-#: auths/AzureAD_enterprise/AzureAD.py:261
-#| msgid "Authenticator not found"
+#: auths/AzureAD_enterprise/AzureAD.py:98
+msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
+msgstr ""
+"Url de retorno de chamada (preenchido por UDS, consertar isso somente se for "
+"necessário!!!!)"
+
+#: auths/AzureAD_enterprise/AzureAD.py:230
+#: auths/AzureAD_enterprise/AzureAD.py:253
+#: auths/AzureAD_enterprise/AzureAD.py:265
 msgid "Authenticator exception:"
 msgstr "Exceção do autenticador:"
 
-#: auths/AzureAD_enterprise/AzureAD.py:291
-#| msgid "Ldap connection error: "
+#: auths/AzureAD_enterprise/AzureAD.py:301
 msgid "Connection error: "
 msgstr "Erro de Conexão: "
 
-#: auths/AzureAD_enterprise/AzureAD.py:292
-#| msgid "Connection params seem correct, test was succesfully executed"
+#: auths/AzureAD_enterprise/AzureAD.py:302
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "Conexão params parece correta, teste foi com êxito executado"
 
@@ -1100,7 +1101,7 @@ msgstr "EDirectory Server IP ou nome do host"
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
-#: services/OpenStack/Provider.py:99
+#: services/OpenStack/Provider.py:100
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:28
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Port"
@@ -1576,11 +1577,11 @@ msgstr "Detectar o plugin"
 msgid "Bypass plugin detection"
 msgstr "Deteção de plugin de desvio"
 
-#: core/managers/UserServiceManager.py:218
+#: core/managers/UserServiceManager.py:224
 msgid "Can't remove a non active element"
 msgstr "Não é possível remover um elemento não-ativo"
 
-#: core/managers/UserServiceManager.py:231
+#: core/managers/UserServiceManager.py:237
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr "Não pode remover nem cancelar {0} causa que seus Estados não permitem"
@@ -2033,7 +2034,7 @@ msgstr ""
 "Gerente de sistema operacional para controlar máquinas windows com domínio."
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
-#: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:77
+#: services/OpenStack/Provider.py:106 transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 #: transports/RDP/BaseRDPTransport.py:64
@@ -2218,6 +2219,7 @@ msgstr "Nome real"
 
 #: reports/lists/users.py:111 templates/uds/admin/tmpl/permissions_add.html:5
 #: templates/uds/admin/tmpl/pool_add_group.html:5
+#: templates/uds/admin/tmpl/pool_edit_assigned.html:5
 #: templates/uds/html5/login.html:79 templates/uds/semantic/login.html:99
 #: web/forms/LoginForm.py:65
 msgid "Authenticator"
@@ -2441,52 +2443,43 @@ msgid "Generates a report with the summary of a pool usage"
 msgstr "Gera um relatório com o resumo de um uso de piscina"
 
 #: services/Azure_enterprise/AzureCloneService.py:29
-#| msgid "Parent Service"
 msgid "Azure Clone Service"
 msgstr "Serviço de Clone azul"
 
 #: services/Azure_enterprise/AzureCloneService.py:31
-#| msgid "This service provides access to vApp based VDI"
 msgid "This service provides access to Azure VMs based VDI"
 msgstr "Este serviço oferece acesso ao Azure VMs com base em VDI"
 
 #: services/Azure_enterprise/AzureCloneService.py:37
-#| msgid "Number of desired vApps to keep running waiting for an user"
 msgid "Number of desired VMs to keep running waiting for an user"
-msgstr "Número de VMs desejados para continuar funcionando à espera de um usuário"
+msgstr ""
+"Número de VMs desejados para continuar funcionando à espera de um usuário"
 
 #: services/Azure_enterprise/AzureCloneService.py:39
-#| msgid "Number of desired vApps to keep suspended waiting for use"
 msgid "Number of desired VMs to keep suspended waiting for use"
 msgstr "Número de VMs desejados manter suspensa esperando para uso"
 
 #: services/Azure_enterprise/AzureCloneService.py:53
-#| msgid "Resource Pool"
 msgid "Resource Group"
 msgstr "Grupo de recursos"
 
 #: services/Azure_enterprise/AzureCloneService.py:54
-#| msgid "Base machine for this service"
 msgid "Resource group container of this VDI service"
 msgstr "Recipiente de grupo recurso deste serviço de VDI"
 
 #: services/Azure_enterprise/AzureCloneService.py:65
-#| msgid "Virtual Datacenter"
 msgid "Virtual Machine"
 msgstr "Máquina virtual"
 
 #: services/Azure_enterprise/AzureCloneService.py:66
-#| msgid "Base Machine"
-msgid "Base virtual machine"
-msgstr "Base de máquina virtual"
+msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
+msgstr "Base máquina virtual. (VMs começando com UDS serão ocultadas)"
 
 #: services/Azure_enterprise/AzureCloneService.py:78
-#| msgid "Cache size"
 msgid "Machine size"
 msgstr "Tamanho da máquina"
 
 #: services/Azure_enterprise/AzureCloneService.py:79
-#| msgid "Memory for machines deployed from this service"
 msgid "Size for machines created from this service."
 msgstr "Tamanho para máquinas criadas a partir deste serviço."
 
@@ -2543,7 +2536,6 @@ msgid "Network"
 msgstr "Rede"
 
 #: services/Azure_enterprise/AzureCloneService.py:91
-#| msgid "Network on which the machine will be deployed"
 msgid "Network where the clones will be attached"
 msgstr "Rede onde os clones serão anexados"
 
@@ -2556,12 +2548,10 @@ msgid "Subnet where the clones will be attached"
 msgstr "Sub-rede onde os clones serão anexados"
 
 #: services/Azure_enterprise/AzureCloneService.py:113
-#| msgid "Security Groups"
 msgid "Security Group"
 msgstr "Grupo de segurança"
 
 #: services/Azure_enterprise/AzureCloneService.py:114
-#| msgid "Fields from where to extract the real name"
 msgid "Security group where to attach the virtual machine"
 msgstr "Grupo de segurança onde conectar a máquina virtual"
 
@@ -2570,7 +2560,6 @@ msgid "Caching policy"
 msgstr "Política de cache"
 
 #: services/Azure_enterprise/AzureCloneService.py:123
-#| msgid "Disk Cache"
 msgid "Disk Caching policy"
 msgstr "Diretiva de cache de disco"
 
@@ -2595,7 +2584,6 @@ msgstr ""
 "tamanho de máquina e máquina suporta esta opção antes de ativar."
 
 #: services/Azure_enterprise/AzureCloneService.py:156
-#| msgid "vApp template for the service"
 msgid "You must select a network for the service"
 msgstr "Você deve selecionar uma rede para o serviço"
 
@@ -2604,7 +2592,6 @@ msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
 msgstr "{} ({}, núcleos de {}, {: .2f} GiB, discos de dados máximo {})"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
-#| msgid "Description"
 msgid "Subscription ID"
 msgstr "ID de assinatura"
 
@@ -2616,7 +2603,7 @@ msgstr "Obtidos de assinaturas"
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:110
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:84
@@ -2628,7 +2615,7 @@ msgstr "Simultaneidade de criação"
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:110
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Xen/XenProvider.py:102
@@ -2639,7 +2626,7 @@ msgstr "Número máximo de simultaneamente criar VMs"
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:111
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Vmware_enterprise/ServiceProviderVC.py:85
@@ -2651,7 +2638,7 @@ msgstr "Simultaneidade de remoção"
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:111
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Xen/XenProvider.py:103
@@ -2664,12 +2651,10 @@ msgid "Timeout in seconds of connection to vCloud"
 msgstr "Tempo limite em segundos de conexão para vCloud"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:48
-#| msgid "RDS Platform Provider"
 msgid "Azure Platform Provider"
 msgstr "Provedor de Platform Azure"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:50
-#| msgid "Provides connection to vCloud Director platform"
 msgid "Provides connection to Azure Platform"
 msgstr "Fornece conexão para plataforma Azure"
 
@@ -2679,7 +2664,6 @@ msgid "Connection parameters seems correct"
 msgstr "Parâmetros de Conexão parece correto"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:231
-#| msgid "VmwareVC Provider: "
 msgid "Azure Provider: "
 msgstr "Provedor de azul: "
 
@@ -3234,7 +3218,7 @@ msgstr "OpenNebula Host"
 msgid "OpenNebula Port (default is 2633 for non ssl connection)"
 msgstr "OpenNebula porta (o padrão é 2633 para conexão não ssl)"
 
-#: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
+#: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:102
 msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
@@ -3319,55 +3303,63 @@ msgstr "Grupos de segurança"
 msgid "Service security groups"
 msgstr "Grupos de segurança do serviço"
 
-#: services/OpenStack/Provider.py:79
+#: services/OpenStack/Provider.py:80
 msgid "OpenStack Platform Provider"
 msgstr "Provedor de plataforma OpenStack"
 
-#: services/OpenStack/Provider.py:83
+#: services/OpenStack/Provider.py:84
 msgid "OpenStack platform service provider"
 msgstr "Provedor de serviços de plataforma OpenStack"
 
-#: services/OpenStack/Provider.py:98
+#: services/OpenStack/Provider.py:99
 msgid "OpenStack Host"
 msgstr "OpenStack Host"
 
-#: services/OpenStack/Provider.py:99
+#: services/OpenStack/Provider.py:100
 msgid "OpenStack Port"
 msgstr "Porto OpenStack"
 
-#: services/OpenStack/Provider.py:102
+#: services/OpenStack/Provider.py:101
+msgid "Newer Openstack"
+msgstr "Mais recente Openstack"
+
+#: services/OpenStack/Provider.py:101
+msgid "Check this if your openstack is newer than OCATA"
+msgstr "Verifique isso, se seu openstack é mais recente que OCATA"
+
+#: services/OpenStack/Provider.py:104
 msgid "Access interface"
 msgstr "Interface de acesso"
 
-#: services/OpenStack/Provider.py:102
+#: services/OpenStack/Provider.py:104
 msgid "Access interface to be used"
 msgstr "Interface de acesso a ser usado"
 
-#: services/OpenStack/Provider.py:104
+#: services/OpenStack/Provider.py:106
 msgid "Domain name (default is Default)"
 msgstr "Nome de domínio (o padrão é padrão)"
 
-#: services/OpenStack/Provider.py:105
+#: services/OpenStack/Provider.py:107
 msgid "User with valid privileges on OpenStack"
 msgstr "Usuário com privilégios válidos na OpenStack"
 
-#: services/OpenStack/Provider.py:106
+#: services/OpenStack/Provider.py:108
 msgid "Password of the user of OpenStack"
 msgstr "Senha do usuário do OpenStack"
 
-#: services/OpenStack/Provider.py:111
+#: services/OpenStack/Provider.py:113
 msgid "Timeout in seconds of connection to OpenStack"
 msgstr "Tempo limite em segundos de conexão para OpenStack"
 
-#: services/OpenStack/Provider.py:155
+#: services/OpenStack/Provider.py:157
 msgid "OpenStack test connection passed"
 msgstr "Conexão de teste OpenStack passado"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:553
+#: services/OpenStack/openStack/UDSOpenStackClient.py:556
 msgid "Authentication error"
 msgstr "Erro de autenticação"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:555
+#: services/OpenStack/openStack/UDSOpenStackClient.py:561
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3954,12 +3946,14 @@ msgstr ""
 "Comprimento da parte numérica para os nomes desta máquinas (beetwen 3 e 6"
 
 #: services/Xen/XenProvider.py:79
-msgid "Xenserver Platform Provider"
-msgstr "Provedor de plataforma XenServer"
+#| msgid "Xenserver Platform Provider"
+msgid "Xenserver/XCP-NG Platforms Provider"
+msgstr "Provedor de plataformas XenServer/XCP-NG"
 
 #: services/Xen/XenProvider.py:83
-msgid "XenServer platform service provider"
-msgstr "Provedor de serviços de plataforma XenServer"
+#| msgid "XenServer platform service provider"
+msgid "XenServer and XCP-NG platforms service provider"
+msgstr "Prestadora de serviços de plataformas XenServer e XCP-NG"
 
 #: services/Xen/XenProvider.py:98
 msgid "XenServer Server IP or Hostname"
@@ -4452,12 +4446,12 @@ msgstr "Você pode acessar o código-fonte aberto de UDS em"
 msgid "UDS has been developed using these components:"
 msgstr "UDS foi desenvolvido usando estes componentes:"
 
-#: templates/uds/html5/about.html:40
+#: templates/uds/html5/about.html:38
 msgid "If you find that we missed any component, please let us know"
 msgstr ""
 "Se você achar que perdemos qualquer componente, por favor deixe-nos saber"
 
-#: templates/uds/html5/about.html:41
+#: templates/uds/html5/about.html:39
 #: templates/uds/html5/service_not_ready.html:21
 #: templates/uds/semantic/about.html:42
 #: templates/uds/semantic/service_not_ready.html:21
@@ -5413,16 +5407,13 @@ msgid "If checked, fonts smoothing will be allowed"
 msgstr "Se marcada, suavização de fontes serão permitidos"
 
 #: transports/RDP/BaseRDPTransport.py:114
-#| msgid "Connection"
 msgid "Connection Bar"
 msgstr "Barra de Conexão"
 
 #: transports/RDP/BaseRDPTransport.py:114
-#| msgid ""
-#| "If checked, all client monitors will be used for displaying (only works "
-#| "on windows clients)"
 msgid "If checked, connection bar will be shown (only on Windows clients)"
-msgstr "Se marcada, barra de conexão será mostrada (somente clientes de Windows)"
+msgstr ""
+"Se marcada, barra de conexão será mostrada (somente clientes de Windows)"
 
 #: transports/RDP/BaseRDPTransport.py:116
 #: transports/RDS_enterprise/BaseRDSTransport.py:99

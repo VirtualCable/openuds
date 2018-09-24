@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-10 11:05+0200\n"
+"POT-Creation-Date: 2018-09-24 11:14+0200\n"
 "PO-Revision-Date: 2018-01-26 09:30+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -711,7 +711,7 @@ msgid "Remove Cache element"
 msgstr "Rimuovere l'elemento della Cache"
 
 #: static/tmp_js/gui-d-servicespools.js:297
-#: static/tmp_js/gui-d-servicespools.js:427
+#: static/tmp_js/gui-d-servicespools.js:480
 msgid "Deletion error"
 msgstr "Errore di omissione"
 
@@ -723,44 +723,54 @@ msgstr "Aggiungi gruppo"
 msgid "You must provide authenticator and group"
 msgstr "È necessario fornire autenticatore e gruppo"
 
-#: static/tmp_js/gui-d-servicespools.js:427
+#: static/tmp_js/gui-d-servicespools.js:434
+#| msgid "Edit services provider"
+msgid "Edit Assigned Service ownership"
+msgstr "Modificare proprietà di servizio assegnato"
+
+#: static/tmp_js/gui-d-servicespools.js:462
+#| msgid "You must provide authenticator and"
+msgid "You must provide authenticator and user"
+msgstr "È necessario fornire authenticator e utente"
+
+#: static/tmp_js/gui-d-servicespools.js:480
 msgid "Remove Assigned service"
 msgstr "Rimuovere il servizio assegnato"
 
-#: static/tmp_js/gui-d-servicespools.js:490
+#: static/tmp_js/gui-d-servicespools.js:543
 msgid "Restrained"
 msgstr "Trattenuto"
 
-#: static/tmp_js/gui-d-servicespools.js:499
+#: static/tmp_js/gui-d-servicespools.js:552
 msgid "New service pool"
 msgstr "Nuovo servizio piscina"
 
-#: static/tmp_js/gui-d-servicespools.js:499
+#: static/tmp_js/gui-d-servicespools.js:552
 msgid "creation error"
 msgstr "errore di creazione"
 
-#: static/tmp_js/gui-d-servicespools.js:509
+#: static/tmp_js/gui-d-servicespools.js:562
 msgid "Publish on creation"
 msgstr "Pubblicare sulla creazione"
 
-#: static/tmp_js/gui-d-servicespools.js:510
+#: static/tmp_js/gui-d-servicespools.js:563
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr "Se selezionata, avvia la pubblicazione inmediatly dopo la creazione"
 
-#: static/tmp_js/gui-d-servicespools.js:522 static/tmp_js/gui.js:53
+#: static/tmp_js/gui-d-servicespools.js:575 static/tmp_js/gui.js:53
 msgid "Edit"
 msgstr "Modifica"
 
-#: static/tmp_js/gui-d-servicespools.js:522
+#: static/tmp_js/gui-d-servicespools.js:575
 msgid "saving error"
 msgstr "errore di risparmio"
 
-#: static/tmp_js/gui-d-servicespools.js:525 static/tmp_js/gui-methods.js:154
+#: static/tmp_js/gui-d-servicespools.js:578 static/tmp_js/gui-methods.js:154
 #: static/tmp_js/gui.js:57
 msgid "Delete"
 msgstr "Eliminare"
 
-#: static/tmp_js/gui-d-servicespools.js:525
+#: static/tmp_js/gui-d-servicespools.js:578
 msgid "deletion error"
 msgstr "errore di omissione"
 

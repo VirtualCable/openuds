@@ -401,10 +401,12 @@ gui.servicesPools.link = (event) ->
           rowSelect: "multi"
           buttons: (if info.must_assign_manually then [
             "new"
+            "edit"
             "delete"
             "xls"
           ] else [
             "delete"
+            "edit"
             "xls"
           ])
 
@@ -434,6 +436,60 @@ gui.servicesPools.link = (event) ->
             )
             return
 
+          onEdit: (item, event, table, refreshFnc) ->
+            gui.doLog(item)
+            api.templates.get "pool_edit_assigned", (tmpl) ->
+              api.authenticators.overview (data) ->
+                # Sorts groups, expression means that "if a > b returns 1, if b > a returns -1, else returns 0"
+                api.authenticators.detail(item.owner_info.auth_id, "users").overview (users) ->
+                  modalId = gui.launchModal(gettext("Edit Assigned Service ownership"), api.templates.evaluate(tmpl,
+                    auths: data,
+                    auth_id: item.owner_info.auth_id,
+                    users: users,
+                    user_id: item.owner_info.user_id,
+                  ))
+                  $(modalId + " #id_auth_select").on "change", (event) ->
+                    auth = $(modalId + " #id_auth_select").val()
+                    api.authenticators.detail(auth, "users").overview (data) ->
+                      $select = $(modalId + " #id_user_select")
+                      $select.empty()
+                      $.each data, (undefined_, value) ->
+                        console.log('Val: ', value)
+                        $select.append "<option value=\"" + value.id + "\">" + value.name + "</option>"
+                        return
+
+
+                      # Refresh selectpicker if item is such
+                      $select.selectpicker "refresh"  if $select.hasClass("selectpicker")
+                      return
+
+                    return
+
+                  $(modalId + " .button-accept").on "click", (event) ->
+                    auth = $(modalId + " #id_auth_select").val()
+                    user = $(modalId + " #id_user_select").val()
+                    if auth is -1 or user is -1
+                      gui.notify gettext("You must provide authenticator and user"), "danger"
+                    else # Save & close modal
+                      assignedServices.rest.save
+                        id: item.id,
+                        auth_id: auth,
+                        user_id: user
+                      , (data) ->
+                        $(modalId).modal "hide"
+                        refreshFnc()
+                        return
+
+                    return
+
+
+                  # Makes form "beautyfull" :-)
+                  gui.tools.applyCustoms modalId
+                  return
+
+                return
+
+              return
 
           onDelete: gui.methods.del(assignedServices, gettext("Remove Assigned service"), gettext("Deletion error"))
         )

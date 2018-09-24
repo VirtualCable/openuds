@@ -167,8 +167,8 @@
                 $('.side-nav > ul > li.dropdown').removeClass('open');
                 showHideTooltip();
               },
-              timeout: 50, // 200,
-              interval: 60 // 500
+              timeout: 50,
+              interval: 50
             });
 
             // set default error function
@@ -203,6 +203,8 @@
         {% js_template 'pool_access_default' %}
         {% js_template 'pool_add_access' %}
         {% js_template 'pool_add_action' %}
+        {% js_template 'pool_add_group' %}
+        {% js_template 'pool_edit_assigned' %}
         {% js_template 'configuration' %}
         {% js_template 'gallery' %}
         {% js_template 'permissions' %}

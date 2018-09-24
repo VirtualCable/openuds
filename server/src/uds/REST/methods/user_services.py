@@ -45,7 +45,6 @@ from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 from uds.core.util import permissions
-import six
 
 import logging
 
@@ -167,6 +166,22 @@ class AssignedService(DetailHandler):
             self.invalidItemException(_('Item is not removable'))
 
         return self.success()
+
+    # Only owner is allowed to change right now
+    def saveItem(self, parent, item):
+        fields = self.readFieldsFromParams(['auth_id', 'user_id'])
+        logger.debug('Saving userService {} / {} ({})'.format(parent, item, fields))
+        service = parent.userServices.get(uuid=processUuid(item))
+        user = User.objects.get(uuid=processUuid(fields['user_id']))
+
+        # If there is another service that has this same owner, raise an exception
+        if parent.userServices.filter(user=user).exclude(uuid=service.uuid).count() > 0:
+            raise self.invalidResponseException('There is already another user service assigned to {}'.format(user.pretty_name))
+
+        service.user = user
+        service.save()
+
+        return service
 
 
 class CachedService(AssignedService):
@@ -316,7 +331,7 @@ class Publications(DetailHandler):
             ds = DeployedServicePublication.objects.get(uuid=processUuid(uuid))
             ds.cancel()
         except Exception as e:
-            raise ResponseError(six.text_type(e))
+            raise ResponseError("{}".format(e))
 
         return self.success()
 

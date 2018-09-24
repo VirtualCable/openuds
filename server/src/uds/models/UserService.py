@@ -57,7 +57,7 @@ from uds.core.services import UserDeployment
 
 import logging
 
-__updated__ = '2018-09-17'
+__updated__ = '2018-09-19'
 
 logger = logging.getLogger(__name__)
 
