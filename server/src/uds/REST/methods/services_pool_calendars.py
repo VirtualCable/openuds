@@ -37,7 +37,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-
 from uds.models import CalendarAccess, CalendarAction, Calendar
 from uds.models.CalendarAction import CALENDAR_ACTION_DICT
 from uds.core.util.State import State
@@ -60,6 +59,7 @@ class AccessCalendars(DetailHandler):
     '''
     Processes the transports detail requests of a Service Pool
     '''
+
     @staticmethod
     def as_dict(item):
         return {
@@ -79,7 +79,6 @@ class AccessCalendars(DetailHandler):
                 return AccessCalendars.as_dict(i)
         except Exception:
             self.invalidItemException()
-
 
     def getTitle(self, parent):
         return _('Access restrictions by calendar')
@@ -109,10 +108,19 @@ class AccessCalendars(DetailHandler):
         else:
             CalendarAccess.objects.create(calendar=calendar, service_pool=parent, access=access, priority=priority)
 
+        log.doLog(parent, log.INFO, "Added access calendar {}/{} by {}".format(calendar.name, access, self._user.pretty_name), log.ADMIN)
+
         return self.success()
 
     def deleteItem(self, parent, item):
-        CalendarAccess.objects.get(uuid=processUuid(self._args[0])).delete()
+        calendarAccess = CalendarAccess.objects.get(uuid=processUuid(self._args[0]))
+        logStr = "Removed access calendar {} by {}".format(calendarAccess.calendar.name, self._user.pretty_name)
+
+        calendarAccess.delete()
+
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+
+        return self.success()
 
 
 class ActionsCalendars(DetailHandler):
@@ -146,7 +154,6 @@ class ActionsCalendars(DetailHandler):
         except Exception:
             self.invalidItemException()
 
-
     def getTitle(self, parent):
         return _('Scheduled actions')
 
@@ -171,7 +178,11 @@ class ActionsCalendars(DetailHandler):
         atStart = self._params['atStart'] not in ('false', False, '0', 0)
         params = json.dumps(self._params['params'])
 
-        logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, eventsOffset, atStart, params))
+        # logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, eventsOffset, atStart, params))
+        logStr = "Added scheduled action \"{},{},{},{},{}\" by {}".format(
+            calendar.name, action, eventsOffset,
+            atStart and 'Start' or 'End', params, self._user.pretty_name
+        )
 
         if uuid is not None:
             calAction = CalendarAction.objects.get(uuid=uuid)
@@ -185,16 +196,36 @@ class ActionsCalendars(DetailHandler):
         else:
             CalendarAction.objects.create(calendar=calendar, service_pool=parent, action=action, at_start=atStart, events_offset=eventsOffset, params=params)
 
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+
         return self.success()
 
     def deleteItem(self, parent, item):
-        CalendarAction.objects.get(uuid=processUuid(self._args[0])).delete()
+        calendarAction = CalendarAction.objects.get(uuid=processUuid(self._args[0]))
+        logStr = "Removed scheduled action \"{},{},{},{},{}\" by {}".format(
+            calendarAction.calendar.name, calendarAction.action,
+            calendarAction.events_offset, calendarAction.at_start and 'Start' or 'End', calendarAction.params,
+            self._user.pretty_name
+        )
+
+        calendarAction.delete()
+
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+
+        return self.success()
 
     def execute(self, parent, item):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
-        logger.debug('Launching action')
         uuid = processUuid(item)
-        calAction = CalendarAction.objects.get(uuid=uuid)
-        calAction.execute()
+        calendarAction = CalendarAction.objects.get(uuid=uuid)
+        logStr = "Launched scheduled action \"{},{},{},{},{}\" by {}".format(
+            calendarAction.calendar.name, calendarAction.action,
+            calendarAction.events_offset, calendarAction.at_start and 'Start' or 'End', calendarAction.params,
+            self._user.pretty_name
+        )
+
+        calendarAction.execute()
+
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
         return self.success()

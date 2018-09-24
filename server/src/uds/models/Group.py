@@ -37,7 +37,6 @@ from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
-
 from uds.core.util.State import State
 from uds.core.util import log
 from .UUIDModel import UUIDModel
@@ -50,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-09-07'
+__updated__ = '2018-09-24'
 
 
 @python_2_unicode_compatible
@@ -76,6 +75,10 @@ class Group(UUIDModel):
         unique_together = (("manager", "name"),)
         ordering = ('name',)
         app_label = 'uds'
+
+    @property
+    def pretty_name(self):
+        return self.name + '@' + self.manager.name
 
     def getManager(self):
         '''
@@ -111,5 +114,6 @@ class Group(UUIDModel):
         log.clearLogs(toDelete)
 
         logger.debug('Deleted group {0}'.format(toDelete))
+
 
 signals.pre_delete.connect(Group.beforeDelete, sender=Group)

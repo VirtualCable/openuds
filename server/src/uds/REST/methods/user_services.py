@@ -153,7 +153,11 @@ class AssignedService(DetailHandler):
             logger.exception('deleteItem')
             self.invalidItemException()
 
-        logger.debug('Deleting assigned service')
+        if service.user:
+            logStr = 'Deleted assigned service {} to user {} by {}'.format(service.friendly_name, service.user.pretty_name, self._user.pretty_name)
+        else:
+            logStr = 'Deleted cached service {} by {}'.format(service.friendly_name, self._user.pretty_name)
+
         if service.state in (State.USABLE, State.REMOVING):
             service.remove()
         elif service.state == State.PREPARING:
@@ -163,14 +167,17 @@ class AssignedService(DetailHandler):
         else:
             self.invalidItemException(_('Item is not removable'))
 
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+
         return self.success()
 
     # Only owner is allowed to change right now
     def saveItem(self, parent, item):
         fields = self.readFieldsFromParams(['auth_id', 'user_id'])
-        logger.debug('Saving userService {} / {} ({})'.format(parent, item, fields))
         service = parent.userServices.get(uuid=processUuid(item))
         user = User.objects.get(uuid=processUuid(fields['user_id']))
+
+        logStr = 'Changing ownership of service from {} to {} by {}'.format(service.user.pretty_name, user.pretty_name, self._user.pretty_name)
 
         # If there is another service that has this same owner, raise an exception
         if parent.userServices.filter(user=user).exclude(uuid=service.uuid).count() > 0:
@@ -179,7 +186,10 @@ class AssignedService(DetailHandler):
         service.user = user
         service.save()
 
-        return service
+        # Log change
+        log.doLog(service, log.INFO, logStr, log.ADMIN)
+
+        return self.success()
 
 
 class CachedService(AssignedService):
@@ -255,11 +265,18 @@ class Groups(DetailHandler):
         return {'field': 'state', 'prefix': 'row-state-'}
 
     def saveItem(self, parent, item):
-        parent.assignedGroups.add(Group.objects.get(uuid=processUuid(self._params['id'])))
+        grp = Group.objects.get(uuid=processUuid(self._params['id']))
+        parent.assignedGroups.add(grp)
+        log.doLog(parent, log.INFO, "Added group {} by {}".format(grp.pretty_name, self._user.pretty_name), log.ADMIN)
+
         return self.success()
 
     def deleteItem(self, parent, item):
-        parent.assignedGroups.remove(Group.objects.get(uuid=processUuid(self._args[0])))
+        grp = Group.objects.get(uuid=processUuid(self._args[0]))
+        parent.assignedGroups.remove(grp)
+        log.doLog(parent, log.INFO, "Removed group {} by {}".format(grp.pretty_name, self._user.pretty_name), log.ADMIN)
+
+        return self.success()
 
 
 class Transports(DetailHandler):
@@ -288,11 +305,18 @@ class Transports(DetailHandler):
         ]
 
     def saveItem(self, parent, item):
-        parent.transports.add(Transport.objects.get(uuid=processUuid(self._params['id'])))
+        transport = Transport.objects.get(uuid=processUuid(self._params['id']))
+        parent.transports.add(transport)
+        log.doLog(parent, log.INFO, "Added transport {} by {}".format(transport.name, self._user.pretty_name), log.ADMIN)
+
         return self.success()
 
     def deleteItem(self, parent, item):
-        parent.transports.remove(Transport.objects.get(uuid=processUuid(self._args[0])))
+        transport = Transport.objects.get(uuid=processUuid(self._args[0]))
+        parent.transports.remove(transport)
+        log.doLog(parent, log.INFO, "Removed transport {} by {}".format(transport.name, self._user.pretty_name), log.ADMIN)
+
+        return self.success()
 
 
 class Publications(DetailHandler):
@@ -314,6 +338,9 @@ class Publications(DetailHandler):
 
         logger.debug('Custom "publish" invoked for {}'.format(parent))
         parent.publish(changeLog)  # Can raise exceptions that will be processed on response
+
+        log.doLog(parent, log.INFO, "Initated publication v{} by {}".format(parent.current_pub_revision, self._user.pretty_name), log.ADMIN)
+
         return self.success()
 
     def cancel(self, parent, uuid):
@@ -332,6 +359,8 @@ class Publications(DetailHandler):
             ds.cancel()
         except Exception as e:
             raise ResponseError(unicode(e))
+
+        log.doLog(parent, log.INFO, "Canceled publication v{} by {}".format(parent.current_pub_revision, self._user.pretty_name), log.ADMIN)
 
         return self.success()
 
