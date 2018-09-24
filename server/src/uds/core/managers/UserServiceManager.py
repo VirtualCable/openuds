@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2018-09-13'
+__updated__ = '2018-09-24'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -315,6 +315,7 @@ class UserServiceManager(object):
             inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
             # totalL1Assigned = inCacheL1 + inAssigned
             if inAssigned >= ds.max_srvs:  # cacheUpdater will drop necesary L1 machines, so it's not neccesary to check against inCacheL1
+                log.doLog(ds, log.WARN, 'Max number of services reached: {}'.format(ds.max_srvs), log.INTERNAL)
                 raise MaxServicesReachedError()
         # Can create new service, create it
         events.addEvent(ds, events.ET_CACHE_MISS, fld1=0)
