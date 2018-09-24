@@ -37,16 +37,13 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-
-from uds.models import Group, Transport, DeployedServicePublication
+from uds.models import Group, Transport, DeployedServicePublication, User
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 from uds.core.util import permissions
-
-
 
 import logging
 
@@ -168,6 +165,22 @@ class AssignedService(DetailHandler):
 
         return self.success()
 
+    # Only owner is allowed to change right now
+    def saveItem(self, parent, item):
+        fields = self.readFieldsFromParams(['auth_id', 'user_id'])
+        logger.debug('Saving userService {} / {} ({})'.format(parent, item, fields))
+        service = parent.userServices.get(uuid=processUuid(item))
+        user = User.objects.get(uuid=processUuid(fields['user_id']))
+
+        # If there is another service that has this same owner, raise an exception
+        if parent.userServices.filter(user=user).exclude(uuid=service.uuid).count() > 0:
+            raise self.invalidResponseException('There is already another user service assigned to {}'.format(user.pretty_name))
+
+        service.user = user
+        service.save()
+
+        return service
+
 
 class CachedService(AssignedService):
     '''
@@ -215,6 +228,7 @@ class Groups(DetailHandler):
     '''
     Processes the groups detail requests of a Service Pool
     '''
+
     def getItems(self, parent, item):
         return [{
             'id': i.uuid,
@@ -252,6 +266,7 @@ class Transports(DetailHandler):
     '''
     Processes the transports detail requests of a Service Pool
     '''
+
     def getItems(self, parent, item):
         return [{
             'id': i.uuid,
@@ -352,6 +367,7 @@ class Changelog(DetailHandler):
     '''
     Processes the transports detail requests of a Service Pool
     '''
+
     def getItems(self, parent, item):
         return [{
             'revision': i.revision,
