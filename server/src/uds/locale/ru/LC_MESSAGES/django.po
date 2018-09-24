@@ -3,13 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-#: auths/AzureAD_enterprise/AzureAD.py:92
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-10 11:05+0200\n"
-"PO-Revision-Date: 2018-06-06 13:28+0000\n"
+"POT-Creation-Date: 2018-09-24 11:14+0200\n"
+"PO-Revision-Date: 2018-09-10 09:10+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -51,7 +50,7 @@ msgstr "Идентификатор"
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:81 REST/methods/transports.py:57
-#: REST/methods/user_services.py:235 REST/methods/user_services.py:270
+#: REST/methods/user_services.py:249 REST/methods/user_services.py:285
 #: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
@@ -65,7 +64,7 @@ msgstr "Имя"
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
 #: REST/methods/providers.py:72 REST/methods/services.py:191
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
-#: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
+#: REST/methods/user_services.py:287 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
@@ -74,7 +73,7 @@ msgstr "Комментарий"
 
 #: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:269 REST/model.py:157
+#: REST/methods/user_services.py:284 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Приоритет"
@@ -245,7 +244,7 @@ msgstr "Доступные репорты"
 #: REST/methods/reports.py:57 REST/methods/users_groups.py:261
 #: REST/methods/users_groups.py:268
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
-#: auths/AzureAD_enterprise/AzureAD.py:84
+#: auths/AzureAD_enterprise/AzureAD.py:88
 #: auths/EDirectory_enterprise/Authenticator.py:81
 #: auths/RegexLdap/Authenticator.py:85 auths/SAML_enterprise/SAML.py:116
 #: templates/uds/admin/tmpl/pool_add_group.html:17
@@ -279,7 +278,7 @@ msgstr "Текущие сервисы"
 msgid "Service name"
 msgstr "Имя сервиса"
 
-#: REST/methods/services.py:192 REST/methods/user_services.py:271
+#: REST/methods/services.py:192 REST/methods/user_services.py:286
 msgid "Type"
 msgstr "Тип"
 
@@ -369,7 +368,7 @@ msgstr "Образ приваязанный с сервисом"
 msgid "Service Pools"
 msgstr "Сервис-пулы"
 
-#: REST/methods/services_pools.py:82 REST/methods/user_services.py:132
+#: REST/methods/services_pools.py:82 REST/methods/user_services.py:129
 msgid "status"
 msgstr "Статус"
 
@@ -532,8 +531,8 @@ msgstr "Базовый сервис больше не существует"
 msgid "This service requires an OS Manager"
 msgstr "Этот сервис требует наличия ОС менеджера"
 
-#: REST/methods/services_usage.py:92 REST/methods/user_services.py:80
-#: REST/methods/user_services.py:81
+#: REST/methods/services_usage.py:92 REST/methods/user_services.py:77
+#: REST/methods/user_services.py:78
 msgid "unknown"
 msgstr "неизвестно"
 
@@ -541,7 +540,7 @@ msgstr "неизвестно"
 msgid "Services Usage"
 msgstr "Использование сервисов"
 
-#: REST/methods/services_usage.py:119 REST/methods/user_services.py:137
+#: REST/methods/services_usage.py:119 REST/methods/user_services.py:134
 msgid "Owner"
 msgstr "Владелец"
 
@@ -559,30 +558,30 @@ msgstr "Сервис"
 msgid "Pool"
 msgstr "Пул"
 
-#: REST/methods/services_usage.py:123 REST/methods/user_services.py:130
-#: REST/methods/user_services.py:198 auths/IP/Authenticator.py:60
+#: REST/methods/services_usage.py:123 REST/methods/user_services.py:127
+#: REST/methods/user_services.py:211 auths/IP/Authenticator.py:60
 #: templates/uds/admin/tmpl/user-info.html:66
 msgid "IP"
 msgstr "IP"
 
-#: REST/methods/services_usage.py:124 REST/methods/user_services.py:131
-#: REST/methods/user_services.py:199
+#: REST/methods/services_usage.py:124 REST/methods/user_services.py:128
+#: REST/methods/user_services.py:212
 msgid "Friendly name"
 msgstr "Дружественное имя"
 
-#: REST/methods/services_usage.py:125 REST/methods/user_services.py:136
+#: REST/methods/services_usage.py:125 REST/methods/user_services.py:133
 msgid "Src Ip"
 msgstr "IP отправителя"
 
-#: REST/methods/services_usage.py:126 REST/methods/user_services.py:135
+#: REST/methods/services_usage.py:126 REST/methods/user_services.py:132
 msgid "Src Host"
 msgstr "Хост отправителя"
 
-#: REST/methods/services_usage.py:148 REST/methods/user_services.py:165
+#: REST/methods/services_usage.py:148 REST/methods/user_services.py:162
 msgid "Item already being removed"
 msgstr "Элемент уже удален"
 
-#: REST/methods/services_usage.py:150 REST/methods/user_services.py:167
+#: REST/methods/services_usage.py:150 REST/methods/user_services.py:164
 msgid "Item is not removable"
 msgstr "Элемент не удаляется"
 
@@ -631,38 +630,38 @@ msgstr ""
 "Если пусто, будет разрешено использовать любое устройство, совместимое с "
 "этим транспортом"
 
-#: REST/methods/user_services.py:123
+#: REST/methods/user_services.py:120
 #: templates/uds/admin/tmpl/services_pool.html:31
 msgid "Assigned services"
 msgstr "Привязанные сервисы"
 
-#: REST/methods/user_services.py:127 REST/methods/user_services.py:195
+#: REST/methods/user_services.py:124 REST/methods/user_services.py:208
 msgid "Creation date"
 msgstr "Создать дату"
 
-#: REST/methods/user_services.py:128 REST/methods/user_services.py:196
-#: REST/methods/user_services.py:338 REST/methods/user_services.py:367
+#: REST/methods/user_services.py:125 REST/methods/user_services.py:209
+#: REST/methods/user_services.py:353 REST/methods/user_services.py:383
 msgid "Revision"
 msgstr "Ревизия"
 
-#: REST/methods/user_services.py:133
+#: REST/methods/user_services.py:130
 msgid "Status date"
 msgstr "Статус даты"
 
-#: REST/methods/user_services.py:134 templates/uds/admin/tmpl/user-info.html:65
+#: REST/methods/user_services.py:131 templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr "В работе"
 
-#: REST/methods/user_services.py:138 REST/methods/user_services.py:202
+#: REST/methods/user_services.py:135 REST/methods/user_services.py:215
 msgid "Actor version"
 msgstr "Версия актора"
 
-#: REST/methods/user_services.py:191
+#: REST/methods/user_services.py:204
 msgid "Cached services"
 msgstr "Кэшированные сервисы"
 
-#: REST/methods/user_services.py:200 REST/methods/user_services.py:237
-#: REST/methods/user_services.py:340
+#: REST/methods/user_services.py:213 REST/methods/user_services.py:251
+#: REST/methods/user_services.py:355
 #: templates/uds/admin/tmpl/group-info.html:18
 #: templates/uds/admin/tmpl/group-info.html:45
 #: templates/uds/admin/tmpl/group.html:54
@@ -672,41 +671,41 @@ msgstr "Кэшированные сервисы"
 msgid "State"
 msgstr "Состояние"
 
-#: REST/methods/user_services.py:201
+#: REST/methods/user_services.py:214
 msgid "Cache level"
 msgstr "Уровень кэша"
 
-#: REST/methods/user_services.py:230
+#: REST/methods/user_services.py:244
 msgid "Assigned groups"
 msgstr "Привязанные группы"
 
-#: REST/methods/user_services.py:236 templates/uds/admin/tmpl/group.html:46
+#: REST/methods/user_services.py:250 templates/uds/admin/tmpl/group.html:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Комментарии"
 
-#: REST/methods/user_services.py:265
+#: REST/methods/user_services.py:280
 msgid "Assigned transports"
 msgstr "Приаязанные транспорты"
 
-#: REST/methods/user_services.py:334
+#: REST/methods/user_services.py:349
 #: templates/uds/admin/tmpl/services_pool.html:35
 msgid "Publications"
 msgstr "Публикации"
 
-#: REST/methods/user_services.py:339 REST/methods/user_services.py:368
+#: REST/methods/user_services.py:354 REST/methods/user_services.py:384
 msgid "Publish date"
 msgstr "Дата публикации"
 
-#: REST/methods/user_services.py:341 templates/uds/admin/tmpl/publish.html:5
+#: REST/methods/user_services.py:356 templates/uds/admin/tmpl/publish.html:5
 msgid "Reason"
 msgstr "Причина"
 
-#: REST/methods/user_services.py:363
+#: REST/methods/user_services.py:379
 msgid "Changelog"
 msgstr "Лог изменения"
 
-#: REST/methods/user_services.py:369
+#: REST/methods/user_services.py:385
 #: templates/uds/admin/tmpl/group-info.html:87
 msgid "Comment"
 msgstr "Комментарий"
@@ -728,7 +727,7 @@ msgstr "Текущие пользователи"
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
-#: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:105
+#: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:107
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
@@ -859,7 +858,7 @@ msgstr "Список пользователей для {}"
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
-#: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:98
+#: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:99
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:27
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:98
@@ -873,7 +872,7 @@ msgstr "Active Directory IP адрес или имя сервера"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 #: auths/EDirectory_enterprise/Authenticator.py:64
 #: auths/RegexLdap/Authenticator.py:59 services/OpenNebula/Provider.py:100
-#: services/OpenStack/Provider.py:100
+#: services/OpenStack/Provider.py:102
 msgid "Use SSL"
 msgstr "Использовать SSL"
 
@@ -891,12 +890,13 @@ msgid "Compatibility of AD connection (Usually windows 2000 and later)"
 msgstr "Совместимость AD подключения (обычно Windows 2000 и выше)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
-#: auths/AzureAD_enterprise/AzureAD.py:83
+#: auths/AzureAD_enterprise/AzureAD.py:87
 #: auths/EDirectory_enterprise/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:60 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
 #: reports/stats/usage_summary_pool.py:73
 #: reports/stats/usage_summary_pool.py:207
+#: templates/uds/admin/tmpl/pool_edit_assigned.html:17
 msgid "User"
 msgstr "Пользователь"
 
@@ -918,7 +918,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:86
 #: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
-#: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:106
+#: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:108
 #: services/Sample/SampleService.py:131
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
@@ -947,7 +947,7 @@ msgstr "Пароль LDAP пользователя"
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
-#: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:111
+#: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:113
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout"
@@ -975,124 +975,118 @@ msgstr "Active Directory аутентификатор"
 msgid "Authenticate against Active Directory"
 msgstr "Аутентификауция в Active Directory"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:75
-#: auths/ActiveDirectory_enterprise/Authenticator.py:474
+#: auths/ActiveDirectory_enterprise/Authenticator.py:76
+#: auths/ActiveDirectory_enterprise/Authenticator.py:481
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Нужно указать имя пользователя в формате USERNAME@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:185
+#: auths/ActiveDirectory_enterprise/Authenticator.py:192
 msgid "Active directory connection error: "
 msgstr "Ошибка подключения к Active directory"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:371
-#: auths/ActiveDirectory_enterprise/Authenticator.py:419
-#: auths/AzureAD_enterprise/AzureAD.py:214
+#: auths/ActiveDirectory_enterprise/Authenticator.py:378
+#: auths/ActiveDirectory_enterprise/Authenticator.py:426
+#: auths/AzureAD_enterprise/AzureAD.py:218
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
 #: auths/RegexLdap/Authenticator.py:366 auths/RegexLdap/Authenticator.py:407
 msgid "Username not found"
 msgstr "Имя пользователя не найдено"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:404
+#: auths/ActiveDirectory_enterprise/Authenticator.py:411
 msgid "Group not found"
 msgstr "Группа не найдена"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:439
-#: auths/ActiveDirectory_enterprise/Authenticator.py:458
+#: auths/ActiveDirectory_enterprise/Authenticator.py:446
+#: auths/ActiveDirectory_enterprise/Authenticator.py:465
 #: auths/EDirectory_enterprise/Authenticator.py:305
 #: auths/RegexLdap/Authenticator.py:429
 msgid "Too many results, be more specific"
 msgstr "Слишком много результатов, сделайте запрос более уникапльным"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:483
+#: auths/ActiveDirectory_enterprise/Authenticator.py:490
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Домен возможно некорректен, пожалуйста проверьте"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:488
+#: auths/ActiveDirectory_enterprise/Authenticator.py:495
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr ""
 "Сервер возможно не является членом Active Directory (у него нет "
 "пользовательских объектов)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:496
+#: auths/ActiveDirectory_enterprise/Authenticator.py:503
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr ""
 "Сервер возможно не является членом Active Directory (у него нет групповых "
 "объектов)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:501
+#: auths/ActiveDirectory_enterprise/Authenticator.py:508
 #: auths/EDirectory_enterprise/Authenticator.py:360
 #: auths/RegexLdap/Authenticator.py:488
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "Параметры подключения правильные, тест был успешно выполнен"
 
-#: auths/AzureAD_enterprise/AzureAD.py:68
-#, fuzzy
-#| msgid "SAML Authenticator"
+#: auths/AzureAD_enterprise/AzureAD.py:72
 msgid "Azure AD Authenticator"
-msgstr "SAML аутентификатор"
+msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:70
-#, fuzzy
-#| msgid "Active Directory Authenticator"
+#: auths/AzureAD_enterprise/AzureAD.py:74
 msgid "Azure Active Directory Authenticator"
-msgstr "Active Directory аутентификатор"
+msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:86
+#: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Tenant ID"
 msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:86
+#: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:87
+#: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Client ID"
 msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:87
+#: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:88
+#: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Client Secret"
 msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:88
+#: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:94
+#: auths/AzureAD_enterprise/AzureAD.py:96
+msgid "Callback"
+msgstr ""
+
+#: auths/AzureAD_enterprise/AzureAD.py:98
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:226
-#: auths/AzureAD_enterprise/AzureAD.py:249
-#: auths/AzureAD_enterprise/AzureAD.py:261
-#, fuzzy
-#| msgid "Authenticator not found"
+#: auths/AzureAD_enterprise/AzureAD.py:230
+#: auths/AzureAD_enterprise/AzureAD.py:253
+#: auths/AzureAD_enterprise/AzureAD.py:265
 msgid "Authenticator exception:"
-msgstr "Аутентификатор не найден"
+msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:291
-#, fuzzy
-#| msgid "Ldap connection error: "
+#: auths/AzureAD_enterprise/AzureAD.py:301
 msgid "Connection error: "
-msgstr "Ошибка подключения к LDAP"
+msgstr ""
 
-#: auths/AzureAD_enterprise/AzureAD.py:292
-#, fuzzy
-#| msgid "Connection params seem correct, test was succesfully executed"
+#: auths/AzureAD_enterprise/AzureAD.py:302
 msgid "Connection params seems correct, test was succesfully executed"
-msgstr "Параметры подключения правильные, тест был успешно выполнен"
+msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:62
 msgid "EDirectory Server IP or Hostname"
@@ -1104,7 +1098,7 @@ msgstr "EDirectory IP адрес или имя сервера"
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
-#: services/OpenStack/Provider.py:99
+#: services/OpenStack/Provider.py:100
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:28
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Port"
@@ -1578,11 +1572,11 @@ msgstr "Обнаружить плагин"
 msgid "Bypass plugin detection"
 msgstr "Обходное определение плагина"
 
-#: core/managers/UserServiceManager.py:218
+#: core/managers/UserServiceManager.py:224
 msgid "Can't remove a non active element"
 msgstr "Нельзя удалить неактивный элемент"
 
-#: core/managers/UserServiceManager.py:231
+#: core/managers/UserServiceManager.py:237
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr ""
@@ -2026,7 +2020,7 @@ msgid "Os Manager to control windows machines with domain."
 msgstr "ОС менеджер для контроля Windows машин в домене"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
-#: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:77
+#: services/OpenStack/Provider.py:106 transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 #: transports/RDP/BaseRDPTransport.py:64
@@ -2211,6 +2205,7 @@ msgstr "Реальное имя"
 
 #: reports/lists/users.py:111 templates/uds/admin/tmpl/permissions_add.html:5
 #: templates/uds/admin/tmpl/pool_add_group.html:5
+#: templates/uds/admin/tmpl/pool_edit_assigned.html:5
 #: templates/uds/html5/login.html:79 templates/uds/semantic/login.html:99
 #: web/forms/LoginForm.py:65
 msgid "Authenticator"
@@ -2434,65 +2429,44 @@ msgid "Generates a report with the summary of a pool usage"
 msgstr "Создает отчет с резюме использования пула"
 
 #: services/Azure_enterprise/AzureCloneService.py:29
-#, fuzzy
-#| msgid "Parent Service"
 msgid "Azure Clone Service"
-msgstr "Родительский сервис"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:31
-#, fuzzy
-#| msgid "This service provides access to vApp based VDI"
 msgid "This service provides access to Azure VMs based VDI"
-msgstr "Эта услуга предоставляет доступ к VDI на основе VApp"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:37
-#, fuzzy
-#| msgid "Number of desired vApps to keep running waiting for an user"
 msgid "Number of desired VMs to keep running waiting for an user"
 msgstr ""
-"Количество желаемых vApps для продолжения работы в ожидании пользователя"
 
 #: services/Azure_enterprise/AzureCloneService.py:39
-#, fuzzy
-#| msgid "Number of desired vApps to keep suspended waiting for use"
 msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr "Количество желаемых vApps, чтобы приостановить ожидание использования"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:53
-#, fuzzy
-#| msgid "Resource Pool"
 msgid "Resource Group"
-msgstr "Пул ресурсов"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:54
-#, fuzzy
-#| msgid "Base machine for this service"
 msgid "Resource group container of this VDI service"
-msgstr "Базовая машина для этой услуги"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:65
-#, fuzzy
-#| msgid "Virtual Datacenter"
 msgid "Virtual Machine"
-msgstr "Виртуальный ЦОД"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:66
-#, fuzzy
-#| msgid "Base Machine"
-msgid "Base virtual machine"
-msgstr "Базовая машина"
+msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:78
-#, fuzzy
-#| msgid "Cache size"
 msgid "Machine size"
-msgstr "Размер кэша"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:79
-#, fuzzy
-#| msgid "Memory for machines deployed from this service"
 msgid "Size for machines created from this service."
-msgstr "Память для машин, развернутых из этого сервиса"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:84
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
@@ -2547,10 +2521,8 @@ msgid "Network"
 msgstr "Сети"
 
 #: services/Azure_enterprise/AzureCloneService.py:91
-#, fuzzy
-#| msgid "Network on which the machine will be deployed"
 msgid "Network where the clones will be attached"
-msgstr "Сеть, на которой будет развернута машина"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:104
 msgid "Subnet"
@@ -2561,26 +2533,20 @@ msgid "Subnet where the clones will be attached"
 msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:113
-#, fuzzy
-#| msgid "Security Groups"
 msgid "Security Group"
-msgstr "Группа безопасности"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:114
-#, fuzzy
-#| msgid "Fields from where to extract the real name"
 msgid "Security group where to attach the virtual machine"
-msgstr "Поля, откуда извлекается реальное имя"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:122
 msgid "Caching policy"
 msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:123
-#, fuzzy
-#| msgid "Disk Cache"
 msgid "Disk Caching policy"
-msgstr "Дисковый кэш"
+msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:131
 msgid "Pricing tier"
@@ -2601,20 +2567,16 @@ msgid ""
 msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:156
-#, fuzzy
-#| msgid "vApp template for the service"
 msgid "You must select a network for the service"
-msgstr "Шаблон vApp для службы"
+msgstr ""
 
 #: services/Azure_enterprise/Helpers.py:76
 msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
 msgstr ""
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
-#, fuzzy
-#| msgid "Description"
 msgid "Subscription ID"
-msgstr "Описание"
+msgstr ""
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Obtained from subscriptions"
@@ -2624,7 +2586,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:110
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:84
@@ -2636,7 +2598,7 @@ msgstr "Параллельность создания"
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:110
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Xen/XenProvider.py:102
@@ -2647,7 +2609,7 @@ msgstr "Максимальное количество создаваемых п�
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:111
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Vmware_enterprise/ServiceProviderVC.py:85
@@ -2659,7 +2621,7 @@ msgstr "Удаление паралелелизма"
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:111
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Xen/XenProvider.py:103
@@ -2672,16 +2634,12 @@ msgid "Timeout in seconds of connection to vCloud"
 msgstr "Таймаут в секундах подключения к vCloud"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:48
-#, fuzzy
-#| msgid "RDS Platform Provider"
 msgid "Azure Platform Provider"
-msgstr "Поставщик платформы RDS"
+msgstr ""
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:50
-#, fuzzy
-#| msgid "Provides connection to vCloud Director platform"
 msgid "Provides connection to Azure Platform"
-msgstr "Предоставить подключение к платформе vCloud Director"
+msgstr ""
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:93
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:80
@@ -2689,10 +2647,8 @@ msgid "Connection parameters seems correct"
 msgstr "Параметры подключения вероятно корректны"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:231
-#, fuzzy
-#| msgid "VmwareVC Provider: "
 msgid "Azure Provider: "
-msgstr "Поставщик VmwareVC"
+msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
@@ -3240,7 +3196,7 @@ msgid "OpenNebula Port (default is 2633 for non ssl connection)"
 msgstr ""
 "OpenNebula порт (по умолчанию 2633 для подключений не использующих ssl)"
 
-#: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
+#: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:102
 msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
@@ -3324,55 +3280,63 @@ msgstr "Группа безопасности"
 msgid "Service security groups"
 msgstr "Сервис группы безопасности"
 
-#: services/OpenStack/Provider.py:79
+#: services/OpenStack/Provider.py:80
 msgid "OpenStack Platform Provider"
 msgstr "Поставщик платформы OpenStack"
 
-#: services/OpenStack/Provider.py:83
+#: services/OpenStack/Provider.py:84
 msgid "OpenStack platform service provider"
 msgstr "Поставщик услуг платформы OpenStack"
 
-#: services/OpenStack/Provider.py:98
+#: services/OpenStack/Provider.py:99
 msgid "OpenStack Host"
 msgstr "Хост OpenStack"
 
-#: services/OpenStack/Provider.py:99
+#: services/OpenStack/Provider.py:100
 msgid "OpenStack Port"
 msgstr "Порт OpenStack"
 
-#: services/OpenStack/Provider.py:102
+#: services/OpenStack/Provider.py:101
+msgid "Newer Openstack"
+msgstr ""
+
+#: services/OpenStack/Provider.py:101
+msgid "Check this if your openstack is newer than OCATA"
+msgstr ""
+
+#: services/OpenStack/Provider.py:104
 msgid "Access interface"
 msgstr "Интерфейс доступа"
 
-#: services/OpenStack/Provider.py:102
+#: services/OpenStack/Provider.py:104
 msgid "Access interface to be used"
 msgstr "Интерфейс доступа для использования"
 
-#: services/OpenStack/Provider.py:104
+#: services/OpenStack/Provider.py:106
 msgid "Domain name (default is Default)"
 msgstr "Доменное имя (по умолчанию Default)"
 
-#: services/OpenStack/Provider.py:105
+#: services/OpenStack/Provider.py:107
 msgid "User with valid privileges on OpenStack"
 msgstr "Пользователь с действующими правами в OpenStack"
 
-#: services/OpenStack/Provider.py:106
+#: services/OpenStack/Provider.py:108
 msgid "Password of the user of OpenStack"
 msgstr "Пароль пользователя OpenStack"
 
-#: services/OpenStack/Provider.py:111
+#: services/OpenStack/Provider.py:113
 msgid "Timeout in seconds of connection to OpenStack"
 msgstr "Таймаут в секундах подключения к OpenStack"
 
-#: services/OpenStack/Provider.py:155
+#: services/OpenStack/Provider.py:157
 msgid "OpenStack test connection passed"
 msgstr "Тест подключения к OpenStack прошел успешно"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:553
+#: services/OpenStack/openStack/UDSOpenStackClient.py:556
 msgid "Authentication error"
 msgstr "Ошибка аутентификации"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:555
+#: services/OpenStack/openStack/UDSOpenStackClient.py:561
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3962,11 +3926,15 @@ msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
 msgstr "Длина числовой части для названий этих машин (между 3 и 6)"
 
 #: services/Xen/XenProvider.py:79
-msgid "Xenserver Platform Provider"
+#, fuzzy
+#| msgid "Xenserver Platform Provider"
+msgid "Xenserver/XCP-NG Platforms Provider"
 msgstr "Поставщик платформы Xenserver"
 
 #: services/Xen/XenProvider.py:83
-msgid "XenServer platform service provider"
+#, fuzzy
+#| msgid "XenServer platform service provider"
+msgid "XenServer and XCP-NG platforms service provider"
 msgstr "Постащик услуг платформы Xenserver"
 
 #: services/Xen/XenProvider.py:98
@@ -4456,13 +4424,13 @@ msgstr "Вы можете получить доступ к исходному к
 msgid "UDS has been developed using these components:"
 msgstr "UDS был разработан с использованием этих компонентов:"
 
-#: templates/uds/html5/about.html:40
+#: templates/uds/html5/about.html:38
 msgid "If you find that we missed any component, please let us know"
 msgstr ""
 "Если вы обнаружите, что мы пропустили какой-либо компонент, сообщите нам об "
 "этом"
 
-#: templates/uds/html5/about.html:41
+#: templates/uds/html5/about.html:39
 #: templates/uds/html5/service_not_ready.html:21
 #: templates/uds/semantic/about.html:42
 #: templates/uds/semantic/service_not_ready.html:21
@@ -5432,20 +5400,12 @@ msgid "If checked, fonts smoothing will be allowed"
 msgstr "Если флажок установлен, разрешается сглаживание шрифтов"
 
 #: transports/RDP/BaseRDPTransport.py:114
-#, fuzzy
-#| msgid "Connection"
 msgid "Connection Bar"
-msgstr "Подключение"
+msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:114
-#, fuzzy
-#| msgid ""
-#| "If checked, all client monitors will be used for displaying (only works "
-#| "on windows clients)"
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
-"Если этот флажок установлен, все клиентские мониторы будут использоваться "
-"для отображения (работает только на клиентах Windows)"
 
 #: transports/RDP/BaseRDPTransport.py:116
 #: transports/RDS_enterprise/BaseRDSTransport.py:99
