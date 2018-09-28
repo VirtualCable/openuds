@@ -10,16 +10,14 @@ from uds.forward import forward  # @UnresolvedImport
 
 from uds import tools  # @UnresolvedImport
 
-import six
-
-# First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
+    # First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
 msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
 cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
 
-if os.path.isfile(msrdc):
-    executable = msrdc
-elif os.path.isfile(cord):
+if os.path.isfile(cord):
     executable = cord
+elif os.path.isfile(msrdc):
+    executable = msrdc
 else:
     executable = None
 
@@ -35,6 +33,7 @@ def onExit():
         ]
     )
 
+
 if executable is None:
     raise Exception('''<p><b>Microsoft Remote Desktop Connection not found</b></p>
 <p>In order to connect to UDS RDP Sessions, you need to have at least one of the following:<p>
@@ -47,7 +46,6 @@ if executable is None:
 <p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
 
 ''')
-
 
 forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389, waitTime={m.tunWait})  # @UndefinedVariable
 

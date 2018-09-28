@@ -9,21 +9,18 @@ import urllib
 
 from uds import tools  # @UnresolvedImport
 
-import six
-
 theFile = '''{m.r.as_file}'''
 
 # First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
-
 
 filename = tools.saveTempFile(theFile)
 msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
 cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
 
-if os.path.isfile(msrdc):
-    executable = msrdc
-elif os.path.isfile(cord):
+if os.path.isfile(cord):
     executable = cord
+elif os.path.isfile(msrdc):
+    executable = msrdc
 else:
     executable = None
 
@@ -38,6 +35,7 @@ def onExit():
              '-s', 'Remote Desktop Connection 2 Password for {m.ip}',
         ]
     )
+
 
 if executable is None:
     raise Exception('''<p><b>Microsoft Remote Desktop Connection not found</b></p>
