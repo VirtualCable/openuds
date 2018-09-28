@@ -110,6 +110,7 @@ def udsJs(context):
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('webapi.services'),
             'enabler': reverse('webapi.enabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
+            'action': reverse('webapi.action', kwargs={ 'idService': 'param1', 'action': 'param2' }),
             'galleryImage': reverse('webapi.galleryImage', kwargs={ 'idImage': 'param1' }),
             'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
             'static': static(''),
@@ -136,11 +137,6 @@ def udsJs(context):
     if profile['role'] == 'staff':  # Add staff things
         actors = [{'url': reverse('utility.downloader', kwargs={'idDownload': key}), 'name': val['name'], 'description': gettext(val['comment'])} for key, val in downloadsManager().getDownloadables().items()]
         config['urls']['admin'] = reverse('uds.admin.views.index')
-
-    if request.user:
-        prefs = request.user.prefs('_uds')
-        # Update bypass configuration with user information
-        config['bypassPluginDetection'] = prefs.get('bypassPluginDetection') == '1'
 
     errors = []
     if 'errors' in request.session:

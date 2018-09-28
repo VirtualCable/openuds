@@ -43,14 +43,15 @@ from uds.models import Transport, Image
 from uds.core.util import html, log
 from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
-import uds.web.errors as errors
+from uds.web import errors
+from uds.web import  services
 
 import json
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-20'
+__updated__ = '2018-09-27'
 
 
 @webLoginRequired(admin=False)
@@ -143,39 +144,42 @@ def clientEnabler(request, idService, idTransport):
 
 @webLoginRequired(admin=False)
 @never_cache
-def release(request, idService):
+def action(request, idService, action):
     logger.debug('ID Service: {}'.format(idService))
     userService = userServiceManager().locateUserService(request.user, idService, create=False)
     logger.debug('UserService: >{}<'.format(userService))
-    if userService is not None and userService.deployed_service.allow_users_remove:
-        log.doLog(
-            userService.deployed_service,
-            log.INFO,
-            "Removing User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
-            log.WEB
-        )
-        userServiceManager().requestLogoff(userService)
-        userService.release()
+    response = None
+    rebuild = False
+    if userService:
+        if action == 'release' and userService.deployed_service.allow_users_remove:
+            rebuild = True
+            log.doLog(
+                userService.deployed_service,
+                log.INFO,
+                "Removing User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
+                log.WEB
+            )
+            userServiceManager().requestLogoff(userService)
+            userService.release()
+        elif (action == 'reset'
+              and userService.deployed_service.allow_users_reset
+              and userService.deployed_service.service.getType().canReset):
+            rebuild = True
+            log.doLog(
+                userService.deployed_service,
+                log.INFO,
+                "Reseting User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
+                log.WEB
+            )
+            # userServiceManager().requestLogoff(userService)
+            userServiceManager().reset(userService)
 
-    return HttpResponse('"ok"', content_type="application/json")
+    if rebuild:
+        # Rebuild services data, but return only "this" service
+        for v in services.getServicesData(request)['services']:
+            logger.debug('{} ==? {}'.format(v['id'], idService))
+            if v['id'] == idService:
+                response = v
+                break
 
-
-@webLoginRequired(admin=False)
-@never_cache
-def reset(request, idService):
-    logger.debug('ID Service: {}'.format(idService))
-    userService = userServiceManager().locateUserService(request.user, idService, create=False)
-    logger.debug('UserService: >{}<'.format(userService))
-    if (userService is not None and userService.deployed_service.allow_users_reset
-            and userService.deployed_service.service.getType().canReset):
-        log.doLog(
-            userService.deployed_service,
-            log.INFO,
-            "Reseting User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
-            log.WEB
-        )
-        # userServiceManager().requestLogoff(userService)
-        userServiceManager().reset(userService)
-
-    return HttpResponse('"ok"', content_type="application/json")
-
+    return HttpResponse(json.dumps(response), content_type="application/json")

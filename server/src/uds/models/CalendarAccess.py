@@ -39,6 +39,7 @@ from uds.core.util import states
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Calendar import Calendar
 from uds.models.ServicesPool import ServicePool
+from uds.models.MetaPool import MetaPool
 # from django.utils.translation import ugettext_lazy as _, ugettext
 
 import logging
@@ -57,6 +58,21 @@ class CalendarAccess(UUIDModel):
         Meta class to declare db table
         """
         db_table = 'uds_cal_access'
+        ordering = ('priority',)
+        app_label = 'uds'
+
+
+class CalendarAccessMeta(UUIDModel):
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    meta_pool = models.ForeignKey(MetaPool, on_delete=models.CASCADE)
+    access = models.CharField(max_length=8, default=states.action.DENY)
+    priority = models.IntegerField(default=0, db_index=True)
+
+    class Meta:
+        """
+        Meta class to declare db table
+        """
+        db_table = 'uds_cal_maccess'
         ordering = ('priority',)
         app_label = 'uds'
 

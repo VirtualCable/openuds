@@ -63,7 +63,7 @@ from .Group import Group
 # Provisioned services
 from .ServicesPool import DeployedService  # Old name, will continue here for a while already
 from .ServicesPool import ServicePool  # New name
-# from .MetaServicePool import
+from .MetaPool import MetaPool
 from .ServicesPoolGroup import ServicesPoolGroup
 from .ServicesPoolPublication import DeployedServicePublication
 from .UserService import UserService
@@ -97,7 +97,7 @@ from .TicketStore import TicketStore
 from .Calendar import Calendar
 from .CalendarRule import CalendarRule
 
-from .CalendarAccess import CalendarAccess
+from .CalendarAccess import CalendarAccess, CalendarAccessMeta
 from .CalendarAction import CalendarAction
 
 # Accounting
@@ -113,7 +113,7 @@ from .Tag import Tag
 # Utility
 from .DBFile import DBFile
 
-__updated__ = '2018-02-14'
+__updated__ = '2018-09-28'
 
 logger = logging.getLogger(__name__)
 

@@ -60,7 +60,7 @@ urlpatterns = [
     re_path(r'^authinfo/(?P<authName>.+)', uds.web.views.authInfo, name='page.auth.info.compat'),
 
     # Ticket authentication
-    re_path(r'^tkauth/(?P<ticketId>.+)$', uds.web.views.ticketAuth, name='page,auth.ticket.compat'),
+    re_path(r'^tkauth/(?P<ticketId>[a-zA-Z0-9-])$', uds.web.views.ticketAuth, name='page,auth.ticket.compat'),
 
     # END COMPAT
 
@@ -69,19 +69,21 @@ urlpatterns = [
 
     # Login/logout
     path(r'uds/page/login/', uds.web.views.modern.login, name='page.login'),
-    re_path(r'^uds/page/login/(?P<tag>.+)$', uds.web.views.modern.login, name='page.login.tag'),
+    re_path(r'^uds/page/login/(?P<tag>[a-zA-Z0-9-])$', uds.web.views.modern.login, name='page.login.tag'),
 
     path(r'uds/page/logout/', uds.web.views.modern.logout, name='page.logout'),
 
-    # Error URL
-    re_path(r'^uds/page/error/(?P<error>.+)$', uds.web.views.error, name='page.error'),
+    # Error URL (just a placeholder, calls index with data on url for angular)
+    re_path(r'^uds/page/error/(?P<error>[a-zA-Z0-9=-]+)$', uds.web.views.error, name='page.error'),
+    # Download plugins URL  (just a placeholder, calls index with data on url for angular)
+    path(r'uds/page/client-download', uds.web.views.modern.index, name='page.client-download'),
 
     # Federated authentication
     re_path(r'^uds/page/auth/(?P<authName>[^/]+)$', uds.web.views.authCallback, name='page.auth.callback'),
-    re_path(r'^uds/page/auth/info/(?P<authName>.+)$', uds.web.views.authInfo, name='page.auth.info'),
+    re_path(r'^uds/page/auth/info/(?P<authName>[a-zA-Z0-9-])$', uds.web.views.authInfo, name='page.auth.info'),
 
     # Ticket authentication related
-    re_path(r'^uds/page/ticket/auth/(?P<ticketId>.+)$', uds.web.views.ticketAuth, name='page.ticket.auth'),
+    re_path(r'^uds/page/ticket/auth/(?P<ticketId>[a-zA-Z0-9-])$', uds.web.views.ticketAuth, name='page.ticket.auth'),
     path(r'uds/page/ticket/launcher', uds.web.views.modern.index, name='page.ticket.launcher'),
 
     # This must be the last, so any patition will be managed by client in fact
@@ -102,13 +104,12 @@ urlpatterns = [
     re_path(r'^uds/utility/files/(?P<uuid>.+)', uds.web.views.file_storage, name='utility.file_storage'),
 
     # WEB API path (not REST api, frontend)
-    re_path(r'^uds/webapi/img/transport/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
-    re_path(r'^uds/webapi/img/gallery/(?P<idImage>.+)$', uds.web.views.image, name='webapi.galleryImage'),
+    re_path(r'^uds/webapi/img/transport/(?P<idTrans>[a-zA-Z0-9-]+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
+    re_path(r'^uds/webapi/img/gallery/(?P<idImage>[a-zA-Z0-9-]+)$', uds.web.views.image, name='webapi.galleryImage'),
 
-    re_path(r'^uds/webapi/enable/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.clientEnabler, name='webapi.enabler'),
+    re_path(r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9-]+)$', uds.web.views.clientEnabler, name='webapi.enabler'),
 
-    re_path(r'^release/(?P<idService>.+)$', uds.web.views.release, name='webapi.releaser'),
-    re_path(r'^reset/(?P<idService>.+)$', uds.web.views.reset, name='webapi.resetter'),
+    re_path(r'^uds/webapi/action/(?P<idService>.+)/(?P<action>[a-zA-Z0-9-]+)$', uds.web.views.action, name='webapi.action'),
 
     # Services list, ...
     path(r'uds/webapi/services', uds.web.views.modern.servicesData, name='webapi.services'),

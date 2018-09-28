@@ -34,7 +34,6 @@ import logging
 
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -43,8 +42,7 @@ import uds.web.errors as errors
 from uds.core.auths.Exceptions import InvalidUserException
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.core.managers import userServiceManager, cryptoManager
-from uds.core.services.Exceptions import InvalidServiceException, ServiceNotReadyError
-from uds.core.ui import theme
+from uds.core.services.Exceptions import ServiceNotReadyError
 from uds.core.util import OsDetector
 from uds.core.util import html
 from uds.core.util.State import State
@@ -54,7 +52,7 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-20'
+__updated__ = '2018-09-28'
 
 
 @csrf_exempt

@@ -30,18 +30,15 @@
 """
 from __future__ import unicode_literals
 
-from django.shortcuts import render
-from django.utils.translation import ugettext as _
-
 from uds.core.auths.auth import webLoginRequired
 from uds.core.managers.DownloadsManager import DownloadsManager
-from uds.core.ui import theme
+from .modern import index
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-05-18'
+__updated__ = '2018-09-28'
 
 
 @webLoginRequired(admin=True)
@@ -49,9 +46,7 @@ def download(request, idDownload):
     """
     Downloadables management
     """
-    if idDownload == '':
-        files = [{'id': key, 'name': val['name'], 'comment': _(val['comment'])} for key, val in DownloadsManager.manager().getDownloadables().items()]
-        logger.debug('Files: {0}'.format(files))
-        return render(request, theme.template('downloads.html'), {'files': files})
+    if idDownload.strip() == '':
+        return index(request)
 
     return DownloadsManager.manager().send(request, idDownload)

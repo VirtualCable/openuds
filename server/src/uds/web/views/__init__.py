@@ -33,16 +33,14 @@ from __future__ import unicode_literals
 import logging
 
 # from .login import login, logout
-from .prefs import prefs
-from .service import transportOwnLink, transportIcon, clientEnabler, serviceImage, release, reset
+from .service import transportOwnLink, transportIcon, clientEnabler, serviceImage, action
 from .auth import authCallback, authInfo, ticketAuth, customAuth
 from .download import download
-from .client_download import client_downloads, plugin_detection
 from ..errors import error
 from .images import image
 from .file_storage import file_storage
 from . import modern
 
-__updated__ = '2018-09-20'
+__updated__ = '2018-09-28'
 
 logger = logging.getLogger(__name__)
