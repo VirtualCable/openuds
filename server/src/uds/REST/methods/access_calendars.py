@@ -37,13 +37,11 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-from uds.models import CalendarAccess, CalendarAction, Calendar
+from uds.models import CalendarAction, Calendar
 from uds.models.CalendarAction import CALENDAR_ACTION_DICT
-from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler
-from uds.REST import ResponseError
 from uds.core.util import permissions
 
 import json
@@ -73,11 +71,12 @@ class AccessCalendars(DetailHandler):
     def getItems(self, parent, item):
         try:
             if item is None:
-                return [AccessCalendars.as_dict(i) for i in parent.calendaraccess_set.all()]
+                return [AccessCalendars.as_dict(i) for i in parent.calendarAccess.all()]
             else:
-                i = CalendarAccess.objects.get(uuid=processUuid(item))
+                i = parent.calendarAccess.get(uuid=processUuid(item))
                 return AccessCalendars.as_dict(i)
         except Exception:
+            logger.exception('err: %s', item)
             self.invalidItemException()
 
     def getTitle(self, parent):
@@ -99,21 +98,21 @@ class AccessCalendars(DetailHandler):
         priority = int(self._params['priority'])
 
         if uuid is not None:
-            calAccess = CalendarAccess.objects.get(uuid=uuid)
+            calAccess = parent.calendarAccess.get(uuid=uuid)
             calAccess.calendar = calendar
             calAccess.service_pool = parent
             calAccess.access = access
             calAccess.priority = priority
             calAccess.save()
         else:
-            CalendarAccess.objects.create(calendar=calendar, service_pool=parent, access=access, priority=priority)
+            parent.calendarAccess.create(calendar=calendar, access=access, priority=priority)
 
         log.doLog(parent, log.INFO, "Added access calendar {}/{} by {}".format(calendar.name, access, self._user.pretty_name), log.ADMIN)
 
         return self.success()
 
     def deleteItem(self, parent, item):
-        calendarAccess = CalendarAccess.objects.get(uuid=processUuid(self._args[0]))
+        calendarAccess = parent.calendarAccess.get(uuid=processUuid(self._args[0]))
         logStr = "Removed access calendar {} by {}".format(calendarAccess.calendar.name, self._user.pretty_name)
 
         calendarAccess.delete()

@@ -31,25 +31,23 @@
 """
 from __future__ import unicode_literals
 
-from uds.models import UserService
-from uds.models import DeployedServicePublication
-from uds.models import DeployedService
-from uds.models import Service
-from uds.models import Provider
-from uds.models import User
-from uds.models import Group
-from uds.models import Authenticator
+from uds.models import (
+    UserService, DeployedServicePublication,
+    DeployedService, Service,
+    Provider, User,
+    Group, Authenticator,
+    MetaPool
+)
 
 from uds.core.util import log
 
 from uds.core.util.Config import GlobalConfig
 
 import logging
-import six
 
 logger = logging.getLogger(__name__)
 
-OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR = range(8)  # @UndefinedVariable
+OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR, OT_METAPOOL = range(9)  # @UndefinedVariable
 
 # Dict for translations
 transDict = {
@@ -60,7 +58,8 @@ transDict = {
     Provider: OT_PROVIDER,
     User: OT_USER,
     Group: OT_GROUP,
-    Authenticator: OT_AUTHENTICATOR
+    Authenticator: OT_AUTHENTICATOR,
+    MetaPool: OT_METAPOOL,
 }
 
 

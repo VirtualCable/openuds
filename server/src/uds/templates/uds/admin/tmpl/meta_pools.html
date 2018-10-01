@@ -1,0 +1,52 @@
+{% load i18n %}
+<div class="row">
+  <div class="col-xs-12">
+    <h1>{% trans 'Meta Pools' %}</h1>
+    <!-- <ol class="breadcrumb">
+      <li><a class="lnk-dashboard" href="#">Dashboard</a></li>
+      <li>{% trans 'Service Pools' %}</li>
+    </ol> -->
+  </div>
+</div><!-- /.row -->
+{% if messages %}
+<div class="row">
+  <div class="col-md-offset-2 col-md-8">
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+       {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% verbatim %}
+<div class="row">
+    <div id="{{ meta_pools }}" class="col-xs-12"></div>
+</div>
+<div id="detail-placeholder" class="row hidden">
+    <div class="col-xs-12">
+        <ul class="bottom_tabs nav nav-tabs">
+            <li class="active"><a href="#{{ meta_info }}" data-toggle="tab">{% endverbatim %}{% trans 'Overview' %}{% verbatim %}</a></li>
+            <li><a href="#{{ meta_service_pools }}" data-toggle="tab">{% endverbatim %}{% trans 'Service Pools' %}{% verbatim %}</a></li>
+            <li><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
+            <li><a id="{{ access }}_tab" href="#{{ access }}" data-toggle="tab">{% endverbatim %}{% trans 'Access Calendars' %}{% verbatim %}</a></li>
+            <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="{{ meta_info }}">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="well">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="{{ meta_service_pools }}">...</div>
+            <div class="tab-pane fade" id="{{ groups }}">...</div>
+            <div class="tab-pane fade" id="{{ access }}">...</div>
+            <div class="tab-pane fade" id="{{ logs }}">...</div>
+        </div>
+    </div>
+</div>
+{% endverbatim %}

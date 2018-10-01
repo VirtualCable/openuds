@@ -32,9 +32,15 @@
 """
 from __future__ import unicode_literals
 
-__updated__ = '2015-09-09'
+__updated__ = '2018-10-01'
 
-from uds.models import Provider, Service, OSManager, Transport, Network, ServicePool, UserService, Authenticator, User, Group, StatsCounters, StatsEvents, Calendar, CalendarRule
+from uds.models import (
+    Provider, Service, OSManager, Transport,
+    Network, ServicePool, UserService,
+    Authenticator, User, Group, StatsCounters,
+    StatsEvents, Calendar, CalendarRule,
+    Proxy, MetaPool
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -54,6 +60,8 @@ STATS_COUNTER_TYPE = 11
 STATS_EVENTS_TYPE = 12
 CALENDAR_TYPE = 13
 CALENDAR_RULE_TYPE = 14
+PROXY_TYPE = 16
+METAPOOL_TYPE = 15
 
 
 def getObjectType(obj):
@@ -71,5 +79,7 @@ def getObjectType(obj):
         StatsCounters: STATS_COUNTER_TYPE,
         StatsEvents: STATS_EVENTS_TYPE,
         Calendar: CALENDAR_TYPE,
-        CalendarRule: CALENDAR_RULE_TYPE
+        CalendarRule: CALENDAR_RULE_TYPE,
+        Proxy: PROXY_TYPE,
+        MetaPool: METAPOOL_TYPE,
     }.get(type(obj))

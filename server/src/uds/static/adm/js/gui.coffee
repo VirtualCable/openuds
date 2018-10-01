@@ -202,6 +202,11 @@
         cleanup: true
       }
       {
+        id: "lnk-meta_pools"
+        exec: gui.metaPools.link
+        cleanup: true
+      }
+      {
         id: "lnk-clear_cache"
         exec: gui.clear_cache.link
         cleanup: false

@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2018-09-27'
+__updated__ = '2018-10-01'
 
 logger = logging.getLogger(__name__)
 
@@ -234,7 +234,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in self.calendaraccess_set.order_by('priority'):
+        for ac in self.calendarAccess.order_by('priority'):
             if CalendarChecker(ac.calendar).check(chkDateTime) is True:
                 access = ac.access
                 break  # Stops on first rule match found
@@ -253,7 +253,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         deadLine = None
 
-        for ac in self.calendaraccess_set.all():
+        for ac in self.calendarAccess.all():
             if ac.access == states.action.ALLOW and self.fallbackAccess == states.action.DENY:
                 nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
                 if deadLine is None or deadLine > nextE:

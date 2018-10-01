@@ -33,6 +33,7 @@ gettext("Username");
 gettext("Password");
 gettext("Authenticator");
 gettext("Login");
+gettext("Downloads");
 gettext("An error has occurred");
 gettext("Return");
 gettext("Dashboard");

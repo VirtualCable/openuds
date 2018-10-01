@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 class CalendarAccess(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    service_pool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
+    service_pool = models.ForeignKey(ServicePool, related_name='calendarAccess', on_delete=models.CASCADE)
     access = models.CharField(max_length=8, default=states.action.DENY)
     priority = models.IntegerField(default=0, db_index=True)
 
@@ -64,7 +64,7 @@ class CalendarAccess(UUIDModel):
 
 class CalendarAccessMeta(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    meta_pool = models.ForeignKey(MetaPool, on_delete=models.CASCADE)
+    meta_pool = models.ForeignKey(MetaPool, related_name='calendarAccess', on_delete=models.CASCADE)
     access = models.CharField(max_length=8, default=states.action.DENY)
     priority = models.IntegerField(default=0, db_index=True)
 

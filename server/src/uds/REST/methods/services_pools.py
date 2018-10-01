@@ -52,7 +52,7 @@ from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from .user_services import AssignedService, CachedService, Groups, Transports, Publications, Changelog
-from .services_pool_calendars import AccessCalendars, ActionsCalendars
+from uds.REST.methods.access_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
 from uds.core.managers import userServiceManager
 

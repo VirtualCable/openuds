@@ -49,7 +49,7 @@ from uds.models.Calendar import Calendar
 
 import logging
 
-__updated__ = '2018-09-28'
+__updated__ = '2018-10-01'
 
 logger = logging.getLogger(__name__)
 
@@ -107,8 +107,8 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool = models.ForeignKey(ServicePool, related_name='pool', on_delete=models.CASCADE)
-    meta_pool = models.ForeignKey(MetaPool, related_name='metaPool', on_delete=models.CASCADE)
+    pool = models.ForeignKey(ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE)
+    meta_pool = models.ForeignKey(MetaPool, related_name='members', on_delete=models.CASCADE)
     priority = models.PositiveIntegerField(default=0)
     enabled = models.BooleanField(default=True)
 

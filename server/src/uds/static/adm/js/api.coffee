@@ -439,6 +439,8 @@ api.servicesPools.actionsList = (id, success_fnc, fail_fnc) ->
     success: success_fnc
     fail: fail_fnc
 
+api.metaPools = new BasicModelRest("metapools")
+
 api.configuration = new BasicModelRest("config")
 api.gallery = new BasicModelRest("gallery/images")
 api.sPoolGroups = new BasicModelRest("gallery/servicespoolgroups")
