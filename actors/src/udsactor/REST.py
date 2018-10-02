@@ -101,6 +101,7 @@ def ensureResultIsOk(result):
 
 
 class Api(object):
+
     def __init__(self, host, masterKey, ssl):
         self.host = host
         self.masterKey = masterKey
@@ -201,6 +202,8 @@ class Api(object):
             raise ConnectionError('REST api has not been initialized')
 
         if processData:
+            if not isinstance(data, six.text_type):
+                data = data.decode('utf8')
             data = json.dumps({'data': data})
         url = self._getUrl('/'.join([self.uuid, msg]))
         return self._request(url, data)['result']

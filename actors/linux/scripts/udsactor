@@ -3,4 +3,4 @@
 FOLDER=/usr/share/UDSActor
 
 cd $FOLDER
-python2.7 -m udsactor.linux.UDSActorService $@
+exec python3 -m udsactor.linux.UDSActorService $@
