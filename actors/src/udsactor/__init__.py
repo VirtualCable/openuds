@@ -41,8 +41,7 @@ __version__ = VERSION
 __build__ = 0x010756
 __author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
 __license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014-2017 VirtualCable S.L.U."
-
+__copyright__ = "Copyright 2014-2018 VirtualCable S.L.U."
 
 if not hasattr(six, 'byte2int'):
     if six.PY3:

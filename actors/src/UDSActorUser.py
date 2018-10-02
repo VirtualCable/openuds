@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2014 Virtual Cable S.L.
@@ -39,6 +39,7 @@ import pickle
 import time
 import datetime
 import signal
+import six
 from udsactor import ipc
 from udsactor import utils
 from udsactor.log import logger
@@ -90,8 +91,8 @@ class UDSMessageDialog(QtGui.QDialog):
 class MessagesProcessor(QtCore.QThread):
 
     logoff = QtCore.pyqtSignal(name='logoff')
-    displayMessage = QtCore.pyqtSignal(QtCore.QString, name='displayMessage')
-    script = QtCore.pyqtSignal(QtCore.QString, name='script')
+    displayMessage = QtCore.pyqtSignal(six.text_type, name='displayMessage')
+    script = QtCore.pyqtSignal(six.text_type, name='script')
     exit = QtCore.pyqtSignal(name='exit')
     information = QtCore.pyqtSignal(dict, name='information')
 
@@ -147,11 +148,11 @@ class MessagesProcessor(QtCore.QThread):
                 msgId, data = msg
                 logger.debug('Got Message on User Space: {}:{}'.format(msgId, data))
                 if msgId == ipc.MSG_MESSAGE:
-                    self.displayMessage.emit(QtCore.QString.fromUtf8(data))
+                    self.displayMessage.emit(data)
                 elif msgId == ipc.MSG_LOGOFF:
                     self.logoff.emit()
                 elif msgId == ipc.MSG_SCRIPT:
-                    self.script.emit(QtCore.QString.fromUtf8(data))
+                    self.script.emit(data)
                 elif msgId == ipc.MSG_INFORMATION:
                     self.information.emit(pickle.loads(data))
             except Exception as e:

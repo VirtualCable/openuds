@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2014 Virtual Cable S.L.
@@ -92,6 +92,7 @@ class UDSConfigDialog(QtGui.QDialog):
         cfg = self._getCfg()
         store.writeConfig(cfg)
         self.close()
+
 
 if __name__ == "__main__":
 
