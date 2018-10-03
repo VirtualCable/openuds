@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-24 11:14+0200\n"
-"PO-Revision-Date: 2018-02-06 11:25+0000\n"
-"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
+"POT-Creation-Date: 2018-10-03 10:16+0200\n"
+"PO-Revision-Date: 2018-09-24 09:15+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
 "Language: ar\n"
@@ -726,12 +726,10 @@ msgid "You must provide authenticator and group"
 msgstr "يجب إضافة المجموعة والمصادق"
 
 #: static/tmp_js/gui-d-servicespools.js:434
-#| msgid "Edit services provider"
 msgid "Edit Assigned Service ownership"
 msgstr "تحرير ملكية \"الخدمة المعينة\""
 
 #: static/tmp_js/gui-d-servicespools.js:462
-#| msgid "You must provide authenticator and"
 msgid "You must provide authenticator and user"
 msgstr "يجب توفير المستخدم والمصادق"
 

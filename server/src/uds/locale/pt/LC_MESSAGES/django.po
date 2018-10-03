@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-24 11:14+0200\n"
-"PO-Revision-Date: 2018-09-10 09:10+0000\n"
+"POT-Creation-Date: 2018-10-03 10:16+0200\n"
+"PO-Revision-Date: 2018-10-03 08:13+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -49,7 +49,7 @@ msgstr "Identificação"
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:81 REST/methods/transports.py:57
-#: REST/methods/user_services.py:249 REST/methods/user_services.py:285
+#: REST/methods/user_services.py:259 REST/methods/user_services.py:302
 #: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
@@ -63,16 +63,16 @@ msgstr "Nome"
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
 #: REST/methods/providers.py:72 REST/methods/services.py:191
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
-#: REST/methods/user_services.py:287 REST/methods/users_groups.py:114
+#: REST/methods/user_services.py:304 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Comentários"
 
-#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
+#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:88
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:284 REST/model.py:157
+#: REST/methods/user_services.py:301 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Prioridade"
@@ -279,7 +279,7 @@ msgstr "Serviços atuais"
 msgid "Service name"
 msgstr "Nome do serviço"
 
-#: REST/methods/services.py:192 REST/methods/user_services.py:286
+#: REST/methods/services.py:192 REST/methods/user_services.py:303
 msgid "Type"
 msgstr "Tipo"
 
@@ -304,49 +304,49 @@ msgstr "Com erros"
 msgid "Ok"
 msgstr "Okey"
 
-#: REST/methods/services_pool_calendars.py:85
+#: REST/methods/services_pool_calendars.py:84
 msgid "Access restrictions by calendar"
 msgstr "Restrições de acesso pelo calendário"
 
-#: REST/methods/services_pool_calendars.py:90
-#: REST/methods/services_pool_calendars.py:155
+#: REST/methods/services_pool_calendars.py:89
+#: REST/methods/services_pool_calendars.py:162
 #: templates/uds/admin/tmpl/pool_add_access.html:12
 #: templates/uds/admin/tmpl/pool_add_action.html:5
 msgid "Calendar"
 msgstr "Calendário"
 
-#: REST/methods/services_pool_calendars.py:91
+#: REST/methods/services_pool_calendars.py:90
 #: REST/methods/services_usage.py:118
 msgid "Access"
 msgstr "Acesso"
 
-#: REST/methods/services_pool_calendars.py:151
+#: REST/methods/services_pool_calendars.py:158
 #: templates/uds/admin/tmpl/services_pool.html:36
 msgid "Scheduled actions"
 msgstr "Ações programadas"
 
-#: REST/methods/services_pool_calendars.py:156
+#: REST/methods/services_pool_calendars.py:163
 #: templates/uds/admin/tmpl/pool_add_action.html:35
 msgid "Action"
 msgstr "Ação"
 
-#: REST/methods/services_pool_calendars.py:157 core/ui/UserInterface.py:87
+#: REST/methods/services_pool_calendars.py:164 core/ui/UserInterface.py:87
 msgid "Parameters"
 msgstr "Parâmetros"
 
-#: REST/methods/services_pool_calendars.py:158
+#: REST/methods/services_pool_calendars.py:165
 msgid "Relative to"
 msgstr "Em relação ao"
 
-#: REST/methods/services_pool_calendars.py:159
+#: REST/methods/services_pool_calendars.py:166
 msgid "Time offset"
 msgstr "Deslocamento de tempo"
 
-#: REST/methods/services_pool_calendars.py:160
+#: REST/methods/services_pool_calendars.py:167
 msgid "Next execution"
 msgstr "Na próxima execução"
 
-#: REST/methods/services_pool_calendars.py:161
+#: REST/methods/services_pool_calendars.py:168
 msgid "Last execution"
 msgstr "Última execução"
 
@@ -561,13 +561,13 @@ msgid "Pool"
 msgstr "Piscina"
 
 #: REST/methods/services_usage.py:123 REST/methods/user_services.py:127
-#: REST/methods/user_services.py:211 auths/IP/Authenticator.py:60
+#: REST/methods/user_services.py:221 auths/IP/Authenticator.py:60
 #: templates/uds/admin/tmpl/user-info.html:66
 msgid "IP"
 msgstr "IP"
 
 #: REST/methods/services_usage.py:124 REST/methods/user_services.py:128
-#: REST/methods/user_services.py:212
+#: REST/methods/user_services.py:222
 msgid "Friendly name"
 msgstr "Nome amigável"
 
@@ -579,11 +579,11 @@ msgstr "src Ip"
 msgid "Src Host"
 msgstr "Src Host"
 
-#: REST/methods/services_usage.py:148 REST/methods/user_services.py:162
+#: REST/methods/services_usage.py:148 REST/methods/user_services.py:166
 msgid "Item already being removed"
 msgstr "Item já está sendo removido"
 
-#: REST/methods/services_usage.py:150 REST/methods/user_services.py:164
+#: REST/methods/services_usage.py:150 REST/methods/user_services.py:168
 msgid "Item is not removable"
 msgstr "Item não é removível"
 
@@ -638,12 +638,12 @@ msgstr ""
 msgid "Assigned services"
 msgstr "Serviços atribuídos"
 
-#: REST/methods/user_services.py:124 REST/methods/user_services.py:208
+#: REST/methods/user_services.py:124 REST/methods/user_services.py:218
 msgid "Creation date"
 msgstr "Data de criação"
 
-#: REST/methods/user_services.py:125 REST/methods/user_services.py:209
-#: REST/methods/user_services.py:353 REST/methods/user_services.py:383
+#: REST/methods/user_services.py:125 REST/methods/user_services.py:219
+#: REST/methods/user_services.py:382 REST/methods/user_services.py:412
 msgid "Revision"
 msgstr "Revisão"
 
@@ -655,16 +655,16 @@ msgstr "Data de estado"
 msgid "In Use"
 msgstr "Em uso"
 
-#: REST/methods/user_services.py:135 REST/methods/user_services.py:215
+#: REST/methods/user_services.py:135 REST/methods/user_services.py:225
 msgid "Actor version"
 msgstr "Versão do ator"
 
-#: REST/methods/user_services.py:204
+#: REST/methods/user_services.py:214
 msgid "Cached services"
 msgstr "Serviços em cache"
 
-#: REST/methods/user_services.py:213 REST/methods/user_services.py:251
-#: REST/methods/user_services.py:355
+#: REST/methods/user_services.py:223 REST/methods/user_services.py:261
+#: REST/methods/user_services.py:384
 #: templates/uds/admin/tmpl/group-info.html:18
 #: templates/uds/admin/tmpl/group-info.html:45
 #: templates/uds/admin/tmpl/group.html:54
@@ -674,41 +674,41 @@ msgstr "Serviços em cache"
 msgid "State"
 msgstr "Estado"
 
-#: REST/methods/user_services.py:214
+#: REST/methods/user_services.py:224
 msgid "Cache level"
 msgstr "Nível de cache"
 
-#: REST/methods/user_services.py:244
+#: REST/methods/user_services.py:254
 msgid "Assigned groups"
 msgstr "Grupos atribuídos"
 
-#: REST/methods/user_services.py:250 templates/uds/admin/tmpl/group.html:46
+#: REST/methods/user_services.py:260 templates/uds/admin/tmpl/group.html:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Comentários"
 
-#: REST/methods/user_services.py:280
+#: REST/methods/user_services.py:297
 msgid "Assigned transports"
 msgstr "Transportes atribuídos"
 
-#: REST/methods/user_services.py:349
+#: REST/methods/user_services.py:378
 #: templates/uds/admin/tmpl/services_pool.html:35
 msgid "Publications"
 msgstr "Publicações"
 
-#: REST/methods/user_services.py:354 REST/methods/user_services.py:384
+#: REST/methods/user_services.py:383 REST/methods/user_services.py:413
 msgid "Publish date"
 msgstr "Data de publicação"
 
-#: REST/methods/user_services.py:356 templates/uds/admin/tmpl/publish.html:5
+#: REST/methods/user_services.py:385 templates/uds/admin/tmpl/publish.html:5
 msgid "Reason"
 msgstr "Razão"
 
-#: REST/methods/user_services.py:379
+#: REST/methods/user_services.py:408
 msgid "Changelog"
 msgstr "Changelog"
 
-#: REST/methods/user_services.py:385
+#: REST/methods/user_services.py:414
 #: templates/uds/admin/tmpl/group-info.html:87
 msgid "Comment"
 msgstr "Comentário"
@@ -1981,9 +1981,10 @@ msgstr "Deve fornecer uma conta de usuário!!!"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
 msgid ""
-"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>"
+"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+"3.5)</b>"
 msgstr ""
-"Ator UDS para Debian, Ubuntu,... Máquinas para Linux <b>(requer python 2.7)</"
+"Ator UDS para Debian, Ubuntu,... Máquinas Linux <b>(requer python > = 3.5.)</"
 "b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
@@ -1998,6 +1999,14 @@ msgstr ""
 msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
 msgstr ""
 "Ator de UDS para openSUSE,... Máquinas para Linux <b>(requer python 2.7)</b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:64
+msgid ""
+"<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
+"python 2.7)</b>"
+msgstr ""
+"<b>Legado</b> Ator UDS para Debian, Ubuntu,... Máquinas Linux <b>(requer "
+"Python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
@@ -3946,12 +3955,10 @@ msgstr ""
 "Comprimento da parte numérica para os nomes desta máquinas (beetwen 3 e 6"
 
 #: services/Xen/XenProvider.py:79
-#| msgid "Xenserver Platform Provider"
 msgid "Xenserver/XCP-NG Platforms Provider"
 msgstr "Provedor de plataformas XenServer/XCP-NG"
 
 #: services/Xen/XenProvider.py:83
-#| msgid "XenServer platform service provider"
 msgid "XenServer and XCP-NG platforms service provider"
 msgstr "Prestadora de serviços de plataformas XenServer e XCP-NG"
 

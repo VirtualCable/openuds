@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-24 11:14+0200\n"
-"PO-Revision-Date: 2018-06-06 13:28+0000\n"
+"POT-Creation-Date: 2018-10-03 10:16+0200\n"
+"PO-Revision-Date: 2018-09-24 09:15+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -726,16 +726,12 @@ msgid "You must provide authenticator and group"
 msgstr "Вы должны предоставить аутентификатор и группу"
 
 #: static/tmp_js/gui-d-servicespools.js:434
-#, fuzzy
-#| msgid "Edit services provider"
 msgid "Edit Assigned Service ownership"
-msgstr "Редактировать поставщика сервисов"
+msgstr "Изменение службы назначены права собственности"
 
 #: static/tmp_js/gui-d-servicespools.js:462
-#, fuzzy
-#| msgid "You must provide authenticator and"
 msgid "You must provide authenticator and user"
-msgstr "Вы должны предоставить аутентификатор и"
+msgstr "Вы должны предоставить, проверки подлинности и пользователь"
 
 #: static/tmp_js/gui-d-servicespools.js:480
 msgid "Remove Assigned service"
