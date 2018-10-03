@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-24 11:14+0200\n"
-"PO-Revision-Date: 2018-09-10 09:10+0000\n"
+"POT-Creation-Date: 2018-10-03 10:16+0200\n"
+"PO-Revision-Date: 2018-10-03 08:13+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -50,7 +50,7 @@ msgstr "Идентификатор"
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:81 REST/methods/transports.py:57
-#: REST/methods/user_services.py:249 REST/methods/user_services.py:285
+#: REST/methods/user_services.py:259 REST/methods/user_services.py:302
 #: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
@@ -64,16 +64,16 @@ msgstr "Имя"
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
 #: REST/methods/providers.py:72 REST/methods/services.py:191
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
-#: REST/methods/user_services.py:287 REST/methods/users_groups.py:114
+#: REST/methods/user_services.py:304 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Комментарий"
 
-#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
+#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:88
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:284 REST/model.py:157
+#: REST/methods/user_services.py:301 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Приоритет"
@@ -278,7 +278,7 @@ msgstr "Текущие сервисы"
 msgid "Service name"
 msgstr "Имя сервиса"
 
-#: REST/methods/services.py:192 REST/methods/user_services.py:286
+#: REST/methods/services.py:192 REST/methods/user_services.py:303
 msgid "Type"
 msgstr "Тип"
 
@@ -303,49 +303,49 @@ msgstr "С ошибками"
 msgid "Ok"
 msgstr "ОК"
 
-#: REST/methods/services_pool_calendars.py:85
+#: REST/methods/services_pool_calendars.py:84
 msgid "Access restrictions by calendar"
 msgstr "Ограничение доступа по календарю"
 
-#: REST/methods/services_pool_calendars.py:90
-#: REST/methods/services_pool_calendars.py:155
+#: REST/methods/services_pool_calendars.py:89
+#: REST/methods/services_pool_calendars.py:162
 #: templates/uds/admin/tmpl/pool_add_access.html:12
 #: templates/uds/admin/tmpl/pool_add_action.html:5
 msgid "Calendar"
 msgstr "Календарь"
 
-#: REST/methods/services_pool_calendars.py:91
+#: REST/methods/services_pool_calendars.py:90
 #: REST/methods/services_usage.py:118
 msgid "Access"
 msgstr "Доступ"
 
-#: REST/methods/services_pool_calendars.py:151
+#: REST/methods/services_pool_calendars.py:158
 #: templates/uds/admin/tmpl/services_pool.html:36
 msgid "Scheduled actions"
 msgstr "Запланированные действия"
 
-#: REST/methods/services_pool_calendars.py:156
+#: REST/methods/services_pool_calendars.py:163
 #: templates/uds/admin/tmpl/pool_add_action.html:35
 msgid "Action"
 msgstr "Действие"
 
-#: REST/methods/services_pool_calendars.py:157 core/ui/UserInterface.py:87
+#: REST/methods/services_pool_calendars.py:164 core/ui/UserInterface.py:87
 msgid "Parameters"
 msgstr "Параметры"
 
-#: REST/methods/services_pool_calendars.py:158
+#: REST/methods/services_pool_calendars.py:165
 msgid "Relative to"
 msgstr "Относительно"
 
-#: REST/methods/services_pool_calendars.py:159
+#: REST/methods/services_pool_calendars.py:166
 msgid "Time offset"
 msgstr "Смещение времени"
 
-#: REST/methods/services_pool_calendars.py:160
+#: REST/methods/services_pool_calendars.py:167
 msgid "Next execution"
 msgstr "Следующий запуск"
 
-#: REST/methods/services_pool_calendars.py:161
+#: REST/methods/services_pool_calendars.py:168
 msgid "Last execution"
 msgstr "Последний запуск"
 
@@ -559,13 +559,13 @@ msgid "Pool"
 msgstr "Пул"
 
 #: REST/methods/services_usage.py:123 REST/methods/user_services.py:127
-#: REST/methods/user_services.py:211 auths/IP/Authenticator.py:60
+#: REST/methods/user_services.py:221 auths/IP/Authenticator.py:60
 #: templates/uds/admin/tmpl/user-info.html:66
 msgid "IP"
 msgstr "IP"
 
 #: REST/methods/services_usage.py:124 REST/methods/user_services.py:128
-#: REST/methods/user_services.py:212
+#: REST/methods/user_services.py:222
 msgid "Friendly name"
 msgstr "Дружественное имя"
 
@@ -577,11 +577,11 @@ msgstr "IP отправителя"
 msgid "Src Host"
 msgstr "Хост отправителя"
 
-#: REST/methods/services_usage.py:148 REST/methods/user_services.py:162
+#: REST/methods/services_usage.py:148 REST/methods/user_services.py:166
 msgid "Item already being removed"
 msgstr "Элемент уже удален"
 
-#: REST/methods/services_usage.py:150 REST/methods/user_services.py:164
+#: REST/methods/services_usage.py:150 REST/methods/user_services.py:168
 msgid "Item is not removable"
 msgstr "Элемент не удаляется"
 
@@ -635,12 +635,12 @@ msgstr ""
 msgid "Assigned services"
 msgstr "Привязанные сервисы"
 
-#: REST/methods/user_services.py:124 REST/methods/user_services.py:208
+#: REST/methods/user_services.py:124 REST/methods/user_services.py:218
 msgid "Creation date"
 msgstr "Создать дату"
 
-#: REST/methods/user_services.py:125 REST/methods/user_services.py:209
-#: REST/methods/user_services.py:353 REST/methods/user_services.py:383
+#: REST/methods/user_services.py:125 REST/methods/user_services.py:219
+#: REST/methods/user_services.py:382 REST/methods/user_services.py:412
 msgid "Revision"
 msgstr "Ревизия"
 
@@ -652,16 +652,16 @@ msgstr "Статус даты"
 msgid "In Use"
 msgstr "В работе"
 
-#: REST/methods/user_services.py:135 REST/methods/user_services.py:215
+#: REST/methods/user_services.py:135 REST/methods/user_services.py:225
 msgid "Actor version"
 msgstr "Версия актора"
 
-#: REST/methods/user_services.py:204
+#: REST/methods/user_services.py:214
 msgid "Cached services"
 msgstr "Кэшированные сервисы"
 
-#: REST/methods/user_services.py:213 REST/methods/user_services.py:251
-#: REST/methods/user_services.py:355
+#: REST/methods/user_services.py:223 REST/methods/user_services.py:261
+#: REST/methods/user_services.py:384
 #: templates/uds/admin/tmpl/group-info.html:18
 #: templates/uds/admin/tmpl/group-info.html:45
 #: templates/uds/admin/tmpl/group.html:54
@@ -671,41 +671,41 @@ msgstr "Кэшированные сервисы"
 msgid "State"
 msgstr "Состояние"
 
-#: REST/methods/user_services.py:214
+#: REST/methods/user_services.py:224
 msgid "Cache level"
 msgstr "Уровень кэша"
 
-#: REST/methods/user_services.py:244
+#: REST/methods/user_services.py:254
 msgid "Assigned groups"
 msgstr "Привязанные группы"
 
-#: REST/methods/user_services.py:250 templates/uds/admin/tmpl/group.html:46
+#: REST/methods/user_services.py:260 templates/uds/admin/tmpl/group.html:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Комментарии"
 
-#: REST/methods/user_services.py:280
+#: REST/methods/user_services.py:297
 msgid "Assigned transports"
 msgstr "Приаязанные транспорты"
 
-#: REST/methods/user_services.py:349
+#: REST/methods/user_services.py:378
 #: templates/uds/admin/tmpl/services_pool.html:35
 msgid "Publications"
 msgstr "Публикации"
 
-#: REST/methods/user_services.py:354 REST/methods/user_services.py:384
+#: REST/methods/user_services.py:383 REST/methods/user_services.py:413
 msgid "Publish date"
 msgstr "Дата публикации"
 
-#: REST/methods/user_services.py:356 templates/uds/admin/tmpl/publish.html:5
+#: REST/methods/user_services.py:385 templates/uds/admin/tmpl/publish.html:5
 msgid "Reason"
 msgstr "Причина"
 
-#: REST/methods/user_services.py:379
+#: REST/methods/user_services.py:408
 msgid "Changelog"
 msgstr "Лог изменения"
 
-#: REST/methods/user_services.py:385
+#: REST/methods/user_services.py:414
 #: templates/uds/admin/tmpl/group-info.html:87
 msgid "Comment"
 msgstr "Комментарий"
@@ -959,13 +959,15 @@ msgstr "Таймаут в секундах подключения к Active Dire
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:43
 msgid "Override Base"
-msgstr ""
+msgstr "Переопределение базовых"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:43
 msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
+"Если не пустое, будет переопределить базу с этим значением AD поиска (формат: dc =..., "
+"DC =...)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
@@ -1030,63 +1032,63 @@ msgstr "Параметры подключения правильные, тест
 
 #: auths/AzureAD_enterprise/AzureAD.py:72
 msgid "Azure AD Authenticator"
-msgstr ""
+msgstr "Лазурное объявление средство проверки подлинности"
 
 #: auths/AzureAD_enterprise/AzureAD.py:74
 msgid "Azure Active Directory Authenticator"
-msgstr ""
+msgstr "Аутентификатор Azure Служба каталогов Active Directory"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Tenant ID"
-msgstr ""
+msgstr "Идентификатор клиента"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
-msgstr ""
+msgstr "Полученные от лазурного Active Directory - Недвижимость - Каталог ID"
 
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Client ID"
-msgstr ""
+msgstr "Идентификатор клиента"
 
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
-msgstr ""
+msgstr "Полученные от приложения, созданный на платформе Azure для UDS предприятия"
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Client Secret"
-msgstr ""
+msgstr "Секрет клиента"
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
-msgstr ""
+msgstr "Полученные от приложения, созданный на платформе Azure для UDS предприятия - ключи"
 
 #: auths/AzureAD_enterprise/AzureAD.py:96
 msgid "Callback"
-msgstr ""
+msgstr "Обратный вызов"
 
 #: auths/AzureAD_enterprise/AzureAD.py:98
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
-msgstr ""
+msgstr "Url обратного вызова (заполнены UDS, исправить это только в случае необходимости!)"
 
 #: auths/AzureAD_enterprise/AzureAD.py:230
 #: auths/AzureAD_enterprise/AzureAD.py:253
 #: auths/AzureAD_enterprise/AzureAD.py:265
 msgid "Authenticator exception:"
-msgstr ""
+msgstr "Исключение проверки подлинности:"
 
 #: auths/AzureAD_enterprise/AzureAD.py:301
 msgid "Connection error: "
-msgstr ""
+msgstr "Ошибка подключения: "
 
 #: auths/AzureAD_enterprise/AzureAD.py:302
 msgid "Connection params seems correct, test was succesfully executed"
-msgstr ""
+msgstr "Подключение params кажется правильным, тест был выполнен успешно"
 
 #: auths/EDirectory_enterprise/Authenticator.py:62
 msgid "EDirectory Server IP or Hostname"
@@ -1974,8 +1976,11 @@ msgstr "Нужно предоставить аккаунт пользовате�
 
 #: osmanagers/LinuxOsManager/__init__.py:49
 msgid ""
-"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>"
-msgstr "UDS Actor для Debian, Ubuntu<b>(Требует python 2.7)</b>"
+"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+"3.5)</b>"
+msgstr ""
+"UDS актер для Debian, Ubuntu... Linux машины <b>(требуется python > = "
+"3.5)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
 msgid ""
@@ -1986,6 +1991,14 @@ msgstr "UDS Actor для Centos, Fedora, RH<b>(Треубет python 2.7)</b>"
 #: osmanagers/LinuxOsManager/__init__.py:59
 msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
 msgstr "UDS Actor для openSUSE<b>(Требует python 2.7)</b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:64
+msgid ""
+"<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
+"python 2.7)</b>"
+msgstr ""
+"<b>Наследие</b> UDS актер для Debian, Ubuntu... Linux машины <b>(требует "
+"Python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
@@ -2430,43 +2443,43 @@ msgstr "Создает отчет с резюме использования п�
 
 #: services/Azure_enterprise/AzureCloneService.py:29
 msgid "Azure Clone Service"
-msgstr ""
+msgstr "Служба Azure клон"
 
 #: services/Azure_enterprise/AzureCloneService.py:31
 msgid "This service provides access to Azure VMs based VDI"
-msgstr ""
+msgstr "Эта служба обеспечивает доступ к Azure виртуальных машин на основе VDI"
 
 #: services/Azure_enterprise/AzureCloneService.py:37
 msgid "Number of desired VMs to keep running waiting for an user"
-msgstr ""
+msgstr "Количество желаемых VMs держать работает ожидания для пользователя"
 
 #: services/Azure_enterprise/AzureCloneService.py:39
 msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr ""
+msgstr "Количество желаемых VMs держать приостановлено ожидания для использования"
 
 #: services/Azure_enterprise/AzureCloneService.py:53
 msgid "Resource Group"
-msgstr ""
+msgstr "Группа ресурсов"
 
 #: services/Azure_enterprise/AzureCloneService.py:54
 msgid "Resource group container of this VDI service"
-msgstr ""
+msgstr "Контейнера группы ресурсов этой службы VDI"
 
 #: services/Azure_enterprise/AzureCloneService.py:65
 msgid "Virtual Machine"
-msgstr ""
+msgstr "Виртуальная машина"
 
 #: services/Azure_enterprise/AzureCloneService.py:66
 msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
-msgstr ""
+msgstr "Базовая виртуальная машина. (VMs, начиная с UDS будет скрыт)"
 
 #: services/Azure_enterprise/AzureCloneService.py:78
 msgid "Machine size"
-msgstr ""
+msgstr "Размер машины"
 
 #: services/Azure_enterprise/AzureCloneService.py:79
 msgid "Size for machines created from this service."
-msgstr ""
+msgstr "Размер для машин, созданных из этой службы."
 
 #: services/Azure_enterprise/AzureCloneService.py:84
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
@@ -2522,65 +2535,67 @@ msgstr "Сети"
 
 #: services/Azure_enterprise/AzureCloneService.py:91
 msgid "Network where the clones will be attached"
-msgstr ""
+msgstr "Сети, где будут прилагаться клонов"
 
 #: services/Azure_enterprise/AzureCloneService.py:104
 msgid "Subnet"
-msgstr ""
+msgstr "Подсеть"
 
 #: services/Azure_enterprise/AzureCloneService.py:105
 msgid "Subnet where the clones will be attached"
-msgstr ""
+msgstr "Подсети, где будет прилагаться клонов"
 
 #: services/Azure_enterprise/AzureCloneService.py:113
 msgid "Security Group"
-msgstr ""
+msgstr "Группа безопасности"
 
 #: services/Azure_enterprise/AzureCloneService.py:114
 msgid "Security group where to attach the virtual machine"
-msgstr ""
+msgstr "Группа безопасности где для присоединения виртуальной машины"
 
 #: services/Azure_enterprise/AzureCloneService.py:122
 msgid "Caching policy"
-msgstr ""
+msgstr "Политика кэширования"
 
 #: services/Azure_enterprise/AzureCloneService.py:123
 msgid "Disk Caching policy"
-msgstr ""
+msgstr "Политика кэширования диска"
 
 #: services/Azure_enterprise/AzureCloneService.py:131
 msgid "Pricing tier"
-msgstr ""
+msgstr "Ценовой уровень"
 
 #: services/Azure_enterprise/AzureCloneService.py:132
 msgid "SKU (pricing tier)"
-msgstr ""
+msgstr "SKU (ценовой уровень)"
 
 #: services/Azure_enterprise/AzureCloneService.py:140
 msgid "Accelerated network"
-msgstr ""
+msgstr "Ускоренное сети"
 
 #: services/Azure_enterprise/AzureCloneService.py:141
 msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
 msgstr ""
+"Активируйте этот параметр, чтобы использовать ускоренного сетей на vm. Убедитесь, что ваш "
+"Размер машины и машина поддерживает этот параметр перед активацией."
 
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
-msgstr ""
+msgstr "Вы должны выбрать сеть для службы"
 
 #: services/Azure_enterprise/Helpers.py:76
 msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
-msgstr ""
+msgstr "{} ({}, {} ядер, {: .2f} GiB, {} Макс данных дисков)"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Subscription ID"
-msgstr ""
+msgstr "Идентификатор подписки"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Obtained from subscriptions"
-msgstr ""
+msgstr "Полученные от подписки"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:41
 #: services/HyperV_enterprise/HyperVProvider.py:88
@@ -2635,11 +2650,11 @@ msgstr "Таймаут в секундах подключения к vCloud"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:48
 msgid "Azure Platform Provider"
-msgstr ""
+msgstr "Платформа Azure провайдер"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:50
 msgid "Provides connection to Azure Platform"
-msgstr ""
+msgstr "Обеспечивает подключение к платформе Azure"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:93
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:80
@@ -2648,7 +2663,7 @@ msgstr "Параметры подключения вероятно коррек�
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:231
 msgid "Azure Provider: "
-msgstr ""
+msgstr "Azure провайдер: "
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
@@ -3298,11 +3313,11 @@ msgstr "Порт OpenStack"
 
 #: services/OpenStack/Provider.py:101
 msgid "Newer Openstack"
-msgstr ""
+msgstr "Новые облаке"
 
 #: services/OpenStack/Provider.py:101
 msgid "Check this if your openstack is newer than OCATA"
-msgstr ""
+msgstr "Проверить это, если ваш облаке новее, чем OCATA"
 
 #: services/OpenStack/Provider.py:104
 msgid "Access interface"
@@ -3926,16 +3941,12 @@ msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
 msgstr "Длина числовой части для названий этих машин (между 3 и 6)"
 
 #: services/Xen/XenProvider.py:79
-#, fuzzy
-#| msgid "Xenserver Platform Provider"
 msgid "Xenserver/XCP-NG Platforms Provider"
-msgstr "Поставщик платформы Xenserver"
+msgstr "XenServer/XCP-NG платформ поставщик"
 
 #: services/Xen/XenProvider.py:83
-#, fuzzy
-#| msgid "XenServer platform service provider"
 msgid "XenServer and XCP-NG platforms service provider"
-msgstr "Постащик услуг платформы Xenserver"
+msgstr "XenServer XCP-NG платформы и поставщика услуг"
 
 #: services/Xen/XenProvider.py:98
 msgid "XenServer Server IP or Hostname"
@@ -5322,7 +5333,7 @@ msgstr "Разрешить диски"
 #: transports/RDP/BaseRDPTransport.py:71
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "Local drives redirection allowed"
-msgstr ""
+msgstr "Локальные диски перенаправление допускается"
 
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:81
@@ -5401,11 +5412,11 @@ msgstr "Если флажок установлен, разрешается сг�
 
 #: transports/RDP/BaseRDPTransport.py:114
 msgid "Connection Bar"
-msgstr ""
+msgstr "Панель подключений"
 
 #: transports/RDP/BaseRDPTransport.py:114
 msgid "If checked, connection bar will be shown (only on Windows clients)"
-msgstr ""
+msgstr "Если флажок установлен, панель подключений будет показан (только на Windows клиентов)"
 
 #: transports/RDP/BaseRDPTransport.py:116
 #: transports/RDS_enterprise/BaseRDSTransport.py:99
