@@ -1,6 +1,64 @@
 # jshint strict: true
 gui.metaPools = new GuiElement(api.metaPools, "metapools")
 
+# Method to add/edit pool
+newEditMemberPoolModal = (memberPools, refreshFnc, member) ->
+  gui.doLog('refreshFnc: ', refreshFnc)
+  if member != null
+    pool_id = member.pool_id
+    enabled = member.enabled
+    priority = member.priority
+  else
+    pool_id = null
+    enabled = true
+    priority = 1
+
+  api.templates.get "meta_add_pool", (tmpl) ->
+    api.servicesPools.overview (data) ->
+      # Sorts groups, expression means that "if a > b returns 1, if b > a returns -1, else returns 0"
+
+      modalId = gui.launchModal(gettext("Add service pool"), api.templates.evaluate(tmpl,
+        pools: data
+        pool_id: pool_id
+        enabled: enabled
+        priority: priority
+      ))
+
+      $(modalId + " .button-accept").on "click", (event) ->
+        pool = $(modalId + " #id_pool_select").val()
+        enabled = $(modalId + " #id_enabled").is(":checked")
+        priority = $(modalId + " #id_priority").val()
+        if member != null # Modify
+          memberPools.rest.save
+            id: member.id
+            pool_id: pool
+            enabled: enabled
+            priority: priority
+          , (data) ->
+            $(modalId).modal "hide"
+            refreshFnc()
+            return           
+        else # Create
+          memberPools.rest.create
+            pool_id: pool
+            enabled: enabled
+            priority: priority
+          , (data) ->
+            $(modalId).modal "hide"
+            refreshFnc()
+            return
+        return
+
+
+      # Makes form "beautyfull" :-)
+      gui.tools.applyCustoms modalId
+      return
+
+    return
+
+  return
+
+
 # To allow fast admin navigation
 gui.metaPools.fastLink = (event, obj) ->
   gui.doLog 'FastLink clicked', obj
@@ -126,12 +184,12 @@ gui.metaPools.link = (event) ->
         #
         #                     * Services pools part
         #
-        servicePool = new GuiElement(api.metaPools.detail(metaPool.id, "pools", { permission: metaPool.permission }), "pools")
+        memberPools = new GuiElement(api.metaPools.detail(metaPool.id, "pools", { permission: metaPool.permission }), "pools")
 
         # servicePool items table
-        servicePoolTable = servicePool.table(
+        memberPoolsTable = memberPools.table(
           doNotLoadData: true
-          icon: 'pool'
+          icon: 'pools'
           container: "meta-service-pools-placeholder"
           rowSelect: "multi"
           buttons: [
@@ -140,8 +198,18 @@ gui.metaPools.link = (event) ->
             "delete"
             "xls"
           ]
+
+          onNew: (value, table, refreshFnc) ->
+            gui.doLog('v, t, r', value, table, refreshFnc)
+            newEditMemberPoolModal(memberPools, refreshFnc, null)
+
+          onEdit: (item, event, table, refreshFnc) ->
+            newEditMemberPoolModal(memberPools, refreshFnc, item)
+
+          onDelete: gui.methods.del(memberPools, gettext("Remove member pool"), gettext("Member pool removal error"))            
+
         )
-        prevTables.push servicePoolTable
+        prevTables.push memberPoolsTable
 
         #
         #                     * Groups part

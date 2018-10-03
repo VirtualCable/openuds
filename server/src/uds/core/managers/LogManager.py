@@ -148,6 +148,7 @@ class LogManager(object):
         """
 
         owner_type = transDict.get(type(wichObject), None)
+        logger.debug('Getting log: %s -> %s', wichObject, owner_type)
 
         if owner_type is not None:
             return self.__getLogs(owner_type, wichObject.id, limit)

@@ -30,11 +30,9 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-
 from django.db import models
 from django.db.models import signals
+from django.utils.translation import ugettext_noop as _
 
 from uds.core.util import log
 from uds.core.util import states
@@ -49,15 +47,26 @@ from uds.models.Calendar import Calendar
 
 import logging
 
-__updated__ = '2018-10-01'
+__updated__ = '2018-10-03'
 
 logger = logging.getLogger(__name__)
 
 
 class MetaPool(UUIDModel, TaggingMixin):
     """
-    A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
+    A meta pool is a pool that has pool members
     """
+    # Type of pool selection for meta pool
+    ROUND_ROBIN_POOL = 0
+    PRIORITY_POOL = 1
+    MOST_AVAILABLE_BY_NUMBER = 2
+
+    TYPES = {
+        ROUND_ROBIN_POOL: _('Round Robin (distribute among all services)'),
+        PRIORITY_POOL: _('Priority (lowest priority is first consumed)'),
+        MOST_AVAILABLE_BY_NUMBER: _('Most available (based on max services value and current used value)'),
+   }
+
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
@@ -71,6 +80,9 @@ class MetaPool(UUIDModel, TaggingMixin):
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
 
     pools = models.ManyToManyField(ServicePool, through='MetapoolMember', related_name='meta')
+
+    # Pool selection policy
+    policy = models.SmallIntegerField(default=0)
 
     class Meta(UUIDModel.Meta):
         """
@@ -99,7 +111,9 @@ class MetaPool(UUIDModel, TaggingMixin):
         clean(toDelete)
 
     def __str__(self):
-        return ''
+        return 'Meta pool: {}, no. pools: {}, visible: {}, policy: {}'.format(
+            self.name, self.pools.all().count(), self.visible, self.policy
+        )
 
 
 # Connects a pre deletion signal

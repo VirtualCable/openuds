@@ -52,7 +52,7 @@ from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from .user_services import Groups
-from .access_calendars import AccessCalendars
+from uds.REST.methods.op_calendars import AccessCalendars
 from .meta_service_pools import MetaServicesPool
 
 import six
@@ -73,7 +73,7 @@ class MetaPools(ModelHandler):
     }
 
     save_fields = ['name', 'short_name', 'comments', 'tags',
-                   'image_id', 'servicesPoolGroup_id', 'visible']
+                   'image_id', 'servicesPoolGroup_id', 'visible', 'policy']
 
     remove_fields = []
 
@@ -119,6 +119,7 @@ class MetaPools(ModelHandler):
             'user_services_count': userServicesCount,
             'user_services_in_preparation': userServicesInPreparation,
             'visible': item.visible,
+            'policy': item.policy,
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
         }
@@ -131,6 +132,13 @@ class MetaPools(ModelHandler):
         g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
         for f in [{
+            'name': 'policy',
+            'values': [gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()],
+            'label': ugettext('Policy'),
+            'tooltip': ugettext('Service pool policy'),
+            'type': gui.InputField.CHOICE_TYPE,
+            'order': 100,
+        }, {
             'name': 'image_id',
             'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
             'label': ugettext('Associated Image'),
@@ -150,9 +158,9 @@ class MetaPools(ModelHandler):
             'name': 'visible',
             'value': True,
             'label': ugettext('Visible'),
-            'tooltip': ugettext('If active, transport will be visible for users'),
+            'tooltip': ugettext('If active, metapool will be visible for users'),
             'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 107,
+            'order': 123,
             'tab': ugettext('Display'),
         }]:
             self.addField(g, f)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,8 +31,6 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from __future__ import unicode_literals
-
 from django.db import models
 
 from uds.models.Util import NEVER_UNIX
@@ -40,8 +38,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2016-01-19'
-
+__updated__ = '2018-10-03'
 
 logger = logging.getLogger(__name__)
 

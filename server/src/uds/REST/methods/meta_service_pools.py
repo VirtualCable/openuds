@@ -61,6 +61,7 @@ class MetaServicesPool(DetailHandler):
     def as_dict(item: MetaPoolMember):
         return {
             'id': item.uuid,
+            'pool_id': item.pool.uuid,
             'name': item.pool.name,
             'comments': item.pool.comments,
             'priority': item.priority,
@@ -95,8 +96,8 @@ class MetaServicesPool(DetailHandler):
         # If already exists
         uuid = processUuid(item) if item is not None else None
 
-        pool = ServicePool.objects.get(uuid=processUuid(self._params['servicePoolId']))
-        enabled = self._params['enabled'].upper() in ('1', 'TRUE')
+        pool = ServicePool.objects.get(uuid=processUuid(self._params['pool_id']))
+        enabled = self._params['enabled'] not in ('false', False, '0', 0)
         priority = int(self._params['priority'])
 
         if uuid is not None:
@@ -108,7 +109,7 @@ class MetaServicesPool(DetailHandler):
         else:
             parent.members.create(pool=pool, priority=priority, enabled=enabled)
 
-        log.doLog(parent, log.INFO, "Added meta pool member {}/{} by {}".format(pool.name, priority, self._user.pretty_name), log.ADMIN)
+        log.doLog(parent, log.INFO, (uuid is None and "Added" or "Modified") + " meta pool member {}/{}/{} by {}".format(pool.name, priority, enabled, self._user.pretty_name), log.ADMIN)
 
         return self.success()
 
