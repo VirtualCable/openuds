@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2018-09-06'
+__updated__ = '2018-10-03'
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class BaseRDPTransport(Transport):
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=23, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
     allowClipboard = gui.CheckBoxField(label=_('Enable clipboard'), order=24, tooltip=_('If checked, copy-paste functions will be allowed'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
     allowAudio = gui.CheckBoxField(label=_('Enable sound'), order=25, tooltip=_('If checked, sound will be redirected.'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
-    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=26, tooltip=_('If checked, will enable Credentials Provider Support)'), tab=gui.PARAMETERS_TAB)
+    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=26, tooltip=_('If checked, will enable Credentials Provider Support)'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),
