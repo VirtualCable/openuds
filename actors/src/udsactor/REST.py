@@ -155,7 +155,11 @@ class Api(object):
                     logger.debug('Requesting with old')
                     r = requests.post(url, data=data, headers={'content-type': 'application/json'})
 
-            r = json.loads(r.content)  # Using instead of r.json() to make compatible with oooold rquests lib versions
+            # From versions of requests, content maybe bytes or str. We need str for json.loads
+            content = r.content
+            if not isinstance(content, six.text_type):
+                content = content.decode('utf8')
+            r = json.loads(content)  # Using instead of r.json() to make compatible with oooold rquests lib versions
         except requests.exceptions.RequestException as e:
             raise ConnectionError(e)
         except Exception as e:
