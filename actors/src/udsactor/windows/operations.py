@@ -91,6 +91,7 @@ def getDomainName():
 def getWindowsVersion():
     return win32api.GetVersionEx()
 
+
 EWX_LOGOFF = 0x00000000
 EWX_SHUTDOWN = 0x00000001
 EWX_REBOOT = 0x00000002
@@ -120,6 +121,7 @@ def renameComputer(newName):
         error = getErrorMessage()
         computerName = win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname)
         raise Exception('Error renaming computer from {} to {}: {}'.format(computerName, newName, error))
+
 
 NETSETUP_JOIN_DOMAIN = 0x00000001
 NETSETUP_ACCT_CREATE = 0x00000002
@@ -187,8 +189,8 @@ def changeUserPassword(user, oldPassword, newPassword):
 
     if res != 0:
         # Log the error, and raise exception to parent
-        error = getErrorMessage()
-        raise Exception('Error changing password for user {}: {}'.format(user.value, error))
+        error = getErrorMessage(res)
+        raise Exception('Error changing password for user {}: {} {}'.format(user.value, res, error))
 
 
 class LASTINPUTINFO(ctypes.Structure):
