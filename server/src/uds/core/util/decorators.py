@@ -33,13 +33,13 @@
 from __future__ import unicode_literals
 
 from uds.core.util.html import checkBrowser
-from uds.web import errors
+from uds.web.util import errors
 
 from functools import wraps
 
 import logging
 
-__updated__ = '2018-06-25'
+__updated__ = '2018-10-07'
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,7 @@ def denyBrowsers(browsers=None, errorResponse=lambda request: errors.errorView(r
         browsers = ['ie<9']
 
     def wrap(view_func):
+
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             """
@@ -66,7 +67,9 @@ def denyBrowsers(browsers=None, errorResponse=lambda request: errors.errorView(r
                     return errorResponse(request)
 
             return view_func(request, *args, **kwargs)
+
         return _wrapped_view
+
     return wrap
 
 

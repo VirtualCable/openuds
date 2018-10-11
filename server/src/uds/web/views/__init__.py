@@ -36,11 +36,12 @@ import logging
 from .service import transportOwnLink, transportIcon, clientEnabler, serviceImage, action
 from .auth import authCallback, authInfo, ticketAuth, customAuth
 from .download import download
-from ..errors import error
+from uds.web.util.errors import error
 from .images import image
 from .file_storage import file_storage
 from . import modern
+from . import custom
 
-__updated__ = '2018-09-28'
+__updated__ = '2018-10-04'
 
 logger = logging.getLogger(__name__)

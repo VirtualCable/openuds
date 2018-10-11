@@ -39,7 +39,7 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import TicketStore
 from uds.models import User
-from uds.web import errors
+from uds.web.util import errors
 from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import ServiceNotReadyError

@@ -44,7 +44,7 @@ from uds.web.authentication import checkLogin
 from uds.core.ui import theme
 from uds.core import VERSION
 
-import uds.web.errors as errors
+import uds.web.util.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,38 +25,22 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from django.db import models
-
-import logging
-
-logger = logging.getLogger(__name__)
+from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
+from uds.core.util.Config import Config
 
 
-class Config(models.Model):
-    """
-    General configuration values model. Used to store global and specific modules configuration values.
-    This model is managed via uds.core.util.Config.Config class
-    """
-    section = models.CharField(max_length=128, db_index=True)
-    key = models.CharField(max_length=64, db_index=True)
-    value = models.TextField(default='')
-    crypt = models.BooleanField(default=False)
-    long = models.BooleanField(default=False)
-    field_type = models.IntegerField(default=-1)
+# @cache_page(3600, key_prefix='custom', cache='memory')
+def custom(request, component):
+    content_type = 'text/plain'
+    value = ''
 
-    class Meta:
-        """
-        Meta class to declare default order and unique multiple field index
-        """
-        db_table = 'uds_configuration'
-        unique_together = (('section', 'key'),)
-        app_label = 'uds'
+    if component == 'styles.css':
+        content_type = 'text/css'
+        value = Config.section('__custom').value('style').get(force=True)
 
-    def __unicode__(self):
-        return u"Config {0} = {1}".format(self.key, self.value)
-
+    return HttpResponse(content_type=content_type, content=value)

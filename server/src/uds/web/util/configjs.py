@@ -36,12 +36,15 @@ import logging
 
 from django import template
 from django.conf import settings
+from django.middleware import csrf
 from django.utils.translation import gettext, get_language
 from django.utils.html import mark_safe
 from django.urls import reverse
 from django.templatetags.static import static
 
+from uds.REST import AUTH_TOKEN_HEADER
 from uds.REST.methods.client import CLIENT_VERSION
+
 from uds.core.managers import downloadsManager
 from uds.core.util.Config import GlobalConfig
 
@@ -57,8 +60,7 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
 @register.simple_tag(takes_context=True)
-def udsJs(context):
-    request = context['request']
+def udsJs(request):
     auth_host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
     profile = {
@@ -67,7 +69,7 @@ def udsJs(context):
     }
 
     # Gets csrf token
-    csrf_token = context.get('csrf_token')
+    csrf_token = csrf.get_token(request)
     if csrf_token is not None:
         csrf_token = str(csrf_token)
 
@@ -107,6 +109,7 @@ def udsJs(context):
             'changeLang': reverse('set_language'),
             'login': reverse('page.login'),
             'logout': reverse('page.logout'),
+            'user': reverse('page.index'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('webapi.services'),
             'enabler': reverse('webapi.enabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
@@ -135,8 +138,16 @@ def udsJs(context):
     actors = []
 
     if profile['role'] == 'staff':  # Add staff things
+        # If is admin (informational, REST api checks users privileges anyway...)
+        profile['admin'] = True;
+        # REST auth
+        config['auth_token'] = request.session.session_key
+        config['auth_header'] = AUTH_TOKEN_HEADER
+        # Actors
         actors = [{'url': reverse('utility.downloader', kwargs={'idDownload': key}), 'name': val['name'], 'description': gettext(val['comment'])} for key, val in downloadsManager().getDownloadables().items()]
+        # URLS
         config['urls']['admin'] = reverse('uds.admin.views.index')
+        config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
 
     errors = []
     if 'errors' in request.session:
@@ -152,6 +163,5 @@ def udsJs(context):
         'data': request.session.get('data')
     }
 
-    javascript = 'var udsData = ' + json.dumps(uds) + ';\n';
+    return 'var udsData = ' + json.dumps(uds) + ';\n'
 
-    return mark_safe(javascript);

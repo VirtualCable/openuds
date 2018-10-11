@@ -37,7 +37,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util.model import processUuid
 
-import uds.web.errors as errors
+import uds.web.util.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)

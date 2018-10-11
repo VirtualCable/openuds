@@ -42,7 +42,7 @@ from uds.core.managers import cryptoManager
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import ServiceNotReadyError
-from uds.web import errors
+from uds.web.util import errors
 
 import datetime
 import six

@@ -198,6 +198,9 @@ class Config(object):
     def enumerate():
         GlobalConfig.initialize()  # Ensures DB contains all values
         for cfg in uds.models.Config.objects.all().order_by('key'):  # @UndefinedVariable
+            # Skip sections with name starting with "__" (not to be editted on configuration)
+            if cfg.section.startswith('__'):  # Hidden section:
+                continue
             logger.debug('{0}.{1}:{2},{3}'.format(cfg.section, cfg.key, cfg.value, cfg.field_type))
             if cfg.crypt is True:
                 val = Config.section(cfg.section).valueCrypt(cfg.key)

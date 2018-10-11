@@ -43,15 +43,15 @@ from uds.models import Transport, Image
 from uds.core.util import html, log
 from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
-from uds.web import errors
-from uds.web import  services
+from uds.web.util import errors
+from uds.web.util import  services
 
 import json
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-27'
+__updated__ = '2018-10-07'
 
 
 @webLoginRequired(admin=False)

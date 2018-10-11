@@ -34,7 +34,7 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse
-from uds.web.errors import errorView
+from uds.web.util.errors import errorView
 from uds.core.auths.auth import (
     getUDSCookie,
     denyNonAuthenticated,
@@ -42,7 +42,8 @@ from uds.core.auths.auth import (
     authLogLogout,
     webLogout,
 )
-from uds.web.services import getServicesData
+from uds.web.util.services import getServicesData
+from uds.web.util import configjs
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ def index(request):
 # Basically, the original /login method, but fixed for modern interface
 def login(request, tag=None):
     from uds.web.forms.LoginForm import LoginForm
-    from uds.web.authentication import checkLogin
+    from uds.web.util.authentication import checkLogin
     from uds.core.auths.auth import webLogin
     from django.http import HttpResponseRedirect
 
@@ -97,7 +98,7 @@ def logout(request):
 
 
 def js(request):
-    return render(request, 'uds/js.js', content_type='text/javascript')
+    return HttpResponse(content=configjs.udsJs(request), content_type='application/javascript')
 
 
 @denyNonAuthenticated

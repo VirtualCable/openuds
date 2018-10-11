@@ -119,6 +119,11 @@ urlpatterns = [
     # Authenticators custom html
     re_path(r'^uds/webapi/customAuth/(?P<idAuth>.*)$', uds.web.views.customAuth, name='uds.web.views.customAuth'),
 
+    # END WEB API
+
+    # Costumization of GUI
+    re_path(r'^uds/custom/(?P<component>[a-zA-Z.-]+)$', uds.web.views.custom.custom, name='custom'),
+
     # REST Api
     re_path(r'^uds/rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
 

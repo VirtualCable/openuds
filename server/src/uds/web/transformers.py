@@ -54,7 +54,7 @@ def transformId(view_func):
 
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        from uds.web import errors
+        from uds.web.util import errors
         for k in kwargs.keys():
             if k[:2] == 'id':
                 try:

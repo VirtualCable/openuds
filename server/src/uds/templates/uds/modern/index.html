@@ -1,26 +1,27 @@
-{% load uds i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+{% load i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
 <html lang="{{ LANGUAGE_CODE }}">
 
 <head>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
   <meta charset="utf-8">
   <title>Uds</title>
   <base href="/uds/page">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" href="/uds/res/modern/img/favicon.png">
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
 
   <!-- just in case translations cannot be loaded, provide a fallback -->
   <script type="text/javascript">
-  django = {
-    gettext: function(s) {
-      return s;
+    django = {
+      gettext: function (s) {
+        return s;
+      }
     }
-  }
   </script>
   <script type="text/javascript" src="{% url 'utility.jsCatalog' LANGUAGE_CODE %}"></script><script type="text/javascript" src="{% url 'utility.js' %}"></script>
 
-<link rel="stylesheet" href="/uds/res/modern/styles.css"></head>
+<link rel="stylesheet" href="/uds/res/modern/styles.css"><link rel="stylesheet" href="{% url 'custom' 'styles.css' %}"></head>
 
 <body>
   <uds-root></uds-root>
