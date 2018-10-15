@@ -39,7 +39,7 @@ import json
 import dateutil.parser
 import six
 
-__updated__ = '2018-09-18'
+__updated__ = '2018-10-15'
 
 logger = logging.getLogger(__name__)
 
@@ -117,8 +117,8 @@ class Client(object):
     PRIVATE = 'private'
     INTERNAL = 'url'
 
-    # NewVersion is True for versions >= Ocata
-    def __init__(self, host, port, domain, username, password, newVersion=False, useSSL=False, projectId=None, region=None, access=None):
+    # Legacyversion is True for versions <= Ocata
+    def __init__(self, host, port, domain, username, password, legacyVersion=True, useSSL=False, projectId=None, region=None, access=None):
         self._authenticated = False
         self._tokenId = None
         self._catalog = None
@@ -132,7 +132,7 @@ class Client(object):
         self._region = region
         self._timeout = 10
 
-        self._authUrl = 'http{}://{}:{}/{}'.format('s' if useSSL else '', host, port, 'identity/' if newVersion else '')
+        self._authUrl = 'http{}://{}:{}/{}'.format('s' if useSSL else '', host, port, 'identity/' if not legacyVersion else '')
 
     def _getEndpointFor(self, type_):  # If no region is indicatad, first endpoint is returned
         for i in self._catalog:
