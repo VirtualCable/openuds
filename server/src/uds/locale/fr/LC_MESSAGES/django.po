@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-03 10:16+0200\n"
+"POT-Creation-Date: 2018-10-15 10:53+0200\n"
 "PO-Revision-Date: 2018-10-03 08:13+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -2865,7 +2865,7 @@ msgstr "Test de connexion réussie"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:181
+#: services/Nutanix_enterprise/NutanixProvider.py:184
 #: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
@@ -2972,19 +2972,7 @@ msgstr "Délai d'attente en secondes de connexion à Nutanix"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Plage de macs valides pour les machines gérées par UDS"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:45
-msgid "Legacy API (v0.8)"
-msgstr "API héritée (v0.8)"
-
-#: services/Nutanix_enterprise/NutanixProvider.py:46
-msgid ""
-"If checked, legacy API v0.8 will be used. Only recommended on OLD Nutanix "
-"installations."
-msgstr ""
-"Si cette case est cochée, l'ancienne version de l'API v0.8 sera utilisée. "
-"Seulement recommandé pour les installations OLD Nutanix."
-
-#: services/Nutanix_enterprise/NutanixProvider.py:179
+#: services/Nutanix_enterprise/NutanixProvider.py:182
 msgid "Connection works fine"
 msgstr "Connexion fonctionne très bien"
 
@@ -3361,16 +3349,17 @@ msgid "OpenStack Host"
 msgstr "Hôte OpenStack "
 
 #: services/OpenStack/Provider.py:100
-msgid "OpenStack Port"
-msgstr "Port OpenStack "
+msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
+msgstr "5000 pour les anciennes versions, 80/443 (ssl) pour les versions plus récentes que OCATA"
 
 #: services/OpenStack/Provider.py:101
-msgid "Newer Openstack"
-msgstr "Openstack plus récent"
+#| msgid "Newer Openstack"
+msgid "Legacy openstack"
+msgstr "Openstack hérité"
 
 #: services/OpenStack/Provider.py:101
-msgid "Check this if your openstack is newer than OCATA"
-msgstr "Cochez cette case si votre openstack est plus récent que OCATA"
+msgid "Set to \"yes\" if your Openstack release is OCATA or older"
+msgstr "Réglée sur « yes » si votre libération Openstack OCATA ou plus"
 
 #: services/OpenStack/Provider.py:104
 msgid "Access interface"

@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-03 10:16+0200\n"
-"PO-Revision-Date: 2018-10-03 08:14+0000\n"
+"POT-Creation-Date: 2018-10-15 10:53+0200\n"
+"PO-Revision-Date: 2018-10-03 08:32+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -978,7 +978,7 @@ msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
-"Si no vacía, anulará la base con este valor la búsqueda de anuncio (formato: "
+"Si no está vacío, reemplazará la base de busqueda con este valor (formato: "
 "dc =..., DC =...)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
@@ -1044,21 +1044,21 @@ msgstr ""
 
 #: auths/AzureAD_enterprise/AzureAD.py:72
 msgid "Azure AD Authenticator"
-msgstr "Autenticador AD azul"
+msgstr "Autenticador Azure AD"
 
 #: auths/AzureAD_enterprise/AzureAD.py:74
 msgid "Azure Active Directory Authenticator"
-msgstr "Autenticador azul Active Directory"
+msgstr "Autenticador Azure Active Directory"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Tenant ID"
-msgstr "Identificación del arrendatario"
+msgstr "Tenant ID"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
-msgstr "Obtenidos de Azure Active Directory - propiedades - directorio de ID"
+msgstr "Obtenidos de Azure Active Directory - propiedades - ID de directorio"
 
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
@@ -1073,22 +1073,20 @@ msgstr "Obtenidos de la aplicación creada en Azure para UDS empresa"
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Client Secret"
-msgstr "Cliente secreto"
+msgstr "Clave de Cliente"
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
-msgstr "Obtenidos de la aplicación creada en Azure para UDS Enteprise - llaves"
+msgstr "Obtenidos de la aplicación creada en Azure para UDS Enteprise - claves"
 
 #: auths/AzureAD_enterprise/AzureAD.py:96
 msgid "Callback"
-msgstr "Devolución de llamada"
+msgstr "URL de respuesta"
 
 #: auths/AzureAD_enterprise/AzureAD.py:98
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
-msgstr ""
-"Url de callback (llenado por UDS, solucionar este problema sólo si es "
-"necesario!!)"
+msgstr "Url de respuesta (rellenado por UDS, modificar sólo si es necesario!!)"
 
 #: auths/AzureAD_enterprise/AzureAD.py:230
 #: auths/AzureAD_enterprise/AzureAD.py:253
@@ -2469,7 +2467,7 @@ msgstr "Genera un informe con el Resumen de un uso de un pool"
 
 #: services/Azure_enterprise/AzureCloneService.py:29
 msgid "Azure Clone Service"
-msgstr "Servicio de clon azul"
+msgstr "Servicio de clones de Azure"
 
 #: services/Azure_enterprise/AzureCloneService.py:31
 msgid "This service provides access to Azure VMs based VDI"
@@ -2857,7 +2855,7 @@ msgstr "Test de conexión realizado con éxito"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:181
+#: services/Nutanix_enterprise/NutanixProvider.py:184
 #: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
@@ -2964,19 +2962,7 @@ msgstr "Tiempo de espera en segundos de conexión a Nutanix"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Rango de macs válidas para máquinas administradas por UDS "
 
-#: services/Nutanix_enterprise/NutanixProvider.py:45
-msgid "Legacy API (v0.8)"
-msgstr "API legacy (v0.8)"
-
-#: services/Nutanix_enterprise/NutanixProvider.py:46
-msgid ""
-"If checked, legacy API v0.8 will be used. Only recommended on OLD Nutanix "
-"installations."
-msgstr ""
-"Si está marcada, se utilizará el API v0.8 obsoleto. Sólo se recomienda en "
-"instalaciones de Nutanix antiguas."
-
-#: services/Nutanix_enterprise/NutanixProvider.py:179
+#: services/Nutanix_enterprise/NutanixProvider.py:182
 msgid "Connection works fine"
 msgstr "Conexión funciona bien"
 
@@ -3347,16 +3333,17 @@ msgid "OpenStack Host"
 msgstr "OpenStack Host"
 
 #: services/OpenStack/Provider.py:100
-msgid "OpenStack Port"
-msgstr "Puerto OpenStack "
+msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
+msgstr "5000 para versiones más antiguas, 80/443 (ssl) para versiones más nuevas de OCATA"
 
 #: services/OpenStack/Provider.py:101
-msgid "Newer Openstack"
-msgstr "Openstack más nuevos"
+#| msgid "Newer Openstack"
+msgid "Legacy openstack"
+msgstr "Openstack legado"
 
 #: services/OpenStack/Provider.py:101
-msgid "Check this if your openstack is newer than OCATA"
-msgstr "Mira si tu openstack es más reciente que OCATA"
+msgid "Set to \"yes\" if your Openstack release is OCATA or older"
+msgstr "Ajustado en \"yes\" Si tu versión de Openstack es OCATA o más"
 
 #: services/OpenStack/Provider.py:104
 msgid "Access interface"

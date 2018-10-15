@@ -4,7 +4,7 @@
 #
 # Translators:
 # , 2014
-# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017
+# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2018
 # blafuente <blafuente@virtualcable.es>, 2014
 # blafuente <blafuente@virtualcable.es>, 2014-2015
 # Javier <jgonzalez@virtualcable.es>, 2014
@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-03 10:16+0200\n"
-"PO-Revision-Date: 2018-09-24 09:15+0000\n"
+"POT-Creation-Date: 2018-10-15 10:53+0200\n"
+"PO-Revision-Date: 2018-10-03 08:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -733,11 +733,11 @@ msgstr "Debe proporcionar autenticador y grupo"
 
 #: static/tmp_js/gui-d-servicespools.js:434
 msgid "Edit Assigned Service ownership"
-msgstr "Editar propiedad de los servicios asignados"
+msgstr "Editar propiedad del servicio asignado"
 
 #: static/tmp_js/gui-d-servicespools.js:462
 msgid "You must provide authenticator and user"
-msgstr "Usted debe proporcionar el autenticador y el usuario"
+msgstr "Debe proporcionar el autenticador y el usuario"
 
 #: static/tmp_js/gui-d-servicespools.js:480
 msgid "Remove Assigned service"
