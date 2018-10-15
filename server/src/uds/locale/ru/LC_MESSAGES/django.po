@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-03 10:16+0200\n"
-"PO-Revision-Date: 2018-10-03 08:13+0000\n"
+"POT-Creation-Date: 2018-10-15 10:53+0200\n"
+"PO-Revision-Date: 2018-10-03 08:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -966,8 +966,8 @@ msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
-"Если не пустое, будет переопределить базу с этим значением AD поиска (формат: dc =..., "
-"DC =...)"
+"Если не пустое, будет переопределить базу с этим значением AD поиска "
+"(формат: dc =..., DC =...)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
@@ -1056,7 +1056,8 @@ msgstr "Идентификатор клиента"
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
-msgstr "Полученные от приложения, созданный на платформе Azure для UDS предприятия"
+msgstr ""
+"Полученные от приложения, созданный на платформе Azure для UDS предприятия"
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
@@ -1066,7 +1067,9 @@ msgstr "Секрет клиента"
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
-msgstr "Полученные от приложения, созданный на платформе Azure для UDS предприятия - ключи"
+msgstr ""
+"Полученные от приложения, созданный на платформе Azure для UDS предприятия - "
+"ключи"
 
 #: auths/AzureAD_enterprise/AzureAD.py:96
 msgid "Callback"
@@ -1074,7 +1077,9 @@ msgstr "Обратный вызов"
 
 #: auths/AzureAD_enterprise/AzureAD.py:98
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
-msgstr "Url обратного вызова (заполнены UDS, исправить это только в случае необходимости!)"
+msgstr ""
+"Url обратного вызова (заполнены UDS, исправить это только в случае "
+"необходимости!)"
 
 #: auths/AzureAD_enterprise/AzureAD.py:230
 #: auths/AzureAD_enterprise/AzureAD.py:253
@@ -1979,8 +1984,8 @@ msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.5)</b>"
 msgstr ""
-"UDS актер для Debian, Ubuntu... Linux машины <b>(требуется python > = "
-"3.5)</b>"
+"UDS актер для Debian, Ubuntu... Linux машины <b>(требуется python > = 3.5)</"
+"b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
 msgid ""
@@ -2455,7 +2460,8 @@ msgstr "Количество желаемых VMs держать работае�
 
 #: services/Azure_enterprise/AzureCloneService.py:39
 msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr "Количество желаемых VMs держать приостановлено ожидания для использования"
+msgstr ""
+"Количество желаемых VMs держать приостановлено ожидания для использования"
 
 #: services/Azure_enterprise/AzureCloneService.py:53
 msgid "Resource Group"
@@ -2578,8 +2584,9 @@ msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
 msgstr ""
-"Активируйте этот параметр, чтобы использовать ускоренного сетей на vm. Убедитесь, что ваш "
-"Размер машины и машина поддерживает этот параметр перед активацией."
+"Активируйте этот параметр, чтобы использовать ускоренного сетей на vm. "
+"Убедитесь, что ваш Размер машины и машина поддерживает этот параметр перед "
+"активацией."
 
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
@@ -2823,7 +2830,7 @@ msgstr "Тест соединения успешен"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:181
+#: services/Nutanix_enterprise/NutanixProvider.py:184
 #: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
@@ -2930,19 +2937,7 @@ msgstr "Таймаут в секундах подключения к Nutanix"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Диапазон действительных мак-адресов для управляемых машин UDS"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:45
-msgid "Legacy API (v0.8)"
-msgstr "Устаревший API (v0.8)"
-
-#: services/Nutanix_enterprise/NutanixProvider.py:46
-msgid ""
-"If checked, legacy API v0.8 will be used. Only recommended on OLD Nutanix "
-"installations."
-msgstr ""
-"Если флажок установлен, будет использоваться устаревший API v0.8. "
-"Рекомендовано только для устаревших установок Nutanix"
-
-#: services/Nutanix_enterprise/NutanixProvider.py:179
+#: services/Nutanix_enterprise/NutanixProvider.py:182
 msgid "Connection works fine"
 msgstr "Подключение работает отлично"
 
@@ -3308,16 +3303,17 @@ msgid "OpenStack Host"
 msgstr "Хост OpenStack"
 
 #: services/OpenStack/Provider.py:100
-msgid "OpenStack Port"
-msgstr "Порт OpenStack"
+msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
+msgstr "5000 для старых выпусков, 80/443 (ssl) для релизов новее, чем OCATA"
 
 #: services/OpenStack/Provider.py:101
-msgid "Newer Openstack"
-msgstr "Новые облаке"
+#| msgid "Newer Openstack"
+msgid "Legacy openstack"
+msgstr "Наследие облаке"
 
 #: services/OpenStack/Provider.py:101
-msgid "Check this if your openstack is newer than OCATA"
-msgstr "Проверить это, если ваш облаке новее, чем OCATA"
+msgid "Set to \"yes\" if your Openstack release is OCATA or older"
+msgstr "Установите значение «Да», если ваш пресс-релиз облаке OCATA или старше"
 
 #: services/OpenStack/Provider.py:104
 msgid "Access interface"
@@ -5416,7 +5412,9 @@ msgstr "Панель подключений"
 
 #: transports/RDP/BaseRDPTransport.py:114
 msgid "If checked, connection bar will be shown (only on Windows clients)"
-msgstr "Если флажок установлен, панель подключений будет показан (только на Windows клиентов)"
+msgstr ""
+"Если флажок установлен, панель подключений будет показан (только на Windows "
+"клиентов)"
 
 #: transports/RDP/BaseRDPTransport.py:116
 #: transports/RDS_enterprise/BaseRDSTransport.py:99

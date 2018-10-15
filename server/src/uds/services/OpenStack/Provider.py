@@ -44,7 +44,7 @@ from . import openStack
 
 import logging
 
-__updated__ = '2018-09-18'
+__updated__ = '2018-10-15'
 
 logger = logging.getLogger(__name__)
 
@@ -97,8 +97,8 @@ class Provider(ServiceProvider):
     # If we don't indicate an order, the output order of fields will be
     # "random"
     host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenStack Host'), required=True)
-    port = gui.NumericField(length=5, label=_('Port'), defvalue='5000', order=2, tooltip=_('OpenStack Port'), required=True)
-    newVersion = gui.CheckBoxField(label=_('Newer Openstack'), order=3, tooltip=_('Check this if your openstack is newer than OCATA'))
+    port = gui.NumericField(length=5, label=_('Port'), defvalue='5000', order=2, tooltip=_('5000 for older releases, 80/443 (ssl) for releases newer than OCATA'), required=True)
+    legacyVersion = gui.CheckBoxField(label=_('Legacy openstack'), order=3, tooltip=_('Set to "yes" if your Openstack release is OCATA or older'), defvalue=gui.TRUE)
     ssl = gui.CheckBoxField(label=_('Use SSL'), order=4, tooltip=_('If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'))
 
     access = gui.ChoiceField(label=_('Access interface'), order=5, tooltip=_('Access interface to be used'), values=INTERFACE_VALUES, defvalue='public')
@@ -130,7 +130,7 @@ class Provider(ServiceProvider):
     def api(self, projectId=None, region=None):
         return openStack.Client(self.host.value, self.port.value,
                                      self.domain.value, self.username.value, self.password.value,
-                                     newVersion=self.newVersion.isTrue(),
+                                     legacyVersion=self.legacyVersion.isTrue(),
                                      useSSL=self.ssl.isTrue(),
                                      projectId=projectId,
                                      region=region,
