@@ -151,7 +151,7 @@
 
     # Datetime renderer (with specified format)
     renderDate: (format) ->
-      (data, type, full) ->
+      (data, type, g) ->
         if data == "None" or data is null
           data = 7226578800
           val = gettext('Never')

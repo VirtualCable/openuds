@@ -5,9 +5,9 @@
 # All rights reserved.
 #
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 from django.utils.translation import ugettext as _
 import logging
@@ -15,12 +15,14 @@ from uds.core.ui import gui
 
 logger = logging.getLogger(__name__)
 
-
 def getResources(parameters):
-    """
+    '''
     This helper is designed as a callback for Project Selector
-    """
-    from .Provider import Provider
+    '''
+    if parameters['legacy'] == 'true':
+        from .ProviderLegacy import ProviderLegacy as Provider
+    else:
+        from .Provider import Provider
     from uds.core.Environment import Environment
     logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))
     env = Environment(parameters['ev'])
@@ -36,21 +38,23 @@ def getResources(parameters):
     volumeTypes = [gui.choiceItem('-', _('None'))] + [gui.choiceItem(t['id'], t['name']) for t in api.listVolumeTypes()]
 
     data = [
-        {'name': 'availabilityZone', 'values': zones},
-        {'name': 'network', 'values': networks},
-        {'name': 'flavor', 'values': flavors},
-        {'name': 'securityGroups', 'values': securityGroups},
-        {'name': 'volumeType', 'values': volumeTypes},
+        {'name': 'availabilityZone', 'values': zones },
+        {'name': 'network', 'values': networks },
+        {'name': 'flavor', 'values': flavors },
+        {'name': 'securityGroups', 'values': securityGroups },
+        {'name': 'volumeType', 'values': volumeTypes },
     ]
     logger.debug('Return data: {}'.format(data))
     return data
 
-
 def getVolumes(parameters):
-    """
+    '''
     This helper is designed as a callback for Zone Selector
-    """
-    from .Provider import Provider
+    '''
+    if parameters['legacy'] == 'true':
+        from .ProviderLegacy import ProviderLegacy as Provider
+    else:
+        from .Provider import Provider
     from uds.core.Environment import Environment
     logger.debug('Parameters received by getVolumes Helper: {0}'.format(parameters))
     env = Environment(parameters['ev'])
@@ -59,11 +63,10 @@ def getVolumes(parameters):
 
     api = provider.api(parameters['project'], parameters['region'])
 
-    volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if
-               v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
+    volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
 
     data = [
-        {'name': 'volume', 'values': volumes},
+        {'name': 'volume', 'values': volumes },
     ]
     logger.debug('Return data: {}'.format(data))
     return data

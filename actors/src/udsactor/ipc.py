@@ -38,6 +38,7 @@ import traceback
 import pickle
 import errno
 import time
+import json
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -93,10 +94,8 @@ REV_DICT = {
 
 MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the right
 
-
 # Allows notifying login/logout from client for linux platform
 ALLOW_LOG_METHODS = sys.platform != 'win32'
-
 
 # States for client processor
 ST_SECOND_BYTE = 0x01
@@ -105,6 +104,7 @@ ST_PROCESS_MESSAGE = 0x02
 
 
 class ClientProcessor(threading.Thread):
+
     def __init__(self, parent, clientSocket):
         super(self.__class__, self).__init__()
         self.parent = parent
@@ -299,6 +299,7 @@ class ServerIPC(threading.Thread):
 
 
 class ClientIPC(threading.Thread):
+
     def __init__(self, listenPort):
         super(ClientIPC, self).__init__()
         self.port = listenPort
