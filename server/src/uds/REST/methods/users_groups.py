@@ -42,7 +42,7 @@ from uds.core.util.State import State
 from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import log
 from uds.core.util.model import processUuid
-from uds.models import Authenticator, User, Group
+from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.auths.User import User as aUser
 from uds.core.managers import cryptoManager
 from uds.REST import RequestError
@@ -58,6 +58,7 @@ logger = logging.getLogger(__name__)
 
 # Details of /auth
 
+
 def getGroupsFromMeta(groups):
     for g in groups:
         if g.is_meta:
@@ -68,9 +69,8 @@ def getGroupsFromMeta(groups):
 
 
 def getPoolsForGroups(groups):
-    for g in groups:
-        for servicePool in g.deployedServices.all():
-            yield servicePool
+    for servicePool in ServicePool.getDeployedServicesForGroups(groups):
+        yield servicePool
 
 
 class Users(DetailHandler):
@@ -195,7 +195,8 @@ class Users(DetailHandler):
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
         res = []
-        for i in getPoolsForGroups(user.groups.all()):
+        groups = list(user.getGroups())
+        for i in getPoolsForGroups(groups):
             res.append({
                 'id': i.uuid,
                 'name': i.name,
@@ -218,7 +219,6 @@ class Users(DetailHandler):
                 res.append(v)
 
         return res
-
 
 
 class Groups(DetailHandler):
