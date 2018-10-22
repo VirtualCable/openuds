@@ -39,7 +39,7 @@ import json
 import dateutil.parser
 import six
 
-__updated__ = '2018-10-15'
+__updated__ = '2018-10-22'
 
 logger = logging.getLogger(__name__)
 
@@ -124,7 +124,6 @@ class Client(object):
         self._catalog = None
 
         self._access = Client.PUBLIC if access is None else access
-        self._host, self._port = host, int(port)
         self._domain, self._username, self._password = domain, username, password
         self._userId = None
         self._projectId = projectId
@@ -132,7 +131,12 @@ class Client(object):
         self._region = region
         self._timeout = 10
 
-        self._authUrl = 'http{}://{}:{}/{}'.format('s' if useSSL else '', host, port, 'identity/' if not legacyVersion else '')
+        if legacyVersion:
+            self._authUrl = 'http{}://{}:{}/'.format('s' if useSSL else '', host, port)
+        else:
+            self._authUrl = host  # Host contains auth URL
+            if self._authUrl[-1] != '/':
+                self._authUrl += '/'
 
     def _getEndpointFor(self, type_):  # If no region is indicatad, first endpoint is returned
         for i in self._catalog:
@@ -542,6 +546,7 @@ class Client(object):
                              verify=VERIFY_SSL,
                              headers=self._requestHeaders())
         except Exception:
+            logger.exception('Testing')
             raise Exception('Connection error')
 
         try:

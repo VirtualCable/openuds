@@ -55,7 +55,7 @@ INTERFACE_VALUES = [
 ]
 
 
-class Provider(ServiceProvider):
+class ProviderLegacy(ServiceProvider):
     '''
     This class represents the sample services provider
 
@@ -77,15 +77,15 @@ class Provider(ServiceProvider):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('OpenStack Platform Provider')
+    typeName = _('OpenStack LEGACY Platform Provider')
     # : Type used internally to identify this provider
-    typeType = 'openStackPlatformNew'
+    typeType = 'openStackPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenStack platform service provider')
+    typeDescription = _('OpenStack LEGACY platform service provider (for older Openstack Releases, previous to OCATA)')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    iconFile = 'openstack.png'
+    iconFile = 'provider.png'
 
     # now comes the form fields
     # There is always two fields that are requested to the admin, that are:
@@ -96,7 +96,9 @@ class Provider(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    endpoint = gui.TextField(length=128, label=_('Identity endpoint'), order=1, tooltip=_('OpenStack identity endpoint API Access (for example, https://10.0.0.0/identity)'), required=True)
+    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenStack Host'), required=True)
+    port = gui.NumericField(length=5, label=_('Port'), defvalue='5000', order=2, tooltip=_('5000 for older releases, 80/443 (ssl) for releases newer than OCATA'), required=True)
+    ssl = gui.CheckBoxField(label=_('Use SSL'), order=4, tooltip=_('If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'))
 
     access = gui.ChoiceField(label=_('Access interface'), order=5, tooltip=_('Access interface to be used'), values=INTERFACE_VALUES, defvalue='public')
 
@@ -112,7 +114,7 @@ class Provider(ServiceProvider):
     # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
     # region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='RegionOne')
 
-    legacy = False
+    legacy = True
 
     # Own variables
     _api = None
@@ -127,10 +129,10 @@ class Provider(ServiceProvider):
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
 
     def api(self, projectId=None, region=None):
-        return openStack.Client(self.endpoint.value, -1,
+        return openStack.Client(self.host.value, self.port.value,
                                      self.domain.value, self.username.value, self.password.value,
-                                     legacyVersion=False,
-                                     useSSL=None,
+                                     legacyVersion=True,
+                                     useSSL=self.ssl.isTrue(),
                                      projectId=projectId,
                                      region=region,
                                      access=self.access.value)
@@ -151,7 +153,6 @@ class Provider(ServiceProvider):
             if self.api().testConnection() is False:
                 raise Exception('Check connection credentials, server, etc.')
         except Exception as e:
-            logger.exception('Error')
             return [False, '{}'.format(e)]
 
         return [True, _('OpenStack test connection passed')]
@@ -173,4 +174,4 @@ class Provider(ServiceProvider):
             second is an String with error, preferably internacionalizated..
 
         '''
-        return Provider(env, data).testConnection()
+        return ProviderLegacy(env, data).testConnection()

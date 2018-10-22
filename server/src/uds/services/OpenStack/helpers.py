@@ -15,11 +15,15 @@ from uds.core.ui import gui
 
 logger = logging.getLogger(__name__)
 
+
 def getResources(parameters):
     '''
     This helper is designed as a callback for Project Selector
     '''
-    from .Provider import Provider
+    if parameters['legacy'] == 'true':
+        from .ProviderLegacy import ProviderLegacy as Provider
+    else:
+        from .Provider import Provider
     from uds.core.Environment import Environment
     logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))
     env = Environment(parameters['ev'])
@@ -44,11 +48,15 @@ def getResources(parameters):
     logger.debug('Return data: {}'.format(data))
     return data
 
+
 def getVolumes(parameters):
     '''
     This helper is designed as a callback for Zone Selector
     '''
-    from .Provider import Provider
+    if parameters['legacy'] == 'true':
+        from .ProviderLegacy import ProviderLegacy as Provider
+    else:
+        from .Provider import Provider
     from uds.core.Environment import Environment
     logger.debug('Parameters received by getVolumes Helper: {0}'.format(parameters))
     env = Environment(parameters['ev'])

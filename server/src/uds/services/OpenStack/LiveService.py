@@ -42,7 +42,7 @@ from uds.core.ui import gui
 import six
 import logging
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-10-22'
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class LiveService(Service):
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    iconFile = 'provider.png'
+    iconFile = 'openstack.png'
 
     # Functional related data
 
@@ -102,7 +102,7 @@ class LiveService(Service):
         fills={
             'callbackName' : 'osFillResources',
             'function' : helpers.getResources,
-            'parameters' : ['ov', 'ev', 'project', 'region']
+            'parameters' : ['ov', 'ev', 'project', 'region', 'legacy']
             },
         tooltip=_('Project for this service'), required=True, rdonly=True
     )
@@ -110,7 +110,7 @@ class LiveService(Service):
         fills={
             'callbackName' : 'osFillVolumees',
             'function' : helpers.getVolumes,
-            'parameters' : ['ov', 'ev', 'project', 'region', 'availabilityZone']
+            'parameters' : ['ov', 'ev', 'project', 'region', 'availabilityZone', 'legacy']
             },
         tooltip=_('Service availability zones'), required=True, rdonly=True
     )
@@ -141,7 +141,8 @@ class LiveService(Service):
     )
 
     ov = gui.HiddenField(value=None)
-    ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
+    ev = gui.HiddenField(value=None)
+    legacy = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values):
         '''
@@ -178,6 +179,7 @@ class LiveService(Service):
 
         self.ov.setDefValue(self.parent().serialize())
         self.ev.setDefValue(self.parent().env.key)
+        self.legacy.setDefValue(self.parent().legacy and 'true' or 'false')
 
     @property
     def api(self):
