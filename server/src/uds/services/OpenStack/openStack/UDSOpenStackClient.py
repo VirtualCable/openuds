@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 # pylint: disable=maybe-no-member,protected-access
 from django.utils.translation import ugettext as _
 
@@ -39,7 +39,7 @@ import json
 import dateutil.parser
 import six
 
-__updated__ = '2018-10-22'
+__updated__ = '2018-10-23'
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
         try:
             _x, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
-            errMsg = errMsg + ': {message}'.format(**err)
+            errMsg += ': {message}'.format(**err)
         except Exception:
             pass  # If error geting error message, simply ignore it (will be loged on service log anyway)
         if errMsg is None:
@@ -120,8 +120,10 @@ class Client(object):
     # Legacyversion is True for versions <= Ocata
     def __init__(self, host, port, domain, username, password, legacyVersion=True, useSSL=False, projectId=None, region=None, access=None):
         self._authenticated = False
+        self._authenticatedProjectId = None
         self._tokenId = None
         self._catalog = None
+        self._isLegacy = legacyVersion
 
         self._access = Client.PUBLIC if access is None else access
         self._domain, self._username, self._password = domain, username, password
@@ -153,6 +155,7 @@ class Client(object):
         return headers
 
     def authPassword(self):
+        # logger.debug('Authenticating...')
         data = {
             'auth': {
                 'identity': {
@@ -173,13 +176,19 @@ class Client(object):
         }
 
         if self._projectId is None:
-            data['auth']['scope'] = 'unscoped'
+            self._authenticatedProjectId = None
+            if self._isLegacy:
+                data['auth']['scope'] = 'unscoped'
         else:
+            self._authenticatedProjectId = self._projectId
             data['auth']['scope'] = {
                 'project': {
-                    'id': self._projectId
+                    'id': self._projectId,
+                    'domain': { 'name': self._domain }
                 }
             }
+
+        # logger.debug('Request data: {}'.format(data))
 
         r = requests.post(self._authUrl + 'v3/auth/tokens',
                           data=json.dumps(data),
@@ -193,17 +202,18 @@ class Client(object):
         self._tokenId = r.headers['X-Subject-Token']
         # Extract the token id
         token = r.json()['token']
+        # logger.debug('Got token {}'.format(token))
         self._userId = token['user']['id']
         validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
 
-        logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
+        # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
         # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectId is not None:
             self._catalog = token['catalog']
 
     def ensureAuthenticated(self):
-        if self._authenticated is False:
+        if self._authenticated is False or self._projectId != self._authenticatedProjectId:
             self.authPassword()
 
     @authRequired
@@ -341,10 +351,10 @@ class Client(object):
 
     @authProjectRequired
     def getSnapshot(self, snapshotId):
-        '''
+        """
         States are:
             creating, available, deleting, error,  error_deleting
-        '''
+        """
         r = requests.get(self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
                          headers=self._requestHeaders(),
                          verify=VERIFY_SSL,
