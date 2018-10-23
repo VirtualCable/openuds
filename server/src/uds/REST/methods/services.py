@@ -176,7 +176,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 self._deleteIncompleteService(service)
             raise RequestError(_('Input error: {0}'.format(six.text_type(e))))
         except Exception as e:
-            self._deleteIncompleteService(service)
+            if item is None:
+                self._deleteIncompleteService(service)
             logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT: {0}'.format(e))
 

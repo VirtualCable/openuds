@@ -39,7 +39,7 @@ import json
 import dateutil.parser
 import six
 
-__updated__ = '2018-10-22'
+__updated__ = '2018-10-23'
 
 logger = logging.getLogger(__name__)
 
@@ -120,8 +120,10 @@ class Client(object):
     # Legacyversion is True for versions <= Ocata
     def __init__(self, host, port, domain, username, password, legacyVersion=True, useSSL=False, projectId=None, region=None, access=None):
         self._authenticated = False
+        self._authenticatedProjectId = None
         self._tokenId = None
         self._catalog = None
+        self._isLegacy = legacyVersion
 
         self._access = Client.PUBLIC if access is None else access
         self._domain, self._username, self._password = domain, username, password
@@ -153,6 +155,7 @@ class Client(object):
         return headers
 
     def authPassword(self):
+        # logger.debug('Authenticating...')
         data = {
             'auth': {
                 'identity': {
@@ -173,13 +176,19 @@ class Client(object):
         }
 
         if self._projectId is None:
-            data['auth']['scope'] = 'unscoped'
+            self._authenticatedProjectId = None
+            if self._isLegacy:
+                data['auth']['scope'] = 'unscoped'
         else:
+            self._authenticatedProjectId = self._projectId
             data['auth']['scope'] = {
                 'project': {
-                    'id': self._projectId
+                    'id': self._projectId,
+                    'domain': { 'name': self._domain }
                 }
             }
+
+        # logger.debug('Request data: {}'.format(data))
 
         r = requests.post(self._authUrl + 'v3/auth/tokens',
                           data=json.dumps(data),
@@ -193,17 +202,18 @@ class Client(object):
         self._tokenId = r.headers['X-Subject-Token']
         # Extract the token id
         token = r.json()['token']
+        # logger.debug('Got token {}'.format(token))
         self._userId = token['user']['id']
         validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
 
-        logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
+        # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
         # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectId is not None:
             self._catalog = token['catalog']
 
     def ensureAuthenticated(self):
-        if self._authenticated is False:
+        if self._authenticated is False or self._projectId != self._authenticatedProjectId:
             self.authPassword()
 
     @authRequired
