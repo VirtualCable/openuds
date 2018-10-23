@@ -411,7 +411,7 @@ namespace.strftimeTZ = strftime.strftimeTZ = strftimeTZ
 namespace.strftimeUTC = strftime.strftimeUTC = strftimeUTC
 namespace.localizedStrftime = strftime.localizedStrftime = localizedStrftime
 RequiredDateMethods = [
-  "getTime"python
+  "getTime"
   "getTimezoneOffset"
   "getDay"
   "getDate"
