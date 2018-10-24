@@ -61,6 +61,7 @@ class Logger(object):
         self.remoteLogger = remoteLogger
 
     def log(self, level, message):
+        print(level)
         if level < self.logLevel:  # Skip not wanted messages
             return
 

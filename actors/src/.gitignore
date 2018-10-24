@@ -1,4 +1,6 @@
 build
+dist
+*.spec
 .idea
 *_enterprise*
 /samples/

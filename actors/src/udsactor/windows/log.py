@@ -37,7 +37,7 @@ import os
 import tempfile
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))
 
 
 class LocalLogger(object):
@@ -58,7 +58,7 @@ class LocalLogger(object):
         # our loglevels are 10000 (other), 20000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
-        self.logger.log(level / 1000 - 10, message)
+        self.logger.log(level // 1000 - 10, message)
 
         if level < INFO or self.serviceLogger is False:  # Only information and above will be on event log
             return
