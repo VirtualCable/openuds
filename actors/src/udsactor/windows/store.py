@@ -31,13 +31,13 @@
 '''
 from __future__ import unicode_literals
 
+import pickle
 from win32com.shell import shell  # @UnresolvedImport, pylint: disable=import-error
 try:
-    import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
-except Exception: # Python3
     import winreg as wreg
+except ImportError: # Python 2.7 fallback
+    import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
 import win32security  # @UnresolvedImport, pylint: disable=import-error
-import pickle
 
 DEBUG = False
 

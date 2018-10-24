@@ -78,6 +78,7 @@ def initCfg():
 
 
 class CommonService(object):
+
     def __init__(self):
         self.isAlive = True
         self.api = None
@@ -319,7 +320,7 @@ class CommonService(object):
             except Exception:
                 logger.error('Couln\'t remove comms url from broker')
 
-        self.notifyStop()
+        # self.notifyStop()
 
     # ***************************************************
     # Methods that ARE overriden by linux & windows Actor
