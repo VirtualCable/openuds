@@ -34,7 +34,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2017-03-10'
+__updated__ = '2018-10-26'
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
@@ -63,6 +63,7 @@ CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Set maximum number of ser
 
 CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
                                                         CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX)))
+
 
 @python_2_unicode_compatible
 class CalendarAction(UUIDModel):
@@ -97,7 +98,7 @@ class CalendarAction(UUIDModel):
         if CALENDAR_ACTION_CACHE_L1['id'] == self.action:
             self.service_pool.cache_l1_srvs = int(params['size'])
         elif CALENDAR_ACTION_CACHE_L2['id'] == self.action:
-            self.service_pool.cache_l1_srvs = int(params['size'])
+            self.service_pool.cache_l2_srvs = int(params['size'])
         elif CALENDAR_ACTION_INITIAL['id'] == self.action:
             self.service_pool.initial_srvs = int(params['size'])
         elif CALENDAR_ACTION_MAX['id'] == self.action:
@@ -113,12 +114,10 @@ class CalendarAction(UUIDModel):
         if saveServicePool:
             self.service_pool.save()
 
-
     def save(self, *args, **kwargs):
         self.next_execution = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=self.last_execution, startEvent=self.at_start, offset=self.offset)
 
         return UUIDModel.save(self, *args, **kwargs)
-
 
     def __str__(self):
         return 'Calendar of {}, last_execution = {}, next execution = {}, action = {}, params = {}'.format(
