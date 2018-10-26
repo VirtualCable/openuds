@@ -143,7 +143,7 @@ class CalendarAction(UUIDModel):
             self.service_pool.cache_l1_srvs = sizeVal()
             executed = True
         elif CALENDAR_ACTION_CACHE_L2['id'] == self.action:
-            self.service_pool.cache_l1_srvs = sizeVal()
+            self.service_pool.cache_l2_srvs = sizeVal()
             executed = True
         elif CALENDAR_ACTION_INITIAL['id'] == self.action:
             self.service_pool.initial_srvs = sizeVal()
