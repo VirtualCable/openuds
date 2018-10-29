@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-05-07'
+__updated__ = '2018-10-29'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -203,14 +203,15 @@ class BaseModelHandler(Handler):
             res['group'] = _(type_.group)  # Add group info is it is contained
         return res
 
-    def processTableFields(self, title, fields, row_style):  # pylint: disable=no-self-use
+    def processTableFields(self, title, fields, row_style, subtitle=None):  # pylint: disable=no-self-use
         """
         Returns a dict containing the table fields description
         """
         return {
-            'title': six.text_type(title),
+            'title': title,
             'fields': fields,
-            'row-style': row_style
+            'row-style': row_style,
+            'subtitle': '' if subtitle is None else subtitle
         }
 
     def readFieldsFromParams(self, fldList):  # pylint: disable=no-self-use
@@ -581,6 +582,7 @@ class ModelHandler(BaseModelHandler):
     table_fields = []
     table_row_style = {}
     table_title = ''
+    table_subtitle = ''
 
     # This methods must be override, depending on what is provided
 
@@ -795,7 +797,7 @@ class ModelHandler(BaseModelHandler):
             elif self._args[0] == TYPES:
                 return list(self.getTypes())
             elif self._args[0] == TABLEINFO:
-                return self.processTableFields(self.table_title, self.table_fields, self.table_row_style)
+                return self.processTableFields(self.table_title, self.table_fields, self.table_row_style, self.table_subtitle)
             elif self._args[0] == GUI:
                 return self.getGui(None)
 
