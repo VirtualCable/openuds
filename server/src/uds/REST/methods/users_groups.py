@@ -182,11 +182,19 @@ class Users(DetailHandler):
             user = parent.users.get(uuid=processUuid(item))
 
             for us in user.userServices.all():
-                us.user = None
-                us.removeOrCancel()
+                try:
+                    us.user = None
+                    us.removeOrCancel()
+                except Exception:
+                    logger.exception('Removing user service')
+                    try:
+                        us.save()
+                    except Exception as e:
+                        logger.exception('Saving user on removing error')
 
             user.delete()
         except Exception:
+            logger.exception('Removing user')
             self.invalidItemException()
 
         return 'deleted'
