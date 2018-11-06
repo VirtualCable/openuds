@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-10-29'
+__updated__ = '2018-11-05'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -896,7 +896,7 @@ class ModelHandler(BaseModelHandler):
             # Now if tags, update them
             if tags is not None:
                 logger.debug('Updating tags: {}'.format(tags))
-                item.tags.set([ Tag.objects.get_or_create(tag=val)[0] for val in tags])
+                item.tags.set([ Tag.objects.get_or_create(tag=val)[0] for val in tags if val != ''])
 
         except self.model.DoesNotExist:
             raise NotFound('Item not found')

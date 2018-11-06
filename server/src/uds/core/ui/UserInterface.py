@@ -781,7 +781,7 @@ class UserInterfaceType(type):
     better place
     """
 
-    def __new__(mcs, classname, bases, classDict):
+    def __new__(cls, classname, bases, classDict):
         newClassDict = {}
         _gui = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
@@ -790,10 +790,10 @@ class UserInterfaceType(type):
                 _gui[attrName] = attr
             newClassDict[attrName] = attr
         newClassDict['_gui'] = _gui
-        return type.__new__(mcs, classname, bases, newClassDict)
+        return type.__new__(cls, classname, bases, newClassDict)
 
 
-#@six.add_metaclass(UserInterfaceType)
+# @six.add_metaclass(UserInterfaceType)
 class UserInterface(object, metaclass=UserInterfaceType):
     """
     This class provides the management for gui descriptions (user forms)

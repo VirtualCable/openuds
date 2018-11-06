@@ -120,6 +120,15 @@ class Provider(ServiceProvider):
         defvalue=gui.TRUE  # : By default, at new item, check this
     )
 
+    methText = gui.TextField(order=5,
+        length=512,
+        multiline=5,
+        label=_('Text area'),
+        tooltip=_('This is a text area'),
+        requred=False,
+        defvalue='Write\nsomething'  # : This will not get translated
+    )
+
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values=None):
         """
