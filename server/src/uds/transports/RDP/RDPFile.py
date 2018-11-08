@@ -135,8 +135,8 @@ class RDPFile(object):
             else:
                 params.append('/printer')
 
-        if not self.compression:
-            params.append('-compression')
+        # if not self.compression:
+        #    params.append('-compression')
 
         if self.showWallpaper:
             params.append('+themes')
