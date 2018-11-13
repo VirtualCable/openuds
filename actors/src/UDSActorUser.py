@@ -259,7 +259,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         if remainingTime <= 0:
             logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
-            self.quit(logoff=True, ' (idle: {} vs {})'.format(idleTime, self.maxIdleTime))
+            self.quit(logoff=True, extra=' (idle: {} vs {})'.format(idleTime, self.maxIdleTime))
 
     def displayMessage(self, message):
         logger.debug('Displaying message')
