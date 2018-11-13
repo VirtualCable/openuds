@@ -259,7 +259,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         if remainingTime <= 0:
             logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
-            self.quit(logoff=True)
+            self.quit(logoff=True, ' (idle: {} vs {})'.format(idleTime, self.maxIdleTime))
 
     def displayMessage(self, message):
         logger.debug('Displaying message')
@@ -296,14 +296,14 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
     def about(self):
         self.aboutDlg.exec_()
 
-    def quit(self, logoff=False):
+    def quit(self, logoff=False, extra=''):
         global doLogoff
         logger.debug('Quit invoked')
         if not self.stopped:
             self.stopped = True
             try:
                 # If we close Client, send Logoff to Broker
-                self.ipc.sendLogout(operations.getCurrentUser())
+                self.ipc.sendLogout(operations.getCurrentUser() + extra)
                 self.timer.stop()
                 self.ipc.stop()
             except Exception:
