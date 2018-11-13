@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-10-16'
+__updated__ = '2018-11-08'
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +138,7 @@ class OGService(Service):
         """
         We check here form values to see if they are valid.
 
-        Note that we check them throught FROM variables, that already has been
+        Note that we check them FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
         """
         if values is not None:

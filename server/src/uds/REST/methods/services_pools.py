@@ -171,7 +171,7 @@ class ServicesPools(ModelHandler):
 
         for f in [{
             'name': 'service_id',
-            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]),
+            'values': [gui.choiceItem('', '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]),
             'label': ugettext('Base service'),
             'tooltip': ugettext('Service used as base of this service pool'),
             'type': gui.InputField.CHOICE_TYPE,

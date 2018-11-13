@@ -241,6 +241,7 @@ class BasicModelRest
 
 
   put: (data, options) ->
+    console.log("Data", data)
     options = options or {}
     path = @putPath
     path += "/" + options.id  if options.id
