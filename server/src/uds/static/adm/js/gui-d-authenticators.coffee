@@ -323,41 +323,46 @@ gui.authenticators.link = (event) ->
 
           onEdit: (value, event, table, refreshFnc) ->
             exec = (groups_all) ->
-              gui.tools.blockUI()
-              api.templates.get "group", (tmpl) -> # Get form template
-                group.rest.item value.id, (item) -> # Get item to edit
-                  # Creates modal
-                  modalId = gui.launchModal(gettext("Edit group") + " <b>" + item.name + "</b>", api.templates.evaluate(tmpl,
-                    id: item.id
-                    type: item.type
-                    meta_if_any: item.meta_if_any
-                    groupname: item.name
-                    groupname_label: type.groupNameLabel
-                    comments: item.comments
-                    state: item.state
-                    external: type.isExternal
-                    canSearchGroups: type.canSearchGroups
-                    groups: item.groups
-                    groups_all: groups_all
-                  ))
-                  gui.tools.applyCustoms modalId
-                  gui.tools.unblockUI()
-                  $(modalId + " .button-accept").click ->
-                    fields = gui.forms.read(modalId)
-                    gui.doLog "Fields", fields
-                    group.rest.save fields, ((data) -> # Success on put
-                      $(modalId).modal "hide"
-                      refreshFnc()
-                      gui.notify gettext("Group saved"), "success"
+              api.servicesPools.summary (servicePools) ->
+                gui.tools.blockUI()
+                api.templates.get "group", (tmpl) -> # Get form template
+                  group.rest.item value.id, (item) -> # Get item to edit
+                    if item.type is 'meta'
+                      servicePools = undefined
+                    # Creates modal
+                    modalId = gui.launchModal(gettext("Edit group") + " <b>" + item.name + "</b>", api.templates.evaluate(tmpl,
+                      id: item.id
+                      type: item.type
+                      meta_if_any: item.meta_if_any
+                      groupname: item.name
+                      groupname_label: type.groupNameLabel
+                      comments: item.comments
+                      state: item.state
+                      external: type.isExternal
+                      canSearchGroups: type.canSearchGroups
+                      groups: item.groups
+                      groups_all: groups_all
+                      pools_all: servicePools
+                      pools: item.pools
+                    ))
+                    gui.tools.applyCustoms modalId
+                    gui.tools.unblockUI()
+                    $(modalId + " .button-accept").click ->
+                      fields = gui.forms.read(modalId)
+                      gui.doLog "Fields", fields
+                      group.rest.save fields, ((data) -> # Success on put
+                        $(modalId).modal "hide"
+                        refreshFnc()
+                        gui.notify gettext("Group saved"), "success"
+                        return
+                      ), gui.failRequestModalFnc("Error saving group", true)
                       return
-                    ), gui.failRequestModalFnc("Error saving group", true)
+
                     return
 
                   return
 
                 return
-
-              return
 
             if value.type is "meta"
 
@@ -372,38 +377,42 @@ gui.authenticators.link = (event) ->
 
           onNew: (t, table, refreshFnc) ->
             exec = (groups_all) ->
-              gui.tools.blockUI()
-              api.templates.get "group", (tmpl) -> # Get form template
-                # Creates modal
-                if t is "meta"
-                  title = gettext("New meta group")
-                else
-                  title = gettext("New group")
-                modalId = gui.launchModal(title, api.templates.evaluate(tmpl,
-                  type: t
-                  groupname_label: type.groupNameLabel
-                  external: type.isExternal
-                  canSearchGroups: type.canSearchGroups
-                  groups: []
-                  groups_all: groups_all
-                ))
-                gui.tools.unblockUI()
-                gui.tools.applyCustoms modalId
-                searchForm modalId, "group", id, gettext("Search groups"), gettext("Group"), gettext("Groups found") # Enable search button click, if it exist ofc
-                $(modalId + " .button-accept").click ->
-                  fields = gui.forms.read(modalId)
-                  gui.doLog "Fields", fields
-                  group.rest.create fields, ((data) -> # Success on put
-                    $(modalId).modal "hide"
-                    refreshFnc()
-                    gui.notify gettext("Group saved"), "success"
+              api.servicesPools.summary (servicePools) ->
+                gui.tools.blockUI()
+                api.templates.get "group", (tmpl) -> # Get form template
+                  # Creates modal
+                  if t is "meta"
+                    title = gettext("New meta group")
+                    servicePools = undefined  # Clear service pools
+                  else
+                    title = gettext("New group")
+                  modalId = gui.launchModal(title, api.templates.evaluate(tmpl,
+                    type: t
+                    groupname_label: type.groupNameLabel
+                    external: type.isExternal
+                    canSearchGroups: type.canSearchGroups
+                    groups_all: groups_all
+                    groups: []
+                    pools_all: servicePools
+                    pools: []
+                  ))
+                  gui.tools.unblockUI()
+                  gui.tools.applyCustoms modalId
+                  searchForm modalId, "group", id, gettext("Search groups"), gettext("Group"), gettext("Groups found") # Enable search button click, if it exist ofc
+                  $(modalId + " .button-accept").click ->
+                    fields = gui.forms.read(modalId)
+                    gui.doLog "Fields", fields
+                    group.rest.create fields, ((data) -> # Success on put
+                      $(modalId).modal "hide"
+                      refreshFnc()
+                      gui.notify gettext("Group saved"), "success"
+                      return
+                    ), gui.failRequestModalFnc(gettext("Group saving error"), true)
                     return
-                  ), gui.failRequestModalFnc(gettext("Group saving error"), true)
+
                   return
 
                 return
-
-              return
 
             if t is "meta"
               # Meta will get all groups
