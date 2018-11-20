@@ -76,12 +76,12 @@ def logStrFromLevel(level):
 def useLog(type_, serviceUniqueId, serviceIp, username, srcIP=None, srcUser=None, userServiceName=None, poolName=None):
     """
     Logs an "use service" event (logged from actors)
-    :param type_: Type of event (commonly 'login' or 'logout' )
+    :param type_: Type of event (commonly 'login' or 'logout')
     :param serviceUniqueId: Unique id of service
     :param serviceIp: IP Of the service
     :param username: Username notified from service (internal "user service" user name
     :param srcIP: IP of user holding that service at time of event
-    :param srcUser: Username holding that service at time of evet
+    :param srcUser: Username holding that service at time of event
     """
     srcIP = 'unknown' if srcIP is None else srcIP
     srcUser = 'unknown' if srcUser is None else srcUser
