@@ -45,6 +45,7 @@ OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xra
 
 
 class Logger(object):
+
     def __init__(self):
         self.logLevel = INFO
         self.logger = LocalLogger()
@@ -61,7 +62,6 @@ class Logger(object):
         self.remoteLogger = remoteLogger
 
     def log(self, level, message):
-        print(level)
         if level < self.logLevel:  # Skip not wanted messages
             return
 

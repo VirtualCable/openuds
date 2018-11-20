@@ -27,13 +27,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models import Transport, Network
+from uds.models import Transport, Network, ServicePool
 from uds.core.transports import factory
 from uds.core.util import permissions
 from uds.core.util import OsDetector
@@ -65,32 +65,44 @@ class Transports(ModelHandler):
 
     def getGui(self, type_):
         try:
-            return self.addField(
-                    self.addField(
-                        self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority']), {
-                            'name': 'nets_positive',
-                            'value': True,
-                            'label': ugettext('Network access'),
-                            'tooltip': ugettext('If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'),
-                            'type': 'checkbox',
-                            'order': 100,  # At end
-                        }), {
-                        'name': 'networks',
-                        'value': [],
-                        'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
-                        'label': ugettext('Networks'),
-                        'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
-                        'type': 'multichoice',
-                        'order': 101
-                    }), {
-                    'name': 'allowed_oss',
-                    'value': [],
-                    'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
-                    'label': ugettext('Allowed Devices'),
-                    'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
-                    'type': 'multichoice',
-                    'order': 102
-                })
+            field = self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority'])
+            field = self.addField(field, {
+                'name': 'nets_positive',
+                'value': True,
+                'label': ugettext('Network access'),
+                'tooltip': ugettext('If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'),
+                'type': 'checkbox',
+                'order': 100,  # At end
+            })
+            field = self.addField(field, {
+                'name': 'networks',
+                'value': [],
+                'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
+                'label': ugettext('Networks'),
+                'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
+                'type': 'multichoice',
+                'order': 101
+            })
+            field = self.addField(field, {
+                'name': 'allowed_oss',
+                'value': [],
+                'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
+                'label': ugettext('Allowed Devices'),
+                'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
+                'type': 'multichoice',
+                'order': 102
+            })
+            field = self.addField(field, {
+                'name': 'pools',
+                'value': [],
+                'values': [{'id': x.id, 'text': x.name} for x in ServicePool.objects.all().order_by('name')],  # TODO: We will fix this behavior after current admin client is fully removed
+                'label': ugettext('Service Pools'),
+                'tooltip': ugettext('Currently assigned services pools'),
+                'type': 'multichoice',
+                'order': 103
+            })
+
+            return field
 
         except Exception:
             self.invalidItemException()
@@ -106,6 +118,7 @@ class Transports(ModelHandler):
             'nets_positive': item.nets_positive,
             'networks': [{'id': n.id} for n in item.networks.all()],
             'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
+            'pools': [{'id': x.id} for x in item.deployedServices.all()],
             'deployed_count': item.deployedServices.count(),
             'type': type_.type(),
             'protocol': type_.protocol,
@@ -123,8 +136,20 @@ class Transports(ModelHandler):
             return
         if networks is None:
             return
-        logger.debug('Networks: {0}'.format(networks))
+        logger.debug('Networks: {}'.format(networks))
         item.networks.set(Network.objects.filter(id__in=networks))
+
+        try:
+            pools = self._params['pools']
+        except Exception:
+            logger.debug('No pools')
+            pools = None
+
+        if pools is None:
+            return
+
+        logger.debug('Pools: %s', pools)
+        item.deployedServices.set(pools)
 
         # try:
         #    oss = ','.join(self._params['allowed_oss'])

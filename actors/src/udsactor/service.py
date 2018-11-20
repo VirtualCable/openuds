@@ -317,8 +317,8 @@ class CommonService(object):
         if self.api is not None:
             try:
                 self.api.notifyComm(None)
-            except Exception:
-                logger.error('Couln\'t remove comms url from broker')
+            except Exception as e:
+                logger.error('Couln\'t remove comms url from broker: {}'.format(e))
 
         # self.notifyStop()
 

@@ -39,7 +39,7 @@ from uds.core.util import OsDetector
 import six
 import shlex
 
-__updated__ = '2018-05-18'
+__updated__ = '2018-11-08'
 
 
 class RDPFile(object):
@@ -135,8 +135,8 @@ class RDPFile(object):
             else:
                 params.append('/printer')
 
-        if self.compression:
-            params.append('/compression:on')
+        # if not self.compression:
+        #    params.append('-compression')
 
         if self.showWallpaper:
             params.append('+themes')

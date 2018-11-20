@@ -252,11 +252,17 @@ class Groups(DetailHandler):
                     'meta_if_any': i.meta_if_any
                 }
                 if i.is_meta:
-                    val['groups'] = list(x.uuid for x in i.groups.all())
+                    val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
                 res.append(val)
             if multi:
                 return res
-            return res[0]
+            # Add pools field if 1 item only
+            res = res[0]
+            if i.is_meta:
+                res['pools'] = []  # Meta groups do not have "assigned "pools, they get it from groups interaction
+            else:
+                res['pools'] = [v.uuid for v in  i.deployedServices.all()]
+            return res
         except:
             logger.exception('REST groups')
             self.invalidItemException()
@@ -298,8 +304,10 @@ class Groups(DetailHandler):
         try:
             is_meta = self._params['type'] == 'meta'
             meta_if_any = self._params.get('meta_if_any', False)
+            pools = self._params.get('pools', None)
             logger.debug('Saving group {0} / {1}'.format(parent, item))
             logger.debug('Meta any {}'.format(meta_if_any))
+            logger.debug('Pools: %s', pools)
             valid_fields = ['name', 'comments', 'state']
             fields = self.readFieldsFromParams(valid_fields)
             is_pattern = fields.get('name', '').find('pat:') == 0
@@ -328,7 +336,11 @@ class Groups(DetailHandler):
                 group.__dict__.update(toSave)
 
             if is_meta:
-                group.groups = parent.groups.filter(uuid__in=self._params['groups'])
+                group.groups.set(parent.groups.filter(uuid__in=self._params['groups']))
+
+            if pools:
+                # Update pools
+                group.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))
 
             group.save()
         except Group.DoesNotExist:

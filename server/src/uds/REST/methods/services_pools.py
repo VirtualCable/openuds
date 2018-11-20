@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2018 Virtual Cable S.L.
+# Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -103,6 +103,7 @@ class ServicesPools(ModelHandler):
     custom_methods = [('setFallbackAccess', True), ('actionsList', True)]
 
     def item_as_dict(self, item):
+        summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
         poolGroupId = None
@@ -131,29 +132,50 @@ class ServicesPools(ModelHandler):
             'state': state,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'account': item.account.name if item.account is not None else '',
+            'account_id': item.account.uuid if item.account is not None else None,
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
-            'servicesPoolGroup_id': poolGroupId,
-            'account_id': item.account.uuid if item.account is not None else None,
-            'pool_group_name': poolGroupName,
-            'pool_group_thumb': poolGroupThumb,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
             'cache_l2_srvs': item.cache_l2_srvs,
             'max_srvs': item.max_srvs,
-            'user_services_count': item.userServices.exclude(state__in=State.INFO_STATES).count(),
-            'user_services_in_preparation': item.userServices.filter(state=State.PREPARING).count(),
-            'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
             'visible': item.visible,
             'allow_users_remove': item.allow_users_remove,
             'allow_users_reset': item.allow_users_reset,
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
-            'permission': permissions.getEffectivePermission(self._user, item),
-            'info': Services.serviceInfo(item.service),
         }
+
+        # Extended info
+        if not summary:
+            state = item.state
+            if item.isInMaintenance():
+                state = State.MAINTENANCE
+            elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
+                state = State.SLOWED_DOWN
+
+            poolGroupId = None
+            poolGroupName = _('Default')
+            poolGroupThumb = DEFAULT_THUMB_BASE64
+            if item.servicesPoolGroup is not None:
+                poolGroupId = item.servicesPoolGroup.uuid
+                poolGroupName = item.servicesPoolGroup.name
+                if item.servicesPoolGroup.image is not None:
+                    poolGroupThumb = item.servicesPoolGroup.image.thumb64
+
+            val['state'] = state
+            val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
+            val['user_services_count'] = item.userServices.exclude(state__in=State.INFO_STATES).count()
+            val['user_services_in_preparation'] = item.userServices.filter(state=State.PREPARING).count()
+            val['tags'] = [tag.tag for tag in item.tags.all()]
+            val['restrained'] = item.isRestrained()
+            val['permission'] = permissions.getEffectivePermission(self._user, item)
+            val['info'] = Services.serviceInfo(item.service)
+            val['servicesPoolGroup_id'] = poolGroupId
+            val['pool_group_name'] = poolGroupName
+            val['pool_group_thumb'] = poolGroupThumb
 
         if item.osmanager is not None:
             val['osmanager_id'] = item.osmanager.uuid

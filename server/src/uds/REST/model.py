@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-11-05'
+__updated__ = '2018-11-20'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -635,7 +635,6 @@ class ModelHandler(BaseModelHandler):
     # gui related
     def getGui(self, type_):
         self.invalidRequestException()
-        return None  # Will never reach this because previous raises an exception
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception

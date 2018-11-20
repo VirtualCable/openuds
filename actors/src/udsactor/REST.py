@@ -78,7 +78,7 @@ class OsManagerError(RESTError):
 try:
     import urllib3  # @UnusedImport @UnresolvedImport
 except Exception:
-    from requests.packages import urllib3  # @Reimport
+    from requests.packages import urllib3  # @Reimport @UnresolvedImport
 
 try:
     urllib3.disable_warnings()  # @UndefinedVariable
@@ -113,7 +113,7 @@ class Api(object):
         self.maxSession = None
         self.secretKey = six.text_type(uuid.uuid4())
         try:
-            self.newerRequestLib = requests.__version__.split('.')[0] >= '1'
+            self.newerRequestLib = requests.__version__.split('.')[0] >= '1'  # @UndefinedVariable
         except Exception:
             self.newerRequestLib = False  # I no version, guess this must be an old requests
 
@@ -208,7 +208,7 @@ class Api(object):
             raise ConnectionError('REST api has not been initialized')
 
         if processData:
-            if not isinstance(data, six.text_type):
+            if data and not isinstance(data, six.text_type):
                 data = data.decode('utf8')
             data = json.dumps({'data': data})
         url = self._getUrl('/'.join([self.uuid, msg]))

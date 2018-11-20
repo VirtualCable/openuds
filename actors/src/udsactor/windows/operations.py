@@ -210,7 +210,10 @@ def initIdleDuration(atLeastSeconds):
 def getIdleDuration():
     lastInputInfo = LASTINPUTINFO()
     lastInputInfo.cbSize = ctypes.sizeof(lastInputInfo)
-    ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo))
+    if ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo)) == 0:
+        return 0
+    if lastInputInfo.dwTime > 1000000000:  # Value toooo high, nonsense...
+        return 0
     millis = ctypes.windll.kernel32.GetTickCount() - lastInputInfo.dwTime  # @UndefinedVariable
     return millis / 1000.0
 

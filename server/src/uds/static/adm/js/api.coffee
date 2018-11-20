@@ -224,6 +224,12 @@ class BasicModelRest
       success: success_fnc
       fail: fail_fnc
 
+  summary: (success_fnc, fail_fnc) ->
+    @get
+      id: "overview?summarize"
+      success: success_fnc
+      fail: fail_fnc
+
 
   item: (itemId, success_fnc, fail_fnc) ->
     @get
