@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-15 10:53+0200\n"
-"PO-Revision-Date: 2018-10-03 08:13+0000\n"
+"POT-Creation-Date: 2018-11-20 11:02+0100\n"
+"PO-Revision-Date: 2018-10-15 08:54+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -62,10 +62,10 @@ msgstr "الاسم"
 
 #: REST/methods/authenticators.py:61 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:72 REST/methods/services.py:191
+#: REST/methods/providers.py:72 REST/methods/services.py:192
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:304 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:262 REST/model.py:148
+#: REST/methods/users_groups.py:276 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -95,7 +95,7 @@ msgstr "المستخدمين"
 
 #: REST/methods/authenticators.py:65 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:76 REST/methods/services.py:195
+#: REST/methods/providers.py:76 REST/methods/services.py:196
 #: REST/methods/services_pools.py:88 REST/methods/transports.py:60
 msgid "tags"
 msgstr "العلامات"
@@ -241,8 +241,8 @@ msgstr "لم يتم العثور على الخدمة"
 msgid "Available reports"
 msgstr "التقارير المتوفرة"
 
-#: REST/methods/reports.py:57 REST/methods/users_groups.py:261
-#: REST/methods/users_groups.py:268
+#: REST/methods/reports.py:57 REST/methods/users_groups.py:275
+#: REST/methods/users_groups.py:282
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
 #: auths/AzureAD_enterprise/AzureAD.py:88
 #: auths/EDirectory_enterprise/Authenticator.py:81
@@ -265,41 +265,41 @@ msgstr "يقوم بإنشاء"
 msgid "Input error: {0}"
 msgstr "إدخال خطأ: {0}"
 
-#: REST/methods/services.py:184
+#: REST/methods/services.py:185
 #, python-brace-format
 msgid "Services of {0}"
 msgstr "خدمات {0}"
 
-#: REST/methods/services.py:186
+#: REST/methods/services.py:187
 msgid "Current services"
 msgstr "الخدمات الحالية"
 
-#: REST/methods/services.py:190
+#: REST/methods/services.py:191
 msgid "Service name"
 msgstr "اسم الخدمة"
 
-#: REST/methods/services.py:192 REST/methods/user_services.py:303
+#: REST/methods/services.py:193 REST/methods/user_services.py:303
 msgid "Type"
 msgstr "نوع"
 
-#: REST/methods/services.py:193 templates/uds/admin/tmpl/group-info.html:4
+#: REST/methods/services.py:194 templates/uds/admin/tmpl/group-info.html:4
 #: templates/uds/admin/tmpl/service-info.html:5
 #: templates/uds/admin/tmpl/user-info.html:5
 msgid "Services Pools"
 msgstr "تجمعات الخدمة"
 
-#: REST/methods/services.py:194 REST/methods/services_pools.py:83
+#: REST/methods/services.py:195 REST/methods/services_pools.py:83
 #: templates/uds/admin/tmpl/dashboard.html:88
 msgid "User services"
 msgstr "خدمات المستخدم"
 
-#: REST/methods/services.py:248 REST/methods/users_groups.py:201
-#: REST/methods/users_groups.py:354
+#: REST/methods/services.py:249 REST/methods/users_groups.py:210
+#: REST/methods/users_groups.py:374
 msgid "With errors"
 msgstr "مع الأخطاء"
 
-#: REST/methods/services.py:248 REST/methods/users_groups.py:201
-#: REST/methods/users_groups.py:354
+#: REST/methods/services.py:249 REST/methods/users_groups.py:210
+#: REST/methods/users_groups.py:374
 msgid "Ok"
 msgstr "موافق"
 
@@ -353,16 +353,17 @@ msgstr "آخر إعدام"
 msgid "Services Pool Groups"
 msgstr "خدمات تجمع مجموعات"
 
-#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:210
+#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:215
 msgid "Associated Image"
 msgstr "الصورة المرتبطة بها"
 
-#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:211
+#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:216
 msgid "Image assocciated with this service"
 msgstr "الصورة المرتبطة مع هذه الخدمة"
 
-#: REST/methods/services_pools.py:79
+#: REST/methods/services_pools.py:79 REST/methods/transports.py:99
 #: templates/uds/admin/snippets/navbar.html:27
+#: templates/uds/admin/tmpl/group.html:82
 #: templates/uds/admin/tmpl/services_pool.html:4
 #: templates/uds/admin/tmpl/services_pool.html:7
 msgid "Service Pools"
@@ -388,44 +389,44 @@ msgstr "تجمع مجموعات"
 msgid "Parent Service"
 msgstr "الخدمة الأم"
 
-#: REST/methods/services_pools.py:99 REST/methods/services_pools.py:217
+#: REST/methods/services_pools.py:130 REST/methods/services_pools.py:222
 msgid "Default"
 msgstr "افتراضي"
 
-#: REST/methods/services_pools.py:153
+#: REST/methods/services_pools.py:158
 msgid "Create at least one OS Manager before creating a new service pool"
 msgstr "إنشاء مدير واحد على الأقل لنظام التشغيل قبل إنشاء تجمع جديد للخدمة"
 
-#: REST/methods/services_pools.py:155
+#: REST/methods/services_pools.py:160
 msgid "Create at least a service before creating a new service pool"
 msgstr "قم بإنشاء على الأقل خدمة قبل إنشاء تجمع جديد للخدمة"
 
-#: REST/methods/services_pools.py:162
+#: REST/methods/services_pools.py:167
 msgid "Base service"
 msgstr "خدمة قاعدة"
 
-#: REST/methods/services_pools.py:163
+#: REST/methods/services_pools.py:168
 msgid "Service used as base of this service pool"
 msgstr "الخدمة التي تستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:170
+#: REST/methods/services_pools.py:175
 msgid "OS Manager"
 msgstr "إدارة نظام التشغيل"
 
-#: REST/methods/services_pools.py:171
+#: REST/methods/services_pools.py:176
 msgid "OS Manager used as base of this service pool"
 msgstr "إدارة نظام التشغيل يستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:178
+#: REST/methods/services_pools.py:183
 msgid "Show transports"
 msgstr "إظهار النقل"
 
-#: REST/methods/services_pools.py:179
+#: REST/methods/services_pools.py:184
 msgid "If active, alternative transports for user will be shown"
 msgstr "في حالة نشطة، سيظهر النقل البديل للمستخدم"
 
-#: REST/methods/services_pools.py:182 REST/methods/services_pools.py:190
-#: REST/methods/services_pools.py:198 REST/methods/services_pools.py:206
+#: REST/methods/services_pools.py:187 REST/methods/services_pools.py:195
+#: REST/methods/services_pools.py:203 REST/methods/services_pools.py:211
 #: auths/RegexLdap/Authenticator.py:71 core/ui/UserInterface.py:86
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
@@ -433,11 +434,11 @@ msgstr "في حالة نشطة، سيظهر النقل البديل للمستخ
 msgid "Advanced"
 msgstr "متقدم"
 
-#: REST/methods/services_pools.py:186
+#: REST/methods/services_pools.py:191
 msgid "Allow removal by users"
 msgstr "السماح بمسح المستخدم"
 
-#: REST/methods/services_pools.py:187
+#: REST/methods/services_pools.py:192
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -446,19 +447,19 @@ msgstr ""
 "إذا نشط، فسيسمح للمستخدم بإزالة الخدمة \"يدويا\". كن حذرا مع هذا، لأن "
 "المستخدم سوف يكون \"السلطة\" لحذف انها الخدمة الخاصة"
 
-#: REST/methods/services_pools.py:194
+#: REST/methods/services_pools.py:199
 msgid "Allow reset by users"
 msgstr "السماح بإعادة برمجة المصنع قبل المستخدمين"
 
-#: REST/methods/services_pools.py:195
+#: REST/methods/services_pools.py:200
 msgid "If active, the user will be allowed to reset the service"
 msgstr "في حالة التفعيل، سيسمح للمستخدم بإعادة برمجة الخدمة"
 
-#: REST/methods/services_pools.py:202
+#: REST/methods/services_pools.py:207
 msgid "Ignores unused"
 msgstr "تجاهل غير المستخدمة"
 
-#: REST/methods/services_pools.py:203
+#: REST/methods/services_pools.py:208
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -466,53 +467,53 @@ msgstr ""
 "إذا تم تمكين الخيار، فإن UDS لا تحاول الكشف عن خدمات المستخدم التي تم "
 "تعيينها ولكن التي ليست قيد الاستخدام."
 
-#: REST/methods/services_pools.py:214 REST/methods/services_pools.py:222
+#: REST/methods/services_pools.py:219 REST/methods/services_pools.py:227
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:179
 msgid "Display"
 msgstr "عرض"
 
-#: REST/methods/services_pools.py:218
+#: REST/methods/services_pools.py:223
 msgid "Pool group"
 msgstr "تجمع مجموعات"
 
-#: REST/methods/services_pools.py:219
+#: REST/methods/services_pools.py:224
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "تجمع الفريق لهذا التجمع (لتصنيف تجمع في العرض)"
 
-#: REST/methods/services_pools.py:227
+#: REST/methods/services_pools.py:232
 msgid "Initial available services"
 msgstr "أولى الخدمات المتاحة"
 
-#: REST/methods/services_pools.py:228
+#: REST/methods/services_pools.py:233
 msgid "Services created initially for this service pool"
 msgstr "الخدمات التي تم إنشاؤها في البداية لتجمع هذه الخدمة"
 
-#: REST/methods/services_pools.py:231 REST/methods/services_pools.py:240
-#: REST/methods/services_pools.py:249 REST/methods/services_pools.py:258
+#: REST/methods/services_pools.py:236 REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:254 REST/methods/services_pools.py:263
 msgid "Availability"
 msgstr "توافر"
 
-#: REST/methods/services_pools.py:236
+#: REST/methods/services_pools.py:241
 msgid "Services to keep in cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت"
 
-#: REST/methods/services_pools.py:237
+#: REST/methods/services_pools.py:242
 msgid "Services kept in cache for improved user service assignation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت لإسناد خدمة مستخدم محسنة"
 
-#: REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:250
 msgid "Services to keep in L2 cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت L2"
 
-#: REST/methods/services_pools.py:246
+#: REST/methods/services_pools.py:251
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت من L2 لتحسين خدمة الجيل"
 
-#: REST/methods/services_pools.py:254
+#: REST/methods/services_pools.py:259
 msgid "Maximum number of services to provide"
 msgstr "الحد الأقصى لعدد الخدمات المتوفرة"
 
-#: REST/methods/services_pools.py:255
+#: REST/methods/services_pools.py:260
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -520,11 +521,11 @@ msgstr ""
 "الحد الأقصى لعدد من الخدمات (المعينة ومخبأة في L1) التي يمكن أن تنشأ عن هذه "
 "الخدمة"
 
-#: REST/methods/services_pools.py:271
+#: REST/methods/services_pools.py:276
 msgid "Base service does not exist anymore"
 msgstr "خدمة قاعدة غير موجود بعد الآن"
 
-#: REST/methods/services_pools.py:293
+#: REST/methods/services_pools.py:298
 msgid "This service requires an OS Manager"
 msgstr "تتطلب هذه الخدمة إدارة نظام التشغيل"
 
@@ -590,11 +591,11 @@ msgstr "النقل الحالي"
 msgid "Devices"
 msgstr "جهاز"
 
-#: REST/methods/transports.py:73
+#: REST/methods/transports.py:72
 msgid "Network access"
 msgstr "الوصول إلى شبكة الاتصال"
 
-#: REST/methods/transports.py:74
+#: REST/methods/transports.py:73
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -615,17 +616,22 @@ msgstr ""
 "الشبكات المرتبطة بهذا النقل. في حالة عدم وجود شبكة اتصال محددة، سوف يعني "
 "\"جميع الشبكات\""
 
-#: REST/methods/transports.py:89
+#: REST/methods/transports.py:90
 msgid "Allowed Devices"
 msgstr "أجهزة مسموحة "
 
-#: REST/methods/transports.py:90
+#: REST/methods/transports.py:91
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
 msgstr ""
 "إذا كان فارغا، لن يسمح لأي نوع من الأجهزة المتوافقة مع هذا النقل. خلاف ذلك،  "
 "يسمح لأجهزة متوافقة فقط مع القيم المحددة"
+
+#: REST/methods/transports.py:100
+#| msgid "Restrained services pools"
+msgid "Currently assigned services pools"
+msgstr "مجمعات الخدمات المعينة حاليا"
 
 #: REST/methods/user_services.py:120
 #: templates/uds/admin/tmpl/services_pool.html:31
@@ -724,7 +730,8 @@ msgstr "المستخدمون الحاليون"
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
-#: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:107
+#: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:104
+#: services/OpenStack/ProviderLegacy.py:106
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
@@ -739,7 +746,7 @@ msgstr "المستخدمون الحاليون"
 msgid "Username"
 msgstr "اسم المستخدم"
 
-#: REST/methods/users_groups.py:115 REST/methods/users_groups.py:263
+#: REST/methods/users_groups.py:115 REST/methods/users_groups.py:277
 msgid "state"
 msgstr "الحالة"
 
@@ -748,28 +755,28 @@ msgstr "الحالة"
 msgid "Last access"
 msgstr "آخر وصول"
 
-#: REST/methods/users_groups.py:166 REST/methods/users_groups.py:325
+#: REST/methods/users_groups.py:166 REST/methods/users_groups.py:345
 msgid "User already exists (duplicate key error)"
 msgstr "المستخدم موجود مسبقا (خطأ مفتاح مكرر)"
 
-#: REST/methods/users_groups.py:255
+#: REST/methods/users_groups.py:269
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "مجموعات من {0}"
 
-#: REST/methods/users_groups.py:257
+#: REST/methods/users_groups.py:271
 msgid "Current groups"
 msgstr "المجموعات الحالية"
 
-#: REST/methods/users_groups.py:268
+#: REST/methods/users_groups.py:282
 msgid "UDS Group"
 msgstr "المجموعة المصغرة"
 
-#: REST/methods/users_groups.py:269
+#: REST/methods/users_groups.py:283
 msgid "Meta group"
 msgstr "Meta المجموعة"
 
-#: REST/methods/users_groups.py:269
+#: REST/methods/users_groups.py:283
 msgid "UDS Meta Group"
 msgstr "مجموعة Meta المصغرة"
 
@@ -853,7 +860,7 @@ msgstr "قائمة المستخدمين ل {}"
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
-#: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:99
+#: services/OpenNebula/Provider.py:98 services/OpenStack/ProviderLegacy.py:99
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:27
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:98
@@ -867,7 +874,7 @@ msgstr "ملقم Active directory IP أو اسم المضيف"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 #: auths/EDirectory_enterprise/Authenticator.py:64
 #: auths/RegexLdap/Authenticator.py:59 services/OpenNebula/Provider.py:100
-#: services/OpenStack/Provider.py:102
+#: services/OpenStack/ProviderLegacy.py:101
 msgid "Use SSL"
 msgstr "استخدام SSL"
 
@@ -913,7 +920,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:86
 #: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
-#: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:108
+#: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:105
+#: services/OpenStack/ProviderLegacy.py:107
 #: services/Sample/SampleService.py:131
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
@@ -942,7 +950,8 @@ msgstr "كلمة مرور المستخدم ldap"
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
-#: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:113
+#: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:110
+#: services/OpenStack/ProviderLegacy.py:112
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout"
@@ -1107,7 +1116,7 @@ msgstr "EDirectory Server IP أو اسم المضيف"
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
-#: services/OpenStack/Provider.py:100
+#: services/OpenStack/ProviderLegacy.py:100
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:28
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Port"
@@ -1602,7 +1611,7 @@ msgstr "خدمة قاعدة"
 
 #: core/services/BaseService.py:122 core/services/BaseService.py:131
 #: models/Permissions.py:79 models/Permissions.py:83
-#: services/Azure_enterprise/Helpers.py:93 services/OpenStack/helpers.py:35
+#: services/Azure_enterprise/Helpers.py:93 services/OpenStack/helpers.py:39
 #: services/Sample/SampleService.py:92 services/Sample/SampleService.py:98
 #: services/TestService_enterprise/TestService.py:29
 msgid "None"
@@ -2027,7 +2036,8 @@ msgid "Os Manager to control windows machines with domain."
 msgstr "مدير نظام التشغيل للسيطرة على أجهزة ويندوز مع المجال."
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
-#: services/OpenStack/Provider.py:106 transports/HTML5RDP/HTML5RDP.py:77
+#: services/OpenStack/Provider.py:103 services/OpenStack/ProviderLegacy.py:105
+#: transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 #: transports/RDP/BaseRDPTransport.py:64
@@ -2631,7 +2641,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:110
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:107
+#: services/OpenStack/ProviderLegacy.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:84
@@ -2643,7 +2654,8 @@ msgstr "تزامن الخلق"
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:110
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:107
+#: services/OpenStack/ProviderLegacy.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Xen/XenProvider.py:102
@@ -2654,7 +2666,8 @@ msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة ا
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:111
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:108
+#: services/OpenStack/ProviderLegacy.py:110
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Vmware_enterprise/ServiceProviderVC.py:85
@@ -2666,7 +2679,8 @@ msgstr "تزامن الإزالة."
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:111
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:108
+#: services/OpenStack/ProviderLegacy.py:110
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Xen/XenProvider.py:103
@@ -2781,7 +2795,7 @@ msgstr "مخازن البيانات لوضع تدريجيات والمطبوعا
 #: services/HyperV_enterprise/HyperVLinkedService.py:177
 #: services/Nutanix_enterprise/NutanixService.py:110
 #: services/OVirt/OVirtLinkedService.py:222
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:156
+#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
 #: services/Vmware_enterprise/VCLinkedCloneService.py:131
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
@@ -2791,7 +2805,7 @@ msgstr "لا يجب أن يكون طول اسم بالإضافة إلى طول �
 #: services/HyperV_enterprise/HyperVLinkedService.py:179
 #: services/Nutanix_enterprise/NutanixService.py:112
 #: services/OVirt/OVirtLinkedService.py:224
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:158
+#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
 #: services/Vmware_enterprise/VCLinkedCloneService.py:133
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
@@ -3231,7 +3245,7 @@ msgstr "OpenNebula المضيف"
 msgid "OpenNebula Port (default is 2633 for non ssl connection)"
 msgstr "ميناء OpenNebula (الافتراضي هو 2633 للاتصال غير SSL)"
 
-#: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:102
+#: services/OpenNebula/Provider.py:100 services/OpenStack/ProviderLegacy.py:101
 msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
@@ -3324,55 +3338,71 @@ msgid "OpenStack platform service provider"
 msgstr "مزود خدمة المنصة Openstack"
 
 #: services/OpenStack/Provider.py:99
-msgid "OpenStack Host"
-msgstr "مضيف OpenStack."
+msgid "Identity endpoint"
+msgstr "هوية نقطة النهاية"
 
-#: services/OpenStack/Provider.py:100
-msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
-msgstr "5000 للإصدارات القديمة، 80/443 (ssl) لإصدارات أحدث من أوكاتا"
+#: services/OpenStack/Provider.py:99
+msgid ""
+"OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
+"identity)"
+msgstr ""
+"OpenStack هوية نقطة النهاية API الوصول (على سبيل المثال، https://10.0.0.0/"
+"الهوية)"
 
-#: services/OpenStack/Provider.py:101
-#| msgid "Newer Openstack"
-msgid "Legacy openstack"
-msgstr "Openstack القديمة"
-
-#: services/OpenStack/Provider.py:101
-msgid "Set to \"yes\" if your Openstack release is OCATA or older"
-msgstr "تعيين \"نعم\" إذا كان لديك الإصدار Openstack أوكاتا أو كبار السن"
-
-#: services/OpenStack/Provider.py:104
+#: services/OpenStack/Provider.py:101 services/OpenStack/ProviderLegacy.py:103
 msgid "Access interface"
 msgstr "واجهة الوصول"
 
-#: services/OpenStack/Provider.py:104
+#: services/OpenStack/Provider.py:101 services/OpenStack/ProviderLegacy.py:103
 msgid "Access interface to be used"
 msgstr "واجهة الوصول لاستخدامها"
 
-#: services/OpenStack/Provider.py:106
+#: services/OpenStack/Provider.py:103 services/OpenStack/ProviderLegacy.py:105
 msgid "Domain name (default is Default)"
 msgstr "اسم النطاق (الافتراضي هو افتراضي)"
 
-#: services/OpenStack/Provider.py:107
+#: services/OpenStack/Provider.py:104 services/OpenStack/ProviderLegacy.py:106
 msgid "User with valid privileges on OpenStack"
 msgstr "المستخدم مع امتياز صالح على OpenStack"
 
-#: services/OpenStack/Provider.py:108
+#: services/OpenStack/Provider.py:105 services/OpenStack/ProviderLegacy.py:107
 msgid "Password of the user of OpenStack"
 msgstr "كلمة السر للمستخدم من Openstack"
 
-#: services/OpenStack/Provider.py:113
+#: services/OpenStack/Provider.py:110 services/OpenStack/ProviderLegacy.py:112
 msgid "Timeout in seconds of connection to OpenStack"
 msgstr "المهلة بالثواني لاتصال Openstack"
 
-#: services/OpenStack/Provider.py:157
+#: services/OpenStack/Provider.py:157 services/OpenStack/ProviderLegacy.py:158
 msgid "OpenStack test connection passed"
 msgstr "مر اختبار الاتصال Openstack."
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:556
+#: services/OpenStack/ProviderLegacy.py:80
+#| msgid "OpenStack Platform Provider"
+msgid "OpenStack LEGACY Platform Provider"
+msgstr "OpenStack إرث منصة موفر"
+
+#: services/OpenStack/ProviderLegacy.py:84
+msgid ""
+"OpenStack LEGACY platform service provider (for older Openstack Releases, "
+"previous to OCATA)"
+msgstr ""
+"موفر خدمة منصة تركه OpenStack (\"الإصدارات\" القديمة من Openstack، "
+"السابقة إلى أوكاتا)"
+
+#: services/OpenStack/ProviderLegacy.py:99
+msgid "OpenStack Host"
+msgstr "مضيف OpenStack."
+
+#: services/OpenStack/ProviderLegacy.py:100
+msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
+msgstr "5000 للإصدارات القديمة، 80/443 (ssl) لإصدارات أحدث من أوكاتا"
+
+#: services/OpenStack/openStack/UDSOpenStackClient.py:571
 msgid "Authentication error"
 msgstr "خطأ مصادقة"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:561
+#: services/OpenStack/openStack/UDSOpenStackClient.py:576
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
