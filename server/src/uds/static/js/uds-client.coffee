@@ -205,7 +205,9 @@ uds.launch = (el, url, alt) ->
 
     error: (jqXHR, textStatus, errorThrown) ->
       unblockUI()
-      alert gettext('Error accessing service: ') + textStatus
+      # Reload window in case of error
+      window.location.reload()
+      # alert gettext('Error accessing service: ') + textStatus
       return
 
 
