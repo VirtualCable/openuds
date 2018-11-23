@@ -40,7 +40,7 @@ if executable is None:
     raise Exception('Unable to find mstsc.exe')
 
 try:
-    subprocess.call([r'c:\windows\system32\reg.exe', 'ADD', r'HKCU\Software\Microsoft\Terminal Server Client\LocalDevices', '/v', '{m.ip}', '/t', 'REG_DWORD', '/d', '255', '/f'])
+    subprocess.call([r'c:\windows\system32\reg.exe', 'ADD', r'HKCU\Software\Microsoft\Terminal Server Client\LocalDevices', '/v', '127.0.0.1', '/t', 'REG_DWORD', '/d', '255', '/f'])
 except Exception as e:
     logger.warn('Exception invoking reg.exe : %s', e)
 
