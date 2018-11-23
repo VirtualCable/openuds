@@ -35,11 +35,12 @@ Created on Jul 29, 2011
 """
 from __future__ import unicode_literals
 
-from uds.core.util import OsDetector
+import urllib.parse
 import six
 import shlex
+from uds.core.util import OsDetector
 
-__updated__ = '2018-11-08'
+__updated__ = '2018-11-22'
 
 
 class RDPFile(object):
@@ -238,9 +239,9 @@ class RDPFile(object):
         url = 'rdp://'
 
         if self.username != '':
-            url += urllib.quote(self.username)
+            url += urllib.parse.quote(self.username)
             if self.password != '':
-                url += ':' + urllib.quote(self.password)
+                url += ':' + urllib.parse.quote(self.password)
             url += '@'
         url += self.address + '/'
 
@@ -263,7 +264,6 @@ class RDPFile(object):
             url += '&forwardPrinters###true'
 
         return url
-
 
     def getGeneric(self):
         password = "{password}"

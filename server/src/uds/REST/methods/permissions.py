@@ -115,7 +115,7 @@ class Permissions(Handler):
 
     def put(self):
         """
-        Processes post requests
+        Processes put requests
         """
         logger.debug('Put args: {}'.format(self._args))
 

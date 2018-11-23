@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-05'
+__updated__ = '2018-11-21'
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
@@ -78,7 +78,7 @@ class Permissions(UUIDModel):
         return {
             Permissions.PERMISSION_NONE: _('None'),
             Permissions.PERMISSION_READ: _('Read'),
-            Permissions.PERMISSION_MANAGEMENT: _('Management'),
+            Permissions.PERMISSION_MANAGEMENT: _('Manage'),
             Permissions.PERMISSION_ALL: _('All')
         }.get(perm, _('None'))
 
