@@ -52,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-11-26'
 
 
 def about(request):
@@ -212,7 +212,8 @@ def index(request):
 
     logger.debug('Services: {0}'.format(services))
 
-    services = sorted(services, key=lambda s: s['name'].upper())
+    # Sort services and remove services with no transports...
+    services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if len(s['transports']) > 0]
 
     autorun = False
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(True) and len(services[0]['transports']) > 0:
