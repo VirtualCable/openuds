@@ -5,6 +5,10 @@ from __future__ import unicode_literals
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
 import win32crypt  # @UnresolvedImport
+try:
+    import winreg as wreg
+except ImportError:  # Python 2.7 fallback
+    import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
 import os
 import subprocess
 from uds.forward import forward  # @UnresolvedImport
@@ -38,6 +42,13 @@ filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
 if executable is None:
     raise Exception('Unable to find mstsc.exe')
+
+try:
+    key = wreg.OpenKey(wreg.HKEY_CURRENT_USER, 'Software\Microsoft\Terminal Server Client\LocalDevices', 0, wreg.KEY_SET_VALUE)  # @UndefinedVariable
+    wreg.SetValueEx(key, '127.0.0.1', 0, wreg.REG_DWORD, 255)  # @UndefinedVariable
+    wreg.CloseKey(key)  # @UndefinedVariable
+except Exception as e:
+    logger.warn('Exception fixing redirection dialog: %s', e)
 
 subprocess.Popen([executable, filename])
 tools.addFileToUnlink(filename)
