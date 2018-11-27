@@ -25,25 +25,34 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
-from django.urls import reverse
+from django.shortcuts import render_to_response
+from django.shortcuts import render
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext
 from django.utils import formats
+
+from django.template import RequestContext
+
+from uds.core.auths.auth import webLoginRequired, webLogout
 
 from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
+from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core import VERSION, VERSION_STAMP
 
 import logging
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2018-03-14'
 
 def getServicesData(request):
     # Session data
@@ -189,7 +198,8 @@ def getServicesData(request):
 
     logger.debug('Services: {0}'.format(services))
 
-    services = sorted(services, key=lambda s: s['name'].upper())
+    # Sort services and remove services with no transports...
+    services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if len(s['transports']) > 0]
 
     autorun = False
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(True) and len(services[0]['transports']) > 0:
