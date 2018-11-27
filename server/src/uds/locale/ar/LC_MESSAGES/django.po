@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-27 11:16+0100\n"
-"PO-Revision-Date: 2018-11-20 10:03+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-11-27 11:54+0100\n"
+"PO-Revision-Date: 2018-11-27 10:53+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
 "Language: ar\n"
@@ -969,8 +969,8 @@ msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1630dc =...)"
+"إذا كان غير فارغ، ستتجاوز قاعدة مع قيمة هذا البحث الإعلانية (تنسيق: dc =... "
+"dc =...)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
@@ -1035,16 +1035,12 @@ msgstr "أزور الإعلانية المصادق"
 
 #: auths/AzureAD_enterprise/AzureAD.py:74
 msgid "Azure Active Directory Authenticator"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1650"
+msgstr "المصادق أزور Active Directory"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Tenant ID"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1655"
+msgstr "معرف المستأجر"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
@@ -1054,16 +1050,12 @@ msgstr "التي تم الحصول عليها من معرف الدليل Active 
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Client ID"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0650.V2_Json."
-"Translate.144E2738"
+msgstr "معرف العميل"
 
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1676"
+msgstr "التي تم الحصول عليها من التطبيق التي تم إنشاؤها في أزور \"المؤسسة المصغرة\""
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
@@ -1073,9 +1065,7 @@ msgstr "العميل السري"
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0650.V2_Json."
-"Translate.144E2755"
+msgstr "التي تم الحصول عليها من التطبيق التي تم إنشاؤها في أزور للمكاتب المصغرة Enteprise--مفاتيح"
 
 #: auths/AzureAD_enterprise/AzureAD.py:96
 msgid "Callback"
@@ -1083,23 +1073,17 @@ msgstr "رد الاتصال"
 
 #: auths/AzureAD_enterprise/AzureAD.py:98
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0756.V2_Json."
-"Translate.142CD6FE"
+msgstr "عنوان رد الاتصال (يشغلها المصغرة، وإصلاح هذا فقط إذا لزم الأمر!!)"
 
 #: auths/AzureAD_enterprise/AzureAD.py:230
 #: auths/AzureAD_enterprise/AzureAD.py:253
 #: auths/AzureAD_enterprise/AzureAD.py:265
 msgid "Authenticator exception:"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0756.V2_Json."
-"Translate.142CD704"
+msgstr "استثناء المصادق:"
 
 #: auths/AzureAD_enterprise/AzureAD.py:301
 msgid "Connection error: "
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C16A5"
+msgstr "خطأ في الاتصال: "
 
 #: auths/AzureAD_enterprise/AzureAD.py:302
 msgid "Connection params seems correct, test was succesfully executed"
@@ -1978,7 +1962,8 @@ msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.5)</b>"
 msgstr ""
-"الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون > = 3.5)</b>"
+"الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون > = "
+"3.5)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
 msgid ""
@@ -1998,8 +1983,8 @@ msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
 msgstr ""
-"<b>إرث</b> الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون 2.7)</"
-"b>"
+"<b>إرث</b> الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب "
+"بيثون 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
@@ -2450,21 +2435,15 @@ msgstr "توفر هذه الخدمة إمكانية الوصول إلى \"نظا
 
 #: services/Azure_enterprise/AzureCloneService.py:37
 msgid "Number of desired VMs to keep running waiting for an user"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0756.V2_Json."
-"Translate.142CD751"
+msgstr "عدد السفن المطلوب للحفاظ على تشغيل الانتظار للمستخدم"
 
 #: services/Azure_enterprise/AzureCloneService.py:39
 msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0756.V2_Json."
-"Translate.142CD759"
+msgstr "عدد السفن المطلوب أن تبقى معلقة في انتظار للاستخدام"
 
 #: services/Azure_enterprise/AzureCloneService.py:53
 msgid "Resource Group"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C16ED"
+msgstr "مجموعة الموارد"
 
 #: services/Azure_enterprise/AzureCloneService.py:54
 msgid "Resource group container of this VDI service"
@@ -2472,9 +2451,7 @@ msgstr "حاوية مجموعة الموارد هذه الخدمة VDI"
 
 #: services/Azure_enterprise/AzureCloneService.py:65
 msgid "Virtual Machine"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1702"
+msgstr "الجهاز الظاهري"
 
 #: services/Azure_enterprise/AzureCloneService.py:66
 msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
@@ -2482,15 +2459,11 @@ msgstr "قاعدة الجهاز الظاهري. (سوف تكون مخفية VMs 
 
 #: services/Azure_enterprise/AzureCloneService.py:78
 msgid "Machine size"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C170E"
+msgstr "حجم الجهاز"
 
 #: services/Azure_enterprise/AzureCloneService.py:79
 msgid "Size for machines created from this service."
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1715"
+msgstr "الحجم للأجهزة التي تم إنشاؤها من هذه الخدمة."
 
 #: services/Azure_enterprise/AzureCloneService.py:84
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
@@ -2550,91 +2523,63 @@ msgstr "شبكة الاتصال حيث سيتم إرفاق المستنسخين"
 
 #: services/Azure_enterprise/AzureCloneService.py:104
 msgid "Subnet"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1730"
+msgstr "الشبكة الفرعية"
 
 #: services/Azure_enterprise/AzureCloneService.py:105
 msgid "Subnet where the clones will be attached"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0650.V2_Json."
-"Translate.144E27E4"
+msgstr "الشبكة الفرعية حيث سيتم إرفاق المستنسخين"
 
 #: services/Azure_enterprise/AzureCloneService.py:113
 msgid "Security Group"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0650.V2_Json."
-"Translate.144E27EC"
+msgstr "مجموعة الأمان"
 
 #: services/Azure_enterprise/AzureCloneService.py:114
 msgid "Security group where to attach the virtual machine"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0650.V2_Json."
-"Translate.144E27F6"
+msgstr "الأمن في المجموعة حيث لإرفاق الجهاز الظاهري"
 
 #: services/Azure_enterprise/AzureCloneService.py:122
 msgid "Caching policy"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1748"
+msgstr "سياسة التخزين المؤقت"
 
 #: services/Azure_enterprise/AzureCloneService.py:123
 msgid "Disk Caching policy"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0756.V2_Json."
-"Translate.142CD7D5"
+msgstr "نهج ذاكرة التخزين المؤقت للقرص"
 
 #: services/Azure_enterprise/AzureCloneService.py:131
 msgid "Pricing tier"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0261.V2_Json."
-"Translate.17B3E7C3"
+msgstr "الطبقة التسعير"
 
 #: services/Azure_enterprise/AzureCloneService.py:132
 msgid "SKU (pricing tier)"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1762"
+msgstr "سكو (الطبقة التسعير)"
 
 #: services/Azure_enterprise/AzureCloneService.py:140
 msgid "Accelerated network"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0650.V2_Json."
-"Translate.144E281F"
+msgstr "شبكة تسارع"
 
 #: services/Azure_enterprise/AzureCloneService.py:141
 msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
 msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0261.V2_Json."
-"Translate.17B3E7D5TranslateApiException: AppId is over the quota : ID=0261."
-"V2_Json.Translate.17B3E7DCTranslateApiException: AppId is over the quota : "
-"ID=0650.V2_Json.Translate.144E2873"
+"تفعيل هذا الخيار لاستخدام الشبكات المتسارعة على vm. التأكد من أن لديك "
+"حجم الجهاز والجهاز يدعم هذا الخيار قبل تنشيط."
 
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C177F"
+msgstr "يجب عليك تحديد شبكة للخدمة"
 
 #: services/Azure_enterprise/Helpers.py:76
 msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0650.V2_Json."
-"Translate.144E2883"
+msgstr "{} ({}، {} النوى، {:.2f} بنك الخليج الدولي، {} أقراص البيانات كحد أقصى)"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Subscription ID"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C178D"
+msgstr "معرف الاشتراك"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Obtained from subscriptions"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0261.V2_Json."
-"Translate.17B3E806"
+msgstr "التي تم الحصول عليها من اشتراكات"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:41
 #: services/HyperV_enterprise/HyperVProvider.py:88
@@ -2693,15 +2638,11 @@ msgstr "المهلة بالثواني لاتصال vCloud"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:48
 msgid "Azure Platform Provider"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0261.V2_Json."
-"Translate.17B3E811"
+msgstr "مزود أزور منهاج"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:50
 msgid "Provides connection to Azure Platform"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C17AE"
+msgstr "يوفر الاتصال \"منصة أزور\""
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:93
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:80
@@ -2710,9 +2651,7 @@ msgstr "يبدو أن معلمات التوصيل صحيحة"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:231
 msgid "Azure Provider: "
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C17F0"
+msgstr "مزود أزور: "
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
@@ -3385,8 +3324,8 @@ msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
 msgstr ""
-"موفر خدمة منصة تركه OpenStack (\"الإصدارات\" القديمة من Openstack، السابقة "
-"إلى أوكاتا)"
+"موفر خدمة منصة تركه OpenStack (\"الإصدارات\" القديمة من Openstack، "
+"السابقة إلى أوكاتا)"
 
 #: services/OpenStack/ProviderLegacy.py:99
 msgid "OpenStack Host"
@@ -5332,9 +5271,7 @@ msgstr "تسمح محركات الأقراص."
 #: transports/RDP/BaseRDPTransport.py:71
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "Local drives redirection allowed"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0756.V2_Json."
-"Translate.142CD881"
+msgstr "إعادة توجيه محركات الأقراص المحلية المسموح به"
 
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:81
@@ -5410,15 +5347,11 @@ msgstr "إذا راجعت، سيسمح لتجانس الخطوط"
 
 #: transports/RDP/BaseRDPTransport.py:114
 msgid "Connection Bar"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C17FC"
+msgstr "شريط الاتصال"
 
 #: transports/RDP/BaseRDPTransport.py:114
 msgid "If checked, connection bar will be shown (only on Windows clients)"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=0759.V2_Json."
-"Translate.144C1805"
+msgstr "إذا راجعت، سيظهر شريط الاتصال (فقط على عملاء Windows)"
 
 #: transports/RDP/BaseRDPTransport.py:116
 #: transports/RDS_enterprise/BaseRDSTransport.py:99
@@ -5709,8 +5642,8 @@ msgid ""
 "If checked, user home folder will be redirected. (On linux, also redirects /"
 "media)"
 msgstr ""
-"إذا كان التحقق، ستتم إعادة توجيه المجلد الرئيسي المستخدم. (في لينكس، وأيضا "
-"إعادة توجيه/وسائط الإعلام)"
+"إذا كان التحقق، ستتم إعادة توجيه المجلد الرئيسي المستخدم. (في لينكس، وأيضا إعادة توجيه/"
+"وسائط الإعلام)"
 
 #: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"

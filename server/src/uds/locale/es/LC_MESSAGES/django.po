@@ -9,16 +9,16 @@
 # blafuente <blafuente@virtualcable.es>, 2014
 # blafuente <blafuente@virtualcable.es>, 2014-2016
 # Javier <jgonzalez@virtualcable.es>, 2014
-# Javier <jgonzalez@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014,2018
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Luis Fagundez <lframses@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-27 11:16+0100\n"
-"PO-Revision-Date: 2018-11-20 10:03+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-11-27 11:54+0100\n"
+"PO-Revision-Date: 2018-11-27 10:51+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -644,7 +644,7 @@ msgstr ""
 
 #: REST/methods/transports.py:100
 msgid "Currently assigned services pools"
-msgstr "Asignado actualmente piscinas servicios"
+msgstr "Services pools asignados actualmente"
 
 #: REST/methods/user_services.py:120
 #: templates/uds/admin/tmpl/services_pool.html:31
@@ -986,8 +986,8 @@ msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
-"Si no está vacío, reemplazará la base de busqueda con este valor (formato: "
-"dc =..., DC =...)"
+"Si no está vacío, reemplazará la base de búsqueda con este valor (formato: "
+"dc=..., dc=...)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
@@ -1076,7 +1076,7 @@ msgstr "ID de cliente"
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
-msgstr "Obtenidos de la aplicación creada en Azure para UDS empresa"
+msgstr "Obtenido de la aplicación creada en Azure para UDS Enterprise"
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
@@ -1086,7 +1086,7 @@ msgstr "Clave de Cliente"
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
-msgstr "Obtenidos de la aplicación creada en Azure para UDS Enteprise - claves"
+msgstr "Obtenido de la aplicación creada en Azure para UDS Enterprise - claves"
 
 #: auths/AzureAD_enterprise/AzureAD.py:96
 msgid "Callback"
@@ -1109,7 +1109,8 @@ msgstr "Error de conexión: "
 #: auths/AzureAD_enterprise/AzureAD.py:302
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr ""
-"Parámetros de conexión parece correcta, prueba fue correctamente ejecutado"
+"Los parámetros de conexión parecen validos, el test fue ejecutado "
+"correctamente "
 
 #: auths/EDirectory_enterprise/Authenticator.py:62
 msgid "EDirectory Server IP or Hostname"
@@ -2025,7 +2026,7 @@ msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
 msgstr ""
-"<b>Legado</b> Actor UDS para Debian, Ubuntu... Máquinas con Linux "
+"<b>Legacy</b> Actor UDS para Debian, Ubuntu... Máquinas con Linux "
 "<b>(requiere Python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
@@ -2481,15 +2482,15 @@ msgstr "Servicio de clones de Azure"
 #: services/Azure_enterprise/AzureCloneService.py:31
 msgid "This service provides access to Azure VMs based VDI"
 msgstr ""
-"Este servicio proporciona acceso a máquinas virtuales de Azure basada en VDI"
+"Este servicio proporciona acceso a máquinas virtuales de Azure basadas en VDI"
 
 #: services/Azure_enterprise/AzureCloneService.py:37
 msgid "Number of desired VMs to keep running waiting for an user"
-msgstr "Número de VMs deseados para seguir corriendo esperando a un usuario"
+msgstr "Número de VMs deseadas en ejecución a la espera de un usuario"
 
 #: services/Azure_enterprise/AzureCloneService.py:39
 msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr "Número de VMs deseados para mantener suspendidos a la espera de uso"
+msgstr "Número de VMs deseadas para mantener suspendidas a la espera de uso"
 
 #: services/Azure_enterprise/AzureCloneService.py:53
 msgid "Resource Group"
@@ -2505,7 +2506,7 @@ msgstr "Máquina virtual"
 
 #: services/Azure_enterprise/AzureCloneService.py:66
 msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
-msgstr "Base la máquina virtual. (Se ocultarán VMs a partir de UDS)"
+msgstr "Máquina virtual base. (Se ocultarán VMs cuyo nombre comience por UDS)"
 
 #: services/Azure_enterprise/AzureCloneService.py:78
 msgid "Machine size"
@@ -2570,7 +2571,7 @@ msgstr "Red"
 
 #: services/Azure_enterprise/AzureCloneService.py:91
 msgid "Network where the clones will be attached"
-msgstr "Red donde se montarán los clones"
+msgstr "Red donde se asignarán los clones"
 
 #: services/Azure_enterprise/AzureCloneService.py:104
 msgid "Subnet"
@@ -2578,7 +2579,7 @@ msgstr "Subred"
 
 #: services/Azure_enterprise/AzureCloneService.py:105
 msgid "Subnet where the clones will be attached"
-msgstr "Subred donde se montarán los clones"
+msgstr "Subred donde se asignarán los clones"
 
 #: services/Azure_enterprise/AzureCloneService.py:113
 msgid "Security Group"
@@ -2586,7 +2587,7 @@ msgstr "Grupo de seguridad"
 
 #: services/Azure_enterprise/AzureCloneService.py:114
 msgid "Security group where to attach the virtual machine"
-msgstr "Seguridad grupo donde sujetar la máquina virtual"
+msgstr "Seguridad grupo donde alojar la máquina virtual"
 
 #: services/Azure_enterprise/AzureCloneService.py:122
 msgid "Caching policy"
@@ -2606,7 +2607,7 @@ msgstr "SKU (nivel de precios)"
 
 #: services/Azure_enterprise/AzureCloneService.py:140
 msgid "Accelerated network"
-msgstr "Acelerado de la red"
+msgstr "Aceleración de red"
 
 #: services/Azure_enterprise/AzureCloneService.py:141
 msgid ""
@@ -2623,7 +2624,7 @@ msgstr "Debe seleccionar una red para el servicio"
 
 #: services/Azure_enterprise/Helpers.py:76
 msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
-msgstr "{} ({,} {} los corazones, {: .2f} GiB, discos de datos máximo de {})"
+msgstr "{} ({,} {} cores, {: .2f} GiB, discos de datos máximo de {})"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Subscription ID"
@@ -2690,7 +2691,7 @@ msgstr "Tiempo de espera en segundos de conexión al vCloud"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:48
 msgid "Azure Platform Provider"
-msgstr "Proveedor de la plataforma Azure"
+msgstr "Proveedor de plataforma Azure"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:50
 msgid "Provides connection to Azure Platform"
@@ -2703,7 +2704,7 @@ msgstr "Los parámetros de conexión parecen correctos"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:231
 msgid "Azure Provider: "
-msgstr "Azul proveedor: "
+msgstr "Proveedor Azure: "
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
@@ -3343,15 +3344,15 @@ msgstr "Proveedor de servicios de Plataforma OpenStack"
 
 #: services/OpenStack/Provider.py:99
 msgid "Identity endpoint"
-msgstr "Punto final de la identidad"
+msgstr "Identity endpoint"
 
 #: services/OpenStack/Provider.py:99
 msgid ""
 "OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
 "identity)"
 msgstr ""
-"Punto final OpenStack identidad acceso API (por ejemplo, https://10.0.0.0/"
-"identidad)"
+"OpenStack identity endpoint API Access (por ejemplo, https://10.0.0.0/"
+"identity)"
 
 #: services/OpenStack/Provider.py:101 services/OpenStack/ProviderLegacy.py:103
 msgid "Access interface"
@@ -3383,15 +3384,15 @@ msgstr "Prueba de conexión a OpenStack superada"
 
 #: services/OpenStack/ProviderLegacy.py:80
 msgid "OpenStack LEGACY Platform Provider"
-msgstr "OpenStack legado plataforma proveedor"
+msgstr "Proveedor de plataforma OpenStack legacy"
 
 #: services/OpenStack/ProviderLegacy.py:84
 msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
 msgstr ""
-"Proveedor de servicios de plataforma de OpenStack legado (para versiones más "
-"antiguas de Openstack, anterior a OCATA)"
+"Proveedor de servicios de plataforma OpenStack legacy (para versiones más "
+"antiguas de OpenStack, anterior a OCATA)"
 
 #: services/OpenStack/ProviderLegacy.py:99
 msgid "OpenStack Host"
@@ -4001,11 +4002,11 @@ msgstr ""
 
 #: services/Xen/XenProvider.py:79
 msgid "Xenserver/XCP-NG Platforms Provider"
-msgstr "Proveedor de plataformas XenServer/XCP-NG"
+msgstr "Proveedor de plataformas XenServer/XCP-ng"
 
 #: services/Xen/XenProvider.py:83
 msgid "XenServer and XCP-NG platforms service provider"
-msgstr "Proveedor de servicios de plataformas XenServer y XCP-NG"
+msgstr "Proveedor de servicios de plataformas XenServer y XCP-ng"
 
 #: services/Xen/XenProvider.py:98
 msgid "XenServer Server IP or Hostname"
