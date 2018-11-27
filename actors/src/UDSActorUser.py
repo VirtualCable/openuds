@@ -57,7 +57,7 @@ doLogoff = False
 
 def sigTerm(sigNo, stackFrame):
     if trayIcon:
-        trayIcon.quit()
+        trayIcon.quit(extra=" (by sigterm)")
 
 
 # About dialog

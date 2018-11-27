@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-20 11:02+0100\n"
+"POT-Creation-Date: 2018-11-27 11:16+0100\n"
 "PO-Revision-Date: 2018-09-24 09:15+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -1051,7 +1051,3 @@ msgstr "Mesedez, {0} edo handiagoa den balioa sartu."
 #: static/tmp_js/uds-client.js:45
 msgid "Contacting service..."
 msgstr "Zerbitzuarekin harremanetan jartzen..."
-
-#: static/tmp_js/uds-client.js:220
-msgid "Error accessing service: "
-msgstr "Zerbitzuan sartzerakoan errorea:"
