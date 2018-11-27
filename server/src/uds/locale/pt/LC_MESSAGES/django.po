@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-20 11:02+0100\n"
-"PO-Revision-Date: 2018-10-15 08:54+0000\n"
+"POT-Creation-Date: 2018-11-27 11:16+0100\n"
+"PO-Revision-Date: 2018-11-20 10:03+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -635,7 +635,6 @@ msgstr ""
 "com valores selecionados"
 
 #: REST/methods/transports.py:100
-#| msgid "Restrained services pools"
 msgid "Currently assigned services pools"
 msgstr "Atualmente atribuído a piscinas de serviços"
 
@@ -3331,8 +3330,8 @@ msgid ""
 "OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
 "identity)"
 msgstr ""
-"Ponto de extremidade do OpenStack identidade acesso API (por exemplo, https://10.0.0.0/"
-"identidade)"
+"Ponto de extremidade do OpenStack identidade acesso API (por exemplo, "
+"https://10.0.0.0/identidade)"
 
 #: services/OpenStack/Provider.py:101 services/OpenStack/ProviderLegacy.py:103
 msgid "Access interface"
@@ -3363,7 +3362,6 @@ msgid "OpenStack test connection passed"
 msgstr "Conexão de teste OpenStack passado"
 
 #: services/OpenStack/ProviderLegacy.py:80
-#| msgid "OpenStack Platform Provider"
 msgid "OpenStack LEGACY Platform Provider"
 msgstr "Provedor de plataforma OpenStack legado"
 
@@ -3372,8 +3370,8 @@ msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
 msgstr ""
-"Provedor de serviços de plataforma OpenStack legado (para versões mais antigas do Openstack, "
-"anterior para OCATA)"
+"Provedor de serviços de plataforma OpenStack legado (para versões mais "
+"antigas do Openstack, anterior para OCATA)"
 
 #: services/OpenStack/ProviderLegacy.py:99
 msgid "OpenStack Host"

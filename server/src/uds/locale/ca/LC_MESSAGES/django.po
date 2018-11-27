@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-20 11:02+0100\n"
-"PO-Revision-Date: 2018-11-14 12:32+0000\n"
+"POT-Creation-Date: 2018-11-27 11:16+0100\n"
+"PO-Revision-Date: 2018-11-23 09:22+0000\n"
 "Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
@@ -638,10 +638,8 @@ msgstr ""
 "els valors seleccionats"
 
 #: REST/methods/transports.py:100
-#, fuzzy
-#| msgid "Restrained services pools"
 msgid "Currently assigned services pools"
-msgstr "Pools de serveis restringits"
+msgstr "Pools de servei actualment assignats"
 
 #: REST/methods/user_services.py:120
 #: templates/uds/admin/tmpl/services_pool.html:31
@@ -2021,7 +2019,7 @@ msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
 msgstr ""
-"<b>Heredat</b> Agent UDS per a màquines Debian, Ubuntu, ... Linux "
+"<b>Legacy</b> Agent UDS per a màquines Debian, Ubuntu, ... Linux "
 "<b>(Requereix python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
@@ -3337,13 +3335,15 @@ msgstr "Proveïdor de serveis de la plataforma OpenStack"
 
 #: services/OpenStack/Provider.py:99
 msgid "Identity endpoint"
-msgstr ""
+msgstr "Punt final de la identitat"
 
 #: services/OpenStack/Provider.py:99
 msgid ""
 "OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
 "identity)"
 msgstr ""
+"Accés a l'API de punt final de la identitat d'OpenStack  (per exemple, "
+"https://10.0.0.0/identitat)"
 
 #: services/OpenStack/Provider.py:101 services/OpenStack/ProviderLegacy.py:103
 msgid "Access interface"
@@ -3374,16 +3374,16 @@ msgid "OpenStack test connection passed"
 msgstr "La prova de connexió amb OpenStack s'ha realitzat correctament"
 
 #: services/OpenStack/ProviderLegacy.py:80
-#, fuzzy
-#| msgid "OpenStack Platform Provider"
 msgid "OpenStack LEGACY Platform Provider"
-msgstr "Proveïdor de plataforma OpenStack"
+msgstr "Proveïdor de plataforma OpenStack Legacy"
 
 #: services/OpenStack/ProviderLegacy.py:84
 msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
 msgstr ""
+"Proveïdor de serveis de plataforma OpenStack Legacy (per a versions antigues "
+"d'OpenStack, anteriors a OCATA)"
 
 #: services/OpenStack/ProviderLegacy.py:99
 msgid "OpenStack Host"

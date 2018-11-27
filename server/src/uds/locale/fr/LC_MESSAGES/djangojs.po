@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-20 11:02+0100\n"
+"POT-Creation-Date: 2018-11-27 11:16+0100\n"
 "PO-Revision-Date: 2018-09-24 09:15+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -1050,7 +1050,3 @@ msgstr "Entrez une valeur supérieure ou égale à {0}."
 #: static/tmp_js/uds-client.js:45
 msgid "Contacting service..."
 msgstr "Encours de contact avec le service..."
-
-#: static/tmp_js/uds-client.js:220
-msgid "Error accessing service: "
-msgstr "Erreur d'accès au service : "

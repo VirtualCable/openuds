@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-20 11:02+0100\n"
-"PO-Revision-Date: 2018-11-14 12:41+0000\n"
+"POT-Creation-Date: 2018-11-27 11:16+0100\n"
+"PO-Revision-Date: 2018-11-23 08:02+0000\n"
 "Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
@@ -328,7 +328,7 @@ msgstr "endavant"
 
 #: static/tmp_js/gui-d-calendar.js:166
 msgid "until "
-msgstr "fins a"
+msgstr "fins a  "
 
 #: static/tmp_js/gui-d-calendar.js:168
 msgid "starting at"
@@ -336,7 +336,7 @@ msgstr "començant a"
 
 #: static/tmp_js/gui-d-calendar.js:171
 msgid "and will remain valid for"
-msgstr "i continuarà essent vàlid fins a"
+msgstr "i continuarà essent vàlid durant "
 
 #: static/tmp_js/gui-d-calendar.js:173
 msgid "with no duration"
@@ -731,7 +731,7 @@ msgstr "Editeu la propietat del Servei Assignat"
 
 #: static/tmp_js/gui-d-servicespools.js:462
 msgid "You must provide authenticator and user"
-msgstr "Heu de proporcionar autenticador i usuari"
+msgstr "Heu de proporcionar un autenticador i un usuari"
 
 #: static/tmp_js/gui-d-servicespools.js:480
 msgid "Remove Assigned service"
@@ -1051,7 +1051,3 @@ msgstr "Si us plau, introduïu un valor major o igual a {0}."
 #: static/tmp_js/uds-client.js:45
 msgid "Contacting service..."
 msgstr "Contactant amb el servei..."
-
-#: static/tmp_js/uds-client.js:220
-msgid "Error accessing service: "
-msgstr "Error accedint al servei:"
