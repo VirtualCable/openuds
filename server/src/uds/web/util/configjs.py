@@ -101,7 +101,6 @@ def udsJs(request):
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
         'authenticators': [getAuth(auth) for auth in authenticators if auth.getType()],
-        'bypassPluginDetection': False,
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,

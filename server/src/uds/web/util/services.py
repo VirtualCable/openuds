@@ -28,31 +28,23 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-from django.shortcuts import render_to_response
-from django.shortcuts import render
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext
 from django.utils import formats
-
-from django.template import RequestContext
-
-from uds.core.auths.auth import webLoginRequired, webLogout
+from django.urls.base import reverse
 
 from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
-from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
-from uds.core import VERSION, VERSION_STAMP
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-11-28'
+
 
 def getServicesData(request):
     # Session data
