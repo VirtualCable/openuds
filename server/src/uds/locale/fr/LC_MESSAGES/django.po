@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-27 11:54+0100\n"
+"POT-Creation-Date: 2018-11-29 10:17+0100\n"
 "PO-Revision-Date: 2018-11-20 10:03+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -2629,10 +2629,6 @@ msgstr ""
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
 msgstr "Vous devez sélectionner un réseau pour le service"
-
-#: services/Azure_enterprise/Helpers.py:76
-msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
-msgstr "{} ({,}, {} carottes, { : .2f} GiB, disques de données max {})"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Subscription ID"
