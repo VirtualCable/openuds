@@ -37,8 +37,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-
-from uds.models import Group, Transport, DeployedServicePublication
+from uds.models import Group, Transport, DeployedServicePublication, User
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
@@ -240,6 +239,7 @@ class Groups(DetailHandler):
     """
     Processes the groups detail requests of a Service Pool
     """
+
     def getItems(self, parent, item):
         return [{
             'id': i.uuid,
@@ -284,6 +284,7 @@ class Transports(DetailHandler):
     """
     Processes the transports detail requests of a Service Pool
     """
+
     def getItems(self, parent, item):
         return [{
             'id': i.uuid,
@@ -396,6 +397,7 @@ class Changelog(DetailHandler):
     """
     Processes the transports detail requests of a Service Pool
     """
+
     def getItems(self, parent, item):
         return [{
             'revision': i.revision,
