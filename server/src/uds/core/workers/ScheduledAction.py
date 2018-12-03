@@ -32,13 +32,8 @@
 '''
 from __future__ import unicode_literals
 
-from django.db import transaction
-
-from uds.core.util.Config import GlobalConfig
 from uds.models import CalendarAction, getSqlDatetime
-from uds.core.util.State import State
 from uds.core.jobs.Job import Job
-from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
