@@ -54,6 +54,8 @@ trayIcon = None
 
 doLogoff = False
 
+TIMER_TIMEOUT = 5  # In seconds
+
 
 def sigTerm(sigNo, stackFrame):
     if trayIcon:
@@ -209,20 +211,34 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         self.counter = 0
 
-        self.timer.start(5000)  # Launch idle checking every 5 seconds
-        self.graceTimerShots = 6  # Start counting for idle after 30 seconds after login, got on windows some "instant" logout because of idle timer not being reset??
+        self.resetTimervars()
+        self.timer.start(TIMER_TIMEOUT * 1000)  # Launch idle checking every 5 seconds
 
         self.ipc.start()
         # If this is running, it's because he have logged in
         self.ipc.sendLogin(operations.getCurrentUser())
 
+    def resetTimervars(self):
+        self.lastTimerTime = datetime.datetime.now()
+        self.graceTimerShots = 6  # Start counting for idle after 30 seconds after login, got on windows some "instant" logout because of idle timer not being reset??
+
     def checkTimers(self):
+        # Check clock readjustment
+        # This is executed
+        elapsed_seconds = (datetime.datetime.now() - self.lastTimerTime).total_seconds()
+        if elapsed_seconds > TIMER_TIMEOUT * 4 or elapsed_seconds < 0:
+            # Clock has changed a lot, reset session variables, idle timer, etc..
+            self.resetTimervars()
+            return
+
+        self.lastTimerTime = datetime.datetime.now()
+
         self.checkIdle()
         self.checkMaxSession()
 
     def checkMaxSession(self):
         if self.maxSessionTime is None or self.maxSessionTime == 0:
-            logger.debug('Returning because maxSessionTime is cero')
+            logger.debug('Returning because maxSessionTime is zero')
             return
 
         remainingTime = self.maxSessionTime - (datetime.datetime.now() - self.sessionStart).total_seconds()
@@ -235,7 +251,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         if remainingTime <= 0:
             logger.debug('Remaining time is less than cero, exiting')
-            self.quit()
+            self.quit(extra=" (max session time {} {})".format(self.maxSessionTime, self.sessionStart))
 
     def checkIdle(self):
         if self.maxIdleTime is None:  # No idle check
