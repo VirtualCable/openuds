@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-27 11:54+0100\n"
+"POT-Creation-Date: 2018-11-29 10:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2502,10 +2502,6 @@ msgstr ""
 
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
-msgstr ""
-
-#: services/Azure_enterprise/Helpers.py:76
-msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
 msgstr ""
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38

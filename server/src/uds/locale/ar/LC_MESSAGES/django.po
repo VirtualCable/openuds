@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-27 11:54+0100\n"
-"PO-Revision-Date: 2018-11-27 10:53+0000\n"
+"POT-Creation-Date: 2018-11-29 10:17+0100\n"
+"PO-Revision-Date: 2018-11-27 10:57+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -1055,7 +1055,8 @@ msgstr "معرف العميل"
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
-msgstr "التي تم الحصول عليها من التطبيق التي تم إنشاؤها في أزور \"المؤسسة المصغرة\""
+msgstr ""
+"التي تم الحصول عليها من التطبيق التي تم إنشاؤها في أزور \"المؤسسة المصغرة\""
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
@@ -1065,7 +1066,9 @@ msgstr "العميل السري"
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
-msgstr "التي تم الحصول عليها من التطبيق التي تم إنشاؤها في أزور للمكاتب المصغرة Enteprise--مفاتيح"
+msgstr ""
+"التي تم الحصول عليها من التطبيق التي تم إنشاؤها في أزور للمكاتب المصغرة "
+"Enteprise--مفاتيح"
 
 #: auths/AzureAD_enterprise/AzureAD.py:96
 msgid "Callback"
@@ -1962,8 +1965,7 @@ msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.5)</b>"
 msgstr ""
-"الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون > = "
-"3.5)</b>"
+"الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون > = 3.5)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
 msgid ""
@@ -1983,8 +1985,8 @@ msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
 msgstr ""
-"<b>إرث</b> الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب "
-"بيثون 2.7)</b>"
+"<b>إرث</b> الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون 2.7)</"
+"b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
@@ -2562,16 +2564,12 @@ msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
 msgstr ""
-"تفعيل هذا الخيار لاستخدام الشبكات المتسارعة على vm. التأكد من أن لديك "
-"حجم الجهاز والجهاز يدعم هذا الخيار قبل تنشيط."
+"تفعيل هذا الخيار لاستخدام الشبكات المتسارعة على vm. التأكد من أن لديك حجم "
+"الجهاز والجهاز يدعم هذا الخيار قبل تنشيط."
 
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
 msgstr "يجب عليك تحديد شبكة للخدمة"
-
-#: services/Azure_enterprise/Helpers.py:76
-msgid "{} ({}, {} cores, {:.2f} GiB, {} max data disks)"
-msgstr "{} ({}، {} النوى، {:.2f} بنك الخليج الدولي، {} أقراص البيانات كحد أقصى)"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Subscription ID"
@@ -3324,8 +3322,8 @@ msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
 msgstr ""
-"موفر خدمة منصة تركه OpenStack (\"الإصدارات\" القديمة من Openstack، "
-"السابقة إلى أوكاتا)"
+"موفر خدمة منصة تركه OpenStack (\"الإصدارات\" القديمة من Openstack، السابقة "
+"إلى أوكاتا)"
 
 #: services/OpenStack/ProviderLegacy.py:99
 msgid "OpenStack Host"
@@ -5642,8 +5640,8 @@ msgid ""
 "If checked, user home folder will be redirected. (On linux, also redirects /"
 "media)"
 msgstr ""
-"إذا كان التحقق، ستتم إعادة توجيه المجلد الرئيسي المستخدم. (في لينكس، وأيضا إعادة توجيه/"
-"وسائط الإعلام)"
+"إذا كان التحقق، ستتم إعادة توجيه المجلد الرئيسي المستخدم. (في لينكس، وأيضا "
+"إعادة توجيه/وسائط الإعلام)"
 
 #: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
