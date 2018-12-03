@@ -52,10 +52,9 @@ class ScheduledAction(Job):
         super(ScheduledAction, self).__init__(environment)
 
     def run(self):
-        with transaction.atomic():
-            for ca in CalendarAction.objects.select_for_update().filter(service_pool__service__provider__maintenance_mode=False, next_execution__lt=getSqlDatetime()).order_by('next_execution'):
-                logger.debug('Executing calendar action {}.{}'.format(ca.service_pool.name, ca.calendar.name))
-                try:
-                    ca.execute()
-                except Exception as e:
-                    logger.exception('Got an exception executing calendar access action: {}'.format(e))
+        for ca in CalendarAction.objects.filter(service_pool__service__provider__maintenance_mode=False, next_execution__lt=getSqlDatetime()).order_by('next_execution'):
+            logger.info('Executing calendar action {}.{} ({})'.format(ca.service_pool.name, ca.calendar.name, ca.action))
+            try:
+                ca.execute()
+            except Exception as e:
+                logger.exception('Got an exception executing calendar access action: {}'.format(e))
