@@ -78,12 +78,19 @@ class IPMachinesService(services.Service):
         return {'ipList': gui.convertToList(ips)}
 
     def marshal(self):
+        logger.debug('Marshal: %s', self._ips)
         self.storage.saveData('ips', pickle.dumps(self._ips))
-        return 'v1'
+        return b'v1'
 
     def unmarshal(self, vals):
-        if vals == 'v1':
-            self._ips = pickle.loads(str(self.storage.readData('ips')))
+        logger.debug('Vals %s', vals)
+        if vals == b'v1':
+            vals = self.storage.readData('ips')
+            try:
+                self._ips = pickle.loads(vals)
+            except:  # Legacy "as string"
+                self._ips = pickle.loads(vals.encode('utf8'))
+        logger.debug('Unmarshal: %s', self._ips)
 
     def getUnassignedMachine(self):
         # Search first unassigned machine

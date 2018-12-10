@@ -138,7 +138,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     def saveItem(self, parent, item):
         # Extract item db fields
         # We need this fields for all
-        logger.debug('Saving service {0} / {1}'.format(parent, item))
+        logger.debug('Saving service for {0} / {1}'.format(parent, item))
         fields = self.readFieldsFromParams(['name', 'comments', 'data_type', 'tags', 'proxy_id'])
         tags = fields['tags']
         del fields['tags']
