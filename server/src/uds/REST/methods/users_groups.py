@@ -159,7 +159,7 @@ class Users(DetailHandler):
                 groups = self.readFieldsFromParams(['groups'])['groups']
                 logger.debug('Groups: {}'.format(groups))
                 logger.debug('Got Groups {}'.format(parent.groups.filter(uuid__in=groups)))
-                user.groups = parent.groups.filter(uuid__in=groups)
+                user.groups.set(parent.groups.filter(uuid__in=groups))
 
             user.save()
 

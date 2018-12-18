@@ -30,8 +30,6 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django.utils.translation import get_language, ugettext as _, ugettext_noop
 from uds.core.util import encoders
 import datetime
@@ -912,7 +910,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
                 continue
             if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 # logger.debug('Serializing value {0}'.format(v.value))
-                val = '\001' + pickle.dumps(v.value)
+                val = b'\001' + pickle.dumps(v.value, protocol=0)
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = six.text_type(int(v.num()))
             else:
@@ -921,8 +919,9 @@ class UserInterface(object, metaclass=UserInterfaceType):
                 val = gui.TRUE
             elif val is False:
                 val = gui.FALSE
-            arr.append(k + '\003' + val)
-        return encoders.encode('\002'.join(arr), 'zip')
+            arr.append(k.encode('utf8') + b'\003' + val)
+        logger.debug('Arr, >>%s<<', arr)
+        return encoders.encode(b'\002'.join(arr), 'zip')
 
     def unserializeForm(self, values):
         """
@@ -941,19 +940,21 @@ class UserInterface(object, metaclass=UserInterfaceType):
                     continue
                 self._gui[k].value = self._gui[k].defValue
 
-            values = encoders.decode(values, 'zip', True)
-            if values == '':  # Has nothing
+            values = encoders.decode(values, 'zip')
+            if values == b'':  # Has nothing
                 return
 
-            for txt in values.split('\002'):
-                k, v = txt.split('\003')
+            for txt in values.split(b'\002'):
+                k, v = txt.split(b'\003')
+                k = k.decode('utf8')  # Convert name to unicode
                 if k in self._gui:
                     try:
-                        if v[0] == '\001':
-                            val = pickle.loads(v[1:].encode('utf-8'))
+                        if v[0] == 1:
+                            val = pickle.loads(v[1:])
                         else:
                             val = v
                     except Exception:
+                        # logger.exception('Pickling')
                         val = ''
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))

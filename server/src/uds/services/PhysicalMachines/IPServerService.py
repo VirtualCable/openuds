@@ -37,7 +37,6 @@ from uds.core.services import types as serviceTypes
 from uds.core.ui.UserInterface import gui
 from .IPMachineDeployed import IPMachineDeployed
 import logging
-import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +68,6 @@ class IPServerService(services.Service):
 
     servicesTypeProvided = (serviceTypes.VDI,)
 
-
     def initialize(self, values):
         """
         We check here form values to see if they are valid.
@@ -80,7 +78,6 @@ class IPServerService(services.Service):
         if values is not None:
             if self.remoteHost.value == '':
                 raise services.Service.ValidationException('No remote host found')
-
 
     # 172.27.0.1~00000
     def getData(self):

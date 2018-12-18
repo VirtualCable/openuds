@@ -99,6 +99,7 @@ class Authenticators(ModelHandler):
             'small_name': auth.small_name,
             'users_count': auth.users.count(),
             'type': type_.type(),
+            'type_info': self.typeInfo(type_),
             'permission': permissions.getEffectivePermission(self._user, auth)
         }
 

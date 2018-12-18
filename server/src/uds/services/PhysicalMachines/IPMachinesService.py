@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 class IPMachinesService(services.Service):
 
     # Gui
-    ipList = gui.EditableList(label=_('List of IPS'))
+    ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
 
     # Description of service
     typeName = _('Static Multiple IP')
