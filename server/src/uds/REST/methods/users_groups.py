@@ -89,11 +89,15 @@ class Users(DetailHandler):
         # Extract authenticator
         try:
             if item is None:
-                return list(Users.uuid_to_id(parent.users.all().values('uuid', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent')))
+                values = list(Users.uuid_to_id(parent.users.all().values('uuid', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent')))
+                for res in values:
+                    res['role'] = res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
+                return values
             else:
                 u = parent.users.get(uuid=processUuid(item))
                 res = model_to_dict(u, fields=('name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent'))
                 res['id'] = u.uuid
+                res['role'] = res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
                 usr = aUser(u)
                 res['groups'] = [g.dbGroup().uuid for g in usr.groups()]
                 logger.debug('Item: {0}'.format(res))
@@ -111,6 +115,7 @@ class Users(DetailHandler):
     def getFields(self, parent):
         return [
             {'name': {'title': _('Username'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-user text-success'}},
+            {'role': {'title': _('Role')}},
             {'real_name': {'title': _('Name')}},
             {'comments': {'title': _('Comments')}},
             {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},

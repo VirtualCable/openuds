@@ -113,6 +113,8 @@ class Authenticators(ModelHandler):
 
             term = self._params['term']
 
+            limit = int(self._params.get('limit', '50'))
+
             auth = item.getInstance()
 
             canDoSearch = type_ == 'user' and (auth.searchUsers != auths.Authenticator.searchUsers) or (auth.searchGroups != auths.Authenticator.searchGroups)
@@ -120,11 +122,13 @@ class Authenticators(ModelHandler):
                 self.notSupported()
 
             if type_ == 'user':
-                return auth.searchUsers(term)
+                return auth.searchUsers(term)[:limit]
             else:
-                return auth.searchGroups(term)
+                return auth.searchGroups(term)[:limit]
         except Exception as e:
-            self.invalidResponseException('{}'.format(e))
+            logger.exception('Too many results: %s', e)
+            return [{'id': _('Too many results...'), 'name': _('Refine your query')}]
+            # self.invalidResponseException('{}'.format(e))
 
     def test(self, type_):
         from uds.core.Environment import Environment
