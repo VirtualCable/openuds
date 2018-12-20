@@ -438,6 +438,8 @@ gui.servicesPools.link = (event) ->
 
           onEdit: (item, event, table, refreshFnc) ->
             gui.doLog(item)
+            if item.state in ['E', 'R', 'C']
+              return
             api.templates.get "pool_edit_assigned", (tmpl) ->
               api.authenticators.overview (data) ->
                 # Sorts groups, expression means that "if a > b returns 1, if b > a returns -1, else returns 0"

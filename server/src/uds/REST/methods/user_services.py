@@ -181,7 +181,7 @@ class AssignedService(DetailHandler):
         logStr = 'Changing ownership of service from {} to {} by {}'.format(service.user.pretty_name, user.pretty_name, self._user.pretty_name)
 
         # If there is another service that has this same owner, raise an exception
-        if parent.userServices.filter(user=user).exclude(uuid=service.uuid).count() > 0:
+        if parent.userServices.filter(user=user).exclude(uuid=service.uuid).exclude(state__in=State.INFO_STATES).count() > 0:
             raise self.invalidResponseException('There is already another user service assigned to {}'.format(user.pretty_name))
 
         service.user = user
