@@ -176,7 +176,7 @@ def __registerUser(authenticator, authInstance, username):
 
     request = getRequest()
 
-    usr = authenticator.getOrCreateUser(username)
+    usr = authenticator.getOrCreateUser(username, '')
     usr.real_name = authInstance.getRealName(username)
     usr.save()
     if usr is not None and State.isActive(usr.state):
