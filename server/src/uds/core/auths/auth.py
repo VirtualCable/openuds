@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2018-08-02'
+__updated__ = '2018-12-21'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -165,7 +165,9 @@ def __registerUser(authenticator, authInstance, username):
 
     request = getRequest()
 
-    usr = authenticator.getOrCreateUser(username, authInstance.getRealName(username))
+    usr = authenticator.getOrCreateUser(username)
+    usr.real_name = authInstance.getRealName(username)
+    usr.save()
     if usr is not None and State.isActive(usr.state):
         # Now we update database groups for this user
         usr.getManager().recreateGroups(usr)
