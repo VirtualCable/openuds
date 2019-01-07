@@ -1582,8 +1582,11 @@ GuacUI.Client.attach = function(guac) {
     };
 
     /**
-     * Calculates maximum possible height that can be scrolled. For additional
-     * info, visit: https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
+     * Calculates maximum possible height that can be scrolled. This helps avoid 
+     * the constant increasing value of scrollHeight on ios Safari.
+     * 
+     * For additional info, visit: 
+     * https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
      *
      * @returns {number} A number that represents the max height in pixels.
      */
@@ -1598,9 +1601,12 @@ GuacUI.Client.attach = function(guac) {
     }
     
     /**
-     * Calculates maximum possible width that can be scrolled. For additional
-     * info, visit: https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
-     *
+     * Calculates maximum possible width that can be scrolled. This helps avoid 
+     * the constant increasing value of scrollWidth on ios Safari.
+     * 
+     * For additional info, visit: 
+     * https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
+     * 
      * @returns {number} A number that represents the max width in pixels.
      */
     function getPageMaxWidth() {
