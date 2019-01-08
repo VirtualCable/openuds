@@ -1583,7 +1583,12 @@ GuacUI.Client.attach = function(guac) {
 
     /**
      * Calculates maximum possible height that can be scrolled. This helps avoid 
-     * the constant increasing value of scrollHeight on ios Safari.
+     * the constant increasing value of scrollHeight on IOS Safari. The
+     * continuous increase of height causes a crash on IOS Safari when the 
+     * unnaturally high value of scrollHeight is passed to the scrollTo 
+     * function. Therefore in the case where the scrollHeight parameter exceeds 
+     * the maximum possible height value, the return value of this parameter is 
+     * used instead. 
      * 
      * For additional info, visit: 
      * https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
@@ -1602,7 +1607,12 @@ GuacUI.Client.attach = function(guac) {
     
     /**
      * Calculates maximum possible width that can be scrolled. This helps avoid 
-     * the constant increasing value of scrollWidth on ios Safari.
+     * the constant increasing value of scrollWidth on IOS Safari. The
+     * continuous increase of width causes a crash on IOS Safari when the 
+     * unnaturally high value of scrollWidth is passed to the scrollTo 
+     * function. Therefore in the case where the scrollWidth parameter exceeds 
+     * the maximum possible width value, the return value of this parameter is 
+     * used instead. 
      * 
      * For additional info, visit: 
      * https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
