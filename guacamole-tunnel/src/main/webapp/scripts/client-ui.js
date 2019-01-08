@@ -1581,6 +1581,54 @@ GuacUI.Client.attach = function(guac) {
             GuacUI.Client.attachedClient.disconnect();
     };
 
+    /**
+     * Calculates maximum possible height that can be scrolled. This helps avoid 
+     * the constant increasing value of scrollHeight on IOS Safari. The
+     * continuous increase of height causes a crash on IOS Safari when the 
+     * unnaturally high value of scrollHeight is passed to the scrollTo 
+     * function. Therefore in the case where the scrollHeight parameter exceeds 
+     * the maximum possible height value, the return value of this parameter is 
+     * used instead. 
+     * 
+     * For additional info, visit: 
+     * https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
+     *
+     * @returns {number} A number that represents the max height in pixels.
+     */
+    function getPageMaxHeight() {
+        return Math.max(
+            document.body.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.clientHeight,
+            document.documentElement.scrollHeight,
+            document.documentElement.offsetHeight
+          ) - window.innerHeight; // Subtract viewport height
+    }
+    
+    /**
+     * Calculates maximum possible width that can be scrolled. This helps avoid 
+     * the constant increasing value of scrollWidth on IOS Safari. The
+     * continuous increase of width causes a crash on IOS Safari when the 
+     * unnaturally high value of scrollWidth is passed to the scrollTo 
+     * function. Therefore in the case where the scrollWidth parameter exceeds 
+     * the maximum possible width value, the return value of this parameter is 
+     * used instead. 
+     * 
+     * For additional info, visit: 
+     * https://muffinman.io/ios-safari-get-bounding-client-rect-bug/
+     * 
+     * @returns {number} A number that represents the max width in pixels.
+     */
+    function getPageMaxWidth() {
+        return Math.max(
+            document.body.scrollWidth,
+            document.body.offsetWidth,
+            document.documentElement.clientWidth,
+            document.documentElement.scrollWidth,
+            document.documentElement.offsetWidth
+          ) - window.innerWidth; // Subtract viewport width
+    }
+
     /*
      * Reflow layout and send size events on resize/scroll
      */
@@ -1608,9 +1656,17 @@ GuacUI.Client.attach = function(guac) {
             last_scroll_height = document.body.scrollHeight;
             last_window_width  = window.innerWidth;
             last_window_height = window.innerHeight;
+            
+            // Get appropriate scrolling height (not greater than max value)
+            var maxHeight = getPageMaxHeight();
+            var scrollHeight = Math.min(document.body.scrollHeight, maxHeight);
+            
+            // Get appropriate scrolling width (not greater than max value)
+            var maxWidth = getPageMaxWidth();            
+            var scrollWidth = Math.min(document.body.scrollWidth, maxWidth);
 
             // Reset scroll and reposition document such that it's on-screen
-            window.scrollTo(document.body.scrollWidth, document.body.scrollHeight);
+            window.scrollTo(scrollWidth, scrollHeight);
 
             // Determine height of bottom section (currently only text input)
             var bottom = GuacUI.Client.text_input.container;
