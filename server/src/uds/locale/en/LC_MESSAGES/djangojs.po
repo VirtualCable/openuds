@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
+"POT-Creation-Date: 2019-01-09 13:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -710,7 +710,7 @@ msgid "Remove Cache element"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:297
-#: static/tmp_js/gui-d-servicespools.js:480
+#: static/tmp_js/gui-d-servicespools.js:484
 msgid "Deletion error"
 msgstr ""
 
@@ -722,52 +722,52 @@ msgstr ""
 msgid "You must provide authenticator and group"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:434
+#: static/tmp_js/gui-d-servicespools.js:438
 msgid "Edit Assigned Service ownership"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:462
+#: static/tmp_js/gui-d-servicespools.js:466
 msgid "You must provide authenticator and user"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:480
+#: static/tmp_js/gui-d-servicespools.js:484
 msgid "Remove Assigned service"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:543
+#: static/tmp_js/gui-d-servicespools.js:547
 msgid "Restrained"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:552
+#: static/tmp_js/gui-d-servicespools.js:556
 msgid "New service pool"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:552
+#: static/tmp_js/gui-d-servicespools.js:556
 msgid "creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:562
+#: static/tmp_js/gui-d-servicespools.js:566
 msgid "Publish on creation"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:563
+#: static/tmp_js/gui-d-servicespools.js:567
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:575 static/tmp_js/gui.js:53
+#: static/tmp_js/gui-d-servicespools.js:579 static/tmp_js/gui.js:53
 msgid "Edit"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:575
+#: static/tmp_js/gui-d-servicespools.js:579
 msgid "saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:578 static/tmp_js/gui-methods.js:154
+#: static/tmp_js/gui-d-servicespools.js:582 static/tmp_js/gui-methods.js:154
 #: static/tmp_js/gui.js:57
 msgid "Delete"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:578
+#: static/tmp_js/gui-d-servicespools.js:582
 msgid "deletion error"
 msgstr ""
 

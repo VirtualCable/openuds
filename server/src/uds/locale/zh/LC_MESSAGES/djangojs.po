@@ -1,20 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
+"POT-Creation-Date: 2019-01-09 13:30+0100\n"
 "PO-Revision-Date: 2019-01-09 11:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/zh/)\n"
+"Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
+"zh/)\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: static/tmp_js/api-tools.js:378
@@ -710,7 +711,7 @@ msgid "Remove Cache element"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:297
-#: static/tmp_js/gui-d-servicespools.js:480
+#: static/tmp_js/gui-d-servicespools.js:484
 msgid "Deletion error"
 msgstr ""
 
@@ -722,52 +723,52 @@ msgstr ""
 msgid "You must provide authenticator and group"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:434
+#: static/tmp_js/gui-d-servicespools.js:438
 msgid "Edit Assigned Service ownership"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:462
+#: static/tmp_js/gui-d-servicespools.js:466
 msgid "You must provide authenticator and user"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:480
+#: static/tmp_js/gui-d-servicespools.js:484
 msgid "Remove Assigned service"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:543
+#: static/tmp_js/gui-d-servicespools.js:547
 msgid "Restrained"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:552
+#: static/tmp_js/gui-d-servicespools.js:556
 msgid "New service pool"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:552
+#: static/tmp_js/gui-d-servicespools.js:556
 msgid "creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:562
+#: static/tmp_js/gui-d-servicespools.js:566
 msgid "Publish on creation"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:563
+#: static/tmp_js/gui-d-servicespools.js:567
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:575 static/tmp_js/gui.js:53
+#: static/tmp_js/gui-d-servicespools.js:579 static/tmp_js/gui.js:53
 msgid "Edit"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:575
+#: static/tmp_js/gui-d-servicespools.js:579
 msgid "saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:578 static/tmp_js/gui-methods.js:154
+#: static/tmp_js/gui-d-servicespools.js:582 static/tmp_js/gui-methods.js:154
 #: static/tmp_js/gui.js:57
 msgid "Delete"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:578
+#: static/tmp_js/gui-d-servicespools.js:582
 msgid "deletion error"
 msgstr ""
 

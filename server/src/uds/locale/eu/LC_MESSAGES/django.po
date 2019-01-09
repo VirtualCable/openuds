@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017
@@ -9,14 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
-"PO-Revision-Date: 2018-11-29 09:18+0000\n"
+"POT-Creation-Date: 2019-01-09 13:29+0100\n"
+"PO-Revision-Date: 2019-01-09 12:29+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/eu/)\n"
+"Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
+"eu/)\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: REST/methods/actor.py:93 REST/methods/client.py:93
@@ -66,13 +67,11 @@ msgstr "Izena"
 #: REST/methods/user_services.py:304 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:276 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
-#: templates/uds/admin/tmpl/group.html:49
-#: templates/uds/admin/tmpl/user.html:40
+#: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Iruzkinak"
 
-#: REST/methods/authenticators.py:62
-#: REST/methods/services_pool_calendars.py:88
+#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:88
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
 #: REST/methods/user_services.py:301 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
@@ -198,7 +197,9 @@ msgstr "Sare eremua"
 msgid ""
 "Network range. Accepts most network definitions formats (range, subnet, "
 "host, etc..."
-msgstr "Sare bitartea. Sare definizio formatu gehienak onartzen dira (bitartea, ostalaria, etb"
+msgstr ""
+"Sare bitartea. Sare definizio formatu gehienak onartzen dira (bitartea, "
+"ostalaria, etb"
 
 #: REST/methods/osmanagers.py:55
 msgid "Current OS Managers"
@@ -206,7 +207,9 @@ msgstr "Momentuko SE kudeatzaileak "
 
 #: REST/methods/osmanagers.py:81
 msgid "Can't delete an OS Manager with services pools associated"
-msgstr "Ezinezkoa da SE kudeazailea ezabatzea pool-zerbitzuak erlazionaturik dituenean"
+msgstr ""
+"Ezinezkoa da SE kudeazailea ezabatzea pool-zerbitzuak erlazionaturik "
+"dituenean"
 
 #: REST/methods/providers.py:67
 msgid "Service providers"
@@ -217,8 +220,7 @@ msgid "Status"
 msgstr "Egoera"
 
 #: REST/methods/providers.py:74 reports/stats/pools_usage.py:107
-#: reports/stats/pools_usage.py:283
-#: templates/uds/admin/snippets/navbar.html:22
+#: reports/stats/pools_usage.py:283 templates/uds/admin/snippets/navbar.html:22
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
@@ -436,7 +438,7 @@ msgstr "Aurreratua"
 
 #: REST/methods/services_pools.py:191
 msgid "Allow removal by users"
-msgstr ""
+msgstr "Baimendu erabiltzaileak kentzea"
 
 #: REST/methods/services_pools.py:192
 msgid ""
@@ -444,24 +446,29 @@ msgid ""
 "careful with this, because the user will have the \"power\" to delete it's "
 "own service"
 msgstr ""
+"Aktibo badago, erabiltzaileak \"eskuz\" zerbitzua kendu ahal izango du. "
+"Kontuz ibili, erabiltzaileak \"boterea\" izango duelako bere zerbitzua "
+"ezabatzeko"
 
 #: REST/methods/services_pools.py:199
 msgid "Allow reset by users"
-msgstr ""
+msgstr "Baimendu berrezarri erabiltzaileek"
 
 #: REST/methods/services_pools.py:200
 msgid "If active, the user will be allowed to reset the service"
-msgstr ""
+msgstr "Aktibatuta badago, erabiltzaileak zerbitzua berrezarriko du"
 
 #: REST/methods/services_pools.py:207
 msgid "Ignores unused"
-msgstr ""
+msgstr "Ez erabiltzen"
 
 #: REST/methods/services_pools.py:208
 msgid ""
-"If the option is enabled, UDS will not attempt to detect and remove the user"
-" services assigned but not in use."
+"If the option is enabled, UDS will not attempt to detect and remove the user "
+"services assigned but not in use."
 msgstr ""
+"Aukera hori gaituta badago, UDS-k ez du erabiltzaileari esleitutako "
+"zerbitzuen detekzioa eta kentzea saiatuko."
 
 #: REST/methods/services_pools.py:219 REST/methods/services_pools.py:227
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:179
@@ -475,6 +482,7 @@ msgstr "Pool Taldea"
 #: REST/methods/services_pools.py:224
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr ""
+"Igerileku honetarako igerileku taldea (igerilekuan sailkatzeko aukera dago)"
 
 #: REST/methods/services_pools.py:232
 msgid "Initial available services"
@@ -496,6 +504,7 @@ msgstr "Cache-an edukitzeko zerbitzuak"
 #: REST/methods/services_pools.py:242
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
+"Cachean gordetako zerbitzuak erabiltzaileen zerbitzuen esleipen hobetzeko"
 
 #: REST/methods/services_pools.py:250
 msgid "Services to keep in L2 cache"
@@ -503,7 +512,7 @@ msgstr "L2 cache-an edukitzeko zerbitzuak"
 
 #: REST/methods/services_pools.py:251
 msgid "Services kept in cache of level2 for improved service generation"
-msgstr ""
+msgstr "Zerbitzuen maila2 cachean gordetako zerbitzuen zerbitzua hobetzeko"
 
 #: REST/methods/services_pools.py:259
 msgid "Maximum number of services to provide"
@@ -514,6 +523,8 @@ msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
 msgstr ""
+"Zerbitzu honetarako sor daitekeen zerbitzu kopurua (esleitutakoa eta L1 "
+"cachea)"
 
 #: REST/methods/services_pools.py:276
 msgid "Base service does not exist anymore"
@@ -530,7 +541,7 @@ msgstr "Ezezaguna"
 
 #: REST/methods/services_usage.py:113
 msgid "Services Usage"
-msgstr ""
+msgstr "Zerbitzuen erabilpena"
 
 #: REST/methods/services_usage.py:119 REST/methods/user_services.py:134
 msgid "Owner"
@@ -538,7 +549,7 @@ msgstr "Jabea"
 
 #: REST/methods/services_usage.py:120
 msgid "Service"
-msgstr ""
+msgstr "zerbitzua"
 
 #: REST/methods/services_usage.py:121 reports/stats/pool_performance.py:106
 #: reports/stats/pool_performance.py:377 reports/stats/pools_usage.py:103
@@ -594,6 +605,8 @@ msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
+"Hautatuta badago, garraioa hautatutako sareetarako gaituko da. Ez bada "
+"hautatuta, garraioa desgaituko da hautatutako sareetarako"
 
 #: REST/methods/transports.py:81 templates/uds/html5/index.html:135
 #: templates/uds/semantic/index.html:29
@@ -604,7 +617,9 @@ msgstr "Sareak"
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
-msgstr "Garraio honekin loturiko sareak. Sarerik ez bada aukeratzen, denak lotuko dira"
+msgstr ""
+"Garraio honekin loturiko sareak. Sarerik ez bada aukeratzen, denak lotuko "
+"dira"
 
 #: REST/methods/transports.py:90
 msgid "Allowed Devices"
@@ -612,13 +627,16 @@ msgstr "Baimendutako gailuak"
 
 #: REST/methods/transports.py:91
 msgid ""
-"If empty, any kind of device compatible with this transport will be allowed."
-" Else, only devices compatible with selected values will be allowed"
+"If empty, any kind of device compatible with this transport will be allowed. "
+"Else, only devices compatible with selected values will be allowed"
 msgstr ""
+"Hutsik badago, garraio honekin bateragarria den edozein gailu onartzen da. "
+"Bestela, hautatutako balioekin bateragarriak diren gailuak bakarrik onartuko "
+"dira"
 
 #: REST/methods/transports.py:100
 msgid "Currently assigned services pools"
-msgstr ""
+msgstr "Une honetan zerbitzu-igerilekuak esleitzen dira"
 
 #: REST/methods/user_services.py:120
 #: templates/uds/admin/tmpl/services_pool.html:31
@@ -638,8 +656,7 @@ msgstr "Berrikustea"
 msgid "Status date"
 msgstr "Egoera data"
 
-#: REST/methods/user_services.py:131
-#: templates/uds/admin/tmpl/user-info.html:65
+#: REST/methods/user_services.py:131 templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr "Erabiltzen"
 
@@ -782,11 +799,11 @@ msgstr "Elementu honen izena"
 
 #: REST/model.py:139
 msgid "Short name"
-msgstr ""
+msgstr "Izen laburra"
 
 #: REST/model.py:140
 msgid "Short name for user service visualization"
-msgstr ""
+msgstr "Erabiltzaileen bistaratzeko izen laburra"
 
 #: REST/model.py:149
 msgid "Comments for this element"
@@ -835,11 +852,11 @@ msgstr "%(page_count)d-tik  %(page_number)d-garren orrialdea"
 #: core/reports/tools/report.py:82 reports/lists/users.py:96
 #, python-format
 msgid "Printed in %(now:%Y, %b %d)s at %(now:%H:%M)s"
-msgstr ""
+msgstr "Inprimatutako %(now:%Y, %b %d)s %(now:%H:%M)s"
 
 #: admin/views/reporting/users.py:112 reports/lists/users.py:136
 msgid "Users List for {}"
-msgstr ""
+msgstr "Erabiltzaileen zerrenda {}"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:35
 #: auths/EDirectory_enterprise/Authenticator.py:62
@@ -868,7 +885,8 @@ msgstr "SSL erabili"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 msgid "If checked,  a ssl connection to Active Directory will be used"
-msgstr "Aktibo izanez gero, ssl bidez ezarriko da konexioa \"Active Directory\"-ra"
+msgstr ""
+"Aktibo izanez gero, ssl bidez ezarriko da konexioa \"Active Directory\"-ra"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 msgid "Compatibility"
@@ -891,9 +909,11 @@ msgstr "Erabiltzailea"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 msgid ""
-"Username with read privileges on the base selected (use USER@DOMAIN.DOM form"
-" for this)"
-msgstr "Aukeratutako oinarrian irakurtzeko pribilegioa daukan erabiltzailea (erabil USER@DOMAIN.DOM)"
+"Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
+"for this)"
+msgstr ""
+"Aukeratutako oinarrian irakurtzeko pribilegioa daukan erabiltzailea (erabil "
+"USER@DOMAIN.DOM)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/ActiveDirectory_enterprise/Authenticator.py:60
@@ -945,17 +965,19 @@ msgstr "Demboraz kampo"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:41
 msgid "Timeout in seconds of connection to Active Directory"
-msgstr ""
+msgstr "Denbora-muga, Active Directory-en konexioaren segundotan"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:43
 msgid "Override Base"
-msgstr ""
+msgstr "Gainidatzi Base"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:43
 msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
+"Ez bada hutsik, AD bilaketa-oinarria gainidatziko du balio honekin "
+"(formatua: dc = ..., dc = ...)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Active Directory Authenticator"
@@ -1001,12 +1023,16 @@ msgstr "Domeinua txarto omen dago, egiazta ezazu."
 #: auths/ActiveDirectory_enterprise/Authenticator.py:495
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
-msgstr "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile objeturik)"
+msgstr ""
+"Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile "
+"objeturik)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:503
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
-msgstr "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du talde objeturik)"
+msgstr ""
+"Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du talde "
+"objeturik)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:508
 #: auths/EDirectory_enterprise/Authenticator.py:360
@@ -1016,63 +1042,64 @@ msgstr "Konexio parametruak ondo daudela dirudi, proba ondo joan da."
 
 #: auths/AzureAD_enterprise/AzureAD.py:72
 msgid "Azure AD Authenticator"
-msgstr ""
+msgstr "Azure AD autentifikatzailea"
 
 #: auths/AzureAD_enterprise/AzureAD.py:74
 msgid "Azure Active Directory Authenticator"
-msgstr ""
+msgstr "Azure Active Directory Authenticator"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Tenant ID"
-msgstr ""
+msgstr "Tenant IDa"
 
 #: auths/AzureAD_enterprise/AzureAD.py:90
 #: services/Azure_enterprise/ServiceProviderAzure.py:35
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
-msgstr ""
+msgstr "Azure Active Directory-tik lortutakoa - Properties - Directory ID"
 
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Client ID"
-msgstr ""
+msgstr "Bezeroaren IDa"
 
 #: auths/AzureAD_enterprise/AzureAD.py:91
 #: services/Azure_enterprise/ServiceProviderAzure.py:36
 msgid "Obtained from App created on Azure for UDS Enterprise"
-msgstr ""
+msgstr "Azure-k sortutako App lortutako UDS Enterprise-ra"
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Client Secret"
-msgstr ""
+msgstr "Bezero sekretua"
 
 #: auths/AzureAD_enterprise/AzureAD.py:92
 #: services/Azure_enterprise/ServiceProviderAzure.py:37
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
-msgstr ""
+msgstr "Azurek sortutako App lortutako UDS Enteprise - Teklak"
 
 #: auths/AzureAD_enterprise/AzureAD.py:96
 msgid "Callback"
-msgstr ""
+msgstr "atzeradei"
 
 #: auths/AzureAD_enterprise/AzureAD.py:98
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr ""
+"Dei-erantzunaren URLa (UDS-k beteta, konpondu hau beharrezkoa bada bakarrik!)"
 
 #: auths/AzureAD_enterprise/AzureAD.py:230
 #: auths/AzureAD_enterprise/AzureAD.py:253
 #: auths/AzureAD_enterprise/AzureAD.py:265
 msgid "Authenticator exception:"
-msgstr ""
+msgstr "Autentifikatzailea salbuespena:"
 
 #: auths/AzureAD_enterprise/AzureAD.py:301
 msgid "Connection error: "
-msgstr ""
+msgstr "Konexioaren errorea:"
 
 #: auths/AzureAD_enterprise/AzureAD.py:302
 msgid "Connection params seems correct, test was succesfully executed"
-msgstr ""
+msgstr "Konexioaren parametak zuzena dirudi, proba ondo exekutatu da"
 
 #: auths/EDirectory_enterprise/Authenticator.py:62
 msgid "EDirectory Server IP or Hostname"
@@ -1099,6 +1126,7 @@ msgstr "LDAP portua (389 SSL-rik gabe edo 636 SSL-arekin)"
 #: auths/RegexLdap/Authenticator.py:59
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr ""
+"Egiaztatuta badago, konexioa ssl izango da, 636 ataka erabiliz 389 ordez"
 
 #: auths/EDirectory_enterprise/Authenticator.py:65
 msgid "Username with read privileges on the eDirectory"
@@ -1107,7 +1135,7 @@ msgstr "eDirectory-an irakurtzeko pribilegioa daukan erabiltzailea"
 #: auths/EDirectory_enterprise/Authenticator.py:67
 #: auths/RegexLdap/Authenticator.py:62
 msgid "Timeout in seconds of connection to LDAP"
-msgstr ""
+msgstr "Denbora-muga LDAP konexio segundotan"
 
 #: auths/EDirectory_enterprise/Authenticator.py:69
 msgid "eDirectory Authenticator"
@@ -1130,13 +1158,17 @@ msgstr "LDAP bilaketa oinarria txarto dago"
 #: auths/EDirectory_enterprise/Authenticator.py:330
 #: auths/RegexLdap/Authenticator.py:454
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
-msgstr "LDAP erabiltzaile mota txarto dagoela dirudi (ez da aurkitu mota horretako erabiltzailerik)"
+msgstr ""
+"LDAP erabiltzaile mota txarto dagoela dirudi (ez da aurkitu mota horretako "
+"erabiltzailerik)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:338
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
 msgstr ""
+"Ldap erabiltzailearen id atributua okerra dela dirudi (atributuak aurkitu ez "
+"dituen erabiltzaileak)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:346
 msgid "Expected group attribute "
@@ -1146,6 +1178,8 @@ msgstr "Itxarondako talde atributua"
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr ""
+"Ldap erabiltzailearen klasea edo erabiltzaile IDa ziurrenik oker dago (Ldap "
+"eDirectory bat da?)"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid "Accept proxy"
@@ -1153,9 +1187,12 @@ msgstr "Proxy-a onartu"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid ""
-"If checked, requests via proxy will get FORWARDED ip address (take care with"
-" this bein checked, can take internal IP addresses from internet)"
+"If checked, requests via proxy will get FORWARDED ip address (take care with "
+"this bein checked, can take internal IP addresses from internet)"
 msgstr ""
+"Egiaztatuta badago, proxyaren bidez eskaerak IP helbidetik jasoko dira "
+"(zaindu bein hau egiaztaturik, barruko IP helbideak internetetik atera "
+"daitezke)"
 
 #: auths/IP/Authenticator.py:54 auths/IP/Authenticator.py:56
 msgid "IP Authenticator"
@@ -1175,7 +1212,7 @@ msgstr "Barneko datu-basea"
 
 #: auths/InternalDB/Authenticator.py:55
 msgid "Internal dabasase authenticator. Doesn't use external sources"
-msgstr ""
+msgstr "Barne dabasase autentifikatzailea. Kanpoko iturriak ez ditu erabiltzen"
 
 #: auths/InternalDB/Authenticator.py:64
 msgid "Different user for each host"
@@ -1216,6 +1253,8 @@ msgstr "Oinarria "
 #: auths/RegexLdap/Authenticator.py:64
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr ""
+"Bilaketa-oinarri arrunta (\"erabiltzaileentzat\" eta \"taldeentzat\" "
+"erabiltzen dena)"
 
 #: auths/RegexLdap/Authenticator.py:64 auths/RegexLdap/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:66 auths/RegexLdap/Authenticator.py:67
@@ -1244,9 +1283,9 @@ msgid "User Name Attr"
 msgstr "Erabiltzailea-izen atributua"
 
 #: auths/RegexLdap/Authenticator.py:67
-msgid ""
-"Attributes that contains the user name (list of comma separated values)"
-msgstr "Erabiltzaile izena daukan atributua (komaz banandutako balio zerrenda) "
+msgid "Attributes that contains the user name (list of comma separated values)"
+msgstr ""
+"Erabiltzaile izena daukan atributua (komaz banandutako balio zerrenda) "
 
 #: auths/RegexLdap/Authenticator.py:68
 msgid "Group Name Attr"
@@ -1258,13 +1297,15 @@ msgstr "Talde izena daukan atributua"
 
 #: auths/RegexLdap/Authenticator.py:71
 msgid "Alt. class"
-msgstr ""
+msgstr "Alt. class"
 
 #: auths/RegexLdap/Authenticator.py:71
 msgid ""
 "Class for LDAP objects that will be also checked for groups retrieval "
 "(normally empty)"
 msgstr ""
+"Taldeak berreskuratzeko hautatutako taldeentzako LDAP objektuentzako klase "
+"(normalean hutsik dago)"
 
 #: auths/RegexLdap/Authenticator.py:73
 msgid "Regex LDAP Authenticator"
@@ -1278,19 +1319,23 @@ msgstr "LDAP autentifikatzailearen adierazpen erregularrak"
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
-msgstr "LDAP erabiltzairen ID atributua txarto dagoela dirudi (ez da aurkitu balditza biak betetzen dituen erabiltzailerik)"
+msgstr ""
+"LDAP erabiltzairen ID atributua txarto dagoela dirudi (ez da aurkitu "
+"balditza biak betetzen dituen erabiltzailerik)"
 
 #: auths/RegexLdap/Authenticator.py:477
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
-msgstr "LDAP taldearen ID atributua txarto dagoela dirudi (ez da talderik aurkitu atributu horrekin )"
+msgstr ""
+"LDAP taldearen ID atributua txarto dagoela dirudi (ez da talderik aurkitu "
+"atributu horrekin )"
 
-#: auths/SAML_enterprise/SAML.py:82
+#: auths/SAML_enterprise/SAML.py:83
 msgid "SAML Authenticator"
 msgstr "SAML autentifikatzailea"
 
-#: auths/SAML_enterprise/SAML.py:94
+#: auths/SAML_enterprise/SAML.py:95
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML (v2.0) autentifikatzailea"
 
@@ -1303,6 +1348,8 @@ msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
 msgstr ""
+"Seinale eta enkripzioan erabilitako gako pribatua, oinarrian sortutako 64 "
+"ataka irekitik"
 
 #: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
 msgid "Certificates"
@@ -1317,6 +1364,8 @@ msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
 msgstr ""
+"Sartu eta erregistratzeko (gako pribatuaren aurreko atal publikoa) "
+"erabilitako gako publikoa, oinarrian sortua 64 ataka irekitik"
 
 #: auths/SAML_enterprise/SAML.py:126
 msgid "IDP Metadata"
@@ -1325,7 +1374,7 @@ msgstr "IDP Metadata"
 #: auths/SAML_enterprise/SAML.py:127
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
-msgstr ""
+msgstr "Hemen sar dezakezu URLa edo IDP metadatuak edo metadatu bera (xml)"
 
 #: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
 msgid "Metadata"
@@ -1336,9 +1385,9 @@ msgid "Entity ID"
 msgstr "Erakunde IDa"
 
 #: auths/SAML_enterprise/SAML.py:130
-msgid ""
-"ID of the SP. If left blank, this will be autogenerated from server URL"
+msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
+"SP IDa. Utzi hutsik badaude, zerbitzariaren URLa automatikoki sortuko da"
 
 #: auths/SAML_enterprise/SAML.py:132
 msgid "User name attrs"
@@ -1346,7 +1395,7 @@ msgstr "Erabiltzaile-izen atributuak"
 
 #: auths/SAML_enterprise/SAML.py:133
 msgid "Fields from where to extract user name"
-msgstr ""
+msgstr "Erabiltzaile izena ateratzeko eremuak"
 
 #: auths/SAML_enterprise/SAML.py:133 auths/SAML_enterprise/SAML.py:136
 #: auths/SAML_enterprise/SAML.py:139
@@ -1359,7 +1408,7 @@ msgstr "Talde-izen atributuak"
 
 #: auths/SAML_enterprise/SAML.py:136
 msgid "Fields from where to extract the groups"
-msgstr ""
+msgstr "Taldeak ateratzeko eremuak"
 
 #: auths/SAML_enterprise/SAML.py:138
 msgid "Real name attrs"
@@ -1367,13 +1416,15 @@ msgstr "Benetazko izenaren atributuak"
 
 #: auths/SAML_enterprise/SAML.py:139
 msgid "Fields from where to extract the real name"
-msgstr ""
+msgstr "Izen erreala ateratzeko eremuetatik"
 
 #: auths/SAML_enterprise/SAML.py:161
 msgid ""
-"Server certificate should be a valid PEM (PEM certificates starts with "
-"-----BEGIN CERTIFICATE-----)"
+"Server certificate should be a valid PEM (PEM certificates starts with -----"
+"BEGIN CERTIFICATE-----)"
 msgstr ""
+"Zerbitzariaren ziurtagiria PEM baliagarria izan behar da (PEM ziurtagiriak "
+"hasi behar dira ----- ZIURTATUEI BEGIN -----)"
 
 #: auths/SAML_enterprise/SAML.py:166
 msgid "Invalid server certificate. "
@@ -1384,35 +1435,37 @@ msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr ""
+"Gako pribatua PEM baliagarria izan behar da (PEM gako pribatuak hasten dira "
+"----- BEGIN RSA PRIBATUA KEY -----"
 
 #: auths/SAML_enterprise/SAML.py:181
 msgid "Invalid private key. "
-msgstr ""
+msgstr "Gako pribatua baliogabea da."
 
 #: auths/SAML_enterprise/SAML.py:201
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
-msgstr ""
+msgstr "Ezin da URL {0} eskuratu: {1}"
 
 #: auths/SAML_enterprise/SAML.py:212
 msgid " (obtained from URL)"
-msgstr ""
+msgstr "(URLetik lortzen da)"
 
 #: auths/SAML_enterprise/SAML.py:213
 msgid "XML does not seem valid for IDP Metadata "
-msgstr ""
+msgstr "XML IDP Metadata ez da baliozkoa"
 
-#: auths/SAML_enterprise/SAML.py:233
+#: auths/SAML_enterprise/SAML.py:232
 msgid "Can't access idp metadata"
-msgstr ""
+msgstr "Ezin dira idp metadatuak atzitu"
 
 #: auths/Sample/SampleAuth.py:74
 msgid "Sample Authenticator"
-msgstr ""
+msgstr "Sample Authenticator"
 
 #: auths/Sample/SampleAuth.py:86
 msgid "Sample dummy authenticator"
-msgstr ""
+msgstr "Erakutsi dummy autentifikatzailea"
 
 #: auths/Sample/SampleAuth.py:104
 msgid "Fake User"
@@ -1429,22 +1482,21 @@ msgstr "Talde faltsua"
 #: templates/uds/admin/tmpl/permissions.html:22
 #: templates/uds/admin/tmpl/services_pool.html:33
 #: templates/uds/admin/tmpl/user-info.html:4
-#: templates/uds/admin/tmpl/user.html:90
-#: templates/uds/admin/tmpl/user.html:104
+#: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
 msgstr "Taldeak"
 
 #: auths/Sample/SampleAuth.py:126
 msgid "We need more than two items!"
-msgstr ""
+msgstr "Bi elementu baino gehiago behar ditugu!"
 
 #: core/BaseModule.py:197
 msgid "No connection checking method is implemented."
-msgstr ""
+msgstr "Ez da konexio-egiaztapen metodo bat inplementatu."
 
 #: core/BaseModule.py:267
 msgid "No check method provided."
-msgstr ""
+msgstr "Ez da emandako egiaztapen metodorik."
 
 #: core/auths/BaseAuthenticator.py:103 core/auths/BaseAuthenticator.py:115
 msgid "Base Authenticator"
@@ -1460,7 +1512,7 @@ msgstr "Talde-Izena"
 
 #: core/auths/BaseAuthenticator.py:540
 msgid "Users can't be created inside this authenticator"
-msgstr ""
+msgstr "Autentifikatzaile honen barruan ezin dira erabiltzaileak sortu"
 
 #: core/auths/auth.py:89
 msgid "System Administrator"
@@ -1473,23 +1525,24 @@ msgstr "Debekatuta"
 #: core/managers/PublicationManager.py:216
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
-msgstr ""
+msgstr "Argitaratu. Aurreko edizioan itxaron amaitzeko eta saiatu berriro"
 
 #: core/managers/PublicationManager.py:219
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr ""
+"Zerbitzua mantenimendu moduan dago eta argitalpen berriak ez dira onartzen"
 
 #: core/managers/PublicationManager.py:252
 msgid "Can't cancel non running publication"
-msgstr ""
+msgstr "Ezin da exekutatze-argitalpena bertan behera utzi"
 
 #: core/managers/PublicationManager.py:274
 msgid "Can't unpublish non usable publication"
-msgstr ""
+msgstr "Ezin da argitalpen erabilgarririk argitaratu"
 
 #: core/managers/PublicationManager.py:277
 msgid "Can't unpublish publications with services in process"
-msgstr ""
+msgstr "Ezin dira argitalpenak argitaratu zerbitzuen prozesuan"
 
 #: core/managers/UserPrefsManager.py:293 transports/RDP/BaseRDPTransport.py:85
 msgid "Screen Size"
@@ -1529,16 +1582,17 @@ msgstr "Plugin-a detektatu"
 
 #: core/managers/UserPrefsManager.py:314
 msgid "Bypass plugin detection"
-msgstr ""
+msgstr "Ezabatu pluginaren detekzioa"
 
 #: core/managers/UserServiceManager.py:224
 msgid "Can't remove a non active element"
-msgstr ""
+msgstr "Ezin da elementu ez aktiboa ezabatu"
 
 #: core/managers/UserServiceManager.py:237
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr ""
+"Ezin da ezabatu ezta bertan behera utzi {0} bere estatuek ez baitute uzten"
 
 #: core/osmanagers/BaseOsManager.py:59
 msgid "Base OS Manager"
@@ -1574,7 +1628,7 @@ msgstr "Bat ere"
 
 #: core/services/ClusteredService.py:42 core/services/ClusteredService.py:44
 msgid "Base Clustered Service"
-msgstr ""
+msgstr "Base Cluster Zerbitzua"
 
 #: core/transports/BaseTransport.py:48
 msgid "Direct"
@@ -1658,7 +1712,7 @@ msgstr "Exekutatzeko itxaroten"
 
 #: core/util/State.py:80 core/util/states/common.py:78
 msgid "Balancing"
-msgstr ""
+msgstr "Oreka"
 
 #: core/util/State.py:81 core/util/states/common.py:79
 #: templates/uds/semantic/index.html:124
@@ -1671,7 +1725,7 @@ msgstr "SE-ri itxaroten"
 
 #: core/util/State.py:83
 msgid "Too many preparing services"
-msgstr ""
+msgstr "Prestatzeko zerbitzu gehiegi"
 
 #: core/util/stats/counters.py:205
 msgid "Assigned"
@@ -1696,32 +1750,34 @@ msgstr "Zenbakizkoa"
 #: core/util/validators.py:61
 #, python-brace-format
 msgid "{0} must be greater than or equal to {1}"
-msgstr ""
+msgstr "{0} {1} baino handiagoa edo handiagoa izan behar du"
 
 #: core/util/validators.py:64
 #, python-brace-format
 msgid "{0} must be lower than or equal to {1}"
-msgstr ""
+msgstr "{0} {1} baino txikiagoa edo txikiagoa izan behar du"
 
 #: core/util/validators.py:69
 #, python-brace-format
 msgid "{0} contains invalid characters"
-msgstr ""
+msgstr "{0} karaktere baliogabeak ditu"
 
 #: core/util/validators.py:116
 msgid ""
-"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-"
-"XX:XX:XX:XX:XX:XX"
+"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
+"XX:XX"
 msgstr ""
+"Mac barraren baliogabea. Mac gama formatoan XX: XX: XX: XX: XX: XX-XX: XX: "
+"XX: XX: XX: XX"
 
 #: dispatchers/wyse_enterprise/views.py:117
 msgid "There are no authenticators available for login"
-msgstr ""
+msgstr "Ez dago autentifikaziorik saioetarako erabilgarri"
 
 #: dispatchers/wyse_enterprise/views.py:130
 #, python-brace-format
 msgid "The authenticator {0} is not usable"
-msgstr ""
+msgstr "Autentifikatzailea {0} ez da erabilgarri"
 
 #: dispatchers/wyse_enterprise/views.py:137
 msgid "Invalid credentials"
@@ -1730,7 +1786,7 @@ msgstr "Baliogabeko egiaztagiriak"
 #: dispatchers/wyse_enterprise/views.py:144
 #, python-brace-format
 msgid "The domain {0} does not exists"
-msgstr ""
+msgstr "{0} domeinua ez da existitzen"
 
 #: dispatchers/wyse_enterprise/views.py:207
 msgid "No services available"
@@ -1744,17 +1800,17 @@ msgstr "Saioa baliogabea"
 #: dispatchers/wyse_enterprise/views.py:227
 #: dispatchers/wyse_enterprise/views.py:321
 msgid "Invalid authorization"
-msgstr ""
+msgstr "Baimen baliogabea"
 
 #: dispatchers/wyse_enterprise/views.py:238
 #: dispatchers/wyse_enterprise/views.py:327
 msgid "Invalid request"
-msgstr ""
+msgstr "Eskaera baliogabea"
 
 #: dispatchers/wyse_enterprise/views.py:241
 #: dispatchers/wyse_enterprise/views.py:330
 msgid "Invalid credentials used"
-msgstr ""
+msgstr "Erabilitako kredentzial baliogabeak"
 
 #: dispatchers/wyse_enterprise/views.py:279 web/errors.py:73
 msgid "Transport not found"
@@ -1764,7 +1820,7 @@ msgstr "Ez da aurkitu garraiorik"
 #: dispatchers/wyse_enterprise/views.py:289
 #: dispatchers/wyse_enterprise/views.py:294
 msgid "Service not ready at this moment. Please, try again in a while."
-msgstr ""
+msgstr "Zerbitzua ez dago prest une honetan. Saiatu berriz pixka bat."
 
 #: models/CalendarAction.py:58
 msgid "Publish"
@@ -1792,7 +1848,7 @@ msgstr "Azierako zerbitzuak ezarri"
 
 #: models/CalendarAction.py:61
 msgid "Initial services"
-msgstr ""
+msgstr "Hasierako zerbitzuak"
 
 #: models/CalendarAction.py:62
 msgid "Set maximum number of services"
@@ -1862,22 +1918,22 @@ msgstr "Linux SE kudeatzailea"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:53
 msgid "Os Manager to control linux virtual machines"
-msgstr ""
+msgstr "Os Administradoreak linux makina birtualak kontrolatzeko"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:50
 msgid "Logout Action"
-msgstr ""
+msgstr "Saioa amaitzeko ekintza"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:53
 msgid "What to do when user logs out from service"
-msgstr ""
+msgstr "Zer egin erabiltzaileak zerbitzutik irteten denean"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:64
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:55
 msgid "Keep service assigned"
-msgstr ""
+msgstr "Mantendu zerbitzua esleituta"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:56
@@ -1887,26 +1943,30 @@ msgstr "Zerbitzua kendu"
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:66
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:57
 msgid "Keep service assigned even on new publication"
-msgstr ""
+msgstr "Mantendu zerbitzua argitalpen berrian ere esleituta"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:71
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:63
 msgid "Max.Idle time"
-msgstr ""
+msgstr "Max.Idle denbora"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:75
 msgid ""
-"Maximum idle time (in seconds) before session is automatically closed to the"
-" user (<= 0 means no max idle time)."
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max idle time)."
 msgstr ""
+"Gehienezko denbora inaktiboan (segundotan) saioa automatikoki itxi egiten da "
+"erabiltzaileari (&lt;= 0 esan nahi du ez duela denbora inaktiboik)."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:47
 msgid "Linux Random Password OS Manager"
-msgstr ""
+msgstr "Linux ausazko pasahitza OS kudeatzailea"
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:49
 msgid "Os Manager to control linux machines, with user password set randomly."
 msgstr ""
+"Linuxeko makinak kontrolatzeko Os kudeatzailea, ausaz aukeratutako "
+"erabiltzailearen pasahitza."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:53
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
@@ -1917,35 +1977,40 @@ msgstr "Kontua"
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:53
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:32
 msgid "User account to change password"
-msgstr ""
+msgstr "Erabiltzailearen kontua pasahitza aldatzeko"
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:63
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:43
 msgid "Must provide an user account!!!"
-msgstr ""
+msgstr "Erabiltzaile-kontua eman behar du !!!"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.5)</b>"
 msgstr ""
+"Debianeko UDS Aktorea, Ubuntu, ... Linux makinak <b>(Python&gt;&gt; 3.5 "
+"beharrezkoa)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
 msgid ""
 "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
 "2.7)</b>"
 msgstr ""
+"UDS Aktorea Centos, Fedora, RH, ... Linux makinak <b>(Python 2.7 behar da)</"
+"b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:59
-msgid ""
-"UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
-msgstr ""
+msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
+msgstr "UDS OpenSUSE aktorea, ... Linux makinak <b>(Python 2.7 behar da)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:64
 msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
 msgstr ""
+"<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
+"python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
@@ -1953,21 +2018,24 @@ msgstr "RDS SE kudeatzailea"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:33
 msgid "Os Manager to control RDS provided services"
-msgstr ""
+msgstr "Os Zerbitzuak emandako zerbitzuak RDS kontrolatzeko"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:40
 msgid "Max. session time"
-msgstr ""
+msgstr "Max. saioaren denbora"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:44
 msgid ""
 "Maximum duration in hours for a session (0 means no limit). After this "
 "period, session will be released."
 msgstr ""
+"Saioaren orduetan gehienezko iraupena (0 ez da mugarik). Epe honen ostean, "
+"saioa kaleratu egingo da."
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:49
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012 and 2016)"
 msgstr ""
+"RDS UDS Aktorea (Windows Server 2012 eta 2016 urruneko aplikazioetarako)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:29
 msgid "Windows Domain OS Manager"
@@ -1975,7 +2043,7 @@ msgstr "Windows domeinu SE kudeatzailea"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:31
 msgid "Os Manager to control windows machines with domain."
-msgstr ""
+msgstr "Os Manager domeinuko leiho makinak kontrolatzeko."
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 #: services/OpenStack/Provider.py:103 services/OpenStack/ProviderLegacy.py:105
@@ -1994,10 +2062,12 @@ msgid ""
 "Domain to join machines to (use FQDN form, Netbios name not supported for "
 "most operations)"
 msgstr ""
+"Makinak elkartzeko domeinua (erabili FQDN inprimakia, Netbios izena ez da "
+"onartzen eragiketa gehienentzat)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
 msgid "Account with rights to add machines to domain"
-msgstr ""
+msgstr "Domeinuko makinak gehitzeko eskubideak dituzten kontua"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
 msgid "Password of the account"
@@ -2013,24 +2083,28 @@ msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
+"Domeinuko makinak gehitzeko non antolakuntza unitatea (erabili aurretik "
+"egiaztatu ezazu). Hau da: ou = Nire makinak, dc = mydomain, dc = tokiko"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
 msgid "Machine Group"
-msgstr ""
+msgstr "Makina-taldea"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
 msgid ""
 "Group to which add machines on creation. If empty, no group will be used. "
 "(experimental)"
 msgstr ""
+"Sorkuntzan makinak gehitzeko taldea. Hutsik badago, ez da talde erabiliko. "
+"(Esperimentala)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 msgid "Server Hint"
-msgstr ""
+msgstr "Zerbitzariaren argibidea"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 msgid "In case of several AD servers, which one is preferred"
-msgstr ""
+msgstr "Hainbat AD zerbitzarietan, bat nahiago baduzu"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:49
 msgid "Must provide a domain!"
@@ -2038,97 +2112,105 @@ msgstr "Domeinu bat eman behar duzu!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:53
 msgid "Must provide an account to add machines to domain!"
-msgstr ""
+msgstr "Kontu bat eman behar da domeinuko makinak gehitzeko!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:55
 msgid "DOM\\USER form is not allowed!"
-msgstr ""
+msgstr "DOM \\ USER inprimakia ez da onartzen!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:57
 msgid "Must provide a password for the account!"
-msgstr ""
+msgstr "Konturako pasahitza eman behar duzu!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:247
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:257
 #, python-brace-format
 msgid "Check error: {0}"
-msgstr ""
+msgstr "Egiaztatu errorea: {0}"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:249
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr ""
+"Ezin izan da zerbitzariaren parametroak aurkitu (_ldap._tcp. {0} ezin da "
+"konpondu)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:262
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
 msgstr ""
+"Egiaztatu errorea: \"{}\" taldea ez da aurkitu (\"cn\" erabiliz kokatu)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:264
 msgid "Server check was successful"
-msgstr ""
+msgstr "Zerbitzariaren egiaztapena arrakasta izan du"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:275
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
-msgstr ""
+msgstr "Ezin izan da AD erabili LDAP ({0}) erabiliz"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:287
 #, python-brace-format
 msgid "The default path {0} for computers was not found!!!"
-msgstr ""
+msgstr "Ordenagailuentzako {0} bide lehenetsia ez da aurkitu!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:289
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
-msgstr ""
+msgstr "{0} bideoa ez da aurkitu!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:291
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr ""
+"Ezin izan dira parametroak egiaztatu (_ldap._tcp. {0} ezin dira konpondu)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:296
 msgid "All parameters seem to work fine."
-msgstr ""
+msgstr "Parametro guztiak ondo funtzionatzen dute."
 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:26
 msgid "Windows Random Password OS Manager"
-msgstr ""
+msgstr "Windows ausazko pasahitza OS kudeatzailea"
 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:28
 msgid ""
 "Os Manager to control windows machines, with user password set randomly."
 msgstr ""
+"Os Manager leiho makinak kontrolatzeko, erabiltzailearen pasahitza ausaz "
+"aukeratuta."
 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
 msgid "Current (template) password of the user account"
-msgstr ""
+msgstr "Uneko (txantiloia) erabiltzaile kontuaren pasahitza"
 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:45
 msgid "Must provide a password for the account!!!"
-msgstr ""
+msgstr "Kontuaren pasahitza eman behar du !!!"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:43
 msgid "Windows Basic OS Manager"
-msgstr ""
+msgstr "Windows Oinarrizko OS kudeatzailea"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:45
 msgid "Os Manager to control windows machines without domain."
-msgstr ""
+msgstr "Os Manager leiho makinak kontrolatzeko domeinurik gabe."
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:68
 msgid ""
-"Maximum idle time (in seconds) before session is automatically closed to the"
-" user (<= 0 means no max. idle time)"
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max. idle time)"
 msgstr ""
+"Gehienezko denbora inaktiboan (segundotan) saioa automatikoki itxi egiten da "
+"erabiltzaileari (&lt;= 0 ez da inaktibo denbora mugarik)"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:77
 msgid "Length must be numeric!!"
-msgstr ""
+msgstr "Luzera numerikoa izan behar da!"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be betwen 1 and 6"
-msgstr ""
+msgstr "Luzera 1 eta 6 artean egon behar da"
 
 #: osmanagers/WindowsOsManager/__init__.py:51
 msgid "UDS Actor for windows machines"
@@ -2157,7 +2239,7 @@ msgstr "Autentifikatzaile"
 
 #: reports/lists/users.py:113
 msgid "Authenticator from where to list users"
-msgstr ""
+msgstr "Erabiltzaileen zerrendatik autentifikatzailea"
 
 #: reports/lists/users.py:117
 msgid "Users list"
@@ -2165,7 +2247,7 @@ msgstr "Erabiltzaile Zerrenda"
 
 #: reports/lists/users.py:118
 msgid "List users of platform"
-msgstr ""
+msgstr "List plataforma erabiltzaileak"
 
 #: reports/stats/base.py:46
 msgid "Statistics"
@@ -2173,15 +2255,15 @@ msgstr "Estadistikak"
 
 #: reports/stats/login.py:78 reports/stats/login.py:104
 msgid "Users access by date"
-msgstr ""
+msgstr "Erabiltzaileek data arabera sartzen dute"
 
 #: reports/stats/login.py:84
 msgid "Users access by day of week"
-msgstr ""
+msgstr "Erabiltzaileek asteko egunaren arabera sartuko dute"
 
 #: reports/stats/login.py:90
 msgid "Users access by hour"
-msgstr ""
+msgstr "Erabiltzaileak ordurako sarbidea"
 
 #: reports/stats/login.py:106 reports/stats/login.py:381
 #: reports/stats/pool_performance.py:108 reports/stats/pool_performance.py:377
@@ -2190,11 +2272,11 @@ msgstr "Data eremua"
 
 #: reports/stats/login.py:126 reports/stats/login.py:365
 msgid "Users access report by date"
-msgstr ""
+msgstr "Erabiltzaileek data arabera jasotzen dute"
 
 #: reports/stats/login.py:127 reports/stats/login.py:366
 msgid "Report of user access to platform by date"
-msgstr ""
+msgstr "Plataformaren erabiltzaileen sarbide data txostena"
 
 #: reports/stats/login.py:133 reports/stats/pool_performance.py:147
 #: reports/stats/usage_by_pool.py:105 reports/stats/usage_summary_pool.py:108
@@ -2204,7 +2286,7 @@ msgstr "Hasiera data"
 #: reports/stats/login.py:134 reports/stats/pool_performance.py:148
 #: reports/stats/usage_by_pool.py:106 reports/stats/usage_summary_pool.py:109
 msgid "starting date for report"
-msgstr ""
+msgstr "txostenaren hasierako data"
 
 #: reports/stats/login.py:141 reports/stats/pool_performance.py:155
 #: reports/stats/usage_by_pool.py:113 reports/stats/usage_summary_pool.py:116
@@ -2214,29 +2296,29 @@ msgstr "Amaiera data"
 #: reports/stats/login.py:142 reports/stats/pool_performance.py:156
 #: reports/stats/usage_by_pool.py:114 reports/stats/usage_summary_pool.py:117
 msgid "finish date for report"
-msgstr ""
+msgstr "txostena amaitzeko data"
 
 #: reports/stats/login.py:149 reports/stats/pool_performance.py:163
 msgid "Number of intervals"
-msgstr ""
+msgstr "Tarte kopurua"
 
 #: reports/stats/login.py:153 reports/stats/pool_performance.py:167
 msgid "Number of sampling points used in charts"
-msgstr ""
+msgstr "Txarteletan erabilitako laginketa-puntuen kopurua"
 
 #: reports/stats/login.py:238 reports/stats/login.py:281
 #: reports/stats/login.py:295 reports/stats/login.py:320
 #: reports/stats/login.py:353
 msgid "Users access to UDS"
-msgstr ""
+msgstr "Erabiltzaileak UDS-ra sartzeko"
 
 #: reports/stats/pool_performance.py:83
 msgid "Distinct users by pool"
-msgstr ""
+msgstr "Erabiltzaile desberdinak igerilekuan"
 
 #: reports/stats/pool_performance.py:89
 msgid "Accesses by pool"
-msgstr ""
+msgstr "Sarbide igerilekuan"
 
 #: reports/stats/pool_performance.py:112 reports/stats/pool_performance.py:377
 msgid "Accesses"
@@ -2244,11 +2326,11 @@ msgstr "Sarbideak"
 
 #: reports/stats/pool_performance.py:133
 msgid "Pools performance by date"
-msgstr ""
+msgstr "Igerilekuak data arabera errendimendua"
 
 #: reports/stats/pool_performance.py:134
 msgid "Pools performance report by date"
-msgstr ""
+msgstr "Piscinas de rendimiento por fecha de actualización"
 
 #: reports/stats/pool_performance.py:140 reports/stats/pools_usage.py:141
 msgid "Pools"
@@ -2256,35 +2338,35 @@ msgstr "Pool-ak"
 
 #: reports/stats/pool_performance.py:141 reports/stats/pools_usage.py:142
 msgid "Pools for report"
-msgstr ""
+msgstr "Txostenentzako igerilekuak"
 
 #: reports/stats/pool_performance.py:196
 msgid "Select at least a service pool for the report"
-msgstr ""
+msgstr "Aukeratu gutxienez txostenaren zerbitzu-igerilekua"
 
 #: reports/stats/pool_performance.py:301
 msgid "Users by pool"
-msgstr ""
+msgstr "Erabiltzaile igerilekuan"
 
 #: reports/stats/pool_performance.py:313
 msgid "Users for {}"
-msgstr ""
+msgstr "{} Erabiltzaileak"
 
 #: reports/stats/pool_performance.py:330
 msgid "Accesses for {}"
-msgstr ""
+msgstr "{} Gunerako sarbideak"
 
 #: reports/stats/pool_performance.py:351
 msgid "UDS Pools Performance Report"
-msgstr ""
+msgstr "UDS Pools Performance Report"
 
 #: reports/stats/pools_usage.py:87
 msgid "Services Asignation"
-msgstr ""
+msgstr "Zerbitzuak esleitzea"
 
 #: reports/stats/pools_usage.py:101
 msgid "Service asignation by hour"
-msgstr ""
+msgstr "Zerbitzuaren esleipena orduz"
 
 #: reports/stats/pools_usage.py:105 reports/stats/pools_usage.py:283
 msgid "Hour"
@@ -2292,11 +2374,11 @@ msgstr "Ordu"
 
 #: reports/stats/pools_usage.py:127
 msgid "Pools usage on a day"
-msgstr ""
+msgstr "Igerilekuen erabilera egun batean"
 
 #: reports/stats/pools_usage.py:128
 msgid "Pools usage counters for an specific day"
-msgstr ""
+msgstr "Igerilekuen erabilera egun jakin bateko kontulariak"
 
 #: reports/stats/pools_usage.py:133 reports/stats/usage_by_pool.py:189
 msgid "Date"
@@ -2304,51 +2386,51 @@ msgstr "Data"
 
 #: reports/stats/pools_usage.py:134
 msgid "Date for report"
-msgstr ""
+msgstr "Txostenaren data"
 
 #: reports/stats/pools_usage.py:232
 msgid "Services by hour"
-msgstr ""
+msgstr "Orduko zerbitzuak"
 
 #: reports/stats/pools_usage.py:244
 msgid "Services for {}"
-msgstr ""
+msgstr "{} Zerbitzuak"
 
 #: reports/stats/pools_usage.py:265
 msgid "Services usage report"
-msgstr ""
+msgstr "Zerbitzuen erabilera txostena"
 
 #: reports/stats/usage.py:45
 msgid "Usage stats"
-msgstr ""
+msgstr "Erabilera estatistikak"
 
 #: reports/stats/usage.py:46
 msgid "Statistics of platform use"
-msgstr ""
+msgstr "Plataforma erabileraren estatistikak"
 
 #: reports/stats/usage_by_pool.py:72
 msgid "Access Datetime"
-msgstr ""
+msgstr "Datetime sarbidea"
 
 #: reports/stats/usage_by_pool.py:74
 msgid "Duration(seconds)"
-msgstr ""
+msgstr "Iraupena (segundutan)"
 
 #: reports/stats/usage_by_pool.py:91
 msgid "Pools usage by users"
-msgstr ""
+msgstr "Igerilekuen erabilera erabiltzaileek"
 
 #: reports/stats/usage_by_pool.py:92
 msgid "Pools usage by user report"
-msgstr ""
+msgstr "Igerilekuen erabilera erabiltzaileen txostenaren bidez"
 
 #: reports/stats/usage_by_pool.py:99 reports/stats/usage_summary_pool.py:102
 msgid "Pool for report"
-msgstr ""
+msgstr "Txostena egiteko igerilekua"
 
 #: reports/stats/usage_by_pool.py:167 reports/stats/usage_summary_pool.py:185
 msgid "Users usage list for {}"
-msgstr ""
+msgstr "Erabiltzaileen erabilera zerrenda {}"
 
 #: reports/stats/usage_by_pool.py:189
 msgid "Seconds"
@@ -2366,59 +2448,59 @@ msgstr "Batazbeztekoa"
 
 #: reports/stats/usage_summary_pool.py:94
 msgid "Summary of pools usage"
-msgstr ""
+msgstr "Igerilekuen erabilera laburpena"
 
 #: reports/stats/usage_summary_pool.py:95
 msgid "Generates a report with the summary of a pool usage"
-msgstr ""
+msgstr "Errenta-erabilera baten laburpena duen txostena sortzen du"
 
 #: services/Azure_enterprise/AzureCloneService.py:29
 msgid "Azure Clone Service"
-msgstr ""
+msgstr "Azure Clone Zerbitzua"
 
 #: services/Azure_enterprise/AzureCloneService.py:31
 msgid "This service provides access to Azure VMs based VDI"
-msgstr ""
+msgstr "Zerbitzu honek Azure VM oinarritutako VDI sarbidea eskaintzen du"
 
 #: services/Azure_enterprise/AzureCloneService.py:37
 msgid "Number of desired VMs to keep running waiting for an user"
-msgstr ""
+msgstr "Erabiltzaile baten zain exekutatzen jarraitzeko beharrezko VM kopurua"
 
 #: services/Azure_enterprise/AzureCloneService.py:39
 msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr ""
+msgstr "Nahi dituzun VM-ak erabiltzeko itxaronaldia mantentzea"
 
 #: services/Azure_enterprise/AzureCloneService.py:53
 msgid "Resource Group"
-msgstr ""
+msgstr "Baliabideen taldea"
 
 #: services/Azure_enterprise/AzureCloneService.py:54
 msgid "Resource group container of this VDI service"
-msgstr ""
+msgstr "VDI zerbitzu honen baliabideen taldeko edukiontzia"
 
 #: services/Azure_enterprise/AzureCloneService.py:65
 msgid "Virtual Machine"
-msgstr ""
+msgstr "Makina birtuala"
 
 #: services/Azure_enterprise/AzureCloneService.py:66
 msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
 msgstr ""
+"Makina birtuala oinarria. (UDS-rekin hasten diren VMak ezkutatuko dira)"
 
 #: services/Azure_enterprise/AzureCloneService.py:78
 msgid "Machine size"
-msgstr ""
+msgstr "Makina-tamaina"
 
 #: services/Azure_enterprise/AzureCloneService.py:79
 msgid "Size for machines created from this service."
-msgstr ""
+msgstr "Zerbitzu honetatik sortutako makinen tamaina."
 
 #: services/Azure_enterprise/AzureCloneService.py:84
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:149
 #: services/Nutanix_enterprise/NutanixService.py:72
 #: services/OVirt/OVirtLinkedService.py:191
-#: services/OpenNebula/LiveService.py:112
-#: services/OpenStack/LiveService.py:125
+#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:125
 #: services/VCloud_enterprise/VCloudCloneService.py:76
 #: services/Vmware_enterprise/VCLinkedCloneService.py:93
 #: services/Xen/XenLinkedService.py:158
@@ -2428,20 +2510,18 @@ msgstr "Makina izenak"
 #: services/Azure_enterprise/AzureCloneService.py:84
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:152
-#: services/OpenNebula/LiveService.py:115
-#: services/OpenStack/LiveService.py:128
+#: services/OpenNebula/LiveService.py:115 services/OpenStack/LiveService.py:128
 #: services/VCloud_enterprise/VCloudCloneService.py:76
 #: services/Vmware_enterprise/VCLinkedCloneService.py:93
 msgid "Base name for clones from this machine"
-msgstr ""
+msgstr "Makinaren klonak oinarrizko izena"
 
 #: services/Azure_enterprise/AzureCloneService.py:85
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:159
 #: services/Nutanix_enterprise/NutanixService.py:81
 #: services/OVirt/OVirtLinkedService.py:201
-#: services/OpenNebula/LiveService.py:122
-#: services/OpenStack/LiveService.py:135
+#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:135
 #: services/VCloud_enterprise/VCloudCloneService.py:77
 #: services/Vmware_enterprise/VCLinkedCloneService.py:94
 #: services/Xen/XenLinkedService.py:168
@@ -2453,12 +2533,11 @@ msgstr "Izen luzeera"
 #: services/HyperV_enterprise/HyperVLinkedService.py:162
 #: services/Nutanix_enterprise/NutanixService.py:84
 #: services/OVirt/OVirtLinkedService.py:204
-#: services/OpenNebula/LiveService.py:125
-#: services/OpenStack/LiveService.py:138
+#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:138
 #: services/VCloud_enterprise/VCloudCloneService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:95
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
-msgstr ""
+msgstr "Makina hauen izenen zenbakizko zatiaren tamaina (3 eta 6 artean)"
 
 #: services/Azure_enterprise/AzureCloneService.py:90
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
@@ -2470,61 +2549,63 @@ msgstr "Sarea"
 
 #: services/Azure_enterprise/AzureCloneService.py:91
 msgid "Network where the clones will be attached"
-msgstr ""
+msgstr "Klonak non sartuko diren sarean"
 
 #: services/Azure_enterprise/AzureCloneService.py:104
 msgid "Subnet"
-msgstr ""
+msgstr "azpisare"
 
 #: services/Azure_enterprise/AzureCloneService.py:105
 msgid "Subnet where the clones will be attached"
-msgstr ""
+msgstr "Cloneak erantsiko dituen subkategia"
 
 #: services/Azure_enterprise/AzureCloneService.py:113
 msgid "Security Group"
-msgstr ""
+msgstr "Segurtasun taldea"
 
 #: services/Azure_enterprise/AzureCloneService.py:114
 msgid "Security group where to attach the virtual machine"
-msgstr ""
+msgstr "Makina birtuala estekatzeko segurtasun taldea"
 
 #: services/Azure_enterprise/AzureCloneService.py:122
 msgid "Caching policy"
-msgstr ""
+msgstr "Caching politika"
 
 #: services/Azure_enterprise/AzureCloneService.py:123
 msgid "Disk Caching policy"
-msgstr ""
+msgstr "Diskoaren Caching politika"
 
 #: services/Azure_enterprise/AzureCloneService.py:131
 msgid "Pricing tier"
-msgstr ""
+msgstr "Prezioen maila"
 
 #: services/Azure_enterprise/AzureCloneService.py:132
 msgid "SKU (pricing tier)"
-msgstr ""
+msgstr "SKU (tasazio maila)"
 
 #: services/Azure_enterprise/AzureCloneService.py:140
 msgid "Accelerated network"
-msgstr ""
+msgstr "Azeleratutako sarea"
 
 #: services/Azure_enterprise/AzureCloneService.py:141
 msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
 msgstr ""
+"Aktibatu aukera hau azeleratutako sareak erabiltzeko vm-en. Egiaztatu zure "
+"makina eta makina tamaina aukera hori aktibatu aurretik."
 
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
-msgstr ""
+msgstr "Zerbitzurako sarea hautatu behar duzu"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Subscription ID"
-msgstr ""
+msgstr "Harpidetza IDa"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:38
 msgid "Obtained from subscriptions"
-msgstr ""
+msgstr "Harpidetzak lortu dira"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:41
 #: services/HyperV_enterprise/HyperVProvider.py:88
@@ -2537,7 +2618,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:84
 #: services/Xen/XenProvider.py:102
 msgid "Creation concurrency"
-msgstr ""
+msgstr "Sorkuntza konkurrentzia"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:41
 #: services/HyperV_enterprise/HyperVProvider.py:88
@@ -2549,7 +2630,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Xen/XenProvider.py:102
 msgid "Maximum number of concurrently creating VMs"
-msgstr ""
+msgstr "VMak aldi berean sortzeko gehienezko kopurua"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:42
 #: services/HyperV_enterprise/HyperVProvider.py:89
@@ -2562,7 +2643,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:85
 #: services/Xen/XenProvider.py:103
 msgid "Removal concurrency"
-msgstr ""
+msgstr "Kentzea"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:42
 #: services/HyperV_enterprise/HyperVProvider.py:89
@@ -2574,39 +2655,40 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Xen/XenProvider.py:103
 msgid "Maximum number of concurrently removing VMs"
-msgstr ""
+msgstr "VMak aldi berean kentzen diren gehienezko kopurua"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:43
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:37
 msgid "Timeout in seconds of connection to vCloud"
-msgstr ""
+msgstr "Denbora-muga vCloud-en konexioaren segundotan"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:48
 msgid "Azure Platform Provider"
-msgstr ""
+msgstr "Azure plataforma hornitzailea"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:50
 msgid "Provides connection to Azure Platform"
-msgstr ""
+msgstr "Plataforma Azure konexioa eskaintzen du"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:93
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:80
 msgid "Connection parameters seems correct"
-msgstr ""
+msgstr "Konexio parametroak zuzena dirudi"
 
 #: services/Azure_enterprise/ServiceProviderAzure.py:231
 msgid "Azure Provider: "
-msgstr ""
+msgstr "Azure hornitzailea:"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
-msgstr ""
+msgstr "HyperV Cluster Linked Clone (Esperimentala)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:60
-msgid ""
-"Hyper Services based on templates and differential disks (experimental)"
+msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr ""
+"Hyper Zerbitzuak txantiloietan eta disko diferentetan oinarrituta "
+"(esperimentala)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
 #: services/HyperV_enterprise/HyperVLinkedService.py:77
@@ -2615,16 +2697,16 @@ msgstr ""
 #: services/Xen/XenLinkedService.py:77
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
+"Nahi duzun makina kopurua erabiltzaile baten zain exekutatzen jarraitzeko"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:83
-#: services/OVirt/OVirtLinkedService.py:83
-#: services/OpenStack/LiveService.py:81
+#: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCFullCloneService.py:42
 #: services/Vmware_enterprise/VCLinkedCloneService.py:43
 #: services/Xen/XenLinkedService.py:83
 msgid "Number of desired machines to keep suspended waiting for use"
-msgstr ""
+msgstr "Nahi duzun makineriaren kopurua eten egingo da"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:121
@@ -2646,9 +2728,10 @@ msgstr "Oinarrizko makina zerbitzua"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:132
 msgid ""
-"If more than 1 interface is found in machine, use one on this network as "
-"main"
+"If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
+"1 interfazea baino gehiago aurkitzen bada makinan, erabili sarea sare "
+"nagusian"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:138
@@ -2663,72 +2746,70 @@ msgstr "Memoria (Mb)"
 #: services/HyperV_enterprise/HyperVLinkedService.py:143
 #: services/Vmware_enterprise/VCLinkedCloneService.py:85
 msgid "Memory for machines deployed from this service"
-msgstr ""
+msgstr "Zerbitzu honetatik zabaldutako makina memoria"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:100
 #: services/HyperV_enterprise/HyperVLinkedService.py:103
 msgid "Datastore Drives"
-msgstr ""
+msgstr "Datastore unitateak"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
 #: services/HyperV_enterprise/HyperVLinkedService.py:107
 msgid "Datastores where to put incrementals & publications"
-msgstr ""
+msgstr "Datastoreak non igoerak eta argitalpenak jarri"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:177
 #: services/Nutanix_enterprise/NutanixService.py:110
 #: services/OVirt/OVirtLinkedService.py:222
-#: services/OpenNebula/LiveService.py:140
-#: services/OpenStack/LiveService.py:157
+#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
 #: services/Vmware_enterprise/VCLinkedCloneService.py:131
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
-msgstr ""
+msgstr "Basename plus luzeraren luzera ez da 15 baino handiagoa izan behar"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
 #: services/HyperV_enterprise/HyperVLinkedService.py:179
 #: services/Nutanix_enterprise/NutanixService.py:112
 #: services/OVirt/OVirtLinkedService.py:224
-#: services/OpenNebula/LiveService.py:142
-#: services/OpenStack/LiveService.py:159
+#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
 #: services/Vmware_enterprise/VCLinkedCloneService.py:133
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
-msgstr ""
+msgstr "Makinaren izena ezin da zenbaki bakarra izan"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:64
 msgid "HyperV Cluster Provider"
-msgstr ""
+msgstr "HyperV Cluster Provider"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:68
 msgid "HyperV Cluster Service Provider"
-msgstr ""
+msgstr "HyperV Cluster Zerbitzuaren hornitzailea"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
 msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
-msgstr ""
+msgstr "HyperV Server IP edo Hostname (lehen WSMAN sarbidea gaitu behar da)"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
 msgid "WSMan Port (normally 5985)"
-msgstr ""
+msgstr "WSMan portua (normalean 5985)"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
 msgid "User with valid privileges on HyperV Server"
-msgstr ""
+msgstr "Erabiltzaileak HyperV zerbitzariaren baliozko pribilegioak ditu"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:86
 msgid "Password of the user of HyperV"
-msgstr ""
+msgstr "HyperV erabiltzailearen pasahitza"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:91
 msgid "Timeout in seconds of connection to HyperV"
-msgstr ""
+msgstr "Denbora-muga, HyperV konexiorako segundoetan"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:94
 #: services/HyperV_enterprise/HyperVProvider.py:92
@@ -2743,17 +2824,17 @@ msgstr "MAC eremua"
 #: services/HyperV_enterprise/HyperVProvider.py:93
 #: services/Xen/XenProvider.py:106
 msgid "Range of valid macs for created machines"
-msgstr ""
+msgstr "Sortutako makinen makina baliotsuen gama"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:132
 msgid "The selected server is not a cluster"
-msgstr ""
+msgstr "Hautatutako zerbitzaria ez da klusterra"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:299
 #: services/HyperV_enterprise/HyperVProvider.py:259
 #: services/Xen/XenProvider.py:419
 msgid "Connection test successful"
-msgstr ""
+msgstr "Konexioaren proba arrakastatsua"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
@@ -2761,30 +2842,30 @@ msgstr ""
 #: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
-msgstr ""
+msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
 
 #: services/HyperV_enterprise/HyperVClusterPublication.py:97
 #: services/HyperV_enterprise/HyperVPublication.py:96
 #: services/OVirt/OVirtPublication.py:90 services/Xen/XenPublication.py:94
 #, python-brace-format
 msgid "UDS pub for {0} at {1}"
-msgstr ""
+msgstr "UDS pub {0} at {1}"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:56
 msgid "HyperV Linked Clone (Experimental)"
-msgstr ""
+msgstr "HyperV Linked Clone (esperimentala)"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:113
 #: services/OVirt/OVirtLinkedService.py:124
 #: services/Xen/XenLinkedService.py:112
 msgid "Reserved Space"
-msgstr ""
+msgstr "Erreserbatutako espazioa"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:116
 #: services/OVirt/OVirtLinkedService.py:128
 #: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
-msgstr ""
+msgstr "Gutxieneko doako espazioa GB-an"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:124
 #: services/HyperV_enterprise/HyperVLinkedService.py:133
@@ -2803,10 +2884,10 @@ msgstr ""
 #: services/OVirt/OVirtLinkedService.py:205
 #: services/OpenNebula/LiveService.py:107
 #: services/OpenNebula/LiveService.py:116
-#: services/OpenNebula/LiveService.py:126
-#: services/OpenStack/LiveService.py:117 services/OpenStack/LiveService.py:119
-#: services/OpenStack/LiveService.py:120 services/OpenStack/LiveService.py:122
-#: services/OpenStack/LiveService.py:130 services/OpenStack/LiveService.py:140
+#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:117
+#: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:120
+#: services/OpenStack/LiveService.py:122 services/OpenStack/LiveService.py:130
+#: services/OpenStack/LiveService.py:140
 #: services/Vmware_enterprise/VCFullCloneService.py:70
 #: services/Vmware_enterprise/VCLinkedCloneService.py:79
 #: services/Vmware_enterprise/VCLinkedCloneService.py:83
@@ -2825,48 +2906,48 @@ msgstr "Makina"
 
 #: services/HyperV_enterprise/HyperVProvider.py:64
 msgid "HyperV Platform Provider (experimental)"
-msgstr ""
+msgstr "HyperV plataforma hornitzailea (esperimentala)"
 
 #: services/HyperV_enterprise/HyperVProvider.py:68
 msgid "HyperV platform service provider (experimental)"
-msgstr ""
+msgstr "HyperV plataforma zerbitzuen hornitzailea (esperimentala)"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:27
 msgid "Nutanix Acropolis Platform Provider"
-msgstr ""
+msgstr "Nutanix Acropolis plataformako hornitzailea"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:29
 msgid "Nutanix based VM provider"
-msgstr ""
+msgstr "Nutanix oinarritutako VM hornitzailea"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 msgid "Nutanix Acropolis Server IP or Hostname"
-msgstr ""
+msgstr "Nutanix Acropolis zerbitzariaren IP edo ostalari izena"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:34
 msgid "Nutanix Acropolis server Port (default 9440)"
-msgstr ""
+msgstr "Nutanix Acropolis zerbitzaria Port (lehenetsia 9440)"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:35
 msgid "User with valid privileges on Nutanix Acropolis"
-msgstr ""
+msgstr "Nutanix Acropolis-eko baliozko pribilegioak dituzten erabiltzaileak"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:36
 msgid "Password of the user of Nutanix Acropolis"
-msgstr ""
+msgstr "Nutanix Acropolis erabiltzailearen pasahitza"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 msgid "Timeout in seconds of connection to Nutanix"
-msgstr ""
+msgstr "Denbora-muga Nutanix-en konexioaren segundotan"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:43
 #: services/OVirt/OVirtProvider.py:118
 msgid "Range of valid macs for UDS managed machines"
-msgstr ""
+msgstr "UDS kudeatutako makinen baliozko makinak"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:182
 msgid "Connection works fine"
-msgstr ""
+msgstr "Konexioa ondo funtzionatzen du"
 
 #: services/Nutanix_enterprise/NutanixService.py:21
 msgid "Nutanix Acropolis Service"
@@ -2878,26 +2959,29 @@ msgstr "Nutanix Acropolis-en Oinarrituriko Zerbitzua"
 
 #: services/Nutanix_enterprise/NutanixService.py:58
 msgid ""
-"Memory assigned to machines. (Zero value means \"keep original machine "
-"memory\")"
+"Memory assigned to machines. (Zero value means \"keep original machine memory"
+"\")"
 msgstr ""
+"Makinak esleitutako memoria. (Zero balioa esan nahi du \"mantendu jatorrizko "
+"makina memoria\")"
 
 #: services/Nutanix_enterprise/NutanixService.py:66
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
-msgstr ""
+msgstr "Makinen sarea (sortutako makina bakoitza sare honetara atxikiko da)"
 
 #: services/Nutanix_enterprise/NutanixService.py:89
 #: services/VCloud_enterprise/VCloudCloneService.py:58
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "Remove found duplicates"
-msgstr ""
+msgstr "Kendu aurkitu diren bikoiztuak"
 
 #: services/Nutanix_enterprise/NutanixService.py:92
 #: services/VCloud_enterprise/VCloudCloneService.py:58
 msgid "If active, found duplicates vApps for this service will be removed"
 msgstr ""
+"Aktibo badago, zerbitzu hauetarako bikoiztuak diren vApps aurkitu egingo dira"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"
@@ -2905,36 +2989,36 @@ msgstr "oVirt/RHEV Linked Clone"
 
 #: services/OVirt/OVirtLinkedService.py:60
 msgid "oVirt Services based on templates and COW (experimental)"
-msgstr ""
+msgstr "OVirt Zerbitzuak txantiloietan eta COW (esperimentaletan) oinarrituta"
 
 #: services/OVirt/OVirtLinkedService.py:104
 msgid "Cluster"
-msgstr ""
+msgstr "Klusterrak"
 
 #: services/OVirt/OVirtLinkedService.py:111
 msgid "Cluster to contain services"
-msgstr ""
+msgstr "Zerbitzuak dituzten klusterrak"
 
 #: services/OVirt/OVirtLinkedService.py:115
 msgid "Datastore Domain"
-msgstr ""
+msgstr "Datastore domeinua"
 
 #: services/OVirt/OVirtLinkedService.py:118
 msgid "Datastore domain where to publish and put incrementals"
-msgstr ""
+msgstr "Datastore domeinua non argitaratu eta jarri igoerak"
 
 #: services/OVirt/OVirtLinkedService.py:147
 #: services/Xen/XenLinkedService.py:141
 msgid "Memory assigned to machines"
-msgstr ""
+msgstr "Makinak esleitutako memoria"
 
 #: services/OVirt/OVirtLinkedService.py:153
 msgid "Memory Guaranteed (Mb)"
-msgstr ""
+msgstr "Memoria bermatua (Mb)"
 
 #: services/OVirt/OVirtLinkedService.py:159
 msgid "Physical memory guaranteed to machines"
-msgstr ""
+msgstr "Makina bermatutako memoria fisikoa"
 
 #: services/OVirt/OVirtLinkedService.py:165
 msgid "USB"
@@ -2942,24 +3026,24 @@ msgstr "USB"
 
 #: services/OVirt/OVirtLinkedService.py:168
 msgid "Enable usb redirection for SPICE"
-msgstr ""
+msgstr "Gaitu USBen birbideratzea SPICErekin"
 
 #: services/OVirt/OVirtLinkedService.py:182
 msgid "Display type (only for administration purposes)"
-msgstr ""
+msgstr "Bistaratze mota (administrazio helburuetarako soilik)"
 
 #: services/OVirt/OVirtLinkedService.py:226
 #: services/Xen/XenLinkedService.py:190
 msgid "The minimum allowed memory is 256 Mb"
-msgstr ""
+msgstr "Gutxieneko memoria onartzen da 256 Mb"
 
 #: services/OVirt/OVirtProvider.py:77
 msgid "oVirt/RHEV Platform Provider"
-msgstr ""
+msgstr "oVirt / RHEV plataforma hornitzailea"
 
 #: services/OVirt/OVirtProvider.py:81
 msgid "oVirt platform service provider"
-msgstr ""
+msgstr "oVirt plataforma-zerbitzuen hornitzailea"
 
 #: services/OVirt/OVirtProvider.py:97
 msgid "oVirt Version"
@@ -2976,112 +3060,120 @@ msgstr "oVirt zerbitzariaren IP-a edota izena"
 #: services/OVirt/OVirtProvider.py:110
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
 msgstr ""
+"Erabiltzaileak oVirt-ekin dituen baliozko pribilegioak (erabili "
+"\"erabiltzailea @ domeinua\" inprimakia)"
 
 #: services/OVirt/OVirtProvider.py:111
 msgid "Password of the user of oVirt"
-msgstr ""
+msgstr "OVirt-eko erabiltzailearen pasahitza"
 
 #: services/OVirt/OVirtProvider.py:116
 msgid "Timeout in seconds of connection to oVirt"
-msgstr ""
+msgstr "Denbora-muga oVirt-ekin konexioaren segundotan"
 
 #: services/OpenGnsys/OGService.py:56
 msgid "OpenGnsys Machines Service"
-msgstr ""
+msgstr "OpenGnsys Makina Zerbitzua"
 
 #: services/OpenGnsys/OGService.py:60
 msgid "OpenGnsys physical machines"
-msgstr ""
+msgstr "OpenGnsys makina fisikoak"
 
 #: services/OpenGnsys/OGService.py:77 services/OpenNebula/LiveService.py:76
 #: services/OpenStack/LiveService.py:78
 #: services/Vmware_enterprise/VCFullCloneService.py:40
 #: services/Vmware_enterprise/VCLinkedCloneService.py:41
 msgid "Number of desired machines to keep running waiting for an user"
-msgstr ""
+msgstr "Nahi duzun makina kopurua erabiltzaileari zain exekutatzen jarraitzeko"
 
 #: services/OpenGnsys/OGService.py:104
 msgid "Organizational Unit"
-msgstr ""
+msgstr "Antolakuntza Unitatea"
 
 #: services/OpenGnsys/OGService.py:110
 msgid "lab"
-msgstr ""
+msgstr "laborategian"
 
 #: services/OpenGnsys/OGService.py:112
 msgid "Laboratory"
-msgstr ""
+msgstr "Laborategi"
 
 #: services/OpenGnsys/OGService.py:118
 msgid "OS Image"
-msgstr ""
+msgstr "OS Irudia"
 
 #: services/OpenGnsys/OGService.py:120
 msgid "OpenGnsys Operating System Image"
-msgstr ""
+msgstr "OpenGnsys sistema eragilearen irudia"
 
 #: services/OpenGnsys/OGService.py:126
 msgid "Max. reservation time"
-msgstr ""
+msgstr "Max. erreserba denbora"
 
 #: services/OpenGnsys/OGService.py:128
 msgid ""
 "Security parameter for OpenGnsys to keep reservations at most this hours"
 msgstr ""
+"Segurtasun parametroa OpenGnsys-ri ordainketak gehienetan gorde ahal izateko"
 
 #: services/OpenGnsys/Provider.py:77
 msgid "OpenGnsys Platform Provider"
-msgstr ""
+msgstr "OpenGnsys Plataforma hornitzailea"
 
 #: services/OpenGnsys/Provider.py:81
 msgid "OpenGnsys platform service provider (experimental)"
-msgstr ""
+msgstr "OpenGnsys plataformaren zerbitzuen hornitzailea (esperimentala)"
 
 #: services/OpenGnsys/Provider.py:96
 msgid "OpenGnsys Host"
-msgstr ""
+msgstr "OpenGnsys ostalaria"
 
 #: services/OpenGnsys/Provider.py:97
 msgid "OpenGnsys Port (default is 443, and only ssl connection is allowed)"
 msgstr ""
+"OpenGnsys portua (lehenetsia 443 da eta konexio ssl bakarrik onartzen da)"
 
 #: services/OpenGnsys/Provider.py:98
 msgid "Check Cert."
-msgstr ""
+msgstr "Egiaztatu Ziurtagiria."
 
 #: services/OpenGnsys/Provider.py:98
 msgid ""
 "If checked, ssl certificate of OpenGnsys server must be valid (not self "
 "signed)"
 msgstr ""
+"Egiaztatuta badago, OpenGnsys zerbitzariaren SSL ziurtagiria baliozkoa "
+"izango da (ez da auto-sinatua)"
 
 #: services/OpenGnsys/Provider.py:99
 msgid "User with valid privileges on OpenGnsys"
-msgstr ""
+msgstr "OpenGnsys-en baliozko pribilegioak dituen erabiltzailea"
 
 #: services/OpenGnsys/Provider.py:100
 msgid "Password of the user of OpenGnsys"
-msgstr ""
+msgstr "OpenGnsys erabiltzailearen pasahitza"
 
 #: services/OpenGnsys/Provider.py:101
 msgid "UDS Server URL"
-msgstr ""
+msgstr "UDS zerbitzariaren URLa"
 
 #: services/OpenGnsys/Provider.py:101
 msgid "URL used by OpenGnsys to access UDS. If empty, UDS will guess it."
 msgstr ""
+"URLa OpenGnsys-ek UDS erabiltzeko erabiltzen duen URLa. Hutsik badago, UDSk "
+"asmatuko du."
 
 #: services/OpenGnsys/Provider.py:106
 msgid "Timeout in seconds of connection to OpenGnsys"
-msgstr ""
+msgstr "Denbora-muga, OpenGnsys-en konexioaren segundotan"
 
 #: services/OpenGnsys/Provider.py:164
 msgid "OpenGnsys test connection passed"
-msgstr ""
+msgstr "OpenGnsys proba konexioa gainditu da"
 
 #: services/OpenGnsys/helpers.py:31
 msgid "All Labs"
-msgstr ""
+msgstr "Labs guztiak"
 
 #: services/OpenNebula/LiveService.py:55
 msgid "OpenNebula Live Images"
@@ -3093,27 +3185,27 @@ msgstr "OpenNebula Live Images-etan oinarrituriko zerbitzua"
 
 #: services/OpenNebula/LiveService.py:97
 msgid "Datastore"
-msgstr ""
+msgstr "Datastore"
 
 #: services/OpenNebula/LiveService.py:99
 msgid "Service clones datastore"
-msgstr ""
+msgstr "Zerbitzua clones datastore"
 
 #: services/OpenNebula/LiveService.py:104
 msgid "Base Template"
-msgstr ""
+msgstr "Base template"
 
 #: services/OpenNebula/LiveService.py:106
 msgid "Service base template"
-msgstr ""
+msgstr "Zerbitzuaren oinarrizko txantiloia"
 
 #: services/OpenNebula/Provider.py:79
 msgid "OpenNebula Platform Provider"
-msgstr ""
+msgstr "OpenNebula plataforma hornitzailea"
 
 #: services/OpenNebula/Provider.py:83
 msgid "OpenNebula platform service provider"
-msgstr ""
+msgstr "OpenNebula plataforma-zerbitzuen hornitzailea"
 
 #: services/OpenNebula/Provider.py:98
 msgid "OpenNebula Host"
@@ -3121,30 +3213,31 @@ msgstr "OpenNebula ostalaria"
 
 #: services/OpenNebula/Provider.py:99
 msgid "OpenNebula Port (default is 2633 for non ssl connection)"
-msgstr ""
+msgstr "OpenNebula Port (lehenetsia 2633 ez da konexio estandarrarentzat)"
 
-#: services/OpenNebula/Provider.py:100
-#: services/OpenStack/ProviderLegacy.py:101
+#: services/OpenNebula/Provider.py:100 services/OpenStack/ProviderLegacy.py:101
 msgid ""
-"If checked, the connection will be forced to be ssl (will not work if server"
-" is not providing ssl)"
+"If checked, the connection will be forced to be ssl (will not work if server "
+"is not providing ssl)"
 msgstr ""
+"Egiaztatuta badago, konexioa ssl (behartuta egongo da ez bada zerbitzatzen "
+"ssl)"
 
 #: services/OpenNebula/Provider.py:101
 msgid "User with valid privileges on OpenNebula"
-msgstr ""
+msgstr "OpenNebula-ren baliozko pribilegioak dituzten erabiltzaileak"
 
 #: services/OpenNebula/Provider.py:102
 msgid "Password of the user of OpenNebula"
-msgstr ""
+msgstr "OpenNebula erabiltzailearen pasahitza"
 
 #: services/OpenNebula/Provider.py:107
 msgid "Timeout in seconds of connection to OpenNebula"
-msgstr ""
+msgstr "Denbora-muga, konexio segundotan OpenNebula-ra"
 
 #: services/OpenNebula/Provider.py:157
 msgid "Opennebula test connection passed"
-msgstr ""
+msgstr "Opennebula proba-konexioa gainditu da"
 
 #: services/OpenStack/LiveService.py:57
 msgid "OpenStack Live Volume"
@@ -3168,99 +3261,103 @@ msgstr "Proiketu"
 
 #: services/OpenStack/LiveService.py:107
 msgid "Project for this service"
-msgstr ""
+msgstr "Zerbitzu honen proiektua"
 
 #: services/OpenStack/LiveService.py:109
 msgid "Availability Zones"
-msgstr ""
+msgstr "Erabilgarritasun-eremuak"
 
 #: services/OpenStack/LiveService.py:115
 msgid "Service availability zones"
-msgstr ""
+msgstr "Zerbitzuaren erabilgarritasun-eremuak"
 
 #: services/OpenStack/LiveService.py:117
 msgid "Volume"
-msgstr ""
+msgstr "Bolumen"
 
 #: services/OpenStack/LiveService.py:117
 msgid "Base volume for service (restricted by availability zone)"
-msgstr ""
+msgstr "Zerbitzuaren oinarrizko bolumena (erabilgarritasun-eremu mugatua)"
 
 #: services/OpenStack/LiveService.py:119
 msgid "Network to attach to this service"
-msgstr ""
+msgstr "Zerbitzu honi eransteko sarea"
 
 #: services/OpenStack/LiveService.py:120
 msgid "Flavor"
-msgstr ""
+msgstr "zapore"
 
 #: services/OpenStack/LiveService.py:120
 msgid "Flavor for service"
-msgstr ""
+msgstr "Zerbitzurako zaporea"
 
 #: services/OpenStack/LiveService.py:122
 msgid "Security Groups"
-msgstr ""
+msgstr "Segurtasun taldeak"
 
 #: services/OpenStack/LiveService.py:122
 msgid "Service security groups"
-msgstr ""
+msgstr "Zerbitzu segurtasuneko taldeak"
 
 #: services/OpenStack/Provider.py:80
 msgid "OpenStack Platform Provider"
-msgstr ""
+msgstr "OpenStack plataforma hornitzailea"
 
 #: services/OpenStack/Provider.py:84
 msgid "OpenStack platform service provider"
-msgstr ""
+msgstr "OpenStack plataforma zerbitzu hornitzailea"
 
 #: services/OpenStack/Provider.py:99
 msgid "Identity endpoint"
-msgstr ""
+msgstr "Nortasunaren amaiera"
 
 #: services/OpenStack/Provider.py:99
 msgid ""
-"OpenStack identity endpoint API Access (for example, "
-"https://10.0.0.0/identity)"
+"OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
+"identity)"
 msgstr ""
+"OpenStack identitatearen amaiera API sarbidea (adibidez, https://10.0.0.0/"
+"identity)"
 
 #: services/OpenStack/Provider.py:101 services/OpenStack/ProviderLegacy.py:103
 msgid "Access interface"
-msgstr ""
+msgstr "Sarbide interfazea"
 
 #: services/OpenStack/Provider.py:101 services/OpenStack/ProviderLegacy.py:103
 msgid "Access interface to be used"
-msgstr ""
+msgstr "Sarbidea erabiltzeko interfazea"
 
 #: services/OpenStack/Provider.py:103 services/OpenStack/ProviderLegacy.py:105
 msgid "Domain name (default is Default)"
-msgstr ""
+msgstr "Domain name (lehenetsia lehenetsia da)"
 
 #: services/OpenStack/Provider.py:104 services/OpenStack/ProviderLegacy.py:106
 msgid "User with valid privileges on OpenStack"
-msgstr ""
+msgstr "OpenStack-en baliozko pribilegioak dituzten erabiltzaileak"
 
 #: services/OpenStack/Provider.py:105 services/OpenStack/ProviderLegacy.py:107
 msgid "Password of the user of OpenStack"
-msgstr ""
+msgstr "OpenStack erabiltzailearen pasahitza"
 
 #: services/OpenStack/Provider.py:110 services/OpenStack/ProviderLegacy.py:112
 msgid "Timeout in seconds of connection to OpenStack"
-msgstr ""
+msgstr "Denbora-muga, segundotan, OpenStack-era konektatzeko"
 
 #: services/OpenStack/Provider.py:157 services/OpenStack/ProviderLegacy.py:158
 msgid "OpenStack test connection passed"
-msgstr ""
+msgstr "OpenStack proba konexioa gainditu da"
 
 #: services/OpenStack/ProviderLegacy.py:80
 msgid "OpenStack LEGACY Platform Provider"
-msgstr ""
+msgstr "OpenStack LEGACY Plataforma hornitzailea"
 
 #: services/OpenStack/ProviderLegacy.py:84
 msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
 msgstr ""
+"OpenStack LEGACY plataformaren zerbitzu-hornitzailea (OCATA-rekin aurreko "
+"Oharra argitaratzeko ohar garrantzitsuetarako)"
 
 #: services/OpenStack/ProviderLegacy.py:99
 msgid "OpenStack Host"
@@ -3269,6 +3366,8 @@ msgstr "OpenStack ostalaria"
 #: services/OpenStack/ProviderLegacy.py:100
 msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
 msgstr ""
+"5000 zaharragoak diren oharrak, 80/443 (ssl) OCATA baino berriagoak diren "
+"oharrak"
 
 #: services/OpenStack/openStack/UDSOpenStackClient.py:571
 msgid "Authentication error"
@@ -3279,6 +3378,8 @@ msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
 msgstr ""
+"Openstack-ek ez du nortasuna API 3.2 edo berriagoa onartzen. OpenStack "
+"zerbitzaria hau ez da UDS-rekin bateragarria."
 
 #: services/PhysicalMachines/IPMachineDeployed.py:59
 msgid "IP "
@@ -3294,7 +3395,7 @@ msgstr "IP estatiko anitz"
 
 #: services/PhysicalMachines/IPMachinesService.py:53
 msgid "This service provides access to POWERED-ON Machines by IP"
-msgstr ""
+msgstr "Zerbitzu honek POWERED-ON makinak IP bidez sarbidea eskaintzen du"
 
 #: services/PhysicalMachines/IPSingleMachineService.py:48
 msgid "Machine IP"
@@ -3307,14 +3408,15 @@ msgstr "IP estatiko bakarra"
 #: services/PhysicalMachines/IPSingleMachineService.py:54
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr ""
+"Zerbitzu honek IP bidez emandako POWERED-ON Machine sarbidea eskaintzen du"
 
 #: services/RDS_enterprise/RDSProvider.py:32
 msgid "RDS Platform Provider"
-msgstr ""
+msgstr "RDS plataforma hornitzailea"
 
 #: services/RDS_enterprise/RDSProvider.py:34
 msgid "Microsoft RDS based provider"
-msgstr ""
+msgstr "Microsoft RDS oinarritutako hornitzailea"
 
 #: services/RDS_enterprise/RDSProvider.py:38
 msgid "List of servers"
@@ -3322,17 +3424,21 @@ msgstr "Zerbitzari zerrenda"
 
 #: services/RDS_enterprise/RDSProvider.py:40
 msgid "User mapping"
-msgstr ""
+msgstr "Erabiltzaileen mapaketa"
 
 #: services/RDS_enterprise/RDSProvider.py:40
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
 msgstr ""
+"Aktibatuta badago, erabiltzaileak mapan egingo dira. Hala ez bada, "
+"erabiltzailearen kredentzialak RDS zerbitzarira birbideratuko dira."
 
 #: services/RDS_enterprise/RDSProvider.py:42
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
+"Mapako erabiltzailearen zerrenda. (Erabiltzaileek mapan ezgaituta badago "
+"erabiltzen da)"
 
 #: services/RDS_enterprise/RDSProvider.py:43
 msgid "User's password"
@@ -3343,25 +3449,30 @@ msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
 msgstr ""
+"Erabiltzaileentzako pasahitz lehenetsia zerrenda mapetan. (Erabiltzaileek "
+"mapan ezgaituta badago erabiltzen da)"
 
 #: services/RDS_enterprise/RDSProvider.py:46
 msgid "Server Checking"
-msgstr ""
+msgstr "Zerbitzariaren egiaztapena"
 
 #: services/RDS_enterprise/RDSProvider.py:47
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr ""
+"Egiaztatuta, zerbitzaria egiaztatuko da esleitu aurretik edo hura erabili "
+"aurretik."
 
 #: services/RDS_enterprise/RDSProvider.py:72
-msgid ""
-"Error: User {} on host {} is being used and cannot be removed right now"
+msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
+"Errorea: Erabiltzailea {} ostalarian {} erabiltzen ari da eta ezin da kendu "
+"oraingoan"
 
 #: services/RDS_enterprise/RDSProvider.py:102
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
-msgstr ""
+msgstr "Ezer ez da probatu, baina dena ondo joan da ..."
 
 #: services/RDS_enterprise/RDSService.py:20
 msgid "RDS Platform RemoteAPP"
@@ -3373,19 +3484,19 @@ msgstr "RDS Platform RemoteAPP-ean oinarritutako zerbitzua"
 
 #: services/RDS_enterprise/RDSService.py:44
 msgid "Application path"
-msgstr ""
+msgstr "Aplikazio bidea"
 
 #: services/RDS_enterprise/RDSService.py:45
 msgid "Full path of the application this service will represent"
-msgstr ""
+msgstr "Zerbitzu honen aplikazioaren bide osoa erakutsiko da"
 
 #: services/RDS_enterprise/RDSService.py:53
 msgid "Application parameters"
-msgstr ""
+msgstr "Aplikazioen parametroak"
 
 #: services/RDS_enterprise/RDSService.py:54
 msgid "Applications parameters, as will be passed in command line"
-msgstr ""
+msgstr "Aplikazioak parametroak, komando lerroan pasatuko diren bezala"
 
 #: services/RDS_enterprise/RDSService.py:62
 msgid "Max. Allowd services"
@@ -3393,29 +3504,31 @@ msgstr "Gehienez baimenduritako zerbitzuak"
 
 #: services/RDS_enterprise/RDSService.py:67
 msgid "Maximum number of allowed services (0 means no limit)"
-msgstr ""
+msgstr "Zerbitzu baimenduen gehienezko kopurua (0 ez da mugarik)"
 
 #: services/RDS_enterprise/RDSService.py:72
 msgid "Wait spawned processes"
-msgstr ""
+msgstr "Itxaron prozesu abiarazleak"
 
 #: services/RDS_enterprise/RDSService.py:75
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
 msgstr ""
+"Aktibo badago, RDS Aktorea aplikazioa eta abiarazitako prozesuak amaitu arte "
+"itxaron egingo da saioa amaitu aurretik"
 
 #: services/RDS_enterprise/RDSService.py:93
 msgid "A valid application path is required"
-msgstr ""
+msgstr "Baliozko aplikazio bide bat behar da"
 
 #: services/Sample/SampleProvider.py:68
 msgid "Sample Provider"
-msgstr ""
+msgstr "Lagin hornitzailea"
 
 #: services/Sample/SampleProvider.py:72
 msgid "Sample (and dummy) service provider"
-msgstr ""
+msgstr "Sample (eta dummy) zerbitzu hornitzailea"
 
 #: services/Sample/SampleProvider.py:92
 msgid "Remote host"
@@ -3423,47 +3536,47 @@ msgstr "Urruneko ostalaria"
 
 #: services/Sample/SampleProvider.py:93
 msgid "This fields contains a remote host"
-msgstr ""
+msgstr "Eremu honek urruneko ostalaria dauka"
 
 #: services/Sample/SampleProvider.py:99
 msgid "Your pet's name"
-msgstr ""
+msgstr "Zure maskota izena"
 
 #: services/Sample/SampleProvider.py:100
 msgid "If you like, write the name of your pet"
-msgstr ""
+msgstr "Nahi baduzu, idatzi zure maskota izena"
 
 #: services/Sample/SampleProvider.py:109
 msgid "Age of Methuselah"
-msgstr ""
+msgstr "Methuselah-ren adina"
 
 #: services/Sample/SampleProvider.py:110
 msgid "If you know it, please, tell me!!!"
-msgstr ""
+msgstr "Badakizu, mesedez, esazu !!!"
 
 #: services/Sample/SampleProvider.py:117
 msgid "Is Methuselah still alive?"
-msgstr ""
+msgstr "Methuselah oraindik bizirik dago?"
 
 #: services/Sample/SampleProvider.py:118
 msgid "If you fail, this will not get saved :-)"
-msgstr ""
+msgstr "Ez baduzu, hau ez da gordeko :-)"
 
 #: services/Sample/SampleProvider.py:138
 msgid "Methuselah is not alive!!! :-)"
-msgstr ""
+msgstr "Methuselah ez da bizirik! :-)"
 
 #: services/Sample/SamplePublication.py:195
 msgid "Random integer was 9!!! :-)"
-msgstr ""
+msgstr "Ausazko zenbaki osoarekin 9! :-)"
 
 #: services/Sample/SampleService.py:71
 msgid "Sample Service One"
-msgstr ""
+msgstr "Sample Zerbitzua One"
 
 #: services/Sample/SampleService.py:75
 msgid "Sample (and dummy) service ONE"
-msgstr ""
+msgstr "Sample (eta dummy) zerbitzua ONE"
 
 #: services/Sample/SampleService.py:118
 msgid "Colour"
@@ -3471,11 +3584,11 @@ msgstr "Kolorea"
 
 #: services/Sample/SampleService.py:119
 msgid "Colour of the field"
-msgstr ""
+msgstr "Eremuaren kolorea"
 
 #: services/Sample/SampleService.py:132
 msgid "Password for testing purposes"
-msgstr ""
+msgstr "Proba egiteko helburuen pasahitza"
 
 #: services/Sample/SampleService.py:138
 msgid "Services names"
@@ -3483,23 +3596,23 @@ msgstr "Zerbitzu izenak"
 
 #: services/Sample/SampleService.py:139
 msgid "Base name for this user services"
-msgstr ""
+msgstr "Erabiltzaileen zerbitzu honetarako oinarrizko izena"
 
 #: services/Sample/SampleService.py:196
 msgid "Sample Service Two"
-msgstr ""
+msgstr "Sample Zerbitzua Bi"
 
 #: services/Sample/SampleService.py:198
 msgid "Sample (and dummy) service ONE+ONE"
-msgstr ""
+msgstr "Mota (eta dummy) zerbitzua ONE + ONE"
 
 #: services/Sample/SampleService.py:204
 msgid "L1 cache for dummy elements"
-msgstr ""
+msgstr "Elementu dummy L1 cachea"
 
 #: services/Sample/SampleService.py:206
 msgid "L2 cache for dummy elements"
-msgstr ""
+msgstr "L2 cachea elementu dummyentzat"
 
 #: services/Sample/SampleService.py:220
 msgid "List of names"
@@ -3507,95 +3620,96 @@ msgstr "Izen zerrenda"
 
 #: services/TestService_enterprise/TestProvider.py:23
 msgid "Test Provider"
-msgstr ""
+msgstr "Proba hornitzailea"
 
 #: services/TestService_enterprise/TestProvider.py:25
 msgid "Test (and dummy) service provider"
-msgstr ""
+msgstr "Proba (eta dummy) zerbitzu hornitzailea"
 
 #: services/TestService_enterprise/TestService.py:18
 msgid "Test Service with cache"
-msgstr ""
+msgstr "Proba Zerbitzua cachearekin"
 
 #: services/TestService_enterprise/TestService.py:20
 msgid "Test service for cache L1 only"
-msgstr ""
+msgstr "Probako c1 L1 zerbitzurako bakarrik"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:27
 msgid "vCloud Server IP or Hostname"
-msgstr ""
+msgstr "vCloud zerbitzariaren IP edo ostalari izena"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:28
 msgid "vCloud Server Port (usually 443)"
-msgstr ""
+msgstr "vCloud zerbitzariaren ataka (normalean 443)"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:29
 msgid "Organization"
-msgstr ""
+msgstr "Erakundea"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:29
 msgid "Organization to use on vCloud"
-msgstr ""
+msgstr "Antolaketa vCloud erabiltzeko"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 msgid "User with valid privileges on vCloud"
-msgstr ""
+msgstr "VCloud-eko baliozko pribilegioak dituzten erabiltzaileak"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 msgid "Password of the user of vCloud"
-msgstr ""
+msgstr "VCloud erabiltzailearen pasahitza"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:42
 msgid "VCloud Director Platform Provider"
-msgstr ""
+msgstr "VCloud zuzendaria plataforma hornitzailea"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:44
 msgid "Provides connection to vCloud Director platform"
-msgstr ""
+msgstr "VCloud zuzendariaren plataforma hornitzen du"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:192
 msgid "vCloud Provider: "
-msgstr ""
+msgstr "vCloud hornitzailea:"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:32
 msgid "VCloud Platform vApp"
-msgstr ""
+msgstr "VCloud plataforma vApp"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:34
 msgid "This service provides access to vApp based VDI"
-msgstr ""
+msgstr "Zerbitzu honek vApp oinarritutako VDI sarbidea eskaintzen du"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:40
 msgid "Number of desired vApps to keep running waiting for an user"
 msgstr ""
+"Nahi dituzun vApps kopurua erabiltzaile baten zain exekutatzen jarraitzeko"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:42
 msgid "Number of desired vApps to keep suspended waiting for use"
-msgstr ""
+msgstr "Nahi duzun vApps kopurua erabiltzeko itxita egotea mantentzea"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:54
 msgid "vDatacenter"
-msgstr ""
+msgstr "vDatacenter"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:55
 msgid "Virtual Datacenter"
-msgstr ""
+msgstr "Datazio zentro birtuala"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:60
 msgid "Catalog"
-msgstr ""
+msgstr "katalogoa"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:60
 msgid "vApps source catalog"
-msgstr ""
+msgstr "vApps iturrien katalogoa"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:69
 msgid "vApp Template"
-msgstr ""
+msgstr "vApp Txantiloia"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:70
 msgid "vApp template for the service"
-msgstr ""
+msgstr "Zerbitzuaren txantiloia vApp"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:72
 #: services/Vmware_enterprise/VCLinkedCloneService.py:86
@@ -3608,10 +3722,12 @@ msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
 msgstr ""
+"Interfaze bat baino gehiago aurkitzen bada makinan, erabili sareko lehen "
+"sarea nagusia den bezala"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:89
 msgid "Only vApp Templates with 1 VM are allowed"
-msgstr ""
+msgstr "Bakarrik VApp plantillak 1 VM-rekin onartzen dira"
 
 #: services/Vmware_enterprise/Helpers.py:72
 msgid "Local"
@@ -3628,41 +3744,43 @@ msgstr "Argitalpena"
 #: services/Vmware_enterprise/PublicationVC.py:44
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
-msgstr ""
+msgstr "UDS {0} (e) k {1} (e) n sortutako argitalpena"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 msgid "VMWare VCenter Server IP or Hostname"
-msgstr ""
+msgstr "VMWare VCenter Server IP edo Hostname"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "VMWare VC Server Port (usually 443)"
-msgstr ""
+msgstr "VMWare VC zerbitzariaren ataka (normalean 443)"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 msgid "User with valid privileges on VC"
-msgstr ""
+msgstr "Erabiltzaileak VCri buruzko baliozko pribilegioak ditu"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 msgid "Password of the user of the VC"
-msgstr ""
+msgstr "VCko erabiltzailearen pasahitza"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout in seconds of connection to VC"
-msgstr ""
+msgstr "Denbora-muga VC konexioaren segundotan"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:42
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 msgstr ""
+"Sortutako makinen makina baliotsuen gama. Barruan egon behar du 00: 50: 56: "
+"00: 00: 00-00: 50: 56: 3F: FF: FF"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:49
 msgid "VMWare VCenter Platform Provider"
-msgstr ""
+msgstr "VMWare VCenter Plataforma hornitzailea"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:51
 msgid "Provides connection to Virtual Center Services"
-msgstr ""
+msgstr "Zentro birtualeko zerbitzuetarako konexioa eskaintzen du"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:137
 msgid "VmwareVC Provider: "
@@ -3674,136 +3792,144 @@ msgstr "Konexio parametroak ondo daude"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:27
 msgid "Fixed Machines Pool"
-msgstr ""
+msgstr "Makina finkoak igerilekua"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
 msgstr ""
+"Zerbitzu honek azpiegiturako hautatutako makina talde finko batera sarbidea "
+"eskaintzen du"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:48
 #: services/Vmware_enterprise/VCLinkedCloneService.py:55
 msgid "Datacenter"
-msgstr ""
+msgstr "datacenter"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:55
 #: services/Vmware_enterprise/VCFixedMachinesService.py:70
 #: services/Vmware_enterprise/VCFixedMachinesService.py:75
 msgid "Machines"
-msgstr ""
+msgstr "Makinak"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:56
 #: services/Vmware_enterprise/VCLinkedCloneService.py:61
 msgid "Datacenter containing base machine"
-msgstr ""
+msgstr "Base makina duten datacenter"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:60
 #: services/Vmware_enterprise/VCLinkedCloneService.py:71
 msgid "Resource Pool"
-msgstr ""
+msgstr "Baliabideen Poola"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:68
 msgid "Resource Pool containing base machines"
-msgstr ""
+msgstr "Base-makinak dituen baliabide-igerilekua"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:75
 msgid "Base Machines"
-msgstr ""
+msgstr "Oinarrizko makinak"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:75
 msgid "Base machines for this service"
-msgstr ""
+msgstr "Zerbitzu honen oinarrizko makinak"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:92
 msgid "We need at least a machine"
-msgstr ""
+msgstr "Gutxienez makina bat behar dugu"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:32
 msgid "Clone based - Full"
-msgstr ""
+msgstr "Klonatutako oinarria - Osoa"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:34
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
 msgstr ""
+"Zerbitzu honek FITXA Cloned makinak FITXA Birtual batean sartzeko aukera "
+"ematen du"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:69
 msgid "VMs Datastores"
-msgstr ""
+msgstr "VM Datastoreak"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:70
 msgid "Datastores where to put machines"
-msgstr ""
+msgstr "Makinak jartzeko datuak"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:33
 msgid "Clone based - Linked"
-msgstr ""
+msgstr "Klonaren oinarria - lotuta"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:35
 msgid ""
 "This service provides access to Linked Clones machines on a Virtual Center"
 msgstr ""
+"Zerbitzu honek Linked Clones makinak zentro birtual batean sarbidea "
+"eskaintzen du"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:63
 msgid "Pub. Resource Pool"
-msgstr ""
+msgstr "Pub. Baliabideen Poola"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:63
 msgid "Resource Pool where deploy clones"
-msgstr ""
+msgstr "Baliabideen Poola non klonak hedatu"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:65
 msgid "Pub.Datastores"
-msgstr ""
+msgstr "Pub.Datastores"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:66
 msgid "Datastores where to put publications"
-msgstr ""
+msgstr "Argitalpenak jarri non datastore"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "If active, found duplicates clones for this service will be removed"
-msgstr ""
+msgstr "Aktibo badago, aurkitu dira bikoiztuak klonak zerbitzu honetarako"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:69
 msgid "Keep on error"
-msgstr ""
+msgstr "Akatsa mantendu"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:69
 msgid "If active, access errors found on machine will not mark is as error."
 msgstr ""
+"Aktibatuta badago, makinan aurkitutako errore-akatsak ez dira markatuko "
+"errore gisa."
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:77
 msgid "Resource Pool containing base machine"
-msgstr ""
+msgstr "Baliabideen Poola oinarrizko makina duena"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:83
 msgid "Base machine for this service"
-msgstr ""
+msgstr "Zerbitzu honen oinarrizko makina"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:88
 msgid "Pub. Network"
-msgstr ""
+msgstr "Pub. Sarea"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:89
 msgid "Network on which the machine will be deployed"
-msgstr ""
+msgstr "Makina zabalduko duen sarea"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:90
 msgid "Clones Folder"
-msgstr ""
+msgstr "Clones karpeta"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:90
 msgid "Folder where deploy clones"
-msgstr ""
+msgstr "Klonak zabaltzeko karpeta"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
 msgid "Inc.Datastores"
-msgstr ""
+msgstr "Inc.Datastores"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:92
 msgid "Datastores where to put incrementals"
-msgstr ""
+msgstr "Datastoreak non igoerak jarri"
 
 #: services/Xen/XenLinkedService.py:56
 msgid "Xen Linked Clone"
@@ -3811,39 +3937,40 @@ msgstr "Xen Linked Clone"
 
 #: services/Xen/XenLinkedService.py:60
 msgid "Xen Services based on templates"
-msgstr ""
+msgstr "Xen txantiloietan oinarritutako zerbitzuak"
 
 #: services/Xen/XenLinkedService.py:103
 msgid "Storage SR"
-msgstr ""
+msgstr "Biltegiratze SR"
 
 #: services/Xen/XenLinkedService.py:106
 msgid "Storage where to publish and put incrementals"
-msgstr ""
+msgstr "Biltegiratu non argitaratu eta gehikuntzak jarri"
 
 #: services/Xen/XenLinkedService.py:131
 msgid "Network used for virtual machines"
-msgstr ""
+msgstr "Makina birtualetarako sarea"
 
 #: services/Xen/XenLinkedService.py:147
 msgid "Shadow"
-msgstr ""
+msgstr "Itzala"
 
 #: services/Xen/XenLinkedService.py:152
 msgid "Shadow memory multiplier (memory overcommit)"
-msgstr ""
+msgstr "Itzalaren memoria biderkatzailea (memoria gainkargatzea)"
 
 #: services/Xen/XenLinkedService.py:171
 msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
 msgstr ""
+"Zenbakiaren zatiaren luzera makinen izenen arabera (3 eta 6 bitartekoa)"
 
 #: services/Xen/XenProvider.py:79
 msgid "Xenserver/XCP-NG Platforms Provider"
-msgstr ""
+msgstr "Xenserver / XCP-NG plataformak hornitzailea"
 
 #: services/Xen/XenProvider.py:83
 msgid "XenServer and XCP-NG platforms service provider"
-msgstr ""
+msgstr "XenServer eta XCP-NG plataformetarako zerbitzu hornitzailea"
 
 #: services/Xen/XenProvider.py:98
 msgid "XenServer Server IP or Hostname"
@@ -3851,34 +3978,36 @@ msgstr "XenServer zerbitzariaren IP-a edota izena"
 
 #: services/Xen/XenProvider.py:99
 msgid "User with valid privileges on XenServer"
-msgstr ""
+msgstr "Erabiltzaileak XenServer-en baliozko pribilegioak ditu"
 
 #: services/Xen/XenProvider.py:100
 msgid "Password of the user of XenServer"
-msgstr ""
+msgstr "XenServer erabiltzailearen pasahitza"
 
 #: services/Xen/XenProvider.py:107
 msgid "Verify Certificate"
-msgstr ""
+msgstr "Egiaztatu ziurtagiria"
 
 #: services/Xen/XenProvider.py:108
 msgid ""
 "If selected, certificate will be checked against system valid certificate "
 "providers"
 msgstr ""
+"Hautatuta badago, ziurtagiria egiaztatuko da sistema baliozko ziurtagiri "
+"hornitzaileei"
 
 #: services/Xen/XenProvider.py:421
 #, python-brace-format
 msgid "Connection failed: {0}"
-msgstr ""
+msgstr "Konexioa huts egin du: {0}"
 
 #: templates/404.html:3 templates/500.html:3
 msgid "Page not found"
-msgstr ""
+msgstr "Ez da orria aurkitu"
 
 #: templates/uds/admin/snippets/navbar.html:6
 msgid "Toggle navigation"
-msgstr ""
+msgstr "Aldatu nabigazioa"
 
 #: templates/uds/admin/snippets/navbar.html:21
 #: templates/uds/admin/tmpl/authenticators.html:30
@@ -3944,7 +4073,7 @@ msgstr "Erabiltzaile modua"
 #: templates/uds/html5/snippets/navbar.html:51
 #: templates/uds/semantic/snippets/user-menu.html:15
 msgid "Logout"
-msgstr ""
+msgstr "Saioa amaitu"
 
 #: templates/uds/admin/tmpl/authenticators.html:33
 #: templates/uds/admin/tmpl/providers.html:33
@@ -3967,15 +4096,15 @@ msgstr "Arau iruzkinak"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:22
 msgid "Event"
-msgstr ""
+msgstr "Gertaera"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:24
 msgid "Starting hour"
-msgstr ""
+msgstr "Ordua hasiz"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:34
 msgid "Duration for this rule"
-msgstr ""
+msgstr "Arau honen iraupena"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:53
 msgid "Repeat"
@@ -3991,31 +4120,31 @@ msgstr "Amaiera data"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:73
 msgid "Frequency for this rule"
-msgstr ""
+msgstr "Arau honen maiztasuna"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:84
 msgid "Repeat interval for this rule"
-msgstr ""
+msgstr "Errepikatu arau honen tartea"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:84
 msgid "Repeat every"
-msgstr ""
+msgstr "Errepikatu behin"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:86
 msgid "Repeat interval for rule"
-msgstr ""
+msgstr "Errepikatu arauaren tartea"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:91
 msgid "Weekdays for this rule"
-msgstr ""
+msgstr "Arau honen asteko ordutegia"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:91
 msgid "Repeat on"
-msgstr ""
+msgstr "Errepikatu"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:105
 msgid "Summary"
-msgstr ""
+msgstr "Laburpen"
 
 #: templates/uds/admin/tmpl/calendars.html:30
 msgid "Rules"
@@ -4065,19 +4194,19 @@ msgstr "Pool-zerbitzuak ikusi"
 
 #: templates/uds/admin/tmpl/dashboard.html:115
 msgid "Restrained services pools"
-msgstr ""
+msgstr "Zerbitzu mugatuen igerilekuak"
 
 #: templates/uds/admin/tmpl/dashboard.html:139
 msgid "Assigned services graph"
-msgstr ""
+msgstr "Zerbitzu esleitutako grafikoa"
 
 #: templates/uds/admin/tmpl/dashboard.html:151
 msgid "Used services graph"
-msgstr ""
+msgstr "Erabilitako zerbitzu grafikoa"
 
 #: templates/uds/admin/tmpl/fld/editlist.html:22
 msgid "Click to edit list"
-msgstr ""
+msgstr "Egin klik zerrendan editatzeko"
 
 #: templates/uds/admin/tmpl/fld/editlist_popup.html:5
 msgid "Current list"
@@ -4093,7 +4222,7 @@ msgstr "Denak ezabatu"
 
 #: templates/uds/admin/tmpl/fld/editlist_popup.html:19
 msgid "Add element"
-msgstr ""
+msgstr "Gehitu elementua"
 
 #: templates/uds/admin/tmpl/fld/editlist_popup.html:23
 msgid "Add"
@@ -4101,7 +4230,7 @@ msgstr "Gehitu"
 
 #: templates/uds/admin/tmpl/fld/taglist.html:8
 msgid "Add Tag..."
-msgstr ""
+msgstr "Gehitu etiketa ..."
 
 #: templates/uds/admin/tmpl/gallery.html:5
 msgid "UDS Image Gallery"
@@ -4109,24 +4238,22 @@ msgstr "UDS irudi galeria"
 
 #: templates/uds/admin/tmpl/group-info.html:46
 msgid "Last Access"
-msgstr ""
+msgstr "Azken sarbidea"
 
 #: templates/uds/admin/tmpl/group-info.html:55
-#: templates/uds/admin/tmpl/group.html:57
-#: templates/uds/admin/tmpl/user.html:48
+#: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
 msgid "Enabled"
-msgstr ""
+msgstr "Gaituta"
 
 #: templates/uds/admin/tmpl/group-info.html:56
-#: templates/uds/admin/tmpl/group.html:58
-#: templates/uds/admin/tmpl/user.html:49
+#: templates/uds/admin/tmpl/group.html:58 templates/uds/admin/tmpl/user.html:49
 msgid "Disabled"
-msgstr ""
+msgstr "Desgaituta"
 
 #: templates/uds/admin/tmpl/group-info.html:71
 #: templates/uds/admin/tmpl/group.html:34
 msgid "Match mode"
-msgstr ""
+msgstr "Partiduen modua"
 
 #: templates/uds/admin/tmpl/group-info.html:74
 #: templates/uds/admin/tmpl/group.html:38
@@ -4134,8 +4261,7 @@ msgid "Any"
 msgstr "Edozein"
 
 #: templates/uds/admin/tmpl/group.html:24
-#: templates/uds/admin/tmpl/search.html:9
-#: templates/uds/admin/tmpl/user.html:21
+#: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
 msgid "Search"
 msgstr "Bilatu"
 
@@ -4147,6 +4273,7 @@ msgstr "Igon nahi den irudiak hautatu"
 #: templates/uds/admin/tmpl/new_image.html:10
 msgid "Name of the image. If left empty, will get the filename as name"
 msgstr ""
+"Irudiaren izena. Utzi hutsik badaude, fitxategi izena izen gisa jasoko du"
 
 #: templates/uds/admin/tmpl/new_image.html:6
 #: templates/uds/admin/tmpl/new_image.html:7
@@ -4171,11 +4298,11 @@ msgstr "PNG, JPEG edo GIF irudiak bakarrik"
 
 #: templates/uds/admin/tmpl/new_image.html:24
 msgid "Image will be resized to "
-msgstr ""
+msgstr "Irudia tamainaz aldatuko da"
 
 #: templates/uds/admin/tmpl/new_image.html:25
 msgid "Max file size for uploading is 256Kb"
-msgstr ""
+msgstr "Igotzeko gehienezko fitxategia 256Kb da"
 
 #: templates/uds/admin/tmpl/osmanagers.html:4
 msgid "OS Managers"
@@ -4183,19 +4310,19 @@ msgstr "SE kudeatzaileak"
 
 #: templates/uds/admin/tmpl/permissions.html:14
 msgid "Revoke user permission"
-msgstr ""
+msgstr "Erabiltzaile baimena berretsi"
 
 #: templates/uds/admin/tmpl/permissions.html:15
 msgid "Add user permission"
-msgstr ""
+msgstr "Gehitu erabiltzailearen baimena"
 
 #: templates/uds/admin/tmpl/permissions.html:29
 msgid "Revoke group permission"
-msgstr ""
+msgstr "Ezabatu taldearen baimena"
 
 #: templates/uds/admin/tmpl/permissions.html:30
 msgid "Add group permission"
-msgstr ""
+msgstr "Gehitu taldearen baimena"
 
 #: templates/uds/admin/tmpl/permissions_add.html:25
 msgid "Permission"
@@ -4212,15 +4339,15 @@ msgstr "Sarbide osoa"
 #: templates/uds/admin/tmpl/pool_access_default.html:5
 #: templates/uds/admin/tmpl/pool_add_access.html:24
 msgid "Access action"
-msgstr ""
+msgstr "Sarbide-ekintza"
 
 #: templates/uds/admin/tmpl/pool_add_action.html:17
 msgid "Events Offset (minutes)"
-msgstr ""
+msgstr "Ekitaldiaren desplazamendua (minutu)"
 
 #: templates/uds/admin/tmpl/pool_add_action.html:24
 msgid "At interval beginning?"
-msgstr ""
+msgstr "Hasieratik hasieran?"
 
 #: templates/uds/admin/tmpl/pool_add_transport.html:5
 msgid "Transport"
@@ -4228,7 +4355,7 @@ msgstr "Garraioa"
 
 #: templates/uds/admin/tmpl/providers.html:32
 msgid "Usage"
-msgstr ""
+msgstr "Usage"
 
 #: templates/uds/admin/tmpl/publish.html:5
 msgid "reason of publication"
@@ -4236,25 +4363,26 @@ msgstr "Argitalpenaren arrazoia"
 
 #: templates/uds/admin/tmpl/publish.html:7
 msgid "Reason for publication (can be empty)"
-msgstr ""
+msgstr "Argitalpen arrazoia (hutsik egon daiteke)"
 
 #: templates/uds/admin/tmpl/request_failed.html:4
 msgid "Error on request"
-msgstr ""
+msgstr "Errorea eskatuz"
 
 #: templates/uds/admin/tmpl/request_failed.html:7
 msgid "There was an error requesting data from server, please, try again"
 msgstr ""
+"Errore bat gertatu da zerbitzariaren datuak eskatuz, mesedez, saiatu berriro"
 
 #: templates/uds/admin/tmpl/request_failed.html:9
 #: templates/uds/html5/snippets/navbar.html:48
 #: templates/uds/semantic/snippets/user-menu.html:13
 msgid "Dashboard"
-msgstr ""
+msgstr "arbela"
 
 #: templates/uds/admin/tmpl/restricted.html:5
 msgid "overview"
-msgstr ""
+msgstr "ikuspegi orokorra"
 
 #: templates/uds/admin/tmpl/restricted.html:29
 msgid "UDS Administration"
@@ -4262,17 +4390,19 @@ msgstr "UDS administrazioa"
 
 #: templates/uds/admin/tmpl/restricted.html:32
 msgid "You are accessing UDS Administration as staff member."
-msgstr ""
+msgstr "UDS Administrazioa administratzen ari zara langile gisa."
 
 #: templates/uds/admin/tmpl/restricted.html:33
 msgid "This means that you have restricted access to assigned elements."
-msgstr ""
+msgstr "Honek esan nahi du sarbide murriztua duzula esleitutako elementuei."
 
 #: templates/uds/admin/tmpl/restricted.html:34
 msgid ""
 "In order to increase your privileges, please contact your local UDS "
 "administrator."
 msgstr ""
+"Zure pribilegioak areagotzeko, jarri harremanetan zure UDS administratzaile "
+"lokalarekin."
 
 #: templates/uds/admin/tmpl/restricted.html:36
 msgid "Thank you."
@@ -4289,7 +4419,7 @@ msgstr "Garraioak"
 
 #: templates/uds/admin/tmpl/services_pool.html:37
 msgid "Access Calendars"
-msgstr ""
+msgstr "Sartu egutegiak"
 
 #: templates/uds/admin/tmpl/services_pool_groups.html:5
 msgid "UDS Services Pool Groups"
@@ -4319,23 +4449,23 @@ msgstr "Langile Kidea"
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/uds/admin/tmpl/user.html:92
-#: templates/uds/admin/tmpl/user.html:106
+#: templates/uds/admin/tmpl/user.html:92 templates/uds/admin/tmpl/user.html:106
 #, python-brace-format
 msgid "{0} of {1} selected"
-msgstr ""
+msgstr "{1} hautatutako {0} aukeratua"
 
 #: templates/uds/html5/about.html:13 templates/uds/semantic/about.html:13
 msgid "You can access UDS Open Source code at"
-msgstr ""
+msgstr "UDS kode irekiko kodea sar zaitezke at"
 
 #: templates/uds/html5/about.html:14 templates/uds/semantic/about.html:14
 msgid "UDS has been developed using these components:"
-msgstr ""
+msgstr "UDS osagai hauen bidez garatu da:"
 
 #: templates/uds/html5/about.html:38
 msgid "If you find that we missed any component, please let us know"
 msgstr ""
+"Osagai bat galdu dugula aurkitzen baduzu, jar zaitez gurekin harremanetan"
 
 #: templates/uds/html5/about.html:39
 #: templates/uds/html5/service_not_ready.html:21
@@ -4359,16 +4489,19 @@ msgid ""
 "In order to be able to execute UDS services, you need to download and "
 "install UDS Plugin."
 msgstr ""
+"UDS zerbitzuak exekutatzeko gai izateko, UDS Plugina deskargatu eta "
+"instalatu behar duzu."
 
 #: templates/uds/html5/download_client.html:14
 msgid "Or download for other operating system"
-msgstr ""
+msgstr "Edo beste sistema eragile deskargatzeko"
 
 #: templates/uds/html5/download_client.html:15
 msgid ""
 "In case that your operating system has not been correctly detected, you can "
 "download manually from"
 msgstr ""
+"Zure sistema eragilea ondo detektatu ez bada, eskuz deskargatu dezakezu"
 
 #: templates/uds/html5/download_client.html:19
 msgid "Download Linux UDS plugin"
@@ -4388,16 +4521,18 @@ msgid ""
 "If you already have UDS Plugin installed but this message persists to "
 "appear, you can disable automatic detection here"
 msgstr ""
+"UDS plugina instalatuta baduzu baina mezu hau agertzen jarraitzen baduzu, "
+"hemen detekzio automatikoa desgaitu dezakezu"
 
 #: templates/uds/html5/download_client.html:39
 #: templates/uds/semantic/download_client.html:39
 msgid "Automatic plugin detection is enabled"
-msgstr ""
+msgstr "Pluginaren detekzio automatikoa gaituta dago"
 
 #: templates/uds/html5/download_client.html:40
 #: templates/uds/semantic/download_client.html:40
 msgid "WARNING: Automatic plugin detection is disabled"
-msgstr ""
+msgstr "ABISUA: plugin detekzio automatikoa desgaituta dago"
 
 #: templates/uds/html5/download_client.html:44
 #: templates/uds/semantic/download_client.html:44
@@ -4405,6 +4540,8 @@ msgid ""
 "Please, note that disabling automatic detection will not trigger this page "
 "again in case you don't have the plugin installed."
 msgstr ""
+"Kontuan izan detekzio automatikoa desgaitzen ez duela orri hau berriro "
+"abiaraziko, plugina instalatuta ez baduzu."
 
 #: templates/uds/html5/download_client.html:45
 #: templates/uds/semantic/download_client.html:45
@@ -4412,11 +4549,13 @@ msgid ""
 "In this case, you will have to manually download the plugin by using the "
 "menu on upper right corner."
 msgstr ""
+"Kasu honetan, eskuz deskargatzeko plugina menu goiko eskuineko izkinan "
+"erabiliz egongo zara."
 
 #: templates/uds/html5/download_client.html:47
 #: templates/uds/semantic/download_client.html:47
 msgid "Return"
-msgstr ""
+msgstr "Return"
 
 #: templates/uds/html5/downloads.html:7
 #: templates/uds/html5/snippets/navbar.html:45
@@ -4429,11 +4568,11 @@ msgstr "Jeitsi"
 #: templates/uds/semantic/downloads.html:10
 msgid ""
 "This page contains a list of downloadables provided by different modules"
-msgstr ""
+msgstr "Orrialde honek modulu ezberdinek emandako deskarga-zerrenda bat dauka"
 
 #: templates/uds/html5/error.html:12 templates/uds/semantic/error.html:12
 msgid "An error occurred"
-msgstr ""
+msgstr "Akats bat gertatu da"
 
 #: templates/uds/html5/error.html:16 templates/uds/semantic/error.html:16
 msgid "Back to services list"
@@ -4462,19 +4601,19 @@ msgstr "Zerbitzua mantentze lanetan"
 
 #: templates/uds/html5/index.html:98
 msgid "This service is in maintenance mode."
-msgstr ""
+msgstr "Zerbitzu hau mantenimendu moduan dago."
 
 #: templates/uds/html5/index.html:99 templates/uds/html5/index.html:118
 msgid "Please, retry access in a while."
-msgstr ""
+msgstr "Mesedez, berriro saiatu sarbidea pixka batean."
 
 #: templates/uds/html5/index.html:113
 msgid "Service access not allowed"
-msgstr ""
+msgstr "Zerbitzu sarbidea ez dago baimenduta"
 
 #: templates/uds/html5/index.html:116
 msgid "This service is currently not accesible due to schedule restrictions."
-msgstr ""
+msgstr "Une honetan zerbitzua ez da eskuragarria ordutegia murrizteko."
 
 #: templates/uds/html5/index.html:131
 msgid "Administrator info panel"
@@ -4486,7 +4625,7 @@ msgstr "IP"
 
 #: templates/uds/html5/index.html:137 templates/uds/semantic/index.html:31
 msgid "User Agent"
-msgstr ""
+msgstr "Erabiltzailearen agente"
 
 #: templates/uds/html5/index.html:138
 msgid "OS"
@@ -4494,13 +4633,14 @@ msgstr "SE"
 
 #: templates/uds/html5/index.html:388 templates/uds/html5/index.html:398
 msgid ""
-"Are you sure that you want to release this service. Its current content will"
-" be lost!"
+"Are you sure that you want to release this service. Its current content will "
+"be lost!"
 msgstr ""
+"Ziur zaude zerbitzu hau askatu nahi duzula. Uneko edukia galdu egingo da!"
 
 #: templates/uds/html5/index.html:408
 msgid "Are you sure that you want to reset this service. USE WITH CAUTION!"
-msgstr ""
+msgstr "Ziur zaude zerbitzu hau berrezarri nahi duzula. EZAGUTU EZAZU!"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -4525,15 +4665,15 @@ msgstr "Autentifikatzailea hautatu"
 
 #: templates/uds/html5/login.html:89
 msgid "Sign in"
-msgstr ""
+msgstr "Hasi saioa"
 
 #: templates/uds/html5/login.html:95 templates/uds/semantic/login.html:128
 msgid "Back to login"
-msgstr ""
+msgstr "Itzuli saioa hasteko"
 
 #: templates/uds/html5/prefs.html:5 templates/uds/semantic/prefs.html:5
 msgid "UDS User Preferences"
-msgstr ""
+msgstr "UDS erabiltzailearen hobespenak"
 
 #: templates/uds/html5/prefs.html:11 templates/uds/semantic/prefs.html:11
 msgid "Cancel"
@@ -4541,14 +4681,14 @@ msgstr "Ezeztatu"
 
 #: templates/uds/html5/prefs.html:12 templates/uds/semantic/prefs.html:12
 msgid "Save Preferences"
-msgstr ""
+msgstr "Gorde hobespenak"
 
 #: templates/uds/html5/service_not_ready.html:4
 #: templates/uds/html5/service_not_ready.html:15
 #: templates/uds/semantic/service_not_ready.html:4
 #: templates/uds/semantic/service_not_ready.html:15
 msgid "The service is not ready"
-msgstr ""
+msgstr "Zerbitzua ez dago prest"
 
 #: templates/uds/html5/service_not_ready.html:17
 #: templates/uds/semantic/service_not_ready.html:17
@@ -4556,6 +4696,8 @@ msgid ""
 "The service is not ready at this moment. Please, try it again after a few "
 "seconds."
 msgstr ""
+"Zerbitzua ez dago prest une honetan. Saiatu berriro segundo batzuk igaro "
+"ondoren."
 
 #: templates/uds/html5/service_not_ready.html:18
 #: templates/uds/semantic/service_not_ready.html:18
@@ -4563,30 +4705,33 @@ msgid ""
 "The service you have requested was not ready, and it is being created right "
 "now. It will be availabe shortly"
 msgstr ""
+"Eskatu duzun zerbitzua ez zegoen prest, eta oraintxe bertan sortzen ari da. "
+"Laster erabilgarri egongo da"
 
 #: templates/uds/html5/service_not_ready.html:23
 #: templates/uds/semantic/service_not_ready.html:23
 msgid "Please, close this window and relaunch again after a while."
 msgstr ""
+"Mesedez, itxi leiho hau eta berrabiarazi berriro pixka bat egin ondoren."
 
 #: templates/uds/html5/simpleLauncher.html:4
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:4
 #: templates/uds/semantic/simpleLauncher.html:4
 #: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:4
 msgid "Service launcher"
-msgstr ""
+msgstr "Zerbitzuen abiarazlea"
 
 #: templates/uds/html5/simpleLauncher.html:9
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:9
 #: templates/uds/semantic/simpleLauncher.html:9
 #: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:9
 msgid "UDS Service launcher"
-msgstr ""
+msgstr "UDS Zerbitzuen abiarazlea"
 
 #: templates/uds/html5/simpleLauncher.html:11
 #: templates/uds/semantic/simpleLauncher.html:11
 msgid "The service you have requested is being launched."
-msgstr ""
+msgstr "Eskatu duzun zerbitzua martxan jarri da."
 
 #: templates/uds/html5/simpleLauncher.html:12
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:11
@@ -4594,11 +4739,12 @@ msgstr ""
 #: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:11
 msgid "Please, note that reloading this page will not work."
 msgstr ""
+"Mesedez, kontuan izan orri hau berriro kargatzen ez dela funtzionatuko."
 
 #: templates/uds/html5/simpleLauncher.html:13
 #: templates/uds/semantic/simpleLauncher.html:13
 msgid "To relaunch service, you will have to do it from origin."
-msgstr ""
+msgstr "Zerbitzua berriro antolatzeko, jatorria egin beharko duzu."
 
 #: templates/uds/html5/simpleLauncher.html:16
 #: templates/uds/semantic/simpleLauncher.html:16
@@ -4606,88 +4752,98 @@ msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS plugin installed"
 msgstr ""
+"Zerbitzuak automatikoki abiarazten ez badu, agian ez duzu UDS plugina "
+"instalatuta izan"
 
 #: templates/uds/html5/simpleLauncher.html:17
 #: templates/uds/semantic/simpleLauncher.html:17
 msgid "You can obtain it from the"
-msgstr ""
+msgstr "Horra hor lor dezakezu"
 
 #: templates/uds/html5/simpleLauncher.html:17
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:14
 #: templates/uds/semantic/simpleLauncher.html:17
 #: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:14
 msgid "UDS Plugin download page"
-msgstr ""
+msgstr "UDS Plugin deskargatzeko orria"
 
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:12
 #: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:12
 msgid "Close this window and try to relaunch service from origin."
-msgstr ""
+msgstr "Itxi leiho hau eta saiatu berriro jatorriz zerbitzua jartzea."
 
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:14
 #: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:14
 msgid "You can obtain required UDS plugin from the"
-msgstr ""
+msgstr "Behar den UDS plugina eskuratu dezakezu"
 
 #: templates/uds/html5/snippets/navbar.html:8
 msgid "toggle navigation"
-msgstr ""
+msgstr "nabigazio aldatzea"
 
 #: templates/uds/html5/snippets/navbar.html:25
 #: templates/uds/semantic/snippets/user-menu.html:10
 msgid "UDS Plugin"
-msgstr ""
+msgstr "UDS plugina"
 
 #: templates/uds/html5/snippets/navbar.html:26
 #: templates/uds/semantic/snippets/navbar.html:23
 msgid "About"
-msgstr ""
+msgstr "About"
 
 #: templates/uds/html5/snippets/navbar.html:42
 #: templates/uds/semantic/snippets/user-menu.html:8
 msgid "Preferences"
-msgstr ""
+msgstr "Preferences"
 
 #: templates/uds/html5/templates/base.html:61
 #: templates/uds/semantic/templates/base.html:33
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
-"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and"
-" must also disable \"Compatibility View Mode\" for this site)"
+"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
+"must also disable \"Compatibility View Mode\" for this site)"
 msgstr ""
+"Zure arakatzailea partzialki onartzen da soilik. Mesedez, eguneratu html5 "
+"nabigatzaile moderno bat Firefox bezalako, Chrome, Opera, ... (IE 10 edo "
+"hobeto izan behar du, eta \"Konektibitatea ikusi modua\" gune honetan ere "
+"desgaitu behar da."
 
 #: templates/uds/html5/templates/base.html:109
 msgid "We use cookies to track usage and preferences"
-msgstr ""
+msgstr "Cookien erabilera erabiltzen dugu eta hobespenak jarraitzeko"
 
 #: templates/uds/html5/templates/base.html:110
 msgid "I Understand"
-msgstr ""
+msgstr "Ulertzen dut"
 
 #: templates/uds/html5/templates/base.html:112
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Pribatutasun politika"
 
 #: templates/uds/semantic/about.html:41
 msgid ""
 "If you found that we missed to mention any component, please let us know"
-msgstr ""
+msgstr "Osagairik aipatu ez bazitzaigun aurkitu bazenu, jakinarazi iezaguzu"
 
 #: templates/uds/semantic/download_client.html:12
 msgid ""
 "In order to be able to execute UDS services, you need to have UDS plugin "
 "installed."
 msgstr ""
+"UDS zerbitzuak exekutatzeko gai izateko UDS plugina instalatuta eduki behar "
+"duzu."
 
 #: templates/uds/semantic/download_client.html:14
 msgid "Or download another version"
-msgstr ""
+msgstr "Edo deskargatu beste bertsioa"
 
 #: templates/uds/semantic/download_client.html:15
 msgid ""
 "In case that your platform has been incorrectly detected, you can download "
 "manually the version required for your Operating System"
 msgstr ""
+"Zure plataformak gaizki detektatu badu, eskuz deskargatu ahal izango duzu "
+"zure sistema eragilea eskatzen duen bertsioa"
 
 #: templates/uds/semantic/download_client.html:19
 msgid "Linux UDS plugin"
@@ -4707,19 +4863,19 @@ msgstr "Administratzaiearen informazioa"
 
 #: templates/uds/semantic/index.html:32
 msgid "Browser Info"
-msgstr ""
+msgstr "Arakatzailearen informazioa"
 
 #: templates/uds/semantic/index.html:124
 msgid "The service is currently in maintenance and cannot be accessed."
-msgstr ""
+msgstr "Zerbitzua mantentze-unean dago eta ezin da sartu."
 
 #: templates/uds/semantic/login.html:110
 msgid "Log In"
-msgstr ""
+msgstr "Saioa hasi"
 
 #: templates/uds/semantic/tmpl/items.html:12
 msgid "Session in use"
-msgstr ""
+msgstr "Erabilitako saioa"
 
 #: templates/uds/semantic/tmpl/items.html:13
 msgid "Maintenance"
@@ -4727,36 +4883,36 @@ msgstr "Mantentze"
 
 #: templatetags/html5.py:173
 msgid "Access limited by calendar"
-msgstr ""
+msgstr "Sarbidea egutegian mugatua"
 
 #: templatetags/html5.py:237
 msgid "Debian based Linux"
-msgstr ""
+msgstr "Debian oinarritutako Linux"
 
 #: templatetags/html5.py:237 templatetags/html5.py:238
 #: templatetags/html5.py:239 templatetags/html5.py:240
 msgid "(requires Python-2.7)"
-msgstr ""
+msgstr "(Python-2.7 behar da)"
 
 #: templatetags/html5.py:238
 msgid "Red Hat based Linux (RH, Fedora, Centos, ...)"
-msgstr ""
+msgstr "Red Hat oinarritutako Linux (RH, Fedora, Centos, ...)"
 
 #: templatetags/html5.py:239
 msgid "Suse based Linux"
-msgstr ""
+msgstr "Suse oinarritutako Linux"
 
 #: templatetags/html5.py:240
 msgid "Generic .tar.gz Linux"
-msgstr ""
+msgstr "Generikoa .tar.gz Linux"
 
 #: transports/HTML5RDP/HTML5RDP.py:62
 msgid "HTML5 RDP"
-msgstr ""
+msgstr "HTML5 RDP"
 
 #: transports/HTML5RDP/HTML5RDP.py:64
 msgid "RDP protocol using HTML5 client"
-msgstr ""
+msgstr "RDP protokoloa HTML5 bezeroa erabiliz"
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
@@ -4769,6 +4925,8 @@ msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
 msgstr ""
+"Tunel zerbitzariaren ostalaria (http / https eta ataka erabili behar izanez "
+"gero) erabiltzaileen eskura"
 
 #: transports/HTML5RDP/HTML5RDP.py:73
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:75
@@ -4778,7 +4936,7 @@ msgstr ""
 #: transports/RGS_enterprise/RGSTransport.py:45
 #: transports/RGS_enterprise/TRGSTransport.py:55
 msgid "Empty creds"
-msgstr ""
+msgstr "Kreditu hutsak"
 
 #: transports/HTML5RDP/HTML5RDP.py:73
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:75
@@ -4789,7 +4947,7 @@ msgstr ""
 #: transports/RGS_enterprise/TRGSTransport.py:55
 #: transports/SPICE/BaseSPICETransport.py:66
 msgid "If checked, the credentials used to connect will be emtpy"
-msgstr ""
+msgstr "Egiaztatuta badago, konektatzeko kredentzialak emtpy izango dira"
 
 #: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:64
 #: transports/NX/TSNXTransport.py:73
@@ -4801,6 +4959,7 @@ msgstr ""
 #: transports/X2GO/BaseX2GOTransport.py:70
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
+"Ez bada hutsik, erabiltzaile izen hau beti kredentzial gisa erabiliko da"
 
 #: transports/HTML5RDP/HTML5RDP.py:75 transports/NX/NXTransport.py:65
 #: transports/NX/TSNXTransport.py:74
@@ -4810,14 +4969,14 @@ msgstr ""
 #: transports/RGS_enterprise/TRGSTransport.py:57
 #: transports/SPICE/BaseSPICETransport.py:78
 msgid "If not empty, this password will be always used as credential"
-msgstr ""
+msgstr "Ez bada hutsik, pasahitza beti erabiliko da kredentzial gisa"
 
 #: transports/HTML5RDP/HTML5RDP.py:76
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:76
 #: transports/RDP/BaseRDPTransport.py:63
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid "Without Domain"
-msgstr ""
+msgstr "Domainik gabe"
 
 #: transports/HTML5RDP/HTML5RDP.py:76
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:76
@@ -4826,6 +4985,8 @@ msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
 msgstr ""
+"Egiaztatuta badago, domeinuaren zati hori beti hustu egingo da "
+"(konektatzeko, xrdp adibidez beharrezkoa da)"
 
 #: transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
@@ -4834,14 +4995,16 @@ msgstr ""
 #: transports/RGS_enterprise/RGSTransport.py:48
 #: transports/RGS_enterprise/TRGSTransport.py:58
 msgid ""
-"If not empty, this domain will be always used as credential (used as "
-"DOMAIN\\user)"
+"If not empty, this domain will be always used as credential (used as DOMAIN"
+"\\user)"
 msgstr ""
+"Ez bada hutsik, domeinu hau beti kredentzial gisa erabiliko da (DOMAIN \\ "
+"user gisa erabiltzen da)"
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
 msgid "Show wallpaper"
-msgstr ""
+msgstr "Erakutsi horma-papera"
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
@@ -4850,36 +5013,40 @@ msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
 msgstr ""
+"Egiaztatuta badago, horma paperak eta gaiak makina bistaratuko dira "
+"(erabiltzaile esperientzia hobea, banda zabalagoa)"
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
 #: transports/RDP/BaseRDPTransport.py:112
 msgid "Allow Desk.Comp."
-msgstr ""
+msgstr "Baimendu Desk.Comp."
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
 #: transports/RDP/BaseRDPTransport.py:112
 msgid "If checked, desktop composition will be allowed"
-msgstr ""
+msgstr "Egiaztatuta badago, mahaigaineko konposizioa onartuko da"
 
 #: transports/HTML5RDP/HTML5RDP.py:80
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:80
 #: transports/RDP/BaseRDPTransport.py:113
 #: transports/RDS_enterprise/BaseRDSTransport.py:97
 msgid "Font Smoothing"
-msgstr ""
+msgstr "Letra tipoaren leuntzea"
 
 #: transports/HTML5RDP/HTML5RDP.py:80
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:80
 #: transports/RDS_enterprise/BaseRDSTransport.py:97
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
+"Egiaztatuta badago, letra-tipoak leuntzeko aukera izango dute (leiho "
+"bezeroak bakarrik)"
 
 #: transports/HTML5RDP/HTML5RDP.py:81
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:81
 msgid "Enable Audio"
-msgstr ""
+msgstr "Gaitu audioa"
 
 #: transports/HTML5RDP/HTML5RDP.py:81
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:81
@@ -4887,11 +5054,13 @@ msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
+"Egiaztatuta badago, audioa bezeroari birbideratuko zaio (bezeroaren "
+"arakatzaileak onartzen badu)"
 
 #: transports/HTML5RDP/HTML5RDP.py:82
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:82
 msgid "Enable Printing"
-msgstr ""
+msgstr "Gaitu inprimatzea"
 
 #: transports/HTML5RDP/HTML5RDP.py:82
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:82
@@ -4899,11 +5068,13 @@ msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
+"Egiaztatuta badago, inprimaketa bezeroari birbideratuko zaio (bezeroaren "
+"arakatzaileak onartzen badu)"
 
 #: transports/HTML5RDP/HTML5RDP.py:83
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:83
 msgid "Enable File Sharing"
-msgstr ""
+msgstr "Gaitu fitxategien partekatzea"
 
 #: transports/HTML5RDP/HTML5RDP.py:83
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:83
@@ -4911,36 +5082,38 @@ msgid ""
 "If checked, the user will be able to upload/download files (if client "
 "browser supports it)"
 msgstr ""
+"Egiaztatuta badago, erabiltzaileak fitxategiak kargatu edo deskargatuko ditu "
+"(bezeroaren arakatzaileak onartzen badu)"
 
 #: transports/HTML5RDP/HTML5RDP.py:85
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:85
 msgid "Layout"
-msgstr ""
+msgstr "Layout"
 
 #: transports/HTML5RDP/HTML5RDP.py:86
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:86
 msgid "Keyboards Layout of server"
-msgstr ""
+msgstr "Teklatuak zerbitzariaren diseinua"
 
 #: transports/HTML5RDP/HTML5RDP.py:89
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:89
 msgid "English (US) keyboard"
-msgstr ""
+msgstr "Ingelesa (AEB) teklatua"
 
 #: transports/HTML5RDP/HTML5RDP.py:90
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:90
 msgid "German keyboard (qwertz)"
-msgstr ""
+msgstr "Teklatu alemana (qwertz)"
 
 #: transports/HTML5RDP/HTML5RDP.py:91
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:91
 msgid "French keyboard (azerty)"
-msgstr ""
+msgstr "Teklatu frantsesa (azerty)"
 
 #: transports/HTML5RDP/HTML5RDP.py:92
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:92
 msgid "Italian keyboard"
-msgstr ""
+msgstr "Italiako teklatua"
 
 #: transports/HTML5RDP/HTML5RDP.py:93
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:93
@@ -4950,27 +5123,27 @@ msgstr "Suediar Teklatua"
 #: transports/HTML5RDP/HTML5RDP.py:94
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:94
 msgid "Failsafe"
-msgstr ""
+msgstr "hutsegiteen aurkako"
 
 #: transports/HTML5RDP/HTML5RDP.py:100
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:100
 msgid "Security"
-msgstr ""
+msgstr "Segurtasuna"
 
 #: transports/HTML5RDP/HTML5RDP.py:101
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:101
 msgid "Connection security mode for Guacamole RDP connection"
-msgstr ""
+msgstr "Guacamole RDP konexioaren konexio segurtasun modua"
 
 #: transports/HTML5RDP/HTML5RDP.py:104
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:104
 msgid "Any (Allow the server to choose the type of auth)"
-msgstr ""
+msgstr "Edozein (Baimendu zerbitzariak auth mota aukeratzeko)"
 
 #: transports/HTML5RDP/HTML5RDP.py:105
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:105
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
-msgstr ""
+msgstr "RDP (RDP estandarraren estandarra. Zerbitzari guztiek onartzen dute)"
 
 #: transports/HTML5RDP/HTML5RDP.py:106
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:106
@@ -4978,16 +5151,18 @@ msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
 msgstr ""
+"NLA (Sareko geruzen autentifikazioa. VALID erabiltzailea eta pasahitza "
+"eskatzen ditu, edo konexioa huts egingo du)."
 
 #: transports/HTML5RDP/HTML5RDP.py:107
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:107
 msgid "TLS (Transport Security Layer encryption)"
-msgstr ""
+msgstr "TLS (Garraioaren segurtasunaren geruza enkriptatzea)"
 
 #: transports/HTML5RDP/HTML5RDP.py:115
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:115
 msgid "Ticket Validity"
-msgstr ""
+msgstr "Txartelaren balioa"
 
 #: transports/HTML5RDP/HTML5RDP.py:118
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:118
@@ -4995,11 +5170,13 @@ msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
 msgstr ""
+"Onartutako denbora, segundotan, HTML5 bezeroarentzako UDS Broker datuen "
+"birkargatzeko. 60 balio lehenetsia gomendatzen da."
 
 #: transports/HTML5RDP/HTML5RDP.py:129
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:129
 msgid "The server must be http or https"
-msgstr ""
+msgstr "Zerbitzariak http edo https izan behar du"
 
 #: transports/HTML5RDP/HTML5RDP.py:131
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:131
@@ -5007,30 +5184,32 @@ msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
 msgstr ""
+"Kredentzial hutsak (kredentzialak fitxan) bakarrik onartzen dira Segurtasun "
+"maila (Parametroen fitxan) \"RDP\" aukeran."
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:62
 msgid "HTML5 RDS for vApps"
-msgstr ""
+msgstr "HTML5 RDS vAppserako"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:64
 msgid "RDS protocol using HTML5 client for vApps"
-msgstr ""
+msgstr "RDS protokoloa HTML5 bezeroa erabiliz vApps-ekin"
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
 msgid "NX v3.5"
-msgstr ""
+msgstr "NX v3.5"
 
 #: transports/NX/NXTransport.py:59
 msgid "NX Protocol v3.5. Direct connection."
-msgstr ""
+msgstr "NX protokoloa v3.5. Zuzeneko konexioa."
 
 #: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port"
-msgstr ""
+msgstr "Entzuteko ataka"
 
 #: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port of NX (ssh) at client machine"
-msgstr ""
+msgstr "NX (ssh) entzuteko ataka bezero makinan"
 
 #: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection"
@@ -5038,7 +5217,7 @@ msgstr "Konexioa"
 
 #: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection speed for this transport (quality)"
-msgstr ""
+msgstr "Konexio-abiadura garraio honetarako (kalitatea)"
 
 #: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 msgid "Session"
@@ -5047,15 +5226,15 @@ msgstr "Sesioa"
 #: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop session"
-msgstr ""
+msgstr "Mahaigaineko saioa"
 
 #: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Disk Cache"
-msgstr ""
+msgstr "Diskoaren katxea"
 
 #: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Cache size en Mb stored at disk"
-msgstr ""
+msgstr "Cachearen tamaina en Mb diskan gordetzen da"
 
 #: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Memory Cache"
@@ -5063,11 +5242,11 @@ msgstr "Memoria cachea"
 
 #: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Cache size en Mb kept at memory"
-msgstr ""
+msgstr "Cachearen tamaina en Mb-k memoria gordetzen du"
 
 #: transports/NX/TSNXTransport.py:64
 msgid "NX protocol v3.5. Tunneled connection."
-msgstr ""
+msgstr "NX protokoloa v3.5. Tunelatutako konexioa."
 
 #: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
@@ -5084,25 +5263,29 @@ msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
 msgstr ""
+"IP edo ostalariaren tuneleko zerbitzarira bezeroaren gailura (\"IP\" "
+"publikoa) eta ataka bidaliko dira. (erabili HOST: PORT formatua)"
 
 #: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid "Tunnel host check"
-msgstr ""
+msgstr "Tunnel ostalariaren egiaztapena"
 
 #: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid ""
-"If not empty, this server will be used to check if service is running before"
-" assigning it to user. (use HOST:PORT format)"
+"If not empty, this server will be used to check if service is running before "
+"assigning it to user. (use HOST:PORT format)"
 msgstr ""
+"Ez bada hutsik, zerbitzari hau erabiltzaileari esleitu aurretik zerbitzu "
+"hori martxan jartzeko erabiliko da. (erabili HOST: PORT formatua)"
 
 #: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:107
 #: transports/RDS_enterprise/TRDSTransport.py:94
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
 msgid "Must use HOST:PORT in Tunnel Server Field"
-msgstr ""
+msgstr "HOST: PORT in Tunnel zerbitzariaren eremua erabili behar da"
 
 #: transports/NX/__init__.py:46 transports/X2GO/__init__.py:41
 msgid "NX/X2GO"
@@ -5110,239 +5293,259 @@ msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
 msgid "PCoIP Cloud Access"
-msgstr ""
+msgstr "PCoIP Cloud Access"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
 msgid "PCoIP protocol using Teradici Cloud Access."
-msgstr ""
+msgstr "PCoIP protokoloa Teradici Cloud Access erabiliz."
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 msgid "If not empty, this domain will be always used as credential domain"
-msgstr ""
+msgstr "Ez bada hutsik, domeinu hau beti kredentzial domeinu gisa erabiliko da"
 
 #: transports/RDP/BaseRDPTransport.py:63
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
 msgstr ""
+"Egiaztatuta badago, domeinuaren zati hori beti hustu egingo da (xrdp-rekin "
+"konektatzeko adibidez beharrezkoa da)"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:68
 msgid "Allow Smartcards"
-msgstr ""
+msgstr "Onartu txartel adimendunak"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:68
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr ""
+"Egiaztatuta badago, garraio honek txartel adimendunak erabiltzea "
+"ahalbidetuko du"
 
 #: transports/RDP/BaseRDPTransport.py:67
 #: transports/RDS_enterprise/BaseRDSTransport.py:69
 msgid "Allow Printers"
-msgstr ""
+msgstr "Onartu inprimagailuak"
 
 #: transports/RDP/BaseRDPTransport.py:67
 #: transports/RDS_enterprise/BaseRDSTransport.py:69
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
+"Egiaztatuta badago, garraio honek erabiltzailearen inprimagailuak erabiltzea "
+"ahalbidetuko du"
 
 #: transports/RDP/BaseRDPTransport.py:69
 #: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "Allow Drives"
-msgstr ""
+msgstr "Onartu unitateak"
 
 #: transports/RDP/BaseRDPTransport.py:71
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "Local drives redirection allowed"
-msgstr ""
+msgstr "Tokiko unitateak birbidaltzea onartzen da"
 
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid "Allow Serials"
-msgstr ""
+msgstr "Baimendu serialak"
 
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
+"Egiaztatuta badago, garraio honek erabiltzailearen serieko atakak erabiltzea "
+"ahalbidetuko du"
 
 #: transports/RDP/BaseRDPTransport.py:80
 #: transports/RDS_enterprise/BaseRDSTransport.py:82
 msgid "Enable clipboard"
-msgstr ""
+msgstr "Arbelean gaitu"
 
 #: transports/RDP/BaseRDPTransport.py:80
 #: transports/RDS_enterprise/BaseRDSTransport.py:82
 msgid "If checked, copy-paste functions will be allowed"
-msgstr ""
+msgstr "Hautatuta badago, kopiatu eta itsasteko funtzioak onartuko dira"
 
 #: transports/RDP/BaseRDPTransport.py:81
 #: transports/X2GO/BaseX2GOTransport.py:103
 msgid "Enable sound"
-msgstr ""
+msgstr "Gaitu soinua"
 
 #: transports/RDP/BaseRDPTransport.py:81
 msgid "If checked, sound will be redirected."
-msgstr ""
+msgstr "Egiaztatuta badago, soinua birbideratuko da."
 
 #: transports/RDP/BaseRDPTransport.py:82
 #: transports/RDS_enterprise/BaseRDSTransport.py:83
 msgid "Credssp Support"
-msgstr ""
+msgstr "Credssp laguntza"
 
 #: transports/RDP/BaseRDPTransport.py:82
 #: transports/RDS_enterprise/BaseRDSTransport.py:83
 msgid "If checked, will enable Credentials Provider Support)"
-msgstr ""
+msgstr "Hautatuta badago, kredentzialak hornitzailearen euskarria gaituko du)"
 
 #: transports/RDP/BaseRDPTransport.py:87
 msgid "Screen size for this transport"
-msgstr ""
+msgstr "Garraioaren tamainaren tamaina"
 
 #: transports/RDP/BaseRDPTransport.py:99
 #: transports/RDS_enterprise/BaseRDSTransport.py:86
 msgid "Color depth"
-msgstr ""
+msgstr "Koloreen sakonera"
 
 #: transports/RDP/BaseRDPTransport.py:101
 #: transports/RDS_enterprise/BaseRDSTransport.py:88
 msgid "Color depth for this connection"
-msgstr ""
+msgstr "Kolorearen sakontasuna konexio honetarako"
 
 #: transports/RDP/BaseRDPTransport.py:110
 msgid "Wallpaper/theme"
-msgstr ""
+msgstr "Wallpaper / gaiaren"
 
 #: transports/RDP/BaseRDPTransport.py:111
 msgid "Multiple monitors"
-msgstr ""
+msgstr "Hainbat monitore"
 
 #: transports/RDP/BaseRDPTransport.py:111
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr ""
+"Egiaztatuta badago, bezeroen monitore guztiak erabiliko dira erakusteko "
+"(Windows bezeroetan bakarrik funtzionatzen du)."
 
 #: transports/RDP/BaseRDPTransport.py:113
 msgid "If checked, fonts smoothing will be allowed"
-msgstr ""
+msgstr "Egiaztatuta badago, letra-tipoak leuntzeko aukera izango da"
 
 #: transports/RDP/BaseRDPTransport.py:114
 msgid "Connection Bar"
-msgstr ""
+msgstr "Konexio barra"
 
 #: transports/RDP/BaseRDPTransport.py:114
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
+"Egiaztatuta badago, konexioaren barra agertuko da (Windows bezeroetan soilik)"
 
 #: transports/RDP/BaseRDPTransport.py:116
 #: transports/RDS_enterprise/BaseRDSTransport.py:99
 msgid "Multimedia sync"
-msgstr ""
+msgstr "Multimedia sinkronizazioa"
 
 #: transports/RDP/BaseRDPTransport.py:116
 #: transports/RDS_enterprise/BaseRDSTransport.py:99
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
+"Egiaztatuta badago. Linux bezeroak xfreerdp-ren multimedia parametroa "
+"erabiliko du"
 
 #: transports/RDP/BaseRDPTransport.py:117
 #: transports/RDS_enterprise/BaseRDSTransport.py:100
 msgid "Use Alsa"
-msgstr ""
+msgstr "Erabili Alsa"
 
 #: transports/RDP/BaseRDPTransport.py:117
 #: transports/RDS_enterprise/BaseRDSTransport.py:100
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
+"Egiaztatuta badago, Linux bezeroak ALSA erabiliko du, bestela Pulse "
+"erabiliko da"
 
 #: transports/RDP/BaseRDPTransport.py:118
 #: transports/RDS_enterprise/BaseRDSTransport.py:101
 #: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect home folder"
-msgstr ""
+msgstr "Birbideratu etxeko karpeta"
 
 #: transports/RDP/BaseRDPTransport.py:118
 #: transports/RDS_enterprise/BaseRDSTransport.py:101
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
+"Egiaztatuta badago, Linux bezeroak redirect / home tokiko karpeta saiatuko da"
 
 #: transports/RDP/BaseRDPTransport.py:119
 #: transports/RDS_enterprise/BaseRDSTransport.py:102
 msgid "Printer string"
-msgstr ""
+msgstr "Inprimagailuen katea"
 
 #: transports/RDP/BaseRDPTransport.py:119
 #: transports/RDS_enterprise/BaseRDSTransport.py:102
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
+"Inprimagailua hautatuta badago, xfreerdp bezeroarekin erabiliko den "
+"inprimagailuaren katea"
 
 #: transports/RDP/BaseRDPTransport.py:120
 #: transports/RDS_enterprise/BaseRDSTransport.py:103
 msgid "Smartcard string"
-msgstr ""
+msgstr "Smartcard katea"
 
 #: transports/RDP/BaseRDPTransport.py:120
 #: transports/RDS_enterprise/BaseRDSTransport.py:103
-msgid ""
-"If smartcard is checked, the smartcard string used with xfreerdp client"
+msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
+"Smartcard egiaztatzen bada, xfreerdp bezeroarekin erabilitako smartcard katea"
 
 #: transports/RDP/BaseRDPTransport.py:121
 #: transports/RDS_enterprise/BaseRDSTransport.py:104
 msgid "Custom parameters"
-msgstr ""
+msgstr "Parametro pertsonalizatuak"
 
 #: transports/RDP/BaseRDPTransport.py:121
 #: transports/RDS_enterprise/BaseRDSTransport.py:104
 msgid ""
-"If not empty, extra parameter to include for Linux Client (for example "
-"/usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)"
+"If not empty, extra parameter to include for Linux Client (for example /usb:"
+"id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgstr ""
+"Ez bada hutsik, parametro gehigarria Linux Client-era sartzeko (adibidez / "
+"usb: id, dev: 054c: 0268 edo zure xfreerdp bezeroarekin bateragarria)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
 msgid "RDP"
-msgstr ""
+msgstr "RDP"
 
 #: transports/RDP/RDPTransport.py:57
 msgid "RDP Protocol. Direct connection."
-msgstr ""
+msgstr "RDP protokoloa. Zuzeneko konexioa."
 
 #: transports/RDP/TRDPTransport.py:65
 msgid "RDP Protocol. Tunneled connection."
-msgstr ""
+msgstr "RDP protokoloa. Tunelatutako konexioa."
 
 #: transports/RDP/TRDPTransport.py:73
 #: transports/RDS_enterprise/TRDSTransport.py:71
 msgid "Tunnel wait time"
-msgstr ""
+msgstr "Tunnel itxaron denbora"
 
 #: transports/RDP/TRDPTransport.py:73
 #: transports/RDS_enterprise/TRDSTransport.py:71
 msgid "Maximum time to wait before closing the tunnel listener"
-msgstr ""
+msgstr "Gehienez tunelaren entzungailua itxi aurretik itxaron beharra"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
 msgid "RDS for vApps"
-msgstr ""
+msgstr "RDAs for vApps"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
 msgid "RDS access using RDP for vApps. Direct connection."
-msgstr ""
+msgstr "RDS sarbidea vPps bidez RDP erabiliz. Zuzeneko konexioa."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
 msgid "RDS access using RDP for vApps. Tunneled connection."
-msgstr ""
+msgstr "RDS sarbidea vPps bidez RDP erabiliz. Tunelatutako konexioa."
 
 #: transports/RGS_enterprise/RGSTransport.py:37
 #: transports/RGS_enterprise/TRGSTransport.py:43
 msgid "RGS"
-msgstr ""
+msgstr "RGS"
 
 #: transports/RGS_enterprise/RGSTransport.py:39
 msgid "RGS Protocol. Direct connection."
-msgstr ""
+msgstr "RGS protokoloa. Zuzeneko konexioa."
 
 #: transports/RGS_enterprise/RGSTransport.py:49
 #: transports/RGS_enterprise/TRGSTransport.py:59
@@ -5352,22 +5555,24 @@ msgstr "Irudi kalitatea"
 #: transports/RGS_enterprise/RGSTransport.py:50
 #: transports/RGS_enterprise/TRGSTransport.py:60
 msgid "Quality of image codec (0-100)"
-msgstr ""
+msgstr "Irudiaren kodeketa kalitatea (0-100)"
 
 #: transports/RGS_enterprise/RGSTransport.py:51
 #: transports/RGS_enterprise/TRGSTransport.py:61
 msgid "Adjustable Quality"
-msgstr ""
+msgstr "Kalitate erregulagarria"
 
 #: transports/RGS_enterprise/RGSTransport.py:52
 #: transports/RGS_enterprise/TRGSTransport.py:62
 msgid "If checked, the image quality will be adjustable with bandwidth"
 msgstr ""
+"Egiaztatuta badago, irudiaren kalitatea banda zabalera erregulagarria izango "
+"da"
 
 #: transports/RGS_enterprise/RGSTransport.py:53
 #: transports/RGS_enterprise/TRGSTransport.py:63
 msgid "Min. Adjustable Quality"
-msgstr ""
+msgstr "Min. Kalitate erregulagarria"
 
 #: transports/RGS_enterprise/RGSTransport.py:54
 #: transports/RGS_enterprise/TRGSTransport.py:64
@@ -5375,21 +5580,23 @@ msgid ""
 "The lowest image quality applied to images to maintain the minimum update "
 "rate."
 msgstr ""
+"Irudiekin aplikatutako irudien kalitate txikiena, gutxieneko eguneratze-tasa "
+"mantentzeko."
 
 #: transports/RGS_enterprise/RGSTransport.py:55
 #: transports/RGS_enterprise/TRGSTransport.py:65
 msgid "Adjustable Frame Rate"
-msgstr ""
+msgstr "Marko erregulagarria"
 
 #: transports/RGS_enterprise/RGSTransport.py:56
 #: transports/RGS_enterprise/TRGSTransport.py:66
 msgid "Update rate threshold to begin adjusting image quality"
-msgstr ""
+msgstr "Eguneratze-tasa atalasea irudiaren kalitatea egokituz"
 
 #: transports/RGS_enterprise/RGSTransport.py:57
 #: transports/RGS_enterprise/TRGSTransport.py:67
 msgid "Match Local Resolution"
-msgstr ""
+msgstr "Partiduen tokiko ebazpena"
 
 #: transports/RGS_enterprise/RGSTransport.py:58
 #: transports/RGS_enterprise/TRGSTransport.py:68
@@ -5397,40 +5604,42 @@ msgid ""
 "Change the Sender's resolution to match the Receiver's resolution when "
 "connecting"
 msgstr ""
+"Aldatu bidaltzailearen bereizmena hargailuaren bereizmena konektatzean "
+"konektatzean"
 
 #: transports/RGS_enterprise/RGSTransport.py:59
 #: transports/RGS_enterprise/TRGSTransport.py:69
 msgid "Redirect USB"
-msgstr ""
+msgstr "Birbideratu USBa"
 
 #: transports/RGS_enterprise/RGSTransport.py:60
 #: transports/RGS_enterprise/TRGSTransport.py:70
 msgid "If checked, the USB will be redirected."
-msgstr ""
+msgstr "Egiaztatuta badago, USBa birbideratuko da."
 
 #: transports/RGS_enterprise/RGSTransport.py:61
 #: transports/RGS_enterprise/TRGSTransport.py:71
 msgid "Redirect Audio"
-msgstr ""
+msgstr "Audio birzuzenketa"
 
 #: transports/RGS_enterprise/RGSTransport.py:62
 #: transports/RGS_enterprise/TRGSTransport.py:72
 msgid "If checked, the Audio will be redirected."
-msgstr ""
+msgstr "Hautatuta badago, audioa birbideratuko da."
 
 #: transports/RGS_enterprise/RGSTransport.py:63
 #: transports/RGS_enterprise/TRGSTransport.py:73
 msgid "Redirect Mic"
-msgstr ""
+msgstr "Birzuzenketa Mic"
 
 #: transports/RGS_enterprise/RGSTransport.py:64
 #: transports/RGS_enterprise/TRGSTransport.py:74
 msgid "If checked, the Mic will be redirected."
-msgstr ""
+msgstr "Egiaztatuta, Mikroa birbideratuko da."
 
 #: transports/RGS_enterprise/TRGSTransport.py:45
 msgid "RGS Protocol. Tunneled connection"
-msgstr ""
+msgstr "RGS protokoloa. Tunelatutako konexioa"
 
 #: transports/SPICE/BaseSPICETransport.py:65
 msgid "Empty credentials"
@@ -5438,83 +5647,91 @@ msgstr "Egiaztagiri gabe"
 
 #: transports/SPICE/BaseSPICETransport.py:86
 msgid ""
-"Server certificate (public), can be found on your ovirt engine, probably at "
-"/etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
+"Server certificate (public), can be found on your ovirt engine, probably at /"
+"etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
 msgstr ""
+"Zerbitzariaren ziurtagiria (publikoa) zure ovirt motorrean aurki daiteke, "
+"seguruenik /etc/pki/ovirt-engine/certs/ca.der (Fitxategi honen edukia "
+"erabili)."
 
 #: transports/SPICE/BaseSPICETransport.py:91
 msgid "Fullscreen Mode"
-msgstr ""
+msgstr "Pantaila osoko modua"
 
 #: transports/SPICE/BaseSPICETransport.py:92
 #: transports/X2GO/BaseX2GOTransport.py:77
 msgid "If checked, viewer will be shown on fullscreen mode-"
-msgstr ""
+msgstr "Egiaztatuta badago, ikuslea pantaila osoko moduan erakutsiko da."
 
 #: transports/SPICE/BaseSPICETransport.py:97
 msgid "Smartcard Redirect"
-msgstr ""
+msgstr "Smartcard Birzuzenketa"
 
 #: transports/SPICE/BaseSPICETransport.py:98
 msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgstr ""
+"Egiaztatuta badago, SPICE protokoloak txartel adimendunaren birbideratzea "
+"ahalbidetuko du."
 
 #: transports/SPICE/BaseSPICETransport.py:104
 msgid "Enable USB"
-msgstr ""
+msgstr "Gaitu USBa"
 
 #: transports/SPICE/BaseSPICETransport.py:105
 msgid "If checked, USB redirection will be allowed."
-msgstr ""
+msgstr "Egiaztatuta badago, USB birbideratzea onartuko da."
 
 #: transports/SPICE/BaseSPICETransport.py:111
 msgid "New USB Auto Sharing"
-msgstr ""
+msgstr "USB Auto partekatzea berria"
 
 #: transports/SPICE/BaseSPICETransport.py:112
 msgid "Auto-redirect USB devices when plugged in."
-msgstr ""
+msgstr "Birbidali automatikoki USB gailuak konektatzean."
 
-#: transports/SPICE/SPICETransport.py:52
-#: transports/SPICE/TSPICETransport.py:60
+#: transports/SPICE/SPICETransport.py:52 transports/SPICE/TSPICETransport.py:60
 msgid "SPICE"
-msgstr ""
+msgstr "SPICE"
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Protocol. Direct connection."
-msgstr ""
+msgstr "SPICE protokoloa. Zuzeneko konexioa."
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Protocol. Tunneled connection."
-msgstr ""
+msgstr "SPICE protokoloa. Tunelatutako konexioa."
 
 #: transports/X2GO/BaseX2GOTransport.py:76
 msgid "Show fullscreen"
-msgstr ""
+msgstr "Erakutsi osoko pantaila"
 
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop"
-msgstr ""
+msgstr "Ordenagailurako"
 
 #: transports/X2GO/BaseX2GOTransport.py:96
 msgid "vAPP"
-msgstr ""
+msgstr "vApp"
 
 #: transports/X2GO/BaseX2GOTransport.py:97
 msgid ""
 "If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
 "executed. If UDS vAPP is not selected, this field will be ignored."
 msgstr ""
+"UDS vAPP \"Desktop\" gisa hautatzen bada, exekutatu beharreko aplikazioaren "
+"FULL PATH. UDS vAPP ez bada hautatzen, eremu hau ez da kontuan hartuko."
 
 #: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"
-msgstr ""
+msgstr "Egiaztatuta badago, soinua erabilgarri egongo da"
 
 #: transports/X2GO/BaseX2GOTransport.py:112
 msgid ""
-"If checked, user home folder will be redirected. (On linux, also redirects "
-"/media)"
+"If checked, user home folder will be redirected. (On linux, also redirects /"
+"media)"
 msgstr ""
+"Egiaztatuta badago, erabiltzaileen etxeko karpeta birbideratuko da. (On "
+"linux, redirects / media ere)"
 
 #: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
@@ -5526,11 +5743,11 @@ msgstr "Konexio abiadura"
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Sound"
-msgstr ""
+msgstr "soinua"
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Sound server"
-msgstr ""
+msgstr "Soinu-zerbitzaria"
 
 #: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard"
@@ -5538,15 +5755,15 @@ msgstr "Teklatua"
 
 #: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard layout (es, us, fr, ...). Empty value means autodetect."
-msgstr ""
+msgstr "Teklatuaren diseinua (es, us, fr, ...). Balio hutsa autodetekzioa da."
 
 #: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack"
-msgstr ""
+msgstr "Pack"
 
 #: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack format. Change with care!"
-msgstr ""
+msgstr "Pakete formatua. Aldatu arretaz!"
 
 #: transports/X2GO/BaseX2GOTransport.py:160
 msgid "Quality"
@@ -5554,29 +5771,31 @@ msgstr "Kalitatea"
 
 #: transports/X2GO/BaseX2GOTransport.py:160
 msgid "Quality value used on some pack formats."
-msgstr ""
+msgstr "Pakete formatu batzuetan erabilitako kalitate-balioa."
 
 #: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
 msgid "X2Go"
-msgstr ""
+msgstr "X2Go"
 
 #: transports/X2GO/TX2GOTransport.py:60
 msgid "X2Go access (Experimental). Tunneled connection."
-msgstr ""
+msgstr "X2Go sarbidea (esperimentala). Tunelatutako konexioa."
 
 #: transports/X2GO/X2GOTransport.py:55
 msgid "X2Go access (Experimental). Direct connection."
-msgstr ""
+msgstr "X2Go sarbidea (esperimentala). Zuzeneko konexioa."
 
 #: web/errors.py:72
 msgid "Unknown error"
-msgstr ""
+msgstr "Errore ezezaguna"
 
 #: web/errors.py:76
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr ""
+"Zerbitzu baliogabea. Une honetan zerbitzua ez dago erabilgarri. Saiatu "
+"geroago"
 
 #: web/errors.py:77
 msgid "Maximum services limit reached. Please, contact administrator"
@@ -5584,11 +5803,11 @@ msgstr "Gehienezko zerbitzuak mugara iritsi. Mesedez, harremanetan ipini"
 
 #: web/errors.py:78
 msgid "You need to enable cookies to let this application work"
-msgstr ""
+msgstr "Cookieak gaitu behar dituzu aplikazioa lan egiteko"
 
 #: web/errors.py:80
 msgid "Authenticator not found"
-msgstr ""
+msgstr "Autentifikatzailea ez da aurkitu"
 
 #: web/errors.py:81
 msgid "Invalid authenticator"
@@ -5596,23 +5815,25 @@ msgstr "Balio gabeko autentifikatzailea"
 
 #: web/errors.py:82
 msgid "Invalid request received"
-msgstr ""
+msgstr "Jasotako eskaera baliogabea"
 
 #: web/errors.py:83
 msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
 msgstr ""
+"Zure arakatzailea ez da onartzen. Mesedez, eguneratu HTML5 arakatzaile "
+"moderno bat Firefox edo Chrome bezalako"
 
 #: web/errors.py:84
 msgid "The requested service is in maintenance mode"
-msgstr ""
+msgstr "Eskatutako zerbitzua mantenimendu moduan dago"
 
 #: web/errors.py:85
 msgid ""
 "The service is not ready.\n"
 "Please, try again in a few moments."
-msgstr ""
+msgstr "Zerbitzua ez dago prest. Saiatu berriro uneoro."
 
 #: web/errors.py:86
 msgid "Preparing service"
@@ -5620,7 +5841,7 @@ msgstr "Zerbitzua prestatzen"
 
 #: web/errors.py:87
 msgid "Service access denied by calendars"
-msgstr ""
+msgstr "Zerbitzu sarbidea egutegien bidez ukatua"
 
 #: web/forms/LoginForm.py:60
 msgid "authenticator"
@@ -5628,18 +5849,21 @@ msgstr "Autentifikatzaile"
 
 #: web/views/auth.py:142
 msgid "Authenticator does not provide information"
-msgstr ""
+msgstr "Autentifikatzaileak ez du informazioa ematen"
 
 #: web/views/client_download.py:53
 msgid "UDS Plugin preferences"
-msgstr ""
+msgstr "UDS Plugin hobespenak"
 
 #: web/views/index.py:190
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
 msgstr ""
+"Zerbitzu hau bertsio berri bat ordeztu behar da. Mesedez, itxaron saioa {} "
+"aurretik eta gorde zure lana guztia galdu gabe uzteko."
 
 #: web/views/service.py:116
 msgid "Service not ready. Please, try again in a while."
-msgstr "Mesedez, aldi batean proba ezazu, zerbitzua ez dago prest oraindik eta."
+msgstr ""
+"Mesedez, aldi batean proba ezazu, zerbitzua ez dago prest oraindik eta."
