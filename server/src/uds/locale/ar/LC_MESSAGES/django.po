@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
-"PO-Revision-Date: 2018-11-27 10:57+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
+"POT-Creation-Date: 2019-01-09 13:29+0100\n"
+"PO-Revision-Date: 2018-11-29 09:18+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
 "Language: ar\n"
@@ -1310,11 +1310,11 @@ msgid ""
 "attribute)"
 msgstr "يبدو أن سمة معرف مجموعة Ldap غير صحيحة (لا توجد أي مجموعةلهذه السمة)"
 
-#: auths/SAML_enterprise/SAML.py:82
+#: auths/SAML_enterprise/SAML.py:83
 msgid "SAML Authenticator"
 msgstr "المصادق SAML"
 
-#: auths/SAML_enterprise/SAML.py:94
+#: auths/SAML_enterprise/SAML.py:95
 msgid "SAML (v2.0) Authenticator"
 msgstr "المصادق (SAML (v2.0"
 
@@ -1434,7 +1434,7 @@ msgstr " (تم الحصول عليها من URL)"
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML لا تبدو صالحة لبيانات التعريف IDP Metadata"
 
-#: auths/SAML_enterprise/SAML.py:233
+#: auths/SAML_enterprise/SAML.py:232
 msgid "Can't access idp metadata"
 msgstr "لا يمكن الوصول إلى بيانات التعريف IDP Metadata"
 

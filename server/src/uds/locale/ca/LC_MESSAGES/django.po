@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
-"PO-Revision-Date: 2018-11-27 10:20+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
+"POT-Creation-Date: 2019-01-09 13:29+0100\n"
+"PO-Revision-Date: 2018-11-29 09:18+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -1338,11 +1338,11 @@ msgstr ""
 "L'atribut d'ID de grup de LDAP sembla incorrecte (no s'ha trobat cap grup "
 "amb aquest atribut)"
 
-#: auths/SAML_enterprise/SAML.py:82
+#: auths/SAML_enterprise/SAML.py:83
 msgid "SAML Authenticator"
 msgstr "Autenticador SAML"
 
-#: auths/SAML_enterprise/SAML.py:94
+#: auths/SAML_enterprise/SAML.py:95
 msgid "SAML (v2.0) Authenticator"
 msgstr "Autenticador SAML (v2.0)"
 
@@ -1464,7 +1464,7 @@ msgstr " (obtingut de l'URL)"
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "El XML no sembla vàlid per a metadades IDP"
 
-#: auths/SAML_enterprise/SAML.py:233
+#: auths/SAML_enterprise/SAML.py:232
 msgid "Can't access idp metadata"
 msgstr "No es pot accedir a les metadades IDP"
 

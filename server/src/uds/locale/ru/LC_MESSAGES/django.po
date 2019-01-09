@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
-"PO-Revision-Date: 2018-11-20 10:03+0000\n"
+"POT-Creation-Date: 2019-01-09 13:29+0100\n"
+"PO-Revision-Date: 2018-11-29 09:18+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -1331,11 +1331,11 @@ msgstr ""
 "Идентификатор аттрибута LDAP группы вероятно неверный (невозможно найти "
 "группу с такими аттрибутами)"
 
-#: auths/SAML_enterprise/SAML.py:82
+#: auths/SAML_enterprise/SAML.py:83
 msgid "SAML Authenticator"
 msgstr "SAML аутентификатор"
 
-#: auths/SAML_enterprise/SAML.py:94
+#: auths/SAML_enterprise/SAML.py:95
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML (v2.0) аутентификатор"
 
@@ -1457,7 +1457,7 @@ msgstr "(полученный из URL)"
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML не подходит для метаданных IDP"
 
-#: auths/SAML_enterprise/SAML.py:233
+#: auths/SAML_enterprise/SAML.py:232
 msgid "Can't access idp metadata"
 msgstr "Нет доступа к IDP метаданным"
 

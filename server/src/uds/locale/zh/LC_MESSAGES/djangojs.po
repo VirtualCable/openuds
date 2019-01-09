@@ -7,12 +7,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
-"PO-Revision-Date: 2018-11-27 10:16+0000\n"
+"POT-Creation-Date: 2019-01-09 13:30+0100\n"
+"PO-Revision-Date: 2019-01-09 11:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Chinese (China) (http://www.transifex.com/openuds/openuds/"
-"language/zh_CN/)\n"
-"Language: zh_CN\n"
+"Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
+"zh/)\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,1031 +20,1031 @@ msgstr ""
 
 #: static/tmp_js/api-tools.js:378
 msgid "Sunday"
-msgstr ""
+msgstr "星期日"
 
 #: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
 msgid "Monday"
-msgstr ""
+msgstr "星期一"
 
 #: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
 msgid "Tuesday"
-msgstr ""
+msgstr "星期二"
 
 #: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
 msgid "Wednesday"
-msgstr ""
+msgstr "星期三"
 
 #: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
 msgid "Thursday"
-msgstr ""
+msgstr "星期四"
 
 #: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
 msgid "Friday"
-msgstr ""
+msgstr "星期五"
 
 #: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
 msgid "Saturday"
-msgstr ""
+msgstr "星期六"
 
 #: static/tmp_js/api-tools.js:380
 msgid "January"
-msgstr ""
+msgstr "一月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "February"
-msgstr ""
+msgstr "二月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "March"
-msgstr ""
+msgstr "游行"
 
 #: static/tmp_js/api-tools.js:380
 msgid "April"
-msgstr ""
+msgstr "四月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "May"
-msgstr ""
+msgstr "可以"
 
 #: static/tmp_js/api-tools.js:380
 msgid "June"
-msgstr ""
+msgstr "六月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "July"
-msgstr ""
+msgstr "七月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "August"
-msgstr ""
+msgstr "八月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "September"
-msgstr ""
+msgstr "九月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "October"
-msgstr ""
+msgstr "十月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "November"
-msgstr ""
+msgstr "十一月"
 
 #: static/tmp_js/api-tools.js:380
 msgid "December"
-msgstr ""
+msgstr "十二月"
 
 #: static/tmp_js/gui-d-authenticators.js:12 static/tmp_js/gui-d-services.js:34
 msgid "Test"
-msgstr ""
+msgstr "测试"
 
 #: static/tmp_js/gui-d-authenticators.js:49
 msgid "Search error"
-msgstr ""
+msgstr "搜索错误"
 
 #: static/tmp_js/gui-d-authenticators.js:58 static/tmp_js/gui-form.js:354
 msgid "Accept"
-msgstr ""
+msgstr "接受"
 
 #: static/tmp_js/gui-d-authenticators.js:164
 #: static/tmp_js/gui-d-connectivity.js:45 static/tmp_js/gui-d-osmanagers.js:43
 #: static/tmp_js/gui-d-services.js:114 static/tmp_js/gui-d-services.js:176
 #: static/tmp_js/gui-d-servicespools.js:247
 msgid "Error accessing data"
-msgstr ""
+msgstr "访问数据时出错"
 
 #: static/tmp_js/gui-d-authenticators.js:184
 #: static/tmp_js/gui-d-authenticators.js:464
 #: static/tmp_js/gui-d-services.js:140
 msgid "Information"
-msgstr ""
+msgstr "信息"
 
 #: static/tmp_js/gui-d-authenticators.js:224
 msgid "Group information"
-msgstr ""
+msgstr "集团信息"
 
 #: static/tmp_js/gui-d-authenticators.js:367
 msgid "Edit group"
-msgstr ""
+msgstr "编辑组"
 
 #: static/tmp_js/gui-d-authenticators.js:391
 #: static/tmp_js/gui-d-authenticators.js:441
 msgid "Group saved"
-msgstr ""
+msgstr "小组已保存"
 
 #: static/tmp_js/gui-d-authenticators.js:416
 msgid "New meta group"
-msgstr ""
+msgstr "新元组"
 
 #: static/tmp_js/gui-d-authenticators.js:419
 msgid "New group"
-msgstr ""
+msgstr "新组"
 
 #: static/tmp_js/gui-d-authenticators.js:433
 msgid "Search groups"
-msgstr ""
+msgstr "搜索组"
 
 #: static/tmp_js/gui-d-authenticators.js:433
 #: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:91
 msgid "Group"
-msgstr ""
+msgstr "组"
 
 #: static/tmp_js/gui-d-authenticators.js:433
 msgid "Groups found"
-msgstr ""
+msgstr "找到的群组"
 
 #: static/tmp_js/gui-d-authenticators.js:442
 msgid "Group saving error"
-msgstr ""
+msgstr "组保存错误"
 
 #: static/tmp_js/gui-d-authenticators.js:456
 msgid "Delete group"
-msgstr ""
+msgstr "删除组"
 
 #: static/tmp_js/gui-d-authenticators.js:456
 msgid "Group deletion error"
-msgstr ""
+msgstr "组删除错误"
 
 #: static/tmp_js/gui-d-authenticators.js:499
 msgid "User information"
-msgstr ""
+msgstr "用户信息"
 
 #: static/tmp_js/gui-d-authenticators.js:672
 msgid "Edit user"
-msgstr ""
+msgstr "编辑用户"
 
 #: static/tmp_js/gui-d-authenticators.js:705
 #: static/tmp_js/gui-d-authenticators.js:738
 msgid "User saved"
-msgstr ""
+msgstr "用户已保存"
 
 #: static/tmp_js/gui-d-authenticators.js:706
 #: static/tmp_js/gui-d-authenticators.js:739
 msgid "User saving error"
-msgstr ""
+msgstr "用户保存错误"
 
 #: static/tmp_js/gui-d-authenticators.js:718
 msgid "New user"
-msgstr ""
+msgstr "新用户"
 
 #: static/tmp_js/gui-d-authenticators.js:729
 msgid "Search users"
-msgstr ""
+msgstr "搜索用户"
 
 #: static/tmp_js/gui-d-authenticators.js:729
 #: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:88
 msgid "User"
-msgstr ""
+msgstr "用户"
 
 #: static/tmp_js/gui-d-authenticators.js:729
 msgid "Users found"
-msgstr ""
+msgstr "用户发现"
 
 #: static/tmp_js/gui-d-authenticators.js:744
 msgid "Delete user"
-msgstr ""
+msgstr "删除用户"
 
 #: static/tmp_js/gui-d-authenticators.js:744
 msgid "User deletion error"
-msgstr ""
+msgstr "用户删除错误"
 
 #: static/tmp_js/gui-d-authenticators.js:756
 msgid "New authenticator"
-msgstr ""
+msgstr "新的验证器"
 
 #: static/tmp_js/gui-d-authenticators.js:756
 msgid "Authenticator creation error"
-msgstr ""
+msgstr "验证器创建错误"
 
 #: static/tmp_js/gui-d-authenticators.js:757
 msgid "Edit authenticator"
-msgstr ""
+msgstr "编辑身份验证器"
 
 #: static/tmp_js/gui-d-authenticators.js:757
 msgid "Authenticator saving error"
-msgstr ""
+msgstr "验证器保存错误"
 
 #: static/tmp_js/gui-d-authenticators.js:758
 msgid "Delete authenticator"
-msgstr ""
+msgstr "删除身份验证器"
 
 #: static/tmp_js/gui-d-authenticators.js:758
 msgid "Authenticator deletion error"
-msgstr ""
+msgstr "验证者删除错误"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "day"
-msgstr ""
+msgstr "天"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "days"
-msgstr ""
+msgstr "天"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "Daily"
-msgstr ""
+msgstr "日常"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "week"
-msgstr ""
+msgstr "周"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "weeks"
-msgstr ""
+msgstr "周"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "Weekly"
-msgstr ""
+msgstr "每周"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "month"
-msgstr ""
+msgstr "月"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "months"
-msgstr ""
+msgstr "个月"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "Monthly"
-msgstr ""
+msgstr "每月一次"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "year"
-msgstr ""
+msgstr "年"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "years"
-msgstr ""
+msgstr "年份"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "Yearly"
-msgstr ""
+msgstr "每年"
 
 #: static/tmp_js/gui-d-calendar.js:27
 msgid "Weekdays"
-msgstr ""
+msgstr "平日"
 
 #: static/tmp_js/gui-d-calendar.js:30
 msgid "Minutes"
-msgstr ""
+msgstr "分钟"
 
 #: static/tmp_js/gui-d-calendar.js:31
 msgid "Hours"
-msgstr ""
+msgstr "小时"
 
 #: static/tmp_js/gui-d-calendar.js:32
 msgid "Days"
-msgstr ""
+msgstr "天"
 
 #: static/tmp_js/gui-d-calendar.js:33
 msgid "Weeks"
-msgstr ""
+msgstr "周"
 
 #: static/tmp_js/gui-d-calendar.js:35
 msgid "Sun"
-msgstr ""
+msgstr "太阳"
 
 #: static/tmp_js/gui-d-calendar.js:51
 msgid "(no days)"
-msgstr ""
+msgstr "（没有日子）"
 
 #: static/tmp_js/gui-d-calendar.js:152
 msgid "This rule will be valid every "
-msgstr ""
+msgstr "这条规则每个都有效"
 
 #: static/tmp_js/gui-d-calendar.js:154
 msgid "of any week"
-msgstr ""
+msgstr "任何一周"
 
 #: static/tmp_js/gui-d-calendar.js:162
 msgid "from"
-msgstr ""
+msgstr "从"
 
 #: static/tmp_js/gui-d-calendar.js:164
 msgid "onwards"
-msgstr ""
+msgstr "向前"
 
 #: static/tmp_js/gui-d-calendar.js:166
 msgid "until "
-msgstr ""
+msgstr "直到"
 
 #: static/tmp_js/gui-d-calendar.js:168
 msgid "starting at"
-msgstr ""
+msgstr "开始于"
 
 #: static/tmp_js/gui-d-calendar.js:171
 msgid "and will remain valid for"
-msgstr ""
+msgstr "并将继续有效"
 
 #: static/tmp_js/gui-d-calendar.js:173
 msgid "with no duration"
-msgstr ""
+msgstr "没有持续时间"
 
 #: static/tmp_js/gui-d-calendar.js:209
 msgid "New rule"
-msgstr ""
+msgstr "新规则"
 
 #: static/tmp_js/gui-d-calendar.js:209
 msgid "Edit rule"
-msgstr ""
+msgstr "编辑规则"
 
 #: static/tmp_js/gui-d-calendar.js:210
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: static/tmp_js/gui-d-calendar.js:316
 msgid "Error creating rule"
-msgstr ""
+msgstr "创建规则时出错"
 
 #: static/tmp_js/gui-d-calendar.js:319
 msgid "Error saving rule"
-msgstr ""
+msgstr "保存规则时出错"
 
 #: static/tmp_js/gui-d-calendar.js:367
 msgid "Delete rule"
-msgstr ""
+msgstr "删除规则"
 
 #: static/tmp_js/gui-d-calendar.js:367
 msgid "Rule deletion error"
-msgstr ""
+msgstr "规则删除错误"
 
 #: static/tmp_js/gui-d-calendar.js:374
 msgid "New calendar"
-msgstr ""
+msgstr "新日历"
 
 #: static/tmp_js/gui-d-calendar.js:374
 msgid "Calendar creation error"
-msgstr ""
+msgstr "日历创建错误"
 
 #: static/tmp_js/gui-d-calendar.js:375
 msgid "Edit calendar"
-msgstr ""
+msgstr "编辑日历"
 
 #: static/tmp_js/gui-d-calendar.js:375
 msgid "Calendar saving error"
-msgstr ""
+msgstr "日历保存错误"
 
 #: static/tmp_js/gui-d-calendar.js:376
 msgid "Delete calendar"
-msgstr ""
+msgstr "删除日历"
 
 #: static/tmp_js/gui-d-calendar.js:376
 msgid "Calendar deletion error"
-msgstr ""
+msgstr "日历删除错误"
 
 #: static/tmp_js/gui-d-config.js:58
 msgid "Configuration saved"
-msgstr ""
+msgstr "配置已保存"
 
 #: static/tmp_js/gui-d-config.js:62
 msgid "No changes has been made"
-msgstr ""
+msgstr "没有任何变化"
 
 #: static/tmp_js/gui-d-connectivity.js:65
 msgid "New transport"
-msgstr ""
+msgstr "新运输"
 
 #: static/tmp_js/gui-d-connectivity.js:65
 msgid "Transport creation error"
-msgstr ""
+msgstr "传输创建错误"
 
 #: static/tmp_js/gui-d-connectivity.js:66
 msgid "Edit transport"
-msgstr ""
+msgstr "编辑传输"
 
 #: static/tmp_js/gui-d-connectivity.js:66
 msgid "Transport saving error"
-msgstr ""
+msgstr "运输保存错误"
 
 #: static/tmp_js/gui-d-connectivity.js:67
 msgid "Delete transport"
-msgstr ""
+msgstr "删除传输"
 
 #: static/tmp_js/gui-d-connectivity.js:67
 msgid "Transport deletion error"
-msgstr ""
+msgstr "传输删除错误"
 
 #: static/tmp_js/gui-d-connectivity.js:74
 msgid "New network"
-msgstr ""
+msgstr "新网络"
 
 #: static/tmp_js/gui-d-connectivity.js:74
 msgid "Network creation error"
-msgstr ""
+msgstr "网络创建错误"
 
 #: static/tmp_js/gui-d-connectivity.js:75
 msgid "Edit network"
-msgstr ""
+msgstr "编辑网络"
 
 #: static/tmp_js/gui-d-connectivity.js:75
 msgid "Network saving error"
-msgstr ""
+msgstr "网络保存错误"
 
 #: static/tmp_js/gui-d-connectivity.js:76
 msgid "Delete network"
-msgstr ""
+msgstr "删除网络"
 
 #: static/tmp_js/gui-d-connectivity.js:76
 msgid "Network deletion error"
-msgstr ""
+msgstr "网络删除错误"
 
 #: static/tmp_js/gui-d-dashboard.js:40
 msgid "Staff member"
-msgstr ""
+msgstr "工作人员"
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "New image"
-msgstr ""
+msgstr "新图片"
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "Edit image"
-msgstr ""
+msgstr "编辑图像"
 
 #: static/tmp_js/gui-d-gallery.js:18
 msgid "Upload"
-msgstr ""
+msgstr "上传"
 
 #: static/tmp_js/gui-d-gallery.js:26
 msgid "You must select an image"
-msgstr ""
+msgstr "您必须选择图像"
 
 #: static/tmp_js/gui-d-gallery.js:34
 msgid "Image is too big (max. upload size is 256Kb)"
-msgstr ""
+msgstr "图像太大（最大上传大小为256Kb）"
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Delete Image"
-msgstr ""
+msgstr "删除图片"
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Image deletion error"
-msgstr ""
+msgstr "图像删除错误"
 
 #: static/tmp_js/gui-d-osmanagers.js:46
 msgid "New OSManager"
-msgstr ""
+msgstr "新的OSManager"
 
 #: static/tmp_js/gui-d-osmanagers.js:46
 msgid "OSManager creation error"
-msgstr ""
+msgstr "OSManager创建错误"
 
 #: static/tmp_js/gui-d-osmanagers.js:47
 msgid "Edit OSManager"
-msgstr ""
+msgstr "编辑OSManager"
 
 #: static/tmp_js/gui-d-osmanagers.js:47
 msgid "OSManager saving error"
-msgstr ""
+msgstr "OSManager保存错误"
 
 #: static/tmp_js/gui-d-osmanagers.js:48
 msgid "Delete OSManager"
-msgstr ""
+msgstr "删除OSManager"
 
 #: static/tmp_js/gui-d-osmanagers.js:48
 msgid "OSManager deletion error"
-msgstr ""
+msgstr "OSManager删除错误"
 
 #: static/tmp_js/gui-d-reports.js:22 static/tmp_js/gui-d-reports.js:46
 msgid "Generate report"
-msgstr ""
+msgstr "生成报告"
 
 #: static/tmp_js/gui-d-reports.js:85
 msgid "Error creating report"
-msgstr ""
+msgstr "创建报告时出错"
 
 #: static/tmp_js/gui-d-reports.js:90
 msgid "Error obtaining report description"
-msgstr ""
+msgstr "获取报告描述时出错"
 
 #: static/tmp_js/gui-d-services.js:90
 msgid "In Maintenance"
-msgstr ""
+msgstr "在维护中"
 
 #: static/tmp_js/gui-d-services.js:92
 msgid "Active"
-msgstr ""
+msgstr "活性"
 
 #: static/tmp_js/gui-d-services.js:168
 msgid "Service information"
-msgstr ""
+msgstr "服务信息"
 
 #: static/tmp_js/gui-d-services.js:246
 msgid "Edit service"
-msgstr ""
+msgstr "编辑服务"
 
 #: static/tmp_js/gui-d-services.js:246
 msgid "Service creation error"
-msgstr ""
+msgstr "服务创建错误"
 
 #: static/tmp_js/gui-d-services.js:247
 msgid "New service"
-msgstr ""
+msgstr "新服务"
 
 #: static/tmp_js/gui-d-services.js:247
 msgid "Service saving error"
-msgstr ""
+msgstr "服务保存错误"
 
 #: static/tmp_js/gui-d-services.js:248
 msgid "Delete service"
-msgstr ""
+msgstr "删除服务"
 
 #: static/tmp_js/gui-d-services.js:248
 msgid "Service deletion error"
-msgstr ""
+msgstr "服务删除错误"
 
 #: static/tmp_js/gui-d-services.js:276
 msgid "Delete user service"
-msgstr ""
+msgstr "删除用户服务"
 
 #: static/tmp_js/gui-d-services.js:276
 msgid "User service deletion error"
-msgstr ""
+msgstr "用户服务删除错误"
 
 #: static/tmp_js/gui-d-services.js:290 static/tmp_js/gui-d-services.js:330
 msgid "Maintenance"
-msgstr ""
+msgstr "保养"
 
 #: static/tmp_js/gui-d-services.js:303
 msgid "Maintenance Mode"
-msgstr ""
+msgstr "维护模式"
 
 #: static/tmp_js/gui-d-services.js:304
 msgid "Enter Maintenance Mode?"
-msgstr ""
+msgstr "进入维护模式？"
 
 #: static/tmp_js/gui-d-services.js:304
 msgid "Exit Maintenance Mode?"
-msgstr ""
+msgstr "退出维护模式？"
 
 #: static/tmp_js/gui-d-services.js:336
 msgid "Enter maintenance Mode"
-msgstr ""
+msgstr "进入维护模式"
 
 #: static/tmp_js/gui-d-services.js:340
 msgid "Exit Maintenance Mode"
-msgstr ""
+msgstr "退出维护模式"
 
 #: static/tmp_js/gui-d-services.js:352
 msgid "New services provider"
-msgstr ""
+msgstr "新服务提供商"
 
 #: static/tmp_js/gui-d-services.js:352
 msgid "Services provider creation error"
-msgstr ""
+msgstr "服务提供商创建错误"
 
 #: static/tmp_js/gui-d-services.js:353
 msgid "Edit services provider"
-msgstr ""
+msgstr "编辑服务提供商"
 
 #: static/tmp_js/gui-d-services.js:353
 msgid "Services Provider saving error"
-msgstr ""
+msgstr "服务提供商保存错误"
 
 #: static/tmp_js/gui-d-services.js:354
 msgid "Delete services provider"
-msgstr ""
+msgstr "删除服务提供商"
 
 #: static/tmp_js/gui-d-services.js:354
 msgid "Services Provider deletion error"
-msgstr ""
+msgstr "服务提供商删除错误"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:56
 msgid "Launch Now"
-msgstr ""
+msgstr "立即发射"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:69
 msgid "Execute action"
-msgstr ""
+msgstr "执行动作"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:70
 msgid "Launch action execution right now?"
-msgstr ""
+msgstr "立即启动行动执行？"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:127
 msgid "Beginning"
-msgstr ""
+msgstr "开始"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:127
 msgid "Ending"
-msgstr ""
+msgstr "结尾"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:136
 msgid "Add scheduled action"
-msgstr ""
+msgstr "添加预定的操作"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:199
 #: static/tmp_js/gui-d-servicespools-calendars.js:98
 msgid "Edit access calendar"
-msgstr ""
+msgstr "编辑访问日历"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:238
 #: static/tmp_js/gui-d-servicespools-calendars.js:126
 msgid "Remove access calendar"
-msgstr ""
+msgstr "删除访问日历"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:238
 #: static/tmp_js/gui-d-servicespools-calendars.js:126
 msgid "Access calendar removal error"
-msgstr ""
+msgstr "访问日历删除错误"
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:45
 msgid "Add access calendar"
-msgstr ""
+msgstr "添加访问日历"
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:75
 msgid "Default fallback access"
-msgstr ""
+msgstr "默认回退访问权限"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:19
 #: static/tmp_js/gui-d-servicespools-publications.js:56
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:29
 #: static/tmp_js/gui-d-servicespools-publications.js:80
 #: static/tmp_js/gui-d-servicespools-publications.js:81
 msgid "Publish"
-msgstr ""
+msgstr "发布"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:30
 msgid "Cancel publication?"
-msgstr ""
+msgstr "取消发布？"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:54
 msgid "Force Cancel"
-msgstr ""
+msgstr "强制取消"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:92
 msgid "Failed creating publication"
-msgstr ""
+msgstr "创建发布失败"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:30
 msgid "Add transport"
-msgstr ""
+msgstr "添加运输"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:37
 msgid "You must provide a transport"
-msgstr ""
+msgstr "您必须提供交通工具"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:52
 msgid "Remove transport"
-msgstr ""
+msgstr "删除运输"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:52
 msgid "Transport removal error"
-msgstr ""
+msgstr "传输删除错误"
 
 #: static/tmp_js/gui-d-servicespools.js:175
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #: static/tmp_js/gui-d-servicespools.js:177
 msgid "No"
-msgstr ""
+msgstr "没有"
 
 #: static/tmp_js/gui-d-servicespools.js:241
 msgid "error"
-msgstr ""
+msgstr "错误"
 
 #: static/tmp_js/gui-d-servicespools.js:297
 msgid "Remove Cache element"
-msgstr ""
+msgstr "删除缓存元素"
 
 #: static/tmp_js/gui-d-servicespools.js:297
-#: static/tmp_js/gui-d-servicespools.js:480
+#: static/tmp_js/gui-d-servicespools.js:484
 msgid "Deletion error"
-msgstr ""
+msgstr "删除错误"
 
 #: static/tmp_js/gui-d-servicespools.js:325
 msgid "Add group"
-msgstr ""
+msgstr "添加组"
 
 #: static/tmp_js/gui-d-servicespools.js:351
 msgid "You must provide authenticator and group"
-msgstr ""
+msgstr "您必须提供身份验证者和组"
 
-#: static/tmp_js/gui-d-servicespools.js:434
+#: static/tmp_js/gui-d-servicespools.js:438
 msgid "Edit Assigned Service ownership"
-msgstr ""
+msgstr "编辑分配的服务所有权"
 
-#: static/tmp_js/gui-d-servicespools.js:462
+#: static/tmp_js/gui-d-servicespools.js:466
 msgid "You must provide authenticator and user"
-msgstr ""
+msgstr "您必须提供身份验证者和用户"
 
-#: static/tmp_js/gui-d-servicespools.js:480
+#: static/tmp_js/gui-d-servicespools.js:484
 msgid "Remove Assigned service"
-msgstr ""
+msgstr "删除已分配的服务"
 
-#: static/tmp_js/gui-d-servicespools.js:543
+#: static/tmp_js/gui-d-servicespools.js:547
 msgid "Restrained"
-msgstr ""
+msgstr "矜持"
 
-#: static/tmp_js/gui-d-servicespools.js:552
+#: static/tmp_js/gui-d-servicespools.js:556
 msgid "New service pool"
-msgstr ""
+msgstr "新服务池"
 
-#: static/tmp_js/gui-d-servicespools.js:552
+#: static/tmp_js/gui-d-servicespools.js:556
 msgid "creation error"
-msgstr ""
+msgstr "创作错误"
 
-#: static/tmp_js/gui-d-servicespools.js:562
+#: static/tmp_js/gui-d-servicespools.js:566
 msgid "Publish on creation"
-msgstr ""
+msgstr "发布创作"
 
-#: static/tmp_js/gui-d-servicespools.js:563
+#: static/tmp_js/gui-d-servicespools.js:567
 msgid "If selected, will initiate the publication inmediatly after creation"
-msgstr ""
+msgstr "如果选中，将在创建后立即启动发布"
 
-#: static/tmp_js/gui-d-servicespools.js:575 static/tmp_js/gui.js:53
+#: static/tmp_js/gui-d-servicespools.js:579 static/tmp_js/gui.js:53
 msgid "Edit"
-msgstr ""
+msgstr "编辑"
 
-#: static/tmp_js/gui-d-servicespools.js:575
+#: static/tmp_js/gui-d-servicespools.js:579
 msgid "saving error"
-msgstr ""
+msgstr "保存错误"
 
-#: static/tmp_js/gui-d-servicespools.js:578 static/tmp_js/gui-methods.js:154
+#: static/tmp_js/gui-d-servicespools.js:582 static/tmp_js/gui-methods.js:154
 #: static/tmp_js/gui.js:57
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
-#: static/tmp_js/gui-d-servicespools.js:578
+#: static/tmp_js/gui-d-servicespools.js:582
 msgid "deletion error"
-msgstr ""
+msgstr "删除错误"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "New Services Pool Group"
-msgstr ""
+msgstr "新服务池组"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "Services Pool Group creation error"
-msgstr ""
+msgstr "服务池组创建错误"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Edit Services Pool Group"
-msgstr ""
+msgstr "编辑服务池组"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Pool Group saving error"
-msgstr ""
+msgstr "服务池组保存错误"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Delete Services Pool Group"
-msgstr ""
+msgstr "删除服务池组"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Services Pool Group removal error"
-msgstr ""
+msgstr "服务池组删除错误"
 
 #: static/tmp_js/gui-definition.js:17
 msgid "Cache"
-msgstr ""
+msgstr "高速缓存"
 
 #: static/tmp_js/gui-definition.js:17
 msgid "Cache has been flushed"
-msgstr ""
+msgstr "缓存已被刷新"
 
 #: static/tmp_js/gui-element.js:320
 msgid "Refresh operation failed"
-msgstr ""
+msgstr "刷新操作失败"
 
 #: static/tmp_js/gui-element.js:750
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 #: static/tmp_js/gui-element.js:760
 msgid "level"
-msgstr ""
+msgstr "水平"
 
 #: static/tmp_js/gui-element.js:768
 msgid "source"
-msgstr ""
+msgstr "资源"
 
 #: static/tmp_js/gui-element.js:775
 msgid "message"
-msgstr ""
+msgstr "信息"
 
 #: static/tmp_js/gui-element.js:780
 msgid "Logs"
-msgstr ""
+msgstr "日志"
 
 #: static/tmp_js/gui-form.js:103
 msgid "Main"
-msgstr ""
+msgstr "主要"
 
 #: static/tmp_js/gui-form.js:337
 msgid "yes"
-msgstr ""
+msgstr "是"
 
 #: static/tmp_js/gui-form.js:338
 msgid "no"
-msgstr ""
+msgstr "没有"
 
 #: static/tmp_js/gui-form.js:355
 msgid "Close"
-msgstr ""
+msgstr "关"
 
 #: static/tmp_js/gui-methods.js:23
 msgid "Test passed successfully"
-msgstr ""
+msgstr "测试顺利通过"
 
 #: static/tmp_js/gui-methods.js:26
 msgid "Test failed:"
-msgstr ""
+msgstr "测试失败："
 
 #: static/tmp_js/gui-methods.js:67
 msgid "Edition successfully done"
-msgstr ""
+msgstr "版成功完成"
 
 #: static/tmp_js/gui-methods.js:90
 msgid "Overview"
-msgstr ""
+msgstr "概观"
 
 #: static/tmp_js/gui-methods.js:114
 msgid "of type"
-msgstr ""
+msgstr "类型"
 
 #: static/tmp_js/gui-methods.js:132
 msgid "Creation successfully done"
-msgstr ""
+msgstr "创作成功完成"
 
 #: static/tmp_js/gui-methods.js:152
 msgid "Are you sure do you want to delete "
-msgstr ""
+msgstr "您确定要删除吗？"
 
 #: static/tmp_js/gui-methods.js:152
 msgid "items:"
-msgstr ""
+msgstr "项目："
 
 #: static/tmp_js/gui-methods.js:162
 msgid "Error deleting"
-msgstr ""
+msgstr "删除错误"
 
 #: static/tmp_js/gui-methods.js:164
 msgid "Successfully deleted"
-msgstr ""
+msgstr "成功删除"
 
 #: static/tmp_js/gui-methods.js:169
 msgid "Deletion results"
-msgstr ""
+msgstr "删除结果"
 
 #: static/tmp_js/gui-permissions.js:43
 msgid "Add"
-msgstr ""
+msgstr "加"
 
 #: static/tmp_js/gui-permissions.js:71
 msgid "You must provide authenticator and"
-msgstr ""
+msgstr "您必须提供身份验证器和"
 
 #: static/tmp_js/gui-permissions.js:94
 msgid "Confirm revocation of following permissions: <br/>"
-msgstr ""
+msgstr "确认撤消以下权限： <br/>"
 
 #: static/tmp_js/gui-permissions.js:104
 msgid "Remove "
-msgstr ""
+msgstr "去掉"
 
 #: static/tmp_js/gui-permissions.js:105
 msgid "Revoke"
-msgstr ""
+msgstr "撤消"
 
 #: static/tmp_js/gui-permissions.js:137
 msgid "Permissions for"
-msgstr ""
+msgstr "权限"
 
 #: static/tmp_js/gui-tools.js:14
 msgid "Just a moment..."
-msgstr ""
+msgstr "一会儿..."
 
 #: static/tmp_js/gui-tools.js:161
 msgid "Never"
-msgstr ""
+msgstr "决不"
 
 #: static/tmp_js/gui.js:24
 msgid "_MENU_ records per page"
-msgstr ""
+msgstr "每页_MENU_条记录"
 
 #: static/tmp_js/gui.js:25
 msgid "Empty"
-msgstr ""
+msgstr "空"
 
 #: static/tmp_js/gui.js:26 static/tmp_js/gui.js:28
 msgid "No records"
-msgstr ""
+msgstr "没有记录"
 
 #: static/tmp_js/gui.js:27
 msgid "Records _START_ to _END_ of _TOTAL_"
-msgstr ""
+msgstr "记录_START_至_END_ of _TOTAL_"
 
 #: static/tmp_js/gui.js:29
 msgid "(filtered from _MAX_ total records)"
-msgstr ""
+msgstr "（从_MAX_总记录中过滤掉）"
 
 #: static/tmp_js/gui.js:30
 msgid "Please wait, processing"
-msgstr ""
+msgstr "请稍等，处理"
 
 #: static/tmp_js/gui.js:31
 msgid "Filter"
-msgstr ""
+msgstr "过滤"
 
 #: static/tmp_js/gui.js:41
 #, javascript-format
 msgid "Selected %d rows"
-msgstr ""
+msgstr "选择%d行"
 
 #: static/tmp_js/gui.js:42
 msgid "Click on a row to select it"
-msgstr ""
+msgstr "单击一行以选择它"
 
 #: static/tmp_js/gui.js:43
 msgid "Selected one row"
-msgstr ""
+msgstr "选中一行"
 
 #: static/tmp_js/gui.js:49
 msgid "New"
-msgstr ""
+msgstr "新"
 
 #: static/tmp_js/gui.js:61
 msgid "Permissions"
-msgstr ""
+msgstr "权限"
 
 #: static/tmp_js/gui.js:65
 msgid "Xls"
-msgstr ""
+msgstr "XLS"
 
 #: static/tmp_js/gui.js:131
 msgid "Message"
-msgstr ""
+msgstr "信息"
 
 #: static/tmp_js/gui.js:140
 msgid "Connection failed"
-msgstr ""
+msgstr "连接失败"
 
 #: static/tmp_js/gui.js:254
 msgid "This field is required."
-msgstr ""
+msgstr "这是必填栏。"
 
 #: static/tmp_js/gui.js:255
 msgid "Please fix this field."
-msgstr ""
+msgstr "请修复这一块。"
 
 #: static/tmp_js/gui.js:256
 msgid "Please enter a valid email address."
-msgstr ""
+msgstr "请输入有效的电子邮件地址。"
 
 #: static/tmp_js/gui.js:257
 msgid "Please enter a valid URL."
-msgstr ""
+msgstr "请输入有效网址。"
 
 #: static/tmp_js/gui.js:258
 msgid "Please enter a valid date."
-msgstr ""
+msgstr "请输入一个有效的日期。"
 
 #: static/tmp_js/gui.js:259
 msgid "Please enter a valid date (ISO)."
-msgstr ""
+msgstr "请输入有效日期（ISO）。"
 
 #: static/tmp_js/gui.js:260
 msgid "Please enter a valid number."
-msgstr ""
+msgstr "请输入有效的号码。"
 
 #: static/tmp_js/gui.js:261
 msgid "Please enter only digits."
-msgstr ""
+msgstr "请只输入数字。"
 
 #: static/tmp_js/gui.js:262
 msgid "Please enter a valid credit card number."
-msgstr ""
+msgstr "请输入一个有效的信用卡号码。"
 
 #: static/tmp_js/gui.js:263
 msgid "Please enter the same value again."
-msgstr ""
+msgstr "请再次输入相同数值。"
 
 #: static/tmp_js/gui.js:264
 msgid "Please enter no more than {0} characters."
-msgstr ""
+msgstr "请输入不超过{0}个字符。"
 
 #: static/tmp_js/gui.js:265
 msgid "Please enter at least {0} characters."
-msgstr ""
+msgstr "请输入至少{0}个字符。"
 
 #: static/tmp_js/gui.js:266
 msgid "Please enter a value between {0} and {1} characters long."
-msgstr ""
+msgstr "请输入介于{0}和{1}个字符之间的值。"
 
 #: static/tmp_js/gui.js:267
 msgid "Please enter a value between {0} and {1}."
-msgstr ""
+msgstr "请输入介于{0}和{1}之间的值。"
 
 #: static/tmp_js/gui.js:268
 msgid "Please enter a value less than or equal to {0}."
-msgstr ""
+msgstr "请输入小于或等于{0}的值。"
 
 #: static/tmp_js/gui.js:269
 msgid "Please enter a value greater than or equal to {0}."
-msgstr ""
+msgstr "请输入大于或等于{0}的值。"
 
 #: static/tmp_js/uds-client.js:45
 msgid "Contacting service..."
-msgstr ""
+msgstr "联系服务......"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-29 10:17+0100\n"
+"POT-Creation-Date: 2019-01-09 13:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1279,11 +1279,11 @@ msgid ""
 "attribute)"
 msgstr ""
 
-#: auths/SAML_enterprise/SAML.py:82
+#: auths/SAML_enterprise/SAML.py:83
 msgid "SAML Authenticator"
 msgstr ""
 
-#: auths/SAML_enterprise/SAML.py:94
+#: auths/SAML_enterprise/SAML.py:95
 msgid "SAML (v2.0) Authenticator"
 msgstr ""
 
@@ -1394,7 +1394,7 @@ msgstr ""
 msgid "XML does not seem valid for IDP Metadata "
 msgstr ""
 
-#: auths/SAML_enterprise/SAML.py:233
+#: auths/SAML_enterprise/SAML.py:232
 msgid "Can't access idp metadata"
 msgstr ""
 
