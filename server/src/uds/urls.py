@@ -91,7 +91,7 @@ urlpatterns = patterns(
 
     # Internacionalization in javascript
     # Javascript catalog
-    (r'^jsi18n/(?P<lang>[a-z]*)$', 'web.views.jsCatalog', js_info_dict),
+    (r'^jsi18n/(?P<lang>[a-z-_]*)$', 'web.views.jsCatalog', js_info_dict),
 
 )
 
