@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-09 13:29+0100\n"
-"PO-Revision-Date: 2019-01-09 12:29+0000\n"
+"POT-Creation-Date: 2019-01-10 11:04+0100\n"
+"PO-Revision-Date: 2019-01-10 09:42+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -4000,6 +4000,50 @@ msgstr ""
 #, python-brace-format
 msgid "Connection failed: {0}"
 msgstr "Konexioa huts egin du: {0}"
+
+#: temp_for_locales.py:75
+msgid "Spanish"
+msgstr "Espainiako"
+
+#: temp_for_locales.py:76
+msgid "English"
+msgstr "English"
+
+#: temp_for_locales.py:77
+msgid "French"
+msgstr "Frantziako"
+
+#: temp_for_locales.py:78
+msgid "German"
+msgstr "Alemaniako"
+
+#: temp_for_locales.py:79
+msgid "Portuguese"
+msgstr "Portugesa"
+
+#: temp_for_locales.py:80
+msgid "Italian"
+msgstr "Italiako"
+
+#: temp_for_locales.py:81
+msgid "Basque"
+msgstr "Euskera"
+
+#: temp_for_locales.py:82
+msgid "Arabic"
+msgstr "Arabiera"
+
+#: temp_for_locales.py:83
+msgid "Russian"
+msgstr "Errusiako"
+
+#: temp_for_locales.py:84
+msgid "Catalan"
+msgstr "Katalanez"
+
+#: temp_for_locales.py:85
+msgid "Chinese"
+msgstr "Txinako"
 
 #: templates/404.html:3 templates/500.html:3
 msgid "Page not found"

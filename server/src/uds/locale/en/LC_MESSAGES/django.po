@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-09 13:29+0100\n"
+"POT-Creation-Date: 2019-01-10 11:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3849,6 +3849,50 @@ msgstr ""
 #: services/Xen/XenProvider.py:421
 #, python-brace-format
 msgid "Connection failed: {0}"
+msgstr ""
+
+#: temp_for_locales.py:75
+msgid "Spanish"
+msgstr ""
+
+#: temp_for_locales.py:76
+msgid "English"
+msgstr ""
+
+#: temp_for_locales.py:77
+msgid "French"
+msgstr ""
+
+#: temp_for_locales.py:78
+msgid "German"
+msgstr ""
+
+#: temp_for_locales.py:79
+msgid "Portuguese"
+msgstr ""
+
+#: temp_for_locales.py:80
+msgid "Italian"
+msgstr ""
+
+#: temp_for_locales.py:81
+msgid "Basque"
+msgstr ""
+
+#: temp_for_locales.py:82
+msgid "Arabic"
+msgstr ""
+
+#: temp_for_locales.py:83
+msgid "Russian"
+msgstr ""
+
+#: temp_for_locales.py:84
+msgid "Catalan"
+msgstr ""
+
+#: temp_for_locales.py:85
+msgid "Chinese"
 msgstr ""
 
 #: templates/404.html:3 templates/500.html:3

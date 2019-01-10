@@ -60,6 +60,7 @@ LANGUAGES = (
   ('de', ugettext('German')),
   ('pt', ugettext('Portuguese')),
   ('it', ugettext('Italian')),
+  ('ar', ugettext('Arabic')),
   ('eu', ugettext('Basque')),
   ('ca', ugettext('Catalan')),
   ('zh-hans', ugettext('Chinese')),

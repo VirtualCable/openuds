@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-09 13:29+0100\n"
-"PO-Revision-Date: 2018-11-29 09:18+0000\n"
+"POT-Creation-Date: 2019-01-10 11:04+0100\n"
+"PO-Revision-Date: 2019-01-10 09:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -4032,6 +4032,50 @@ msgstr ""
 #, python-brace-format
 msgid "Connection failed: {0}"
 msgstr "Conexión fallida: {0}"
+
+#: temp_for_locales.py:75
+msgid "Spanish"
+msgstr "Español"
+
+#: temp_for_locales.py:76
+msgid "English"
+msgstr "Inglés"
+
+#: temp_for_locales.py:77
+msgid "French"
+msgstr "Francés"
+
+#: temp_for_locales.py:78
+msgid "German"
+msgstr "Alemán"
+
+#: temp_for_locales.py:79
+msgid "Portuguese"
+msgstr "Portugués"
+
+#: temp_for_locales.py:80
+msgid "Italian"
+msgstr "Italiano"
+
+#: temp_for_locales.py:81
+msgid "Basque"
+msgstr "Vasco"
+
+#: temp_for_locales.py:82
+msgid "Arabic"
+msgstr "Árabe"
+
+#: temp_for_locales.py:83
+msgid "Russian"
+msgstr "Ruso"
+
+#: temp_for_locales.py:84
+msgid "Catalan"
+msgstr "Catalán"
+
+#: temp_for_locales.py:85
+msgid "Chinese"
+msgstr "Chino"
 
 #: templates/404.html:3 templates/500.html:3
 msgid "Page not found"
