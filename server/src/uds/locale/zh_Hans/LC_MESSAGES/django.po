@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-09 13:29+0100\n"
-"PO-Revision-Date: 2019-01-09 11:19+0000\n"
+"POT-Creation-Date: 2019-01-10 11:04+0100\n"
+"PO-Revision-Date: 2019-01-10 09:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -439,7 +439,9 @@ msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
 "own service"
-msgstr "如果激活，则允许用户“手动”删除服务。请注意这一点，因为用户将拥有“权力”来删除它自己的服务"
+msgstr ""
+"如果激活，则允许用户“手动”删除服务。请注意这一点，因为用户将拥有“权力”来删除"
+"它自己的服务"
 
 #: REST/methods/services_pools.py:199
 msgid "Allow reset by users"
@@ -1150,7 +1152,9 @@ msgstr "接受代理"
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
-msgstr "如果选中，通过代理的请求将获得FORWARDED IP地址（请注意这个bein检查，可以从Internet获取内部IP地址）"
+msgstr ""
+"如果选中，通过代理的请求将获得FORWARDED IP地址（请注意这个bein检查，可以从"
+"Internet获取内部IP地址）"
 
 #: auths/IP/Authenticator.py:54 auths/IP/Authenticator.py:56
 msgid "IP Authenticator"
@@ -1366,7 +1370,8 @@ msgstr "字段从哪里提取真实姓名"
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
-msgstr "服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
+msgstr ""
+"服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
 
 #: auths/SAML_enterprise/SAML.py:166
 msgid "Invalid server certificate. "
@@ -1704,7 +1709,9 @@ msgstr "{0}包含无效字符"
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
-msgstr "无效的mac范围。 Mac系列必须采用XX：XX：XX：XX：XX：XX-XX：XX：XX：XX：XX：XX格式"
+msgstr ""
+"无效的mac范围。 Mac系列必须采用XX：XX：XX：XX：XX：XX-XX：XX：XX：XX：XX：XX"
+"格式"
 
 #: dispatchers/wyse_enterprise/views.py:117
 msgid "There are no authenticators available for login"
@@ -1890,7 +1897,9 @@ msgstr "最大闲置时间"
 msgid ""
 "Maximum idle time (in seconds) before session is automatically closed to the "
 "user (<= 0 means no max idle time)."
-msgstr "会话自动关闭给用户之前的最大空闲时间（以秒为单位）（&lt;= 0表示没有最大空闲时间）。"
+msgstr ""
+"会话自动关闭给用户之前的最大空闲时间（以秒为单位）（&lt;= 0表示没有最大空闲时"
+"间）。"
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:47
 msgid "Linux Random Password OS Manager"
@@ -1926,7 +1935,8 @@ msgstr "Debian的UDS演员，Ubuntu，... Linux机器<b>（需要python&gt; = 3.
 msgid ""
 "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
 "2.7)</b>"
-msgstr "适用于Centos，Fedora，RH的UDS演员...... Linux机器<b>（需要python 2.7）</b>"
+msgstr ""
+"适用于Centos，Fedora，RH的UDS演员...... Linux机器<b>（需要python 2.7）</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:59
 msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
@@ -1936,7 +1946,8 @@ msgstr "用于openSUSE的UDS Actor，... Linux机器<b>（需要python 2.7）</b
 msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
-msgstr "Debian，Ubuntu的<b>遗产</b> UDS演员，... Linux机器<b>（需要python 2.7）</b>"
+msgstr ""
+"Debian，Ubuntu的<b>遗产</b> UDS演员，... Linux机器<b>（需要python 2.7）</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
@@ -2003,7 +2014,9 @@ msgstr "OU"
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
-msgstr "组织单位在域中添加计算机的位置（在使用之前检查它）。即：ou =我的机器，dc = mydomain，dc = local"
+msgstr ""
+"组织单位在域中添加计算机的位置（在使用之前检查它）。即：ou =我的机器，dc = "
+"mydomain，dc = local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
 msgid "Machine Group"
@@ -2111,7 +2124,9 @@ msgstr "Os Manager可以控制没有域的Windows机器。"
 msgid ""
 "Maximum idle time (in seconds) before session is automatically closed to the "
 "user (<= 0 means no max. idle time)"
-msgstr "会话自动关闭给用户之前的最大空闲时间（以秒为单位）（&lt;= 0表示没有最大空闲时间）"
+msgstr ""
+"会话自动关闭给用户之前的最大空闲时间（以秒为单位）（&lt;= 0表示没有最大空闲时"
+"间）"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:77
 msgid "Length must be numeric!!"
@@ -2499,7 +2514,9 @@ msgstr "加速网络"
 msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
-msgstr "激活此选项以在vm上使用加速网络。在激活之前，请确保您的机器和机器尺寸支持此选项。"
+msgstr ""
+"激活此选项以在vm上使用加速网络。在激活之前，请确保您的机器和机器尺寸支持此选"
+"项。"
 
 #: services/Azure_enterprise/AzureCloneService.py:156
 msgid "You must select a network for the service"
@@ -3241,7 +3258,8 @@ msgstr "OpenStack LEGACY平台提供商"
 msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
-msgstr "OpenStack LEGACY平台服务提供商（适用于旧版Openstack版本，OCATA之前版本）"
+msgstr ""
+"OpenStack LEGACY平台服务提供商（适用于旧版Openstack版本，OCATA之前版本）"
 
 #: services/OpenStack/ProviderLegacy.py:99
 msgid "OpenStack Host"
@@ -3259,7 +3277,8 @@ msgstr "授权错误"
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
-msgstr "Openstack不支持Identity API 3.2或更新版本。此OpenStack服务器与UDS不兼容。"
+msgstr ""
+"Openstack不支持Identity API 3.2或更新版本。此OpenStack服务器与UDS不兼容。"
 
 #: services/PhysicalMachines/IPMachineDeployed.py:59
 msgid "IP "
@@ -3309,7 +3328,9 @@ msgstr "用户映射"
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
-msgstr "如果处于活动状态，则将完成用户映射。如果没有，来自用户的凭证将被重定向到RDS服务器。"
+msgstr ""
+"如果处于活动状态，则将完成用户映射。如果没有，来自用户的凭证将被重定向到RDS服"
+"务器。"
 
 #: services/RDS_enterprise/RDSProvider.py:42
 msgid "User list for mapping. (Not used if User mapping is disabled)"
@@ -3383,7 +3404,9 @@ msgstr "等待产生的进程"
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
-msgstr "如果处于活动状态，RDS Actor将等到应用程序和所有生成的进程完成后再考虑应用程序注销"
+msgstr ""
+"如果处于活动状态，RDS Actor将等到应用程序和所有生成的进程完成后再考虑应用程序"
+"注销"
 
 #: services/RDS_enterprise/RDSService.py:93
 msgid "A valid application path is required"
@@ -3634,7 +3657,9 @@ msgstr "连接VC的超时时间"
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
-msgstr "已创建计算机的有效mac范围。必须在00：50：56：00：00：00-00：50：56：3F：FF：FF内"
+msgstr ""
+"已创建计算机的有效mac范围。必须在00：50：56：00：00：00-00：50：56：3F：FF："
+"FF内"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:49
 msgid "VMWare VCenter Platform Provider"
@@ -3851,6 +3876,50 @@ msgstr "如果选中，将根据系统有效证书提供程序检查证书"
 #, python-brace-format
 msgid "Connection failed: {0}"
 msgstr "连接失败：{0}"
+
+#: temp_for_locales.py:75
+msgid "Spanish"
+msgstr "西班牙语"
+
+#: temp_for_locales.py:76
+msgid "English"
+msgstr "英语"
+
+#: temp_for_locales.py:77
+msgid "French"
+msgstr "法国"
+
+#: temp_for_locales.py:78
+msgid "German"
+msgstr "德语"
+
+#: temp_for_locales.py:79
+msgid "Portuguese"
+msgstr "葡萄牙语"
+
+#: temp_for_locales.py:80
+msgid "Italian"
+msgstr "意大利"
+
+#: temp_for_locales.py:81
+msgid "Basque"
+msgstr "巴斯克"
+
+#: temp_for_locales.py:82
+msgid "Arabic"
+msgstr "阿拉伯"
+
+#: temp_for_locales.py:83
+msgid "Russian"
+msgstr "俄语"
+
+#: temp_for_locales.py:84
+msgid "Catalan"
+msgstr "加泰罗尼亚"
+
+#: temp_for_locales.py:85
+msgid "Chinese"
+msgstr "中文"
 
 #: templates/404.html:3 templates/500.html:3
 msgid "Page not found"
@@ -4631,8 +4700,8 @@ msgid ""
 "html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
 "must also disable \"Compatibility View Mode\" for this site)"
 msgstr ""
-"您的浏览器仅部分受支持。请将它升级到现代的html5浏览器，如Firefox，Chrome，Opera，...（IE必须为10或更高，并且还必须禁用此站点"
-"的“兼容性视图模式”）"
+"您的浏览器仅部分受支持。请将它升级到现代的html5浏览器，如Firefox，Chrome，"
+"Opera，...（IE必须为10或更高，并且还必须禁用此站点的“兼容性视图模式”）"
 
 #: templates/uds/html5/templates/base.html:109
 msgid "We use cookies to track usage and preferences"
@@ -4972,7 +5041,9 @@ msgstr "机票有效期"
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
-msgstr "HTML5客户端从UDS Broker重新加载数据的允许时间（以秒为单位）。建议使用默认值60。"
+msgstr ""
+"HTML5客户端从UDS Broker重新加载数据的允许时间（以秒为单位）。建议使用默认值"
+"60。"
 
 #: transports/HTML5RDP/HTML5RDP.py:129
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:129
@@ -4984,7 +5055,9 @@ msgstr "服务器必须是http或https"
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
-msgstr "仅在安全级别（在“参数”选项卡上）设置为“RDP”时，才允许空凭据（在“凭据”选项卡上）"
+msgstr ""
+"仅在安全级别（在“参数”选项卡上）设置为“RDP”时，才允许空凭据（在“凭据”选项卡"
+"上）"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:62
 msgid "HTML5 RDS for vApps"
@@ -5061,7 +5134,9 @@ msgstr "隧道服务器"
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
-msgstr "发送到客户端设备（“public”ip）和端口的隧道服务器的IP或主机名。 （使用HOST：PORT格式）"
+msgstr ""
+"发送到客户端设备（“public”ip）和端口的隧道服务器的IP或主机名。 （使用HOST："
+"PORT格式）"
 
 #: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
@@ -5073,7 +5148,9 @@ msgstr "隧道主机检查"
 msgid ""
 "If not empty, this server will be used to check if service is running before "
 "assigning it to user. (use HOST:PORT format)"
-msgstr "如果不为空，则此服务器将用于检查服务是否正在运行，然后再将其分配给用户。 （使用HOST：PORT格式）"
+msgstr ""
+"如果不为空，则此服务器将用于检查服务是否正在运行，然后再将其分配给用户。 （使"
+"用HOST：PORT格式）"
 
 #: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:107
 #: transports/RDS_enterprise/TRDSTransport.py:94
@@ -5275,7 +5352,9 @@ msgstr "自定义参数"
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
-msgstr "如果不为空，则为Linux客户端包含额外参数（例如/ usb：id，dev：054c：0268，或者与xfreerdp客户端兼容的东西）"
+msgstr ""
+"如果不为空，则为Linux客户端包含额外参数（例如/usb：id，dev：054c：0268，或者"
+"与xfreerdp客户端兼容的东西）"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
 msgid "RDP"
@@ -5418,7 +5497,8 @@ msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
 "etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
 msgstr ""
-"服务器证书（公共）可以在您的ovirt引擎上找到，可能在/etc/pki/ovirt-engine/certs/ca.der（使用此文件的内容）。"
+"服务器证书（公共）可以在您的ovirt引擎上找到，可能在/etc/pki/ovirt-engine/"
+"certs/ca.der（使用此文件的内容）。"
 
 #: transports/SPICE/BaseSPICETransport.py:91
 msgid "Fullscreen Mode"
@@ -5481,7 +5561,9 @@ msgstr "VAPP"
 msgid ""
 "If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
 "executed. If UDS vAPP is not selected, this field will be ignored."
-msgstr "如果选择UDS vAPP作为“桌面”，则要执行的应用程序的FULL PATH。如果未选择UDS vAPP，则将忽略此字段。"
+msgstr ""
+"如果选择UDS vAPP作为“桌面”，则要执行的应用程序的FULL PATH。如果未选择UDS "
+"vAPP，则将忽略此字段。"
 
 #: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"

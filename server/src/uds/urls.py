@@ -186,7 +186,7 @@ urlpatterns = [
 
     # Internacionalization in javascript
     # Javascript catalog. In fact, lang is not used, but it is maintanied for "backward" user templates compatibility
-    # re_path(r'^jsi18n/(?P<lang>[a-z]*)$', JavaScriptCatalog.as_view(), name='uds.web.views.jsCatalog'),
+    # re_path(r'^jsi18n/(?P<lang>[a-z-_]*)$', JavaScriptCatalog.as_view(), name='uds.web.views.jsCatalog'),
 ]
 
 # Append urls from special dispatchers
