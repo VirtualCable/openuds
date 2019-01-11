@@ -3,12 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Adolfo Gómez <dkmaster@dkmon.com>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-10 12:39+0100\n"
-"PO-Revision-Date: 2019-01-10 09:58+0000\n"
+"POT-Creation-Date: 2019-01-11 05:57+0100\n"
+"PO-Revision-Date: 2019-01-11 04:56+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -286,7 +287,7 @@ msgstr "genere"
 #: templates/uds/admin/tmpl/service-info.html:5
 #: templates/uds/admin/tmpl/user-info.html:5
 msgid "Services Pools"
-msgstr "Servizi Piscine"
+msgstr "Pool di servizi "
 
 #: REST/methods/services.py:195 REST/methods/services_pools.py:83
 #: templates/uds/admin/tmpl/dashboard.html:88
@@ -476,13 +477,11 @@ msgstr "Display"
 
 #: REST/methods/services_pools.py:223
 msgid "Pool group"
-msgstr "Gruppo di piscina"
+msgstr "Gruppo di pool"
 
 #: REST/methods/services_pools.py:224
 msgid "Pool group for this pool (for pool classify on display)"
-msgstr ""
-"Gruppo di piscine per questa piscina (per la piscina classificare sul "
-"display)"
+msgstr "Gruppo di poll per questa piscina (per classificare sul display)"
 
 #: REST/methods/services_pools.py:232
 msgid "Initial available services"
@@ -561,7 +560,7 @@ msgstr "Servizio"
 #: templates/uds/admin/tmpl/service-info.html:21
 #: templates/uds/admin/tmpl/user-info.html:37
 msgid "Pool"
-msgstr "Piscina"
+msgstr "Pool"
 
 #: REST/methods/services_usage.py:123 REST/methods/user_services.py:127
 #: REST/methods/user_services.py:221 auths/IP/Authenticator.py:60
@@ -2332,7 +2331,7 @@ msgstr "Utenti distinti per piscina"
 
 #: reports/stats/pool_performance.py:89
 msgid "Accesses by pool"
-msgstr "Accessi per piscina"
+msgstr "Accessi per pool"
 
 #: reports/stats/pool_performance.py:112 reports/stats/pool_performance.py:377
 msgid "Accesses"
@@ -2340,7 +2339,7 @@ msgstr "accessi"
 
 #: reports/stats/pool_performance.py:133
 msgid "Pools performance by date"
-msgstr "Classifica le prestazioni per data"
+msgstr "Pool Prestazioni per data"
 
 #: reports/stats/pool_performance.py:134
 msgid "Pools performance report by date"
@@ -2348,11 +2347,11 @@ msgstr "Rapporto sulle prestazioni dei pool per data"
 
 #: reports/stats/pool_performance.py:140 reports/stats/pools_usage.py:141
 msgid "Pools"
-msgstr "piscine"
+msgstr "Pools"
 
 #: reports/stats/pool_performance.py:141 reports/stats/pools_usage.py:142
 msgid "Pools for report"
-msgstr "Piscine per rapporto"
+msgstr "Pools per Rapporto"
 
 #: reports/stats/pool_performance.py:196
 msgid "Select at least a service pool for the report"
@@ -2372,7 +2371,7 @@ msgstr "Accesso per {}"
 
 #: reports/stats/pool_performance.py:351
 msgid "UDS Pools Performance Report"
-msgstr "Rapporto prestazioni pool UDS"
+msgstr "Rapporto prestazioni per UDS Pool"
 
 #: reports/stats/pools_usage.py:87
 msgid "Services Asignation"
@@ -4259,7 +4258,7 @@ msgstr "Visualizza i pool di servizi"
 
 #: templates/uds/admin/tmpl/dashboard.html:115
 msgid "Restrained services pools"
-msgstr "Piscine di servizi limitati"
+msgstr "Pool di servizi limitati"
 
 #: templates/uds/admin/tmpl/dashboard.html:139
 msgid "Assigned services graph"
