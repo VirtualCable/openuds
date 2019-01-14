@@ -95,7 +95,7 @@ urlpatterns = [
     path(r'uds/utility/uds.js', uds.web.views.modern.js, name="utility.js"),
 
     # i18n
-    re_path(r'^uds/utility/i18n/(?P<lang>[a-z]*).js$', JavaScriptCatalog.as_view(), name='utility.jsCatalog'),
+    re_path(r'^uds/utility/i18n/(?P<lang>[a-z_-]*).js$', JavaScriptCatalog.as_view(), name='utility.jsCatalog'),
     path(r'uds/utility/i18n/', include('django.conf.urls.i18n')),
 
     # Dowloader

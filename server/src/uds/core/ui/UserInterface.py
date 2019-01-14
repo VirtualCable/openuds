@@ -534,11 +534,21 @@ class gui(object):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.CHECKBOX_TYPE)
 
+        @staticmethod
+        def _checkTrue(val):
+            return val in (True, 'true', 'True', b'true', b'True')
+
+        def _setValue(self, value):
+            """
+            Override to set value to True or False (bool)
+            """
+            self._data['value'] = self._checkTrue(value)
+
         def isTrue(self):
             """
             Checks that the value is true
             """
-            return self.value is True or self.value == gui.TRUE
+            return self.value in (True, 'true', 'True', b'true', b'True')
 
     class ChoiceField(InputField):
         """
@@ -913,12 +923,14 @@ class UserInterface(object, metaclass=UserInterfaceType):
                 val = b'\001' + pickle.dumps(v.value, protocol=0)
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = six.text_type(int(v.num()))
+            elif v.isType(gui.InputField.CHECKBOX_TYPE):
+                val = v.isTrue()
             else:
                 val = v.value
             if val is True:
-                val = gui.TRUE
+                val = gui.TRUE.encode('utf8')
             elif val is False:
-                val = gui.FALSE
+                val = gui.FALSE.encode('utf8')
             arr.append(k.encode('utf8') + b'\003' + val)
         logger.debug('Arr, >>%s<<', arr)
         return encoders.encode(b'\002'.join(arr), 'zip')
