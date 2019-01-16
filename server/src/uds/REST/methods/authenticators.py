@@ -55,7 +55,7 @@ class Authenticators(ModelHandler):
     detail = {'users': Users, 'groups': Groups}
     save_fields = ['name', 'comments', 'tags', 'priority', 'small_name']
 
-    table_title = _('Current authenticators')
+    table_title = _('Authenticators')
     table_fields = [
         {'numeric_id': {'title': _('Id'), 'visible': True}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},

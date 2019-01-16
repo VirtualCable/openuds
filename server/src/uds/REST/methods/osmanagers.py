@@ -52,7 +52,7 @@ class OsManagers(ModelHandler):
     model = OSManager
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('Current OS Managers')
+    table_title = _('OS Managers')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},

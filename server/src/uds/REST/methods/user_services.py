@@ -245,6 +245,7 @@ class Groups(DetailHandler):
             'id': i.uuid,
             'auth_id': i.manager.uuid,
             'name': i.name,
+            'group_name': i.pretty_name,
             'comments': i.comments,
             'state': i.state,
             'type': i.is_meta and 'meta' or 'group',
@@ -292,6 +293,7 @@ class Transports(DetailHandler):
             'type': self.typeAsDict(i.getType()),
             'comments': i.comments,
             'priority': i.priority,
+            'trans_type': _(i.getType().name()),
         } for i in parent.transports.all()]
 
     def getTitle(self, parent):

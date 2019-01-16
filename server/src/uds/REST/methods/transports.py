@@ -51,7 +51,7 @@ class Transports(ModelHandler):
     model = Transport
     save_fields = ['name', 'comments', 'tags', 'priority', 'nets_positive', 'allowed_oss']
 
-    table_title = _('Current Transports')
+    table_title = _('Transports')
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},

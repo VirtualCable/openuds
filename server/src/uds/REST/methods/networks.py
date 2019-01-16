@@ -56,7 +56,7 @@ class Networks(ModelHandler):
     model = Network
     save_fields = ['name', 'net_string', 'tags']
 
-    table_title = _('Current Networks')
+    table_title = _('Networks')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success'}},
         {'net_string': {'title': _('Range')}},

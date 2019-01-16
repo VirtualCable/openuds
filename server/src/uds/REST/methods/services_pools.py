@@ -88,13 +88,13 @@ class ServicesPools(ModelHandler):
     table_title = _('Service Pools')
     table_fields = [
         {'name': {'title': _('Name')}},
-        {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
+        {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.dictionary()}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},
         {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
-        {'pool_group_name': {'title': _('Pool Group')}},
-        {'parent': {'title': _('Parent Service')}},
+        {'pool_group_name': {'title': _('Pool group')}},
+        {'parent': {'title': _('Parent service')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....

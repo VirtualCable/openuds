@@ -43,15 +43,14 @@ from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler
 
-
-
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 class ServicesUsage(DetailHandler):
     """
-    Rest handler for Assigned Services, wich parent is Service
+    Rest handler for Assigned Services, which parent is Service
     """
 
     @staticmethod
@@ -75,7 +74,6 @@ class ServicesUsage(DetailHandler):
                'auth_id': item.user.manager.uuid,
                'user_id': item.user.uuid
             }
-
 
         return {
             'id': item.uuid,
