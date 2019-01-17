@@ -136,7 +136,7 @@ class ActionsCalendars(DetailHandler):
             'calendarId': item.calendar.uuid,
             'calendar': item.calendar.name,
             'action': item.action,
-            'actionDescription':  CALENDAR_ACTION_DICT[item.action]['description'],
+            'actionDescription':  CALENDAR_ACTION_DICT.get(item.action, {}).get('description', ''),
             'atStart': item.at_start,
             'eventsOffset': item.events_offset,
             'params': json.loads(item.params),
@@ -174,6 +174,8 @@ class ActionsCalendars(DetailHandler):
 
         calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
         action = self._params['action'].upper()
+        if action not in CALENDAR_ACTION_DICT:
+            self.invalidRequestException()
         eventsOffset = int(self._params['eventsOffset'])
         atStart = self._params['atStart'] not in ('false', False, '0', 0)
         params = json.dumps(self._params['params'])
