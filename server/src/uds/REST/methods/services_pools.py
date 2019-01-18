@@ -100,7 +100,7 @@ class ServicesPools(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
 
-    custom_methods = [('setFallbackAccess', True), ('actionsList', True)]
+    custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True), ('actionsList', True)]
 
     def item_as_dict(self, item):
         summary = 'summarize' in self._params
@@ -425,10 +425,14 @@ class ServicesPools(ModelHandler):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
-        logger.debug('Setting fallback of {} to {}'.format(item.name, fallback))
-        item.fallbackAccess = fallback
-        item.save()
-        return ''
+        if fallback != '':
+            logger.debug('Setting fallback of {} to {}'.format(item.name, fallback))
+            item.fallbackAccess = fallback
+            item.save()
+        return item.fallbackAccess
+
+    def getFallbackAccess(self, item):
+        return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendar
     def actionsList(self, item):
