@@ -321,7 +321,7 @@ def webLogout(request, exit_url=None):
     """
 
     authenticator = request.user and request.user.manager.getInstance() or None
-    username = request.user.name
+    username = request.user and request.user.name or None
     exit_url = authenticator.logout(username) or exit_url
 
     if request.user is not None and request.user.id != ROOT_ID:
