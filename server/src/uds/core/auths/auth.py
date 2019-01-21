@@ -54,7 +54,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2018-12-21'
+__updated__ = '2019-01-21'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -319,9 +319,13 @@ def webLogout(request, exit_url=None):
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     """
-    # Invoke exit for authenticator
+
+    authenticator = request.user and request.user.manager.getInstance() or None
+    username = request.user.name
+    exit_url = authenticator.logout(username) or exit_url
 
     if request.user is not None and request.user.id != ROOT_ID:
+        # Try yo invoke logout of auth
         events.addEvent(request.user.manager, events.ET_LOGOUT, username=request.user.name, srcip=request.ip)
 
     request.session.clear()
@@ -331,7 +335,10 @@ def webLogout(request, exit_url=None):
             exit_url = exit_url.replace('http://', 'https://')
 
     # Try to delete session
-    return HttpResponseRedirect(request.build_absolute_uri(exit_url))
+    response = HttpResponseRedirect(request.build_absolute_uri(exit_url))
+    if authenticator:
+        authenticator.webLogoutHook(username, request, response)
+    return response
 
 
 def authLogLogin(request, authenticator, userName, logStr=''):

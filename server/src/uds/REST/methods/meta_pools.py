@@ -31,18 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import MetaPool, ServicePool, OSManager, Service, Image, ServicesPoolGroup, Account
-from uds.models.CalendarAction import (
-    CALENDAR_ACTION_INITIAL,
-    CALENDAR_ACTION_MAX,
-    CALENDAR_ACTION_CACHE_L1,
-    CALENDAR_ACTION_CACHE_L2,
-    CALENDAR_ACTION_PUBLISH,
-    CALENDAR_ACTION_ADD_TRANSPORT,
-    CALENDAR_ACTION_DEL_TRANSPORT,
-    CALENDAR_ACTION_ADD_GROUP,
-    CALENDAR_ACTION_DEL_GROUP
-)
+from uds.models import MetaPool, Image, ServicesPoolGroup
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
@@ -55,7 +44,6 @@ from .user_services import Groups
 from uds.REST.methods.op_calendars import AccessCalendars
 from .meta_service_pools import MetaServicesPool
 
-import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -87,7 +75,7 @@ class MetaPools(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    custom_methods = [('setFallbackAccess', True), ]
+    custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True)]
 
     def item_as_dict(self, item: MetaPool):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -219,18 +207,6 @@ class MetaPools(ModelHandler):
         item.save()
         return ''
 
-    #  Returns the action list based on current element, for calendar
-    def actionsList(self, item):
-        validActions = ()
-        itemInfo = item.service.getType()
-        if itemInfo.usesCache is True:
-            validActions += (CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_MAX)
-            if itemInfo.usesCache_L2 is True:
-                validActions += (CALENDAR_ACTION_CACHE_L2,)
+    def getFallbackAccess(self, item):
+        return item.fallbackAccess
 
-        if itemInfo.publicationType is not None:
-            validActions += (CALENDAR_ACTION_PUBLISH,)
-
-        # Transport & groups actions
-        validActions += (CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT, CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP)
-        return validActions

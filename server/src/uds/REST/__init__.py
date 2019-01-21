@@ -29,8 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django import http
 from django.views.generic.base import View
 from django.views.decorators.csrf import csrf_exempt
@@ -41,8 +39,6 @@ from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, Req
 
 import time
 import logging
-
-import six
 
 logger = logging.getLogger(__name__)
 
@@ -142,20 +138,20 @@ class Dispatcher(View):
                 response[k] = val
             return response
         except RequestError as e:
-            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
+            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except ResponseError as e:
-            return http.HttpResponseServerError(six.text_type(e), content_type="text/plain")
+            return http.HttpResponseServerError(str(e), content_type="text/plain")
         except NotSupportedError as e:
-            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
+            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except AccessDenied as e:
-            return http.HttpResponseForbidden(six.text_type(e), content_type="text/plain")
+            return http.HttpResponseForbidden(str(e), content_type="text/plain")
         except NotFound as e:
-            return http.HttpResponseNotFound(six.text_type(e), content_type="text/plain")
+            return http.HttpResponseNotFound(str(e), content_type="text/plain")
         except HandlerError as e:
-            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
+            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except Exception as e:
             logger.exception('Error processing request')
-            return http.HttpResponseServerError(six.text_type(e), content_type="text/plain")
+            return http.HttpResponseServerError(str(e), content_type="text/plain")
 
     @staticmethod
     def registerSubclasses(classes):

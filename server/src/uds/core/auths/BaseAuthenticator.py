@@ -39,7 +39,7 @@ from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths.Exceptions import InvalidUserException
 import logging
 
-__updated__ = '2018-09-12'
+__updated__ = '2019-01-21'
 
 logger = logging.getLogger(__name__)
 
@@ -387,6 +387,24 @@ class Authenticator(Module):
 
         """
         return None
+
+    def webLogoutHook(self, username, request, response):
+        '''
+        Invoked on web logout of an user
+        Args:
+
+            username: Name of the user being logged out of the web
+            request: Django request
+            response: Django response
+
+        Returns:
+            Nothing
+
+        :note: This method will be invoked whenever the webLogout is requested. It receibes request & response so auth cna
+               make changes (for example, on cookies) to it.
+
+        '''
+        return
 
     def getForAuth(self, username):
         """

@@ -93,8 +93,13 @@ class AccessCalendars(DetailHandler):
         # If already exists
         uuid = processUuid(item) if item is not None else None
 
-        calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
-        access = self._params['access'].upper()
+        try:
+            calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
+            access = self._params['access'].upper()
+            if access not in ('ALLOW', 'DENY'):
+                raise Exception()
+        except Exception:
+            self.invalidRequestException(_('Invalid parameters on request'))
         priority = int(self._params['priority'])
 
         if uuid is not None:
