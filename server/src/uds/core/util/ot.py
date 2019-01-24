@@ -32,14 +32,14 @@
 """
 from __future__ import unicode_literals
 
-__updated__ = '2018-10-01'
+__updated__ = '2019-01-24'
 
 from uds.models import (
     Provider, Service, OSManager, Transport,
     Network, ServicePool, UserService,
     Authenticator, User, Group, StatsCounters,
     StatsEvents, Calendar, CalendarRule,
-    Proxy, MetaPool
+    Proxy, MetaPool, Account
 )
 import logging
 
@@ -62,6 +62,7 @@ CALENDAR_TYPE = 13
 CALENDAR_RULE_TYPE = 14
 PROXY_TYPE = 16
 METAPOOL_TYPE = 15
+ACCOUNT_TYPE = 16
 
 
 def getObjectType(obj):
@@ -82,4 +83,5 @@ def getObjectType(obj):
         CalendarRule: CALENDAR_RULE_TYPE,
         Proxy: PROXY_TYPE,
         MetaPool: METAPOOL_TYPE,
+        Account: ACCOUNT_TYPE
     }.get(type(obj))
