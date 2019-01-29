@@ -209,10 +209,13 @@ class Config(object):
             yield val
 
     @staticmethod
-    def update(section, key, value):
+    def update(section, key, value, checkType=False):
         # If cfg value does not exists, simply ignore request
         try:
             cfg = uds.models.Config.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
+            if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
+                return  # Skip non writable elements
+
             if cfg.crypt is True:
                 value = CryptoManager.manager().encrypt(value)
             cfg.value = value

@@ -34,16 +34,22 @@ from __future__ import unicode_literals
 
 from uds.core.util.Config import Config as cfgConfig
 
-from uds.REST import Handler, AccessDenied
-import six
+from uds.REST import Handler
 
 import logging
 
 logger = logging.getLogger(__name__)
 
+# Pair of section/value removed from current UDS version
+REMOVED = {
+    'UDS': ('allowPreferencesAccess', 'customHtmlLogin', 'UDS Theme', 'UDS Theme Enhaced', 'css'),
+    'Cluster': ('Destination CPU Load', 'Migration CPU Load', 'Migration Free Memory'),
+    'IPAUTH': ('autoLogin',),
+    'VMWare': ('minUsableDatastoreGB', 'maxRetriesOnError'),
+};
+
+
 # Enclosed methods under /config path
-
-
 class Config(Handler):
     needs_admin = True  # By default, staff is lower level needed
 
@@ -52,6 +58,11 @@ class Config(Handler):
         addCrypt = self.is_admin()
 
         for cfg in cfgConfig.enumerate():
+            # Skip removed configuration values, even if they are in database
+            logger.debug('Key: %s, val: %s', cfg.section(), cfg.key());
+            if cfg.key() in REMOVED.get(cfg.section(), ()):
+                continue
+
             if cfg.isCrypted() is True and addCrypt is False:
                 continue
             # add section if it do not exists
@@ -68,7 +79,7 @@ class Config(Handler):
         return res
 
     def put(self):
-        for section, secDict in six.iteritems(self._params):
-            for key, vals in six.iteritems(secDict):
+        for section, secDict in self._params.items():
+            for key, vals in secDict.items():
                 cfgConfig.update(section, key, vals['value'])
         return 'done'

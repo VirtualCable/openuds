@@ -50,7 +50,7 @@ from uds.core.util.Config import GlobalConfig
 
 from uds.core import VERSION, VERSION_STAMP
 
-from uds.models import Authenticator
+from uds.models import Authenticator, Image
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +104,7 @@ def udsJs(request):
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
+        'image_size': Image.MAX_IMAGE_SIZE,
         'urls': {
             'changeLang': reverse('set_language'),
             'login': reverse('page.login'),
