@@ -173,7 +173,7 @@ class ServicesPools(ModelHandler):
             val['restrained'] = item.isRestrained()
             val['permission'] = permissions.getEffectivePermission(self._user, item)
             val['info'] = Services.serviceInfo(item.service)
-            val['servicesPoolGroup_id'] = poolGroupId
+            val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb
 
