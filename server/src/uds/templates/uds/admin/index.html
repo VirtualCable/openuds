@@ -1,251 +1,97 @@
-{% load l10n i18n static compress html5 REST %}{% spaceless %}
-{% get_current_language as LANGUAGE_CODE %}
-{% get_available_languages as LANGUAGES %}
-<!DOCTYPE html>{% endspaceless %}
-<html lang='{{LANGUAGE_CODE}}'>
-    <head>
-        <title>UDS Dashboard</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="robots" content="noindex, nofollow">
+{% load i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
 
-        <link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon">
+<head>
+  <meta charset="utf-8">
+  <title>Uds</title>
+  <!-- inline spinner styles to be able to display spinner right away -->
+  <style type="text/css">
+    body,
+    html {
+      height: 100%;
+    }
 
-        <!-- minified css from: bootstrap, font-awesome, bootstrap-select, bootstrap-switch, datatables, tabletools, tabletools.botstrap, uds CSSs  -->
-        {% compress css %}
-        <!-- Bootstrap -->
-        <link href="{% get_static_prefix %}adm/css/bootstrap-datepicker3.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/bootstrap-timepicker.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/datatables.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/font-awesome.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/bootstrap-switch.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/jquery.bootstrap-touchspin.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/bootstrap-select.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/jasny-bootstrap.min.css" rel="stylesheet" media="screen">
+    .app-loading {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
 
-        <link href="{% get_static_prefix %}adm/css/uds.css" rel="stylesheet" media="screen">
-        {% endcompress %}
-    </head>
+    .app-loading .spinner {
+      height: 200px;
+      width: 200px;
+      animation: rotate 2s linear infinite;
+      transform-origin: center center;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
 
-    <body>
-        <!-- Navigation bar -->
-        <div id="wrapper" class="full">
+    .app-loading .spinner .path {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+      animation: dash 1.5s ease-in-out infinite;
+      stroke-linecap: round;
+      stroke: #ddd;
+    }
 
-        {% block menu %}{% include 'uds/admin/snippets/navbar.html' with admin=request.user.is_admin %}{% endblock %}
-        <!-- End of menu -->
-        <!-- Content -->
-             <div id="page-wrapper">
-                <div id="content">
-                </div>
-            </div>
-         </div>
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
 
-        <script src="{% url 'utility.jsCatalog' LANGUAGE_CODE %}"></script>
-        <script>
-            // Initialize a few settings, needed for api to work
-            (function(api){
-                api.config = {
-                    token: "{% auth_token %}",
-                    admin: {{ request.user.is_admin|lower }},
-                    auth_header: "{% auth_token_header %}",
-                    lang: "{{ LANGUAGE_CODE }}",
-                    base_url: "{% url 'REST' '' %}",
-                    template_url: "{% url 'uds.admin.views.tmpl' '' %}",
-                    img_url: "{% get_static_prefix %}adm/img/",
-                };
-            }(window.api = window.api || {}));
-        </script>
+    @keyframes dash {
+      0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+      } 50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+      } 100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+      }
+    }
 
+  </style>
 
+  <base href="/uds/page">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="/uds/res/modern/img/favicon.png">
 
-        {% compress js %}
-        <script src="{% get_static_prefix %}adm/js/jquery-2.1.3.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/datatables.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
-        <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.bootstrap-touchspin.js"></script>
-        <script src="{% get_static_prefix %}adm/js/bootstrap-datepicker.js"></script>
-        <script src="{% get_static_prefix %}adm/js/bootstrap-timepicker.js"></script>
-        <script src="{% get_static_prefix %}adm/js/datepicker-locales/bootstrap-datepicker.{{ LANGUAGE_CODE }}.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
 
-        <script src="{% get_static_prefix %}adm/js/bootstrap-select.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.hoverIntent.minified.js"></script>
+  <!-- just in case translations cannot be loaded, provide a fallback -->
+  <script type="text/javascript">
+    django = {
+      gettext: function (s) {
+        return s;
+      }
+    }
 
-        <!-- Flot charts -->
-        <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.resize.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.time.min.js"></script>
+  </script>
+  <script type="text/javascript" src="{% url 'utility.jsCatalog' LANGUAGE_CODE %}"></script><script type="text/javascript" src="{% url 'utility.js' %}"></script>
 
-        <!-- for "save" from javascript -->
-        <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
-        <script src="{% get_static_prefix %}adm/js/FileSaver.min.js"></script>
+<link rel="stylesheet" href="/uds/res/admin/styles.css"></head>
 
-        <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script>
+<body>
+  <uds-root>
+    <!-- loading layout replaced by app after startupp -->
+    <div class="app-loading">
+      <div class="logo"></div>
+      <svg class="spinner" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+      </svg>
+    </div>
+  </uds-root>
+<script type="text/javascript" src="/uds/res/admin/runtime.js"></script><script type="text/javascript" src="/uds/res/admin/polyfills.js"></script><script type="text/javascript" src="/uds/res/admin/main.js"></script></body>
 
-        <!-- For Image preview on file upload -->
-        <script src="{% get_static_prefix %}adm/js/jasny-bootstrap.min.js"></script>
-
-        <!-- template engine -->
-        <script src="{% get_static_prefix %}adm/js/handlebars-v4.0.10.js"></script>
-
-        <!-- First all api related stuff -->
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api.coffee"></script>
-
-        <!-- utilities attached to api -->
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api-tools.coffee"></script>
-
-        <!--  templates related, inserts itself into api -->
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api-templates.coffee"></script>
-
-        <!--  export to xls, inserts itself into api -->
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api-spreadsheet.coffee"></script>
-
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-methods.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-tools.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-form.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-permissions.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-element.coffee"></script>
-
-        <!-- user interface management -->
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-definition.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-dashboard.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-services.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-authenticators.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-osmanagers.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-connectivity.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-proxies.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools-calendars.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools-actions.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools-publications.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools-transports.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-metapools.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-metapools-calendars.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-config.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-gallery.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespoolsgroup.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-reports.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-calendars.coffee"></script>
-        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-accounts.coffee"></script>
-
-        <!-- base64 encoding -->
-        <script src="{% get_static_prefix %}adm/js/base64.js"></script>
-
-        <script type="text/javascript">
-           function showHideTooltip() {
-              console.log("ShowHide");
-              if( $('.side-nav').attr('class').indexOf('full') != -1) {
-                $('.side-nav li').find('img').tooltip('destroy');
-              } else {
-                $('.side-nav li').each(function(index, element) {
-                  var $element = $(element).find('a').eq(0);
-                  var title = $element.find('.menu-lnk').eq(0).text();
-                  $element.find('img').eq(0).tooltip({
-                    placement: 'right',
-                    title: title,
-                    container: 'body',
-                    delay: {
-                      show: 200,
-                      hide: 100
-                    }
-                  });
-                });
-              }
-            }
-
-          $(function(){
-            showHideTooltip();
-            $('.side-nav').hoverIntent({
-              over: function() {
-                $('.side-nav').addClass('full');
-                showHideTooltip();
-              },
-              out: function() {
-                $('.side-nav').removeClass('full');
-                $('.side-nav > ul > li.dropdown').removeClass('open');
-                showHideTooltip();
-              },
-              timeout: 50,
-              interval: 50
-            });
-
-            // set default error function
-            api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
-    		// Initialize gui
-        	gui.init();
-
-            $.fn.datepicker.defaults.format = 'yyyy/mm/dd';
-            $.fn.datepicker.defaults.todayBtn = "linked";
-            $.fn.datepicker.defaults.autoclose = true;
-            $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
-
-          });
-        </script>
-        {% block js %}{% endblock %}
-        {% endcompress %}
-
-        {% js_template_path 'uds/admin/tmpl' %}
-        <!-- preloading of templates -->
-        <!-- page contents -->
-        {% js_template 'dashboard' %}
-        {% js_template 'restricted' %}
-        {% js_template 'providers' %}
-        {% js_template 'service-info' %}
-        {% js_template 'authenticators' %}
-        {% js_template 'user-info' %}
-        {% js_template 'group-info' %}
-        {% js_template 'osmanagers' %}
-        {% js_template 'connectivity' %}
-        {% js_template 'services_pool' %}
-        {% js_template 'services_pool_groups' %}
-        {% js_template 'pool_access_default' %}
-        {% js_template 'pool_add_access' %}
-        {% js_template 'pool_add_action' %}
-        {% js_template 'pool_add_group' %}
-        {% js_template 'pool_edit_assigned' %}
-        {% js_template 'configuration' %}
-        {% js_template 'gallery' %}
-        {% js_template 'permissions' %}
-        {% js_template 'permissions_add' %}
-        {% js_template 'reports' %}
-        {% js_template 'calendars' %}
-        {% js_template 'accounts' %}
-        {% js_template 'proxies' %}
-
-        <!-- utility pages -->
-        {% js_template 'request_failed' %}
-        <!-- specific pages -->
-        {% js_template 'new_image' %}
-        {% js_template 'calendar_rule' %}
-        <!-- components -->
-        {% js_template 'comp/table' %}
-        {% js_template 'comp/modal' %}
-        {% js_template 'comp/responsive_table' %}
-        {% js_template 'comp/dropdown' %}
-        {% js_template 'comp/dropdown_grouped' %}
-
-        <!-- overview -->
-        {% js_template 'comp/overview_record' %}
-
-
-        <!-- fields, not really needed but 'caching' them is faster -->
-        {% js_template 'fld/checkbox' %}
-        {% js_template 'fld/choice' %}
-        {% js_template 'fld/imgchoice' %}
-        {% js_template 'fld/editlist' %}
-        {% js_template 'fld/editlist_popup' %}
-        {% js_template 'fld/hidden' %}
-        {% js_template 'fld/multichoice' %}
-        {% js_template 'fld/numeric' %}
-        {% js_template 'fld/password' %}
-        {% js_template 'fld/text' %}
-        {% js_template 'fld/textbox' %}
-        {% js_template 'fld/date' %}
-        {% js_template 'fld/taglist' %}
-
-    </body>
 </html>
