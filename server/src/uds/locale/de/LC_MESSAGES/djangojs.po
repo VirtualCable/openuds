@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-11 05:57+0100\n"
+"POT-Creation-Date: 2019-02-04 09:46+0100\n"
 "PO-Revision-Date: 2019-01-10 08:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -19,1035 +19,1488 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: static/tmp_js/api-tools.js:378
-msgid "Sunday"
-msgstr "Sonntag"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:220
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:13
+msgid "seconds"
+msgstr "Sekunden"
 
-#: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
-msgid "Monday"
-msgstr "Montag"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:82
+#: static/admin/translations-adm-fakejs.js:125
+#: static/admin/translations-adm-fakejs.js:127
+#: static/admin/translations-adm-fakejs.js:129
+#: static/admin/translations-adm-fakejs.js:138
+#: static/admin/translations-adm-fakejs.js:140
+#: static/admin/translations-adm-fakejs.js:142
+#: static/admin/translations-adm-fakejs.js:221
+#: static/admin/translations-adm-fakejs.js:242
+msgid "Error"
+msgstr "Error"
 
-#: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
-msgid "Tuesday"
-msgstr "Dienstag"
+#: static/admin/main.js:1
+msgid "Please, fill in require fields: "
+msgstr "Bitte füllen Sie Pflichtfelder aus:"
 
-#: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
-msgid "Wednesday"
-msgstr "Mittwoch"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:223
+msgid "Testing..."
+msgstr "Testen..."
 
-#: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
-msgid "Thursday"
-msgstr "Donnerstag"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:98
+#: static/admin/translations-adm-fakejs.js:118
+#: static/admin/translations-adm-fakejs.js:123
+#: static/admin/translations-adm-fakejs.js:132
+#: static/admin/translations-adm-fakejs.js:136
+#: static/admin/translations-adm-fakejs.js:145
+#: static/admin/translations-adm-fakejs.js:224
+#: static/admin/translations-adm-fakejs.js:226
+#: static/admin/translations-adm-fakejs.js:228
+#: static/admin/translations-adm-fakejs.js:230
+#: static/admin/translations-adm-fakejs.js:233
+#: static/admin/translations-adm-fakejs.js:235
+msgid "dismiss"
+msgstr "entlassen"
 
-#: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
-msgid "Friday"
-msgstr "Freitag"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:225
+msgid "Test failed:"
+msgstr "Im Test durchgefallen:"
 
-#: static/tmp_js/api-tools.js:378 static/tmp_js/gui-d-calendar.js:35
-msgid "Saturday"
-msgstr "Samstag"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:227
+msgid "Test passed successfully"
+msgstr "Test erfolgreich bestanden"
 
-#: static/tmp_js/api-tools.js:380
-msgid "January"
-msgstr "Januar"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:144
+#: static/admin/translations-adm-fakejs.js:229
+msgid "Successfully saved"
+msgstr "Erfolgreich gespeichert"
 
-#: static/tmp_js/api-tools.js:380
-msgid "February"
-msgstr "Februar"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:231
+msgid "Are you sure do you want to delete the following items?"
+msgstr "Möchten Sie die folgenden Elemente wirklich löschen?"
 
-#: static/tmp_js/api-tools.js:380
-msgid "March"
-msgstr "März"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:232
+msgid "Deletion finished"
+msgstr "Löschung abgeschlossen"
 
-#: static/tmp_js/api-tools.js:380
-msgid "April"
-msgstr "April"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:188
+msgid "provider"
+msgstr "Anbieter"
 
-#: static/tmp_js/api-tools.js:380
-msgid "May"
-msgstr "Kann"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:189
+msgid "service"
+msgstr "Bedienung"
 
-#: static/tmp_js/api-tools.js:380
-msgid "June"
-msgstr "Juni"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:190
+msgid "service pool"
+msgstr "Service-Pool"
 
-#: static/tmp_js/api-tools.js:380
-msgid "July"
-msgstr "Juli"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:191
+msgid "authenticator"
+msgstr "Authentifikator"
 
-#: static/tmp_js/api-tools.js:380
-msgid "August"
-msgstr "August"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:192
+msgid "user"
+msgstr "Nutzer"
 
-#: static/tmp_js/api-tools.js:380
-msgid "September"
-msgstr "September"
-
-#: static/tmp_js/api-tools.js:380
-msgid "October"
-msgstr "Oktober"
-
-#: static/tmp_js/api-tools.js:380
-msgid "November"
-msgstr "November"
-
-#: static/tmp_js/api-tools.js:380
-msgid "December"
-msgstr "Dezember"
-
-#: static/tmp_js/gui-d-authenticators.js:12 static/tmp_js/gui-d-services.js:34
-msgid "Test"
-msgstr "Prüfung"
-
-#: static/tmp_js/gui-d-authenticators.js:49
-msgid "Search error"
-msgstr "Suchfehler"
-
-#: static/tmp_js/gui-d-authenticators.js:58 static/tmp_js/gui-form.js:354
-msgid "Accept"
-msgstr "Akzeptieren"
-
-#: static/tmp_js/gui-d-authenticators.js:164
-#: static/tmp_js/gui-d-connectivity.js:45 static/tmp_js/gui-d-osmanagers.js:43
-#: static/tmp_js/gui-d-services.js:114 static/tmp_js/gui-d-services.js:176
-#: static/tmp_js/gui-d-servicespools.js:247
-msgid "Error accessing data"
-msgstr "Fehler beim Zugriff auf Daten"
-
-#: static/tmp_js/gui-d-authenticators.js:184
-#: static/tmp_js/gui-d-authenticators.js:464
-#: static/tmp_js/gui-d-services.js:140
-msgid "Information"
-msgstr "Information"
-
-#: static/tmp_js/gui-d-authenticators.js:224
-msgid "Group information"
-msgstr "Gruppeninformationen"
-
-#: static/tmp_js/gui-d-authenticators.js:367
-msgid "Edit group"
-msgstr "Gruppe bearbeiten"
-
-#: static/tmp_js/gui-d-authenticators.js:391
-#: static/tmp_js/gui-d-authenticators.js:441
-msgid "Group saved"
-msgstr "Gruppe gespeichert"
-
-#: static/tmp_js/gui-d-authenticators.js:416
-msgid "New meta group"
-msgstr "Neue Metagruppe"
-
-#: static/tmp_js/gui-d-authenticators.js:419
-msgid "New group"
-msgstr "Neue Gruppe"
-
-#: static/tmp_js/gui-d-authenticators.js:433
-msgid "Search groups"
-msgstr "Gruppen durchsuchen"
-
-#: static/tmp_js/gui-d-authenticators.js:433
-#: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:91
-msgid "Group"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:193
+msgid "group"
 msgstr "Gruppe"
 
-#: static/tmp_js/gui-d-authenticators.js:433
-msgid "Groups found"
-msgstr "Gruppen gefunden"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:194
+msgid "transport"
+msgstr "Transport"
 
-#: static/tmp_js/gui-d-authenticators.js:442
-msgid "Group saving error"
-msgstr "Fehler beim Speichern der Gruppe"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:195
+msgid "OS manager"
+msgstr "OS-Manager"
 
-#: static/tmp_js/gui-d-authenticators.js:456
-msgid "Delete group"
-msgstr "Gruppe löschen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:196
+msgid "calendar"
+msgstr "Kalender"
 
-#: static/tmp_js/gui-d-authenticators.js:456
-msgid "Group deletion error"
-msgstr "Fehler beim Löschen der Gruppe"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:197
+msgid "pool group"
+msgstr "Poolgruppe"
 
-#: static/tmp_js/gui-d-authenticators.js:499
-msgid "User information"
-msgstr "Nutzerinformation"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:198
+msgid "Go to"
+msgstr "Gehe zu"
 
-#: static/tmp_js/gui-d-authenticators.js:672
-msgid "Edit user"
-msgstr "Benutzer bearbeiten"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:3
+msgid "yes"
+msgstr "Ja"
 
-#: static/tmp_js/gui-d-authenticators.js:705
-#: static/tmp_js/gui-d-authenticators.js:738
-msgid "User saved"
-msgstr "Benutzer gespeichert"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:4
+msgid "no"
+msgstr "Nein"
 
-#: static/tmp_js/gui-d-authenticators.js:706
-#: static/tmp_js/gui-d-authenticators.js:739
-msgid "User saving error"
-msgstr "Fehler beim Speichern des Benutzers"
+#: static/admin/main.js:1
+msgid "Error saving: "
+msgstr "Fehler beim Speichern:"
 
-#: static/tmp_js/gui-d-authenticators.js:718
-msgid "New user"
-msgstr "Neuer Benutzer"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:186
+msgid "Save error"
+msgstr "Fehler speichern"
 
-#: static/tmp_js/gui-d-authenticators.js:729
-msgid "Search users"
-msgstr "Benutzer suchen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:187
+msgid "Communication error"
+msgstr "Kommunikationsfehler"
 
-#: static/tmp_js/gui-d-authenticators.js:729
-#: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:88
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:244
+msgid "Read only"
+msgstr "Schreibgeschützt"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:245
+msgid "Full Access"
+msgstr "Voller Zugriff"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:246
+#: static/admin/translations-adm-fakejs.js:326
+#: static/admin/translations-adm-fakejs.js:378
 msgid "User"
 msgstr "Nutzer"
 
-#: static/tmp_js/gui-d-authenticators.js:729
-msgid "Users found"
-msgstr "Benutzer gefunden"
-
-#: static/tmp_js/gui-d-authenticators.js:744
-msgid "Delete user"
-msgstr "Benutzer löschen"
-
-#: static/tmp_js/gui-d-authenticators.js:744
-msgid "User deletion error"
-msgstr "Fehler beim Löschen des Benutzers"
-
-#: static/tmp_js/gui-d-authenticators.js:756
-msgid "New authenticator"
-msgstr "Neuer Authentifikator"
-
-#: static/tmp_js/gui-d-authenticators.js:756
-msgid "Authenticator creation error"
-msgstr "Fehler beim Erstellen des Authentifikators"
-
-#: static/tmp_js/gui-d-authenticators.js:757
-msgid "Edit authenticator"
-msgstr "Authentifikator bearbeiten"
-
-#: static/tmp_js/gui-d-authenticators.js:757
-msgid "Authenticator saving error"
-msgstr "Fehler beim Authenticator-Speichern"
-
-#: static/tmp_js/gui-d-authenticators.js:758
-msgid "Delete authenticator"
-msgstr "Authentifikator löschen"
-
-#: static/tmp_js/gui-d-authenticators.js:758
-msgid "Authenticator deletion error"
-msgstr "Fehler beim Authenticator-Löschvorgang"
-
-#: static/tmp_js/gui-d-calendar.js:23
-msgid "day"
-msgstr "Tag"
-
-#: static/tmp_js/gui-d-calendar.js:23
-msgid "days"
-msgstr "Tage"
-
-#: static/tmp_js/gui-d-calendar.js:23
-msgid "Daily"
-msgstr "Täglich"
-
-#: static/tmp_js/gui-d-calendar.js:24
-msgid "week"
-msgstr "Woche"
-
-#: static/tmp_js/gui-d-calendar.js:24
-msgid "weeks"
-msgstr "Wochen"
-
-#: static/tmp_js/gui-d-calendar.js:24
-msgid "Weekly"
-msgstr "Wöchentlich"
-
-#: static/tmp_js/gui-d-calendar.js:25
-msgid "month"
-msgstr "Monat"
-
-#: static/tmp_js/gui-d-calendar.js:25
-msgid "months"
-msgstr "Monate"
-
-#: static/tmp_js/gui-d-calendar.js:25
-msgid "Monthly"
-msgstr "Monatlich"
-
-#: static/tmp_js/gui-d-calendar.js:26
-msgid "year"
-msgstr "Jahr"
-
-#: static/tmp_js/gui-d-calendar.js:26
-msgid "years"
-msgstr "Jahre"
-
-#: static/tmp_js/gui-d-calendar.js:26
-msgid "Yearly"
-msgstr "Jährlich"
-
-#: static/tmp_js/gui-d-calendar.js:27
-msgid "Weekdays"
-msgstr "Wochentage"
-
-#: static/tmp_js/gui-d-calendar.js:30
-msgid "Minutes"
-msgstr "Protokoll"
-
-#: static/tmp_js/gui-d-calendar.js:31
-msgid "Hours"
-msgstr "Std"
-
-#: static/tmp_js/gui-d-calendar.js:32
-msgid "Days"
-msgstr "Tage"
-
-#: static/tmp_js/gui-d-calendar.js:33
-msgid "Weeks"
-msgstr "Wochen"
-
-#: static/tmp_js/gui-d-calendar.js:35
-msgid "Sun"
-msgstr "Sonne"
-
-#: static/tmp_js/gui-d-calendar.js:51
-msgid "(no days)"
-msgstr "(keine tage)"
-
-#: static/tmp_js/gui-d-calendar.js:152
-msgid "This rule will be valid every "
-msgstr "Diese Regel gilt für alle"
-
-#: static/tmp_js/gui-d-calendar.js:154
-msgid "of any week"
-msgstr "von einer Woche"
-
-#: static/tmp_js/gui-d-calendar.js:162
-msgid "from"
-msgstr "von"
-
-#: static/tmp_js/gui-d-calendar.js:164
-msgid "onwards"
-msgstr "weiter"
-
-#: static/tmp_js/gui-d-calendar.js:166
-msgid "until "
-msgstr "bis um"
-
-#: static/tmp_js/gui-d-calendar.js:168
-msgid "starting at"
-msgstr "beginnt um"
-
-#: static/tmp_js/gui-d-calendar.js:171
-msgid "and will remain valid for"
-msgstr "und bleibt gültig für"
-
-#: static/tmp_js/gui-d-calendar.js:173
-msgid "with no duration"
-msgstr "ohne Dauer"
-
-#: static/tmp_js/gui-d-calendar.js:209
-msgid "New rule"
-msgstr "Neue Regel"
-
-#: static/tmp_js/gui-d-calendar.js:209
-msgid "Edit rule"
-msgstr "Regel bearbeiten"
-
-#: static/tmp_js/gui-d-calendar.js:210
-msgid "Save"
-msgstr "sparen"
-
-#: static/tmp_js/gui-d-calendar.js:316
-msgid "Error creating rule"
-msgstr "Fehler beim Erstellen der Regel"
-
-#: static/tmp_js/gui-d-calendar.js:319
-msgid "Error saving rule"
-msgstr "Fehler beim Speichern der Regel"
-
-#: static/tmp_js/gui-d-calendar.js:367
-msgid "Delete rule"
-msgstr "Regel löschen"
-
-#: static/tmp_js/gui-d-calendar.js:367
-msgid "Rule deletion error"
-msgstr "Fehler beim Löschen der Regel"
-
-#: static/tmp_js/gui-d-calendar.js:374
-msgid "New calendar"
-msgstr "Neuer Kalender"
-
-#: static/tmp_js/gui-d-calendar.js:374
-msgid "Calendar creation error"
-msgstr "Fehler bei der Kalendererstellung"
-
-#: static/tmp_js/gui-d-calendar.js:375
-msgid "Edit calendar"
-msgstr "Kalender bearbeiten"
-
-#: static/tmp_js/gui-d-calendar.js:375
-msgid "Calendar saving error"
-msgstr "Fehler beim Speichern des Kalenders"
-
-#: static/tmp_js/gui-d-calendar.js:376
-msgid "Delete calendar"
-msgstr "Kalender löschen"
-
-#: static/tmp_js/gui-d-calendar.js:376
-msgid "Calendar deletion error"
-msgstr "Fehler beim Löschen des Kalenders"
-
-#: static/tmp_js/gui-d-config.js:58
-msgid "Configuration saved"
-msgstr "Konfiguration gespeichert"
-
-#: static/tmp_js/gui-d-config.js:62
-msgid "No changes has been made"
-msgstr "Es wurden keine Änderungen vorgenommen"
-
-#: static/tmp_js/gui-d-connectivity.js:65
-msgid "New transport"
-msgstr "Neuer Transport"
-
-#: static/tmp_js/gui-d-connectivity.js:65
-msgid "Transport creation error"
-msgstr "Fehler beim Transporterstellung"
-
-#: static/tmp_js/gui-d-connectivity.js:66
-msgid "Edit transport"
-msgstr "Transport bearbeiten"
-
-#: static/tmp_js/gui-d-connectivity.js:66
-msgid "Transport saving error"
-msgstr "Fehler beim Transport"
-
-#: static/tmp_js/gui-d-connectivity.js:67
-msgid "Delete transport"
-msgstr "Transport löschen"
-
-#: static/tmp_js/gui-d-connectivity.js:67
-msgid "Transport deletion error"
-msgstr "Transportlöschfehler"
-
-#: static/tmp_js/gui-d-connectivity.js:74
-msgid "New network"
-msgstr "Neues Netzwerk"
-
-#: static/tmp_js/gui-d-connectivity.js:74
-msgid "Network creation error"
-msgstr "Fehler beim Erstellen des Netzwerks"
-
-#: static/tmp_js/gui-d-connectivity.js:75
-msgid "Edit network"
-msgstr "Netzwerk bearbeiten"
-
-#: static/tmp_js/gui-d-connectivity.js:75
-msgid "Network saving error"
-msgstr "Fehler beim Speichern des Netzwerks"
-
-#: static/tmp_js/gui-d-connectivity.js:76
-msgid "Delete network"
-msgstr "Netzwerk löschen"
-
-#: static/tmp_js/gui-d-connectivity.js:76
-msgid "Network deletion error"
-msgstr "Fehler beim Löschen des Netzwerks"
-
-#: static/tmp_js/gui-d-dashboard.js:40
-msgid "Staff member"
-msgstr "Mitarbeiter"
-
-#: static/tmp_js/gui-d-gallery.js:17
-msgid "New image"
-msgstr "Neues Bild"
-
-#: static/tmp_js/gui-d-gallery.js:17
-msgid "Edit image"
-msgstr "Bild bearbeiten"
-
-#: static/tmp_js/gui-d-gallery.js:18
-msgid "Upload"
-msgstr "Hochladen"
-
-#: static/tmp_js/gui-d-gallery.js:26
-msgid "You must select an image"
-msgstr "Sie müssen ein Bild auswählen"
-
-#: static/tmp_js/gui-d-gallery.js:34
-msgid "Image is too big (max. upload size is 256Kb)"
-msgstr "Bild ist zu groß (max. Upload-Größe beträgt 256Kb)"
-
-#: static/tmp_js/gui-d-gallery.js:80
-msgid "Delete Image"
-msgstr "Lösche Bild"
-
-#: static/tmp_js/gui-d-gallery.js:80
-msgid "Image deletion error"
-msgstr "Fehler beim Löschen von Bildern"
-
-#: static/tmp_js/gui-d-osmanagers.js:46
-msgid "New OSManager"
-msgstr "Neuer OSManager"
-
-#: static/tmp_js/gui-d-osmanagers.js:46
-msgid "OSManager creation error"
-msgstr "OSManager-Erstellungsfehler"
-
-#: static/tmp_js/gui-d-osmanagers.js:47
-msgid "Edit OSManager"
-msgstr "Bearbeiten Sie OSManager"
-
-#: static/tmp_js/gui-d-osmanagers.js:47
-msgid "OSManager saving error"
-msgstr "OSManager-Speicherfehler"
-
-#: static/tmp_js/gui-d-osmanagers.js:48
-msgid "Delete OSManager"
-msgstr "Löschen Sie OSManager"
-
-#: static/tmp_js/gui-d-osmanagers.js:48
-msgid "OSManager deletion error"
-msgstr "OSManager-Löschfehler"
-
-#: static/tmp_js/gui-d-reports.js:22 static/tmp_js/gui-d-reports.js:46
-msgid "Generate report"
-msgstr "Bericht generieren"
-
-#: static/tmp_js/gui-d-reports.js:85
-msgid "Error creating report"
-msgstr "Fehler beim Erstellen des Berichts"
-
-#: static/tmp_js/gui-d-reports.js:90
-msgid "Error obtaining report description"
-msgstr "Fehler beim Abrufen der Berichtsbeschreibung"
-
-#: static/tmp_js/gui-d-services.js:90
-msgid "In Maintenance"
-msgstr "In Wartung"
-
-#: static/tmp_js/gui-d-services.js:92
-msgid "Active"
-msgstr "Aktiv"
-
-#: static/tmp_js/gui-d-services.js:168
-msgid "Service information"
-msgstr "Service Information"
-
-#: static/tmp_js/gui-d-services.js:246
-msgid "Edit service"
-msgstr "Dienst bearbeiten"
-
-#: static/tmp_js/gui-d-services.js:246
-msgid "Service creation error"
-msgstr "Fehler bei der Serviceerstellung"
-
-#: static/tmp_js/gui-d-services.js:247
-msgid "New service"
-msgstr "Neuer Service"
-
-#: static/tmp_js/gui-d-services.js:247
-msgid "Service saving error"
-msgstr "Fehler beim Speichern des Dienstes"
-
-#: static/tmp_js/gui-d-services.js:248
-msgid "Delete service"
-msgstr "Dienst löschen"
-
-#: static/tmp_js/gui-d-services.js:248
-msgid "Service deletion error"
-msgstr "Fehler beim Löschen des Dienstes"
-
-#: static/tmp_js/gui-d-services.js:276
-msgid "Delete user service"
-msgstr "Benutzerdienst löschen"
-
-#: static/tmp_js/gui-d-services.js:276
-msgid "User service deletion error"
-msgstr "Fehler beim Löschen des Benutzerservice"
-
-#: static/tmp_js/gui-d-services.js:290 static/tmp_js/gui-d-services.js:330
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:157
+#: static/admin/translations-adm-fakejs.js:172
+#: static/admin/translations-adm-fakejs.js:247
+#: static/admin/translations-adm-fakejs.js:321
+#: static/admin/translations-adm-fakejs.js:331
+msgid "Group"
+msgstr "Gruppe"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:248
+#: static/admin/translations-adm-fakejs.js:320
+#: static/admin/translations-adm-fakejs.js:325
+#: static/admin/translations-adm-fakejs.js:330
+#: static/modern/translations-fakejs.js:34
+msgid "Authenticator"
+msgstr "Authenticator"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:249
+msgid "Permission"
+msgstr "Genehmigung"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:250
+msgid "Remove"
+msgstr "Löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:251
+msgid "Confirm revokation of permission"
+msgstr "Widerruf der Genehmigung bestätigen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:57
+#: static/admin/translations-adm-fakejs.js:200
+msgid "Sunday"
+msgstr "Sonntag"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:58
+#: static/admin/translations-adm-fakejs.js:201
+msgid "Monday"
+msgstr "Montag"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:59
+#: static/admin/translations-adm-fakejs.js:202
+msgid "Tuesday"
+msgstr "Dienstag"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:60
+#: static/admin/translations-adm-fakejs.js:203
+msgid "Wednesday"
+msgstr "Mittwoch"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:61
+#: static/admin/translations-adm-fakejs.js:204
+msgid "Thursday"
+msgstr "Donnerstag"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:62
+#: static/admin/translations-adm-fakejs.js:205
+msgid "Friday"
+msgstr "Freitag"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:63
+#: static/admin/translations-adm-fakejs.js:206
+msgid "Saturday"
+msgstr "Samstag"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:207
+msgid "January"
+msgstr "Januar"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:208
+msgid "February"
+msgstr "Februar"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:209
+msgid "March"
+msgstr "März"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:210
+msgid "April"
+msgstr "April"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:211
+msgid "May"
+msgstr "Kann"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:212
+msgid "June"
+msgstr "Juni"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:213
+msgid "July"
+msgstr "Juli"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:214
+msgid "August"
+msgstr "August"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:215
+msgid "September"
+msgstr "September"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:216
+msgid "October"
+msgstr "Oktober"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:217
+msgid "November"
+msgstr "November"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:218
+msgid "December"
+msgstr "Dezember"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:219
+msgid "Never"
+msgstr "noch nie"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:14
 msgid "Maintenance"
 msgstr "Instandhaltung"
 
-#: static/tmp_js/gui-d-services.js:303
-msgid "Maintenance Mode"
-msgstr "Wartungsmodus"
-
-#: static/tmp_js/gui-d-services.js:304
-msgid "Enter Maintenance Mode?"
-msgstr "Wartungsmodus aktivieren?"
-
-#: static/tmp_js/gui-d-services.js:304
-msgid "Exit Maintenance Mode?"
-msgstr "Wartungsmodus verlassen?"
-
-#: static/tmp_js/gui-d-services.js:336
-msgid "Enter maintenance Mode"
-msgstr "Rufen Sie den Wartungsmodus auf"
-
-#: static/tmp_js/gui-d-services.js:340
-msgid "Exit Maintenance Mode"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:15
+msgid "Exit maintenance mode"
 msgstr "Beenden Sie den Wartungsmodus"
 
-#: static/tmp_js/gui-d-services.js:352
-msgid "New services provider"
-msgstr "Neuer Dienstleister"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:16
+msgid "Enter maintenance mode"
+msgstr "Rufen Sie den Wartungsmodus auf"
 
-#: static/tmp_js/gui-d-services.js:352
-msgid "Services provider creation error"
-msgstr "Fehler beim Erstellen des Diensteanbieters"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:17
+msgid "New provider"
+msgstr "Neuer Anbieter"
 
-#: static/tmp_js/gui-d-services.js:353
-msgid "Edit services provider"
-msgstr "Diensteanbieter bearbeiten"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:18
+msgid "Edit provider"
+msgstr "Anbieter bearbeiten"
 
-#: static/tmp_js/gui-d-services.js:353
-msgid "Services Provider saving error"
-msgstr "Fehler beim Speichern des Diensteanbieters"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:19
+msgid "Delete provider"
+msgstr "Anbieter löschen"
 
-#: static/tmp_js/gui-d-services.js:354
-msgid "Delete services provider"
-msgstr "Dienstanbieter löschen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:20
+msgid "Exit maintenance mode?"
+msgstr "Wartungsmodus verlassen?"
 
-#: static/tmp_js/gui-d-services.js:354
-msgid "Services Provider deletion error"
-msgstr "Fehler beim Löschen des Dienstanbieters"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:21
+msgid "Enter maintenance mode?"
+msgstr "Wartungsmodus aktivieren?"
 
-#: static/tmp_js/gui-d-servicespools-actions.js:56
-msgid "Launch Now"
-msgstr "Starte jetzt"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:22
+msgid "Maintenance mode for"
+msgstr "Wartungsmodus für"
 
-#: static/tmp_js/gui-d-servicespools-actions.js:69
-msgid "Execute action"
-msgstr "Aktion ausführen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:23
+#: static/admin/translations-adm-fakejs.js:168
+msgid "In Maintenance"
+msgstr "In Wartung"
 
-#: static/tmp_js/gui-d-servicespools-actions.js:70
-msgid "Launch action execution right now?"
-msgstr "Aktionsausführung jetzt starten?"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:24
+#: static/admin/translations-adm-fakejs.js:169
+msgid "Active"
+msgstr "Aktiv"
 
-#: static/tmp_js/gui-d-servicespools-actions.js:127
-msgid "Beginning"
-msgstr "Anfang"
-
-#: static/tmp_js/gui-d-servicespools-actions.js:127
-msgid "Ending"
-msgstr "Ende"
-
-#: static/tmp_js/gui-d-servicespools-actions.js:136
-msgid "Add scheduled action"
-msgstr "Geplante Aktion hinzufügen"
-
-#: static/tmp_js/gui-d-servicespools-actions.js:199
-#: static/tmp_js/gui-d-servicespools-calendars.js:98
-msgid "Edit access calendar"
-msgstr "Zugriffskalender bearbeiten"
-
-#: static/tmp_js/gui-d-servicespools-actions.js:238
-#: static/tmp_js/gui-d-servicespools-calendars.js:126
-msgid "Remove access calendar"
-msgstr "Zugriffskalender entfernen"
-
-#: static/tmp_js/gui-d-servicespools-actions.js:238
-#: static/tmp_js/gui-d-servicespools-calendars.js:126
-msgid "Access calendar removal error"
-msgstr "Fehler beim Entfernen des Kalenders"
-
-#: static/tmp_js/gui-d-servicespools-calendars.js:45
-msgid "Add access calendar"
-msgstr "Zugriffskalender hinzufügen"
-
-#: static/tmp_js/gui-d-servicespools-calendars.js:75
-msgid "Default fallback access"
-msgstr "Standard-Fallback-Zugriff"
-
-#: static/tmp_js/gui-d-servicespools-publications.js:19
-#: static/tmp_js/gui-d-servicespools-publications.js:56
-msgid "Cancel"
-msgstr "Stornieren"
-
-#: static/tmp_js/gui-d-servicespools-publications.js:29
-#: static/tmp_js/gui-d-servicespools-publications.js:80
-#: static/tmp_js/gui-d-servicespools-publications.js:81
-msgid "Publish"
-msgstr "Veröffentlichen"
-
-#: static/tmp_js/gui-d-servicespools-publications.js:30
-msgid "Cancel publication?"
-msgstr "Veröffentlichung abbrechen?"
-
-#: static/tmp_js/gui-d-servicespools-publications.js:54
-msgid "Force Cancel"
-msgstr "Abbrechen erzwingen"
-
-#: static/tmp_js/gui-d-servicespools-publications.js:92
-msgid "Failed creating publication"
-msgstr "Fehler beim Erstellen der Publikation"
-
-#: static/tmp_js/gui-d-servicespools-transports.js:30
-msgid "Add transport"
-msgstr "Transport hinzufügen"
-
-#: static/tmp_js/gui-d-servicespools-transports.js:37
-msgid "You must provide a transport"
-msgstr "Sie müssen einen Transport bereitstellen"
-
-#: static/tmp_js/gui-d-servicespools-transports.js:52
-msgid "Remove transport"
-msgstr "Transport entfernen"
-
-#: static/tmp_js/gui-d-servicespools-transports.js:52
-msgid "Transport removal error"
-msgstr "Transportentfernungsfehler"
-
-#: static/tmp_js/gui-d-servicespools.js:175
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:237
+#: static/admin/translations-adm-fakejs.js:252
+#: static/admin/translations-adm-fakejs.js:390
+#: static/modern/translations-fakejs.js:45
 msgid "Yes"
 msgstr "Ja"
 
-#: static/tmp_js/gui-d-servicespools.js:177
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:238
+#: static/admin/translations-adm-fakejs.js:253
+#: static/admin/translations-adm-fakejs.js:391
+#: static/modern/translations-fakejs.js:46
 msgid "No"
 msgstr "Nein"
 
-#: static/tmp_js/gui-d-servicespools.js:241
-msgid "error"
-msgstr "Error"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:254
+msgid "(hidden)"
+msgstr "(versteckt)"
 
-#: static/tmp_js/gui-d-servicespools.js:297
-msgid "Remove Cache element"
-msgstr "Cache-Element entfernen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:255
+msgid "Selected items :"
+msgstr "Ausgewählte Artikel :"
 
-#: static/tmp_js/gui-d-servicespools.js:297
-#: static/tmp_js/gui-d-servicespools.js:484
-msgid "Deletion error"
-msgstr "Löschfehler"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:25
+#: static/admin/translations-adm-fakejs.js:150
+#: static/admin/translations-adm-fakejs.js:174
+msgid "Pool"
+msgstr "Schwimmbad"
 
-#: static/tmp_js/gui-d-servicespools.js:325
-msgid "Add group"
-msgstr "Gruppe hinzufügen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:26
+#: static/admin/translations-adm-fakejs.js:151
+#: static/admin/translations-adm-fakejs.js:175
+#: static/admin/translations-adm-fakejs.js:359
+#: static/admin/translations-adm-fakejs.js:371
+msgid "State"
+msgstr "Zustand"
 
-#: static/tmp_js/gui-d-servicespools.js:351
-msgid "You must provide authenticator and group"
-msgstr "Sie müssen Authentifikator und Gruppe angeben"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:27
+#: static/admin/translations-adm-fakejs.js:152
+#: static/admin/translations-adm-fakejs.js:176
+msgid "User Services"
+msgstr "Benutzerdienste"
 
-#: static/tmp_js/gui-d-servicespools.js:438
-msgid "Edit Assigned Service ownership"
-msgstr "Bearbeiten Sie den zugewiesenen Service-Besitz"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:28
+#: static/admin/translations-adm-fakejs.js:162
+#: static/admin/translations-adm-fakejs.js:281
+#: static/admin/translations-adm-fakejs.js:401
+msgid "Service pools"
+msgstr "Service-Pools"
 
-#: static/tmp_js/gui-d-servicespools.js:466
-msgid "You must provide authenticator and user"
-msgstr "Sie müssen Authentifikator und Benutzer angeben"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:29
+#: static/admin/translations-adm-fakejs.js:167
+msgid "Information"
+msgstr "Information"
 
-#: static/tmp_js/gui-d-servicespools.js:484
-msgid "Remove Assigned service"
-msgstr "Zugewiesenen Dienst entfernen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:30
+msgid "New service"
+msgstr "Neuer Service"
 
-#: static/tmp_js/gui-d-servicespools.js:547
-msgid "Restrained"
-msgstr "Zurückhaltend"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:31
+msgid "Edit service"
+msgstr "Dienst bearbeiten"
 
-#: static/tmp_js/gui-d-servicespools.js:556
-msgid "New service pool"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:32
+msgid "Delete service"
+msgstr "Dienst löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:33
+msgid "Delete user service"
+msgstr "Benutzerdienst löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:34
+#: static/admin/translations-adm-fakejs.js:147
+msgid "New Authenticator"
+msgstr "Neuer Authenticator"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:35
+#: static/admin/translations-adm-fakejs.js:148
+msgid "Edit Authenticator"
+msgstr "Authenticator bearbeiten"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:149
+msgid "Delete Authenticator"
+msgstr "Authenticator löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:165
+msgid "Any"
+msgstr "Irgendein"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:166
+msgid "All"
+msgstr "Alles"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:158
+#: static/admin/translations-adm-fakejs.js:173
+#: static/admin/translations-adm-fakejs.js:266
+#: static/admin/translations-adm-fakejs.js:358
+#: static/admin/translations-adm-fakejs.js:370
+msgid "Comments"
+msgstr "Bemerkungen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:177
+msgid "Unique ID"
+msgstr "Eindeutige ID"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:178
+msgid "Friendly Name"
+msgstr "Freundlicher Name"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:179
+msgid "In Use"
+msgstr "In Benutzung"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:180
+msgid "IP"
+msgstr "IP"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:181
+msgid "Services Pool"
+msgstr "Dienstleistungen Pool"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:164
+#: static/admin/translations-adm-fakejs.js:182
+#: static/admin/translations-adm-fakejs.js:282
+#: static/admin/translations-adm-fakejs.js:298
+#: static/admin/translations-adm-fakejs.js:349
+#: static/admin/translations-adm-fakejs.js:353
+#: static/admin/translations-adm-fakejs.js:379
+#: static/admin/translations-adm-fakejs.js:383
+#: static/admin/translations-adm-fakejs.js:403
+msgid "Groups"
+msgstr "Gruppen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:183
+#: static/admin/translations-adm-fakejs.js:347
+#: static/admin/translations-adm-fakejs.js:384
+msgid "Services Pools"
+msgstr "Dienstleistungen Pools"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:184
+#: static/admin/translations-adm-fakejs.js:296
+msgid "Assigned services"
+msgstr "Zugewiesene Dienste"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:153
+#: static/admin/translations-adm-fakejs.js:265
+msgid "Name"
+msgstr "Name"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:154
+msgid "Real Name"
+msgstr "Echter Name"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:155
+msgid "state"
+msgstr "Zustand"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:156
+msgid "Last access"
+msgstr "Letzter Zugriff"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:163
+#: static/admin/translations-adm-fakejs.js:348
+#: static/admin/translations-adm-fakejs.js:352
+msgid "Users"
+msgstr "Benutzer"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:159
+#: static/admin/translations-adm-fakejs.js:360
+#: static/admin/translations-adm-fakejs.js:372
+msgid "Enabled"
+msgstr "aktiviert"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:160
+#: static/admin/translations-adm-fakejs.js:361
+#: static/admin/translations-adm-fakejs.js:373
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:161
+#: static/admin/translations-adm-fakejs.js:374
+msgid "Blocked"
+msgstr "verstopft"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:170
+msgid "Delete user"
+msgstr "Benutzer löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:171
+msgid "Delete group"
+msgstr "Gruppe löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:36
+msgid "Delete authencitator"
+msgstr "Löschen Sie den Autorennitator"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:11
+msgid "New Transport"
+msgstr "Neuer Transport"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:12
+msgid "Edit Transport"
+msgstr "Transport bearbeiten"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:13
+msgid "Delete Transport"
+msgstr "Transport löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:5
+msgid "New Network"
+msgstr "Neues Netzwerk"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:6
+msgid "Edit Network"
+msgstr "Netzwerk bearbeiten"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:7
+msgid "Delete Network"
+msgstr "Netzwerk löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:8
+msgid "New Proxy"
+msgstr "Neuer Proxy"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:9
+msgid "Edit Proxy"
+msgstr "Proxy bearbeiten"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:10
+msgid "Delete Proxy"
+msgstr "Proxy löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:100
+msgid "(This service does not requires an OS Manager)"
+msgstr "(Dieser Dienst erfordert keinen Betriebssystemmanager.)"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:37
+#: static/admin/translations-adm-fakejs.js:101
+msgid "New service Pool"
 msgstr "Neuer Service-Pool"
 
-#: static/tmp_js/gui-d-servicespools.js:556
-msgid "creation error"
-msgstr "Erstellungsfehler"
-
-#: static/tmp_js/gui-d-servicespools.js:566
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:102
 msgid "Publish on creation"
 msgstr "Bei Erstellung veröffentlichen"
 
-#: static/tmp_js/gui-d-servicespools.js:567
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:103
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr ""
 "Wenn ausgewählt, wird die Veröffentlichung sofort nach der Erstellung "
 "gestartet"
 
-#: static/tmp_js/gui-d-servicespools.js:579 static/tmp_js/gui.js:53
-msgid "Edit"
-msgstr "Bearbeiten"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:38
+#: static/admin/translations-adm-fakejs.js:104
+msgid "New Service Pool"
+msgstr "Neuer Service Pool"
 
-#: static/tmp_js/gui-d-servicespools.js:579
-msgid "saving error"
-msgstr "Fehler beim Speichern"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:105
+msgid "Delete service pool"
+msgstr "Dienstpool löschen"
 
-#: static/tmp_js/gui-d-servicespools.js:582 static/tmp_js/gui-methods.js:154
-#: static/tmp_js/gui.js:57
-msgid "Delete"
-msgstr "Löschen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:126
+msgid "Please, select a valid user"
+msgstr "Bitte wählen Sie einen gültigen Benutzer aus"
 
-#: static/tmp_js/gui-d-servicespools.js:582
-msgid "deletion error"
-msgstr "Löschfehler"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:128
+msgid "Please, select a valid group"
+msgstr "Bitte wählen Sie eine gültige Gruppe aus"
 
-#: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "New Services Pool Group"
-msgstr "Neue Service-Pool-Gruppe"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:130
+msgid "Please, select a valid transport"
+msgstr "Bitte wählen Sie einen gültigen Transport aus"
 
-#: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "Services Pool Group creation error"
-msgstr "Fehler beim Erstellen der Service-Pool-Gruppe"
-
-#: static/tmp_js/gui-d-servicespoolsgroup.js:22
-msgid "Edit Services Pool Group"
-msgstr "Service-Pool-Gruppe bearbeiten"
-
-#: static/tmp_js/gui-d-servicespoolsgroup.js:22
-msgid "Services Pool Group saving error"
-msgstr "Fehler beim Speichern der Service-Pool-Gruppe"
-
-#: static/tmp_js/gui-d-servicespoolsgroup.js:23
-msgid "Delete Services Pool Group"
-msgstr "Löschen Sie die Service-Pool-Gruppe"
-
-#: static/tmp_js/gui-d-servicespoolsgroup.js:23
-msgid "Services Pool Group removal error"
-msgstr "Fehler beim Entfernen der Services Pool Group"
-
-#: static/tmp_js/gui-definition.js:17
-msgid "Cache"
-msgstr "Zwischenspeicher"
-
-#: static/tmp_js/gui-definition.js:17
-msgid "Cache has been flushed"
-msgstr "Cache wurde geleert"
-
-#: static/tmp_js/gui-element.js:320
-msgid "Refresh operation failed"
-msgstr "Aktualisierungsvorgang fehlgeschlagen"
-
-#: static/tmp_js/gui-element.js:750
-msgid "Date"
-msgstr "Datum"
-
-#: static/tmp_js/gui-element.js:760
-msgid "level"
-msgstr "Niveau"
-
-#: static/tmp_js/gui-element.js:768
-msgid "source"
-msgstr "Quelle"
-
-#: static/tmp_js/gui-element.js:775
-msgid "message"
-msgstr "Botschaft"
-
-#: static/tmp_js/gui-element.js:780
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:106
+#: static/admin/translations-adm-fakejs.js:260
+#: static/admin/translations-adm-fakejs.js:263
+#: static/admin/translations-adm-fakejs.js:284
+#: static/admin/translations-adm-fakejs.js:303
+#: static/admin/translations-adm-fakejs.js:354
+#: static/admin/translations-adm-fakejs.js:417
 msgid "Logs"
 msgstr "Protokolle"
 
-#: static/tmp_js/gui-form.js:103
-msgid "Main"
-msgstr "Main"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:107
+msgid "Launch now"
+msgstr "Starte jetzt"
 
-#: static/tmp_js/gui-form.js:337
-msgid "yes"
-msgstr "Ja"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:108
+msgid "Change owner"
+msgstr "Besitzer wechseln"
 
-#: static/tmp_js/gui-form.js:338
-msgid "no"
-msgstr "Nein"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:109
+#: static/admin/translations-adm-fakejs.js:277
+#: static/admin/translations-adm-fakejs.js:288
+#: static/admin/translations-adm-fakejs.js:293
+#: static/admin/translations-adm-fakejs.js:309
+#: static/admin/translations-adm-fakejs.js:322
+#: static/admin/translations-adm-fakejs.js:327
+#: static/admin/translations-adm-fakejs.js:332
+#: static/admin/translations-adm-fakejs.js:336
+#: static/admin/translations-adm-fakejs.js:344
+#: static/admin/translations-adm-fakejs.js:365
+#: static/admin/translations-adm-fakejs.js:380
+#: static/admin/translations-adm-fakejs.js:413
+#: static/admin/translations-adm-fakejs.js:432
+msgid "Cancel"
+msgstr "Stornieren"
 
-#: static/tmp_js/gui-form.js:355
-msgid "Close"
-msgstr "Schließen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:110
+msgid "Changelog"
+msgstr "Änderungsprotokoll"
 
-#: static/tmp_js/gui-methods.js:23
-msgid "Test passed successfully"
-msgstr "Test erfolgreich bestanden"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:111
+msgid "Delete assigned service"
+msgstr "Löschen Sie den zugewiesenen Dienst"
 
-#: static/tmp_js/gui-methods.js:26
-msgid "Test failed:"
-msgstr "Im Test durchgefallen:"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:112
+msgid "Delete cached service"
+msgstr "Löschen Sie den zwischengespeicherten Dienst"
 
-#: static/tmp_js/gui-methods.js:67
-msgid "Edition successfully done"
-msgstr "Edition erfolgreich abgeschlossen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:85
+#: static/admin/translations-adm-fakejs.js:113
+msgid "Delete assigned group"
+msgstr "Zugeordnete Gruppe löschen"
 
-#: static/tmp_js/gui-methods.js:90
-msgid "Overview"
-msgstr "Überblick"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:114
+msgid "Delete assigned transport"
+msgstr "Löschen Sie den zugewiesenen Transport"
 
-#: static/tmp_js/gui-methods.js:114
-msgid "of type"
-msgstr "vom Typ"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:115
+msgid "Publication"
+msgstr "Veröffentlichung"
 
-#: static/tmp_js/gui-methods.js:132
-msgid "Creation successfully done"
-msgstr "Erstellung erfolgreich abgeschlossen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:116
+msgid "Cancel publication?"
+msgstr "Veröffentlichung abbrechen?"
 
-#: static/tmp_js/gui-methods.js:152
-msgid "Are you sure do you want to delete "
-msgstr "Möchten Sie wirklich löschen?"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:117
+msgid "Publication canceled"
+msgstr "Veröffentlichung abgesagt"
 
-#: static/tmp_js/gui-methods.js:152
-msgid "items:"
-msgstr "Artikel:"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:119
+msgid "Delete scheduled action"
+msgstr "Geplante Aktion löschen"
 
-#: static/tmp_js/gui-methods.js:162
-msgid "Error deleting"
-msgstr "Fehler beim Löschen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:120
+msgid "Execute scheduled action"
+msgstr "Geplante Aktion ausführen"
 
-#: static/tmp_js/gui-methods.js:164
-msgid "Successfully deleted"
-msgstr "Erfolgreich gelöscht"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:121
+msgid "Execute scheduled action right now?"
+msgstr "Geplante Aktion sofort ausführen?"
 
-#: static/tmp_js/gui-methods.js:169
-msgid "Deletion results"
-msgstr "Löschergebnisse"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:122
+msgid "Scheduled action executed"
+msgstr "Geplante Aktion ausgeführt"
 
-#: static/tmp_js/gui-permissions.js:43
-msgid "Add"
-msgstr "Hinzufügen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:86
+#: static/admin/translations-adm-fakejs.js:124
+msgid "Delete calendar access rule"
+msgstr "Kalenderzugriffsregel löschen"
 
-#: static/tmp_js/gui-permissions.js:71
-msgid "You must provide authenticator and"
-msgstr "Sie müssen Authentifikator und angeben"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:87
+msgid "New meta pool"
+msgstr "Neuer Metapool"
 
-#: static/tmp_js/gui-permissions.js:94
-msgid "Confirm revocation of following permissions: <br/>"
-msgstr "Bestätigen Sie den Widerruf folgender Berechtigungen: <br/>"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:88
+msgid "Edit meta pool"
+msgstr "Metapool bearbeiten"
 
-#: static/tmp_js/gui-permissions.js:104
-msgid "Remove "
-msgstr "Löschen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:89
+msgid "Delete meta pool"
+msgstr "Metapool löschen"
 
-#: static/tmp_js/gui-permissions.js:105
-msgid "Revoke"
-msgstr "Widerrufen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:83
+msgid "Please, select a valid service pool"
+msgstr "Bitte wählen Sie einen gültigen Service-Pool aus"
 
-#: static/tmp_js/gui-permissions.js:137
-msgid "Permissions for"
-msgstr "Berechtigungen für"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:84
+msgid "Remove member pool"
+msgstr "Mitgliederpool entfernen"
 
-#: static/tmp_js/gui-tools.js:14
-msgid "Just a moment..."
-msgstr "Einen Augenblick..."
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:79
+msgid "New calendar"
+msgstr "Neuer Kalender"
 
-#: static/tmp_js/gui-tools.js:161
-msgid "Never"
-msgstr "noch nie"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:80
+msgid "Edit calendar"
+msgstr "Kalender bearbeiten"
 
-#: static/tmp_js/gui.js:24
-msgid "_MENU_ records per page"
-msgstr "_MENU_ Datensätze pro Seite"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:81
+msgid "Delete calendar"
+msgstr "Kalender löschen"
 
-#: static/tmp_js/gui.js:25
-msgid "Empty"
-msgstr "Leeren"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:40
+msgid "day"
+msgstr "Tag"
 
-#: static/tmp_js/gui.js:26 static/tmp_js/gui.js:28
-msgid "No records"
-msgstr "Keine Aufzeichnungen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:41
+msgid "days"
+msgstr "Tage"
 
-#: static/tmp_js/gui.js:27
-msgid "Records _START_ to _END_ of _TOTAL_"
-msgstr "Datensätze _START_ bis _END_ of _TOTAL_"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:42
+msgid "Daily"
+msgstr "Täglich"
 
-#: static/tmp_js/gui.js:29
-msgid "(filtered from _MAX_ total records)"
-msgstr "(gefiltert aus _MAX_ Gesamtdatensätzen)"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:43
+msgid "week"
+msgstr "Woche"
 
-#: static/tmp_js/gui.js:30
-msgid "Please wait, processing"
-msgstr "Bitte warten Sie, Verarbeitung"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:44
+msgid "weeks"
+msgstr "Wochen"
 
-#: static/tmp_js/gui.js:31
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:45
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:46
+msgid "month"
+msgstr "Monat"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:47
+msgid "months"
+msgstr "Monate"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:48
+msgid "Monthly"
+msgstr "Monatlich"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:49
+msgid "year"
+msgstr "Jahr"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:50
+msgid "years"
+msgstr "Jahre"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:51
+msgid "Yearly"
+msgstr "Jährlich"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:52
+#: static/admin/translations-adm-fakejs.js:274
+msgid "Weekdays"
+msgstr "Wochentage"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:53
+msgid "Minutes"
+msgstr "Protokoll"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:54
+msgid "Hours"
+msgstr "Std"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:55
+msgid "Days"
+msgstr "Tage"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:56
+msgid "Weeks"
+msgstr "Wochen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:64
+msgid "(no days)"
+msgstr "(keine tage)"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:65
+msgid "Forever"
+msgstr "Für immer"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:66
+msgid "Start date/time"
+msgstr "Startdatum / Uhrzeit"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:67
+msgid "End date"
+msgstr "Endtermin"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:68
+msgid "Interval"
+msgstr "Intervall"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:69
+msgid "Week days"
+msgstr "Wochentage"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:70
+msgid "Invalid or incomplete rule. Please, fix field $FIELD"
+msgstr ""
+"Ungültige oder unvollständige Regel Bitte korrigieren Sie das Feld $ FIELD"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:71
+msgid "This rule will be valid every"
+msgstr "Diese Regel gilt für alle"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:72
+msgid "of any week"
+msgstr "von einer Woche"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:73
+msgid "from"
+msgstr "von"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:74
+msgid "until"
+msgstr "bis um"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:75
+msgid "onwards"
+msgstr "weiter"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:76
+msgid "starting at"
+msgstr "beginnt um"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:77
+msgid "and every event will be active for"
+msgstr "und jede Veranstaltung wird für aktiv sein"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:78
+msgid "with no duration"
+msgstr "ohne Dauer"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:39
+msgid "Delete calendar rule"
+msgstr "Kalenderregel löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:91
+msgid "Set time mark"
+msgstr "Zeitmarke setzen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:92
+msgid "New account"
+msgstr "Neues Konto"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:93
+msgid "Edit account"
+msgstr "Konto bearbeiten"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:94
+msgid "Delete account"
+msgstr "Konto löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:95
+msgid "Time mark"
+msgstr "Zeitmarke"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:96
+msgid "Set time mark for $NAME to current date/time?"
+msgstr "Zeitmarke für $ NAME auf aktuelles Datum / Uhrzeit setzen?"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:97
+msgid "Time mark stabliched"
+msgstr "Zeitmarke stabilisiert"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:99
+msgid "No time mark"
+msgstr "Keine Zeitmarke"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:90
+msgid "Delete account usage"
+msgstr "Benutzerkonto löschen"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:139
+msgid "Image is too big (max. upload size is 256Kb)"
+msgstr "Bild ist zu groß (max. Upload-Größe beträgt 256Kb)"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:141
+msgid "Invalid image type (only supports JPEG, PNG and GIF"
+msgstr "Ungültiger Bildtyp (unterstützt nur JPEG, PNG und GIF"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:143
+msgid "Please, provide a name and a image"
+msgstr "Bitte geben Sie einen Namen und ein Bild an"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:146
+msgid "Delete image"
+msgstr "Lösche Bild"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:133
+#: static/admin/translations-adm-fakejs.js:137
+msgid "Generate report"
+msgstr "Bericht generieren"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:134
+msgid "Generating report..."
+msgstr "Bericht wird erstellt ..."
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:135
+msgid "Report finished"
+msgstr "Bericht beendet"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:131
+msgid "Configuration saved"
+msgstr "Konfiguration gespeichert"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:240
+#: static/admin/translations-adm-fakejs.js:418
+#: static/admin/translations-adm-fakejs.js:425
 msgid "Filter"
 msgstr "Filter"
 
-#: static/tmp_js/gui.js:41
-#, javascript-format
-msgid "Selected %d rows"
-msgstr "Ausgewählte %d Zeilen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:241
+msgid "No entries found"
+msgstr "Keine Einträge gefunden"
 
-#: static/tmp_js/gui.js:42
-msgid "Click on a row to select it"
-msgstr "Klicken Sie auf eine Reihe, um sie auszuwählen"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:239
+msgid ", (%i more items)"
+msgstr ", (% i weitere Artikel)"
 
-#: static/tmp_js/gui.js:43
-msgid "Selected one row"
-msgstr "Eine Zeile ausgewählt"
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:236
+msgid "Main"
+msgstr "Main"
 
-#: static/tmp_js/gui.js:49
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:234
+msgid "Cache flushed"
+msgstr "Cache geleert"
+
+#: static/admin/main.js:1 static/admin/translations-adm-fakejs.js:199
+msgid "Items per page"
+msgstr "Objekte pro Seite"
+
+#: static/admin/translations-adm-fakejs.js:185
+msgid "Error saving:"
+msgstr "Fehler beim Speichern:"
+
+#: static/admin/translations-adm-fakejs.js:222
+#: static/admin/translations-adm-fakejs.js:243
+msgid "Please, fill in require fields:"
+msgstr "Bitte füllen Sie Pflichtfelder aus:"
+
+#: static/admin/translations-adm-fakejs.js:257
+#: static/admin/translations-adm-fakejs.js:276
+#: static/admin/translations-adm-fakejs.js:280
+#: static/admin/translations-adm-fakejs.js:295
+#: static/admin/translations-adm-fakejs.js:351
+#: static/admin/translations-adm-fakejs.js:392
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+#: static/admin/translations-adm-fakejs.js:258
+#: static/admin/translations-adm-fakejs.js:393
+msgid "Services"
+msgstr "Dienstleistungen"
+
+#: static/admin/translations-adm-fakejs.js:259
+msgid "Usage"
+msgstr "Verwendungszweck"
+
+#: static/admin/translations-adm-fakejs.js:261
+#: static/admin/translations-adm-fakejs.js:346
+#: static/admin/translations-adm-fakejs.js:382
+msgid "Information for"
+msgstr "Information für"
+
+#: static/admin/translations-adm-fakejs.js:262
+msgid "Services pools"
+msgstr "Dienstleistungen Pools"
+
+#: static/admin/translations-adm-fakejs.js:264
+#: static/admin/translations-adm-fakejs.js:278
+#: static/admin/translations-adm-fakejs.js:289
+#: static/admin/translations-adm-fakejs.js:294
+#: static/admin/translations-adm-fakejs.js:305
+#: static/admin/translations-adm-fakejs.js:310
+#: static/admin/translations-adm-fakejs.js:312
+#: static/admin/translations-adm-fakejs.js:323
+#: static/admin/translations-adm-fakejs.js:328
+#: static/admin/translations-adm-fakejs.js:333
+#: static/admin/translations-adm-fakejs.js:337
+#: static/admin/translations-adm-fakejs.js:345
+#: static/admin/translations-adm-fakejs.js:350
+#: static/admin/translations-adm-fakejs.js:366
+#: static/admin/translations-adm-fakejs.js:381
+#: static/admin/translations-adm-fakejs.js:386
+#: static/admin/translations-adm-fakejs.js:414
+#: static/admin/translations-adm-fakejs.js:433
+#: static/admin/translations-adm-fakejs.js:436
+msgid "Ok"
+msgstr "OK"
+
+#: static/admin/translations-adm-fakejs.js:267
+msgid "Event"
+msgstr "Veranstaltung"
+
+#: static/admin/translations-adm-fakejs.js:268
+msgid "Start time"
+msgstr "Startzeit"
+
+#: static/admin/translations-adm-fakejs.js:269
+msgid "Duration"
+msgstr "Dauer"
+
+#: static/admin/translations-adm-fakejs.js:270
+msgid "Duration units"
+msgstr "Dauer Einheiten"
+
+#: static/admin/translations-adm-fakejs.js:271
+msgid "Start date"
+msgstr "Anfangsdatum"
+
+#: static/admin/translations-adm-fakejs.js:272
+msgid "Repeat until date"
+msgstr "Wiederholen Sie bis zum Datum"
+
+#: static/admin/translations-adm-fakejs.js:273
+msgid "Frequency"
+msgstr "Frequenz"
+
+#: static/admin/translations-adm-fakejs.js:275
+msgid "Repeat every"
+msgstr "Wiederhole jeden"
+
+#: static/admin/translations-adm-fakejs.js:279
+msgid "Rules"
+msgstr "Regeln"
+
+#: static/admin/translations-adm-fakejs.js:283
+#: static/admin/translations-adm-fakejs.js:302
+msgid "Access calendars"
+msgstr "Zugriff auf Kalender"
+
+#: static/admin/translations-adm-fakejs.js:285
+#: static/admin/translations-adm-fakejs.js:306
+msgid "Priority"
+msgstr "Priorität"
+
+#: static/admin/translations-adm-fakejs.js:286
+msgid "Service pool"
+msgstr "Service-Pool"
+
+#: static/admin/translations-adm-fakejs.js:287
+msgid "Enabled?"
+msgstr "Aktiviert?"
+
+#: static/admin/translations-adm-fakejs.js:290
+msgid "Account usage"
+msgstr "Kontonutzung"
+
+#: static/admin/translations-adm-fakejs.js:291
+msgid "New publication for"
+msgstr "Neue Veröffentlichung für"
+
+#: static/admin/translations-adm-fakejs.js:292
+msgid "Reason"
+msgstr "Grund"
+
+#: static/admin/translations-adm-fakejs.js:297
+msgid "Cache"
+msgstr "Zwischenspeicher"
+
+#: static/admin/translations-adm-fakejs.js:299
+#: static/admin/translations-adm-fakejs.js:397
+#: static/modern/translations-fakejs.js:49
+msgid "Transports"
+msgstr "Transporte"
+
+#: static/admin/translations-adm-fakejs.js:300
+msgid "Publications"
+msgstr "Veröffentlichungen"
+
+#: static/admin/translations-adm-fakejs.js:301
+msgid "Scheduled actions"
+msgstr "Geplante Aktionen"
+
+#: static/admin/translations-adm-fakejs.js:304
+msgid "Changelog of"
+msgstr "Änderungsprotokoll von"
+
+#: static/admin/translations-adm-fakejs.js:307
+#: static/admin/translations-adm-fakejs.js:315
+msgid "Calendar"
+msgstr "Kalender"
+
+#: static/admin/translations-adm-fakejs.js:308
+#: static/admin/translations-adm-fakejs.js:318
+msgid "Action"
+msgstr "Aktion"
+
+#: static/admin/translations-adm-fakejs.js:311
+msgid "Logs of"
+msgstr "Protokolle von"
+
+#: static/admin/translations-adm-fakejs.js:313
+msgid "Edit action for"
+msgstr "Aktion bearbeiten für"
+
+#: static/admin/translations-adm-fakejs.js:314
+msgid "New action for"
+msgstr "Neue Aktion für"
+
+#: static/admin/translations-adm-fakejs.js:316
+msgid "Events offset (minutes)"
+msgstr "Versatz der Ereignisse (Minuten)"
+
+#: static/admin/translations-adm-fakejs.js:317
+msgid "At the beginning of the interval?"
+msgstr "Am Anfang des Intervalls?"
+
+#: static/admin/translations-adm-fakejs.js:319
+#: static/admin/translations-adm-fakejs.js:335
+msgid "Transport"
+msgstr "Transport"
+
+#: static/admin/translations-adm-fakejs.js:324
+msgid "Change owner of assigned service"
+msgstr "Besitzer des zugewiesenen Dienstes ändern"
+
+#: static/admin/translations-adm-fakejs.js:329
+msgid "New group for"
+msgstr "Neue Gruppe für"
+
+#: static/admin/translations-adm-fakejs.js:334
+msgid "New transport for"
+msgstr "Neuer Transport für"
+
+#: static/admin/translations-adm-fakejs.js:338
+msgid "UDS Configuration"
+msgstr "UDS-Konfiguration"
+
+#: static/admin/translations-adm-fakejs.js:339
+#: static/admin/translations-adm-fakejs.js:416
+msgid "Save"
+msgstr "sparen"
+
+#: static/admin/translations-adm-fakejs.js:340
+msgid "Image name"
+msgstr "Bildname"
+
+#: static/admin/translations-adm-fakejs.js:341
+msgid "Image (click to change)"
+msgstr "Bild (zum Ändern klicken)"
+
+#: static/admin/translations-adm-fakejs.js:342
+msgid "For optimal results, use "
+msgstr "Verwenden Sie für optimale Ergebnisse"
+
+#: static/admin/translations-adm-fakejs.js:343
+msgid "The image will be resized on upload to"
+msgstr "Das Bild wird beim Hochladen in die Größe geändert"
+
+#: static/admin/translations-adm-fakejs.js:355
+msgid "Edit group"
+msgstr "Gruppe bearbeiten"
+
+#: static/admin/translations-adm-fakejs.js:356
+msgid "New group"
+msgstr "Neue Gruppe"
+
+#: static/admin/translations-adm-fakejs.js:357
+msgid "Meta group name"
+msgstr "Name der Metagruppe"
+
+#: static/admin/translations-adm-fakejs.js:362
+msgid "Service Pools"
+msgstr "Service-Pools"
+
+#: static/admin/translations-adm-fakejs.js:363
+msgid "Match mode"
+msgstr "Match-Modus"
+
+#: static/admin/translations-adm-fakejs.js:364
+msgid "Selected Groups"
+msgstr "Ausgewählte Gruppen"
+
+#: static/admin/translations-adm-fakejs.js:367
+msgid "Edit user"
+msgstr "Benutzer bearbeiten"
+
+#: static/admin/translations-adm-fakejs.js:368
+msgid "New user"
+msgstr "Neuer Benutzer"
+
+#: static/admin/translations-adm-fakejs.js:369
+msgid "Real name"
+msgstr "Echter Name"
+
+#: static/admin/translations-adm-fakejs.js:375
+msgid "Role"
+msgstr "Rolle"
+
+#: static/admin/translations-adm-fakejs.js:376
+msgid "Admin"
+msgstr "Administrator"
+
+#: static/admin/translations-adm-fakejs.js:377
+msgid "Staff member"
+msgstr "Mitarbeiter"
+
+#: static/admin/translations-adm-fakejs.js:385
+msgid "Assigned Services"
+msgstr "Zugewiesene Dienste"
+
+#: static/admin/translations-adm-fakejs.js:387
+msgid "User mode"
+msgstr "Benutzermodus"
+
+#: static/admin/translations-adm-fakejs.js:388
+#: static/modern/translations-fakejs.js:41
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: static/admin/translations-adm-fakejs.js:389
+#: static/admin/translations-adm-fakejs.js:415
+#: static/modern/translations-fakejs.js:44
+msgid "Close"
+msgstr "Schließen"
+
+#: static/admin/translations-adm-fakejs.js:394
+msgid "Authenticators"
+msgstr "Authentifikatoren"
+
+#: static/admin/translations-adm-fakejs.js:395
+msgid "Os Managers"
+msgstr "OS-Manager"
+
+#: static/admin/translations-adm-fakejs.js:396
+msgid "Connectivity"
+msgstr "Konnektivität"
+
+#: static/admin/translations-adm-fakejs.js:398
+msgid "Networks"
+msgstr "Netzwerke"
+
+#: static/admin/translations-adm-fakejs.js:399
+msgid "Proxies"
+msgstr "Proxies"
+
+#: static/admin/translations-adm-fakejs.js:400
+msgid "Pools"
+msgstr "Pools"
+
+#: static/admin/translations-adm-fakejs.js:402
+msgid "Meta pools"
+msgstr "Meta-Pools"
+
+#: static/admin/translations-adm-fakejs.js:404
+msgid "Calendars"
+msgstr "Kalender"
+
+#: static/admin/translations-adm-fakejs.js:405
+msgid "Accounts"
+msgstr "Konten"
+
+#: static/admin/translations-adm-fakejs.js:406
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: static/admin/translations-adm-fakejs.js:407
+msgid "Gallery"
+msgstr "Galerie"
+
+#: static/admin/translations-adm-fakejs.js:408
+msgid "Reports"
+msgstr "Berichte"
+
+#: static/admin/translations-adm-fakejs.js:409
+msgid "Configuration"
+msgstr "Aufbau"
+
+#: static/admin/translations-adm-fakejs.js:410
+msgid "Flush Cache"
+msgstr "Cache leeren"
+
+#: static/admin/translations-adm-fakejs.js:411
+msgid "Remove all"
+msgstr "Alles entfernen"
+
+#: static/admin/translations-adm-fakejs.js:412
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: static/admin/translations-adm-fakejs.js:419
+#: static/admin/translations-adm-fakejs.js:420
 msgid "New"
 msgstr "Neu"
 
-#: static/tmp_js/gui.js:61
+#: static/admin/translations-adm-fakejs.js:421
+#: static/admin/translations-adm-fakejs.js:428
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: static/admin/translations-adm-fakejs.js:422
+#: static/admin/translations-adm-fakejs.js:429
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: static/tmp_js/gui.js:65
-msgid "Xls"
-msgstr "Xls"
+#: static/admin/translations-adm-fakejs.js:423
+msgid "Export"
+msgstr "Export"
 
-#: static/tmp_js/gui.js:131
-msgid "Message"
-msgstr "Botschaft"
+#: static/admin/translations-adm-fakejs.js:424
+#: static/admin/translations-adm-fakejs.js:430
+msgid "Delete"
+msgstr "Löschen"
 
-#: static/tmp_js/gui.js:140
-msgid "Connection failed"
-msgstr "Verbindung fehlgeschlagen"
+#: static/admin/translations-adm-fakejs.js:426
+msgid "Selected items"
+msgstr "Ausgewählte Artikel"
 
-#: static/tmp_js/gui.js:254
-msgid "This field is required."
-msgstr "Dieses Feld wird benötigt."
+#: static/admin/translations-adm-fakejs.js:427
+msgid "Detail"
+msgstr "Detail"
 
-#: static/tmp_js/gui.js:255
-msgid "Please fix this field."
-msgstr "Bitte repariere dieses Feld."
+#: static/admin/translations-adm-fakejs.js:431
+msgid "New group permission for"
+msgstr "Neue Gruppenerlaubnis für"
 
-#: static/tmp_js/gui.js:256
-msgid "Please enter a valid email address."
-msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+#: static/admin/translations-adm-fakejs.js:434
+msgid "Permissions for"
+msgstr "Berechtigungen für"
 
-#: static/tmp_js/gui.js:257
-msgid "Please enter a valid URL."
-msgstr "Bitte geben Sie eine gültige URL ein."
+#: static/admin/translations-adm-fakejs.js:435
+msgid "New permission..."
+msgstr "Neue Erlaubnis ..."
 
-#: static/tmp_js/gui.js:258
-msgid "Please enter a valid date."
-msgstr "Bitte gib ein korrektes Datum an."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:6
+msgid "Launching service"
+msgstr "Dienst starten"
 
-#: static/tmp_js/gui.js:259
-msgid "Please enter a valid date (ISO)."
-msgstr "Bitte geben Sie ein gültiges Datum (ISO) ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:7
+msgid "Please wait"
+msgstr "Warten Sie mal"
 
-#: static/tmp_js/gui.js:260
-msgid "Please enter a valid number."
-msgstr "Bitte geben Sie eine gültige Nummer ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:8
+msgid ""
+"Remember that UDS Plugin is required in order for this service to be launched"
+msgstr ""
+"Denken Sie daran, dass das UDS-Plugin erforderlich ist, damit dieser Dienst "
+"gestartet werden kann"
 
-#: static/tmp_js/gui.js:261
-msgid "Please enter only digits."
-msgstr "Bitte gib nur Ziffern ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "Error launching service"
+msgstr "Fehler beim Starten des Dienstes"
 
-#: static/tmp_js/gui.js:262
-msgid "Please enter a valid credit card number."
-msgstr "Bitte geben Sie eine gültige Kreditkartennummer ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:3
+msgid "We use cookies to track usage and preferences"
+msgstr "Wir verwenden Cookies, um die Nutzung und Präferenzen zu verfolgen"
 
-#: static/tmp_js/gui.js:263
-msgid "Please enter the same value again."
-msgstr "Bitte geben Sie den gleichen Wert erneut ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:4
+msgid "I Understand"
+msgstr "Ich verstehe"
 
-#: static/tmp_js/gui.js:264
-msgid "Please enter no more than {0} characters."
-msgstr "Bitte geben Sie nicht mehr als {0} Zeichen ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:5
+msgid "Learn more"
+msgstr "Mehr erfahren"
 
-#: static/tmp_js/gui.js:265
-msgid "Please enter at least {0} characters."
-msgstr "Bitte geben Sie mindestens {0} Zeichen ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:14
+msgid "Service is in maintenance"
+msgstr "Service ist in Wartung"
 
-#: static/tmp_js/gui.js:266
-msgid "Please enter a value between {0} and {1} characters long."
-msgstr "Bitte geben Sie einen Wert zwischen {0} und {1} Zeichen ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:15
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr ""
+"Dieser Dienst ist derzeit aufgrund von Zeitplaneinschränkungen nicht "
+"verfügbar."
 
-#: static/tmp_js/gui.js:267
-msgid "Please enter a value between {0} and {1}."
-msgstr "Bitte geben Sie einen Wert zwischen {0} und {1} ein."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:16
+msgid "Launcher"
+msgstr "Startprogramm"
 
-#: static/tmp_js/gui.js:268
-msgid "Please enter a value less than or equal to {0}."
-msgstr "Bitte geben Sie einen Wert ein, der kleiner oder gleich {0} ist."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:17
+msgid "Service is in maintenance and cannot be launched"
+msgstr "Der Service ist in Wartung und kann nicht gestartet werden"
 
-#: static/tmp_js/gui.js:269
-msgid "Please enter a value greater than or equal to {0}."
-msgstr "Bitte geben Sie einen Wert ein, der größer oder gleich {0} ist."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:18
+msgid "This service is currently not accesible due to schedule restrictions."
+msgstr ""
+"Dieser Dienst ist derzeit aufgrund von Zeitplaneinschränkungen nicht "
+"zugänglich."
 
-#: static/tmp_js/uds-client.js:45
-msgid "Contacting service..."
-msgstr "Service kontaktieren ..."
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:19
+msgid "Access limited by calendar"
+msgstr "Zugriff durch Kalender begrenzt"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:20
+msgid "Please, retry access in a while."
+msgstr "Bitte versuchen Sie den Zugriff erneut."
+
+#: static/modern/main.js:1
+msgid "Release service: "
+msgstr "Service freigeben:"
+
+#: static/modern/main.js:1
+msgid "Reset service: "
+msgstr "Dienst zurücksetzen:"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:23
+msgid "Service released"
+msgstr "Dienst freigegeben"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:24
+msgid "Service reseted"
+msgstr "Service zurückgesetzt"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:25
+msgid "Are you sure?"
+msgstr "Bist du sicher?"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:10
+msgid "Warning"
+msgstr "Warnung"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:11
+msgid "Service is in maintenance and cannot be executed"
+msgstr "Der Service ist in Wartung und kann nicht ausgeführt werden"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:12
+msgid "Invalid error string"
+msgstr "Ungültige Fehlerzeichenfolge"
+
+#: static/modern/translations-fakejs.js:21
+msgid "Release service:"
+msgstr "Service freigeben:"
+
+#: static/modern/translations-fakejs.js:22
+msgid "Reset service:"
+msgstr "Dienst zurücksetzen:"
+
+#: static/modern/translations-fakejs.js:27
+msgid "UDS Client"
+msgstr "UDS-Client"
+
+#: static/modern/translations-fakejs.js:28
+msgid "Download UDS client for your platform"
+msgstr "Laden Sie den UDS-Client für Ihre Plattform herunter"
+
+#: static/modern/translations-fakejs.js:29
+msgid "You can access UDS Open Source code at"
+msgstr "Sie können auf den UDS Open Source-Code unter zugreifen"
+
+#: static/modern/translations-fakejs.js:30
+msgid "UDS has been developed using these components:"
+msgstr "UDS wurde mit diesen Komponenten entwickelt:"
+
+#: static/modern/translations-fakejs.js:31
+msgid "If you find that we missed any component, please let us know"
+msgstr ""
+"Wenn Sie feststellen, dass wir eine Komponente vermisst haben, teilen Sie "
+"uns dies bitte mit"
+
+#: static/modern/translations-fakejs.js:32
+msgid "Username"
+msgstr "Nutzername"
+
+#: static/modern/translations-fakejs.js:33
+msgid "Password"
+msgstr "Passwort"
+
+#: static/modern/translations-fakejs.js:35
+msgid "Login"
+msgstr "Anmeldung"
+
+#: static/modern/translations-fakejs.js:36
+#: static/modern/translations-fakejs.js:40
+msgid "Downloads"
+msgstr "Downloads"
+
+#: static/modern/translations-fakejs.js:37
+msgid "An error has occurred"
+msgstr "Ein Fehler ist aufgetreten"
+
+#: static/modern/translations-fakejs.js:38
+msgid "Return"
+msgstr "Rückkehr"
+
+#: static/modern/translations-fakejs.js:39
+msgid "Dashboard"
+msgstr "Instrumententafel"
+
+#: static/modern/translations-fakejs.js:42
+#: static/modern/translations-fakejs.js:43
+msgid "About"
+msgstr "Über"
+
+#: static/modern/translations-fakejs.js:47
+msgid "Release service"
+msgstr "Service freigeben"
+
+#: static/modern/translations-fakejs.js:48
+msgid "Reset service"
+msgstr "Dienst zurücksetzen"
+
+#: static/modern/translations-fakejs.js:50
+msgid "Actions"
+msgstr "Aktionen"
