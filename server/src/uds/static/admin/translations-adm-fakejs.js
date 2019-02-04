@@ -182,7 +182,7 @@ gettext("Services Pool");
 gettext("Groups");
 gettext("Services Pools");
 gettext("Assigned services");
-gettext("Error saving: ");
+gettext("Error saving:");
 gettext("Save error");
 gettext("Communication error");
 gettext("provider");
@@ -219,7 +219,7 @@ gettext("December");
 gettext("Never");
 gettext("seconds");
 gettext("Error");
-gettext("Please, fill in require fields: ");
+gettext("Please, fill in require fields:");
 gettext("Testing...");
 gettext("dismiss");
 gettext("Test failed:");
@@ -240,7 +240,7 @@ gettext(", (%i more items)");
 gettext("Filter");
 gettext("No entries found");
 gettext("Error");
-gettext("Please, fill in require fields: ");
+gettext("Please, fill in require fields:");
 gettext("Read only");
 gettext("Full Access");
 gettext("User");
@@ -268,12 +268,8 @@ gettext("Event");
 gettext("Start time");
 gettext("Duration");
 gettext("Duration units");
-gettext("
-          Start date
-        ");
-gettext("
-          Repeat until date
-        ");
+gettext("Start date");
+gettext("Repeat until date");
 gettext("Frequency");
 gettext("Weekdays");
 gettext("Repeat every");
@@ -343,12 +339,8 @@ gettext("UDS Configuration");
 gettext("Save");
 gettext("Image name");
 gettext("Image (click to change)");
-gettext("
-        For optimal results, use "squared" images. 
-      ");
-gettext("
-          The image will be resized on upload to
-      ");
+gettext("For optimal results, use "squared" images.");
+gettext("The image will be resized on upload to");
 gettext("Cancel");
 gettext("Ok");
 gettext("Information for");
