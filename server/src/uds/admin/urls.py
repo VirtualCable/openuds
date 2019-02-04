@@ -34,10 +34,8 @@ from django.conf.urls import url
 
 import uds.admin.views
 
-__updated__ = '2016-08-26'
+__updated__ = '2019-02-04'
 
 urlpatterns = [
-    url(r'^$', uds.admin.views.index, name='uds.admin.views.index'),
-    url(r'^tmpl/(?P<template>[a-zA-Z0-9_-]*)$', uds.admin.views.tmpl, name='uds.admin.views.tmpl'),
-    url(r'^sample$', uds.admin.views.sample, name='uds.admin.views.sample'),
+    url(r'^.*$', uds.admin.views.index, name='uds.admin.views.index'),
 ]

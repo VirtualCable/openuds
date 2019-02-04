@@ -55,12 +55,13 @@ class State(object):
     REMOVING = 'M'
     PREPARING = 'P'
     REMOVABLE = 'R'
+    RESTRAINED = 'T'  # "Visual" state, no element will in fact be in this state, but admins uses it to "notily" user
     REMOVED = 'S'
     USABLE = 'U'
     RUNNING = 'W'
     FOR_EXECUTE = 'X'
     MAINTENANCE = 'Y'  # "Visual" state, no element will be in fact in maintenance, but used to show "Services Pools" for which a Provider is in maintenance
-    WAITING_OS = 'Z'  # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are whating for os manager
+    WAITING_OS = 'Z'  # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
 
     string = {
         ACTIVE: _('Active'),
@@ -70,6 +71,7 @@ class State(object):
         PREPARING: _('In preparation'),
         USABLE: _('Valid'),
         REMOVABLE: _('Waiting for removal'),
+        RESTRAINED: _('Restrained'),
         REMOVING: _('Removing'),
         REMOVED: _('Removed'),
         CANCELED: _('Canceled'),
