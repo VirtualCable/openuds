@@ -39,7 +39,7 @@ from django.utils import formats
 import six
 import logging
 
-__updated__ = '2015-05-03'
+__updated__ = '2019-02-05'
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,10 @@ def udsLink(request, ticket, scrambler):
 
 def udsAccessLink(request, serviceId, transportId):
     return 'udsa://{}/{}'.format(serviceId, transportId)
+
+
+def udsMetaLink(request, serviceId):
+    return 'udsa://{}/meta'.format(serviceId)
 
 
 def parseDate(dateToParse):

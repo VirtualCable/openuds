@@ -105,6 +105,11 @@ def udsJs(request):
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
         'image_size': Image.MAX_IMAGE_SIZE,
+        'reload_time': GlobalConfig.RELOAD_TIME.getInt(True),
+        'messages': {
+            # Calendar denied message
+            'calendarDenied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip() or gettext("Access limited by calendar")
+        },
         'urls': {
             'changeLang': reverse('set_language'),
             'login': reverse('page.login'),

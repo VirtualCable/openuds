@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-10-07'
+__updated__ = '2019-02-05'
 
 
 @webLoginRequired(admin=False)
@@ -97,13 +97,20 @@ def serviceImage(request, idImage):
 
 @webLoginRequired(admin=False)
 @never_cache
-def clientEnabler(request, idService, idTransport):
+def userServiceEnabler(request, idService, idTransport):
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: {}, idTransport: {}'.format(idService, idTransport))
     url = ''
     error = _('Service not ready. Please, try again in a while.')
+
+    # If meta service, process and rebuild idService & idTransport
+
     try:
-        res = userServiceManager().getService(request.user, request.ip, idService, idTransport, doTest=False)
+        res = (
+            idTransport == 'meta' and
+            userServiceManager().getMeta(request.user, request.ip, request.os, idService) or
+            userServiceManager().getService(request.user, request.ip, idService, idTransport, doTest=False)
+        )
         scrambler = cryptoManager().randomString(32)
         password = cryptoManager().symCrypt(webPassword(request), scrambler)
 

@@ -33,7 +33,7 @@ from __future__ import unicode_literals
 import logging
 
 # from .login import login, logout
-from .service import transportOwnLink, transportIcon, clientEnabler, serviceImage, action
+from .service import transportOwnLink, transportIcon, userServiceEnabler, serviceImage, action
 from .auth import authCallback, authInfo, ticketAuth, customAuth
 from .download import download
 from uds.web.util.errors import error

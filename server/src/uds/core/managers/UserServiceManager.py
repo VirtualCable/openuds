@@ -39,8 +39,14 @@ from uds.core.services.Exceptions import OperationException
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.util.Config import GlobalConfig
-from uds.core.services.Exceptions import MaxServicesReachedError, ServiceInMaintenanceMode, InvalidServiceException, ServiceNotReadyError, ServiceAccessDeniedByCalendar
-from uds.models import ServicePool, UserService, getSqlDatetime, Transport
+from uds.core.services.Exceptions import (
+    MaxServicesReachedError,
+    ServiceInMaintenanceMode,
+    InvalidServiceException,
+    ServiceNotReadyError,
+    ServiceAccessDeniedByCalendar
+)
+from uds.models import MetaPool, ServicePool, UserService, getSqlDatetime, Transport
 from uds.core import services
 from uds.core.services import Service
 from uds.core.util.stats import events
@@ -50,8 +56,9 @@ from .userservice.opchecker  import UserServiceOpChecker
 import requests
 import json
 import logging
+import random
 
-__updated__ = '2018-09-24'
+__updated__ = '2019-02-05'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -551,8 +558,6 @@ class UserServiceManager(object):
             logger.debug('Getting A service {}'.format(idService))
             userService = UserService.objects.get(uuid=idService)
             userService.deployed_service.validateUser(user)
-        elif kind == 'M':  # This is a meta service..
-            pass
         else:
             ds = ServicePool.objects.get(uuid=idService)
             # We first do a sanity check for this, if the user has access to this service
@@ -600,7 +605,7 @@ class UserServiceManager(object):
 
         # If transport is not available for the request IP...
         if trans.validForIp(srcIp) is False:
-            msg = 'The requested transport {} is not valid for {}'.format(trans.name, srcIp)
+            msg = _('The requested transport {} is not valid for {}').format(trans.name, srcIp)
             logger.error(msg)
             raise InvalidServiceException(msg)
 
@@ -650,3 +655,57 @@ class UserServiceManager(object):
 
         traceLogger.error('ERROR {} on service "{}" for user "{}" with transport "{}" (ip:{})'.format(serviceNotReadyCode, userService.name, userName, trans.name, ip))
         raise ServiceNotReadyError(code=serviceNotReadyCode, service=userService, transport=trans)
+
+    def getMeta(self, user, srcIp, os, idMetaPool):
+        logger.debug('This is meta')
+        # We need to locate the service pool related to this meta, and also the transport
+        # First, locate if there is a service in any pool associated with this metapool
+        meta = MetaPool.objects.get(uuid=idMetaPool)
+
+        # Sort pools based on meta selection
+        if meta.policy == MetaPool.PRIORITY_POOL:
+            pools = [(p.priority, p.pool) for p in meta.members.all()]
+        elif meta.policy == MetaPool.MOST_AVAILABLE_BY_NUMBER:
+            pools = [(p.usage(), p) for p in meta.pools.all()]
+        else:
+            pools = [(random.randint(0, 10000), p) for p in meta.pools.all()]
+
+        # Sort pools related to policy now, and xtract only pools, not sort keys
+        # Remove "full" pools (100%) from result
+        pools = [p[1] for p in sorted(pools, key=lambda x: x[0]) if p[1].usage() < 100]
+
+        logger.debug('Pools: %s', pools)
+
+        usable = None
+        # Now, Lets find first if there is one assigned in ANY pool
+        try:
+            alreadyAssigned = UserService.objects.filter(deployed_service__in=pools, user=user, cache_level=0).order_by('deployed_service__name')[0]
+            logger.debug('Already assigned %s', alreadyAssigned)
+
+            # Ensure transport is available for the OS
+            for t in alreadyAssigned.deployed_service.transports.all().order_by('priority'):
+                typeTrans = t.getType()
+                if t.getType() and t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
+                    usable = (alreadyAssigned, t)
+                    break
+
+        except Exception:  # No service already assigned, lets find a suitable one
+            for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
+                # Ensure transport is available for the OS
+                for t in pool.transports.all().order_by('priority'):
+                    typeTrans = t.getType()
+                    if t.getType() and t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
+                        usable = (pool, t)
+                        break
+
+                # Stop if a pool-transport is found
+                if usable:
+                    break
+
+        if not usable:
+            log.doLog(meta, log.WARN, "No user service accessible from device (ip {}, os: {})".format(srcIp, os['OS']), log.SERVICE)
+            raise InvalidServiceException(_('The service is not accessible from this device'))
+
+        logger.debug('Found usable pair: %s', usable)
+        # We have found an usable user service already assigned & can be accessed from this, so return it
+        return None, usable[0], None, usable[1], None

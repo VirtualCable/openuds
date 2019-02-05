@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2018-10-01'
+__updated__ = '2019-02-05'
 
 logger = logging.getLogger(__name__)
 
@@ -172,7 +172,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     @property
     def is_meta(self):
-        return self.meta_pools.count() == 0
+        return self.memberOfMeta.count() > 0
 
     @property
     def visual_name(self):
@@ -477,6 +477,16 @@ class DeployedService(UUIDModel, TaggingMixin):
         If it don't has an user associated, the user deployed service is wrong.
         """
         return self.userServices.filter(cache_level=0, user=None)
+
+    def usage(self):
+        """
+        Returns the % used services, related to "maximum" user services
+        If no "maximum" number of services, will return 0% ofc
+        """
+        if self.max_srvs == 0:
+            return 0
+
+        return 100 * self.assignedUserServices().count() // self.max_srvs
 
     def testServer(self, host, port, timeout=4):
         return self.service.testServer(host, port, timeout)

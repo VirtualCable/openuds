@@ -199,29 +199,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'compressor',
     'uds',
 )
-
-# Compressor settings (for css/js)
-COMPRESS_ENABLED = not DEBUG
-COMPRESS_OUTPUT_DIR = 'cache'
-COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),
-    ('text/less', 'lessc {infile} {outfile}'),
-    ('text/x-sass', 'sass {infile} {outfile}'),
-    ('text/x-scss', 'sass --scss {infile} {outfile}'),
-    # ('text/stylus', 'stylus < {infile} > {outfile}'),
-    # ('text/foobar', 'path.to.MyPrecompilerFilter'),
-)
-if DEBUG:
-    COMPRESS_DEBUG_TOGGLE = 'debug'
-#
-# Enable this if you need to allow round robin load balancing of web server
-# This is so because we need to share the files between servers
-# Another options is put /var/server/static on a shared nfs forder for all servers
-#
-# COMPRESS_STORAGE = 'uds.core.util.FileStorage.CompressorFileStorage'
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.

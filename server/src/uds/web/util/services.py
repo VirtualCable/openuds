@@ -33,7 +33,7 @@ from django.utils.translation import ugettext
 from django.utils import formats
 from django.urls.base import reverse
 
-from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup
+from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup, MetaPool
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
@@ -53,6 +53,7 @@ def getServicesData(request):
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
     availServices = DeployedService.getDeployedServicesForGroups(groups)
+    availMetas = MetaPool.getForGroups(groups)
 
     # Information for administrators
     nets = ''
@@ -68,9 +69,64 @@ def getServicesData(request):
                 tt.append(t.name)
         validTrans = ','.join(tt)
 
+    logger.debug('Checking meta pools: %s', availMetas)
     services = []
+    # Add meta pools data first
+    for meta in availMetas:
+        # Check that we have access to at least one transport on some of its children
+        hasUsablePools = False
+        in_use = False
+        for pool in meta.pools.all():
+            # if pool.isInMaintenance():
+            #    continue
+            for t in pool.transports.all():
+                typeTrans = t.getType()
+                if t.getType() and t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
+                    hasUsablePools = True
+                    break
+
+            if not in_use:
+                assignedUserService = UserServiceManager.manager().getExistingAssignationForUser(pool, request.user)
+                if assignedUserService:
+                    in_use = assignedUserService.in_use
+
+            # Stop when 1 usable pool is found
+            if hasUsablePools:
+                break
+
+        # If no usable pools, this is not visible
+        if hasUsablePools:
+            group = meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicesPoolGroup.default().as_dict
+
+            services.append({
+                'id': 'M' + meta.uuid,
+                'name': meta.name,
+                'visual_name': meta.visual_name,
+                'description': meta.comments,
+                'group': group,
+                'transports': [{
+                    'id': 'meta',
+                    'name': 'meta',
+                    'link': html.udsMetaLink(request, meta.uuid),
+                    'priority': 0
+                }],
+                'imageId': meta.image and meta.image.uuid or 'x',
+                'show_transports': False,
+                'allow_users_remove': False,
+                'allow_users_reset': False,
+                'maintenance': meta.isInMaintenance(),
+                'not_accesible': not meta.isAccessAllowed(),
+                'in_use': in_use,
+                'to_be_replaced': None,
+                'to_be_replaced_text': '',
+            })
+
     # Now generic user service
     for svr in availServices:
+        # Skip pools that are part of meta pools
+        if svr.is_meta:
+            continue
+
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
@@ -106,7 +162,7 @@ def getServicesData(request):
         else:
             in_use = ads.in_use
 
-        group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
+        group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicesPoolGroup.default().as_dict
 
         tbr = svr.toBeReplaced(request.user)
         if tbr:
@@ -131,7 +187,6 @@ def getServicesData(request):
             'in_use': in_use,
             'to_be_replaced': tbr,
             'to_be_replaced_text': tbrt,
-            'comments': svr.comments,
         })
 
     logger.debug('Services: {0}'.format(services))

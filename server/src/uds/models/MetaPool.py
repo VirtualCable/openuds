@@ -31,13 +31,15 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from django.db import models
-from django.db.models import signals
+from django.db.models import signals, QuerySet
 from django.utils.translation import ugettext_noop as _
 
 from uds.core.util import log
 from uds.core.util import states
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Tag import TaggingMixin
+from uds.models.Util import getSqlDatetime
+from uds.core.util.calendar import CalendarChecker
 
 from uds.models.Image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
@@ -47,7 +49,7 @@ from uds.models.Calendar import Calendar
 
 import logging
 
-__updated__ = '2018-10-03'
+__updated__ = '2019-02-05'
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +64,7 @@ class MetaPool(UUIDModel, TaggingMixin):
     MOST_AVAILABLE_BY_NUMBER = 2
 
     TYPES = {
-        ROUND_ROBIN_POOL: _('Round Robin (distribute among all services)'),
+        ROUND_ROBIN_POOL: _('Evenly distributed (distribute among all services equally)'),
         PRIORITY_POOL: _('Priority (lowest priority is first consumed)'),
         MOST_AVAILABLE_BY_NUMBER: _('Most available (based on max services value and current used value)'),
    }
@@ -90,6 +92,56 @@ class MetaPool(UUIDModel, TaggingMixin):
         """
         db_table = 'uds__pool_meta'
         app_label = 'uds'
+
+    def isInMaintenance(self) -> bool:
+        total, maintenance = 0, 0
+        for p in self.pools.all():
+            total += 1
+            if p.isInMaintenance():
+                maintenance += 1
+        return total == maintenance
+
+    def isAccessAllowed(self, chkDateTime=None) -> bool:
+        """
+        Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
+        """
+        if chkDateTime is None:
+            chkDateTime = getSqlDatetime()
+
+        access = self.fallbackAccess
+        # Let's see if we can access by current datetime
+        for ac in self.calendarAccess.order_by('priority'):
+            if CalendarChecker(ac.calendar).check(chkDateTime) is True:
+                access = ac.access
+                break  # Stops on first rule match found
+
+        return access == states.action.ALLOW
+
+    @property
+    def visual_name(self):
+        logger.debug("SHORT: {} {} {}".format(self.short_name, self.short_name is not None, self.name))
+        if self.short_name and self.short_name.strip() != '':
+            return self.short_name
+        return self.name
+
+    @staticmethod
+    def getForGroups(groups) -> QuerySet:
+        """
+        Return deployed services with publications for the groups requested.
+
+        Args:
+            groups: List of groups to check
+
+        Returns:
+            List of accesible deployed services
+        """
+        from uds.core import services
+        # Get services that HAS publications
+        meta = MetaPool.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE,
+                                        visible=True)
+        # TODO: Maybe we can exclude non "usable" metapools (all his pools are in maintenance mode?)
+
+        return meta
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

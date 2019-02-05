@@ -68,6 +68,7 @@ class MetaPools(ModelHandler):
     table_title = _('Meta Pools')
     table_fields = [
         {'name': {'title': _('Name')}},
+        {'comments': {'title': _('Comments')}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},

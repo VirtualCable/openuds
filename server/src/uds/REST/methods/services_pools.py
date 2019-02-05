@@ -94,6 +94,7 @@ class ServicesPools(ModelHandler):
         {'visible': {'title': _('Visible'), 'type': 'callback'}},
         {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
         {'pool_group_name': {'title': _('Pool group')}},
+        {'usage': {'title': _('Usage')}},
         {'parent': {'title': _('Parent service')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
@@ -176,6 +177,7 @@ class ServicesPools(ModelHandler):
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb
+            val['usage'] = item.usage()
 
         if item.osmanager is not None:
             val['osmanager_id'] = item.osmanager.uuid

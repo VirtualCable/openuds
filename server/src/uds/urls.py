@@ -107,7 +107,7 @@ urlpatterns = [
     re_path(r'^uds/webapi/img/transport/(?P<idTrans>[a-zA-Z0-9-]+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
     re_path(r'^uds/webapi/img/gallery/(?P<idImage>[a-zA-Z0-9-]+)$', uds.web.views.image, name='webapi.galleryImage'),
 
-    re_path(r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9-]+)$', uds.web.views.clientEnabler, name='webapi.enabler'),
+    re_path(r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9-]+)$', uds.web.views.userServiceEnabler, name='webapi.enabler'),
 
     re_path(r'^uds/webapi/action/(?P<idService>.+)/(?P<action>[a-zA-Z0-9-]+)$', uds.web.views.action, name='webapi.action'),
 

@@ -36,7 +36,7 @@ from django.utils.translation import ugettext as _
 
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.models import UserService, DeployedService, ServicesPoolGroup
+from uds.models import MetaPool, ServicePool, ServicesPoolGroup
 from uds.core.managers import userServiceManager
 from uds.core.managers import cryptoManager
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
@@ -84,44 +84,11 @@ class Connection(Handler):
 
     def serviceList(self):
         # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
-        groups = list(self._user.getGroups())
-        availServices = DeployedService.getDeployedServicesForGroups(groups)
+        from uds.web.util.services import getServicesData
 
-        # Extract required data to show to user
-        services = []
-        # User services
-        for servicePool in availServices:
-            trans = []
-            for t in servicePool.transports.all().order_by('priority'):
-                if t.validForIp(self._request.ip) and t.getType().providesConnetionInfo():
-                    trans.append({'id': t.uuid, 'name': t.name})
+        self._request.user = self._user
 
-            # Locate if user service has any already assigned user service for this
-            ads = userServiceManager().getExistingAssignationForUser(servicePool, self._user)
-            if ads is None:
-                in_use = False
-            else:
-                in_use = ads.in_use
-
-            services.append({'id': 'F' + servicePool.uuid,
-                             'name': servicePool.name,
-                             'description': servicePool.comments,
-                             'visual_name': servicePool.visual_name,
-                             'group': servicePool.servicesPoolGroup if servicePool.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict,
-                             'thumb': servicePool.image.thumb64 if servicePool.image is not None else DEFAULT_THUMB_BASE64,
-                             'show_transports': servicePool.show_transports,
-                             'allow_users_remove': servicePool.allow_users_remove,
-                             'not_accesible': not servicePool.isAccessAllowed(),
-                             'to_be_replaced': servicePool.toBeReplaced(),
-                             'transports': trans,
-                             'maintenance': servicePool.isInMaintenance(),
-                             'in_use': in_use})
-
-        logger.debug('Services: {0}'.format(services))
-
-        services = sorted(services, key=lambda s: s['name'].upper())
-
-        return Connection.result(result=services)
+        return Connection.result(result=getServicesData(self._request))
 
     def connection(self, doNotCheck=False):
         idService = self._args[0]
