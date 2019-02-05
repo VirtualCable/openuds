@@ -43,7 +43,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-11-28'
+__updated__ = '2019-02-05'
 
 
 def getServicesData(request):
@@ -53,7 +53,6 @@ def getServicesData(request):
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
     availServices = DeployedService.getDeployedServicesForGroups(groups)
-    availUserServices = UserService.getUserAssignedServices(request.user)
 
     # Information for administrators
     nets = ''
@@ -69,60 +68,7 @@ def getServicesData(request):
                 tt.append(t.name)
         validTrans = ','.join(tt)
 
-    # Extract required data to show to user
     services = []
-    # Select assigned user services (manually assigned)
-    for svr in availUserServices:
-        trans = []
-        for t in svr.transports.all().order_by('priority'):
-            typeTrans = t.getType()
-            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
-                if typeTrans.ownLink is True:
-                    link = reverse('TransportOwnLink', args=('A' + svr.uuid, t.uuid))
-                else:
-                    link = html.udsAccessLink(request, 'A' + svr.uuid, t.uuid)
-                trans.append(
-                    {
-                        'id': t.uuid,
-                        'name': t.name,
-                        'link': link
-                    }
-                )
-
-        # If empty transports, do not include it on list
-        if not trans:
-            continue
-
-        servicePool = svr.deployed_service
-
-        if servicePool.image is not None:
-            imageId = servicePool.image.uuid
-        else:
-            imageId = 'x'  # Invalid
-
-        # Extract app group
-        group = servicePool.servicesPoolGroup if servicePool.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
-
-        services.append({
-            'id': 'A' + svr.uuid,
-            'name': servicePool.name,
-            'visual_name': servicePool.visual_name,
-            'description': servicePool.comments,
-            'group': group,
-            'transports': trans,
-            'imageId': imageId,
-            'show_transports': servicePool.show_transports,
-            'allow_users_remove': servicePool.allow_users_remove,
-            'allow_users_reset': servicePool.allow_users_reset,
-            'maintenance': servicePool.isInMaintenance(),
-            'not_accesible': not servicePool.isAccessAllowed(),
-            'in_use': svr.in_use,
-            'to_be_replaced': False,  # Manually assigned will not be autoremoved never
-            'comments': servicePool.comments,
-        })
-
-    logger.debug(services)
-
     # Now generic user service
     for svr in availServices:
         trans = []

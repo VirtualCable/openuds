@@ -57,7 +57,7 @@ from uds.core.services import UserDeployment
 
 import logging
 
-__updated__ = '2018-09-26'
+__updated__ = '2019-02-05'
 
 logger = logging.getLogger(__name__)
 
@@ -450,26 +450,6 @@ class UserService(UUIDModel):
         """
         from uds.core.managers.UserServiceManager import UserServiceManager
         UserServiceManager.manager().moveToLevel(self, cacheLevel)
-
-    @staticmethod
-    def getUserAssignedServices(user):
-        """
-        Return DeployedUserServices (not deployed services) that this user owns and are assignable
-        For this to happen, we locate all user services assigned to this user, and we keep those that:
-        * Must assign service manually
-        This method is probably not the best in performance, but the number of assigned services will never be "high" (maybe a couple dozens at most?)
-        @returns and array of dicts with id, name and transports
-        """
-        logger.debug("Filtering assigned services for user {0}".format(user))
-        res = []
-        for us in UserService.objects.filter(user=user):
-            if us.deployed_service.state != State.ACTIVE:  # Do not show removing or removed services
-                continue
-            usi = us.getInstance()
-            if usi.service().mustAssignManually is False:
-                continue
-            res.append({'id': us.id, 'name': usi.getName(), 'transports': us.deployed_service.transports, 'service': us})
-        return res
 
     def getProperty(self, propName, default=None):
         try:
