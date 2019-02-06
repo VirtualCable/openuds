@@ -42,7 +42,7 @@ from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from .user_services import Groups
 from uds.REST.methods.op_calendars import AccessCalendars
-from .meta_service_pools import MetaServicesPool
+from .meta_service_pools import MetaServicesPool, MetaAssignedService
 
 import logging
 
@@ -56,6 +56,7 @@ class MetaPools(ModelHandler):
     model = MetaPool
     detail = {
         'pools': MetaServicesPool,
+        'services': MetaAssignedService,
         'groups': Groups,
         'access': AccessCalendars,
     }
@@ -69,6 +70,7 @@ class MetaPools(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
+        {'policy': {'title': _('Policy'), 'type': 'dict', 'dict': MetaPool.TYPES}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},

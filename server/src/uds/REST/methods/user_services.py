@@ -111,7 +111,7 @@ class AssignedService(DetailHandler):
                 return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()
                         .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
             else:
-                return parent.assignedUserServices().get(processUuid(uuid=processUuid(item)))
+                return AssignedService.itemToDict(parent.assignedUserServices().get(processUuid(uuid=processUuid(item))))
         except Exception:
             logger.exception('getItems')
             self.invalidItemException()
@@ -188,7 +188,7 @@ class AssignedService(DetailHandler):
         service.save()
 
         # Log change
-        log.doLog(service, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
         return self.success()
 

@@ -38,7 +38,7 @@ from .OVirtJobs import OVirtDeferredRemoval
 import pickle
 import logging
 
-__updated__ = '2018-03-16'
+__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 
@@ -76,15 +76,27 @@ class OVirtLinkedDeployment(UserDeployment):
         """
         Does nothing right here, we will use envoronment storage in this sample
         """
-        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, pickle.dumps(self._queue)])
+        return b'\1'.join([b'v1',
+             self._name.encode('utf8'),
+             self._ip.encode('utf8'),
+             self._mac.encode('utf8'),
+             self._vmid.encode('utf8'),
+             self._reason.encode('utf8'),
+             pickle.dumps(self._queue, protocol=0)
+        ])
 
     def unmarshal(self, str_):
         """
         Does nothing here also, all data are keeped at environment storage
         """
-        vals = str_.split('\1')
-        if vals[0] == 'v1':
-            self._name, self._ip, self._mac, self._vmid, self._reason, queue = vals[1:]
+        vals = str_.split(b'\1')
+        if vals[0] == b'v1':
+            self._name = vals[1].decode('utf8')
+            self._ip = vals[2].decode('utf8')
+            self._mac = vals[3].decode('utf8')
+            self._vmid = vals[4].decode('utf8')
+            self._reason = vals[5].decode('utf8')
+            queue = pickle.loads(vals[6])
             self._queue = pickle.loads(queue)
 
     def getName(self):
@@ -567,6 +579,11 @@ class OVirtLinkedDeployment(UserDeployment):
         Invoked for destroying a deployed service
         """
         self.__debug('destroy')
+        if self._vmid == '':
+            self._queue = []
+            self._reason = "canceled"
+            return State.FINISHED
+
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
         op = self.__getCurrentOp()

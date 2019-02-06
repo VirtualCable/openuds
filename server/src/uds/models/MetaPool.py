@@ -49,7 +49,7 @@ from uds.models.Calendar import Calendar
 
 import logging
 
-__updated__ = '2019-02-05'
+__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 
@@ -64,10 +64,10 @@ class MetaPool(UUIDModel, TaggingMixin):
     MOST_AVAILABLE_BY_NUMBER = 2
 
     TYPES = {
-        ROUND_ROBIN_POOL: _('Evenly distributed (distribute among all services equally)'),
-        PRIORITY_POOL: _('Priority (lowest priority is first consumed)'),
-        MOST_AVAILABLE_BY_NUMBER: _('Most available (based on max services value and current used value)'),
-   }
+        ROUND_ROBIN_POOL: _('Evenly distributed'),
+        PRIORITY_POOL: _('Priority'),
+        MOST_AVAILABLE_BY_NUMBER: _('Greater % available'),
+    }
 
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')

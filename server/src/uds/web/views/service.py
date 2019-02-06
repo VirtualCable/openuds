@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2019-02-05'
+__updated__ = '2019-02-06'
 
 
 @webLoginRequired(admin=False)
@@ -152,9 +152,7 @@ def userServiceEnabler(request, idService, idTransport):
 @webLoginRequired(admin=False)
 @never_cache
 def action(request, idService, action):
-    logger.debug('ID Service: {}'.format(idService))
     userService = userServiceManager().locateUserService(request.user, idService, create=False)
-    logger.debug('UserService: >{}<'.format(userService))
     response = None
     rebuild = False
     if userService:

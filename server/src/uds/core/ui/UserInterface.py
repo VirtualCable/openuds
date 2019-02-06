@@ -910,7 +910,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
         # logger.debug('Caller is : {}'.format(inspect.stack()))
 
         arr = []
-        for k, v in six.iteritems(self._gui):
+        for k, v in self._gui.items():
             logger.debug('serializing Key: {0}/{1}'.format(k, v.value))
             if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
                 # logger.debug('Field {0} is not serializable'.format(k))
@@ -922,15 +922,16 @@ class UserInterface(object, metaclass=UserInterfaceType):
                 # logger.debug('Serializing value {0}'.format(v.value))
                 val = b'\001' + pickle.dumps(v.value, protocol=0)
             elif v.isType(gui.InputField.NUMERIC_TYPE):
-                val = six.text_type(int(v.num()))
+                val = str(int(v.num())).encode('utf8')
             elif v.isType(gui.InputField.CHECKBOX_TYPE):
                 val = v.isTrue()
             else:
-                val = v.value
+                val = v.value.encode('utf8')
             if val is True:
                 val = gui.TRUE.encode('utf8')
             elif val is False:
                 val = gui.FALSE.encode('utf8')
+
             arr.append(k.encode('utf8') + b'\003' + val)
         logger.debug('Arr, >>%s<<', arr)
         return encoders.encode(b'\002'.join(arr), 'zip')
@@ -965,6 +966,9 @@ class UserInterface(object, metaclass=UserInterfaceType):
                             val = pickle.loads(v[1:])
                         else:
                             val = v
+                            # Ensure "legacy bytes" values are loaded correctly as unicode
+                            if isinstance(val, bytes):
+                                val = val.decode('utf_8')
                     except Exception:
                         # logger.exception('Pickling')
                         val = ''

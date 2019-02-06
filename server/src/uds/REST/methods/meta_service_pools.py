@@ -39,11 +39,14 @@ from django.utils.translation import ugettext as _
 
 from uds.models.MetaPool import MetaPool, MetaPoolMember
 from uds.models.ServicesPool import ServicePool
+from uds.models.UserService import UserService
+from uds.models.User import User
 
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler
+from .user_services import AssignedService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -119,6 +122,116 @@ class MetaServicesPool(DetailHandler):
 
         member.delete()
 
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+
+        return self.success()
+
+
+class MetaAssignedService(DetailHandler):
+    """
+    Rest handler for Assigned Services, wich parent is Service
+    """
+
+    @staticmethod
+    def itemToDict(metaPool, item):
+        element = AssignedService.itemToDict(item, False)
+        element['pool_id'] = item.deployed_service.uuid
+        element['pool_name'] = item.deployed_service.name
+        return element
+
+    def _getAssignedService(self, metaPool, userServiceId):
+        """
+        Gets an assigned service and checks that it belongs to this metapool
+        If not found, raises InvalidItemException
+        """
+        try:
+            return UserService.objects.filter(uuid=processUuid(userServiceId), cache_level=0, deployed_service__meta=metaPool)[0]
+        except Exception:
+            self.invalidItemException()
+
+    def getItems(self, parent, item):
+
+        def assignedUserServicesForPools():
+            for m in parent.members.all():
+                if m.enabled:
+                    for u in m.pool.assignedUserServices().prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication'):
+                        yield u
+
+        try:
+            if item is None:  # All items
+                return [MetaAssignedService.itemToDict(parent, k) for k in assignedUserServicesForPools()]
+            else:
+                return MetaAssignedService.itemToDict(parent, self._getAssignedService(parent, item))
+        except Exception:
+            logger.exception('getItems')
+            self.invalidItemException()
+
+    def getTitle(self, parent):
+        return _('Assigned services')
+
+    def getFields(self, parent):
+        return [
+            {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
+            {'pool_name': {'title': _('Pool')}},
+            {'unique_id': {'title': 'Unique ID'}},
+            {'ip': {'title': _('IP')}},
+            {'friendly_name': {'title': _('Friendly name')}},
+            {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
+            {'in_use': {'title': _('In Use')}},
+            {'source_host': {'title': _('Src Host')}},
+            {'source_ip': {'title': _('Src Ip')}},
+            {'owner': {'title': _('Owner')}},
+            {'actor_version': {'title': _('Actor version')}}
+        ]
+
+    def getRowStyle(self, parent):
+        return {'field': 'state', 'prefix': 'row-state-'}
+
+    def getLogs(self, parent, item):
+        try:
+            item = self._getAssignedService(parent, item)
+            logger.debug('Getting logs for {0}'.format(item))
+            return log.getLogs(item)
+        except Exception:
+            self.invalidItemException()
+
+    def deleteItem(self, parent, item):
+        service = self._getAssignedService(parent, item)
+
+        if service.user:
+            logStr = 'Deleted assigned service {} to user {} by {}'.format(service.friendly_name, service.user.pretty_name, self._user.pretty_name)
+        else:
+            logStr = 'Deleted cached service {} by {}'.format(service.friendly_name, self._user.pretty_name)
+
+        if service.state in (State.USABLE, State.REMOVING):
+            service.remove()
+        elif service.state == State.PREPARING:
+            service.cancel()
+        elif service.state == State.REMOVABLE:
+            self.invalidItemException(_('Item already being removed'))
+        else:
+            self.invalidItemException(_('Item is not removable'))
+
+        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+
+        return self.success()
+
+    # Only owner is allowed to change right now
+    def saveItem(self, parent, item):
+        fields = self.readFieldsFromParams(['auth_id', 'user_id'])
+        service = self._getAssignedService(parent, item)
+        user = User.objects.get(uuid=processUuid(fields['user_id']))
+
+        logStr = 'Changing ownership of service from {} to {} by {}'.format(service.user.pretty_name, user.pretty_name, self._user.pretty_name)
+
+        # If there is another service that has this same owner, raise an exception
+        if service.deployed_service.userServices.filter(user=user).exclude(uuid=service.uuid).exclude(state__in=State.INFO_STATES).count() > 0:
+            raise self.invalidResponseException('There is already another user service assigned to {}'.format(user.pretty_name))
+
+        service.user = user
+        service.save()
+
+        # Log change
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
         return self.success()

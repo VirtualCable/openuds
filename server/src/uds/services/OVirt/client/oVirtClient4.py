@@ -17,7 +17,7 @@ import threading
 import logging
 import six
 
-__updated__ = '2018-01-05'
+__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class Client(object):
         Returns:
             The cache key, taking into consideration the prefix
         """
-        return prefix + self._host + self._username + self._password + str(self._timeout)
+        return "{}{}{}{}{}".format(prefix, self._host, self._username, self._password, self._timeout)
 
     def __getApi(self):
         """

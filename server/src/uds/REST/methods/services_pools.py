@@ -91,10 +91,10 @@ class ServicesPools(ModelHandler):
         {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.dictionary()}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
+        {'usage': {'title': _('Usage')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},
         {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
         {'pool_group_name': {'title': _('Pool group')}},
-        {'usage': {'title': _('Usage')}},
         {'parent': {'title': _('Parent service')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]

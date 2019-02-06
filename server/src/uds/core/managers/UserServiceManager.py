@@ -58,7 +58,7 @@ import json
 import logging
 import random
 
-__updated__ = '2019-02-05'
+__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -253,7 +253,7 @@ class UserServiceManager(object):
             dsp.cachedDeployedService.filter(state__in=State.INFO_STATES).delete()
 
     def getExistingAssignationForUser(self, ds, user):
-        existing = ds.assignedUserServices().filter(user=user, state__in=State.VALID_STATES, deployed_service__visible=True)
+        existing = ds.assignedUserServices().filter(user=user, state__in=State.VALID_STATES)  # , deployed_service__visible=True
         lenExisting = existing.count()
         if lenExisting > 0:  # Already has 1 assigned
             logger.debug('Found assigned service from {0} to user {1}'.format(ds, user.name))
@@ -579,6 +579,9 @@ class UserServiceManager(object):
         """
         userService = self.locateUserService(user, idService, create=True)
 
+        if userService is None:
+            raise InvalidServiceException(_('The requested service is not available'))
+
         # Early log of "access try" so we can imagine what is going on
         userService.setConnectionSource(srcIp, 'unknown')
 
@@ -662,6 +665,10 @@ class UserServiceManager(object):
         # First, locate if there is a service in any pool associated with this metapool
         meta = MetaPool.objects.get(uuid=idMetaPool)
 
+        # If access is denied by calendar...
+        if meta.isAccessAllowed() is False:
+            raise ServiceAccessDeniedByCalendar()
+
         # Sort pools based on meta selection
         if meta.policy == MetaPool.PRIORITY_POOL:
             pools = [(p.priority, p.pool) for p in meta.members.all()]
@@ -671,41 +678,55 @@ class UserServiceManager(object):
             pools = [(random.randint(0, 10000), p) for p in meta.pools.all()]
 
         # Sort pools related to policy now, and xtract only pools, not sort keys
-        # Remove "full" pools (100%) from result
-        pools = [p[1] for p in sorted(pools, key=lambda x: x[0]) if p[1].usage() < 100]
+        # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
+        pools = [p[1] for p in sorted(pools, key=lambda x: x[0]) if p[1].usage() < 100 and p[1].isUsable()]
 
         logger.debug('Pools: %s', pools)
 
         usable = None
         # Now, Lets find first if there is one assigned in ANY pool
-        try:
-            alreadyAssigned = UserService.objects.filter(deployed_service__in=pools, user=user, cache_level=0).order_by('deployed_service__name')[0]
-            logger.debug('Already assigned %s', alreadyAssigned)
 
-            # Ensure transport is available for the OS
-            for t in alreadyAssigned.deployed_service.transports.all().order_by('priority'):
+        def ensureTransport(pool):
+            usable = None
+            for t in pool.transports.all().order_by('priority'):
                 typeTrans = t.getType()
                 if t.getType() and t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
-                    usable = (alreadyAssigned, t)
+                    usable = (pool, t)
                     break
+            return usable
+
+        try:
+            alreadyAssigned = UserService.objects.filter(deployed_service__in=pools,
+                                                         state__in=State.VALID_STATES,
+                                                         user=user,
+                                                         cache_level=0).order_by('deployed_service__name')[0]
+            logger.debug('Already assigned %s', alreadyAssigned)
+
+            # Ensure transport is available for the OS, and store it
+            usable = ensureTransport(alreadyAssigned.deployed_service)
+            # Found already assigned, ensure everythinf is fine
+            if usable:
+                self.getService(user, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
 
         except Exception:  # No service already assigned, lets find a suitable one
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
                 # Ensure transport is available for the OS
-                for t in pool.transports.all().order_by('priority'):
-                    typeTrans = t.getType()
-                    if t.getType() and t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
-                        usable = (pool, t)
-                        break
+                usable = ensureTransport(pool)
 
-                # Stop if a pool-transport is found
+                # Stop if a pool-transport is found and can be assigned to user
                 if usable:
-                    break
+                    try:
+                        self.getService(user, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
+                        break  # If all goes fine, stop here
+                    except Exception as e:
+                        logger.info('Meta service {}:{} could not be assigned, trying a new one'.format(usable[0].name, e))
+                        usable = None
 
         if not usable:
             log.doLog(meta, log.WARN, "No user service accessible from device (ip {}, os: {})".format(srcIp, os['OS']), log.SERVICE)
             raise InvalidServiceException(_('The service is not accessible from this device'))
 
         logger.debug('Found usable pair: %s', usable)
+        usable[0].validateUser(user)
         # We have found an usable user service already assigned & can be accessed from this, so return it
         return None, usable[0], None, usable[1], None

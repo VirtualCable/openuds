@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2019-02-05'
+__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 
@@ -211,6 +211,9 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     def isVisible(self) -> bool :
         return self.visible
+
+    def isUsable(self) -> bool:
+        return self.state == states.servicePool.ACTIVE and not self.isInMaintenance() and not self.isRestrained()
 
     def toBeReplaced(self, forUser) -> datetime:
         activePub = self.activePublication()
@@ -483,10 +486,14 @@ class DeployedService(UUIDModel, TaggingMixin):
         Returns the % used services, related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
         """
-        if self.max_srvs == 0:
+        maxs = self.max_srvs
+        if maxs == 0:
+            maxs = self.service.getInstance().maxDeployed
+
+        if maxs <= 0:
             return 0
 
-        return 100 * self.assignedUserServices().count() // self.max_srvs
+        return 100 * self.assignedUserServices().count() // maxs
 
     def testServer(self, host, port, timeout=4):
         return self.service.testServer(host, port, timeout)

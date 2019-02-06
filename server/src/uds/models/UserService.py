@@ -57,12 +57,11 @@ from uds.core.services import UserDeployment
 
 import logging
 
-__updated__ = '2019-02-05'
+__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
 class UserService(UUIDModel):
     """
     This is the base model for assigned user service and cached user services.
@@ -495,7 +494,7 @@ class UserService(UUIDModel):
         return self.deployed_service.testServer(host, port, timeout)
 
     def __str__(self):
-        return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,
+        return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.name, self.cache_level, self.user, self.friendly_name,
                                                                                              State.toString(self.state), State.toString(self.os_state))
 
     @staticmethod
