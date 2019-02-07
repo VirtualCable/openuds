@@ -37,6 +37,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class SampleUserDeploymentOne(UserDeployment):
     """
     This class generates the user consumable elements of the service tree.
@@ -73,20 +74,19 @@ class SampleUserDeploymentOne(UserDeployment):
     # Serializable needed methods
     def marshal(self):
         """
-        Does nothing right here, we will use envoronment storage in this sample
+        Does nothing right here, we will use environment storage in this sample
         """
-        return ''
+        return b''
 
     def unmarshal(self, str_):
         """
-        Does nothing here also, all data are keeped at environment storage
+        Does nothing here also, all data are kept at environment storage
         """
         pass
 
-
     def getName(self):
         """
-        We override this to return a name to display. Default inplementation
+        We override this to return a name to display. Default implementation
         (in base class), returns getUniqueIde() value
         This name will help user to identify elements, and is only used
         at administration interface.
@@ -108,7 +108,7 @@ class SampleUserDeploymentOne(UserDeployment):
         name = self.storage.readData('name')
         if name is None:
             name = self.nameGenerator().get(self.service().getBaseName()
-                            + '-' + self.service().getColour(), 3)
+                            +'-' + self.service().getColour(), 3)
             # Store value for persistence
             self.storage.saveData('name', name)
 
@@ -236,7 +236,6 @@ class SampleUserDeploymentOne(UserDeployment):
             return State.ERROR
 
         return State.RUNNING
-
 
     def checkState(self):
         """

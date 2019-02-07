@@ -4,27 +4,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
@@ -38,6 +38,7 @@ from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class SamplePublication(Publication):
     """
@@ -76,9 +77,9 @@ class SamplePublication(Publication):
     The class attribute that indicates this suggested time is "suggestedTime", and
     it's expressed in seconds, (i.e. "suggestedTime = 10")
     """
-    
-    suggestedTime = 5 #: Suggested recheck time if publication is unfinished in seconds
-    
+
+    suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
+
     def initialize(self):
         """
         This method will be invoked by default __init__ of base class, so it gives
@@ -86,31 +87,30 @@ class SamplePublication(Publication):
 
         In our case, we setup a few attributes..
         """
-        
+
         # We do not check anything at marshal method, so we ensure that
         # default values are correctly handled by marshal.
         self._name = 'test'
-        self._reason = '' # No error, no reason for it
+        self._reason = ''  # No error, no reason for it
         self._number = 1
-        
+
     def marshal(self):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join( [self._name, self._reason, str(self._number)] )
-    
+        return '\t'.join([self._name, self._reason, str(self._number)]).encode('utf8')
+
     def unmarshal(self, data):
         """
         deserializes the data and loads it inside instance.
         """
         logger.debug('Data: {0}'.format(data))
-        vals = data.split('\t')
+        vals = data.decode('utf8').split('\t')
         logger.debug('Values: {0}'.format(vals))
         self._name = vals[0]
         self._reason = vals[1]
         self._number = int(vals[2])
-    
-    
+
     def publish(self):
         """
         This method is invoked whenever the administrator requests a new publication.
@@ -167,7 +167,7 @@ class SamplePublication(Publication):
         self._number = 5
         self._reason = ''
         return State.RUNNING
-    
+
     def checkState(self):
         """
         Our publish method will initiate publication, but will not finish it.
@@ -189,18 +189,17 @@ class SamplePublication(Publication):
         import random
         self._number -= 1
         # Serialization will take care of storing self._number
-        
-        # One of every 10 calls 
+
+        # One of every 10 calls
         if random.randint(0, 9) == 9:
             self._reason = _('Random integer was 9!!! :-)')
             return State.ERROR
-         
+
         if self._number <= 0:
             return State.FINISHED
         else:
             return State.RUNNING
-           
-    
+
     def finish(self):
         """
         Invoked when Publication manager noticed that the publication has finished.
@@ -214,7 +213,7 @@ class SamplePublication(Publication):
         import random
         # Make simply a random string
         self._name = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-    
+
     def reasonOfError(self):
         """
         If a publication produces an error, here we must notify the reason why
@@ -236,12 +235,11 @@ class SamplePublication(Publication):
         The retunred value is the same as when publishing, State.RUNNING,
         State.FINISHED or State.ERROR.
         """
-        self._name = '' 
-        self._reason = '' # In fact, this is not needed, but cleaning up things... :-)
-        
+        self._name = ''
+        self._reason = ''  # In fact, this is not needed, but cleaning up things... :-)
+
         # We do not do anything else to destroy this instance of publication
         return State.FINISHED
-        
 
     def cancel(self):
         """

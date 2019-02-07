@@ -39,7 +39,7 @@ from . import on
 import pickle
 import logging
 
-__updated__ = '2018-08-20'
+__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
@@ -76,16 +76,28 @@ class LiveDeployment(UserDeployment):
         """
         Does nothing right here, we will use envoronment storage in this sample
         """
-        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, pickle.dumps(self._queue)])
+        return b'\1'.join([
+            b'v1',
+            self._name.encode('utf8'),
+            self._ip.encode('utf8'),
+            self._mac.encode('utf8'),
+            self._vmid.encode('utf8'),
+            self._reason.encode('utf8'),
+            pickle.dumps(self._queue, protocol=0)
+        ])
 
     def unmarshal(self, str_):
         """
         Does nothing here also, all data are keeped at environment storage
         """
-        vals = str_.split('\1')
-        if vals[0] == 'v1':
-            self._name, self._ip, self._mac, self._vmid, self._reason, queue = vals[1:]
-            self._queue = pickle.loads(queue)
+        vals = str_.split(b'\1')
+        if vals[0] == b'v1':
+            self._name = vals[1].decode('utf8')
+            self._ip = vals[2].decode('utf8')
+            self._mac = vals[3].decode('utf8')
+            self._vmid = vals[4].decode('utf8')
+            self._reason = vals[5].decode('utf8')
+            self._queue = pickle.loads(vals[6])
 
     def getName(self):
         """
@@ -172,7 +184,7 @@ class LiveDeployment(UserDeployment):
 
         state = self.service().getMachineState(self._vmid)
 
-        if state == on.VmState.UNKNOWN:
+        if state == on.VmState.UNKNOWN:  # @UndefinedVariable
             return self.__error('Machine is not available anymore')
 
         self.service().startMachine(self._vmid)
@@ -227,7 +239,7 @@ class LiveDeployment(UserDeployment):
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state in [on.VmState.UNKNOWN, on.VmState.DONE]:
+        if state in [on.VmState.UNKNOWN, on.VmState.DONE]:  # @UndefinedVariable
             return self.__error('Machine not found')
 
         ret = State.RUNNING
@@ -353,10 +365,10 @@ class LiveDeployment(UserDeployment):
         """
         state = self.service().getMachineState(self._vmid)
 
-        if state == on.VmState.UNKNOWN:
+        if state == on.VmState.UNKNOWN:  # @UndefinedVariable
             raise Exception('Machine not found')
 
-        if state == on.VmState.ACTIVE:
+        if state == on.VmState.ACTIVE:  # @UndefinedVariable
             subState = self.service().getMachineSubstate(self._vmid)
             if subState < 3:  # Less than running
                 logger.info('Must wait before remove: {}'.format(subState))
@@ -382,19 +394,19 @@ class LiveDeployment(UserDeployment):
         """
         Checks the state of a deploy for an user or cache
         """
-        return self.__checkMachineState(on.VmState.ACTIVE)
+        return self.__checkMachineState(on.VmState.ACTIVE)  # @UndefinedVariable
 
     def __checkStart(self):
         """
         Checks if machine has started
         """
-        return self.__checkMachineState(on.VmState.ACTIVE)
+        return self.__checkMachineState(on.VmState.ACTIVE)  # @UndefinedVariable
 
     def __checkSuspend(self):
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState(on.VmState.SUSPENDED)
+        return self.__checkMachineState(on.VmState.SUSPENDED)  # @UndefinedVariable
 
     def __checkRemoved(self):
         """
@@ -404,7 +416,7 @@ class LiveDeployment(UserDeployment):
 
     def checkState(self):
         """
-        Check what operation is going on, and acts acordly to it
+        Check what operation is going on, and acts based on it
         """
         self.__debug('checkState')
         op = self.__getCurrentOp()

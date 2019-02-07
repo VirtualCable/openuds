@@ -79,8 +79,8 @@ class XenLinkedDeployment(UserDeployment):
         """
         Does nothing right here, we will use envoronment storage in this sample
         """
-        return six.b('\1').join([
-            six.b('v1'),
+        return b'\1'.join([
+            b'v1',
             self._name.encode('utf8'),
             self._ip.encode('utf8'),
             self._mac.encode('utf8'),
@@ -94,8 +94,8 @@ class XenLinkedDeployment(UserDeployment):
         """
         Does nothing here also, all data are keeped at environment storage
         """
-        vals = str_.split(six.b('\1'))
-        if vals[0] == six.b('v1'):
+        vals = str_.split(b'\1')
+        if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
             self._ip = vals[2].decode('utf8')
             self._mac = vals[3].decode('utf8')

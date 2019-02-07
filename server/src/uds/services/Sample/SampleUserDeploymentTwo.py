@@ -34,8 +34,10 @@
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 import logging
+import codecs
 
 logger = logging.getLogger(__name__)
+
 
 class SampleUserDeploymentTwo(UserDeployment):
     """
@@ -96,13 +98,13 @@ class SampleUserDeploymentTwo(UserDeployment):
         """
         data = '\t'.join(['v1', self._name, self._ip, self._mac, self._error,
                           str(self._count)])
-        return data.encode('zip')
+        return codecs.encode(data.encode('utf8'), 'zip')
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data):
         """
         We unmarshal the content.
         """
-        data = str_.decode('zip').split('\t')
+        data = codecs.decode(data, 'zip').decode('utf8').split('\t')
         # Data Version check
         # If we include some new data at some point in a future, we can
         # add "default" values at v1 check, and load new values at 'v2' check.

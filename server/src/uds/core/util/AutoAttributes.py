@@ -97,7 +97,7 @@ class AutoAttributes(Serializable):
         self.dict = d
 
     def marshal(self):
-        return encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8') if isinstance(k, str) else k, pickle.dumps(v)) for k, v in self.dict.items()]), 'bz2')
+        return encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.dict.items()]), 'bz2')
 
     def unmarshal(self, data):
         if data == b'':  # Can be empty
@@ -111,7 +111,7 @@ class AutoAttributes(Serializable):
         for pair in data.split(b'\2'):
             k, v = pair.split(b'\1')
             # logger.debug('k: %s  ---   v: %s', k, v)
-            self.dict[k] = pickle.loads(v)
+            self.dict[k.decode('utf8')] = pickle.loads(v)
 
     def __str__(self):
         str_ = '<AutoAttribute '

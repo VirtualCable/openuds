@@ -40,9 +40,7 @@ import six
 
 import logging
 
-
-__updated__ = '2016-03-09'
-
+__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
@@ -79,14 +77,13 @@ class LivePublication(Publication):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state, self._destroyAfter])
+        return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state, self._destroyAfter]).encode('utf8')
 
     def unmarshal(self, data):
         """
         deserializes the data and loads it inside instance.
         """
-        logger.debug('Data: {0}'.format(data))
-        vals = data.split('\t')
+        vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
             self._name, self._reason, self._templateId, self._state, self._destroyAfter = vals[1:]
 

@@ -37,9 +37,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-
-__updated__ = '2017-05-18'
-
+__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
@@ -68,14 +66,13 @@ class OGPublication(Publication):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name])
+        return '\t'.join(['v1', self._name]).encode('utf8')
 
     def unmarshal(self, data):
         """
         deserializes the data and loads it inside instance.
         """
-        logger.debug('Data: {0}'.format(data))
-        vals = data.split('\t')
+        vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
             self._name = vals[1]
 

@@ -38,7 +38,7 @@ from .OVirtJobs import OVirtDeferredRemoval
 import pickle
 import logging
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ class OVirtLinkedDeployment(UserDeployment):
     # Serializable needed methods
     def marshal(self):
         """
-        Does nothing right here, we will use envoronment storage in this sample
+        Does nothing right here, we will use environment storage in this sample
         """
         return b'\1'.join([b'v1',
              self._name.encode('utf8'),
