@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 07:28+0100\n"
+"POT-Creation-Date: 2019-02-08 10:18+0100\n"
 "PO-Revision-Date: 2019-01-10 09:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
@@ -136,7 +136,7 @@ msgstr "Метка"
 
 #: REST/methods/authenticators.py:65 reports/stats/pools_performance.py:208
 #: reports/stats/pools_performance.py:265 reports/stats/user_access.py:237
-#: reports/stats/user_access.py:276 services/RDS_enterprise/RDSProvider.py:42
+#: reports/stats/user_access.py:276 services/RDS_enterprise/RDSProvider.py:41
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
@@ -447,7 +447,7 @@ msgstr "Сервисы"
 msgid "User Services"
 msgstr "Пользовательские сервисы"
 
-#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:251
+#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:253
 #: web/util/errors.py:72
 msgid "Service not found"
 msgstr "Сервис не найден"
@@ -468,7 +468,6 @@ msgstr "Проверить сертификат"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 #: auths/EDirectory_enterprise/Authenticator.py:45
 #: auths/RegexLdap/Authenticator.py:55
-#: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
@@ -485,7 +484,6 @@ msgstr "Сервер (IP или FQDN), который будет служить 
 
 #: REST/methods/proxies.py:95 auths/EDirectory_enterprise/Authenticator.py:46
 #: auths/RegexLdap/Authenticator.py:56
-#: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
@@ -893,7 +891,6 @@ msgstr "Текущие пользователи"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:59
 #: auths/EDirectory_enterprise/Authenticator.py:62
 #: auths/RegexLdap/Authenticator.py:81
-#: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
@@ -1039,7 +1036,6 @@ msgstr ""
 #: core/auths/BaseAuthenticator.py:140
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:34
-#: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:86
 #: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
@@ -1068,7 +1064,6 @@ msgstr "Пароль LDAP пользователя"
 #: auths/EDirectory_enterprise/Authenticator.py:50
 #: auths/RegexLdap/Authenticator.py:60
 #: services/Azure_enterprise/ServiceProviderAzure.py:43
-#: services/HyperV_enterprise/HyperVClusterProvider.py:94
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
@@ -1610,26 +1605,26 @@ msgstr "Системный администратор"
 msgid "Forbidden"
 msgstr "Запрещено"
 
-#: core/managers/PublicationManager.py:218
+#: core/managers/PublicationManager.py:223
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Уже опубликовано. Подождите, пока предыдущая публикация закончится и "
 "повторите попытку."
 
-#: core/managers/PublicationManager.py:221
+#: core/managers/PublicationManager.py:226
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr "Сервис находится в режиме обслуживания, новые публикации запрещены"
 
-#: core/managers/PublicationManager.py:254
+#: core/managers/PublicationManager.py:259
 msgid "Can't cancel non running publication"
 msgstr "Нельзя отменить не запущенную публикацию"
 
-#: core/managers/PublicationManager.py:276
+#: core/managers/PublicationManager.py:282
 msgid "Can't unpublish non usable publication"
 msgstr "Невозможно опубликовать неиспользуемую публикацию"
 
-#: core/managers/PublicationManager.py:279
+#: core/managers/PublicationManager.py:285
 msgid "Can't unpublish publications with services in process"
 msgstr "Невозможно опубликовать публикацию с сервисами в процессе"
 
@@ -1684,15 +1679,15 @@ msgstr ""
 "Невозможно ни удалить ни отменить {0}, потому что его состояния не позволяют "
 "это сделать"
 
-#: core/managers/UserServiceManager.py:583
+#: core/managers/UserServiceManager.py:586
 msgid "The requested service is not available"
 msgstr "Запрашиваемая услуга недоступна"
 
-#: core/managers/UserServiceManager.py:611
+#: core/managers/UserServiceManager.py:614
 msgid "The requested transport {} is not valid for {}"
 msgstr "Запрошенный транспорт {} недействителен для {}"
 
-#: core/managers/UserServiceManager.py:727
+#: core/managers/UserServiceManager.py:730
 msgid "The service is not accessible from this device"
 msgstr "Сервис недоступен с этого устройства"
 
@@ -1913,37 +1908,37 @@ msgstr "Недопустимые учетные данные"
 msgid "The domain {0} does not exists"
 msgstr "Домен {0} не существует"
 
-#: dispatchers/wyse_enterprise/views.py:207
+#: dispatchers/wyse_enterprise/views.py:209
 msgid "No services available"
 msgstr "Нет доступных сервисов"
 
-#: dispatchers/wyse_enterprise/views.py:223
-#: dispatchers/wyse_enterprise/views.py:303
+#: dispatchers/wyse_enterprise/views.py:225
+#: dispatchers/wyse_enterprise/views.py:305
 msgid "Invalid session"
 msgstr "Недействительная сессия"
 
-#: dispatchers/wyse_enterprise/views.py:227
-#: dispatchers/wyse_enterprise/views.py:307
+#: dispatchers/wyse_enterprise/views.py:229
+#: dispatchers/wyse_enterprise/views.py:309
 msgid "Invalid authorization"
 msgstr "Недействительная авторизация"
 
-#: dispatchers/wyse_enterprise/views.py:238
-#: dispatchers/wyse_enterprise/views.py:313
+#: dispatchers/wyse_enterprise/views.py:240
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Invalid request"
 msgstr "Недействительный запрос"
 
-#: dispatchers/wyse_enterprise/views.py:241
-#: dispatchers/wyse_enterprise/views.py:316
+#: dispatchers/wyse_enterprise/views.py:243
+#: dispatchers/wyse_enterprise/views.py:318
 msgid "Invalid credentials used"
 msgstr "Использованы недействительные учетные данные"
 
-#: dispatchers/wyse_enterprise/views.py:265 web/util/errors.py:71
+#: dispatchers/wyse_enterprise/views.py:267 web/util/errors.py:71
 msgid "Transport not found"
 msgstr "Транспорт не найден"
 
-#: dispatchers/wyse_enterprise/views.py:269
-#: dispatchers/wyse_enterprise/views.py:275
-#: dispatchers/wyse_enterprise/views.py:280
+#: dispatchers/wyse_enterprise/views.py:271
+#: dispatchers/wyse_enterprise/views.py:277
+#: dispatchers/wyse_enterprise/views.py:282
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "Сервис не готов в данный момент. Пожалуйста попробуйте снова позднее."
 
@@ -2667,7 +2662,6 @@ msgid "Size for machines created from this service."
 msgstr "Размер для машин, созданных из этой службы."
 
 #: services/Azure_enterprise/AzureCloneService.py:84
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:149
 #: services/Nutanix_enterprise/NutanixService.py:72
 #: services/OVirt/OVirtLinkedService.py:191
@@ -2679,7 +2673,6 @@ msgid "Machine Names"
 msgstr "Имена машин"
 
 #: services/Azure_enterprise/AzureCloneService.py:84
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:152
 #: services/Nutanix_enterprise/NutanixService.py:75
 #: services/OVirt/OVirtLinkedService.py:194
@@ -2691,7 +2684,6 @@ msgid "Base name for clones from this machine"
 msgstr "Базовое имя для клонов этой машины"
 
 #: services/Azure_enterprise/AzureCloneService.py:85
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:159
 #: services/Nutanix_enterprise/NutanixService.py:81
 #: services/OVirt/OVirtLinkedService.py:201
@@ -2703,7 +2695,6 @@ msgid "Name Length"
 msgstr "Длина имени"
 
 #: services/Azure_enterprise/AzureCloneService.py:86
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
 #: services/HyperV_enterprise/HyperVLinkedService.py:162
 #: services/Nutanix_enterprise/NutanixService.py:84
 #: services/OVirt/OVirtLinkedService.py:204
@@ -2714,7 +2705,6 @@ msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr "Размер числовой части для названий этих машин (от 3 до 6)"
 
 #: services/Azure_enterprise/AzureCloneService.py:90
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
 #: services/HyperV_enterprise/HyperVLinkedService.py:129
 #: services/Nutanix_enterprise/NutanixService.py:65
 #: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
@@ -2854,18 +2844,16 @@ msgstr "Параметры подключения вероятно коррек�
 msgid "Azure Provider: "
 msgstr "Azure провайдер: "
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
-msgid "HyperV Cluster Linked Clone (Experimental)"
-msgstr "Связанные клоны кластера HyperV (экспериментальный)"
+#: services/HyperV_enterprise/HyperVLinkedService.py:56
+msgid "HyperV Linked Clone (Experimental)"
+msgstr "HyperV слинкованный клон (эксперимент)"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:60
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr ""
 "Hyper Services на основе шаблонов и дифференциальных дисков "
 "(экспериментальный)"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
 #: services/HyperV_enterprise/HyperVLinkedService.py:77
 #: services/OVirt/OVirtLinkedService.py:77
 #: services/TestService_enterprise/TestService.py:27
@@ -2873,7 +2861,6 @@ msgstr ""
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "Количество требуемых машин для работы в ожидании пользователя"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:83
 #: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCFullCloneService.py:42
@@ -2882,152 +2869,13 @@ msgstr "Количество требуемых машин для работы �
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "Количество желаемых машин для приостановки ожидания использования"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:121
-#: services/Nutanix_enterprise/NutanixService.py:45
-#: services/OVirt/OVirtLinkedService.py:133
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
-#: services/Xen/XenLinkedService.py:120
-msgid "Base Machine"
-msgstr "Базовая машина"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:123
-#: services/Nutanix_enterprise/NutanixService.py:46
-#: services/OVirt/OVirtLinkedService.py:135
-#: services/Xen/XenLinkedService.py:122
-msgid "Service base machine"
-msgstr "Сервисная базовая машина"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
-#: services/HyperV_enterprise/HyperVLinkedService.py:132
-msgid ""
-"If more than 1 interface is found in machine, use one on this network as main"
-msgstr ""
-"Если в машине найдено более 1 интерфейса, используйте один в этой сети в "
-"качестве основного"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
-#: services/HyperV_enterprise/HyperVLinkedService.py:138
-#: services/Nutanix_enterprise/NutanixService.py:52
-#: services/OVirt/OVirtLinkedService.py:141
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#: services/Xen/XenLinkedService.py:137
-msgid "Memory (Mb)"
-msgstr "Память (Мбиты)"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
-#: services/HyperV_enterprise/HyperVLinkedService.py:143
-#: services/Vmware_enterprise/VCLinkedCloneService.py:86
-msgid "Memory for machines deployed from this service"
-msgstr "Память для машин, развернутых из этого сервиса"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:100
 #: services/HyperV_enterprise/HyperVLinkedService.py:103
 msgid "Datastore Drives"
 msgstr "Диски хранилища данных"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
 #: services/HyperV_enterprise/HyperVLinkedService.py:107
 msgid "Datastores where to put incrementals & publications"
 msgstr "Хранилища данных, где следует добавлять и добавлять публикации"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
-#: services/HyperV_enterprise/HyperVLinkedService.py:177
-#: services/Nutanix_enterprise/NutanixService.py:110
-#: services/OVirt/OVirtLinkedService.py:222
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
-#: services/Vmware_enterprise/VCLinkedCloneService.py:132
-#: services/Xen/XenLinkedService.py:186
-msgid "The length of basename plus length must not be greater than 15"
-msgstr "Длина базового имени плюс длина числовой части не должна превышать 15"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
-#: services/HyperV_enterprise/HyperVLinkedService.py:179
-#: services/Nutanix_enterprise/NutanixService.py:112
-#: services/OVirt/OVirtLinkedService.py:224
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
-#: services/Vmware_enterprise/VCLinkedCloneService.py:134
-#: services/Xen/XenLinkedService.py:188
-msgid "The machine name can't be only numbers"
-msgstr "Имя машины не может быть только из номеров"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:65
-msgid "HyperV Cluster Provider"
-msgstr "HyperV кластер поставщик"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:69
-msgid "HyperV Cluster Service Provider"
-msgstr "HyperV кластер поставщик услуг"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:90
-#: services/HyperV_enterprise/HyperVProvider.py:83
-msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
-msgstr "IP адрес или имя сервера HyperV (должен включить первый доступ WSMAN)"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:91
-#: services/HyperV_enterprise/HyperVProvider.py:84
-msgid "WSMan Port (normally 5985)"
-msgstr "WSMan порт (обычно 5985)"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:92
-#: services/HyperV_enterprise/HyperVProvider.py:85
-msgid "User with valid privileges on HyperV Server"
-msgstr "Пользователь с допустимыми правами на сервере HyperV"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:93
-#: services/HyperV_enterprise/HyperVProvider.py:86
-msgid "Password of the user of HyperV"
-msgstr "Пароль пользователя HyperV"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:94
-#: services/HyperV_enterprise/HyperVProvider.py:91
-msgid "Timeout in seconds of connection to HyperV"
-msgstr "Таймаут в секундах подключения к HyperV"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:95
-#: services/HyperV_enterprise/HyperVProvider.py:92
-#: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/OVirt/OVirtProvider.py:117
-#: services/Vmware_enterprise/ServiceProviderVC.py:41
-#: services/Xen/XenProvider.py:105
-msgid "Macs range"
-msgstr "Максимальный диапазон"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:96
-#: services/HyperV_enterprise/HyperVProvider.py:93
-#: services/Xen/XenProvider.py:106
-msgid "Range of valid macs for created machines"
-msgstr "Диапазон действительных макросов для созданных машин"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:133
-msgid "The selected server is not a cluster"
-msgstr "Выбранный сервер не является кластером"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:299
-#: services/HyperV_enterprise/HyperVProvider.py:259
-#: services/Xen/XenProvider.py:417
-msgid "Connection test successful"
-msgstr "Тест соединения успешен"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:300
-#: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:184
-#: services/OVirt/OVirtProvider.py:444
-#: services/Vmware_enterprise/ServiceProviderVC.py:150
-msgid "Connection failed. Check connection params"
-msgstr "Ошибка подключения. Проверьте параметры подключения"
-
-#: services/HyperV_enterprise/HyperVClusterPublication.py:97
-#: services/HyperV_enterprise/HyperVPublication.py:105
-#: services/OVirt/OVirtPublication.py:88 services/Xen/XenPublication.py:93
-#, python-brace-format
-msgid "UDS pub for {0} at {1}"
-msgstr "UDS pub для {0} в {1}"
-
-#: services/HyperV_enterprise/HyperVLinkedService.py:56
-msgid "HyperV Linked Clone (Experimental)"
-msgstr "HyperV слинкованный клон (эксперимент)"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:113
 #: services/OVirt/OVirtLinkedService.py:124
@@ -3040,6 +2888,21 @@ msgstr "Зарезервированное место"
 #: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
 msgstr "Минимальное свободное место в GB"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:121
+#: services/Nutanix_enterprise/NutanixService.py:45
+#: services/OVirt/OVirtLinkedService.py:133
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/Xen/XenLinkedService.py:120
+msgid "Base Machine"
+msgstr "Базовая машина"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:123
+#: services/Nutanix_enterprise/NutanixService.py:46
+#: services/OVirt/OVirtLinkedService.py:135
+#: services/Xen/XenLinkedService.py:122
+msgid "Service base machine"
+msgstr "Сервисная базовая машина"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:124
 #: services/HyperV_enterprise/HyperVLinkedService.py:133
@@ -3078,6 +2941,44 @@ msgstr "Минимальное свободное место в GB"
 msgid "Machine"
 msgstr "Машина"
 
+#: services/HyperV_enterprise/HyperVLinkedService.py:132
+msgid ""
+"If more than 1 interface is found in machine, use one on this network as main"
+msgstr ""
+"Если в машине найдено более 1 интерфейса, используйте один в этой сети в "
+"качестве основного"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:138
+#: services/Nutanix_enterprise/NutanixService.py:52
+#: services/OVirt/OVirtLinkedService.py:141
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Xen/XenLinkedService.py:137
+msgid "Memory (Mb)"
+msgstr "Память (Мбиты)"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:143
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+msgid "Memory for machines deployed from this service"
+msgstr "Память для машин, развернутых из этого сервиса"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:177
+#: services/Nutanix_enterprise/NutanixService.py:110
+#: services/OVirt/OVirtLinkedService.py:222
+#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
+#: services/Vmware_enterprise/VCLinkedCloneService.py:132
+#: services/Xen/XenLinkedService.py:186
+msgid "The length of basename plus length must not be greater than 15"
+msgstr "Длина базового имени плюс длина числовой части не должна превышать 15"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:179
+#: services/Nutanix_enterprise/NutanixService.py:112
+#: services/OVirt/OVirtLinkedService.py:224
+#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
+#: services/Vmware_enterprise/VCLinkedCloneService.py:134
+#: services/Xen/XenLinkedService.py:188
+msgid "The machine name can't be only numbers"
+msgstr "Имя машины не может быть только из номеров"
+
 #: services/HyperV_enterprise/HyperVProvider.py:64
 msgid "HyperV Platform Provider (experimental)"
 msgstr "Поставщик платформы HyperV (эксперимент)"
@@ -3085,6 +2986,57 @@ msgstr "Поставщик платформы HyperV (эксперимент)"
 #: services/HyperV_enterprise/HyperVProvider.py:68
 msgid "HyperV platform service provider (experimental)"
 msgstr "Поставщик услуг платформы HyperV"
+
+#: services/HyperV_enterprise/HyperVProvider.py:83
+msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
+msgstr "IP адрес или имя сервера HyperV (должен включить первый доступ WSMAN)"
+
+#: services/HyperV_enterprise/HyperVProvider.py:84
+msgid "WSMan Port (normally 5985)"
+msgstr "WSMan порт (обычно 5985)"
+
+#: services/HyperV_enterprise/HyperVProvider.py:85
+msgid "User with valid privileges on HyperV Server"
+msgstr "Пользователь с допустимыми правами на сервере HyperV"
+
+#: services/HyperV_enterprise/HyperVProvider.py:86
+msgid "Password of the user of HyperV"
+msgstr "Пароль пользователя HyperV"
+
+#: services/HyperV_enterprise/HyperVProvider.py:91
+msgid "Timeout in seconds of connection to HyperV"
+msgstr "Таймаут в секундах подключения к HyperV"
+
+#: services/HyperV_enterprise/HyperVProvider.py:92
+#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/OVirt/OVirtProvider.py:117
+#: services/Vmware_enterprise/ServiceProviderVC.py:41
+#: services/Xen/XenProvider.py:105
+msgid "Macs range"
+msgstr "Максимальный диапазон"
+
+#: services/HyperV_enterprise/HyperVProvider.py:93
+#: services/Xen/XenProvider.py:106
+msgid "Range of valid macs for created machines"
+msgstr "Диапазон действительных макросов для созданных машин"
+
+#: services/HyperV_enterprise/HyperVProvider.py:259
+#: services/Xen/XenProvider.py:417
+msgid "Connection test successful"
+msgstr "Тест соединения успешен"
+
+#: services/HyperV_enterprise/HyperVProvider.py:260
+#: services/Nutanix_enterprise/NutanixProvider.py:184
+#: services/OVirt/OVirtProvider.py:444
+#: services/Vmware_enterprise/ServiceProviderVC.py:150
+msgid "Connection failed. Check connection params"
+msgstr "Ошибка подключения. Проверьте параметры подключения"
+
+#: services/HyperV_enterprise/HyperVPublication.py:104
+#: services/OVirt/OVirtPublication.py:88 services/Xen/XenPublication.py:93
+#, python-brace-format
+msgid "UDS pub for {0} at {1}"
+msgstr "UDS pub для {0} в {1}"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:27
 msgid "Nutanix Acropolis Platform Provider"
@@ -3558,7 +3510,7 @@ msgid "IP "
 msgstr "IP "
 
 #: services/PhysicalMachines/IPMachinesService.py:48
-#: services/RDS_enterprise/RDSProvider.py:38
+#: services/RDS_enterprise/RDSProvider.py:37
 msgid "List of servers"
 msgstr "Список серверов"
 
@@ -3602,19 +3554,19 @@ msgstr "Статический одиночный IP адрес"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "Сервис предлоставляет доступ к включенным машинам по IP"
 
-#: services/RDS_enterprise/RDSProvider.py:32
+#: services/RDS_enterprise/RDSProvider.py:31
 msgid "RDS Platform Provider"
 msgstr "Поставщик платформы RDS"
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:33
 msgid "Microsoft RDS based provider"
 msgstr "Поставщик на базе Microsoft RDS"
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "User mapping"
 msgstr "Сопоставление пользователей"
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -3622,17 +3574,17 @@ msgstr ""
 "Если активен, будет выполнено сопоставление пользователей. Если нет, учетные "
 "данные от пользователя будут перенаправлено на сервер RDS."
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:41
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
 "Список пользователей для сопоставления (Не используетс если сопоставление "
 "пользователей отключено)"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid "User's password"
 msgstr "Пароль пользователя"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3640,11 +3592,11 @@ msgstr ""
 "Пароль по умолчанию для плльзователей в списке сопоставления. (Не "
 "используетс если сопоставление пользователей отключено)"
 
-#: services/RDS_enterprise/RDSProvider.py:46
+#: services/RDS_enterprise/RDSProvider.py:45
 msgid "Server Checking"
 msgstr "Сервер проверяется"
 
-#: services/RDS_enterprise/RDSProvider.py:47
+#: services/RDS_enterprise/RDSProvider.py:46
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr ""
 "Если флажок установлен, сервер будет проверен перед назначением или "
@@ -3656,7 +3608,7 @@ msgstr ""
 "Ошибка: Пользователь {} на хосте {} используется и не может быть удален "
 "прямо сейчас"
 
-#: services/RDS_enterprise/RDSProvider.py:102
+#: services/RDS_enterprise/RDSProvider.py:100
 #: services/Sample/SampleProvider.py:187
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."

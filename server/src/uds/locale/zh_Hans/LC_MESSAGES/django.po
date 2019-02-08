@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 07:28+0100\n"
+"POT-Creation-Date: 2019-02-08 10:18+0100\n"
 "PO-Revision-Date: 2019-01-10 09:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -134,7 +134,7 @@ msgstr "标签"
 
 #: REST/methods/authenticators.py:65 reports/stats/pools_performance.py:208
 #: reports/stats/pools_performance.py:265 reports/stats/user_access.py:237
-#: reports/stats/user_access.py:276 services/RDS_enterprise/RDSProvider.py:42
+#: reports/stats/user_access.py:276 services/RDS_enterprise/RDSProvider.py:41
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
@@ -443,7 +443,7 @@ msgstr "服务"
 msgid "User Services"
 msgstr "用户服务"
 
-#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:251
+#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:253
 #: web/util/errors.py:72
 msgid "Service not found"
 msgstr "无法提供服务"
@@ -464,7 +464,6 @@ msgstr "检查证书"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 #: auths/EDirectory_enterprise/Authenticator.py:45
 #: auths/RegexLdap/Authenticator.py:55
-#: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
@@ -481,7 +480,6 @@ msgstr "将充当代理的服务器（IP或FQDN）。"
 
 #: REST/methods/proxies.py:95 auths/EDirectory_enterprise/Authenticator.py:46
 #: auths/RegexLdap/Authenticator.py:56
-#: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
@@ -873,7 +871,6 @@ msgstr "目前的用户"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:59
 #: auths/EDirectory_enterprise/Authenticator.py:62
 #: auths/RegexLdap/Authenticator.py:81
-#: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
@@ -1015,7 +1012,6 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: core/auths/BaseAuthenticator.py:140
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:34
-#: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:86
 #: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
@@ -1044,7 +1040,6 @@ msgstr "ldap用户的密码"
 #: auths/EDirectory_enterprise/Authenticator.py:50
 #: auths/RegexLdap/Authenticator.py:60
 #: services/Azure_enterprise/ServiceProviderAzure.py:43
-#: services/HyperV_enterprise/HyperVClusterProvider.py:94
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
@@ -1550,24 +1545,24 @@ msgstr "系统管理员"
 msgid "Forbidden"
 msgstr "被禁止"
 
-#: core/managers/PublicationManager.py:218
+#: core/managers/PublicationManager.py:223
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr "已经发布。等待以前的出版物完成，然后重试"
 
-#: core/managers/PublicationManager.py:221
+#: core/managers/PublicationManager.py:226
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr "服务处于维护模式，不允许新的出版物"
 
-#: core/managers/PublicationManager.py:254
+#: core/managers/PublicationManager.py:259
 msgid "Can't cancel non running publication"
 msgstr "无法取消非运行发布"
 
-#: core/managers/PublicationManager.py:276
+#: core/managers/PublicationManager.py:282
 msgid "Can't unpublish non usable publication"
 msgstr "无法取消发布不可用的出版物"
 
-#: core/managers/PublicationManager.py:279
+#: core/managers/PublicationManager.py:285
 msgid "Can't unpublish publications with services in process"
 msgstr "无法取消发布正在处理的服务的出版物"
 
@@ -1620,15 +1615,15 @@ msgstr "无法删除非活动元素"
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr "无法删除也不能取消{0}导致其状态不允许"
 
-#: core/managers/UserServiceManager.py:583
+#: core/managers/UserServiceManager.py:586
 msgid "The requested service is not available"
 msgstr "请求的服务不可用"
 
-#: core/managers/UserServiceManager.py:611
+#: core/managers/UserServiceManager.py:614
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/UserServiceManager.py:727
+#: core/managers/UserServiceManager.py:730
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
@@ -1849,37 +1844,37 @@ msgstr "无效证件"
 msgid "The domain {0} does not exists"
 msgstr "域{0}不存在"
 
-#: dispatchers/wyse_enterprise/views.py:207
+#: dispatchers/wyse_enterprise/views.py:209
 msgid "No services available"
 msgstr "没有可用的服务"
 
-#: dispatchers/wyse_enterprise/views.py:223
-#: dispatchers/wyse_enterprise/views.py:303
+#: dispatchers/wyse_enterprise/views.py:225
+#: dispatchers/wyse_enterprise/views.py:305
 msgid "Invalid session"
 msgstr "无效会话"
 
-#: dispatchers/wyse_enterprise/views.py:227
-#: dispatchers/wyse_enterprise/views.py:307
+#: dispatchers/wyse_enterprise/views.py:229
+#: dispatchers/wyse_enterprise/views.py:309
 msgid "Invalid authorization"
 msgstr "授权无效"
 
-#: dispatchers/wyse_enterprise/views.py:238
-#: dispatchers/wyse_enterprise/views.py:313
+#: dispatchers/wyse_enterprise/views.py:240
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Invalid request"
 msgstr "非法请求"
 
-#: dispatchers/wyse_enterprise/views.py:241
-#: dispatchers/wyse_enterprise/views.py:316
+#: dispatchers/wyse_enterprise/views.py:243
+#: dispatchers/wyse_enterprise/views.py:318
 msgid "Invalid credentials used"
 msgstr "使用的凭据无效"
 
-#: dispatchers/wyse_enterprise/views.py:265 web/util/errors.py:71
+#: dispatchers/wyse_enterprise/views.py:267 web/util/errors.py:71
 msgid "Transport not found"
 msgstr "未找到运输"
 
-#: dispatchers/wyse_enterprise/views.py:269
-#: dispatchers/wyse_enterprise/views.py:275
-#: dispatchers/wyse_enterprise/views.py:280
+#: dispatchers/wyse_enterprise/views.py:271
+#: dispatchers/wyse_enterprise/views.py:277
+#: dispatchers/wyse_enterprise/views.py:282
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "此时服务还没有准备好。请稍后再试一次。"
 
@@ -2586,7 +2581,6 @@ msgid "Size for machines created from this service."
 msgstr "从此服务创建的计算机的大小。"
 
 #: services/Azure_enterprise/AzureCloneService.py:84
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:149
 #: services/Nutanix_enterprise/NutanixService.py:72
 #: services/OVirt/OVirtLinkedService.py:191
@@ -2598,7 +2592,6 @@ msgid "Machine Names"
 msgstr "机器名称"
 
 #: services/Azure_enterprise/AzureCloneService.py:84
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:152
 #: services/Nutanix_enterprise/NutanixService.py:75
 #: services/OVirt/OVirtLinkedService.py:194
@@ -2610,7 +2603,6 @@ msgid "Base name for clones from this machine"
 msgstr "来自此计算机的克隆的基本名称"
 
 #: services/Azure_enterprise/AzureCloneService.py:85
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:159
 #: services/Nutanix_enterprise/NutanixService.py:81
 #: services/OVirt/OVirtLinkedService.py:201
@@ -2622,7 +2614,6 @@ msgid "Name Length"
 msgstr "名称长度"
 
 #: services/Azure_enterprise/AzureCloneService.py:86
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
 #: services/HyperV_enterprise/HyperVLinkedService.py:162
 #: services/Nutanix_enterprise/NutanixService.py:84
 #: services/OVirt/OVirtLinkedService.py:204
@@ -2633,7 +2624,6 @@ msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr "这些机器名称的数字部分大小（3到6之间）"
 
 #: services/Azure_enterprise/AzureCloneService.py:90
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
 #: services/HyperV_enterprise/HyperVLinkedService.py:129
 #: services/Nutanix_enterprise/NutanixService.py:65
 #: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
@@ -2772,16 +2762,14 @@ msgstr "连接参数似乎正确"
 msgid "Azure Provider: "
 msgstr "Azure提供商："
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
-msgid "HyperV Cluster Linked Clone (Experimental)"
-msgstr "HyperV群集链接克隆（实验性）"
+#: services/HyperV_enterprise/HyperVLinkedService.py:56
+msgid "HyperV Linked Clone (Experimental)"
+msgstr "HyperV链接克隆（实验性）"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:60
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr "基于模板和差异磁盘的超级服务（实验性）"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
 #: services/HyperV_enterprise/HyperVLinkedService.py:77
 #: services/OVirt/OVirtLinkedService.py:77
 #: services/TestService_enterprise/TestService.py:27
@@ -2789,7 +2777,6 @@ msgstr "基于模板和差异磁盘的超级服务（实验性）"
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "要继续运行等待用户的所需机器数"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:83
 #: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCFullCloneService.py:42
@@ -2798,150 +2785,13 @@ msgstr "要继续运行等待用户的所需机器数"
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "要暂停等待使用的所需机器数"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:121
-#: services/Nutanix_enterprise/NutanixService.py:45
-#: services/OVirt/OVirtLinkedService.py:133
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
-#: services/Xen/XenLinkedService.py:120
-msgid "Base Machine"
-msgstr "基础机器"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:123
-#: services/Nutanix_enterprise/NutanixService.py:46
-#: services/OVirt/OVirtLinkedService.py:135
-#: services/Xen/XenLinkedService.py:122
-msgid "Service base machine"
-msgstr "服务基础机器"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
-#: services/HyperV_enterprise/HyperVLinkedService.py:132
-msgid ""
-"If more than 1 interface is found in machine, use one on this network as main"
-msgstr "如果在计算机中找到多个接口，请在此网络上使用一个作为主要接口"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
-#: services/HyperV_enterprise/HyperVLinkedService.py:138
-#: services/Nutanix_enterprise/NutanixService.py:52
-#: services/OVirt/OVirtLinkedService.py:141
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#: services/Xen/XenLinkedService.py:137
-msgid "Memory (Mb)"
-msgstr "记忆（Mb）"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
-#: services/HyperV_enterprise/HyperVLinkedService.py:143
-#: services/Vmware_enterprise/VCLinkedCloneService.py:86
-msgid "Memory for machines deployed from this service"
-msgstr "从此服务部署的计算机的内存"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:100
 #: services/HyperV_enterprise/HyperVLinkedService.py:103
 msgid "Datastore Drives"
 msgstr "数据存储驱动器"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
 #: services/HyperV_enterprise/HyperVLinkedService.py:107
 msgid "Datastores where to put incrementals & publications"
 msgstr "数据存储放置增量和出版物的位置"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
-#: services/HyperV_enterprise/HyperVLinkedService.py:177
-#: services/Nutanix_enterprise/NutanixService.py:110
-#: services/OVirt/OVirtLinkedService.py:222
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
-#: services/Vmware_enterprise/VCLinkedCloneService.py:132
-#: services/Xen/XenLinkedService.py:186
-msgid "The length of basename plus length must not be greater than 15"
-msgstr "basename加长度的长度不得大于15"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
-#: services/HyperV_enterprise/HyperVLinkedService.py:179
-#: services/Nutanix_enterprise/NutanixService.py:112
-#: services/OVirt/OVirtLinkedService.py:224
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
-#: services/Vmware_enterprise/VCLinkedCloneService.py:134
-#: services/Xen/XenLinkedService.py:188
-msgid "The machine name can't be only numbers"
-msgstr "机器名称不能只是数字"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:65
-msgid "HyperV Cluster Provider"
-msgstr "HyperV群集提供程序"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:69
-msgid "HyperV Cluster Service Provider"
-msgstr "HyperV群集服务提供商"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:90
-#: services/HyperV_enterprise/HyperVProvider.py:83
-msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
-msgstr "HyperV服务器IP或主机名（必须启用第一个WSMAN访问）"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:91
-#: services/HyperV_enterprise/HyperVProvider.py:84
-msgid "WSMan Port (normally 5985)"
-msgstr "WSMan港口（通常为5985）"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:92
-#: services/HyperV_enterprise/HyperVProvider.py:85
-msgid "User with valid privileges on HyperV Server"
-msgstr "在HyperV Server上具有有效权限的用户"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:93
-#: services/HyperV_enterprise/HyperVProvider.py:86
-msgid "Password of the user of HyperV"
-msgstr "HyperV用户的密码"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:94
-#: services/HyperV_enterprise/HyperVProvider.py:91
-msgid "Timeout in seconds of connection to HyperV"
-msgstr "连接到HyperV的超时时间"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:95
-#: services/HyperV_enterprise/HyperVProvider.py:92
-#: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/OVirt/OVirtProvider.py:117
-#: services/Vmware_enterprise/ServiceProviderVC.py:41
-#: services/Xen/XenProvider.py:105
-msgid "Macs range"
-msgstr "Macs系列"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:96
-#: services/HyperV_enterprise/HyperVProvider.py:93
-#: services/Xen/XenProvider.py:106
-msgid "Range of valid macs for created machines"
-msgstr "已创建计算机的有效mac范围"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:133
-msgid "The selected server is not a cluster"
-msgstr "所选服务器不是群集"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:299
-#: services/HyperV_enterprise/HyperVProvider.py:259
-#: services/Xen/XenProvider.py:417
-msgid "Connection test successful"
-msgstr "连接测试成功"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:300
-#: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:184
-#: services/OVirt/OVirtProvider.py:444
-#: services/Vmware_enterprise/ServiceProviderVC.py:150
-msgid "Connection failed. Check connection params"
-msgstr "连接失败。检查连接参数"
-
-#: services/HyperV_enterprise/HyperVClusterPublication.py:97
-#: services/HyperV_enterprise/HyperVPublication.py:105
-#: services/OVirt/OVirtPublication.py:88 services/Xen/XenPublication.py:93
-#, python-brace-format
-msgid "UDS pub for {0} at {1}"
-msgstr "{1}的{0}的UDS发布"
-
-#: services/HyperV_enterprise/HyperVLinkedService.py:56
-msgid "HyperV Linked Clone (Experimental)"
-msgstr "HyperV链接克隆（实验性）"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:113
 #: services/OVirt/OVirtLinkedService.py:124
@@ -2954,6 +2804,21 @@ msgstr "预留空间"
 #: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
 msgstr "GB中最小的可用空间"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:121
+#: services/Nutanix_enterprise/NutanixService.py:45
+#: services/OVirt/OVirtLinkedService.py:133
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/Xen/XenLinkedService.py:120
+msgid "Base Machine"
+msgstr "基础机器"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:123
+#: services/Nutanix_enterprise/NutanixService.py:46
+#: services/OVirt/OVirtLinkedService.py:135
+#: services/Xen/XenLinkedService.py:122
+msgid "Service base machine"
+msgstr "服务基础机器"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:124
 #: services/HyperV_enterprise/HyperVLinkedService.py:133
@@ -2992,6 +2857,42 @@ msgstr "GB中最小的可用空间"
 msgid "Machine"
 msgstr "机"
 
+#: services/HyperV_enterprise/HyperVLinkedService.py:132
+msgid ""
+"If more than 1 interface is found in machine, use one on this network as main"
+msgstr "如果在计算机中找到多个接口，请在此网络上使用一个作为主要接口"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:138
+#: services/Nutanix_enterprise/NutanixService.py:52
+#: services/OVirt/OVirtLinkedService.py:141
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Xen/XenLinkedService.py:137
+msgid "Memory (Mb)"
+msgstr "记忆（Mb）"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:143
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+msgid "Memory for machines deployed from this service"
+msgstr "从此服务部署的计算机的内存"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:177
+#: services/Nutanix_enterprise/NutanixService.py:110
+#: services/OVirt/OVirtLinkedService.py:222
+#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
+#: services/Vmware_enterprise/VCLinkedCloneService.py:132
+#: services/Xen/XenLinkedService.py:186
+msgid "The length of basename plus length must not be greater than 15"
+msgstr "basename加长度的长度不得大于15"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:179
+#: services/Nutanix_enterprise/NutanixService.py:112
+#: services/OVirt/OVirtLinkedService.py:224
+#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
+#: services/Vmware_enterprise/VCLinkedCloneService.py:134
+#: services/Xen/XenLinkedService.py:188
+msgid "The machine name can't be only numbers"
+msgstr "机器名称不能只是数字"
+
 #: services/HyperV_enterprise/HyperVProvider.py:64
 msgid "HyperV Platform Provider (experimental)"
 msgstr "HyperV平台提供商（实验性）"
@@ -2999,6 +2900,57 @@ msgstr "HyperV平台提供商（实验性）"
 #: services/HyperV_enterprise/HyperVProvider.py:68
 msgid "HyperV platform service provider (experimental)"
 msgstr "HyperV平台服务提供商（实验性）"
+
+#: services/HyperV_enterprise/HyperVProvider.py:83
+msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
+msgstr "HyperV服务器IP或主机名（必须启用第一个WSMAN访问）"
+
+#: services/HyperV_enterprise/HyperVProvider.py:84
+msgid "WSMan Port (normally 5985)"
+msgstr "WSMan港口（通常为5985）"
+
+#: services/HyperV_enterprise/HyperVProvider.py:85
+msgid "User with valid privileges on HyperV Server"
+msgstr "在HyperV Server上具有有效权限的用户"
+
+#: services/HyperV_enterprise/HyperVProvider.py:86
+msgid "Password of the user of HyperV"
+msgstr "HyperV用户的密码"
+
+#: services/HyperV_enterprise/HyperVProvider.py:91
+msgid "Timeout in seconds of connection to HyperV"
+msgstr "连接到HyperV的超时时间"
+
+#: services/HyperV_enterprise/HyperVProvider.py:92
+#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/OVirt/OVirtProvider.py:117
+#: services/Vmware_enterprise/ServiceProviderVC.py:41
+#: services/Xen/XenProvider.py:105
+msgid "Macs range"
+msgstr "Macs系列"
+
+#: services/HyperV_enterprise/HyperVProvider.py:93
+#: services/Xen/XenProvider.py:106
+msgid "Range of valid macs for created machines"
+msgstr "已创建计算机的有效mac范围"
+
+#: services/HyperV_enterprise/HyperVProvider.py:259
+#: services/Xen/XenProvider.py:417
+msgid "Connection test successful"
+msgstr "连接测试成功"
+
+#: services/HyperV_enterprise/HyperVProvider.py:260
+#: services/Nutanix_enterprise/NutanixProvider.py:184
+#: services/OVirt/OVirtProvider.py:444
+#: services/Vmware_enterprise/ServiceProviderVC.py:150
+msgid "Connection failed. Check connection params"
+msgstr "连接失败。检查连接参数"
+
+#: services/HyperV_enterprise/HyperVPublication.py:104
+#: services/OVirt/OVirtPublication.py:88 services/Xen/XenPublication.py:93
+#, python-brace-format
+msgid "UDS pub for {0} at {1}"
+msgstr "{1}的{0}的UDS发布"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:27
 msgid "Nutanix Acropolis Platform Provider"
@@ -3456,7 +3408,7 @@ msgid "IP "
 msgstr "IP"
 
 #: services/PhysicalMachines/IPMachinesService.py:48
-#: services/RDS_enterprise/RDSProvider.py:38
+#: services/RDS_enterprise/RDSProvider.py:37
 msgid "List of servers"
 msgstr "服务器列表"
 
@@ -3500,19 +3452,19 @@ msgstr "静态单IP"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
 
-#: services/RDS_enterprise/RDSProvider.py:32
+#: services/RDS_enterprise/RDSProvider.py:31
 msgid "RDS Platform Provider"
 msgstr "RDS平台提供商"
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:33
 msgid "Microsoft RDS based provider"
 msgstr "基于Microsoft RDS的提供商"
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "User mapping"
 msgstr "用户映射"
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -3520,25 +3472,25 @@ msgstr ""
 "如果处于活动状态，则将完成用户映射。如果没有，来自用户的凭证将被重定向到RDS服"
 "务器。"
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:41
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr "用于映射的用户列表。 （如果禁用用户映射，则不使用）"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid "User's password"
 msgstr "用户密码"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
 msgstr "列表映射中用户的默认密码。 （如果禁用用户映射，则不使用）"
 
-#: services/RDS_enterprise/RDSProvider.py:46
+#: services/RDS_enterprise/RDSProvider.py:45
 msgid "Server Checking"
 msgstr "服务器检查"
 
-#: services/RDS_enterprise/RDSProvider.py:47
+#: services/RDS_enterprise/RDSProvider.py:46
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr "如果选中，则在分配或使用服务器之前将检查服务器。"
 
@@ -3546,7 +3498,7 @@ msgstr "如果选中，则在分配或使用服务器之前将检查服务器。
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "错误：正在使用主机{}上的用户{}，目前无法删除"
 
-#: services/RDS_enterprise/RDSProvider.py:102
+#: services/RDS_enterprise/RDSProvider.py:100
 #: services/Sample/SampleProvider.py:187
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."

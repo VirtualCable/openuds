@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 07:28+0100\n"
+"POT-Creation-Date: 2019-02-08 10:18+0100\n"
 "PO-Revision-Date: 2019-01-10 09:42+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -136,7 +136,7 @@ msgstr "Etiketa"
 
 #: REST/methods/authenticators.py:65 reports/stats/pools_performance.py:208
 #: reports/stats/pools_performance.py:265 reports/stats/user_access.py:237
-#: reports/stats/user_access.py:276 services/RDS_enterprise/RDSProvider.py:42
+#: reports/stats/user_access.py:276 services/RDS_enterprise/RDSProvider.py:41
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
@@ -450,7 +450,7 @@ msgstr "Zerbitzuak"
 msgid "User Services"
 msgstr "Erabiltzaile Zerbitzuak"
 
-#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:251
+#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:253
 #: web/util/errors.py:72
 msgid "Service not found"
 msgstr "Ez da aurkitu Zerbitzurik"
@@ -471,7 +471,6 @@ msgstr "Egiaztatu ziurtagiria"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 #: auths/EDirectory_enterprise/Authenticator.py:45
 #: auths/RegexLdap/Authenticator.py:55
-#: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
@@ -488,7 +487,6 @@ msgstr "Zerbitzaria (IP edo FQDN) proxy gisa balioko du."
 
 #: REST/methods/proxies.py:95 auths/EDirectory_enterprise/Authenticator.py:46
 #: auths/RegexLdap/Authenticator.py:56
-#: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:34
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
@@ -895,7 +893,6 @@ msgstr "Momentuko erabiltzaileak"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:59
 #: auths/EDirectory_enterprise/Authenticator.py:62
 #: auths/RegexLdap/Authenticator.py:81
-#: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
@@ -1040,7 +1037,6 @@ msgstr ""
 #: core/auths/BaseAuthenticator.py:140
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:34
-#: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:86
 #: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
@@ -1069,7 +1065,6 @@ msgstr "LDAP erabiltzailearen pasahitza"
 #: auths/EDirectory_enterprise/Authenticator.py:50
 #: auths/RegexLdap/Authenticator.py:60
 #: services/Azure_enterprise/ServiceProviderAzure.py:43
-#: services/HyperV_enterprise/HyperVClusterProvider.py:94
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
@@ -1607,25 +1602,25 @@ msgstr "Sistema-administratzaileak"
 msgid "Forbidden"
 msgstr "Debekatuta"
 
-#: core/managers/PublicationManager.py:218
+#: core/managers/PublicationManager.py:223
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr "Argitaratu. Aurreko edizioan itxaron amaitzeko eta saiatu berriro"
 
-#: core/managers/PublicationManager.py:221
+#: core/managers/PublicationManager.py:226
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr ""
 "Zerbitzua mantenimendu moduan dago eta argitalpen berriak ez dira onartzen"
 
-#: core/managers/PublicationManager.py:254
+#: core/managers/PublicationManager.py:259
 msgid "Can't cancel non running publication"
 msgstr "Ezin da exekutatze-argitalpena bertan behera utzi"
 
-#: core/managers/PublicationManager.py:276
+#: core/managers/PublicationManager.py:282
 msgid "Can't unpublish non usable publication"
 msgstr "Ezin da argitalpen erabilgarririk argitaratu"
 
-#: core/managers/PublicationManager.py:279
+#: core/managers/PublicationManager.py:285
 msgid "Can't unpublish publications with services in process"
 msgstr "Ezin dira argitalpenak argitaratu zerbitzuen prozesuan"
 
@@ -1679,15 +1674,15 @@ msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr ""
 "Ezin da ezabatu ezta bertan behera utzi {0} bere estatuek ez baitute uzten"
 
-#: core/managers/UserServiceManager.py:583
+#: core/managers/UserServiceManager.py:586
 msgid "The requested service is not available"
 msgstr "Eskatutako zerbitzua ez dago erabilgarri"
 
-#: core/managers/UserServiceManager.py:611
+#: core/managers/UserServiceManager.py:614
 msgid "The requested transport {} is not valid for {}"
 msgstr "Eskatutako garraioa {} ez da {} baliozkoa"
 
-#: core/managers/UserServiceManager.py:727
+#: core/managers/UserServiceManager.py:730
 msgid "The service is not accessible from this device"
 msgstr "Zerbitzua ez dago gailutik eskura"
 
@@ -1908,37 +1903,37 @@ msgstr "Baliogabeko egiaztagiriak"
 msgid "The domain {0} does not exists"
 msgstr "{0} domeinua ez da existitzen"
 
-#: dispatchers/wyse_enterprise/views.py:207
+#: dispatchers/wyse_enterprise/views.py:209
 msgid "No services available"
 msgstr "Ez dago zerbitzurik eskuragarri"
 
-#: dispatchers/wyse_enterprise/views.py:223
-#: dispatchers/wyse_enterprise/views.py:303
+#: dispatchers/wyse_enterprise/views.py:225
+#: dispatchers/wyse_enterprise/views.py:305
 msgid "Invalid session"
 msgstr "Saioa baliogabea"
 
-#: dispatchers/wyse_enterprise/views.py:227
-#: dispatchers/wyse_enterprise/views.py:307
+#: dispatchers/wyse_enterprise/views.py:229
+#: dispatchers/wyse_enterprise/views.py:309
 msgid "Invalid authorization"
 msgstr "Baimen baliogabea"
 
-#: dispatchers/wyse_enterprise/views.py:238
-#: dispatchers/wyse_enterprise/views.py:313
+#: dispatchers/wyse_enterprise/views.py:240
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Invalid request"
 msgstr "Eskaera baliogabea"
 
-#: dispatchers/wyse_enterprise/views.py:241
-#: dispatchers/wyse_enterprise/views.py:316
+#: dispatchers/wyse_enterprise/views.py:243
+#: dispatchers/wyse_enterprise/views.py:318
 msgid "Invalid credentials used"
 msgstr "Erabilitako kredentzial baliogabeak"
 
-#: dispatchers/wyse_enterprise/views.py:265 web/util/errors.py:71
+#: dispatchers/wyse_enterprise/views.py:267 web/util/errors.py:71
 msgid "Transport not found"
 msgstr "Ez da aurkitu garraiorik"
 
-#: dispatchers/wyse_enterprise/views.py:269
-#: dispatchers/wyse_enterprise/views.py:275
-#: dispatchers/wyse_enterprise/views.py:280
+#: dispatchers/wyse_enterprise/views.py:271
+#: dispatchers/wyse_enterprise/views.py:277
+#: dispatchers/wyse_enterprise/views.py:282
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "Zerbitzua ez dago prest une honetan. Saiatu berriz pixka bat."
 
@@ -2665,7 +2660,6 @@ msgid "Size for machines created from this service."
 msgstr "Zerbitzu honetatik sortutako makinen tamaina."
 
 #: services/Azure_enterprise/AzureCloneService.py:84
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:149
 #: services/Nutanix_enterprise/NutanixService.py:72
 #: services/OVirt/OVirtLinkedService.py:191
@@ -2677,7 +2671,6 @@ msgid "Machine Names"
 msgstr "Makina izenak"
 
 #: services/Azure_enterprise/AzureCloneService.py:84
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:152
 #: services/Nutanix_enterprise/NutanixService.py:75
 #: services/OVirt/OVirtLinkedService.py:194
@@ -2689,7 +2682,6 @@ msgid "Base name for clones from this machine"
 msgstr "Makinaren klonak oinarrizko izena"
 
 #: services/Azure_enterprise/AzureCloneService.py:85
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:159
 #: services/Nutanix_enterprise/NutanixService.py:81
 #: services/OVirt/OVirtLinkedService.py:201
@@ -2701,7 +2693,6 @@ msgid "Name Length"
 msgstr "Izen luzeera"
 
 #: services/Azure_enterprise/AzureCloneService.py:86
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
 #: services/HyperV_enterprise/HyperVLinkedService.py:162
 #: services/Nutanix_enterprise/NutanixService.py:84
 #: services/OVirt/OVirtLinkedService.py:204
@@ -2712,7 +2703,6 @@ msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr "Makina hauen izenen zenbakizko zatiaren tamaina (3 eta 6 artean)"
 
 #: services/Azure_enterprise/AzureCloneService.py:90
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
 #: services/HyperV_enterprise/HyperVLinkedService.py:129
 #: services/Nutanix_enterprise/NutanixService.py:65
 #: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
@@ -2851,18 +2841,16 @@ msgstr "Konexio parametroak zuzena dirudi"
 msgid "Azure Provider: "
 msgstr "Azure hornitzailea:"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
-msgid "HyperV Cluster Linked Clone (Experimental)"
-msgstr "HyperV Cluster Linked Clone (Esperimentala)"
+#: services/HyperV_enterprise/HyperVLinkedService.py:56
+msgid "HyperV Linked Clone (Experimental)"
+msgstr "HyperV Linked Clone (esperimentala)"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:60
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr ""
 "Hyper Zerbitzuak txantiloietan eta disko diferentetan oinarrituta "
 "(esperimentala)"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
 #: services/HyperV_enterprise/HyperVLinkedService.py:77
 #: services/OVirt/OVirtLinkedService.py:77
 #: services/TestService_enterprise/TestService.py:27
@@ -2871,7 +2859,6 @@ msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
 "Nahi duzun makina kopurua erabiltzaile baten zain exekutatzen jarraitzeko"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:83
 #: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCFullCloneService.py:42
@@ -2880,152 +2867,13 @@ msgstr ""
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "Nahi duzun makineriaren kopurua eten egingo da"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:121
-#: services/Nutanix_enterprise/NutanixService.py:45
-#: services/OVirt/OVirtLinkedService.py:133
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
-#: services/Xen/XenLinkedService.py:120
-msgid "Base Machine"
-msgstr "Oinarri makina"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:123
-#: services/Nutanix_enterprise/NutanixService.py:46
-#: services/OVirt/OVirtLinkedService.py:135
-#: services/Xen/XenLinkedService.py:122
-msgid "Service base machine"
-msgstr "Oinarrizko makina zerbitzua"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
-#: services/HyperV_enterprise/HyperVLinkedService.py:132
-msgid ""
-"If more than 1 interface is found in machine, use one on this network as main"
-msgstr ""
-"1 interfazea baino gehiago aurkitzen bada makinan, erabili sarea sare "
-"nagusian"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
-#: services/HyperV_enterprise/HyperVLinkedService.py:138
-#: services/Nutanix_enterprise/NutanixService.py:52
-#: services/OVirt/OVirtLinkedService.py:141
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#: services/Xen/XenLinkedService.py:137
-msgid "Memory (Mb)"
-msgstr "Memoria (Mb)"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
-#: services/HyperV_enterprise/HyperVLinkedService.py:143
-#: services/Vmware_enterprise/VCLinkedCloneService.py:86
-msgid "Memory for machines deployed from this service"
-msgstr "Zerbitzu honetatik zabaldutako makina memoria"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:100
 #: services/HyperV_enterprise/HyperVLinkedService.py:103
 msgid "Datastore Drives"
 msgstr "Datastore unitateak"
 
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
 #: services/HyperV_enterprise/HyperVLinkedService.py:107
 msgid "Datastores where to put incrementals & publications"
 msgstr "Datastoreak non igoerak eta argitalpenak jarri"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
-#: services/HyperV_enterprise/HyperVLinkedService.py:177
-#: services/Nutanix_enterprise/NutanixService.py:110
-#: services/OVirt/OVirtLinkedService.py:222
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
-#: services/Vmware_enterprise/VCLinkedCloneService.py:132
-#: services/Xen/XenLinkedService.py:186
-msgid "The length of basename plus length must not be greater than 15"
-msgstr "Basename plus luzeraren luzera ez da 15 baino handiagoa izan behar"
-
-#: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
-#: services/HyperV_enterprise/HyperVLinkedService.py:179
-#: services/Nutanix_enterprise/NutanixService.py:112
-#: services/OVirt/OVirtLinkedService.py:224
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
-#: services/Vmware_enterprise/VCLinkedCloneService.py:134
-#: services/Xen/XenLinkedService.py:188
-msgid "The machine name can't be only numbers"
-msgstr "Makinaren izena ezin da zenbaki bakarra izan"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:65
-msgid "HyperV Cluster Provider"
-msgstr "HyperV Cluster Provider"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:69
-msgid "HyperV Cluster Service Provider"
-msgstr "HyperV Cluster Zerbitzuaren hornitzailea"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:90
-#: services/HyperV_enterprise/HyperVProvider.py:83
-msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
-msgstr "HyperV Server IP edo Hostname (lehen WSMAN sarbidea gaitu behar da)"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:91
-#: services/HyperV_enterprise/HyperVProvider.py:84
-msgid "WSMan Port (normally 5985)"
-msgstr "WSMan portua (normalean 5985)"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:92
-#: services/HyperV_enterprise/HyperVProvider.py:85
-msgid "User with valid privileges on HyperV Server"
-msgstr "Erabiltzaileak HyperV zerbitzariaren baliozko pribilegioak ditu"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:93
-#: services/HyperV_enterprise/HyperVProvider.py:86
-msgid "Password of the user of HyperV"
-msgstr "HyperV erabiltzailearen pasahitza"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:94
-#: services/HyperV_enterprise/HyperVProvider.py:91
-msgid "Timeout in seconds of connection to HyperV"
-msgstr "Denbora-muga, HyperV konexiorako segundoetan"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:95
-#: services/HyperV_enterprise/HyperVProvider.py:92
-#: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/OVirt/OVirtProvider.py:117
-#: services/Vmware_enterprise/ServiceProviderVC.py:41
-#: services/Xen/XenProvider.py:105
-msgid "Macs range"
-msgstr "MAC eremua"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:96
-#: services/HyperV_enterprise/HyperVProvider.py:93
-#: services/Xen/XenProvider.py:106
-msgid "Range of valid macs for created machines"
-msgstr "Sortutako makinen makina baliotsuen gama"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:133
-msgid "The selected server is not a cluster"
-msgstr "Hautatutako zerbitzaria ez da klusterra"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:299
-#: services/HyperV_enterprise/HyperVProvider.py:259
-#: services/Xen/XenProvider.py:417
-msgid "Connection test successful"
-msgstr "Konexioaren proba arrakastatsua"
-
-#: services/HyperV_enterprise/HyperVClusterProvider.py:300
-#: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:184
-#: services/OVirt/OVirtProvider.py:444
-#: services/Vmware_enterprise/ServiceProviderVC.py:150
-msgid "Connection failed. Check connection params"
-msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
-
-#: services/HyperV_enterprise/HyperVClusterPublication.py:97
-#: services/HyperV_enterprise/HyperVPublication.py:105
-#: services/OVirt/OVirtPublication.py:88 services/Xen/XenPublication.py:93
-#, python-brace-format
-msgid "UDS pub for {0} at {1}"
-msgstr "UDS pub {0} at {1}"
-
-#: services/HyperV_enterprise/HyperVLinkedService.py:56
-msgid "HyperV Linked Clone (Experimental)"
-msgstr "HyperV Linked Clone (esperimentala)"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:113
 #: services/OVirt/OVirtLinkedService.py:124
@@ -3038,6 +2886,21 @@ msgstr "Erreserbatutako espazioa"
 #: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
 msgstr "Gutxieneko doako espazioa GB-an"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:121
+#: services/Nutanix_enterprise/NutanixService.py:45
+#: services/OVirt/OVirtLinkedService.py:133
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/Xen/XenLinkedService.py:120
+msgid "Base Machine"
+msgstr "Oinarri makina"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:123
+#: services/Nutanix_enterprise/NutanixService.py:46
+#: services/OVirt/OVirtLinkedService.py:135
+#: services/Xen/XenLinkedService.py:122
+msgid "Service base machine"
+msgstr "Oinarrizko makina zerbitzua"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:124
 #: services/HyperV_enterprise/HyperVLinkedService.py:133
@@ -3076,6 +2939,44 @@ msgstr "Gutxieneko doako espazioa GB-an"
 msgid "Machine"
 msgstr "Makina"
 
+#: services/HyperV_enterprise/HyperVLinkedService.py:132
+msgid ""
+"If more than 1 interface is found in machine, use one on this network as main"
+msgstr ""
+"1 interfazea baino gehiago aurkitzen bada makinan, erabili sarea sare "
+"nagusian"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:138
+#: services/Nutanix_enterprise/NutanixService.py:52
+#: services/OVirt/OVirtLinkedService.py:141
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Xen/XenLinkedService.py:137
+msgid "Memory (Mb)"
+msgstr "Memoria (Mb)"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:143
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+msgid "Memory for machines deployed from this service"
+msgstr "Zerbitzu honetatik zabaldutako makina memoria"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:177
+#: services/Nutanix_enterprise/NutanixService.py:110
+#: services/OVirt/OVirtLinkedService.py:222
+#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:157
+#: services/Vmware_enterprise/VCLinkedCloneService.py:132
+#: services/Xen/XenLinkedService.py:186
+msgid "The length of basename plus length must not be greater than 15"
+msgstr "Basename plus luzeraren luzera ez da 15 baino handiagoa izan behar"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:179
+#: services/Nutanix_enterprise/NutanixService.py:112
+#: services/OVirt/OVirtLinkedService.py:224
+#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:159
+#: services/Vmware_enterprise/VCLinkedCloneService.py:134
+#: services/Xen/XenLinkedService.py:188
+msgid "The machine name can't be only numbers"
+msgstr "Makinaren izena ezin da zenbaki bakarra izan"
+
 #: services/HyperV_enterprise/HyperVProvider.py:64
 msgid "HyperV Platform Provider (experimental)"
 msgstr "HyperV plataforma hornitzailea (esperimentala)"
@@ -3083,6 +2984,57 @@ msgstr "HyperV plataforma hornitzailea (esperimentala)"
 #: services/HyperV_enterprise/HyperVProvider.py:68
 msgid "HyperV platform service provider (experimental)"
 msgstr "HyperV plataforma zerbitzuen hornitzailea (esperimentala)"
+
+#: services/HyperV_enterprise/HyperVProvider.py:83
+msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
+msgstr "HyperV Server IP edo Hostname (lehen WSMAN sarbidea gaitu behar da)"
+
+#: services/HyperV_enterprise/HyperVProvider.py:84
+msgid "WSMan Port (normally 5985)"
+msgstr "WSMan portua (normalean 5985)"
+
+#: services/HyperV_enterprise/HyperVProvider.py:85
+msgid "User with valid privileges on HyperV Server"
+msgstr "Erabiltzaileak HyperV zerbitzariaren baliozko pribilegioak ditu"
+
+#: services/HyperV_enterprise/HyperVProvider.py:86
+msgid "Password of the user of HyperV"
+msgstr "HyperV erabiltzailearen pasahitza"
+
+#: services/HyperV_enterprise/HyperVProvider.py:91
+msgid "Timeout in seconds of connection to HyperV"
+msgstr "Denbora-muga, HyperV konexiorako segundoetan"
+
+#: services/HyperV_enterprise/HyperVProvider.py:92
+#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/OVirt/OVirtProvider.py:117
+#: services/Vmware_enterprise/ServiceProviderVC.py:41
+#: services/Xen/XenProvider.py:105
+msgid "Macs range"
+msgstr "MAC eremua"
+
+#: services/HyperV_enterprise/HyperVProvider.py:93
+#: services/Xen/XenProvider.py:106
+msgid "Range of valid macs for created machines"
+msgstr "Sortutako makinen makina baliotsuen gama"
+
+#: services/HyperV_enterprise/HyperVProvider.py:259
+#: services/Xen/XenProvider.py:417
+msgid "Connection test successful"
+msgstr "Konexioaren proba arrakastatsua"
+
+#: services/HyperV_enterprise/HyperVProvider.py:260
+#: services/Nutanix_enterprise/NutanixProvider.py:184
+#: services/OVirt/OVirtProvider.py:444
+#: services/Vmware_enterprise/ServiceProviderVC.py:150
+msgid "Connection failed. Check connection params"
+msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
+
+#: services/HyperV_enterprise/HyperVPublication.py:104
+#: services/OVirt/OVirtPublication.py:88 services/Xen/XenPublication.py:93
+#, python-brace-format
+msgid "UDS pub for {0} at {1}"
+msgstr "UDS pub {0} at {1}"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:27
 msgid "Nutanix Acropolis Platform Provider"
@@ -3559,7 +3511,7 @@ msgid "IP "
 msgstr "IP"
 
 #: services/PhysicalMachines/IPMachinesService.py:48
-#: services/RDS_enterprise/RDSProvider.py:38
+#: services/RDS_enterprise/RDSProvider.py:37
 msgid "List of servers"
 msgstr "Zerbitzari zerrenda"
 
@@ -3604,19 +3556,19 @@ msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr ""
 "Zerbitzu honek IP bidez emandako POWERED-ON Machine sarbidea eskaintzen du"
 
-#: services/RDS_enterprise/RDSProvider.py:32
+#: services/RDS_enterprise/RDSProvider.py:31
 msgid "RDS Platform Provider"
 msgstr "RDS plataforma hornitzailea"
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:33
 msgid "Microsoft RDS based provider"
 msgstr "Microsoft RDS oinarritutako hornitzailea"
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "User mapping"
 msgstr "Erabiltzaileen mapaketa"
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -3624,17 +3576,17 @@ msgstr ""
 "Aktibatuta badago, erabiltzaileak mapan egingo dira. Hala ez bada, "
 "erabiltzailearen kredentzialak RDS zerbitzarira birbideratuko dira."
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:41
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
 "Mapako erabiltzailearen zerrenda. (Erabiltzaileek mapan ezgaituta badago "
 "erabiltzen da)"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid "User's password"
 msgstr "Erabiltzailearen pasahitza"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3642,11 +3594,11 @@ msgstr ""
 "Erabiltzaileentzako pasahitz lehenetsia zerrenda mapetan. (Erabiltzaileek "
 "mapan ezgaituta badago erabiltzen da)"
 
-#: services/RDS_enterprise/RDSProvider.py:46
+#: services/RDS_enterprise/RDSProvider.py:45
 msgid "Server Checking"
 msgstr "Zerbitzariaren egiaztapena"
 
-#: services/RDS_enterprise/RDSProvider.py:47
+#: services/RDS_enterprise/RDSProvider.py:46
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr ""
 "Egiaztatuta, zerbitzaria egiaztatuko da esleitu aurretik edo hura erabili "
@@ -3658,7 +3610,7 @@ msgstr ""
 "Errorea: Erabiltzailea {} ostalarian {} erabiltzen ari da eta ezin da kendu "
 "oraingoan"
 
-#: services/RDS_enterprise/RDSProvider.py:102
+#: services/RDS_enterprise/RDSProvider.py:100
 #: services/Sample/SampleProvider.py:187
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
