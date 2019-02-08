@@ -32,16 +32,14 @@
 """
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 import logging
 
-__updated__ = '2018-10-03'
+__updated__ = '2019-02-08'
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
 class UniqueId(models.Model):
     """
     Unique ID Database. Used to store unique names, unique macs, etc...

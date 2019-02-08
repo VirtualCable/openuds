@@ -94,7 +94,9 @@ class Connection(Handler):
         idService = self._args[0]
         idTransport = self._args[1]
         try:
-            ip, userService, iads, trans, itrans = userServiceManager().getService(self._user, self._request.ip, idService, idTransport, not doNotCheck)
+            ip, userService, iads, trans, itrans = userServiceManager().getService(
+                self._user, self._request.os, self._request.ip, idService, idTransport, not doNotCheck
+            )
             ci = {
                 'username': '',
                 'password': '',
@@ -119,7 +121,7 @@ class Connection(Handler):
         hostname = self._args[3]
 
         try:
-            res = userServiceManager().getService(self._user, self._request.ip, idService, idTransport)
+            res = userServiceManager().getService(self._user, self._request.os, self._request.ip, idService, idTransport)
             logger.debug('Res: {}'.format(res))
             ip, userService, userServiceInstance, transport, transportInstance = res
             password = cryptoManager().symDecrpyt(self.getValue('password'), scrambler)

@@ -58,7 +58,7 @@ import json
 import logging
 import random
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-02-08'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -573,10 +573,13 @@ class UserServiceManager(object):
         logger.debug('Found service: {0}'.format(userService))
         return userService
 
-    def getService(self, user, srcIp, idService, idTransport, doTest=True):
+    def getService(self, user, os, srcIp, idService, idTransport, doTest=True):
         """
         Get service info from
         """
+        if idService[0] == 'M':  # Meta pool
+            return self.getMeta(user, srcIp, os, idService[1:])
+
         userService = self.locateUserService(user, idService, create=True)
 
         if userService is None:
@@ -706,7 +709,7 @@ class UserServiceManager(object):
             usable = ensureTransport(alreadyAssigned.deployed_service)
             # Found already assigned, ensure everythinf is fine
             if usable:
-                self.getService(user, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
+                self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
 
         except Exception:  # No service already assigned, lets find a suitable one
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
@@ -716,7 +719,7 @@ class UserServiceManager(object):
                 # Stop if a pool-transport is found and can be assigned to user
                 if usable:
                     try:
-                        self.getService(user, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
+                        self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
                         break  # If all goes fine, stop here
                     except Exception as e:
                         logger.info('Meta service {}:{} could not be assigned, trying a new one'.format(usable[0].name, e))

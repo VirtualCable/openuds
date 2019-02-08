@@ -154,7 +154,7 @@ class MetaAssignedService(DetailHandler):
         def assignedUserServicesForPools():
             for m in parent.members.all():
                 if m.enabled:
-                    for u in m.pool.assignedUserServices().prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication'):
+                    for u in m.pool.assignedUserServices().filter(state__in=State.VALID_STATES).prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication'):
                         yield u
 
         try:

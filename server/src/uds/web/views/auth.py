@@ -52,7 +52,7 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-28'
+__updated__ = '2019-02-08'
 
 
 @csrf_exempt
@@ -211,7 +211,7 @@ def ticketAuth(request, ticketId):
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             # If service pool is in there, also is transport
-            res = userServiceManager().getService(request.user, request.ip, 'F' + servicePool, transport, False)
+            res = userServiceManager().getService(request.user, request.os, request.ip, 'F' + servicePool, transport, False)
             _x, userService, _x, transport, _x = res
 
             transportInstance = transport.getInstance()

@@ -35,11 +35,12 @@ from __future__ import unicode_literals
 from django.utils.translation import get_language
 from uds.core.util import OsDetector
 from django.utils import formats
+from uds.core.managers import cryptoManager
 
 import six
 import logging
 
-__updated__ = '2019-02-05'
+__updated__ = '2019-02-08'
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +60,7 @@ def udsAccessLink(request, serviceId, transportId):
 
 
 def udsMetaLink(request, serviceId):
-    return 'udsa://{}/meta'.format(serviceId)
+    return 'udsa://{}/{}'.format(serviceId, 'meta')
 
 
 def parseDate(dateToParse):

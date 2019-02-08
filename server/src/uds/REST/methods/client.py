@@ -135,7 +135,7 @@ class Client(Handler):
 
         try:
             logger.debug(data)
-            res = userServiceManager().getService(self._request.user, self._request.ip, data['service'], data['transport'])
+            res = userServiceManager().getService(self._request.user, self._request.os, self._request.ip, data['service'], data['transport'])
             logger.debug('Res: {}'.format(res))
             ip, userService, userServiceInstance, transport, transportInstance = res
             password = cryptoManager().symDecrpyt(data['password'], scrambler)

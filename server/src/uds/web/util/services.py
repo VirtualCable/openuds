@@ -33,7 +33,7 @@ from django.utils.translation import ugettext
 from django.utils import formats
 from django.urls.base import reverse
 
-from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup, MetaPool
+from uds.models import DeployedService, Transport, Network, ServicesPoolGroup, MetaPool
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
@@ -43,7 +43,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2019-02-05'
+__updated__ = '2019-02-08'
 
 
 def getServicesData(request):
@@ -107,7 +107,7 @@ def getServicesData(request):
                 'transports': [{
                     'id': 'meta',
                     'name': 'meta',
-                    'link': html.udsMetaLink(request, meta.uuid),
+                    'link': html.udsMetaLink(request, 'M' + meta.uuid),
                     'priority': 0
                 }],
                 'imageId': meta.image and meta.image.uuid or 'x',
@@ -208,3 +208,4 @@ def getServicesData(request):
             'transports': validTrans,
             'autorun': autorun
     }
+

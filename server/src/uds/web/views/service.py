@@ -51,13 +51,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-02-08'
 
 
 @webLoginRequired(admin=False)
 def transportOwnLink(request, idService, idTransport):
     try:
-        res = userServiceManager().getService(request.user, request.ip, idService, idTransport)
+        res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport)
         ip, userService, iads, trans, itrans = res  # @UnusedVariable
         # This returns a response object in fact
         return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
@@ -106,11 +106,7 @@ def userServiceEnabler(request, idService, idTransport):
     # If meta service, process and rebuild idService & idTransport
 
     try:
-        res = (
-            idTransport == 'meta' and
-            userServiceManager().getMeta(request.user, request.ip, request.os, idService) or
-            userServiceManager().getService(request.user, request.ip, idService, idTransport, doTest=False)
-        )
+        res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport, doTest=False)
         scrambler = cryptoManager().randomString(32)
         password = cryptoManager().symCrypt(webPassword(request), scrambler)
 

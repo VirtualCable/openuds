@@ -55,8 +55,13 @@ class Storage(object):
         return h.hexdigest()
 
     def saveData(self, skey, data, attr1=None):
+        # If None is to be saved, remove
+        if data == None:
+            self.remove(skey)
+            return
+
         key = self.__getKey(skey)
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode('utf-8')
         data = encoders.encode(data, 'base64', asText=True)
         attr1 = '' if attr1 is None else attr1
@@ -70,7 +75,7 @@ class Storage(object):
         return self.saveData(skey, data)
 
     def putPickle(self, skey, data, attr1=None):
-        return self.saveData(skey, pickle.dumps(data, protocol=2), attr1)  # Protocol 2 is compatible with python 2.7. This will be unnecesary when fully migrated
+        return self.saveData(skey, pickle.dumps(data), attr1)  # Protocol 2 is compatible with python 2.7. This will be unnecesary when fully migrated
 
     def updateData(self, skey, data, attr1=None):
         self.saveData(skey, data, attr1)
@@ -102,16 +107,23 @@ class Storage(object):
             v = pickle.loads(v)
         return v
 
-    def getPickleByAttr1(self, attr1):
+    def getPickleByAttr1(self, attr1, forUpdate=False):
         try:
-            return pickle.loads(encoders.decode(dbStorage.objects.filter(owner=self._owner, attr1=attr1)[0].data, 'base64'))  # @UndefinedVariable
+            query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)
+            if forUpdate:
+                query = filter.select_for_update()
+            return pickle.loads(encoders.decode(query[0].data, 'base64'))  # @UndefinedVariable
         except Exception:
             return None
 
     def remove(self, skey):
         try:
-            key = self.__getKey(skey)
-            dbStorage.objects.filter(key=key).delete()  # @UndefinedVariable
+            if isinstance(skey, (list, tuple)):
+                # Process several keys at once
+                dbStorage.objects.filter(key__in=[self.__getKey(k) for k in skey])
+            else:
+                key = self.__getKey(skey)
+                dbStorage.objects.filter(key=key).delete()  # @UndefinedVariable
         except Exception:
             pass
 
@@ -119,13 +131,15 @@ class Storage(object):
         """
         Use with care. If locked, it must be unlocked before returning
         """
-        dbStorage.objects.lock()  # @UndefinedVariable
+        # dbStorage.objects.lock()  # @UndefinedVariable
+        pass
 
     def unlock(self):
         """
         Must be used to unlock table
         """
-        dbStorage.objects.unlock()  # @UndefinedVariable
+        # dbStorage.objects.unlock()  # @UndefinedVariable
+        pass
 
     def locateByAttr1(self, attr1):
         if isinstance(attr1, (list, tuple)):
@@ -136,17 +150,20 @@ class Storage(object):
         for v in query:
             yield encoders.decode(v.data, 'base64')
 
-    def filter(self, attr1):
+    def filter(self, attr1, forUpdate=False):
         if attr1 is None:
             query = dbStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
+        if forUpdate:
+            query = query.select_for_update()
+
         for v in query:  # @UndefinedVariable
             yield (v.key, encoders.decode(v.data, 'base64'), v.attr1)
 
-    def filterPickle(self, attr1=None):
-        for v in self.filter(attr1):
+    def filterPickle(self, attr1=None, forUpdate=False):
+        for v in self.filter(attr1, forUpdate):
             yield (v[0], pickle.loads(v[1]), v[2])
 
     @staticmethod

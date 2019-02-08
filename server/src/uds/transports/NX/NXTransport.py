@@ -122,7 +122,7 @@ class NXTransport(Transport):
         Serializes the transport data so we can store it in database
         """
         return str.join('\t', ['v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
-                               self._connection, self._session, self._cacheDisk, self._cacheMem])
+                               self._connection, self._session, self._cacheDisk, self._cacheMem]).encode('utf8')
 
     def unmarshal(self, val):
         data = val.decode('utf8').split('\t')

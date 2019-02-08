@@ -53,6 +53,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
     """
     This delayed task is for removing a pending "removable" publication
     """
+
     def __init__(self, publicationId):
         super(PublicationOldMachinesCleaner, self).__init__()
         self._id = publicationId
@@ -77,6 +78,7 @@ class PublicationLauncher(DelayedTask):
     """
     This delayed task if for launching a new publication
     """
+
     def __init__(self, publish):
         super(PublicationLauncher, self).__init__()
         self._publishId = publish.id
@@ -99,6 +101,8 @@ class PublicationLauncher(DelayedTask):
             deployedService.storeValue('toBeReplacedIn', pickle.dumps(now + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))))
             deployedService.save()
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
+        except DeployedServicePublication.DoesNotExist:  # Deployed service publication has been removed from database, this is ok, just ignore it
+            pass
         except Exception:
             logger.exception("Exception launching publication")
             try:
@@ -113,6 +117,7 @@ class PublicationFinishChecker(DelayedTask):
     """
     This delayed task is responsible of checking if a publication is finished
     """
+
     def __init__(self, servicePoolPub):
         super(PublicationFinishChecker, self).__init__()
         self._publishId = servicePoolPub.id
@@ -255,6 +260,7 @@ class PublicationManager(object):
 
         if servicePoolPub.state == State.LAUNCHING:
             servicePoolPub.state = State.CANCELED
+            servicePoolPub.deployed_service.storeValue('toBeReplacedIn', None)
             servicePoolPub.save()
             return servicePoolPub
 
