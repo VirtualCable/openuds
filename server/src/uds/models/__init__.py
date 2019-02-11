@@ -39,7 +39,6 @@ from .Permissions import Permissions
 
 # Utility
 from .Util import getSqlDatetime
-from .Util import optimizeTable
 from .Util import NEVER
 from .Util import NEVER_UNIX
 
@@ -113,7 +112,7 @@ from .Tag import Tag
 # Utility
 from .DBFile import DBFile
 
-__updated__ = '2018-09-28'
+__updated__ = '2019-02-11'
 
 logger = logging.getLogger(__name__)
 

@@ -35,7 +35,6 @@ from uds.core.util.Config import GlobalConfig
 from uds.models import StatsCounters
 from uds.models import getSqlDatetime
 from uds.models import StatsEvents
-from uds.models import optimizeTable
 import datetime
 import time
 import six
@@ -69,9 +68,6 @@ class StatsManager(object):
 
         # Newer Django versions (at least 1.7) does this deletions as it must (executes a DELETE FROM ... WHERE...)
         model.objects.filter(stamp__lt=minTime).delete()
-
-        # Optimize mysql tables after deletions
-        optimizeTable(model._meta.db_table)
 
     # Counter stats
     def addCounter(self, owner_type, owner_id, counterType, counterValue, stamp=None):

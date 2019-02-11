@@ -40,7 +40,7 @@ from time import mktime
 
 import logging
 
-__updated__ = '2018-02-16'
+__updated__ = '2019-02-11'
 
 logger = logging.getLogger(__name__)
 
@@ -91,14 +91,3 @@ def getSqlFnc(fncName):
         return { 'CEIL': 'CEILING'}.get(fncName, fncName)
 
     return fncName
-
-
-def optimizeTable(dbTable):
-    """
-    Executes table optimization
-    Supported only on mysql right now
-    """
-    cursor = connection.cursor()
-
-    if connection.vendor == 'mysql':
-        cursor.execute('OPTIMIZE TABLE {0}'.format(dbTable))
