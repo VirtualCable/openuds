@@ -58,7 +58,7 @@ import json
 import logging
 import random
 
-__updated__ = '2019-02-08'
+__updated__ = '2019-02-11'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -516,7 +516,7 @@ class UserServiceManager(object):
         This checks that the service can continue existing or not
         """
         osm = uService.deployed_service.osmanager
-        # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
+        # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
         doPublicationCleanup = True if osm is None else not osm.getInstance().isPersistent()
 
         if doPublicationCleanup:

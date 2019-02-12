@@ -32,7 +32,7 @@
 """
 from __future__ import unicode_literals
 
-from uds.models import User, Service, UserService, DeployedService, getSqlDatetime
+from uds.models import User, Group, Service, UserService, ServicePool, MetaPool, getSqlDatetime
 
 from uds.core.util.stats import counters
 from uds.core.util.Cache import Cache
@@ -63,7 +63,7 @@ def getServicesPoolsCounters(servicePool, counter_type):
         val = cache.get(cacheKey)
         if val is None:
             if servicePool is None:
-                us = DeployedService()
+                us = ServicePool()
                 complete = True  # Get all deployed services stats
             else:
                 us = servicePool
@@ -91,12 +91,18 @@ class System(Handler):
         if len(self._args) == 1:
             if self._args[0] == 'overview':  # System overview
                 users = User.objects.count()
+                groups = Group.objects.count()
                 services = Service.objects.count()
+                service_pools = ServicePool.objects.count()
+                meta_pools = MetaPool.objects.count()
                 user_services = UserService.objects.exclude(state__in=(State.REMOVED, State.ERROR)).count()
-                restrained_services_pools = len(DeployedService.getRestraineds())
+                restrained_services_pools = len(ServicePool.getRestraineds())
                 return {
                     'users': users,
+                    'groups': groups,
                     'services': services,
+                    'service_pools': service_pools,
+                    'meta_pools': meta_pools,
                     'user_services': user_services,
                     'restrained_services_pools': restrained_services_pools,
                 }
