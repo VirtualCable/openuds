@@ -23,7 +23,6 @@
 	</buildSpec>
 	<natures>
 		<nature>org.python.pydev.django.djangoNature</nature>
-		<nature>net.vtst.ow.eclipse.js.closure.closureNature</nature>
 		<nature>org.python.pydev.pythonNature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
