@@ -131,7 +131,7 @@ class XenServer(object):
         return getattr(self._session.xenapi, prop)
 
     # Properties to fast access XenApi classes
-    Async = property(lambda self: self.getXenapiProperty('Async'))
+    asnc = property(lambda self: self.getXenapiProperty('asnc'))
     task = property(lambda self: self.getXenapiProperty('task'))
     VM = property(lambda self: self.getXenapiProperty('VM'))
     SR = property(lambda self: self.getXenapiProperty('SR'))
@@ -312,32 +312,32 @@ class XenServer(object):
         except XenAPI.Failure as e:
             return XenFailure(e.details)
 
-    def startVM(self, vmId, async=True):
+    def startVM(self, vmId, asnc=True):
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.running:
             return None  # Already powered on
 
         if vmState == XenPowerState.suspended:
-            return self.resumeVM(vmId, async)
+            return self.resumeVM(vmId, asnc)
 
-        if async:
-            return self.Async.VM.start(vmId, False, False)
+        if asnc:
+            return self.asnc.VM.start(vmId, False, False)
         return self.VM.start(vmId, False, False)
 
-    def stopVM(self, vmId, async=True):
+    def stopVM(self, vmId, asnc=True):
         vmState = self.getVMPowerState(vmId)
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
             return None  # Already powered off
-        if async:
-            return self.Async.VM.hard_shutdown(vmId)
+        if asnc:
+            return self.asnc.VM.hard_shutdown(vmId)
         return self.VM.hard_shutdown(vmId)
 
-    def resetVM(self, vmId, async=True):
+    def resetVM(self, vmId, asnc=True):
         vmState = self.getVMPowerState(vmId)
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
             return None  # Already powered off
-        if async:
-            return self.Async.VM.hard_reboot(vmId)
+        if asnc:
+            return self.asnc.VM.hard_reboot(vmId)
         return self.VM.hard_reboot(vmId)
 
     def canSuspendVM(self, vmId):
@@ -345,20 +345,20 @@ class XenServer(object):
         logger.debug('Operations: {}'.format(operations))
         return 'suspend' in operations
 
-    def suspendVM(self, vmId, async=True):
+    def suspendVM(self, vmId, asnc=True):
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.suspended:
             return None
-        if async:
-            return self.Async.VM.suspend(vmId)
+        if asnc:
+            return self.asnc.VM.suspend(vmId)
         return self.VM.suspend(vmId)
 
-    def resumeVM(self, vmId, async=True):
+    def resumeVM(self, vmId, asnc=True):
         vmState = self.getVMPowerState(vmId)
         if vmState != XenPowerState.suspended:
             return None
-        if async:
-            return self.Async.VM.resume(vmId, False, False)
+        if asnc:
+            return self.asnc.VM.resume(vmId, False, False)
         return self.VM.resume(vmId, False, False)
 
     def cloneVM(self, vmId, targetName, targetSR=None):
@@ -382,11 +382,11 @@ class XenServer(object):
             if targetSR:
                 if 'copy' not in operations:
                     raise XenException('Copy is not supported for this machine')
-                task = self.Async.VM.copy(vmId, targetName, targetSR)
+                task = self.asnc.VM.copy(vmId, targetName, targetSR)
             else:
                 if 'clone' not in operations:
                     raise XenException('Clone is not supported for this machine')
-                task = self.Async.VM.clone(vmId, targetName)
+                task = self.asnc.VM.clone(vmId, targetName)
             return task
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
@@ -460,8 +460,8 @@ class XenServer(object):
         tags.append(TAG_MACHINE)
         self.VM.set_tags(vmId, tags)
 
-        if kwargs.get('async', True) is True:
-            return self.Async.VM.provision(vmId)
+        if kwargs.get('asnc', True) is True:
+            return self.asnc.VM.provision(vmId)
         return self.VM.provision(vmId)
 
     def convertToTemplate(self, vmId, shadowMultiplier=4):

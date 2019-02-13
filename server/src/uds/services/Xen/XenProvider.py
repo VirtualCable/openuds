@@ -293,7 +293,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getVMPowerState(machineId)
 
-    def startVM(self, machineId, async=True):
+    def startVM(self, machineId, asnc=True):
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer.
 
@@ -304,9 +304,9 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().startVM(machineId, async)
+        return self.__getApi().startVM(machineId, asnc)
 
-    def stopVM(self, machineId, async=True):
+    def stopVM(self, machineId, asnc=True):
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -315,9 +315,9 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().stopVM(machineId, async)
+        return self.__getApi().stopVM(machineId, asnc)
 
-    def resetVM(self, machineId, async=True):
+    def resetVM(self, machineId, asnc=True):
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -326,7 +326,7 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().resetVM(machineId, async)
+        return self.__getApi().resetVM(machineId, asnc)
 
     def canSuspendVM(self, machineId):
         """
@@ -340,7 +340,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().canSuspendVM(machineId)
 
-    def suspendVM(self, machineId, async=True):
+    def suspendVM(self, machineId, asnc=True):
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -349,9 +349,9 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().suspendVM(machineId, async)
+        return self.__getApi().suspendVM(machineId, asnc)
 
-    def resumeVM(self, machineId, async=True):
+    def resumeVM(self, machineId, asnc=True):
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -360,7 +360,7 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().resumeVM(machineId, async)
+        return self.__getApi().resumeVM(machineId, asnc)
 
     def removeVM(self, machineId):
         """
@@ -376,8 +376,8 @@ class Provider(ServiceProvider):
     def configureVM(self, machineId, netId, mac, memory):
         self.__getApi().configureVM(machineId, mac={'network': netId, 'mac': mac}, memory=memory)
 
-    def provisionVM(self, machineId, async):
-        return self.__getApi().provisionVM(machineId, async=async)
+    def provisionVM(self, machineId, asnc):
+        return self.__getApi().provisionVM(machineId, asnc=asnc)
 
     def getMacRange(self):
         return self.macsRange.value

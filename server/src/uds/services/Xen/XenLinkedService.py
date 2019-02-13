@@ -297,7 +297,7 @@ class XenLinkedService(Service):
         """
         return self.parent().getVMPowerState(machineId)
 
-    def startVM(self, machineId, async=True):
+    def startVM(self, machineId, asnc=True):
         """
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
@@ -308,9 +308,9 @@ class XenLinkedService(Service):
 
         Returns:
         """
-        return self.parent().startVM(machineId, async)
+        return self.parent().startVM(machineId, asnc)
 
-    def stopVM(self, machineId, async=True):
+    def stopVM(self, machineId, asnc=True):
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -319,9 +319,9 @@ class XenLinkedService(Service):
 
         Returns:
         """
-        return self.parent().stopVM(machineId, async)
+        return self.parent().stopVM(machineId, asnc)
 
-    def resetVM(self, machineId, async=True):
+    def resetVM(self, machineId, asnc=True):
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -330,7 +330,7 @@ class XenLinkedService(Service):
 
         Returns:
         """
-        return self.parent().resetVM(machineId, async)
+        return self.parent().resetVM(machineId, asnc)
 
     def canSuspendVM(self, machineId):
         """
@@ -344,7 +344,7 @@ class XenLinkedService(Service):
         """
         return self.parent().canSuspendVM(machineId)
 
-    def suspendVM(self, machineId, async=True):
+    def suspendVM(self, machineId, asnc=True):
         """
         Tries to suspend a machine. No check is done, it is simply requested to Xen
 
@@ -353,9 +353,9 @@ class XenLinkedService(Service):
 
         Returns:
         """
-        return self.parent().suspendVM(machineId, async)
+        return self.parent().suspendVM(machineId, asnc)
 
-    def resumeVM(self, machineId, async=True):
+    def resumeVM(self, machineId, asnc=True):
         """
         Tries to resume a machine. No check is done, it is simply requested to Xen
 
@@ -364,7 +364,7 @@ class XenLinkedService(Service):
 
         Returns:
         """
-        return self.parent().suspendVM(machineId, async)
+        return self.parent().suspendVM(machineId, asnc)
 
     def removeVM(self, machineId):
         """
@@ -380,8 +380,8 @@ class XenLinkedService(Service):
     def configureVM(self, machineId, mac):
         return self.parent().configureVM(machineId, self.network.value, mac, self.memory.value)
 
-    def provisionVM(self, machineId, async=True):
-        return self.parent().provisionVM(machineId, async)
+    def provisionVM(self, machineId, asnc=True):
+        return self.parent().provisionVM(machineId, asnc)
 
     def getMacRange(self):
         """
