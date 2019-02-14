@@ -14,7 +14,6 @@ paramiko
 defusedxml
 python-dateutil
 requests
-XenAPI
 WeasyPrint
 webencodings
 xml-marshaller

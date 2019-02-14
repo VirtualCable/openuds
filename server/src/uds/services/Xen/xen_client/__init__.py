@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from __future__ import unicode_literals
 
-import six
-import XenAPI  # From PIP, will remove this when dropped Python 2.7 support
+import xmlrpc.client
+from . import XenAPI  # From PIP, will remove this when dropped Python 2.7 support
 
 import ssl
 
@@ -39,7 +39,6 @@ logger = logging.getLogger(__name__)
 
 TAG_TEMPLATE = "uds-template"
 TAG_MACHINE = "uds-machine"
-
 
 class XenFault(Exception):
     pass
@@ -105,7 +104,7 @@ class XenServer(object):
 
     def __init__(self, host, port, username, password, useSSL=False, verifySSL=False):
         self._originalHost = self._host = host
-        self._port = six.text_type(port)
+        self._port = str(port)
         self._useSSL = useSSL and True or False
         self._verifySSL = verifySSL and True or False
         self._protocol = 'http' + (self._useSSL and 's' or '') + '://'
@@ -131,7 +130,7 @@ class XenServer(object):
         return getattr(self._session.xenapi, prop)
 
     # Properties to fast access XenApi classes
-    asnc = property(lambda self: self.getXenapiProperty('asnc'))
+    Async = property(lambda self: self.getXenapiProperty('Async'))
     task = property(lambda self: self.getXenapiProperty('task'))
     VM = property(lambda self: self.getXenapiProperty('VM'))
     SR = property(lambda self: self.getXenapiProperty('SR'))
@@ -155,19 +154,19 @@ class XenServer(object):
     def login(self, switchToMaster=False):
         try:
             self._url = self._protocol + self._host + ':' + self._port
-            # On python 2.7.9, HTTPS is verified by default,
-            if self._useSSL and self._verifySSL is False:
-                context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)  # @UndefinedVariable
-                context.verify_mode = ssl.CERT_NONE
-                transport = six.moves.xmlrpc_client.SafeTransport(context=context)
-            else:
-                transport = None
+            # On modern python's, HTTPS is verified by default,
+            if self._useSSL:
+                context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+                if self._verifySSL is False:
+                    context.verify_mode = ssl.CERT_NONE
+                transport = xmlrpc.client.SafeTransport(context=context)
+                logger.debug('Transport: %s', transport)
 
             self._session = XenAPI.Session(self._url, transport=transport)
             self._session.xenapi.login_with_password(self._username, self._password)
             self._loggedIn = True
             self._apiVersion = self._session.API_version
-            self._poolName = six.text_type(self.getPoolName())
+            self._poolName = str(self.getPoolName())
         except XenAPI.Failure as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
             if switchToMaster and e.details[0] == 'HOST_IS_SLAVE':
                 logger.info('{0} is an Slave, connecting to master at {1} cause switchToMaster is True'.format(self._host, e.details[1]))
@@ -175,6 +174,9 @@ class XenServer(object):
                 self.login()
             else:
                 raise XenFailure(e.details)
+        except Exception as e:
+            logger.exception('Unrecognized xenapi exception')
+            raise
 
     def test(self):
         self.login(False)
@@ -219,7 +221,7 @@ class XenServer(object):
                 status = 'failure'
         except Exception as e:
             logger.exception('Unexpected exception!')
-            result = six.text_type(e)
+            result = str(e)
             status = 'failure'
 
         # Removes <value></value> if present
@@ -230,9 +232,9 @@ class XenServer(object):
             try:
                 self.task.destroy(task)
             except Exception as e:
-                logger.info('Task {0} returned error {1}'.format(task, six.text_type(e)))
+                logger.info('Task {0} returned error {1}'.format(task, str(e)))
 
-        return {'result': result, 'progress': progress, 'status': six.text_type(status)}
+        return {'result': result, 'progress': progress, 'status':str(status)}
 
     def getSRs(self):
         for srId in self.SR.get_all():
@@ -296,7 +298,7 @@ class XenServer(object):
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
         except Exception as e:
-            raise XenException(six.text_type(e))
+            raise XenException(str(e))
 
     def getVMPowerState(self, vmId):
         try:
@@ -321,7 +323,7 @@ class XenServer(object):
             return self.resumeVM(vmId, asnc)
 
         if asnc:
-            return self.asnc.VM.start(vmId, False, False)
+            return self.Async.VM.start(vmId, False, False)
         return self.VM.start(vmId, False, False)
 
     def stopVM(self, vmId, asnc=True):
@@ -329,7 +331,7 @@ class XenServer(object):
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
             return None  # Already powered off
         if asnc:
-            return self.asnc.VM.hard_shutdown(vmId)
+            return self.Async.VM.hard_shutdown(vmId)
         return self.VM.hard_shutdown(vmId)
 
     def resetVM(self, vmId, asnc=True):
@@ -337,7 +339,7 @@ class XenServer(object):
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
             return None  # Already powered off
         if asnc:
-            return self.asnc.VM.hard_reboot(vmId)
+            return self.Async.VM.hard_reboot(vmId)
         return self.VM.hard_reboot(vmId)
 
     def canSuspendVM(self, vmId):
@@ -350,7 +352,7 @@ class XenServer(object):
         if vmState == XenPowerState.suspended:
             return None
         if asnc:
-            return self.asnc.VM.suspend(vmId)
+            return self.Async.VM.suspend(vmId)
         return self.VM.suspend(vmId)
 
     def resumeVM(self, vmId, asnc=True):
@@ -358,7 +360,7 @@ class XenServer(object):
         if vmState != XenPowerState.suspended:
             return None
         if asnc:
-            return self.asnc.VM.resume(vmId, False, False)
+            return self.Async.VM.resume(vmId, False, False)
         return self.VM.resume(vmId, False, False)
 
     def cloneVM(self, vmId, targetName, targetSR=None):
@@ -382,11 +384,11 @@ class XenServer(object):
             if targetSR:
                 if 'copy' not in operations:
                     raise XenException('Copy is not supported for this machine')
-                task = self.asnc.VM.copy(vmId, targetName, targetSR)
+                task = self.Async.VM.copy(vmId, targetName, targetSR)
             else:
                 if 'clone' not in operations:
                     raise XenException('Clone is not supported for this machine')
-                task = self.asnc.VM.clone(vmId, targetName)
+                task = self.Async.VM.clone(vmId, targetName)
             return task
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
@@ -446,7 +448,7 @@ class XenServer(object):
             if memory is not None:
                 logger.debug('Setting up memory to {0} MB'.format(memory))
                 # Convert memory to MB
-                memory = six.text_type(int(memory) * 1024 * 1024)
+                memory = str(int(memory) * 1024 * 1024)
                 self.VM.set_memory_limits(vmId, memory, memory, memory, memory)
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
@@ -461,7 +463,7 @@ class XenServer(object):
         self.VM.set_tags(vmId, tags)
 
         if kwargs.get('asnc', True) is True:
-            return self.asnc.VM.provision(vmId)
+            return self.Async.VM.provision(vmId)
         return self.VM.provision(vmId)
 
     def convertToTemplate(self, vmId, shadowMultiplier=4):

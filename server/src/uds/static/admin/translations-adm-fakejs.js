@@ -2,6 +2,10 @@
 // Typescript
 gettext("yes");
 gettext("no");
+gettext("$USERS users, $GROUPS groups");
+gettext("$POOLS service pools");
+gettext("$SERVICES user services");
+gettext("$RESTRAINED restrained services!");
 gettext("New Network");
 gettext("Edit Network");
 gettext("Delete Network");
@@ -255,6 +259,15 @@ gettext("No");
 gettext("(hidden)");
 gettext("Selected items :");
 // HTML
+gettext("Dashboard");
+gettext("View authenticators");
+gettext("View service pools");
+gettext("View service pools");
+gettext("View service pools");
+gettext("You are accessing UDS Administration as staff member.");
+gettext("This means that you have restricted access to elements.");
+gettext("In order to increase your access privileges, please contact your local UDS administrator.");
+gettext("Thank you.");
 gettext("Summary");
 gettext("Services");
 gettext("Usage");
