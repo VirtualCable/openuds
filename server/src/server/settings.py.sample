@@ -198,7 +198,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'uds',
+    'uds.UDSAppConfig',
 )
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
