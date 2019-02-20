@@ -16,7 +16,6 @@ gettext("This service is currently not accessible due to schedule restrictions."
 gettext("Launcher");
 gettext("Service is in maintenance and cannot be launched");
 gettext("This service is currently not accesible due to schedule restrictions.");
-gettext("Access limited by calendar");
 gettext("Please, retry access in a while.");
 gettext("Release service:");
 gettext("Reset service:");
