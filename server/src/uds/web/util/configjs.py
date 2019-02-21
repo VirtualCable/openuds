@@ -38,7 +38,6 @@ from django import template
 from django.conf import settings
 from django.middleware import csrf
 from django.utils.translation import gettext, get_language
-from django.utils.html import mark_safe
 from django.urls import reverse
 from django.templatetags.static import static
 

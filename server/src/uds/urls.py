@@ -39,11 +39,6 @@ from django.views.generic.base import RedirectView
 from uds import REST
 import uds.web.views
 
-js_info_dict = {
-    'domain': 'djangojs',
-    'packages': ('uds',),
-}
-
 urlpatterns = [
     # Root url placeholder
     path(r'', RedirectView.as_view(pattern_name='page.index', permanent=False), name='page.index.placeholder'),
