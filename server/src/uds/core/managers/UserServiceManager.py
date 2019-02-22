@@ -58,7 +58,11 @@ import json
 import logging
 import random
 
+<<<<<<< HEAD
 __updated__ = '2019-02-11'
+=======
+__updated__ = '2019-02-22'
+>>>>>>> origin/v2.2
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -279,14 +283,27 @@ class UserServiceManager(object):
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():
             cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1]
-            if len(cache) == 0:
-                cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
-            if len(cache) > 0:
+            if len(cache) != 0:
                 cache = cache[0]
-                cache.assignToUser(user)
-                cache.save()  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
+                # Ensure element is reserved correctly on DB
+                if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                    cache = None
             else:
                 cache = None
+
+        if cache == None:
+            with transaction.atomic():
+                cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
+                if len(cache) > 0:
+                    cache = cache[0]
+                    if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                        cache = None
+                else:
+                    cache = None
+
+        if cache:
+            cache.assignToUser(user)
+            cache.save()  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
 
         # Out of atomic transaction
         if cache is not None:
@@ -305,8 +322,11 @@ class UserServiceManager(object):
             cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
             if len(cache) > 0:
                 cache = cache[0]
-                cache.assignToUser(user)
-                cache.save()
+                if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                    cache = None
+                else:
+                    cache.assignToUser(user)
+                    cache.save()
             else:
                 cache = None
 
@@ -539,10 +559,10 @@ class UserServiceManager(object):
             uService.updateData(ui)
             if state == State.FINISHED:
                 logger.debug('Service is now ready')
-                uService.save()
             elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
                 uService.setState(State.PREPARING)
                 UserServiceOpChecker.makeUnique(uService, ui, state)
+            uService.save(update_fields=['in_use', 'in_use_date', 'os_state', 'state', 'state_date' 'data'])
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: {}'.format(e))
             uService.setState(State.ERROR)

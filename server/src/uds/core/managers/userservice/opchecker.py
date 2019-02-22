@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2017 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -64,7 +64,7 @@ class StateUpdater(object):
             self.userService.setState(newState)
 
         self.userService.updateData(self.userServiceInstance)
-        self.userService.save()
+        self.userService.save(update_fields=['data', 'state', 'state_date'])
 
     def logIp(self):
         ip = self.userServiceInstance.getIp()
@@ -197,6 +197,7 @@ class UserServiceOpChecker(DelayedTask):
             # Fills up basic data
             userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
             userService.friendly_name = userServiceInstance.getName()  # And name, both methods can modify serviceInstance, so we save it later
+            userService.save(update_fields=['unique_id', 'friendly_name'])
 
             updater = {
                 State.PREPARING: UpdateFromPreparing,
@@ -212,7 +213,7 @@ class UserServiceOpChecker(DelayedTask):
             logger.exception('Checking service state')
             log.doLog(userService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             userService.setState(State.ERROR)
-            userService.save()
+            userService.save(update_fields=['data', 'state', 'state_date'])
 
     @staticmethod
     def checkLater(userService, ci):
@@ -248,6 +249,6 @@ class UserServiceOpChecker(DelayedTask):
                 log.doLog(uService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             try:
                 uService.setState(State.ERROR)
-                uService.save()
+                uService.save(update_fields=['data', 'state', 'state_date'])
             except Exception:
                 logger.error('Can\'t update state of uService object')

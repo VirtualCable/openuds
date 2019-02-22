@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-02-22'
 
 logger = logging.getLogger(__name__)
 
@@ -217,6 +217,10 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     def toBeReplaced(self, forUser) -> datetime:
         activePub = self.activePublication()
+        if activePub is None or activePub.revision == self.current_pub_revision - 1:
+            return None
+
+        # Return the date
         try:
             if activePub and activePub.id != self.assignedUserServices().filter(user=forUser)[0].publication.id:
                 ret = self.recoverValue('toBeReplacedIn')
