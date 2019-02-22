@@ -270,7 +270,7 @@ class UserServiceManager(object):
             if len(cache) != 0:
                 cache = cache[0]
                 # Ensure element is reserved correctly on DB
-                if ds.cachedUserServices().select_for_update().filter(uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
                     cache = None
             else:
                 cache = None
@@ -280,7 +280,7 @@ class UserServiceManager(object):
                 cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
                 if len(cache) > 0:
                     cache = cache[0]
-                    if ds.cachedUserServices().select_for_update().filter(uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                    if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
                         cache = None
                 else:
                     cache = None
@@ -306,7 +306,7 @@ class UserServiceManager(object):
             cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
             if len(cache) > 0:
                 cache = cache[0]
-                if ds.cachedUserServices().select_for_update().filter(uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
                     cache = None
                 else:
                     cache.assignToUser(user)
