@@ -513,10 +513,10 @@ class UserServiceManager(object):
             uService.updateData(ui)
             if state == State.FINISHED:
                 logger.debug('Service is now ready')
-                uService.save()
             elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
                 uService.setState(State.PREPARING)
                 UserServiceOpChecker.makeUnique(uService, ui, state)
+            uService.save(update_fields=['in_use', 'in_use_date', 'os_state', 'state', 'state_date' 'data'])
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: {}'.format(e))
             uService.setState(State.ERROR)

@@ -40,15 +40,17 @@ from uds.models import UserService
 
 import logging
 
-__updated__ = '2017-06-15'
+__updated__ = '2019-02-22'
 
 logger = logging.getLogger(__name__)
 
 USERSERVICE_TAG = 'cm-'
 
+
 # State updaters
 # This will be executed on current service state for checking transitions to new state, task states, etc..
 class StateUpdater(object):
+
     def __init__(self, userService, userServiceInstance=None):
         self.userService = userService
         self.userServiceInstance = userServiceInstance if userServiceInstance is not None else userService.getInstance()
@@ -63,7 +65,7 @@ class StateUpdater(object):
         if newState is not None:
             self.userService.setState(newState)
         self.userService.updateData(self.userServiceInstance)
-        self.userService.save()
+        self.userService.save(update_fields=['data', 'state', 'state_date'])
 
     def checkLater(self):
         UserServiceOpChecker.checkLater(self.userService, self.userServiceInstance)
@@ -136,7 +138,9 @@ class UpdateFromPreparing(StateUpdater):
 
         self.save(state)
 
+
 class UpdateFromRemoving(StateUpdater):
+
     def finish(self):
         osManager = self.userServiceInstance.osmanager()
         if osManager is not None:
@@ -144,7 +148,9 @@ class UpdateFromRemoving(StateUpdater):
 
         self.save(State.REMOVED)
 
+
 class UpdateFromCanceling(StateUpdater):
+
     def finish(self):
         osManager = self.userServiceInstance.osmanager()
         if osManager is not None:
@@ -152,7 +158,9 @@ class UpdateFromCanceling(StateUpdater):
 
         self.save(State.CANCELED)
 
+
 class UpdateFromOther(StateUpdater):
+
     def finish(self):
         self.setError('Unknown running transition from {}'.format(State.toString(self.userService.state)))
 
@@ -164,6 +172,7 @@ class UserServiceOpChecker(DelayedTask):
     '''
     This is the delayed task responsible of executing the service tasks and the service state transitions
     '''
+
     def __init__(self, service):
         super(UserServiceOpChecker, self).__init__()
         self._svrId = service.id
@@ -187,6 +196,7 @@ class UserServiceOpChecker(DelayedTask):
             # Fills up basic data
             userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
             userService.friendly_name = userServiceInstance.getName()  # And name, both methods can modify serviceInstance, so we save it later
+            userService.save(update_fields=['unique_id', 'friendly_name'])
 
             updater = {
                 State.PREPARING: UpdateFromPreparing,
@@ -202,7 +212,7 @@ class UserServiceOpChecker(DelayedTask):
             logger.exception('Checking service state')
             log.doLog(userService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             userService.setState(State.ERROR)
-            userService.save()
+            userService.save(update_fields=['data', 'state', 'state_date'])
 
     @staticmethod
     def checkLater(userService, ci):
@@ -238,6 +248,6 @@ class UserServiceOpChecker(DelayedTask):
                 log.doLog(uService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             try:
                 uService.setState(State.ERROR)
-                uService.save()
+                uService.save(update_fields=['data', 'state', 'state_date'])
             except Exception:
                 logger.error('Can\'t update state of uService object')

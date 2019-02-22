@@ -208,7 +208,7 @@ class WindowsOsManager(osmanagers.OSManager):
             userService.release()
         else:
             if notifyReady is False:
-                userService.save()
+                userService.save(update_fields=['in_use', 'in_use_date', 'os_state', 'state', 'data'])
             else:
                 logger.debug('Notifying ready')
                 UserServiceManager.manager().notifyReadyFromOsManager(userService, '')

@@ -42,7 +42,7 @@ from uds.core import Module
 
 import six
 
-__updated__ = '2018-03-02'
+__updated__ = '2019-02-22'
 
 STORAGE_KEY = 'osmk'
 
@@ -215,7 +215,7 @@ class OSManager(Module):
         userService.setProperty('loginsCounter', six.text_type(counter))
 
         if save:
-            userService.save()
+            userService.save(update_fields=['data'])
 
     def loggedOut(self, userService, userName=None, save=True):
         '''
@@ -258,7 +258,7 @@ class OSManager(Module):
         log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
         if save:
-            userService.save()
+            userService.save(update_fields=['data'])
 
     def isPersistent(self):
         '''
