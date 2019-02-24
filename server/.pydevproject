@@ -8,4 +8,7 @@
         <key>DJANGO_SETTINGS_MODULE</key>
         <value>server.settings</value>
     </pydev_variables_property>
+    <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
+        <path>/${PROJECT_DIR_NAME}/src</path>
+    </pydev_pathproperty>
 </pydev_project>

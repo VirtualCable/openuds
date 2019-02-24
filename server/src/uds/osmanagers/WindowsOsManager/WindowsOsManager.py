@@ -8,10 +8,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext_noop as _, ugettext_lazy
-from django.conf import settings
 from uds.core.services import types as serviceTypes
 from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
@@ -19,9 +16,6 @@ from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.models import TicketStore
-from uds.REST.methods.actor import SECURE_OWNER
-
-import six
 
 import logging
 
@@ -32,14 +26,14 @@ def scrambleMsg(data):
     """
     Simple scrambler so password are not seen at source page
     """
-    if isinstance(data, six.text_type):
+    if isinstance(data, str):
         data = data.encode('utf8')
     res = []
     n = 0x32
     for c in data[::-1]:
         res.append(chr(ord(c) ^ n))
         n = (n + ord(c)) & 0xFF
-    return six.text_type(b''.join(res).encode('hex'))
+    return (b''.join(res).encode('hex')).decode('utf8')
 
 
 class WindowsOsManager(osmanagers.OSManager):
@@ -187,7 +181,7 @@ class WindowsOsManager(osmanagers.OSManager):
             self.doLog(userService, data, log.ACTOR)
         elif msg == "logon" or msg == 'login':
             if '\\' not in data:
-                self.loggedIn(userService, data, False)
+                self.loggedIn(userService, data)
             userService.setInUse(True)
             # We get the userService logged hostname & ip and returns this
             ip, hostname = userService.getConnectionSource()
@@ -197,7 +191,7 @@ class WindowsOsManager(osmanagers.OSManager):
             else:
                 ret = "{0}\t{1}".format(ip, hostname)
         elif msg == "logoff" or msg == 'logout':
-            self.loggedOut(userService, data, False)
+            self.loggedOut(userService, data)
             doRemove = self.isRemovableOnLogout(userService)
         elif msg == "ip":
             # This ocurss on main loop inside machine, so userService is usable
@@ -273,7 +267,7 @@ class WindowsOsManager(osmanagers.OSManager):
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)]).encode('utf8')
+        return '\t'.join(['v2', self._onLogout, str(self._idle)]).encode('utf8')
 
     def unmarshal(self, s):
         data = s.decode('utf8').split('\t')

@@ -180,7 +180,7 @@ class OSManager(Module):
     def toReady(self, userService):
         userService.setProperty('loginsCounter', '0')
 
-    def loggedIn(self, userService, userName=None, save=True):
+    def loggedIn(self, userService, userName=None):
         """
         This method:
           - Add log in event to stats
@@ -215,7 +215,7 @@ class OSManager(Module):
         userService.setProperty('loginsCounter', six.text_type(counter))
 
 
-    def loggedOut(self, userService, userName=None, save=True):
+    def loggedOut(self, userService, userName=None):
         """
         This method:
           - Add log in event to stats

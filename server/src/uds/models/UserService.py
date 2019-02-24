@@ -37,7 +37,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.Environment import Environment
 from uds.core.util import log
@@ -52,8 +51,6 @@ from uds.models.User import User
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
-
-from uds.core.services import UserDeployment
 
 import logging
 
@@ -166,7 +163,7 @@ class UserService(UUIDModel):
         try:  # We may have deleted publication...
             if self.publication is not None:
                 publicationInstance = self.publication.getInstance()
-        except Exception as e:
+        except Exception:
             # The publication to witch this item points to, does not exists
             self.publication = None
             logger.exception("Got exception at getInstance of an userService {}".format(self))
@@ -255,7 +252,7 @@ class UserService(UUIDModel):
         """
         self.src_ip = ip
         self.src_hostname = hostname
-        self.save()
+        self.save(update_fields=['src_ip', 'src_hostname'])
 
     def getConnectionSource(self):
         """
@@ -324,8 +321,6 @@ class UserService(UUIDModel):
             self.state = state
             self.save(update_fields=['state', 'state_date'])
 
-        self.save(update_fields=['state', 'state_date'])
-
     def setOsState(self, state):
         """
         Updates the os state (state of the os) of this object and, optionally, saves it
@@ -339,6 +334,7 @@ class UserService(UUIDModel):
         if state != self.os_state:
             self.state_date = getSqlDatetime()
             self.os_state = state
+            self.save(update_fields=['os_state', 'state_date'])
 
     def assignToUser(self, user):
         """
@@ -422,7 +418,6 @@ class UserService(UUIDModel):
         Mark this user deployed service for removal
         """
         self.setState(State.REMOVABLE)
-        self.save(update_fields=['state', 'state_date'])
 
     def release(self):
         """

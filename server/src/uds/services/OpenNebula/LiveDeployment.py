@@ -473,25 +473,6 @@ class LiveDeployment(UserDeployment):
 
         return self.__executeQueue()
 
-    def userLoggedIn(self, user):
-        """
-        This method must be available so os managers can invoke it whenever
-        an user get logged into a service.
-
-        The user provided is just an string, that is provided by actor.
-        """
-        # We store the value at storage, but never get used, just an example
-        pass
-
-    def userLoggedOut(self, user):
-        """
-        This method must be available so os managers can invoke it whenever
-        an user get logged out if a service.
-
-        The user provided is just an string, that is provided by actor.
-        """
-        pass
-
     def reasonOfError(self):
         """
         Returns the reason of the error.
