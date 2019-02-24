@@ -187,9 +187,10 @@ class UserService(UUIDModel):
         Args:
             dsp: :py:class:uds.core.services.UserDeployment to serialize
 
-        :note: This method do not saves the updated record, just updates the field
+        :note: This method SAVES the updated record, just updates the field
         """
         self.data = us.serialize()
+        self.data.save(update_fields=['data'])
 
     def getName(self):
         """
@@ -321,6 +322,7 @@ class UserService(UUIDModel):
         if state != self.state:
             self.state_date = getSqlDatetime()
             self.state = state
+            self.save(update_fields=['state', 'state_date'])
 
     def setOsState(self, state):
         """
@@ -336,7 +338,7 @@ class UserService(UUIDModel):
             self.state_date = getSqlDatetime()
             self.os_state = state
 
-    def assignToUser(self, user, save=False):
+    def assignToUser(self, user):
         """
         Assigns this user deployed service to an user.
 
@@ -361,6 +363,7 @@ class UserService(UUIDModel):
         from uds.core.managers.UserServiceManager import UserServiceManager
         self.in_use = state
         self.in_use_date = getSqlDatetime()
+        self.save(update_fields=['in_use', 'in_use_date'])
 
         # Start/stop accounting
         if state is True:

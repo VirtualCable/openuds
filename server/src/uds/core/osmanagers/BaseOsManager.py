@@ -214,8 +214,6 @@ class OSManager(Module):
         counter = int(userService.getProperty('loginsCounter', '0')) + 1
         userService.setProperty('loginsCounter', six.text_type(counter))
 
-        if save:
-            userService.save(update_fields=['in_use', 'in_use_date', 'data'])
 
     def loggedOut(self, userService, userName=None, save=True):
         """
@@ -256,9 +254,6 @@ class OSManager(Module):
         log.doLog(userService, log.INFO, "User {0} has logged out".format(userName), log.OSMANAGER)
 
         log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
-
-        if save:
-            userService.save(update_fields=['data'])
 
     def isPersistent(self):
         """

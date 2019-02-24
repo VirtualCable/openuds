@@ -149,6 +149,7 @@ class DeployedServicePublication(UUIDModel):
         :note: This method do not saves the updated record, just updates the field
         """
         self.data = dsp.serialize()
+        self.save(update_fields=['data'])
 
     def setState(self, state):
         """
@@ -162,6 +163,7 @@ class DeployedServicePublication(UUIDModel):
         """
         self.state_date = getSqlDatetime()
         self.state = state
+        self.save(update_fields=['state_date', 'state'])
 
     def unpublish(self):
         """

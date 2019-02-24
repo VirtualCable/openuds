@@ -64,7 +64,6 @@ class StateUpdater(object):
             self.userService.setState(newState)
 
         self.userService.updateData(self.userServiceInstance)
-        self.userService.save(update_fields=['data', 'state', 'state_date'])
 
     def logIp(self):
         ip = self.userServiceInstance.getIp()
