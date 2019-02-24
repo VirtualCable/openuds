@@ -58,7 +58,7 @@ import json
 import logging
 import random
 
-__updated__ = '2019-02-22'
+__updated__ = '2019-02-24'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -548,7 +548,7 @@ class UserServiceManager(object):
             elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
                 uService.setState(State.PREPARING)
                 UserServiceOpChecker.makeUnique(uService, ui, state)
-            uService.save(update_fields=['in_use', 'in_use_date', 'os_state', 'state', 'state_date' 'data'])
+            uService.save(update_fields=['in_use', 'in_use_date', 'os_state', 'state', 'state_date', 'data'])
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: {}'.format(e))
             uService.setState(State.ERROR)
