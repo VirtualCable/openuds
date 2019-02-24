@@ -40,7 +40,7 @@ from uds.models import UserService
 
 import logging
 
-__updated__ = '2019-02-22'
+__updated__ = '2019-02-24'
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +63,9 @@ class StateUpdater(object):
 
     def save(self, newState=None):
         if newState is not None:
-            self.userService.setState(newState)
-        self.userService.updateData(self.userServiceInstance)
-        self.userService.save(update_fields=['data', 'state', 'state_date'])
+            self.userService.setState(newState)  # This saves state & state_date
+        self.userService.updateData(self.userServiceInstance)  # This saves data
+        # self.userService.save(update_fields=['data', 'state', 'state_date'])
 
     def checkLater(self):
         UserServiceOpChecker.checkLater(self.userService, self.userServiceInstance)

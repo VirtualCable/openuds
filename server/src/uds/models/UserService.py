@@ -188,6 +188,7 @@ class UserService(UUIDModel):
         :note: This method do not saves the updated record, just updates the field
         '''
         self.data = us.serialize()
+        self.save(update_fields=['data'])
 
     def getName(self):
         '''
@@ -319,6 +320,8 @@ class UserService(UUIDModel):
         if state != self.state:
             self.state_date = getSqlDatetime()
             self.state = state
+
+        self.save(update_fields=['state', 'state_date'])
 
     def setOsState(self, state):
         '''
