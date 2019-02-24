@@ -324,6 +324,8 @@ class UserService(UUIDModel):
             self.state = state
             self.save(update_fields=['state', 'state_date'])
 
+        self.save(update_fields=['state', 'state_date'])
+
     def setOsState(self, state):
         """
         Updates the os state (state of the os) of this object and, optionally, saves it
@@ -348,8 +350,7 @@ class UserService(UUIDModel):
         self.cache_level = 0
         self.state_date = getSqlDatetime()
         self.user = user
-        if save:
-            self.save(update_fields=['cache_level', 'state_date', 'user'])
+        self.save(update_fields=['cache_level', 'state_date', 'user'])
 
     def setInUse(self, state):
         """
