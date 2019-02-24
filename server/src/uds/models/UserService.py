@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2018-09-19'
+__updated__ = '2019-02-24'
 
 logger = logging.getLogger(__name__)
 
@@ -334,7 +334,7 @@ class UserService(UUIDModel):
             self.state_date = getSqlDatetime()
             self.os_state = state
 
-    def assignToUser(self, user):
+    def assignToUser(self, user, save=False):
         '''
         Assigns this user deployed service to an user.
 
@@ -344,6 +344,8 @@ class UserService(UUIDModel):
         self.cache_level = 0
         self.state_date = getSqlDatetime()
         self.user = user
+        if save:
+            self.save(update_fields=['cache_level', 'state_date', 'user'])
 
     def setInUse(self, state):
         '''
