@@ -58,11 +58,7 @@ import json
 import logging
 import random
 
-<<<<<<< HEAD
-__updated__ = '2019-02-11'
-=======
 __updated__ = '2019-02-22'
->>>>>>> origin/v2.2
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -302,17 +298,12 @@ class UserServiceManager(object):
                     cache = None
 
         if cache:
-            cache.assignToUser(user)
-            cache.save()  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
+            cache.assignToUser(user, save=True)
 
         # Out of atomic transaction
         if cache is not None:
             logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
             events.addEvent(ds, events.ET_CACHE_HIT, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE).count())
-            ci = cache.getInstance()  # User Deployment instance
-            ci.assignToUser(user)
-            cache.updateData(ci)
-            cache.save()
             return cache
 
         # Cache missed
@@ -325,8 +316,7 @@ class UserServiceManager(object):
                 if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
                     cache = None
                 else:
-                    cache.assignToUser(user)
-                    cache.save()
+                    cache.assignToUser(user, save=True)
             else:
                 cache = None
 
@@ -334,10 +324,6 @@ class UserServiceManager(object):
         if cache is not None:
             logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
             events.addEvent(ds, events.ET_CACHE_MISS, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING).count())
-            ci = cache.getInstance()  # User Deployment instance
-            ci.assignToUser(user)
-            cache.updateData(ci)
-            cache.save()
             return cache
 
         # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested

@@ -289,20 +289,6 @@ class SampleUserDeploymentOne(UserDeployment):
         # Note that this is not really needed, is just a sample of storage use
         self.storage.remove('count')
 
-    def assignToUser(self, user):
-        """
-        This method is invoked whenever a cache item gets assigned to an user.
-        This gives the User Deployment an oportunity to do whatever actions
-        are required so the service puts at a correct state for using by a service.
-
-        In our sample, the service is always ready, so this does nothing.
-
-        This is not a task method. All level 1 cache items can be diretly
-        assigned to an user with no more work needed, but, if something is needed,
-        here you can do whatever you need
-        """
-        pass
-
     def userLoggedIn(self, user):
         """
         This method must be available so os managers can invoke it whenever

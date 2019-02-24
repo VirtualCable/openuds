@@ -463,14 +463,6 @@ class LiveDeployment(UserDeployment):
         self.__debug('finish')
         pass
 
-    def assignToUser(self, user):
-        """
-        This method is invoked whenever a cache item gets assigned to an user.
-        This gives the User Deployment an oportunity to do whatever actions
-        are required so the service puts at a correct state for using by a service.
-        """
-        pass
-
     def moveToCache(self, newLevel):
         """
         Moves machines between cache levels

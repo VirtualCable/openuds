@@ -449,25 +449,6 @@ class UserDeployment(Environmentable, Serializable):
         """
         pass
 
-    def assignToUser(self, user):
-        """
-        This method is invoked whenever a cache item gets assigned to an user.
-        This is not a task method right now, simply a notification. This means
-        that L1 cache items must be directly usable (except for the readyness part)
-        by users in a single step operation.
-
-        Note that there will be an setReady call before letting the user consume
-        this user deployment, so this is more informational (so, if you keep at
-        what cache level is this instance, you can update it) than anything else.
-
-        This is not a task method. All level 1 cache items can be dircetly
-        assigned to an user with no more work needed, but, if something is needed,
-        here you can do whatever you need.
-
-        user is a Database user object.
-        """
-        pass
-
     def moveToCache(self, newLevel):
         """
         This method is invoked whenever the core needs to move from the current

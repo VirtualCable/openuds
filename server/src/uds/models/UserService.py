@@ -116,7 +116,7 @@ class UserService(UUIDModel):
         """
         return "{}\\{}".format(self.deployed_service.name, self.friendly_name)
 
-    def getEnvironment(self) -> Environment:
+    def getEnvironment(self):
         """
         Returns an environment valid for the record this object represents.
 
@@ -138,7 +138,7 @@ class UserService(UUIDModel):
             }
         )
 
-    def getInstance(self) -> UserDeployment:
+    def getInstance(self):
         """
         Instantiates the object this record contains. In this case, the instantiated object needs also
         the os manager and the publication, so we also instantiate those here.
@@ -336,7 +336,7 @@ class UserService(UUIDModel):
             self.state_date = getSqlDatetime()
             self.os_state = state
 
-    def assignToUser(self, user):
+    def assignToUser(self, user, save=False):
         """
         Assigns this user deployed service to an user.
 
@@ -346,6 +346,8 @@ class UserService(UUIDModel):
         self.cache_level = 0
         self.state_date = getSqlDatetime()
         self.user = user
+        if save:
+            self.save(update_fields=['cache_level', 'state_date', 'user'])
 
     def setInUse(self, state):
         """
