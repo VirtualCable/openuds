@@ -212,7 +212,7 @@ class UserServiceOpChecker(DelayedTask):
             logger.exception('Checking service state')
             log.doLog(userService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             userService.setState(State.ERROR)
-            userService.save(update_fields=['data', 'state', 'state_date'])
+            userService.save(update_fields=['data'])
 
     @staticmethod
     def checkLater(userService, ci):
