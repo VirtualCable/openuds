@@ -42,7 +42,7 @@ from uds.core import Module
 
 import six
 
-__updated__ = '2019-02-22'
+__updated__ = '2019-02-24'
 
 STORAGE_KEY = 'osmk'
 
@@ -215,7 +215,7 @@ class OSManager(Module):
         userService.setProperty('loginsCounter', six.text_type(counter))
 
         if save:
-            userService.save(update_fields=['data'])
+            userService.save(update_fields=['in_use', 'in_use_date', 'data'])
 
     def loggedOut(self, userService, userName=None, save=True):
         '''
