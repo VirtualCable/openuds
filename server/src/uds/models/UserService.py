@@ -334,7 +334,7 @@ class UserService(UUIDModel):
             self.state_date = getSqlDatetime()
             self.os_state = state
 
-    def assignToUser(self, user, save=False):
+    def assignToUser(self, user):
         '''
         Assigns this user deployed service to an user.
 
@@ -344,8 +344,7 @@ class UserService(UUIDModel):
         self.cache_level = 0
         self.state_date = getSqlDatetime()
         self.user = user
-        if save:
-            self.save(update_fields=['cache_level', 'state_date', 'user'])
+        self.save(update_fields=['cache_level', 'state_date', 'user'])
 
     def setInUse(self, state):
         '''
@@ -359,6 +358,8 @@ class UserService(UUIDModel):
         from uds.core.managers.UserServiceManager import UserServiceManager
         self.in_use = state
         self.in_use_date = getSqlDatetime()
+        # Sync fields with db
+        self.save(update_fields=['in_use', 'in_use_date'])
         if state is False:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
             UserServiceManager.manager().checkForRemoval(self)

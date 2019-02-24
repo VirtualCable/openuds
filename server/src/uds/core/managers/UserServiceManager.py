@@ -286,7 +286,7 @@ class UserServiceManager(object):
                     cache = None
 
         if cache:
-            cache.assignToUser(user, save=True)  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
+            cache.assignToUser(user)  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
 
         # Out of atomic transaction
         if cache is not None:
@@ -304,7 +304,7 @@ class UserServiceManager(object):
                 if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
                     cache = None
                 else:
-                    cache.assignToUser(user, save=True)  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
+                    cache.assignToUser(user)  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
             else:
                 cache = None
 

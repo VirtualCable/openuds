@@ -258,7 +258,7 @@ class OSManager(Module):
         log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
         if save:
-            userService.save(update_fields=['data'])
+            userService.save(update_fields=['in_use', 'in_use_date', 'data'])
 
     def isPersistent(self):
         '''
