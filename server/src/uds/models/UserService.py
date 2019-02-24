@@ -418,7 +418,7 @@ class UserService(UUIDModel):
         Mark this user deployed service for removal
         """
         self.setState(State.REMOVABLE)
-        self.save()
+        self.save(update_fields=['state', 'state_date'])
 
     def release(self):
         """
