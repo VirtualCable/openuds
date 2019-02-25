@@ -62,7 +62,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2019-02-22'
+__updated__ = '2019-02-25'
 
 logger = logging.getLogger(__name__)
 
@@ -442,7 +442,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         Returns:
             A list of db records (userService) with cached user services
         '''
-        return self.userServices.exclude(cache_level=0, user=None)
+        return self.userServices.exclude(cache_level=0).filter(user=None)
 
     def assignedUserServices(self):
         '''
