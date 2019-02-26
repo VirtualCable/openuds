@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2019-02-24'
+__updated__ = '2019-02-26'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -520,7 +520,7 @@ class UserServiceManager(object):
 
         if kind == 'A':  # This is an assigned service
             logger.debug('Getting A service {}'.format(idService))
-            userService = UserService.objects.get(uuid=idService)
+            userService = UserService.objects.get(uuid=idService, user=user)
             userService.deployed_service.validateUser(user)
         else:
             ds = ServicePool.objects.get(uuid=idService)
