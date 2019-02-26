@@ -86,10 +86,6 @@ def getSqlDatetime(unix=False):
 
 def optimizeTable(dbTable):
     '''
-    Executes table optimization
-    Supported only on mysql right now
+    Legacy method, does nothing actually
     '''
-    cursor = connection.cursor()
-
-    if connection.vendor == 'mysql':
-        cursor.execute('OPTIMIZE TABLE {0}'.format(dbTable))
+    pass

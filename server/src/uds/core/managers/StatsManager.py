@@ -71,9 +71,6 @@ class StatsManager(object):
         # Newer Django versions (at least 1.7) does this deletions as it must (executes a DELETE FROM ... WHERE...)
         model.objects.filter(stamp__lt=minTime).delete()
 
-        # Optimize mysql tables after deletions
-        optimizeTable(model._meta.db_table)
-
     # Counter stats
     def addCounter(self, owner_type, owner_id, counterType, counterValue, stamp=None):
         '''
