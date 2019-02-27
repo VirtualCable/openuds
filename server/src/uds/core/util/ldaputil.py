@@ -36,7 +36,6 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 import ldap.filter
-import six
 import logging
 from uds.core.util import tools
 
@@ -72,7 +71,7 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
     """
     logger.debug('Login in to {} as user {}'.format(host, username))
     l = None
-    if isinstance(password, six.text_type):
+    if isinstance(password, str):
         password = password.encode('utf-8')
     try:
         if debug:
@@ -110,7 +109,7 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
     logger.debug('Filter: {}, attr list: {}'.format(ldapFilter, attrList))
 
     if attrList is not None:
-        attrList = [tools.b2(i) for i in attrList]
+        attrList = [i for i in attrList]
 
     res = None
     try:
@@ -139,8 +138,8 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
             dct = tools.CaseInsensitiveDict((k, ['']) for k in attrList) if attrList is not None else tools.CaseInsensitiveDict()
 
             # Convert back result fields to str
-            for k, v in six.iteritems(r[1]):
-                dct[tools.u2(k)] = list(i.decode('utf8', errors='replace') for i in v)
+            for k, v in r[1].items():
+                dct[k] = list(i.decode('utf8', errors='replace') for i in v)
 
             dct.update({'dn': r[0]})
 

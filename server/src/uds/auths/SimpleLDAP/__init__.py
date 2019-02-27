@@ -34,6 +34,6 @@
 '''
 from __future__ import unicode_literals
 
-from Authenticator import SimpleLDAPAuthenticator
+from .Authenticator import SimpleLDAPAuthenticator
 
 __updated__ = '2014-02-19'
