@@ -39,7 +39,6 @@ import json
 import datetime
 import time
 import types
-import six
 from django import http
 
 import logging
@@ -88,7 +87,7 @@ class ContentProcessor(object):
         """
         Renders an obj to the spefific type
         """
-        return six.text_type(obj)
+        return str(obj)
 
     @staticmethod
     def procesForRender(obj):
@@ -97,13 +96,11 @@ class ContentProcessor(object):
         """
         if obj is None:
             return None
-        elif isinstance(obj, (bool, int, float, six.text_type)):
+        elif isinstance(obj, (bool, int, float, str)):
             return obj
-        elif six.PY2 and isinstance(obj, six.types.LongType):
-            return int(obj)
         elif isinstance(obj, dict):
             res = {}
-            for k, v in six.iteritems(obj):
+            for k, v in obj.item():
                 res[k] = ContentProcessor.procesForRender(v)
             return res
         elif isinstance(obj, (list, tuple, types.GeneratorType)):
@@ -113,9 +110,9 @@ class ContentProcessor(object):
             return res
         elif isinstance(obj, (datetime.datetime, datetime.date)):
             return int(time.mktime(obj.timetuple()))
-        elif isinstance(obj, six.binary_type):
+        elif isinstance(obj, bytes):
             return obj.decode('utf-8')
-        return six.text_type(obj)
+        return str(obj)
 
 
 class MarshallerProcessor(ContentProcessor):
@@ -135,7 +132,7 @@ class MarshallerProcessor(ContentProcessor):
             return res
         except Exception as e:
             logger.exception('parsing {}: {}'.format(self.mime_type, e))
-            raise ParametersException(six.text_type(e))
+            raise ParametersException(str(e))
 
     def render(self, obj):
         return self.marshaller.dumps(ContentProcessor.procesForRender(obj))

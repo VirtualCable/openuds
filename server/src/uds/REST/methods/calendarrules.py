@@ -38,12 +38,10 @@ from django.utils.translation import ugettext as _
 from uds.models.CalendarRule import freqs, CalendarRule
 from uds.models.Util import getSqlDatetime
 
-from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
-from uds.core.Environment import Environment
 from uds.REST.model import DetailHandler
-from uds.REST import NotFound, ResponseError, RequestError
+from uds.REST import RequestError
 from django.db import IntegrityError
 
 import six

@@ -685,7 +685,7 @@ class ModelHandler(BaseModelHandler):
                 pattern = pattern[:-1]
                 e = '$'
 
-            r = re.compile(s + fnmatch.translate(pattern) + e, re.IGNORECASE)
+            r = re.compile(s + fnmatch.translate(pattern) + e, re.RegexFlag.IGNORECASE)
 
             def fltr_function(item):
                 try:

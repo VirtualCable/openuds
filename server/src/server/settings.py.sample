@@ -2,8 +2,6 @@
 '''
 Settings file for uds server (Django)
 '''
-from __future__ import unicode_literals
-
 import os
 import django
 
