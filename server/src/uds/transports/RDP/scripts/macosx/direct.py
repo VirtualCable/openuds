@@ -93,7 +93,7 @@ else:  # CoRD
 
     url += '&forwardAudio###' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
 
-    if {m.r.redirectDrives}:  # @UndefinedVariable
+    if '{m.r.redirectDrives}' != 'false':  # @UndefinedVariable
         url += '&forwardDisks###true'
 
     if {m.r.redirectPrinters}:  # @UndefinedVariable
