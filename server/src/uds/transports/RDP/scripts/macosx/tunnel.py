@@ -20,6 +20,8 @@ if os.path.isfile(msrdc):
     executable = msrdc
 elif os.path.isfile(cord):
     executable = cord
+elif os.path.isfile(msrdc):
+    executable = msrdc
 else:
     executable = None
 
@@ -34,6 +36,7 @@ def onExit():
              '-s', 'Remote Desktop Connection 2 Password for 127.0.0.1',
         ]
     )
+
 
 if executable is None:
     raise Exception('''<p><b>Microsoft Remote Desktop Connection not found</b></p>
