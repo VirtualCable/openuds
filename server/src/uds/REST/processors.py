@@ -100,7 +100,7 @@ class ContentProcessor(object):
             return obj
         elif isinstance(obj, dict):
             res = {}
-            for k, v in obj.item():
+            for k, v in obj.items():
                 res[k] = ContentProcessor.procesForRender(v)
             return res
         elif isinstance(obj, (list, tuple, types.GeneratorType)):

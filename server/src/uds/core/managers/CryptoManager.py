@@ -182,12 +182,12 @@ class CryptoManager(object):
         if obj is None:
             obj = self.randomString()
             self._counter += 1
-        elif isinstance(obj, six.binary_type):
+        elif isinstance(obj, bytes):
             obj = obj.decode('utf8')  # To binary
         else:
             obj = '{}'.format(obj)
 
-        return six.text_type(uuid.uuid5(self._namespace, obj)).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
+        return str(uuid.uuid5(self._namespace, obj)).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 
     def randomString(self, length=40):
         return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
