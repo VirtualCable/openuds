@@ -99,7 +99,7 @@ class MessagesProcessor(QtCore.QThread):
     information = QtCore.pyqtSignal(dict, name='information')
 
     def __init__(self):
-        super(self.__class__, self).__init__()
+        super(MessagesProcessor, self).__init__()
         # Retries connection for a while
         for _ in range(10):
             try:
@@ -313,12 +313,13 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.aboutDlg.exec_()
 
     def quit(self, logoff=False, extra=''):
-        global doLogoff
+        global doLogoff  # pylint: disable=global-statement
         logger.debug('Quit invoked')
         if not self.stopped:
             self.stopped = True
             try:
                 # If we close Client, send Logoff to Broker
+                # if sys.platform != 'win32':
                 self.ipc.sendLogout(operations.getCurrentUser() + extra)
                 self.timer.stop()
                 self.ipc.stop()
@@ -355,6 +356,7 @@ if __name__ == '__main__':
     # Catch kill and logout user :)
     signal.signal(signal.SIGTERM, sigTerm)
 
+    # app.aboutToQuit.connect()
     res = app.exec_()
 
     logger.debug('Exiting')
