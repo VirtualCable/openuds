@@ -5,7 +5,7 @@
 set -e
 case "$1" in
 	configure)
-		/usr/bin/python2.7 -m compileall /usr/share/UDSActor > /dev/nul 2>&1
+		/usr/bin/python3 -m compileall /usr/share/UDSActor > /dev/nul 2>&1
 		# If new "fresh" install or if configuration file has disappeared...
 		if [ "$2" = "" ] || [ ! -f /etc/udsactor/udsactor.cfg ]; then
 			db_get udsactor/host
