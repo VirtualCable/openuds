@@ -147,6 +147,7 @@ class ServicesPools(ModelHandler):
             'allow_users_reset': item.allow_users_reset,
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
+            'meta_member': [{'id': i.uuid, 'name': i.name} for i in item.meta.all()],
         }
 
         # Extended info

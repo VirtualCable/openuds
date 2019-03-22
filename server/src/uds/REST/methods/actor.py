@@ -30,10 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from __future__ import unicode_literals
-
 import datetime
 import logging
 
@@ -119,9 +115,12 @@ class Actor(Handler):
         except Exception:
             raise RequestError('Invalid request: (no id found)')
 
+
         services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
-        if services.count() == 0:
+        
+        if not services:
             return None
+            
 
         return services[0]
 
