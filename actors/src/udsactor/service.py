@@ -260,7 +260,7 @@ class CommonService(object):
             logger.info('Rest api not ready')
             return
 
-        if msg == ipc.REQ_LOGIN and self.loggedIn is False:
+        if msg == ipc.REQ_LOGIN:
             self.loggedIn = True
             res = self.api.login(data).split('\t')
             # third parameter, if exists, sets maxSession duration to this.
@@ -312,6 +312,9 @@ class CommonService(object):
     def endAPI(self):
         if self.api is not None:
             try:
+                if self.loggedIn:
+                    self.loggedIn = False
+                    self.api.logout('service_stopped')
                 self.api.notifyComm(None)
             except Exception as e:
                 logger.error('Couln\'t remove comms url from broker: {}'.format(e))
