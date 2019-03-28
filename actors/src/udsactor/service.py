@@ -87,6 +87,7 @@ class CommonService(object):
         self.httpServer = None
         self.rebootRequested = False
         self.knownIps = []
+        self.loggedIn = False
         socket.setdefaulttimeout(20)
 
     def reboot(self):
@@ -166,6 +167,7 @@ class CommonService(object):
         # Now try to run the "runonce" element
         runOnce = store.runApplication()
         if runOnce is not None:
+            logger.info('Executing runOnce app: {}'.format(runOnce))
             if self.execute(runOnce, 'RunOnce') is True:
                 # operations.reboot()
                 return False
@@ -260,24 +262,26 @@ class CommonService(object):
             return
 
         if msg == ipc.REQ_LOGIN:
+            self.loggedIn = True
             res = self.api.login(data).split('\t')
             # third parameter, if exists, sets maxSession duration to this.
             # First & second parameters are ip & hostname of connection source
             if len(res) >= 3:
                 self.api.maxSession = int(res[2])  # Third parameter is max session duration
                 msg = ipc.REQ_INFORMATION  # Senf information, requested or not, to client on login notification
-        elif msg == ipc.REQ_LOGOUT:
+        if msg == ipc.REQ_LOGOUT and self.loggedIn is True:
+            self.loggedIn = False
             self.api.logout(data)
             self.onLogout(data)
-        elif msg == ipc.REQ_INFORMATION:
+        if msg == ipc.REQ_INFORMATION:
             info = {}
             if self.api.idle is not None:
                 info['idle'] = self.api.idle
             if self.api.maxSession is not None:
                 info['maxSession'] = self.api.maxSession
             self.ipc.sendInformationMessage(info)
-        elif msg == ipc.REQ_TICKET:
-            d = json.loads('data')
+        if msg == ipc.REQ_TICKET:
+            d = json.loads(data)
             try:
                 result = self.api.getTicket(d['ticketId'], d['secure'])
                 self.ipc.sendTicketMessage(result)
@@ -317,6 +321,9 @@ class CommonService(object):
     def endAPI(self):
         if self.api is not None:
             try:
+                if self.loggedIn:
+                    self.loggedIn = False
+                    self.api.logout('service_stopped')
                 self.api.notifyComm(None)
             except Exception as e:
                 logger.error('Couln\'t remove comms url from broker: {}'.format(e))
