@@ -33,11 +33,11 @@ from __future__ import unicode_literals
 import socket
 import threading
 import sys
-import six
 import traceback
 import pickle
 import errno
 import time
+import six
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -89,10 +89,8 @@ REV_DICT = {
 
 MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the right
 
-
 # Allows notifying login/logout from client for linux platform
 ALLOW_LOG_METHODS = sys.platform != 'win32'
-
 
 # States for client processor
 ST_SECOND_BYTE = 0x01
@@ -101,8 +99,9 @@ ST_PROCESS_MESSAGE = 0x02
 
 
 class ClientProcessor(threading.Thread):
+
     def __init__(self, parent, clientSocket):
-        super(self.__class__, self).__init__()
+        super(ClientProcessor, self).__init__()
         self.parent = parent
         self.clientSocket = clientSocket
         self.running = False
@@ -133,6 +132,7 @@ class ClientProcessor(threading.Thread):
                     if b == b'':
                         # Client disconnected
                         self.running = False
+                        self.processRequest(REQ_LOGOUT, 'CLIENT_CONNECTION_LOST')
                         break
                     buf = six.byte2int(b)  # Empty buffer, this is set as non-blocking
                     if state is None:
@@ -187,8 +187,8 @@ class ClientProcessor(threading.Thread):
 
             try:
                 m = msg[1] if msg[1] is not None else b''
-                l = len(m)
-                data = MAGIC + six.int2byte(msg[0]) + six.int2byte(l & 0xFF) + six.int2byte(l >> 8) + m
+                ln = len(m)
+                data = MAGIC + six.int2byte(msg[0]) + six.int2byte(ln & 0xFF) + six.int2byte(ln >> 8) + m
                 try:
                     self.clientSocket.sendall(data)
                 except socket.error as e:
@@ -208,7 +208,7 @@ class ClientProcessor(threading.Thread):
 class ServerIPC(threading.Thread):
 
     def __init__(self, listenPort, clientMessageProcessor=None):
-        super(self.__class__, self).__init__()
+        super(ServerIPC, self).__init__()
         self.port = listenPort
         self.running = False
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -291,6 +291,7 @@ class ServerIPC(threading.Thread):
 
 
 class ClientIPC(threading.Thread):
+
     def __init__(self, listenPort):
         super(ClientIPC, self).__init__()
         self.port = listenPort
@@ -320,8 +321,8 @@ class ClientIPC(threading.Thread):
         if isinstance(data, six.text_type):  # Convert to bytes if necessary
             data = data.encode('utf-8')
 
-        l = len(data)
-        msg = six.int2byte(msg) + six.int2byte(l & 0xFF) + six.int2byte(l >> 8) + data
+        ln = len(data)
+        msg = six.int2byte(msg) + six.int2byte(ln & 0xFF) + six.int2byte(ln >> 8) + data
         self.clientSocket.sendall(msg)
 
     def requestInformation(self):

@@ -86,6 +86,7 @@ class CommonService(object):
         self.httpServer = None
         self.rebootRequested = False
         self.knownIps = []
+        self.loggedIn = False
         socket.setdefaulttimeout(20)
 
     def reboot(self):
@@ -259,14 +260,16 @@ class CommonService(object):
             logger.info('Rest api not ready')
             return
 
-        if msg == ipc.REQ_LOGIN:
+        if msg == ipc.REQ_LOGIN and self.loggedIn is False:
+            self.loggedIn = True
             res = self.api.login(data).split('\t')
             # third parameter, if exists, sets maxSession duration to this.
             # First & second parameters are ip & hostname of connection source
             if len(res) >= 3:
                 self.api.maxSession = int(res[2])  # Third parameter is max session duration
                 msg = ipc.REQ_INFORMATION  # Senf information, requested or not, to client on login notification
-        if msg == ipc.REQ_LOGOUT:
+        if msg == ipc.REQ_LOGOUT and self.loggedIn is True:
+            self.loggedIn = False
             self.api.logout(data)
             self.onLogout(data)
         if msg == ipc.REQ_INFORMATION:
