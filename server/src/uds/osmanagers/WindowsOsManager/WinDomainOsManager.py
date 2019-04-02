@@ -100,6 +100,14 @@ class WinDomainOsManager(WindowsOsManager):
             account += '@' + self._domain
 
         _str = "No servers found"
+        # First, tries to connect using SSL
+        for server in servers:
+            try:
+                return ldaputil.connection(account, self._password, server[0], -1, ssl=True, timeout=10, debug=False)
+            except Exception as e:
+                _str = 'Error: {}'.format(e)
+                
+        # And if not possible, try using NON-SSL
         for server in servers:
             try:
                 return ldaputil.connection(account, self._password, server[0], server[1], ssl=False, timeout=10, debug=False)
@@ -172,7 +180,7 @@ class WinDomainOsManager(WindowsOsManager):
                 break
             except ldaputil.LDAPError:
                 logger.exception('Ldap Exception caught')
-                error = "Could not remove machine from domain (invalid credentials for {0})".format(self._account)
+                error = "Could not add machine (invalid credentials? for {0})".format(self._account)
             except Exception as e:
                 error = "Could not add machine {} to group {}: {}".format(userService.friendly_name, self._group, e)
                 # logger.exception('Ldap Exception caught')
