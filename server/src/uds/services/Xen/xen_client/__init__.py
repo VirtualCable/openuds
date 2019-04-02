@@ -29,7 +29,7 @@
 from __future__ import unicode_literals
 
 import xmlrpc.client
-from . import XenAPI  # From PIP, will remove this when dropped Python 2.7 support
+from . import XenAPI
 
 import ssl
 
