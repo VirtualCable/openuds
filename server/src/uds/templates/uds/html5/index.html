@@ -391,16 +391,6 @@
                 return false;
             });
 
-            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.release').on("click", function (event) {
-                event.stopPropagation();
-                event.preventDefault();
-                if ( confirm("{%trans 'Are you sure that you want to release this service. Its current content will be lost!' %}") ) {
-                  window.location.href = $(this).attr('data-href');
-                }
-
-                return false;
-            });
-
             $('div.service:not(.maintenance, .notaccesible) > span.gear > span.reseter').on("click", function (event) {
                 event.stopPropagation();
                 event.preventDefault();
