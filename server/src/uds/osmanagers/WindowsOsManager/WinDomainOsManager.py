@@ -40,7 +40,10 @@ class WinDomainOsManager(WindowsOsManager):
     password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Password of the account'), required=True)
     ou = gui.TextField(length=64, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'))
     grp = gui.TextField(length=64, label=_('Machine Group'), order=7, tooltip=_('Group to which add machines on creation. If empty, no group will be used. (experimental)'), tab=_('Advanced'))
-    serverHint = gui.TextField(length=64, label=_('Server Hint'), order=8, tooltip=_('In case of several AD servers, which one is preferred'), tab=_('Advanced'))
+    removeOnExit = gui.CheckBoxField(label=_('Machine clean'), order=8, tooltip=_('If checked, UDS will try to remove the machine from the domain USING the provided credentials'), tab=_('Advanced'), defvalue=gui.TRUE)
+    serverHint = gui.TextField(length=64, label=_('Server Hint'), order=9, tooltip=_('In case of several AD servers, which one is preferred'), tab=_('Advanced'))
+    ssl = gui.CheckBoxField(label=_('Use SSL'), order=10, tooltip=_('If checked,  a ssl connection to Active Directory will be used'), tab=_('Advanced'))
+    
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
@@ -64,6 +67,8 @@ class WinDomainOsManager(WindowsOsManager):
             self._password = values['password']
             self._group = values['grp'].strip()
             self._serverHint = values['serverHint'].strip()
+            self._ssl = 'y' if values['ssl'] else 'n' 
+            self._removeOnExit = 'y' if values['removeOnExit'] else 'n' 
         else:
             self._domain = ""
             self._ou = ""
@@ -71,6 +76,8 @@ class WinDomainOsManager(WindowsOsManager):
             self._password = ""
             self._group = ""
             self._serverHint = ""
+            self._removeOnExit = 'n'
+            self._ssl = 'n'
 
         # self._ou = self._ou.replace(' ', ''), do not remove spaces
         if self._domain != '' and self._ou != '':
@@ -100,17 +107,12 @@ class WinDomainOsManager(WindowsOsManager):
             account += '@' + self._domain
 
         _str = "No servers found"
-        # First, tries to connect using SSL
-        for server in servers:
-            try:
-                return ldaputil.connection(account, self._password, server[0], -1, ssl=True, timeout=10, debug=False)
-            except Exception as e:
-                _str = 'Error: {}'.format(e)
-                
         # And if not possible, try using NON-SSL
         for server in servers:
+            port = server[1] if self._ssl != 'y' else -1
+            ssl = self._ssl == 'y'
             try:
-                return ldaputil.connection(account, self._password, server[0], server[1], ssl=False, timeout=10, debug=False)
+                return ldaputil.connection(account, self._password, server[0], port, ssl=ssl, timeout=10, debug=False)
             except Exception as e:
                 _str = 'Error: {}'.format(e)
 
@@ -194,6 +196,10 @@ class WinDomainOsManager(WindowsOsManager):
         service is a db user service object
         """
         super(WinDomainOsManager, self).release(service)
+        
+        # If no removal requested, just return
+        if self._removeOnExit != 'y':
+            return
 
         if not '.' in self._domain:
             logger.info('Releasing from a not FQDN domain is not supported')
@@ -291,30 +297,37 @@ class WinDomainOsManager(WindowsOsManager):
         Serializes the os manager data so we can store it in database
         '''
         return '\t'.join([
-            'v3',
+            'v4',
             self._domain, self._ou, self._account,
             CryptoManager.manager().encrypt(self._password),
             encoders.encode(base, 'hex', asText=True),
-            self._group, self._serverHint]
+            self._group, self._serverHint, self._ssl, self._removeOnExit]
         ).encode('utf8')
 
     def unmarshal(self, s):
         data = s.decode('utf8').split('\t')
-        if data[0] in ('v1', 'v2', 'v3'):
+        if data[0] in ('v1', 'v2', 'v3', 'v4'):
             self._domain = data[1]
             self._ou = data[2]
             self._account = data[3]
             self._password = CryptoManager.manager().decrypt(data[4])
 
-        if data[0] in ('v2', 'v3'):
+        if data[0] in ('v2', 'v3', 'v4'):
             self._group = data[6]
         else:
             self._group = ''
 
-        if data[0] == 'v3':
+        if data[0] in ('v3', 'v4'):
             self._serverHint = data[7]
         else:
             self._serverHint = ''
+            
+        if data[0] == 'v4':
+            self._ssl = data[8]
+            self._removeOnExit = data[9]
+        else:
+            self._ssl = 'n'
+            self._removeOnExit = 'y'
 
         super(WinDomainOsManager, self).unmarshal(encoders.decode(data[5], 'hex'))
 
@@ -326,4 +339,6 @@ class WinDomainOsManager(WindowsOsManager):
         dct['password'] = self._password
         dct['grp'] = self._group
         dct['serverHint'] = self._serverHint
+        dct['ssl'] = self._ssl == 'y'
+        dct['removeOnExit'] = self._removeOnExit == 'y' 
         return dct
