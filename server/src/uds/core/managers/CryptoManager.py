@@ -132,15 +132,15 @@ class CryptoManager(object):
         return
 
     def xor(self, s1, s2):
-        if isinstance(s1, six.text_type):
+        if isinstance(s1, str):
             s1 = s1.encode('utf-8')
-        if isinstance(s2, six.text_type):
+        if isinstance(s2, str):
             s2 = s2.encode('utf-8')
         mult = int(len(s1) / len(s2)) + 1
         s1 = array.array('B', s1)
         s2 = array.array('B', s2 * mult)
         # We must return bynary in xor, because result is in fact binary
-        return array.array('B', (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()
+        return array.array('B', (s1[i] ^ s2[i] for i in range(len(s1)))).tobytes()
 
     def symCrypt(self, text, key):
         return self.xor(text, key)

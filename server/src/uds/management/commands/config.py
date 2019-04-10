@@ -30,9 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-import six
 from django.core.management.base import BaseCommand
 from uds.core.util.Config import Config, GLOBAL_SECTION, GlobalConfig
 import logging
@@ -45,14 +42,13 @@ class Command(BaseCommand):
     help = "Updates configuration values. If mod is omitted, UDS will be used. Omit whitespaces betwen name, =, and value (they must be a single param)"
 
     def add_arguments(self, parser):
-        parser.add_argument('name_value', nargs='+', type=six.text_type)
+        parser.add_argument('name_value', nargs='+', type=str)
 
     def handle(self, *args, **options):
         logger.debug("Handling settings")
         GlobalConfig.initialize()
         try:
-            for param in options['name_value']:
-                config = param.decode('utf-8')
+            for config in options['name_value']:
                 logger.debug('Config: {}'.format(config))
                 first, value = config.split('=')
                 first = first.split('.')
@@ -62,5 +58,6 @@ class Command(BaseCommand):
                     mod, name = GLOBAL_SECTION, first[0]
                 if Config.update(mod, name, value) is False:  # If not exists, try to store value without any special parameters
                     Config.section(mod).value(name, value).get()
-        except Exception:
+        except Exception as e:
+            print('The command could not be processed: {}'.format(e))
             logger.exception('Exception processing {}'.format(args))
