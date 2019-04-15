@@ -30,13 +30,13 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-
 import six
 import os
 
 DEBUG = False
 
 CONFIGFILE = '/etc/udsactor/udsactor.cfg' if DEBUG is False else '/tmp/udsactor.cfg'
+PRECONNECT_CMD = '/etc/udsactor/pre'
 
 
 def checkPermissions():
@@ -79,10 +79,15 @@ def writeConfig(data):
 
     os.chmod(CONFIGFILE, 0o0600)
 
+
 def useOldJoinSystem():
     return False
+
 
 # Right now, we do not really need an application to be run on "startup" as could ocur with windows
 def runApplication():
     return None
 
+
+def preApplication():
+    return PRECONNECT_CMD

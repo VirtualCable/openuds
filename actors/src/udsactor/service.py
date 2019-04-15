@@ -92,7 +92,7 @@ class CommonService(object):
     def reboot(self):
         self.rebootRequested = True
 
-    def execute(self, cmdLine, section):
+    def execute(self, cmdLine, section):  # pylint: disable=no-self-use
         cmd = shlex.split(cmdLine, posix=False)
 
         if os.path.isfile(cmd[0]):

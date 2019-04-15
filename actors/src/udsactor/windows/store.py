@@ -35,7 +35,7 @@ import pickle
 from win32com.shell import shell  # @UnresolvedImport, pylint: disable=import-error
 try:
     import winreg as wreg
-except ImportError: # Python 2.7 fallback
+except ImportError:  # Python 2.7 fallback
     import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
 import win32security  # @UnresolvedImport, pylint: disable=import-error
 
@@ -49,6 +49,7 @@ def encoder(data):
 
 def decoder(data):
     return data.decode('bz2')
+
 
 path = 'Software\\UDSActor'
 baseKey = wreg.HKEY_CURRENT_USER if DEBUG is True else wreg.HKEY_LOCAL_MACHINE  # @UndefinedVariable
@@ -85,6 +86,7 @@ def readConfig():
     except Exception:
         return None
 
+
 def writeConfig(data, fixPermissions=True):
     try:
         key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
@@ -95,6 +97,7 @@ def writeConfig(data, fixPermissions=True):
 
     wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(pickle.dumps(data)))  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable
+
 
 def useOldJoinSystem():
     try:
@@ -109,6 +112,7 @@ def useOldJoinSystem():
 
     return data == 'old'
 
+
 # Gives the oportunity to run an application ONE TIME (because, the registry key "run" will be deleted after read)
 def runApplication():
     try:
@@ -119,8 +123,21 @@ def runApplication():
         except Exception:
             data = None
         wreg.CloseKey(key)  # @UndefinedVariable
-    except:
+    except Exception:
         data = None
 
     return data
 
+
+def preApplication():
+    try:
+        key = wreg.OpenKey(baseKey, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
+        try:
+            data, _ = wreg.QueryValueEx(key, 'pre')  # @UndefinedVariable
+        except Exception:
+            data = None
+        wreg.CloseKey(key)  # @UndefinedVariable
+    except Exception:
+        data = None
+
+    return data

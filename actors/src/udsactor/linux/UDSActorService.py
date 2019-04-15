@@ -31,6 +31,11 @@
 '''
 from __future__ import unicode_literals
 
+import sys
+import os
+import stat
+import subprocess
+
 from udsactor import operations
 
 from udsactor.service import CommonService
@@ -38,23 +43,18 @@ from udsactor.service import initCfg
 from udsactor.service import IPC_PORT
 
 from udsactor import ipc
-
+from udsactor import store
 from udsactor.log import logger
 
 from udsactor.linux.daemon import Daemon
 from udsactor.linux import renamer
 
-import sys
-import os
-import stat
-import subprocess
-
 POST_CMD = '/etc/udsactor/post'
-PRECONNECT_CMD = '/etc/udsactor/pre'
 
 try:
     from prctl import set_proctitle  # @UnresolvedImport
 except Exception:  # Platform may not include prctl, so in case it's not available, we let the "name" as is
+
     def set_proctitle(_):
         pass
 
@@ -97,7 +97,6 @@ class UDSActorSvc(Daemon, CommonService):
             logger.info('Rebooting computer to activate new name {}'.format(name))
             self.reboot()
 
-
     def joinDomain(self, name, domain, ou, account, password):
         logger.fatal('Join domain is not supported on linux platforms right now')
 
@@ -108,18 +107,19 @@ class UDSActorSvc(Daemon, CommonService):
         # Execute script in /etc/udsactor/post after interacting with broker, if no reboot is requested ofc
         # This will be executed only when machine gets "ready"
         try:
-
-            if os.path.isfile(PRECONNECT_CMD):
-                if (os.stat(PRECONNECT_CMD).st_mode & stat.S_IXUSR) != 0:
-                    subprocess.call([PRECONNECT_CMD, user, protocol])
+            pre_cmd = store.preApplication()
+            if os.path.isfile(pre_cmd):
+                if (os.stat(pre_cmd).st_mode & stat.S_IXUSR) != 0:
+                    subprocess.call([pre_cmd, user, protocol])
                 else:
                     logger.info('PRECONNECT file exists but it it is not executable (needs execution permission by root)')
             else:
                 logger.info('PRECONNECT file not found & not executed')
-        except Exception as e:
+        except Exception:
             # Ignore output of execution command
             logger.error('Executing preconnect command give')
 
+        return 'ok'
 
     def run(self):
         cfg = initCfg()  # Gets a local copy of config to get "reboot"
@@ -195,6 +195,7 @@ class UDSActorSvc(Daemon, CommonService):
 def usage():
     sys.stderr.write("usage: {} start|stop|restart|login 'username'|logout 'username'\n".format(sys.argv[0]))
     sys.exit(2)
+
 
 if __name__ == '__main__':
     logger.setLevel(20000)
