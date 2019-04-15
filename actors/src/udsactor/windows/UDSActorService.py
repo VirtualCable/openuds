@@ -32,6 +32,10 @@
 from __future__ import unicode_literals
 # pylint: disable=unused-wildcard-import, wildcard-import
 
+import subprocess
+import os
+import stat
+
 import win32serviceutil  # @UnresolvedImport, pylint: disable=import-error
 import win32service  # @UnresolvedImport, pylint: disable=import-error
 import win32security  # @UnresolvedImport, pylint: disable=import-error
@@ -40,8 +44,6 @@ import win32event  # @UnresolvedImport, pylint: disable=import-error
 import win32com.client  # @UnresolvedImport,  @UnusedImport, pylint: disable=import-error
 import pythoncom  # @UnresolvedImport, pylint: disable=import-error
 import servicemanager  # @UnresolvedImport, pylint: disable=import-error
-import subprocess
-import os
 
 from udsactor import operations
 from udsactor import store
@@ -205,6 +207,20 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             self._user = None
             logger.debug('User {} already in group'.format(user))
 
+        # Now try to run pre connect command
+        try:
+            pre_cmd = store.preApplication()
+            if os.path.isfile(pre_cmd):
+                if (os.stat(pre_cmd).st_mode & stat.S_IXUSR) != 0:
+                    subprocess.call([pre_cmd, user, protocol])
+                else:
+                    logger.info('PRECONNECT file exists but it it is not executable (needs execution permission by root)')
+            else:
+                logger.info('PRECONNECT file not found & not executed')
+        except Exception as e:
+            # Ignore output of execution command
+            logger.error('Executing preconnect command give')
+
         return 'ok'
 
     def onLogout(self, user):
@@ -223,7 +239,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             except Exception as e:
                 logger.error('Exception removing user from Remote Desktop Users: {}'.format(e))
 
-    def SvcDoRun(self):
+    def SvcDoRun(self):  # pylint: disable=too-many-statements, too-many-branches
         '''
         Main service loop
         '''
