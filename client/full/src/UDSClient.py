@@ -194,7 +194,7 @@ class UDSClient(QtGui.QMainWindow):
                 if tools.verifySignature(script, signature) is False:
                     logger.error('Signature is invalid')
                     
-                    # raise Exception('Invalid UDS code signature. Please, report to administrator')
+                    raise Exception('Invalid UDS code signature. Please, report to administrator')
 
             self.stopAnim()
 

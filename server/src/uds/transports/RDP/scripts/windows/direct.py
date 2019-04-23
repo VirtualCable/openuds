@@ -9,7 +9,6 @@ try:
 except ImportError:  # Python 2.7 fallback
     import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
 
-import os
 import subprocess
 from uds.log import logger  # @UnresolvedImport
 
@@ -18,7 +17,7 @@ from uds import tools  # @UnresolvedImport
 import six
 
 try:
-    thePass = six.binary_type("""{m.password}""".encode('UTF-16LE'))
+    thePass = six.binary_type(sp['password'].encode('UTF-16LE'))  # @UndefinedVariable
     password = win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01).encode('hex')
 except Exception:
     logger.info('Cannot encrypt for user, trying for machine')
@@ -26,14 +25,16 @@ except Exception:
 
 try:
     key = wreg.OpenKey(wreg.HKEY_CURRENT_USER, 'Software\Microsoft\Terminal Server Client\LocalDevices', 0, wreg.KEY_SET_VALUE)  # @UndefinedVariable
-    wreg.SetValueEx(key, '{m.ip}', 0, wreg.REG_DWORD, 255)  # @UndefinedVariable
+    wreg.SetValueEx(key, sp['ip'], 0, wreg.REG_DWORD, 255)  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable
 except Exception as e:
     logger.warn('Exception fixing redirection dialog: %s', e)
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-theFile = '''{m.r.as_file}'''.format(password=password)
-
+theFile = sp['as_file'].format(# @UndefinedVariable
+    password=password,
+    address=sp['ip']+':'+sp['port']  # @UndefinedVariable
+)
 filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
 

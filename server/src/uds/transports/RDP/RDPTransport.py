@@ -159,6 +159,9 @@ class RDPTransport(BaseRDPTransport):
         sp = {
             'password': password,
             'this_server': request.build_absolute_uri('/'),
+            'ip': ip,
+            'port': '3389',
+            'address': r.address,
         }
 
         if os == 'windows':
@@ -176,7 +179,6 @@ class RDPTransport(BaseRDPTransport):
         else:  # Mac
             sp.update({
                 'as_file': r.as_file,
-                'ip': ip,
                 'as_cord_url': r.as_cord_url,
             })
             if domain != '':

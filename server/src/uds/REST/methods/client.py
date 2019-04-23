@@ -54,7 +54,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '2.5.0'
+REQUIRED_CLIENT_VERSION = '3.0.0'
 
 
 # Enclosed methods under /actor path
@@ -150,7 +150,7 @@ class Client(Handler):
             return Client.result(result={
                 'script': transportScript,
                 'signature': signature,  # It is already on base64
-                'params': json.dumps(params).encode('bz2').encode('base64'),
+                'params': encoders.encode(encoders.encode(json.dumps(params), 'bz2'), 'base64', asText=True),
             })
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
