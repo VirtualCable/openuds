@@ -182,7 +182,7 @@ class UDSClient(QtGui.QMainWindow):
             params = None
 
             if self.serverVersion <= OLD_METHOD_VERSION:
-                script = data['result'].decode('base64').decode('bz2_codec')
+                script = data['result'].decode('base64').decode('bz2')
             else:
                 res = data['result']
                 # We have three elements on result:
@@ -190,7 +190,7 @@ class UDSClient(QtGui.QMainWindow):
                 # * Signature
                 # * Script data
                 # We test that the Script has correct signature, and them execute it with the parameters
-                script, signature, params = res['script'].decode('base64').decode('bz2_codec'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2_codec'))
+                script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
                 if tools.verifySignature(script, signature) is False:
                     logger.error('Signature is invalid')
                     
