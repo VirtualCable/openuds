@@ -414,7 +414,11 @@ class ServicesPools(ModelHandler):
                 pass
 
     def deleteItem(self, item):
-        item.remove()  # This will mark it for deletion, but in fact will not delete it directly
+        try:
+            logger.debug('Deleting {}'.format(item))
+            item.remove()  # This will mark it for deletion, but in fact will not delete it directly
+        except:
+            logger.exception()
 
     # Logs
     def getLogs(self, item):

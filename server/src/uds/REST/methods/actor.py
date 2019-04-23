@@ -131,7 +131,7 @@ class Actor(Handler):
         """
         logger.debug("Ticket args for GET: {0}".format(self._args))
 
-        secure = self._params.get('secure') in ('1', 'true')
+        # secure = self._params.get('secure') in ('1', 'true')
 
         if len(self._args) != 2:
             raise RequestError('Invalid request')

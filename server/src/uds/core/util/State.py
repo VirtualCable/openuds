@@ -30,10 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext_noop as _, ugettext_lazy
-import six
 
 
 # States for different objects. Not all objects supports all States
@@ -71,7 +68,7 @@ class State(object):
         LAUNCHING: _('Waiting publication'),
         PREPARING: _('In preparation'),
         USABLE: _('Valid'),
-        REMOVABLE: _('Waiting for removal'),
+        REMOVABLE: _('Removing'),    # Display as it is removing
         RESTRAINED: _('Restrained'),
         REMOVING: _('Removing'),
         REMOVED: _('Removed'),
@@ -163,6 +160,6 @@ class State(object):
         Returns a dictionary with current active locale translation of States to States String
         """
         res = {}
-        for k, v in six.iteritems(State.string):
+        for k, v in State.string.items():
             res[k] = ugettext_lazy(v)
         return res
