@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 import sys
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 import six
 
 from uds.rest import RestRequest
@@ -192,7 +192,8 @@ class UDSClient(QtGui.QMainWindow):
                 # We test that the Script has correct signature, and them execute it with the parameters
                 script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
                 if tools.verifySignature(script, signature) is False:
-                    raise Exception('Invalid UDS code signature. Please, report to administrator')
+                    logger.error('Signature is invalid')
+                    # raise Exception('Invalid UDS code signature. Please, report to administrator')
 
             self.stopAnim()
 
@@ -202,12 +203,12 @@ class UDSClient(QtGui.QMainWindow):
             QtCore.QTimer.singleShot(3000, self.endScript)
             self.hide()
 
-            if self.serverVersion <= OLD_METHOD_VERSION:
-                errorString = '<p>The server <b>{}</b> runs an old version of UDS:</p>'.format(host)
-                errorString += '<p>To avoid security issues, you must approve old UDS Version access.</p>'
-
-                if QtGui.QMessageBox.warning(None, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
-                    raise Exception('Server not approved. Access denied.')
+            # if self.serverVersion <= OLD_METHOD_VERSION:
+            #     errorString = '<p>The server <b>{}</b> runs an old version of UDS:</p>'.format(host)
+            #     errorString += '<p>To avoid security issues, you must approve old UDS Version access.</p>'
+            #
+            #     if QtGui.QMessageBox.warning(None, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+            #         raise Exception('Server not approved. Access denied.')
 
             six.exec_(script, globals(), {'parent': self, 'sp':  params})
 

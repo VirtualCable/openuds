@@ -187,7 +187,7 @@ class UserService(UUIDModel):
         :note: This method SAVES the updated record, just updates the field
         """
         self.data = us.serialize()
-        self.data.save(update_fields=['data'])
+        self.save(update_fields=['data'])
 
     def getName(self):
         """
