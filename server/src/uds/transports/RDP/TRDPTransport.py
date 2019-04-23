@@ -184,6 +184,7 @@ class TRDPTransport(BaseRDPTransport):
 
         }.get(os['OS'])
 
+
         if os is None:
             return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
@@ -196,7 +197,29 @@ class TRDPTransport(BaseRDPTransport):
             'ip': ip,
             'password': password,
             'this_server': request.build_absolute_uri('/'),
-            'r': r,
         }
+
+        if os == 'windows':
+            if password != '':
+                r.password = '{password}'
+            sp.update({
+                'as_file': r.as_file,
+            })
+        elif os == 'linux':
+            sp.update({
+                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
+                'as_rdesktop_params': r.as_rdesktop_params,
+                'address': r.address,
+            })
+        else:  # Mac
+            sp.update({
+                'as_file': r.as_file,
+                'as_cord_url': r.as_cord_url,
+            })
+            if domain != '':
+                sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)
+            else:
+                sp['usernameWithDomain'] = username
+
 
         return self.getScript('scripts/{}/tunnel.py', os, sp)
