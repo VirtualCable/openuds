@@ -30,7 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+
+from typing import Tuple
+import logging
 
 from django.utils.translation import ugettext_noop as _
 
@@ -39,8 +41,6 @@ from uds.core import Module
 from uds.core.transports import protocols
 from uds.core.util import encoders
 from uds.core.util import connection
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +185,7 @@ class Transport(Module):
         """
         return user.name
 
-    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request) -> Tuple[str, str, dict]:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client

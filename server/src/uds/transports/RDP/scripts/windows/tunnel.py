@@ -9,7 +9,6 @@ try:
     import winreg as wreg
 except ImportError:  # Python 2.7 fallback
     import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
-import os
 import subprocess
 from uds.forward import forward  # @UnresolvedImport
 from uds.log import logger  # @UnresolvedImport
@@ -26,7 +25,7 @@ if forwardThread.status == 2:
 tools.addTaskToWait(forwardThread)
 
 try:
-    thePass = six.binary_type(sp['password'].encode('UTF-16LE'))
+    thePass = six.binary_type(sp['password'].encode('UTF-16LE'))  # @UndefinedVariable
     password = win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01).encode('hex')
 except Exception:
     # Cannot encrypt for user, trying for machine

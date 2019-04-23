@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
+from typing import Tuple
 
 import logging
 import os
@@ -187,7 +188,7 @@ class BaseRDPTransport(Transport):
     def getConnectionInfo(self, service, user, password):
         return self.processUserPassword(service, user, password)
 
-    def getScript(self, scriptName, osName, params):
+    def getScript(self, scriptName, osName, params) -> Tuple[str, str, dict]:
         # Reads script
         scriptName = scriptName.format(osName)
         with open(os.path.join(os.path.dirname(__file__), scriptName)) as f:

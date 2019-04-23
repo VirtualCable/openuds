@@ -44,8 +44,6 @@ from uds import VERSION
 
 import webbrowser
 import json
-import sys
-import six
 
 from UDSWindow import Ui_MainWindow
 

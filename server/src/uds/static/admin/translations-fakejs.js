@@ -2,10 +2,10 @@
 // Typescript
 gettext("yes");
 gettext("no");
-gettext("$USERS users, $GROUPS groups");
-gettext("$POOLS service pools");
-gettext("$SERVICES user services");
-gettext("$RESTRAINED restrained services!");
+gettext("#USR_NUMBER# users, #GRP_NUMBER# groups");
+gettext("#POOLS_NUMBER# service pools");
+gettext("#SERVICES_NUMBER# user services");
+gettext("#RESTRAINED_NUMBER# restrained services!");
 gettext("New Network");
 gettext("Edit Network");
 gettext("Delete Network");
@@ -427,7 +427,7 @@ gettext("Remove all");
 gettext("Add");
 gettext("Cancel");
 gettext("Ok");
-gettext("Close");
+gettext("Discard & close");
 gettext("Save");
 gettext("Logs");
 gettext("Filter");
