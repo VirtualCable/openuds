@@ -4,12 +4,12 @@ from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
+import subprocess
 import win32crypt  # @UnresolvedImport
 try:
     import winreg as wreg
 except ImportError:  # Python 2.7 fallback
     import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
-import subprocess
 from uds.forward import forward  # @UnresolvedImport
 from uds.log import logger  # @UnresolvedImport
 

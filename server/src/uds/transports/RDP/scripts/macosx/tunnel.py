@@ -5,26 +5,22 @@ from __future__ import unicode_literals
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
 import os
-import urllib
 from uds.forward import forward  # @UnresolvedImport
 
 from uds import tools  # @UnresolvedImport
 
-import six
+# Inject local passed sp into globals for functions
+globals()['sp'] = sp  # @UndefinedVariable
 
-# First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
 msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
 cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
 
-if os.path.isfile(msrdc):
-    executable = msrdc
-elif os.path.isfile(cord):
+if os.path.isfile(cord):
     executable = cord
 elif os.path.isfile(msrdc):
     executable = msrdc
 else:
     executable = None
-
 
 def onExit():
     import subprocess  # @Reimport
@@ -50,23 +46,19 @@ if executable is None:
 <p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
 '''.format(sp['this_server']))  # @UndefinedVariable
 
-forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, sp['tunWait'])  # @UndefinedVariable
+forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])  # @UndefinedVariable
 address = '127.0.0.1:{}'.format(port)
 
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
 
 else:
-    theFile = '''{m.r.as_file}'''.format(
-        address='127.0.0.1:{{}}'.format(port)
-    )
-    filename = tools.saveTempFile(theFile)
-    tools.addFileToUnlink(filename)
-
     if executable == msrdc:
+        theFile = sp['as_file'].format(address=address)  # @UndefinedVariable
+        filename = tools.saveTempFile(theFile)
+        tools.addFileToUnlink(filename)
+        
         try:
-            filename = tools.saveTempFile(sp['as_file'].format(address=address))  # @UndefinedVariable
-            tools.addFileToUnlink(filename)
             if sp['password'] != '':  # @UndefinedVariable
                 subprocess.call(
                     [

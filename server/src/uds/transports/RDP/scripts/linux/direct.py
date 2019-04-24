@@ -8,23 +8,23 @@ import re
 
 from uds import tools  # @UnresolvedImport
 
-import six
-
+# Inject local passed sp into globals for functions
+globals()['sp'] = sp  # @UndefinedVariable
 
 def execUdsRdp(udsrdp):
-    import subprocess
-    params = [udsrdp] + {m.r.as_new_xfreerdp_params} + ['/v:{m.r.address}']  # @UndefinedVariable
+    # import subprocess  # @Reimport
+    params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execNewXFreeRdp(xfreerdp):
-    import subprocess  # @Reimport
+    # import subprocess  # @Reimport
     params = [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execRdesktop(rdesktop):
-    import subprocess  # @Reimport
+    # import subprocess  # @Reimport
     params = [rdesktop] + sp['as_rdesktop_params'] + [sp['address']]  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
     if sp['password'] != '':  # @UndefinedVariable

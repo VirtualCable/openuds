@@ -5,15 +5,12 @@ from __future__ import unicode_literals
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
 import os
-import urllib
 
 from uds import tools  # @UnresolvedImport
 
-theFile = '''{m.r.as_file}'''
+# Inject local passed sp into globals for functions
+globals()['sp'] = sp  # @UndefinedVariable
 
-# First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
-
-filename = tools.saveTempFile(theFile)
 msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
 cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
 

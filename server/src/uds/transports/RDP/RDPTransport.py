@@ -122,29 +122,6 @@ class RDPTransport(BaseRDPTransport):
         r.printerString = self.printerString.value
         r.linuxCustomParameters = self.customParameters.value
 
-        # data
-#         data = {
-#             'os': os['OS'],
-#             'ip': ip,
-#             'port': 3389,
-#             'username': username,
-#             'password': password,
-#             'hasCredentials': username != '' and password != '',
-#             'domain': domain,
-#             'width': width,
-#             'height': height,
-#             'depth': depth,
-#             'printers': self.allowPrinters.isTrue(),
-#             'smartcards': self.allowSmartcards.isTrue(),
-#             'drives': self.allowDrives.isTrue(),
-#             'serials': self.allowSerials.isTrue(),
-#             'compression': True,
-#             'wallpaper': self.wallpaper.isTrue(),
-#             'multimon': self.multimon.isTrue(),
-#             'fullScreen': width == -1 or height == -1,
-#             'this_server': request.build_absolute_uri('/')
-#         }
-
         os = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
@@ -178,6 +155,7 @@ class RDPTransport(BaseRDPTransport):
             })
         else:  # Mac
             sp.update({
+                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 'as_file': r.as_file,
                 'as_cord_url': r.as_cord_url,
             })

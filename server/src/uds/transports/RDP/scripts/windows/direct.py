@@ -3,15 +3,14 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
+import subprocess
 import win32crypt  # @UnresolvedImport
 try:
     import winreg as wreg
 except ImportError:  # Python 2.7 fallback
     import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
 
-import subprocess
 from uds.log import logger  # @UnresolvedImport
-
 from uds import tools  # @UnresolvedImport
 
 import six
@@ -32,13 +31,10 @@ except Exception as e:
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
 theFile = sp['as_file'].format(# @UndefinedVariable
-    password=password,
-    address=sp['ip']+':'+sp['port']  # @UndefinedVariable
+    password=password
 )
 filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
-
 subprocess.Popen([executable, filename])
 tools.addFileToUnlink(filename)
 
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
