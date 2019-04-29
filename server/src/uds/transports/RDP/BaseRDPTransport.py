@@ -31,7 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
@@ -40,8 +39,6 @@ from typing import Tuple
 
 import logging
 import os
-
-__updated__ = '2018-10-03'
 
 logger = logging.getLogger(__name__)
 

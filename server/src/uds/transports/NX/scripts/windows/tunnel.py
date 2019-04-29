@@ -18,12 +18,12 @@ except Exception:
 <p>Please, install appropriate package for your system.</p>
 ''')
 
-forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.port})  # @UndefinedVariable
+forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])  # @UndefinedVariable
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
 
 
-theFile = '''{r.as_file_for_format}'''.format(
+theFile = sp['as_file_for_format'].format(  # @UndefinedVariable
     address='127.0.0.1',
     port=port
 )

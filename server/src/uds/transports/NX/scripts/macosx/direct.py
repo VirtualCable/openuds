@@ -16,6 +16,6 @@ if os.path.isfile(cmd) is False:
 ''')
 
 
-filename = tools.saveTempFile('''{r.as_file}''')
+filename = tools.saveTempFile(sp['as_file'])  # @UndefinedVariable
 tools.addTaskToWait(subprocess.Popen([cmd, '--session={{}}'.format(filename), '--autologin', '--killerrors']))
 tools.addFileToUnlink(filename)

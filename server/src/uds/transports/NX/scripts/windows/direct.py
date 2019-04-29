@@ -17,7 +17,7 @@ except Exception:
 <p>Please, install appropriate package for your system.</p>
 ''')
 
-filename = tools.saveTempFile('''{r.as_file}''')
+filename = tools.saveTempFile(sp['as_file'])  # @UndefinedVariable
 cmd = cmd.replace('%1', filename)
 tools.addTaskToWait(subprocess.Popen(cmd))
 tools.addFileToUnlink(filename)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -42,6 +42,7 @@ from uds.models import TicketStore
 from uds.core.util import OsDetector
 from uds.core.util.tools import DictAsObj
 from .NXFile import NXFile
+from .BaseNXTransport import BaseNXTransport
 
 import logging
 import random
@@ -50,10 +51,9 @@ import os
 
 logger = logging.getLogger(__name__)
 
-READY_CACHE_TIMEOUT = 30
 
 
-class TSNXTransport(Transport):
+class TSNXTransport(BaseNXTransport):
     """
     Provides access via NX to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
@@ -159,27 +159,6 @@ class TSNXTransport(Transport):
             'tunnelCheckServer': self._tunnelCheckServer
         }
 
-    def isAvailableFor(self, userService, ip):
-        """
-        Checks if the transport is available for the requested destination ip
-        Override this in yours transports
-        """
-        logger.debug('Checking availability for {0}'.format(ip))
-        ready = self.cache.get(ip)
-        if ready is None:
-            # Check again for readyness
-            if self.testServer(userService, ip, self._listenPort) is True:
-                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
-                return True
-            else:
-                self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
-        return ready == 'Y'
-
-    def getScript(self, script):
-        with open(os.path.join(os.path.dirname(__file__), script)) as f:
-            data = f.read()
-        return data
-
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         prefs = user.prefs('nx')
 
@@ -208,15 +187,6 @@ class TSNXTransport(Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        m = {
-            'ip': ip,
-            'tunUser': tunuser,
-            'tunPass': tunpass,
-            'tunHost': sshHost,
-            'tunPort': sshPort,
-            'password': password,
-            'port': self._listenPort
-        }
 
         r = NXFile(username=username, password=password, width=width, height=height)
         r.host = '{address}'
@@ -236,8 +206,14 @@ class TSNXTransport(Transport):
         if os is None:
             return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        return self.getScript('scripts/{}/tunnel.py'.format(os)).format(
-            r=r,
-            m=DictAsObj(m),
-        )
-
+        sp = {
+            'ip': ip,
+            'tunUser': tunuser,
+            'tunPass': tunpass,
+            'tunHost': sshHost,
+            'tunPort': sshPort,
+            'port': self._listenPort,
+            'as_file_for_format': r.as_file_for_format
+        }
+        
+        return self.getScript('scripts/{}/direct.py', os, sp)
