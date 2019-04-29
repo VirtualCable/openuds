@@ -92,7 +92,7 @@ class Login(Handler):
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
 
-            scrambler = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
+            scrambler = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
             authId = self._params.get('authId', None)
             authSmallName = self._params.get('authSmallName', None)
             authName = self._params.get('auth', None)

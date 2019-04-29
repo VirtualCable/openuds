@@ -110,7 +110,7 @@ class TX2GOTransport(BaseX2GOTransport):
             user=username
         )
 
-        tunpass = ''.join(random.choice(string.ascii_letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')

@@ -86,7 +86,7 @@ class TSPICETransport(BaseSpiceTransport):
         secure_port = -1 if secure_port is None else secure_port
 
         # Ticket
-        tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')

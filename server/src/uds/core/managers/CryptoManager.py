@@ -190,4 +190,4 @@ class CryptoManager(object):
         return str(uuid.uuid5(self._namespace, obj)).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 
     def randomString(self, length=40):
-        return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
+        return ''.join(random.SystemRandom().choices(string.ascii_lowercase + string.digits, k=length))

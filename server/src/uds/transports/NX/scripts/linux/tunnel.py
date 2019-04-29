@@ -17,7 +17,7 @@ except Exception:
 <p>Please, install appropriate package for your system.</p>
 ''')
 
-    # Open tunnel
+# Open tunnel
 forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])  # @UndefinedVariable
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')

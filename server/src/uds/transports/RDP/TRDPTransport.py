@@ -118,7 +118,7 @@ class TRDPTransport(BaseRDPTransport):
         width, height = self.screenSize.value.split('x')
         depth = self.colorDepth.value
 
-        tunpass = ''.join(random.choice(string.ascii_letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')

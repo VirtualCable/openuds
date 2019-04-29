@@ -69,7 +69,7 @@ def getUDSCookie(request, response=None, force=False):
     Generates a random cookie for uds, used, for example, to encript things
     '''
     if 'uds' not in request.COOKIES:
-        cookie = cryptoManager().randomString(32)
+        cookie = cryptoManager().randomString(48)
         if response is not None:
             response.set_cookie('uds', cookie)
         request.COOKIES['uds'] = cookie
