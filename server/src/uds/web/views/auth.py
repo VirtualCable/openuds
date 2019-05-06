@@ -218,8 +218,8 @@ def ticketAuth(request, ticketId):
             else:
                 link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 
-            request.session['data'] = link;
-            response = HttpResponseRedirect(reverse('page.index'))
+            request.session['launch'] = link;
+            response = HttpResponseRedirect(reverse('page.ticket.launcher'))
         else:
             response = HttpResponsePermanentRedirect(reverse('page.index'))
 

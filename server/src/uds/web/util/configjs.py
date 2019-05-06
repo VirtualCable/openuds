@@ -121,6 +121,8 @@ def udsJs(request):
             'galleryImage': reverse('webapi.galleryImage', kwargs={ 'idImage': 'param1' }),
             'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
             'static': static(''),
+            # Launcher URL if exists
+            'launch': request.session.get('launch', ''),
         }
     }
 
@@ -166,6 +168,9 @@ def udsJs(request):
         'errors': errors,
         'data': request.session.get('data')
     }
+
+    # Reset some 1 time values...
+    request.session['launch'] = '';
 
     return 'var udsData = ' + json.dumps(uds) + ';\n'
 
