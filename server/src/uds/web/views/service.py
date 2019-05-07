@@ -144,6 +144,8 @@ def userServiceEnabler(request, idService, idTransport):
         content_type='application/json'
     )
 
+def closer(request):
+    return HttpResponse('<html><body onload="window.close()"></body></html>')
 
 @webLoginRequired(admin=False)
 @never_cache

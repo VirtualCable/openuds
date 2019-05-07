@@ -89,10 +89,16 @@ class HTML5RDPTransport(Transport):
         values=[
             gui.choiceItem('-', 'default'),
             gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
+            gui.choiceItem('en-gb-qwerty', _('English (GB) keyboard')),
+            gui.choiceItem('es-es-qwerty', _('Spanish keyboard')),
             gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
             gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
+            gui.choiceItem('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
+            gui.choiceItem('de-ch-qwertz', _('Swiss German keyboard (qwertz)')),
             gui.choiceItem('it-it-qwerty', _('Italian keyboard')),
             gui.choiceItem('sv-se-qwerty', _('Swedish keyboard')),
+            gui.choiceItem('ja-jp-qwerty', _('Japanese keyboard')),
+            gui.choiceItem('pt-br-qwerty', _('Brazilian keyboard')),
             gui.choiceItem('failsafe', _('Failsafe')),
         ],
         defvalue='-',
@@ -233,5 +239,5 @@ class HTML5RDPTransport(Transport):
 
         ticket = TicketStore.create(params, validity=self.ticketValidity.num())
 
-        return HttpResponseRedirect("{}/transport/?{}.{}&{}".format(self.guacamoleServer.value, ticket, scrambler, request.build_absolute_uri(reverse('Index'))))
+        return HttpResponseRedirect("{}/transport/?{}.{}&{}".format(self.guacamoleServer.value, ticket, scrambler, request.build_absolute_uri(reverse('utility.closer'))))
 

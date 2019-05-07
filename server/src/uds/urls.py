@@ -85,6 +85,7 @@ urlpatterns = [
     re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.placeholder'),
 
     # Utility
+    path('uds/utility/closer', uds.web.views.service.closer, name='utility.closer'),
 
     # Javascript
     path(r'uds/utility/uds.js', uds.web.views.modern.js, name="utility.js"),
