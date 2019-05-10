@@ -47,7 +47,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-12-20'
+__updated__ = '2019-05-10'
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +87,7 @@ class TSPICETransport(BaseSpiceTransport):
         secure_port = -1 if secure_port is None else secure_port
 
         # Ticket
-        tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')

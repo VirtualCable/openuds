@@ -62,7 +62,7 @@ class WinRandomPassManager(WindowsOsManager):
         import string
         randomPass = service.recoverValue('winOsRandomPass')
         if randomPass is None:
-            randomPass = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+            randomPass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16))
             service.storeValue('winOsRandomPass', randomPass)
             log.doLog(service, log.INFO, "Password set to \"{}\"".format(randomPass), log.OSMANAGER)
         return randomPass

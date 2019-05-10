@@ -45,7 +45,7 @@ import logging
 import random
 import string
 
-__updated__ = '2018-03-22'
+__updated__ = '2019-05-10'
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +110,7 @@ class TX2GOTransport(BaseX2GOTransport):
             user=username
         )
 
-        tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')

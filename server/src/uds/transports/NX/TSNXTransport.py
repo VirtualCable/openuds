@@ -194,7 +194,7 @@ class TSNXTransport(Transport):
         if self._useEmptyCreds is True:
             username, password = '', ''
 
-        tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshServer = self._tunnelServer

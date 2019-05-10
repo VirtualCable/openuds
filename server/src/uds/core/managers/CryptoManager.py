@@ -189,4 +189,4 @@ class CryptoManager(object):
         return six.text_type(uuid.uuid5(self._namespace, six.binary_type(obj))).lower()  # uuid must return a lowercase uuid always?, just in case... :)
 
     def randomString(self, length=40):
-        return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
+        return ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(length))

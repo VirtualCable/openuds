@@ -63,12 +63,13 @@ def transformId(view_func):
                 except Exception:
                     return errors.errorView(request, errors.INVALID_REQUEST)
         return view_func(request, *args, **kwargs)
+
     return _wrapped_view
 
 
 def scrambleId(request, id_):
     if request.session.get(SCRAMBLE_SES) is None:
-        request.session[SCRAMBLE_SES] = ''.join(random.choice(string.letters) for _ in range(SCRAMBLE_LEN))
+        request.session[SCRAMBLE_SES] = ''.join(random.SystemRandom().choice(string.letters) for _ in range(SCRAMBLE_LEN))
     return base64.b64encode(unicode(id_) + request.session.get(SCRAMBLE_SES)).encode('hex')
 
 
