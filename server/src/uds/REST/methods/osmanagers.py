@@ -55,6 +55,7 @@ class OsManagers(ModelHandler):
     table_title = _('OS Managers')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+        {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
@@ -68,6 +69,7 @@ class OsManagers(ModelHandler):
             'tags': [tag.tag for tag in osm.tags.all()],
             'deployed_count': osm.deployedServices.count(),
             'type': type_.type(),
+            'type_name': type_.name(),
             'servicesTypes': type_.servicesType,
             'comments': osm.comments,
             'permission': permissions.getEffectivePermission(self._user, osm)

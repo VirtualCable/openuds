@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from uds.core.jobs.DelayedTask import DelayedTask
@@ -40,15 +40,17 @@ from uds.models import UserService
 
 import logging
 
-__updated__ = '2017-06-15'
+__updated__ = '2019-05-08'
 
 logger = logging.getLogger(__name__)
 
 USERSERVICE_TAG = 'cm-'
 
+
 # State updaters
 # This will be executed on current service state for checking transitions to new state, task states, etc..
 class StateUpdater(object):
+
     def __init__(self, userService, userServiceInstance=None):
         self.userService = userService
         self.userServiceInstance = userServiceInstance if userServiceInstance is not None else userService.getInstance()

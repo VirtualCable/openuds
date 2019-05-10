@@ -54,7 +54,7 @@ def loadModulesUrls():
                 fullModName = '%s.%s.urls' % (modName, name)
                 try:
                     mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], 0)
-                    logger.debug('Lodaded mod {}'.format(mod))
+                    logger.debug('Lodaded mod {}, url {}'.format(mod, mod.urlpatterns))
                     patterns += mod.urlpatterns
                 except:
                     logger.exception('Loading patterns')

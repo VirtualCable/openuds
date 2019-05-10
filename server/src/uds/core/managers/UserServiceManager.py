@@ -58,7 +58,7 @@ import json
 import logging
 import random
 
-__updated__ = '2019-02-26'
+__updated__ = '2019-05-08'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -195,6 +195,7 @@ class UserServiceManager(object):
         ci = cache.getInstance()
         state = ci.moveToCache(cacheLevel)
         cache.cache_level = cacheLevel
+        cache.save(update_fields=['cache_level'])
         logger.debug('Service State: {0} {1} {2}'.format(State.toString(state), State.toString(cache.state), State.toString(cache.os_state)))
         if State.isRuning(state) and cache.isUsable():
             cache.setState(State.PREPARING)

@@ -59,6 +59,7 @@ class Authenticators(ModelHandler):
     table_fields = [
         {'numeric_id': {'title': _('Id'), 'visible': True}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+        {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
         {'small_name': {'title': _('Label')}},
@@ -99,6 +100,7 @@ class Authenticators(ModelHandler):
             'small_name': auth.small_name,
             'users_count': auth.users.count(),
             'type': type_.type(),
+            'type_name': type_.name(),
             'type_info': self.typeInfo(type_),
             'permission': permissions.getEffectivePermission(self._user, auth)
         }
