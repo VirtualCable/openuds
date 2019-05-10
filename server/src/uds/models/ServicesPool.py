@@ -62,7 +62,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2019-02-25'
+__updated__ = '2019-05-10'
 
 logger = logging.getLogger(__name__)
 
@@ -206,19 +206,20 @@ class DeployedService(UUIDModel, TaggingMixin):
         return self.service is not None and self.service.isInMaintenance()
 
     def toBeReplaced(self):
-        activePub = self.activePublication()
-        if activePub is None or activePub.revision == self.current_pub_revision - 1:
-            return None
+        return None
+        # activePub = self.activePublication()
+        # if activePub is None or activePub.revision == self.current_pub_revision - 1:
+        #     return None
 
         # Return the date
-        try:
-            ret = self.recoverValue('toBeReplacedIn')
-            if ret is not None:
-                return pickle.loads(ret)
-        except Exception:
-            logger.exception('Recovering publication death line')
+        # try:
+        #     ret = self.recoverValue('toBeReplacedIn')
+        #     if ret is not None:
+        #         return pickle.loads(ret)
+        # except Exception:
+        #     logger.exception('Recovering publication death line')
 
-        return None
+        # return None
 
     def isAccessAllowed(self, chkDateTime=None):
         '''
