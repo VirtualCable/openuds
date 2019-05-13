@@ -65,9 +65,10 @@ static int getUrl(const char* url, char* buffer, size_t size ) {
 
 int isValid(const char* str) 
 {
-  const int len = strnlen(str, 256);
-  for( int i = 0; i < len; i++ ) {
-    if ( !isalnum(str[i] && str[i] != '-') ) {
+  const int len = strnlen(str, DATASIZE);
+  int i;
+  for( i = 0; i < len; i++ ) {
+    if ( !isalnum(str[i]) && str[i] != '-' ) {
       return 0;
     }
   }
