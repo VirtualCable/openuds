@@ -14,6 +14,8 @@
 
 #include <syslog.h>
 
+#include "http.h"
+
 char baseUrl[256] = { '\0' };
 
 enum nss_status _nss_uds_getpwuid_r(uid_t,struct passwd *,char *, size_t,int *);
