@@ -165,3 +165,5 @@
 /udsService/udsgui/obj/Debug
 /udsService/udsgui/obj/Release
 /udsService/udsgui/obj/x86
+
+.vscode

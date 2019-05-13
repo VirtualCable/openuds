@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include <curl/curl.h>
 #include <curl/easy.h>
@@ -61,6 +62,18 @@ static int getUrl(const char* url, char* buffer, size_t size ) {
   return res;
   
 }
+
+int isValid(const char* str) 
+{
+  const int len = strnlen(str, DATASIZE);
+  int i;
+  for( i = 0; i < len; i++ ) {
+    if ( !isalnum(str[i]) && str[i] != '-' ) {
+      return 0;
+    }
+  }
+  return 1;
+}
  
 int httpAuthenticate(const char* username, const char* password, const char* authHost)
 {
@@ -68,6 +81,11 @@ int httpAuthenticate(const char* username, const char* password, const char* aut
   char* url = malloc(256);
   int res;
   
+  /* Ensure username & passwords are valid */
+  if (!isValid(username) || !isValid(password)) {
+    return -1; /* no valid data, injecting? */
+  }
+
   sprintf( url, "%s?%s=%s&%s=%s", authHost, AUTHID, username, AUTHPASS, password );
   res = getUrl( url, buffer, DATASIZE );
   free(url);
