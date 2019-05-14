@@ -277,6 +277,9 @@ class UserServiceManager(object):
         if assignedUserService is not None:
             return assignedUserService
 
+        if ds.isRestrained():
+            raise InvalidServiceException(_('The requested service is restrained'))
+
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():
             cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1]

@@ -97,8 +97,6 @@ urlpatterns = [
     # Downloader
     re_path(r'^uds/utility/download/(?P<idDownload>[a-zA-Z0-9-]*)$', uds.web.views.download, name='utility.downloader'),
 
-    re_path(r'^uds/utility/files/(?P<uuid>.+)', uds.web.views.file_storage, name='utility.file_storage'),
-
     # WEB API path (not REST api, frontend)
     re_path(r'^uds/webapi/img/transport/(?P<idTrans>[a-zA-Z0-9-]+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
     re_path(r'^uds/webapi/img/gallery/(?P<idImage>[a-zA-Z0-9-]+)$', uds.web.views.image, name='webapi.galleryImage'),
