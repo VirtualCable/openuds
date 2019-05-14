@@ -52,10 +52,18 @@ def pam(request):
         ids = request.GET.getlist('id')
         response = '0'
         if len(ids) == 1:
+            userId = ids[0]
             logger.debug("Auth request for user [{0}] and pass [{1}]".format(request.GET['id'], request.GET['pass']))
-            password = TicketStore.get(request.GET['id'])
-            if password == request.GET['pass']:
-                response = '1'
+            try:
+                password = TicketStore.get(userId)
+                if password == request.GET['pass']:
+                    response = '1'
+            except Exception:
+                # Non existing ticket, log it and stop
+                logger.info('Invalid access from {} using user {}'.format(request.ip, userId))
+        else:
+            logger.warn('Invalid request from {}: {}'.format(request.ip, [v for v in request.GET.lists()]))
+            
     elif 'uid' in request.GET:
         # This is an "get name for id" call
         logger.debug("NSS Request for id [{0}]".format(request.GET['uid']))
