@@ -49,12 +49,13 @@ def pam(request):
         return HttpResponseNotAllowed(['GET'])
     if 'id' in request.GET and 'pass' in request.GET:
         # This is an "auth" request
-        logger.debug("Auth request for user [{0}] and pass [{1}]".format(request.GET['id'], request.GET['pass']))
-        password = TicketStore.get(request.GET['id'])
+        ids = request.GET.getlist('id')
         response = '0'
-        if password == request.GET['pass']:
-            response = '1'
-
+        if len(ids) == 1:
+            logger.debug("Auth request for user [{0}] and pass [{1}]".format(request.GET['id'], request.GET['pass']))
+            password = TicketStore.get(request.GET['id'])
+            if password == request.GET['pass']:
+                response = '1'
     elif 'uid' in request.GET:
         # This is an "get name for id" call
         logger.debug("NSS Request for id [{0}]".format(request.GET['uid']))
