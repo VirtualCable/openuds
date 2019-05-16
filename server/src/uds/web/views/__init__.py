@@ -38,7 +38,6 @@ from .auth import authCallback, authInfo, ticketAuth, customAuth
 from .download import download
 from uds.web.util.errors import error
 from .images import image
-from .file_storage import file_storage
 from . import modern
 from . import custom
 
