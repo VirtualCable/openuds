@@ -28,23 +28,32 @@ static enum nss_status p_search(FILE *f,const char *name,const uid_t uid,struct 
 
 
 static void read_config(char* host, size_t size) {
-  FILE* f = fopen("/etc/uds.conf", "r");
   int n;
-  fgets( host, size-1, f );
-  n = strlen(host) - 1;
-  if( host[n] == '\n' )
-    host[n] = '\0';
-  fclose(f);
+  FILE* f = fopen("/etc/uds.conf", "r");
+  if( f != NULL ) {
+    fgets( host, size-1, f );
+    n = strlen(host) - 1;
+    if( host[n] == '\n' )
+      host[n] = '\0';
+    fclose(f);
+  } else {
+    host[0] = '\0';
+  }
 
 }
 
-enum nss_status _nss_uds_getpwuid_r( uid_t uid, struct passwd *result,
-	char *buf, size_t buflen, int *errnop) {
-  char host[128];
+enum nss_status _nss_uds_getpwuid_r(
+  uid_t uid,
+  struct passwd *result,
+  char *buf,
+  size_t buflen,
+  int *errnop
+) {
+  char host[256];
   char *dir;
   read_config( host, sizeof(host) );
 
-  if ( result == NULL || buflen < 128 )
+  if (result == NULL || buflen < 128 || *host == '\0')
     return NSS_STATUS_UNAVAIL;
 
   *errnop = getName( host, uid, buf, &result->pw_uid );
@@ -53,9 +62,9 @@ enum nss_status _nss_uds_getpwuid_r( uid_t uid, struct passwd *result,
     return NSS_STATUS_NOTFOUND;
 
   dir = buf + strlen(buf) + 1;
-  sprintf( dir, "/home/udstmp", buf );
+  sprintf( dir, "/var/udstmp", buf );
   result->pw_name = buf;
-  result->pw_passwd = "molongo;pongo";
+  result->pw_passwd = "*"; // This is really not used in our environment :)
   result->pw_gid = 65534; // Nogroup
   result->pw_gecos = "bugoma";
   result->pw_dir = dir;
@@ -65,11 +74,11 @@ enum nss_status _nss_uds_getpwuid_r( uid_t uid, struct passwd *result,
 
 enum nss_status _nss_uds_getpwnam_r(const char *name, struct passwd *result,
 		char *buf, size_t buflen, int *errnop) {
-  char host[128];
+  char host[256];
   char *dir;
   read_config( host, sizeof(host) );
   
-  if ( result == NULL || buflen < 128 )
+  if (result == NULL || buflen < 128 || *host == '\0')
     return NSS_STATUS_UNAVAIL;
 
   *errnop = getUID( host, name, buf, &result->pw_uid );
@@ -78,17 +87,15 @@ enum nss_status _nss_uds_getpwnam_r(const char *name, struct passwd *result,
     return NSS_STATUS_NOTFOUND;
 
   dir = buf + strlen(buf) + 1;
-  strcpy( dir, "/home/udstmp");
+  strcpy( dir, "/var/udstmp");
   result->pw_name = buf;
-  result->pw_passwd = "molongo;pongo";
+  result->pw_passwd = "*"; // This is really not used in our environment :)
   result->pw_gid = 65534; // Nogroup
   result->pw_gecos = "bugoma";
   result->pw_dir = dir;
   result->pw_shell = "/bin/false";
   return NSS_STATUS_SUCCESS;
 }
-
-static FILE *usersfile = NULL;
 
 enum nss_status _nss_uds_setpwent (void) {
          
