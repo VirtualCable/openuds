@@ -259,7 +259,7 @@ class RegexLdap(auths.Authenticator):
     def __getGroups(self, usr):
         grps = self.__processField(self._groupNameAttr, usr)
         if extra:
-            grps += extra.getGroups(usr)
+            grps += extra.getGroups(self, usr)
         return grps
 
     def __getUserRealName(self, usr):
