@@ -31,8 +31,6 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import auths
@@ -42,6 +40,11 @@ from uds.core.util import ldaputil
 import ldap
 import re
 import logging
+
+try:
+    from . import extra  # @UnresolvedImport
+except Exception:
+    extra = None
 
 __updated__ = '2018-09-04'
 
@@ -167,7 +170,7 @@ class RegexLdap(auths.Authenticator):
 
             for v in val:
                 try:
-                    srch = re.search(pattern, v, re.IGNORECASE)
+                    srch = re.search(pattern, v, re.IGNORECASE)  # @UndefinedVariable
                     logger.debug("Found against {0}: {1} ".format(v, srch.groups()))
                     if srch is None:
                         continue
@@ -254,7 +257,10 @@ class RegexLdap(auths.Authenticator):
         )
 
     def __getGroups(self, usr):
-        return self.__processField(self._groupNameAttr, usr)
+        grps = self.__processField(self._groupNameAttr, usr)
+        if extra:
+            grps += extra.getGroups(usr)
+        return grps
 
     def __getUserRealName(self, usr):
         return ' '.join(self.__processField(self._userNameAttr, usr))
