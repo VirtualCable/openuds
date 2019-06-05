@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import time
+import logging
+
 from django import http
 from django.views.generic.base import View
 from django.views.decorators.csrf import csrf_exempt
@@ -37,8 +40,8 @@ from django.utils.translation import ugettext as _, activate
 from django.conf import settings
 from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError, NotSupportedError
 
-import time
-import logging
+from . import processors
+
 
 logger = logging.getLogger(__name__)
 
@@ -55,12 +58,10 @@ class Dispatcher(View):
     services = {'': None}  # Will include a default /rest handler, but rigth now this will be fine
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
-        logger.debug('Language in dispatcher: {0}'.format(request.LANGUAGE_CODE))
-        from uds.REST import processors
 
         # Remove session, so response middleware do nothing with this
         del request.session
@@ -88,7 +89,7 @@ class Dispatcher(View):
                 break
 
         full_path = '/'.join(full_path)
-        logger.debug("REST request: {} ({})".format(full_path, content_type))
+        logger.debug("REST request: %s (%s)",full_path, content_type)
 
         # Here, service points to the path
         cls = service['']
@@ -112,8 +113,8 @@ class Dispatcher(View):
             handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)
             operation = getattr(handler, http_method)
         except processors.ParametersException as e:
-            logger.debug('Path: {0}'.format(full_path))
-            logger.debug('Error: {0}'.format(e))
+            logger.debug('Path: %s', full_path)
+            logger.debug('Error: %s', e)
             return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(full_path, e), content_type="text/plain")
         except AttributeError:
             allowedMethods = []
@@ -125,7 +126,7 @@ class Dispatcher(View):
             return http.HttpResponseForbidden('access denied', content_type="text/plain")
         except Exception:
             logger.exception('error accessing attribute')
-            logger.debug('Getting attribute {0} for {1}'.format(http_method, full_path))
+            logger.debug('Getting attribute %s for %s', http_method, full_path)
             return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
 
         # Invokes the handler's operation, add headers to response and returns
@@ -160,12 +161,12 @@ class Dispatcher(View):
         """
         for cls in classes:
             if len(cls.__subclasses__()) == 0:  # Only classes that has not been inherited will be registered as Handlers
-                logger.debug('Found class {0}'.format(cls))
+                logger.debug('Found class %s', cls)
                 if cls.name is None:
                     name = cls.__name__.lower()
                 else:
                     name = cls.name
-                logger.debug('Adding handler {0} for method {1} in path {2}'.format(cls, name, cls.path))
+                logger.debug('Adding handler %s for method %s in path %s', cls, name, cls.path)
                 service_node = Dispatcher.services
                 if cls.path is not None:
                     for k in cls.path.split('/'):

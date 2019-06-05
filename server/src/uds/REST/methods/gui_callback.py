@@ -30,12 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from uds.core.ui.UserInterface import gui
 from uds.REST import Handler, RequestError, NotFound
 
-import logging
 
 logger = logging.getLogger(__name__)
 

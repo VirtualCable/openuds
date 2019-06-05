@@ -78,7 +78,7 @@ class BaseModelHandler(Handler):
     Base Handler for Master & Detail Handlers
     """
 
-    def addField(self, gui, field):  # pylint: disable=no-self-use
+    def addField(self, gui: typing.List[typing.Any], field: typing.Dict[str, typing.Any]):  # pylint: disable=no-self-use
         """
         Add a field to a "gui" description.
         This method checks that every required field element is in there.
@@ -242,7 +242,7 @@ class BaseModelHandler(Handler):
             for key, value in six.iteritems(i.valuesDict()):
                 if isinstance(value, six.string_types):
                     value = {"true": True, "false": False}.get(value, value)  # Translate "true" & "false" to True & False (booleans)
-                logger.debug('{0} = {1}'.format(key, value))
+                logger.debug('%s = %s', key, value)
                 res[key] = value
         return res
 
@@ -263,7 +263,7 @@ class BaseModelHandler(Handler):
         """
         Raises a NotFound exception with translated "Method not found" string to current locale
         """
-        raise RequestError(_('Method not found in {}: {}'.format(self.__class__, self._args)))
+        raise RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
     def invalidItemException(self, message=None):
         """
@@ -284,14 +284,14 @@ class BaseModelHandler(Handler):
         """
         Utility method to be invoked for simple methods that returns nothing in fact
         """
-        logger.debug('Returning success on {} {}'.format(self.__class__, self._args))
+        logger.debug('Returning success on %s %s', self.__class__, self._args)
         return OK
 
     def test(self, type_):
         """
         Invokes a test for an item
         """
-        logger.debug('Called base test for {0} --> {1}'.format(self.__class__.__name__, self._params))
+        logger.debug('Called base test for %s --> %s', self.__class__.__name__, self._params)
         return self.invalidMethodException()
 
 
@@ -340,7 +340,7 @@ class DetailHandler(BaseModelHandler):
         :param parent: Parent Model Element
         :param arg: argument to pass to custom method
         """
-        logger.debug('Checking custom method {0}'.format(check))
+        logger.debug('Checking custom method %s', check)
         if check in self.custom_methods:
             operation = getattr(self, check)
 
@@ -415,7 +415,7 @@ class DetailHandler(BaseModelHandler):
         elif len(self._args) > 1:  # PUT expects 0 or 1 parameters. 0 == NEW, 1 = EDIT
             self.invalidRequestException()
 
-        logger.debug('Invoking proper saving detail item {}'.format(item))
+        logger.debug('Invoking proper saving detail item %s', item)
         return self.saveItem(parent, item)
 
     def post(self):
@@ -431,7 +431,7 @@ class DetailHandler(BaseModelHandler):
         Process the "DELETE" operation, making the correspondent checks.
         Extracts the item id and invokes deleteItem with parent item and item id (uuid)
         """
-        logger.debug("Detail args for DELETE: {0}".format(self._args))
+        logger.debug('Detail args for DELETE: %s', self._args)
 
         parent = self._kwargs['parent']
 
@@ -471,7 +471,7 @@ class DetailHandler(BaseModelHandler):
         :param item: Item id (uuid)
         :return: Normally "success" is expected, but can throw any "exception"
         """
-        logger.debug('Default saveItem handler caller for {0}'.format(self._path))
+        logger.debug('Default saveItem handler caller for %s', self._path)
         self.invalidRequestException()
 
     # Default delete
@@ -563,7 +563,7 @@ class ModelHandler(BaseModelHandler):
     authenticated: typing.ClassVar[bool] = True
     needs_staff: typing.ClassVar[bool] = True
     # Which model does this manage
-    model: typing.Optional[models.Model] = None
+    model: models.Model
 
     # By default, filter is empty
     fltr: typing.Optional[str] = None
@@ -738,12 +738,12 @@ class ModelHandler(BaseModelHandler):
 
         raise Exception('Invalid code executed on processDetail')
 
-    def getItems(self, overview=True, *args, **kwargs):
+    def getItems(self, *args, **kwargs) -> typing.Generator:
         for item in self.model.objects.filter(*args, **kwargs):
             try:
                 if permissions.checkPermissions(self._user, item, permissions.PERMISSION_READ) is False:
                     continue
-                if overview:
+                if kwargs.get('overview', True):
                     yield self.item_as_dict_overview(item)
                 else:
                     res = self.item_as_dict(item)
@@ -762,7 +762,7 @@ class ModelHandler(BaseModelHandler):
         return self.doFilter(self.doGet())
 
     def doGet(self):
-        logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
+        logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
         nArgs = len(self._args)
 
         if nArgs == 0:
@@ -777,7 +777,7 @@ class ModelHandler(BaseModelHandler):
                         operation = getattr(self, self._args[1])
                         item = self.model.objects.get(uuid=self._args[0].lower())
                     except Exception as e:
-                        logger.error('Invalid custom method exception {}/{}/{}: {}'.format(self.__class__.__name__, self._args, self._params, e))
+                        logger.error('Invalid custom method exception %s/%s/%s: %s', self.__class__.__name__, self._args, self._params, e)
                         self.invalidMethodException()
 
                     return operation(item)
@@ -848,7 +848,7 @@ class ModelHandler(BaseModelHandler):
         Processes a POST request
         """
         # right now
-        logger.debug('method POST for {0}, {1}'.format(self.__class__.__name__, self._args))
+        logger.debug('method POST for %s, %s', self.__class__.__name__, self._args)
         if len(self._args) == 2:
             if self._args[0] == 'test':
                 return self.test(self._args[1])
@@ -859,7 +859,7 @@ class ModelHandler(BaseModelHandler):
         """
         Processes a PUT request
         """
-        logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
+        logger.debug('method PUT for %s, %s', self.__class__.__name__, self._args)
         self._params['_request'] = self._request
 
         deleteOnError = False
@@ -872,7 +872,7 @@ class ModelHandler(BaseModelHandler):
         try:
             # Extract fields
             args = self.readFieldsFromParams(self.save_fields)
-            logger.debug('Args: {}'.format(args))
+            logger.debug('Args: %s', args)
             self.beforeSave(args)
             # If tags is in save fields, treat it "specially"
             if 'tags' in self.save_fields:
@@ -937,7 +937,7 @@ class ModelHandler(BaseModelHandler):
         """
         Processes a DELETE request
         """
-        logger.debug('method DELETE for {0}, {1}'.format(self.__class__.__name__, self._args))
+        logger.debug('method DELETE for %s, %s', self.__class__.__name__, self._args)
         if len(self._args) > 1:
             return self.processDetail()
 

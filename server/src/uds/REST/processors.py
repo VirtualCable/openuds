@@ -30,18 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-# from django.utils import simplejson as json
-# import ujson as json
-import json
-# from xml_marshaller import xml_marshaller
 import datetime
+import json
+import logging
 import time
 import types
+import typing
+
 from django import http
 
-import logging
+# from xml_marshaller import xml_marshaller
 
 logger = logging.getLogger(__name__)
 
@@ -50,12 +48,12 @@ class ParametersException(Exception):
     pass
 
 
-class ContentProcessor(object):
+class ContentProcessor:
     """
     Process contents (request/response) so Handlers can manage them
     """
-    mime_type = None
-    extensions = None
+    mime_type: typing.ClassVar[typing.Optional[str]] = None
+    extensions: typing.ClassVar[typing.Iterable[str]] = []
 
     def __init__(self, request):
         self._request = request
@@ -94,24 +92,27 @@ class ContentProcessor(object):
         """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
-        if obj is None:
-            return None
-        elif isinstance(obj, (bool, int, float, str)):
+        if obj is None or isinstance(obj, (bool, int, float, str)):
             return obj
-        elif isinstance(obj, dict):
+
+        if isinstance(obj, dict):
             res = {}
             for k, v in obj.items():
                 res[k] = ContentProcessor.procesForRender(v)
             return res
-        elif isinstance(obj, (list, tuple, types.GeneratorType)):
+
+        if isinstance(obj, (list, tuple, types.GeneratorType)):
             res = []
             for v in obj:
                 res.append(ContentProcessor.procesForRender(v))
             return res
-        elif isinstance(obj, (datetime.datetime, datetime.date)):
+
+        if isinstance(obj, (datetime.datetime, datetime.date)):
             return int(time.mktime(obj.timetuple()))
-        elif isinstance(obj, bytes):
+
+        if isinstance(obj, bytes):
             return obj.decode('utf-8')
+
         return str(obj)
 
 
@@ -120,7 +121,7 @@ class MarshallerProcessor(ContentProcessor):
     If we have a simple marshaller for processing contents
     this class will allow us to set up a new one simply setting "marshaller"
     """
-    marshaller = None
+    marshaller: typing.ClassVar[typing.Any] = None
 
     def processParameters(self):
         try:
@@ -128,10 +129,10 @@ class MarshallerProcessor(ContentProcessor):
                 return self.processGetParameters()
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body.decode('utf8'))
-            logger.debug("Unmarshalled content: {}".format(res))
+            logger.debug('Unmarshalled content: %s', res)
             return res
         except Exception as e:
-            logger.exception('parsing {}: {}'.format(self.mime_type, e))
+            logger.exception('parsing %s: %s', self.mime_type, e)
             raise ParametersException(str(e))
 
     def render(self, obj):
