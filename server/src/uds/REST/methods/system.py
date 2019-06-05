@@ -30,7 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import pickle
+from datetime import timedelta
+
+import logging
 
 from uds.models import User, Group, Service, UserService, ServicePool, MetaPool, getSqlDatetime
 
@@ -39,10 +42,6 @@ from uds.core.util.Cache import Cache
 from uds.core.util.State import State
 from uds.core.util import encoders
 from uds.REST import Handler, RequestError, ResponseError
-import pickle
-from datetime import timedelta
-
-import logging
 
 logger = logging.getLogger(__name__)
 

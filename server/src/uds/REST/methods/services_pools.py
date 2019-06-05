@@ -30,6 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+
+import six
+
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
 from uds.models.CalendarAction import (
@@ -56,8 +60,6 @@ from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
 from uds.core.managers import userServiceManager
 
-import six
-import logging
 
 logger = logging.getLogger(__name__)
 

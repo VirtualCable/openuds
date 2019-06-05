@@ -32,7 +32,8 @@
 """
 # pylint: disable=too-many-public-methods
 
-from __future__ import unicode_literals
+import typing
+import logging
 
 from django.contrib.sessions.backends.db import SessionStore
 
@@ -40,8 +41,6 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.auths.auth import getRootUser
 from uds.models import Authenticator
 from uds.core.managers import cryptoManager
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -52,54 +51,48 @@ class HandlerError(Exception):
     """
     Generic error for a REST handler
     """
-    pass
 
 
 class NotFound(HandlerError):
     """
     Item not found error
     """
-    pass
 
 
 class AccessDenied(HandlerError):
     """
     Access denied error
     """
-    pass
 
 
 class RequestError(HandlerError):
     """
     Request is invalid error
     """
-    pass
 
 
 class ResponseError(HandlerError):
     """
     Generic response error
     """
-    pass
 
 
 class NotSupportedError(HandlerError):
     """
     Some elements do not support some operations (as searching over an authenticator that does not supports it)
     """
-    pass
 
 
-class Handler(object):
+class Handler:
     """
     REST requests handler base class
     """
-    raw = False  # If true, Handler will return directly an HttpResponse Object
-    name = None  # If name is not used, name will be the class name in lower case
-    path = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
-    authenticated = True  # By default, all handlers needs authentication
-    needs_admin = False  # By default, the methods will be accessible by anyone if nothing else indicated
-    needs_staff = False  # By default, staff
+    raw: typing.ClassVar[bool] = False  # If true, Handler will return directly an HttpResponse Object
+    name: typing.ClassVar[typing.Optional[str]] = None  # If name is not used, name will be the class name in lower case
+    path: typing.ClassVar[typing.Optional[str]] = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
+    authenticated: typing.ClassVar[bool] = True  # By default, all handlers needs authentication
+    needs_admin: typing.ClassVar[bool] = False  # By default, the methods will be accessible by anyone if nothing else indicated
+    needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
     def __init__(self, request, path, operation, params, *args, **kwargs):
@@ -248,25 +241,25 @@ class Handler(object):
             self._session.accessed = True
             self._session.save()
         except Exception:
-            logger.exception('Got an exception setting session value {} to {}'.format(key, value))
+            logger.exception('Got an exception setting session value %s to %s', key, value)
 
     def is_admin(self):
         """
         True if user of this REST request is administrator
         """
-        return self.getValue('is_admin') and True or False
+        return bool(self.getValue('is_admin'))
 
     def is_staff_member(self):
         """
         True if user of this REST request is member of staff
         """
-        return self.getValue('staff_member') and True or False
+        return bool(self.getValue('staff_member'))
 
     def getUser(self):
         """
         If user is staff member, returns his Associated user on auth
         """
-        logger.debug('REST : {}'.format(self._session))
+        logger.debug('REST : %s', self._session)
         authId = self.getValue('auth')
         username = self.getValue('username')
         # Maybe it's root user??

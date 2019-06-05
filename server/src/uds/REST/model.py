@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,12 +31,19 @@
 """
 # pylint: disable=too-many-public-methods
 
-from __future__ import unicode_literals
+import fnmatch
+import re
+import types
+import typing
+
+import logging
+
+import six
+
+from django.utils.translation import ugettext as _
+from django.db import IntegrityError, models
 
 from uds.REST.handlers import NotFound, RequestError, ResponseError, AccessDenied, NotSupportedError
-from django.utils.translation import ugettext as _
-from django.db import IntegrityError
-
 from uds.core.ui.UserInterface import gui as uiGui
 from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
@@ -44,13 +51,6 @@ from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.models import Tag
 
-import six
-from six.moves import filter  # @UnresolvedImport
-import fnmatch
-import re
-import types
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,6 @@ class SaveException(HandlerError):
     """
     Exception thrown if couldn't save
     """
-    pass
 
 
 class BaseModelHandler(Handler):
@@ -299,7 +298,7 @@ class BaseModelHandler(Handler):
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 # noinspection PyMissingConstructor
-class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-used
+class DetailHandler(BaseModelHandler):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -320,7 +319,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
 
     Also accepts GET methods for "custom" methods
     """
-    custom_methods = []
+    custom_methods: typing.Iterable[typing.Tuple[str, bool]] = []
 
     def __init__(self, parentHandler, path, params, *args, **kwargs):  # pylint: disable=super-init-not-called
         """
@@ -357,7 +356,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         Processes GET method for a detail Handler
         """
         # Process args
-        logger.debug("Detail args for GET: {0}".format(self._args))
+        logger.debug('Detail args for GET: %s', self._args)
         nArgs = len(self._args)
 
         parent = self._kwargs['parent']
@@ -405,7 +404,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         Evaluates if it is a new element or a "modify" operation (based on if it has parameter),
         and invokes "saveItem" with parent & item (that can be None for a new Item)
         """
-        logger.debug("Detail args for PUT: {0}, {1}".format(self._args, self._params))
+        logger.debug('Detail args for PUT: %s, %s', self._args, self._params)
 
         parent = self._kwargs['parent']
 
@@ -514,7 +513,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         """
         return {}
 
-    def getGui(self, parent, forType):  # pylint: disable=no-self-use
+    def getGui(self, parent, forType) -> typing.Iterable[typing.Any]:  # pylint: disable=no-self-use
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
@@ -522,7 +521,8 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         :param forType: Type of object needing gui
         :return: a "gui" (list of gui fields)
         """
-        raise RequestError('Gui not provided for this type of object')
+        # raise RequestError('Gui not provided for this type of object')
+        return []
 
     def getTypes(self, parent, forType):  # pylint: disable=no-self-use
         """
@@ -560,39 +560,39 @@ class ModelHandler(BaseModelHandler):
           The only detail that has types within is "Service", child of "Provider"
     """
     # Authentication related
-    authenticated = True
-    needs_staff = True
+    authenticated: typing.ClassVar[bool] = True
+    needs_staff: typing.ClassVar[bool] = True
     # Which model does this manage
-    model = None
+    model: typing.Optional[models.Model] = None
 
     # By default, filter is empty
-    fltr = None
+    fltr: typing.Optional[str] = None
 
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
-    custom_methods = []  # If this model respond to "custom" methods, we will declare them here
+    custom_methods: typing.Iterable[typing.Tuple[str, bool]] = []  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
-    detail = None  # Dictionary containing detail routing
+    detail: typing.Optional[typing.Dict[str, typing.Type[DetailHandler]]] = None  # Dictionary containing detail routing
     # Put needed fields
-    save_fields = []
+    save_fields: typing.Iterable[str] = []
     # Put removable fields before updating
-    remove_fields = []
+    remove_fields: typing.Iterable[str] = []
     # Table info needed fields and title
-    table_fields = []
-    table_row_style = {}
-    table_title = ''
-    table_subtitle = ''
+    table_fields: typing.Iterable[typing.Any] = []
+    table_row_style: typing.Dict = {}
+    table_title: str = ''
+    table_subtitle: str = ''
 
     # This methods must be override, depending on what is provided
 
     # Data related
-    def item_as_dict(self, item):
+    def item_as_dict(self, item) -> typing.Dict[str, typing.Any]:
         """
         Must be overriden by descendants.
         Expects the return of an item as a dictionary
         """
-        return None
+        return {}
 
     def item_as_dict_overview(self, item):
         """
@@ -623,7 +623,7 @@ class ModelHandler(BaseModelHandler):
         if found is None:
             raise NotFound('type not found')
 
-        logger.debug('Found type {0}'.format(found))
+        logger.debug('Found type %s', found)
         return found
 
     # log related
@@ -633,8 +633,9 @@ class ModelHandler(BaseModelHandler):
         return log.getLogs(item)
 
     # gui related
-    def getGui(self, type_):
-        self.invalidRequestException()
+    def getGui(self, type_) -> typing.Iterable[typing.Any]:
+        return []
+        # self.invalidRequestException()
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception
@@ -662,7 +663,7 @@ class ModelHandler(BaseModelHandler):
         if 'filter' in self._params:
             self.fltr = self._params['filter']
             del self._params['filter']  # Remove parameter
-            logger.debug('Found a filter expression ({})'.format(self.fltr))
+            logger.debug('Found a filter expression (%s)', self.fltr)
 
     def doFilter(self, data):
         # Right now, filtering only supports a single filter, in a future
@@ -674,7 +675,7 @@ class ModelHandler(BaseModelHandler):
         if not isinstance(data, (list, tuple, types.GeneratorType)):
             return data
 
-        logger.debug('data: {}, fltr: {}'.format(data, self.fltr))
+        logger.debug('data: %s, fltr: %s', data, self.fltr)
         try:
             fld, pattern = self.fltr.split('=')
             s, e = '', ''
@@ -697,11 +698,11 @@ class ModelHandler(BaseModelHandler):
 
             res = list(filter(fltr_function, data))
 
-            logger.debug('After filtering: {}'.format(res))
+            logger.debug('After filtering: %s', res)
             return res
         except:
             logger.exception('Exception:')
-            logger.info('Filtering expression {} is invalid!'.format(self.fltr))
+            logger.info('Filtering expression %s is invalid!', self.fltr)
             raise RequestError('Filtering expression {} is invalid'.format(self.fltr))
 
         return data
@@ -709,7 +710,7 @@ class ModelHandler(BaseModelHandler):
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
     def processDetail(self):
-        logger.debug('Processing detail {} for with params {}'.format(self._path, self._params))
+        logger.debug('Processing detail %s for with params %s', self._path, self._params)
         try:
             item = self.model.objects.filter(uuid=self._args[0])[0]
             # If we do not have access to parent to, at least, read...
@@ -720,10 +721,10 @@ class ModelHandler(BaseModelHandler):
                 requiredPermission = permissions.PERMISSION_READ
 
             if permissions.checkPermissions(self._user, item, requiredPermission) is False:
-                logger.debug('Permission for user {} does not comply with {}'.format(self._user, requiredPermission))
+                logger.debug('Permission for user %s does not comply with %s', self._user, requiredPermission)
                 self.accessDenied()
 
-            detailCls = self.detail[self._args[1]]
+            detailCls = self.detail[self._args[1]]  # pylint: disable=unsubscriptable-object
             args = list(self._args[2:])
             path = self._path + '/'.join(args[:2])
             detail = detailCls(self, path, self._params, *args, parent=item, user=self._user)

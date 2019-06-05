@@ -167,3 +167,4 @@
 /udsService/udsgui/obj/x86
 
 .vscode
+.mypy_cache

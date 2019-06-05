@@ -74,13 +74,15 @@ class XenLinkedService(Service):
     usesCache = True
     # : Tooltip shown to user when this item is pointed at admin interface, none
     # : because we don't use it
-    cacheTooltip = _('Number of desired machines to keep running waiting for a user')
+    cacheTooltip = _(
+        'Number of desired machines to keep running waiting for a user')
     # : If we need to generate a "Level 2" cache for this service (i.e., L1
     # : could be running machines and L2 suspended machines)
     usesCache_L2 = True
     # : Tooltip shown to user when this item is pointed at admin interface, None
     # : also because we don't use it
-    cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use')
+    cacheTooltip_L2 = _(
+        'Number of desired machines to keep suspended waiting for use')
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
@@ -168,7 +170,8 @@ class XenLinkedService(Service):
         label=_('Name Length'),
         defvalue=5,
         order=115,
-        tooltip=_('Length of numeric part for the names of this machines (beetwen 3 and 6'),
+        tooltip=_(
+            'Length of numeric part for the names of this machines (beetwen 3 and 6'),
         tab=_('Machine'),
         required=True
     )
@@ -183,11 +186,14 @@ class XenLinkedService(Service):
         if values is not None:
             length = int(self.lenName.value)
             if len(self.baseName.value) + length > 15:
-                raise Service.ValidationException(_('The length of basename plus length must not be greater than 15'))
+                raise Service.ValidationException(
+                    _('The length of basename plus length must not be greater than 15'))
             if self.baseName.value.isdigit():
-                raise Service.ValidationException(_('The machine name can\'t be only numbers'))
+                raise Service.ValidationException(
+                    _('The machine name can\'t be only numbers'))
             if int(self.memory.value) < 256:
-                raise Service.ValidationException(_('The minimum allowed memory is 256 Mb'))
+                raise Service.ValidationException(
+                    _('The minimum allowed memory is 256 Mb'))
 
     def initGui(self):
         """
@@ -206,8 +212,10 @@ class XenLinkedService(Service):
             machines_list.append(gui.choiceItem(m['id'], m['name']))
         storages_list = []
         for storage in storages:
-            space, free = storage['size'] / 1024, (storage['size'] - storage['used']) / 1024
-            storages_list.append(gui.choiceItem(storage['id'], "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free)))
+            space, free = storage['size'] / \
+                1024, (storage['size'] - storage['used']) / 1024
+            storages_list.append(gui.choiceItem(
+                storage['id'], "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free)))
         network_list = []
         for net in networks:
             network_list.append(gui.choiceItem(net['id'], net['name']))
@@ -221,12 +229,14 @@ class XenLinkedService(Service):
 
     def datastoreHasSpace(self):
         # Get storages for that datacenter
-        logger.debug('Checking datastore space for {0}'.format(self.datastore.value))
+        logger.debug('Checking datastore space for {0}'.format(
+            self.datastore.value))
         info = self.parent().getStorageInfo(self.datastore.value)
         logger.debug('Datastore Info: {0}'.format(info))
         availableGB = (info['size'] - info['used']) / 1024
         if availableGB < self.minSpaceGB.num():
-            raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(self.minSpaceGB.num(), availableGB))
+            raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(
+                self.minSpaceGB.num(), availableGB))
 
     def sanitizeVmName(self, name):
         """
@@ -248,7 +258,8 @@ class XenLinkedService(Service):
         Raises an exception if operation fails.
         """
 
-        logger.debug('Starting deploy of template from machine {0} on datastore {1}'.format(self.machine.value, self.datastore.value))
+        logger.debug('Starting deploy of template from machine {0} on datastore {1}'.format(
+            self.machine.value, self.datastore.value))
 
         # Checks datastore size
         self.datastoreHasSpace()
@@ -256,6 +267,7 @@ class XenLinkedService(Service):
 
     def convertToTemplate(self, machineId):
         """
+        converts machine to template
         """
         self.parent().convertToTemplate(machineId, self.shadow.value)
 
@@ -274,7 +286,8 @@ class XenLinkedService(Service):
         Returns:
             Id of the machine being created form template
         """
-        logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
+        logger.debug(
+            'Deploying from template {0} machine {1}'.format(templateId, name))
         self.datastoreHasSpace()
 
         return self.parent().startDeployFromTemplate(name, comments, templateId)
@@ -406,4 +419,3 @@ class XenLinkedService(Service):
         Returns the selected display type (for created machines, for administration
         """
         return self.display.value
-

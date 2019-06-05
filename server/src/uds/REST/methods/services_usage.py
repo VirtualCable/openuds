@@ -33,17 +33,15 @@
 
 # pylint: disable=too-many-public-methods
 
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext as _
 
 from uds.models import UserService
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
-from uds.core.util import log
 from uds.REST.model import DetailHandler
 
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -30,15 +30,15 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+import six
+
+from django.utils.translation import ugettext_lazy as _
 
 from uds.REST import model
 from uds import reports
 
-import six
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class Reports(model.BaseModelHandler):
 
     def _findReport(self, uuid, values=None):
         found = None
-        logger.debug('Looking for report {}'.format(uuid))
+        logger.debug('Looking for report %s', uuid)
         for i in reports.availableReports:
             if i.getUuid() == uuid:
                 found = i(values)
@@ -76,7 +76,7 @@ class Reports(model.BaseModelHandler):
         return found
 
     def get(self):
-        logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
+        logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
         nArgs = len(self._args)
 
         if nArgs == 0:
@@ -98,7 +98,7 @@ class Reports(model.BaseModelHandler):
         """
         Processes a PUT request
         """
-        logger.debug('method PUT for {0}, {1}, {2}'.format(self.__class__.__name__, self._args, self._params))
+        logger.debug('method PUT for %s, %s, %s', self.__class__.__name__, self._args, self._params)
 
         if len(self._args) != 1:
             return self.invalidRequestException()
@@ -106,7 +106,7 @@ class Reports(model.BaseModelHandler):
         report = self._findReport(self._args[0], self._params)
 
         try:
-            logger.debug('Report: {}'.format(report))
+            logger.debug('Report: %s', report)
             result = report.generateEncoded()
 
             data = {

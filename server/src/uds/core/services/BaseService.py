@@ -30,15 +30,15 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 from uds.core.transports import protocols
 from . import types
-
-__updated__ = '2018-06-07'
-
+from .BasePublication import Publication
+from .BaseDeployed import UserDeployment
 
 class Service(Module):
     """
@@ -79,38 +79,38 @@ class Service(Module):
     """
 
     # : Constant for indicating that max elements this service can deploy is unlimited.
-    UNLIMITED = -1
+    UNLIMITED: int = -1
 
     # : Name of type, used at administration interface to identify this
     # : service (i.e. Xen server, oVirt Server, ...)
     # : This string will be translated when provided to admin interface
     # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     # : if you want so it can be translated.
-    typeName = _('Base Service')
+    typeName: str = _('Base Service')
 
     # : Name of type used by Managers to identify this type of service
     # : We could have used here the Class name, but we decided that the
     # : module implementator will be the one that will provide a name that
     # : will relation the class (type) and that name.
-    typeType = 'BaseService'
+    typeType: str = 'BaseService'
 
     # : Description shown at administration level for this service.
     # : This string will be translated when provided to admin interface
     # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     # : if you want so it can be translated.
-    typeDescription = _('Base Service')
+    typeDescription: str = _('Base Service')
 
     # : Icon file, used to represent this service at administration interface
     # : This file should be at same folder as this class is, except if you provide
     # : your own :py:meth:uds.core.BaseModule.BaseModule.icon method.
-    iconFile = 'service.png'
+    iconFile: str = 'service.png'
 
     # Functional related data
 
     # : Normally set to UNLIMITED. This attribute indicates if the service has some "limitation"
     # : for providing deployed services to users. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
-    maxDeployed = UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
+    maxDeployed: int = UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
 
     # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
     cacheConstrains = None
@@ -134,7 +134,7 @@ class Service(Module):
     cacheTooltip_L2 = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If the service needs a o.s. manager (see os managers section)
-    needsManager = False
+    needsManager: bool = False
 
     # : If the service can be autoassigned or needs to be assigned by administrator
     # : Not all services are for assigning it. Thing, i.e., a Service that manages
@@ -143,7 +143,7 @@ class Service(Module):
     # : to assign the service automatically. If this is true, the core will not
     # : assign the service automatically, so if the user do not have a consumable
     # : assigned, the user will never get one (of this kind, of course)
-    mustAssignManually = False
+    mustAssignManually: typing.ClassVar[bool] = False
 
     # : Types of publications (preparated data for deploys)
     # : If you provide this, UDS will assume that the service needs a preparation.
@@ -152,23 +152,23 @@ class Service(Module):
     # : provide a publication type
     # : This refers to class that provides the logic for publication, you can see
     # : :py:class:uds.core.services.Publication
-    publicationType = None
+    publicationType: typing.ClassVar[typing.Optional[typing.Type[Publication]]] = None
 
     # : Types of deploys (services in cache and/or assigned to users)
     # : This is ALWAYS a MUST. You mast indicate the class responsible
     # : for managing the user deployments (user consumable services generated
     # : from this one). If this attribute is not set, the service will never work
     # : (core will not know how to handle the user deployments)
-    deployedType = None
+    deployedType: typing.ClassVar[typing.Optional[typing.Type[UserDeployment]]] = None
 
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
-    allowedProtocols = protocols.GENERIC
+    allowedProtocols: typing.Iterable = protocols.GENERIC
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
-    spawnsNew = False
+    spawnsNew: bool = False
 
     # : If the service allows "reset", here we will announce it
     # : Defaults to False
@@ -176,7 +176,7 @@ class Service(Module):
 
     # : 'kind' of services that this service provides:
     # : For example, VDI, VAPP, ...
-    servicesTypeProvided = types.ALL
+    servicesTypeProvided: typing.Iterable = types.ALL
 
     def __init__(self, environment, parent, values=None, uuid=None):
         """

@@ -30,22 +30,22 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
+import logging
 
 from django.utils.translation import ugettext, ugettext_lazy as _
+
 from uds.models import Provider, Service, UserService
 from uds.core import services
 from uds.core.util.State import State
 from uds.core.util import permissions
-from uds.core.util.model import processUuid
-
-from .services import Services as DetailServices
-from .services_usage import ServicesUsage
 
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
-import logging
+from .services import Services as DetailServices
+from .services_usage import ServicesUsage
+
 
 logger = logging.getLogger(__name__)
 
@@ -78,8 +78,8 @@ class Providers(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def item_as_dict(self, provider):
-        type_ = provider.getType()
+    def item_as_dict(self, item) -> typing.Dict[str, typing.Any]:
+        type_ = item.getType()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
         offers = [{
@@ -89,16 +89,16 @@ class Providers(ModelHandler):
             'icon': t.icon().replace('\n', '')} for t in type_.getServicesTypes()]
 
         return {
-            'id': provider.uuid,
-            'name': provider.name,
-            'tags': [tag.vtag for tag in provider.tags.all()],
-            'services_count': provider.services.count(),
-            'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).exclude(state__in=(State.REMOVED, State.ERROR)).count(),
-            'maintenance_mode': provider.maintenance_mode,
+            'id': item.uuid,
+            'name': item.name,
+            'tags': [tag.vtag for tag in item.tags.all()],
+            'services_count': item.services.count(),
+            'user_services_count': UserService.objects.filter(deployed_service__service__provider=item).exclude(state__in=(State.REMOVED, State.ERROR)).count(),
+            'maintenance_mode': item.maintenance_mode,
             'offers': offers,
             'type': type_.type(),
-            'comments': provider.comments,
-            'permission': permissions.getEffectivePermission(self._user, provider)
+            'comments': item.comments,
+            'permission': permissions.getEffectivePermission(self._user, item)
         }
 
     def checkDelete(self, item):
@@ -152,12 +152,12 @@ class Providers(ModelHandler):
     def test(self, type_):
         from uds.core.Environment import Environment
 
-        logger.debug('Type: {}'.format(type_))
+        logger.debug('Type: %s', type_)
         spType = services.factory().lookup(type_)
 
         self.ensureAccess(spType, permissions.PERMISSION_MANAGEMENT, root=True)
 
-        logger.debug('spType: {}'.format(spType))
+        logger.debug('spType: %s', spType)
 
         dct = self._params.copy()
         dct['_request'] = self._request

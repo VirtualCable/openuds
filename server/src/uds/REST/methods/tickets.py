@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import datetime
+
+import logging
+
 
 from uds.REST import Handler
 from uds.REST import RequestError
@@ -41,11 +44,6 @@ from uds.models import TicketStore
 from uds.core.managers import cryptoManager
 from uds.core.util.model import processUuid
 from uds.core.util import tools
-
-import datetime
-import six
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +140,7 @@ class Tickets(Handler):
             username = self._params['username']
             password = self._params.get('password', '')  # Some machines needs password, depending on configuration
             groups = self._params['groups']
-            if isinstance(groups, (six.text_type, six.binary_type)):
+            if isinstance(groups, (str, bytes)):
                 groups = (groups,)
             grps = []
             for g in groups:
@@ -204,7 +202,7 @@ class Tickets(Handler):
         except Transport.DoesNotExist:
             return Tickets.result(error='Transport does not exists')
         except Exception as e:
-            return Tickets.result(error=six.text_type(e))
+            return Tickets.result(error=str(e))
 
         data = {
             'username': username,
