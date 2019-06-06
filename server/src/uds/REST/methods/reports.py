@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,8 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-
-import six
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -119,7 +117,7 @@ class Reports(model.BaseModelHandler):
             return data
         except Exception as e:
             logger.exception('Generating report')
-            return self.invalidRequestException(six.text_type(e))
+            return self.invalidRequestException(str(e))
 
     # Gui related
     def getGui(self, uuid):

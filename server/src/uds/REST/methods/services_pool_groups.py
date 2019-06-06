@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,7 @@
 """
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import ServicesPoolGroup, Image
@@ -39,8 +39,6 @@ from uds.core.ui.UserInterface import gui
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
 from uds.REST.model import ModelHandler
-
-import logging
 
 logger = logging.getLogger(__name__)
 

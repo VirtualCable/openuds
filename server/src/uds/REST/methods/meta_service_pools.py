@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,10 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=too-many-public-methods
-
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext as _
 
@@ -47,12 +44,8 @@ from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler
 from .user_services import AssignedService
-import logging
 
 logger = logging.getLogger(__name__)
-
-ALLOW = 'ALLOW'
-DENY = 'DENY'
 
 
 class MetaServicesPool(DetailHandler):
@@ -71,16 +64,14 @@ class MetaServicesPool(DetailHandler):
             'enabled': item.enabled,
             'user_services_count': item.pool.userServices.exclude(state__in=State.INFO_STATES).count(),
             'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
-            'priority': item.priority,
         }
 
     def getItems(self, parent: MetaPool, item: str):
         try:
             if item is None:
                 return [MetaServicesPool.as_dict(i) for i in parent.members.all()]
-            else:
-                i = parent.members.get(uuid=processUuid(item))
-                return MetaServicesPool.as_dict(i)
+            i = parent.members.get(uuid=processUuid(item))
+            return MetaServicesPool.as_dict(i)
         except Exception:
             logger.exception('err: %s', item)
             self.invalidItemException()
@@ -190,7 +181,7 @@ class MetaAssignedService(DetailHandler):
     def getLogs(self, parent, item):
         try:
             item = self._getAssignedService(parent, item)
-            logger.debug('Getting logs for {0}'.format(item))
+            logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
             self.invalidItemException()

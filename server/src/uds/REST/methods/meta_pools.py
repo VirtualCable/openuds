@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2018 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import MetaPool, Image, ServicesPoolGroup
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
@@ -40,11 +42,10 @@ from uds.core.util import permissions
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
-from .user_services import Groups
 from uds.REST.methods.op_calendars import AccessCalendars
-from .meta_service_pools import MetaServicesPool, MetaAssignedService
 
-import logging
+from .user_services import Groups
+from .meta_service_pools import MetaServicesPool, MetaAssignedService
 
 logger = logging.getLogger(__name__)
 
@@ -63,8 +64,6 @@ class MetaPools(ModelHandler):
 
     save_fields = ['name', 'short_name', 'comments', 'tags',
                    'image_id', 'servicesPoolGroup_id', 'visible', 'policy']
-
-    remove_fields = []
 
     table_title = _('Meta Pools')
     table_fields = [
@@ -175,7 +174,7 @@ class MetaPools(ModelHandler):
             # Servicepool Group
             spgrpId = fields['servicesPoolGroup_id']
             fields['servicesPoolGroup_id'] = None
-            logger.debug('servicesPoolGroup_id: {}'.format(spgrpId))
+            logger.debug('servicesPoolGroup_id: %s', spgrpId)
             try:
                 if spgrpId != '-1':
                     spgrp = ServicesPoolGroup.objects.get(uuid=processUuid(spgrpId))
@@ -188,7 +187,7 @@ class MetaPools(ModelHandler):
         except Exception as e:
             raise RequestError(str(e))
 
-        logger.debug('Fields: {}'.format(fields))
+        logger.debug('Fields: %s', fields)
 
     def deleteItem(self, item):
         item.delete()

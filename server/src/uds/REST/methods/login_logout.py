@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,21 +30,20 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import random
+import string
 
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.model import processUuid
-from uds.models import Authenticator
 from uds.core.auths.auth import authenticate
 from uds.core import VERSION as UDS_VERSION
 
 from uds.REST import RequestError
 from uds.REST import Handler
 
-import logging
-import random
-import string
-import six
+from uds.models import Authenticator
+
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +131,7 @@ class Login(Handler):
             raise Exception('Invalid Credentials')
         except Exception as e:
             logger.exception('exception')
-            return {'result': 'error', 'error': six.text_type(e)}
+            return {'result': 'error', 'error': str(e)}
 
 
 class Logout(Handler):

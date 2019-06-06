@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -125,7 +125,7 @@ class MarshallerProcessor(ContentProcessor):
 
     def processParameters(self):
         try:
-            if self._request.META.get('CONTENT_LENGTH', '0') == '0' or len(self._request.body) == 0:
+            if self._request.META.get('CONTENT_LENGTH', '0') == '0' or not self._request.body:
                 return self.processGetParameters()
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body.decode('utf8'))

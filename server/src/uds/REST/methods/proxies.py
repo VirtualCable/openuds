@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2017-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,17 +30,15 @@
 """
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Proxy
 from uds.core.ui.UserInterface import gui
 from uds.core.util import permissions
-import datetime
 
 from uds.REST.model import ModelHandler
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -64,52 +62,53 @@ class Proxies(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, proxy):
+    def item_as_dict(self, item):
         return {
-            'id': proxy.uuid,
-            'name': proxy.name,
-            'tags': [tag.tag for tag in proxy.tags.all()],
-            'comments': proxy.comments,
-            'url': proxy.url,
-            'host': proxy.host,
-            'port': proxy.port,
-            'ssl': proxy.ssl,
-            'check_cert': proxy.check_cert,
-            'permission': permissions.getEffectivePermission(self._user, proxy)
+            'id': item.uuid,
+            'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
+            'comments': item.comments,
+            'url': item.url,
+            'host': item.host,
+            'port': item.port,
+            'ssl': item.ssl,
+            'check_cert': item.check_cert,
+            'permission': permissions.getEffectivePermission(self._user, item)
         }
 
     def getGui(self, type_):
         g = self.addDefaultFields([], ['name', 'comments', 'tags'])
 
-        for f in [{
-            'name': 'host',
-            'value': '',
-            'label': ugettext('Host'),
-            'tooltip': ugettext('Server (IP or FQDN) that will serve as proxy.'),
-            'type': gui.InputField.TEXT_TYPE,
-            'order': 110,
-        }, {
-            'name': 'port',
-            'value': '9090',
-            'minValue': '0',
-            'label': ugettext('Port'),
-            'tooltip': ugettext('Port of proxy server'),
-            'type': gui.InputField.NUMERIC_TYPE,
-            'order': 111,
-        }, {
-            'name': 'ssl',
-            'value': True,
-            'label': ugettext('Use SSL'),
-            'tooltip': ugettext('If active, the proxied connections will be done using HTTPS'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-        }, {
-            'name': 'check_cert',
-            'value': True,
-            'label': ugettext('Check Certificate'),
-            'tooltip': ugettext('If active, any SSL certificate will be checked (will not allow self signed certificates on proxy)'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-        },
-        ]:
+        for f in [
+                {
+                    'name': 'host',
+                    'value': '',
+                    'label': ugettext('Host'),
+                    'tooltip': ugettext('Server (IP or FQDN) that will serve as proxy.'),
+                    'type': gui.InputField.TEXT_TYPE,
+                    'order': 110,
+                }, {
+                    'name': 'port',
+                    'value': '9090',
+                    'minValue': '0',
+                    'label': ugettext('Port'),
+                    'tooltip': ugettext('Port of proxy server'),
+                    'type': gui.InputField.NUMERIC_TYPE,
+                    'order': 111,
+                }, {
+                    'name': 'ssl',
+                    'value': True,
+                    'label': ugettext('Use SSL'),
+                    'tooltip': ugettext('If active, the proxied connections will be done using HTTPS'),
+                    'type': gui.InputField.CHECKBOX_TYPE,
+                }, {
+                    'name': 'check_cert',
+                    'value': True,
+                    'label': ugettext('Check Certificate'),
+                    'tooltip': ugettext('If active, any SSL certificate will be checked (will not allow self signed certificates on proxy)'),
+                    'type': gui.InputField.CHECKBOX_TYPE,
+                },
+            ]:
             self.addField(g, f)
 
         return g

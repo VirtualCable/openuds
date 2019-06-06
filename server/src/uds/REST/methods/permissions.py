@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,20 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-from django.utils.translation import ugettext as _
-
-from uds.REST import Handler
-from uds.REST import RequestError
 from uds.core.util import permissions
 
 from uds.models import Provider, Service, Authenticator, OSManager, Transport, Network, ServicePool, Calendar, Account, MetaPool
 from uds.models import User, Group
 
-import six
+from uds.REST import Handler
+from uds.REST import RequestError
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +99,7 @@ class Permissions(Handler):
         """
         Processes get requests
         """
-        logger.debug("Permissions args for GET: {0}".format(self._args))
+        logger.debug('Permissions args for GET: %s', self._args)
 
         if len(self._args) != 2:
             raise RequestError('Invalid request')
@@ -119,7 +115,7 @@ class Permissions(Handler):
         """
         Processes put requests
         """
-        logger.debug('Put args: {}'.format(self._args))
+        logger.debug('Put args: %s', self._args)
 
         la = len(self._args)
 

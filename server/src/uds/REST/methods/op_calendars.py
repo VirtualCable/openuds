@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,22 +30,18 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=too-many-public-methods
-
-from __future__ import unicode_literals
+import json
+import logging
 
 from django.utils.translation import ugettext as _
 
 from uds.models import CalendarAction, Calendar
 from uds.models.CalendarAction import CALENDAR_ACTION_DICT
+from uds.core.util import log, permissions
 from uds.core.util.model import processUuid
-from uds.core.util import log
-from uds.REST.model import DetailHandler
-from uds.core.util import permissions
 
-import json
-import logging
+from uds.REST.model import DetailHandler
+
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +92,7 @@ class AccessCalendars(DetailHandler):
         try:
             calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
             access = self._params['access'].upper()
-            if access not in ('ALLOW', 'DENY'):
+            if access not in (ALLOW, DENY):
                 raise Exception()
         except Exception:
             self.invalidRequestException(_('Invalid parameters on request'))
@@ -155,9 +151,8 @@ class ActionsCalendars(DetailHandler):
         try:
             if item is None:
                 return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
-            else:
-                i = CalendarAction.objects.get(uuid=processUuid(item))
-                return ActionsCalendars.as_dict(i)
+            i = CalendarAction.objects.get(uuid=processUuid(item))
+            return ActionsCalendars.as_dict(i)
         except Exception:
             self.invalidItemException()
 
