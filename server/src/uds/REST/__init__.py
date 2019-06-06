@@ -38,7 +38,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _, activate
 from django.conf import settings
-from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError, NotSupportedError
+
+from .handlers import (
+    Handler,
+    HandlerError,
+    AccessDenied,
+    NotFound,
+    RequestError,
+    ResponseError,
+    NotSupportedError
+)
 
 from . import processors
 

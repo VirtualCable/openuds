@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from uds.models import Authenticator
@@ -42,7 +42,6 @@ from uds.core.util import permissions
 
 from .users_groups import Users, Groups
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -88,21 +87,21 @@ class Authenticators(ModelHandler):
         except Exception:
             raise NotFound('type not found')
 
-    def item_as_dict(self, auth):
-        type_ = auth.getType()
+    def item_as_dict(self, item):
+        type_ = item.getType()
         return {
-            'numeric_id': auth.id,
-            'id': auth.uuid,
-            'name': auth.name,
-            'tags': [tag.tag for tag in auth.tags.all()],
-            'comments': auth.comments,
-            'priority': auth.priority,
-            'small_name': auth.small_name,
-            'users_count': auth.users.count(),
+            'numeric_id': item.id,
+            'id': item.uuid,
+            'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
+            'comments': item.comments,
+            'priority': item.priority,
+            'small_name': item.small_name,
+            'users_count': item.users.count(),
             'type': type_.type(),
             'type_name': type_.name(),
             'type_info': self.typeInfo(type_),
-            'permission': permissions.getEffectivePermission(self._user, auth)
+            'permission': permissions.getEffectivePermission(self._user, item)
         }
 
     # Custom "search" method
@@ -146,12 +145,12 @@ class Authenticators(ModelHandler):
         else:
             return res[1]
 
-    def deleteItem(self, auth):
+    def deleteItem(self, item):
         # For every user, remove assigned services (mark them for removal)
 
-        for user in auth.users.all():
+        for user in item.users.all():
             for userService in user.userServices.all():
                 userService.user = None
                 userService.removeOrCancel()
 
-        auth.delete()
+        item.delete()

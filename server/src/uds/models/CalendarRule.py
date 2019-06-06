@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,21 +31,18 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from __future__ import unicode_literals
-
-__updated__ = '2017-12-12'
+import datetime
+import logging
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 from dateutil import rrule as rules
 
 from .UUIDModel import UUIDModel
 from .Calendar import Calendar
 from .Util import getSqlDatetime
 
-import datetime
-import logging
 
 logger = logging.getLogger(__name__)
 

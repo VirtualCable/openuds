@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,15 @@
 """
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 from uds.models import Calendar
 from uds.core.util import permissions
 
 from uds.REST.model import ModelHandler
 from .calendarrules import CalendarRules
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -63,14 +62,14 @@ class Calendars(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, calendar):
+    def item_as_dict(self, item):
         return {
-            'id': calendar.uuid,
-            'name': calendar.name,
-            'tags': [tag.tag for tag in calendar.tags.all()],
-            'comments': calendar.comments,
-            'modified': calendar.modified,
-            'permission': permissions.getEffectivePermission(self._user, calendar)
+            'id': item.uuid,
+            'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
+            'comments': item.comments,
+            'modified': item.modified,
+            'permission': permissions.getEffectivePermission(self._user, item)
         }
 
     def getGui(self, type_):

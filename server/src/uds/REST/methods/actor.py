@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -108,7 +108,7 @@ class Actor(Handler):
         """
         This will get the client from the IDs passed from parameters
         """
-        logger.debug('Getting User services from ids: {}'.format(self._params.get('id')))
+        logger.debug('Getting User services from ids: %s', self._params.get('id'))
 
         try:
             clientIds = [i.upper() for i in self._params.get('id').split(',')[:5]]
@@ -129,7 +129,7 @@ class Actor(Handler):
         Processes get requests in order to obtain a ticket content
         GET /rest/actor/ticket/[ticketId]?key=masterKey&[secure=true|1|false|0]
         """
-        logger.debug("Ticket args for GET: {0}".format(self._args))
+        logger.debug('Ticket args for GET: %s', self._args)
 
         # secure = self._params.get('secure') in ('1', 'true')
 
@@ -141,13 +141,13 @@ class Actor(Handler):
         except Exception:
             return Actor.result({})
 
-    def get(self):
+    def get(self):  # pylint: disable=too-many-return-statements
         """
         Processes get requests
         """
-        logger.debug("Actor args for GET: {0}".format(self._args))
+        logger.debug('Actor args for GET: %s', self._args)
 
-        if len(self._args) < 1:
+        if not self._args:
             raise RequestError('Invalid request')
 
         if self._args[0] == 'PostThoughGet':
@@ -172,7 +172,7 @@ class Actor(Handler):
             actorVersion = self._params.get('version', 'unknown')
             service = self.getUserServiceByIds()
             if service is None:
-                logger.info('Unmanaged host request: {}'.format(self._args))
+                logger.info('Unmanaged host request: %s', self._args)
                 return Actor.result(_('Unmanaged host'), error=ERR_HOST_NOT_MANAGED)
             else:
                 # Set last seen actor version
@@ -180,7 +180,7 @@ class Actor(Handler):
                 maxIdle = None
                 if service.deployed_service.osmanager is not None:
                     maxIdle = service.deployed_service.osmanager.getInstance().maxIdle()
-                    logger.debug('Max idle: {}'.format(maxIdle))
+                    logger.debug('Max idle: %s', maxIdle)
                 return Actor.result((service.uuid,
                                      service.unique_id,
                                      0 if maxIdle is None else maxIdle)
@@ -208,7 +208,7 @@ class Actor(Handler):
             return Actor.result(_('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND)
 
         if message == 'notifyComms':
-            logger.debug('Setting comms url to {}'.format(data))
+            logger.debug('Setting comms url to %s', data)
             service.setCommsUrl(data)
             return Actor.result('ok')
         elif message == 'ssoAvailable':
@@ -217,7 +217,7 @@ class Actor(Handler):
             return Actor.result('ok')
         elif message == 'version':
             version = self._params.get('version', 'unknown')
-            logger.debug('Got notified version {}'.format(version))
+            logger.debug('Got notified version %s', version)
             service.setProperty('actor_version', version)
 
         # "Cook" some messages, common to all clients, such as "log"

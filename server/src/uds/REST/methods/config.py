@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from uds.core.util.Config import Config as cfgConfig
-
 from uds.REST import Handler
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +44,7 @@ REMOVED = {
     'Cluster': ('Destination CPU Load', 'Migration CPU Load', 'Migration Free Memory'),
     'IPAUTH': ('autoLogin',),
     'VMWare': ('minUsableDatastoreGB', 'maxRetriesOnError'),
-};
+}
 
 
 # Enclosed methods under /config path
@@ -75,7 +73,7 @@ class Config(Handler):
                 'type': cfg.getType(),
                 'params': cfg.getParams()
             }
-        logger.debug('Configuration: {0}'.format(res))
+        logger.debug('Configuration: %s', res)
         return res
 
     def put(self):

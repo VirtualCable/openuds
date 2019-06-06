@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-from uds.core.util.Cache import Cache as uCache
 from django.core.cache import cache as djCache
+from uds.core.util.Cache import Cache as uCache
 from uds.REST import Handler, RequestError
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +49,8 @@ class Cache(Handler):
         """
         Processes get method. Basically, clears & purges the cache, no matter what params
         """
-        logger.debug('Params: {0}'.format(self._params))
-        if len(self._args) == 0:
+        logger.debug('Params: %s', self._params)
+        if not self._args:
             return {}
 
         if len(self._args) != 1:

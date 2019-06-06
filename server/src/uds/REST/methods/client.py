@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import json
 
 from django.utils.translation import ugettext as _
 
@@ -46,10 +47,6 @@ from uds.core.services.Exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION
 from uds.core.util import encoders
 
-import six
-import json
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +82,7 @@ class Client(Handler):
             res['error'] = error
             res['retryable'] = retryable and '1' or '0'
 
-        logger.debug('Client Result: {}'.format(res))
+        logger.debug('Client Result: %s', res)
 
         return res
 
@@ -99,9 +96,9 @@ class Client(Handler):
         """
         Processes get requests
         """
-        logger.debug("Client args for GET: {0}".format(self._args))
+        logger.debug('Client args for GET: %s', self._args)
 
-        if len(self._args) == 0:  # Gets version
+        if not self._args:  # Gets version
             url = self._request.build_absolute_uri(reverse('page.client-download'))
             return Client.result({
                 'availableVersion': CLIENT_VERSION,
@@ -113,7 +110,7 @@ class Client(Handler):
             return Client.result(_('Correct'))
 
         try:
-            ticket, scrambler = self._args  # If more than 2 args, got an error
+            ticket, scrambler = self._args  # If more than 2 args, got an error.  pylint: disable=unbalanced-tuple-unpacking
             hostname = self._params['hostname']  # Or if hostname is not included...
             srcIp = self._request.ip
 
@@ -124,7 +121,7 @@ class Client(Handler):
         except Exception:
             raise RequestError('Invalid request')
 
-        logger.debug('Got Ticket: {}, scrambled: {}, Hostname: {}, Ip: {}'.format(ticket, scrambler, hostname, srcIp))
+        logger.debug('Got Ticket: %s, scrambled: %s, Hostname: %s, Ip: %s', ticket, scrambler, hostname, srcIp)
 
         try:
             data = TicketStore.get(ticket)
@@ -136,7 +133,7 @@ class Client(Handler):
         try:
             logger.debug(data)
             res = userServiceManager().getService(self._request.user, self._request.os, self._request.ip, data['service'], data['transport'])
-            logger.debug('Res: {}'.format(res))
+            logger.debug('Res: %s', res)
             ip, userService, userServiceInstance, transport, transportInstance = res
             password = cryptoManager().symDecrpyt(data['password'], scrambler)
 
@@ -144,8 +141,8 @@ class Client(Handler):
 
             transportScript, signature, params = transportInstance.getEncodedTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 
-            logger.debug('Signature: {}'.format(signature))
-            logger.debug('Data:#######\n{}\n###########'.format(params))
+            logger.debug('Signature: %s', signature)
+            logger.debug('Data:#######\n%s\n###########', params)
 
             return Client.result(result={
                 'script': transportScript,
@@ -158,7 +155,7 @@ class Client(Handler):
             return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
-            return Client.result(error=six.text_type(e))
+            return Client.result(error=str(e))
 
         # Will never reach this
         raise RuntimeError('Unreachable point reached!!!')

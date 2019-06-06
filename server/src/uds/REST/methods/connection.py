@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,24 +30,17 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import datetime
 
-from django.utils.translation import ugettext as _
+import logging
 
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.models import MetaPool, ServicePool, ServicesPoolGroup
 from uds.core.managers import userServiceManager
 from uds.core.managers import cryptoManager
-from uds.core.ui.images import DEFAULT_THUMB_BASE64
-from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import ServiceNotReadyError
 from uds.web.util import errors
 
-import datetime
-import six
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +87,7 @@ class Connection(Handler):
         idService = self._args[0]
         idTransport = self._args[1]
         try:
-            ip, userService, iads, trans, itrans = userServiceManager().getService(
+            ip, userService, iads, trans, itrans = userServiceManager().getService(  # pylint: disable=unused-variable
                 self._user, self._request.os, self._request.ip, idService, idTransport, not doNotCheck
             )
             ci = {
@@ -112,7 +105,7 @@ class Connection(Handler):
             return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
-            return Connection.result(error=six.text_type(e))
+            return Connection.result(error=str(e))
 
     def script(self):
         idService = self._args[0]
@@ -122,8 +115,8 @@ class Connection(Handler):
 
         try:
             res = userServiceManager().getService(self._user, self._request.os, self._request.ip, idService, idTransport)
-            logger.debug('Res: {}'.format(res))
-            ip, userService, userServiceInstance, transport, transportInstance = res
+            logger.debug('Res: %s', res)
+            ip, userService, userServiceInstance, transport, transportInstance = res  # pylint: disable=unused-variable
             password = cryptoManager().symDecrpyt(self.getValue('password'), scrambler)
 
             userService.setConnectionSource(self._request.ip, hostname)  # Store where we are accessing from so we can notify Service
@@ -136,7 +129,7 @@ class Connection(Handler):
             return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
-            return Connection.result(error=six.text_type(e))
+            return Connection.result(error=str(e))
 
         return password
 
@@ -144,7 +137,7 @@ class Connection(Handler):
         """
         Processes get requests
         """
-        logger.debug("Connection args for GET: {0}".format(self._args))
+        logger.debug('Connection args for GET: %s', self._args)
 
         if len(self._args) == 0:
             # Return list of services/transports

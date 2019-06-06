@@ -38,18 +38,24 @@ import typing
 
 import logging
 
-import six
-
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError, models
 
-from uds.REST.handlers import NotFound, RequestError, ResponseError, AccessDenied, NotSupportedError
 from uds.core.ui.UserInterface import gui as uiGui
-from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.models import Tag
+
+from .handlers import (
+    Handler,
+    HandlerError,
+    NotFound, 
+    RequestError, 
+    ResponseError, 
+    AccessDenied, 
+    NotSupportedError
+) 
 
 
 logger = logging.getLogger(__name__)
@@ -225,7 +231,7 @@ class BaseModelHandler(Handler):
                 args[key] = self._params[key]
                 del self._params[key]
         except KeyError as e:
-            raise RequestError('needed parameter not found in data {0}'.format(six.text_type(e)))
+            raise RequestError('needed parameter not found in data {0}'.format(e))
 
         return args
 
@@ -239,8 +245,8 @@ class BaseModelHandler(Handler):
         if hasattr(item, 'getInstance'):
             i = item.getInstance()
             i.initGui()  # Defaults & stuff
-            for key, value in six.iteritems(i.valuesDict()):
-                if isinstance(value, six.string_types):
+            for key, value in i.valuesDict().items():
+                if isinstance(value, str):
                     value = {"true": True, "false": False}.get(value, value)  # Translate "true" & "false" to True & False (booleans)
                 logger.debug('%s = %s', key, value)
                 res[key] = value
@@ -903,7 +909,7 @@ class ModelHandler(BaseModelHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError('Element already exists (duplicate key error)')
         except SaveException as e:
-            raise RequestError(six.text_type(e))
+            raise RequestError(str(e))
         except (RequestError, ResponseError):
             raise
         except Exception:

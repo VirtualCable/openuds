@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,9 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import datetime
 
 from django.utils.translation import ugettext as _
+from django.db import IntegrityError
 
 
 from uds.models.CalendarRule import freqs, CalendarRule
@@ -42,11 +44,7 @@ from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.REST.model import DetailHandler
 from uds.REST import RequestError
-from django.db import IntegrityError
 
-import six
-import logging
-import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +86,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 k = parent.rules.get(uuid=processUuid(item))
                 return CalendarRules.ruleToDict(k, perm)
         except Exception:
-            logger.exception('itemId {}'.format(item))
+            logger.exception('itemId %s', item)
             self.invalidItemException()
 
     def getFields(self, parent):
@@ -96,7 +94,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             {'name': {'title': _('Rule name')}},
             {'start': {'title': _('Starts'), 'type': 'datetime'}},
             {'end': {'title': _('Ends'), 'type': 'date'}},
-            {'frequency': {'title': _('Repeats'), 'type': 'dict', 'dict': dict((v[0], six.text_type(v[1])) for v in freqs)}},
+            {'frequency': {'title': _('Repeats'), 'type': 'dict', 'dict': dict((v[0], str(v[1])) for v in freqs)}},
             {'interval': {'title': _('Every'), 'type': 'callback'}},
             {'duration': {'title': _('Duration'), 'type': 'callback'}},
             {'comments': {'title': _('Comments')}},
@@ -105,7 +103,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
     def saveItem(self, parent, item):
         # Extract item db fields
         # We need this fields for all
-        logger.debug('Saving rule {0} / {1}'.format(parent, item))
+        logger.debug('Saving rule %s / %s', parent, item)
         fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration', 'duration_unit'])
 
         if int(fields['interval']) < 1:
@@ -135,7 +133,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         return self.getItems(parent, calRule.uuid)
 
     def deleteItem(self, parent, item):
-        logger.debug('Deleting rule {} from {}'.format(item, parent))
+        logger.debug('Deleting rule %s from %s', item, parent)
         try:
             calRule = parent.rules.get(uuid=processUuid(item))
             calRule.calendar.modified = getSqlDatetime()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2017-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,6 @@
 """
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import datetime
 import logging
 
@@ -66,13 +64,13 @@ class Accounts(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, account):
+    def item_as_dict(self, item):
         return {
-            'id': account.uuid,
-            'name': account.name,
-            'tags': [tag.tag for tag in account.tags.all()],
-            'comments': account.comments,
-            'time_mark': account.time_mark,
+            'id': item.uuid,
+            'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
+            'comments': item.comments,
+            'time_mark': item.time_mark,
             'permission': permissions.getEffectivePermission(self._user, account)
         }
 
@@ -82,7 +80,6 @@ class Accounts(ModelHandler):
     def timemark(self, item):
         item.time_mark = datetime.datetime.now()
         item.save()
-        return
 
     def clear(self, item):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2017-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
 
 from django.utils.translation import ugettext as _
@@ -82,7 +80,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
                 k = parent.usages.get(uuid=processUuid(item))
                 return AccountsUsage.usageToDict(k, perm)
         except Exception:
-            logger.exception('itemId {}'.format(item))
+            logger.exception('itemId %s', item)
             self.invalidItemException()
 
     def getFields(self, parent):
@@ -103,7 +101,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
         raise RequestError('Accounts usage cannot be edited')
 
     def deleteItem(self, parent, item):
-        logger.debug('Deleting account usage {} from {}'.format(item, parent))
+        logger.debug('Deleting account usage %s from %s', item, parent)
         try:
             usage = parent.usages.get(uuid=processUuid(item))
             usage.delete()
