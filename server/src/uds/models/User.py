@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.Authenticator import Authenticator
 from uds.models.Util import UnsavedForeignKey
@@ -44,14 +42,10 @@ from uds.models.Util import getSqlDatetime
 from uds.core.util import log
 from uds.models.UUIDModel import UUIDModel
 
-import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-06-08'
 
-
-@python_2_unicode_compatible
 class User(UUIDModel):
     """
     This class represents a single user, associated with one authenticator
@@ -156,24 +150,25 @@ class User(UUIDModel):
         for g in usr.groups.filter(is_meta=False):
             grps += (g.id,)
             yield g
+
         # Locate metagroups
         for g in self.manager.groups.filter(is_meta=True):
             gn = g.groups.filter(id__in=grps).count()
 
-            logger.debug('gn = {}'.format(gn))
-            logger.debug('groups count: {}'.format(g.groups.count()))
+            logger.debug('gn = %s', gn)
+            logger.debug('groups count: %s', g.groups.count())
 
             if g.meta_if_any is True and gn > 0:
                 gn = g.groups.count()
 
-            logger.debug('gn after = {}'.format(gn))
+            logger.debug('gn after = %s', gn)
 
             if gn == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g
 
     def __str__(self):
-        return u"User {0}(id:{1}) from auth {2}".format(self.name, self.id, self.manager.name)
+        return 'User {}(id:{}) from auth {}'.format(self.name, self.id, self.manager.name)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -202,7 +197,7 @@ class User(UUIDModel):
             us.assignToUser(None)
             us.remove()
 
-        logger.debug('Deleted user {0}'.format(toDelete))
+        logger.debug('Deleted user %s', toDelete)
 
 
 signals.pre_delete.connect(User.beforeDelete, sender=User)

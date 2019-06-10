@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,27 +30,21 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-
-__updated__ = '2016-08-24'
+import logging
 
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.util import net
 
 from uds.models.ManagedObjectModel import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class Transport(ManagedObjectModel, TaggingMixin):
+class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
     A Transport represents a way of connecting the user with the service.
 
@@ -117,13 +111,13 @@ class Transport(ManagedObjectModel, TaggingMixin):
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
 
     def validForOs(self, os):
-        logger.debug('Checkin if os "{}" is in "{}"'.format(os, self.allowed_oss))
+        logger.debug('Checkin if os "%s" is in "%s"', os, self.allowed_oss)
         if self.allowed_oss == '' or os in self.allowed_oss.split(','):
             return True
         return False
 
     def __str__(self):
-        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -138,7 +132,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 
-        logger.debug('Before delete transport {}'.format(toDelete))
+        logger.debug('Before delete transport %s', toDelete)
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()

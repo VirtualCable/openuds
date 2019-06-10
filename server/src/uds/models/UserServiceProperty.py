@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,26 +30,17 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=model-missing-unicode, too-many-public-methods
-
-from __future__ import unicode_literals
-
-__updated__ = '2014-11-25'
+import logging
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 from .UserService import UserService
-from uds.models.Util import getSqlDatetime
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class UserServiceProperty(models.Model):
+class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-methods
     """
     Properties for User Service.
     The value field is a Text field, so we can put whatever we want in it

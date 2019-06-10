@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import sys
 
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
@@ -40,8 +41,6 @@ from uds.core.util.Cache import Cache
 from uds.core.util.State import State
 from uds.models import Scheduler
 
-import logging
-import sys
 
 logger = logging.getLogger(__name__)
 

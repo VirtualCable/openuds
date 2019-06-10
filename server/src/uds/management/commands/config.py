@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,9 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+
 from django.core.management.base import BaseCommand
 from uds.core.util.Config import Config, GLOBAL_SECTION, GlobalConfig
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ class Command(BaseCommand):
         GlobalConfig.initialize()
         try:
             for config in options['name_value']:
-                logger.debug('Config: {}'.format(config))
+                logger.debug('Config: %s', config)
                 first, value = config.split('=')
                 first = first.split('.')
                 if len(first) == 2:
@@ -60,4 +61,4 @@ class Command(BaseCommand):
                     Config.section(mod).value(name, value).get()
         except Exception as e:
             print('The command could not be processed: {}'.format(e))
-            logger.exception('Exception processing {}'.format(args))
+            logger.exception('Exception processing %s', args)

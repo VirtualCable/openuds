@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,20 +31,17 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=protected-access
-from __future__ import unicode_literals
-
-from django.core.management.base import BaseCommand  # , CommandError
-from optparse import make_option
-from django.conf import settings
-
-from uds.core.managers.TaskManager import TaskManager
-from uds.core.util.Config import GlobalConfig
 import logging
 import sys
 import os
 import signal
 import time
-import six
+
+from django.core.management.base import BaseCommand  # , CommandError
+from django.conf import settings
+
+from uds.core.managers.TaskManager import TaskManager
+from uds.core.util.Config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +53,6 @@ def getPidFile():
 
 # become_daemon seems te be removed on django 1.9
 # This is a copy of posix version from django 1.8
-buffering = int(six.PY3)
 def become_daemon(our_home_dir='.', out_log='/dev/null',
                   err_log='/dev/null', umask=0o022):
     """Robustly turn into a UNIX daemon, running in our_home_dir."""
@@ -80,8 +76,8 @@ def become_daemon(our_home_dir='.', out_log='/dev/null',
         os._exit(1)
 
     si = open('/dev/null', 'r')
-    so = open(out_log, 'a+', buffering)
-    se = open(err_log, 'a+', buffering)
+    so = open(out_log, 'a+', 1)
+    se = open(err_log, 'a+', 1)
     os.dup2(si.fileno(), sys.stdin.fileno())
     os.dup2(so.fileno(), sys.stdout.fileno())
     os.dup2(se.fileno(), sys.stderr.fileno())
@@ -95,16 +91,20 @@ class Command(BaseCommand):
     help = "Executes the task manager as a daemon. No parameter show current status of task manager"
 
     def add_arguments(self, parser):
-        parser.add_argument('--start',
-                    action='store_true',
-                    dest='start',
-                    default=False,
-                    help='Starts a new daemon')
-        parser.add_argument('--stop',
-                    action='store_true',
-                    dest='stop',
-                    default=False,
-                    help='Stop any running daemon')
+        parser.add_argument(
+            '--start',
+            action='store_true',
+            dest='start',
+            default=False,
+            help='Starts a new daemon'
+        )
+        parser.add_argument(
+            '--stop',
+            action='store_true',
+            dest='stop',
+            default=False,
+            help='Stop any running daemon'
+        )
 
     def handle(self, *args, **options):
         logger.info("Running task manager command")
@@ -122,7 +122,7 @@ class Command(BaseCommand):
 
         if stop is True and pid is not None:
             try:
-                logger.info('Stopping task manager. pid: {0}'.format(pid))
+                logger.info('Stopping task manager. pid: %s', pid)
                 os.kill(pid, signal.SIGTERM)
                 time.sleep(1)  # Wait a bit before running new one
                 os.unlink(getPidFile())
@@ -133,9 +133,9 @@ class Command(BaseCommand):
         if start is True:
             logger.info('Starting task manager.')
             become_daemon(settings.BASE_DIR, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
-            pid = six.text_type(os.getpid())
+            pid = str(os.getpid())
 
-            open(getPidFile(), 'w+').write("%s\n" % pid)
+            open(getPidFile(), 'w+').write('{}\n'.format(pid))
 
             manager = TaskManager()
             manager.run()

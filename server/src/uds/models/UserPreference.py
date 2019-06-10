@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,12 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-
-__updated__ = '2014-04-24'
+import logging
 
 from django.db import models
 
 from uds.models.User import User
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -56,3 +52,5 @@ class UserPreference(models.Model):
     class Meta:
         app_label = 'uds'
 
+    def __str__(self):
+        return '{}.{} = "{}" for user {}'.format(self.module, self.name, self.value, self.user)

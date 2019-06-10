@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,10 +30,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=model-missing-unicode, too-many-public-methods
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from django.db.models import signals
@@ -52,14 +49,11 @@ from uds.models.User import User
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
-import logging
-
-__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 
 
-class UserService(UUIDModel):
+class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     """
     This is the base model for assigned user service and cached user services.
     This are the real assigned services to users. DeployedService is the container (the group) of this elements.
@@ -88,10 +82,6 @@ class UserService(UUIDModel):
 
     cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True)
 
-    # "Secret" url used to communicate (send message) to services
-    # if This is None, communication is not possible
-    # The communication is done using POST via REST & Json
-    # comms_url = models.CharField(max_length=256, default=None, null=True, blank=True)
 
     class Meta(UUIDModel.Meta):
         """
@@ -166,7 +156,7 @@ class UserService(UUIDModel):
         except Exception:
             # The publication to witch this item points to, does not exists
             self.publication = None
-            logger.exception("Got exception at getInstance of an userService {}".format(self))
+            logger.exception('Got exception at getInstance of an userService %s', self)
         if serviceInstance.deployedType is None:
             raise Exception('Class {0} needs deployedType but it is not defined!!!'.format(serviceInstance.__class__.__name__))
         us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance, publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)
@@ -174,7 +164,7 @@ class UserService(UUIDModel):
             try:
                 us.unserialize(self.data)
             except Exception:
-                logger.exception('Error unserializing {}//{} : {}'.format(self.deployed_service.name, self.uuid, self.data))
+                logger.exception('Error unserializing %s//%s : %s', self.deployed_service.name, self.uuid, self.data)
         return us
 
     def updateData(self, us):
@@ -514,7 +504,7 @@ class UserService(UUIDModel):
         # Clear related logs to this user service
         log.clearLogs(toDelete)
 
-        logger.debug('Deleted user service {0}'.format(toDelete))
+        logger.debug('Deleted user service %s', toDelete)
 
 
 # Connects a pre deletion signal to Authenticator
