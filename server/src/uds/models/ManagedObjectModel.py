@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,12 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from uds.core.Environment import Environment
 from uds.models.UUIDModel import UUIDModel
 
-import logging
-
-__updated__ = '2018-06-12'
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +45,6 @@ class ManagedObjectModel(UUIDModel):
     Base abstract model for models that are top level Managed Objects
     (such as Authenticator, Transport, OSManager, Provider, Service ...)
     """
-    # pylint: disable=model-missing-unicode, abstract-class-not-used
     name = models.CharField(max_length=128, unique=False, db_index=True)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')

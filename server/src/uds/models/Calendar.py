@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,24 +31,17 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-
-__updated__ = '2017-12-12'
+import logging
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
-from django.utils.encoding import python_2_unicode_compatible
-# from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models.Tag import TaggingMixin
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class Calendar(UUIDModel, TaggingMixin):
+class Calendar(UUIDModel, TaggingMixin):  # type: ignore
 
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
@@ -61,10 +54,10 @@ class Calendar(UUIDModel, TaggingMixin):
         db_table = 'uds_calendar'
         app_label = 'uds'
 
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         logger.debug('Saving calendar')
 
-        res = UUIDModel.save(self, *args, **kwargs)
+        res = super().save(force_insert, force_update, using, update_fields)
 
         # Basically, recalculates all related actions next execution time...
         try:

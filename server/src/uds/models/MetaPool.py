@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2018 Virtual Cable S.L.
+# Copyright (c) 2018-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+
 from django.db import models
 from django.db.models import signals, QuerySet
 from django.utils.translation import ugettext_noop as _
@@ -47,14 +49,11 @@ from uds.models.ServicesPool import ServicePool
 from uds.models.Group import Group
 from uds.models.Calendar import Calendar
 
-import logging
-
-__updated__ = '2019-02-06'
 
 logger = logging.getLogger(__name__)
 
 
-class MetaPool(UUIDModel, TaggingMixin):
+class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     """
     A meta pool is a pool that has pool members
     """
@@ -119,7 +118,7 @@ class MetaPool(UUIDModel, TaggingMixin):
 
     @property
     def visual_name(self):
-        logger.debug("SHORT: {} {} {}".format(self.short_name, self.short_name is not None, self.name))
+        logger.debug('SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name)
         if self.short_name and self.short_name.strip() != '':
             return self.short_name
         return self.name
@@ -135,10 +134,12 @@ class MetaPool(UUIDModel, TaggingMixin):
         Returns:
             List of accesible deployed services
         """
-        from uds.core import services
         # Get services that HAS publications
-        meta = MetaPool.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE,
-                                        visible=True)
+        meta = MetaPool.objects.filter(
+            assignedGroups__in=groups,
+            assignedGroups__state=states.group.ACTIVE,
+            visible=True
+        )
         # TODO: Maybe we can exclude non "usable" metapools (all his pools are in maintenance mode?)
 
         return meta

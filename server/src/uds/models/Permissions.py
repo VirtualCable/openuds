@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from __future__ import unicode_literals
-
-__updated__ = '2018-11-21'
-
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.db.models import Q
@@ -45,17 +41,14 @@ from uds.models.User import User
 from uds.models.Group import Group
 from uds.models.Util import getSqlDatetime
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
 class Permissions(UUIDModel):
     """
     An OS Manager represents a manager for responding requests for agents inside services.
     """
-    # pylint: disable=model-missing-unicode
     # Allowed permissions
     PERMISSION_NONE = 0
     PERMISSION_READ = 32
@@ -139,7 +132,7 @@ class Permissions(UUIDModel):
         user = kwargs.get('user', None)
         groups = kwargs.get('groups', [])
 
-        if user is None and len(groups) == 0:
+        if user is None and not groups:
             q = Q()
         else:
             q = Q(user=user) | Q(group__in=groups)
@@ -150,7 +143,7 @@ class Permissions(UUIDModel):
                 Q(object_id=None) | Q(object_id=object_id),
                 q
             ).order_by('-permission')[0]
-            logger.debug('Got permission {}'.format(perm))
+            logger.debug('Got permission %s', perm)
             return perm.permission
         except Exception:  # DoesNotExists
             return Permissions.PERMISSION_NONE

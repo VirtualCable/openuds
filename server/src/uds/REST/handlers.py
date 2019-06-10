@@ -30,8 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pylint: disable=too-many-public-methods
-
 import typing
 import logging
 

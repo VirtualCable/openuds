@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,26 +30,19 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from django.utils.translation import ugettext as _
-
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Image import Image
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
-import logging
-
-__updated__ = '2018-09-07'
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
 class ServicesPoolGroup(UUIDModel):
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
@@ -68,7 +61,7 @@ class ServicesPoolGroup(UUIDModel):
         app_label = 'uds'
 
     def __str__(self):
-        return u"Service Pool group {0}({1})".format(self.name, self.comments)
+        return 'Service Pool group {}({})'.format(self.name, self.comments)
 
     @property
     def as_dict(self):

@@ -30,12 +30,13 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import typing
+import logging
+import pickle
+from datetime import datetime, timedelta
 
 from django.db import models, transaction
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.Environment import Environment
 from uds.core.util import log
@@ -58,18 +59,15 @@ from uds.models.Util import getSqlDatetime
 
 from uds.core.util.calendar import CalendarChecker
 
-from datetime import datetime, timedelta
-import logging
-import pickle
-import six
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models.UserService import UserService
 
-__updated__ = '2019-02-25'
 
 logger = logging.getLogger(__name__)
 
-
-@python_2_unicode_compatible
-class DeployedService(UUIDModel, TaggingMixin):
+# pylint: disable=too-many-public-methods
+class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
@@ -154,7 +152,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     @staticmethod
     def getRestraineds():
-        from uds.models.UserService import UserService
+        from uds.models.UserService import UserService  # pylint: disable=redefined-outer-name
         from uds.core.util.Config import GlobalConfig
         from django.db.models import Count
 
@@ -176,10 +174,10 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     @property
     def visual_name(self):
-        logger.debug("SHORT: {} {} {}".format(self.short_name, self.short_name is not None, self.name))
-        if self.short_name is not None and six.text_type(self.short_name).strip() != '':
-            return six.text_type(self.short_name)
-        return six.text_type(self.name)
+        logger.debug("SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name)
+        if self.short_name is not None and str(self.short_name).strip() != '':
+            return str(self.short_name)
+        return str(self.name)
 
     def isRestrained(self) -> bool:
         """
@@ -215,7 +213,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     def isUsable(self) -> bool:
         return self.state == states.servicePool.ACTIVE and not self.isInMaintenance() and not self.isRestrained()
 
-    def toBeReplaced(self, forUser) -> datetime:
+    def toBeReplaced(self, forUser) ->  typing.Optional[datetime]:
         activePub = self.activePublication()
         if activePub is None or activePub.revision == self.current_pub_revision - 1:
             return None
@@ -352,7 +350,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         """
         now = getSqlDatetime()
         if activePub is None:
-            logger.error('No active publication, don\'t know what to erase!!! (ds = {0})'.format(self))
+            logger.error('No active publication, don\'t know what to erase!!! (ds = %s)', self)
             return
         for ap in self.publications.exclude(id=activePub.id):
             for u in ap.userServices.filter(state=states.userService.PREPARING):
@@ -367,7 +365,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         raise an InvalidUserException if fails check
         """
         from uds.core import auths
-        if len(set(grps) & set(self.assignedGroups.all())) == 0:
+        if not (set(grps) & set(self.assignedGroups.all())):
             raise auths.Exceptions.InvalidUserException()
 
     def validatePublication(self):
@@ -402,8 +400,8 @@ class DeployedService(UUIDModel, TaggingMixin):
         """
         # We have to check if at least one group from this user is valid for this deployed service
 
-        logger.debug('User: {0}'.format(user.id))
-        logger.debug('DeployedService: {0}'.format(self.id))
+        logger.debug('User: %s', user.id)
+        logger.debug('DeployedService: %s', self.id)
         self.validateGroups(user.getGroups())
         self.validatePublication()
         return True
@@ -466,7 +464,6 @@ class DeployedService(UUIDModel, TaggingMixin):
         return self.userServices.exclude(cache_level=0)
 
     def assignedUserServices(self):
-        ':rtype uds.models.UserService.UserService'
         """
         Utility method to access the assigned user services
 
@@ -505,7 +502,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     # parent accessors
     @property
     def proxy(self):
-        return self.service.proxy;
+        return self.service.proxy
 
     # Utility for logging
     def log(self, message, level=log.INFO):
@@ -524,7 +521,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 
-        logger.debug('Deleting Deployed Service {0}'.format(toDelete))
+        logger.debug('Deleting Deployed Service %s', toDelete)
         toDelete.getEnvironment().clearRelatedData()
 
         # Clears related logs
@@ -534,7 +531,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         clean(toDelete)
 
     def __str__(self):
-        return u"Deployed service {0}({1}) with {2} as initial, {3} as L1 cache, {4} as L2 cache, {5} as max".format(
+        return 'Deployed service {}({}) with {} as initial, {} as L1 cache, {} as L2 cache, {} as max'.format(
             self.name, self.id, self.initial_srvs, self.cache_l1_srvs, self.cache_l2_srvs, self.max_srvs)
 
 

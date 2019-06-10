@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,23 +31,15 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-
-__updated__ = '2018-03-02'
+import logging
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from uds.models.UUIDModel import UUIDModel
 from uds.core.util import encoders
 
-import logging
-import six
 
 logger = logging.getLogger(__name__)
 
-
-@python_2_unicode_compatible
 class DBFile(UUIDModel):
     owner = models.CharField(max_length=32, default='')  # Not indexed, used for cleanups only
     name = models.CharField(max_length=255, primary_key=True)
@@ -61,12 +53,11 @@ class DBFile(UUIDModel):
         try:
             return encoders.decode(encoders.decode(self.content, 'base64'), 'zip')
         except Exception:
-            logger.error('DBFile {} has errors and cannot be used'.format(self.name))
+            logger.error('DBFile %s has errors and cannot be used', self.name)
             try:
                 self.delete()  # Autodelete, invalid...
-                pass
             except Exception:
-                logger.error('Could not even delete {}!!'.format(self.name))
+                logger.error('Could not even delete %s!!', self.name)
 
             return ''
 

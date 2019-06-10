@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,15 +30,11 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from __future__ import unicode_literals
-
-__updated__ = '2016-02-10'
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +60,7 @@ class Tag(UUIDModel):
     def vtag(self):
         return self.tag.capitalize()
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Tag: {} {}'.format(self.uuid, self.tag)
 
 

@@ -35,7 +35,6 @@ import datetime
 import logging
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from dateutil import rrule as rules
 
@@ -88,8 +87,6 @@ dunit_to_mins = {
 weekdays = [rules.SU, rules.MO, rules.TU, rules.WE, rules.TH, rules.FR, rules.SA]
 
 
-# noinspection PyPep8
-@python_2_unicode_compatible
 class CalendarRule(UUIDModel):
     name = models.CharField(max_length=128)
     comments = models.CharField(max_length=256)
@@ -155,11 +152,11 @@ class CalendarRule(UUIDModel):
     def duration_as_minutes(self):
         return dunit_to_mins.get(self.duration_unit, 1) * self.duration
 
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         logger.debug('Saving...')
         self.calendar.modified = getSqlDatetime()
 
-        res = UUIDModel.save(self, *args, **kwargs)
+        res = super().save(force_insert, force_update, using, update_fields)
         self.calendar.save()
         return res
 

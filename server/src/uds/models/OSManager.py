@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,25 +30,19 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from __future__ import unicode_literals
-
-__updated__ = '2016-02-26'
-
-from django.utils.encoding import python_2_unicode_compatible
 from django.db import IntegrityError
 from django.db.models import signals
 
 from uds.models.ManagedObjectModel import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class OSManager(ManagedObjectModel, TaggingMixin):
+class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
     An OS Manager represents a manager for responding requests for agents inside services.
     """
@@ -114,7 +108,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
             s.destroy()
             s.env.clearRelatedData()
 
-        logger.debug('Before delete os manager {}'.format(toDelete))
+        logger.debug('Before delete os manager %s', toDelete)
 
 # : Connects a pre deletion signal to OS Manager
 signals.pre_delete.connect(OSManager.beforeDelete, sender=OSManager)

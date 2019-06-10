@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,10 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from __future__ import unicode_literals
-
-__updated__ = '2018-03-02'
 
 from django.db import models
 from django.db.models import signals
@@ -44,7 +42,6 @@ from uds.core.jobs.JobsFactory import JobsFactory
 
 from uds.models.Util import NEVER
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -105,11 +102,11 @@ class Scheduler(models.Model):
         Used to remove environment for sheduled task
         """
         toDelete = kwargs['instance']
-        logger.debug('Deleting sheduled task {0}'.format(toDelete))
+        logger.debug('Deleting sheduled task %s', toDelete)
         toDelete.getEnvironment().clearRelatedData()
 
-    def __unicode__(self):
-        return u"Scheduled task {0}, every {1}, last execution at {2}, state = {3}".format(self.name, self.frecuency, self.last_execution, self.state)
+    def __str__(self):
+        return 'Scheduled task {}, every {}, last execution at {}, state = {}'.format(self.name, self.frecuency, self.last_execution, self.state)
 
 
 # Connects a pre deletion signal to Scheduler

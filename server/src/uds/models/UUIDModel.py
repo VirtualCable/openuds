@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -39,11 +38,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from uds.core.util.model import generateUuid
 
 
-import logging
-
 logger = logging.getLogger(__name__)
-
-__updated__ = '2015-04-28'
 
 
 @python_2_unicode_compatible
@@ -61,13 +56,13 @@ class UUIDModel(models.Model):
         return generateUuid()
 
     # Override default save to add uuid
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.uuid is None or self.uuid == '':
             self.uuid = self.genUuid()
         elif self.uuid != self.uuid.lower():
             self.uuid = self.uuid.lower()  # If we modify uuid elsewhere, ensure that it's stored in lower case
 
-        return models.Model.save(self, *args, **kwargs)
+        return models.Model.save(self, force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return 'Object of class {} with uuid {}'.format(self.__class__, self.uuid)

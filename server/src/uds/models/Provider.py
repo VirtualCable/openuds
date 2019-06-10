@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,10 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from __future__ import unicode_literals
-
-from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.db.models import signals
 
@@ -41,17 +39,11 @@ from uds.core.util import log
 from uds.models.ManagedObjectModel import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
-import logging
-
-
-__updated__ = '2016-02-26'
-
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class Provider(ManagedObjectModel, TaggingMixin):
+class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
     A Provider represents the Service provider itself, (i.e. a KVM Server or a Terminal Server)
     """
@@ -82,7 +74,7 @@ class Provider(ManagedObjectModel, TaggingMixin):
         return self.maintenance_mode
 
     def __str__(self):
-        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -97,7 +89,7 @@ class Provider(ManagedObjectModel, TaggingMixin):
         from uds.core.util.permissions import clean
 
         toDelete = kwargs['instance']
-        logger.debug('Before delete service provider {}'.format(toDelete))
+        logger.debug('Before delete service provider %s', toDelete)
 
         # Only tries to get instance if data is not empty
         if toDelete.data != '':

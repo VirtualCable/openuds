@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,20 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
+import typing
 import logging
 import socket
 
 logger = logging.getLogger(__name__)
 
 
-def testServer(host, port, timeOut=4):
+def testServer(host: str, port: typing.Union[int, str], timeOut: int = 4):
     try:
-        logger.debug('Checking connection to {0}:{1} with {2} seconds timeout'.format(host, port, timeOut))
+        logger.debug('Checking connection to %s:%s with %s seconds timeout', host, port, timeOut)
         sock = socket.create_connection((host, int(port)), timeOut)
         sock.close()
     except Exception as e:
-        logger.debug('Exception checking {0}:{1} with {2} timeout: {3}'.format(host, port, timeOut, e))
+        logger.debug('Exception checking %s:%s with %s timeout: %s', host, port, timeOut, e)
         return False
     return True

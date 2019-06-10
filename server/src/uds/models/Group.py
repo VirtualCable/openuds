@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,11 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from __future__ import unicode_literals
 
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.util.State import State
 from uds.core.util import log
@@ -45,14 +44,9 @@ from .Authenticator import Authenticator
 from .User import User
 from .Util import UnsavedForeignKey, getSqlDatetime
 
-import logging
-
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-24'
 
-
-@python_2_unicode_compatible
 class Group(UUIDModel):
     """
     This class represents a group, associated with one authenticator
@@ -90,9 +84,9 @@ class Group(UUIDModel):
 
     def __str__(self):
         if self.is_meta:
-            return "Meta group {0}(id:{1}) with groups {2}".format(self.name, self.id, list(self.groups.all()))
-        else:
-            return "Group {0}(id:{1}) from auth {2}".format(self.name, self.id, self.manager.name)
+            return "Meta group {}(id:{}) with groups {}".format(self.name, self.id, list(self.groups.all()))
+
+        return "Group {}(id:{}) from auth {}".format(self.name, self.id, self.manager.name)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

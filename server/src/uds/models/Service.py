@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.Environment import Environment
 from uds.core.util import log
@@ -47,16 +45,11 @@ from uds.core.util import connection
 
 from uds.models.Provider import Provider
 
-import logging
-import six
-
-__updated__ = '2018-06-12'
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class Service(ManagedObjectModel, TaggingMixin):
+class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
     A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
     or a Terminal Server configuration).
@@ -141,10 +134,10 @@ class Service(ManagedObjectModel, TaggingMixin):
     def testServer(self, host, port, timeout=4):
         if self.proxy is not None:
             return self.proxy.doTestServer(host, port, timeout)
-        return connection.testServer(host, six.text_type(port), timeout)
+        return connection.testServer(host, str(port), timeout)
 
     def __str__(self):
-        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -159,7 +152,7 @@ class Service(ManagedObjectModel, TaggingMixin):
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 
-        logger.debug('Before delete service {}'.format(toDelete))
+        logger.debug('Before delete service %s', toDelete)
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()

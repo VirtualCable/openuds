@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,27 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from __future__ import unicode_literals
-
-__updated__ = '2016-02-10'
 
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.Transport import Transport
 from uds.core.util import net
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Tag import TaggingMixin
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class Network(UUIDModel, TaggingMixin):
+class Network(UUIDModel, TaggingMixin):  # type: ignore
     """
     This model is used for keeping information of networks associated with transports (right now, just transports..)
     """
@@ -128,14 +123,14 @@ class Network(UUIDModel, TaggingMixin):
         self.save()
 
     def __str__(self):
-        return u'Network {0} ({1}) from {2} to {3}'.format(self.name, self.net_string, net.longToIp(self.net_start), net.longToIp(self.net_end))
+        return u'Network {} ({}) from {} to {}'.format(self.name, self.net_string, net.longToIp(self.net_start), net.longToIp(self.net_end))
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 
-        logger.debug('Before delete auth {}'.format(toDelete))
+        logger.debug('Before delete auth %s', toDelete)
 
         # Clears related permissions
         clean(toDelete)

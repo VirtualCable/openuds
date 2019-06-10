@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,11 +31,10 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.util.State import State
 from uds.core.Environment import Environment
@@ -45,14 +44,9 @@ from uds.models.ServicesPool import DeployedService
 from uds.models.Util import getSqlDatetime
 from uds.models.UUIDModel import UUIDModel
 
-import logging
-
-__updated__ = '2018-06-07'
-
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
 class DeployedServicePublicationChangelog(models.Model):
     publication = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='changelog')
     stamp = models.DateTimeField()
@@ -67,10 +61,8 @@ class DeployedServicePublicationChangelog(models.Model):
         app_label = 'uds'
 
     def __str__(self):
-        return 'Revision log  for publication {0}, rev {1}:  {2}'.format(self.publication.name, self.revision, self.log)
+        return 'Revision log  for publication {}, rev {}:  {}'.format(self.publication.name, self.revision, self.log)
 
-
-@python_2_unicode_compatible
 class DeployedServicePublication(UUIDModel):
     """
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
@@ -201,10 +193,10 @@ class DeployedServicePublication(UUIDModel):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Deleted publication {0}'.format(toDelete))
+        logger.debug('Deleted publication %s', toDelete)
 
     def __str__(self):
-        return 'Publication {0}, rev {1}, state {2}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
+        return 'Publication {}, rev {}, state {}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(DeployedServicePublication.beforeDelete, sender=DeployedServicePublication)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,9 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import typing
+import logging
+from collections.abc import Iterable
 
 from django.db import models
 
@@ -39,9 +40,6 @@ from uds.models.Util import NEVER_UNIX
 from uds.models.Util import getSqlDatetime
 from uds.models.Util import getSqlFnc
 
-import logging
-
-__updated__ = '2018-02-16'
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +63,7 @@ class StatsCounters(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_grouped(owner_type, counter_type, **kwargs):
+    def get_grouped(owner_type: typing.Union[str, typing.Iterable[str]], counter_type: str, **kwargs):  # pylint: disable=too-many-locals
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 
@@ -73,46 +71,44 @@ class StatsCounters(models.Model):
         """
 
         filt = 'owner_type'
-        if type(owner_type) in (list, tuple):
+        if isinstance(owner_type, Iterable):
             filt += ' in (' + ','.join((str(x) for x in owner_type)) + ')'
         else:
             filt += '=' + str(owner_type)
 
-        owner_id = None
-        if kwargs.get('owner_id', None) is not None:
+        owner_id = kwargs.get('owner_id', None)
+        if owner_id is not None:
             filt += ' AND OWNER_ID'
-            oid = kwargs['owner_id']
-            if type(oid) in (list, tuple):
-                filt += ' in (' + ','.join(str(x) for x in oid) + ')'
+            if isinstance(owner_id, Iterable):
+                filt += ' in (' + ','.join(str(x) for x in owner_id) + ')'
             else:
-                filt += '=' + str(oid)
+                filt += '=' + str(owner_id)
 
         filt += ' AND counter_type=' + str(counter_type)
 
         since = kwargs.get('since', None)
         to = kwargs.get('to', None)
 
-        since = since and int(since) or NEVER_UNIX
-        to = to and int(to) or getSqlDatetime(True)
+        since = int(since) if since else NEVER_UNIX
+        to = int(to) if to else getSqlDatetime(True)
 
         interval = 600  # By default, group items in ten minutes interval (600 seconds)
 
-        limit = kwargs.get('limit', None)
+        elements = kwargs.get('limit', None)
 
-        if limit is not None:
-            limit = int(limit)
-            elements = kwargs['limit']
-
-            # Protect for division a few lines below... :-)
-            if elements < 2:
-                elements = 2
+        if elements:
+            # Protect against division by "elements-1" a few lines below
+            elements = int(elements) if int(elements) > 1 else 2
 
             if owner_id is None:
                 q = StatsCounters.objects.filter(stamp__gte=since, stamp__lte=to)
             else:
-                q = StatsCounters.objects.filter(owner_id=owner_id, stamp__gte=since, stamp__lte=to)
+                if isinstance(owner_id, Iterable):
+                    q = StatsCounters.objects.filter(owner_id__in=owner_id, stamp__gte=since, stamp__lte=to)
+                else:
+                    q = StatsCounters.objects.filter(owner_id=owner_id, stamp__gte=since, stamp__lte=to)
 
-            if type(owner_type) in (list, tuple):
+            if isinstance(owner_type, Iterable):
                 q = q.filter(owner_type__in=owner_type)
             else:
                 q = q.filter(owner_type=owner_type)
@@ -127,14 +123,16 @@ class StatsCounters(models.Model):
 
         fnc = getSqlFnc('MAX' if kwargs.get('use_max', False) else 'AVG')
 
-        query = ('SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, ' + stampValue + '*{}'.format(interval) + ' AS stamp,' +
-                        getSqlFnc('CEIL') + '({0}(value)) AS value '
-                 'FROM {1} WHERE {2}').format(fnc, StatsCounters._meta.db_table, filt)
+        query = (
+            'SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, ' + stampValue + '*{}'.format(interval) + ' AS stamp,' +
+            getSqlFnc('CEIL') + '({0}(value)) AS value '
+            'FROM {1} WHERE {2}'
+        ).format(fnc, StatsCounters._meta.db_table, filt)
 
-        logger.debug('Stats query: {0}'.format(query))
+        logger.debug('Stats query: %s', query)
 
         # We use result as an iterator
         return StatsCounters.objects.raw(query)
 
-    def __unicode__(self):
-        return u"Counter of {0}({1}): {2} - {3} - {4}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)
+    def __str__(self):
+        return u"Counter of {}({}): {} - {} - {}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)

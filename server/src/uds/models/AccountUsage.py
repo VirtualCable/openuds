@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,8 +28,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 
@@ -39,11 +38,7 @@ from uds.models.UserService import UserService
 from uds.models.Util import NEVER
 from uds.core.util.tools import secondsToString
 
-import logging
-
 logger = logging.getLogger(__name__)
-
-__updated__ = '2017-01-31'
 
 
 class AccountUsage(UUIDModel):
@@ -71,13 +66,13 @@ class AccountUsage(UUIDModel):
 
     @property
     def elapsed_seconds(self):
-        if self.end == NEVER or self.start == NEVER:
+        if  NEVER in (self.end, self.start):
             return 0
         return (self.end - self.start).total_seconds()
 
     @property
     def elapsed_seconds_timemark(self):
-        if self.end == NEVER or self.start == NEVER:
+        if  NEVER in (self.end, self.start):
             return 0
 
         start = self.start
@@ -97,5 +92,5 @@ class AccountUsage(UUIDModel):
     def elapsed_timemark(self):
         return secondsToString(self.elapsed_seconds_timemark)
 
-    def __unicode__(self):
+    def __str__(self):
         return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(self.id, self.pool_name, self.user_name, self.start, self.end)

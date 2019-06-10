@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,17 +30,13 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
+from time import mktime
 
 from datetime import datetime
 from django.db import models
 from django.db import connection
-from time import mktime
 
-import logging
-
-__updated__ = '2019-02-11'
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +84,6 @@ def getSqlFnc(fncName):
     Convert different sql functions for different platforms
     """
     if connection.vendor == 'microsoft':
-        return { 'CEIL': 'CEILING'}.get(fncName, fncName)
+        return {'CEIL': 'CEILING'}.get(fncName, fncName)
 
     return fncName

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,14 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-__updated__ = '2015-03-09'
+import logging
 
 from uds.models import Permissions
 from uds.core.util import ot
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -64,8 +61,8 @@ def getEffectivePermission(user, obj, root=False):
 
     if root is False:
         return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk)
-    else:
-        return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
+
+    return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
 
 
 def addUserPermission(user, obj, permission=PERMISSION_READ):

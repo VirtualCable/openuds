@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016-2018 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,8 +31,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 from uds.core.util import states
@@ -40,9 +39,7 @@ from uds.models.UUIDModel import UUIDModel
 from uds.models.Calendar import Calendar
 from uds.models.ServicesPool import ServicePool
 from uds.models.MetaPool import MetaPool
-# from django.utils.translation import ugettext_lazy as _, ugettext
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +58,9 @@ class CalendarAccess(UUIDModel):
         ordering = ('priority',)
         app_label = 'uds'
 
+    def __str__(self):
+        return 'Calendar Access {}/{}'.format(self.calendar, self.access)
+
 
 class CalendarAccessMeta(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
@@ -76,3 +76,5 @@ class CalendarAccessMeta(UUIDModel):
         ordering = ('priority',)
         app_label = 'uds'
 
+    def __str__(self):
+        return 'Calendar Access Meta {}/{}'.format(self.calendar, self.access)

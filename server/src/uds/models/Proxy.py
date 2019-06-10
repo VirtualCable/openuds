@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,24 +28,21 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import json
+import logging
 
-from __future__ import unicode_literals
-
-__updated__ = '2017-01-31'
+import requests
 
 from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Tag import TaggingMixin
 
-import requests
-import json
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Proxy(UUIDModel, TaggingMixin):
+class Proxy(UUIDModel, TaggingMixin):  # type: ignore
     """
     Proxy DB model
     """
@@ -107,5 +104,5 @@ class Proxy(UUIDModel, TaggingMixin):
 
         return False
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Proxy {} on {}:{} '.format(self.name, self.host, self.port)

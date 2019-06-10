@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,8 +28,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import logging
 
 from django.db import models
 
@@ -38,14 +37,12 @@ from uds.models.Tag import TaggingMixin
 from uds.models.Util import getSqlDatetime
 from uds.models.Util import NEVER
 
-import logging
-
 logger = logging.getLogger(__name__)
 
 __updated__ = '2017-01-30'
 
 
-class Account(UUIDModel, TaggingMixin):
+class Account(UUIDModel, TaggingMixin):  # type: ignore
     """
     Account storing on DB model
     """
@@ -55,8 +52,10 @@ class Account(UUIDModel, TaggingMixin):
 
     def startUsageAccounting(self, service):
         if hasattr(service, 'accounting'):  # Already has an account
-            return
+            return None
+
         start = getSqlDatetime()
+
         if service.user is not None:
             userName = service.user.pretty_name
             userUuid = service.user.uuid
@@ -89,5 +88,5 @@ class Account(UUIDModel, TaggingMixin):
         db_table = 'uds_accounts'
         app_label = 'uds'
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Account id {}, name {}'.format(self.id, self.name)

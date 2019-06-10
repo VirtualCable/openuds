@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,10 +30,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
 from django.db import models
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,6 @@ class Config(models.Model):
         unique_together = (('section', 'key'),)
         app_label = 'uds'
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Config {0} = {1}".format(self.key, self.value)
 

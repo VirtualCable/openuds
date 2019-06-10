@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,8 +28,9 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
-from __future__ import unicode_literals
+import datetime
+import pickle
+import logging
 
 from django.db import models
 
@@ -37,15 +38,8 @@ from uds.models.UUIDModel import UUIDModel
 from uds.models.Util import getSqlDatetime
 from uds.core.managers import cryptoManager
 
-import datetime
-import pickle
-import string
-import random
-import logging
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2019-05-10'
 
 
 class TicketStore(UUIDModel):
@@ -124,7 +118,7 @@ class TicketStore(UUIDModel):
             validity = datetime.timedelta(seconds=t.validity)
             now = getSqlDatetime()
 
-            logger.debug('Ticket validity: {} {}'.format(t.stamp + validity, now))
+            logger.debug('Ticket validity: %s %s', t.stamp + validity, now)
             if t.stamp + validity < now:
                 raise TicketStore.InvalidTicket('Not valid anymore')
 
@@ -165,9 +159,9 @@ class TicketStore(UUIDModel):
             if now > v.stamp + timedelta(seconds=v.validity):
                 v.delete()
         cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
-        number = TicketStore.objects.filter(stamp__lt=cleanSince).delete()
+        TicketStore.objects.filter(stamp__lt=cleanSince).delete()
 
-    def __unicode__(self):
+    def __str__(self):
         if self.validator is not None:
             validator = pickle.loads(self.validator)
         else:

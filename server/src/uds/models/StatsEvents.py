@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,15 +30,15 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
+from collections.abc import Iterable
 
 from django.db import models
 
 from uds.models.Util import NEVER_UNIX
 from uds.models.Util import getSqlDatetime
 
-import logging
-
-__updated__ = '2018-10-03'
 
 logger = logging.getLogger(__name__)
 
@@ -67,18 +67,18 @@ class StatsEvents(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_stats(owner_type, event_type, **kwargs):
+    def get_stats(owner_type: typing.Union[str, typing.Iterable[str]], event_type: typing.Union[str, typing.Iterable[str]], **kwargs):
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 
         Note: if someone cant get this more optimized, please, contribute it!
         """
-        if isinstance(event_type, (list, tuple)):
+        if isinstance(event_type, Iterable):
             fltr = StatsEvents.objects.filter(event_type__in=event_type)
         else:
             fltr = StatsEvents.objects.filter(event_type=event_type)
 
-        if type(owner_type) in (list, tuple):
+        if isinstance(owner_type, Iterable):
             fltr = fltr.filter(owner_type__in=owner_type)
         else:
             fltr = fltr.filter(owner_type=owner_type)
@@ -93,8 +93,8 @@ class StatsEvents(models.Model):
         since = kwargs.get('since', None)
         to = kwargs.get('to', None)
 
-        since = since and int(since) or NEVER_UNIX
-        to = to and int(to) or getSqlDatetime(True)
+        since = int(since) if since else NEVER_UNIX
+        to = int(to) if to else getSqlDatetime(True)
 
         fltr = fltr.filter(stamp__gte=since, stamp__lt=to)
 
@@ -117,5 +117,5 @@ class StatsEvents(models.Model):
     def uniqueId(self):
         return self.fld4
 
-    def __unicode__(self):
-        return u"Log of {0}({1}): {2} - {3} - {4}, {5}, {6}".format(self.owner_type, self.owner_id, self.event_type, self.stamp, self.fld1, self.fld2, self.fld3)
+    def __str__(self):
+        return 'Log of {}({}): {} - {} - {}, {}, {}'.format(self.owner_type, self.owner_id, self.event_type, self.stamp, self.fld1, self.fld2, self.fld3)

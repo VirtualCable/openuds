@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,24 +28,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-
-__updated__ = '2018-01-16'
-
-from django.db import models
-from django.http import HttpResponse
-
-from uds.models.UUIDModel import UUIDModel
-from uds.models.Util import getSqlDatetime
-from django.db.models import signals
-
-from uds.core.util import encoders
-
-from PIL import Image as PILImage  # @UnresolvedImport
 import io
 
 import logging
+
+
+from django.db import models
+from django.db.models import signals
+from django.http import HttpResponse
+
+from PIL import Image as PILImage  # @UnresolvedImport
+
+from uds.models.UUIDModel import UUIDModel
+from uds.models.Util import getSqlDatetime
+
+from uds.core.util import encoders
+
 
 logger = logging.getLogger(__name__)
 
@@ -170,11 +168,11 @@ class Image(UUIDModel):
     def thumbnailResponse(self):
         return HttpResponse(self.thumb, content_type='image/png')
 
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.stamp = getSqlDatetime()
-        return UUIDModel.save(self, *args, **kwargs)
+        return super().save(force_insert, force_update, using, update_fields)
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Image id {}, name {}, {} bytes, {} bytes thumb'.format(self.id, self.name, len(self.data), len(self.thumb))
 
     @staticmethod
@@ -188,7 +186,7 @@ class Image(UUIDModel):
         """
         toDelete = kwargs['instance']
 
-        logger.debug('Deleted image {0}'.format(toDelete))
+        logger.debug('Deleted image %s', toDelete)
 
 
 signals.pre_delete.connect(Image.beforeDelete, sender=Image)

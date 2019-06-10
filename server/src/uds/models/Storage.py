@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,9 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-from django.db import models
-
 import logging
 
-__updated__ = '2018-06-15'
+from django.db import models
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +56,6 @@ class Storage(models.Model):
         """
         app_label = 'uds'
 
-    def __unicode__(self):
-        return u"{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, '/'.join([self.attr1]))
+    def __str__(self):
+        return '{} {} = {}, {}'.format(self.owner, self.key, self.data, '/'.join([self.attr1]))
 
