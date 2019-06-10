@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
+from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
 from uds.models import Service, UserService, Tag, Proxy
@@ -41,15 +42,13 @@ from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.core.Environment import Environment
-from uds.REST.model import DetailHandler
-from uds.REST import NotFound, ResponseError, RequestError
-from django.db import IntegrityError
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.ui.UserInterface import gui
 from uds.core.util.State import State
 
-import six
-import logging
+from uds.REST.model import DetailHandler
+from uds.REST import NotFound, ResponseError, RequestError
+
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +117,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 val = Services.serviceToDict(k, perm, full=True)
                 return self.fillIntanceFields(k, val)
         except Exception:
-            logger.exception('itemId {}'.format(item))
+            logger.exception('itemId %s', item)
             self.invalidItemException()
 
     def getRowStyle(self, parent):
@@ -138,7 +137,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     def saveItem(self, parent, item):
         # Extract item db fields
         # We need this fields for all
-        logger.debug('Saving service for {0} / {1}'.format(parent, item))
+        logger.debug('Saving service for %s / %s', parent, item)
         fields = self.readFieldsFromParams(['name', 'comments', 'data_type', 'tags', 'proxy_id'])
         tags = fields['tags']
         del fields['tags']
@@ -146,7 +145,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         proxyId = fields['proxy_id']
         fields['proxy_id'] = None
-        logger.debug('Proxy id: {}'.format(proxyId))
+        logger.debug('Proxy id: %s', proxyId)
 
         proxy = None
         if proxyId != '-1':
@@ -174,7 +173,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except coreService.ValidationException as e:
             if item is None:  # Only remove partially saved element if creating new (if editing, ignore this)
                 self._deleteIncompleteService(service)
-            raise RequestError(_('Input error: {0}'.format(six.text_type(e))))
+            raise RequestError(_('Input error: {0}'.format(e)))
         except Exception as e:
             if item is None:
                 self._deleteIncompleteService(service)
@@ -199,7 +198,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getTitle(self, parent):
         try:
-            return _('Services of {0}').format(parent.name)
+            return _('Services of %s').format(parent.name)
         except Exception:
             return _('Current services')
 
@@ -215,7 +214,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         ]
 
     def getTypes(self, parent, forType):
-        logger.debug('getTypes parameters: {0}, {1}'.format(parent, forType))
+        logger.debug('getTypes parameters: %s, %s', parent, forType)
         if forType is None:
             offers = [{
                 'name': _(t.name()),
@@ -235,7 +234,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getGui(self, parent, forType):
         try:
-            logger.debug('getGui parameters: {0}, {1}'.format(parent, forType))
+            logger.debug('getGui parameters: %s, %s', parent, forType)
             parentInstance = parent.getInstance()
             serviceType = parentInstance.getServiceByType(forType)
             service = serviceType(Environment.getTempEnv(), parentInstance)  # Instantiate it so it has the opportunity to alter gui description based on parent
@@ -256,19 +255,19 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         except Exception as e:
             logger.exception('getGui')
-            raise ResponseError(six.text_type(e))
+            raise ResponseError(str(e))
 
     def getLogs(self, parent, item):
         try:
             item = parent.services.get(uuid=processUuid(item))
-            logger.debug('Getting logs for {0}'.format(item))
+            logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
             self.invalidItemException()
 
     def servicesPools(self, parent, item):
         self.ensureAccess(item, permissions.PERMISSION_READ)
-        logger.debug('Got parameters for servicepools: {}, {}'.format(parent, item))
+        logger.debug('Got parameters for servicepools: %s, %s', parent, item)
         uuid = processUuid(item)
         service = parent.services.get(uuid=uuid)
         res = []

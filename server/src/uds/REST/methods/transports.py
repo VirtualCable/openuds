@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,7 @@
 '''
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Transport, Network, ServicePool
@@ -40,7 +40,6 @@ from uds.core.util import OsDetector
 
 from uds.REST.model import ModelHandler
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -131,12 +130,12 @@ class Transports(ModelHandler):
     def afterSave(self, item):
         try:
             networks = self._params['networks']
-        except:  # No networks passed in, this is ok
+        except Exception:  # No networks passed in, this is ok
             logger.debug('No networks')
             return
         if networks is None:
             return
-        logger.debug('Networks: {}'.format(networks))
+        logger.debug('Networks: %s', networks)
         item.networks.set(Network.objects.filter(id__in=networks))
 
         try:

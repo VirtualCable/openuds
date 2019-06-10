@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,8 +32,6 @@
 """
 import logging
 
-import six
-
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
 from uds.models.CalendarAction import (
@@ -47,18 +45,21 @@ from uds.models.CalendarAction import (
     CALENDAR_ACTION_ADD_GROUP,
     CALENDAR_ACTION_DEL_GROUP
 )
+
+from uds.core.managers import userServiceManager
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.core.util import permissions
+from uds.core.ui.UserInterface import gui
+
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
-from uds.core.ui.UserInterface import gui
+
 from .user_services import AssignedService, CachedService, Groups, Transports, Publications, Changelog
 from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
-from uds.core.managers import userServiceManager
 
 
 logger = logging.getLogger(__name__)
@@ -197,132 +198,130 @@ class ServicesPools(ModelHandler):
         g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
         for f in [{
-            'name': 'service_id',
-            'values': [gui.choiceItem('', '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]),
-            'label': ugettext('Base service'),
-            'tooltip': ugettext('Service used as base of this service pool'),
-            'type': gui.InputField.CHOICE_TYPE,
-            'rdonly': True,
-            'order': 100,  # Ensueres is At end
-        }, {
-            'name': 'osmanager_id',
-            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]),
-            'label': ugettext('OS Manager'),
-            'tooltip': ugettext('OS Manager used as base of this service pool'),
-            'type': gui.InputField.CHOICE_TYPE,
-            'rdonly': True,
-            'order': 101,
-        }, {
-            'name': 'show_transports',
-            'value': True,
-            'label': ugettext('Show transports'),
-            'tooltip': ugettext('If active, alternative transports for user will be shown'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 110,
-            'tab': ugettext('Advanced'),
-        }, {
-            'name': 'allow_users_remove',
-            'value': False,
-            'label': ugettext('Allow removal by users'),
-            'tooltip': ugettext('If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete it\'s own service'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 111,
-            'tab': ugettext('Advanced'),
-        }, {
-            'name': 'allow_users_reset',
-            'value': False,
-            'label': ugettext('Allow reset by users'),
-            'tooltip': ugettext('If active, the user will be allowed to reset the service'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 112,
-            'tab': ugettext('Advanced'),
-        }, {
-            'name': 'ignores_unused',
-            'value': False,
-            'label': ugettext('Ignores unused'),
-            'tooltip': ugettext('If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 113,
-            'tab': ugettext('Advanced'),
-        }, {
-            'name': 'image_id',
-            'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
-            'label': ugettext('Associated Image'),
-            'tooltip': ugettext('Image assocciated with this service'),
-            'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 120,
-            'tab': ugettext('Display'),
-        }, {
-            'name': 'servicesPoolGroup_id',
-            'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicesPoolGroup.objects.all()]),
-            'label': ugettext('Pool group'),
-            'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
-            'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 121,
-            'tab': ugettext('Display'),
-        }, {
-            'name': 'visible',
-            'value': True,
-            'label': ugettext('Visible'),
-            'tooltip': ugettext('If active, transport will be visible for users'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 107,
-            'tab': ugettext('Display'),
-        }, {
-            'name': 'initial_srvs',
-            'value': '0',
-            'minValue': '0',
-            'label': ugettext('Initial available services'),
-            'tooltip': ugettext('Services created initially for this service pool'),
-            'type': gui.InputField.NUMERIC_TYPE,
-            'order': 130,
-            'tab': ugettext('Availability'),
-        }, {
-            'name': 'cache_l1_srvs',
-            'value': '0',
-            'minValue': '0',
-            'label': ugettext('Services to keep in cache'),
-            'tooltip': ugettext('Services kept in cache for improved user service assignation'),
-            'type': gui.InputField.NUMERIC_TYPE,
-            'order': 131,
-            'tab': ugettext('Availability'),
-        }, {
-            'name': 'cache_l2_srvs',
-            'value': '0',
-            'minValue': '0',
-            'label': ugettext('Services to keep in L2 cache'),
-            'tooltip': ugettext('Services kept in cache of level2 for improved service generation'),
-            'type': gui.InputField.NUMERIC_TYPE,
-            'order': 132,
-            'tab': ugettext('Availability'),
-        }, {
-            'name': 'max_srvs',
-            'value': '0',
-            'minValue': '1',
-            'label': ugettext('Maximum number of services to provide'),
-            'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
-            'type': gui.InputField.NUMERIC_TYPE,
-            'order': 133,
-            'tab': ugettext('Availability'),
-        }, {
-            'name': 'show_transports',
-            'value': True,
-            'label': ugettext('Show transports'),
-            'tooltip': ugettext('If active, alternative transports for user will be shown'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'tab': ugettext('Advanced'),
-            'order': 130,
-        }, {
-            'name': 'account_id',
-            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]),
-            'label': ugettext('Accounting'),
-            'tooltip': ugettext('Account associated to this service pool'),
-            'type': gui.InputField.CHOICE_TYPE,
-            'tab': ugettext('Advanced'),
-            'order': 131,
-        }
-
-        ]:
+                'name': 'service_id',
+                'values': [gui.choiceItem('', '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]),
+                'label': ugettext('Base service'),
+                'tooltip': ugettext('Service used as base of this service pool'),
+                'type': gui.InputField.CHOICE_TYPE,
+                'rdonly': True,
+                'order': 100,  # Ensueres is At end
+            }, {
+                'name': 'osmanager_id',
+                'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]),
+                'label': ugettext('OS Manager'),
+                'tooltip': ugettext('OS Manager used as base of this service pool'),
+                'type': gui.InputField.CHOICE_TYPE,
+                'rdonly': True,
+                'order': 101,
+            }, {
+                'name': 'show_transports',
+                'value': True,
+                'label': ugettext('Show transports'),
+                'tooltip': ugettext('If active, alternative transports for user will be shown'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'order': 110,
+                'tab': ugettext('Advanced'),
+            }, {
+                'name': 'allow_users_remove',
+                'value': False,
+                'label': ugettext('Allow removal by users'),
+                'tooltip': ugettext('If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete it\'s own service'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'order': 111,
+                'tab': ugettext('Advanced'),
+            }, {
+                'name': 'allow_users_reset',
+                'value': False,
+                'label': ugettext('Allow reset by users'),
+                'tooltip': ugettext('If active, the user will be allowed to reset the service'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'order': 112,
+                'tab': ugettext('Advanced'),
+            }, {
+                'name': 'ignores_unused',
+                'value': False,
+                'label': ugettext('Ignores unused'),
+                'tooltip': ugettext('If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'order': 113,
+                'tab': ugettext('Advanced'),
+            }, {
+                'name': 'image_id',
+                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
+                'label': ugettext('Associated Image'),
+                'tooltip': ugettext('Image assocciated with this service'),
+                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'order': 120,
+                'tab': ugettext('Display'),
+            }, {
+                'name': 'servicesPoolGroup_id',
+                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicesPoolGroup.objects.all()]),
+                'label': ugettext('Pool group'),
+                'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
+                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'order': 121,
+                'tab': ugettext('Display'),
+            }, {
+                'name': 'visible',
+                'value': True,
+                'label': ugettext('Visible'),
+                'tooltip': ugettext('If active, transport will be visible for users'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'order': 107,
+                'tab': ugettext('Display'),
+            }, {
+                'name': 'initial_srvs',
+                'value': '0',
+                'minValue': '0',
+                'label': ugettext('Initial available services'),
+                'tooltip': ugettext('Services created initially for this service pool'),
+                'type': gui.InputField.NUMERIC_TYPE,
+                'order': 130,
+                'tab': ugettext('Availability'),
+            }, {
+                'name': 'cache_l1_srvs',
+                'value': '0',
+                'minValue': '0',
+                'label': ugettext('Services to keep in cache'),
+                'tooltip': ugettext('Services kept in cache for improved user service assignation'),
+                'type': gui.InputField.NUMERIC_TYPE,
+                'order': 131,
+                'tab': ugettext('Availability'),
+            }, {
+                'name': 'cache_l2_srvs',
+                'value': '0',
+                'minValue': '0',
+                'label': ugettext('Services to keep in L2 cache'),
+                'tooltip': ugettext('Services kept in cache of level2 for improved service generation'),
+                'type': gui.InputField.NUMERIC_TYPE,
+                'order': 132,
+                'tab': ugettext('Availability'),
+            }, {
+                'name': 'max_srvs',
+                'value': '0',
+                'minValue': '1',
+                'label': ugettext('Maximum number of services to provide'),
+                'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
+                'type': gui.InputField.NUMERIC_TYPE,
+                'order': 133,
+                'tab': ugettext('Availability'),
+            }, {
+                'name': 'show_transports',
+                'value': True,
+                'label': ugettext('Show transports'),
+                'tooltip': ugettext('If active, alternative transports for user will be shown'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'tab': ugettext('Advanced'),
+                'order': 130,
+            }, {
+                'name': 'account_id',
+                'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]),
+                'label': ugettext('Accounting'),
+                'tooltip': ugettext('Account associated to this service pool'),
+                'type': gui.InputField.CHOICE_TYPE,
+                'tab': ugettext('Advanced'),
+                'order': 131,
+            }]:
             self.addField(g, f)
 
         return g
@@ -352,7 +351,7 @@ class ServicesPools(ModelHandler):
                     del fields['osmanager_id']
 
                 if serviceType.cacheConstrains is not None:
-                    for k, v in six.iteritems(serviceType.cacheConstrains):
+                    for k, v in serviceType.cacheConstrains.items():
                         fields[k] = v
 
                 if serviceType.maxDeployed != -1:
@@ -373,7 +372,7 @@ class ServicesPools(ModelHandler):
             # *** ACCOUNT ***
             accountId = fields['account_id']
             fields['account_id'] = None
-            logger.debug('Account id: {}'.format(accountId))
+            logger.debug('Account id: %s', accountId)
 
             if accountId != '-1':
                 try:
@@ -384,7 +383,7 @@ class ServicesPools(ModelHandler):
             # **** IMAGE ***
             imgId = fields['image_id']
             fields['image_id'] = None
-            logger.debug('Image id: {}'.format(imgId))
+            logger.debug('Image id: %s', imgId)
             try:
                 if imgId != '-1':
                     image = Image.objects.get(uuid=processUuid(imgId))
@@ -395,7 +394,7 @@ class ServicesPools(ModelHandler):
             # Servicepool Group
             spgrpId = fields['servicesPoolGroup_id']
             fields['servicesPoolGroup_id'] = None
-            logger.debug('servicesPoolGroup_id: {}'.format(spgrpId))
+            logger.debug('servicesPoolGroup_id: %s', spgrpId)
             try:
                 if spgrpId != '-1':
                     spgrp = ServicesPoolGroup.objects.get(uuid=processUuid(spgrpId))
@@ -417,10 +416,11 @@ class ServicesPools(ModelHandler):
 
     def deleteItem(self, item):
         try:
-            logger.debug('Deleting {}'.format(item))
+            logger.debug('Deleting %s', item)
             item.remove()  # This will mark it for deletion, but in fact will not delete it directly
-        except:
-            logger.exception()
+        except Exception:
+            # Eat it and logit
+            logger.exception('deleting service pool')
 
     # Logs
     def getLogs(self, item):
@@ -435,7 +435,7 @@ class ServicesPools(ModelHandler):
 
         fallback = self._params.get('fallbackAccess')
         if fallback != '':
-            logger.debug('Setting fallback of {} to {}'.format(item.name, fallback))
+            logger.debug('Setting fallback of %s to %s', item.name, fallback)
             item.fallbackAccess = fallback
             item.save()
         return item.fallbackAccess

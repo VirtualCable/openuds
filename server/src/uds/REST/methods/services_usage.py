@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -63,14 +63,14 @@ class ServicesUsage(DetailHandler):
         if item.user is None:
             owner = ''
             owner_info = {
-               'auth_id': '',
-               'user_id': ''
+                'auth_id': '',
+                'user_id': ''
             }
         else:
             owner = item.user.pretty_name
             owner_info = {
-               'auth_id': item.user.manager.uuid,
-               'user_id': item.user.uuid
+                'auth_id': item.user.manager.uuid,
+                'user_id': item.user.uuid
             }
 
         return {

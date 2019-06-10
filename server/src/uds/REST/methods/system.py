@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,9 +31,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import pickle
-from datetime import timedelta
-
 import logging
+from datetime import timedelta
 
 from uds.models import User, Group, Service, UserService, ServicePool, MetaPool, getSqlDatetime
 
@@ -86,7 +85,7 @@ def getServicesPoolsCounters(servicePool, counter_type):
 class System(Handler):
 
     def get(self):
-        logger.debug('args: {0}'.format(self._args))
+        logger.debug('args: %s', self._args)
         if len(self._args) == 1:
             if self._args[0] == 'overview':  # System overview
                 users = User.objects.count()

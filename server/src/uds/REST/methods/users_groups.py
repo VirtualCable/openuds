@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,9 +29,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-# import time
 from django.utils.translation import ugettext as _
 from django.forms.models import model_to_dict
 from django.db import IntegrityError
@@ -47,12 +46,11 @@ from uds.core.auths.User import User as aUser
 from uds.core.managers import cryptoManager
 from uds.REST import RequestError
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
-from .user_services import AssignedService
 
 from uds.REST.model import DetailHandler
-import six
 
-import logging
+from .user_services import AssignedService
+
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +98,7 @@ class Users(DetailHandler):
                 res['role'] = res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
                 usr = aUser(u)
                 res['groups'] = [g.dbGroup().uuid for g in usr.groups()]
-                logger.debug('Item: {0}'.format(res))
+                logger.debug('Item: %s', res)
                 return res
         except Exception:
             logger.exception('En users')
@@ -135,7 +133,7 @@ class Users(DetailHandler):
         return log.getLogs(user)
 
     def saveItem(self, parent, item):
-        logger.debug('Saving user {0} / {1}'.format(parent, item))
+        logger.debug('Saving user %s / %s', parent, item)
         valid_fields = ['name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin']
         if 'password' in self._params:
             valid_fields.append('password')
@@ -159,11 +157,11 @@ class Users(DetailHandler):
                 user = parent.users.get(uuid=processUuid(item))
                 user.__dict__.update(toSave)
 
-            logger.debug('User parent: {}'.format(user.parent))
+            logger.debug('User parent: %s', user.parent)
             if auth.isExternalSource is False and (user.parent is None or user.parent == ''):
                 groups = self.readFieldsFromParams(['groups'])['groups']
-                logger.debug('Groups: {}'.format(groups))
-                logger.debug('Got Groups {}'.format(parent.groups.filter(uuid__in=groups)))
+                logger.debug('Groups: %s', groups)
+                logger.debug('Got Groups %s', parent.groups.filter(uuid__in=groups))
                 user.groups.set(parent.groups.filter(uuid__in=groups))
 
             user.save()
@@ -173,9 +171,9 @@ class Users(DetailHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
-            raise RequestError(six.text_type(e))
+            raise RequestError(str(e))
         except ValidationError as e:
-            raise RequestError(six.text_type(e.message))
+            raise RequestError(str(e.message))
         except Exception:
             logger.exception('Saving user')
             self.invalidRequestException()
@@ -194,7 +192,7 @@ class Users(DetailHandler):
                     logger.exception('Removing user service')
                     try:
                         us.save()
-                    except Exception as e:
+                    except Exception:
                         logger.exception('Saving user on removing error')
 
             user.delete()
@@ -247,6 +245,7 @@ class Groups(DetailHandler):
             else:
                 q = parent.groups.filter(uuid=processUuid(item))
             res = []
+            i = None
             for i in q:
                 val = {
                     'id': i.uuid,
@@ -259,7 +258,7 @@ class Groups(DetailHandler):
                 if i.is_meta:
                     val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
                 res.append(val)
-            if multi:
+            if multi or not i:
                 return res
             # Add pools field if 1 item only
             res = res[0]
@@ -268,14 +267,14 @@ class Groups(DetailHandler):
             else:
                 res['pools'] = [v.uuid for v in  i.deployedServices.all()]
             return res
-        except:
+        except Exception:
             logger.exception('REST groups')
             self.invalidItemException()
 
     def getTitle(self, parent):
         try:
             return _('Groups of {0}').format(Authenticator.objects.get(uuid=processUuid(self._kwargs['parent_id'])).name)
-        except:
+        except Exception:
             return _('Current groups')
 
     def getFields(self, parent):
@@ -295,14 +294,15 @@ class Groups(DetailHandler):
             'type': t,
             'description': tDct[t]['description'],
             'icon': ''
-        } for t in tDct.keys()]
+        } for t in tDct]
+
         if forType is None:
             return types
-        else:
-            try:
-                return types[forType]
-            except Exception:
-                self.invalidRequestException()
+
+        try:
+            return types[forType]
+        except Exception:
+            self.invalidRequestException()
 
     def saveItem(self, parent, item):
         group = None  # Avoid warning on reference before assignment
@@ -310,8 +310,8 @@ class Groups(DetailHandler):
             is_meta = self._params['type'] == 'meta'
             meta_if_any = self._params.get('meta_if_any', False)
             pools = self._params.get('pools', None)
-            logger.debug('Saving group {0} / {1}'.format(parent, item))
-            logger.debug('Meta any {}'.format(meta_if_any))
+            logger.debug('Saving group %s / %s', parent, item)
+            logger.debug('Meta any %s', meta_if_any)
             logger.debug('Pools: %s', pools)
             valid_fields = ['name', 'comments', 'state']
             fields = self.readFieldsFromParams(valid_fields)
@@ -353,7 +353,7 @@ class Groups(DetailHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
-            raise RequestError(six.text_type(e))
+            raise RequestError(str(e))
         except Exception:
             logger.exception('Saving group')
             self.invalidRequestException()
@@ -365,7 +365,7 @@ class Groups(DetailHandler):
             group = parent.groups.get(uuid=item)
 
             group.delete()
-        except:
+        except Exception:
             self.invalidItemException()
 
         return 'deleted'

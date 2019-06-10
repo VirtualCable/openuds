@@ -66,7 +66,7 @@ class ServicesPoolGroups(ModelHandler):
     def beforeSave(self, fields):
         imgId = fields['image_id']
         fields['image_id'] = None
-        logger.debug('Image id: {}'.format(imgId))
+        logger.debug('Image id: %s', imgId)
         try:
             if imgId != '-1':
                 image = Image.objects.get(uuid=processUuid(imgId))

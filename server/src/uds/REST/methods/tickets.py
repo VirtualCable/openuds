@@ -87,7 +87,7 @@ class Tickets(Handler):
         """
         Processes get requests, currently none
         """
-        logger.debug("Ticket args for GET: {0}".format(self._args))
+        logger.debug('Ticket args for GET: %s', self._args)
 
         raise RequestError('Invalid request')
 
@@ -102,7 +102,7 @@ class Tickets(Handler):
 
         for p in self._params:
             if p not in VALID_PARAMS:
-                logger.debug('Parameter {} not in valid ticket parameters list'.format(p))
+                logger.debug('Parameter %s not in valid ticket parameters list', p)
                 raise RequestError('Invalid parameters')
 
         if len(self._args) != 1 or self._args[0] not in ('create',):
@@ -147,7 +147,7 @@ class Tickets(Handler):
                 try:
                     grps.append(auth.groups.get(name=g).uuid)
                 except Exception:
-                    logger.info('Group {} from ticket does not exists on auth {}, forced creation: {}'.format(g, auth, force))
+                    logger.info('Group %s from ticket does not exists on auth %s, forced creation: %s', g, auth, force)
                     if force:
                         grps.append(auth.groups.create(name=g, comments='Autocreated form ticket by using force paratemeter').uuid)
 
@@ -176,7 +176,7 @@ class Tickets(Handler):
                     try:
                         servicePool.validateTransport(transport)
                     except Exception:
-                        logger.error('Transport {} is not valid for Service Pool {}'.format(transport.name, servicePool.name))
+                        logger.error('Transport %s is not valid for Service Pool %s', transport.name, servicePool.name)
                         raise Exception('Invalid transport for Service Pool')
                 else:
                     if userIp is None:
@@ -189,7 +189,7 @@ class Tickets(Handler):
                                 break
 
                         if transport is None:
-                            logger.error('Service pool {} does not has valid transports for ip {}'.format(servicePool.name, userIp))
+                            logger.error('Service pool %s does not has valid transports for ip %s', servicePool.name, userIp)
                             raise Exception('Service pool does not has any valid transports for ip {}'.format(userIp))
 
                 servicePool = servicePool.uuid

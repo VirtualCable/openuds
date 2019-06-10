@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,10 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=too-many-public-methods
-
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext as _
 
@@ -45,7 +42,6 @@ from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 from uds.core.util import permissions
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -141,7 +137,7 @@ class AssignedService(DetailHandler):
     def getLogs(self, parent, item):
         try:
             item = parent.assignedUserServices().get(uuid=processUuid(item))
-            logger.debug('Getting logs for {0}'.format(item))
+            logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
             self.invalidItemException()
@@ -229,7 +225,7 @@ class CachedService(AssignedService):
     def getLogs(self, parent, item):
         try:
             item = parent.cachedUserServices().get(uuid=processUuid(item))
-            logger.debug('Getting logs for {0}'.format(item))
+            logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
             self.invalidItemException()
@@ -336,10 +332,10 @@ class Publications(DetailHandler):
         changeLog = self._params['changelog'] if 'changelog' in self._params else None
 
         if permissions.checkPermissions(self._user, parent, permissions.PERMISSION_MANAGEMENT) is False:
-            logger.debug('Management Permission failed for user {}'.format(self._user))
+            logger.debug('Management Permission failed for user %s', self._user)
             self.accessDenied()
 
-        logger.debug('Custom "publish" invoked for {}'.format(parent))
+        logger.debug('Custom "publish" invoked for %s', parent)
         parent.publish(changeLog)  # Can raise exceptions that will be processed on response
 
         log.doLog(parent, log.INFO, "Initated publication v{} by {}".format(parent.current_pub_revision, self._user.pretty_name), log.ADMIN)
@@ -354,7 +350,7 @@ class Publications(DetailHandler):
         :param uuid: uuid of the publication
         """
         if permissions.checkPermissions(self._user, parent, permissions.PERMISSION_MANAGEMENT) is False:
-            logger.debug('Management Permission failed for user {}'.format(self._user))
+            logger.debug('Management Permission failed for user %s', self._user)
             self.accessDenied()
 
         try:
