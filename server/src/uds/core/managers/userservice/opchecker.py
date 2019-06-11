@@ -40,8 +40,6 @@ from uds.models import UserService
 
 import logging
 
-__updated__ = '2019-05-08'
-
 logger = logging.getLogger(__name__)
 
 USERSERVICE_TAG = 'cm-'
