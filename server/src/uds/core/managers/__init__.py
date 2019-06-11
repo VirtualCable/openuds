@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,40 +32,42 @@ UDS managers (downloads, users preferences, publications, ...)
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
-__updated__ = '2019-02-05'
-
-
-def cryptoManager():
-    ':rtype uds.core.managers.CryptoManager.CryptoManager'
+# Imports for type checking
+if typing.TYPE_CHECKING:
     from .CryptoManager import CryptoManager
+    from .TaskManager import TaskManager
+    from .DownloadsManager import DownloadsManager
+    from .LogManager import LogManager
+    from .StatsManager import StatsManager
+    from .UserServiceManager import UserServiceManager
+
+def cryptoManager() -> 'CryptoManager':
+    from .CryptoManager import CryptoManager  # pylint: disable=redefined-outer-name
     return CryptoManager.manager()
 
 
 def taskManager():
-    from .TaskManager import TaskManager
+    from .TaskManager import TaskManager  # pylint: disable=redefined-outer-name
     return TaskManager
 
 
 def downloadsManager():
-    from .DownloadsManager import DownloadsManager
+    from .DownloadsManager import DownloadsManager  # pylint: disable=redefined-outer-name
     return DownloadsManager.manager()
 
 
 def logManager():
-    ':rtype uds.core.managers.LogManager.LogManager'
-    from .LogManager import LogManager
+    from .LogManager import LogManager  # pylint: disable=redefined-outer-name
     return LogManager.manager()
 
 
 def statsManager():
-    ':rtype uds.core.managers.StatsManager.StatsManager'
-    from .StatsManager import StatsManager
+    from .StatsManager import StatsManager  # pylint: disable=redefined-outer-name
     return StatsManager.manager()
 
 
 def userServiceManager():
-    ':rtype uds.core.managers.UserServiceManager.UserServiceManager'
-    from .UserServiceManager import UserServiceManager
+    from .UserServiceManager import UserServiceManager  # pylint: disable=redefined-outer-name
     return UserServiceManager.manager()

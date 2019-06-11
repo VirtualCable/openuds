@@ -30,13 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-import six
 import codecs
 
-
 def __toBinary(data):
-    if isinstance(data, six.text_type):
+    if isinstance(data, str):
         return data.encode('utf8')
     return data
 

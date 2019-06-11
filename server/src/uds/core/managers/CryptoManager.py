@@ -30,25 +30,25 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from django.conf import settings
-from uds.core.util import encoders
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import AES
-from uds.core.util import encoders
-from OpenSSL import crypto
-from Crypto.Random import atfork
+import typing
 import hashlib
 import array
 import uuid
 import struct
-import datetime
 import random
 import string
 
 import logging
-import six
+
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES
+# from Crypto.Random import atfork 
+
+from OpenSSL import crypto
+
+from django.conf import settings
+
+from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ logger = logging.getLogger(__name__)
 # RSA.generate(1024, os.urandom).exportKey()
 
 
-class CryptoManager(object):
+class CryptoManager:
     instance = None
 
     def __init__(self):
@@ -68,60 +68,60 @@ class CryptoManager(object):
         self._counter = 0
 
     @staticmethod
-    def AESKey(key, length):
-        if isinstance(key, six.text_type):
+    def AESKey(key: typing.Union[str, bytes], length: int) -> bytes:
+        if isinstance(key, str):
             key = key.encode('utf8')
 
         while len(key) < length:
             key += key  # Dup key
 
-        kl = [ord(v) for v in key]
+        kl: typing.List[int] = [v for v in key]
         pos = 0
         while len(kl) > length:
             kl[pos] ^= kl[length]
             pos = (pos + 1) % length
             del kl[length]
 
-        return b''.join([chr(v) for v in kl])
+        return bytes(kl)
 
     @staticmethod
-    def manager():
+    def manager() -> 'CryptoManager':
         if CryptoManager.instance is None:
             CryptoManager.instance = CryptoManager()
         return CryptoManager.instance
 
-    def encrypt(self, value):
-        if isinstance(value, six.text_type):
+    def encrypt(self, value: typing.Union[str, bytes]) -> str:
+        if isinstance(value, str):
             value = value.encode('utf-8')
 
-        atfork()
-        return encoders.encode((self._rsa.encrypt(value, six.b(''))[0]), 'base64', asText=True)
+        # atfork()
+        return encoders.encode((self._rsa.encrypt(value, b'')[0]), 'base64', asText=True)
 
-    def decrypt(self, value):
-        if isinstance(value, six.text_type):
+    def decrypt(self, value: typing.Union[str, bytes]) -> str:
+        if isinstance(value, str):
             value = value.encode('utf-8')
         # import inspect
         try:
-            atfork()
-            return six.text_type(self._rsa.decrypt(encoders.decode(value, 'base64')).decode('utf-8'))
+            # atfork()
+            return str(self._rsa.decrypt(encoders.decode(value, 'base64')).decode('utf-8'))
         except Exception:
-            logger.exception('Decripting: {0}'.format(value))
+            logger.exception('Decripting: %s', value)
             # logger.error(inspect.stack())
             return 'decript error'
 
-    def AESCrypt(self, text, key, base64=False):
+    def AESCrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
         # First, match key to 16 bytes. If key is over 16, create a new one based on key of 16 bytes length
         cipher = AES.new(CryptoManager.AESKey(key, 16), AES.MODE_CBC, 'udsinitvectoruds')
         rndStr = self.randomString(cipher.block_size)
         paddedLength = ((len(text) + 4 + 15) // 16) * 16
         toEncode = struct.pack('>i', len(text)) + text + rndStr[:paddedLength - len(text) - 4]
         encoded = cipher.encrypt(toEncode)
-        if hex:
-            return encoders.encode(encoded, 'base64', True)
+        if base64:
+            return encoders.encode(encoded, 'base64', asText=False)  # Return as binary
 
         return encoded
 
-    def AESDecrypt(self, text, key, base64=False):
+    def AESDecrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
         if base64:
             text = encoders.decode(text, 'base64')
 
@@ -129,23 +129,21 @@ class CryptoManager(object):
         toDecode = cipher.decrypt(text)
         return toDecode[4:4 + struct.unpack('>i', toDecode[:4])[0]]
 
-        return
-
-    def xor(self, s1, s2):
+    def xor(self, s1: typing.Union[str, bytes], s2: typing.Union[str, bytes]) -> bytes:
         if isinstance(s1, str):
             s1 = s1.encode('utf-8')
         if isinstance(s2, str):
             s2 = s2.encode('utf-8')
         mult = int(len(s1) / len(s2)) + 1
-        s1 = array.array('B', s1)
-        s2 = array.array('B', s2 * mult)
+        s1a = array.array('B', s1) 
+        s2a = array.array('B', s2 * mult) 
         # We must return bynary in xor, because result is in fact binary
-        return array.array('B', (s1[i] ^ s2[i] for i in range(len(s1)))).tobytes()
+        return array.array('B', (s1a[i] ^ s2a[i] for i in range(len(s1a)))).tobytes()
 
-    def symCrypt(self, text, key):
+    def symCrypt(self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
         return self.xor(text, key)
 
-    def symDecrpyt(self, cryptText, key):
+    def symDecrpyt(self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
         return self.xor(cryptText, key).decode('utf-8')
 
     def loadPrivateKey(self, rsaKey):
@@ -165,14 +163,14 @@ class CryptoManager(object):
     def certificateString(self, certificate):
         return certificate.replace('-----BEGIN CERTIFICATE-----', '').replace('-----END CERTIFICATE-----', '').replace('\n', '')
 
-    def hash(self, value):
-        if isinstance(value, six.text_type):
+    def hash(self, value: typing.Union[str, bytes]) -> str:
+        if isinstance(value, str):
             value = value.encode('utf-8')
 
-        if value is '' or value is None:
+        if not value:
             return ''
 
-        return six.text_type(hashlib.sha1(value).hexdigest())
+        return str(hashlib.sha1(value).hexdigest())
 
     def uuid(self, obj=None):
         """

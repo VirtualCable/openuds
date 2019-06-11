@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-__updated__ = '2014-11-12'
 
 
-class AuthsFactory(object):
+class AuthsFactory:
     """
     This class holds the register of all known authentication modules
     inside UDS.

@@ -38,6 +38,7 @@ from django.db.models import signals
 
 from uds.core.util.State import State
 from uds.core.util import log
+from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
 from .UUIDModel import UUIDModel
 
 from .Authenticator import Authenticator
@@ -62,7 +63,7 @@ class Group(UUIDModel):
     groups = models.ManyToManyField('self', symmetrical=False)
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
-    class Meta(UUIDModel.Meta):
+    class Meta:
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -71,10 +72,10 @@ class Group(UUIDModel):
         app_label = 'uds'
 
     @property
-    def pretty_name(self):
+    def pretty_name(self) -> str:
         return self.name + '@' + self.manager.name
 
-    def getManager(self):
+    def getManager(self) -> AuthenticatorInstance:
         """
         Returns the authenticator object that owns this user.
 
@@ -107,7 +108,7 @@ class Group(UUIDModel):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Deleted group {0}'.format(toDelete))
+        logger.debug('Deleted group %s', toDelete)
 
 
 signals.pre_delete.connect(Group.beforeDelete, sender=Group)

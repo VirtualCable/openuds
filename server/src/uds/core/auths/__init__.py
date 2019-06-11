@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,15 +32,11 @@ UDS authentication related interfaces and classes
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from uds.core.auths.BaseAuthenticator import Authenticator
 from uds.core.auths.User import User
 from uds.core.auths.Group import Group
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths import Exceptions
-
-__updated__ = '2014-11-11'
 
 
 def factory():

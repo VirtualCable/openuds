@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,23 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import re
+import logging
+import typing
+
+from collections.abc import Iterable
 
 from uds.core.util.State import State
-from uds.models import Group as dbGroup
-from uds.core.auths.Group import Group
+from uds.models import Group as DBGroup
+from uds.models import Authenticator as DBAuthenticator
+from .Group import Group
 
-import six
-import re
-import inspect
-import logging
-
-__updated__ = '2018-02-01'
 
 logger = logging.getLogger(__name__)
 
 
-class GroupsManager(object):
+class GroupsManager:
     """
     Manages registered groups for an specific authenticator.
 
@@ -65,8 +64,9 @@ class GroupsManager(object):
 
     Managed groups names are compared using case insensitive comparison.
     """
+    _groups: typing.Dict[str, dict]
 
-    def __init__(self, dbAuthenticator):
+    def __init__(self, dbAuthenticator: DBAuthenticator):
         """
         Initializes the groups manager.
         The dbAuthenticator is the database record of the authenticator
@@ -79,74 +79,73 @@ class GroupsManager(object):
             isPattern = name.find('pat:') == 0  # Is a pattern?
             self._groups[name] = {'name': g.name, 'group': Group(g), 'valid': False, 'pattern': isPattern}
 
-    def checkAllGroups(self, groupName):
+    def checkAllGroups(self, groupName: str):
         """
         Returns true if this groups manager contains the specified group name (string)
         """
         name = groupName.lower()
         res = []
-        for gName, grp in six.iteritems(self._groups):
+        for gName, grp in self._groups.items():
             if grp['pattern'] is True:
-                logger.debug('Group is a pattern: {}'.format(grp))
+                logger.debug('Group is a pattern: %s', grp)
                 try:
-                    logger.debug('Match: {}->{}'.format(grp['name'][4:], name))
+                    logger.debug('Match: %s->%s', grp['name'][4:], name)
                     if re.search(grp['name'][4:], name, re.IGNORECASE) is not None:
                         res.append(grp)  # Stop searching, one group at least matches
                 except Exception:
                     logger.exception('Exception in RE')
             else:
-                logger.debug('Group: {}=={}'.format(name, gName))
+                logger.debug('Group: %s==%s', name, gName)
                 if name == gName:
                     res.append(grp)
         return res
 
-    def getGroupsNames(self):
+    def getGroupsNames(self) -> typing.Iterable[str]:
         """
         Return all groups names managed by this groups manager. The names are returned
         as where inserted inside Database (most probably using administration interface)
         """
-        for g in six.itervalues(self._groups):
-            yield g['group'].dbGroup().name
+        for g in self._groups.values():
+            yield g['group'].DBGroup().name
 
-    def getValidGroups(self):
+    def getValidGroups(self) -> typing.Iterable[Group]:
         """
         returns the list of valid groups (:py:class:uds.core.auths.Group.Group)
         """
-        lst = ()
-        for g in six.itervalues(self._groups):
+        lst: typing.List[str] = []
+        for g in self._groups.values():
             if g['valid'] is True:
-                lst += (g['group'].dbGroup().id,)
+                lst += (g['group'].DBGroup().id,)
                 yield g['group']
         # Now, get metagroups and also return them
-        for g in dbGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=True):  # @UndefinedVariable
-            gn = g.groups.filter(id__in=lst, state=State.ACTIVE).count()
-            if g.meta_if_any is True and gn > 0:
-                gn = g.groups.count()
-            if gn == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
+        for g2 in DBGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=True):  # @UndefinedVariable
+            gn = g2.groups.filter(id__in=lst, state=State.ACTIVE).count()
+            if g2.meta_if_any is True and gn > 0:
+                gn = g2.groups.count()
+            if gn == g2.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
-                yield Group(g)
+                yield Group(g2)
 
     def hasValidGroups(self):
         """
         Checks if this groups manager has at least one group that has been
         validated (using :py:meth:.validate)
         """
-        for g in six.itervalues(self._groups):
+        for g in self._groups.values():
             if g['valid'] is True:
                 return True
         return False
 
-    def getGroup(self, groupName):
+    def getGroup(self, groupName: str) -> typing.Optional[Group]:
         """
         If this groups manager contains that group manager, it returns the
         :py:class:uds.core.auths.Group.Group  representing that group name.
         """
         if groupName.lower() in self._groups:
             return self._groups[groupName.lower()]['group']
-        else:
-            return None
+        return None
 
-    def validate(self, groupName):
+    def validate(self, groupName: typing.Union[str, typing.Iterable]):
         """
         Validates that the group groupName passed in is valid for this group manager.
 
@@ -158,14 +157,14 @@ class GroupsManager(object):
         Returns nothing, it changes the groups this groups contains attributes,
         so they reflect the known groups that are considered valid.
         """
-        if type(groupName) is tuple or type(groupName) is list or inspect.isgenerator(groupName):
+        if isinstance(groupName, Iterable):
             for n in groupName:
                 self.validate(n)
         else:
             for grp in self.checkAllGroups(groupName):
                 grp['valid'] = True
 
-    def isValid(self, groupName):
+    def isValid(self, groupName: str) -> bool:
         """
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,20 +31,18 @@ Base module for all authenticators
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from uds.core import Module
-from django.utils.translation import ugettext_noop as _
-from uds.core.auths.GroupsManager import GroupsManager
-from uds.core.auths.Exceptions import InvalidUserException
 import logging
 
-__updated__ = '2019-01-21'
+from django.utils.translation import ugettext_noop as _
+from uds.core import Module
+from uds.core.auths.GroupsManager import GroupsManager
+from uds.core.auths.Exceptions import InvalidUserException
+
 
 logger = logging.getLogger(__name__)
 
 
-class Authenticator(Module):
+class Authenticator(Module):  # pylint: disable=too-many-public-methods
     """
     This class represents the base interface to implement authenticators.
 
@@ -181,7 +179,6 @@ class Authenticator(Module):
 
         Default implementation does nothing
         """
-        pass
 
     def dbAuthenticator(self):
         """
@@ -430,7 +427,6 @@ class Authenticator(Module):
         calling its :py:meth:`uds.core.auths.GroupsManager.validate` method with groups names provided by the authenticator itself
         (for example, LDAP, AD, ...)
         """
-        pass
 
     def getJavascript(self, request):
         """
@@ -582,7 +578,6 @@ class Authenticator(Module):
         :note: By default, this will do nothing, as we can only modify "accesory" internal
                data of users.
         """
-        pass
 
     def createGroup(self, groupData):
         """
@@ -609,7 +604,6 @@ class Authenticator(Module):
             Take care with whatever you modify here, you can even modify provided
             name (group name) to a new one!
         """
-        pass
 
     def modifyGroup(self, groupData):
         """
@@ -635,7 +629,6 @@ class Authenticator(Module):
 
         Note: 'name' output parameter will be ignored
         """
-        pass
 
     def removeUser(self, username):
         """
@@ -650,7 +643,6 @@ class Authenticator(Module):
 
         If this method raises an exception, the user will not be removed from UDS
         """
-        pass
 
     # We don't have a "modify" group option. Once u have created it, the only way of changing it if removing it an recreating it with another name
 
@@ -667,4 +659,3 @@ class Authenticator(Module):
 
         If this method raises an exception, the group will not be removed from UDS
         """
-        pass

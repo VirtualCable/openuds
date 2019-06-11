@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,20 +30,30 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
+import typing
 
-__updated__ = '2018-09-04'
+from uds.models import Group as DBGroup, User as DBUser
+from .GroupsManager import GroupsManager
+from .Group import Group
+
+# Imports for type checking
+if typing.TYPE_CHECKING:
+    from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
+
 
 logger = logging.getLogger(__name__)
 
 
-class User(object):
+class User:
     """
     An user represents a database user, associated with its authenticator (instance)
     and its groups.
     """
+    _manager: 'AuthenticatorInstance'
+    _grpsManager: typing.Optional[GroupsManager]
+    _dbUser: DBUser
+    _groups: typing.Optional[typing.List[Group]]
 
     def __init__(self, dbUser):
         self._manager = dbUser.getManager()
@@ -51,19 +61,17 @@ class User(object):
         self._dbUser = dbUser
         self._groups = None
 
-    def _groupsManager(self):
+    def _groupsManager(self) -> GroupsManager:
         """
         If the groups manager for this user already exists, it returns this.
         If it does not exists, it creates one default from authenticator and
         returns it.
         """
-        from .GroupsManager import GroupsManager
-
         if self._grpsManager is None:
             self._grpsManager = GroupsManager(self._manager.dbAuthenticator())
         return self._grpsManager
 
-    def groups(self):
+    def groups(self) -> typing.List[Group]:
         """
         Returns the valid groups for this user.
         To do this, it will validate groups through authenticator instance using
@@ -71,34 +79,31 @@ class User(object):
 
         :note: Once obtained valid groups, it caches them until object removal.
         """
-        from uds.models import User as DbUser
-        from uds.core.auths.Group import Group
-
         if self._groups is None:
             if self._manager.isExternalSource is True:
                 self._manager.getGroups(self._dbUser.name, self._groupsManager())
                 self._groups = list(self._groupsManager().getValidGroups())
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
-                usr = DbUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
-                lst = ()
+                usr = DBUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
+                lst: typing.List[DBGroup] = []
                 for g in self._groups:
                     if g.dbGroup().is_meta is False:
                         lst += (g.dbGroup().id,)
                 usr.groups.set(lst)
             else:
                 # From db
-                usr = DbUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
+                usr = DBUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
                 self._groups = [Group(g) for g in usr.getGroups()]
         return self._groups
 
-    def manager(self):
+    def manager(self) -> 'AuthenticatorInstance':
         """
         Returns the authenticator instance
         """
         return self._manager
 
-    def dbUser(self):
+    def dbUser(self) -> DBUser:
         """
         Returns the database user
         """

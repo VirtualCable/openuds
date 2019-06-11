@@ -5,4 +5,4 @@ This module contains the definition of UserInterface, needed to describe the int
 between an UDS module and the administration interface
 """
 
-from uds.core.ui.UserInterface import gui
+from .UserInterface import gui

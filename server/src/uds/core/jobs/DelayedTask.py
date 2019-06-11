@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from uds.core.Environment import Environmentable
 import logging
 
-__updated__ = '2018-09-17'
+from uds.core.Environment import Environmentable
+
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +62,7 @@ class DelayedTask(Environmentable):
         """
         logging.debug("Base run of job called for class")
 
-    def register(self, suggestedTime, tag='', check=True):
+    def register(self, suggestedTime, tag: str = '', check: bool = True):
         """
         Utility method that allows to register a Delayedtask
         """

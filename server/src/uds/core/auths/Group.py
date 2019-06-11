@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,37 +31,40 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-import six
 import logging
+import typing
 
-__updated__ = '2018-01-05'
+from uds.models import Group as DBGroup
+
+# Imports for type checking
+if typing.TYPE_CHECKING:
+    from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
+
 
 logger = logging.getLogger(__name__)
 
 
-class Group(object):
+class Group:
     """
     A group is simply a database group associated with its authenticator instance
 
     It's only constructor expect a database group as parameter.
     """
 
-    def __init__(self, dbGroup):
+    def __init__(self, dbGroup: DBGroup):
         """
         Initializes internal data
         """
         self._manager = dbGroup.getManager()
         self._dbGroup = dbGroup
 
-    def manager(self):
+    def manager(self) -> 'AuthenticatorInstance':
         """
         Returns the database authenticator associated with this group
         """
         return self._manager
 
-    def dbGroup(self):
+    def dbGroup(self) -> DBGroup:
         """
         Returns the database group associated with this
         """

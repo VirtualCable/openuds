@@ -86,8 +86,9 @@ class TaskManager(object):
     def registerScheduledTasks():
 
         logger.info("Registering sheduled tasks")
-        # Simply import this to make workers "auto import"
-        from uds.core import workers  # @UnusedImport
+
+        # Simply import this to make workers "auto imported"
+        from uds.core import workers  # @UnusedImport pylint: disable=unused-import
 
     @staticmethod
     def run():

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,18 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from django.utils.translation import get_language, ugettext as _, ugettext_noop
-from uds.core.util import encoders
 import datetime
+import typing
 import time
-import six
 import pickle
 import logging
+
+# import six
+
+from django.utils.translation import get_language, ugettext as _, ugettext_noop
+
+from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
 
-class gui(object):
+class gui:
     """
     This class contains the representations of fields needed by UDS modules and
     administation interface.
@@ -89,7 +93,7 @@ class gui(object):
     DISPLAY_TAB = ugettext_noop('Display')
 
     # : Static Callbacks simple registry
-    callbacks = {}
+    callbacks: typing.Dict[str, typing.Callable] = {}
 
     # Helpers
     @staticmethod
@@ -107,7 +111,7 @@ class gui(object):
     @staticmethod
     def convertToList(vals):
         if vals is not None:
-            return [six.text_type(v) for v in vals]
+            return [str(v) for v in vals]
         return []
 
     @staticmethod
@@ -127,11 +131,11 @@ class gui(object):
         :note: Text can be anything, the method converts it first to text before
         assigning to dictionary
         """
-        return {'id': str(id_), 'text': six.text_type(text)}
+        return {'id': str(id_), 'text': str(text)}
 
     @staticmethod
     def choiceImage(id_, text, img):
-        return {'id': str(id_), 'text': six.text_type(text), 'img': img }
+        return {'id': str(id_), 'text': str(text), 'img': img }
 
     @staticmethod
     def sortedChoices(choices):
@@ -151,7 +155,7 @@ class gui(object):
         """
         if isinstance(str_, bool):
             return str_
-        if six.text_type(str_).lower() == gui.TRUE:
+        if str(str_).lower() == gui.TRUE:
             return True
         return False
 
@@ -230,7 +234,7 @@ class gui(object):
                 'length': options.get('length', gui.InputField.DEFAULT_LENTGH),
                 'required': options.get('required', False),
                 'label': options.get('label', ''),
-                'defvalue': six.text_type(options.get('defvalue', '')),
+                'defvalue': str(options.get('defvalue', '')),
                 'rdonly': options.get('rdonly', False),  # This property only affects in "modify" operations
                 'order': options.get('order', 0),
                 'tooltip': options.get('tooltip', ''),
@@ -349,7 +353,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
             multiline = int(options.get('multiline', 0))
             if multiline > 8:
@@ -378,7 +382,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             minValue = options.get('minValue', '987654321')
             maxValue = options.get('maxValue', '987654321')
             self._data['minValue'] = int(minValue)
@@ -432,7 +436,7 @@ class gui(object):
             for v in 'value', 'defvalue':
                 self.processValue(v, options)
 
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._type(gui.InputField.DATE_TYPE)
 
         def date(self):
@@ -467,7 +471,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._type(gui.InputField.PASSWORD_TYPE)
 
     class HiddenField(InputField):
@@ -503,7 +507,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._isSerializable = options.get('serializable', '') != ''
             self._type(gui.InputField.HIDDEN_TYPE)
 
@@ -531,7 +535,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._type(gui.InputField.CHECKBOX_TYPE)
 
         @staticmethod
@@ -645,7 +649,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._data['values'] = options.get('values', [])
             if 'fills' in options:
                 # Save fnc to register as callback
@@ -665,7 +669,7 @@ class gui(object):
     class ImageChoiceField(InputField):
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._data['values'] = options.get('values', [])
 
             self._type(gui.InputField.IMAGECHOICE_TYPE)
@@ -711,7 +715,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._data['values'] = options.get('values', [])
             self._data['rows'] = options.get('rows', -1)
             self._type(gui.InputField.MULTI_CHOICE_TYPE)
@@ -753,16 +757,16 @@ class gui(object):
         SEPARATOR = '\001'
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._data['values'] = gui.convertToList(options.get('values', []))
             self._type(gui.InputField.EDITABLE_LIST)
 
-        def _setValue(self, values):
+        def _setValue(self, value):
             """
             So we can override value setting at descendants
             """
-            super(self.__class__, self)._setValue(values)
-            self._data['values'] = gui.convertToList(values)
+            super()._setValue(value)
+            self._data['values'] = gui.convertToList(value)
 
     class ImageField(InputField):
         """
@@ -770,7 +774,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
 
     class InfoField(InputField):
@@ -779,7 +783,7 @@ class gui(object):
         """
 
         def __init__(self, **options):
-            super(self.__class__, self).__init__(**options)
+            super().__init__(**options)
             self._type(gui.InputField.INFO_TYPE)
 
 
@@ -789,7 +793,7 @@ class UserInterfaceType(type):
     better place
     """
 
-    def __new__(cls, classname, bases, classDict):
+    def __new__(cls, classname, bases, classDict):  # pylint: disable=bad-mcs-classmethod-argument
         newClassDict = {}
         _gui = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
@@ -801,8 +805,7 @@ class UserInterfaceType(type):
         return type.__new__(cls, classname, bases, newClassDict)
 
 
-# @six.add_metaclass(UserInterfaceType)
-class UserInterface(object, metaclass=UserInterfaceType):
+class UserInterface(metaclass=UserInterfaceType):
     """
     This class provides the management for gui descriptions (user forms)
 
@@ -813,7 +816,6 @@ class UserInterface(object, metaclass=UserInterfaceType):
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
     """
-    # __metaclass__ = UserInterfaceType
 
     def __init__(self, values=None):
         import copy
@@ -821,15 +823,15 @@ class UserInterface(object, metaclass=UserInterfaceType):
         # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
         # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
         self._gui = copy.deepcopy(self._gui)  # Ensure "gui" is our own instance, deep copied from base
-        for key, val in six.iteritems(self._gui):  # And refresh references to them
+        for key, val in self._gui.items():  # And refresh references to them
             setattr(self, key, val)
 
         if values is not None:
-            for k, v in six.iteritems(self._gui):
+            for k, v in self._gui.items():
                 if k in values:
                     v.value = values[k]
                 else:
-                    logger.warning('Field {} not found'.format(k))
+                    logger.warning('Field %s not found', k)
 
     def initGui(self):
         """
@@ -850,7 +852,6 @@ class UserInterface(object, metaclass=UserInterfaceType):
                time, and returned data will be probable a nonsense. We will take care
                of this posibility in a near version...
         """
-        pass
 
     def valuesDict(self):
         """
@@ -880,7 +881,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
 
         """
         dic = {}
-        for k, v in six.iteritems(self._gui):
+        for k, v in self._gui.items():
             if v.isType(gui.InputField.EDITABLE_LIST):
                 dic[k] = gui.convertToList(v.value)
             elif v.isType(gui.InputField.MULTI_CHOICE_TYPE):
@@ -891,7 +892,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
 #                dic[k] = v.defValue
             else:
                 dic[k] = v.value
-        logger.debug('Values Dict: {0}'.format(dic))
+        logger.debug('Values Dict: %s', dic)
         return dic
 
     def serializeForm(self):
@@ -911,7 +912,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
 
         arr = []
         for k, v in self._gui.items():
-            logger.debug('serializing Key: {0}/{1}'.format(k, v.value))
+            logger.debug('serializing Key: %s/%s', k, v.value)
             if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
                 # logger.debug('Field {0} is not serializable'.format(k))
                 continue
@@ -947,7 +948,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
 
         try:
             # Set all values to defaults ones
-            for k in six.iterkeys(self._gui):
+            for k in self._gui:
                 if self._gui[k].isType(gui.InputField.HIDDEN_TYPE) and self._gui[k].isSerializable() is False:
                     # logger.debug('Field {0} is not unserializable'.format(k))
                     continue
@@ -975,7 +976,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))
         except Exception:
-            logger.exception('Exception on unserialization on {}'.format(self.__class__))
+            logger.exception('Exception on unserialization on %s', self.__class__)
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
@@ -990,7 +991,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
             object: If not none, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
         """
-        logger.debug('Active language for theGui translation: {0}'.format(get_language()))
+        logger.debug('Active language for theGui translation: %s', get_language())
         theGui = cls
         if obj is not None:
             obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
@@ -998,9 +999,9 @@ class UserInterface(object, metaclass=UserInterfaceType):
 
         res = []
         # pylint: disable=protected-access,maybe-no-member
-        for key, val in six.iteritems(theGui._gui):
-            logger.debug('{0} ### {1}'.format(key, val))
+        for key, val in theGui._gui.items():
+            logger.debug('%s ### %s', key, val)
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
 
-        logger.debug('>>>>>>>>>>>> Gui Description: {0} -- {1}'.format(obj, res))
+        logger.debug('>>>>>>>>>>>> Gui Description: %s -- %s', obj, res)
         return res
