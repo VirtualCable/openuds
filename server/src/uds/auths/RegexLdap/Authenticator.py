@@ -31,18 +31,21 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import re
+import logging
+
+import ldap
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import auths
 from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import ldaputil
 
-import ldap
-import re
-import logging
 
 try:
-    from . import extra  # @UnresolvedImport
+    # pylint: disable=no-name-in-module
+    from . import extra  # type: ignore
 except Exception:
     extra = None
 
@@ -151,7 +154,7 @@ class RegexLdap(auths.Authenticator):
 
     def __processField(self, field, attributes):
         res = []
-        logger.debug('Attributes: {}'.format(attributes))
+        logger.debug('Attributes: %s', attributes)
         for line in field.splitlines():
             equalPos = line.find('=')
             if equalPos == -1:
@@ -166,18 +169,18 @@ class RegexLdap(auths.Authenticator):
             if type(val) is not list:  # May we have a single value
                 val = [val]
 
-            logger.debug('Pattern: {0}'.format(pattern))
+            logger.debug('Pattern: %s', pattern)
 
             for v in val:
                 try:
                     srch = re.search(pattern, v, re.IGNORECASE)  # @UndefinedVariable
-                    logger.debug("Found against {0}: {1} ".format(v, srch.groups()))
+                    logger.debug("Found against %s: %s ", v, srch.groups())
                     if srch is None:
                         continue
                     res.append(''.join(srch.groups()))
                 except Exception:
                     pass  # Ignore exceptions here
-        logger.debug('Res: {}'.format(res))
+        logger.debug('Res: %s', res)
         return res
 
     def valuesDict(self):
@@ -191,8 +194,9 @@ class RegexLdap(auths.Authenticator):
 
     def __str__(self):
         return "Ldap Auth: {}:{}@{}:{}, base = {}, userClass = {}, userIdAttr = {}, groupNameAttr = {}, userName attr = {}, altClass={}".format(
-               self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr,
-               self._userNameAttr, self._altClass)
+            self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr,
+            self._userNameAttr, self._altClass
+        )
 
     def marshal(self):
         return '\t'.join([

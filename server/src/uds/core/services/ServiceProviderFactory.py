@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,32 +30,31 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
+import typing
 import logging
 
-__updated__ = '2014-11-12'
+from .BaseServiceProvider import ServiceProvider
 
 logger = logging.getLogger(__name__)
 
 
-class ServiceProviderFactory(object):
+class ServiceProviderFactory:
     """
     This class holds the register of all known service provider modules
     inside UDS.
 
     It provides a way to register and recover providers providers.
     """
-    _factory = None
+    _factory: typing.Optional['ServiceProviderFactory'] = None
 
     def __init__(self):
         """
         Initializes internal dictionary for service providers registration
         """
-        self._providers = {}
+        self._providers: typing.Dict[str, ServiceProvider] = {}
 
     @staticmethod
-    def factory():
+    def factory() -> 'ServiceProviderFactory':
         """
         Returns the factory that keeps the register of service providers.
         """
@@ -63,13 +62,13 @@ class ServiceProviderFactory(object):
             ServiceProviderFactory._factory = ServiceProviderFactory()
         return ServiceProviderFactory._factory
 
-    def providers(self):
+    def providers(self) -> typing.Dict[str, ServiceProvider]:
         """
         Returns the list of service providers already registered.
         """
         return self._providers
 
-    def insert(self, type_):
+    def insert(self, type_: ServiceProvider) -> None:
         """
         Inserts type_ as a service provider
         """
@@ -81,7 +80,7 @@ class ServiceProviderFactory(object):
         # that service will not be registered and it will be informed
         typeName = type_.type().lower()
         if typeName in self._providers:
-            logger.debug('{0} already registered as Service Provider'.format(type_))
+            logger.debug('%s already registered as Service Provider', type_)
             return
 
         offers = []
@@ -89,13 +88,13 @@ class ServiceProviderFactory(object):
             if s.usesCache_L2 is True:
                 s.usesCache = True
                 if s.publicationType is None:
-                    logger.error('Provider {0} offers {1}, but {1} needs cache and do not have publicationType defined'.format(type_, s))
+                    logger.error('Provider %s offers %s, but %s needs cache and do not have publicationType defined', type_, s, s)
                     continue
             offers.append(s)
 
         # Only offers valid services
         type_.offers = offers
-        logger.debug('Adding provider {0} as {1}'.format(type_.type(), type_))
+        logger.debug('Adding provider %s as %s', type_.type(), type_)
 
         self._providers[typeName] = type_
 

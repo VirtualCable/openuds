@@ -32,7 +32,7 @@
 """
 import logging
 import typing
-from collections.abc import Iterable
+import types
 
 from django.db import models
 
@@ -73,12 +73,12 @@ class StatsEvents(models.Model):
 
         Note: if someone cant get this more optimized, please, contribute it!
         """
-        if isinstance(event_type, Iterable):
+        if isinstance(event_type, (list, tuple, types.GeneratorType)):
             fltr = StatsEvents.objects.filter(event_type__in=event_type)
         else:
             fltr = StatsEvents.objects.filter(event_type=event_type)
 
-        if isinstance(owner_type, Iterable):
+        if isinstance(owner_type, (list, tuple, types.GeneratorType)):
             fltr = fltr.filter(owner_type__in=owner_type)
         else:
             fltr = fltr.filter(owner_type=owner_type)

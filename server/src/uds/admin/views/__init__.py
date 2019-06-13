@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,8 +28,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
 
 from django.http import HttpResponse
@@ -42,16 +40,14 @@ from uds.core.util.decorators import denyBrowsers
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-05-18'
 
-
-@denyBrowsers(browsers=['ie<9'])
+@denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def index(request):
     return render(request, 'uds/admin/index.html')
 
 
-@denyBrowsers(browsers=['ie<9'])
+@denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def tmpl(request, template):
     try:
@@ -64,7 +60,7 @@ def tmpl(request, template):
     return HttpResponse(resp, content_type="text/plain")
 
 
-@denyBrowsers(browsers=['ie<9'])
+@denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def sample(request):
     return render(request, 'uds/admin/sample.html')

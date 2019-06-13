@@ -32,14 +32,13 @@ Core of UDS.
 This package contains all core-related code for UDS
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import time
 
 # Core needs tasks manager to register scheduled jobs, so we ensure of that here
 from uds.core.Environment import Environmentable
 from uds.core.Serializable import Serializable
 from uds.core.BaseModule import Module
 
-import time
 
 VERSION = '3.x.x-DEVEL'
 VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))

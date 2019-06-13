@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
 from uds.core.util import encoders
 
@@ -48,7 +48,7 @@ class Serializable(object):
     def __init__(self):
         pass
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         This is the method that must be overriden in order to serialize an object.
 
@@ -59,7 +59,7 @@ class Serializable(object):
         """
         raise Exception('Base marshaler called!!!')
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data: bytes) -> None:
         """
         This is the method that must be overriden in order to unserialize an object.
 
@@ -70,20 +70,20 @@ class Serializable(object):
         In that case, initialize the object with default values
 
         Args:
-            str_ _ : String readed from persistent storage to deseralilize
+            data : String readed from persistent storage to deseralilize
 
         :note: This method must be overridden
         """
         raise Exception('Base unmarshaler called!!!')
 
-    def serialize(self):
+    def serialize(self) -> str:
         """
         Serializes and "obfuscates' the data.
         """
-        return encoders.encode(self.marshal(), 'base64', asText=True)
+        return typing.cast(str, (encoders.encode(self.marshal(), 'base64', asText=True)))
 
-    def unserialize(self, str_):
+    def unserialize(self, data: str) -> None:
         """
         des-obfuscates the data and then de-serializes it via unmarshal method
         """
-        return self.unmarshal(encoders.decode(str_, 'base64'))
+        self.unmarshal(typing.cast(bytes, encoders.decode(data, 'base64')))

@@ -31,8 +31,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import types
 import logging
-from collections.abc import Iterable
 
 from django.db import models
 
@@ -71,7 +71,7 @@ class StatsCounters(models.Model):
         """
 
         filt = 'owner_type'
-        if isinstance(owner_type, Iterable):
+        if isinstance(owner_type, (list, tuple, types.GeneratorType)):
             filt += ' in (' + ','.join((str(x) for x in owner_type)) + ')'
         else:
             filt += '=' + str(owner_type)
@@ -79,7 +79,7 @@ class StatsCounters(models.Model):
         owner_id = kwargs.get('owner_id', None)
         if owner_id is not None:
             filt += ' AND OWNER_ID'
-            if isinstance(owner_id, Iterable):
+            if isinstance(owner_id, (list, tuple, types.GeneratorType)):
                 filt += ' in (' + ','.join(str(x) for x in owner_id) + ')'
             else:
                 filt += '=' + str(owner_id)
@@ -103,12 +103,12 @@ class StatsCounters(models.Model):
             if owner_id is None:
                 q = StatsCounters.objects.filter(stamp__gte=since, stamp__lte=to)
             else:
-                if isinstance(owner_id, Iterable):
+                if isinstance(owner_id, (list, tuple, types.GeneratorType)):
                     q = StatsCounters.objects.filter(owner_id__in=owner_id, stamp__gte=since, stamp__lte=to)
                 else:
                     q = StatsCounters.objects.filter(owner_id=owner_id, stamp__gte=since, stamp__lte=to)
 
-            if isinstance(owner_type, Iterable):
+            if isinstance(owner_type, (list, tuple, types.GeneratorType)):
                 q = q.filter(owner_type__in=owner_type)
             else:
                 q = q.filter(owner_type=owner_type)

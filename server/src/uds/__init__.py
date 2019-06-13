@@ -32,19 +32,18 @@
 """
 
 # Make sure that all services are "available" at service startup
+import math
+import ssl
+import logging
 
 from django.db.backends.signals import connection_created
 from django.dispatch import receiver
-import math
-import ssl
 
 
 from django.apps import AppConfig
 
-import logging
 
 logger = logging.getLogger(__name__)
-
 
 
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...

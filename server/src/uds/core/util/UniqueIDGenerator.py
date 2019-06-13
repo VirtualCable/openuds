@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,14 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import time
+import typing
 
 from django.db import transaction, OperationalError, connection
 from django.db.utils import IntegrityError
+from django.db.models.query import QuerySet
+
 from uds.models.UniqueId import UniqueId
-from uds.models import getSqlDatetime
-import logging
-import time
+from uds.models.Util import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
@@ -48,22 +50,24 @@ class CreateNewIdException(Exception):
     pass
 
 
-class UniqueIDGenerator(object):
+class UniqueIDGenerator:
+    _owner: str
+    _baseName: str
 
-    def __init__(self, typeName, owner, baseName=None):
+    def __init__(self, typeName: str, owner: typing.Any, baseName: typing.Optional[str] = None):
         self._owner = owner + typeName
         self._baseName = 'uds' if baseName is None else baseName
 
-    def setBaseName(self, newBaseName):
+    def setBaseName(self, newBaseName: str):
         self._baseName = newBaseName
 
-    def __filter(self, rangeStart, rangeEnd=MAX_SEQ, forUpdate=False):
+    def __filter(self, rangeStart: int, rangeEnd: int = MAX_SEQ, forUpdate: bool = False) -> QuerySet:
         # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
         # if not for update, do not use the clause :)
         obj = UniqueId.objects.select_for_update() if forUpdate else UniqueId.objects
         return obj.filter(basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd)  # @UndefinedVariable
 
-    def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
+    def get(self, rangeStart: int = 0, rangeEnd: int = MAX_SEQ) -> int:
         """
         Tries to generate a new unique id in the range provided. This unique id
         is global to "unique ids' database
@@ -92,7 +96,7 @@ class UniqueIDGenerator(object):
                         item = None
 
                     # No item was found on first instance (already created, but freed)
-                    if item is None:
+                    if not item:
                         # logger.debug('No free found, creating new one')
                         try:
                             last = flt.filter(assigned=True)[0]  # DB Returns correct order so the 0 item is the last
@@ -120,22 +124,34 @@ class UniqueIDGenerator(object):
         # logger.debug('Seq: {}'.format(seq))
         return seq
 
-    def transfer(self, seq, toUidGen):
-        self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(owner=toUidGen._owner, basename=toUidGen._baseName, stamp=getSqlDatetime(True))
+    def transfer(self, seq, toUidGen) -> bool:
+        self.__filter(
+            0, forUpdate=True
+        ).filter(
+            owner=self._owner, seq=seq
+        ).update(
+            owner=toUidGen._owner, basename=toUidGen._baseName, stamp=getSqlDatetime(True)  # pylint: disable=protected-access
+        )
         return True
 
-    def free(self, seq):
-        logger.debug('Freeing seq {} from {}  ({})'.format(seq, self._owner, self._baseName))
+    def free(self, seq) -> None:
+        logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._baseName)
         with transaction.atomic():
-            flt = self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(owner='', assigned=False, stamp=getSqlDatetime(True))
+            flt = self.__filter(
+                0, forUpdate=True
+            ).filter(
+                owner=self._owner, seq=seq
+            ).update(
+                owner='', assigned=False, stamp=getSqlDatetime(True)
+            )
         if flt > 0:
             self.__purge()
 
-    def __purge(self):
+    def __purge(self) -> None:
         logger.debug('Purging UniqueID database')
         try:
             last = self.__filter(0, forUpdate=False).filter(assigned=True)[0]
-            logger.debug('Last: {}'.format(last))
+            logger.debug('Last: %s', last)
             seq = last.seq + 1
         except Exception:
             # logger.exception('Error here')
@@ -143,11 +159,11 @@ class UniqueIDGenerator(object):
         with transaction.atomic():
             self.__filter(seq).delete()  # Clean ups all unassigned after last assigned in this range
 
-    def release(self):
+    def release(self) -> None:
         UniqueId.objects.select_for_update().filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetime(True))  # @UndefinedVariable
         self.__purge()
 
-    def releaseOlderThan(self, stamp=None):
+    def releaseOlderThan(self, stamp=None) -> None:
         stamp = getSqlDatetime(True) if stamp is None else stamp
         UniqueId.objects.select_for_update().filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
         self.__purge()

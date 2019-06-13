@@ -34,11 +34,7 @@ import re
 import logging
 import typing
 
-from collections.abc import Iterable
-
 from uds.core.util.State import State
-from uds.models import Group as DBGroup
-from uds.models import Authenticator as DBAuthenticator
 from .Group import Group
 
 
@@ -64,6 +60,8 @@ class GroupsManager:
 
     Managed groups names are compared using case insensitive comparison.
     """
+    from uds.models import Authenticator as DBAuthenticator
+
     _groups: typing.Dict[str, dict]
 
     def __init__(self, dbAuthenticator: DBAuthenticator):
@@ -106,17 +104,20 @@ class GroupsManager:
         as where inserted inside Database (most probably using administration interface)
         """
         for g in self._groups.values():
-            yield g['group'].DBGroup().name
+            yield g['group'].dbGroup().name
 
     def getValidGroups(self) -> typing.Iterable[Group]:
         """
         returns the list of valid groups (:py:class:uds.core.auths.Group.Group)
         """
+        from uds.models import Group as DBGroup
+
         lst: typing.List[str] = []
         for g in self._groups.values():
             if g['valid'] is True:
-                lst += (g['group'].DBGroup().id,)
+                lst += (g['group'].dbGroup().id,)
                 yield g['group']
+
         # Now, get metagroups and also return them
         for g2 in DBGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=True):  # @UndefinedVariable
             gn = g2.groups.filter(id__in=lst, state=State.ACTIVE).count()
@@ -157,7 +158,7 @@ class GroupsManager:
         Returns nothing, it changes the groups this groups contains attributes,
         so they reflect the known groups that are considered valid.
         """
-        if isinstance(groupName, Iterable):
+        if not isinstance(groupName, str):
             for n in groupName:
                 self.validate(n)
         else:

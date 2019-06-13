@@ -58,7 +58,7 @@ class ManagedObjectModel(UUIDModel):
         """
         abstract = True
 
-    def getEnvironment(self):
+    def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """

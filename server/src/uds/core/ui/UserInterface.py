@@ -529,8 +529,7 @@ class gui:
               # Declares an check box field, with label "Use SSL", order 3,
               # tooltip "If checked, will use a ssl connection", default value
               # unchecked (not included, so it's empty, so it's not true :-))
-              ssl = gui.CheckBoxField(label = _('Use SSL'), order = 3,
-                  tooltip = _('If checked, will use a ssl connection'))
+              ssl = gui.CheckBoxField(label = _('Use SSL'), order = 3, tooltip = _('If checked, will use a ssl connection'))
 
         """
 

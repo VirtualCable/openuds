@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,23 +32,18 @@ UDS Service modules interfaces and classes.
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from .BaseServiceProvider import ServiceProvider
-from .BaseService import Service
-from .BasePublication import Publication
-from .BaseDeployed import UserDeployment
-
+from . import Exceptions
 from . import types
 
-import uds.core.services.Exceptions
+from .BaseDeployed import UserDeployment
+from .BasePublication import Publication
+from .BaseService import Service
+from .BaseServiceProvider import ServiceProvider
+from .ServiceProviderFactory import ServiceProviderFactory
 
-__updated__ = '2018-09-17'
 
-
-def factory():
+def factory() -> ServiceProviderFactory:
     """
     Returns factory for register/access to service providers
     """
-    from uds.core.services.ServiceProviderFactory import ServiceProviderFactory
     return ServiceProviderFactory.factory()

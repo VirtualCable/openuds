@@ -48,21 +48,28 @@ class DelayedTask(Environmentable):
         """
         Remember to invoke parent init in derived clases using super(myClass,self).__init__() to let this initialize its own variables
         """
-        Environmentable.__init__(self, None)
+        super().__init__(None)
 
-    def execute(self):
+
+    def execute(self) -> None:
+        """
+        Executes the job
+        """
         try:
             self.run()
         except Exception as e:
-            logger.error('Job {0} raised an exception: {1}'.format(self.__class__, e))
+            logger.error('Job %s raised an exception: %s', self.__class__, e)
 
-    def run(self):
-        """
-        You must provide your own "run" method to do whatever you need
-        """
-        logging.debug("Base run of job called for class")
 
-    def register(self, suggestedTime, tag: str = '', check: bool = True):
+    def run(self) -> None:
+        """
+        Run method, executes your code. Override this on your classes
+        """
+        logging.error("Base run of job called for class")
+        raise NotImplementedError
+
+
+    def register(self, suggestedTime: int, tag: str = '', check: bool = True):
         """
         Utility method that allows to register a Delayedtask
         """

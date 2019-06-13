@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +28,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from uds.core import Environmentable
-import logging
+from uds.core.util.Config import Config
 
-__updated__ = '2014-11-26'
 
 logger = logging.getLogger(__name__)
 
@@ -43,15 +41,9 @@ logger = logging.getLogger(__name__)
 class Job(Environmentable):
     # Default frecuency, once a day. Remenber that precision will be based on "granurality" of Scheduler
     # If a job is used for delayed execution, this attribute is in fact ignored
-    frecuency = 24 * 3600 + 3  # Defaults to a big one, and i know frecuency is written as frequency, but this is an "historical mistake" :)
-    frecuency_cfg = None  # If we use a configuration variable from DB, we need to update the frecuency asap, but not before app is ready
+    frecuency: int = 24 * 3600 + 3  # Defaults to a big one, and i know frecuency is written as frequency, but this is an "historical mistake" :)
+    frecuency_cfg: typing.Optional[Config] = None  # If we use a configuration variable from DB, we need to update the frecuency asap, but not before app is ready
     friendly_name = 'Unknown'
-
-    def __init__(self, environment):
-        """
-        Remember to invoke parent init in derived clases using super(myClass,self).__init__(environmnet) if u want to use env(), cache() and storage() methods
-        """
-        Environmentable.__init__(self, environment)
 
     @classmethod
     def setup(cls):
@@ -61,19 +53,18 @@ class Job(Environmentable):
         if cls.frecuency_cfg is not None:
             try:
                 cls.frecuency = cls.frecuency_cfg.getInt(force=True)
-                logger.debug('Setting frequency from DB setting for {} to {}'.format(cls, cls.frecuency))
+                logger.debug('Setting frequency from DB setting for %s to %s', cls, cls.frecuency)
             except Exception as e:
-                logger.error('Error setting default frequency for {} (){}. Got default value of {}'.format(cls, e, cls.frecuency))
+                logger.error('Error setting default frequency for %s ()%s. Got default value of %s', cls, e, cls.frecuency)
 
     def execute(self):
         try:
             self.run()
         except Exception:
-            logger.exception('Job {0} raised an exception:'.format(self.__class__))
+            logger.exception('Job %s raised an exception:', self.__class__)
 
     def run(self):
         """
         You must provide your own "run" method to do whatever you need
         """
         logging.debug("Base run of job called for class")
-        pass

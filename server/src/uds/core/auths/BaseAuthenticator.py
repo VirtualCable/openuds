@@ -32,9 +32,13 @@ Base module for all authenticators
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
+from django.http import HttpRequest, HttpResponse
+
 from uds.core import Module
+from uds.core.Environment import Environment
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths.Exceptions import InvalidUserException
 
@@ -120,40 +124,41 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
     # : Mark this authenticator as that the users comes from outside the UDS
     # : database, that are most authenticator (except Internal DB)
     # : So, isInternalSource means that "user is kept at database only"
-    isExternalSource = True
+    isExternalSource: typing.ClassVar[bool] = True
 
     # : If we need to enter the password for this user when creating a new
     # : user at administration interface. Used basically by internal authenticator.
-    needsPassword = False
+    needsPassword: typing.ClassVar[bool] = False
 
     # : Label for username field, shown at administration interface user form.
-    userNameLabel = _('User name')
+    userNameLabel: typing.ClassVar[str] = _('User name')
 
     # : Label for group field, shown at administration interface user form.
-    groupNameLabel = _('Group name')
+    groupNameLabel: typing.ClassVar[str] = _('Group name')
 
     # : Label for password field, , shown at administration interface user form.
     # : Not needed for external authenticators (where credentials are stored with
     # : an already existing user.
-    passwordLabel = _('Password')
+    passwordLabel: typing.ClassVar[str] = _('Password')
 
     # : If this authenticators casues a temporal block of an user on repeated login failures
-    blockUserOnLoginFailures = True
+    blockUserOnLoginFailures: typing.ClassVar[bool] = True
 
     from uds.core.auths.User import User
     from uds.core.auths.Group import Group
+    from uds.models import Authenticator as DBAuthenticator, User as DBUser
 
     # : The type of user provided, normally standard user will be enough.
     # : This is here so if we need it in some case, we can write our own
     # : user class
-    userType = User
+    userType: typing.ClassVar[typing.Type[User]] = User
 
     # : The type of group provided, normally standard group will be enough
     # : This is here so if we need it in some case, we can write our own
     # : group class
-    groupType = Group
+    groupType: typing.ClassVar[typing.Type[Group]] = Group
 
-    def __init__(self, dbAuth, environment, values):
+    def __init__(self, dbAuth: DBAuthenticator, environment: Environment, values: typing.Optional[typing.Dict[str, str]]):
         """
         Instantiathes the authenticator.
         @param dbAuth: Database object for the authenticator
@@ -164,7 +169,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         super(Authenticator, self).__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values):
+    def initialize(self, values: typing.Optional[typing.Dict[str, str]]):
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -180,13 +185,13 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         Default implementation does nothing
         """
 
-    def dbAuthenticator(self):
+    def dbAuthenticator(self) -> 'DBAuthenticator':
         """
         Helper method to access the Authenticator database object
         """
         return self._dbAuth
 
-    def recreateGroups(self, user):
+    def recreateGroups(self, user: DBUser):
         """
         Helper method, not needed to be overriden.
         It simply checks if the source is external and if so, recreates
@@ -199,7 +204,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
             self.getGroups(user.name, groupsManager)
             user.groups.set([g.dbGroup() for g in groupsManager.getValidGroups()])
 
-    def callbackUrl(self):
+    def callbackUrl(self) -> str:
         """
         Helper method to return callback url for self (authenticator).
 
@@ -209,7 +214,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         from .auth import authCallbackUrl
         return authCallbackUrl(self.dbAuthenticator())
 
-    def infoUrl(self):
+    def infoUrl(self) -> str:
         """
         Helper method to return info url for this authenticator
         """
@@ -217,20 +222,20 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         return authInfoUrl(self.dbAuthenticator())
 
     @classmethod
-    def isCustom(cls):
+    def isCustom(cls) -> bool:
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
         return cls.getJavascript != Authenticator.getJavascript
 
     @classmethod
-    def canCheckUserPassword(cls):
+    def canCheckUserPassword(cls) -> bool:
         """
         Helper method to query if a class can do a login using credentials
         """
         return cls.authenticate != Authenticator.authenticate
 
-    def searchUsers(self, pattern):
+    def searchUsers(self, pattern) -> typing.Iterable[typing.Dict[str, str]]:
         """
         If you provide this method, the user will be allowed to search users,
         that is, the search button at administration interface, at user form,
@@ -250,7 +255,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return []
 
-    def searchGroups(self, pattern):
+    def searchGroups(self, pattern) -> typing.Iterable[typing.Dict[str, str]]:
         """
         Returns an array of groups that match the supplied pattern
         If none found, returns empty array. Items returned are BaseGroups (or derived)
@@ -265,7 +270,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return []
 
-    def authenticate(self, username, credentials, groupsManager):
+    def authenticate(self, username: str, credentials: str, groupsManager: GroupsManager) -> bool:
         """
         This method must be overriden, and is responsible for authenticating
         users.
@@ -306,7 +311,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return False
 
-    def transformUsername(self, username):
+    def transformUsername(self, username: str) -> str:
         """
         On login, this method get called so we can "transform" provided user name.
 
@@ -321,7 +326,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return username
 
-    def internalAuthenticate(self, username, credentials, groupsManager):
+    def internalAuthenticate(self, username: str, credentials: str, groupsManager: GroupsManager) -> bool:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
         the username/credentials in an alternative way.
@@ -357,7 +362,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return self.authenticate(username, credentials, groupsManager)
 
-    def logout(self, username):
+    def logout(self, username: str) -> typing.Optional[str]:
         """
         Invoked whenever an user logs out.
 
@@ -385,7 +390,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def webLogoutHook(self, username, request, response):
+    def webLogoutHook(self, username: str, request: HttpRequest, response: HttpResponse) -> None:
         '''
         Invoked on web logout of an user
         Args:
@@ -403,7 +408,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         '''
         return
 
-    def getForAuth(self, username):
+    def getForAuth(self, username: str) -> str:
         """
         Process the username for this authenticator and returns it.
         This transformation is used for transports only, not for transforming
@@ -417,7 +422,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return username
 
-    def getGroups(self, username, groupsManager):
+    def getGroups(self, username: str, groupsManager: GroupsManager):
         """
         Looks for the real groups to which the specified user belongs.
 
@@ -427,8 +432,9 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         calling its :py:meth:`uds.core.auths.GroupsManager.validate` method with groups names provided by the authenticator itself
         (for example, LDAP, AD, ...)
         """
+        raise NotImplementedError
 
-    def getJavascript(self, request):
+    def getJavascript(self, request: HttpRequest):
         """
         If you override this method, and returns something different of None,
         UDS will consider your authenticator as "Owner draw", that is, that it
@@ -441,7 +447,6 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         We have here a few things that we should know for creating our own
         html for authenticator:
 
-            * We use jQuery, so your javascript can use it
             * The id of the username input field is **id_user**
             * The id of the password input field is **id_password**
             * The id of the login form is **loginform**
@@ -466,7 +471,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def authCallback(self, parameters, gm):
+    def authCallback(self, parameters: typing.Dict[str, str], gm: GroupsManager) -> typing.Optional[str]:
         """
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.
@@ -502,7 +507,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def getInfo(self, parameters):
+    def getInfo(self, parameters: typing.Dict[str, str]) -> typing.Optional[str]:
         """
         This method is invoked whenever the authinfo url is invoked, with the name of the authenticator
         If this is implemented, information returned by this will be shown via web.
@@ -512,7 +517,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def getRealName(self, username):
+    def getRealName(self, username: str) -> str:
         """
         Tries to get the real name of an user
 
@@ -520,7 +525,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return username
 
-    def createUser(self, usrData):
+    def createUser(self, usrData: typing.Dict[str, str]) -> None:
         """
         This method is used when creating an user to allow the authenticator:
 
@@ -553,7 +558,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         raise InvalidUserException(_('Users can\'t be created inside this authenticator'))
 
-    def modifyUser(self, usrData):
+    def modifyUser(self, usrData: typing.Dict[str, str]) -> None:
         """
         This method is used when modifying an user to allow the authenticator:
 
@@ -579,7 +584,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
                data of users.
         """
 
-    def createGroup(self, groupData):
+    def createGroup(self, groupData: typing.Dict[str, str]) -> None:
         """
         This method is used when creating a new group to allow the authenticator:
 
@@ -605,7 +610,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
             name (group name) to a new one!
         """
 
-    def modifyGroup(self, groupData):
+    def modifyGroup(self, groupData: typing.Dict[str, str]) -> None:
         """
         This method is used when modifying group to allow the authenticator:
 
@@ -630,7 +635,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         Note: 'name' output parameter will be ignored
         """
 
-    def removeUser(self, username):
+    def removeUser(self, username: str) -> None:
         """
         Remove user is used whenever from the administration interface, or from other
         internal workers, an user needs to be removed.
@@ -646,7 +651,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
     # We don't have a "modify" group option. Once u have created it, the only way of changing it if removing it an recreating it with another name
 
-    def removeGroup(self, groupname):
+    def removeGroup(self, groupname: str) -> None:
         """
         Remove user is used whenever from the administration interface, or from other
         internal workers, an group needs to be removed.

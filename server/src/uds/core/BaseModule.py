@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,19 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from django.utils.translation import ugettext as _
-from uds.core.ui.UserInterface import UserInterface
-from uds.core import Environmentable
-from uds.core import Serializable
-from uds.core.util import encoders
+import typing
 import os.path
 import sys
 import logging
+
+
+from django.utils.translation import ugettext as _
+
+from uds.core.ui.UserInterface import UserInterface
+from uds.core import Environmentable
+from uds.core import Serializable
+from uds.core.Environment import Environment
+from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
@@ -96,13 +99,13 @@ class Module(UserInterface, Environmentable, Serializable):
     """
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
-    typeName = 'Base Module'
+    typeName: typing.ClassVar[str] = 'Base Module'
     # : Internal type name, used by system to locate this module
-    typeType = 'BaseModule'
+    typeType: typing.ClassVar[str] = 'BaseModule'
     # : Description of this module, used at admin level
-    typeDescription = 'Base Module'
+    typeDescription: typing.ClassVar[str] = 'Base Module'
     # : Icon file, relative to module folders
-    iconFile = 'base.png'  # This is expected to be png, use this format always
+    iconFile: typing.ClassVar[str] = 'base.png'  # This is expected to be png, use this format always
 
     class ValidationException(Exception):
         """
@@ -110,7 +113,7 @@ class Module(UserInterface, Environmentable, Serializable):
         """
 
     @classmethod
-    def name(cls):
+    def name(cls: typing.Type['Module']) -> str:
         """
         Returns "translated" typeName, using ugettext for transforming
         cls.typeName
@@ -124,7 +127,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return _(cls.typeName)
 
     @classmethod
-    def type(cls):
+    def type(cls: typing.Type['Module']) -> str:
         """
         Returns typeType
 
@@ -137,7 +140,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return cls.typeType
 
     @classmethod
-    def description(cls):
+    def description(cls: typing.Type['Module']) -> str:
         """
         This method returns the "translated" description, that is, using
         ugettext for transforming cls.typeDescription.
@@ -152,7 +155,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return _(cls.typeDescription)
 
     @classmethod
-    def icon(cls, inBase64=True):
+    def icon(cls: typing.Type['Module'], inBase64=True) -> typing.Union[str, bytes]:
         """
         Reads the file specified by iconFile at module folder, and returns it content.
         This is used to obtain an icon so administration can represent it.
@@ -166,17 +169,17 @@ class Module(UserInterface, Environmentable, Serializable):
             Base 64 encoded or raw image, obtained from the specified file at
             'iconFile' class attribute
         """
-        logger.debug('Loading icon for class {0} ({1})'.format(cls, cls.iconFile))
+        logger.debug('Loading icon for class %s (%s)', cls, cls.iconFile)
         file_ = open(os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile, 'rb')
         data = file_.read()
         file_.close()
         if inBase64:
             return encoders.encode(data, 'base64', asText=True)
-        else:
-            return data
+
+        return data
 
     @staticmethod
-    def test(env, data):
+    def test(env, data: typing.Dict[str, str]) -> typing.List[typing.Any]:
         """
         Test if the connection data is ok.
 
@@ -196,7 +199,7 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return [True, _("No connection checking method is implemented.")]
 
-    def __init__(self, environment, values=None, uuid=None):
+    def __init__(self, environment: Environment, values: typing.Optional[typing.Dict[str, str]] = None, uuid=None):
         """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(environment, values)".
@@ -219,7 +222,6 @@ class Module(UserInterface, Environmentable, Serializable):
         valuesDict, you must also take account of values (dict) provided at the
         __init__ method of your class.
         """
-        #
         UserInterface.__init__(self, values)
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
@@ -239,7 +241,7 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return True
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         By default and if not overriden by descendants, this method, overridden
         from Serializable, and returns the serialization of
@@ -254,7 +256,7 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         self.unserializeForm(str_)
 
-    def check(self):
+    def check(self) -> str:
         """
         Method that will provide the "check" capability for the module.
 
@@ -266,10 +268,10 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return _("No check method provided.")
 
-    def getUuid(self):
+    def getUuid(self) -> str:
         return self._uuid
 
-    def destroy(self):
+    def destroy(self) -> None:
         """
         Invoked before deleting an module from database.
 
@@ -279,4 +281,3 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Nothing
         """
-        pass

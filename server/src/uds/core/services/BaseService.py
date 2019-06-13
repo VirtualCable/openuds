@@ -203,7 +203,6 @@ class Service(Module):
 
         Default implementation does nothing
         """
-        pass
 
     def parent(self):
         """

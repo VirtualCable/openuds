@@ -111,4 +111,3 @@ from .Tag import Tag
 from .DBFile import DBFile
 
 logger = logging.getLogger(__name__)
-

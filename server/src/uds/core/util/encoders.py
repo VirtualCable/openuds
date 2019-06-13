@@ -30,23 +30,24 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import codecs
 
-def __toBinary(data):
+def __toBinary(data: typing.Union[str, bytes]) -> bytes:
     if isinstance(data, str):
         return data.encode('utf8')
     return data
 
 
-def encode(data, encoder, asText=False):
-    res = codecs.encode(__toBinary(data), encoder)
+def encode(data: typing.Union[str, bytes], encoder: str, asText: bool = False) -> typing.Union[str, bytes]:
+    res = codecs.encode(__toBinary(data), encoder)  # type: ignore
     if asText:
         return res.decode('utf8')
     return res
 
 
-def decode(data, encoder, asText=False):
+def decode(data: typing.Union[str, bytes], encoder: str, asText: bool = False) -> typing.Union[str, bytes]:
     res = codecs.decode(__toBinary(data), encoder)
     if asText:
-        return res.decode('utf8')
+        return res.decode('utf8')  # type: ignore
     return res
