@@ -51,7 +51,7 @@ class ServiceProviderFactory:
         """
         Initializes internal dictionary for service providers registration
         """
-        self._providers: typing.Dict[str, ServiceProvider] = {}
+        self._providers: typing.Dict[str, typing.Type[ServiceProvider]] = {}
 
     @staticmethod
     def factory() -> 'ServiceProviderFactory':
@@ -62,13 +62,13 @@ class ServiceProviderFactory:
             ServiceProviderFactory._factory = ServiceProviderFactory()
         return ServiceProviderFactory._factory
 
-    def providers(self) -> typing.Dict[str, ServiceProvider]:
+    def providers(self) -> typing.Dict[str, typing.Type[ServiceProvider]]:
         """
         Returns the list of service providers already registered.
         """
         return self._providers
 
-    def insert(self, type_: ServiceProvider) -> None:
+    def insert(self, type_: typing.Type[ServiceProvider]) -> None:
         """
         Inserts type_ as a service provider
         """
@@ -98,14 +98,14 @@ class ServiceProviderFactory:
 
         self._providers[typeName] = type_
 
-    def lookup(self, typeName):
+    def lookup(self, typeName) -> typing.Optional[typing.Type[ServiceProvider]]:
         """
         Tries to locate a server provider and by its name, and, if
         not found, returns None
         """
         return self._providers.get(typeName.lower(), None)
 
-    def servicesThatDoNotNeedPublication(self):
+    def servicesThatDoNotNeedPublication(self) -> typing.Iterable[typing.Type[ServiceProvider]]:
         """
         Returns a list of all service providers registered that do not need
         to be published

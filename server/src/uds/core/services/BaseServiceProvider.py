@@ -30,16 +30,14 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from uds.core import Module
 from uds.core.util.Config import GlobalConfig
 from uds.core.ui.UserInterface import gui
-import logging
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-06-07'
 
 
 class ServiceProvider(Module):
@@ -75,11 +73,12 @@ class ServiceProvider(Module):
     only need data that is keeped at form fields, marshal and unmarshal and in fact
     not needed.
     """
+    from .BaseService import Service
 
     # : Services that we offers. Here is a list of service types (python types) that
     # : this class will provide. This types are the python clases, derived from
     # : Service, that are childs of this provider
-    offers = []
+    offers: typing.List[typing.Type['Service']] = []
 
     # : Name of type, used at administration interface to identify this
     # : provider (i.e. Xen server, oVirt Server, ...)
@@ -108,20 +107,20 @@ class ServiceProvider(Module):
     # : This defines the maximum number of concurrent services that should be in state "in preparation" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
-    maxPreparingServices = None
+    maxPreparingServices: typing.Any = None
 
     # : This defines the maximum number of concurrent services that should be in state "removing" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_REMOVING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
-    maxRemovingServices = None
+    maxRemovingServices: typing.Any = None
 
     # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
     # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
-    ignoreLimits = None
+    ignoreLimits: typing.Any = None
 
     @classmethod
-    def getServicesTypes(cls):
+    def getServicesTypes(cls) -> typing.List[typing.Type['Service']]:
         """
         Returns what type of services this provider offers
         """

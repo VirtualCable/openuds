@@ -235,7 +235,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return cls.authenticate != Authenticator.authenticate
 
-    def searchUsers(self, pattern) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
         If you provide this method, the user will be allowed to search users,
         that is, the search button at administration interface, at user form,
@@ -255,7 +255,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return []
 
-    def searchGroups(self, pattern) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
         Returns an array of groups that match the supplied pattern
         If none found, returns empty array. Items returned are BaseGroups (or derived)

@@ -249,12 +249,12 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return self.serializeForm()
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data: bytes) -> None:
         """
         By default and if not overriden by descendants, this method recovers
         data serialized using serializeForm
         """
-        self.unserializeForm(str_)
+        self.unserializeForm(data)
 
     def check(self) -> str:
         """

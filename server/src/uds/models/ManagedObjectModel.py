@@ -31,9 +31,11 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from uds.core.Environment import Environment
+from uds.core import Module
 from uds.models.UUIDModel import UUIDModel
 
 
@@ -50,7 +52,7 @@ class ManagedObjectModel(UUIDModel):
     data = models.TextField(default='')
     comments = models.CharField(max_length=256)
 
-    _cachedInstance = None
+    _cachedInstance: typing.Optional[Module] = None
 
     class Meta(UUIDModel.Meta):
         """
@@ -75,7 +77,7 @@ class ManagedObjectModel(UUIDModel):
 
         self._cachedInstance = None  # Ensures returns correct value on getInstance
 
-    def getInstance(self, values=None):
+    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> Module:
         """
         Instantiates the object this record contains.
 
@@ -103,14 +105,14 @@ class ManagedObjectModel(UUIDModel):
 
         return obj
 
-    def getType(self):
+    def getType(self) -> typing.Type[Module]:
         """
         Returns the type of self (as python type)
         Must be overriden!!!
         """
         raise NotImplementedError('getType has not been implemented for {}'.format(self.__class__))
 
-    def isOfType(self, type_):
+    def isOfType(self, type_: str) -> bool:
         """
         return True if self if of the requested type, else returns False
         """

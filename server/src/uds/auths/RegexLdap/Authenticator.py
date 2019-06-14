@@ -166,7 +166,7 @@ class RegexLdap(auths.Authenticator):
             if pattern.find('(') == -1:
                 pattern = '(' + pattern + ')'
             val = attributes.get(attr, [])
-            if type(val) is not list:  # May we have a single value
+            if not isinstance(val, list):  # May we have a single value
                 val = [val]
 
             logger.debug('Pattern: %s', pattern)
@@ -183,7 +183,7 @@ class RegexLdap(auths.Authenticator):
         logger.debug('Res: %s', res)
         return res
 
-    def valuesDict(self):
+    def valuesDict(self) -> gui.ValuesDictType:
         return {
             'host': self._host, 'port': self._port, 'ssl': gui.boolToStr(self._ssl),
             'username': self._username, 'password': self._password, 'timeout': self._timeout,
@@ -198,7 +198,7 @@ class RegexLdap(auths.Authenticator):
             self._userNameAttr, self._altClass
         )
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         return '\t'.join([
             'v3',
             self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password,
@@ -206,27 +206,27 @@ class RegexLdap(auths.Authenticator):
             self._groupNameAttr, self._userNameAttr, self._altClass
         ]).encode('utf8')
 
-    def unmarshal(self, val):
-        data = val.decode('utf8').split('\t')
-        if data[0] == 'v1':
-            logger.debug("Data: {0}".format(data[1:]))
+    def unmarshal(self, data: bytes) -> None:
+        vals = data.decode('utf8').split('\t')
+        if vals[0] == 'v1':
+            logger.debug("Data: %s", vals[1:])
             self._host, self._port, self._ssl, self._username, self._password, \
                 self._timeout, self._ldapBase, self._userClass, self._userIdAttr, \
-                self._groupNameAttr, _regex, self._userNameAttr = data[1:]
+                self._groupNameAttr, _regex, self._userNameAttr = vals[1:]
             self._ssl = gui.strToBool(self._ssl)
             self._groupNameAttr = self._groupNameAttr + '=' + _regex
             self._userNameAttr = '\n'.join(self._userNameAttr.split(','))
-        elif data[0] == 'v2':
-            logger.debug("Data v2: {0}".format(data[1:]))
+        elif vals[0] == 'v2':
+            logger.debug("Data v2: %s", vals[1:])
             self._host, self._port, self._ssl, self._username, self._password, \
                 self._timeout, self._ldapBase, self._userClass, self._userIdAttr, \
-                self._groupNameAttr, self._userNameAttr = data[1:]
+                self._groupNameAttr, self._userNameAttr = vals[1:]
             self._ssl = gui.strToBool(self._ssl)
-        elif data[0] == 'v3':
-            logger.debug("Data v3: {0}".format(data[1:]))
+        elif vals[0] == 'v3':
+            logger.debug("Data v3: %s", vals[1:])
             self._host, self._port, self._ssl, self._username, self._password, \
                 self._timeout, self._ldapBase, self._userClass, self._userIdAttr, \
-                self._groupNameAttr, self._userNameAttr, self._altClass = data[1:]
+                self._groupNameAttr, self._userNameAttr, self._altClass = vals[1:]
             self._ssl = gui.strToBool(self._ssl)
 
     def __connection(self):
@@ -240,7 +240,7 @@ class RegexLdap(auths.Authenticator):
 
         return self._connection
 
-    def __connectAs(self, username, password):
+    def __connectAs(self, username: str, password: str):
         return ldaputil.connection(username, password, self._host, ssl=self._ssl, timeout=self._timeout, debug=False)
 
     def __getUser(self, username):
@@ -338,7 +338,6 @@ class RegexLdap(auths.Authenticator):
         @params groupData: a dict that has, at least, name, comments and active
         @return:  Raises an exception it things doesn't go fine
         """
-        pass
 
     def getGroups(self, username, groupsManager):
         """
@@ -356,13 +355,13 @@ class RegexLdap(auths.Authenticator):
         try:
             res = []
             for r in ldaputil.getAsDict(
-                con=self.__connection(),
-                base=self._ldapBase,
-                ldapFilter='(&(&(objectClass={})({}={}*)))'.format(self._userClass, self._userIdAttr, ldaputil.escape(pattern)),
-                attrList=None,  # All attrs
-                sizeLimit=LDAP_RESULT_LIMIT
-            ):
-                logger.debug('R: {0}'.format(r))
+                    con=self.__connection(),
+                    base=self._ldapBase,
+                    ldapFilter='(&(&(objectClass={})({}={}*)))'.format(self._userClass, self._userIdAttr, ldaputil.escape(pattern)),
+                    attrList=None,  # All attrs
+                    sizeLimit=LDAP_RESULT_LIMIT
+                ):
+                logger.debug('Result: %s', r)
                 res.append({
                     'id': r.get(self._userIdAttr.lower(), '')[0],
                     'name': self.__getUserRealName(r)
@@ -379,7 +378,7 @@ class RegexLdap(auths.Authenticator):
             auth = RegexLdap(None, env, data)
             return auth.testConnection()
         except Exception as e:
-            logger.error("Exception found testing Simple LDAP auth {0}: {1}".format(e.__class__, e))
+            logger.error('Exception found testing Simple LDAP auth %s: %s', e.__class__, e)
             return [False, "Error testing connection"]
 
     def testConnection(self):
