@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,13 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-Created on Jun 22, 2012
-
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
+import logging
 
 from django.utils.translation import ugettext_noop as _
+from uds.core import Module
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -42,13 +42,10 @@ from uds.core.util import validators
 from .LiveService import LiveService
 from . import openStack
 
-import logging
-
-__updated__ = '2018-10-22'
 
 logger = logging.getLogger(__name__)
 
-INTERFACE_VALUES = [
+INTERFACE_VALUES: typing.List[gui.ChoiceType] = [
     gui.choiceItem('public', 'public'),
     gui.choiceItem('private', 'private'),
     gui.choiceItem('admin', 'admin'),
@@ -115,27 +112,31 @@ class Provider(ServiceProvider):
     legacy = False
 
     # Own variables
-    _api = None
+    _api: typing.Optional[openStack.Client] = None
 
-    def initialize(self, values=None):
+    def initialize(self, values: Module.ValuesType = None):
         """
         We will use the "autosave" feature for form fields
         """
-        # Just reset _api connection variable
+        self._api = None
 
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
 
     def api(self, projectId=None, region=None):
-        return openStack.Client(self.endpoint.value, -1,
-                                     self.domain.value, self.username.value, self.password.value,
-                                     legacyVersion=False,
-                                     useSSL=None,
-                                     projectId=projectId,
-                                     region=region,
-                                     access=self.access.value)
+        if self._api is None:
+            self._api = openStack.Client(
+                self.endpoint.value, -1,
+                self.domain.value, self.username.value, self.password.value,
+                legacyVersion=False,
+                useSSL=None,
+                projectId=projectId,
+                region=region,
+                access=self.access.value
+            )
+        return self._api
 
-    def sanitizeVmName(self, name):
+    def sanitizeVmName(self, name: str):
         return openStack.sanitizeName(name)
 
     def testConnection(self):

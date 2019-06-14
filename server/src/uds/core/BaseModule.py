@@ -97,6 +97,9 @@ class Module(UserInterface, Environmentable, Serializable):
     Environmentable is a base class that provides utility method to access a separate Environment for every single
     module.
     """
+    # Types
+    ValuesType = typing.Optional[typing.Dict[str, str]]
+
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
     typeName: typing.ClassVar[str] = 'Base Module'
@@ -199,7 +202,7 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return [True, _("No connection checking method is implemented.")]
 
-    def __init__(self, environment: Environment, values: typing.Optional[typing.Dict[str, str]] = None, uuid=None):
+    def __init__(self, environment: Environment, values: ValuesType = None, uuid: typing.Optional[str] = None):
         """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(environment, values)".
@@ -225,7 +228,7 @@ class Module(UserInterface, Environmentable, Serializable):
         UserInterface.__init__(self, values)
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._uuid = uuid if uuid is not None else ''
+        self._uuid = uuid if uuid else ''
 
     def __str__(self):
         return "Base Module"

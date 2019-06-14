@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,6 +34,8 @@ import logging
 import typing
 
 from uds.core import Module
+from uds.core.Environment import Environment
+
 from uds.core.util.Config import GlobalConfig
 from uds.core.ui.UserInterface import gui
 
@@ -78,7 +80,7 @@ class ServiceProvider(Module):
     # : Services that we offers. Here is a list of service types (python types) that
     # : this class will provide. This types are the python clases, derived from
     # : Service, that are childs of this provider
-    offers: typing.List[typing.Type['Service']] = []
+    offers: typing.List[typing.Type[Service]] = []
 
     # : Name of type, used at administration interface to identify this
     # : provider (i.e. Xen server, oVirt Server, ...)
@@ -127,7 +129,7 @@ class ServiceProvider(Module):
         return cls.offers
 
     @classmethod
-    def getServiceByType(cls, typeName):
+    def getServiceByType(cls, typeName: str) -> typing.Optional[typing.Type['Service']]:
         """
         Tries to locate a child service which type corresponds with the
         one provided.
@@ -136,14 +138,12 @@ class ServiceProvider(Module):
         :note: The type that this method looks for is not the class, but
                the typeType that Service has.
         """
-        res = None
         for _type in cls.offers:
             if _type.type() == typeName:
-                res = _type
-                break
-        return res
+                return _type
+        return None
 
-    def __init__(self, environment, values=None, uuid=None):
+    def __init__(self, environment: Environment, values: Module.ValuesType = None, uuid: typing.Optional[str] = None):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         if you override this method. Better is to provide an "__initialize__" method, that will be invoked
@@ -151,10 +151,10 @@ class ServiceProvider(Module):
         Values parameter is provided (are not None) when creating or modifying the service provider, so params check should ocur here and, if not
         valid, raise an "ValidationException" message
         """
-        super(ServiceProvider, self).__init__(environment, values, uuid=uuid)
+        super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
-    def initialize(self, values):
+    def initialize(self, values: Module.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -169,9 +169,8 @@ class ServiceProvider(Module):
 
         Default implementation does nothing
         """
-        pass
 
-    def getMaxPreparingServices(self):
+    def getMaxPreparingServices(self) -> int:
         val = self.maxPreparingServices
         if val is None:
             val = self.maxPreparingServices = GlobalConfig.MAX_PREPARING_SERVICES.getInt(force=True)  # Recover global an cache till restart
@@ -179,7 +178,7 @@ class ServiceProvider(Module):
         retVal = int(getattr(val, 'value', val))
         return retVal if retVal > 0 else 1
 
-    def getMaxRemovingServices(self):
+    def getMaxRemovingServices(self) -> int:
         val = self.maxRemovingServices
         if val is None:
             val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(force=True)  # Recover global an cache till restart
@@ -187,7 +186,7 @@ class ServiceProvider(Module):
         retVal = int(getattr(val, 'value', val))
         return retVal if retVal > 0 else 1
 
-    def getIgnoreLimits(self):
+    def getIgnoreLimits(self) -> bool:
         val = self.ignoreLimits
         if val is None:
             val = self.ignoreLimits = GlobalConfig.IGNORE_LIMITS.getBool(force=True)  # Recover global an cache till restart

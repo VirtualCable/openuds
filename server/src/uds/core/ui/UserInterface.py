@@ -80,6 +80,7 @@ class gui:
     """
     # Values dict type
     ValuesDictType = typing.Dict[str, typing.Union[str, typing.List[str], typing.List[typing.Dict[str, str]]]]
+    ChoiceType = typing.Dict[str, str]
 
     # : True string value
     TRUE: typing.ClassVar[str] = 'true'
@@ -116,7 +117,7 @@ class gui:
         return []
 
     @staticmethod
-    def choiceItem(id_: str, text: str) -> typing.Dict[str, str]:
+    def choiceItem(id_: str, text: str) -> gui.ChoiceType:
         """
         Helper method to create a single choice item.
 

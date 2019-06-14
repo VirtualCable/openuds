@@ -30,9 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 
-from uds.core.util.Config import Config as cfgConfig
+from uds.core.util.Config import Config as CfgConfig
 from uds.REST import Handler
 
 
@@ -52,12 +53,14 @@ class Config(Handler):
     needs_admin = True  # By default, staff is lower level needed
 
     def get(self):
-        res = {}
+        cfg: CfgConfig.Value
+
+        res: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
         addCrypt = self.is_admin()
 
-        for cfg in cfgConfig.enumerate():
+        for cfg in CfgConfig.enumerate():
             # Skip removed configuration values, even if they are in database
-            logger.debug('Key: %s, val: %s', cfg.section(), cfg.key());
+            logger.debug('Key: %s, val: %s', cfg.section(), cfg.key())
             if cfg.key() in REMOVED.get(cfg.section(), ()):
                 continue
 
@@ -79,5 +82,5 @@ class Config(Handler):
     def put(self):
         for section, secDict in self._params.items():
             for key, vals in secDict.items():
-                cfgConfig.update(section, key, vals['value'])
+                CfgConfig.update(section, key, vals['value'])
         return 'done'
