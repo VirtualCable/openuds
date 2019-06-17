@@ -80,15 +80,15 @@ def getUDSCookie(request: HttpRequest, response: typing.Optional[HttpResponse] =
     return cookie
 
 
-def getRootUser():
+def getRootUser() -> User:
     # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
     u = User(id=ROOT_ID, name=GlobalConfig.SUPER_USER_LOGIN.get(True), real_name=_(
         'System Administrator'), state=State.ACTIVE, staff_member=True, is_admin=True)
     u.manager = Authenticator()
-    # Fake overwrite some methods, not too "legal" maybe? :)
-    u.getGroups = lambda: []
-    u.updateLastAccess = lambda: None
-    u.logout = lambda: None
+    # Fake overwrite some methods, a bit cheating? maybe? :)
+    u.getGroups = lambda: []  # type: ignore
+    u.updateLastAccess = lambda: None  # type: ignore
+    u.logout = lambda: None  # type: ignore
     return u
 
 
@@ -99,15 +99,17 @@ def getIp(request):
 
 
 # Decorator to make easier protect pages that needs to be logged in
-def webLoginRequired(admin: bool = False):
+def webLoginRequired(admin: typing.Union[bool, str] = False):
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
+    if admin == True, needs admin or staff
+    if admin == 'admin', needs admin
     """
 
-    def decorator(view_func):
+    def decorator(view_func: typing.Callable):
         @wraps(view_func, assigned=available_attrs(view_func))
-        def _wrapped_view(request, *args, **kwargs):
+        def _wrapped_view(request: HttpRequest, *args, **kwargs):
             """
             Wrapped function for decorator
             """
@@ -130,14 +132,14 @@ def webLoginRequired(admin: bool = False):
 
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
-def trustedSourceRequired(view_func):
+def trustedSourceRequired(view_func: typing.Callable):
     """
     Decorator to set protection to access page
     look for sample at uds.dispatchers.pam
     """
 
     @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
+    def _wrapped_view(request: HttpRequest, *args, **kwargs):
         """
         Wrapped function for decorator
         """
@@ -150,10 +152,10 @@ def trustedSourceRequired(view_func):
 
 
 # decorator to deny non authenticated requests
-def denyNonAuthenticated(view_func):
+def denyNonAuthenticated(view_func: typing.Callable):
 
     @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
+    def _wrapped_view(request: HttpRequest, *args, **kwargs):
         if request.user is None:
             return HttpResponseForbidden()
         return view_func(request, *args, **kwargs)

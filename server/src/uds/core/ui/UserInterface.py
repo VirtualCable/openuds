@@ -117,7 +117,7 @@ class gui:
         return []
 
     @staticmethod
-    def choiceItem(id_: str, text: str) -> gui.ChoiceType:
+    def choiceItem(id_: str, text: str) -> 'gui.ChoiceType':
         """
         Helper method to create a single choice item.
 
