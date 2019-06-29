@@ -333,6 +333,9 @@ class RDPFile(object):
         # DirectX?
         res += 'redirectdirectx:i:1\n'
 
+        # Camera?
+        # res += 'camerastoredirect:s:*\n'
+
         return res
 
     def getMacOsX(self):

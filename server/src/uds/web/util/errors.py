@@ -30,7 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import traceback
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
@@ -41,8 +42,6 @@ from django.urls import reverse
 from uds.core.util import encoders
 from uds.models import DeployedService, Transport, UserService, Authenticator
 
-import traceback
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -96,10 +95,10 @@ def errorString(errorId):
     return strings[0]
 
 
-def errorView(request, error):
-    idError = int(error)
+def errorView(request, errorCode):
+    idError = int(errorCode)
     code = (error >> 8) & 0xFF
-    idError = idError & 0xFF;
+    idError = idError & 0xFF
 
     errStr = errorString(idError)
     if code != 0:

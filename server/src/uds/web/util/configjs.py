@@ -116,9 +116,9 @@ def udsJs(request):
             'user': reverse('page.index'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('webapi.services'),
-            'enabler': reverse('webapi.enabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
-            'action': reverse('webapi.action', kwargs={ 'idService': 'param1', 'action': 'param2' }),
-            'galleryImage': reverse('webapi.galleryImage', kwargs={ 'idImage': 'param1' }),
+            'enabler': reverse('webapi.enabler', kwargs={'idService': 'param1', 'idTransport': 'param2'}),
+            'action': reverse('webapi.action', kwargs={'idService': 'param1', 'action': 'param2'}),
+            'galleryImage': reverse('webapi.galleryImage', kwargs={'idImage': 'param1'}),
             'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
             'static': static(''),
             # Launcher URL if exists
@@ -145,7 +145,7 @@ def udsJs(request):
 
     if profile['role'] == 'staff':  # Add staff things
         # If is admin (informational, REST api checks users privileges anyway...)
-        profile['admin'] = True;
+        profile['admin'] = True
         # REST auth
         config['auth_token'] = request.session.session_key
         config['auth_header'] = AUTH_TOKEN_HEADER
@@ -159,6 +159,7 @@ def udsJs(request):
     if 'errors' in request.session:
         errors = request.session['errors']
         del request.session['errors']
+        request.session.modified = True  # Ensure saves it
 
     uds = {
         'profile': profile,
@@ -170,7 +171,6 @@ def udsJs(request):
     }
 
     # Reset some 1 time values...
-    request.session['launch'] = '';
+    request.session['launch'] = ''
 
     return 'var udsData = ' + json.dumps(uds) + ';\n'
-

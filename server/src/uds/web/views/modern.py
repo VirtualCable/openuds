@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2018 Virtual Cable S.L.
+# Copyright (c) 2018-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,10 +29,9 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import json
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from uds.web.util.errors import errorView
 from uds.core.auths.auth import (
@@ -103,7 +102,4 @@ def js(request):
 
 @denyNonAuthenticated
 def servicesData(request):
-    data = getServicesData(request)
-
-    return HttpResponse(content=json.dumps(data), content_type='application/json')
-
+    return JsonResponse(getServicesData(request))
