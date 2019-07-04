@@ -263,7 +263,7 @@ GuacUI.Client = {
     "min_zoom"        : 1,
     "max_zoom"        : 3,
 
-    "connectionName"  : "Guacamole",
+    "connectionName"  : "UDS Remote Connection",
     "attachedClient"  : null,
 
     /* Mouse emulation */
