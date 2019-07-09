@@ -116,8 +116,8 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         try:
             HTTPServerHandler.lock.acquire()
-            length = int(self.headers.getheader('content-length'))
-            content = self.rfile.read(length)
+            length = int(self.headers.get('content-length'))
+            content = self.rfile.read(length).decode('utf8')
             logger.debug('length: {}, content >>{}<<'.format(length, content))
             params = json.loads(content)
 
