@@ -116,8 +116,8 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         try:
             HTTPServerHandler.lock.acquire()
-            length = int(self.headers.getheader('content-length'))
-            content = self.rfile.read(length)
+            length = int(self.headers.get('content-length'))
+            content = self.rfile.read(length).decode('utf8')
             logger.debug('length: {}, content >>{}<<'.format(length, content))
             params = json.loads(content)
 
@@ -173,11 +173,6 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def get_information(self, params):
         # TODO: Return something useful? :)
         return 'Up and running'
-
-    def get_refresh(self, params):
-        '''
-        Requests a refresh of own information offered from UDS Server
-        '''
 
     def get_uuid(self, params):
         return self.service.api.uuid
