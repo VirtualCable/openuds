@@ -1,3 +1,9 @@
+udsclient (3.0.0) stable; urgency=medium
+
+  * Upgraded to 3.0.0 release
+
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Wed, 10 Jul 2019 9:24:10 +0200
+
 udsclient (2.2.1) stable; urgency=medium
 
   * Upgraded to 2.2.1 release
