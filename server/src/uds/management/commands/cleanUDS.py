@@ -63,8 +63,4 @@ class Command(BaseCommand):
         # Release all Schedulers
         Scheduler.objects.all().update(owner_server='', state=State.FOR_EXECUTE)
 
-        sys.stdout.write("Reseting UDS Theme (setting to html5)...\n")
-        # Reset theme to html5
-        GlobalConfig.UDS_THEME.set('html5')
-
         sys.stdout.write("UDS Cleaned UP\n")
