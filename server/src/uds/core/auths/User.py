@@ -33,13 +33,14 @@
 import logging
 import typing
 
-from uds.models import Group as DBGroup, User as DBUser
+from uds.models.User import User as DBUser
 from .GroupsManager import GroupsManager
 from .Group import Group
 
 # Imports for type checking
 if typing.TYPE_CHECKING:
     from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
+    from uds.models.Group import Group as DBGroup
 
 
 logger = logging.getLogger(__name__)
