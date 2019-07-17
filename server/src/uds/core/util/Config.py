@@ -75,7 +75,7 @@ class Config:
             self._key: str = key
             self._crypt: bool = crypt
             self._longText: bool = longText
-            if crypt is False:
+            if crypt is False or not default:
                 self._default: str = default
             else:
                 self._default = CryptoManager.manager().encrypt(default)
