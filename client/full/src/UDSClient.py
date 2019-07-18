@@ -193,7 +193,7 @@ class UDSClient(QtGui.QMainWindow):
                 script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
                 if tools.verifySignature(script, signature) is False:
                     logger.error('Signature is invalid')
-                    
+
                     raise Exception('Invalid UDS code signature. Please, report to administrator')
 
             self.stopAnim()
