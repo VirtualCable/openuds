@@ -86,24 +86,24 @@ class Service(Module):
     # : This string will be translated when provided to admin interface
     # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     # : if you want so it can be translated.
-    typeName: str = _('Base Service')
+    typeName = _('Base Service')
 
     # : Name of type used by Managers to identify this type of service
     # : We could have used here the Class name, but we decided that the
     # : module implementator will be the one that will provide a name that
     # : will relation the class (type) and that name.
-    typeType: str = 'BaseService'
+    typeType = 'BaseService'
 
     # : Description shown at administration level for this service.
     # : This string will be translated when provided to admin interface
     # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     # : if you want so it can be translated.
-    typeDescription: str = _('Base Service')
+    typeDescription = _('Base Service')
 
     # : Icon file, used to represent this service at administration interface
     # : This file should be at same folder as this class is, except if you provide
     # : your own :py:meth:uds.core.BaseModule.BaseModule.icon method.
-    iconFile: str = 'service.png'
+    iconFile = 'service.png'
 
     # Functional related data
 

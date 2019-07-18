@@ -102,13 +102,13 @@ class Module(UserInterface, Environmentable, Serializable):
 
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
-    typeName: typing.ClassVar[str] = 'Base Module'
+    typeName: typing.ClassVar[typing.Any] = 'Base Module'
     # : Internal type name, used by system to locate this module
-    typeType: typing.ClassVar[str] = 'BaseModule'
+    typeType: typing.ClassVar[typing.Any] = 'BaseModule'
     # : Description of this module, used at admin level
-    typeDescription: typing.ClassVar[str] = 'Base Module'
+    typeDescription: typing.ClassVar[typing.Any] = 'Base Module'
     # : Icon file, relative to module folders
-    iconFile: typing.ClassVar[str] = 'base.png'  # This is expected to be png, use this format always
+    iconFile: typing.ClassVar[typing.Any] = 'base.png'  # This is expected to be png, use this format always
 
     class ValidationException(Exception):
         """
