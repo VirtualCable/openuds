@@ -42,7 +42,7 @@ import logging
 
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES
-# from Crypto.Random import atfork 
+from Crypto.Random import atfork
 
 from OpenSSL import crypto
 
@@ -94,7 +94,7 @@ class CryptoManager:
         if isinstance(value, str):
             value = value.encode('utf-8')
 
-        # atfork()
+        atfork()
         return encoders.encode((self._rsa.encrypt(value, b'')[0]), 'base64', asText=True)
 
     def decrypt(self, value: typing.Union[str, bytes]) -> str:
@@ -102,7 +102,7 @@ class CryptoManager:
             value = value.encode('utf-8')
         # import inspect
         try:
-            # atfork()
+            atfork()
             return str(self._rsa.decrypt(encoders.decode(value, 'base64')).decode('utf-8'))
         except Exception:
             logger.exception('Decripting: %s', value)
