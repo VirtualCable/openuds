@@ -105,8 +105,6 @@ def create(api, fromTemplateId, name, toDataStore):
             # Now clone the image
             imgName = sanitizeName(name + ' DSK ' + six.text_type(counter))
             newId = api.cloneImage(imgId, imgName, toDataStore)  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
-            # Ensure image is non persistent
-            api.makePersistentImage(newId, False)
             # Now Store id/name
             if fromId is True:
                 node.data = six.text_type(newId)
@@ -211,8 +209,12 @@ def checkPublished(api, templateId):
                 return False
             elif state != '1':  # If error is not READY
                 raise Exception('Error publishing. Image is in an invalid state. (Check it and delete it if not needed anymore)')
+            # Ensure image is non persistent, do not ask first because this is a simple request and normally templates has only 1 image.
+            api.makePersistentImage(imgId, False)
+
     except Exception:
         logger.exception('Exception checking published')
         raise
+
 
     return True
