@@ -55,7 +55,7 @@ def tmpl(request, template):
         c = RequestContext(request)
         resp = t.render(c.flatten())
     except Exception as e:
-        logger.debug('Exception getting template: {0}'.format(e))
+        logger.debug('Exception getting template: %s', e)
         resp = _('requested a template that do not exist')
     return HttpResponse(resp, content_type="text/plain")
 
