@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,16 +32,16 @@
 """
 
 # pylint: disable=maybe-no-member
-
-import six
+import types
+import xmlrpc.client
 
 from uds.core.util import xml2dict
+
 from . import storage
 from . import template
 from . import vm
 # Import submodules
 from .common import *
-import types
 
 __updated__ = '2017-03-28'
 
@@ -72,14 +72,14 @@ def checkResult(lst, parseResult=True):
         raise Exception('OpenNebula error {}: "{}"'.format(lst[2], lst[1]))
     if parseResult:
         return xml2dict.parse(lst[1])
-    else:
-        return lst[1]
+
+    return lst[1]
 
 
 def asList(element):
     if isinstance(element, (tuple, list)):
         return element
-    return element,
+    return (element,)
 
 
 # noinspection PyShadowingNames
@@ -95,7 +95,7 @@ class OpenNebulaClient(object):
     def sessionString(self):
         return '{}:{}'.format(self.username, self.password)
 
-    @property
+    @property  # type: ignore
     @ensureConnected
     def version(self):
         if self.cachedVersion is None:
@@ -108,11 +108,11 @@ class OpenNebulaClient(object):
         if self.connection is not None:
             return
 
-        self.connection = six.moves.xmlrpc_client.ServerProxy(self.endpoint)  # @UndefinedVariable
+        self.connection = xmlrpc.client.ServerProxy(self.endpoint)  # @UndefinedVariable
 
     @ensureConnected
     def enumStorage(self, storageType=0):
-        storageType = six.text_type(storageType)  # Ensure it is an string
+        storageType = str(storageType)  # Ensure it is an string
         # Invoke datastore pools info, no parameters except connection string
         result = self.connection.one.datastorepool.info(self.sessionString)
         result = checkResult(result)
@@ -129,8 +129,7 @@ class OpenNebulaClient(object):
         3.- When the next parameter is >= -1 this is the Range start ID. Can be -1. For smaller values this is the offset used for pagination.
         4.- For values >= -1 this is the Range end ID. Can be -1 to get until the last ID. For values < -1 this is the page size used for pagination.
         """
-        result = self.connection.one.templatepool.info(self.sessionString, -1, -1, -1)
-        result = checkResult(result)
+        result = checkResult(self.connection.one.templatepool.info(self.sessionString, -1, -1, -1))
         for ds in asList(result['VMTEMPLATE_POOL']['VMTEMPLATE']):
             try:
                 yield(ds['ID'], ds['NAME'], ds['TEMPLATE']['MEMORY'])
@@ -182,7 +181,7 @@ class OpenNebulaClient(object):
         return checkResult(result, parseResult=False)
 
     @ensureConnected
-    def updateTemplate(self, templateId, template, updateType=0):
+    def updateTemplate(self, templateId, templateData, updateType=0):
         """
         Updates the template with the templateXml
         1.- Session string
@@ -190,7 +189,7 @@ class OpenNebulaClient(object):
         3.- The new template contents. Syntax can be the usual attribute=value or XML.
         4.- Update type. 0 replace the whole template, 1 merge with the existing one
         """
-        result = self.connection.one.template.update(self.sessionString, int(templateId), template, int(updateType))
+        result = self.connection.one.template.update(self.sessionString, int(templateId), templateData, int(updateType))
         return checkResult(result, parseResult=False)
 
     @ensureConnected
@@ -208,6 +207,7 @@ class OpenNebulaClient(object):
     @ensureConnected
     def deleteTemplate(self, templateId):
         """
+        Deletes the template (not images)
         """
         result = self.connection.one.template.delete(self.sessionString, int(templateId))
         return checkResult(result, parseResult=False)

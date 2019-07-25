@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,14 +32,12 @@
 '''
 
 import logging
-import six
 # import oca
 
 from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import VmState
 
-__updated__ = '2018-08-20'
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +59,7 @@ def getMachineState(api, machineId):
         # return vm.state
         return api.getVMState(machineId)
     except Exception as e:
-        logger.error('Error obtaining machine state for {} on OpenNebula: {}'.format(machineId, e))
+        logger.error('Error obtaining machine state for %s on OpenNebula: %s', machineId, e)
 
     return VmState.UNKNOWN
 
@@ -73,7 +71,7 @@ def getMachineSubstate(api, machineId):
     try:
         return api.getVMSubstate(machineId)
     except Exception as e:
-        logger.error('Error obtaining machine state for {} on OpenNebula: {}'.format(machineId, e))
+        logger.error('Error obtaining machine substate for %s on OpenNebula: %s', machineId, e)
 
     return VmState.UNKNOWN
 
@@ -91,7 +89,7 @@ def startMachine(api, machineId):
     '''
     try:
         api.VMAction(machineId, 'resume')
-    except Exception as e:
+    except Exception:
         # MAybe the machine is already running. If we get error here, simply ignore it for now...
         pass
 
@@ -108,7 +106,7 @@ def stopMachine(api, machineId):
     try:
         api.VMAction(machineId, 'poweroff-hard')
     except Exception as e:
-        logger.error('Error powering off {} on OpenNebula: {}'.format(machineId, e))
+        logger.error('Error powering off %s on OpenNebula: %s', machineId, e)
 
 
 def suspendMachine(api, machineId):
@@ -123,7 +121,7 @@ def suspendMachine(api, machineId):
     try:
         api.VMAction(machineId, 'suspend')
     except Exception as e:
-        logger.error('Error suspending {} on OpenNebula: {}'.format(machineId, e))
+        logger.error('Error suspending %s on OpenNebula: %s', machineId, e)
 
 
 def resetMachine(api, machineId):
@@ -138,7 +136,7 @@ def resetMachine(api, machineId):
     try:
         api.VMAction(machineId, 'reboot-hard')
     except Exception as e:
-        logger.error('Error reseting {} on OpenNebula: {}'.format(machineId, e))
+        logger.error('Error reseting %s on OpenNebula: %s', machineId, e)
 
 
 def removeMachine(api, machineId):
@@ -155,8 +153,9 @@ def removeMachine(api, machineId):
         # vm.delete()
         api.deleteVM(machineId)
     except Exception as e:
-        logger.exception('Error removing machine {} on OpenNebula: {}'.format(machineId, e))
-        raise Exception('Error removing machine {} on OpenNebula: {}'.format(machineId, e))
+        err = 'Error removing machine {} on OpenNebula: {}'.format(machineId, e)
+        logger.exception(err)
+        raise Exception(err)
 
 
 def enumerateMachines(api):
@@ -248,4 +247,3 @@ def getDisplayConnection(api, machineId):
 #             <NIC_ID><![CDATA[2]]></NIC_ID>
 #             <VLAN><![CDATA[NO]]></VLAN>
 #         </NIC>
-

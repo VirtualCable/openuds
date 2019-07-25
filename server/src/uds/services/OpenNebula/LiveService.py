@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,17 +30,16 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from django.utils.translation import ugettext_noop as _, ugettext
+import logging
+
+from django.utils.translation import ugettext_noop as _
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
+from uds.core.ui import gui
+
 from .LivePublication import LivePublication
 from .LiveDeployment import LiveDeployment
 
-from uds.core.ui import gui
-
-import logging
-
-__updated__ = '2018-08-20'
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +185,7 @@ class LiveService(Service):
         Returns:
             Id of the machine being created form template
         """
-        logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
+        logger.debug('Deploying from template %s machine %s', templateId, name)
         # self.datastoreHasSpace()
         return self.parent().deployFromTemplate(name, templateId)
 

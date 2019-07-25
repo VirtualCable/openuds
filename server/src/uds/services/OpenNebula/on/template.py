@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,16 +32,13 @@
 """
 
 import logging
-import six
 
 from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2017-05-05'
 
 logger = logging.getLogger(__name__)
-
 
 def getTemplates(api, force=False):
 
@@ -76,13 +73,13 @@ def create(api, fromTemplateId, name, toDataStore):
 
         info = api.templateInfo(templateId)[1]
         template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
-        logger.debug('XML: {}'.format(template.toxml()))
+        logger.debug('XML: %s', template.toxml())
 
         counter = 0
         for dsk in template.getElementsByTagName('DISK'):
             counter += 1
             imgIds = dsk.getElementsByTagName('IMAGE_ID')
-            if len(imgIds) == 0:
+            if not imgIds:
                 fromId = False
                 try:
                     node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
@@ -99,19 +96,17 @@ def create(api, fromTemplateId, name, toDataStore):
                 node = imgIds[0].childNodes[0]
                 imgId = node.data
 
-            logger.debug('Found {} for cloning'.format(imgId))
+            logger.debug('Found %s for cloning', imgId)
 
             # if api.imageInfo(imgId)[0]['IMAGE']['STATE'] != '1':
             #    raise Exception('The base machines images are not in READY state')
 
             # Now clone the image
-            imgName = sanitizeName(name + ' DSK ' + six.text_type(counter))
+            imgName = sanitizeName(name + ' DSK ' + str(counter))
             newId = api.cloneImage(imgId, imgName, toDataStore)  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
-            # Ensure image is non persistent
-            api.makePersistentImage(newId, False)
             # Now Store id/name
             if fromId is True:
-                node.data = six.text_type(newId)
+                node.data = str(newId)
             else:
                 node.data = imgName
 
@@ -119,9 +114,9 @@ def create(api, fromTemplateId, name, toDataStore):
         # api.call('template.update', templateId, template.toxml())
         api.updateTemplate(templateId, template.toxml())
 
-        return six.text_type(templateId)
+        return str(templateId)
     except Exception as e:
-        logger.exception('Creating template on OpenNebula: {}'.format(e))
+        logger.exception('Creating template on OpenNebula')
         try:
             api.deleteTemplate(templateId)  # Try to remove created template in case of fail
         except Exception:
@@ -143,11 +138,11 @@ def remove(api, templateId):
 
             info = api.templateInfo(templateId)[1]
             template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
-            logger.debug('XML: {}'.format(template.toxml()))
+            logger.debug('XML: %s', template.toxml())
 
             for dsk in template.getElementsByTagName('DISK'):
                 imgIds = dsk.getElementsByTagName('IMAGE_ID')
-                if len(imgIds) == 0:
+                if not imgIds:
                     try:
                         node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
                     except IndexError:
@@ -157,17 +152,16 @@ def remove(api, templateId):
                     node = imgIds[0].childNodes[0]
                     imgId = node.data
 
-                logger.debug('Found {} for cloning'.format(imgId))
+                logger.debug('Found %s for cloning', imgId)
 
                 # Now delete the image
                 api.deleteImage(imgId)  # api.call('image.delete', int(imgId))
-
-        except:
-            logger.exception('Exception cloning image')
+        except Exception:
+            logger.exception('Removing image')
 
         api.deleteTemplate(templateId)  # api.call('template.delete', int(templateId))
-    except Exception as e:
-        logger.error('Removing template on OpenNebula: {}'.format(e))
+    except Exception:
+        logger.error('Removing template on OpenNebula')
 
 def deployFrom(api, templateId, name):
     """
@@ -182,7 +176,7 @@ def deployFrom(api, templateId, name):
         Id of the machine being created form template
     """
     vmId = api.instantiateTemplate(templateId, name, False, '', False)  # api.call('template.instantiate', int(templateId), name, False, '')
-    return six.text_type(vmId)
+    return str(vmId)
 
 def checkPublished(api, templateId):
     """
@@ -193,11 +187,11 @@ def checkPublished(api, templateId):
 
         info = api.templateInfo(templateId)[1]
         template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
-        logger.debug('XML: {}'.format(template.toxml()))
+        logger.debug('XML: %s', template.toxml())
 
         for dsk in template.getElementsByTagName('DISK'):
             imgIds = dsk.getElementsByTagName('IMAGE_ID')
-            if len(imgIds) == 0:
+            if not imgIds:
                 try:
                     node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
                 except IndexError:
@@ -207,13 +201,16 @@ def checkPublished(api, templateId):
                 node = imgIds[0].childNodes[0]
                 imgId = node.data
 
-            logger.debug('Found {} for checking'.format(imgId))
+            logger.debug('Found %s for checking', imgId)
 
             state = api.imageInfo(imgId)[0]['IMAGE']['STATE']
             if state in ('0', '4'):
                 return False
-            elif state != '1':  # If error is not READY
+            if state != '1':  # If error is not READY
                 raise Exception('Error publishing. Image is in an invalid state. (Check it and delete it if not needed anymore)')
+            # Ensure image is non persistent. This may be invoked more than once, but idoes not matters
+            api.makePersistentImage(imgId, False)
+
     except Exception:
         logger.exception('Exception checking published')
         raise

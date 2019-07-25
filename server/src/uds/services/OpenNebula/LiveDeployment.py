@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,23 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import pickle
+import logging
+import typing
+
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
 
 from . import on
 
-import pickle
-import logging
-
-__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
 opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(8)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
-
 
 class LiveDeployment(UserDeployment):
     """
@@ -59,9 +58,17 @@ class LiveDeployment(UserDeployment):
     The logic for managing ovirt deployments (user machines in this case) is here.
 
     """
-
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 6
+
+    #
+    _name = ''
+    _ip = ''
+    _mac = ''
+    _vmid = ''
+    _reason = ''
+    _queue: typing.List[int] = []
+
 
     def initialize(self):
         self._name = ''
@@ -86,11 +93,11 @@ class LiveDeployment(UserDeployment):
             pickle.dumps(self._queue, protocol=0)
         ])
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data):
         """
         Does nothing here also, all data are keeped at environment storage
         """
-        vals = str_.split(b'\1')
+        vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
             self._ip = vals[2].decode('utf8')
@@ -139,7 +146,7 @@ class LiveDeployment(UserDeployment):
         :note: This IP is the IP of the "consumed service", so the transport can
                access it.
         """
-        logger.debug('Setting IP to {}'.format(ip))
+        logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
     def getUniqueId(self):
@@ -204,7 +211,7 @@ class LiveDeployment(UserDeployment):
 
     def notifyReadyFromOsManager(self, data):
         # Here we will check for suspending the VM (when full ready)
-        logger.debug('Checking if cache 2 for {0}'.format(self._name))
+        logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
             logger.debug('Machine is ready. Moving to level 2')
             self.__popCurrentOp()  # Remove current state
@@ -235,7 +242,7 @@ class LiveDeployment(UserDeployment):
             self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
 
     def __checkMachineState(self, chkState):
-        logger.debug('Checking that state of machine {} ({}) is {}'.format(self._vmid, self._name, chkState))
+        logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
@@ -254,13 +261,13 @@ class LiveDeployment(UserDeployment):
         return ret
 
     def __getCurrentOp(self):
-        if len(self._queue) == 0:
+        if not self._queue:
             return opFinish
 
         return self._queue[0]
 
     def __popCurrentOp(self):
-        if len(self._queue) == 0:
+        if not self._queue:
             return opFinish
 
         res = self._queue.pop(0)
@@ -279,14 +286,14 @@ class LiveDeployment(UserDeployment):
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
         """
-        logger.debug('Setting error state, reason: {0}'.format(reason))
+        logger.debug('Setting error state, reason: %s', reason)
         self.doLog(log.ERROR, reason)
 
         if self._vmid != '':  # Powers off & delete it
             try:
                 self.service().removeMachine(self._vmid)
-            except:
-                logger.debug('Can\t set machine state to stopped')
+            except Exception:
+                logger.debug('Can\'t set machine state to stopped')
 
         self._queue = [opError]
         self._reason = str(reason)
@@ -371,7 +378,7 @@ class LiveDeployment(UserDeployment):
         if state == on.VmState.ACTIVE:  # @UndefinedVariable
             subState = self.service().getMachineSubstate(self._vmid)
             if subState < 3:  # Less than running
-                logger.info('Must wait before remove: {}'.format(subState))
+                logger.info('Must wait before remove: %s', subState)
                 self.__pushFrontOp(opRetry)
                 return
 
@@ -457,7 +464,6 @@ class LiveDeployment(UserDeployment):
         (No matter wether it is for cache or for an user)
         """
         self.__debug('finish')
-        pass
 
     def moveToCache(self, newLevel):
         """
@@ -529,8 +535,8 @@ class LiveDeployment(UserDeployment):
         }.get(op, '????')
 
     def __debug(self, txt):
-        logger.debug('_name {0}: {1}'.format(txt, self._name))
-        logger.debug('_ip {0}: {1}'.format(txt, self._ip))
-        logger.debug('_mac {0}: {1}'.format(txt, self._mac))
-        logger.debug('_vmid {0}: {1}'.format(txt, self._vmid))
-        logger.debug('Queue at {0}: {1}'.format(txt, [LiveDeployment.__op2str(op) for op in self._queue]))
+        logger.debug('_name %s: %s', txt, self._name)
+        logger.debug('_ip %s: %s', txt, self._ip)
+        logger.debug('_mac %s: %s', txt, self._mac)
+        logger.debug('_vmid %s: %s', txt, self._vmid)
+        logger.debug('Queue at %s: %s', txt, [LiveDeployment.__op2str(op) for op in self._queue])

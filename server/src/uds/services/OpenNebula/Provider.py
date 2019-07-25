@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,28 +28,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-Created on Jun 22, 2012
-
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
-from defusedxml import minidom
 
 from .LiveService import LiveService
 from . import on
-
-import logging
-import six
-
-# Python bindings for OpenNebula
-# import oca
-
-__updated__ = '2018-08-20'
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +108,7 @@ class Provider(ServiceProvider):
 
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
-            logger.debug('Endpoint: {}'.format(self.endpoint))
+            logger.debug('Endpoint: %s', self.endpoint)
 
     @property
     def endpoint(self):
@@ -130,7 +119,7 @@ class Provider(ServiceProvider):
         if self._api is None:
             self._api = on.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
 
-        logger.debug('Api: {}'.format(self._api))
+        logger.debug('Api: %s', self._api)
         return self._api
 
     def resetApi(self):

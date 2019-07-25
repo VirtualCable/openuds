@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,11 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
-from django.utils.translation import ugettext as _
 from uds.core.services import Publication
 from uds.core.util.State import State
 
-import six
-
-import logging
-
-__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +45,11 @@ class LivePublication(Publication):
     """
 
     suggestedTime = 2  # : Suggested recheck time if publication is unfinished in seconds
+
+    _name = ''
+    _reason = ''
+    _templateId = ''
+    _state = ''
 
     def initialize(self):
         """
@@ -76,7 +76,7 @@ class LivePublication(Publication):
         """
         deserializes the data and loads it inside instance.
         """
-        logger.debug('Data: {0}'.format(data))
+        logger.debug('Data: %s', data)
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
             self._name, self._reason, self._templateId, self._state = vals[1:]
@@ -93,7 +93,7 @@ class LivePublication(Publication):
             self._templateId = self.service().makeTemplate(self._name)
         except Exception as e:
             self._state = 'error'
-            self._reason = six.text_type(e)
+            self._reason = str(e)
             return State.ERROR
 
         return State.RUNNING
@@ -109,7 +109,7 @@ class LivePublication(Publication):
                 self._state = 'ok'
             except Exception as e:
                 self._state = 'error'
-                self._reason = six.text_type(e)
+                self._reason = str(e)
 
         if self._state == 'error':
             return State.ERROR
@@ -124,7 +124,6 @@ class LivePublication(Publication):
         """
         In our case, finish does nothing
         """
-        pass
 
     def reasonOfError(self):
         """
