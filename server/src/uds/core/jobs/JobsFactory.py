@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,18 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-import six
 import datetime
 import logging
-
-__updated__ = '2014-11-26'
 
 logger = logging.getLogger(__name__)
 
 
-class JobsFactory(object):
+class JobsFactory:
     _factory = None
 
     def __init__(self):
@@ -57,11 +52,11 @@ class JobsFactory(object):
         return self._jobs
 
     def insert(self, name, type_):
-        logger.debug('Inserting job {0} of type_ {1}'.format(name, type_))
+        logger.debug('Inserting job %s of type_ %s', name, type_)
         try:
             self._jobs[name] = type_
         except Exception as e:
-            logger.debug('Exception at insert in JobsFactory: {0}, {1}'.format(e.__class__, e))
+            logger.debug('Exception at insert in JobsFactory: %s, %s', e.__class__, e)
 
     def ensureJobsInDatabase(self):
         from uds.models import Scheduler, getSqlDatetime
@@ -71,7 +66,7 @@ class JobsFactory(object):
         try:
             logger.debug('Ensuring that jobs are registered inside database')
             workers.initialize()
-            for name, type_ in six.iteritems(self._jobs):
+            for name, type_ in self._jobs.items():
                 try:
                     type_.setup()
                     # We use database server datetime
@@ -79,14 +74,14 @@ class JobsFactory(object):
                     next_ = now
                     job = Scheduler.objects.create(name=name, frecuency=type_.frecuency, last_execution=now, next_execution=next_, state=State.FOR_EXECUTE)
                 except Exception:  # already exists
-                    logger.debug('Already added {0}'.format(name))
+                    logger.debug('Already added %s', name)
                     job = Scheduler.objects.get(name=name)
                     job.frecuency = type_.frecuency
                     if job.next_execution > job.last_execution + datetime.timedelta(seconds=type_.frecuency):
                         job.next_execution = job.last_execution + datetime.timedelta(seconds=type_.frecuency)
                     job.save()
         except Exception as e:
-            logger.debug('Exception at ensureJobsInDatabase in JobsFactory: {0}, {1}'.format(e.__class__, e))
+            logger.debug('Exception at ensureJobsInDatabase in JobsFactory: %s, %s', e.__class__, e)
 
     def lookup(self, typeName):
         try:

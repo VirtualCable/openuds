@@ -69,7 +69,7 @@ class DelayedTask(Environmentable):
         raise NotImplementedError
 
 
-    def register(self, suggestedTime: int, tag: str = '', check: bool = True):
+    def register(self, suggestedTime: int, tag: str = '', check: bool = True) -> None:
         """
         Utility method that allows to register a Delayedtask
         """

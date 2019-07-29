@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +32,8 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import dns
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.auths import Authenticator
@@ -41,10 +42,7 @@ from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core.util.State import State
 from uds.core.util.request import getRequest
-import dns
-import logging
 
-__updated__ = '2016-04-20'
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +100,7 @@ class InternalDBAuth(Authenticator):
         return username
 
     def authenticate(self, username, credentials, groupsManager):
-        logger.debug('Username: {0}, Password: {1}'.format(username, credentials))
+        logger.debug('Username: %s, Password: %s', username, credentials)
         auth = self.dbAuthenticator()
         try:
             try:
@@ -124,6 +122,16 @@ class InternalDBAuth(Authenticator):
 
     def createUser(self, usrData):
         pass
+
+    def getGroups(self, username, groupsManager):
+        auth = self.dbAuthenticator()
+        try:
+            usr = auth.users.get(name=username, state=State.ACTIVE)
+        except Exception:
+            return
+
+        groupsManager.validate([g.name for g in usr.groups.all()])
+
 
     @staticmethod
     def test(env, data):

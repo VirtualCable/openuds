@@ -434,37 +434,15 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         raise NotImplementedError
 
-    def getJavascript(self, request: HttpRequest):
+    def getJavascript(self, request: HttpRequest) -> typing.Optional[str]:
         """
         If you override this method, and returns something different of None,
         UDS will consider your authenticator as "Owner draw", that is, that it
         will not use the standard form for user authentication.
 
         Args:
-            Request is the DJango request received for generating this html,
+            Request is the DJango request received for generating this javascript,
             with included user ip at request.ip.
-
-        We have here a few things that we should know for creating our own
-        html for authenticator:
-
-            * The id of the username input field is **id_user**
-            * The id of the password input field is **id_password**
-            * The id of the login form is **loginform**
-            * The id of the "back to login" link is **backToLogin**
-
-        This is what happens when an authenticator that has getJavascript method is
-        selected in the front end (from the combo shown):
-
-            * The div with id **login** is hidden.
-            * The div with id **nonStandard** is shown
-            * Using Ajax, the html provided by this method is requested for
-              the authenticator
-            * The returned html is rendered inside **nonStandardLogin** div.
-            * The **nonStandard** div is shown.
-
-        **nonStandard** div has two inner divs, **nonStandardLogin** and
-        **divBackToLogin**. If there is no standard auths, divBackToLogin is
-        erased.
 
         With this, and :py:meth:.authCallback method, we can add SSO engines
         to UDS with no much problems.

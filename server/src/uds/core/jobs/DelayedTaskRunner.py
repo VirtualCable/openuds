@@ -110,7 +110,7 @@ class DelayedTaskRunner:
                 task = DBDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
                     logger.warning('EXecuted %s due to insert_date being in the future!', task.type)
-                taskInstanceDump = encoders.decode(task.instance, 'base64')
+                taskInstanceDump = typing.cast(bytes, encoders.decode(task.instance, 'base64'))
                 task.delete()
             taskInstance = pickle.loads(taskInstanceDump)
         except IndexError:

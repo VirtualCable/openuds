@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,23 +30,24 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+from functools import wraps
+import typing
+import logging
+import inspect
 
 from uds.core.util.html import checkBrowser
 from uds.web.util import errors
 
-from functools import wraps
-
-import logging
-
-__updated__ = '2018-10-07'
 
 logger = logging.getLogger(__name__)
 
 
 # Decorator that protects pages that needs at least a browser version
 # Default is to deny IE < 9
-def denyBrowsers(browsers=None, errorResponse=lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)):
+def denyBrowsers(
+        browsers: typing.Optional[typing.List[str]] = None,
+        errorResponse: typing.Callable = lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)
+    ):
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
@@ -77,19 +78,14 @@ def deprecated(func):
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used."""
-    import inspect
 
     @wraps(func)
     def new_func(*args, **kwargs):
         try:
             caller = inspect.stack()[1]
-            logger.warning(
-                "Call to deprecated function {0} from {1}:{2}.".format(func.__name__,
-                                                                       caller[1], caller[2]
-                                                                       )
-            )
+            logger.warning('Call to deprecated function %s from %s:%s.', func.__name__, caller[1], caller[2])
         except Exception:
-            logger.info('No stack info on deprecated function call {0}'.format(func.__name__))
+            logger.info('No stack info on deprecated function call %s', func.__name__)
 
         return func(*args, **kwargs)
 
@@ -100,7 +96,12 @@ def deprecated(func):
 #
 # Decorator for caching
 # Decorator that tries to get from cache before executing
-def allowCache(cachePrefix, cacheTimeout, cachingArgs=None, cachingKeyFnc=None):
+def allowCache(
+        cachePrefix: str,
+        cacheTimeout: int,
+        cachingArgs: typing.Optional[typing.Union[typing.List[int], int]] = None,
+        cachingKeyFnc: typing.Optional[typing.Callable] = None
+    ):
     """Decorator that give us a "quick& clean" caching feature on service providers.
 
     Note: This decorator is intended ONLY for service providers
@@ -111,10 +112,9 @@ def allowCache(cachePrefix, cacheTimeout, cachingArgs=None, cachingKeyFnc=None):
                         First arg (self) is 0, so normally cachingArgs are 1, or [1,2,..]
     """
     if not cachingKeyFnc:
-        cachingKeyFnc = lambda x:''
+        cachingKeyFnc = lambda x: ''
 
-    def allowCacheDecorator(fnc):
-
+    def allowCacheDecorator(fnc: typing.Callable):
         @wraps(fnc)
         def wrapper(*args, **kwargs):
             if cachingArgs is not None:
@@ -140,7 +140,7 @@ def allowCache(cachePrefix, cacheTimeout, cachingArgs=None, cachingKeyFnc=None):
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
                     args[0].cache.put(cacheKey, data, cacheTimeout)
                 except Exception as e:
-                    logger.debug('Data for {} is not serializable, not cached. {} ({})'.format(cacheKey, data, e))
+                    logger.debug('Data for %s is not serializable on call to %s, not cached. %s (%s)', cacheKey, fnc.__name__, data, e)
             return data
 
         return wrapper

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,20 +30,17 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import platform
+import threading
+import time
+import logging
+from datetime import timedelta
 
 from django.db.models import Q
 from django.db import transaction, DatabaseError, connection
 from uds.models import Scheduler as dbScheduler, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs.JobsFactory import JobsFactory
-from datetime import timedelta
-import platform
-import threading
-import time
-import logging
-
-__updated__ = '2018-03-02'
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +61,7 @@ class JobThread(threading.Thread):
         try:
             self._jobInstance.execute()
         except Exception:
-            logger.warning("Exception executing job {0}".format(self._dbJobId))
+            logger.warning("Exception executing job %s", self._dbJobId)
         finally:
             self.jobDone()
 
@@ -82,7 +79,7 @@ class JobThread(threading.Thread):
                 try:
                     connection.close()
                 except Exception as e:
-                    logger.error('On job executor, closing db connection: {}'.format(e))
+                    logger.error('On job executor, closing db connection: %s', e)
                 # logger.info('Database access failed... Retrying')
                 time.sleep(1)
 
@@ -114,7 +111,7 @@ class Scheduler(object):
     def __init__(self):
         self._hostname = platform.node()
         self._keepRunning = True
-        logger.info('Initialized scheduler for host "{}"'.format(self._hostname))
+        logger.info('Initialized scheduler for host "%s"', self._hostname)
 
     @staticmethod
     def scheduler():
@@ -144,7 +141,7 @@ class Scheduler(object):
                 # This params are all set inside fltr (look at __init__)
                 job = dbScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]  # @UndefinedVariable
                 if job.last_execution > now:
-                    logger.warning('EXecuted {} due to last_execution being in the future!'.format(job.name))
+                    logger.warning('EXecuted %s due to last_execution being in the future!', job.name)
                 job.state = State.RUNNING
                 job.owner_server = self._hostname
                 job.last_execution = now
@@ -153,10 +150,10 @@ class Scheduler(object):
             jobInstance = job.getInstance()
 
             if jobInstance is None:
-                logger.error('Job instance can\'t be resolved for {0}, removing it'.format(job))
+                logger.error('Job instance can\'t be resolved for %s, removing it', job)
                 job.delete()
                 return
-            logger.debug('Executing job:>{0}<'.format(job.name))
+            logger.debug('Executing job:>%s<', job.name)
             JobThread(jobInstance, job).start()  # Do not instatiate thread, just run it
         except IndexError:
             # Do nothing, there is no jobs for execution
@@ -197,7 +194,7 @@ class Scheduler(object):
                 # This can happen often on sqlite, and this is not problem at all as we recover it.
                 # The log is removed so we do not get increased workers.log file size with no information at all
                 if not isinstance(e, DatabaseError):
-                    logger.error('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+                    logger.error('Unexpected exception at run loop %s: %s', e.__class__, e)
                 try:
                     connection.close()
                 except Exception:
