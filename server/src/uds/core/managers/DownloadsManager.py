@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,23 +30,21 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
 
 import os
-import uuid
-from django.http import HttpResponse, Http404
+import logging
+import typing
+
 from wsgiref.util import FileWrapper
+from django.http import HttpResponse, Http404
 
 from uds.core.managers import cryptoManager
 
-import six
-
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-class DownloadsManager(object):
+class DownloadsManager:
     """
     Manager so connectors can register their own downloadables
     For registering, use at __init__.py of the conecto something like this:
@@ -57,7 +55,8 @@ class DownloadsManager(object):
                                                         os.path.join(os.path.dirname(sys.modules[__package__].__file__), 'files/test.exe'),
                                                         'application/x-msdos-program')
     """
-    _manager = None
+    _manager: typing.Optional['DownloadsManager'] = None
+    _downloadables: typing.Dict[str, typing.Dict[str, str]] = {}
 
     def __init__(self):
         self._downloadables = {}
@@ -68,7 +67,7 @@ class DownloadsManager(object):
             DownloadsManager._manager = DownloadsManager()
         return DownloadsManager._manager
 
-    def registerDownloadable(self, name, comment, path, mime='application/octet-stream'):
+    def registerDownloadable(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'):
         """
         Registers a downloadable file.
         @param name: name shown
@@ -78,16 +77,16 @@ class DownloadsManager(object):
         _id = cryptoManager().uuid(name)
         self._downloadables[_id] = {'name': name, 'comment': comment, 'path': path, 'mime': mime}
 
-    def getDownloadables(self):
+    def getDownloadables(self) -> typing.Dict[str, typing.Dict[str, str]]:
         return self._downloadables
 
-    def send(self, request, _id):
+    def send(self, request, _id) -> HttpResponse:
         if _id not in self._downloadables:
-            logger.error('ID {0} not found in {1}!!!'.format(_id, self._downloadables))
+            logger.error('Downloadable id %s not found in %s!!!', _id, self._downloadables)
             raise Http404
         return self._send_file(request, self._downloadables[_id]['name'], self._downloadables[_id]['path'], self._downloadables[_id]['mime'])
 
-    def _send_file(self, _, name, filename, mime):
+    def _send_file(self, _, name, filename, mime) -> HttpResponse:
         """
         Send a file through Django without loading the whole file into
         memory at once. The FileWrapper will turn the file object into an

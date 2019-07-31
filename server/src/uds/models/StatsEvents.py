@@ -67,7 +67,7 @@ class StatsEvents(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_stats(owner_type: typing.Union[str, typing.Iterable[str]], event_type: typing.Union[str, typing.Iterable[str]], **kwargs):
+    def get_stats(owner_type: typing.Union[int, typing.Iterable[int]], event_type: typing.Union[int, typing.Iterable[int]], **kwargs):
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 

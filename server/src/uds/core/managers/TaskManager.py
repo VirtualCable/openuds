@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,17 +30,17 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import threading
+import time
+import signal
+import logging
+import typing
 
 from django.db import connection
 from uds.core.jobs.Scheduler import Scheduler
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
 from uds.core import jobs
 from uds.core.util.Config import GlobalConfig
-import threading
-import time
-import signal
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +61,8 @@ class DelayedTaskThread(threading.Thread):
         DelayedTaskRunner.runner().notifyTermination()
 
 
-class TaskManager(object):
-    keepRunning = True
+class TaskManager:
+    keepRunning: bool = True
 
     @staticmethod
     def sigTerm(sigNum, frame):
@@ -78,7 +78,7 @@ class TaskManager(object):
         TaskManager.keepRunning = False
 
     @staticmethod
-    def registerJob(jobType):
+    def registerJob(jobType: typing.Type[jobs.Job]):
         jobName = jobType.friendly_name
         jobs.factory().insert(jobName, jobType)
 
@@ -87,7 +87,7 @@ class TaskManager(object):
 
         logger.info("Registering sheduled tasks")
 
-        # Simply import this to make workers "auto imported"
+        # Simply import this to make workers "auto import themself"
         from uds.core import workers  # @UnusedImport pylint: disable=unused-import
 
     @staticmethod
@@ -103,23 +103,23 @@ class TaskManager(object):
 
         TaskManager.registerScheduledTasks()
 
-        noSchedulers = GlobalConfig.SCHEDULER_THREADS.getInt()
-        noDelayedTasks = GlobalConfig.DELAYED_TASKS_THREADS.getInt()
+        noSchedulers: int = GlobalConfig.SCHEDULER_THREADS.getInt()
+        noDelayedTasks: int = GlobalConfig.DELAYED_TASKS_THREADS.getInt()
 
-        logger.info('Starting {0} schedulers and {1} task executors'.format(noSchedulers, noDelayedTasks))
+        logger.info('Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks)
 
         threads = []
         for _ in range(noSchedulers):
             thread = SchedulerThread()
             thread.start()
             threads.append(thread)
-            time.sleep(0.5)
+            time.sleep(0.5)  # Wait a bit before next scheduler is started
 
         for _ in range(noDelayedTasks):
             thread = DelayedTaskThread()
             thread.start()
             threads.append(thread)
-            time.sleep(0.5)
+            time.sleep(0.5)  # Wait a bit before next delayed task runner is started
 
         signal.signal(signal.SIGTERM, TaskManager.sigTerm)
 

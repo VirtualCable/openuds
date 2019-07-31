@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from uds.models import (
     UserService, DeployedServicePublication,
@@ -42,8 +43,6 @@ from uds.models import (
 from uds.core.util import log
 
 from uds.core.util.Config import GlobalConfig
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -63,22 +62,22 @@ transDict = {
 }
 
 
-class LogManager(object):
+class LogManager:
     """
     Manager for logging (at database) events
     """
-    _manager = None
+    _manager: typing.Optional['LogManager'] = None
 
     def __init__(self):
         pass
 
     @staticmethod
     def manager():
-        if LogManager._manager is None:
+        if not LogManager._manager:
             LogManager._manager = LogManager()
         return LogManager._manager
 
-    def __log(self, owner_type, owner_id, level, message, source, avoidDuplicates):
+    def __log(self, owner_type: int, owner_id: int, level: int, message: str, source: str, avoidDuplicates: bool):
         """
         Logs a message associated to owner
         """
@@ -106,11 +105,11 @@ class LogManager(object):
         # now, we add new log
         try:
             Log.objects.create(owner_type=owner_type, owner_id=owner_id, created=getSqlDatetime(), source=source, level=level, data=message)
-        except:
-            # Some objects will not get logged, such as System administrator objects
+        except Exception:
+            # Some objects will not get logged, such as System administrator objects, but this is fine
             pass
 
-    def __getLogs(self, owner_type, owner_id, limit):
+    def __getLogs(self, owner_type: int, owner_id: int, limit: int) -> typing.List[typing.Dict]:
         """
         Get all logs associated with an user service, ordered by date
         """
@@ -119,7 +118,7 @@ class LogManager(object):
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in reversed(qs.order_by('-created', '-id')[:limit])]
 
-    def __clearLogs(self, owner_type, owner_id):
+    def __clearLogs(self, owner_type: int, owner_id: int):
         """
         Clears all logs related to user service
         """
@@ -127,22 +126,22 @@ class LogManager(object):
 
         Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
-    def doLog(self, wichObject, level, message, source, avoidDuplicates=True):
+    def doLog(self, wichObject: typing.Any, level: typing.Union[int, str], message: str, source: str, avoidDuplicates: bool = True):
         """
         Do the logging for the requested object.
 
         If the object provided do not accepts associated loggin, it simply ignores the request
         """
-        if type(level) is not int:
-            level = log.logLevelFromStr(level)
+        lvl = log.logLevelFromStr(level) if not isinstance(level, int) else typing.cast(int, level)
 
         owner_type = transDict.get(type(wichObject), None)
-        if owner_type is not None:
-            self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)
-        else:
-            logger.debug('Requested doLog for a type of object not covered: {0}'.format(wichObject))
 
-    def getLogs(self, wichObject, limit):
+        if owner_type is not None:
+            self.__log(owner_type, wichObject.id, lvl, message, source, avoidDuplicates)
+        else:
+            logger.debug('Requested doLog for a type of object not covered: %s', wichObject)
+
+    def getLogs(self, wichObject, limit) -> typing.List[typing.Dict]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """
@@ -153,7 +152,7 @@ class LogManager(object):
         if owner_type is not None:
             return self.__getLogs(owner_type, wichObject.id, limit)
         else:
-            logger.debug('Requested getLogs for a type of object not covered: {0}'.format(wichObject))
+            logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
             return []
 
     def clearLogs(self, wichObject):
@@ -167,4 +166,4 @@ class LogManager(object):
         if owner_type is not None:
             self.__clearLogs(owner_type, wichObject.id)
         else:
-            logger.debug('Requested clearLogs for a type of object not covered: {0}'.format(wichObject))
+            logger.debug('Requested clearLogs for a type of object not covered: %s', wichObject)

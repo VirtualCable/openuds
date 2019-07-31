@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -42,7 +42,7 @@ import logging
 
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES
-from Crypto.Random import atfork
+from Crypto.Random import atfork # type: ignore
 
 from OpenSSL import crypto
 
@@ -95,7 +95,7 @@ class CryptoManager:
             value = value.encode('utf-8')
 
         atfork()
-        return encoders.encode((self._rsa.encrypt(value, b'')[0]), 'base64', asText=True)
+        return typing.cast(str, encoders.encode((self._rsa.encrypt(value, b'')[0]), 'base64', asText=True))
 
     def decrypt(self, value: typing.Union[str, bytes]) -> str:
         if isinstance(value, str):
@@ -117,13 +117,13 @@ class CryptoManager:
         toEncode = struct.pack('>i', len(text)) + text + rndStr[:paddedLength - len(text) - 4]
         encoded = cipher.encrypt(toEncode)
         if base64:
-            return encoders.encode(encoded, 'base64', asText=False)  # Return as binary
+            return typing.cast(bytes, encoders.encode(encoded, 'base64', asText=False))  # Return as binary
 
         return encoded
 
     def AESDecrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
         if base64:
-            text = encoders.decode(text, 'base64')
+            text = typing.cast(bytes, encoders.decode(text, 'base64'))
 
         cipher = AES.new(CryptoManager.AESKey(key, 16), AES.MODE_CBC, 'udsinitvectoruds')
         toDecode = cipher.decrypt(text)
@@ -134,9 +134,9 @@ class CryptoManager:
             s1 = s1.encode('utf-8')
         if isinstance(s2, str):
             s2 = s2.encode('utf-8')
-        mult = int(len(s1) / len(s2)) + 1
-        s1a = array.array('B', s1) 
-        s2a = array.array('B', s2 * mult) 
+        mult = len(s1) // len(s2) + 1
+        s1a = array.array('B', s1)
+        s2a = array.array('B', s2 * mult)
         # We must return bynary in xor, because result is in fact binary
         return array.array('B', (s1a[i] ^ s2a[i] for i in range(len(s1a)))).tobytes()
 
@@ -146,21 +146,21 @@ class CryptoManager:
     def symDecrpyt(self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
         return self.xor(cryptText, key).decode('utf-8')
 
-    def loadPrivateKey(self, rsaKey):
+    def loadPrivateKey(self, rsaKey: str):
         try:
             pk = RSA.importKey(rsaKey)
         except Exception as e:
             raise e
         return pk
 
-    def loadCertificate(self, certificate):
+    def loadCertificate(self, certificate: str):
         try:
             cert = crypto.load_certificate(crypto.FILETYPE_PEM, certificate)
         except crypto.Error as e:
             raise Exception(e.message[0][2])
         return cert
 
-    def certificateString(self, certificate):
+    def certificateString(self, certificate: str) -> str:
         return certificate.replace('-----BEGIN CERTIFICATE-----', '').replace('-----END CERTIFICATE-----', '').replace('\n', '')
 
     def hash(self, value: typing.Union[str, bytes]) -> str:
@@ -172,7 +172,7 @@ class CryptoManager:
 
         return str(hashlib.sha1(value).hexdigest())
 
-    def uuid(self, obj=None):
+    def uuid(self, obj: typing.Any = None) -> str:
         """
         Generates an uuid from obj. (lower case)
         If obj is None, returns an uuid based on current datetime + counter
@@ -187,5 +187,5 @@ class CryptoManager:
 
         return str(uuid.uuid5(self._namespace, obj)).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 
-    def randomString(self, length=40):
+    def randomString(self, length: int = 40) -> str:
         return ''.join(random.SystemRandom().choices(string.ascii_lowercase + string.digits, k=length))

@@ -63,7 +63,7 @@ class StatsCounters(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_grouped(owner_type: typing.Union[str, typing.Iterable[str]], counter_type: str, **kwargs):  # pylint: disable=too-many-locals
+    def get_grouped(owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs) -> typing.Iterable:  # pylint: disable=too-many-locals
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 
@@ -77,7 +77,7 @@ class StatsCounters(models.Model):
             filt += '=' + str(owner_type)
 
         owner_id = kwargs.get('owner_id', None)
-        if owner_id is not None:
+        if owner_id:
             filt += ' AND OWNER_ID'
             if isinstance(owner_id, (list, tuple, types.GeneratorType)):
                 filt += ' in (' + ','.join(str(x) for x in owner_id) + ')'

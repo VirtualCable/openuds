@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,19 +30,24 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+# This module is deprecated and probably will be removed soon
+
+import logging
+import typing
 
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from uds.core.ui.UserInterface import gui
-import logging
-import six
+
+if typing.TYPE_CHECKING:
+    from uds.models import User
 
 logger = logging.getLogger(__name__)
 
 
-class UserPrefsManager(object):
-    _manager = None
+class UserPrefsManager:
+    _manager: typing.Optional['UserPrefsManager'] = None
+    _prefs: typing.Dict[str, typing.Dict]
 
     def __init__(self):
         self._prefs = {}
@@ -56,39 +61,39 @@ class UserPrefsManager(object):
     def __nameFor(self, module, name):
         return module + "_" + name
 
-    def registerPrefs(self, modName, friendlyModName, prefs):
+    def registerPrefs(self, modName: str, friendlyModName: str, prefs: typing.Any) -> None:
         """
         Register an array of preferences for a module
         """
         self._prefs[modName] = {'friendlyName': friendlyModName, 'prefs': prefs}
 
-    def getPreferencesForUser(self, modName, user):
+    def getPreferencesForUser(self, modName: str, user: 'User'):
         """
         Gets the preferences for an specified module for the user
         """
-        logger.debug('Self prefs: {}'.format(self._prefs))
+        # logger.debug('Self prefs: %s', self._prefs)
         prefs = {}
         for up in user.preferences.filter(module=modName):
             prefs[up.name] = up.value
         for p in self._prefs[modName]['prefs']:
             if p.getName() not in prefs:
                 prefs[p.getName()] = p.getDefValue()
-        logger.debug('Preferences: {}'.format(prefs))
+        logger.debug('Preferences: %s', prefs)
         return prefs
 
-    def setPreferenceForUser(self, user, modName, prefName, value):
+    def setPreferenceForUser(self, user: 'User', modName: str, prefName: str, value: str):
         try:
             user.preferences.create(module=modName, name=prefName, value=value)
-        except Exception:
+        except Exception:  # Already exits, update it
             user.preferences.filter(module=modName, name=prefName).update(value=value)
 
-    def getHtmlForUserPreferences(self, user):
+    def getHtmlForUserPreferences(self, user: 'User'):
         # First fill data for all preferences
         data = {}
         for up in user.preferences.all().order_by('module'):
             data[self.__nameFor(up.module, up.name)] = up.value
         res = ''
-        for mod, v in sorted(six.iteritems(self._prefs)):
+        for mod, v in sorted(self._prefs.items()):
             form = forms.Form()
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
@@ -103,7 +108,7 @@ class UserPrefsManager(object):
             for up in user.preferences.all():
                 data[self.__nameFor(up.module, up.name)] = up.value
         res = []
-        for mod, v in six.iteritems(self._prefs):
+        for mod, v in self._prefs.items():
             grp = []
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
@@ -117,9 +122,9 @@ class UserPrefsManager(object):
         Returns a list of errors in case of error, else return None
         """
         # First, read fields form every single "section"
-        logger.debug('Processing {0}'.format(self._prefs))
+        logger.debug('Processing %s', self._prefs)
         prefs = []
-        for mod, v in six.iteritems(self._prefs):
+        for mod, v in self._prefs.items():
             logger.debug(mod)
             form = forms.Form(data)
             for p in v['prefs']:
@@ -142,10 +147,11 @@ class UserPrefsManager(object):
 
     def processGuiForUserPreferences(self, user, data):
         """
+        Processes the preferences got from user
         """
-        logger.debug('Processing data {0}'.format(data))
+        logger.debug('Processing data %s', data)
         prefs = []
-        for mod, v in six.iteritems(self._prefs):
+        for mod, v in self._prefs.items():
             logger.debug(mod)
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
@@ -179,15 +185,16 @@ class UserPreference(object):
 
     def guiField(self, value):
         """
+        returns a gui field
         """
-        raise NotImplementedError('Can\'t create an abstract preference!!!')
+        return None
 
 
 class UserTextPreference(UserPreference):
     TYPE = 'text'
 
     def __init__(self, **kwargs):
-        super(self.__class__, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._length = kwargs.get('length', None)
 
     def formField(self, value):
@@ -198,7 +205,7 @@ class UserNumericPreference(UserPreference):
     TYPE = 'numeric'
 
     def __init__(self, **kwargs):
-        super(self.__class__, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._min = kwargs.get('minvalue', None)
         self._max = kwargs.get('maxvalue', None)
 
@@ -211,10 +218,7 @@ class UserChoicePreference(UserPreference):
     TYPE = 'choice'
 
     def __init__(self, **kwargs):
-        super(self.__class__, self).__init__(**kwargs)
-        '''
-        Values are a tuple of
-        '''
+        super().__init__(**kwargs)
         self._values = kwargs['values']
 
     def formField(self, value):
@@ -231,13 +235,10 @@ class UserChoicePreference(UserPreference):
 class UserCheckboxPreference(UserPreference):
     TYPE = 'checkbox'
 
-    def __init__(self, **kwargs):
-        super(self.__class__, self).__init__(**kwargs)
-
     def formField(self, value):
         if value is None:
             value = False
-        logger.debug('Value type: {}'.format(type(value)))
+        logger.debug('Value type: %s', type(value))
         return forms.BooleanField(label=_(self._label), initial=value)
 
 

@@ -62,11 +62,11 @@ __nameLevels = {
 __valueLevels = dict((v, k) for k, v in __nameLevels.items())
 
 
-def logLevelFromStr(str_):
+def logLevelFromStr(level: str) -> int:
     """
     Gets the numeric log level from an string.
     """
-    return __nameLevels.get(str_.upper(), OTHER)
+    return __nameLevels.get(level.upper(), OTHER)
 
 
 def logStrFromLevel(level):

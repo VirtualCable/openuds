@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,15 +30,15 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
+import logging
+import typing
 
 from uds.core.jobs.DelayedTask import DelayedTask
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
 from uds.core.util.State import State
 from uds.core.util import log
+from uds.core.services import UserDeployment
 from uds.models import UserService
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -47,20 +47,20 @@ USERSERVICE_TAG = 'cm-'
 
 # State updaters
 # This will be executed on current service state for checking transitions to new state, task states, etc..
-class StateUpdater(object):
+class StateUpdater:
 
-    def __init__(self, userService, userServiceInstance=None):
+    def __init__(self, userService: UserService, userServiceInstance: typing.Optional[UserDeployment] = None):
         self.userService = userService
         self.userServiceInstance = userServiceInstance if userServiceInstance is not None else userService.getInstance()
 
-    def setError(self, msg=None):
-        logger.error('Got error on processor: {}'.format(msg))
+    def setError(self, msg: typing.Optional[str] = None):
+        logger.error('Got error on processor: %s', msg)
         self.save(State.ERROR)
         if msg is not None:
             log.doLog(self.userService, log.ERROR, msg, log.INTERNAL)
 
-    def save(self, newState=None):
-        if newState is not None:
+    def save(self, newState: typing.Optional[str] = None):
+        if newState:
             self.userService.setState(newState)
 
         self.userService.updateData(self.userServiceInstance)
@@ -71,18 +71,17 @@ class StateUpdater(object):
         if ip is not None and ip != '':
             self.userService.logIP(ip)
 
-
     def checkLater(self):
         UserServiceOpChecker.checkLater(self.userService, self.userServiceInstance)
 
     def run(self, state):
         executor = {
-         State.RUNNING: self.running,
-         State.ERROR: self.error,
-         State.FINISHED: self.finish
+            State.RUNNING: self.running,
+            State.ERROR: self.error,
+            State.FINISHED: self.finish
         }.get(state, self.error)
 
-        logger.debug('Running updater with state {} and executor {}'.format(State.toString(state), executor))
+        logger.debug('Running updater with state %s and executor %s', State.toString(state), executor)
 
         try:
             executor()
@@ -111,13 +110,13 @@ class UpdateFromPreparing(StateUpdater):
         # This is an "early check" for os manager, so if we do not have os manager, or os manager
         # already notifies "ready" for this, we
         if osManager is not None and State.isPreparing(self.userService.os_state):
-            logger.debug('Has valid osmanager for {}'.format(self.userService.friendly_name))
+            logger.debug('Has valid osmanager for %s', self.userService.friendly_name)
 
             stateOs = osManager.checkState(self.userService)
         else:
             stateOs = State.FINISHED
 
-        logger.debug('State {}, StateOS {} for {}'.format(State.toString(state), State.toString(stateOs), self.userService.friendly_name))
+        logger.debug('State %s, StateOS %s for %s', State.toString(state), State.toString(stateOs), self.userService.friendly_name)
         if stateOs == State.RUNNING:
             self.userService.setOsState(State.PREPARING)
         else:
@@ -136,7 +135,7 @@ class UpdateFromPreparing(StateUpdater):
     def finish(self):
         state = State.REMOVABLE  # By default, if not valid publication, service will be marked for removal on preparation finished
         if self.userService.isValidPublication():
-            logger.debug('Publication is valid for {}'.format(self.userService.friendly_name))
+            logger.debug('Publication is valid for %s', self.userService.friendly_name)
             state = self.checkOsManagerRelated()
 
         # Now notifies the service instance that we have finished processing
@@ -174,12 +173,12 @@ class UserServiceOpChecker(DelayedTask):
     This is the delayed task responsible of executing the service tasks and the service state transitions
     """
     def __init__(self, service):
-        super(UserServiceOpChecker, self).__init__()
+        super().__init__()
         self._svrId = service.id
         self._state = service.state
 
     @staticmethod
-    def makeUnique(userService, userServiceInstance, state):
+    def makeUnique(userService: UserService, userServiceInstance: UserDeployment, state: str):
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
         """
@@ -187,7 +186,7 @@ class UserServiceOpChecker(DelayedTask):
         UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
 
     @staticmethod
-    def checkAndUpdateState(userService, userServiceInstance, state):
+    def checkAndUpdateState(userService: UserService, userServiceInstance: UserDeployment, state: str):
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
@@ -204,13 +203,13 @@ class UserServiceOpChecker(DelayedTask):
                 State.CANCELING: UpdateFromCanceling
             }.get(userService.state, UpdateFromOther)
 
-            logger.debug('Updating from {} with updater {} and state {}'.format(State.toString(userService.state), updater, state))
+            logger.debug('Updating from %s with updater %s and state %s', State.toString(userService.state), updater, state)
 
             updater(userService, userServiceInstance).run(state)
 
         except Exception as e:
             logger.exception('Checking service state')
-            log.doLog(userService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
+            log.doLog(userService, log.ERROR, 'Exception: {}'.format(e), log.INTERNAL)
             userService.setState(State.ERROR)
             userService.save(update_fields=['data'])
 
@@ -227,7 +226,7 @@ class UserServiceOpChecker(DelayedTask):
         DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + userService.uuid)
 
     def run(self):
-        logger.debug('Checking user service finished {0}'.format(self._svrId))
+        logger.debug('Checking user service finished %s', self._svrId)
         uService = None
         try:
             uService = UserService.objects.get(pk=self._svrId)
@@ -236,16 +235,16 @@ class UserServiceOpChecker(DelayedTask):
                 # This item is no longer valid, returning will not check it again (no checkLater called)
                 return
             ci = uService.getInstance()
-            logger.debug("uService instance class: {0}".format(ci.__class__))
+            logger.debug("uService instance class: %s", ci.__class__)
             state = ci.checkState()
             UserServiceOpChecker.checkAndUpdateState(uService, ci, state)
         except UserService.DoesNotExist as e:
-            logger.error('User service not found (erased from database?) {0} : {1}'.format(e.__class__, e))
+            logger.error('User service not found (erased from database?) %s : %s', e.__class__, e)
         except Exception as e:
             # Exception caught, mark service as errored
-            logger.exception("Error {0}, {1} :".format(e.__class__, e))
+            logger.exception("Error %s, %s :", e.__class__, e)
             if uService is not None:
-                log.doLog(uService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
+                log.doLog(uService, log.ERROR, 'Exception: {}'.format(e), log.INTERNAL)
             try:
                 uService.setState(State.ERROR)
                 uService.save(update_fields=['data', 'state', 'state_date'])

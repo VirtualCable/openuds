@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,22 +29,20 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import datetime
+import time
+import logging
+import typing
 
 from uds.core.util.Config import GlobalConfig
 from uds.models import StatsCounters
 from uds.models import getSqlDatetime
 from uds.models import StatsEvents
-import datetime
-import time
-import six
-
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-class StatsManager(object):
+class StatsManager:
     """
     Manager for statistics, so we can provide usefull info about platform usage
 
@@ -52,25 +50,23 @@ class StatsManager(object):
     that has counters (such as how many users is at a time active at platform, how many services
     are assigned, are in use, in cache, etc...
     """
-    _manager = None
+    _manager: typing.Optional['StatsManager'] = None
 
     def __init__(self):
         pass
 
     @staticmethod
     def manager():
-        if StatsManager._manager is None:
+        if not StatsManager._manager:
             StatsManager._manager = StatsManager()
         return StatsManager._manager
 
     def __doCleanup(self, model):
         minTime = time.mktime((getSqlDatetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple())
-
-        # Newer Django versions (at least 1.7) does this deletions as it must (executes a DELETE FROM ... WHERE...)
         model.objects.filter(stamp__lt=minTime).delete()
 
     # Counter stats
-    def addCounter(self, owner_type, owner_id, counterType, counterValue, stamp=None):
+    def addCounter(self, owner_type: int, owner_id: int, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None):
         """
         Adds a new counter stats to database.
 
@@ -88,19 +84,20 @@ class StatsManager(object):
             Nothing
         """
         if stamp is None:
-            stamp = getSqlDatetime()
+            stamp = typing.cast(datetime.datetime, getSqlDatetime())
 
         # To Unix epoch
-        stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
+        stampInt = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
-            StatsCounters.objects.create(owner_type=owner_type, owner_id=owner_id, counter_type=counterType, value=counterValue, stamp=stamp)
+            StatsCounters.objects.create(owner_type=owner_type, owner_id=owner_id, counter_type=counterType, value=counterValue, stamp=stampInt)
             return True
         except Exception:
             logger.error('Exception handling counter stats saving (maybe database is full?)')
         return False
 
-    def getCounters(self, ownerType, counterType, ownerIds, since, to, limit, use_max=False):
+    def getCounters(self, ownerType: int, counterType: int, ownerIds: typing.Union[typing.Iterable[int], int],
+                    since: datetime.datetime, to: datetime.datetime, limit: int, use_max: bool = False) -> typing.Iterable:
         """
         Retrieves counters from item
 
@@ -117,10 +114,10 @@ class StatsManager(object):
             Iterator, containing (date, counter) each element
         """
         # To Unix epoch
-        since = int(time.mktime(since.timetuple()))
-        to = int(time.mktime(to.timetuple()))
+        sinceInt = int(time.mktime(since.timetuple()))
+        toInt = int(time.mktime(to.timetuple()))
 
-        return StatsCounters.get_grouped(ownerType, counterType, owner_id=ownerIds, since=since, to=to, limit=limit, use_max=use_max)
+        return StatsCounters.get_grouped(ownerType, counterType, owner_id=ownerIds, since=sinceInt, to=toInt, limit=limit, use_max=use_max)
 
     def cleanupCounters(self):
         """
@@ -128,7 +125,7 @@ class StatsManager(object):
         """
         self.__doCleanup(StatsCounters)
 
-    def getEventFldFor(self, fld):
+    def getEventFldFor(self, fld: str) -> typing.Optional[str]:
         return {
             'username': 'fld1',
             'platform': 'fld1',
@@ -140,7 +137,7 @@ class StatsManager(object):
         }.get(fld, None)
 
     # Event stats
-    def addEvent(self, owner_type, owner_id, eventType, **kwargs):
+    def addEvent(self, owner_type: int, owner_id: int, eventType: int, **kwargs):
         """
         Adds a new event stat to database.
 
@@ -154,8 +151,6 @@ class StatsManager(object):
         Returns:
 
             Nothing
-
-
         """
         logger.debug('Adding event stat')
         stamp = kwargs.get('stamp')
@@ -169,7 +164,7 @@ class StatsManager(object):
 
             # Replaces nulls for ''
             def noneToEmpty(value):
-                return six.text_type(value) if value is not None else ''
+                return str(value) if value else ''
 
             fld1 = noneToEmpty(kwargs.get('fld1', kwargs.get('username', kwargs.get('platform', ''))))
             fld2 = noneToEmpty(kwargs.get('fld2', kwargs.get('srcip', kwargs.get('browser', ''))))
@@ -182,7 +177,7 @@ class StatsManager(object):
             logger.exception('Exception handling event stats saving (maybe database is full?)')
         return False
 
-    def getEvents(self, ownerType, eventType, **kwargs):
+    def getEvents(self, ownerType: typing.Union[int, typing.Iterable[int]], eventType: typing.Union[int, typing.Iterable[int]], **kwargs):
         """
         Retrieves counters from item
 
