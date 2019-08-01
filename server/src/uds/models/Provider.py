@@ -59,7 +59,6 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         app_label = 'uds'
 
     def getType(self):
-        from uds.core import services
         '''
         Get the type of the object this record represents.
 
@@ -68,6 +67,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         Returns:
             The python type for this record object
         '''
+        from uds.core import services
         return services.factory().lookup(self.data_type)
 
     def isInMaintenance(self):

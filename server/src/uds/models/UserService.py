@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
@@ -49,6 +50,9 @@ from uds.models.User import User
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import services
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +129,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             }
         )
 
-    def getInstance(self):
+    def getInstance(self) -> 'services.UserDeployment':
         """
         Instantiates the object this record contains. In this case, the instantiated object needs also
         the os manager and the publication, so we also instantiate those here.
@@ -167,7 +171,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
                 logger.exception('Error unserializing %s//%s : %s', self.deployed_service.name, self.uuid, self.data)
         return us
 
-    def updateData(self, us):
+    def updateData(self, userServiceInstance: 'services.UserDeployment'):
         """
         Updates the data field with the serialized :py:class:uds.core.services.UserDeployment
 
@@ -176,7 +180,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: This method SAVES the updated record, just updates the field
         """
-        self.data = us.serialize()
+        self.data = userServiceInstance.serialize()
         self.save(update_fields=['data'])
 
     def getName(self):
@@ -229,7 +233,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             val = self.getEnvironment().storage.get(name)
         return val
 
-    def setConnectionSource(self, ip, hostname=''):
+    def setConnectionSource(self, ip: str, hostname: str = '') -> None:
         """
         Notifies that the last access to this service was initiated from provided params
 
@@ -466,10 +470,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     def setCommsUrl(self, commsUrl=None):
         self.setProperty('comms_url', commsUrl)
 
-    def getCommsUrl(self):
+    def getCommsUrl(self) -> typing.Optional[str]:
         return self.getProperty('comms_url', None)
 
-    def logIP(self, ip=None):
+    def logIP(self, ip: str = None) -> None:
         self.setProperty('ip', ip)
 
     def getLoggedIP(self):

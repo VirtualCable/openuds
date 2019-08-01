@@ -62,6 +62,7 @@ from uds.core.util.calendar import CalendarChecker
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models.UserService import UserService
+    from uds.models.ServicesPoolPublication import DeployedServicePublication
 
 
 logger = logging.getLogger(__name__)
@@ -122,7 +123,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
-    def activePublication(self):
+    def activePublication(self) -> typing.Optional['DeployedServicePublication']:
         """
         Returns the current valid publication for this deployed service.
 
@@ -151,7 +152,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         return [username, password]
 
     @staticmethod
-    def getRestraineds():
+    def getRestraineds() -> typing.Iterable['DeployedService']:
         from uds.models.UserService import UserService  # pylint: disable=redefined-outer-name
         from uds.core.util.Config import GlobalConfig
         from django.db.models import Count
@@ -159,7 +160,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return []  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        date = typing.cast(datetime, getSqlDatetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
 
         res = []
@@ -169,11 +170,11 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         return DeployedService.objects.filter(pk__in=res)
 
     @property
-    def is_meta(self):
+    def is_meta(self) -> bool:
         return self.memberOfMeta.count() > 0
 
     @property
-    def visual_name(self):
+    def visual_name(self) -> str:
         logger.debug("SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name)
         if self.short_name is not None and str(self.short_name).strip() != '':
             return str(self.short_name)
@@ -198,7 +199,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        date = typing.cast(datetime, getSqlDatetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         if self.userServices.filter(state=states.userService.ERROR, state_date__gt=date).count() >= GlobalConfig.RESTRAINT_COUNT.getInt():
             return True
 
@@ -207,7 +208,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
     def isInMaintenance(self) -> bool:
         return self.service is not None and self.service.isInMaintenance()
 
-    def isVisible(self) -> bool :
+    def isVisible(self) -> bool:
         return self.visible
 
     def isUsable(self) -> bool:
@@ -365,7 +366,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         raise an InvalidUserException if fails check
         """
         from uds.core import auths
-        if not (set(grps) & set(self.assignedGroups.all())):
+        if not set(grps) & set(self.assignedGroups.all()):
             raise auths.Exceptions.InvalidUserException()
 
     def validatePublication(self):
@@ -382,7 +383,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         except:
             raise InvalidServiceException()
 
-    def validateUser(self, user):
+    def validateUser(self, user) -> None:
         """
         Validates that the user has access to this deployed service
 
@@ -404,7 +405,6 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         logger.debug('DeployedService: %s', self.id)
         self.validateGroups(user.getGroups())
         self.validatePublication()
-        return True
 
     # Stores usage accounting information
     def saveAccounting(self, userService, start, end):

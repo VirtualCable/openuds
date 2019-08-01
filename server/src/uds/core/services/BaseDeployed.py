@@ -374,7 +374,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         raise Exception('Base deploy for cache invoked! for class {0}'.format(self.__class__.__name__))
 
-    def deployForUser(self, user):
+    def deployForUser(self, user) -> str:
         """
         Deploys an service instance for an user.
 

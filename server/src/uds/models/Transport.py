@@ -31,9 +31,12 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
+
+from uds.core import transports
 
 from uds.core.util import net
 
@@ -64,6 +67,9 @@ class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
+    def getInstance(self, values=None) -> 'transports.Transport':
+        return typing.cast(Transport, super().getInstance(values=values))
+
     def getType(self):
         """
         Get the type of the object this record represents.
@@ -75,8 +81,6 @@ class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         :note: We only need to get info from this, not access specific data (class specific info)
         """
-        from uds.core import transports
-
         return transports.factory().lookup(self.data_type)
 
     def validForIp(self, ip):

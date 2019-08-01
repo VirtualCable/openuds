@@ -31,8 +31,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from typing import Tuple
 import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
 
@@ -47,6 +47,9 @@ logger = logging.getLogger(__name__)
 DIRECT_GROUP = _('Direct')
 TUNNELED_GROUP = _('Tunneled')
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
 
 class Transport(Module):
     """
@@ -107,13 +110,13 @@ class Transport(Module):
         """
         pass
 
-    def testServer(self, userService, ip, port, timeout=4):
+    def testServer(self, userService: 'models.UserService', ip: str, port: typing.Union[str, int], timeout: int = 4):
         proxy = userService.deployed_service.service.proxy
         if proxy is not None:
             return proxy.doTestServer(ip, port, timeout)
         return connection.testServer(ip, str(port), timeout)
 
-    def isAvailableFor(self, userService, ip):
+    def isAvailableFor(self, userService: 'models.UserService', ip: str):
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -185,7 +188,7 @@ class Transport(Module):
         """
         return user.name
 
-    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request) -> Tuple[str, str, dict]:
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request) -> typing.Tuple[str, str, typing.Dict[str, str]]:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client

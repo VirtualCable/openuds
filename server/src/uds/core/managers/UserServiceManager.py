@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import json
+import logging
+import random
+import typing
+
+import requests
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q
@@ -38,7 +43,6 @@ from django.db import transaction
 from uds.core.services.Exceptions import OperationException
 from uds.core.util.State import State
 from uds.core.util import log
-from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import (
     MaxServicesReachedError,
     ServiceInMaintenanceMode,
@@ -46,368 +50,374 @@ from uds.core.services.Exceptions import (
     ServiceNotReadyError,
     ServiceAccessDeniedByCalendar
 )
-from uds.models import MetaPool, ServicePool, UserService, getSqlDatetime, Transport
-from uds.core import services
-from uds.core.services import Service
+from uds.models import MetaPool, ServicePool, UserService, getSqlDatetime, Transport, User, DeployedServicePublication
+from uds.core import services, transports
 from uds.core.util.stats import events
 
 from .userservice.opchecker  import UserServiceOpChecker
 
-import requests
-import json
-import logging
-import random
-
-__updated__ = '2019-05-08'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
 
-
-class UserServiceManager(object):
-    _manager = None
+class UserServiceManager:
+    _manager: typing.Optional['UserServiceManager'] = None
 
     def __init__(self):
         pass
 
     @staticmethod
     def manager():
-        if UserServiceManager._manager is None:
+        if not UserServiceManager._manager:
             UserServiceManager._manager = UserServiceManager()
         return UserServiceManager._manager
 
     @staticmethod
-    def getCacheStateFilter(level):
+    def getCacheStateFilter(level: int) -> Q:
         return Q(cache_level=level) & UserServiceManager.getStateFilter()
 
     @staticmethod
-    def getStateFilter():
+    def getStateFilter() -> Q:
         return Q(state__in=[State.PREPARING, State.USABLE])
 
-    def __checkMaxDeployedReached(self, deployedService):
+    def __checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
         """
         Checks if maxDeployed for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
         """
-        serviceInstance = deployedService.service.getInstance()
+        serviceInstance = servicePool.service.getInstance()
         # Early return, so no database count is needed
-        if serviceInstance.maxDeployed == Service.UNLIMITED:
+        if serviceInstance.maxDeployed == services.Service.UNLIMITED:
             return
 
-        numberOfServices = deployedService.userServices.filter(state__in=[State.PREPARING, State.USABLE]).count()
+        numberOfServices = servicePool.userServices.filter(state__in=[State.PREPARING, State.USABLE]).count()
 
         if serviceInstance.maxDeployed <= numberOfServices:
             raise MaxServicesReachedError('Max number of allowed deployments for service reached')
 
-    def __createCacheAtDb(self, deployedServicePublication, cacheLevel):
+    def __createCacheAtDb(self, publication: DeployedServicePublication, cacheLevel: int) -> UserService:
         """
         Private method to instatiate a cache element at database with default states
         """
         # Checks if maxDeployed has been reached and if so, raises an exception
-        self.__checkMaxDeployedReached(deployedServicePublication.deployed_service)
+        self.__checkMaxDeployedReached(publication.deployed_service)
         now = getSqlDatetime()
-        return deployedServicePublication.userServices.create(cache_level=cacheLevel, state=State.PREPARING, os_state=State.PREPARING,
-                                                              state_date=now, creation_date=now, data='',
-                                                              deployed_service=deployedServicePublication.deployed_service,
-                                                              user=None, in_use=False)
+        return publication.userServices.create(
+            cache_level=cacheLevel,
+            state=State.PREPARING,
+            os_state=State.PREPARING,
+            state_date=now,
+            creation_date=now,
+            data='',
+            deployed_service=publication.deployed_service,
+            user=None,
+            in_use=False
+        )
 
-    def __createAssignedAtDb(self, deployedServicePublication, user):
+    def __createAssignedAtDb(self, publication: DeployedServicePublication, user: User) -> UserService:
         """
         Private method to instatiate an assigned element at database with default state
         """
-        self.__checkMaxDeployedReached(deployedServicePublication.deployed_service)
+        self.__checkMaxDeployedReached(publication.deployed_service)
         now = getSqlDatetime()
-        return deployedServicePublication.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
-                                                              state_date=now, creation_date=now, data='',
-                                                              deployed_service=deployedServicePublication.deployed_service,
-                                                              user=user, in_use=False)
+        return publication.userServices.create(
+            cache_level=0,
+            state=State.PREPARING,
+            os_state=State.PREPARING,
+            state_date=now,
+            creation_date=now,
+            data='',
+            deployed_service=publication.deployed_service,
+            user=user,
+            in_use=False
+        )
 
-    def __createAssignedAtDbForNoPublication(self, deployedService, user):
+    def __createAssignedAtDbForNoPublication(self, servicePool: ServicePool, user: User) -> UserService:
         """
         __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
         There is cases where deployed services do not have publications (do not need them), so we need this method to create
         an UserService with no publications, and create them from an DeployedService
         """
-        self.__checkMaxDeployedReached(deployedService)
+        self.__checkMaxDeployedReached(servicePool)
         now = getSqlDatetime()
-        return deployedService.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
-                                                   state_date=now, creation_date=now, data='', publication=None, user=user, in_use=False)
+        return servicePool.userServices.create(
+            cache_level=0,
+            state=State.PREPARING,
+            os_state=State.PREPARING,
+            state_date=now,
+            creation_date=now,
+            data='',
+            publication=None,
+            user=user,
+            in_use=False
+        )
 
-    def createCacheFor(self, deployedServicePublication, cacheLevel):
+    def createCacheFor(self, publication: DeployedServicePublication, cacheLevel: int) -> UserService:
         """
         Creates a new cache for the deployed service publication at level indicated
         """
-        logger.debug('Creating a new cache element at level {0} for publication {1}'.format(cacheLevel, deployedServicePublication))
-        cache = self.__createCacheAtDb(deployedServicePublication, cacheLevel)
+        logger.debug('Creating a new cache element at level %s for publication %s', cacheLevel, publication)
+        cache = self.__createCacheAtDb(publication, cacheLevel)
         ci = cache.getInstance()
         state = ci.deployForCache(cacheLevel)
 
         UserServiceOpChecker.checkAndUpdateState(cache, ci, state)
         return cache
 
-    def createAssignedFor(self, ds, user):
+    def createAssignedFor(self, servicePool: ServicePool, user: User) -> UserService:
         """
-        Creates a new assigned deployed service for the publication and user indicated
+        Creates a new assigned deployed service for the current publication (if any) of service pool and user indicated
         """
         # First, honor maxPreparingServices
-        if self.canInitiateServiceFromDeployedService(ds) is False:
+        if self.canInitiateServiceFromDeployedService(servicePool) is False:
             # Cannot create new
-            logger.warn('Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).')
+            logger.info('Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).')
             raise ServiceNotReadyError()
 
-        if ds.service.getType().publicationType is not None:
-            dsp = ds.activePublication()
-            logger.debug('Creating a new assigned element for user {0} por publication {1}'.format(user, dsp))
-            assigned = self.__createAssignedAtDb(dsp, user)
+        if servicePool.service.getType().publicationType is not None:
+            publication = servicePool.activePublication()
+            logger.debug('Creating a new assigned element for user %s por publication %s', user, publication)
+            if publication:
+                assigned = self.__createAssignedAtDb(publication, user)
+            else:
+                raise Exception('Invalid publication creating service assignation: {} {}'.format(servicePool, user))
         else:
-            logger.debug('Creating a new assigned element for user {0}'.format(user))
-            assigned = self.__createAssignedAtDbForNoPublication(ds, user)
+            logger.debug('Creating a new assigned element for user %s', user)
+            assigned = self.__createAssignedAtDbForNoPublication(servicePool, user)
 
-        ai = assigned.getInstance()
-        state = ai.deployForUser(user)
+        assignedInstance = assigned.getInstance()
+        state = assignedInstance.deployForUser(user)
 
-        UserServiceOpChecker.makeUnique(assigned, ai, state)
+        UserServiceOpChecker.makeUnique(assigned, assignedInstance, state)
 
         return assigned
 
-    def createAssignable(self, ds, deployed, user):
-        """
-        Creates an assignable service
-        """
-        now = getSqlDatetime()
-        assignable = ds.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
-                                            state_date=now, creation_date=now, data='', user=user, in_use=False)
-        state = deployed.deployForUser(user)
-        try:
-            UserServiceOpChecker.makeUnique(assignable, deployed, state)
-        except Exception as e:
-            logger.exception("Exception {0}".format(e))
-        logger.debug("Assignable: {0}".format(assignable))
-        return assignable
-
-    def moveToLevel(self, cache, cacheLevel):
+    def moveToLevel(self, cache: UserService, cacheLevel: int) -> None:
         """
         Moves a cache element from one level to another
         @return: cache element
         """
-        cache = UserService.objects.get(id=cache.id)
-        logger.debug('Moving cache {0} to level {1}'.format(cache, cacheLevel))
-        ci = cache.getInstance()
-        state = ci.moveToCache(cacheLevel)
+        cache.refresh_from_db()
+        logger.debug('Moving cache %s to level %s', cache, cacheLevel)
+        cacheInstance = cache.getInstance()
+        state = cacheInstance.moveToCache(cacheLevel)
         cache.cache_level = cacheLevel
         cache.save(update_fields=['cache_level'])
-        logger.debug('Service State: {0} {1} {2}'.format(State.toString(state), State.toString(cache.state), State.toString(cache.os_state)))
+        logger.debug('Service State: %a %s %s', State.toString(state), State.toString(cache.state), State.toString(cache.os_state))
         if State.isRuning(state) and cache.isUsable():
             cache.setState(State.PREPARING)
 
-        UserServiceOpChecker.makeUnique(cache, ci, state)
+        # Data will be serialized on makeUnique process
+        UserServiceOpChecker.makeUnique(cache, cacheInstance, state)
 
-    def cancel(self, uService):
+    def cancel(self, userService: UserService) -> UserService:
         """
-        Cancels a user service creation
+        Cancels an user service creation
         @return: the Uservice canceling
         """
-        uService = UserService.objects.get(pk=uService.id)
-        logger.debug('Canceling uService {0} creation'.format(uService))
-        if uService.isPreparing() is False:
+        userService = UserService.objects.get(pk=userService.id)
+        logger.debug('Canceling userService %s creation', userService)
+        if userService.isPreparing() is False:
             logger.info('Cancel requested for a non running operation, performing removal instead')
-            return self.remove(uService)
+            return self.remove(userService)
 
-        ui = uService.getInstance()
+        userServiceInstance = userService.getInstance()
         # We simply notify service that it should cancel operation
-        state = ui.cancel()
-        uService.updateData(ui)
-        uService.setState(State.CANCELING)
-        UserServiceOpChecker.makeUnique(uService, ui, state)
-        return uService
+        state = userServiceInstance.cancel()
+        userService.setState(State.CANCELING)
+        # Data will be serialized on makeUnique process
+        UserServiceOpChecker.makeUnique(userService, userServiceInstance, state)
+        return userService
 
-    def remove(self, uService):
+    def remove(self, userService: UserService) -> UserService:
         """
         Removes a uService element
-        @return: the uService removed (marked for removal)
         """
         with transaction.atomic():
-            uService = UserService.objects.select_for_update().get(id=uService.id)
-            logger.debug('Removing uService {0}'.format(uService))
-            if uService.isUsable() is False and State.isRemovable(uService.state) is False:
+            userService = UserService.objects.select_for_update().get(id=userService.id)
+            logger.debug('Removing userService %a', userService)
+            if userService.isUsable() is False and State.isRemovable(userService.state) is False:
                 raise OperationException(_('Can\'t remove a non active element'))
-            uService.setState(State.REMOVING)
-            logger.debug("***** The state now is {}".format(State.toString(uService.state)))
-            uService.setInUse(False)  # For accounting, ensure that it is not in use right now
-            uService.save()
+            userService.setState(State.REMOVING)
+            logger.debug("***** The state now is %s *****", State.toString(userService.state))
+            userService.setInUse(False)  # For accounting, ensure that it is not in use right now
+            userService.save()
 
-        ci = uService.getInstance()
-        state = ci.destroy()
+        userServiceInstance = userService.getInstance()
+        state = userServiceInstance.destroy()
 
-        UserServiceOpChecker.makeUnique(uService, ci, state)
+        # Data will be serialized on makeUnique process
+        UserServiceOpChecker.makeUnique(userService, userServiceInstance, state)
 
-    def removeOrCancel(self, uService):
-        if uService.isUsable() or State.isRemovable(uService.state):
-            return self.remove(uService)
-        elif uService.isPreparing():
-            return self.cancel(uService)
-        else:
-            raise OperationException(_('Can\'t remove nor cancel {0} cause its states don\'t allow it'))
+        return userService
 
-    def removeInfoItems(self, dsp):
-        with transaction.atomic():
-            dsp.cachedDeployedService.filter(state__in=State.INFO_STATES).delete()
+    def removeOrCancel(self, userService: UserService):
+        if userService.isUsable() or State.isRemovable(userService.state):
+            return self.remove(userService)
 
-    def getExistingAssignationForUser(self, ds, user):
-        existing = ds.assignedUserServices().filter(user=user, state__in=State.VALID_STATES)  # , deployed_service__visible=True
+        if userService.isPreparing():
+            return self.cancel(userService)
+
+        raise OperationException(_('Can\'t remove nor cancel {} cause its state don\'t allow it').format(userService.name))
+
+    def getExistingAssignationForUser(self, servicePool: ServicePool, user: User) -> typing.Optional[UserService]:
+        existing = servicePool.assignedUserServices().filter(user=user, state__in=State.VALID_STATES)  # , deployed_service__visible=True
         lenExisting = existing.count()
         if lenExisting > 0:  # Already has 1 assigned
-            logger.debug('Found assigned service from {0} to user {1}'.format(ds, user.name))
+            logger.debug('Found assigned service from %s to user %s', servicePool, user.name)
             return existing[0]
-            # if existing[0].state == State.ERROR:
-            #    if lenExisting > 1:
-            #        return existing[1]
-            # else:
-            #    return existing[0]
         return None
 
-    def getAssignationForUser(self, ds, user):
+    def getAssignationForUser(self, servicePool: ServicePool, user: User) -> typing.Optional[UserService]:  # pylint: disable=too-many-branches
 
-        if ds.service.getInstance().spawnsNew is False:
-            assignedUserService = self.getExistingAssignationForUser(ds, user)
+        if servicePool.service.getInstance().spawnsNew is False:
+            assignedUserService = self.getExistingAssignationForUser(servicePool, user)
         else:
             assignedUserService = None
 
         # If has an assigned user service, returns this without any more work
-        if assignedUserService is not None:
+        if assignedUserService:
             return assignedUserService
 
-        if ds.isRestrained():
+        if servicePool.isRestrained():
             raise InvalidServiceException(_('The requested service is restrained'))
 
+        cache: typing.Optional[UserService] = None
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():
-            cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1]
-            if len(cache) != 0:
-                cache = cache[0]
+            caches = servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1]
+            if caches:
+                cache = caches[0]
                 # Ensure element is reserved correctly on DB
-                if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                if servicePool.cachedUserServices().select_for_update().filter(user=None, uuid=typing.cast(UserService, cache).uuid).update(user=user, cache_level=0) != 1:
                     cache = None
             else:
                 cache = None
 
-        if cache == None:
+        # Out of previous atomic
+        if not cache:
             with transaction.atomic():
-                cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
-                if len(cache) > 0:
+                cache = servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
+                if cache:
                     cache = cache[0]
-                    if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+                    if servicePool.cachedUserServices().select_for_update().filter(user=None, uuid=typing.cast(UserService, cache).uuid).update(user=user, cache_level=0) != 1:
                         cache = None
                 else:
                     cache = None
 
-        if cache:
-            cache.assignToUser(user, save=True)
-
         # Out of atomic transaction
-        if cache is not None:
-            logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
-            events.addEvent(ds, events.ET_CACHE_HIT, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE).count())
+        if cache:
+            # Early assign
+            cache.assignToUser(user)
+
+            logger.debug('Found a cached-ready service from %s for user %s, item %s', servicePool, user, cache)
+            events.addEvent(servicePool, events.ET_CACHE_HIT, fld1=servicePool.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE).count())
             return cache
 
         # Cache missed
 
         # Now find if there is a preparing one
         with transaction.atomic():
-            cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
-            if len(cache) > 0:
-                cache = cache[0]
-                if ds.cachedUserServices().select_for_update().filter(user=None, uuid=cache.uuid).update(user=user, cache_level=0) != 1:
+            caches = servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
+            if caches:
+                cache = caches[0]
+                if servicePool.cachedUserServices().select_for_update().filter(user=None, uuid=typing.cast(UserService, cache).uuid).update(user=user, cache_level=0) != 1:
                     cache = None
-                else:
-                    cache.assignToUser(user, save=True)
             else:
                 cache = None
 
         # Out of atomic transaction
-        if cache is not None:
-            logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
-            events.addEvent(ds, events.ET_CACHE_MISS, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING).count())
+        if cache:
+            cache.assignToUser(user)
+
+            logger.debug('Found a cached-preparing service from %s for user %s, item %s', servicePool, user, cache)
+            events.addEvent(servicePool, events.ET_CACHE_MISS, fld1=servicePool.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING).count())
             return cache
 
         # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
-        ty = ds.service.getType()
-        if ty.usesCache is True:
+        serviceType = servicePool.service.getType()
+        if serviceType.usesCache:
             # inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
-            inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
+            inAssigned = servicePool.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
             # totalL1Assigned = inCacheL1 + inAssigned
-            if inAssigned >= ds.max_srvs:  # cacheUpdater will drop necesary L1 machines, so it's not neccesary to check against inCacheL1
-                log.doLog(ds, log.WARN, 'Max number of services reached: {}'.format(ds.max_srvs), log.INTERNAL)
+            if inAssigned >= servicePool.max_srvs:  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
+                log.doLog(servicePool, log.WARN, 'Max number of services reached: {}'.format(servicePool.max_srvs), log.INTERNAL)
                 raise MaxServicesReachedError()
-        # Can create new service, create it
-        events.addEvent(ds, events.ET_CACHE_MISS, fld1=0)
-        return self.createAssignedFor(ds, user)
 
-    def getServicesInStateForProvider(self, provider_id, state):
+        # Can create new service, create it
+        events.addEvent(servicePool, events.ET_CACHE_MISS, fld1=0)
+        return self.createAssignedFor(servicePool, user)
+
+    def getServicesInStateForProvider(self, provider_id: int, state: str) -> int:
         """
         Returns the number of services of a service provider in the state indicated
         """
         return UserService.objects.filter(deployed_service__service__provider__id=provider_id, state=state).count()
 
-    def canRemoveServiceFromDeployedService(self, ds):
+    def canRemoveServiceFromDeployedService(self, servicePool: ServicePool) -> bool:
         """
         checks if we can do a "remove" from a deployed service
         serviceIsntance is just a helper, so if we already have unserialized deployedService
         """
-        removing = self.getServicesInStateForProvider(ds.service.provider_id, State.REMOVING)
-        serviceInstance = ds.service.getInstance()
+        removing = self.getServicesInStateForProvider(servicePool.service.provider_id, State.REMOVING)
+        serviceInstance = servicePool.service.getInstance()
         if removing >= serviceInstance.parent().getMaxRemovingServices() and serviceInstance.parent().getIgnoreLimits() is False:
             return False
         return True
 
-    def canInitiateServiceFromDeployedService(self, ds):
+    def canInitiateServiceFromDeployedService(self, servicePool: ServicePool) -> bool:
         """
         Checks if we can start a new service
         """
-        preparing = self.getServicesInStateForProvider(ds.service.provider_id, State.PREPARING)
-        serviceInstance = ds.service.getInstance()
+        preparing = self.getServicesInStateForProvider(servicePool.service.provider_id, State.PREPARING)
+        serviceInstance = servicePool.service.getInstance()
         if preparing >= serviceInstance.parent().getMaxPreparingServices() and serviceInstance.parent().getIgnoreLimits() is False:
             return False
         return True
 
-    def isReady(self, uService):
-        UserService.objects.update()
-        uService = UserService.objects.get(id=uService.id)
-        logger.debug('Checking ready of {0}'.format(uService))
-        if uService.state != State.USABLE or uService.os_state != State.USABLE:
-            logger.debug('State is not usable for {0}'.format(uService))
+    def isReady(self, userService: UserService) -> bool:
+        userService.refresh_from_db()
+        logger.debug('Checking ready of %s', userService)
+
+        if userService.state != State.USABLE or userService.os_state != State.USABLE:
+            logger.debug('State is not usable for %s', userService.name)
             return False
-        logger.debug('Service {0} is usable, checking it via setReady'.format(uService))
-        ui = uService.getInstance()
-        state = ui.setReady()
-        logger.debug('State: {0}'.format(state))
-        uService.updateData(ui)
+
+        logger.debug('Service %s is usable, checking it via setReady', userService)
+        userServiceInstance = userService.getInstance()
+        state = userServiceInstance.setReady()
+        logger.debug('State: %s', state)
+
         if state == State.FINISHED:
-            uService.save()
+            userService.updateData(userServiceInstance)
             return True
-        uService.setState(State.PREPARING)
-        UserServiceOpChecker.makeUnique(uService, ui, state)
+
+        userService.setState(State.PREPARING)
+        UserServiceOpChecker.makeUnique(userService, userServiceInstance, state)
+
         return False
 
-    def reset(self, uService):
-        UserService.objects.update()
-        uService = UserService.objects.get(id=uService.id)
-        if uService.deployed_service.service.getType().canReset is False:
+    def reset(self, userService: UserService) -> None:
+        userService.refresh_from_db()
+
+        if not userService.deployed_service.service.getType().canReset:
             return
 
-        logger.debug('Reseting'.format(uService))
+        logger.debug('Reseting %s', userService)
 
-        ui = uService.getInstance()
+        userServiceInstance = userService.getInstance()
         try:
-            ui.reset()
+            userServiceInstance.reset()
         except Exception:
             logger.exception('Reseting service')
 
-    def notifyPreconnect(self, uService, userName, protocol):
-
-        proxy = uService.deployed_service.proxy
-        url = uService.getCommsUrl()
-        if url is None:
+    def notifyPreconnect(self, userService: UserService, userName: str, protocol: str) -> None:
+        '''
+        Notifies a preconnect to an user service
+        '''
+        proxy = userService.deployed_service.proxy
+        url = userService.getCommsUrl()
+        if not url:
             logger.debug('No notification is made because agent does not supports notifications')
             return
 
@@ -418,28 +428,32 @@ class UserServiceManager(object):
             if proxy is not None:
                 r = proxy.doProxyRequest(url=url, data=data, timeout=2)
             else:
-                r = requests.post(url,
-                                  data=json.dumps(data),
-                                  headers={'content-type': 'application/json'},
-                                  verify=False,
-                                  timeout=2)
+                r = requests.post(
+                    url,
+                    data=json.dumps(data),
+                    headers={'content-type': 'application/json'},
+                    verify=False,
+                    timeout=2
+                )
             r = json.loads(r.content)
-            logger.debug('Sent pre connection to client using {}: {}'.format(url, r))
+            logger.debug('Sent pre-connection to client using %s: %s', url, r)
             # In fact we ignore result right now
         except Exception as e:
-            logger.info('preConnection failed: {}. Check connection on destination machine: {}'.format(e, url))
+            logger.info('preConnection failed: %s. Check connection on destination machine: %s', e, url)
 
-    def checkUuid(self, uService):
+    def checkUuid(self, userService: UserService) ->  bool:
+        '''
+        Checks if the uuid of the service is the same of our known uuid on DB
+        '''
+        proxy = userService.deployed_service.proxy
 
-        proxy = uService.deployed_service.proxy
+        url = userService.getCommsUrl()
 
-        url = uService.getCommsUrl()
-
-        if url is None:
+        if not url:
             logger.debug('No uuid to retrieve because agent does not supports notifications')
             return True  # UUid is valid because it is not supported checking it
 
-        version = uService.getProperty('actor_version', '')
+        version = userService.getProperty('actor_version', '')
         # Just for 2.0 or newer, previous actors will not support this method.
         # Also externally supported agents will not support this method (as OpenGnsys)
         if '-' in version or version < '2.0.0':
@@ -448,39 +462,40 @@ class UserServiceManager(object):
         url += '/uuid'
 
         try:
-            if proxy is not None:
+            if proxy:
                 r = proxy.doProxyRequest(url=url, timeout=5)
             else:
                 r = requests.get(url, verify=False, timeout=5)
             uuid = json.loads(r.content)
-            if uuid != uService.uuid:
-                logger.info('The requested machine has uuid {} and the expected was {}'.format(uuid, uService.uuid))
+
+            if uuid != userService.uuid:
+                logger.info('The requested machine has uuid %s and the expected was %s', uuid, userService.uuid)
                 return False
 
-            logger.debug('Got uuid from machine: {} {} {}'.format(url, uuid, uService.uuid))
+            logger.debug('Got uuid from machine: %s %s %s', url, uuid, userService.uuid)
             # In fact we ignore result right now
         except Exception as e:
-            logger.info('Get uuid failed: {}. Check connection on destination machine: {}'.format(e, url))
-            # return True
+            logger.error('Get uuid failed: %s. Check connection on destination machine: %s', e, url)
 
         return True
 
-    def sendScript(self, uService, script):
+    def sendScript(self, userService: UserService, script: str) -> None:
         """
         If allowed, send script to user service
         """
-        proxy = uService.deployed_service.proxy
+        proxy = userService.deployed_service.proxy
 
         # logger.debug('Senging script: {}'.format(script))
-        url = uService.getCommsUrl()
-        if url is None:
+        url = userService.getCommsUrl()
+        if not url:
             logger.error('Can\'t connect with actor (no actor or legacy actor)')
             return
+
         url += '/script'
 
         try:
             data = {'script': script}
-            if proxy is not None:
+            if proxy:
                 r = proxy.doProxyRequest(url=url, data=data, timeout=5)
             else:
                 r = requests.post(
@@ -491,148 +506,167 @@ class UserServiceManager(object):
                     timeout=5
                 )
             r = json.loads(r.content)
-            logger.debug('Sent script to client using {}: {}'.format(url, r))
+            logger.debug('Sent script to client using %s: %s', url, r)
             # In fact we ignore result right now
         except Exception as e:
-            logger.error('Exception caught sending script: {}. Check connection on destination machine: {}'.format(e, url))
+            logger.error('Exception caught sending script: %s. Check connection on destination machine: %s', e, url)
 
         # All done
 
-    def requestLogoff(self, uService):
+    def requestLogoff(self, userService: UserService) -> None:
         """
         Ask client to logoff user
         """
-        url = uService.getCommsUrl()
-        if url is None:
+        proxy = userService.deployed_service.proxy
+
+        url = userService.getCommsUrl()
+        if not url:
             logger.error('Can\'t connect with actor (no actor or legacy actor)')
             return
+
         url += '/logoff'
 
         try:
-            r = requests.post(url, data=json.dumps({}), headers={'content-type': 'application/json'}, verify=False, timeout=4)
+            data: typing.Dict = {}
+            if proxy:
+                r = proxy.doProxyRequest(url=url, data=data, timeout=5)
+            else:
+                r = requests.post(
+                    url,
+                    data=json.dumps(data),
+                    headers={'content-type': 'application/json'},
+                    verify=False,
+                    timeout=4
+                )
             r = json.loads(r.content)
-            logger.debug('Sent logoff to client using {}: {}'.format(url, r))
+            logger.debug('Sent logoff to client using %s: %s', url, r)
             # In fact we ignore result right now
-        except Exception as e:
-            # TODO: Right now, this is an "experimental" feature, not supported on Apps (but will)
+        except Exception:
+            # logger.info('Logoff requested but service was not listening: %s', e, url)
             pass
-            # logger.info('Logoff requested but service was not listening: {}'.format(e, url))
 
         # All done
 
-    def checkForRemoval(self, uService):
+    def checkForRemoval(self, userService: UserService) -> None:
         """
         This method is used by UserService when a request for setInUse(False) is made
         This checks that the service can continue existing or not
         """
-        osm = uService.deployed_service.osmanager
+        osManager = userService.deployed_service.osmanager
         # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
-        doPublicationCleanup = True if osm is None else not osm.getInstance().isPersistent()
+        doPublicationCleanup = True if not osManager else not osManager.getInstance().isPersistent()
 
         if doPublicationCleanup:
             remove = False
             with transaction.atomic():
-                uService = UserService.objects.select_for_update().get(id=uService.id)
-                if uService.publication is not None and uService.publication.id != uService.deployed_service.activePublication().id:
-                    logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
+                userService = UserService.objects.select_for_update().get(id=userService.id)
+                if userService.publication and userService.publication.id != userService.deployed_service.activePublication().id:
+                    logger.debug('Old revision of user service, marking as removable: %s', userService)
                     remove = True
 
             if remove:
-                uService.remove()
+                userService.remove()
 
-    def notifyReadyFromOsManager(self, uService, data):
+    def notifyReadyFromOsManager(self, userService: UserService, data: typing.Any) -> None:
         try:
-            ui = uService.getInstance()
+            userServiceInstance = userService.getInstance()
             logger.debug('Notifying user service ready state')
-            state = ui.notifyReadyFromOsManager(data)
-            logger.debug('State: {0}'.format(state))
-            uService.updateData(ui)
+            state = userServiceInstance.notifyReadyFromOsManager(data)
+            logger.debug('State: %s', state)
             if state == State.FINISHED:
+                userService.updateData(userServiceInstance)
                 logger.debug('Service is now ready')
-            elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
-                uService.setState(State.PREPARING)
-                UserServiceOpChecker.makeUnique(uService, ui, state)
-            uService.save(update_fields=['os_state'])
+            elif userService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
+                userService.setState(State.PREPARING)
+                UserServiceOpChecker.makeUnique(userService, userServiceInstance, state)
+            userService.save(update_fields=['os_state'])
         except Exception as e:
-            logger.exception('Unhandled exception on notyfyReady: {}'.format(e))
-            uService.setState(State.ERROR)
+            logger.exception('Unhandled exception on notyfyReady: %s', e)
+            userService.setState(State.ERROR)
             return
 
-    def locateUserService(self, user, idService, create=False):
-        kind, idService = idService[0], idService[1:]
+    def locateUserService(self, user: User, idService: str, create: bool = False) -> typing.Optional[UserService]:
+        kind, uuidService = idService[0], idService[1:]
 
-        logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
-        userService = None
+        logger.debug('Kind of service: %s, idService: %s', kind, uuidService)
+        userService: typing.Optional[UserService] = None
 
         if kind == 'A':  # This is an assigned service
-            logger.debug('Getting A service {}'.format(idService))
-            userService = UserService.objects.get(uuid=idService, user=user)
-            userService.deployed_service.validateUser(user)
+            logger.debug('Getting A service %s', uuidService)
+            userService = UserService.objects.get(uuid=uuidService, user=user)
+            typing.cast(UserService, userService).deployed_service.validateUser(user)
         else:
-            ds = ServicePool.objects.get(uuid=idService)
+            servicePool: ServicePool = ServicePool.objects.get(uuid=uuidService)
             # We first do a sanity check for this, if the user has access to this service
             # If it fails, will raise an exception
-            ds.validateUser(user)
+            servicePool.validateUser(user)
 
             # Now we have to locate an instance of the service, so we can assign it to user.
             if create:  # getAssignation, if no assignation is found, tries to create one
-                userService = self.getAssignationForUser(ds, user)
+                userService = self.getAssignationForUser(servicePool, user)
             else:  # Sometimes maybe we only need to locate the existint user service
-                userService = self.getExistingAssignationForUser(ds, user)
+                userService = self.getExistingAssignationForUser(servicePool, user)
 
-        logger.debug('Found service: {0}'.format(userService))
+        logger.debug('Found service: %s', userService)
+
         return userService
 
-    def getService(self, user, os, srcIp, idService, idTransport, doTest=True):
+    def getService( # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+            self,
+            user: User,
+            os: typing.Dict,
+            srcIp: str,
+            idService: str,
+            idTransport: str,
+            doTest: bool = True
+        ) -> typing.Tuple[typing.Optional[str], UserService, typing.Optional['services.UserDeployment'], Transport, typing.Optional[transports.Transport]]:
         """
-        Get service info from
+        Get service info from user service
         """
         if idService[0] == 'M':  # Meta pool
             return self.getMeta(user, srcIp, os, idService[1:])
 
         userService = self.locateUserService(user, idService, create=True)
 
-        if userService is None:
+        if not userService:
             raise InvalidServiceException(_('The requested service is not available'))
 
         # Early log of "access try" so we can imagine what is going on
         userService.setConnectionSource(srcIp, 'unknown')
 
-        if userService.isInMaintenance() is True:
+        if userService.isInMaintenance():
             raise ServiceInMaintenanceMode()
 
-        if userService.deployed_service.isAccessAllowed() is False:
+        if not userService.deployed_service.isAccessAllowed():
             raise ServiceAccessDeniedByCalendar()
 
-        if idTransport is None or idTransport == '':  # Find a suitable transport
-            for v in userService.deployed_service.transports.order_by('priority'):
-                if v.validForIp(srcIp):
-                    idTransport = v.uuid
+        if not idTransport:  # Find a suitable transport
+            t: Transport
+            for t in userService.deployed_service.transports.order_by('priority'):
+                if t.validForIp(srcIp):
+                    idTransport = t.uuid
                     break
 
         try:
-            trans = Transport.objects.get(uuid=idTransport)
+            transport: Transport = Transport.objects.get(uuid=idTransport)
         except Exception:
             raise InvalidServiceException()
 
         # Ensures that the transport is allowed for this service
-        if trans not in userService.deployed_service.transports.all():
+        if  userService.deployed_service.transports.filter(id=transport.id).count() == 0:
             raise InvalidServiceException()
 
         # If transport is not available for the request IP...
-        if trans.validForIp(srcIp) is False:
-            msg = _('The requested transport {} is not valid for {}').format(trans.name, srcIp)
+        if not transport.validForIp(srcIp):
+            msg = _('The requested transport {} is not valid for {}').format(transport.name, srcIp)
             logger.error(msg)
             raise InvalidServiceException(msg)
 
-        if user is not None:
-            userName = user.name
-        else:
-            userName = 'unknown'
+        userName = user.name if user else 'unknown'
 
-        if doTest is False:
+        if not doTest:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
-            return None, userService, None, trans, None
+            return None, userService, None, transport, None
 
         serviceNotReadyCode = 0x0001
         ip = 'unknown'
@@ -641,42 +675,48 @@ class UserServiceManager(object):
             serviceNotReadyCode = 0x0002
             log.doLog(userService, log.INFO, "User {0} from {1} has initiated access".format(user.name, srcIp), log.WEB)
             # If ready, show transport for this service, if also ready ofc
-            iads = userService.getInstance()
-            ip = iads.getIp()
+            userServiceInstance = userService.getInstance()
+            ip = userServiceInstance.getIp()
             userService.logIP(ip)  # Update known ip
 
-            if self.checkUuid(userService) is False:  # Machine is not what is expected
+            if self.checkUuid(userService) is False:  # The service is not the expected one
                 serviceNotReadyCode = 0x0004
                 log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                logger.debug('Transport is not ready for user service {0}'.format(userService))
+                logger.debug('Transport is not ready for user service %s', userService)
             else:
                 events.addEvent(userService.deployed_service, events.ET_ACCESS, username=userName, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
-                if ip is not None:
+                if ip:
                     serviceNotReadyCode = 0x0003
-                    itrans = trans.getInstance()
-                    if itrans.isAvailableFor(userService, ip):
+                    transportInstance = transport.getInstance()
+                    if transportInstance.isAvailableFor(userService, ip):
                         # userService.setConnectionSource(srcIp, 'unknown')
                         log.doLog(userService, log.INFO, "User service ready", log.WEB)
-                        self.notifyPreconnect(userService, itrans.processedUser(userService, user), itrans.protocol)
-                        traceLogger.info('READY on service "{}" for user "{}" with transport "{}" (ip:{})'.format(userService.name, userName, trans.name, ip))
-                        return ip, userService, iads, trans, itrans
-                    else:
-                        message = itrans.getCustomAvailableErrorMsg(userService, ip)
-                        log.doLog(userService, log.WARN, message, log.TRANSPORT)
-                        logger.debug('Transport is not ready for user service {}:  {}'.format(userService, message))
+                        self.notifyPreconnect(userService, transportInstance.processedUser(userService, user), transportInstance.protocol)
+                        traceLogger.info('READY on service "%s" for user "%s" with transport "%s" (ip:%s)', userService.name, userName, transport.name, ip)
+                        return ip, userService, userServiceInstance, transport, transportInstance
+
+                    message = transportInstance.getCustomAvailableErrorMsg(userService, ip)
+                    log.doLog(userService, log.WARN, message, log.TRANSPORT)
+                    logger.debug('Transport is not ready for user service %s: %s', userService, message)
                 else:
-                    logger.debug('Ip not available from user service {0}'.format(userService))
+                    logger.debug('Ip not available from user service %s', userService)
         else:
-            log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but service was not ready".format(user.name, srcIp), log.WEB)
+            log.doLog(userService, log.WARN, "User {} from {} tried to access, but service was not ready".format(user.name, srcIp), log.WEB)
 
-        traceLogger.error('ERROR {} on service "{}" for user "{}" with transport "{}" (ip:{})'.format(serviceNotReadyCode, userService.name, userName, trans.name, ip))
-        raise ServiceNotReadyError(code=serviceNotReadyCode, service=userService, transport=trans)
+        traceLogger.error('ERROR %s on service "%s" for user "%s" with transport "%s" (ip:%s)', serviceNotReadyCode, userService.name, userName, transport.name, ip)
+        raise ServiceNotReadyError(code=serviceNotReadyCode, service=userService, transport=transport)
 
-    def getMeta(self, user, srcIp, os, idMetaPool):
+    def getMeta(
+            self,
+            user: User,
+            srcIp: str,
+            os: typing.Dict,
+            idMetaPool: str
+        ) -> typing.Tuple[typing.Optional[str], UserService, typing.Optional['services.UserDeployment'], Transport, typing.Optional[transports.Transport]]:
         logger.debug('This is meta')
         # We need to locate the service pool related to this meta, and also the transport
         # First, locate if there is a service in any pool associated with this metapool
-        meta = MetaPool.objects.get(uuid=idMetaPool)
+        meta: MetaPool = MetaPool.objects.get(uuid=idMetaPool)
 
         # If access is denied by calendar...
         if meta.isAccessAllowed() is False:
@@ -684,35 +724,38 @@ class UserServiceManager(object):
 
         # Sort pools based on meta selection
         if meta.policy == MetaPool.PRIORITY_POOL:
-            pools = [(p.priority, p.pool) for p in meta.members.all()]
+            sortPools = [(p.priority, p.pool) for p in meta.members.all()]
         elif meta.policy == MetaPool.MOST_AVAILABLE_BY_NUMBER:
-            pools = [(p.usage(), p) for p in meta.pools.all()]
+            sortPools = [(p.usage(), p) for p in meta.pools.all()]
         else:
-            pools = [(random.randint(0, 10000), p) for p in meta.pools.all()]
+            sortPools = [(random.randint(0, 10000), p) for p in meta.pools.all()]  # Just shuffle them
 
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
-        pools = [p[1] for p in sorted(pools, key=lambda x: x[0]) if p[1].usage() < 100 and p[1].isUsable()]
+        pools: typing.List[ServicePool] = [p[1] for p in sorted(sortPools, key=lambda x: x[0]) if p[1].usage() < 100 and p[1].isUsable()]
 
         logger.debug('Pools: %s', pools)
 
-        usable = None
+        usable: typing.Optional[typing.Tuple[ServicePool, Transport]] = None
         # Now, Lets find first if there is one assigned in ANY pool
 
-        def ensureTransport(pool):
-            usable = None
+        def ensureTransport(pool: ServicePool) -> typing.Optional[typing.Tuple[ServicePool, Transport]]:
+            found = None
+            t: Transport
             for t in pool.transports.all().order_by('priority'):
                 typeTrans = t.getType()
                 if t.getType() and t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
-                    usable = (pool, t)
+                    found = (pool, t)
                     break
-            return usable
+            return found
 
         try:
-            alreadyAssigned = UserService.objects.filter(deployed_service__in=pools,
-                                                         state__in=State.VALID_STATES,
-                                                         user=user,
-                                                         cache_level=0).order_by('deployed_service__name')[0]
+            alreadyAssigned: UserService = UserService.objects.filter(
+                deployed_service__in=pools,
+                state__in=State.VALID_STATES,
+                user=user,
+                cache_level=0
+            ).order_by('deployed_service__name')[0]
             logger.debug('Already assigned %s', alreadyAssigned)
 
             # Ensure transport is available for the OS, and store it
@@ -732,7 +775,7 @@ class UserServiceManager(object):
                         self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
                         break  # If all goes fine, stop here
                     except Exception as e:
-                        logger.info('Meta service {}:{} could not be assigned, trying a new one'.format(usable[0].name, e))
+                        logger.info('Meta service %s:%s could not be assigned, trying a new one', usable[0].name, e)
                         usable = None
 
         if not usable:
