@@ -101,6 +101,8 @@ def create(api, fromTemplateId, name, toDataStore):
 
             # if api.imageInfo(imgId)[0]['IMAGE']['STATE'] != '1':
             #    raise Exception('The base machines images are not in READY state')
+            # Ensure base Image persistence is set to "False"
+            # api.makePersistentImage(imgId, False)
 
             # Now clone the image
             imgName = sanitizeName(name + ' DSK ' + six.text_type(counter))
@@ -205,13 +207,12 @@ def checkPublished(api, templateId):
             logger.debug('Found {} for checking'.format(imgId))
 
             state = api.imageInfo(imgId)[0]['IMAGE']['STATE']
-            if state in ('0', '4'):
+            if state in ('0', '4', '6'):
                 return False
             elif state != '1':  # If error is not READY
                 raise Exception('Error publishing. Image is in an invalid state. (Check it and delete it if not needed anymore)')
             # Ensure image is non persistent, do not ask first because this is a simple request and normally templates has only 1 image.
             api.makePersistentImage(imgId, False)
-
     except Exception:
         logger.exception('Exception checking published')
         raise
