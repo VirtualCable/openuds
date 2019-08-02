@@ -30,17 +30,17 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
-
-__updated__ = '2014-11-12'
+import typing
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from .BaseOsManager import OSManager
 
-class OSManagersFactory(object):
-    _factory = None
+class OSManagersFactory:
+    _factory: typing.Optional['OSManagersFactory'] = None
+    _osManagers: typing.Dict[str, typing.Type['OSManager']]
 
     def __init__(self):
         self._osManagers = {}
@@ -54,8 +54,8 @@ class OSManagersFactory(object):
     def providers(self):
         return self._osManagers
 
-    def insert(self, type_):
-        logger.debug('Adding OS Manager {0} as {1}'.format(type_.type(), type_))
+    def insert(self, type_: typing.Type['OSManager']):
+        logger.debug('Adding OS Manager %s as %s', type_.type(), type_)
         typeName = type_.type().lower()
         self._osManagers[typeName] = type_
 

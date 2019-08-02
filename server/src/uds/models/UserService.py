@@ -342,7 +342,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         self.user = user
         self.save(update_fields=['cache_level', 'state_date', 'user'])
 
-    def setInUse(self, state):
+    def setInUse(self, inUse: bool) -> None:
         """
         Set the "in_use" flag for this user deployed service
 
@@ -352,17 +352,17 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
         """
         from uds.core.managers.UserServiceManager import UserServiceManager
-        self.in_use = state
+        self.in_use = inUse
         self.in_use_date = getSqlDatetime()
         self.save(update_fields=['in_use', 'in_use_date'])
 
         # Start/stop accounting
-        if state is True:
+        if inUse:
             self.startUsageAccounting()
         else:
             self.stopUsageAccounting()
 
-        if state is False:  # Service released, check y we should mark it for removal
+        if not inUse:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
             UserServiceManager.manager().checkForRemoval(self)
 
@@ -445,10 +445,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         from uds.core.managers.UserServiceManager import UserServiceManager
         UserServiceManager.manager().moveToLevel(self, cacheLevel)
 
-    def getProperty(self, propName, default=None):
+    def getProperty(self, propName: str, default: typing.Optional[str] = None):
         try:
             val = self.properties.get(name=propName).value
-            return val if val is not '' else default  # Empty string is null
+            return val or default  # Empty string is null
         except Exception:
             return default
 
@@ -462,9 +462,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             dct[v.name] = v.value
         return dct
 
-    def setProperty(self, propName, propValue):
+    def setProperty(self, propName: str, propValue: typing.Optional[str]):
         prop, _ = self.properties.get_or_create(name=propName)
-        prop.value = propValue if propValue is not None else ''
+        prop.value = propValue or ''
         prop.save()
 
     def setCommsUrl(self, commsUrl=None):
@@ -473,7 +473,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     def getCommsUrl(self) -> typing.Optional[str]:
         return self.getProperty('comms_url', None)
 
-    def logIP(self, ip: str = None) -> None:
+    def logIP(self, ip: typing.Optional[str] = None) -> None:
         self.setProperty('ip', ip)
 
     def getLoggedIP(self):

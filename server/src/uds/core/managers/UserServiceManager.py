@@ -67,7 +67,7 @@ class UserServiceManager:
         pass
 
     @staticmethod
-    def manager():
+    def manager() -> 'UserServiceManager':
         if not UserServiceManager._manager:
             UserServiceManager._manager = UserServiceManager()
         return UserServiceManager._manager

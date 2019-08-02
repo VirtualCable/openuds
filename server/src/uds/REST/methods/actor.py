@@ -117,12 +117,8 @@ class Actor(Handler):
 
 
         services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
-        
-        if not services:
-            return None
-            
 
-        return services[0]
+        return services[0] if services else None
 
     def getTicket(self):
         """
@@ -174,17 +170,19 @@ class Actor(Handler):
             if service is None:
                 logger.info('Unmanaged host request: %s', self._args)
                 return Actor.result(_('Unmanaged host'), error=ERR_HOST_NOT_MANAGED)
-            else:
-                # Set last seen actor version
-                service.setProperty('actor_version', actorVersion)
-                maxIdle = None
-                if service.deployed_service.osmanager is not None:
-                    maxIdle = service.deployed_service.osmanager.getInstance().maxIdle()
-                    logger.debug('Max idle: %s', maxIdle)
-                return Actor.result((service.uuid,
-                                     service.unique_id,
-                                     0 if maxIdle is None else maxIdle)
-                                    )
+            # Set last seen actor version
+            service.setProperty('actor_version', actorVersion)
+            maxIdle = None
+            if service.deployed_service.osmanager is not None:
+                maxIdle = service.deployed_service.osmanager.getInstance().maxIdle()
+                logger.debug('Max idle: %s', maxIdle)
+            return Actor.result(
+                (
+                    service.uuid,
+                    service.unique_id,
+                    0 if maxIdle is None else maxIdle
+                )
+            )
         raise RequestError('Invalid request')
 
     # Must be invoked as '/rest/actor/UUID/[message], with message data in post body

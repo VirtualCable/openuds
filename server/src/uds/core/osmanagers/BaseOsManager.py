@@ -44,7 +44,7 @@ STORAGE_KEY = 'osmk'
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService
-    from uds.core.environmentable import Environment
+    from uds.core.environment import Environment
 
 class OSManager(Module):
     """
@@ -96,7 +96,7 @@ class OSManager(Module):
         """
 
     # These methods must be overriden
-    def process(self, userService: 'UserService', message: str, data: str, options=None):
+    def process(self, userService: 'UserService', message: str, data: str, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> None:
         """
         This method must be overriden so your so manager can manage requests and responses from agent.
         @param userService: Service that sends the request (virtual machine or whatever)
@@ -104,7 +104,7 @@ class OSManager(Module):
         @param data: Data for this message
         """
 
-    def checkState(self, service):
+    def checkState(self, userService: 'UserService') -> str:
         """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
@@ -118,21 +118,20 @@ class OSManager(Module):
         """
         return State.FINISHED
 
-    def processUnused(self, userService):
+    def processUnused(self, userService: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        pass
 
-    def maxIdle(self):
+    def maxIdle(self) -> typing.Optional[int]:
         """
         If os manager request "max idle", this method will return a value different to None so actors will get informed on Connection
         @return Must return None (default if not override), or a "max idle" in seconds
         """
         return None
 
-    def maxSession(self):
+    def maxSession(self) -> typing.Optional[int]:
         """
         If os manager requests "max session duration", this methos will return a value distinct of None so actors will get informed on Connection
         @return Must return None (default if not override), or a "max session duration" in seconds
@@ -140,14 +139,14 @@ class OSManager(Module):
         return None
 
     @classmethod
-    def transformsUserOrPasswordForService(cls):
+    def transformsUserOrPasswordForService(cls: typing.Type['OSManager']):
         """
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from DeployedService
         """
         return cls.processUserPassword != OSManager.processUserPassword
 
-    def processUserPassword(self, service, username, password):
+    def processUserPassword(self, userService: 'UserService', username: str, password: str) -> typing.Tuple[str, str]:
         """
         This will be invoked prior to passsing username/password to Transport.
 
@@ -162,21 +161,23 @@ class OSManager(Module):
 
         Note: This method is, right now, invoked by Transports directly. So if you implement a Transport, remember to invoke this
         """
-        return [username, password]
+        return username, password
 
-    def destroy(self):
+    def destroy(self) -> None:
         """
         Invoked when OS Manager is deleted
         """
-        pass
 
-    def logKnownIp(self, userService, ip):
+    def logKnownIp(self, userService: 'UserService', ip: str) -> None:
         userService.logIP(ip)
 
-    def toReady(self, userService):
+    def toReady(self, userService: 'UserService') -> None:
+        '''
+        Resets login counter to 0
+        '''
         userService.setProperty('loginsCounter', '0')
 
-    def loggedIn(self, userService, userName=None):
+    def loggedIn(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -185,21 +186,18 @@ class OSManager(Module):
         """
         uniqueId = userService.unique_id
         userService.setInUse(True)
-        si = userService.getInstance()
-        si.userLoggedIn(userName)
-        userService.updateData(si)
+        userServiceInstance = userService.getInstance()
+        userServiceInstance.userLoggedIn(userName)
+        userService.updateData(userServiceInstance)
 
-        serviceIp = si.getIp()
+        serviceIp = userServiceInstance.getIp()
 
-        fullUserName = 'unknown'
-        if userService.user is not None:
-            fullUserName = userService.user.manager.name + '\\' + userService.user.name
+        fullUserName = userService.user.manager.name + '\\' + userService.user.name  if userService.user else 'unknown'
 
         knownUserIP = userService.src_ip + ':' + userService.src_hostname
         knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
 
-        if userName is None:
-            userName = 'unknown'
+        userName = userName or 'unknown'
 
         addEvent(userService.deployed_service, ET_LOGIN, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
 
@@ -208,10 +206,10 @@ class OSManager(Module):
         log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
         counter = int(userService.getProperty('loginsCounter', '0')) + 1
-        userService.setProperty('loginsCounter', six.text_type(counter))
+        userService.setProperty('loginsCounter', str(counter))
 
 
-    def loggedOut(self, userService, userName=None):
+    def loggedOut(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -221,19 +219,18 @@ class OSManager(Module):
         counter = int(userService.getProperty('loginsCounter', '0'))
         if counter > 0:
             counter -= 1
-        userService.setProperty('loginsCounter', six.text_type(counter))
+        userService.setProperty('loginsCounter', str(counter))
 
-        if GlobalConfig.EXCLUSIVE_LOGOUT.getBool(True) is True:
-            if counter > 0:
-                return
+        if GlobalConfig.EXCLUSIVE_LOGOUT.getBool(True) and counter > 0:
+            return
 
         uniqueId = userService.unique_id
         userService.setInUse(False)
-        si = userService.getInstance()
-        si.userLoggedOut(userName)
-        userService.updateData(si)
+        userServiceInstance = userService.getInstance()
+        userServiceInstance.userLoggedOut(userName)
+        userService.updateData(userServiceInstance)
 
-        serviceIp = si.getIp()
+        serviceIp = userServiceInstance.getIp()
 
         fullUserName = 'unknown'
         if userService.user is not None:
@@ -242,8 +239,7 @@ class OSManager(Module):
         knownUserIP = userService.src_ip + ':' + userService.src_hostname
         knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
 
-        if userName is None:
-            userName = 'unknown'
+        userName = userName or 'unknown'
 
         addEvent(userService.deployed_service, ET_LOGOUT, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
 
@@ -251,7 +247,7 @@ class OSManager(Module):
 
         log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
-    def isPersistent(self):
+    def isPersistent(self) -> bool:
         """
         When a publication if finished, old assigned machines will be removed if this value is True.
         Defaults to False
@@ -260,6 +256,3 @@ class OSManager(Module):
 
     def __str__(self):
         return "Base OS Manager"
-
-    def __unicode__(self):
-        return self.__str__()
