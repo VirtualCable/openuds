@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.db import models
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 from uds.core import Module
 from uds.models.UUIDModel import UUIDModel
 

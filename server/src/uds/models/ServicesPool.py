@@ -38,7 +38,7 @@ from datetime import datetime, timedelta
 from django.db import models, transaction
 from django.db.models import signals
 
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import states
 from uds.core.services.Exceptions import InvalidServiceException

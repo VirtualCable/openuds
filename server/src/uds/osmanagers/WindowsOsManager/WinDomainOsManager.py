@@ -201,14 +201,14 @@ class WinDomainOsManager(WindowsOsManager):
         if self._removeOnExit != 'y':
             return
 
-        if not '.' in self._domain:
+        if '.' not in self._domain:
             logger.info('Releasing from a not FQDN domain is not supported')
             return
 
         try:
             l = self.__connectLdap()
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
-            logger.warning('Could not find _ldap._tcp.' + self._domain)
+            logger.warning('Could not find _ldap._tcp.%s', self._domain)
             log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
             return
         except ldaputil.LDAPError:

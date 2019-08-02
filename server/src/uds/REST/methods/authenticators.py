@@ -132,7 +132,7 @@ class Authenticators(ModelHandler):
             # self.invalidResponseException('{}'.format(e))
 
     def test(self, type_):
-        from uds.core.Environment import Environment
+        from uds.core.environment import Environment
 
         authType = auths.factory().lookup(type_)
         self.ensureAccess(authType, permissions.PERMISSION_MANAGEMENT, root=True)

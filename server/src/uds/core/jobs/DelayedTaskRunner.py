@@ -40,7 +40,7 @@ from django.db import transaction, connection
 from django.db.models import Q
 from uds.models import DelayedTask as DBDelayedTask
 from uds.models import getSqlDatetime
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 from uds.core.util import encoders
 
 from .DelayedTask import DelayedTask

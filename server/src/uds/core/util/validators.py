@@ -32,7 +32,7 @@
 """
 from __future__ import unicode_literals
 
-from uds.core.BaseModule import Module
+from uds.core.module import Module
 from django.utils.translation import gettext as _
 
 import re

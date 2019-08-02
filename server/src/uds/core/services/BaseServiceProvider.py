@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds.core import Module
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 
 from uds.core.util.Config import GlobalConfig
 from uds.core.ui.UserInterface import gui
@@ -103,7 +103,7 @@ class ServiceProvider(Module):
 
     # : Icon file, used to represent this provider at administration interface
     # : This file should be at same folder as this class is, except if you provide
-    # : your own py:meth:`uds.core.BaseModule.BaseModule.icon` method.
+    # : your own py:meth:`uds.core.module.BaseModule.icon` method.
     iconFile = 'provider.png'
 
     # : This defines the maximum number of concurrent services that should be in state "in preparation" for this provider

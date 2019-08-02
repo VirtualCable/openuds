@@ -87,7 +87,7 @@ class SampleAuth(auths.Authenticator):
 
     # : Icon file, used to represent this authenticator at administration interface
     # : This file should be at same folder as this class is, except if you provide
-    # : your own :py:meth:uds.core.BaseModule.BaseModule.icon method.
+    # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile = 'auth.png'
 
     # : Mark this authenticator as that the users comes from outside the UDS

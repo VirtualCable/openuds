@@ -23,7 +23,7 @@ def getResources(parameters):
         from .ProviderLegacy import ProviderLegacy as Provider
     else:
         from .Provider import Provider
-    from uds.core.Environment import Environment
+    from uds.core.environment import Environment
     logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))
     env = Environment(parameters['ev'])
     provider = Provider(env)
@@ -55,7 +55,7 @@ def getVolumes(parameters):
         from .ProviderLegacy import ProviderLegacy as Provider
     else:
         from .Provider import Provider
-    from uds.core.Environment import Environment
+    from uds.core.environment import Environment
     logger.debug('Parameters received by getVolumes Helper: {0}'.format(parameters))
     env = Environment(parameters['ev'])
     provider = Provider(env)

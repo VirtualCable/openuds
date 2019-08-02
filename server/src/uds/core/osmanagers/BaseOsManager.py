@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import types as serviceTypes
@@ -40,12 +40,11 @@ from uds.core.util import log
 from uds.core.util.Config import GlobalConfig
 from uds.core import Module
 
-import six
-
-__updated__ = '2019-02-24'
-
 STORAGE_KEY = 'osmk'
 
+if typing.TYPE_CHECKING:
+    from uds.models import UserService
+    from uds.core.environmentable import Environment
 
 class OSManager(Module):
     """
@@ -69,11 +68,11 @@ class OSManager(Module):
     # : Defaults to all. (list or tuple)
     servicesType = serviceTypes.ALL
 
-    def __init__(self, environment, values):
-        super(OSManager, self).__init__(environment, values)
+    def __init__(self, environment: 'Environment', values: Module.ValuesType):
+        super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values):
+    def initialize(self, values: Module.ValuesType):
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -88,25 +87,22 @@ class OSManager(Module):
 
         Default implementation does nothing
         """
-        pass
 
-    def release(self, service):
+    def release(self, userService: 'UserService') -> None:
         """
         Called by a service that is in Usable state before destroying it so osmanager can release data associated with it
         Only invoked for services that reach the state "removed"
         @return nothing
         """
-        pass
 
     # These methods must be overriden
-    def process(self, userService, message, data, options=None):
+    def process(self, userService: 'UserService', message: str, data: str, options=None):
         """
         This method must be overriden so your so manager can manage requests and responses from agent.
         @param userService: Service that sends the request (virtual machine or whatever)
         @param message: message to process (os manager dependent)
         @param data: Data for this message
         """
-        pass
 
     def checkState(self, service):
         """

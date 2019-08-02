@@ -35,9 +35,9 @@ This package contains all core-related code for UDS
 import time
 
 # Core needs tasks manager to register scheduled jobs, so we ensure of that here
-from uds.core.Environment import Environmentable
-from uds.core.Serializable import Serializable
-from uds.core.BaseModule import Module
+from .environment import Environmentable
+from .serializable import Serializable
+from .module import Module
 
 
 VERSION = '3.x.x-DEVEL'

@@ -37,7 +37,7 @@ from django.db import models
 from django.db.models import signals
 
 from uds.core.util.State import State
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 from uds.core.jobs.JobsFactory import JobsFactory
 
 from uds.models.Util import NEVER

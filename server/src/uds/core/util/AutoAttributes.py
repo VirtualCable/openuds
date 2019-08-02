@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-from uds.core.Serializable import Serializable
+from uds.core.serializable import Serializable
 from uds.core.util import encoders
 import pickle
 import six

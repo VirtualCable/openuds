@@ -22,7 +22,7 @@ class oVirtHelpers(object):
         This helper is designed as a callback for machine selector, so we can provide valid clusters and datastores domains based on it
         """
         from OVirtProvider import Provider
-        from uds.core.Environment import Environment
+        from uds.core.environment import Environment
         logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))
         env = Environment(parameters['ev'])
         provider = Provider(env)

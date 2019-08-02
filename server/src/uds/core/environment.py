@@ -153,7 +153,7 @@ class Environment:
         return Environment(GLOBAL_ENV)  # This environment is a global environment for general utility.
 
 
-class Environmentable(object):
+class Environmentable:
     """
     This is a base class provided for all objects that have an environment associated. These are mainly modules
     """

@@ -21,7 +21,7 @@ def getResources(parameters):
     This helper is designed as a callback for Project Selector
     """
     from .Provider import OGProvider
-    from uds.core.Environment import Environment
+    from uds.core.environment import Environment
     logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))
     env = Environment(parameters['ev'])
     provider = OGProvider(env)

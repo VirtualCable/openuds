@@ -36,7 +36,7 @@ import typing
 from django.db import models
 from django.db.models import signals
 
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
 from uds.core.util.State import State

@@ -51,7 +51,7 @@ class SamplePublication(Publication):
         * :py:meth:`.checkState`
         * :py:meth:`.finish`
 
-    Also, of course, methods from :py:class:`uds.core.Serializable.Serializable`
+    Also, of course, methods from :py:class:`uds.core.serializable.Serializable`
 
 
     Publication do not have an configuration interface, all data contained

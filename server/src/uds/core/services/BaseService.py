@@ -102,7 +102,7 @@ class Service(Module):
 
     # : Icon file, used to represent this service at administration interface
     # : This file should be at same folder as this class is, except if you provide
-    # : your own :py:meth:uds.core.BaseModule.BaseModule.icon method.
+    # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile = 'service.png'
 
     # Functional related data

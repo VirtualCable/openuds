@@ -7,7 +7,7 @@ from uds.core.util import encoders
 from uds.transports.RDP.RDPTransport import RDPTransport
 from uds.transports.RDP.TRDPTransport import TRDPTransport
 
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 
 
 def unmarshalRDP(str_):

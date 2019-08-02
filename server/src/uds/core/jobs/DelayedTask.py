@@ -32,7 +32,7 @@
 """
 import logging
 
-from uds.core.Environment import Environmentable
+from uds.core.environment import Environmentable
 
 
 logger = logging.getLogger(__name__)

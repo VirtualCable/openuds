@@ -38,7 +38,7 @@ from django.utils.translation import ugettext_noop as _
 from django.http import HttpRequest, HttpResponse
 
 from uds.core import Module
-from uds.core.Environment import Environment
+from uds.core.environment import Environment
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths.Exceptions import InvalidUserException
 
@@ -118,7 +118,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
     # : Icon file, used to represent this authenticator at administration interface
     # : This file should be at same folder as this class is, except if you provide
-    # : your own :py:meth:uds.core.BaseModule.BaseModule.icon method.
+    # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile = 'auth.png'
 
     # : Mark this authenticator as that the users comes from outside the UDS

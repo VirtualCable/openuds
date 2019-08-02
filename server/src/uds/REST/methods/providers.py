@@ -150,7 +150,7 @@ class Providers(ModelHandler):
         return self.item_as_dict(item)
 
     def test(self, type_):
-        from uds.core.Environment import Environment
+        from uds.core.environment import Environment
 
         logger.debug('Type: %s', type_)
         spType = services.factory().lookup(type_)
