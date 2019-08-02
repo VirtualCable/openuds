@@ -36,7 +36,7 @@ import typing
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
-    from .BaseOsManager import OSManager
+    from .osmanager import OSManager
 
 class OSManagersFactory:
     _factory: typing.Optional['OSManagersFactory'] = None

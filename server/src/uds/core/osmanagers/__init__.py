@@ -32,12 +32,12 @@ UDS os managers related interfaces and classes
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .BaseOsManager import OSManager
+from .osmanager import OSManager
 
 
 def factory():
     """
     Returns factory for register/access to authenticators
     """
-    from .OSManagersFactory import OSManagersFactory
+    from .osmfactory import OSManagersFactory
     return OSManagersFactory.factory()

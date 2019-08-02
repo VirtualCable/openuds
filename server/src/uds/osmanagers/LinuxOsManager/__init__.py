@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.osmanagers.OSManagersFactory import OSManagersFactory
+from uds.core.osmanagers.osmfactory import OSManagersFactory
 from uds.core.managers.DownloadsManager import DownloadsManager
 from uds.core import VERSION
 

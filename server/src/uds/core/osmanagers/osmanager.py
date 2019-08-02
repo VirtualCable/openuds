@@ -56,7 +56,7 @@ class OSManager(Module):
     """
     # Service informational related data
     typeName = _('Base OS Manager')
-    typeType = 'BaseOSManager'
+    typeType = 'osmanager'
     typeDescription = _('Base Manager')
     iconFile = 'osmanager.png'
 
