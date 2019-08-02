@@ -36,6 +36,7 @@ import typing
 import time
 import pickle
 import logging
+import copy
 
 from django.utils.translation import get_language, ugettext as _, ugettext_noop
 
@@ -79,6 +80,7 @@ class gui:
     create new instances of this module.
     """
     # Values dict type
+    ValuesType = typing.Optional[typing.Dict[str, str]]
     ValuesDictType = typing.Dict[str, typing.Union[str, typing.List[str], typing.List[typing.Dict[str, str]]]]
     ChoiceType = typing.Dict[str, str]
 
@@ -829,8 +831,7 @@ class UserInterface(metaclass=UserInterfaceType):
     _gui: typing.Dict[str, gui.InputField]
 
 
-    def __init__(self, values: typing.Optional[typing.Dict[str, str]] = None):
-        import copy
+    def __init__(self, values: gui.ValuesType = None):
         # : If there is an array of elements to initialize, simply try to store values on form fields
         # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
         # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way

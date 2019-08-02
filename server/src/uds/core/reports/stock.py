@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,28 +30,24 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
-from PIL import Image
 from uds.core.util import tools
 
-import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-07'
-
+# Default values
 LOGO = 'logo-512.png'
 CSS = 'report.css'
 
 
-def getStockImagePath(stockImg=None):
-    if stockImg is None:
-        stockImg = LOGO
+def getStockImagePath(stockImg: typing.Optional[str] = None) -> str:
+    stockImg = stockImg or LOGO
     return tools.packageRelativeFile(__name__, 'stock_images/' + stockImg)
 
 
-def getStockCssPath(css=None):
-    if css is None:
-        css = CSS
+def getStockCssPath(css: typing.Optional[str] = None) -> str:
+    css = css or CSS
     return tools.packageRelativeFile(__name__, 'css/' + css)

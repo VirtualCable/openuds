@@ -111,7 +111,7 @@ class CaseInsensitiveDict(dict):
             self.__setitem__(k, v)
 
 
-def packageRelativeFile(moduleName, fileName):
+def packageRelativeFile(moduleName: str, fileName: str) -> str:
     """
     Helper to get image path from relative to a module.
     This allows to keep images alongside report

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,24 +30,21 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+from datetime import datetime
+import typing
+
+from weasyprint import HTML, CSS, default_url_fetcher
 
 from django.utils.translation import ugettext, ugettext_noop as _
 from django.template import loader
 
-from uds.core.ui.UserInterface import UserInterface
+from uds.core.ui.UserInterface import UserInterface, gui
 from uds.core.util import encoders
 from . import stock
 
-from weasyprint import HTML, CSS, default_url_fetcher
-from datetime import datetime
-
-import logging
-import six
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-02-08'
 
 
 class Report(UserInterface):
@@ -87,40 +84,39 @@ class Report(UserInterface):
         return cls.uuid
 
     @staticmethod
-    def asPDF(html, header=None, water=None, images=None):
+    def asPDF(html, header: typing.Optional[str] = None, water: typing.Optional[str] = None, images: typing.Optional[typing.Dict[str, bytes]] = None):
         """
         Renders an html as PDF.
         Uses the "report.css" as stylesheet
         """
 
         # url fetcher for weasyprint
-        def report_fetcher(url):
-            logger.debug('Getting url for weasyprint {}'.format(url))
+        def report_fetcher(url: str) -> typing.Dict:
+            logger.debug('Getting url for weasyprint %s', url)
             if url.startswith('stock://'):
                 imagePath = stock.getStockImagePath(url[8:])
                 with open(imagePath, 'rb') as f:
                     image = f.read()
-                return dict(string=image,
-                            mime_type='image/png')
-            elif url.startswith('image://'):
-                img = ''  # Empty image
-                if isinstance(images, dict):
-                    img = images.get(url[8:], None)
-                    logger.debug('Getting image {}? {}'.format(url[8:], img is not None))
-                return dict(string=img,
-                            mime_type='image/png')
-            else:
-                return default_url_fetcher(url)
+                return dict(string=image, mime_type='image/png')
+
+            if url.startswith('image://'):
+                img: typing.Optional[bytes] = b''  # Empty image
+                if images:
+                    img = images.get(url[8:])
+                    logger.debug('Getting image %s? %s', url[8:], img is not None)
+                return dict(string=img, mime_type='image/png')
+
+            return default_url_fetcher(url)
 
         with open(stock.getStockCssPath('report.css'), 'r') as f:
             css = f.read()
 
         css = (
-            css.replace("{header}", _('Report') if header is None else header)
-                .replace('{page}', _('Page'))
-                .replace('{of}', _('of'))
-                .replace('{water}', 'UDS Report' if water is None else water)
-                .replace('{printed}', _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.now()))
+            css.replace("{header}", header or _('Report'))
+            .replace('{page}', _('Page'))
+            .replace('{of}', _('of'))
+            .replace('{water}', water or 'UDS Report')
+            .replace('{printed}', _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.now()))
         )
 
         h = HTML(string=html, url_fetcher=report_fetcher)
@@ -137,7 +133,7 @@ class Report(UserInterface):
 
         return Report.asPDF(t.render(dct), header=header, water=water, images=images)
 
-    def __init__(self, values=None):
+    def __init__(self, values: gui.ValuesType = None):
         """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(values)".
@@ -153,7 +149,7 @@ class Report(UserInterface):
         __init__ method of your class.
         """
         #
-        UserInterface.__init__(self, values)
+        super().__init__(values)
         self.initialize(values)
 
     def initialize(self, values):
@@ -164,7 +160,6 @@ class Report(UserInterface):
 
         This can be or can be not overriden
         """
-        pass
 
     def generate(self):
         """

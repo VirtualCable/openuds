@@ -59,5 +59,5 @@ class OSManagersFactory:
         typeName = type_.type().lower()
         self._osManagers[typeName] = type_
 
-    def lookup(self, typeName):
+    def lookup(self, typeName: str) -> typing.Optional[typing.Type['OSManager']]:
         return self._osManagers.get(typeName.lower(), None)

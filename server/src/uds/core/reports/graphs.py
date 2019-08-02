@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2018 Virtual Cable S.L.
+# Copyright (c) 2018-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -35,8 +35,8 @@ import logging
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+# from mpl_toolkits.mplot3d import Axes3D
 
 import numpy as np
 
@@ -110,16 +110,16 @@ def surfaceChart(size, data, output):
     y = data['y']
     z = data['z']
 
-    logger.debug('X: {}'.format(x))
-    logger.debug('Y: {}'.format(y))
-    logger.debug('Z: {}'.format(z))
+    logger.debug('X: %s', x)
+    logger.debug('Y: %s', y)
+    logger.debug('Z: %s', z)
 
     x, y = np.meshgrid(x, y)
     z = np.array(z)
 
-    logger.debug('X\': {}'.format(x))
-    logger.debug('Y\': {}'.format(y))
-    logger.debug('Z\': {}'.format(z))
+    logger.debug('X\': %s', x)
+    logger.debug('Y\': %s', y)
+    logger.debug('Z\': %s', z)
 
     fig = Figure(figsize=(size[0], size[1]), dpi=size[2])
     FigureCanvas(fig)  # Stores canvas on fig.canvas
