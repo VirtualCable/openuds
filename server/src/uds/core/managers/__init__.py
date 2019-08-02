@@ -48,26 +48,26 @@ def cryptoManager() -> 'CryptoManager':
     return CryptoManager.manager()
 
 
-def taskManager():
+def taskManager() -> typing.Type['TaskManager']:
     from .TaskManager import TaskManager  # pylint: disable=redefined-outer-name
     return TaskManager
 
 
-def downloadsManager():
+def downloadsManager() -> 'DownloadsManager':
     from .DownloadsManager import DownloadsManager  # pylint: disable=redefined-outer-name
     return DownloadsManager.manager()
 
 
-def logManager():
+def logManager() -> 'LogManager':
     from .LogManager import LogManager  # pylint: disable=redefined-outer-name
     return LogManager.manager()
 
 
-def statsManager():
+def statsManager() -> 'StatsManager':
     from .StatsManager import StatsManager  # pylint: disable=redefined-outer-name
     return StatsManager.manager()
 
 
-def userServiceManager():
+def userServiceManager() -> 'UserServiceManager':
     from .UserServiceManager import UserServiceManager  # pylint: disable=redefined-outer-name
     return UserServiceManager.manager()

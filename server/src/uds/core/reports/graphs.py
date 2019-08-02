@@ -36,7 +36,8 @@ import logging
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib import cm
-# from mpl_toolkits.mplot3d import Axes3D
+# This must be imported to allow 3d projections
+from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-import
 
 import numpy as np
 

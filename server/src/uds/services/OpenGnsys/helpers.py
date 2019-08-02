@@ -8,9 +8,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
 from django.utils.translation import ugettext as _
-import logging
 from uds.core.ui import gui
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def getResources(parameters):
     """
     from .Provider import OGProvider
     from uds.core.environment import Environment
-    logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))
+    logger.debug('Parameters received by getResources Helper: %s', parameters)
     env = Environment(parameters['ev'])
     provider = OGProvider(env)
     provider.unserialize(parameters['ov'])
@@ -36,5 +36,5 @@ def getResources(parameters):
         {'name': 'lab', 'values': labs},
         {'name': 'image', 'values': images},
     ]
-    logger.debug('Return data: {}'.format(data))
+    logger.debug('Return data: %s', data)
     return data

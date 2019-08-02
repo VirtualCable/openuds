@@ -30,4 +30,4 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .BaseReport import Report
+from .report import Report

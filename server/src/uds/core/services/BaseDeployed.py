@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
 from uds.core import Environmentable
 from uds.core import Serializable
 from uds.core.util.State import State
 
-__updated__ = '2018-06-11'
+if typing.TYPE_CHECKING:
+    from uds.core import services
+    from uds.core import osmanagers
+    from uds.core.environment import Environment
+    from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
+    from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
+    from uds.core.util.UniqueGIDGenerator import UniqueGIDGenerator
+    from uds.models import Service, User
 
-
-class UserDeployment(Environmentable, Serializable):
+class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many-public-methods
     """
     Interface for deployed services.
 
@@ -114,7 +120,13 @@ class UserDeployment(Environmentable, Serializable):
     # : so u can modify it at your own implementation.
     suggestedTime = 10
 
-    def __init__(self, environment, **kwargs):
+    _service: 'services.Service'
+    _publication: typing.Optional['services.Publication']
+    _osmanager: typing.Optional['osmanagers.OSManager']
+    _dbService: typing.Optional['Service']
+    _uuid: str
+
+    def __init__(self, environment: 'Environment', **kwargs):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, **kwargs)"
         We want to use the env, service and storage methods outside class. If not called, you must implement your own methods
@@ -139,7 +151,7 @@ class UserDeployment(Environmentable, Serializable):
         self._osmanager = kwargs.get('osmanager', None)
         self._dbService = kwargs.get('dbservice', None)
         self._uuid = kwargs.get('uuid', '')
-        # If it has dbService
+        # If it has dbService, got uuid from it
         if self._dbService:
             self._uuid = self._dbService.uuid
 
@@ -153,9 +165,8 @@ class UserDeployment(Environmentable, Serializable):
         This will get invoked when all initialization stuff is done, so
         you can here access publication, service, osManager, ...
         """
-        pass
 
-    def getName(self):
+    def getName(self) -> str:
         """
         Override this to return a name to display under some circustances
 
@@ -165,7 +176,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return self.getUniqueId()
 
-    def service(self):
+    def service(self) -> 'services.Service':
         """
         Utility method to access parent service. This doesn't need to be override.
 
@@ -178,7 +189,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return self._service
 
-    def publication(self):
+    def publication(self) -> typing.Optional['services.Publication']:
         """
         Utility method to access publication. This doesn't need to be overriden.
 
@@ -189,7 +200,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return self._publication
 
-    def osmanager(self):
+    def osmanager(self) -> typing.Optional['osmanagers.OSManager']:
         """
         Utility method to access os manager. This doesn't need to be overriden.
 
@@ -200,10 +211,10 @@ class UserDeployment(Environmentable, Serializable):
         """
         return self._osmanager
 
-    def getUuid(self):
+    def getUuid(self) -> str:
         return self._uuid
 
-    def dbservice(self):
+    def dbservice(self) -> typing.Optional['Service']:
         """
         Utility method to access database object for the object this represents.
 
@@ -213,36 +224,36 @@ class UserDeployment(Environmentable, Serializable):
         """
         return self._dbService
 
-    def doLog(self, level, message):
+    def doLog(self, level, message) -> None:
         """
         Logs a message with requested level associated with this service
         """
         from uds.core.util import log
         log.doLog(self._dbService, level, message, log.SERVICE)
 
-    def macGenerator(self):
+    def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
         """
         Utility method to access provided macs generator (inside environment)
 
         Returns the environment unique mac addresses generator
         """
-        return self.idGenerators('mac')
+        return typing.cast('UniqueMacGenerator', self.idGenerators('mac'))
 
-    def nameGenerator(self):
+    def nameGenerator(self) -> typing.Optional['UniqueNameGenerator']:
         """
         Utility method to access provided names generator (inside environment)
 
         Returns the environment unique name generator
         """
-        return self.idGenerators('name')
+        return typing.cast('UniqueNameGenerator', self.idGenerators('name'))
 
-    def gidGenerator(self):
+    def gidGenerator(self) -> typing.Optional['UniqueGIDGenerator']:
         """
         Utility method to access provided names generator (inside environment)
 
         Returns the environment unique global id generator
         """
-        return self.idGenerators('id')
+        return typing.cast('UniqueGIDGenerator', self.idGenerators('id'))
 
     def getUniqueId(self):
         """
@@ -253,9 +264,9 @@ class UserDeployment(Environmentable, Serializable):
             An unique identifier for this object, that is an string and must be
             unique.
         """
-        raise Exception('Base getUniqueId for User Deployment called!!!')
+        raise NotImplementedError('Base getUniqueId for User Deployment called!!!')
 
-    def notifyReadyFromOsManager(self, data):
+    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -283,7 +294,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return State.FINISHED
 
-    def getIp(self):
+    def getIp(self) -> str:
         """
         All services are "IP" services, so this method is a MUST
 
@@ -294,14 +305,13 @@ class UserDeployment(Environmentable, Serializable):
         """
         raise Exception('Base getIp for User Deployment got called!!!')
 
-    def setIp(self, ip):
+    def setIp(self, ip: str):
         """
         This is an utility method, invoked by some os manager to notify what they thinks is the ip for this service.
         If you assign the service IP by your own methods, do not override this
         """
-        pass
 
-    def setReady(self):
+    def setReady(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -335,7 +345,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return State.FINISHED
 
-    def deployForCache(self, cacheLevel):
+    def deployForCache(self, cacheLevel: int):
         """
         Deploys a user deployment as cache.
 
@@ -372,16 +382,16 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('Base deploy for cache invoked! for class {0}'.format(self.__class__.__name__))
+        raise NotImplementedError('Base deploy for cache invoked! for class {0}'.format(self.__class__.__name__))
 
-    def deployForUser(self, user) -> str:
+    def deployForUser(self, user: 'User') -> str:
         """
         Deploys an service instance for an user.
 
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
 
-        The user parameter is not realy neded, but provided. It indicates the
+        The user parameter is not neded, but provided. It indicates the
         Database User Object (see py:mod:`uds.modules`) to which this deployed
         user service will be assigned to.
 
@@ -407,9 +417,9 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('Base deploy for user invoked! for class {0}'.format(self.__class__.__name__))
+        raise NotImplementedError('Base deploy for user invoked! for class {0}'.format(self.__class__.__name__))
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -432,9 +442,9 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('Base check state invoked! for class {0}'.format(self.__class__.__name__))
+        raise NotImplementedError('Base check state invoked! for class {0}'.format(self.__class__.__name__))
 
-    def finish(self):
+    def finish(self) -> None:
         """
         Invoked when the core notices that the deployment of a service has finished.
         (No matter whether it is for cache or for an user)
@@ -447,9 +457,8 @@ class UserDeployment(Environmentable, Serializable):
                not needed, but can be provided (default implementation of base class does
                nothing)
         """
-        pass
 
-    def moveToCache(self, newLevel):
+    def moveToCache(self, newLevel: int) -> str:
         """
         This method is invoked whenever the core needs to move from the current
         cache level to a new cache level an user deployment.
@@ -478,7 +487,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return State.FINISHED
 
-    def userLoggedIn(self, username):
+    def userLoggedIn(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
@@ -492,9 +501,8 @@ class UserDeployment(Environmentable, Serializable):
 
         The user provided is just an string, that is provided by actors.
         """
-        pass
 
-    def userLoggedOut(self, username):
+    def userLoggedOut(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.
@@ -508,9 +516,8 @@ class UserDeployment(Environmentable, Serializable):
 
         The user provided is just an string, that is provided by actor.
         """
-        pass
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         Returns the reason of the error.
 
@@ -525,7 +532,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return 'unknown'
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -541,9 +548,9 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('destroy method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError('destroy method for class {0} not provided!'.format(self.__class__.__name__))
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -560,14 +567,14 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('cancel method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError('cancel method for class {0} not provided!'.format(self.__class__.__name__))
 
-    def reset(self):
+    def reset(self) -> None:
         """
         This method is invoked for "reset" an user service
-        This method is not intended to be a task right now, it's more like the
+        This method is not intended to be a task right now, (so its one step method)
         """
-        raise Exception('reset method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError('reset method for class {0} not provided!'.format(self.__class__.__name__))
 
     def __str__(self):
         """

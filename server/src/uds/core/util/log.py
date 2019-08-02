@@ -30,12 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
+
 
 from uds.core.managers import logManager
-
-import logging
-import six
 
 logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
@@ -91,8 +90,14 @@ def useLog(type_, serviceUniqueId, serviceIp, username, srcIP=None, srcUser=None
     useLogger.info('|'.join([type_, serviceUniqueId, serviceIp, srcIP, srcUser, username, userServiceName, poolName]))
 
 
-def doLog(wichObject, level, message, source=UNKNOWN, avoidDuplicates=True):
-    logger.debug('{} {} {}'.format(wichObject, level, message))
+def doLog(
+        wichObject: typing.Any,
+        level: typing.Union[int, str],
+        message: str,
+        source: str = UNKNOWN,
+        avoidDuplicates: bool = True
+    ):
+    logger.debug('%s %s %s', wichObject, level, message)
     logManager().doLog(wichObject, level, message, source, avoidDuplicates)
 
 
