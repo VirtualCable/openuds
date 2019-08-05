@@ -198,7 +198,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getTitle(self, parent):
         try:
-            return _('Services of %s').format(parent.name)
+            return _('Services of {}').format(parent.name)
         except Exception:
             return _('Current services')
 
