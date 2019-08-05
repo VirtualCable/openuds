@@ -32,12 +32,12 @@
 
 from django.urls import re_path, path
 from django.conf.urls import include
-from uds.core.util.modfinder import loadModulesUrls
 from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import RedirectView
 
 from uds import REST
 import uds.web.views
+from uds.core.util.modfinder import loadModulesUrls
 
 urlpatterns = [
     # Root url placeholder

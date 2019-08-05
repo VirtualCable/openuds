@@ -28,19 +28,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
 
 import logging
 
 # from .login import login, logout
+from uds.web.util.errors import error
 from .service import transportOwnLink, transportIcon, userServiceEnabler, serviceImage, action
 from .auth import authCallback, authInfo, ticketAuth, customAuth
 from .download import download
-from uds.web.util.errors import error
 from .images import image
 from . import modern
 from . import custom
-
-__updated__ = '2018-10-04'
 
 logger = logging.getLogger(__name__)
