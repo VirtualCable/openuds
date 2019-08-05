@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -42,14 +42,17 @@ from uds.core.transports import protocols
 from uds.core.util import encoders
 from uds.core.util import connection
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.environment import Environment
+    from uds import models
+
 logger = logging.getLogger(__name__)
 
 DIRECT_GROUP = _('Direct')
 TUNNELED_GROUP = _('Tunneled')
 
-# Not imported in runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from uds import models
 
 class Transport(Module):
     """
@@ -68,26 +71,26 @@ class Transport(Module):
     # Windows
     # Macintosh
     # Linux
-    supportedOss = OsDetector.desktopOss  # Supported operating systems
+    supportedOss: typing.Tuple = OsDetector.desktopOss  # Supported operating systems
 
     # If this transport is visible via Web, via Thin Client or both
-    webTransport = False
-    tcTransport = False
+    webTransport: bool = False
+    tcTransport: bool = False
 
     # If the link to use transport is provided by transport itself
-    ownLink = False
+    ownLink: bool = False
 
     # Protocol "type". This is not mandatory, but will help
-    protocol = protocols.NONE
+    protocol: str = protocols.NONE
 
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
-    group = DIRECT_GROUP
+    group: str = DIRECT_GROUP
 
-    def __init__(self, environment, values):
-        super(Transport, self).__init__(environment, values)
+    def __init__(self, environment: 'Environment', values: Module.ValuesType):
+        super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values):
+    def initialize(self, values: Module.ValuesType):
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -102,60 +105,59 @@ class Transport(Module):
 
         Default implementation does nothing
         """
-        pass
 
-    def destroy(self):
+    def destroy(self) -> None:
         """
         Invoked when Transport is deleted
         """
-        pass
 
-    def testServer(self, userService: 'models.UserService', ip: str, port: typing.Union[str, int], timeout: int = 4):
-        proxy = userService.deployed_service.service.proxy
+    def testServer(self, userService: 'models.UserService', ip: str, port: typing.Union[str, int], timeout: int = 4) -> bool:
+        proxy: 'models.Proxy' = userService.deployed_service.service.proxy
         if proxy is not None:
             return proxy.doTestServer(ip, port, timeout)
         return connection.testServer(ip, str(port), timeout)
 
-    def isAvailableFor(self, userService: 'models.UserService', ip: str):
+    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
         """
         return False
 
-    def getCustomAvailableErrorMsg(self, userService, ip):
+    def getCustomAvailableErrorMsg(self, userService: 'models.UserService', ip: str) -> str:
         """
         Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
         Override this in yours transports if needed
         """
-        return "Not accessible (using service ip {0})".format(ip)
+        return "Not accessible (using service ip {})".format(ip)
 
     @classmethod
-    def supportsProtocol(cls, protocol):
-        if isinstance(protocol, (list, tuple)):
-            for v in protocol:
-                if cls.supportsProtocol(v) is True:
-                    return True
-            return False
-        return protocol.lower() == cls.protocol.lower()
+    def supportsProtocol(cls, protocol: typing.Union[typing.Iterable, str]):
+        if isinstance(protocol, str):
+            return protocol.lower() == cls.protocol.lower()
+        # Not string group of strings
+        for v in protocol:
+            if cls.supportsProtocol(v):
+                return True
+        return False
 
     @classmethod
-    def supportsOs(cls, osName):
+    def supportsOs(cls, osName: str) -> bool:
         """
         Helper method to check if transport supports requested operating system.
         Class method
         """
-        logger.debug('Checking suported os {0} against {1}'.format(osName, cls.supportedOss))
+        logger.debug('Checking suported os %s against %s', osName, cls.supportedOss)
         return cls.supportedOss.count(osName) > 0
 
     @classmethod
-    def providesConnetionInfo(cls):
+    def providesConnetionInfo(cls) -> bool:
         """
         Helper method to check if transport provides information about connection
         """
         return cls.getConnectionInfo != Transport.getConnectionInfo
 
-    def getConnectionInfo(self, service, user, password):
+    def getConnectionInfo(self, userService: 'models.UserService', user: 'models.User', password: str) -> typing.Dict[str, str]:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
@@ -180,7 +182,7 @@ class Transport(Module):
         """
         return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
 
-    def processedUser(self, userService, user):
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> None:
         """
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification
@@ -188,7 +190,16 @@ class Transport(Module):
         """
         return user.name
 
-    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request) -> typing.Tuple[str, str, typing.Dict[str, str]]:
+    def getUDSTransportScript(
+            self,
+            userService: 'models.UserService',
+            transport: 'models.Transport',
+            ip: str,
+            os: typing.Dict[str, str],
+            user: 'models.User',
+            password: str,
+            request: 'HttpRequest'
+        ) -> typing.Tuple[str, str, typing.Dict[str, str]]:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
@@ -210,20 +221,38 @@ class Transport(Module):
             'O6acQZmbjBCqZoo9Qsg7k9cTcalNkc5flEYAk1mULnddgDM6'\
             'YGmoJgVnDr0=', {'transport': transport.name}
 
-    def getEncodedTransportScript(self, userService, transport, ip, os, user, password, request):
+    def getEncodedTransportScript(
+            self,
+            userService: 'models.UserService',
+            transport: 'models.Transport',
+            ip: str,
+            os: typing.Dict[str, str],
+            user: 'models.User',
+            password: str,
+            request: 'HttpRequest'
+        ) -> typing.Tuple[str, str, typing.Dict[str, str]]:
         """
         Encodes the script so the client can understand it
         """
         script, signature, params = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
-        logger.debug('Transport script: {}'.format(script))
-        return encoders.encode(encoders.encode(script, 'bz2'), 'base64', asText=True).replace('\n', ''), signature, params
+        logger.debug('Transport script: %s', script)
+        return typing.cast(str, encoders.encode(encoders.encode(script, 'bz2'), 'base64', asText=True)).replace('\n', ''), signature, params
 
-    def getLink(self, userService, transport, ip, os, user, password, request):
+    def getLink(
+            self,
+            userService: 'models.UserService',
+            transport: 'models.Transport',
+            ip: str,
+            os: typing.Dict[str, str],
+            user: 'models.User',
+            password: str,
+            request: 'HttpRequest'
+        ) -> str:
         """
         Must override if transport does provides its own link
         If transport provides own link, this method provides the link itself
         """
-        return None
+        return 'https://www.udsenterprise.com'
 
     def __str__(self):
-        return "Base OS Manager"
+        return 'Base OS Manager'

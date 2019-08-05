@@ -136,8 +136,8 @@ class BaseRDPTransport(Transport):
                 self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(self, userService, userName):
-        v = self.processUserPassword(userService, userName, '')
+    def processedUser(self, userService, user):
+        v = self.processUserPassword(userService, user, '')
         return v['username']
 
     def processUserPassword(self, service, user, password):
@@ -182,8 +182,8 @@ class BaseRDPTransport(Transport):
 
         return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
 
-    def getConnectionInfo(self, service, user, password):
-        return self.processUserPassword(service, user, password)
+    def getConnectionInfo(self, userService, user, password):
+        return self.processUserPassword(userService, user, password)
 
     def getScript(self, scriptName, osName, params) -> Tuple[str, str, dict]:
         # Reads script

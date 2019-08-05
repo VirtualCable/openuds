@@ -30,6 +30,7 @@
 """
 import json
 import logging
+import typing
 
 import requests
 
@@ -62,18 +63,18 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
         app_label = 'uds'
 
     @property
-    def url(self):
+    def url(self) -> str:
         return 'http{}://{}:{}'.format('s' if self.ssl is True else '', self.host, self.port)
 
     @property
-    def proxyRequestUrl(self):
+    def proxyRequestUrl(self) -> str:
         return self.url + "/proxyRequest"
 
     @property
-    def testServerUrl(self):
+    def testServerUrl(self) -> str:
         return self.url + "/testServer"
 
-    def doProxyRequest(self, url, data=None, timeout=5):
+    def doProxyRequest(self, url, data: typing.Optional[typing.Any] = None, timeout: int = 5) -> requests.Response:
         d = {
             'url': url
         }
@@ -88,7 +89,7 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
             timeout=timeout
         )
 
-    def doTestServer(self, ip, port, timeout=5):
+    def doTestServer(self, ip: str, port: typing.Union[str, int], timeout=5) -> bool:
         try:
             url = self.testServerUrl + '?host={}&port={}&timeout={}'.format(ip, port, timeout)
             r = requests.get(

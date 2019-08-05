@@ -37,7 +37,7 @@ import socket
 logger = logging.getLogger(__name__)
 
 
-def testServer(host: str, port: typing.Union[int, str], timeOut: int = 4):
+def testServer(host: str, port: typing.Union[int, str], timeOut: int = 4) -> bool:
     try:
         logger.debug('Checking connection to %s:%s with %s seconds timeout', host, port, timeOut)
         sock = socket.create_connection((host, int(port)), timeOut)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,24 +30,25 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
+import typing
+
+if typing.TYPE_CHECKING:
+    from .BaseTransport import Transport
+
 
 logger = logging.getLogger(__name__)
 
 
-class TransportsFactory(object):
-    _factory = None
+class TransportsFactory:
+    _factory: typing.Optional['TransportsFactory'] = None
+    _transports: typing.Dict[str, typing.Type['Transport']]
 
     def __init__(self):
         self._transports = {}
 
     @staticmethod
-    def factory():
-        """
-        Singleton getter
-        """
+    def factory() -> 'TransportsFactory':
         if TransportsFactory._factory is None:
             TransportsFactory._factory = TransportsFactory()
         return TransportsFactory._factory
@@ -55,10 +56,10 @@ class TransportsFactory(object):
     def providers(self):
         return self._transports
 
-    def insert(self, type_):
-        logger.debug('Adding transport {0} as {1}'.format(type_.type(), type_))
+    def insert(self, type_: typing.Type['Transport']) -> None:
+        logger.debug('Adding transport %s as %s', type_.type(), type_)
         typeName = type_.type().lower()
         self._transports[typeName] = type_
 
-    def lookup(self, typeName):
+    def lookup(self, typeName: str) -> typing.Optional[typing.Type['Transport']]:
         return self._transports.get(typeName.lower(), None)

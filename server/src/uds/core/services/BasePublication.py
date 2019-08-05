@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,16 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
 from uds.core import Environmentable
 from uds.core import Serializable
 
-__updated__ = '2018-06-07'
+if typing.TYPE_CHECKING:
+    from uds.core import services
+    from uds.core import osmanagers
+    from uds.core.environment import Environment
+    from uds.models import DeployedServicePublication
 
 
 class Publication(Environmentable, Serializable):
@@ -49,7 +53,7 @@ class Publication(Environmentable, Serializable):
 
     As always, do not forget to invoke base class __init__ if you override it as this::
 
-       super(self.__class__, self).__init__(environment, **kwargs)
+       super().__init__(environment, **kwargs)
 
     This is a MUST, so internal structured gets filled correctly, so don't forget it!.
 
@@ -77,7 +81,14 @@ class Publication(Environmentable, Serializable):
     # : change suggestedTime in your implementation.
     suggestedTime = 10
 
-    def __init__(self, environment, **kwargs):
+    _osmanager: typing.Optional['osmanagers.OSManager']
+    _service: 'services.Service'
+    _revision: int
+    _dbPublication: typing.Optional['DeployedServicePublication']
+    _dsName: str
+    _uuid: str
+
+    def __init__(self, environment: 'Environment', **kwargs):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         We want to use the env, cache and storage methods outside class. If not called, you must implement your own methods
@@ -95,7 +106,7 @@ class Publication(Environmentable, Serializable):
 
         self.initialize()
 
-    def initialize(self):
+    def initialize(self) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -103,9 +114,8 @@ class Publication(Environmentable, Serializable):
         This will get invoked when all initialization stuff is done, so
         you can here access service, osManager, ...
         """
-        pass
 
-    def service(self):
+    def service(self) -> 'services.Service':
         """
         Utility method to access parent service of this publication
 
@@ -115,7 +125,7 @@ class Publication(Environmentable, Serializable):
         """
         return self._service
 
-    def osManager(self):
+    def osManager(self) -> 'osmanagers.OSManager':
         """
         Utility method to access os manager for this publication.
 
@@ -127,27 +137,26 @@ class Publication(Environmentable, Serializable):
         """
         return self._osManager
 
-    def revision(self):
+    def revision(self) -> int:
         """
         Utility method to access the revision of this publication
         This is a numeric value, and is set by core
         """
         return self._revision
 
-    def dsName(self):
+    def dsName(self) -> str:
         """
         Utility method to access the declared deployed service name.
 
         This name is set by core, using the administrator provided data
         at administration interface.
-        '''
-        return self._dsName
-
-    def getUuid(self):
         """
         return self._dsName
 
-    def publish(self):
+    def getUuid(self) -> str:
+        return self._uuid
+
+    def publish(self) -> str:
         """
         This method is invoked whenever the administrator requests a new publication.
 
@@ -180,9 +189,9 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('publish method for class {0} not provided! '.format(self.__class__.__name__))
+        raise NotImplementedError('publish method for class {0} not provided! '.format(self.__class__.__name__))
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -206,9 +215,9 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('checkState method for class {0} not provided!!!'.format(self.__class__.__name__))
+        raise NotImplementedError('checkState method for class {0} not provided!!!'.format(self.__class__.__name__))
 
-    def finish(self):
+    def finish(self) -> None:
         """
         Invoked when Publication manager noticed that the publication has finished.
         This give us the opportunity  of cleaning up things (as stored vars, etc..)
@@ -217,9 +226,8 @@ class Publication(Environmentable, Serializable):
         Default implementation does nothing. You can leave default method if you
         are going to do nothing.
         """
-        pass
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         If a publication produces an error, here we must return the reason why
         it happened. This will be called just after publish or checkPublishingState
@@ -232,7 +240,7 @@ class Publication(Environmentable, Serializable):
         """
         return 'unknown'
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -250,9 +258,9 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('destroy method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError('destroy method for class {0} not provided!'.format(self.__class__.__name__))
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -270,7 +278,7 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('cancel method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError('cancel method for class {0} not provided!'.format(self.__class__.__name__))
 
     def __str__(self):
         """

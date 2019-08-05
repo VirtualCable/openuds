@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +39,16 @@ from uds.core.transports import protocols
 from . import types
 from .BasePublication import Publication
 from .BaseDeployed import UserDeployment
+
+if typing.TYPE_CHECKING:
+    from uds.core import services
+    from uds.core import osmanagers
+    from uds.core.environment import Environment
+    from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
+    from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
+    from uds.core.util.UniqueGIDGenerator import UniqueGIDGenerator
+    from uds.models import DeployedServicePublication
+
 
 class Service(Module):
     """
@@ -178,17 +188,19 @@ class Service(Module):
     # : For example, VDI, VAPP, ...
     servicesTypeProvided: typing.Iterable = types.ALL
 
-    def __init__(self, environment, parent, values=None, uuid=None):
+    _provider: 'services.ServiceProvider'
+
+    def __init__(self, environment, parent: 'services.ServiceProvider', values: Module.ValuesType = None, uuid: typing.Optional[str] = None):
         """
-        Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, parent, values)".
+        Do not forget to invoke this in your derived class using "super().__init__(environment, parent, values)".
         We want to use the env, parent methods outside class. If not called, you must implement your own methods
         cache and storage are "convenient" methods to access _env.cache and _env.storage
         """
-        super(Service, self).__init__(environment, values)
+        Module.__init__(self, environment, values, uuid)
         self._provider = parent
         self.initialize(values)
 
-    def initialize(self, values):
+    def initialize(self, values: Module.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -204,7 +216,7 @@ class Service(Module):
         Default implementation does nothing
         """
 
-    def parent(self):
+    def parent(self) -> 'services.ServiceProvider':
         """
         Utility method to access parent provider for this service
 
@@ -214,7 +226,7 @@ class Service(Module):
         """
         return self._provider
 
-    def requestServicesForAssignation(self, **kwargs):
+    def requestServicesForAssignation(self, **kwargs) -> typing.Iterable[UserDeployment]:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -222,26 +234,26 @@ class Service(Module):
         We will access the returned array in "name" basis. This means that the service will be assigned by "name", so be care that every single service
         returned are not repeated... :-)
         """
-        raise Exception('The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(self.__class__.__name__))
+        raise NotImplementedError('The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(self.__class__.__name__))
 
-    def macGenerator(self):
+    def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
         """
         Utility method to access provided macs generator (inside environment)
 
         Returns the environment unique mac addresses generator
         """
-        return self.idGenerators('mac')
+        return typing.cast('UniqueMacGenerator', self.idGenerators('mac'))
 
-    def nameGenerator(self):
+    def nameGenerator(self) -> typing.Optional['UniqueNameGenerator']:
         """
         Utility method to access provided names generator (inside environment)
 
         Returns the environment unique name generator
         """
-        return self.idGenerators('name')
+        return typing.cast('UniqueNameGenerator', self.idGenerators('name'))
 
     def __str__(self):
         """
         String method, mainly used for debugging purposes
         """
-        return "Base Service Provider"
+        return 'Base Service Provider'

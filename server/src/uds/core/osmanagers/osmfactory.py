@@ -33,10 +33,11 @@
 import logging
 import typing
 
-logger = logging.getLogger(__name__)
-
 if typing.TYPE_CHECKING:
     from .osmanager import OSManager
+
+logger = logging.getLogger(__name__)
+
 
 class OSManagersFactory:
     _factory: typing.Optional['OSManagersFactory'] = None
@@ -46,7 +47,7 @@ class OSManagersFactory:
         self._osManagers = {}
 
     @staticmethod
-    def factory():
+    def factory() -> 'OSManagersFactory':
         if OSManagersFactory._factory is None:
             OSManagersFactory._factory = OSManagersFactory()
         return OSManagersFactory._factory
@@ -54,7 +55,7 @@ class OSManagersFactory:
     def providers(self):
         return self._osManagers
 
-    def insert(self, type_: typing.Type['OSManager']):
+    def insert(self, type_: typing.Type['OSManager']) -> None:
         logger.debug('Adding OS Manager %s as %s', type_.type(), type_)
         typeName = type_.type().lower()
         self._osManagers[typeName] = type_

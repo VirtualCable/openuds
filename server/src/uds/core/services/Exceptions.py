@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,9 +30,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
-__updated__ = '2016-03-16'
+if typing.TYPE_CHECKING:
+    from uds.models import UserService, Transport
 
 
 class ServiceException(Exception):
@@ -44,28 +45,24 @@ class UnsupportedException(ServiceException):
     """
     Reflects that we request an operation that is not supported, i.e. Cancel a publication with snapshots
     """
-    pass
 
 
 class OperationException(ServiceException):
     """
     Reflects that the operation requested can't be acomplished, i.e. remove an snapshot without snapshot reference, cancel non running operation, etc...
     """
-    pass
 
 
 class PublishException(ServiceException):
     """
     Reflects thate the publication can't be done for causes we don't know in advance
     """
-    pass
 
 
 class DeploymentException(ServiceException):
     """
     Reflects that a deployment of a service (at cache, or assigned to user) can't be done for causes we don't know in advance
     """
-    pass
 
 
 class CancelException(ServiceException):
@@ -78,7 +75,6 @@ class InvalidServiceException(ServiceException):
     """
     Invalid service specified. The service is not ready
     """
-    pass
 
 
 class MaxServicesReachedError(ServiceException):
@@ -86,21 +82,18 @@ class MaxServicesReachedError(ServiceException):
     Number of maximum services has been reached, and no more services
     can be created for users.
     """
-    pass
 
 
 class ServiceInMaintenanceMode(ServiceException):
     """
     The service is in maintenance mode and can't be accesed right now
     """
-    pass
 
 
 class ServiceAccessDeniedByCalendar(ServiceException):
     """
     This service can't be accessed right now, probably due to date-time restrictions
     """
-    pass
 
 
 class ServiceNotReadyError(ServiceException):
@@ -108,6 +101,9 @@ class ServiceNotReadyError(ServiceException):
     The service is not ready
     Can include an optional code error
     """
+    code: int
+    service: 'UserService'
+    transport: 'Transport'
     def __init__(self, *args, **kwargs):
         super(ServiceNotReadyError, self).__init__(*args, **kwargs)
         self.code = kwargs.get('code', 0x0000)

@@ -199,4 +199,4 @@ class ServiceProvider(Module):
         Basic implementation, mostly used for debuging and testing, never used
         at user or admin interfaces.
         """
-        return "Base Service Provider"
+        return 'Base Service Provider'
