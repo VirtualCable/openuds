@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,11 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pylint: disable=maybe-no-member
-from __future__ import unicode_literals
+import datetime
+import time
+import logging
+
+import bitarray
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
@@ -40,32 +43,25 @@ from uds.models.Calendar import Calendar
 
 from uds.core.util.Cache import Cache
 
-import datetime
-import time
-import six
-import bitarray
-import logging
-
-__updated__ = '2017-12-12'
 
 logger = logging.getLogger(__name__)
 
 
-class CalendarChecker(object):
-    calendar = None
+class CalendarChecker:
+    calendar: Calendar
 
     # For performance checking
-    updates = 0
-    cache_hit = 0
-    hits = 0
+    updates: int = 0
+    cache_hit: int = 0
+    hits: int = 0
 
     cache = Cache('calChecker')
 
-    def __init__(self, calendar):
+    def __init__(self, calendar: Calendar):
         self.calendar = calendar
 
-    def _updateData(self, dtime):
-        logger.debug('Updating {}'.format(dtime))
+    def _updateData(self, dtime: datetime.datetime):
+        logger.debug('Updating %s', dtime)
         # Else, update the array
         CalendarChecker.updates += 1
 
@@ -141,8 +137,7 @@ class CalendarChecker(object):
             dtime = getSqlDatetime()
 
         # First, try to get data from cache if it is valid
-        cacheKey = six.text_type(hash(self.calendar.modified)) + six.text_type(
-            dtime.date().toordinal()) + self.calendar.uuid + 'checker'
+        cacheKey = str(hash(self.calendar.modified)) + str(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
         cached = CalendarChecker.cache.get(cacheKey, None)
 
         if cached is not None:
@@ -170,9 +165,8 @@ class CalendarChecker(object):
         if offset is None:
             offset = datetime.timedelta(minutes=0)
 
-        cacheKey = six.text_type(hash(self.calendar.modified)) + self.calendar.uuid + six.text_type(
-            offset.seconds) + six.text_type(int(time.mktime(checkFrom.timetuple()))) + 'event' + (
-                       'x' if startEvent is True else '_')
+        cacheKey = str(hash(self.calendar.modified)) + self.calendar.uuid + str(
+            offset.seconds) + str(int(time.mktime(checkFrom.timetuple()))) + 'event' + ('x' if startEvent is True else '_')
         next_event = CalendarChecker.cache.get(cacheKey, None)
         if next_event is None:
             logger.debug('Regenerating cached nextEvent')

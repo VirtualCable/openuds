@@ -958,7 +958,7 @@ class UserInterface(metaclass=UserInterfaceType):
         :py:meth:`serializeForm`, and stores
         the valid values form form fileds inside its corresponding field
         """
-        if values == b'':  # Has nothing
+        if not values:  # Has nothing
             return
 
         try:
@@ -970,7 +970,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 self._gui[k].value = self._gui[k].defValue
 
             values = typing.cast(bytes, encoders.decode(values, 'zip'))
-            if values == b'':  # Has nothing
+            if not values:  # Has nothing
                 return
 
             for txt in values.split(b'\002'):
@@ -996,7 +996,7 @@ class UserInterface(metaclass=UserInterfaceType):
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
     @classmethod
-    def guiDescription(cls, obj=None) -> typing.List[typing.Dict[str, str]]:
+    def guiDescription(cls, obj: typing.Optional['UserInterface'] = None) -> typing.List[typing.Dict[str, str]]:
         """
         This simple method generates the theGui description needed by the
         administration client, so it can
@@ -1007,8 +1007,8 @@ class UserInterface(metaclass=UserInterfaceType):
                     This will only happen (not to be None) in Services.
         """
         logger.debug('Active language for theGui translation: %s', get_language())
-        theGui = cls
-        if obj is not None:
+        theGui: typing.Union[typing.Type['UserInterface'], 'UserInterface'] = cls
+        if obj:
             obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
             theGui = obj
 
