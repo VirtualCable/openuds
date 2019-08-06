@@ -30,14 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import datetime
+import logging
+import typing
 
-from uds.models import NEVER
 from django.utils.translation import ugettext_lazy as _
 from uds.core.managers import statsManager
-import datetime
-
-import logging
+from uds.models import NEVER
 
 logger = logging.getLogger(__name__)
 
@@ -48,13 +47,13 @@ logger = logging.getLogger(__name__)
     CT_LOAD, CT_STORAGE, CT_ASSIGNED, CT_INUSE,
 ) = range(4)
 
-__caRead = None
-__caWrite = None
-__transDict = None
-__typeTitles = None
+__caRead: typing.Dict = {}
+__caWrite: typing.Dict = {}
+__transDict: typing.Dict = {}
+__typeTitles: typing.Dict = {}
 
 
-def addCounter(obj, counterType, counterValue, stamp=None):
+def addCounter(obj: typing.Any, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None) -> bool:
     """
     Adds a counter stat to specified object
 
@@ -64,14 +63,15 @@ def addCounter(obj, counterType, counterValue, stamp=None):
 
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     """
-    if type(obj) not in __caWrite.get(counterType, ()):
-        logger.error('Type {0} does not accepts counter of type {1}'.format(type(obj), counterValue))
+    type_ = type(obj)
+    if type_ not in __caWrite.get(counterType, ()):  # pylint: disable
+        logger.error('Type %s does not accepts counter of type %s', type_, counterValue)
         return False
 
     return statsManager().addCounter(__transDict[type(obj)], obj.id, counterType, counterValue, stamp)
 
 
-def getCounters(obj, counterType, **kwargs):
+def getCounters(obj: typing.Any, counterType: int, **kwargs):
     """
     Get counters
 
@@ -92,20 +92,21 @@ def getCounters(obj, counterType, **kwargs):
     to = kwargs.get('to', datetime.datetime.now())
     limit = kwargs.get('limit', 1000)
     use_max = kwargs.get('use_max', False)
+    type_ = type(obj)
 
-    readFncTbl = __caRead.get(type(obj), None)
+    readFncTbl = __caRead.get(type_)
 
-    if readFncTbl is None:
-        logger.error('Type {0} has no registered stats'.format(type(obj)))
+    if not readFncTbl:
+        logger.error('Type %s has no registered stats', type_)
         return
 
-    fnc = readFncTbl.get(counterType, None)
+    fnc = readFncTbl.get(counterType)
 
-    if fnc is None:
-        logger.error('Type {0} has no registerd stats of type {1}'.format(type(obj), counterType))
+    if not fnc:
+        logger.error('Type %s has no registerd stats of type %s', type_, counterType)
         return
 
-    if kwargs.get('all', None) is not True:
+    if not kwargs.get('all', False):
         owner_ids = fnc(obj)
     else:
         owner_ids = None
@@ -128,17 +129,12 @@ def _initializeData():
     """
     from uds.models import Provider, Service, DeployedService
 
-    global __caWrite
-    global __caRead
-    global __transDict
-    global __typeTitles
-
-    __caWrite = {
+    __caWrite.update({
         CT_LOAD: (Provider,),
         CT_STORAGE: (Service,),
         CT_ASSIGNED: (DeployedService,),
         CT_INUSE: (DeployedService,),
-    }
+    })
 
     # OBtain  ids from variups type of object to retrieve stats
     def get_Id(obj):
@@ -156,23 +152,23 @@ def _initializeData():
             res += get_S_DS_Ids(i)
         return res
 
-    __caRead = {
-            Provider: {
-                CT_LOAD: get_Id,
-                CT_STORAGE: get_P_S_Ids,
-                CT_ASSIGNED: get_P_S_DS_Ids,
-                CT_INUSE: get_P_S_DS_Ids
-            },
-            Service: {
-                CT_STORAGE: get_Id,
-                CT_ASSIGNED: get_S_DS_Ids,
-                CT_INUSE: get_S_DS_Ids
-            },
-            DeployedService: {
-                CT_ASSIGNED: get_Id,
-                CT_INUSE: get_Id
-            }
-    }
+    __caRead.update({
+        Provider: {
+            CT_LOAD: get_Id,
+            CT_STORAGE: get_P_S_Ids,
+            CT_ASSIGNED: get_P_S_DS_Ids,
+            CT_INUSE: get_P_S_DS_Ids
+        },
+        Service: {
+            CT_STORAGE: get_Id,
+            CT_ASSIGNED: get_S_DS_Ids,
+            CT_INUSE: get_S_DS_Ids
+        },
+        DeployedService: {
+            CT_ASSIGNED: get_Id,
+            CT_INUSE: get_Id
+        }
+    })
 
     def _getIds(obj):
         to = type(obj)
@@ -194,19 +190,19 @@ def _initializeData():
 
     # Dict to convert objects to owner types
     # Dict for translations
-    __transDict = {
+    __transDict.update({
         DeployedService: OT_DEPLOYED,
         Service: OT_SERVICE,
         Provider: OT_PROVIDER
-    }
+    })
 
     # Titles of types
-    __typeTitles = {
+    __typeTitles.update({
         CT_ASSIGNED: _('Assigned'),
         CT_INUSE: _('In use'),
         CT_LOAD: _('Load'),
         CT_STORAGE: _('Storage')
-    }
+    })
 
 
 _initializeData()

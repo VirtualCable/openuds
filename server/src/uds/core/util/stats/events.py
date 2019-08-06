@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2013-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import datetime
+import logging
+import typing
 
 from uds.models import NEVER
 from uds.core.managers import statsManager
-import datetime
-
-import logging
 
 logger = logging.getLogger(__name__)
 
+EventTupleType = typing.Tuple[datetime.datetime, str, str, str, str, int]
 
 # Posible events, note that not all are used by every possible owner type
 (
@@ -60,10 +60,10 @@ logger = logging.getLogger(__name__)
 ) = range(4)
 
 
-__transDict = None
+__transDict: typing.Dict = {}
 
 
-def addEvent(obj, eventType, **kwargs):
+def addEvent(obj: typing.Any, eventType: int, **kwargs) -> bool:
     """
     Adds a event stat to specified object
 
@@ -77,7 +77,7 @@ def addEvent(obj, eventType, **kwargs):
     return statsManager().addEvent(__transDict[type(obj)], obj.id, eventType, **kwargs)
 
 
-def getEvents(obj, eventType, **kwargs):
+def getEvents(obj: typing.Any, eventType: int, **kwargs) -> typing.Generator[EventTupleType, None, None]:
     """
     Get events
 
@@ -96,13 +96,14 @@ def getEvents(obj, eventType, **kwargs):
 
     since = kwargs.get('since', NEVER)
     to = kwargs.get('to', datetime.datetime.now())
+    type_ = type(obj)
 
-    if kwargs.get('all', False) is True:
+    if kwargs.get('all', False):
         owner_id = None
     else:
         owner_id = obj.pk
 
-    for i in statsManager().getEvents(__transDict[type(obj)], eventType, owner_id=owner_id, since=since, to=to):
+    for i in statsManager().getEvents(__transDict[type_], eventType, owner_id=owner_id, since=since, to=to):
         val = (datetime.datetime.fromtimestamp(i.stamp), i.fld1, i.fld2, i.fld3, i.fld4, i.event_type)
         yield val
 
@@ -111,21 +112,17 @@ def getEvents(obj, eventType, **kwargs):
 def _initializeData():
     """
     Initializes dictionaries.
-
-    Hides data from global var space
     """
     from uds.models import Provider, Service, DeployedService, Authenticator
 
-    global __transDict
-
     # Dict to convert objects to owner types
     # Dict for translations
-    __transDict = {
+    __transDict.update({
         DeployedService: OT_DEPLOYED,
         Service: OT_SERVICE,
         Provider: OT_PROVIDER,
         Authenticator: OT_AUTHENTICATOR,
-    }
+    })
 
 
 _initializeData()

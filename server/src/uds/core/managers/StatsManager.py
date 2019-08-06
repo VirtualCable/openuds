@@ -66,7 +66,7 @@ class StatsManager:
         model.objects.filter(stamp__lt=minTime).delete()
 
     # Counter stats
-    def addCounter(self, owner_type: int, owner_id: int, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None):
+    def addCounter(self, owner_type: int, owner_id: int, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None) -> bool:
         """
         Adds a new counter stats to database.
 

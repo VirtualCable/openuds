@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2013-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,16 +25,15 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-from __future__ import unicode_literals
-from uds.core.util.Config import GlobalConfig
-from django.http import HttpResponseRedirect
 import logging
+
+from django.http import HttpResponseRedirect
+from uds.core.util.Config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 
 
-class XUACompatibleMiddleware(object):
+class XUACompatibleMiddleware:
     """
     Add a X-UA-Compatible header to the response
     This header tells to Internet Explorer to render page with latest
@@ -50,7 +49,7 @@ class XUACompatibleMiddleware(object):
         return response
 
 
-class RedirectMiddleware(object):
+class RedirectMiddleware:
     NO_REDIRECT = [
         'rest',
         'pam',
@@ -68,7 +67,7 @@ class RedirectMiddleware(object):
                 redirect = False
                 break
 
-        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False and redirect:
+        if redirect and request.is_secure() is False and GlobalConfig.REDIRECT_TO_HTTPS.getBool():
             if request.method == 'POST':
                 url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
             else:
