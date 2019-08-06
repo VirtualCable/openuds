@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,10 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from .UniqueIDGenerator import UniqueIDGenerator
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -49,16 +48,16 @@ class UniqueNameGenerator(UniqueIDGenerator):
             raise KeyError('No more names available. Please, increase service digits.')
         return "%s%0*d" % (self._baseName, length, seq)
 
-    def get(self, baseName, length=5):
+    def get(self, baseName, length=5):  # pylint: disable=arguments-differ
         self.setBaseName(baseName)
         minVal = 0
         maxVal = 10 ** length - 1
         return self.__toName(super(UniqueNameGenerator, self).get(minVal, maxVal), length)
 
-    def transfer(self, baseName, name, toUNGen):
+    def transfer(self, baseName, name, toUNGen):  # pylint: disable=arguments-differ
         self.setBaseName(baseName)
         super(UniqueNameGenerator, self).transfer(int(name[len(self._baseName):]), toUNGen)
 
-    def free(self, baseName, name):
+    def free(self, baseName, name):  # pylint: disable=arguments-differ
         self.setBaseName(baseName)
         super(UniqueNameGenerator, self).free(int(name[len(self._baseName):]))

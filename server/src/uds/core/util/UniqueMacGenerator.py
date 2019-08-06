@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,11 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from .UniqueIDGenerator import UniqueIDGenerator
 import logging
 import re
+
+from .UniqueIDGenerator import UniqueIDGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -53,16 +52,16 @@ class UniqueMacGenerator(UniqueIDGenerator):
         return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
 
     # noinspection PyMethodOverriding
-    def get(self, macRange):
+    def get(self, macRange):  # pylint: disable=arguments-differ
         firstMac, lastMac = macRange.split('-')
         firstMac = self.__toInt(firstMac)
         lastMac = self.__toInt(lastMac)
         return self.__toMac(super(UniqueMacGenerator, self).get(firstMac, lastMac))
 
-    def transfer(self, mac, toUMgen):
+    def transfer(self, mac, toUMgen):  # pylint: disable=arguments-differ
         super(UniqueMacGenerator, self).transfer(self.__toInt(mac), toUMgen)
 
-    def free(self, mac):
+    def free(self, mac):  # pylint: disable=arguments-differ
         super(UniqueMacGenerator, self).free(self.__toInt(mac))
 
     # Release is inherited, no mod needed

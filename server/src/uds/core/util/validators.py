@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,19 +30,24 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import re
+import logging
+import typing
 
 from uds.core.module import Module
 from django.utils.translation import gettext as _
 
-import re
-import logging
-import six
 
 logger = logging.getLogger(__name__)
 
 
-def validateNumeric(numericStr, minValue=None, maxValue=None, returnAsInteger=True, fieldName=None):
+def validateNumeric(
+        numericStr: str,
+        minValue: typing.Optional[int] = None,
+        maxValue: typing.Optional[int] = None,
+        returnAsInteger: bool = True,
+        fieldName: typing.Optional[str] = None
+    ) -> typing.Union[str, int]:
     """
     Validates that a numeric value is valid
     :param numericStr: Numeric value to check (as string)
@@ -53,7 +58,7 @@ def validateNumeric(numericStr, minValue=None, maxValue=None, returnAsInteger=Tr
     :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
     """
     numericStr = numericStr.replace(' ', '')
-    fieldName = fieldName if fieldName is not None else _('Numeric')
+    fieldName = fieldName or _('Numeric')
 
     try:
         numeric = int(numericStr)
@@ -63,7 +68,7 @@ def validateNumeric(numericStr, minValue=None, maxValue=None, returnAsInteger=Tr
         if maxValue is not None and numeric > maxValue:
             raise Module.ValidationException(_('{0} must be lower than or equal to {1}'.format(fieldName, maxValue)))
 
-        numericStr = six.u(str(numeric))
+        numericStr = str(numeric)
 
     except ValueError:
         raise Module.ValidationException(_('{0} contains invalid characters').format(fieldName))
@@ -74,7 +79,7 @@ def validateNumeric(numericStr, minValue=None, maxValue=None, returnAsInteger=Tr
     return numericStr
 
 
-def validatePort(portStr, returnAsInteger=True):
+def validatePort(portStr: str, returnAsInteger: bool = True) -> typing.Union[str, int]:
     """
     Validates that a port number is valid
     :param portStr: port to validate, as string
@@ -84,7 +89,7 @@ def validatePort(portStr, returnAsInteger=True):
     return validateNumeric(portStr, minValue=0, maxValue=65535, returnAsInteger=returnAsInteger, fieldName='Port')
 
 
-def validateTimeout(timeOutStr, returnAsInteger=True):
+def validateTimeout(timeOutStr, returnAsInteger: bool = True) -> typing.Union[str, int]:
     """
     Validates that a timeout value is valid
     :param timeOutStr: timeout to validate
@@ -94,7 +99,7 @@ def validateTimeout(timeOutStr, returnAsInteger=True):
     return validateNumeric(timeOutStr, minValue=0, returnAsInteger=returnAsInteger, fieldName='Timeout')
 
 
-def validateMacRange(macRange):
+def validateMacRange(macRange: str) -> str:
     """
     Corrects mac range (uppercase, without spaces), and checks that is range is valid
     :param macRange: Range to fix

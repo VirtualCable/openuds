@@ -30,10 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 # Helper to acommodate all unique generators in one place
+# pylint: disable=unused-import
 
-from .UniqueGIDGenerator import UniqueGIDGenerator  # @UnusedImport
-from .UniqueMacGenerator import UniqueMacGenerator  # @UnusedImport
-from .UniqueNameGenerator import UniqueNameGenerator  # @UnusedImport
+from .UniqueGIDGenerator import UniqueGIDGenerator
+from .UniqueMacGenerator import UniqueMacGenerator
+from .UniqueNameGenerator import UniqueNameGenerator

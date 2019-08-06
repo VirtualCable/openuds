@@ -6,7 +6,7 @@ Created on Jul 11, 2016
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2013-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,8 +31,8 @@ Created on Jul 11, 2016
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import typing
 
-from __future__ import unicode_literals
 from collections import defaultdict
 from xml.etree import cElementTree
 
@@ -56,6 +56,5 @@ def etree_to_dict(t):
             d[t.tag] = text
     return d
 
-def parse(xml_string):
-    return  etree_to_dict(cElementTree.XML(xml_string))  # @UndefinedVariable
-
+def parse(xml_string: str) -> typing.Dict:
+    return  etree_to_dict(cElementTree.XML(xml_string))

@@ -27,12 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import unicode_literals
-
-import six
 from threading import Thread
-
 import logging
+import queue
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +50,7 @@ class Worker(Thread):
         while self._stop is False:
             try:
                 func, args, kargs = self._tasks.get(block=True, timeout=1)
-            except six.moves.queue.Empty:
+            except queue.Empty:
                 continue
 
             try:
@@ -66,7 +63,7 @@ class Worker(Thread):
 
 class ThreadPool:
     def __init__(self, num_threads, queueSize=DEFAULT_QUEUE_SIZE):
-        self._tasks = six.moves.queue.Queue(queueSize)
+        self._tasks = queue.Queue(queueSize)
         self._numThreads = num_threads
         self._threads = []
 
@@ -74,7 +71,7 @@ class ThreadPool:
         """
         Add a task to the queue
         """
-        if len(self._threads) == 0:
+        if not self._threads:
             for _ in range(self._numThreads):
                 self._threads.append(Worker(self._tasks))
 

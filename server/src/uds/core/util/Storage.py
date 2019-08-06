@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,33 +30,35 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from django.db import transaction
-from uds.models.Storage import Storage as dbStorage
-from uds.core.util import encoders
 import hashlib
 import logging
 import pickle
-import six
+import typing
+
+from django.db import transaction
+from uds.models.Storage import Storage as DBStorage
+from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
 
-class Storage(object):
+class Storage:
+    _owner: str
+    _bownwer: bytes
 
-    def __init__(self, owner):
-        self._owner = owner.encode('utf-8') if isinstance(owner, six.text_type) else owner
+    def __init__(self, owner: typing.Union[str, bytes]):
+        self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
+        self._bowner = self._owner.encode('utf8')
 
-    def __getKey(self, key):
+    def __getKey(self, key: typing.Union[str, bytes]) -> str:
         h = hashlib.md5()
-        h.update(self._owner)
-        h.update(key.encode('utf8') if isinstance(key, six.text_type) else key)
+        h.update(self._bowner)
+        h.update(key.encode('utf8') if isinstance(key, str) else key)
         return h.hexdigest()
 
-    def saveData(self, skey, data, attr1=None):
+    def saveData(self, skey: typing.Union[str, bytes], data: typing.Any, attr1: typing.Optional[str] = None) -> None:
         # If None is to be saved, remove
-        if data == None:
+        if not data:
             self.remove(skey)
             return
 
@@ -66,64 +68,64 @@ class Storage(object):
         data = encoders.encode(data, 'base64', asText=True)
         attr1 = '' if attr1 is None else attr1
         try:
-            dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
+            DBStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
         except Exception:
-            dbStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
+            DBStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
         # logger.debug('Key saved')
 
-    def put(self, skey, data):
+    def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:
         return self.saveData(skey, data)
 
-    def putPickle(self, skey, data, attr1=None):
+    def putPickle(self, skey: typing.Union[str, bytes], data: typing.Any, attr1: typing.Optional[str] = None) -> None:
         return self.saveData(skey, pickle.dumps(data), attr1)  # Protocol 2 is compatible with python 2.7. This will be unnecesary when fully migrated
 
-    def updateData(self, skey, data, attr1=None):
+    def updateData(self, skey: typing.Union[str, bytes], data: typing.Any, attr1: typing.Optional[str] = None) -> None:
         self.saveData(skey, data, attr1)
 
-    def readData(self, skey, fromPickle=False):
+    def readData(self, skey: typing.Union[str, bytes], fromPickle: bool = False) -> typing.Optional[typing.Union[str, bytes]]:
         try:
             key = self.__getKey(skey)
-            logger.debug('Accesing to {0} {1}'.format(skey, key))
-            c = dbStorage.objects.get(pk=key)  # @UndefinedVariable
-            val = encoders.decode(c.data, 'base64')
+            logger.debug('Accesing to %s %s', skey, key)
+            c: DBStorage = DBStorage.objects.get(pk=key)  # @UndefinedVariable
+            val: bytes = typing.cast(bytes, encoders.decode(c.data, 'base64'))
 
             if fromPickle:
                 return val
 
             try:
                 return val.decode('utf-8')  # Tries to encode in utf-8
-            except:
+            except Exception:
                 return val
-        except dbStorage.DoesNotExist:  # @UndefinedVariable
+        except DBStorage.DoesNotExist:  # @UndefinedVariable
             logger.debug('key not found')
             return None
 
-    def get(self, skey):
+    def get(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
         return self.readData(skey)
 
-    def getPickle(self, skey):
+    def getPickle(self, skey: typing.Union[str, bytes]) -> typing.Any:
         v = self.readData(skey, True)
-        if v is not None:
-            v = pickle.loads(v)
-        return v
+        if v:
+            return pickle.loads(typing.cast(bytes, v))
+        return None
 
-    def getPickleByAttr1(self, attr1, forUpdate=False):
+    def getPickleByAttr1(self, attr1: str, forUpdate: bool = False):
         try:
-            query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)
+            query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)
             if forUpdate:
-                query = filter.select_for_update()
-            return pickle.loads(encoders.decode(query[0].data, 'base64'))  # @UndefinedVariable
+                query = query.select_for_update()
+            return pickle.loads(typing.cast(bytes, encoders.decode(query[0].data, 'base64')))  # @UndefinedVariable
         except Exception:
             return None
 
-    def remove(self, skey):
+    def remove(self, skey: typing.Union[str, bytes]) -> None:
         try:
             if isinstance(skey, (list, tuple)):
                 # Process several keys at once
-                dbStorage.objects.filter(key__in=[self.__getKey(k) for k in skey])
+                DBStorage.objects.filter(key__in=[self.__getKey(k) for k in skey])
             else:
                 key = self.__getKey(skey)
-                dbStorage.objects.filter(key=key).delete()  # @UndefinedVariable
+                DBStorage.objects.filter(key=key).delete()  # @UndefinedVariable
         except Exception:
             pass
 
@@ -132,29 +134,27 @@ class Storage(object):
         Use with care. If locked, it must be unlocked before returning
         """
         # dbStorage.objects.lock()  # @UndefinedVariable
-        pass
 
     def unlock(self):
         """
         Must be used to unlock table
         """
         # dbStorage.objects.unlock()  # @UndefinedVariable
-        pass
 
-    def locateByAttr1(self, attr1):
-        if isinstance(attr1, (list, tuple)):
-            query = dbStorage.objects.filter(owner=self._owner, attr1_in=attr1)  # @UndefinedVariable
+    def locateByAttr1(self, attr1: typing.Union[typing.Iterable[str], str]) -> typing.Generator[bytes, None,None]:
+        if isinstance(attr1, str):
+            query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
         else:
-            query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
+            query = DBStorage.objects.filter(owner=self._owner, attr1_in=attr1)  # @UndefinedVariable
 
         for v in query:
-            yield encoders.decode(v.data, 'base64')
+            yield typing.cast(bytes, encoders.decode(v.data, 'base64'))
 
-    def filter(self, attr1, forUpdate=False):
+    def filter(self, attr1: typing.Optional[str], forUpdate: bool = False):
         if attr1 is None:
-            query = dbStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
+            query = DBStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
-            query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
+            query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         if forUpdate:
             query = query.select_for_update()
@@ -162,14 +162,14 @@ class Storage(object):
         for v in query:  # @UndefinedVariable
             yield (v.key, encoders.decode(v.data, 'base64'), v.attr1)
 
-    def filterPickle(self, attr1=None, forUpdate=False):
+    def filterPickle(self, attr1: typing.Optional[str] = None, forUpdate: bool = False):
         for v in self.filter(attr1, forUpdate):
             yield (v[0], pickle.loads(v[1]), v[2])
 
     @staticmethod
-    def delete(owner=None):
+    def delete(owner: typing.Optional[str] = None):
         if owner is None:
-            objects = dbStorage.objects.all()  # @UndefinedVariable
+            objects = DBStorage.objects.all()  # @UndefinedVariable
         else:
-            objects = dbStorage.objects.filter(owner=owner)  # @UndefinedVariable
+            objects = DBStorage.objects.filter(owner=owner)  # @UndefinedVariable
         objects.delete()
