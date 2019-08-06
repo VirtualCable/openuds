@@ -141,7 +141,7 @@ class LogManager:
         else:
             logger.debug('Requested doLog for a type of object not covered: %s', wichObject)
 
-    def getLogs(self, wichObject, limit) -> typing.List[typing.Dict]:
+    def getLogs(self, wichObject: typing.Any, limit: int) -> typing.List[typing.Dict]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """
@@ -149,13 +149,13 @@ class LogManager:
         owner_type = transDict.get(type(wichObject), None)
         logger.debug('Getting log: %s -> %s', wichObject, owner_type)
 
-        if owner_type is not None:
+        if owner_type:
             return self.__getLogs(owner_type, wichObject.id, limit)
-        else:
-            logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
-            return []
 
-    def clearLogs(self, wichObject):
+        logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
+        return []
+
+    def clearLogs(self, wichObject: typing.Any):
         """
         Clears all logs related to wichObject
 

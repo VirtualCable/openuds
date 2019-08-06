@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,23 +30,24 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
 
 import os.path
 import pkgutil
 import sys
 import logging
-import uds.dispatchers  # @UnusedImport
+import typing
+
+# Forces dispatchers to be already present
+import uds.dispatchers  # pylint: disable=unused-import
 
 logger = logging.getLogger(__name__)
 
-patterns = []
+patterns: typing.List = []
 
 
 def loadModulesUrls():
     logger.debug('Looking for dispatching modules')
-    global patterns
-    if len(patterns) == 0:
+    if not patterns:
         try:
             modName = 'uds.dispatchers'
             pkgpath = os.path.dirname(sys.modules[modName].__file__)
@@ -54,12 +55,14 @@ def loadModulesUrls():
                 fullModName = '%s.%s.urls' % (modName, name)
                 try:
                     mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], 0)
-                    logger.debug('Lodaded mod {}, url {}'.format(mod, mod.urlpatterns))
-                    patterns += mod.urlpatterns
-                except:
+                    logger.debug('Lodaded mod %s, url %s', mod, mod.urlpatterns)
+                    # Append patters from mod
+                    for up in mod.urlpatterns:
+                        patterns.append(up)
+
+                except Exception:
                     logger.exception('Loading patterns')
-        except Exception as e:
+        except Exception:
             logger.exception('Processing dispatchers loading')
-            pass
 
     return patterns

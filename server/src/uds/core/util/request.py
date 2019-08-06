@@ -31,8 +31,8 @@
 """
 import threading
 import logging
-import typing
 import datetime
+import typing
 
 from django.http import HttpRequest, HttpResponse
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,29 +30,24 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import sys
+import os
+import datetime
+import typing
 
 from django.utils import formats
 from django.utils.translation import ugettext
 import django.template.defaultfilters as filters
 
-import datetime
 
-import sys
-import os
-import six
-
-__updated__ = '2018-01-24'
-
-
-class DictAsObj(object):
+class DictAsObj:
     """
     Returns a mix between a dict and an obj
     Can be accesses as .xxxx or ['xxx']
     """
 
-    def __init__(self, dct=None, **kwargs):
-        if dct is not None:
+    def __init__(self, dct: typing.Optional[typing.Dict[str, typing.Any]] = None, **kwargs):
+        if dct:
             self.__dict__.update(dct)
         self.__dict__.update(kwargs)
 
@@ -65,11 +60,12 @@ class DictAsObj(object):
         )
 
 
+# pylint: disable=protected-access
 class CaseInsensitiveDict(dict):
 
     @classmethod
     def _k(cls, key):
-        return key.lower() if isinstance(key, six.text_type) else key
+        return key.lower() if isinstance(key, str) else key
 
     def __init__(self, *args, **kwargs):
         super(CaseInsensitiveDict, self).__init__(*args, **kwargs)
@@ -148,19 +144,15 @@ def secondsToString(seconds):
     return ', '.join(res)
 
 
-def b2(s):
+def b2(s: str):
     """
     Returns a b'' string on python2, or str on python3
     """
-    if six.PY2:
-        return s.encode('utf8')
     return s
 
 
-def u2(s):
+def u2(s: str):
     """
     returns an u'' string on python2, or str on python3
     """
-    if six.PY2:
-        return s.decode('utf8')
     return s

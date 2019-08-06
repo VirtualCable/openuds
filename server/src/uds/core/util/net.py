@@ -30,10 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
 import re
-import six
 import logging
+import typing
+
+NetworkType = typing.Tuple[int, int]
+NetworklistType = typing.List[NetworkType]
 
 logger = logging.getLogger(__name__)
 
@@ -47,20 +49,20 @@ reRange = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})-(
 reHost = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 
 
-def ipToLong(ip):
+def ipToLong(ip: str) -> int:
     """
     convert decimal dotted quad string to long integer
     """
     try:
         hexn = int(''.join(["%02X" % int(i) for i in ip.split('.')]), 16)
-        logger.debug('IP {} is {}'.format(ip, hexn))
+        logger.debug('IP %s is %s', ip, hexn)
         return hexn
     except Exception as e:
-        logger.error('Ivalid value: {}'.format(e))
+        logger.error('Ivalid value: %s (%s)', ip, e)
         return 0  # Invalid values will map to "0.0.0.0" --> 0
 
 
-def longToIp(n):
+def longToIp(n: int) -> str:
     """
     convert long int to dotted quad string
     """
@@ -73,11 +75,11 @@ def longToIp(n):
             d >>= 8
 
         return '.'.join(q)
-    except:
+    except Exception:
         return '0.0.0.0'  # Invalid values will map to "0.0.0.0"
 
 
-def networksFromString(strNets, allowMultipleNetworks=True):
+def networksFromString(strNets: str, allowMultipleNetworks: bool = True) -> typing.Union[NetworklistType, NetworkType]:
     """
     Parses the network from strings in this forms:
       - A.* (or A.*.* or A.*.*.*)
@@ -92,7 +94,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
     """
 
     inputString = strNets
-    logger.debug('Getting network from {}'.format(strNets))
+    logger.debug('Getting network from %s', strNets)
 
     def check(*args):
         for n in args:
@@ -117,7 +119,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
         res = []
         for strNet in re.split('[;,]', strNets):
             if strNet != '':
-                res.append(networksFromString(strNet, False))
+                res.append(typing.cast(NetworkType, networksFromString(strNet, False)))
         return res
 
     strNets = strNets.replace(' ', '')
@@ -177,17 +179,17 @@ def networksFromString(strNets, allowMultipleNetworks=True):
         # No pattern recognized, invalid network
         raise Exception()
     except Exception as e:
-        logger.error('Invalid network found: {} {}'.format(strNets, e))
+        logger.error('Invalid network found: %s %s', strNets, e)
         raise ValueError(inputString)
 
 
-def ipInNetwork(ip, network):
-    if isinstance(ip, six.string_types):
+def ipInNetwork(ip: typing.Union[str, int], network: typing.Union[str, NetworklistType]) -> bool:
+    if isinstance(ip, str):
         ip = ipToLong(ip)
-    if isinstance(network, six.string_types):
-        network = networksFromString(network)
+    if isinstance(network, str):
+        network = typing.cast(NetworklistType, networksFromString(network))
 
-    for net in network:
+    for net in typing.cast(NetworklistType, network):
         if net[0] <= ip <= net[1]:
             return True
     return False

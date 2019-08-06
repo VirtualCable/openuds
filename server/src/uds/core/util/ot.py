@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,9 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-__updated__ = '2019-01-24'
+import logging
+import typing
 
 from uds.models import (
     Provider, Service, OSManager, Transport,
@@ -41,7 +40,6 @@ from uds.models import (
     StatsEvents, Calendar, CalendarRule,
     Proxy, MetaPool, Account
 )
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -64,24 +62,25 @@ PROXY_TYPE = 16
 METAPOOL_TYPE = 15
 ACCOUNT_TYPE = 16
 
+objTypeDict: typing.Dict[typing.Type, int] = {
+    Provider: PROVIDER_TYPE,
+    Service: SERVICE_TYPE,
+    OSManager: OSMANAGER_TYPE,
+    Transport: TRANSPORT_TYPE,
+    Network: NETWORK_TYPE,
+    ServicePool: POOL_TYPE,
+    UserService: USER_SERVICE_TYPE,
+    Authenticator: AUTHENTICATOR_TYPE,
+    User: USER_TYPE,
+    Group: GROUP_TYPE,
+    StatsCounters: STATS_COUNTER_TYPE,
+    StatsEvents: STATS_EVENTS_TYPE,
+    Calendar: CALENDAR_TYPE,
+    CalendarRule: CALENDAR_RULE_TYPE,
+    Proxy: PROXY_TYPE,
+    MetaPool: METAPOOL_TYPE,
+    Account: ACCOUNT_TYPE
+}
 
-def getObjectType(obj):
-    return {
-        Provider: PROVIDER_TYPE,
-        Service: SERVICE_TYPE,
-        OSManager: OSMANAGER_TYPE,
-        Transport: TRANSPORT_TYPE,
-        Network: NETWORK_TYPE,
-        ServicePool: POOL_TYPE,
-        UserService: USER_SERVICE_TYPE,
-        Authenticator: AUTHENTICATOR_TYPE,
-        User: USER_TYPE,
-        Group: GROUP_TYPE,
-        StatsCounters: STATS_COUNTER_TYPE,
-        StatsEvents: STATS_EVENTS_TYPE,
-        Calendar: CALENDAR_TYPE,
-        CalendarRule: CALENDAR_RULE_TYPE,
-        Proxy: PROXY_TYPE,
-        MetaPool: METAPOOL_TYPE,
-        Account: ACCOUNT_TYPE
-    }.get(type(obj))
+def getObjectType(obj: typing.Any) -> typing.Optional[int]:
+    return objTypeDict.get(type(obj))

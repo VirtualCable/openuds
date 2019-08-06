@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,51 +30,53 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
-
-class StateQueue(object):
+class StateQueue:
+    _queue: typing.List[typing.Any]
+    _current: typing.Optional[typing.Any]
 
     def __init__(self):
-        self.reset()
+        self._queue = []
+        self._current = None
 
     def __str__(self):
         res = '<StateQueue Current: %s, Queue: (%s)>' % (self._current, ','.join(state for state in self._queue))
         return res
 
-    def clearQueue(self):
-        self._queue = []
+    def clearQueue(self) -> None:
+        self._queue.clear()
 
-    def reset(self):
-        self._queue = []
+    def reset(self) -> None:
+        self._queue.clear()
         self._current = None
 
-    def getCurrent(self):
+    def getCurrent(self) -> typing.Any:
         return self._current
 
-    def setCurrent(self, newState):
+    def setCurrent(self, newState: typing.Any) -> typing.Any:
         self._current = newState
         return self._current
 
-    def contains(self, state):
+    def contains(self, state: typing.Any) -> bool:
         # if self._queue.co
         for s in self._queue:
             if s == state:
                 return True
         return False
 
-    def push_back(self, state):
+    def push_back(self, state: typing.Any) -> None:
         self._queue.append(state)
 
-    def push_front(self, state):
+    def push_front(self, state: typing.Any) -> None:
         self._queue.insert(0, state)
 
-    def pop_front(self):
-        if len(self._queue) > 0:
+    def pop_front(self) -> typing.Optional[typing.Any]:
+        if self._queue:
             return self._queue.pop(0)
         return None
 
-    def remove(self, state):
+    def remove(self, state: typing.Any):
         try:
             self._queue.remove(state)
         except Exception:

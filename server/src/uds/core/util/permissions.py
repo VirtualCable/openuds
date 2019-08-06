@@ -31,10 +31,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from uds.models import Permissions
 from uds.core.util import ot
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import User, Group
 
 logger = logging.getLogger(__name__)
 
@@ -44,15 +48,15 @@ PERMISSION_MANAGEMENT = Permissions.PERMISSION_MANAGEMENT
 PERMISSION_NONE = Permissions.PERMISSION_NONE
 
 
-def clean(obj):
+def clean(obj: typing.Any) -> None:
     Permissions.cleanPermissions(ot.getObjectType(obj), obj.pk)
 
 
-def getPermissions(obj):
+def getPermissions(obj: typing.Any) -> typing.List[Permissions]:
     return list(Permissions.enumeratePermissions(object_type=ot.getObjectType(obj), object_id=obj.pk))
 
 
-def getEffectivePermission(user, obj, root=False):
+def getEffectivePermission(user: 'User', obj: typing.Any, root: bool = False):
     if user.is_admin is True:
         return PERMISSION_ALL
 
@@ -65,25 +69,31 @@ def getEffectivePermission(user, obj, root=False):
     return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
 
 
-def addUserPermission(user, obj, permission=PERMISSION_READ):
+def addUserPermission(user: 'User', obj: typing.Any, permission: int = PERMISSION_READ):
     # Some permissions added to some object types needs at least READ_PERMISSION on parent
     Permissions.addPermission(user=user, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
 
 
-def addGroupPermission(group, obj, permission=PERMISSION_READ):
+def addGroupPermission(group: 'Group', obj: typing.Any, permission: int = PERMISSION_READ):
     Permissions.addPermission(group=group, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
 
 
-def checkPermissions(user, obj, permission=PERMISSION_ALL, root=False):
+def checkPermissions(user: 'User', obj: typing.Any, permission: int = PERMISSION_ALL, root: bool = False):
     return getEffectivePermission(user, obj, root) >= permission
 
 
-def getPermissionName(perm):
+def getPermissionName(perm) -> str:
     return Permissions.permissionAsString(perm)
 
 
-def revokePermissionById(permId):
+def revokePermissionById(permId: str) -> None:
+    """Revokes a permision by its uuid
+
+    Arguments:
+        permId {str} -- uuid of permission
+
+    """
     try:
-        return Permissions.objects.get(uuid=permId).delete()
+        Permissions.objects.get(uuid=permId).delete()
     except Exception:
-        return None
+        pass

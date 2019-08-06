@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -58,7 +58,7 @@ __nameLevels = {
 }
 
 # Reverse dict of names
-__valueLevels = dict((v, k) for k, v in __nameLevels.items())
+__valueLevels = {v: k for k, v in __nameLevels.items()}
 
 
 def logLevelFromStr(level: str) -> int:
@@ -68,11 +68,21 @@ def logLevelFromStr(level: str) -> int:
     return __nameLevels.get(level.upper(), OTHER)
 
 
-def logStrFromLevel(level):
+def logStrFromLevel(level: int) -> str:
     return __valueLevels.get(level, 'OTHER')
 
 
-def useLog(type_, serviceUniqueId, serviceIp, username, srcIP=None, srcUser=None, userServiceName=None, poolName=None):
+def useLog(
+        type_: str,
+        serviceUniqueId:
+        str,
+        serviceIp: str,
+        username: str,
+        srcIP: typing.Optional[str] = None,
+        srcUser: typing.Optional[str] = None,
+        userServiceName: typing.Optional[str] = None,
+        poolName: typing.Optional[str] = None
+    ):
     """
     Logs an "use service" event (logged from actors)
     :param type_: Type of event (commonly 'login' or 'logout')
@@ -101,7 +111,7 @@ def doLog(
     logManager().doLog(wichObject, level, message, source, avoidDuplicates)
 
 
-def getLogs(wichObject, limit=None):
+def getLogs(wichObject: typing.Any, limit: typing.Optional[int] = None) -> typing.List[typing.Dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
@@ -113,7 +123,7 @@ def getLogs(wichObject, limit=None):
     return logManager().getLogs(wichObject, limit)
 
 
-def clearLogs(wichObject):
+def clearLogs(wichObject: typing.Any):
     """
     Clears the logs associated with the object using the logManager
     """

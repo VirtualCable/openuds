@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,11 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import re
-import six
 import logging
+import typing
+
 from .tools import DictAsObj
 
 logger = logging.getLogger(__name__)
@@ -70,7 +69,7 @@ Other = 'Other'
 
 knownBrowsers = (Firefox, Seamonkey, Chrome, Chromium, Safari, Opera, IExplorer, Other)
 
-browsersREs = {
+browsersREs: typing.Dict[str, typing.Tuple] = {
     Firefox: (re.compile(r'Firefox/([0-9.]+)'),),
     Seamonkey: (re.compile(r'Seamonkey/([0-9.]+)'),),
     Chrome: (re.compile(r'Chrome/([0-9.]+)'),),
@@ -80,7 +79,7 @@ browsersREs = {
     IExplorer: (re.compile(r';MSIE ([0-9.]+);'), re.compile(r'Trident/.*rv:([0-9.]+)'),)
 }
 
-browserRules = {
+browserRules: typing.Dict[str, typing.Tuple] = {
     Chrome: (Chrome, (Chromium, Opera)),
     Firefox: (Firefox, (Seamonkey,)),
     IExplorer: (IExplorer, ()),
@@ -91,7 +90,7 @@ browserRules = {
 }
 
 
-def getOsFromUA(ua):
+def getOsFromUA(ua: typing.Optional[str]) -> DictAsObj:  # pylint: disable=too-many-branches
     """
     Basic OS Client detector (very basic indeed :-))
     """
@@ -104,7 +103,7 @@ def getOsFromUA(ua):
     for os in knownOss:
         try:
             ua.index(os)
-            res.OS = os
+            res.OS = os  # type: ignore
             break
         except Exception:
             pass
@@ -112,7 +111,7 @@ def getOsFromUA(ua):
     match = None
 
     ruleKey, ruleValue = None, None
-    for ruleKey, ruleValue in six.iteritems(browserRules):
+    for ruleKey, ruleValue in browserRules.items():
         must, mustNot = ruleValue
 
         for mustRe in browsersREs[must]:
@@ -133,8 +132,8 @@ def getOsFromUA(ua):
             break
 
     if match is not None:
-        res.Browser = ruleKey  # pylint: disable=undefined-loop-variable
-        res.Version = match.groups(1)[0]
+        res.Browser = ruleKey  # type: ignore
+        res.Version = match.groups(1)[0]  # type: ignore
 
     return res
 

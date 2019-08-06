@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_noop as _, ugettext_lazy
 
 
 # States for different objects. Not all objects supports all States
-class State(object):
+class State:
     """
     This class represents possible states for objects at database.
     Take in consideration that objects do not have to support all states, they are here for commodity

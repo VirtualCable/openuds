@@ -67,7 +67,7 @@ class Permissions(UUIDModel):
     permission = models.SmallIntegerField(default=PERMISSION_NONE, db_index=True)
 
     @staticmethod
-    def permissionAsString(perm):
+    def permissionAsString(perm: int) -> str:
         return {
             Permissions.PERMISSION_NONE: _('None'),
             Permissions.PERMISSION_READ: _('Read'),
