@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,23 +30,22 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import pickle
+import logging
+import typing
 
 from uds.core.serializable import Serializable
 from uds.core.util import encoders
-import pickle
-import six
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Attribute(object):
+class Attribute:
+    _type: typing.Type
+    _value: typing.Optional[typing.Any]
 
-    def __init__(self, theType, value=None):
+    def __init__(self, theType: typing.Type, value: typing.Optional[typing.Any] = None):
         self._type = theType
-        self._value = None
         self.setValue(value)
 
     def getType(self):
@@ -58,7 +57,7 @@ class Attribute(object):
     def getStrValue(self):
         return str(self._value)
 
-    def setValue(self, value):
+    def setValue(self, value: typing.Any):
         if value is None:
             self._value = self._type()
         else:
@@ -75,8 +74,11 @@ class AutoAttributes(Serializable):
     Access attrs as "self._attr1, self._attr2"
     """
 
+    _dict: typing.Dict
+
     def __init__(self, **kwargs):
-        self.dict = None
+        super().__init__()
+        self.dict = {}
         self.declare(**kwargs)
 
     def __getattribute__(self, name):
@@ -92,21 +94,21 @@ class AutoAttributes(Serializable):
 
     def declare(self, **kwargs):
         d = {}
-        for key, typ in six.iteritems(kwargs):
+        for key, typ in kwargs.items():
             d[key] = Attribute(typ)
         self.dict = d
 
-    def marshal(self):
-        return encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.dict.items()]), 'bz2')
+    def marshal(self) -> bytes:
+        return typing.cast(bytes, encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.dict.items()]), 'bz2'))
 
-    def unmarshal(self, data):
-        if data == b'':  # Can be empty
+    def unmarshal(self, data: bytes):
+        if not data:  # Can be empty
             return
         # We keep original data (maybe incomplete)
         try:
-            data = encoders.decode(data, 'bz2')
+            data = typing.cast(bytes, encoders.decode(data, 'bz2'))
         except Exception:  # With old zip encoding
-            data = encoders.decode(data, 'zip')
+            data = typing.cast(bytes, encoders.decode(data, 'zip'))
         # logger.debug('DATA: %s', data)
         for pair in data.split(b'\2'):
             k, v = pair.split(b'\1')
@@ -115,6 +117,6 @@ class AutoAttributes(Serializable):
 
     def __str__(self):
         str_ = '<AutoAttribute '
-        for k, v in six.iteritems(self.dict):
+        for k, v in self.dict.items():
             str_ += "%s (%s) = %s" % (k, v.getType(), v.getStrValue())
         return str_ + '>'

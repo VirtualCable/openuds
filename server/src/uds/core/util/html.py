@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,22 +30,29 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import datetime
+import logging
+import typing
 
 from django.utils.translation import get_language
-from uds.core.util import OsDetector
 from django.utils import formats
-from uds.core.managers import cryptoManager
+from uds.core.util import OsDetector
 
-import six
-import logging
-
-__updated__ = '2019-02-08'
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
+_browsers: typing.Dict[str, typing.Tuple] = {
+    'ie': (OsDetector.IExplorer,),
+    'opera': (OsDetector.Opera,),
+    'firefox': (OsDetector.Firefox, OsDetector.Seamonkey),
+    'chrome': (OsDetector.Chrome, OsDetector.Chromium),
+    'safari': (OsDetector.Safari,),
+}
 
-def udsLink(request, ticket, scrambler):
+
+def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
 
     if request.is_secure():
         proto = 'udss'
@@ -55,17 +62,15 @@ def udsLink(request, ticket, scrambler):
     return "{}://{}{}/{}".format(proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler)
 
 
-def udsAccessLink(request, serviceId, transportId):
+def udsAccessLink(request: 'HttpRequest', serviceId: str, transportId: str) -> str:
     return 'udsa://{}/{}'.format(serviceId, transportId)
 
 
-def udsMetaLink(request, serviceId):
+def udsMetaLink(request: 'HttpRequest', serviceId: str) -> str:
     return 'udsa://{}/{}'.format(serviceId, 'meta')
 
 
-def parseDate(dateToParse):
-    import datetime
-
+def parseDate(dateToParse) -> datetime.date:
     if get_language() == 'fr':
         date_format = '%d/%m/%Y'
     else:
@@ -74,7 +79,7 @@ def parseDate(dateToParse):
     return datetime.datetime.strptime(dateToParse, date_format).date()
 
 
-def dateToLiteral(date):
+def dateToLiteral(date) -> str:
     # Fix for FR lang for datepicker
     if get_language() == 'fr':
         date = date.strftime('%d/%m/%Y')
@@ -84,8 +89,7 @@ def dateToLiteral(date):
     return date
 
 
-def extractKey(dictionary, key, **kwargs):
-
+def extractKey(dictionary: typing.Dict, key: typing.Any, **kwargs) -> str:
     format_ = kwargs.get('format', '{0}')
     default = kwargs.get('default', '')
 
@@ -97,16 +101,7 @@ def extractKey(dictionary, key, **kwargs):
     return value
 
 
-_browsers = {
-    'ie': [OsDetector.IExplorer],
-    'opera': [OsDetector.Opera],
-    'firefox': [OsDetector.Firefox, OsDetector.Seamonkey],
-    'chrome': [OsDetector.Chrome, OsDetector.Chromium],
-    'safari': [OsDetector.Safari],
-}
-
-
-def checkBrowser(request, browser):
+def checkBrowser(request: 'HttpRequest', browser: str) -> bool:
     """
     Known browsers right now:
     ie[version]
@@ -116,14 +111,14 @@ def checkBrowser(request, browser):
     needs_version = 0
     needs = ''
 
-    for b, requires in six.iteritems(_browsers):
+    for b, requires in _browsers.items():
         if browser.startswith(b):
             if request.os.Browser not in requires:
                 return False
-            browser = browser[len(b):]
+            browser = browser[len(b):]  # remove "browser name" from string
             break
 
-    browser += ' '  # So we ensure we have at least beowser 0
+    browser += ' '  # So we ensure we have at least beowser[0]
 
     if browser[0] == '<' or browser[0] == '>' or browser[0] == '=':
         needs = browser[0]
@@ -140,9 +135,9 @@ def checkBrowser(request, browser):
         version = int(request.os.Version.split('.')[0])
         if needs == '<':
             return version < needs_version
-        elif needs == '>':
+        if needs == '>':
             return version > needs_version
-        elif needs == '=':
+        if needs == '=':
             return version == needs_version
 
         return True
@@ -151,6 +146,6 @@ def checkBrowser(request, browser):
 
 
 # debug setting in context
-def context(request):
+def context(request: 'HttpRequest'):
     from django.conf import settings
     return {'DEBUG': settings.DEBUG}

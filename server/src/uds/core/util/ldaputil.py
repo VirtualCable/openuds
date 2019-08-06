@@ -30,27 +30,26 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pylint: disable=no-name-in-module,import-error, maybe-no-member
-from __future__ import unicode_literals
-
-from django.utils.translation import ugettext as _
+import logging
+import typing
 
 import ldap.filter
-import logging
+
+
+from django.utils.translation import ugettext as _
 from uds.core.util import tools
 
 logger = logging.getLogger(__name__)
 
 
 class LDAPError(Exception):
-
     @staticmethod
-    def reraise(e):
+    def reraise(e: typing.Any):
         _str = _('Connection error: ')
         if hasattr(e, 'message') and isinstance(e.message, dict):
-            _str += ', '.join((e.message.get('info', ''), e.message.get('desc')))
+            _str += '{}, {}'.format(e.message.get('info', ''), e.message.get('desc'))
         else:
-            _str += "{}".format(e)
+            _str += '{}'.format(e)
         raise LDAPError(_str)
 
 
@@ -61,7 +60,7 @@ def escape(value):
     return ldap.filter.escape_filter_chars(tools.b2(value))
 
 
-def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=False):
+def connection(username: str, passwd: typing.Union[str, bytes], host: str, port: int = -1, ssl: bool = False, timeout: int = 3, debug: bool = False) -> typing.Any:
     """
     Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
     @param username: Username for connection validation
@@ -69,19 +68,19 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
     @return: Connection established
     @raise exception: If connection could not be established
     """
-    logger.debug('Login in to {} as user {}'.format(host, username))
+    logger.debug('Login in to %s as user %s', host, username)
     l = None
-    if isinstance(password, str):
-        password = password.encode('utf-8')
+    password = passwd.encode('utf-8') if isinstance(passwd, str) else passwd
+
     try:
         if debug:
             ldap.set_option(ldap.OPT_DEBUG_LEVEL, 9)
         ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
-        schema = ssl and 'ldaps' or 'ldap'
+        schema = 'ldaps' if ssl else 'ldap'
         if port == -1:
-            port = ssl and 636 or 389
+            port = 636 if ssl else 389
         uri = "{}://{}:{}".format(schema, host, port)
-        logger.debug('Ldap uri: {}'.format(uri))
+        logger.debug('Ldap uri: %s', uri)
 
         l = ldap.initialize(uri=uri)
         l.set_option(ldap.OPT_REFERRALS, 0)
@@ -101,14 +100,21 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
     return l
 
 
-def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTREE):
+def getAsDict(
+        con: typing.Any,
+        base: str,
+        ldapFilter: str,
+        attrList: typing.Optional[typing.Iterable[str]],
+        sizeLimit: int,
+        scope=ldap.SCOPE_SUBTREE
+    ) -> typing.Generator[typing.Dict[str, typing.Union[str, typing.List[str]]], None, None]:
     """
     Makes a search on LDAP, adjusting string to required type (ascii on python2, str on python3).
     returns an generator with the results, where each result is a dictionary where it values are always a list of strings
     """
-    logger.debug('Filter: {}, attr list: {}'.format(ldapFilter, attrList))
+    logger.debug('Filter: %s, attr list: %s', ldapFilter, attrList)
 
-    if attrList is not None:
+    if attrList:
         attrList = [i for i in attrList]
 
     res = None
@@ -127,7 +133,7 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
         logger.exception('Exception connection:')
         raise LDAPError('{}'.format(e))
 
-    logger.debug('Result of search {} on {}: {}'.format(ldapFilter, base, res))
+    logger.debug('Result of search %s on %s: %s', ldapFilter, base, res)
 
     if res is not None:
         for r in res:
@@ -146,16 +152,24 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
             yield dct
 
 
-def getFirst(con, base, objectClass, field, value, attributes=None, sizeLimit=50):
+def getFirst(
+        con: typing.Any,
+        base: str,
+        objectClass: str,
+        field: str,
+        value: str,
+        attributes: typing.Optional[typing.Iterable[str]] = None,
+        sizeLimit: int = 50
+    ):
     """
     Searchs for the username and returns its LDAP entry
     @param username: username to search, using user provided parameters at configuration to map search entries.
     @param objectClass: Objectclass of the user mane username to search.
     @return: None if username is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
     """
-    value = ldap.filter.escape_filter_chars(tools.b2(value))
+    value = ldap.filter.escape_filter_chars(value)
     # Convert atttribute list to bynary ONLY on python2
-    attrList = [field] + [i for i in attributes]
+    attrList = [field] + [i for i in attributes] if attributes else []
 
     ldapFilter = '(&(objectClass={})({}={}))'.format(objectClass, field, value)
 
@@ -170,7 +184,7 @@ def getFirst(con, base, objectClass, field, value, attributes=None, sizeLimit=50
 
 
 # Recursive delete
-def recursive_delete(con, base_dn):
+def recursive_delete(con: typing.Any, base_dn: str):
     search = con.search_s(base_dn, ldap.SCOPE_ONELEVEL)
 
     for dn, _ in search:
@@ -179,4 +193,3 @@ def recursive_delete(con, base_dn):
         con.delete_s(dn)
 
     con.delete_s(base_dn)
-

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,40 +31,43 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=no-name-in-module,import-error, maybe-no-member
-from __future__ import unicode_literals
+import os
+import io
+import logging
+from urllib.parse import urlparse
+import typing
 
 from django.core.cache import caches
 from django.core.files import File
 from django.core.files.storage import Storage
 from django.conf import settings
-from six.moves.urllib import parse as urlparse  # @UnresolvedImport
 
 from uds.models import DBFile
 from uds.models import getSqlDatetime
 
 from .tools import DictAsObj
 
-import six
-import os
-import logging
 
 logger = logging.getLogger(__name__)
 
 
 class FileStorage(Storage):
+    _base_url: str
+    cache: typing.Any
 
     def __init__(self, *args, **kwargs):
         self._base_url = getattr(settings, 'FILE_STORAGE', '/uds/utility/files')
         if self._base_url[-1] != '/':
             self._base_url += '/'
 
-        cacheName = getattr(settings, 'FILE_CACHE', 'memory')
+        cacheName: str = getattr(settings, 'FILE_CACHE', 'memory')
 
         try:
             cache = caches[cacheName]
         except Exception:
             logger.info('No cache for FileStorage configured.')
-            cache = None
+            self.cache = None
+            return
 
         self.cache = cache
         if 'owner' in kwargs:
@@ -73,9 +76,10 @@ class FileStorage(Storage):
         else:
             self.owner = 'fstor'
 
-        self.cache._cache.flush_all()  # On start, ensures that cache is empty to avoid surprises
+        # On start, ensures that cache is empty to avoid surprises
+        self.cache._cache.flush_all()  # pylint: disable=protected-access
 
-        Storage.__init__(self, *args, **kwargs)  # @UndefinedVariable
+        Storage.__init__(self, *args, **kwargs)
 
     def get_valid_name(self, name):
         if name is None:
@@ -88,7 +92,7 @@ class FileStorage(Storage):
             memcached does not allow keys bigger than 250 chars, so we are going to use hash() to
             get a key for this
         """
-        return 'fstor' + six.text_type(hash(self.get_valid_name(name)))
+        return 'fstor' + str(hash(self.get_valid_name(name)))
 
     def _dbFileForReadOnly(self, name):
         # If we have a cache, & the cache contains the object
@@ -125,7 +129,7 @@ class FileStorage(Storage):
         self.cache.delete(self._getKey(name))
 
     def _open(self, name, mode='rb'):
-        f = six.BytesIO(self._dbFileForReadOnly(name).data)
+        f = io.BytesIO(self._dbFileForReadOnly(name).data)
         f.name = name
         f.mode = mode
         return File(f)
@@ -160,12 +164,12 @@ class FileStorage(Storage):
         return self._dbFileForReadOnly(name).size
 
     def delete(self, name):
-        logger.debug('Delete callef for {}'.format(name))
+        logger.debug('Delete callef for %s', name)
         self._dbFileForReadWrite(name).delete()
         self._removeFromCache(name)
 
     def exists(self, name):
-        logger.debug('Called exists for {}'.format(name))
+        logger.debug('Called exists for %s', name)
         try:
             _ = self._dbFileForReadOnly(name).uuid  # Tries to access uuid
             return True
@@ -178,10 +182,3 @@ class FileStorage(Storage):
             return urlparse.urljoin(self._base_url, uuid)
         except DBFile.DoesNotExist:
             return None
-
-
-class CompressorFileStorage(FileStorage):
-
-    def __init__(self, *args, **kwargs):
-        FileStorage.__init__(self, *args, **dict(kwargs, owner='compressor'))
-
