@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,15 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+from datetime import timedelta
+import logging
 
 from django.db.models import Q
 from uds.core.util.Config import GlobalConfig
-from uds.models import DeployedService, getSqlDatetime
+from uds.models import ServicePool, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs.Job import Job
 from uds.core.util import log
-from datetime import timedelta
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -49,20 +48,20 @@ class HangedCleaner(Job):
     frecuency_cfg = GlobalConfig.MAX_INITIALIZING_TIME
     friendly_name = 'Hanged services checker'
 
-    def __init__(self, environment):
-        super(HangedCleaner, self).__init__(environment)
-
     def run(self):
         since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt())
         # Filter for locating machine not ready
         flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING) | Q(state_date__lt=since_state, state=State.REMOVING)
 
-        for ds in DeployedService.objects.exclude(osmanager=None, state__in=State.VALID_STATES, service__provider__maintenance_mode=True):
-            logger.debug('Searching for hanged services for {0}'.format(ds))
-            for us in ds.userServices.filter(flt):
-                logger.debug('Found hanged service {0}'.format(us))
+        # Type
+        servicePool: ServicePool
+
+        for servicePool in ServicePool.objects.exclude(osmanager=None, state__in=State.VALID_STATES, service__provider__maintenance_mode=True):
+            logger.debug('Searching for hanged services for %s', servicePool)
+            for us in servicePool.userServices.filter(flt):
+                logger.debug('Found hanged service %s', us)
                 log.doLog(us, log.ERROR, 'User Service seems to be hanged. Removing it.', log.INTERNAL)
-                log.doLog(ds, log.ERROR, 'Removing user service {0} because it seems to be hanged'.format(us.friendly_name))
+                log.doLog(servicePool, log.ERROR, 'Removing user service {0} because it seems to be hanged'.format(us.friendly_name))
                 if us.state in (State.REMOVING,):
                     us.setState(State.ERROR)
                 else:

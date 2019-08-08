@@ -56,7 +56,7 @@ def getComputerName():
 
 def getNetworkInfo():
     obj = win32com.client.Dispatch("WbemScripting.SWbemLocator")
-    wmobj = obj.ConnectServer("localhost", "root\cimv2")
+    wmobj = obj.ConnectServer("localhost", "root\\cimv2")
     adapters = wmobj.ExecQuery("Select * from Win32_NetworkAdapterConfiguration where IpEnabled=True")
     try:
         for obj in adapters:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,15 +30,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+from datetime import timedelta
+import logging
 
 from django.db import transaction
 
 from uds.models import Scheduler, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs.Job import Job
-from datetime import timedelta
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -47,9 +46,6 @@ class SchedulerHousekeeping(Job):
     frecuency = 301  # Frecuncy for this job
     friendly_name = 'Scheduler house keeping'
 
-    def __init__(self, environment):
-        super(SchedulerHousekeeping, self).__init__(environment)
-
     def run(self):
         """
         Look for "hanged" scheduler tasks and reset them
@@ -57,5 +53,3 @@ class SchedulerHousekeeping(Job):
         since = getSqlDatetime() - timedelta(minutes=15)
         with transaction.atomic():
             Scheduler.objects.select_for_update().filter(last_execution__lt=since, state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)
-
-

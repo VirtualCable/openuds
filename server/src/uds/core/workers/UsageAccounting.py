@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from django.db import transaction
 
 from uds.models import AccountUsage, getSqlDatetime
 from uds.core.jobs.Job import Job
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -44,9 +43,6 @@ logger = logging.getLogger(__name__)
 class UsageAccounting(Job):
     frecuency = 60
     friendly_name = 'Usage Accounting update'
-
-    def __init__(self, environment):
-        super(UsageAccounting, self).__init__(environment)
 
     def run(self):
         with transaction.atomic():

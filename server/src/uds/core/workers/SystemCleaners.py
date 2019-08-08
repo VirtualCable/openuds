@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,15 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+from importlib import import_module
+import logging
 
+from django.conf import settings
 from uds.core.util.Cache import Cache
 from uds.core.jobs.Job import Job
 from uds.models import TicketStore
-from django.conf import settings
-from importlib import import_module
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -47,9 +45,6 @@ class CacheCleaner(Job):
 
     frecuency = 3600 * 24  # Once a day
     friendly_name = 'Utility Cache Cleaner'
-
-    def __init__(self, environment):
-        super(CacheCleaner, self).__init__(environment)
 
     def run(self):
         logger.debug('Starting cache cleanup')
@@ -62,9 +57,6 @@ class TicketStoreCleaner(Job):
     frecuency = 60  # every minute (60 seconds)
     friendly_name = 'Ticket Storage Cleaner'
 
-    def __init__(self, environment):
-        super(TicketStoreCleaner, self).__init__(environment)
-
     def run(self):
         logger.debug('Starting ticket storage cleanup')
         TicketStore.cleanup()
@@ -75,9 +67,6 @@ class SessionsCleaner(Job):
 
     frecuency = 3600 * 24 * 7  # Once a day will be enough
     friendly_name = 'User Sessions cleaner'
-
-    def __init__(self, environment):
-        super(SessionsCleaner, self).__init__(environment)
 
     def run(self):
         logger.debug('Starting session cleanup')

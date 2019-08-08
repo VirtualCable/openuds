@@ -42,7 +42,7 @@ class Job(Environmentable):
     # Default frecuency, once a day. Remenber that precision will be based on "granurality" of Scheduler
     # If a job is used for delayed execution, this attribute is in fact ignored
     frecuency: int = 24 * 3600 + 3  # Defaults to a big one, and i know frecuency is written as frequency, but this is an "historical mistake" :)
-    frecuency_cfg: typing.Optional[Config] = None  # If we use a configuration variable from DB, we need to update the frecuency asap, but not before app is ready
+    frecuency_cfg: typing.Optional[Config.Value] = None  # If we use a configuration variable from DB, we need to update the frecuency asap, but not before app is ready
     friendly_name = 'Unknown'
 
     @classmethod

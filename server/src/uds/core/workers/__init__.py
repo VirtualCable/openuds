@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,6 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -51,14 +49,14 @@ def initialize():
     # Dinamycally import children of this package.
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        logger.debug('Importing {}'.format(name))
+        logger.debug('Importing %s', name)
         __import__(name, globals(), locals(), [], 1)
 
     p = jobs.Job
     # This is marked as error in IDE, but it's not (__subclasses__)
     for cls in p.__subclasses__():
-        logger.debug('Examining worker {}'.format(cls.__module__))
+        logger.debug('Examining worker %s', cls.__module__)
         # Limit to autoregister just workers jobs inside this module
         if cls.__module__[0:16] == 'uds.core.workers':
-            logger.debug('Added worker {} to list'.format(cls.__module__))
+            logger.debug('Added worker %s to list', cls.__module__)
             TaskManager.registerJob(cls)

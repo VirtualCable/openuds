@@ -48,7 +48,6 @@ class Storage(models.Model):
     attr1 = models.CharField(max_length=64, db_index=True, null=True, blank=True, default=None)
 
     # Removed old locking manager, that blocked tables
-    # TODO: review that all is consistents (it should)
 
     class Meta:
         """
@@ -58,4 +57,3 @@ class Storage(models.Model):
 
     def __str__(self):
         return '{} {} = {}, {}'.format(self.owner, self.key, self.data, '/'.join([self.attr1]))
-

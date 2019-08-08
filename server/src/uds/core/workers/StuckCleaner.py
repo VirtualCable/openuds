@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,14 +30,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+from datetime import datetime, timedelta
+import logging
+import typing
 
-from uds.models import DeployedService, getSqlDatetime
+from uds.models import ServicePool, UserService, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs.Job import Job
 from uds.core.util import log
-from datetime import timedelta
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -52,16 +52,19 @@ class StuckCleaner(Job):
     frecuency = 3600 * 24  # Executes Once a day
     friendly_name = 'Stuck States cleaner'
 
-    def __init__(self, environment):
-        super(StuckCleaner, self).__init__(environment)
-
     def run(self):
-        since_state = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
+        since_state: datetime  = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
         # Filter for locating machine not ready
-        for ds in DeployedService.objects.filter(service__provider__maintenance_mode=False):
-            logger.debug('Searching for stuck states for {0}'.format(ds))
+        servicePoolsActive: typing.Iterable[ServicePool] = ServicePool.objects.filter(service__provider__maintenance_mode=False).iterator()
+        for servicePool in servicePoolsActive:
+            logger.debug('Searching for stuck states for %s', servicePool.name)
+            stuckUserServices: typing.Iterable[UserService] = servicePool.userServices.filter(
+                state_date__lt=since_state
+            ).exclude(
+                state__in=State.INFO_STATES + State.VALID_STATES
+            ).iterator()
             # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
-            for us in ds.userServices.filter(state_date__lt=since_state).exclude(state__in=State.INFO_STATES + State.VALID_STATES):
-                logger.debug('Found stuck user service {0}'.format(us))
-                log.doLog(ds, log.ERROR, 'User service {0} has been hard removed because it\'s stuck'.format(us.friendly_name))
-                us.delete()
+            for stuck in stuckUserServices:
+                logger.debug('Found stuck user service %s', stuck)
+                log.doLog(servicePool, log.ERROR, 'User service %s has been hard removed because it\'s stuck', stuck.name)
+                stuck.delete()

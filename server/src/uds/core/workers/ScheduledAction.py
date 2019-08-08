@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,11 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from uds.models import CalendarAction, getSqlDatetime
 from uds.core.jobs.Job import Job
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -43,13 +42,14 @@ class ScheduledAction(Job):
     frecuency = 29  # Frecuncy for this job
     friendly_name = 'Scheduled action runner'
 
-    def __init__(self, environment):
-        super(ScheduledAction, self).__init__(environment)
-
     def run(self):
-        for ca in CalendarAction.objects.filter(service_pool__service__provider__maintenance_mode=False, next_execution__lt=getSqlDatetime()).order_by('next_execution'):
-            logger.info('Executing calendar action {}.{} ({})'.format(ca.service_pool.name, ca.calendar.name, ca.action))
+        configuredAction: CalendarAction
+        for configuredAction in CalendarAction.objects.filter(
+                service_pool__service__provider__maintenance_mode=False,
+                next_execution__lt=getSqlDatetime()
+            ).order_by('next_execution'):
+            logger.info('Executing calendar action %s.%s (%s)', configuredAction.service_pool.name, configuredAction.calendar.name, configuredAction.action)
             try:
-                ca.execute()
-            except Exception as e:
-                logger.exception('Got an exception executing calendar access action: {}'.format(e))
+                configuredAction.execute()
+            except Exception:
+                logger.exception('Got an exception executing calendar access action: %s', configuredAction)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2013-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,15 +29,15 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
-from uds.models import DeployedService
+from uds.models import ServicePool
 from uds.core.util.State import State
 from uds.core.util.stats import counters
 from uds.core.managers import statsManager
 from uds.core.jobs.Job import Job
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -46,25 +46,22 @@ class DeployedServiceStatsCollector(Job):
     """
     This Job is responsible for collecting stats for every deployed service every ten minutes
     """
-
     frecuency = 599  # Once every ten minutes, 601 is prime, 599 also is prime
     friendly_name = 'Deployed Service Stats'
-
-    def __init__(self, environment):
-        super(DeployedServiceStatsCollector, self).__init__(environment)
 
     def run(self):
         logger.debug('Starting Deployed service stats collector')
 
-        for ds in DeployedService.objects.filter(state=State.ACTIVE):
+        servicePoolsToCheck: typing.Iterable[ServicePool] = ServicePool.objects.filter(state=State.ACTIVE).iterator()
+        for servicePool in servicePoolsToCheck:
             try:
-                fltr = ds.assignedUserServices().exclude(state__in=State.INFO_STATES)
+                fltr = servicePool.assignedUserServices().exclude(state__in=State.INFO_STATES)
                 assigned = fltr.count()
                 inUse = fltr.filter(in_use=True).count()
-                counters.addCounter(ds, counters.CT_ASSIGNED, assigned)
-                counters.addCounter(ds, counters.CT_INUSE, inUse)
+                counters.addCounter(servicePool, counters.CT_ASSIGNED, assigned)
+                counters.addCounter(servicePool, counters.CT_INUSE, inUse)
             except Exception:
-                logger.exception('Getting counters for deployed service {0}'.format(ds))
+                logger.exception('Getting counters for service pool %s', servicePool.name)
 
         logger.debug('Done Deployed service stats collector')
 
@@ -84,12 +81,12 @@ class StatsCleaner(Job):
         logger.debug('Starting statistics cleanup')
         try:
             statsManager().cleanupCounters()
-        except:
+        except Exception:
             logger.exception('Cleaning up counters')
 
         try:
             statsManager().cleanupEvents()
-        except:
+        except Exception:
             logger.exception('Cleaning up events')
 
         logger.debug('Done statistics cleanup')

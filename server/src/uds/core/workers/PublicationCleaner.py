@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+from datetime import timedelta
+import logging
+import typing
 
 from uds.core.managers.PublicationManager import PublicationManager
 from uds.core.util.Config import GlobalConfig
@@ -38,8 +40,6 @@ from uds.models import DeployedServicePublication, getSqlDatetime
 from uds.core.services.Exceptions import PublishException
 from uds.core.util.State import State
 from uds.core.jobs import Job
-from datetime import timedelta
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -49,26 +49,20 @@ class PublicationInfoItemsCleaner(Job):
     frecuency_cfg = GlobalConfig.CLEANUP_CHECK  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publications Info Cleaner'
 
-    def __init__(self, environment):
-        super(PublicationInfoItemsCleaner, self).__init__(environment)
-
     def run(self):
         removeFrom = getSqlDatetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True))
         DeployedServicePublication.objects.filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
 
 
 class PublicationCleaner(Job):
-    frecuency = GlobalConfig.REMOVAL_CHECK.getInt()  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
+    frecuency = 31
+    frecuency_cfg = GlobalConfig.REMOVAL_CHECK  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publication Cleaner'
 
-    def __init__(self, environment):
-        super(PublicationCleaner, self).__init__(environment)
-
     def run(self):
-        removables = DeployedServicePublication.objects.filter(state=State.REMOVABLE, deployed_service__service__provider__maintenance_mode=False)
+        removables: typing.Iterable[DeployedServicePublication] = DeployedServicePublication.objects.filter(state=State.REMOVABLE, deployed_service__service__provider__maintenance_mode=False)
         for removable in removables:
             try:
                 PublicationManager.manager().unpublish(removable)
             except PublishException:  # Can say that it cant be removed right now
                 logger.debug('Delaying removal')
-                pass

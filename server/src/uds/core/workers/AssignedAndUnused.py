@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
 from datetime import timedelta
 
@@ -48,9 +46,6 @@ class AssignedAndUnused(Job):
     frecuency_cfg = GlobalConfig.CHECK_UNUSED_TIME
     friendly_name = 'Unused services checker'
 
-    def __init__(self, environment):
-        super(AssignedAndUnused, self).__init__(environment)
-
     def run(self):
         since_state = getSqlDatetime() - timedelta(seconds=self.frecuency)
         for ds in DeployedService.objects.all():
@@ -61,11 +56,11 @@ class AssignedAndUnused(Job):
             if ds.osmanager is not None:
                 osm = ds.osmanager.getInstance()
                 if osm.processUnusedMachines is True:
-                    logger.debug('Processing unused services for {}, {}'.format(ds, ds.osmanager))
+                    logger.debug('Processing unused services for %s, %s', ds, ds.osmanager)
                     for us in ds.assignedUserServices().filter(in_use=False, state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
-                        logger.debug('Found unused assigned service {0}'.format(us))
+                        logger.debug('Found unused assigned service %s', us)
                         osm.processUnused(us)
             else:  # No os manager, simply remove unused services in specified time
                 for us in ds.assignedUserServices().filter(in_use=False, state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
-                    logger.debug('Found unused assigned service with no OS Manager {0}'.format(us))
+                    logger.debug('Found unused assigned service with no OS Manager %s', us)
                     us.remove()
