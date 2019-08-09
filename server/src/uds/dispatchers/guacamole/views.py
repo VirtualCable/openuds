@@ -30,15 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from uds.models import TicketStore
 from uds.core.auths import auth
 from uds.core.managers import cryptoManager
 
-import six
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -49,12 +47,12 @@ CONTENT_TYPE = 'text/plain'
 
 
 def dict2resp(dct):
-    return '\r'.join((k + '\t' + v for k, v in six.iteritems(dct)))
+    return '\r'.join((k + '\t' + v for k, v in dct.items()))
 
 
 @auth.trustedSourceRequired
-def guacamole(request, tunnelId):
-    logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
+def guacamole(request: HttpRequest, tunnelId: str) -> HttpResponse:
+    logger.debug('Received credentials request for tunnel id %s', tunnelId)
 
     tunnelId, scrambler = tunnelId.split('.')
 
@@ -64,7 +62,7 @@ def guacamole(request, tunnelId):
 
         response = dict2resp(val)
     except Exception:
-        logger.error('Invalid guacamole ticket (F5 on client?): {}'.format(tunnelId))
+        logger.error('Invalid guacamole ticket (F5 on client?): %s', tunnelId)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
 
     return HttpResponse(response, content_type=CONTENT_TYPE)

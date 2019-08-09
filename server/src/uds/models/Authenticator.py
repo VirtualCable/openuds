@@ -31,16 +31,23 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
 
+from uds.core import auths
+from uds.core import environment
 from uds.core.util import log
 from uds.core.util.State import State
 from uds.models.ManagedObjectModel import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
 from uds.models.Util import NEVER
+
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    pass
 
 
 logger = logging.getLogger(__name__)
@@ -63,7 +70,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values=None):
+    def getInstance(self, values=None) ->  auths.Authenticator:
         """
         Instantiates the object this record contains.
 
@@ -78,9 +85,8 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         Raises:
         """
-        from uds.core.auths import Authenticator as fakeAuth
         if self.id is None:
-            return fakeAuth(self, None, values)
+            return auths.Authenticator(self, environment.Environment.getTempEnv(), values)
 
         auType = self.getType()
         env = self.getEnvironment()
@@ -88,7 +94,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
         self.deserialize(auth, values)
         return auth
 
-    def getType(self):
+    def getType(self) -> typing.Type[auths.Authenticator]:
         """
         Get the type of the object this record represents.
 
@@ -99,8 +105,8 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         :note: We only need to get info from this, not access specific data (class specific info)
         """
-        from uds.core import auths
-        return auths.factory().lookup(self.data_type)
+        # If type is not registered (should be, but maybe a database inconsistence), consider this a "base empty auth"
+        return auths.factory().lookup(self.data_type) or auths.Authenticator
 
     def getOrCreateUser(self, username, realName=None):
         """

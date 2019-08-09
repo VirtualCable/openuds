@@ -33,14 +33,14 @@
 import logging
 import typing
 
-from uds.models.User import User as DBUser
-from .GroupsManager import GroupsManager
 from .Group import Group
 
 # Imports for type checking
 if typing.TYPE_CHECKING:
     from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
+    from .GroupsManager import GroupsManager
     from uds.models.Group import Group as DBGroup
+    from uds.models.User import User as DBUser
 
 
 logger = logging.getLogger(__name__)
@@ -52,8 +52,8 @@ class User:
     and its groups.
     """
     _manager: 'AuthenticatorInstance'
-    _grpsManager: typing.Optional[GroupsManager]
-    _dbUser: DBUser
+    _grpsManager: typing.Optional['GroupsManager']
+    _dbUser: 'DBUser'
     _groups: typing.Optional[typing.List[Group]]
 
     def __init__(self, dbUser):
@@ -62,7 +62,7 @@ class User:
         self._dbUser = dbUser
         self._groups = None
 
-    def _groupsManager(self) -> GroupsManager:
+    def _groupsManager(self) -> 'GroupsManager':
         """
         If the groups manager for this user already exists, it returns this.
         If it does not exists, it creates one default from authenticator and
@@ -80,6 +80,8 @@ class User:
 
         :note: Once obtained valid groups, it caches them until object removal.
         """
+        from uds.models.User import User as DBUser  # pylint: disable=redefined-outer-name
+
         if self._groups is None:
             if self._manager.isExternalSource is True:
                 self._manager.getGroups(self._dbUser.name, self._groupsManager())
@@ -104,7 +106,7 @@ class User:
         """
         return self._manager
 
-    def dbUser(self) -> DBUser:
+    def dbUser(self) -> 'DBUser':
         """
         Returns the database user
         """

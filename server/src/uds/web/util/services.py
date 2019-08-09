@@ -28,38 +28,55 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import logging
+import typing
 
 from django.utils.translation import ugettext
 from django.utils import formats
 from django.urls.base import reverse
 
-from uds.models import DeployedService, Transport, Network, ServicesPoolGroup, MetaPool
+from uds.models import ServicePool, Transport, Network, ServicesPoolGroup, MetaPool
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
 from uds.core.managers.UserServiceManager import UserServiceManager
 
-import logging
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest # pylint: disable=ungrouped-imports
+
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2019-02-08'
 
+def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:
+    """Obtains the service data dictionary will all available services for this request
+    
+    Arguments:
+        request {HttpRequest} -- request from where to xtract credentials
+    
+    Returns:
+        typing.Dict[str, typing.Any] --  Keys has this:
+            'services': services,
+            'ip': request.ip,
+            'nets': nets,
+            'transports': validTrans,
+            'autorun': autorun
 
-def getServicesData(request):
+    """
     # Session data
     os = request.os
 
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
-    availServices = DeployedService.getDeployedServicesForGroups(groups)
-    availMetas = MetaPool.getForGroups(groups)
+    availServicePools = ServicePool.getDeployedServicesForGroups(groups)
+    availMetaPools = MetaPool.getForGroups(groups)
 
     # Information for administrators
     nets = ''
     validTrans = ''
 
-    logger.debug('OS: {0}'.format(os['OS']))
+    logger.debug('OS: %s', os['OS'])
 
     if request.user.isStaff():
         nets = ','.join([n.name for n in Network.networksFor(request.ip)])
@@ -69,10 +86,10 @@ def getServicesData(request):
                 tt.append(t.name)
         validTrans = ','.join(tt)
 
-    logger.debug('Checking meta pools: %s', availMetas)
+    logger.debug('Checking meta pools: %s', availMetaPools)
     services = []
     # Add meta pools data first
-    for meta in availMetas:
+    for meta in availMetaPools:
         # Check that we have access to at least one transport on some of its children
         hasUsablePools = False
         in_use = False
@@ -122,7 +139,7 @@ def getServicesData(request):
             })
 
     # Now generic user service
-    for svr in availServices:
+    for svr in availServicePools:
         # Skip pools that are part of meta pools
         if svr.is_meta:
             continue
@@ -202,10 +219,9 @@ def getServicesData(request):
             # return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
     return {
-            'services': services,
-            'ip': request.ip,
-            'nets': nets,
-            'transports': validTrans,
-            'autorun': autorun
+        'services': services,
+        'ip': request.ip,
+        'nets': nets,
+        'transports': validTrans,
+        'autorun': autorun
     }
-

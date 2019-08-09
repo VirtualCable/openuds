@@ -39,8 +39,10 @@ from django.http import HttpRequest, HttpResponse
 
 from uds.core import Module
 from uds.core.environment import Environment
-from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths.Exceptions import InvalidUserException
+
+if typing.TYPE_CHECKING:
+    from uds.core.auths.GroupsManager import GroupsManager
 
 
 logger = logging.getLogger(__name__)
@@ -199,6 +201,8 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
         user param is a database user object
         """
+        from uds.core.auths.GroupsManager import GroupsManager  # pylint: disable=redefined-outer-name
+
         if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
             self.getGroups(user.name, groupsManager)
@@ -270,7 +274,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return []
 
-    def authenticate(self, username: str, credentials: str, groupsManager: GroupsManager) -> bool:
+    def authenticate(self, username: str, credentials: str, groupsManager: 'GroupsManager') -> bool:
         """
         This method must be overriden, and is responsible for authenticating
         users.
@@ -326,7 +330,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return username
 
-    def internalAuthenticate(self, username: str, credentials: str, groupsManager: GroupsManager) -> bool:
+    def internalAuthenticate(self, username: str, credentials: str, groupsManager: 'GroupsManager') -> bool:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
         the username/credentials in an alternative way.
@@ -422,7 +426,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return username
 
-    def getGroups(self, username: str, groupsManager: GroupsManager):
+    def getGroups(self, username: str, groupsManager: 'GroupsManager'):
         """
         Looks for the real groups to which the specified user belongs.
 
@@ -449,7 +453,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def authCallback(self, parameters: typing.Dict[str, str], gm: GroupsManager) -> typing.Optional[str]:
+    def authCallback(self, parameters: typing.Dict[str, str], gm: 'GroupsManager') -> typing.Optional[str]:
         """
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.

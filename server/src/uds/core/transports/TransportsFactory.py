@@ -53,7 +53,7 @@ class TransportsFactory:
             TransportsFactory._factory = TransportsFactory()
         return TransportsFactory._factory
 
-    def providers(self):
+    def providers(self) -> typing.Dict[str, typing.Type['Transport']]:
         return self._transports
 
     def insert(self, type_: typing.Type['Transport']) -> None:

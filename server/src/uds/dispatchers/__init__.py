@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -41,10 +39,10 @@ def __init__():
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         try:
-            logger.info('Loading dispatcher {}'.format(name))
+            logger.info('Loading dispatcher %s', name)
             __import__(name, globals(), locals(), [], 1)
         except Exception:
-            logger.exception('Loading dispatcher {}'.format(name))
+            logger.exception('Loading dispatcher %s', name)
 
     logger.debug('Dispatchers initialized')
 

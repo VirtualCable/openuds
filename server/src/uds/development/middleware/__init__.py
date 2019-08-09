@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2013-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +32,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class RequestDebug(object):
+class RequestDebug:
     """
     Add a X-UA-Compatible header to the response
     This header tells to Internet Explorer to render page with latest
@@ -42,7 +42,7 @@ class RequestDebug(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        logger.info('Request lang: {0}'.format(request.LANGUAGE_CODE))
+        logger.info('Request lang: %s', request.LANGUAGE_CODE)
 
         response = self.get_response(request)
 

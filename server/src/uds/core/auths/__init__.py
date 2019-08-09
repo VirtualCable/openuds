@@ -33,15 +33,15 @@ UDS authentication related interfaces and classes
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from uds.core.auths.BaseAuthenticator import Authenticator
+from uds.core.auths.AuthsFactory import AuthsFactory
 from uds.core.auths.User import User
 from uds.core.auths.Group import Group
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths import Exceptions
 
 
-def factory():
+def factory() -> AuthsFactory:
     """
     Returns factory for register/access to authenticators
     """
-    from uds.core.auths.AuthsFactory import AuthsFactory
     return AuthsFactory.factory()

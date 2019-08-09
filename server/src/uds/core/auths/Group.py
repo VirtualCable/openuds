@@ -34,11 +34,11 @@
 import logging
 import typing
 
-from uds.models import Group as DBGroup
-
 # Imports for type checking
 if typing.TYPE_CHECKING:
     from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
+    from uds.models import Group as DBGroup
+
 
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class Group:
     It's only constructor expect a database group as parameter.
     """
 
-    def __init__(self, dbGroup: DBGroup):
+    def __init__(self, dbGroup: 'DBGroup'):
         """
         Initializes internal data
         """
@@ -64,7 +64,7 @@ class Group:
         """
         return self._manager
 
-    def dbGroup(self) -> DBGroup:
+    def dbGroup(self) -> 'DBGroup':
         """
         Returns the database group associated with this
         """

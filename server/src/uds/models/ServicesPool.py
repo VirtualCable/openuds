@@ -414,7 +414,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
         return self.account.addUsageAccount(userService, start, end)
 
     @staticmethod
-    def getDeployedServicesForGroups(groups):
+    def getDeployedServicesForGroups(groups) -> typing.List['DeployedService']:
         """
         Return deployed services with publications for the groups requested.
 

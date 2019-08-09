@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
@@ -41,6 +42,11 @@ from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 from uds.core.util import log
 from uds.models.UUIDModel import UUIDModel
+
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import auths
+    from uds.models import Group
 
 
 logger = logging.getLogger(__name__)
@@ -71,7 +77,7 @@ class User(UUIDModel):
         ordering = ('name',)
         app_label = 'uds'
 
-    def getUsernameForAuth(self):
+    def getUsernameForAuth(self) -> str:
         """
         Return the username transformed for authentication.
         This transformation is used for transports only, not for transforming
@@ -83,10 +89,10 @@ class User(UUIDModel):
         return self.getManager().getForAuth(self.name)
 
     @property
-    def pretty_name(self):
+    def pretty_name(self) -> str:
         return self.name + '@' + self.manager.name
 
-    def getManager(self):
+    def getManager(self) -> 'auths.Authenticator':
         """
         Returns the authenticator object that owns this user.
 
@@ -94,13 +100,13 @@ class User(UUIDModel):
         """
         return self.manager.getInstance()
 
-    def isStaff(self):
+    def isStaff(self) -> bool:
         """
         Return true if this user is admin or staff member
         """
         return self.staff_member or self.is_admin
 
-    def prefs(self, modName):
+    def prefs(self, modName) -> typing.Dict:
         """
         Returns the preferences for this user for the provided module name.
 
@@ -120,21 +126,21 @@ class User(UUIDModel):
         from uds.core.managers.UserPrefsManager import UserPrefsManager
         return UserPrefsManager.manager().getPreferencesForUser(modName, self)
 
-    def updateLastAccess(self):
+    def updateLastAccess(self) -> None:
         """
         Updates the last access for this user with the current time of the sql server
         """
         self.last_access = getSqlDatetime()
-        self.save()
+        self.save(update_fields='last_access')
 
-    def logout(self):
+    def logout(self) -> typing.Optional[str]:
         """
         Invoked to log out this user
         Returns the url where to redirect user, or None if default url will be used
         """
         return self.getManager().logout(self.name)
 
-    def getGroups(self):
+    def getGroups(self) -> typing.Generator['Group', None, None]:
         """
         returns the groups (and metagroups) this user belongs to
         """
@@ -146,29 +152,30 @@ class User(UUIDModel):
         else:
             usr = self
 
-        grps = list()
+        grps: typing.List[int] = []
+        g: 'Group'
         for g in usr.groups.filter(is_meta=False):
-            grps += (g.id,)
+            grps.append(g.id)
             yield g
 
         # Locate metagroups
         for g in self.manager.groups.filter(is_meta=True):
-            gn = g.groups.filter(id__in=grps).count()
+            numberGroupsBelongingInMeta: int = g.groups.filter(id__in=grps).count()
 
-            logger.debug('gn = %s', gn)
+            logger.debug('gn = %s', numberGroupsBelongingInMeta)
             logger.debug('groups count: %s', g.groups.count())
 
-            if g.meta_if_any is True and gn > 0:
-                gn = g.groups.count()
+            if g.meta_if_any is True and numberGroupsBelongingInMeta > 0:
+                numberGroupsBelongingInMeta = g.groups.count()
 
-            logger.debug('gn after = %s', gn)
+            logger.debug('gn after = %s', numberGroupsBelongingInMeta)
 
-            if gn == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
+            if numberGroupsBelongingInMeta == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g
 
     def __str__(self):
-        return 'User {}(id:{}) from auth {}'.format(self.name, self.id, self.manager.name)
+        return 'User {} (id:{}) from auth {}'.format(self.name, self.id, self.manager.name)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

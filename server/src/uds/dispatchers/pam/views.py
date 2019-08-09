@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-from django.http import HttpResponseNotAllowed, HttpResponse
+from django.http import HttpResponseNotAllowed, HttpResponse, HttpRequest
 from uds.models import TicketStore
 from uds.core.auths import auth
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 @auth.trustedSourceRequired
-def pam(request):
+def pam(request: HttpRequest) -> HttpResponse:
     response = ''
     if request.method == 'POST':
         return HttpResponseNotAllowed(['GET'])
@@ -51,25 +50,25 @@ def pam(request):
         # This is an "auth" request
         ids = request.GET.getlist('id')
         response = '0'
+        # If request is not forged...
         if len(ids) == 1:
             userId = ids[0]
-            logger.debug("Auth request for user [{0}] and pass [{1}]".format(request.GET['id'], request.GET['pass']))
+            logger.debug("Auth request for user [%s] and pass [%s]", request.GET['id'], request.GET['pass'])
             try:
                 password = TicketStore.get(userId)
                 if password == request.GET['pass']:
                     response = '1'
             except Exception:
                 # Non existing ticket, log it and stop
-                logger.info('Invalid access from {} using user {}'.format(request.ip, userId))
+                logger.info('Invalid access from %s using user %s', request.ip, userId)
         else:
-            logger.warn('Invalid request from {}: {}'.format(request.ip, [v for v in request.GET.lists()]))
-            
+            logger.warning('Invalid request from %s: %s', request.ip, [v for v in request.GET.lists()])
     elif 'uid' in request.GET:
         # This is an "get name for id" call
-        logger.debug("NSS Request for id [{0}]".format(request.GET['uid']))
+        logger.debug("NSS Request for id [%s]", request.GET['uid'])
         response = '10000 udstmp'
     elif 'name' in request.GET:
-        logger.debug("NSS Request for username [{0}]".format(request.GET['name']))
+        logger.debug("NSS Request for username [%s]", request.GET['name'])
         response = '10000 udstmp'
 
     return HttpResponse(response, content_type='text/plain')

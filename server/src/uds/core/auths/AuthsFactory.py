@@ -30,7 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .BaseAuthenticator import Authenticator
 
 class AuthsFactory:
     """
@@ -39,13 +43,14 @@ class AuthsFactory:
 
     It provides a way to register and recover Authentication providers.
     """
-    _factory = None
+    _factory: typing.Optional['AuthsFactory'] = None
+    _auths: typing.Dict[str, typing.Type['Authenticator']] = {}
 
     def __init__(self):
-        self._auths = {}
+        pass
 
     @staticmethod
-    def factory():
+    def factory() -> 'AuthsFactory':
         """
         Returns the factory that keeps the register of authentication providers.
         """
@@ -53,19 +58,19 @@ class AuthsFactory:
             AuthsFactory._factory = AuthsFactory()
         return AuthsFactory._factory
 
-    def providers(self):
+    def providers(self) -> typing.Dict[str, typing.Type['Authenticator']]:
         """
         Returns the list of authentication providers already registered.
         """
         return self._auths
 
-    def insert(self, type_):
+    def insert(self, type_: typing.Type['Authenticator']):
         """
         Registers a new authentication provider
         """
         self._auths[type_.type().lower()] = type_
 
-    def lookup(self, typeName):
+    def lookup(self, typeName: str) -> typing.Optional[typing.Type['Authenticator']]:
         """
         Tries to locate an authentication provider and by its name, and, if
         not found, returns None

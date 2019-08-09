@@ -53,7 +53,7 @@ class UserPrefsManager:
         self._prefs = {}
 
     @staticmethod
-    def manager():
+    def manager() -> 'UserPrefsManager':
         if UserPrefsManager._manager is None:
             UserPrefsManager._manager = UserPrefsManager()
         return UserPrefsManager._manager

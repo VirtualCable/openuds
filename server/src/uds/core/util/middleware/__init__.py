@@ -78,5 +78,5 @@ class RedirectMiddleware:
         return self.get_response(request)
 
     @staticmethod
-    def registerException(path):
+    def registerException(path: str) -> None:
         RedirectMiddleware.NO_REDIRECT.append(path)

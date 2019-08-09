@@ -35,7 +35,7 @@ import typing
 from uds.core.util import encoders
 
 
-class Serializable(object):
+class Serializable:
     """
     This class represents the interface that all serializable objects must provide.
 
