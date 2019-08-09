@@ -131,7 +131,7 @@ class User(UUIDModel):
         Updates the last access for this user with the current time of the sql server
         """
         self.last_access = getSqlDatetime()
-        self.save(update_fields='last_access')
+        self.save(update_fields=['last_access'])
 
     def logout(self) -> typing.Optional[str]:
         """

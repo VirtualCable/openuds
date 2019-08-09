@@ -53,11 +53,11 @@ class LDAPError(Exception):
         raise LDAPError(_str)
 
 
-def escape(value):
+def escape(value: str):
     """
     Escape filter chars for ldap search filter
     """
-    return ldap.filter.escape_filter_chars(tools.b2(value))
+    return ldap.filter.escape_filter_chars(value)
 
 
 def connection(username: str, passwd: typing.Union[str, bytes], host: str, port: int = -1, ssl: bool = False, timeout: int = 3, debug: bool = False) -> typing.Any:
@@ -123,7 +123,7 @@ def getAsDict(
         res = con.search_ext_s(
             base,
             scope=scope,
-            filterstr=tools.b2(ldapFilter),
+            filterstr=ldapFilter,
             attrlist=attrList,
             sizelimit=sizeLimit
         )

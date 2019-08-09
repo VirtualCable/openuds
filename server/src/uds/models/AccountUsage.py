@@ -36,7 +36,7 @@ from uds.models.UUIDModel import UUIDModel
 from uds.models.Account import Account
 from uds.models.UserService import UserService
 from uds.models.Util import NEVER
-from uds.core.util.tools import secondsToString
+from uds.core.util.tools import secondsToTimeString
 
 logger = logging.getLogger(__name__)
 
@@ -65,13 +65,13 @@ class AccountUsage(UUIDModel):
         app_label = 'uds'
 
     @property
-    def elapsed_seconds(self):
+    def elapsed_seconds(self) -> int:
         if  NEVER in (self.end, self.start):
             return 0
         return (self.end - self.start).total_seconds()
 
     @property
-    def elapsed_seconds_timemark(self):
+    def elapsed_seconds_timemark(self) -> int:
         if  NEVER in (self.end, self.start):
             return 0
 
@@ -85,12 +85,12 @@ class AccountUsage(UUIDModel):
         return (end - start).total_seconds()
 
     @property
-    def elapsed(self):
-        return secondsToString(self.elapsed_seconds)
+    def elapsed(self) -> str:
+        return secondsToTimeString(self.elapsed_seconds)
 
     @property
-    def elapsed_timemark(self):
-        return secondsToString(self.elapsed_seconds_timemark)
+    def elapsed_timemark(self) -> str:
+        return secondsToTimeString(self.elapsed_seconds_timemark)
 
     def __str__(self):
         return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(self.id, self.pool_name, self.user_name, self.start, self.end)

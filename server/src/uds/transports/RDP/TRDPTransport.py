@@ -80,6 +80,7 @@ class TRDPTransport(BaseRDPTransport):
     allowSmartcards = BaseRDPTransport.allowSmartcards
     allowPrinters = BaseRDPTransport.allowPrinters
     allowDrives = BaseRDPTransport.allowDrives
+    enforceDrives = BaseRDPTransport.enforceDrives
     allowSerials = BaseRDPTransport.allowSerials
     allowClipboard = BaseRDPTransport.allowClipboard
     allowAudio = BaseRDPTransport.allowAudio

@@ -29,6 +29,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 
@@ -39,7 +40,9 @@ from uds.models.Util import NEVER
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-01-30'
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import UserService
 
 
 class Account(UUIDModel, TaggingMixin):  # type: ignore
@@ -50,33 +53,33 @@ class Account(UUIDModel, TaggingMixin):  # type: ignore
     time_mark = models.DateTimeField(default=NEVER)
     comments = models.CharField(max_length=256)
 
-    def startUsageAccounting(self, service):
-        if hasattr(service, 'accounting'):  # Already has an account
+    def startUsageAccounting(self, userService: 'UserService') -> None:
+        if hasattr(userService, 'accounting'):  # Already has an account
             return None
 
         start = getSqlDatetime()
 
-        if service.user is not None:
-            userName = service.user.pretty_name
-            userUuid = service.user.uuid
+        if userService.user:
+            userName = userService.user.pretty_name
+            userUuid = userService.user.uuid
         else:
             userName = '??????'
             userUuid = '00000000-0000-0000-0000-000000000000'
         return self.usages.create(
-            user_service=service,
+            user_service=userService,
             user_name=userName,
             user_uuid=userUuid,
-            pool_name=service.deployed_service.name,
-            pool_uuid=service.deployed_service.uuid,
+            pool_name=userService.deployed_service.name,
+            pool_uuid=userService.deployed_service.uuid,
             start=start,
             end=start
         )
 
-    def stopUsageAccounting(self, service):
-        if hasattr(service, 'accounting') is False:
+    def stopUsageAccounting(self, userService: 'UserService') -> None:
+        if hasattr(userService, 'accounting') is False:
             return
 
-        tmp = service.accounting
+        tmp = userService.accounting
         tmp.user_service = None
         tmp.end = getSqlDatetime()
         tmp.save()

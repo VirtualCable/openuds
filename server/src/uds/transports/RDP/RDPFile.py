@@ -36,8 +36,9 @@ Created on Jul 29, 2011
 from __future__ import unicode_literals
 
 import urllib.parse
-import six
 import shlex
+import typing
+
 from uds.core.util import OsDetector
 
 __updated__ = '2018-11-22'
@@ -71,11 +72,12 @@ class RDPFile(object):
     enablecredsspsupport = False
     enableClipboard = False
     linuxCustomParameters = None
+    enforcedShares: typing.Optional[str] = None
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
-        self.width = six.text_type(width)
-        self.height = six.text_type(height)
-        self.bpp = six.text_type(bpp)
+        self.width = str(width)
+        self.height = str(height)
+        self.bpp = str(bpp)
         self.fullScreen = fullScreen
         self.target = target
 
@@ -294,7 +296,7 @@ class RDPFile(object):
         res += 'redirectsmartcards:i:' + scards + '\n'
         res += 'redirectclipboard:i:' + enableClipboard + '\n'
         res += 'displayconnectionbar:i:' + bar + '\n'
-        if len(self.username) != 0:
+        if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
             if self.target == OsDetector.Windows:
@@ -321,11 +323,13 @@ class RDPFile(object):
         if self.redirectAudio is True:
             res += 'audiocapturemode:i:1\n'
 
+        enforcedSharesStr = ';'.join(self.enforcedShares.replace(' ', '').upper().split(',')) + ';' if self.enforcedShares else ''
+
         if self.redirectDrives != 'false':
             if self.redirectDrives == 'true':
-                res += 'drivestoredirect:s:*\n'
+                res += 'drivestoredirect:s:{}\n'.format(enforcedSharesStr or '*')
             else:  # Dynamic
-                res += 'drivestoredirect:s:DynamicDrives\n'
+                res += 'drivestoredirect:s:{}DynamicDrives\n'.format(enforcedSharesStr)
             res += 'devicestoredirect:s:*\n'
 
         res += 'enablecredsspsupport:i:{}\n'.format(0 if self.enablecredsspsupport is False else 1)

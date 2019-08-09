@@ -124,35 +124,12 @@ def timestampAsStr(stamp, format_='SHORT_DATETIME_FORMAT'):
     return filters.date(datetime.datetime.fromtimestamp(stamp), format_)
 
 
-def secondsToString(seconds):
+def secondsToTimeString(seconds: int) -> str:
     seconds = int(seconds)
-    minutes = seconds / 60
+    minutes = seconds // 60
     seconds %= 60
-    hours = minutes / 60
+    hours = minutes // 60
     minutes %= 60
-    days = hours / 24
+    days = hours // 24
     hours %= 24
-    res = []
-    if days > 0:
-        res.append(ugettext('{} days').format(days))
-    if hours > 0:
-        res.append(ugettext('{} hours').format(hours))
-    if minutes > 0:
-        res.append(ugettext('{} minutes').format(minutes))
-    res.append(ugettext('{} seconds').format(seconds))
-
-    return ', '.join(res)
-
-
-def b2(s: str):
-    """
-    Returns a b'' string on python2, or str on python3
-    """
-    return s
-
-
-def u2(s: str):
-    """
-    returns an u'' string on python2, or str on python3
-    """
-    return s
+    return ugettext('{} days {:d}:{:02d}:{:02d}').format(days, hours, minutes, seconds)
