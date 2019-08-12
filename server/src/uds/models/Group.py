@@ -40,7 +40,7 @@ from uds.core.util.State import State
 from uds.core.util import log
 from .UUIDModel import UUIDModel
 
-from .Authenticator import Authenticator
+from .authenticator import Authenticator
 from .User import User
 from .Util import UnsavedForeignKey, getSqlDatetime
 

@@ -36,7 +36,7 @@ import typing
 from django.db import models
 from django.db.models import signals
 
-from uds.models.Authenticator import Authenticator
+from uds.models.authenticator import Authenticator
 from uds.models.Util import UnsavedForeignKey
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime

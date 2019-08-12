@@ -43,6 +43,8 @@ from uds.core.auths.Exceptions import InvalidUserException
 
 if typing.TYPE_CHECKING:
     from uds.core.auths.GroupsManager import GroupsManager
+    from uds.models import Authenticator as DBAuthenticator
+    from uds.models.User import User as DBUser
 
 
 logger = logging.getLogger(__name__)
@@ -148,7 +150,6 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
     from uds.core.auths.User import User
     from uds.core.auths.Group import Group
-    from uds.models import Authenticator as DBAuthenticator, User as DBUser
 
     # : The type of user provided, normally standard user will be enough.
     # : This is here so if we need it in some case, we can write our own
@@ -160,7 +161,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
     # : group class
     groupType: typing.ClassVar[typing.Type[Group]] = Group
 
-    def __init__(self, dbAuth: DBAuthenticator, environment: Environment, values: typing.Optional[typing.Dict[str, str]]):
+    def __init__(self, dbAuth: 'DBAuthenticator', environment: Environment, values: typing.Optional[typing.Dict[str, str]]):
         """
         Instantiathes the authenticator.
         @param dbAuth: Database object for the authenticator
@@ -193,7 +194,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return self._dbAuth
 
-    def recreateGroups(self, user: DBUser) -> None:
+    def recreateGroups(self, user: 'DBUser') -> None:
         """
         Helper method, not needed to be overriden.
         It simply checks if the source is external and if so, recreates

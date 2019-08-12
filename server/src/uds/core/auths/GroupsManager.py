@@ -37,6 +37,8 @@ import typing
 from uds.core.util.State import State
 from .Group import Group
 
+if typing.TYPE_CHECKING:
+    from uds.models import Authenticator as DBAuthenticator
 
 logger = logging.getLogger(__name__)
 
@@ -60,11 +62,9 @@ class GroupsManager:
 
     Managed groups names are compared using case insensitive comparison.
     """
-    from uds.models import Authenticator as DBAuthenticator
-
     _groups: typing.Dict[str, dict]
 
-    def __init__(self, dbAuthenticator: DBAuthenticator):
+    def __init__(self, dbAuthenticator: 'DBAuthenticator'):
         """
         Initializes the groups manager.
         The dbAuthenticator is the database record of the authenticator

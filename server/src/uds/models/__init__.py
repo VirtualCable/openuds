@@ -52,7 +52,7 @@ from .Transport import Transport
 from .Network import Network
 
 # Authenticators
-from .Authenticator import Authenticator
+from .authenticator import Authenticator
 from .User import User
 from .UserPreference import UserPreference
 from .Group import Group
