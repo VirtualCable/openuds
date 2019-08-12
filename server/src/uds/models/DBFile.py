@@ -32,6 +32,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
@@ -49,9 +50,9 @@ class DBFile(UUIDModel):
     modified = models.DateTimeField()
 
     @property
-    def data(self):
+    def data(self) -> bytes:
         try:
-            return encoders.decode(encoders.decode(self.content, 'base64'), 'zip')
+            return typing.cast(bytes, encoders.decode(encoders.decode(self.content, 'base64'), 'zip'))
         except Exception:
             logger.error('DBFile %s has errors and cannot be used', self.name)
             try:
@@ -59,13 +60,12 @@ class DBFile(UUIDModel):
             except Exception:
                 logger.error('Could not even delete %s!!', self.name)
 
-            return ''
+            return b''
 
     @data.setter
-    def data(self, value):
+    def data(self, value: typing.Union[str, bytes]):
         self.size = len(value)
-        content = encoders.encode(encoders.encode(value, 'zip'), 'base64', asText=True)
-        self.content = content
+        self.content = typing.cast(str, encoders.encode(encoders.encode(value, 'zip'), 'base64', asText=True))
 
     def __str__(self):
         return 'File: {} {} {} {}'.format(self.name, self.size, self.created, self.modified)

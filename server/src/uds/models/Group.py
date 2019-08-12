@@ -31,19 +31,22 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-
+import typing
 
 from django.db import models
 from django.db.models import signals
 
 from uds.core.util.State import State
 from uds.core.util import log
-from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
 from .UUIDModel import UUIDModel
 
 from .Authenticator import Authenticator
 from .User import User
 from .Util import UnsavedForeignKey, getSqlDatetime
+
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import auths
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +78,7 @@ class Group(UUIDModel):
     def pretty_name(self) -> str:
         return self.name + '@' + self.manager.name
 
-    def getManager(self) -> AuthenticatorInstance:
+    def getManager(self) -> 'auths.Authenticator':
         """
         Returns the authenticator object that owns this user.
 

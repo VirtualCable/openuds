@@ -29,15 +29,15 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import io
-
 import logging
+import typing
 
 
 from django.db import models
 from django.db.models import signals
 from django.http import HttpResponse
 
-from PIL import Image as PILImage  # @UnresolvedImport
+from PIL import Image as PILImage
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Util import getSqlDatetime
@@ -72,15 +72,15 @@ class Image(UUIDModel):
         app_label = 'uds'
 
     @staticmethod
-    def encode64(data):
-        return encoders.encode(data, 'base64', asText=True).replace('\n', '')  # Removes \n
+    def encode64(data: bytes) -> str:
+        return typing.cast(str, encoders.encode(data, 'base64', asText=True)).replace('\n', '')  # Removes \n
 
     @staticmethod
-    def decode64(data64):
-        return encoders.decode(data64, 'base64')
+    def decode64(data64: str) -> bytes:
+        return typing.cast(bytes, encoders.decode(data64, 'base64'))
 
     @staticmethod
-    def prepareForDb(data):
+    def prepareForDb(data: bytes) -> bytes:
         try:
             stream = io.BytesIO(data)
             image = PILImage.open(stream)
@@ -94,35 +94,35 @@ class Image(UUIDModel):
         return output.getvalue()
 
     @property
-    def data64(self):
+    def data64(self) -> str:
         """
         Returns the value of the image (data) as a base 64 encoded string
         """
         return Image.encode64(self.data)
 
     @data64.setter
-    def data64(self, value):
+    def data64(self, value: str):
         """
         Sets the value of image (data) from a base 64 encoded string
         """
         self.data = Image.decode64(value)
 
     @property
-    def thumb64(self):
+    def thumb64(self) -> str:
         """
         Returns the value of the image (data) as a base 64 encoded string
         """
         return Image.encode64(self.thumb)
 
     @thumb64.setter
-    def thumb64(self, value):
+    def thumb64(self, value: str):
         """
         Sets the value of image (data) from a base 64 encoded string
         """
         self.thumb = Image.decode64(value)
 
     @property
-    def image(self):
+    def image(self) -> PILImage:
         """
         Returns an image (PIL Image)
         """
@@ -133,13 +133,13 @@ class Image(UUIDModel):
             return PILImage.new('RGBA', Image.MAX_IMAGE_SIZE)
 
     @property
-    def size(self):
+    def size(self) -> typing.Tuple[int, int]:
         """
         Returns the image size
         """
         return self.width, self.height
 
-    def updateThumbnail(self):
+    def updateThumbnail(self) -> None:
         thumb = self.image
         self.width, self.height = thumb.size
         thumb.thumbnail(Image.THUMBNAIL_SIZE, PILImage.ANTIALIAS)
@@ -147,25 +147,25 @@ class Image(UUIDModel):
         thumb.save(output, 'png')
         self.thumb = output.getvalue()
 
-    def _processImageStore(self):
+    def _processImageStore(self) -> None:
         self.data = Image.prepareForDb(self.data)
         self.updateThumbnail()
 
-    def storeImageFromBinary(self, data):
+    def storeImageFromBinary(self, data) -> None:
         self.data = data
         self._processImageStore()
 
-    def storeImageFromBase64(self, data64):
+    def storeImageFromBase64(self, data64: str):
         """
         Stores an image, passed as base64 string, resizing it as necessary
         """
         self.data64 = data64
         self._processImageStore()
 
-    def imageResponse(self):
+    def imageResponse(self) -> HttpResponse:
         return HttpResponse(self.data, content_type='image/png')
 
-    def thumbnailResponse(self):
+    def thumbnailResponse(self) -> HttpResponse:
         return HttpResponse(self.thumb, content_type='image/png')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

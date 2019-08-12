@@ -33,6 +33,7 @@
 
 import datetime
 import logging
+import typing
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -48,7 +49,7 @@ logger = logging.getLogger(__name__)
 WEEKDAYS = 'WEEKDAYS'
 
 # Frequencies
-freqs = (
+freqs: typing.Tuple[typing.Tuple[str, str], ...] = (
     ('YEARLY', _('Yearly')),
     ('MONTHLY', _('Monthly')),
     ('WEEKLY', _('Weekly')),
@@ -56,35 +57,35 @@ freqs = (
     (WEEKDAYS, _('Weekdays'))
 )
 
-frq_to_rrl = {
+frq_to_rrl: typing.Dict[str, int] = {
     'YEARLY': rules.YEARLY,
     'MONTHLY': rules.MONTHLY,
     'WEEKLY': rules.WEEKLY,
     'DAILY': rules.DAILY,
 }
 
-frq_to_mins = {
+frq_to_mins: typing.Dict[str, int] = {
     'YEARLY': 366 * 24 * 60,
     'MONTHLY': 31 * 24 * 60,
     'WEEKLY': 7 * 24 * 60,
     'DAILY': 24 * 60,
 }
 
-dunits = (
+dunits: typing.Tuple[typing.Tuple[str, str], ...] = (
     ('MINUTES', _('Minutes')),
     ('HOURS', _('Hours')),
     ('DAYS', _('Days')),
     ('WEEKS', _('Weeks')),
 )
 
-dunit_to_mins = {
+dunit_to_mins: typing.Dict[str, int] = {
     'MINUTES': 1,
     'HOURS': 60,
     'DAYS': 60 * 24,
     'WEEKS': 60 * 24 * 7
 }
 
-weekdays = [rules.SU, rules.MO, rules.TU, rules.WE, rules.TH, rules.FR, rules.SA]
+weekdays: typing.Tuple[rules.weekday, ...] = (rules.SU, rules.MO, rules.TU, rules.WE, rules.TH, rules.FR, rules.SA)
 
 
 class CalendarRule(UUIDModel):
@@ -107,7 +108,7 @@ class CalendarRule(UUIDModel):
         db_table = 'uds_calendar_rules'
         app_label = 'uds'
 
-    def as_rrule(self):
+    def as_rrule(self) -> rules.rrule:
         if self.interval == 0:  # Fix 0 intervals
             self.interval = 1
 
@@ -121,10 +122,9 @@ class CalendarRule(UUIDModel):
                     dw.append(weekdays[i])
                 l >>= 1
             return rules.rrule(rules.DAILY, byweekday=dw, dtstart=self.start, until=end)
-        else:
-            return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start, until=end)
+        return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start, until=end)
 
-    def as_rrule_end(self):
+    def as_rrule_end(self) -> rules.rrule:
         if self.interval == 0:  # Fix 0 intervals
             self.interval = 1
 
@@ -138,18 +138,16 @@ class CalendarRule(UUIDModel):
                     dw.append(weekdays[i])
                 l >>= 1
             return rules.rrule(rules.DAILY, byweekday=dw, dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes), until=end)
-        else:
-            return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes), until=end)
+        return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes), until=end)
 
     @property
-    def frequency_as_minutes(self):
+    def frequency_as_minutes(self) -> int:
         if self.frequency != WEEKDAYS:
             return frq_to_mins.get(self.frequency, 0) * self.interval
-        else:
-            return 7 * 24 * 60
+        return 7 * 24 * 60
 
     @property
-    def duration_as_minutes(self):
+    def duration_as_minutes(self) -> int:
         return dunit_to_mins.get(self.duration_unit, 1) * self.duration
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -157,6 +155,7 @@ class CalendarRule(UUIDModel):
         self.calendar.modified = getSqlDatetime()
 
         res = super().save(force_insert, force_update, using, update_fields)
+        # Ensure saves associated calendar, so next execution of actions is updated with rule values
         self.calendar.save()
         return res
 

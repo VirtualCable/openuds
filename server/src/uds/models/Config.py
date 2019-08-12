@@ -59,5 +59,4 @@ class Config(models.Model):
         app_label = 'uds'
 
     def __str__(self):
-        return u"Config {0} = {1}".format(self.key, self.value)
-
+        return "Config {} = {}".format(self.key, self.value)
