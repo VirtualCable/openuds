@@ -52,7 +52,7 @@ from uds.models.Group import Group
 from uds.models.Image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
 from uds.models.Calendar import Calendar
-from uds.models.Account import Account
+from uds.models.account import Account
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime

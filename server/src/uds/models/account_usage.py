@@ -32,11 +32,13 @@ import logging
 
 from django.db import models
 
-from uds.models.UUIDModel import UUIDModel
-from uds.models.Account import Account
-from uds.models.user_service import UserService
-from uds.models.Util import NEVER
 from uds.core.util.tools import secondsToTimeString
+
+from .UUIDModel import UUIDModel
+from .account import Account
+from .user_service import UserService
+from .Util import NEVER
+
 
 logger = logging.getLogger(__name__)
 
