@@ -75,7 +75,7 @@ from .StatsEvents import StatsEvents
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
 # We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from .Cache import Cache
+from .cache import Cache
 from .Config import Config
 from .Storage import Storage
 from .UniqueId import UniqueId
@@ -91,11 +91,11 @@ from .Image import Image
 from .TicketStore import TicketStore
 
 # Calendar related
-from .Calendar import Calendar
-from .CalendarRule import CalendarRule
+from .calendar import Calendar
+from .calendar_rule import CalendarRule
 
-from .CalendarAccess import CalendarAccess, CalendarAccessMeta
-from .CalendarAction import CalendarAction
+from .calendar_access import CalendarAccess, CalendarAccessMeta
+from .calendar_action import CalendarAction
 
 # Accounting
 from .account import Account

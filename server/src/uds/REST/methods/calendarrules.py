@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 from django.db import IntegrityError
 
 
-from uds.models.CalendarRule import freqs, CalendarRule
+from uds.models.calendar_rule import freqs, CalendarRule
 from uds.models.Util import getSqlDatetime
 
 from uds.core.util import permissions

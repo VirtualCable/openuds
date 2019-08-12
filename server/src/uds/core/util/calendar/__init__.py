@@ -39,7 +39,7 @@ import bitarray
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
-from uds.models.Calendar import Calendar
+from uds.models.calendar import Calendar
 
 from uds.core.util.Cache import Cache
 

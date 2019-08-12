@@ -34,39 +34,49 @@
 import logging
 
 from django.db import models
-from uds.models.UUIDModel import UUIDModel
-from uds.models.Tag import TaggingMixin
+
+from uds.core.util import states
+
+from .UUIDModel import UUIDModel
+from .calendar import Calendar
+from .ServicesPool import ServicePool
+from .MetaPool import MetaPool
 
 
 logger = logging.getLogger(__name__)
 
 
-class Calendar(UUIDModel, TaggingMixin):  # type: ignore
-
-    name = models.CharField(max_length=128, default='')
-    comments = models.CharField(max_length=256, default='')
-    modified = models.DateTimeField(auto_now=True)
+class CalendarAccess(UUIDModel):
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    service_pool = models.ForeignKey(ServicePool, related_name='calendarAccess', on_delete=models.CASCADE)
+    access = models.CharField(max_length=8, default=states.action.DENY)
+    priority = models.IntegerField(default=0, db_index=True)
 
     class Meta:
         """
         Meta class to declare db table
         """
-        db_table = 'uds_calendar'
+        db_table = 'uds_cal_access'
+        ordering = ('priority',)
         app_label = 'uds'
 
-    def save(self, force_insert: bool = False, force_update: bool = False, using: bool = None, update_fields: bool = None):
-        logger.debug('Saving calendar')
+    def __str__(self):
+        return 'Calendar Access {}/{}'.format(self.calendar, self.access)
 
-        res = UUIDModel.save(self, force_insert, force_update, using, update_fields)
 
-        # Basically, recalculates all related actions next execution time...
-        try:
-            for v in self.calendaraction_set.all():
-                v.save()
-        except Exception:
-            pass
+class CalendarAccessMeta(UUIDModel):
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    meta_pool = models.ForeignKey(MetaPool, related_name='calendarAccess', on_delete=models.CASCADE)
+    access = models.CharField(max_length=8, default=states.action.DENY)
+    priority = models.IntegerField(default=0, db_index=True)
 
-        return res
+    class Meta:
+        """
+        Meta class to declare db table
+        """
+        db_table = 'uds_cal_maccess'
+        ordering = ('priority',)
+        app_label = 'uds'
 
     def __str__(self):
-        return 'Calendar "{}" modified on {} with {} rules'.format(self.name, self.modified, self.rules.count())
+        return 'Calendar Access Meta {}/{}'.format(self.calendar, self.access)

@@ -48,7 +48,7 @@ from uds.models.Image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
 from uds.models.ServicesPool import ServicePool
 from uds.models.Group import Group
-from uds.models.Calendar import Calendar
+from uds.models.calendar import Calendar
 
 if typing.TYPE_CHECKING:
     import datetime

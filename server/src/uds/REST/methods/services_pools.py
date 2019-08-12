@@ -34,7 +34,7 @@ import logging
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
-from uds.models.CalendarAction import (
+from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
     CALENDAR_ACTION_CACHE_L1,

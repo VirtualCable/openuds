@@ -36,7 +36,7 @@ import logging
 from django.utils.translation import ugettext as _
 
 from uds.models import CalendarAction, Calendar
-from uds.models.CalendarAction import CALENDAR_ACTION_DICT
+from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.core.util import log, permissions
 from uds.core.util.model import processUuid
 

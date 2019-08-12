@@ -39,13 +39,15 @@ import typing
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from uds.models.Calendar import Calendar
-from uds.models.UUIDModel import UUIDModel
-from uds.models.Util import getSqlDatetime
+
 from uds.core.util import (calendar, log)
-from uds.models.ServicesPool import ServicePool
-from uds.models.Transport import Transport
-from uds.models.authenticator import Authenticator
+
+from .calendar import Calendar
+from .UUIDModel import UUIDModel
+from .Util import getSqlDatetime
+from .ServicesPool import ServicePool
+from .Transport import Transport
+from .authenticator import Authenticator
 # from django.utils.translation import ugettext_lazy as _, ugettext
 
 
