@@ -66,13 +66,13 @@ class ManagedObjectModel(UUIDModel):
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
-    def deserialize(self, obj, values):
+    def deserialize(self, obj: Module, values: typing.Optional[typing.Dict[str, str]]):
         """
         Conditionally deserializes obj if not initialized via user interface and data holds something
         """
         # Only unserializes if this is not initialized via user interface and
         # data contains something
-        if values is None and self.data is not None and self.data != '':
+        if not values and self.data:
             obj.unserialize(self.data)
 
         self._cachedInstance = None  # Ensures returns correct value on getInstance
@@ -92,7 +92,7 @@ class ManagedObjectModel(UUIDModel):
         Notes:
             Can be overriden
         """
-        if self._cachedInstance is not None and values is None:
+        if self._cachedInstance and values is None:
             # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
 

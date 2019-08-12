@@ -63,9 +63,9 @@ class Networks(ModelHandler):
     ]
 
     def beforeSave(self, fields):
-        logger.debug('Before {0}'.format(fields))
+        logger.debug('Before %s', fields)
         try:
-            nr = net.networksFromString(fields['net_string'], False)
+            nr = net.networkFromString(fields['net_string'])
             fields['net_start'] = nr[0]
             fields['net_end'] = nr[1]
         except Exception as e:

@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-
+import typing
 
 from django.db import models
 from django.db.models import signals
@@ -64,15 +64,15 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         app_label = 'uds'
 
     @staticmethod
-    def networksFor(ip):
+    def networksFor(ip: str) -> typing.Iterable['Network']:
         """
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         """
-        ip = net.ipToLong(ip)
-        return Network.objects.filter(net_start__lte=ip, net_end__gte=ip)
+        ipInt = net.ipToLong(ip)
+        return Network.objects.filter(net_start__lte=ipInt, net_end__gte=ipInt)
 
     @staticmethod
-    def create(name, netRange):
+    def create(name: str, netRange: str) -> 'Network':
         """
         Creates an network record, with the specified net start and net end (dotted quad)
 
@@ -81,11 +81,11 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
 
             netEnd: Network end
         """
-        nr = net.networksFromString(netRange, False)
+        nr = net.networkFromString(netRange)
         return Network.objects.create(name=name, net_start=nr[0], net_end=nr[1], net_string=netRange)
 
     @property
-    def netStart(self):
+    def netStart(self) -> str:
         """
         Property to access the quad dotted format of the stored network start
 
@@ -95,7 +95,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         return net.longToIp(self.net_start)
 
     @property
-    def netEnd(self):
+    def netEnd(self) -> str:
         """
         Property to access the quad dotted format of the stored network end
 
@@ -104,7 +104,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         """
         return net.longToIp(self.net_end)
 
-    def update(self, name, netRange):
+    def update(self, name: str, netRange: str):
         """
         Updated this network with provided values
 
@@ -116,7 +116,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
             netEnd: new Network end (quad dotted)
         """
         self.name = name
-        nr = net.networksFromString(netRange, False)
+        nr = net.networkFromString(netRange)
         self.net_start = nr[0]
         self.net_end = nr[1]
         self.net_string = netRange

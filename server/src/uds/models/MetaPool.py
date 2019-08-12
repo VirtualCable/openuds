@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals, QuerySet
@@ -48,6 +49,9 @@ from uds.models.ServicesPoolGroup import ServicesPoolGroup
 from uds.models.ServicesPool import ServicePool
 from uds.models.Group import Group
 from uds.models.Calendar import Calendar
+
+if typing.TYPE_CHECKING:
+    import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -93,6 +97,11 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         app_label = 'uds'
 
     def isInMaintenance(self) -> bool:
+        """If a Metapool is in maintenance (that is, all its pools are in maintenance)
+
+        Returns:
+            bool -- [description]
+        """
         total, maintenance = 0, 0
         for p in self.pools.all():
             total += 1
@@ -100,12 +109,12 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 maintenance += 1
         return total == maintenance
 
-    def isAccessAllowed(self, chkDateTime=None) -> bool:
+    def isAccessAllowed(self, chkDateTime: typing.Optional['datetime.datetime'] = None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
         if chkDateTime is None:
-            chkDateTime = getSqlDatetime()
+            chkDateTime = typing.cast(datetime.datetime, getSqlDatetime())
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
@@ -117,9 +126,9 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         return access == states.action.ALLOW
 
     @property
-    def visual_name(self):
+    def visual_name(self) -> str:
         logger.debug('SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name)
-        if self.short_name and self.short_name.strip() != '':
+        if self.short_name.strip():
             return self.short_name
         return self.name
 

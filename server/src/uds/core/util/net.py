@@ -78,7 +78,10 @@ def longToIp(n: int) -> str:
     except Exception:
         return '0.0.0.0'  # Invalid values will map to "0.0.0.0"
 
+def networkFromString(strNets: str) -> NetworkType:
+    return typing.cast(NetworkType, networksFromString(strNets, False))
 
+# pylint: disable=too-many-return-statements, too-many-branches, too-many-statements
 def networksFromString(strNets: str, allowMultipleNetworks: bool = True) -> typing.Union[NetworklistType, NetworkType]:
     """
     Parses the network from strings in this forms:
