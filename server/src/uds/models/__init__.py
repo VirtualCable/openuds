@@ -63,8 +63,8 @@ from .ServicesPool import ServicePool  # New name
 from .MetaPool import MetaPool
 from .ServicesPoolGroup import ServicesPoolGroup
 from .ServicesPoolPublication import DeployedServicePublication
-from .UserService import UserService
-from .UserServiceProperty import UserServiceProperty
+from .user_service import UserService
+from .user_service_property import UserServiceProperty
 
 # Especific log information for an user service
 from .Log import Log

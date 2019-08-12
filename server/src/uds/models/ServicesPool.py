@@ -61,7 +61,7 @@ from uds.core.util.calendar import CalendarChecker
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models.UserService import UserService
+    from uds.models.user_service import UserService
     from uds.models.ServicesPoolPublication import DeployedServicePublication
 
 
@@ -153,7 +153,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
 
     @staticmethod
     def getRestraineds() -> typing.Iterable['DeployedService']:
-        from uds.models.UserService import UserService  # pylint: disable=redefined-outer-name
+        from uds.models.user_service import UserService  # pylint: disable=redefined-outer-name
         from uds.core.util.Config import GlobalConfig
         from django.db.models import Count
 
@@ -455,7 +455,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
 
     def cachedUserServices(self):
         """
-        ':rtype uds.models.UserService.UserService'
+        ':rtype uds.models.user_service.UserService'
         Utility method to access the cached user services (level 1 and 2)
 
         Returns:

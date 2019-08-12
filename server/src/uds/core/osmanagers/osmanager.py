@@ -43,7 +43,7 @@ from uds.core import Module
 STORAGE_KEY = 'osmk'
 
 if typing.TYPE_CHECKING:
-    from uds.models import UserService
+    from uds.models.user_service import UserService
     from uds.core.environment import Environment
 
 class OSManager(Module):
@@ -187,7 +187,7 @@ class OSManager(Module):
         uniqueId = userService.unique_id
         userService.setInUse(True)
         userServiceInstance = userService.getInstance()
-        userServiceInstance.userLoggedIn(userName)
+        userServiceInstance.userLoggedIn(userName or 'unknown')
         userService.updateData(userServiceInstance)
 
         serviceIp = userServiceInstance.getIp()
@@ -227,13 +227,13 @@ class OSManager(Module):
         uniqueId = userService.unique_id
         userService.setInUse(False)
         userServiceInstance = userService.getInstance()
-        userServiceInstance.userLoggedOut(userName)
+        userServiceInstance.userLoggedOut(userName or 'unknown')
         userService.updateData(userServiceInstance)
 
         serviceIp = userServiceInstance.getIp()
 
         fullUserName = 'unknown'
-        if userService.user is not None:
+        if userService.user:
             fullUserName = userService.user.manager.name + '\\' + userService.user.name
 
         knownUserIP = userService.src_ip + ':' + userService.src_hostname

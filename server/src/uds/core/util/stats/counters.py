@@ -36,7 +36,6 @@ import typing
 
 from django.utils.translation import ugettext_lazy as _
 from uds.core.managers import statsManager
-from uds.models import NEVER
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +86,7 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs):
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
+    from uds.models import NEVER
 
     since = kwargs.get('since', NEVER)
     to = kwargs.get('to', datetime.datetime.now())

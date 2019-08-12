@@ -34,7 +34,7 @@ from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Account import Account
-from uds.models.UserService import UserService
+from uds.models.user_service import UserService
 from uds.models.Util import NEVER
 from uds.core.util.tools import secondsToTimeString
 

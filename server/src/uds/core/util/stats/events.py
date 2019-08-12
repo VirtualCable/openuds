@@ -34,7 +34,6 @@ import datetime
 import logging
 import typing
 
-from uds.models import NEVER
 from uds.core.managers import statsManager
 
 logger = logging.getLogger(__name__)
@@ -93,6 +92,7 @@ def getEvents(obj: typing.Any, eventType: int, **kwargs) -> typing.Generator[Eve
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
+    from uds.models import NEVER
 
     since = kwargs.get('since', NEVER)
     to = kwargs.get('to', datetime.datetime.now())

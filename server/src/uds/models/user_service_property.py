@@ -34,7 +34,7 @@ import logging
 
 from django.db import models
 
-from .UserService import UserService
+from .user_service import UserService
 
 
 logger = logging.getLogger(__name__)

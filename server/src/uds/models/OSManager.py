@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import IntegrityError
 from django.db.models import signals
@@ -38,6 +39,9 @@ from django.db.models import signals
 from uds.models.ManagedObjectModel import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import osmanagers
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +59,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
-    def getType(self):
+    def getType(self) -> typing.Type['osmanagers.OSManager']:
         """
         Get the type of the object this record represents.
 
@@ -67,10 +71,15 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         :note: We only need to get info from this, not access specific data (class specific info)
         """
         # We only need to get info from this, not access specific data (class specific info)
-        from uds.core import osmanagers
-        return osmanagers.factory().lookup(self.data_type)
+        from uds.core import osmanagers  # pylint: disable=redefined-outer-name
 
-    def remove(self):
+        type_ = osmanagers.factory().lookup(self.data_type)
+        if type_:
+            return type_
+        # If invalid type, ensure at least we have "basic" model (that will fail if used, but not if referenced)
+        return osmanagers.OSManager
+
+    def remove(self) -> bool:
         """
         Removes this OS Manager only if there is no associated deployed service using it.
 
@@ -87,7 +96,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         return True
 
     def __str__(self):
-        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
