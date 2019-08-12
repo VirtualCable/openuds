@@ -104,24 +104,24 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
     # : This string will be translated when provided to admin interface
     # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     # : if you want so it can be translated.
-    typeName = _('Base Authenticator')
+    typeName: typing.ClassVar[str] = _('Base Authenticator')
 
     # : Name of type used by Managers to identify this type of service
     # : We could have used here the Class name, but we decided that the
     # : module implementator will be the one that will provide a name that
     # : will relation the class (type) and that name.
-    typeType = 'BaseAuthenticator'
+    typeType: typing.ClassVar[str] = 'BaseAuthenticator'
 
     # : Description shown at administration level for this authenticator.
     # : This string will be translated when provided to admin interface
     # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     # : if you want so it can be translated.
-    typeDescription = _('Base Authenticator')
+    typeDescription: typing.ClassVar[str] = _('Base Authenticator')
 
     # : Icon file, used to represent this authenticator at administration interface
     # : This file should be at same folder as this class is, except if you provide
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
-    iconFile = 'auth.png'
+    iconFile: typing.ClassVar[str] = 'auth.png'
 
     # : Mark this authenticator as that the users comes from outside the UDS
     # : database, that are most authenticator (except Internal DB)
@@ -171,7 +171,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         super(Authenticator, self).__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, str]]):
+    def initialize(self, values: typing.Optional[typing.Dict[str, str]]) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -193,7 +193,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return self._dbAuth
 
-    def recreateGroups(self, user: DBUser):
+    def recreateGroups(self, user: DBUser) -> None:
         """
         Helper method, not needed to be overriden.
         It simply checks if the source is external and if so, recreates

@@ -33,7 +33,7 @@
 from datetime import timedelta
 import logging
 
-from django.db import models
+from django.db import models, transaction
 
 from uds.models.Util import getSqlDatetime
 
@@ -59,11 +59,10 @@ class Cache(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def cleanUp():
+    def cleanUp() -> None:
         """
         Purges the cache items that are no longer vaild.
         """
-        from django.db import transaction
         now = getSqlDatetime()
         with transaction.atomic():
             for v in Cache.objects.all():
@@ -75,4 +74,4 @@ class Cache(models.Model):
             expired = "Expired"
         else:
             expired = "Active"
-        return u"{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
+        return "{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)

@@ -34,6 +34,7 @@
 import datetime
 import json
 import logging
+import typing
 
 
 from django.utils.translation import ugettext_lazy as _
@@ -63,13 +64,13 @@ CALENDAR_ACTION_DEL_TRANSPORT = {'id': 'REMOVE_TRANSPORT', 'description': _('Rem
 CALENDAR_ACTION_ADD_GROUP = {'id': 'ADD_GROUP', 'description': _('Add a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
 CALENDAR_ACTION_DEL_GROUP = {'id': 'REMOVE_GROUP', 'description': _('Remove a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
 
-CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (
+CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {c['id']: c for c in (
     CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
     CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
     CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT,
     CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP
-)))
+)}
 
 
 class CalendarAction(UUIDModel):
@@ -95,9 +96,13 @@ class CalendarAction(UUIDModel):
         return datetime.timedelta(minutes=self.events_offset)
 
     @property
-    def prettyParams(self):
+    def prettyParams(self) -> str:
         try:
             ca = CALENDAR_ACTION_DICT.get(self.action)
+
+            if ca is None:
+                raise Exception('{} not in action dict'.format(self.action))
+
             params = json.loads(self.params)
             res = []
             for p in ca['params']:
@@ -126,14 +131,19 @@ class CalendarAction(UUIDModel):
             logger.exception('error')
             return '(invalid action)'
 
-    def execute(self, save=True):
+    def execute(self, save: bool = True) -> None:  # pylinf: disable=too-many-branches, too-many-statements
+        """Executes the calendar action
+
+        Keyword Arguments:
+            save {bool} -- [If save this action after execution (will regen next execution time)] (default: {True})
+        """
         logger.debug('Executing action')
         self.last_execution = getSqlDatetime()
         params = json.loads(self.params)
 
         saveServicePool = save
 
-        def sizeVal():
+        def sizeVal() -> int:
             v = int(params['size'])
             return v if v >= 0 else 0
 
@@ -154,39 +164,38 @@ class CalendarAction(UUIDModel):
             self.service_pool.publish(changeLog='Scheduled publication action')
             saveServicePool = False
             executed = True
-        # Add transport
-        elif CALENDAR_ACTION_ADD_TRANSPORT['id'] == self.action:
-            try:
-                t = Transport.objects.get(uuid=params['transport'])
-                self.service_pool.transports.add(t)
-                executed = True
-            except Exception:
-                self.service_pool.log('Scheduled action not executed because transport is not available anymore')
-            saveServicePool = False
-        # Remove transport
-        elif CALENDAR_ACTION_DEL_TRANSPORT['id'] == self.action:
-            try:
-                t = Transport.objects.get(uuid=params['transport'])
-                self.service_pool.transports.remove(t)
-                executed = True
-            except Exception:
-                self.service_pool.log('Scheduled action not executed because transport is not available anymore', level=log.ERROR)
-            saveServicePool = False
-        elif CALENDAR_ACTION_ADD_GROUP['id'] == self.action:
-            try:
-                auth, grp = params['group'].split('@')
-                grp = Authenticator.objects.get(uuid=auth).groups.get(uuid=grp)
-
-            except Exception:
-                pass
-        elif CALENDAR_ACTION_DEL_GROUP['id'] == self.action:
-            pass
+        else:
+            caTransports = (CALENDAR_ACTION_ADD_TRANSPORT['id'], CALENDAR_ACTION_DEL_TRANSPORT['id'])
+            caGroups = (CALENDAR_ACTION_ADD_GROUP['id'], CALENDAR_ACTION_DEL_GROUP['id'])
+            if self.action in caTransports:
+                try:
+                    t = Transport.objects.get(uuid=params['transport'])
+                    if self.action == caTransports[0]:
+                        self.service_pool.transports.add(t)
+                    else:
+                        self.service_pool.transports.remove(t)
+                    executed = True
+                except Exception:
+                    self.service_pool.log('Scheduled action not executed because transport is not available anymore')
+                saveServicePool = False
+            elif self.action in caGroups:
+                try:
+                    auth, grp = params['group'].split('@')
+                    grp = Authenticator.objects.get(uuid=auth).groups.get(uuid=grp)
+                    if self.action == caGroups[0]:
+                        self.service_pool.assignedGroups.add(grp)
+                    else:
+                        self.service_pool.assignedGroups.remove(grp)
+                    executed = True
+                except Exception:
+                    self.service_pool.log('Scheduled action not executed because group is not available anymore')
+                saveServicePool = False
 
         if executed:
             try:
                 self.service_pool.log(
                     'Executed action {} [{}]'.format(
-                        CALENDAR_ACTION_DICT.get(self.action)['description'], self.prettyParams
+                        CALENDAR_ACTION_DICT.get(self.action, {})['description'], self.prettyParams
                     ),
                     level=log.INFO
                 )

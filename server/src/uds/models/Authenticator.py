@@ -47,18 +47,18 @@ from uds.models.Util import NEVER
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
-    pass
+    from uds.models import User
+    from django.db.models import QuerySet  # pylint: disable=ungrouped-imports
 
 
 logger = logging.getLogger(__name__)
 
 
-class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
+class Authenticator(ManagedObjectModel, TaggingMixin):
     """
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...
     """
-    # pylint: disable=model-missing-unicode
 
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
@@ -108,7 +108,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
         # If type is not registered (should be, but maybe a database inconsistence), consider this a "base empty auth"
         return auths.factory().lookup(self.data_type) or auths.Authenticator
 
-    def getOrCreateUser(self, username, realName=None):
+    def getOrCreateUser(self, username: str, realName: typing.Optional[str] = None) -> 'User':
         """
         Used to get or create a new user at database associated with this authenticator.
 
@@ -135,18 +135,17 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
             the ip is NOT contained in ANY subnet associated with this transport.
 
         Raises:
-
-
         """
+        user: 'User'
         realName = realName if realName is None else username
         user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
         if (user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()) and realName != user.real_name:
             user.real_name = realName
-            user.save()
+            user.save(update_fields=['real_name'])
 
         return user
 
-    def isValidUser(self, username, falseIfNotExists=True):
+    def isValidUser(self, username: str, falseIfNotExists: bool = True) -> bool:
         """
         Checks the validity of an user
 
@@ -163,20 +162,20 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
         This is done so we can check non existing or non blocked users (state != Active, or do not exists)
         """
         try:
-            u = self.users.get(name=username)
+            u: User = self.users.get(name=username)
             return State.isActive(u.state)
         except Exception:
             return falseIfNotExists
 
     @staticmethod
-    def all():
+    def all() -> 'QuerySet':
         """
         Returns all authenticators ordered by priority
         """
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def getByTag(tag=None):
+    def getByTag(tag=None) -> typing.List['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
@@ -184,17 +183,17 @@ class Authenticator(ManagedObjectModel, TaggingMixin):  # type: ignore
         from uds.core.util.Config import GlobalConfig
 
         if tag is not None:
-            auths = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
-            if auths.count() == 0:
-                auths = Authenticator.objects.all().order_by('priority', 'name')
+            authsList: 'QuerySet' = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
+            if not authsList:
+                authsList = Authenticator.objects.all().order_by('priority', 'name')
                 # If disallow global login (use all auths), get just the first by priority/name
                 if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
-                    auths = auths[0:1]
-            logger.debug(auths)
+                    authsList = authsList[0:1]
+            logger.debug(authsList)
         else:
-            auths = Authenticator.objects.all().order_by('priority', 'name')
+            authsList = Authenticator.objects.all().order_by('priority', 'name')
 
-        return [auth for auth in auths if auth.getType() and (auth.getType().isCustom() is False or tag != 'disabled')]
+        return [auth for auth in authsList if auth.getType() and (auth.getType().isCustom() is False or tag != 'disabled')]
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

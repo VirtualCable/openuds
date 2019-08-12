@@ -102,13 +102,13 @@ class Module(UserInterface, Environmentable, Serializable):
 
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
-    typeName: typing.ClassVar[typing.Any] = 'Base Module'
+    typeName: typing.ClassVar[str] = 'Base Module'
     # : Internal type name, used by system to locate this module
-    typeType: typing.ClassVar[typing.Any] = 'BaseModule'
+    typeType: typing.ClassVar[str] = 'BaseModule'
     # : Description of this module, used at admin level
-    typeDescription: typing.ClassVar[typing.Any] = 'Base Module'
+    typeDescription: typing.ClassVar[str] = 'Base Module'
     # : Icon file, relative to module folders
-    iconFile: typing.ClassVar[typing.Any] = 'base.png'  # This is expected to be png, use this format always
+    iconFile: typing.ClassVar[str] = 'base.png'  # This is expected to be png, use this format always
 
     class ValidationException(Exception):
         """
@@ -158,7 +158,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return _(cls.typeDescription)
 
     @classmethod
-    def icon(cls: typing.Type['Module'], inBase64=True) -> typing.Union[str, bytes]:
+    def icon(cls: typing.Type['Module'], inBase64: bool = True) -> typing.Union[str, bytes]:
         """
         Reads the file specified by iconFile at module folder, and returns it content.
         This is used to obtain an icon so administration can represent it.
@@ -182,7 +182,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return data
 
     @staticmethod
-    def test(env, data: typing.Dict[str, str]) -> typing.List[typing.Any]:
+    def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:
         """
         Test if the connection data is ok.
 
@@ -228,12 +228,12 @@ class Module(UserInterface, Environmentable, Serializable):
         UserInterface.__init__(self, values)
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._uuid = uuid if uuid else ''
+        self._uuid = uuid or ''
 
     def __str__(self):
         return "Base Module"
 
-    def isDirty(self):
+    def isDirty(self) -> bool:
         """
         This method informs the core if the module has changed serializable data,
         and that must be re-serialized
