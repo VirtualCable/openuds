@@ -76,7 +76,7 @@ from .StatsEvents import StatsEvents
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
 # We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
 from .cache import Cache
-from .Config import Config
+from .config import Config
 from .Storage import Storage
 from .UniqueId import UniqueId
 
