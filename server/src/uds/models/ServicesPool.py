@@ -45,7 +45,7 @@ from uds.core.services.Exceptions import InvalidServiceException
 from uds.models.uuid_model import UUIDModel
 from uds.models.Tag import TaggingMixin
 
-from uds.models.OSManager import OSManager
+from uds.models.os_manager import OSManager
 from uds.models.Service import Service
 from uds.models.transport import Transport
 from uds.models.group import Group

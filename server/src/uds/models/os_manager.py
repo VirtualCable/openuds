@@ -59,6 +59,9 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
+    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'osmanagers.OSManager':
+        return typing.cast('osmanagers.OSManager', super().getInstance(values=values))
+
     def getType(self) -> typing.Type['osmanagers.OSManager']:
         """
         Get the type of the object this record represents.

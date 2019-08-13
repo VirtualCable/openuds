@@ -33,7 +33,7 @@
 import logging
 
 # Permissions
-from .Permissions import Permissions
+from .permissions import Permissions
 
 # Utility
 from .util import getSqlDatetime
@@ -45,7 +45,7 @@ from .Provider import Provider
 from .Service import Service
 
 # Os managers
-from .OSManager import OSManager
+from .os_manager import OSManager
 
 # Transports
 from .transport import Transport
