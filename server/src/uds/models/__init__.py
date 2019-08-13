@@ -54,7 +54,7 @@ from .Network import Network
 # Authenticators
 from .authenticator import Authenticator
 from .user import User
-from .UserPreference import UserPreference
+from .user_preference import UserPreference
 from .group import Group
 
 # Provisioned services
