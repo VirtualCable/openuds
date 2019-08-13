@@ -49,7 +49,7 @@ from uds.models.OSManager import OSManager
 from uds.models.Service import Service
 from uds.models.Transport import Transport
 from uds.models.group import Group
-from uds.models.Image import Image
+from uds.models.image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
 from uds.models.calendar import Calendar
 from uds.models.account import Account

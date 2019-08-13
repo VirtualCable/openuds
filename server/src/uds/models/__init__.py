@@ -85,7 +85,7 @@ from .Scheduler import Scheduler
 from .delayed_task import DelayedTask
 
 # Image galery related
-from .Image import Image
+from .image import Image
 
 # Ticket storage
 from .TicketStore import TicketStore

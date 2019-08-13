@@ -36,7 +36,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from uds.models.uuid_model import UUIDModel
-from uds.models.Image import Image
+from uds.models.image import Image
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
 
