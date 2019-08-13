@@ -42,7 +42,7 @@ from .util import NEVER_UNIX
 
 # Services
 from .provider import Provider
-from .Service import Service
+from .service import Service
 
 # Os managers
 from .os_manager import OSManager

@@ -46,7 +46,7 @@ from uds.models.uuid_model import UUIDModel
 from uds.models.Tag import TaggingMixin
 
 from uds.models.os_manager import OSManager
-from uds.models.Service import Service
+from uds.models.service import Service
 from uds.models.transport import Transport
 from uds.models.group import Group
 from uds.models.image import Image

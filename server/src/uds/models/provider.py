@@ -80,7 +80,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'services.ServiceProvider':
         return typing.cast('services.ServiceProvider', super().getInstance(values=values))
 
-    def isInMaintenance(self) -> int:
+    def isInMaintenance(self) -> bool:
         return self.maintenance_mode
 
     def __str__(self):

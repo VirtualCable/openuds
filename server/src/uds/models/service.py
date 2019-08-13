@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
@@ -45,6 +46,10 @@ from uds.core.util import connection
 
 from uds.models.provider import Provider
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import services
+
 
 logger = logging.getLogger(__name__)
 
@@ -55,11 +60,13 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     or a Terminal Server configuration).
     """
     # pylint: disable=model-missing-unicode
-    provider = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
+    provider: 'Provider' = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
 
     # Proxy for this service
-    proxy = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
+    proxy: 'Proxy' = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
 
+
+    _cachedInstance: typing.Optional['services.Service'] = None
 
     class Meta(ManagedObjectModel.Meta):
         """
@@ -86,7 +93,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             }
         )
 
-    def getInstance(self, values=None):
+    def getInstance(self, values=None) -> 'services.Service':
         """
         Instantiates the object this record contains.
 
@@ -105,17 +112,20 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
 
-        prov = self.provider.getInstance()
+        prov: 'services.ServiceProvider' = self.provider.getInstance()
         sType = prov.getServiceByType(self.data_type)
-        env = self.getEnvironment()
-        obj = sType(env, prov, values)
-        self.deserialize(obj, values)
+
+        if sType:
+            obj = sType(self.getEnvironment(), prov, values)
+            self.deserialize(obj, values)
+        else:
+            raise Exception('Service type of {} is not recogniced by provider {}'.format(self.data_type, prov))
 
         self._cachedInstance = obj
 
         return obj
 
-    def getType(self):
+    def getType(self) -> typing.Type['services.Service']:
         """
         Get the type of the object this record represents.
 
@@ -126,15 +136,21 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         :note: We only need to get info from this, not access specific data (class specific info)
         """
-        return self.provider.getType().getServiceByType(self.data_type)
+        prov: typing.Type['services.ServiceProvider'] = self.provider.getType()
+        type_ = prov.getServiceByType(self.data_type)
+        if type_:
+            return type_
 
-    def isInMaintenance(self):
-        return self.provider is not None and self.provider.isInMaintenance()
+        raise Exception('Service type of {} is not recogniced by provider {}'.format(self.data_type, prov))
 
-    def testServer(self, host, port, timeout=4):
+    def isInMaintenance(self) -> bool:
+        # orphaned services?
+        return self.provider.isInMaintenance() if self.provider else True
+
+    def testServer(self, host: str, port: typing.Union[str, int], timeout: int = 4) -> bool:
         if self.proxy is not None:
             return self.proxy.doTestServer(host, port, timeout)
-        return connection.testServer(host, str(port), timeout)
+        return connection.testServer(host, port, timeout)
 
     def __str__(self):
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
