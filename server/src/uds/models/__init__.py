@@ -81,7 +81,7 @@ from .Storage import Storage
 from .UniqueId import UniqueId
 
 # Workers/Schedulers related
-from .Scheduler import Scheduler
+from .scheduler import Scheduler
 from .delayed_task import DelayedTask
 
 # Image galery related
@@ -102,7 +102,7 @@ from .account import Account
 from .account_usage import AccountUsage
 
 # Proxies
-from .Proxy import Proxy
+from .proxy import Proxy
 
 # Tagging
 from .Tag import Tag

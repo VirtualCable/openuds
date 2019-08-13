@@ -52,7 +52,7 @@ class OSManagersFactory:
             OSManagersFactory._factory = OSManagersFactory()
         return OSManagersFactory._factory
 
-    def providers(self):
+    def providers(self) -> typing.Dict[str, typing.Type['OSManager']]:
         return self._osManagers
 
     def insert(self, type_: typing.Type['OSManager']) -> None:

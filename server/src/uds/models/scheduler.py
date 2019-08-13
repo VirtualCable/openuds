@@ -32,16 +32,14 @@
 """
 import logging
 
-
 from django.db import models
 from django.db.models import signals
 
 from uds.core.util.State import State
 from uds.core.environment import Environment
-from uds.core.jobs.JobsFactory import JobsFactory
+from uds.core import jobs
 
 from uds.models.util import NEVER
-
 
 logger = logging.getLogger(__name__)
 
@@ -78,23 +76,23 @@ class Scheduler(models.Model):
         """
         app_label = 'uds'
 
-    def getEnvironment(self):
+    def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
-    def getInstance(self):
+    def getInstance(self) -> jobs.Job:
         """
         Returns an instance of the class that this record of the Scheduler represents. This clas is derived
         of uds.core.jobs.Job.Job
         """
-        jobInstance = JobsFactory.factory().lookup(self.name)
-        if jobInstance is not None:
-            env = self.getEnvironment()
-            return jobInstance(env)
-        else:
-            return None
+        jobInstance = jobs.factory().lookup(self.name)
+
+        if jobInstance:
+            return jobInstance(self.getEnvironment())
+
+        return jobs.Job(self.getEnvironment())
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

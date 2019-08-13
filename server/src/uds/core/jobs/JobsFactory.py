@@ -32,23 +32,28 @@
 """
 import datetime
 import logging
+import typing
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from .Job import Job
+
 
 class JobsFactory:
-    _factory = None
+    _factory: typing.Optional['JobsFactory'] = None
+    _jobs: typing.Dict[str, typing.Type['Job']]
 
     def __init__(self):
         self._jobs = {}
 
     @staticmethod
-    def factory():
-        if JobsFactory._factory is None:
+    def factory() -> 'JobsFactory':
+        if not JobsFactory._factory:
             JobsFactory._factory = JobsFactory()
         return JobsFactory._factory
 
-    def jobs(self):
+    def jobs(self) -> typing.Dict[str, typing.Type['Job']]:
         return self._jobs
 
     def insert(self, name, type_):
@@ -58,7 +63,7 @@ class JobsFactory:
         except Exception as e:
             logger.debug('Exception at insert in JobsFactory: %s, %s', e.__class__, e)
 
-    def ensureJobsInDatabase(self):
+    def ensureJobsInDatabase(self) -> None:
         from uds.models import Scheduler, getSqlDatetime
         from uds.core.util.State import State
         from uds.core import workers
@@ -83,7 +88,7 @@ class JobsFactory:
         except Exception as e:
             logger.debug('Exception at ensureJobsInDatabase in JobsFactory: %s, %s', e.__class__, e)
 
-    def lookup(self, typeName):
+    def lookup(self, typeName: str) -> typing.Optional[typing.Type['Job']]:
         try:
             return self._jobs[typeName]
         except KeyError:
