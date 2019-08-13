@@ -82,7 +82,7 @@ from .UniqueId import UniqueId
 
 # Workers/Schedulers related
 from .Scheduler import Scheduler
-from .DelayedTask import DelayedTask
+from .delayed_task import DelayedTask
 
 # Image galery related
 from .Image import Image
@@ -108,6 +108,6 @@ from .Proxy import Proxy
 from .Tag import Tag
 
 # Utility
-from .DBFile import DBFile
+from .dbfile import DBFile
 
 logger = logging.getLogger(__name__)

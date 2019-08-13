@@ -34,7 +34,7 @@ import logging
 
 from django.conf import settings
 from django.apps import apps
-import uds.models.config
+from uds.models.config import Config as DBConfig
 from uds.core.managers.CryptoManager import CryptoManager
 
 logger = logging.getLogger(__name__)
@@ -96,7 +96,7 @@ class Config:
             try:
                 if force or self._data is None:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
-                    readed = uds.models.config.objects.get(section=self._section.name(), key=self._key)  # @UndefinedVariable
+                    readed = DBConfig.objects.get(section=self._section.name(), key=self._key)  # @UndefinedVariable
                     self._data = readed.value
                     self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
                     self._longText = readed.long
@@ -165,7 +165,7 @@ class Config:
 
             logger.debug('Saving config %s.%s as %s', self._section.name(), self._key, value)
             try:
-                obj, _ = uds.models.config.objects.get_or_create(section=self._section.name(), key=self._key)  # @UndefinedVariable
+                obj, _ = DBConfig.objects.get_or_create(section=self._section.name(), key=self._key)  # @UndefinedVariable
                 obj.value, obj.crypt, obj.long, obj.field_type = value, self._crypt, self._longText, self._type
                 obj.save()
             except Exception:
@@ -200,7 +200,7 @@ class Config:
     @staticmethod
     def enumerate() -> typing.Iterable['Config.Value']:
         GlobalConfig.initialize()  # Ensures DB contains all values
-        for cfg in uds.models.config.objects.all().order_by('key'):  # @UndefinedVariable
+        for cfg in DBConfig.objects.all().order_by('key'):  # @UndefinedVariable
             # Skip sections with name starting with "__" (not to be editted on configuration)
             if cfg.section.startswith('__'):  # Hidden section:
                 continue
@@ -215,7 +215,7 @@ class Config:
     def update(section, key, value, checkType=False) -> bool:
         # If cfg value does not exists, simply ignore request
         try:
-            cfg = uds.models.config.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
+            cfg = DBConfig.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
             if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
                 return  False# Skip non writable elements
 
