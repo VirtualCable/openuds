@@ -43,7 +43,7 @@ from uds.models.Tag import TaggingMixin
 from uds.models.Proxy import Proxy
 from uds.core.util import connection
 
-from uds.models.Provider import Provider
+from uds.models.provider import Provider
 
 
 logger = logging.getLogger(__name__)

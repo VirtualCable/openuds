@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
@@ -39,6 +40,9 @@ from uds.core.util import log
 from uds.models.managed_object_model import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import services
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +62,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
-    def getType(self):
+    def getType(self) -> typing.Type['services.ServiceProvider']:
         '''
         Get the type of the object this record represents.
 
@@ -67,10 +71,16 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         Returns:
             The python type for this record object
         '''
-        from uds.core import services
-        return services.factory().lookup(self.data_type)
+        from uds.core import services  # pylint: disable=redefined-outer-name
+        type_ = services.factory().lookup(self.data_type)
+        if type_:
+            return type_
+        return services.ServiceProvider  # Basic Service implementation. Will fail if we try to use it, but will be ok to reference it
 
-    def isInMaintenance(self):
+    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'services.ServiceProvider':
+        return typing.cast('services.ServiceProvider', super().getInstance(values=values))
+
+    def isInMaintenance(self) -> int:
         return self.maintenance_mode
 
     def __str__(self):
@@ -102,6 +112,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         # Clears related permissions
         clean(toDelete)
+
 
 # : Connects a pre deletion signal to Provider
 signals.pre_delete.connect(Provider.beforeDelete, sender=Provider)

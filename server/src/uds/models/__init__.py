@@ -41,7 +41,7 @@ from .util import NEVER
 from .util import NEVER_UNIX
 
 # Services
-from .Provider import Provider
+from .provider import Provider
 from .Service import Service
 
 # Os managers
