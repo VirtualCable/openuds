@@ -45,10 +45,10 @@ from uds.models.UUIDModel import UUIDModel
 from uds.models.ServicesPool import DeployedService
 from uds.models.ServicesPoolPublication import DeployedServicePublication
 
-from uds.models.User import User
+from uds.models.user import User
 
-from uds.models.Util import NEVER
-from uds.models.Util import getSqlDatetime
+from uds.models.util import NEVER
+from uds.models.util import getSqlDatetime
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:

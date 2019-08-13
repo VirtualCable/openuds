@@ -35,8 +35,8 @@ from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Tag import TaggingMixin
-from uds.models.Util import getSqlDatetime
-from uds.models.Util import NEVER
+from uds.models.util import getSqlDatetime
+from uds.models.util import NEVER
 
 logger = logging.getLogger(__name__)
 

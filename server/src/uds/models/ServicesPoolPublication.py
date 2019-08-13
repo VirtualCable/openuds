@@ -41,7 +41,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 
 from uds.models.ServicesPool import DeployedService
-from uds.models.Util import getSqlDatetime
+from uds.models.util import getSqlDatetime
 from uds.models.UUIDModel import UUIDModel
 
 logger = logging.getLogger(__name__)

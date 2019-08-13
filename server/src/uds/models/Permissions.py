@@ -37,9 +37,9 @@ from django.db import models
 from django.db.models import Q
 
 from uds.models.UUIDModel import UUIDModel
-from uds.models.User import User
-from uds.models.Group import Group
-from uds.models.Util import getSqlDatetime
+from uds.models.user import User
+from uds.models.group import Group
+from uds.models.util import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)

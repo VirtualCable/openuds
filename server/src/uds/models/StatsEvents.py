@@ -36,8 +36,8 @@ import types
 
 from django.db import models
 
-from uds.models.Util import NEVER_UNIX
-from uds.models.Util import getSqlDatetime
+from uds.models.util import NEVER_UNIX
+from uds.models.util import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)

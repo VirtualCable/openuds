@@ -44,7 +44,7 @@ from uds.core.auths.Exceptions import InvalidUserException
 if typing.TYPE_CHECKING:
     from uds.core.auths.GroupsManager import GroupsManager
     from uds.models import Authenticator as DBAuthenticator
-    from uds.models.User import User as DBUser
+    from uds.models.user import User as DBUser
 
 
 logger = logging.getLogger(__name__)

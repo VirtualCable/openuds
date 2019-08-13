@@ -38,7 +38,7 @@ from django.db import IntegrityError
 
 
 from uds.models.calendar_rule import freqs, CalendarRule
-from uds.models.Util import getSqlDatetime
+from uds.models.util import getSqlDatetime
 
 from uds.core.util import permissions
 from uds.core.util.model import processUuid

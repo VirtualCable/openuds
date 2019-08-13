@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
-from uds.models.Util import getSqlDatetime
+from uds.models.util import getSqlDatetime
 
 from . import og
 import six

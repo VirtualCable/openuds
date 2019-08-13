@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 from uds.models.MetaPool import MetaPool, MetaPoolMember
 from uds.models.ServicesPool import ServicePool
 from uds.models.user_service import UserService
-from uds.models.User import User
+from uds.models.user import User
 
 from uds.core.util.State import State
 from uds.core.util.model import processUuid

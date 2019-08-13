@@ -38,11 +38,11 @@ from django.db.models import signals
 
 from uds.core.util.State import State
 from uds.core.util import log
-from .UUIDModel import UUIDModel
 
+from .UUIDModel import UUIDModel
 from .authenticator import Authenticator
-from .User import User
-from .Util import UnsavedForeignKey, getSqlDatetime
+from .user import User
+from .util import UnsavedForeignKey, getSqlDatetime
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:

@@ -37,8 +37,8 @@ from datetime import datetime, timedelta
 import typing
 
 from django.db import transaction
-import uds.models.cache
-from uds.models.Util import getSqlDatetime
+from uds.models.cache import Cache as DBCache
+from uds.models.util import getSqlDatetime
 from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class Cache:
         try:
             key = self.__getKey(skey)
             logger.debug('Key: %s', key)
-            c: uds.models.cache = uds.models.cache.objects.get(pk=key)  # @UndefinedVariable
+            c: DBCache = DBCache.objects.get(pk=key)  # @UndefinedVariable
             # If expired
             if now > c.created + timedelta(seconds=c.validity):
                 return defValue
@@ -86,7 +86,7 @@ class Cache:
 
             Cache.hits += 1
             return val
-        except uds.models.cache.DoesNotExist:  # @UndefinedVariable
+        except DBCache.DoesNotExist:  # @UndefinedVariable
             Cache.misses += 1
             logger.debug('key not found: %s', skey)
             return defValue
@@ -103,9 +103,9 @@ class Cache:
         # logger.debug('Removing key "%s" for uService "%s"' % (skey, self._owner))
         try:
             key = self.__getKey(skey)
-            uds.models.cache.objects.get(pk=key).delete()  # @UndefinedVariable
+            DBCache.objects.get(pk=key).delete()  # @UndefinedVariable
             return True
-        except uds.models.cache.DoesNotExist:  # @UndefinedVariable
+        except DBCache.DoesNotExist:  # @UndefinedVariable
             logger.debug('key not found')
             return False
 
@@ -120,11 +120,11 @@ class Cache:
         value = typing.cast(str, encoders.encode(pickle.dumps(value), 'base64', asText=True))
         now: datetime = typing.cast(datetime, getSqlDatetime())
         try:
-            uds.models.cache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable
+            DBCache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable
         except Exception:
             try:
                 # Already exists, modify it
-                c: uds.models.cache = uds.models.cache.objects.get(pk=key)  # @UndefinedVariable
+                c: DBCache = DBCache.objects.get(pk=key)  # @UndefinedVariable
                 c.owner = self._owner
                 c.key = key
                 c.value = value
@@ -138,26 +138,26 @@ class Cache:
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
         try:
             key = self.__getKey(skey)
-            c = uds.models.cache.objects.get(pk=key)  # @UndefinedVariable
+            c = DBCache.objects.get(pk=key)  # @UndefinedVariable
             c.created = getSqlDatetime()
             c.save()
-        except uds.models.cache.DoesNotExist:  # @UndefinedVariable
+        except DBCache.DoesNotExist:  # @UndefinedVariable
             logger.debug('Can\'t refresh cache key %s because it doesn\'t exists', skey)
             return
 
     @staticmethod
     def purge() -> None:
-        uds.models.cache.objects.all().delete()  # @UndefinedVariable
+        DBCache.objects.all().delete()  # @UndefinedVariable
 
     @staticmethod
     def cleanUp() -> None:
-        uds.models.cache.cleanUp()  # @UndefinedVariable
+        DBCache.cleanUp()  # @UndefinedVariable
 
     @staticmethod
     def delete(owner: typing.Optional[str] = None) -> None:
         # logger.info("Deleting cache items")
         if owner is None:
-            objects = uds.models.cache.objects.all()  # @UndefinedVariable
+            objects = DBCache.objects.all()  # @UndefinedVariable
         else:
-            objects = uds.models.cache.objects.filter(owner=owner)  # @UndefinedVariable
+            objects = DBCache.objects.filter(owner=owner)  # @UndefinedVariable
         objects.delete()

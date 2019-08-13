@@ -3,7 +3,7 @@
 import datetime
 from django.db import migrations, models
 import django.db.models.deletion
-import uds.models.Util
+import uds.models.util
 
 
 class Migration(migrations.Migration):
@@ -569,12 +569,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='group',
             name='created',
-            field=models.DateTimeField(blank=True, default=uds.models.Util.getSqlDatetime),
+            field=models.DateTimeField(blank=True, default=uds.models.util.getSqlDatetime),
         ),
         migrations.AddField(
             model_name='user',
             name='created',
-            field=models.DateTimeField(blank=True, default=uds.models.Util.getSqlDatetime),
+            field=models.DateTimeField(blank=True, default=uds.models.util.getSqlDatetime),
         ),
         migrations.AlterField(
             model_name='deployedservice',
@@ -584,12 +584,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='group',
             name='manager',
-            field=uds.models.Util.UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='uds.Authenticator'),
+            field=uds.models.util.UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='uds.Authenticator'),
         ),
         migrations.AlterField(
             model_name='user',
             name='manager',
-            field=uds.models.Util.UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users', to='uds.Authenticator'),
+            field=uds.models.util.UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users', to='uds.Authenticator'),
         ),
         migrations.AddField(
             model_name='deployedservicepublicationchangelog',

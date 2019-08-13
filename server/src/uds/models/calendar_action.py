@@ -44,7 +44,7 @@ from uds.core.util import (calendar, log)
 
 from .calendar import Calendar
 from .UUIDModel import UUIDModel
-from .Util import getSqlDatetime
+from .util import getSqlDatetime
 from .ServicesPool import ServicePool
 from .Transport import Transport
 from .authenticator import Authenticator

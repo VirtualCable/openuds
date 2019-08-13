@@ -41,7 +41,7 @@ from dateutil import rrule as rules
 
 from .UUIDModel import UUIDModel
 from .calendar import Calendar
-from .Util import getSqlDatetime
+from .util import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)

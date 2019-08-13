@@ -37,8 +37,7 @@ import typing
 # Imports for type checking
 if typing.TYPE_CHECKING:
     from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
-    from uds.models import Group as DBGroup
-
+    from uds.models.group import Group as DBGroup
 
 
 logger = logging.getLogger(__name__)

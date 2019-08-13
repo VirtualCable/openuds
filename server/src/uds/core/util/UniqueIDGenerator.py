@@ -39,7 +39,7 @@ from django.db.utils import IntegrityError
 from django.db.models.query import QuerySet
 
 from uds.models.UniqueId import UniqueId
-from uds.models.Util import getSqlDatetime
+from uds.models.util import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 

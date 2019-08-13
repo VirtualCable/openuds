@@ -37,9 +37,9 @@ from django.db import models
 from django.db.models import signals
 
 from uds.models.authenticator import Authenticator
-from uds.models.Util import UnsavedForeignKey
-from uds.models.Util import NEVER
-from uds.models.Util import getSqlDatetime
+from uds.models.util import UnsavedForeignKey
+from uds.models.util import NEVER
+from uds.models.util import getSqlDatetime
 from uds.core.util import log
 from uds.models.UUIDModel import UUIDModel
 

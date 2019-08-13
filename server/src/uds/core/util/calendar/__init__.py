@@ -36,8 +36,8 @@ import logging
 
 import bitarray
 
-from uds.models.Util import NEVER
-from uds.models.Util import getSqlDatetime
+from uds.models.util import NEVER
+from uds.models.util import getSqlDatetime
 
 from uds.models.calendar import Calendar
 

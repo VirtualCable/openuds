@@ -34,7 +34,7 @@ import logging
 
 from django.db import models
 
-from uds.models.User import User
+from uds.models.user import User
 
 
 logger = logging.getLogger(__name__)

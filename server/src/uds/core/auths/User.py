@@ -39,8 +39,8 @@ from .Group import Group
 if typing.TYPE_CHECKING:
     from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
     from .GroupsManager import GroupsManager
-    from uds.models.Group import Group as DBGroup
-    from uds.models.User import User as DBUser
+    from uds.models.group import Group as DBGroup
+    from uds.models.user import User as DBUser
 
 
 logger = logging.getLogger(__name__)
@@ -80,7 +80,7 @@ class User:
 
         :note: Once obtained valid groups, it caches them until object removal.
         """
-        from uds.models.User import User as DBUser  # pylint: disable=redefined-outer-name
+        from uds.models.user import User as DBUser  # pylint: disable=redefined-outer-name
 
         if self._groups is None:
             if self._manager.isExternalSource is True:

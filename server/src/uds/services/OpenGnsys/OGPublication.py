@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 from uds.core.services import Publication
 from uds.core.util.State import State
-from uds.models.Util import getSqlDatetime
+from uds.models.util import getSqlDatetime
 
 import logging
 

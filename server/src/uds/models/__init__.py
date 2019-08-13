@@ -36,9 +36,9 @@ import logging
 from .Permissions import Permissions
 
 # Utility
-from .Util import getSqlDatetime
-from .Util import NEVER
-from .Util import NEVER_UNIX
+from .util import getSqlDatetime
+from .util import NEVER
+from .util import NEVER_UNIX
 
 # Services
 from .Provider import Provider
@@ -53,9 +53,9 @@ from .Network import Network
 
 # Authenticators
 from .authenticator import Authenticator
-from .User import User
+from .user import User
 from .UserPreference import UserPreference
-from .Group import Group
+from .group import Group
 
 # Provisioned services
 from .ServicesPool import DeployedService  # Old name, will continue here for a while already

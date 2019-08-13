@@ -48,14 +48,14 @@ from uds.models.Tag import TaggingMixin
 from uds.models.OSManager import OSManager
 from uds.models.Service import Service
 from uds.models.Transport import Transport
-from uds.models.Group import Group
+from uds.models.group import Group
 from uds.models.Image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
 from uds.models.calendar import Calendar
 from uds.models.account import Account
 
-from uds.models.Util import NEVER
-from uds.models.Util import getSqlDatetime
+from uds.models.util import NEVER
+from uds.models.util import getSqlDatetime
 
 from uds.core.util.calendar import CalendarChecker
 

@@ -37,7 +37,7 @@ from uds.core.util.tools import secondsToTimeString
 from .UUIDModel import UUIDModel
 from .account import Account
 from .user_service import UserService
-from .Util import NEVER
+from .util import NEVER
 
 
 logger = logging.getLogger(__name__)
