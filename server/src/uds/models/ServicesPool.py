@@ -47,7 +47,7 @@ from uds.models.Tag import TaggingMixin
 
 from uds.models.OSManager import OSManager
 from uds.models.Service import Service
-from uds.models.Transport import Transport
+from uds.models.transport import Transport
 from uds.models.group import Group
 from uds.models.image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup

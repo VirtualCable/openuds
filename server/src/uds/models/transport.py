@@ -47,7 +47,7 @@ from uds.models.Tag import TaggingMixin
 logger = logging.getLogger(__name__)
 
 
-class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
+class Transport(ManagedObjectModel, TaggingMixin):
     """
     A Transport represents a way of connecting the user with the service.
 
@@ -59,7 +59,6 @@ class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
     # We store allowed oss as a comma-separated list
     allowed_oss = models.CharField(max_length=255, default='')
 
-
     class Meta(ManagedObjectModel.Meta):
         """
         Meta class to declare default order
@@ -67,10 +66,10 @@ class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values=None) -> 'transports.Transport':
-        return typing.cast(Transport, super().getInstance(values=values))
+    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'transports.Transport':
+        return typing.cast('transports.Transport', super().getInstance(values=values))
 
-    def getType(self):
+    def getType(self)  -> typing.Type['transports.Transport']:
         """
         Get the type of the object this record represents.
 
@@ -83,7 +82,7 @@ class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         return transports.factory().lookup(self.data_type)
 
-    def validForIp(self, ip):
+    def validForIp(self, ipStr: str) -> bool:
         """
         Checks if this transport is valid for the specified IP.
 
@@ -108,15 +107,14 @@ class Transport(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         if self.networks.count() == 0:
             return True
-        ip = net.ipToLong(ip)
+        ip = net.ipToLong(ipStr)
         if self.nets_positive:
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() > 0
-        else:
-            return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
+        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
 
-    def validForOs(self, os):
+    def validForOs(self, os: str) -> bool:
         logger.debug('Checkin if os "%s" is in "%s"', os, self.allowed_oss)
-        if self.allowed_oss == '' or os in self.allowed_oss.split(','):
+        if not self.allowed_oss or os in self.allowed_oss.split(','):
             return True
         return False
 

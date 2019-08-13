@@ -48,8 +48,8 @@ from .Service import Service
 from .OSManager import OSManager
 
 # Transports
-from .Transport import Transport
-from .Network import Network
+from .transport import Transport
+from .network import Network
 
 # Authenticators
 from .authenticator import Authenticator
