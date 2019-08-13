@@ -40,7 +40,7 @@ from uds.core import auths
 from uds.core import environment
 from uds.core.util import log
 from uds.core.util.State import State
-from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.managed_object_model import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
 from uds.models.util import NEVER

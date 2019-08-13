@@ -36,7 +36,7 @@ from django.db import models
 from django.db.models import signals
 
 from uds.core.util import log
-from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.managed_object_model import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
 

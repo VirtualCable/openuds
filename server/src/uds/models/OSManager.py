@@ -36,7 +36,7 @@ import typing
 from django.db import IntegrityError
 from django.db.models import signals
 
-from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.managed_object_model import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 
 # Not imported in runtime, just for type checking

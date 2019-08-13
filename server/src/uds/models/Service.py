@@ -38,7 +38,7 @@ from django.db.models import signals
 from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
-from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.managed_object_model import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
 from uds.models.Proxy import Proxy
 from uds.core.util import connection
