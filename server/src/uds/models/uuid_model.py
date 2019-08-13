@@ -33,26 +33,22 @@
 import logging
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.util.model import generateUuid
 
 
 logger = logging.getLogger(__name__)
 
-
-@python_2_unicode_compatible
 class UUIDModel(models.Model):
     """
     Base abstract model for models that require an uuid
     """
-    # pylint: disable=model-missing-unicode
     uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 
     class Meta:
         abstract = True
 
-    def genUuid(self):
+    def genUuid(self) -> str:
         return generateUuid()
 
     # Override default save to add uuid

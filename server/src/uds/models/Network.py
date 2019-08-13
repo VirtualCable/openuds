@@ -38,7 +38,7 @@ from django.db.models import signals
 
 from uds.models.Transport import Transport
 from uds.core.util import net
-from uds.models.UUIDModel import UUIDModel
+from uds.models.uuid_model import UUIDModel
 from uds.models.Tag import TaggingMixin
 
 

@@ -33,7 +33,7 @@ import typing
 
 from django.db import models
 
-from uds.models.UUIDModel import UUIDModel
+from uds.models.uuid_model import UUIDModel
 from uds.models.Tag import TaggingMixin
 from uds.models.util import getSqlDatetime
 from uds.models.util import NEVER

@@ -39,7 +39,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from dateutil import rrule as rules
 
-from .UUIDModel import UUIDModel
+from .uuid_model import UUIDModel
 from .calendar import Calendar
 from .util import getSqlDatetime
 

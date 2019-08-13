@@ -43,7 +43,7 @@ from django.db import models
 from uds.core.util import (calendar, log)
 
 from .calendar import Calendar
-from .UUIDModel import UUIDModel
+from .uuid_model import UUIDModel
 from .util import getSqlDatetime
 from .ServicesPool import ServicePool
 from .Transport import Transport

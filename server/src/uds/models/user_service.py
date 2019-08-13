@@ -40,7 +40,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
 from uds.core.util.State import State
-from uds.models.UUIDModel import UUIDModel
+from uds.models.uuid_model import UUIDModel
 
 from uds.models.ServicesPool import DeployedService
 from uds.models.ServicesPoolPublication import DeployedServicePublication

@@ -41,7 +41,7 @@ from uds.models.util import UnsavedForeignKey
 from uds.models.util import NEVER
 from uds.models.util import getSqlDatetime
 from uds.core.util import log
-from uds.models.UUIDModel import UUIDModel
+from uds.models.uuid_model import UUIDModel
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:

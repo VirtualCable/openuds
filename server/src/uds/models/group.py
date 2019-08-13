@@ -39,7 +39,7 @@ from django.db.models import signals
 from uds.core.util.State import State
 from uds.core.util import log
 
-from .UUIDModel import UUIDModel
+from .uuid_model import UUIDModel
 from .authenticator import Authenticator
 from .user import User
 from .util import UnsavedForeignKey, getSqlDatetime

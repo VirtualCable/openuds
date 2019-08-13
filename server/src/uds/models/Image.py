@@ -39,7 +39,7 @@ from django.http import HttpResponse
 
 from PIL import Image as PILImage
 
-from uds.models.UUIDModel import UUIDModel
+from uds.models.uuid_model import UUIDModel
 from uds.models.util import getSqlDatetime
 
 from uds.core.util import encoders

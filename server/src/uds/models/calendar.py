@@ -32,7 +32,7 @@
 import logging
 
 from django.db import models
-from uds.models.UUIDModel import UUIDModel
+from uds.models.uuid_model import UUIDModel
 from uds.models.Tag import TaggingMixin
 
 
