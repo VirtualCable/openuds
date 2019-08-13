@@ -34,7 +34,7 @@ import logging
 
 from django.utils.translation import ugettext as _
 
-from uds.models.MetaPool import MetaPool, MetaPoolMember
+from uds.models.meta_pool import MetaPool, MetaPoolMember
 from uds.models.ServicesPool import ServicePool
 from uds.models.user_service import UserService
 from uds.models.user import User

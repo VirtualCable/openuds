@@ -40,7 +40,7 @@ from uds.core.util import states
 from .uuid_model import UUIDModel
 from .calendar import Calendar
 from .ServicesPool import ServicePool
-from .MetaPool import MetaPool
+from .meta_pool import MetaPool
 
 
 logger = logging.getLogger(__name__)

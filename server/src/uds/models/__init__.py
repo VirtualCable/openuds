@@ -60,14 +60,14 @@ from .group import Group
 # Provisioned services
 from .ServicesPool import DeployedService  # Old name, will continue here for a while already
 from .ServicesPool import ServicePool  # New name
-from .MetaPool import MetaPool
+from .meta_pool import MetaPool
 from .ServicesPoolGroup import ServicesPoolGroup
 from .ServicesPoolPublication import DeployedServicePublication
 from .user_service import UserService
 from .user_service_property import UserServiceProperty
 
 # Especific log information for an user service
-from .Log import Log
+from .log import Log
 
 # Stats
 from .StatsCounters import StatsCounters
