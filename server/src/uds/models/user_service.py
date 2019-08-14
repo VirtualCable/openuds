@@ -51,6 +51,7 @@ from .util import getSqlDatetime
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import services
+    from uds.models import OSManager, ServicePool, ServicePoolPublication
 
 logger = logging.getLogger(__name__)
 
@@ -63,8 +64,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
-    publication = models.ForeignKey(ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
+    deployed_service: 'ServicePool' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
+    publication: typing.Optional['ServicePoolPublication'] = models.ForeignKey(ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
 
     unique_id = models.CharField(max_length=128, default='', db_index=True)  # User by agents to locate machine
     friendly_name = models.CharField(max_length=128, default='')
@@ -144,12 +145,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Raises:
         """
         # We get the service instance, publication instance and osmanager instance
-        ds = self.deployed_service
-        serviceInstance = ds.service.getInstance()
+        servicePool = self.deployed_service
+        serviceInstance = servicePool.service.getInstance()
         if serviceInstance.needsManager is False:
             osmanagerInstance = None
         else:
-            osmanagerInstance = ds.osmanager.getInstance()
+            osmanagerInstance = servicePool.osmanager.getInstance()
         # We get active publication
         publicationInstance = None
         try:  # We may have deleted publication...
@@ -158,7 +159,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         except Exception:
             # The publication to witch this item points to, does not exists
             self.publication = None
-            logger.exception('Got exception at getInstance of an userService %s', self)
+            logger.exception('Got exception at getInstance of an userService %s (seems that publication does not exists!)', self)
         if serviceInstance.deployedType is None:
             raise Exception('Class {0} needs deployedType but it is not defined!!!'.format(serviceInstance.__class__.__name__))
         us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance, publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)
@@ -181,7 +182,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         self.data = userServiceInstance.serialize()
         self.save(update_fields=['data'])
 
-    def getName(self):
+    def getName(self) -> str:
         """
         Returns the name of the user deployed service
         """
@@ -192,7 +193,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         return self.friendly_name
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         """
         Returns the unique id of the user deployed service
         """
@@ -202,7 +203,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             self.updateData(si)
         return self.unique_id
 
-    def storeValue(self, name, value):
+    def storeValue(self, name: str, value: str) -> None:
         """
         Stores a value inside custom storage
 
@@ -213,7 +214,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         # Store value as a property
         self.setProperty(name, value)
 
-    def recoverValue(self, name):
+    def recoverValue(self, name: str) -> str:
         """
         Recovers a value from custom storage
 
@@ -228,7 +229,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         # To transition between old stor at storage table and new properties table
         # If value is found on property, use it, else, try to recover it from storage
         if val is None:
-            val = self.getEnvironment().storage.get(name)
+            val = typing.cast(str, self.getEnvironment().storage.get(name))
         return val
 
     def setConnectionSource(self, ip: str, hostname: str = '') -> None:
@@ -246,7 +247,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         self.src_hostname = hostname
         self.save(update_fields=['src_ip', 'src_hostname'])
 
-    def getConnectionSource(self):
+    def getConnectionSource(self) -> typing.Tuple[str, str]:
         """
         Returns stored connection source data (ip & hostname)
 
@@ -255,16 +256,16 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If the transport did not notified this data, this may be "empty"
         """
-        return [self.src_ip, self.src_hostname]
+        return (self.src_ip, self.src_hostname)
 
-    def getOsManager(self):
+    def getOsManager(self) -> 'OSManager':
         return self.deployed_service.osmanager
 
-    def needsOsManager(self):
+    def needsOsManager(self) -> bool:
         """
         Returns True if this User Service needs an os manager (i.e. parent services pools is marked to use an os manager)
         """
-        return self.getOsManager() is not None
+        return bool(self.getOsManager())
 
     def transformsUserOrPasswordForService(self):
         """
@@ -443,7 +444,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         from uds.core.managers.UserServiceManager import UserServiceManager
         UserServiceManager.manager().moveToLevel(self, cacheLevel)
 
-    def getProperty(self, propName: str, default: typing.Optional[str] = None):
+    def getProperty(self, propName: str, default: typing.Optional[str] = None) -> typing.Optional[str]:
         try:
             val = self.properties.get(name=propName).value
             return val or default  # Empty string is null

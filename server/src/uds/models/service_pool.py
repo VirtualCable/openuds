@@ -41,28 +41,28 @@ from django.db.models import signals
 from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import states
-from uds.core.services.Exceptions import InvalidServiceException
-from uds.models.uuid_model import UUIDModel
-from uds.models.tag import TaggingMixin
-
-from uds.models.os_manager import OSManager
-from uds.models.service import Service
-from uds.models.transport import Transport
-from uds.models.group import Group
-from uds.models.image import Image
-from uds.models.service_pool_group import ServicePoolGroup
-from uds.models.calendar import Calendar
-from uds.models.account import Account
-
-from uds.models.util import NEVER
-from uds.models.util import getSqlDatetime
-
 from uds.core.util.calendar import CalendarChecker
+from uds.core.services.Exceptions import InvalidServiceException
+
+from .uuid_model import UUIDModel
+from .tag import TaggingMixin
+
+from .os_manager import OSManager
+from .service import Service
+from .transport import Transport
+from .group import Group
+from .image import Image
+from .service_pool_group import ServicePoolGroup
+from .calendar import Calendar
+from .account import Account
+
+from .util import NEVER
+from .util import getSqlDatetime
+
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models.user_service import UserService
-    from uds.models.service_pool_publication import ServicePoolPublication
+    from uds.models import UserService, ServicePoolPublication, User
 
 
 logger = logging.getLogger(__name__)
@@ -76,8 +76,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
-    service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
-    osmanager = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
+    service: Service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
+    osmanager: typing.Optional[OSManager] = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
     transports = models.ManyToManyField(Transport, related_name='deployedServices', db_table='uds__ds_trans')
     assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
     state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
@@ -89,9 +89,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     ignores_unused = models.BooleanField(default=False)
 
-    image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
+    image: Image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
-    servicesPoolGroup = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
+    servicesPoolGroup: ServicePoolGroup = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
 
     accessCalendars = models.ManyToManyField(Calendar, related_name='accessSP', through='CalendarAccess')
     # Default fallback action for access
@@ -99,7 +99,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
 
     # Usage accounting
-    account = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)
+    account: Account = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)
 
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
@@ -117,7 +117,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         db_table = 'uds__deployed_service'
         app_label = 'uds'
 
-    def getEnvironment(self):
+    def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
@@ -137,8 +137,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         except Exception:
             return None
 
-    def transformsUserOrPasswordForService(self):
-        return self.osmanager.getType().transformsUserOrPasswordForService()
+    def transformsUserOrPasswordForService(self) -> bool:
+        if self.osmanager:
+            return self.osmanager.getType().transformsUserOrPasswordForService()
+        return False
 
     def processUserPassword(self, username, password):
         """
@@ -164,10 +166,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
 
         res = []
-        for v in UserService.objects.filter(state=states.userService.ERROR, state_date__gt=date).values('deployed_service').annotate(how_many=Count('deployed_service')).order_by('deployed_service'):
+        for v in UserService.objects.filter(
+                state=states.userService.ERROR, state_date__gt=date
+            ).values('deployed_service').annotate(how_many=Count('deployed_service')).order_by('deployed_service'):
             if v['how_many'] >= min_:
                 res.append(v['deployed_service'])
-        return ServicePool.objects.filter(pk__in=res)
+        return ServicePool.objects.filter(pk__in=res).iterator()
 
     @property
     def is_meta(self) -> bool:
@@ -214,16 +218,17 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     def isUsable(self) -> bool:
         return self.state == states.servicePool.ACTIVE and not self.isInMaintenance() and not self.isRestrained()
 
-    def toBeReplaced(self, forUser) ->  typing.Optional[datetime]:
-        activePub = self.activePublication()
-        if activePub is None or activePub.revision == self.current_pub_revision - 1:
+    def toBeReplaced(self, forUser: 'User') ->  typing.Optional[datetime]:
+        activePub: typing.Optional['ServicePoolPublication'] = self.activePublication()
+        # If no publication or current revision, it's not going to be replaced
+        if activePub is None:
             return None
 
         # Return the date
         try:
             if activePub and activePub.id != self.assignedUserServices().filter(user=forUser)[0].publication.id:
                 ret = self.recoverValue('toBeReplacedIn')
-                if ret is not None:
+                if ret:
                     return pickle.loads(ret)
         except Exception:
             # logger.exception('Recovering publication death line')
@@ -247,12 +252,17 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return access == states.action.ALLOW
 
-    def getDeadline(self, chkDateTime=None):
-        """
-        Gets the deadline for an access on chkDateTime
+    def getDeadline(self, chkDateTime: typing.Optional[datetime] = None) -> typing.Optional[int]:
+        """Gets the deadline for an access on chkDateTime in seconds
+
+        Keyword Arguments:
+            chkDateTime {typing.Optional[datetime]} -- [Gets the deadline for this date instead of current] (default: {None})
+
+        Returns:
+            typing.Optional[int] -- [Returns deadline in secods. If no deadline (forever), will return None]
         """
         if chkDateTime is None:
-            chkDateTime = getSqlDatetime()
+            chkDateTime = typing.cast(datetime, getSqlDatetime())
 
         if self.isAccessAllowed(chkDateTime) is False:
             return -1
@@ -272,12 +282,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if deadLine is None:
             if self.fallbackAccess == states.action.ALLOW:
                 return None
-            else:
-                return -1
+            return -1
 
         return int((deadLine - chkDateTime).total_seconds())
 
-    def storeValue(self, name, value):
+    def storeValue(self, name: str, value: typing.Any):
         """
         Stores a value inside custom storage
 
@@ -287,7 +296,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         self.getEnvironment().storage.put(name, value)
 
-    def recoverValue(self, name):
+    def recoverValue(self, name: str) -> typing.Any:
         """
         Recovers a value from custom storage
 
@@ -297,9 +306,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Returns:
             Stored value, None if no value was stored
         """
-        return self.getEnvironment().storage.get(name)
+        return typing.cast(str, self.getEnvironment().storage.get(name))
 
-    def setState(self, state, save=True):
+    def setState(self, state: str, save: bool = True) -> None:
         """
         Updates the state of this object and, optionally, saves it
 
@@ -311,10 +320,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         self.state = state
         self.state_date = getSqlDatetime()
-        if save is True:
+        if save:
             self.save()
 
-    def remove(self):
+    def remove(self) -> None:
         """
         Marks the deployed service for removing.
 
@@ -322,7 +331,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         self.setState(states.servicePool.REMOVABLE)
 
-    def removed(self):
+    def removed(self) -> None:
         """
         Mark the deployed service as removed.
 
@@ -335,7 +344,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         # self.setState(State.REMOVED)
         self.delete()
 
-    def markOldUserServicesAsRemovables(self, activePub):
+    def markOldUserServicesAsRemovables(self, activePub: typing.Optional['ServicePoolPublication']):
         """
         Used when a new publication is finished.
 
@@ -350,15 +359,18 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             activePub: Active publication used as "current" publication to make checks
         """
         now = getSqlDatetime()
+        nonActivePub: 'ServicePoolPublication'
+        userService: 'UserService'
+
         if activePub is None:
             logger.error('No active publication, don\'t know what to erase!!! (ds = %s)', self)
             return
-        for ap in self.publications.exclude(id=activePub.id):
-            for u in ap.userServices.filter(state=states.userService.PREPARING):
-                u.cancel()
+        for nonActivePub in self.publications.exclude(id=activePub.id):
+            for userService in nonActivePub.userServices.filter(state=states.userService.PREPARING):
+                userService.cancel()
             with transaction.atomic():
-                ap.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(state=states.userService.REMOVABLE, state_date=now)
-                ap.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
+                nonActivePub.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(state=states.userService.REMOVABLE, state_date=now)
+                nonActivePub.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
 
     def validateGroups(self, grps):
         """

@@ -40,14 +40,14 @@ from uds.core import auths
 from uds.core import environment
 from uds.core.util import log
 from uds.core.util.State import State
-from uds.models.managed_object_model import ManagedObjectModel
-from uds.models.tag import TaggingMixin
 
-from uds.models.util import NEVER
+from .managed_object_model import ManagedObjectModel
+from .tag import TaggingMixin
+from .util import NEVER
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import User
+    from .user import User
     from django.db.models import QuerySet  # pylint: disable=ungrouped-imports
 
 

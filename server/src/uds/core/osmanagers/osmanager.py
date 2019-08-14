@@ -139,7 +139,7 @@ class OSManager(Module):
         return None
 
     @classmethod
-    def transformsUserOrPasswordForService(cls: typing.Type['OSManager']):
+    def transformsUserOrPasswordForService(cls: typing.Type['OSManager']) -> bool:
         """
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from ServicePool
@@ -205,7 +205,7 @@ class OSManager(Module):
 
         log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
-        counter = int(userService.getProperty('loginsCounter', '0')) + 1
+        counter = int(typing.cast(str, userService.getProperty('loginsCounter', '0'))) + 1
         userService.setProperty('loginsCounter', str(counter))
 
 
@@ -216,7 +216,7 @@ class OSManager(Module):
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         """
-        counter = int(userService.getProperty('loginsCounter', '0'))
+        counter = int(typing.cast(str, userService.getProperty('loginsCounter', '0')))
         if counter > 0:
             counter -= 1
         userService.setProperty('loginsCounter', str(counter))

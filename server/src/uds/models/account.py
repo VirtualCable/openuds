@@ -33,10 +33,10 @@ import typing
 
 from django.db import models
 
-from uds.models.uuid_model import UUIDModel
-from uds.models.tag import TaggingMixin
-from uds.models.util import getSqlDatetime
-from uds.models.util import NEVER
+from .uuid_model import UUIDModel
+from .tag import TaggingMixin
+from .util import getSqlDatetime
+from .util import NEVER
 
 logger = logging.getLogger(__name__)
 

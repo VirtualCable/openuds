@@ -40,9 +40,13 @@ from uds.core.jobs.DelayedTask import DelayedTask
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import PublishException
-from uds.models import ServicePoolPublication, getSqlDatetime, ServicePool
 from uds.core.util.State import State
 from uds.core.util import log
+
+from uds.models import ServicePoolPublication, getSqlDatetime, ServicePool
+
+if typing.TYPE_CHECKING:
+    from uds.core import services
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +69,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
                 logger.info('Already removed')
 
             now = getSqlDatetime()
-            activePub = servicePoolPub.deployed_service.activePublication()
+            activePub: typing.Optional[ServicePoolPublication] = servicePoolPub.deployed_service.activePublication()
             servicePoolPub.deployed_service.userServices.filter(in_use=True).update(in_use=False, state_date=now)
             servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
         except Exception:
@@ -84,7 +88,7 @@ class PublicationLauncher(DelayedTask):
 
     def run(self):
         logger.debug('Publishing')
-        servicePoolPub = None
+        servicePoolPub: typing.Optional[ServicePoolPublication] = None
         try:
             now = getSqlDatetime()
             with transaction.atomic():
@@ -95,18 +99,19 @@ class PublicationLauncher(DelayedTask):
                 servicePoolPub.save()
             pi = servicePoolPub.getInstance()
             state = pi.publish()
-            deployedService = servicePoolPub.deployed_service
-            deployedService.current_pub_revision += 1
-            deployedService.storeValue('toBeReplacedIn', pickle.dumps(now + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))))
-            deployedService.save()
+            servicePool: ServicePool = servicePoolPub.deployed_service
+            servicePool.current_pub_revision += 1
+            servicePool.storeValue('toBeReplacedIn', pickle.dumps(now + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))))
+            servicePool.save()
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
         except ServicePoolPublication.DoesNotExist:  # Deployed service publication has been removed from database, this is ok, just ignore it
             pass
         except Exception:
             logger.exception("Exception launching publication")
             try:
-                servicePoolPub.state = State.ERROR
-                servicePoolPub.save()
+                if servicePoolPub:
+                    servicePoolPub.state = State.ERROR
+                    servicePoolPub.save()
             except Exception:
                 logger.error('Error saving ERROR state for pool %s', servicePoolPub)
 
@@ -123,7 +128,7 @@ class PublicationFinishChecker(DelayedTask):
         self._state = publication.state
 
     @staticmethod
-    def checkAndUpdateState(publication, publicationInstance, state):
+    def checkAndUpdateState(publication: ServicePoolPublication, publicationInstance: 'services.Publication', state: str) -> None:
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
@@ -169,7 +174,7 @@ class PublicationFinishChecker(DelayedTask):
             PublicationFinishChecker.checkLater(publication, publicationInstance)
 
     @staticmethod
-    def checkLater(publication, publicationInstance):
+    def checkLater(publication: ServicePoolPublication, publicationInstance: 'services.Publication'):
         """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
         @param dps: Database object for ServicePoolPublication
@@ -202,7 +207,7 @@ class PublicationManager:
         pass
 
     @staticmethod
-    def manager():
+    def manager() -> 'PublicationManager':
         """
         Returns the singleton to this manager
         """
@@ -222,20 +227,21 @@ class PublicationManager:
         if servicePool.isInMaintenance():
             raise PublishException(_('Service is in maintenance mode and new publications are not allowed'))
 
-        dsp = None
+        publication: typing.Optional[ServicePoolPublication] = None
         try:
             now = getSqlDatetime()
-            dsp = servicePool.publications.create(state=State.LAUNCHING, state_date=now, publish_date=now, revision=servicePool.current_pub_revision)
+            publication = servicePool.publications.create(state=State.LAUNCHING, state_date=now, publish_date=now, revision=servicePool.current_pub_revision)
             if changeLog:
                 servicePool.changelog.create(revision=servicePool.current_pub_revision, log=changeLog, stamp=now)
-            DelayedTaskRunner.runner().insert(PublicationLauncher(dsp), 4, PUBTAG + str(dsp.id))
+            if publication:
+                DelayedTaskRunner.runner().insert(PublicationLauncher(publication), 4, PUBTAG + str(publication.id))
         except Exception as e:
             logger.debug('Caught exception at publish: %s', e)
-            if dsp is not None:
+            if publication is not None:
                 try:
-                    dsp.delete()
+                    publication.delete()
                 except Exception:
-                    logger.info('Could not delete %s', dsp)
+                    logger.info('Could not delete %s', publication)
             raise PublishException(str(e))
 
     def cancel(self, publication: ServicePoolPublication):  # pylint: disable=no-self-use
@@ -269,7 +275,7 @@ class PublicationManager:
         except Exception as e:
             raise PublishException(str(e))
 
-    def unpublish(self, servicePoolPub):  # pylint: disable=no-self-use
+    def unpublish(self, servicePoolPub: ServicePoolPublication):  # pylint: disable=no-self-use
         """
         Unpublishes an active (usable) or removable publication
         :param servicePoolPub: Publication to unpublish

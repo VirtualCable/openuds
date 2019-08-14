@@ -32,6 +32,7 @@
 """
 
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
@@ -40,9 +41,13 @@ from uds.core.util.State import State
 from uds.core.environment import Environment
 from uds.core.util import log
 
-from uds.models.service_pool import ServicePool
-from uds.models.util import getSqlDatetime
-from uds.models.uuid_model import UUIDModel
+from .service_pool import ServicePool
+from .util import getSqlDatetime
+from .uuid_model import UUIDModel
+
+
+if typing.TYPE_CHECKING:
+    from uds.core import services
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +73,7 @@ class ServicePoolPublication(UUIDModel):
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
     # pylint: disable=model-missing-unicode
-    deployed_service = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='publications')
+    deployed_service: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='publications')
     publish_date = models.DateTimeField(db_index=True)
     # data_type = models.CharField(max_length=128) # The data type is specified by the service itself
     data = models.TextField(default='')
@@ -91,13 +96,13 @@ class ServicePoolPublication(UUIDModel):
         ordering = ('publish_date',)
         app_label = 'uds'
 
-    def getEnvironment(self):
+    def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
-    def getInstance(self):
+    def getInstance(self) -> 'services.Publication':
         """
         Instantiates the object this record contains.
 
@@ -113,25 +118,29 @@ class ServicePoolPublication(UUIDModel):
         Raises:
         """
         serviceInstance = self.deployed_service.service.getInstance()
-        osManagerInstance = self.deployed_service.osmanager
-        if osManagerInstance is not None:
-            osManagerInstance = osManagerInstance.getInstance()
+        osManager = self.deployed_service.osmanager
+        osManagerInstance = osManager.getInstance() if osManager else None
+
         # Sanity check, so it's easier to find when we have created
         # a service that needs publication but do not have
 
         if serviceInstance.publicationType is None:
-            raise Exception('Tried to get a publication instance for a service that do not needs it')
+            raise Exception('Class {} do not have defined publicationType but needs to be published!!!'.format(serviceInstance.__class__))
 
-        if serviceInstance.publicationType is None:
-            raise Exception('Class {0} do not have defined publicationType but needs to be published!!!'.format(serviceInstance.__class__))
-
-        dpl = serviceInstance.publicationType(self.getEnvironment(), service=serviceInstance, osManager=osManagerInstance, revision=self.revision, dsName=self.deployed_service.name, uuid=self.uuid, dbPublication=self)
+        publication = serviceInstance.publicationType(
+            self.getEnvironment(),
+            service=serviceInstance,
+            osManager=osManagerInstance,
+            revision=self.revision,
+            dsName=self.deployed_service.name,
+            uuid=self.uuid, dbPublication=self
+        )
         # Only invokes deserialization if data has something. '' is nothing
-        if self.data != '' and self.data is not None:
-            dpl.unserialize(self.data)
-        return dpl
+        if self.data:
+            publication.unserialize(self.data)
+        return publication
 
-    def updateData(self, dsp):
+    def updateData(self, publication):
         """
         Updates the data field with the serialized uds.core.services.Publication
 
@@ -140,10 +149,10 @@ class ServicePoolPublication(UUIDModel):
 
         :note: This method do not saves the updated record, just updates the field
         """
-        self.data = dsp.serialize()
+        self.data = publication.serialize()
         self.save(update_fields=['data'])
 
-    def setState(self, state):
+    def setState(self, state: str):
         """
         Updates the state of this object and, optionally, saves it
 
@@ -157,7 +166,7 @@ class ServicePoolPublication(UUIDModel):
         self.state = state
         self.save(update_fields=['state_date', 'state'])
 
-    def unpublish(self):
+    def unpublish(self) -> None:
         """
         Tries to remove the publication
 
@@ -183,7 +192,7 @@ class ServicePoolPublication(UUIDModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete = kwargs['instance']
+        toDelete: ServicePoolPublication = kwargs['instance']
         toDelete.getEnvironment().clearRelatedData()
 
         # Delete method is invoked directly by PublicationManager,
