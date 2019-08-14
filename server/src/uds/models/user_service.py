@@ -43,7 +43,7 @@ from uds.core.util.State import State
 from uds.models.uuid_model import UUIDModel
 
 from uds.models.service_pool import DeployedService
-from uds.models.ServicesPoolPublication import DeployedServicePublication
+from uds.models.ServicesPoolPublication import ServicePoolPublication
 
 from uds.models.user import User
 
@@ -66,7 +66,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
     deployed_service = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='userServices')
-    publication = models.ForeignKey(DeployedServicePublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
+    publication = models.ForeignKey(ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
 
     unique_id = models.CharField(max_length=128, default='', db_index=True)  # User by agents to locate machine
     friendly_name = models.CharField(max_length=128, default='')

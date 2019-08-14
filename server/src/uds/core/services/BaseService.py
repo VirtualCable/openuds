@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
     from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
     from uds.core.util.UniqueGIDGenerator import UniqueGIDGenerator
-    from uds.models import DeployedServicePublication
+    from uds.models import ServicePoolPublication
 
 
 class Service(Module):

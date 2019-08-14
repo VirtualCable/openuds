@@ -39,7 +39,7 @@ if typing.TYPE_CHECKING:
     from uds.core import services
     from uds.core import osmanagers
     from uds.core.environment import Environment
-    from uds.models import DeployedServicePublication
+    from uds.models import ServicePoolPublication
 
 
 class Publication(Environmentable, Serializable):
@@ -84,7 +84,7 @@ class Publication(Environmentable, Serializable):
     _osmanager: typing.Optional['osmanagers.OSManager']
     _service: 'services.Service'
     _revision: int
-    _dbPublication: typing.Optional['DeployedServicePublication']
+    _dbPublication: typing.Optional['ServicePoolPublication']
     _dsName: str
     _uuid: str
 

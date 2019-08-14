@@ -62,7 +62,7 @@ from uds.core.util.calendar import CalendarChecker
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
-    from uds.models.ServicesPoolPublication import DeployedServicePublication
+    from uds.models.ServicesPoolPublication import ServicePoolPublication
 
 
 logger = logging.getLogger(__name__)
@@ -123,7 +123,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
-    def activePublication(self) -> typing.Optional['DeployedServicePublication']:
+    def activePublication(self) -> typing.Optional['ServicePoolPublication']:
         """
         Returns the current valid publication for this deployed service.
 

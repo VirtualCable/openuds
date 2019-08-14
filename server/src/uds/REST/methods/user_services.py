@@ -34,7 +34,7 @@ import logging
 
 from django.utils.translation import ugettext as _
 
-from uds.models import Group, Transport, DeployedServicePublication, User
+from uds.models import Group, Transport, ServicePoolPublication, User
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
@@ -354,7 +354,7 @@ class Publications(DetailHandler):
             self.accessDenied()
 
         try:
-            ds = DeployedServicePublication.objects.get(uuid=processUuid(uuid))
+            ds = ServicePoolPublication.objects.get(uuid=processUuid(uuid))
             ds.cancel()
         except Exception as e:
             raise ResponseError("{}".format(e))

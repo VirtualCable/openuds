@@ -47,7 +47,7 @@ from uds.models.uuid_model import UUIDModel
 logger = logging.getLogger(__name__)
 
 
-class DeployedServicePublicationChangelog(models.Model):
+class ServicePoolPublicationChangelog(models.Model):
     publication = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='changelog')
     stamp = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
@@ -63,7 +63,7 @@ class DeployedServicePublicationChangelog(models.Model):
     def __str__(self):
         return 'Revision log  for publication {}, rev {}:  {}'.format(self.publication.name, self.revision, self.log)
 
-class DeployedServicePublication(UUIDModel):
+class ServicePoolPublication(UUIDModel):
     """
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
@@ -199,6 +199,4 @@ class DeployedServicePublication(UUIDModel):
         return 'Publication {}, rev {}, state {}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
 
 # Connects a pre deletion signal to Authenticator
-signals.pre_delete.connect(DeployedServicePublication.beforeDelete, sender=DeployedServicePublication)
-
-ServicePoolPublication = DeployedServicePublication
+signals.pre_delete.connect(ServicePoolPublication.beforeDelete, sender=ServicePoolPublication)

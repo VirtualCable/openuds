@@ -36,7 +36,7 @@ import typing
 
 from uds.core.managers.PublicationManager import PublicationManager
 from uds.core.util.Config import GlobalConfig
-from uds.models import DeployedServicePublication, getSqlDatetime
+from uds.models import ServicePoolPublication, getSqlDatetime
 from uds.core.services.Exceptions import PublishException
 from uds.core.util.State import State
 from uds.core.jobs import Job
@@ -51,7 +51,7 @@ class PublicationInfoItemsCleaner(Job):
 
     def run(self):
         removeFrom = getSqlDatetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True))
-        DeployedServicePublication.objects.filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
+        ServicePoolPublication.objects.filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
 
 
 class PublicationCleaner(Job):
@@ -60,7 +60,7 @@ class PublicationCleaner(Job):
     friendly_name = 'Publication Cleaner'
 
     def run(self):
-        removables: typing.Iterable[DeployedServicePublication] = DeployedServicePublication.objects.filter(state=State.REMOVABLE, deployed_service__service__provider__maintenance_mode=False)
+        removables: typing.Iterable[ServicePoolPublication] = ServicePoolPublication.objects.filter(state=State.REMOVABLE, deployed_service__service__provider__maintenance_mode=False)
         for removable in removables:
             try:
                 PublicationManager.manager().unpublish(removable)

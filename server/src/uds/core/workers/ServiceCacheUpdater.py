@@ -39,7 +39,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.State import State
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.services.Exceptions import MaxServicesReachedError
-from uds.models import ServicePool, DeployedServicePublication, UserService
+from uds.models import ServicePool, ServicePoolPublication, UserService
 from uds.core import services
 from uds.core.util import log
 from uds.core.jobs.Job import Job
@@ -175,7 +175,7 @@ class ServiceCacheUpdater(Job):
         try:
             # This has a velid publication, or it will not be here
             UserServiceManager.manager().createCacheFor(
-                typing.cast(DeployedServicePublication, servicePool.activePublication()), services.UserDeployment.L1_CACHE
+                typing.cast(ServicePoolPublication, servicePool.activePublication()), services.UserDeployment.L1_CACHE
             )
         except MaxServicesReachedError:
             log.doLog(servicePool, log.ERROR, 'Max number of services reached for this service', log.INTERNAL)
@@ -195,7 +195,7 @@ class ServiceCacheUpdater(Job):
         try:
             # This has a velid publication, or it will not be here
             UserServiceManager.manager().createCacheFor(
-                typing.cast(DeployedServicePublication, servicePool.activePublication()), services.UserDeployment.L2_CACHE
+                typing.cast(ServicePoolPublication, servicePool.activePublication()), services.UserDeployment.L2_CACHE
             )
         except MaxServicesReachedError:
             logger.warning('Max user services reached for %s: %s. Cache not created', servicePool.name, servicePool.max_srvs)

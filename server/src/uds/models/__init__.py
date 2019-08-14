@@ -62,7 +62,7 @@ from .service_pool import DeployedService  # Old name, will continue here for a 
 from .service_pool import ServicePool  # New name
 from .meta_pool import MetaPool
 from .ServicesPoolGroup import ServicesPoolGroup
-from .ServicesPoolPublication import DeployedServicePublication
+from .ServicesPoolPublication import ServicePoolPublication
 from .user_service import UserService
 from .user_service_property import UserServiceProperty
 

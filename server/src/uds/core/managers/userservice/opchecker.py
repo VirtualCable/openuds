@@ -217,7 +217,7 @@ class UserServiceOpChecker(DelayedTask):
     def checkLater(userService, ci):
         """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
-        @param dps: Database object for DeployedServicePublication
+        @param dps: Database object for ServicePoolPublication
         @param pi: Instance of Publication manager for the object
         """
         # Do not add task if already exists one that updates this service

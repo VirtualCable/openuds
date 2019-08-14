@@ -40,7 +40,7 @@ from uds.core.jobs.DelayedTask import DelayedTask
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import PublishException
-from uds.models import DeployedServicePublication, getSqlDatetime, ServicePool
+from uds.models import ServicePoolPublication, getSqlDatetime, ServicePool
 from uds.core.util.State import State
 from uds.core.util import log
 
@@ -60,7 +60,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
 
     def run(self):
         try:
-            servicePoolPub: DeployedServicePublication = DeployedServicePublication.objects.get(pk=self._id)
+            servicePoolPub: ServicePoolPublication = ServicePoolPublication.objects.get(pk=self._id)
             if servicePoolPub.state != State.REMOVABLE:
                 logger.info('Already removed')
 
@@ -78,7 +78,7 @@ class PublicationLauncher(DelayedTask):
     This delayed task if for launching a new publication
     """
 
-    def __init__(self, publication: DeployedServicePublication):
+    def __init__(self, publication: ServicePoolPublication):
         super().__init__()
         self._publicationId = publication.id
 
@@ -88,7 +88,7 @@ class PublicationLauncher(DelayedTask):
         try:
             now = getSqlDatetime()
             with transaction.atomic():
-                servicePoolPub = DeployedServicePublication.objects.select_for_update().get(pk=self._publicationId)
+                servicePoolPub = ServicePoolPublication.objects.select_for_update().get(pk=self._publicationId)
                 if servicePoolPub.state != State.LAUNCHING:  # If not preparing (may has been canceled by user) just return
                     return
                 servicePoolPub.state = State.PREPARING
@@ -100,7 +100,7 @@ class PublicationLauncher(DelayedTask):
             deployedService.storeValue('toBeReplacedIn', pickle.dumps(now + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))))
             deployedService.save()
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
-        except DeployedServicePublication.DoesNotExist:  # Deployed service publication has been removed from database, this is ok, just ignore it
+        except ServicePoolPublication.DoesNotExist:  # Deployed service publication has been removed from database, this is ok, just ignore it
             pass
         except Exception:
             logger.exception("Exception launching publication")
@@ -117,7 +117,7 @@ class PublicationFinishChecker(DelayedTask):
     This delayed task is responsible of checking if a publication is finished
     """
 
-    def __init__(self, publication: DeployedServicePublication):
+    def __init__(self, publication: ServicePoolPublication):
         super(PublicationFinishChecker, self).__init__()
         self._publishId = publication.id
         self._state = publication.state
@@ -172,7 +172,7 @@ class PublicationFinishChecker(DelayedTask):
     def checkLater(publication, publicationInstance):
         """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
-        @param dps: Database object for DeployedServicePublication
+        @param dps: Database object for ServicePoolPublication
         @param pi: Instance of Publication manager for the object
         """
         DelayedTaskRunner.runner().insert(PublicationFinishChecker(publication), publicationInstance.suggestedTime, PUBTAG + str(publication.id))
@@ -180,7 +180,7 @@ class PublicationFinishChecker(DelayedTask):
     def run(self):
         logger.debug('Checking publication finished %s', self._publishId)
         try:
-            publication: DeployedServicePublication = DeployedServicePublication.objects.get(pk=self._publishId)
+            publication: ServicePoolPublication = ServicePoolPublication.objects.get(pk=self._publishId)
             if publication.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
             else:
@@ -238,13 +238,13 @@ class PublicationManager:
                     logger.info('Could not delete %s', dsp)
             raise PublishException(str(e))
 
-    def cancel(self, publication: DeployedServicePublication):  # pylint: disable=no-self-use
+    def cancel(self, publication: ServicePoolPublication):  # pylint: disable=no-self-use
         """
         Invoked to cancel a publication.
         Double invokation (i.e. invokation over a "cancelling" item) will lead to a "forced" cancellation (unclean)
         :param servicePoolPub: Service pool publication (db object for a publication)
         """
-        publication = DeployedServicePublication.objects.get(pk=publication.id) # Reloads publication from db
+        publication = ServicePoolPublication.objects.get(pk=publication.id) # Reloads publication from db
         if publication.state not in State.PUBLISH_STATES:
             if publication.state == State.CANCELING:  # Double cancel
                 logger.info('Double cancel invoked for a publication')

@@ -33,7 +33,7 @@ import logging
 import typing
 
 from uds.models import (
-    UserService, DeployedServicePublication,
+    UserService, ServicePoolPublication,
     DeployedService, Service,
     Provider, User,
     Group, Authenticator,
@@ -51,7 +51,7 @@ OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT
 # Dict for translations
 transDict = {
     UserService: OT_USERSERVICE,
-    DeployedServicePublication: OT_PUBLICATION,
+    ServicePoolPublication: OT_PUBLICATION,
     DeployedService: OT_DEPLOYED_SERVICE,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,

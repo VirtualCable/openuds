@@ -50,7 +50,7 @@ from uds.core.services.Exceptions import (
     ServiceNotReadyError,
     ServiceAccessDeniedByCalendar
 )
-from uds.models import MetaPool, ServicePool, UserService, getSqlDatetime, Transport, User, DeployedServicePublication
+from uds.models import MetaPool, ServicePool, UserService, getSqlDatetime, Transport, User, ServicePoolPublication
 from uds.core import services, transports
 from uds.core.util.stats import events
 
@@ -95,7 +95,7 @@ class UserServiceManager:
         if serviceInstance.maxDeployed <= numberOfServices:
             raise MaxServicesReachedError('Max number of allowed deployments for service reached')
 
-    def __createCacheAtDb(self, publication: DeployedServicePublication, cacheLevel: int) -> UserService:
+    def __createCacheAtDb(self, publication: ServicePoolPublication, cacheLevel: int) -> UserService:
         """
         Private method to instatiate a cache element at database with default states
         """
@@ -114,7 +114,7 @@ class UserServiceManager:
             in_use=False
         )
 
-    def __createAssignedAtDb(self, publication: DeployedServicePublication, user: User) -> UserService:
+    def __createAssignedAtDb(self, publication: ServicePoolPublication, user: User) -> UserService:
         """
         Private method to instatiate an assigned element at database with default state
         """
@@ -152,7 +152,7 @@ class UserServiceManager:
             in_use=False
         )
 
-    def createCacheFor(self, publication: DeployedServicePublication, cacheLevel: int) -> UserService:
+    def createCacheFor(self, publication: ServicePoolPublication, cacheLevel: int) -> UserService:
         """
         Creates a new cache for the deployed service publication at level indicated
         """
