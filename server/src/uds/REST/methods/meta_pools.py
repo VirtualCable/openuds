@@ -122,37 +122,37 @@ class MetaPools(ModelHandler):
         g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
         for f in [{
-            'name': 'policy',
-            'values': [gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()],
-            'label': ugettext('Policy'),
-            'tooltip': ugettext('Service pool policy'),
-            'type': gui.InputField.CHOICE_TYPE,
-            'order': 100,
-        }, {
-            'name': 'image_id',
-            'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
-            'label': ugettext('Associated Image'),
-            'tooltip': ugettext('Image assocciated with this service'),
-            'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 120,
-            'tab': ugettext('Display'),
-        }, {
-            'name': 'servicesPoolGroup_id',
-            'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]),
-            'label': ugettext('Pool group'),
-            'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
-            'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 121,
-            'tab': ugettext('Display'),
-        }, {
-            'name': 'visible',
-            'value': True,
-            'label': ugettext('Visible'),
-            'tooltip': ugettext('If active, metapool will be visible for users'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 123,
-            'tab': ugettext('Display'),
-        }]:
+                'name': 'policy',
+                'values': [gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()],
+                'label': ugettext('Policy'),
+                'tooltip': ugettext('Service pool policy'),
+                'type': gui.InputField.CHOICE_TYPE,
+                'order': 100,
+            }, {
+                'name': 'image_id',
+                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
+                'label': ugettext('Associated Image'),
+                'tooltip': ugettext('Image assocciated with this service'),
+                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'order': 120,
+                'tab': ugettext('Display'),
+            }, {
+                'name': 'servicesPoolGroup_id',
+                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]),
+                'label': ugettext('Pool group'),
+                'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
+                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'order': 121,
+                'tab': ugettext('Display'),
+            }, {
+                'name': 'visible',
+                'value': True,
+                'label': ugettext('Visible'),
+                'tooltip': ugettext('If active, metapool will be visible for users'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'order': 123,
+                'tab': ugettext('Display'),
+            }]:
             self.addField(g, f)
 
         return g
@@ -163,7 +163,7 @@ class MetaPools(ModelHandler):
             # **** IMAGE ***
             imgId = fields['image_id']
             fields['image_id'] = None
-            logger.debug('Image id: {}'.format(imgId))
+            logger.debug('Image id: %s', imgId)
             try:
                 if imgId != '-1':
                     image = Image.objects.get(uuid=processUuid(imgId))
@@ -204,7 +204,7 @@ class MetaPools(ModelHandler):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
-        logger.debug('Setting fallback of {} to {}'.format(item.name, fallback))
+        logger.debug('Setting fallback of %s to %s', item.name, fallback)
         item.fallbackAccess = fallback
         item.save()
         return ''

@@ -80,14 +80,14 @@ class AssignedService(DetailHandler):
             if item.user is None:
                 owner = ''
                 owner_info = {
-                   'auth_id': '',
-                   'user_id': ''
+                    'auth_id': '',
+                    'user_id': ''
                 }
             else:
                 owner = item.user.pretty_name
                 owner_info = {
-                   'auth_id': item.user.manager.uuid,
-                   'user_id': item.user.uuid
+                    'auth_id': item.user.manager.uuid,
+                    'user_id': item.user.uuid
                 }
 
             val.update({

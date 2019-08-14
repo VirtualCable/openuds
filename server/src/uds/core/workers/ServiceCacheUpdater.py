@@ -236,7 +236,7 @@ class ServiceCacheUpdater(Job):
             cacheItems: typing.List[UserService] = servicePool.cachedUserServices().filter(
                 UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)
             ).order_by('creation_date')
-            # TODO: Look first for non finished cache items and cancel them
+            # TODO: Look first for non finished cache items and cancel them?
             cache = cacheItems[0]
             cache.removeOrCancel()
 
