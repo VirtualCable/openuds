@@ -43,7 +43,7 @@ from uds.core.util.State import State
 from uds.models.uuid_model import UUIDModel
 
 from uds.models.service_pool import DeployedService
-from uds.models.ServicesPoolPublication import ServicePoolPublication
+from uds.models.service_pool_publication import ServicePoolPublication
 
 from uds.models.user import User
 

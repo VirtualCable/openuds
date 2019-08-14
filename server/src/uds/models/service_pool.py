@@ -62,7 +62,7 @@ from uds.core.util.calendar import CalendarChecker
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
-    from uds.models.ServicesPoolPublication import ServicePoolPublication
+    from uds.models.service_pool_publication import ServicePoolPublication
 
 
 logger = logging.getLogger(__name__)
