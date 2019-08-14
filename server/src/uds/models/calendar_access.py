@@ -39,7 +39,7 @@ from uds.core.util import states
 
 from .uuid_model import UUIDModel
 from .calendar import Calendar
-from .ServicesPool import ServicePool
+from .service_pool import ServicePool
 from .meta_pool import MetaPool
 
 

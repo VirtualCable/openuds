@@ -58,8 +58,8 @@ from .user_preference import UserPreference
 from .group import Group
 
 # Provisioned services
-from .ServicesPool import DeployedService  # Old name, will continue here for a while already
-from .ServicesPool import ServicePool  # New name
+from .service_pool import DeployedService  # Old name, will continue here for a while already
+from .service_pool import ServicePool  # New name
 from .meta_pool import MetaPool
 from .ServicesPoolGroup import ServicesPoolGroup
 from .ServicesPoolPublication import DeployedServicePublication

@@ -46,7 +46,7 @@ from uds.core.util.calendar import CalendarChecker
 
 from uds.models.image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
-from uds.models.ServicesPool import ServicePool
+from uds.models.service_pool import ServicePool
 from uds.models.group import Group
 from uds.models.calendar import Calendar
 

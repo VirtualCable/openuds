@@ -45,7 +45,7 @@ from uds.core.util import (calendar, log)
 from .calendar import Calendar
 from .uuid_model import UUIDModel
 from .util import getSqlDatetime
-from .ServicesPool import ServicePool
+from .service_pool import ServicePool
 from .transport import Transport
 from .authenticator import Authenticator
 # from django.utils.translation import ugettext_lazy as _, ugettext

@@ -40,7 +40,7 @@ from uds.core.util.State import State
 from uds.core.environment import Environment
 from uds.core.util import log
 
-from uds.models.ServicesPool import DeployedService
+from uds.models.service_pool import DeployedService
 from uds.models.util import getSqlDatetime
 from uds.models.uuid_model import UUIDModel
 
@@ -202,4 +202,3 @@ class DeployedServicePublication(UUIDModel):
 signals.pre_delete.connect(DeployedServicePublication.beforeDelete, sender=DeployedServicePublication)
 
 ServicePoolPublication = DeployedServicePublication
-
