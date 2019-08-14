@@ -39,7 +39,7 @@ from uds.core.util.State import State
 from uds.core.environment import Environment
 from uds.core import jobs
 
-from uds.models.util import NEVER
+from .util import NEVER
 
 logger = logging.getLogger(__name__)
 

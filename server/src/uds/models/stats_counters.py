@@ -36,9 +36,9 @@ import logging
 
 from django.db import models
 
-from uds.models.util import NEVER_UNIX
-from uds.models.util import getSqlDatetime
-from uds.models.util import getSqlFnc
+from .util import NEVER_UNIX
+from .util import getSqlDatetime
+from .util import getSqlFnc
 
 
 logger = logging.getLogger(__name__)

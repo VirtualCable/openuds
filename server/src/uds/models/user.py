@@ -36,12 +36,13 @@ import typing
 from django.db import models
 from django.db.models import signals
 
-from uds.models.authenticator import Authenticator
-from uds.models.util import UnsavedForeignKey
-from uds.models.util import NEVER
-from uds.models.util import getSqlDatetime
 from uds.core.util import log
-from uds.models.uuid_model import UUIDModel
+
+from .authenticator import Authenticator
+from .util import UnsavedForeignKey
+from .util import NEVER
+from .util import getSqlDatetime
+from .uuid_model import UUIDModel
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:

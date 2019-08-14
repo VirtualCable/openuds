@@ -39,12 +39,12 @@ from django.db.models import signals
 from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
-from uds.models.managed_object_model import ManagedObjectModel
-from uds.models.tag import TaggingMixin
-from uds.models.proxy import Proxy
 from uds.core.util import connection
 
-from uds.models.provider import Provider
+from .managed_object_model import ManagedObjectModel
+from .tag import TaggingMixin
+from .proxy import Proxy
+from .provider import Provider
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:

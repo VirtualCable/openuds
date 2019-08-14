@@ -62,4 +62,4 @@ class Log(models.Model):
         app_label = 'uds'
 
     def __str__(self):
-        return u"Log of {}({}): {} - {} - {} - {}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+        return "Log of {}({}): {} - {} - {} - {}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)

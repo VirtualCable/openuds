@@ -36,10 +36,10 @@ from django.utils.translation import ugettext as _
 from django.db import models
 from django.db.models import Q
 
-from uds.models.uuid_model import UUIDModel
-from uds.models.user import User
-from uds.models.group import Group
-from uds.models.util import getSqlDatetime
+from .uuid_model import UUIDModel
+from .user import User
+from .group import Group
+from .util import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)

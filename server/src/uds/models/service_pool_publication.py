@@ -152,7 +152,7 @@ class ServicePoolPublication(UUIDModel):
         self.data = publication.serialize()
         self.save(update_fields=['data'])
 
-    def setState(self, state: str):
+    def setState(self, state: str) -> None:
         """
         Updates the state of this object and, optionally, saves it
 

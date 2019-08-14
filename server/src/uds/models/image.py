@@ -33,16 +33,18 @@ import logging
 import typing
 
 
+from PIL import Image as PILImage
+
 from django.db import models
 from django.db.models import signals
 from django.http import HttpResponse
 
-from PIL import Image as PILImage
-
-from uds.models.uuid_model import UUIDModel
-from uds.models.util import getSqlDatetime
-
 from uds.core.util import encoders
+
+
+from .uuid_model import UUIDModel
+from .util import getSqlDatetime
+
 
 
 logger = logging.getLogger(__name__)

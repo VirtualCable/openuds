@@ -39,16 +39,17 @@ from django.utils.translation import ugettext_noop as _
 
 from uds.core.util import log
 from uds.core.util import states
-from uds.models.uuid_model import UUIDModel
-from uds.models.tag import TaggingMixin
-from uds.models.util import getSqlDatetime
 from uds.core.util.calendar import CalendarChecker
 
-from uds.models.image import Image
-from uds.models.service_pool_group import ServicePoolGroup
-from uds.models.service_pool import ServicePool
-from uds.models.group import Group
-from uds.models.calendar import Calendar
+from .uuid_model import UUIDModel
+from .tag import TaggingMixin
+from .util import getSqlDatetime
+
+from .image import Image
+from .service_pool_group import ServicePoolGroup
+from .service_pool import ServicePool
+from .group import Group
+from .calendar import Calendar
 
 if typing.TYPE_CHECKING:
     import datetime

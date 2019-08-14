@@ -35,8 +35,10 @@ import logging
 import typing
 
 from django.db import models
-from uds.models.uuid_model import UUIDModel
 from uds.core.util import encoders
+
+from .uuid_model import UUIDModel
+
 
 
 logger = logging.getLogger(__name__)

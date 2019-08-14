@@ -34,7 +34,7 @@ import logging
 
 
 from django.db import models
-from uds.models.uuid_model import UUIDModel
+from .uuid_model import UUIDModel
 
 logger = logging.getLogger(__name__)
 

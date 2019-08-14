@@ -36,10 +36,11 @@ import typing
 from django.db import models
 from django.db.models import signals
 
-from uds.models.transport import Transport
 from uds.core.util import net
-from uds.models.uuid_model import UUIDModel
-from uds.models.tag import TaggingMixin
+
+from .transport import Transport
+from .uuid_model import UUIDModel
+from .tag import TaggingMixin
 
 
 logger = logging.getLogger(__name__)

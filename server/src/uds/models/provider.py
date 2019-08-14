@@ -37,8 +37,8 @@ from django.db import models
 from django.db.models import signals
 
 from uds.core.util import log
-from uds.models.managed_object_model import ManagedObjectModel
-from uds.models.tag import TaggingMixin
+from .managed_object_model import ManagedObjectModel
+from .tag import TaggingMixin
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:

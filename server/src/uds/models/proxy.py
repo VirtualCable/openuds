@@ -36,8 +36,8 @@ import requests
 
 from django.db import models
 
-from uds.models.uuid_model import UUIDModel
-from uds.models.tag import TaggingMixin
+from .uuid_model import UUIDModel
+from .tag import TaggingMixin
 
 
 logger = logging.getLogger(__name__)
