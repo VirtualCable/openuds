@@ -45,7 +45,7 @@ from uds.models.util import getSqlDatetime
 from uds.core.util.calendar import CalendarChecker
 
 from uds.models.image import Image
-from uds.models.ServicesPoolGroup import ServicesPoolGroup
+from uds.models.service_pool_group import ServicePoolGroup
 from uds.models.service_pool import ServicePool
 from uds.models.group import Group
 from uds.models.calendar import Calendar
@@ -77,7 +77,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     comments = models.CharField(max_length=256, default='')
     visible = models.BooleanField(default=True)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='metaPools', on_delete=models.SET_NULL)
-    servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='metaPools', on_delete=models.SET_NULL)
+    servicesPoolGroup = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='metaPools', on_delete=models.SET_NULL)
     assignedGroups = models.ManyToManyField(Group, related_name='metaPools', db_table='uds__meta_grps')
 
     accessCalendars = models.ManyToManyField(Calendar, related_name='accessMeta', through='CalendarAccessMeta')

@@ -43,7 +43,7 @@ from uds.core.ui.images import DEFAULT_THUMB_BASE64
 logger = logging.getLogger(__name__)
 
 
-class ServicesPoolGroup(UUIDModel):
+class ServicePoolGroup(UUIDModel):
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
@@ -79,4 +79,4 @@ class ServicesPoolGroup(UUIDModel):
 
     @staticmethod
     def default():
-        return ServicesPoolGroup(name=_('General'), comments='', priority=-10000)
+        return ServicePoolGroup(name=_('General'), comments='', priority=-10000)

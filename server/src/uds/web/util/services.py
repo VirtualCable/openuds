@@ -35,7 +35,7 @@ from django.utils.translation import ugettext
 from django.utils import formats
 from django.urls.base import reverse
 
-from uds.models import ServicePool, Transport, Network, ServicesPoolGroup, MetaPool
+from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
@@ -113,7 +113,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
 
         # If no usable pools, this is not visible
         if hasUsablePools:
-            group = meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicesPoolGroup.default().as_dict
+            group = meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
 
             services.append({
                 'id': 'M' + meta.uuid,
@@ -179,7 +179,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         else:
             in_use = ads.in_use
 
-        group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicesPoolGroup.default().as_dict
+        group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
 
         tbr = svr.toBeReplaced(request.user)
         if tbr:

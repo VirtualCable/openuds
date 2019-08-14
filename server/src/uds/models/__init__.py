@@ -61,7 +61,7 @@ from .group import Group
 from .service_pool import DeployedService  # Old name, will continue here for a while already
 from .service_pool import ServicePool  # New name
 from .meta_pool import MetaPool
-from .ServicesPoolGroup import ServicesPoolGroup
+from .service_pool_group import ServicePoolGroup
 from .ServicesPoolPublication import ServicePoolPublication
 from .user_service import UserService
 from .user_service_property import UserServiceProperty

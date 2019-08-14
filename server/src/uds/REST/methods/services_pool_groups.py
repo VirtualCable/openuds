@@ -33,7 +33,7 @@
 import logging
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models import ServicesPoolGroup, Image
+from uds.models import ServicePoolGroup, Image
 from uds.core.util.model import processUuid
 from uds.core.ui.UserInterface import gui
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
@@ -52,7 +52,7 @@ class ServicesPoolGroups(ModelHandler):
     # needs_admin = True
 
     path = 'gallery'
-    model = ServicesPoolGroup
+    model = ServicePoolGroup
     save_fields = ['name', 'comments', 'image_id', 'priority']
 
     table_title = _('Services Pool Groups')

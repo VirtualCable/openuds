@@ -50,7 +50,7 @@ from uds.models.service import Service
 from uds.models.transport import Transport
 from uds.models.group import Group
 from uds.models.image import Image
-from uds.models.ServicesPoolGroup import ServicesPoolGroup
+from uds.models.service_pool_group import ServicePoolGroup
 from uds.models.calendar import Calendar
 from uds.models.account import Account
 
@@ -91,7 +91,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
-    servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
+    servicesPoolGroup = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
 
     accessCalendars = models.ManyToManyField(Calendar, related_name='accessSP', through='CalendarAccess')
     # Default fallback action for access

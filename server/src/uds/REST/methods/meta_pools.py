@@ -33,7 +33,7 @@
 import logging
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import MetaPool, Image, ServicesPoolGroup
+from uds.models import MetaPool, Image, ServicePoolGroup
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
@@ -138,7 +138,7 @@ class MetaPools(ModelHandler):
             'tab': ugettext('Display'),
         }, {
             'name': 'servicesPoolGroup_id',
-            'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicesPoolGroup.objects.all()]),
+            'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]),
             'label': ugettext('Pool group'),
             'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
@@ -177,7 +177,7 @@ class MetaPools(ModelHandler):
             logger.debug('servicesPoolGroup_id: %s', spgrpId)
             try:
                 if spgrpId != '-1':
-                    spgrp = ServicesPoolGroup.objects.get(uuid=processUuid(spgrpId))
+                    spgrp = ServicePoolGroup.objects.get(uuid=processUuid(spgrpId))
                     fields['servicesPoolGroup_id'] = spgrp.id
             except Exception:
                 logger.exception('At service pool group recovering')
