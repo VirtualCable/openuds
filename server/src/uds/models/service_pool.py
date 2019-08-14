@@ -68,7 +68,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # pylint: disable=too-many-public-methods
-class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
+class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
@@ -536,7 +536,7 @@ class DeployedService(UUIDModel, TaggingMixin):  #  type: ignore
 
 
 # Connects a pre deletion signal to Authenticator
-signals.pre_delete.connect(DeployedService.beforeDelete, sender=DeployedService)
+signals.pre_delete.connect(ServicePool.beforeDelete, sender=ServicePool)
 
-# Renaming of model, easier to understand
-ServicePool = DeployedService
+# For now, keep back compat with model name
+DeployedService = ServicePool
