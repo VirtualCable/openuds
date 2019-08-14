@@ -165,7 +165,7 @@ class Transport(Module):
         kind of terminals/application will not work
 
         Args:
-            userService: DeployedUserService for witch we are rendering the connection (db model), or DeployedService (db model)
+            userService: DeployedUserService for witch we are rendering the connection (db model), or ServicePool (db model)
             user: user (dbUser) logged in
             pass: password used in authentication
 
@@ -177,12 +177,12 @@ class Transport(Module):
 
         :note: The provided service can be an user service or an deployed service (parent of user services).
                I have implemented processUserPassword in both so in most cases we do not need if the service is
-               DeployedService or UserService. In case of processUserPassword for an DeployedService, no transformation
+               ServicePool or UserService. In case of processUserPassword for an ServicePool, no transformation
                is done, because there is no relation at that level between user and service.
         """
         return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> None:
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         """
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification

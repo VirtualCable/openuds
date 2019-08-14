@@ -38,7 +38,7 @@ import logging
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import Authenticator
-from uds.models import DeployedService
+from uds.models import ServicePool
 from uds.models import Transport
 from uds.models import TicketStore
 from uds.core.managers import cryptoManager
@@ -164,7 +164,7 @@ class Tickets(Handler):
             transport = self._params.get('transport', None)
 
             if servicePool is not None:
-                servicePool = DeployedService.objects.get(uuid=processUuid(servicePool))
+                servicePool = ServicePool.objects.get(uuid=processUuid(servicePool))
 
                 # If forced that servicePool must honor groups
                 if force:
@@ -197,7 +197,7 @@ class Tickets(Handler):
 
         except Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
-        except DeployedService.DoesNotExist:
+        except ServicePool.DoesNotExist:
             return Tickets.result(error='Service pool does not exists')
         except Transport.DoesNotExist:
             return Tickets.result(error='Transport does not exists')

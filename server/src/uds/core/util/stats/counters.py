@@ -127,13 +127,13 @@ def _initializeData():
 
     Hides data from global var space
     """
-    from uds.models import Provider, Service, DeployedService
+    from uds.models import Provider, Service, ServicePool
 
     __caWrite.update({
         CT_LOAD: (Provider,),
         CT_STORAGE: (Service,),
-        CT_ASSIGNED: (DeployedService,),
-        CT_INUSE: (DeployedService,),
+        CT_ASSIGNED: (ServicePool,),
+        CT_INUSE: (ServicePool,),
     })
 
     # OBtain  ids from variups type of object to retrieve stats
@@ -164,7 +164,7 @@ def _initializeData():
             CT_ASSIGNED: get_S_DS_Ids,
             CT_INUSE: get_S_DS_Ids
         },
-        DeployedService: {
+        ServicePool: {
             CT_ASSIGNED: get_Id,
             CT_INUSE: get_Id
         }
@@ -173,7 +173,7 @@ def _initializeData():
     def _getIds(obj):
         to = type(obj)
 
-        if to is DeployedService:
+        if to is ServicePool:
             return to.id
 
         if to is Service:
@@ -191,7 +191,7 @@ def _initializeData():
     # Dict to convert objects to owner types
     # Dict for translations
     __transDict.update({
-        DeployedService: OT_DEPLOYED,
+        ServicePool: OT_DEPLOYED,
         Service: OT_SERVICE,
         Provider: OT_PROVIDER
     })

@@ -40,15 +40,13 @@ from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
 from uds.core.util.State import State
-from uds.models.uuid_model import UUIDModel
 
-from uds.models.service_pool import DeployedService
-from uds.models.service_pool_publication import ServicePoolPublication
-
-from uds.models.user import User
-
-from uds.models.util import NEVER
-from uds.models.util import getSqlDatetime
+from .uuid_model import UUIDModel
+from .service_pool import ServicePool
+from .service_pool_publication import ServicePoolPublication
+from .user import User
+from .util import NEVER
+from .util import getSqlDatetime
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -60,12 +58,12 @@ logger = logging.getLogger(__name__)
 class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     """
     This is the base model for assigned user service and cached user services.
-    This are the real assigned services to users. DeployedService is the container (the group) of this elements.
+    This are the real assigned services to users. ServicePool is the container (the group) of this elements.
     """
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='userServices')
+    deployed_service = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
     publication = models.ForeignKey(ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
 
     unique_id = models.CharField(max_length=128, default='', db_index=True)  # User by agents to locate machine
@@ -101,13 +99,13 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         )
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         Simple accessor to deployed service name plus unique name
         """
         return "{}\\{}".format(self.deployed_service.name, self.friendly_name)
 
-    def getEnvironment(self):
+    def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents.
 

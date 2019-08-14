@@ -48,7 +48,7 @@ opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = ran
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
 
-class LiveDeployment(UserDeployment):
+class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     """
     This class generates the user consumable elements of the service tree.
 
@@ -91,11 +91,11 @@ class LiveDeployment(UserDeployment):
             pickle.dumps(self._queue, protocol=0)
         ]).encode('utf8')
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data: bytes):
         """
         Does nothing here also, all data are keeped at environment storage
         """
-        vals = str_.split(b'\1')
+        vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
             self._ip = vals[2].decode('utf8')
@@ -289,17 +289,18 @@ class LiveDeployment(UserDeployment):
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
         """
-        logger.debug('Setting error state, reason: {0}'.format(reason))
-        self.doLog(log.ERROR, reason)
+        logger.debug('Setting error state, reason: %s', reason)
+        self._queue = [opError]
+        self._reason = str(reason)
+
+        self.doLog(log.ERROR, self._reason)
 
         if self._vmid != '':  # Powers off & delete it
             try:
                 self.service().removeMachine(self._vmid)
-            except:
-                logger.debug('Can\t set machine state to stopped')
+            except Exception:
+                logger.warning('Can\t set machine %s state to stopped', self._vmid)
 
-        self._queue = [opError]
-        self._reason = str(reason)
         return State.ERROR
 
     def __executeQueue(self):

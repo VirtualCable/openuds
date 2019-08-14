@@ -41,7 +41,7 @@ from uds.core import transports
 from uds.core.util import net
 
 from uds.models.managed_object_model import ManagedObjectModel
-from uds.models.Tag import TaggingMixin
+from uds.models.tag import TaggingMixin
 
 
 logger = logging.getLogger(__name__)

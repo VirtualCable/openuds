@@ -40,7 +40,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
 from uds.models.managed_object_model import ManagedObjectModel
-from uds.models.Tag import TaggingMixin
+from uds.models.tag import TaggingMixin
 from uds.models.proxy import Proxy
 from uds.core.util import connection
 

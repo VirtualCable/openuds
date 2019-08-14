@@ -58,7 +58,6 @@ from .user_preference import UserPreference
 from .group import Group
 
 # Provisioned services
-from .service_pool import DeployedService  # Old name, will continue here for a while already
 from .service_pool import ServicePool  # New name
 from .meta_pool import MetaPool
 from .service_pool_group import ServicePoolGroup
@@ -70,15 +69,15 @@ from .user_service_property import UserServiceProperty
 from .log import Log
 
 # Stats
-from .StatsCounters import StatsCounters
-from .StatsEvents import StatsEvents
+from .stats_counters import StatsCounters
+from .stats_events import StatsEvents
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
 # We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
 from .cache import Cache
 from .config import Config
-from .Storage import Storage
-from .UniqueId import UniqueId
+from .storage import Storage
+from .unique_id import UniqueId
 
 # Workers/Schedulers related
 from .scheduler import Scheduler
@@ -88,7 +87,7 @@ from .delayed_task import DelayedTask
 from .image import Image
 
 # Ticket storage
-from .TicketStore import TicketStore
+from .ticket_store import TicketStore
 
 # Calendar related
 from .calendar import Calendar
@@ -105,7 +104,7 @@ from .account_usage import AccountUsage
 from .proxy import Proxy
 
 # Tagging
-from .Tag import Tag
+from .tag import Tag
 
 # Utility
 from .dbfile import DBFile

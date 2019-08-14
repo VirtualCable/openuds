@@ -37,7 +37,7 @@ from django.db import IntegrityError
 from django.db.models import signals
 
 from uds.models.managed_object_model import ManagedObjectModel
-from uds.models.Tag import TaggingMixin
+from uds.models.tag import TaggingMixin
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -89,7 +89,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         Returns:
             True if the object has been removed
 
-            False if the object can't be removed because it is being used by some DeployedService
+            False if the object can't be removed because it is being used by some ServicePool
 
         Raises:
         """

@@ -43,7 +43,7 @@ from uds.core.util import log
 from uds.core.util import states
 from uds.core.services.Exceptions import InvalidServiceException
 from uds.models.uuid_model import UUIDModel
-from uds.models.Tag import TaggingMixin
+from uds.models.tag import TaggingMixin
 
 from uds.models.os_manager import OSManager
 from uds.models.service import Service
@@ -142,17 +142,17 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def processUserPassword(self, username, password):
         """
-        This method is provided for consistency between UserService and DeployedService
+        This method is provided for consistency between UserService and ServicePool
         There is no posibility to check the username and password that a user will use to
         connect to a service at this level, because here there is no relation between both.
 
         The only function of this method is allow Transport to transform username/password in
-        getConnectionInfo without knowing if it is requested by a DeployedService or an UserService
+        getConnectionInfo without knowing if it is requested by a ServicePool or an UserService
         """
         return [username, password]
 
     @staticmethod
-    def getRestraineds() -> typing.Iterable['DeployedService']:
+    def getRestraineds() -> typing.Iterable['ServicePool']:
         from uds.models.user_service import UserService  # pylint: disable=redefined-outer-name
         from uds.core.util.Config import GlobalConfig
         from django.db.models import Count
@@ -167,7 +167,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         for v in UserService.objects.filter(state=states.userService.ERROR, state_date__gt=date).values('deployed_service').annotate(how_many=Count('deployed_service')).order_by('deployed_service'):
             if v['how_many'] >= min_:
                 res.append(v['deployed_service'])
-        return DeployedService.objects.filter(pk__in=res)
+        return ServicePool.objects.filter(pk__in=res)
 
     @property
     def is_meta(self) -> bool:
@@ -402,7 +402,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         # We have to check if at least one group from this user is valid for this deployed service
 
         logger.debug('User: %s', user.id)
-        logger.debug('DeployedService: %s', self.id)
+        logger.debug('ServicePool: %s', self.id)
         self.validateGroups(user.getGroups())
         self.validatePublication()
 
@@ -414,7 +414,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return self.account.addUsageAccount(userService, start, end)
 
     @staticmethod
-    def getDeployedServicesForGroups(groups) -> typing.List['DeployedService']:
+    def getDeployedServicesForGroups(groups) -> typing.List['ServicePool']:
         """
         Return deployed services with publications for the groups requested.
 
@@ -426,11 +426,15 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import services
         # Get services that HAS publications
-        list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE,
-                                               state=states.servicePool.ACTIVE, visible=True).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
+        list1 = ServicePool.objects.filter(
+            assignedGroups__in=groups,
+            assignedGroups__state=states.group.ACTIVE,
+            state=states.servicePool.ACTIVE,
+            visible=True
+        ).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
         # Now get deployed services that DO NOT NEED publication
         doNotNeedPublishing = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
-        list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE, service__data_type__in=doNotNeedPublishing, state=states.servicePool.ACTIVE, visible=True)
+        list2 = ServicePool.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE, service__data_type__in=doNotNeedPublishing, state=states.servicePool.ACTIVE, visible=True)
         # And generate a single list without duplicates
         return list(set([r for r in list1] + [r for r in list2]))
 
@@ -537,6 +541,3 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(ServicePool.beforeDelete, sender=ServicePool)
-
-# For now, keep back compat with model name
-DeployedService = ServicePool

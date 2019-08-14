@@ -40,7 +40,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util import log
 from uds.core.util import states
 from uds.models.uuid_model import UUIDModel
-from uds.models.Tag import TaggingMixin
+from uds.models.tag import TaggingMixin
 from uds.models.util import getSqlDatetime
 from uds.core.util.calendar import CalendarChecker
 

@@ -45,7 +45,7 @@ from uds.core.util import OsDetector
 from uds.core.util import html
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
-from uds.models import Authenticator, DeployedService
+from uds.models import Authenticator, ServicePool
 from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
@@ -203,7 +203,7 @@ def ticketAuth(request, ticketId):
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
         logger.debug("Service & transport: {}, {}".format(servicePool, transport))
-        for v in DeployedService.objects.all():
+        for v in ServicePool.objects.all():
             logger.debug("{} {}".format(v.uuid, v.name))
 
         # Check if servicePool is part of the ticket
@@ -233,7 +233,7 @@ def ticketAuth(request, ticketId):
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
         return errors.errorView(request, errors.ACCESS_DENIED)
-    except DeployedService.DoesNotExist:
+    except ServicePool.DoesNotExist:
         logger.error('Ticket has an invalid Service Pool')
         return errors.errorView(request, errors.SERVICE_NOT_FOUND)
     except Exception as e:

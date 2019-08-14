@@ -36,7 +36,7 @@ import pickle
 import typing
 
 from django.db import transaction
-from uds.models.Storage import Storage as DBStorage
+from uds.models.storage import Storage as DBStorage
 from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
@@ -70,7 +70,8 @@ class Storage:
         try:
             DBStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
         except Exception:
-            DBStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
+            with transaction.atomic():
+                DBStorage.objects.filter(key=key).select_for_update().update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
         # logger.debug('Key saved')
 
     def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:

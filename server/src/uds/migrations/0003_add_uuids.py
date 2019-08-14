@@ -25,7 +25,6 @@ def remove_uuids(apps, schema_editor):
     """
     Dummy function. uuid field will be dropped on reverse migration
     """
-    pass
 
 
 class Migration(migrations.Migration):

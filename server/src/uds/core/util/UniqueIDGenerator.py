@@ -38,7 +38,7 @@ from django.db import transaction, OperationalError, connection
 from django.db.utils import IntegrityError
 from django.db.models.query import QuerySet
 
-from uds.models.UniqueId import UniqueId
+from uds.models.unique_id import UniqueId
 from uds.models.util import getSqlDatetime
 
 logger = logging.getLogger(__name__)

@@ -113,12 +113,12 @@ def _initializeData():
     """
     Initializes dictionaries.
     """
-    from uds.models import Provider, Service, DeployedService, Authenticator
+    from uds.models import Provider, Service, ServicePool, Authenticator
 
     # Dict to convert objects to owner types
     # Dict for translations
     __transDict.update({
-        DeployedService: OT_DEPLOYED,
+        ServicePool: OT_DEPLOYED,
         Service: OT_SERVICE,
         Provider: OT_PROVIDER,
         Authenticator: OT_AUTHENTICATOR,

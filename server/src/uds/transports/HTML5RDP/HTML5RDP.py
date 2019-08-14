@@ -225,6 +225,7 @@ class HTML5RDPTransport(Transport):
 
         if self.enablePrinting.isTrue() is True:
             params['enable-printing'] = 'true'
+            params['printer-name'] = 'UDS-Printer'
 
         if self.wallpaper.isTrue() is True:
             params['enable-wallpaper'] = 'true'
@@ -235,9 +236,8 @@ class HTML5RDPTransport(Transport):
         if self.smooth.isTrue() is True:
             params['enable-font-smoothing'] = 'true'
 
-        logger.debug('RDP Params: {0}'.format(params))
+        logger.debug('RDP Params: %s', params)
 
         ticket = TicketStore.create(params, validity=self.ticketValidity.num())
 
         return HttpResponseRedirect("{}/transport/?{}.{}&{}".format(self.guacamoleServer.value, ticket, scrambler, request.build_absolute_uri(reverse('utility.closer'))))
-

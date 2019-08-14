@@ -136,7 +136,7 @@ class UserServiceManager:
         """
         __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
         There is cases where deployed services do not have publications (do not need them), so we need this method to create
-        an UserService with no publications, and create them from an DeployedService
+        an UserService with no publications, and create them from an ServicePool
         """
         self.__checkMaxDeployedReached(servicePool)
         now = getSqlDatetime()

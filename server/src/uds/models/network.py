@@ -39,7 +39,7 @@ from django.db.models import signals
 from uds.models.transport import Transport
 from uds.core.util import net
 from uds.models.uuid_model import UUIDModel
-from uds.models.Tag import TaggingMixin
+from uds.models.tag import TaggingMixin
 
 
 logger = logging.getLogger(__name__)

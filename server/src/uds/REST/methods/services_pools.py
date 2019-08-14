@@ -33,7 +33,7 @@
 import logging
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import DeployedService, OSManager, Service, Image, ServicePoolGroup, Account
+from uds.models import ServicePool, OSManager, Service, Image, ServicePoolGroup, Account
 from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
@@ -69,7 +69,7 @@ class ServicesPools(ModelHandler):
     """
     Handles Services Pools REST requests
     """
-    model = DeployedService
+    model = ServicePool
     detail = {
         'services': AssignedService,
         'cache': CachedService,

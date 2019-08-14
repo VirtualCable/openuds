@@ -36,7 +36,7 @@ from datetime import timedelta
 from uds.core.jobs.Job import Job
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.State import State
-from uds.models import DeployedService, getSqlDatetime
+from uds.models import ServicePool, getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class AssignedAndUnused(Job):
 
     def run(self):
         since_state = getSqlDatetime() - timedelta(seconds=self.frecuency)
-        for ds in DeployedService.objects.all():
+        for ds in ServicePool.objects.all():
             # Skips checking deployed services in maintenance mode or ignores assigned and unused
             if ds.isInMaintenance() is True or ds.ignores_unused:
                 continue

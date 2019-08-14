@@ -67,7 +67,7 @@ class StatsEvents(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_stats(owner_type: typing.Union[int, typing.Iterable[int]], event_type: typing.Union[int, typing.Iterable[int]], **kwargs):
+    def get_stats(owner_type: typing.Union[int, typing.Iterable[int]], event_type: typing.Union[int, typing.Iterable[int]], **kwargs) -> models.QuerySet:
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 
@@ -101,20 +101,21 @@ class StatsEvents(models.Model):
         # We use result as an iterator
         return fltr
 
+    # Utility aliases for reading
     @property
-    def username(self):
+    def username(self) -> str:
         return self.fld1
 
     @property
-    def srcIp(self):
+    def srcIp(self) -> str:
         return self.fld2
 
     @property
-    def dstIp(self):
+    def dstIp(self) -> str:
         return self.fld3
 
     @property
-    def uniqueId(self):
+    def uniqueId(self) -> str:
         return self.fld4
 
     def __str__(self):

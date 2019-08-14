@@ -142,7 +142,7 @@ class OSManager(Module):
     def transformsUserOrPasswordForService(cls: typing.Type['OSManager']):
         """
         Helper method that informs if the os manager transforms the username and/or the password.
-        This is used from DeployedService
+        This is used from ServicePool
         """
         return cls.processUserPassword != OSManager.processUserPassword
 

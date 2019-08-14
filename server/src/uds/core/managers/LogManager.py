@@ -34,7 +34,7 @@ import typing
 
 from uds.models import (
     UserService, ServicePoolPublication,
-    DeployedService, Service,
+    ServicePool, Service,
     Provider, User,
     Group, Authenticator,
     MetaPool
@@ -52,7 +52,7 @@ OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT
 transDict = {
     UserService: OT_USERSERVICE,
     ServicePoolPublication: OT_PUBLICATION,
-    DeployedService: OT_DEPLOYED_SERVICE,
+    ServicePool: OT_DEPLOYED_SERVICE,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
     User: OT_USER,

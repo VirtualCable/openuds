@@ -40,7 +40,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from uds.core.util import encoders
-from uds.models import DeployedService, Transport, UserService, Authenticator
+from uds.models import ServicePool, Transport, UserService, Authenticator
 
 
 logger = logging.getLogger(__name__)
@@ -123,7 +123,7 @@ def exceptionView(request, exception):
         raise exception
     except UserService.DoesNotExist:
         return errorView(request, ERR_USER_SERVICE_NOT_FOUND)
-    except DeployedService.DoesNotExist:
+    except ServicePool.DoesNotExist:
         return errorView(request, SERVICE_NOT_FOUND)
     except Transport.DoesNotExist:
         return errorView(request, TRANSPORT_NOT_FOUND)
