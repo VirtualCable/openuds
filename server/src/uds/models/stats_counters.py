@@ -37,7 +37,7 @@ import logging
 from django.db import models
 
 from .util import NEVER_UNIX
-from .util import getSqlDatetime
+from .util import getSqlDatetimeAsUnix
 from .util import getSqlFnc
 
 
@@ -90,7 +90,7 @@ class StatsCounters(models.Model):
         to = kwargs.get('to', None)
 
         since = int(since) if since else NEVER_UNIX
-        to = int(to) if to else getSqlDatetime(True)
+        to = int(to) if to else getSqlDatetimeAsUnix()
 
         interval = 600  # By default, group items in ten minutes interval (600 seconds)
 

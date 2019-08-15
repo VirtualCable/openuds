@@ -39,7 +39,7 @@ from django.db.utils import IntegrityError
 from django.db.models.query import QuerySet
 
 from uds.models.unique_id import UniqueId
-from uds.models.util import getSqlDatetime
+from uds.models.util import getSqlDatetimeAsUnix
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ class UniqueIDGenerator:
         is global to "unique ids' database
         """
         # First look for a name in the range defined
-        stamp = getSqlDatetime(True)
+        stamp = getSqlDatetimeAsUnix()
         seq = rangeStart
         # logger.debug(UniqueId)
         counter = 0
@@ -130,7 +130,7 @@ class UniqueIDGenerator:
         ).filter(
             owner=self._owner, seq=seq
         ).update(
-            owner=toUidGen._owner, basename=toUidGen._baseName, stamp=getSqlDatetime(True)  # pylint: disable=protected-access
+            owner=toUidGen._owner, basename=toUidGen._baseName, stamp=getSqlDatetimeAsUnix()  # pylint: disable=protected-access
         )
         return True
 
@@ -142,7 +142,7 @@ class UniqueIDGenerator:
             ).filter(
                 owner=self._owner, seq=seq
             ).update(
-                owner='', assigned=False, stamp=getSqlDatetime(True)
+                owner='', assigned=False, stamp=getSqlDatetimeAsUnix()
             )
         if flt > 0:
             self.__purge()
@@ -160,10 +160,10 @@ class UniqueIDGenerator:
             self.__filter(seq).delete()  # Clean ups all unassigned after last assigned in this range
 
     def release(self) -> None:
-        UniqueId.objects.select_for_update().filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetime(True))  # @UndefinedVariable
+        UniqueId.objects.select_for_update().filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetimeAsUnix())  # @UndefinedVariable
         self.__purge()
 
     def releaseOlderThan(self, stamp=None) -> None:
-        stamp = getSqlDatetime(True) if stamp is None else stamp
+        stamp = getSqlDatetimeAsUnix() if stamp is None else stamp
         UniqueId.objects.select_for_update().filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
         self.__purge()

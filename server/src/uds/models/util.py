@@ -32,7 +32,6 @@
 """
 import logging
 from time import mktime
-import typing
 
 from datetime import datetime
 from django.db import models
@@ -56,7 +55,7 @@ class UnsavedForeignKey(models.ForeignKey):
     allow_unsaved_instance_assignment = True
 
 
-def getSqlDatetime(unix: bool = False) -> typing.Union[int, datetime]:
+def getSqlDatetime() -> datetime:
     """
     Returns the current date/time of the database server.
 
@@ -74,11 +73,10 @@ def getSqlDatetime(unix: bool = False) -> typing.Union[int, datetime]:
     else:
         date = datetime.now()  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
 
-    if unix:
-        return int(mktime(date.timetuple()))
-    else:
-        return date
+    return date
 
+def getSqlDatetimeAsUnix() -> int:
+    return int(mktime(getSqlDatetime().timetuple()))
 
 def getSqlFnc(fncName):
     """

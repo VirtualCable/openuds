@@ -36,9 +36,12 @@ import logging
 from .permissions import Permissions
 
 # Utility
-from .util import getSqlDatetime
-from .util import NEVER
-from .util import NEVER_UNIX
+from .util import (
+    getSqlDatetime,
+    getSqlDatetimeAsUnix,
+    NEVER,
+    NEVER_UNIX
+)
 
 # Services
 from .provider import Provider

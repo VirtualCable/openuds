@@ -30,18 +30,16 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import pickle
+import logging
+
 
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
-from uds.models.util import getSqlDatetime
+from uds.models.util import getSqlDatetimeAsUnix
 
 from . import og
-import six
-
-import pickle
-import logging
 
 __updated__ = '2019-02-07'
 
@@ -62,7 +60,7 @@ class OGDeployment(UserDeployment):
 
     """
 
-    # : Recheck every six seconds by default (for task methods)
+    # : Recheck every N seconds by default (for task methods)
     suggestedTime = 20
 
     def initialize(self):
@@ -249,7 +247,7 @@ class OGDeployment(UserDeployment):
         self._name = r['name']
         self._mac = r['mac']
         self._ip = r['ip']
-        self._stamp = getSqlDatetime(unix=True)
+        self._stamp = getSqlDatetimeAsUnix()
 
         # Store actor version & Known ip
         self.dbservice().setProperty('actor_version', '1.0-OpenGnsys')

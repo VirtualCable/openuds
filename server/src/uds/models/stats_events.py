@@ -37,7 +37,7 @@ import types
 from django.db import models
 
 from .util import NEVER_UNIX
-from .util import getSqlDatetime
+from .util import getSqlDatetimeAsUnix
 
 
 logger = logging.getLogger(__name__)
@@ -94,7 +94,7 @@ class StatsEvents(models.Model):
         to = kwargs.get('to', None)
 
         since = int(since) if since else NEVER_UNIX
-        to = int(to) if to else getSqlDatetime(True)
+        to = int(to) if to else getSqlDatetimeAsUnix()
 
         fltr = fltr.filter(stamp__gte=since, stamp__lt=to)
 

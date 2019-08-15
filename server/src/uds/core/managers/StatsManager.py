@@ -36,7 +36,7 @@ import typing
 
 from uds.core.util.Config import GlobalConfig
 from uds.models import StatsCounters
-from uds.models import getSqlDatetime
+from uds.models import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.models import StatsEvents
 
 logger = logging.getLogger(__name__)
@@ -155,7 +155,7 @@ class StatsManager:
         logger.debug('Adding event stat')
         stamp = kwargs.get('stamp')
         if stamp is None:
-            stamp = getSqlDatetime(unix=True)
+            stamp = getSqlDatetimeAsUnix()
         else:
             # To Unix epoch
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
