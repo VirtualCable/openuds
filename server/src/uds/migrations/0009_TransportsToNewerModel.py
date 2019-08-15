@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core.util import encoders
 from uds.transports.RDP.RDPTransport import RDPTransport
 from uds.transports.RDP.TRDPTransport import TRDPTransport

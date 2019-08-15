@@ -39,7 +39,7 @@ from weasyprint import HTML, CSS, default_url_fetcher
 from django.utils.translation import ugettext, ugettext_noop as _
 from django.template import loader
 
-from uds.core.ui.UserInterface import UserInterface, gui
+from uds.core.ui import UserInterface, gui
 from uds.core.util import encoders
 from . import stock
 

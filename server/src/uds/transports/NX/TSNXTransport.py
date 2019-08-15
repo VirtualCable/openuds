@@ -34,7 +34,7 @@ Created on Jul 29, 2011
 """
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports.BaseTransport import TUNNELED_GROUP
 from uds.core.transports import protocols
@@ -204,7 +204,7 @@ class TSNXTransport(BaseNXTransport):
         }.get(os['OS'])
 
         if os is None:
-            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         sp = {
             'ip': ip,

@@ -30,17 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import os.path
+import sys
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.osmanagers.osmfactory import OSManagersFactory
 from uds.core.managers.DownloadsManager import DownloadsManager
 from uds.core import VERSION
 
-from .LinuxOsManager import LinuxOsManager
-from .LinuxRandomPassOsManager import LinuxRandomPassManager
-import os.path
-import sys
+from .linux_osmanager import LinuxOsManager
+from .linux_randompass_osmanager import LinuxRandomPassManager
 
 OSManagersFactory.factory().insert(LinuxOsManager)
 OSManagersFactory.factory().insert(LinuxRandomPassManager)

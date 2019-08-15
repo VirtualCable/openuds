@@ -36,7 +36,7 @@ import pickle
 from datetime import datetime, timedelta
 
 from django.db import models, transaction
-from django.db.models import signals
+from django.db.models import signals, QuerySet
 
 from uds.core.environment import Environment
 from uds.core.util import log
@@ -154,7 +154,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return [username, password]
 
     @staticmethod
-    def getRestraineds() -> typing.Iterable['ServicePool']:
+    def getRestrainedsQuerySet() -> QuerySet:
         from uds.models.user_service import UserService  # pylint: disable=redefined-outer-name
         from uds.core.util.Config import GlobalConfig
         from django.db.models import Count
@@ -171,7 +171,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             ).values('deployed_service').annotate(how_many=Count('deployed_service')).order_by('deployed_service'):
             if v['how_many'] >= min_:
                 res.append(v['deployed_service'])
-        return ServicePool.objects.filter(pk__in=res).iterator()
+        return ServicePool.objects.filter(pk__in=res)
+
+    @staticmethod
+    def getRestraineds() -> typing.Iterable['ServicePool']:
+        return ServicePool.getRestrainedsQuerySet().iterator()
 
     @property
     def is_meta(self) -> bool:

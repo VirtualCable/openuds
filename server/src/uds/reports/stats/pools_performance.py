@@ -39,7 +39,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.db.models import Count
 import django.template.defaultfilters as filters
 
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core.util.stats import events
 
 from uds.core.reports import graphs

@@ -10,7 +10,7 @@
 """
 from django.utils.translation import ugettext_noop as _, ugettext_lazy
 from uds.core.services import types as serviceTypes
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core import osmanagers
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util.State import State

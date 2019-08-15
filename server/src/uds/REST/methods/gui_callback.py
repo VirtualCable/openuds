@@ -32,7 +32,7 @@
 """
 import logging
 
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.REST import Handler, RequestError, NotFound
 
 

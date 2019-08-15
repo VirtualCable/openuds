@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from django.utils.translation import ugettext_noop as _
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core import auths
 
 import logging

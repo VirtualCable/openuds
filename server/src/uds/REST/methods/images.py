@@ -34,7 +34,7 @@ import logging
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Image
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 
 from uds.REST.model import ModelHandler
 

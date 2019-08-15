@@ -37,7 +37,7 @@ import logging
 import ldap
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core import auths
 from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import ldaputil

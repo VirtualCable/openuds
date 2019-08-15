@@ -37,7 +37,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Network
 from uds.core.util import net
 from uds.core.util import permissions
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 
 from uds.REST.model import ModelHandler, SaveException
 

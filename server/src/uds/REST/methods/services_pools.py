@@ -52,7 +52,7 @@ from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.core.util import permissions
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError

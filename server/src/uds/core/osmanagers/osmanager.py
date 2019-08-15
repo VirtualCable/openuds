@@ -66,7 +66,7 @@ class OSManager(Module):
 
     # : Type of services for which this OS Manager is designed
     # : Defaults to all. (list or tuple)
-    servicesType = serviceTypes.ALL
+    servicesType: typing.Tuple[str, ...] = serviceTypes.ALL
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)

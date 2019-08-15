@@ -36,7 +36,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core.auths import Authenticator
 from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import ldaputil

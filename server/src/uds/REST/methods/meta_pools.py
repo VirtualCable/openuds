@@ -41,7 +41,7 @@ from uds.core.util import log
 from uds.core.util import permissions
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.REST.methods.op_calendars import AccessCalendars
 
 from .user_services import Groups

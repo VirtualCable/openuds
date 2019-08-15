@@ -11,7 +11,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core import osmanagers
 from .WindowsOsManager import WindowsOsManager

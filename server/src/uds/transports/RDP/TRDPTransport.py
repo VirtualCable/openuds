@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports.BaseTransport import TUNNELED_GROUP
 from uds.core.transports import protocols

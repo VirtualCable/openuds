@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.models import Authenticator
 
 import six

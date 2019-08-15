@@ -30,16 +30,15 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core import osmanagers
-from uds.osmanagers.LinuxOsManager import LinuxOsManager
 from uds.core.util import log
 from uds.core.util import encoders
 
-import logging
+from .linux_osmanager import LinuxOsManager
 
 logger = logging.getLogger(__name__)
 

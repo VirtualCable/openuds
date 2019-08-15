@@ -37,7 +37,7 @@ import typing
 
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
     from uds.models import User

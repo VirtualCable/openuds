@@ -32,7 +32,7 @@
 """
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 from uds.core.util.stats import counters
 
 import csv

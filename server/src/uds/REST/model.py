@@ -41,7 +41,7 @@ import logging
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError, models
 
-from uds.core.ui.UserInterface import gui as uiGui
+from uds.core.ui import gui as uiGui
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid

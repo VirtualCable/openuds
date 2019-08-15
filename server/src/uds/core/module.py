@@ -38,7 +38,7 @@ import logging
 
 from django.utils.translation import ugettext as _
 
-from uds.core.ui.UserInterface import UserInterface
+from uds.core.ui import UserInterface
 from uds.core.util import encoders
 
 from .serializable import Serializable
@@ -89,7 +89,7 @@ class Module(UserInterface, Environmentable, Serializable):
          Anyway, if you override this method, you must also override previous one
 
     * UserInterface Methods:
-       * :py:meth:`uds.core.ui.UserInterface.UserInterface.valuesDict`
+       * :py:meth:`from from uds.core.ui.valuesDict`
          This method, by default, provides the values contained in the form fields. If you don't override the marshal and
          unmarshal, this method should be fine as is for you also.
 

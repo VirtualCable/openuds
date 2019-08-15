@@ -38,7 +38,7 @@ from uds.core.auths import Authenticator
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.util import net
 from uds.core.util.request import getRequest
-from uds.core.ui.UserInterface import gui
+from uds.core.ui import gui
 
 
 logger = logging.getLogger(__name__)
