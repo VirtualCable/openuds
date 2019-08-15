@@ -36,7 +36,7 @@ import typing
 
 # Imports for type checking
 if typing.TYPE_CHECKING:
-    from .CryptoManager import CryptoManager
+    from .crypto import CryptoManager
     from .TaskManager import TaskManager
     from .DownloadsManager import DownloadsManager
     from .LogManager import LogManager
@@ -44,7 +44,7 @@ if typing.TYPE_CHECKING:
     from .UserServiceManager import UserServiceManager
 
 def cryptoManager() -> 'CryptoManager':
-    from .CryptoManager import CryptoManager  # pylint: disable=redefined-outer-name
+    from .crypto import CryptoManager  # pylint: disable=redefined-outer-name
     return CryptoManager.manager()
 
 

@@ -35,7 +35,7 @@ import logging
 from django.conf import settings
 from django.apps import apps
 from uds.models.config import Config as DBConfig
-from uds.core.managers.CryptoManager import CryptoManager
+from uds.core.managers import cryptoManager
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ class Config:
             if crypt is False or not default:
                 self._default: str = default
             else:
-                self._default = CryptoManager.manager().encrypt(default)
+                self._default = cryptoManager().encrypt(default)
             self._data: typing.Optional[str] = None
 
 
@@ -107,13 +107,13 @@ class Config:
             except Exception:
                 # Not found
                 if self._default != '' and self._crypt:
-                    self.set(CryptoManager.manager().decrypt(self._default))
+                    self.set(cryptoManager().decrypt(self._default))
                 elif not self._crypt:
                     self.set(self._default)
                 self._data = self._default
 
             if self._crypt is True:
-                return CryptoManager.manager().decrypt(typing.cast(str, self._data))
+                return cryptoManager().decrypt(typing.cast(str, self._data))
             return typing.cast(str, self._data)
 
         def setParams(self, params: typing.Any) -> None:
@@ -159,7 +159,7 @@ class Config:
                 return
 
             if self._crypt is True:
-                value = CryptoManager.manager().encrypt(value)
+                value = cryptoManager().encrypt(value)
 
             # Editable here means that this configuration value can be edited by admin directly (generally, that this is a "clean text" value)
 
@@ -220,7 +220,7 @@ class Config:
                 return  False# Skip non writable elements
 
             if cfg.crypt is True:
-                value = CryptoManager.manager().encrypt(value)
+                value = cryptoManager().encrypt(value)
             cfg.value = value
             cfg.save()
             logger.debug('Updated value for %s.%s to %s', section, key, value)
@@ -335,7 +335,7 @@ class GlobalConfig:
     LOWERCASE_USERNAME: Config.Value = Config.section(SECURITY_SECTION).value('Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD)
 
     # Global UDS ID (common for all servers on the same cluster)
-    UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value('UDS ID', CryptoManager.manager().uuid(), type=Config.READ_FIELD)
+    UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value('UDS ID', cryptoManager().uuid(), type=Config.READ_FIELD)
 
     _initDone = False
 

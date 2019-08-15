@@ -112,7 +112,7 @@ class CryptoManager:
     def AESCrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
         # First, match key to 16 bytes. If key is over 16, create a new one based on key of 16 bytes length
         cipher = AES.new(CryptoManager.AESKey(key, 16), AES.MODE_CBC, 'udsinitvectoruds')
-        rndStr = self.randomString(cipher.block_size)
+        rndStr = self.randomString(cipher.block_size).encode('utf8')
         paddedLength = ((len(text) + 4 + 15) // 16) * 16
         toEncode = struct.pack('>i', len(text)) + text + rndStr[:paddedLength - len(text) - 4]
         encoded = cipher.encrypt(toEncode)

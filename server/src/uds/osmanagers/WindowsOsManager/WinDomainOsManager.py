@@ -8,22 +8,21 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
-import six
+import dns.resolver
+import ldap
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
-from uds.core.managers.CryptoManager import CryptoManager
+from uds.core.managers import cryptoManager
 from uds.core import osmanagers
 from uds.core.util import log
 from uds.core.util import encoders
 from uds.core.util import ldaputil
 
-import dns.resolver
-import ldap
 from .WindowsOsManager import WindowsOsManager
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +89,7 @@ class WinDomainOsManager(WindowsOsManager):
             yield (self._serverHint, 389)
 
         for server in reversed(sorted(dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'), key=lambda i: i.priority * 10000 + i.weight)):
-            yield (six.text_type(server.target)[:-1], server.port)
+            yield (str(server.target)[:-1], server.port)
 
     def __connectLdap(self, servers=None):
         """
@@ -174,7 +173,7 @@ class WinDomainOsManager(WindowsOsManager):
                 error = None
                 break
             except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
-                logger.warning('Could not find _ldap._tcp.' + self._domain)
+                logger.warning('Could not find _ldap._tcp.%s', self._domain)
                 log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
             except ldap.ALREADY_EXISTS:  # @UndefinedVariable
                 # Already added this machine to this group, pass
@@ -225,7 +224,7 @@ class WinDomainOsManager(WindowsOsManager):
                 raise Exception('Machine {} not found on AD (permissions?)'.format(service.friendly_name))
             ldaputil.recursive_delete(l, res)
         except IndexError:
-            logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, self._ou))
+            logger.error('Error deleting %s from BASE %s', service.friendly_name, self._ou)
         except Exception:
             logger.exception('Deleting from AD: ')
 
@@ -299,7 +298,7 @@ class WinDomainOsManager(WindowsOsManager):
         return '\t'.join([
             'v4',
             self._domain, self._ou, self._account,
-            CryptoManager.manager().encrypt(self._password),
+            cryptoManager().encrypt(self._password),
             encoders.encode(base, 'hex', asText=True),
             self._group, self._serverHint, self._ssl, self._removeOnExit]
         ).encode('utf8')
@@ -310,7 +309,7 @@ class WinDomainOsManager(WindowsOsManager):
             self._domain = data[1]
             self._ou = data[2]
             self._account = data[3]
-            self._password = CryptoManager.manager().decrypt(data[4])
+            self._password = cryptoManager().decrypt(data[4])
 
         if data[0] in ('v2', 'v3', 'v4'):
             self._group = data[6]

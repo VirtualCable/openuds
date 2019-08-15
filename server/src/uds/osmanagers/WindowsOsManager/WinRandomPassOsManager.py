@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
-from uds.core.managers.CryptoManager import CryptoManager
+from uds.core.managers import cryptoManager
 from uds.core import osmanagers
 from .WindowsOsManager import WindowsOsManager
 from uds.core.util import log
@@ -80,13 +80,13 @@ class WinRandomPassManager(WindowsOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v1', self._userAccount, CryptoManager.manager().encrypt(self._password), encoders.encode(base, 'hex', asText=True)]).encode('utf8')
+        return '\t'.join(['v1', self._userAccount, cryptoManager().encrypt(self._password), encoders.encode(base, 'hex', asText=True)]).encode('utf8')
 
     def unmarshal(self, s):
         data = s.decode('utf8').split('\t')
         if data[0] == 'v1':
             self._userAccount = data[1]
-            self._password = CryptoManager.manager().decrypt(data[2])
+            self._password = cryptoManager().decrypt(data[2])
             super(WinRandomPassManager, self).unmarshal(encoders.decode(data[3], 'hex'))
 
     def valuesDict(self):
