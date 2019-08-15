@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.db.models import signals
@@ -82,7 +83,7 @@ class Scheduler(models.Model):
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
-    def getInstance(self) -> jobs.Job:
+    def getInstance(self) -> typing.Optional[jobs.Job]:
         """
         Returns an instance of the class that this record of the Scheduler represents. This clas is derived
         of uds.core.jobs.Job.Job
@@ -92,7 +93,7 @@ class Scheduler(models.Model):
         if jobInstance:
             return jobInstance(self.getEnvironment())
 
-        return jobs.Job(self.getEnvironment())
+        return None
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

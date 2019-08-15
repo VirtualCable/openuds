@@ -37,7 +37,7 @@ import typing
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
-    from .Job import Job
+    from .job import Job
 
 
 class JobsFactory:
@@ -56,7 +56,7 @@ class JobsFactory:
     def jobs(self) -> typing.Dict[str, typing.Type['Job']]:
         return self._jobs
 
-    def insert(self, name, type_):
+    def insert(self, name: str, type_: typing.Type['Job']):
         logger.debug('Inserting job %s of type_ %s', name, type_)
         try:
             self._jobs[name] = type_
@@ -64,6 +64,9 @@ class JobsFactory:
             logger.debug('Exception at insert in JobsFactory: %s, %s', e.__class__, e)
 
     def ensureJobsInDatabase(self) -> None:
+        """
+        Ensures that uds core workers are correctly registered in database and in factory
+        """
         from uds.models import Scheduler, getSqlDatetime
         from uds.core.util.State import State
         from uds.core import workers
@@ -89,7 +92,4 @@ class JobsFactory:
             logger.debug('Exception at ensureJobsInDatabase in JobsFactory: %s, %s', e.__class__, e)
 
     def lookup(self, typeName: str) -> typing.Optional[typing.Type['Job']]:
-        try:
-            return self._jobs[typeName]
-        except KeyError:
-            return None
+        return self._jobs.get(typeName, None)

@@ -30,41 +30,28 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 import logging
-import typing
 
-from uds.models import ServicePool, UserService, getSqlDatetime
+from django.db import transaction
+
+from uds.models import Scheduler, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs import Job
-from uds.core.util import log
 
 logger = logging.getLogger(__name__)
 
-MAX_STUCK_TIME = 3600 * 24 * 2  # At most 2 days "Stuck", not configurable (there is no need to)
-
-
-class StuckCleaner(Job):
+class SchedulerHousekeeping(Job):
     """
-    Kaputen Cleaner is very similar to Hanged Cleaner, at start, almost a copy
-    We keep it in a new place to "control" more specific thins
+    Ensures no task is executed for more than 15 minutes
     """
-    frecuency = 3600 * 24  # Executes Once a day
-    friendly_name = 'Stuck States cleaner'
+    frecuency = 301  # Frecuncy for this job
+    friendly_name = 'Scheduler house keeping'
 
     def run(self):
-        since_state: datetime  = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
-        # Filter for locating machine not ready
-        servicePoolsActive: typing.Iterable[ServicePool] = ServicePool.objects.filter(service__provider__maintenance_mode=False).iterator()
-        for servicePool in servicePoolsActive:
-            logger.debug('Searching for stuck states for %s', servicePool.name)
-            stuckUserServices: typing.Iterable[UserService] = servicePool.userServices.filter(
-                state_date__lt=since_state
-            ).exclude(
-                state__in=State.INFO_STATES + State.VALID_STATES
-            ).iterator()
-            # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
-            for stuck in stuckUserServices:
-                logger.debug('Found stuck user service %s', stuck)
-                log.doLog(servicePool, log.ERROR, 'User service %s has been hard removed because it\'s stuck', stuck.name)
-                stuck.delete()
+        """
+        Look for "hanged" scheduler tasks and reset them
+        """
+        since = getSqlDatetime() - timedelta(minutes=15)
+        with transaction.atomic():
+            Scheduler.objects.select_for_update().filter(last_execution__lt=since, state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)

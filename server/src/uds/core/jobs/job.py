@@ -50,7 +50,7 @@ class Job(Environmentable):
         """
         Sets ups frequency from configuration values
         """
-        if cls.frecuency_cfg is not None:
+        if cls.frecuency_cfg:
             try:
                 cls.frecuency = cls.frecuency_cfg.getInt(force=True)
                 logger.debug('Setting frequency from DB setting for %s to %s', cls, cls.frecuency)

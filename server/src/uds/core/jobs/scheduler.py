@@ -38,7 +38,7 @@ from datetime import timedelta
 
 from django.db.models import Q
 from django.db import transaction, DatabaseError, connection
-from uds.models import Scheduler as dbScheduler, getSqlDatetime
+from uds.models import Scheduler as DBScheduler, getSqlDatetime
 from uds.core.util.State import State
 from .jobs_factory import JobsFactory
 
@@ -91,7 +91,7 @@ class JobThread(threading.Thread):
         Atomically updates the scheduler db to "release" this job
         """
         with transaction.atomic():
-            job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)  # @UndefinedVariable
+            job = DBScheduler.objects.select_for_update().get(id=self._dbJobId)  # @UndefinedVariable
             job.state = State.FOR_EXECUTE
             job.owner_server = ''
             job.next_execution = getSqlDatetime() + timedelta(seconds=job.frecuency)
@@ -99,7 +99,7 @@ class JobThread(threading.Thread):
             job.save()
 
 
-class Scheduler(object):
+class Scheduler:
     """
     Class responsible of maintain/execute scheduled jobs
     """
@@ -139,7 +139,7 @@ class Scheduler(object):
             with transaction.atomic():
                 # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
                 # This params are all set inside fltr (look at __init__)
-                job = dbScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]  # @UndefinedVariable
+                job: DBScheduler = DBScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]  # @UndefinedVariable
                 if job.last_execution > now:
                     logger.warning('EXecuted %s due to last_execution being in the future!', job.name)
                 job.state = State.RUNNING
@@ -173,9 +173,9 @@ class Scheduler(object):
         """
         logger.debug('Releasing all owned scheduled tasks')
         with transaction.atomic():
-            dbScheduler.objects.select_for_update().filter(owner_server=platform.node()).update(owner_server='')  # @UndefinedVariable
-            dbScheduler.objects.select_for_update().filter(last_execution__lt=getSqlDatetime() - timedelta(minutes=15), state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)  # @UndefinedVariable
-            dbScheduler.objects.select_for_update().filter(owner_server='').update(state=State.FOR_EXECUTE)  # @UndefinedVariable
+            DBScheduler.objects.select_for_update().filter(owner_server=platform.node()).update(owner_server='')  # @UndefinedVariable
+            DBScheduler.objects.select_for_update().filter(last_execution__lt=getSqlDatetime() - timedelta(minutes=15), state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)  # @UndefinedVariable
+            DBScheduler.objects.select_for_update().filter(owner_server='').update(state=State.FOR_EXECUTE)  # @UndefinedVariable
 
     def run(self):
         """
