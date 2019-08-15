@@ -35,7 +35,7 @@ import logging
 
 from django.conf import settings
 from uds.core.util.Cache import Cache
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)

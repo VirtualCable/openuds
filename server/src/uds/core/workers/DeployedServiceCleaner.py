@@ -38,7 +38,7 @@ from django.db import transaction
 from uds.core.util.Config import GlobalConfig
 from uds.models import ServicePool, UserService, getSqlDatetime
 from uds.core.util.State import State
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 

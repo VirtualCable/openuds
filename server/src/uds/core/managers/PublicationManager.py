@@ -36,8 +36,8 @@ import typing
 
 from django.utils.translation import ugettext as _
 from django.db import transaction
-from uds.core.jobs.DelayedTask import DelayedTask
-from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
+from uds.core.jobs.delayed_task import DelayedTask
+from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import PublishException
 from uds.core.util.State import State

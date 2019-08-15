@@ -42,7 +42,7 @@ from uds.core.services.Exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService
 from uds.core import services
 from uds.core.util import log
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 

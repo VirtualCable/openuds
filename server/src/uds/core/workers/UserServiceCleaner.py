@@ -39,7 +39,7 @@ from uds.core import managers
 from uds.core.util.Config import GlobalConfig
 from uds.models import UserService, getSqlDatetime
 from uds.core.util.State import State
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 

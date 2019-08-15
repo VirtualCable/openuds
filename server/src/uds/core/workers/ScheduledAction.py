@@ -33,7 +33,7 @@
 import logging
 
 from uds.models import CalendarAction, getSqlDatetime
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 

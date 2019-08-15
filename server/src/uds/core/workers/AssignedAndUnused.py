@@ -33,7 +33,7 @@
 import logging
 from datetime import timedelta
 
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.State import State
 from uds.models import ServicePool, getSqlDatetime

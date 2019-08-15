@@ -40,7 +40,7 @@ from django.db.models import Q
 from django.db import transaction, DatabaseError, connection
 from uds.models import Scheduler as dbScheduler, getSqlDatetime
 from uds.core.util.State import State
-from uds.core.jobs.JobsFactory import JobsFactory
+from .jobs_factory import JobsFactory
 
 logger = logging.getLogger(__name__)
 

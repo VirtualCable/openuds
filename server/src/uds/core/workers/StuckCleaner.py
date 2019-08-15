@@ -36,7 +36,7 @@ import typing
 
 from uds.models import ServicePool, UserService, getSqlDatetime
 from uds.core.util.State import State
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 from uds.core.util import log
 
 logger = logging.getLogger(__name__)

@@ -43,7 +43,7 @@ from uds.models import getSqlDatetime
 from uds.core.environment import Environment
 from uds.core.util import encoders
 
-from .DelayedTask import DelayedTask
+from .delayed_task import DelayedTask
 
 logger = logging.getLogger(__name__)
 

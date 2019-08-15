@@ -37,7 +37,7 @@ from django.db import transaction
 
 from uds.models import Scheduler, getSqlDatetime
 from uds.core.util.State import State
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 

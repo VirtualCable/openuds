@@ -32,13 +32,14 @@ UDS jobs related modules
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .Job import Job
-from .DelayedTask import DelayedTask
-from .JobsFactory import JobsFactory
+from .job import Job
+from .delayed_task import DelayedTask
+from .jobs_factory import JobsFactory
 
+factory = JobsFactory.factory
 
-def factory() -> JobsFactory:
-    """
-    Returns a singleton to a jobs factory
-    """
-    return JobsFactory.factory()
+# def factory() -> JobsFactory:
+#     """
+#     Returns a singleton to a jobs factory
+#     """
+#     return JobsFactory.factory()
