@@ -251,6 +251,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return _('Server check was successful')
 
+    # pylint: disable=protected-access
     @staticmethod
     def test(env, data):
         logger.debug('Test invoked')
