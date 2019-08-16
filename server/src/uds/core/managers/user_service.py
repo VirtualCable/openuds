@@ -453,7 +453,7 @@ class UserServiceManager:
             logger.debug('No uuid to retrieve because agent does not supports notifications')
             return True  # UUid is valid because it is not supported checking it
 
-        version = userService.getProperty('actor_version', '')
+        version = typing.cast(str, userService.getProperty('actor_version', ''))
         # Just for 2.0 or newer, previous actors will not support this method.
         # Also externally supported agents will not support this method (as OpenGnsys)
         if '-' in version or version < '2.0.0':
@@ -560,7 +560,8 @@ class UserServiceManager:
             remove = False
             with transaction.atomic():
                 userService = UserService.objects.select_for_update().get(id=userService.id)
-                if userService.publication and userService.publication.id != userService.deployed_service.activePublication().id:
+                activePublication = userService.deployed_service.activePublication()
+                if userService.publication and activePublication and userService.publication.id != activePublication.id:
                     logger.debug('Old revision of user service, marking as removable: %s', userService)
                     remove = True
 

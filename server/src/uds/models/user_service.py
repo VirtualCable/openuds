@@ -350,7 +350,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
         """
-        from uds.core.managers.UserServiceManager import UserServiceManager
+        from uds.core.managers import userServiceManager
         self.in_use = inUse
         self.in_use_date = getSqlDatetime()
         self.save(update_fields=['in_use', 'in_use_date'])
@@ -363,7 +363,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         if not inUse:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
-            UserServiceManager.manager().checkForRemoval(self)
+            userServiceManager().checkForRemoval(self)
 
     def startUsageAccounting(self):
         # 1.- If do not have any account associated, do nothing
@@ -400,8 +400,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Returns if this service is ready (not preparing or marked for removal)
         """
         # Call to isReady of the instance
-        from uds.core.managers.UserServiceManager import UserServiceManager
-        return UserServiceManager.manager().isReady(self)
+        from uds.core.managers import userServiceManager
+        return userServiceManager().isReady(self)
 
     def isInMaintenance(self):
         return self.deployed_service.isInMaintenance()
@@ -422,8 +422,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
         """
-        from uds.core.managers.UserServiceManager import UserServiceManager
-        UserServiceManager.manager().cancel(self)
+        from uds.core.managers import userServiceManager
+        userServiceManager().cancel(self)
 
     def removeOrCancel(self):
         """
@@ -441,8 +441,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Args:
             cacheLevel: New cache level to put object in
         """
-        from uds.core.managers.UserServiceManager import UserServiceManager
-        UserServiceManager.manager().moveToLevel(self, cacheLevel)
+        from uds.core.managers import userServiceManager
+        userServiceManager().moveToLevel(self, cacheLevel)
 
     def getProperty(self, propName: str, default: typing.Optional[str] = None) -> typing.Optional[str]:
         try:

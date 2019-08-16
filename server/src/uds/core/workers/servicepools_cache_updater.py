@@ -37,7 +37,7 @@ from django.db import transaction
 from django.db.models import Q
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.State import State
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.managers import userServiceManager
 from uds.core.services.Exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService
 from uds.core import services
@@ -98,9 +98,9 @@ class ServiceCacheUpdater(Job):
                 continue
 
             # Get data related to actual state of cache
-            inCacheL1: int = servicePool.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
-            inCacheL2: int = servicePool.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).count()
-            inAssigned: int = servicePool.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
+            inCacheL1: int = servicePool.cachedUserServices().filter(userServiceManager().getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
+            inCacheL2: int = servicePool.cachedUserServices().filter(userServiceManager().getCacheStateFilter(services.UserDeployment.L2_CACHE)).count()
+            inAssigned: int = servicePool.assignedUserServices().filter(userServiceManager().getStateFilter()).count()
             # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
             logger.debug("Examining %s with %s in cache L1 and %s in cache L2, %s inAssigned", servicePool.name, inCacheL1, inCacheL2, inAssigned)
             totalL1Assigned = inCacheL1 + inAssigned
@@ -124,7 +124,7 @@ class ServiceCacheUpdater(Job):
                 continue
 
             # If this service don't allows more starting user services, continue
-            if UserServiceManager.manager().canInitiateServiceFromDeployedService(servicePool) is False:
+            if userServiceManager().canInitiateServiceFromDeployedService(servicePool) is False:
                 logger.debug('This provider has the max allowed starting services running: %s', servicePool)
                 continue
 
@@ -160,7 +160,7 @@ class ServiceCacheUpdater(Job):
         if cacheL2 > 0:
             valid = None
             with transaction.atomic():
-                for n in servicePool.cachedUserServices().select_for_update().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date'):
+                for n in servicePool.cachedUserServices().select_for_update().filter(userServiceManager().getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date'):
                     if n.needsOsManager():
                         if State.isUsable(n.state) is False or State.isUsable(n.os_state):
                             valid = n
@@ -174,7 +174,7 @@ class ServiceCacheUpdater(Job):
                 return
         try:
             # This has a velid publication, or it will not be here
-            UserServiceManager.manager().createCacheFor(
+            userServiceManager().createCacheFor(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()), services.UserDeployment.L1_CACHE
             )
         except MaxServicesReachedError:
@@ -194,7 +194,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Growing L2 cache creating a new service for %s", servicePool.name)
         try:
             # This has a velid publication, or it will not be here
-            UserServiceManager.manager().createCacheFor(
+            userServiceManager().createCacheFor(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()), services.UserDeployment.L2_CACHE
             )
         except MaxServicesReachedError:
@@ -205,7 +205,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Reducing L1 cache erasing a service in cache for %s", servicePool)
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
         cacheItems: typing.List[UserService] = list(servicePool.cachedUserServices().filter(
-            UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)
+            userServiceManager().getCacheStateFilter(services.UserDeployment.L1_CACHE)
         ).order_by('-creation_date').iterator())
 
         if not cacheItems:
@@ -234,7 +234,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Reducing L2 cache erasing a service in cache for %s", servicePool.name)
         if cacheL2 > 0:
             cacheItems: typing.List[UserService] = servicePool.cachedUserServices().filter(
-                UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)
+                userServiceManager().getCacheStateFilter(services.UserDeployment.L2_CACHE)
             ).order_by('creation_date')
             # TODO: Look first for non finished cache items and cancel them?
             cache = cacheItems[0]

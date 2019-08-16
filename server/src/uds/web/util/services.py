@@ -39,7 +39,7 @@ from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPo
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.managers import userServiceManager
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -103,7 +103,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
                     break
 
             if not in_use:
-                assignedUserService = UserServiceManager.manager().getExistingAssignationForUser(pool, request.user)
+                assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
                 if assignedUserService:
                     in_use = assignedUserService.in_use
 
@@ -173,7 +173,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             imageId = 'x'
 
         # Locate if user service has any already assigned user service for this
-        ads = UserServiceManager.manager().getExistingAssignationForUser(svr, request.user)
+        ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
         if ads is None:
             in_use = False
         else:
@@ -209,10 +209,10 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
     logger.debug('Services: {0}'.format(services))
 
     # Sort services and remove services with no transports...
-    services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if len(s['transports']) > 0]
+    services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']]
 
     autorun = False
-    if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(True) and len(services[0]['transports']) > 0:
+    if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(True) and services[0]['transports']:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
             autorun = True

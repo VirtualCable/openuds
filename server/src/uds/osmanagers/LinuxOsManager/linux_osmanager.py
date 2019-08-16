@@ -30,19 +30,21 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _, ugettext_lazy
-from django.conf import settings
+
 from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
 from uds.core import osmanagers
 from uds.core.util.State import State
 from uds.core.util import log
-import six
+from uds.core.managers import userServiceManager
 
-import logging
-from uds.core.managers.UserServiceManager import UserServiceManager
+if typing.TYPE_CHECKING:
+    from uds.models.user_service import UserService
+    from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
 
@@ -89,14 +91,14 @@ class LinuxOsManager(osmanagers.OSManager):
 
         self.__setProcessUnusedMachines()
 
-    def release(self, service):
+    def release(self, userService: 'UserService') -> None:
         pass
 
-    def isRemovableOnLogout(self, userService):
+    def isRemovableOnLogout(self, userService: 'UserService'):
         '''
         Says if a machine is removable on logout
         '''
-        if userService.in_use == False:
+        if not userService.in_use:
             if (self._onLogout == 'remove') or (not userService.isValidPublication() and self._onLogout == 'keep'):
                 return True
 
@@ -197,7 +199,7 @@ class LinuxOsManager(osmanagers.OSManager):
             userService.release()
         else:
             if notifyReady:
-                UserServiceManager.manager().notifyReadyFromOsManager(userService, '')
+                userServiceManager.notifyReadyFromOsManager(userService, '')
         logger.debug('Returning {0}'.format(ret))
         return ret
 
@@ -225,19 +227,19 @@ class LinuxOsManager(osmanagers.OSManager):
 
         return self._idle
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)]).encode('utf8')
+        return '\t'.join(['v2', self._onLogout, str(self._idle)]).encode('utf8')
 
-    def unmarshal(self, s):
-        data = s.decode('utf8').split('\t')
-        if data[0] == 'v1':
-            self._onLogout = data[1]
+    def unmarshal(self, data: bytes):
+        values = s.decode('utf8').split('\t')
+        if values[0] == 'v1':
+            self._onLogout = values[1]
             self._idle = -1
-        elif data[0] == 'v2':
-            self._onLogout, self._idle = data[1], int(data[2])
+        elif values[0] == 'v2':
+            self._onLogout, self._idle = values[1], int(values[2])
 
         self.__setProcessUnusedMachines()
 

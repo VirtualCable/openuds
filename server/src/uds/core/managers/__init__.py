@@ -41,7 +41,7 @@ if typing.TYPE_CHECKING:
     from .downloads import DownloadsManager
     from .log import LogManager
     from .stats import StatsManager
-    from .UserServiceManager import UserServiceManager
+    from .user_service import UserServiceManager
     from .publication import PublicationManager
 
 def cryptoManager() -> 'CryptoManager':
@@ -70,7 +70,7 @@ def statsManager() -> 'StatsManager':
 
 
 def userServiceManager() -> 'UserServiceManager':
-    from .UserServiceManager import UserServiceManager  # pylint: disable=redefined-outer-name
+    from .user_service import UserServiceManager  # pylint: disable=redefined-outer-name
     return UserServiceManager.manager()
 
 def publicationManager() -> 'PublicationManager':
