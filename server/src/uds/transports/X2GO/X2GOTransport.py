@@ -32,7 +32,7 @@
 """
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.managers.UserPrefsManager import CommonPrefs
+from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.util import OsDetector
 from uds.core.util import tools
 from .BaseX2GOTransport import BaseX2GOTransport

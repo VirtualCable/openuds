@@ -33,7 +33,7 @@ Created on Jul 29, 2011
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from django.utils.translation import ugettext_noop as _
-from uds.core.managers.UserPrefsManager import CommonPrefs
+from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.ui import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports.BaseTransport import TUNNELED_GROUP

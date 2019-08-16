@@ -124,7 +124,7 @@ class User(UUIDModel):
             If the module exists, the preferences will always contain something, but may be the values are the default ones.
 
         """
-        from uds.core.managers.UserPrefsManager import UserPrefsManager
+        from uds.core.managers.user_preferences import UserPrefsManager
         return UserPrefsManager.manager().getPreferencesForUser(modName, self)
 
     def updateLastAccess(self) -> None:

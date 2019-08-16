@@ -41,7 +41,7 @@ from uds.core.util import html
 from uds.core.auths.auth import ROOT_ID
 from uds.core.util.Config import GlobalConfig
 from uds.models.image import Image
-from uds.core.managers.UserPrefsManager import UserPrefsManager
+from uds.core.managers.user_preferences import UserPrefsManager
 from uds.REST.methods.client import CLIENT_VERSION
 
 import logging

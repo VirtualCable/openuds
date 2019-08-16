@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
-from uds.core.managers.UserPrefsManager import CommonPrefs
+from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.util import OsDetector
 from uds.core.util import tools
 from .BaseRDPTransport import BaseRDPTransport
