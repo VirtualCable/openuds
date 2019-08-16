@@ -49,11 +49,7 @@ logger = logging.getLogger(__name__)
 
 
 module = sys.modules[__name__]
-VmState = imp.new_module('VmState')
 ImageState = imp.new_module('ImageState')
-
-for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED', 'DONE', 'FAILED', 'POWEROFF', 'UNDEPLOYED']):
-    setattr(VmState, i[1], i[0])
 
 for i in enumerate(['INIT', 'READY', 'USED', 'DISABLED', 'LOCKED', 'ERROR', 'CLONE', 'DELETE', 'USED_PERS', 'LOCKED_USED', 'LOCKED_USED_PERS']):
     setattr(ImageState, i[1], i[0])
