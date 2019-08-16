@@ -37,7 +37,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 import uds.web.util.errors as errors
-from uds.core.auths.Exceptions import InvalidUserException
+from uds.core.auths.exceptions import InvalidUserException
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.core.managers import userServiceManager, cryptoManager
 from uds.core.services.Exceptions import ServiceNotReadyError

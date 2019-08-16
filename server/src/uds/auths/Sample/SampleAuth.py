@@ -176,7 +176,7 @@ class SampleAuth(auths.Authenticator):
         the method so the authenticator can say, for the username being validated,
         to which uds groups it belongs to.
 
-        This is done using the :py:meth:uds.core.auths.GroupsManager.GroupsManager.validate
+        This is done using the :py:meth:uds.core.auths.groups_manager.GroupsManager.validate
         method of the provided groups manager.
 
         At return, UDS will do two things:
@@ -214,7 +214,7 @@ class SampleAuth(auths.Authenticator):
 
         We have to fill up groupsManager from two different places, so it's not
         a bad idea to make a method that get the "real" authenticator groups and
-        them simply call to :py:meth:uds.core.auths.GroupsManager.GroupsManager.validate
+        them simply call to :py:meth:uds.core.auths.groups_manager.GroupsManager.validate
 
         In our case, we simply repeat the process that we also do at authenticate
         """

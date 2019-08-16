@@ -38,11 +38,11 @@ from django.core.exceptions import ValidationError
 
 from uds.core.util.State import State
 
-from uds.core.auths.Exceptions import AuthenticatorException
+from uds.core.auths.exceptions import AuthenticatorException
+from uds.core.auths.user import User as aUser
 from uds.core.util import log
 from uds.core.util.model import processUuid
 from uds.models import Authenticator, User, Group, ServicePool
-from uds.core.auths.User import User as aUser
 from uds.core.managers import cryptoManager
 from uds.REST import RequestError
 from uds.core.ui.images import DEFAULT_THUMB_BASE64

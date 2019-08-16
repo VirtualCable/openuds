@@ -51,7 +51,7 @@ from uds.core.util.stats import events
 from uds.core.managers import cryptoManager
 from uds.core.util.State import State
 from uds.models import User, Authenticator
-from uds.core.auths.BaseAuthenticator import Authenticator as AuthenticatorInstance
+from uds.core.auths import Authenticator as AuthenticatorInstance
 
 
 logger = logging.getLogger(__name__)

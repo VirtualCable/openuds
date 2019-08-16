@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,25 +32,25 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import logging
+import typing
 
-from __future__ import unicode_literals
+import ldap.filter
+import ldap
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core.auths import Authenticator
-from uds.core.auths.Exceptions import AuthenticatorException
+from uds.core.auths.exceptions import AuthenticatorException
 from uds.core.util import ldaputil
 
-import ldap.filter
-import ldap
-import logging
-import six
+if typing.TYPE_CHECKING:
+    from uds.core.auths import GroupsManager
 
-__updated__ = '2016-04-18'
 
 logger = logging.getLogger(__name__)
 
-LDAP_RESULT_LIMIT = 50
+LDAP_RESULT_LIMIT = 100
 
 
 class SimpleLDAPAuthenticator(Authenticator):
@@ -117,12 +117,20 @@ class SimpleLDAPAuthenticator(Authenticator):
             self._userNameAttr = None
         self._connection = None
 
-    def valuesDict(self):
+    def valuesDict(self) -> gui.ValuesDictType:
         return {
-            'host': self._host, 'port': self._port, 'ssl': gui.boolToStr(self._ssl),
-            'username': self._username, 'password': self._password, 'timeout': self._timeout,
-            'ldapBase': self._ldapBase, 'userClass': self._userClass, 'groupClass': self._groupClass,
-            'userIdAttr': self._userIdAttr, 'groupIdAttr': self._groupIdAttr, 'memberAttr': self._memberAttr,
+            'host': self._host,
+            'port': self._port,
+            'ssl': gui.boolToStr(self._ssl),
+            'username': self._username,
+            'password': self._password,
+            'timeout': self._timeout,
+            'ldapBase': self._ldapBase,
+            'userClass': self._userClass,
+            'groupClass': self._groupClass,
+            'userIdAttr': self._userIdAttr,
+            'groupIdAttr': self._groupIdAttr,
+            'memberAttr': self._memberAttr,
             'userNameAttr': self._userNameAttr
         }
 
@@ -131,19 +139,21 @@ class SimpleLDAPAuthenticator(Authenticator):
             self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr,
             self._userNameAttr)
 
-    def marshal(self):
-        return '\t'.join(['v1',
-                          self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
-                          self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr]).encode('utf8')
+    def marshal(self) -> bytes:
+        return '\t'.join([
+            'v1',
+            self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
+            self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr
+        ]).encode('utf8')
 
-    def unmarshal(self, str_):
-        data = str_.decode('utf8').split('\t')
-        if data[0] == 'v1':
-            logger.debug("Data: {0}".format(data[1:]))
-            self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr = data[1:]
+    def unmarshal(self, data: bytes):
+        vals = data.decode('utf8').split('\t')
+        if vals[0] == 'v1':
+            logger.debug("Data: %s", vals[1:])
+            self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr = vals[1:]
             self._ssl = gui.strToBool(self._ssl)
 
-    def __connection(self, username=None, password=None):
+    def __connection(self, username: typing.Optional[str] = None, password: typing.Optional[str] = None):
         """
         Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
         @return: Connection established
@@ -194,36 +204,36 @@ class SimpleLDAPAuthenticator(Authenticator):
     def __getGroups(self, usr):
         try:
             groups = {}
-            
+
             filter_ = '(&(objectClass=%s)(|(%s=%s)(%s=%s)))' % (self._groupClass, self._memberAttr, usr['_id'], self._memberAttr, usr['dn'])
             fld = self._groupIdAttr
-            
+
             for d in ldaputil.getAsDict(
-                con=self.__connection(),
-                base=self.__getLdapBase(),
-                ldapFilter=_filter,
-                attrList=[fld],
-                sizeLimit=10 * LDAP_RESULT_LIMIT
+                    con=self.__connection(),
+                    base=self.__getLdapBase(),
+                    ldapFilter=filter_,
+                    attrList=[fld],
+                    sizeLimit=10 * LDAP_RESULT_LIMIT
                 ):
                 if fld in d:
                     for k in d[fld]:
                         groups.add(k)
-                
-            logger.debug('Groups: {0}'.format(groups))
+
+            logger.debug('Groups: %s', groups)
             return groups
 
         except Exception:
             logger.exception('Exception at __getGroups')
             return {}
 
-    def __getUserRealName(self, usr):
+    def __getUserRealName(self, usr: typing.Dict) -> str:
         '''
         Tries to extract the real name for this user. Will return all atttributes (joint)
         specified in _userNameAttr (comma separated).
         '''
-        return ' '.join([(type(usr.get(id_, '')) is list and ' '.join((str(k) for k in usr.get(id_, ''))) or str(usr.get(id_, ''))) for id_ in self._userNameAttr.split(',')]).strip()
+        return ' '.join([' '.join((str(k) for k in usr.get(id_, ''))) if isinstance(usr.get(id_), list) else str(usr.get(id_, '')) for id_ in self._userNameAttr.split(',')]).strip()
 
-    def authenticate(self, username, credentials, groupsManager):
+    def authenticate(self, username: str, credentials: str, groupsManager: 'GroupsManager') -> bool:
         '''
         Must authenticate the user.
         We can have to different situations here:
@@ -231,7 +241,7 @@ class SimpleLDAPAuthenticator(Authenticator):
            2.- The authenticator isn't external source, what means that users have been manually added to system and are known before this call
         We receive the username, the credentials used (normally password, but can be a public key or something related to pk) and a group manager.
         The group manager is responsible for letting know the authenticator which groups we currently has active.
-        @see: uds.core.auths.GroupsManager
+        @see: uds.core.auths.groups_manager
         '''
         try:
             # Locate the user at LDAP
@@ -241,7 +251,7 @@ class SimpleLDAPAuthenticator(Authenticator):
                 return False
 
             # Let's see first if it credentials are fine
-            self.__connectAs(usrAD['dn'], credentials)  # Will raise an exception if it can't connect
+            self.__connectAs(usr['dn'], credentials)  # Will raise an exception if it can't connect
 
             groupsManager.validate(self.__getGroups(usr))
 
@@ -309,17 +319,17 @@ class SimpleLDAPAuthenticator(Authenticator):
             fld = self._userIdAttr
             res = []
             for r in ldaputil.getAsDict(
-                con=self.__connection(),
-                base=self.__getLdapBase(),
-                ldapFilter='(&(objectClass=%s)(%s=%s*))' % (self._userClass, self._userIdAttr, pattern),
-                attrList=[fld, self._userNameAttr],
-                sizeLimit=LDAP_RESULT_LIMIT
-            ):
+                    con=self.__connection(),
+                    base=self.__getLdapBase(),
+                    ldapFilter='(&(objectClass=%s)(%s=%s*))' % (self._userClass, self._userIdAttr, pattern),
+                    attrList=[fld, self._userNameAttr],
+                    sizeLimit=LDAP_RESULT_LIMIT
+                ):
                 res.append({
                     'id': r[fld][0],  # Ignore @...
                     'name': self.__getUserRealName(r)
                 })
-            
+
             return res
         except Exception:
             logger.exception("Exception: ")
@@ -330,12 +340,12 @@ class SimpleLDAPAuthenticator(Authenticator):
             fld = self._groupIdAttr
             res = []
             for r in ldaputil.getAsDict(
-                con=self.__connection(),
-                base=self.__getLdapBase(),
-                ldapFilter='(&(objectClass=%s)(%s=%s*))' % (self._groupClass, self._groupIdAttr, pattern),
-                attrList=[fld, 'memberOf', 'description'],
-                sizeLimit=LDAP_RESULT_LIMIT
-            ):
+                    con=self.__connection(),
+                    base=self.__getLdapBase(),
+                    ldapFilter='(&(objectClass=%s)(%s=%s*))' % (self._groupClass, self._groupIdAttr, pattern),
+                    attrList=[fld, 'memberOf', 'description'],
+                    sizeLimit=LDAP_RESULT_LIMIT
+                ):
                 res.append({
                     'id': r[fld][0],
                     'name': r['description'][0]
@@ -352,10 +362,10 @@ class SimpleLDAPAuthenticator(Authenticator):
             auth = SimpleLDAPAuthenticator(None, env, data)
             return auth.testConnection()
         except Exception as e:
-            logger.error("Exception found testing Simple LDAP auth {0}: {1}".format(e.__class__, e))
+            logger.error("Exception found testing Simple LDAP auth: %s", e)
             return [False, "Error testing connection"]
 
-    def testConnection(self):
+    def testConnection(self):  # pylint: disable=too-many-return-statements,too-many-branches
         try:
             con = self.__connection()
         except Exception as e:

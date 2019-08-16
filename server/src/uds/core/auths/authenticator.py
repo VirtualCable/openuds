@@ -39,10 +39,10 @@ from django.http import HttpRequest, HttpResponse
 
 from uds.core import Module
 from uds.core.environment import Environment
-from uds.core.auths.Exceptions import InvalidUserException
+from uds.core.auths.exceptions import InvalidUserException
 
 if typing.TYPE_CHECKING:
-    from uds.core.auths.GroupsManager import GroupsManager
+    from uds.core.auths.groups_manager import GroupsManager
     from uds.models import Authenticator as DBAuthenticator
     from uds.models.user import User as DBUser
 
@@ -112,7 +112,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
     # : We could have used here the Class name, but we decided that the
     # : module implementator will be the one that will provide a name that
     # : will relation the class (type) and that name.
-    typeType: typing.ClassVar[str] = 'BaseAuthenticator'
+    typeType: typing.ClassVar[str] = 'Authenticator'
 
     # : Description shown at administration level for this authenticator.
     # : This string will be translated when provided to admin interface
@@ -148,8 +148,8 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
     # : If this authenticators casues a temporal block of an user on repeated login failures
     blockUserOnLoginFailures: typing.ClassVar[bool] = True
 
-    from uds.core.auths.User import User
-    from uds.core.auths.Group import Group
+    from .user import User
+    from .group import Group
 
     # : The type of user provided, normally standard user will be enough.
     # : This is here so if we need it in some case, we can write our own
@@ -202,7 +202,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
         user param is a database user object
         """
-        from uds.core.auths.GroupsManager import GroupsManager  # pylint: disable=redefined-outer-name
+        from uds.core.auths.groups_manager import GroupsManager  # pylint: disable=redefined-outer-name
 
         if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
@@ -302,7 +302,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         Returns:
             True if authentication success, False if don't.
 
-        See uds.core.auths.GroupsManager
+        See uds.core.auths.groups_manager
 
         :note: This method must check not only that the user has valid credentials, but also
                check the valid groups from groupsManager.
@@ -353,7 +353,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
             By default, internalAuthenticate simply invokes authenticate, but this method
             is here so you can provide your own method if needed
 
-        See uds.core.auths.GroupsManager
+        See uds.core.auths.groups_manager
 
         :note: This method must check not only that the user has valid credentials, but also
                check the valid groups from groupsManager.
@@ -433,8 +433,8 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
         You MUST override this method, UDS will call it whenever it needs to refresh an user group membership.
 
-        The expected behavior of this method is to mark valid groups in the :py:class:`uds.core.auths.GroupsManager` provided, normally
-        calling its :py:meth:`uds.core.auths.GroupsManager.validate` method with groups names provided by the authenticator itself
+        The expected behavior of this method is to mark valid groups in the :py:class:`uds.core.auths.groups_manager` provided, normally
+        calling its :py:meth:`uds.core.auths.groups_manager.validate` method with groups names provided by the authenticator itself
         (for example, LDAP, AD, ...)
         """
         raise NotImplementedError
@@ -480,7 +480,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
             An username if validation check is successfull, None if not
 
         You can also return an exception here and, if you don't wont to check the user login,
-        you can raise :py:class:uds.core.auths.Exceptions.Redirect to redirect user to somewhere.
+        you can raise :py:class:uds.core.auths.exceptions.Redirect to redirect user to somewhere.
         In this case, no user checking will be done. This is usefull to use this url to provide
         other functionality appart of login, (such as logout)
 

@@ -35,7 +35,7 @@ import logging
 import typing
 
 from uds.core.util.State import State
-from .Group import Group
+from .group import Group
 
 if typing.TYPE_CHECKING:
     from uds.models import Authenticator as DBAuthenticator
@@ -108,7 +108,7 @@ class GroupsManager:
 
     def getValidGroups(self) -> typing.Iterable[Group]:
         """
-        returns the list of valid groups (:py:class:uds.core.auths.Group.Group)
+        returns the list of valid groups (:py:class:uds.core.auths.group.Group)
         """
         from uds.models import Group as DBGroup
 
@@ -140,7 +140,7 @@ class GroupsManager:
     def getGroup(self, groupName: str) -> typing.Optional[Group]:
         """
         If this groups manager contains that group manager, it returns the
-        :py:class:uds.core.auths.Group.Group  representing that group name.
+        :py:class:uds.core.auths.group.Group  representing that group name.
         """
         if groupName.lower() in self._groups:
             return self._groups[groupName.lower()]['group']

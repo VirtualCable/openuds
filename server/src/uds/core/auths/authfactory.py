@@ -34,7 +34,7 @@ import typing
 
 # Not imported in runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .BaseAuthenticator import Authenticator
+    from .authenticator import Authenticator
 
 class AuthsFactory:
     """

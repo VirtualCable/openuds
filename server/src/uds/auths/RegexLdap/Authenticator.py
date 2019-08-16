@@ -39,7 +39,7 @@ import ldap
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core import auths
-from uds.core.auths.Exceptions import AuthenticatorException
+from uds.core.auths.exceptions import AuthenticatorException
 from uds.core.util import ldaputil
 
 
@@ -277,7 +277,7 @@ class RegexLdap(auths.Authenticator):
            2.- The authenticator isn't external source, what means that users have been manually added to system and are known before this call
         We receive the username, the credentials used (normally password, but can be a public key or something related to pk) and a group manager.
         The group manager is responsible for letting know the authenticator which groups we currently has active.
-        @see: uds.core.auths.GroupsManager
+        @see: uds.core.auths.groups_manager
         """
         try:
             # Locate the user at LDAP

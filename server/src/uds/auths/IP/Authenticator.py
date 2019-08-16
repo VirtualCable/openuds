@@ -35,7 +35,7 @@ import logging
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.auths import Authenticator
-from uds.core.auths.GroupsManager import GroupsManager
+from uds.core.auths.groups_manager import GroupsManager
 from uds.core.util import net
 from uds.core.util.request import getRequest
 from uds.core.ui import gui
