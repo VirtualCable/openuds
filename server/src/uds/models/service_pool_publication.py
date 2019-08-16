@@ -172,15 +172,15 @@ class ServicePoolPublication(UUIDModel):
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         """
-        from uds.core.managers.PublicationManager import PublicationManager
-        PublicationManager.manager().unpublish(self)
+        from uds.core.managers import publicationManager
+        publicationManager().unpublish(self)
 
     def cancel(self):
         """
         Invoques the cancelation of this publication
         """
-        from uds.core.managers.PublicationManager import PublicationManager
-        PublicationManager.manager().cancel(self)
+        from uds.core.managers import publicationManager
+        publicationManager().cancel(self)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

@@ -34,7 +34,7 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.osmanagers.osmfactory import OSManagersFactory
-from uds.core.managers.DownloadsManager import DownloadsManager
+from uds.core.managers import downloadsManager
 from .WindowsOsManager import WindowsOsManager
 from .WinDomainOsManager import WinDomainOsManager
 from .WinRandomPassOsManager import WinRandomPassManager
@@ -47,7 +47,7 @@ OSManagersFactory.factory().insert(WindowsOsManager)
 OSManagersFactory.factory().insert(WinDomainOsManager)
 OSManagersFactory.factory().insert(WinRandomPassManager)
 
-DownloadsManager.manager().registerDownloadable('UDSActorSetup-{version}.exe'.format(version=VERSION),
+downloadsManager().registerDownloadable('UDSActorSetup-{version}.exe'.format(version=VERSION),
                                                 _('UDS Actor for windows machines'),
                                                 os.path.dirname(sys.modules[__package__].__file__) + '/files/UDSActorSetup-{version}.exe'.format(version=VERSION),
                                                 'application/x-msdos-program')

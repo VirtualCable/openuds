@@ -34,14 +34,15 @@ UDS managers (downloads, users preferences, publications, ...)
 """
 import typing
 
-# Imports for type checking
+# Imports for type checking only (not on runtime), we have later to get rid of false "redefined outer names" for pylint
 if typing.TYPE_CHECKING:
     from .crypto import CryptoManager
     from .TaskManager import TaskManager
-    from .DownloadsManager import DownloadsManager
-    from .LogManager import LogManager
+    from .downloads import DownloadsManager
+    from .log import LogManager
     from .StatsManager import StatsManager
     from .UserServiceManager import UserServiceManager
+    from .publication import PublicationManager
 
 def cryptoManager() -> 'CryptoManager':
     from .crypto import CryptoManager  # pylint: disable=redefined-outer-name
@@ -54,12 +55,12 @@ def taskManager() -> typing.Type['TaskManager']:
 
 
 def downloadsManager() -> 'DownloadsManager':
-    from .DownloadsManager import DownloadsManager  # pylint: disable=redefined-outer-name
+    from .downloads import DownloadsManager  # pylint: disable=redefined-outer-name
     return DownloadsManager.manager()
 
 
 def logManager() -> 'LogManager':
-    from .LogManager import LogManager  # pylint: disable=redefined-outer-name
+    from .log import LogManager  # pylint: disable=redefined-outer-name
     return LogManager.manager()
 
 
@@ -71,3 +72,7 @@ def statsManager() -> 'StatsManager':
 def userServiceManager() -> 'UserServiceManager':
     from .UserServiceManager import UserServiceManager  # pylint: disable=redefined-outer-name
     return UserServiceManager.manager()
+
+def publicationManager() -> 'PublicationManager':
+    from .publication import PublicationManager  # pylint: disable=redefined-outer-name
+    return PublicationManager.manager()

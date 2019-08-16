@@ -460,8 +460,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         """
-        from uds.core.managers.PublicationManager import PublicationManager
-        PublicationManager.manager().publish(self, changeLog)
+        from uds.core.managers import publicationManager
+        publicationManager().publish(self, changeLog)
 
     def unpublish(self):
         """

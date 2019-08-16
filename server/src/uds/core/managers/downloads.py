@@ -48,9 +48,9 @@ class DownloadsManager:
     """
     Manager so connectors can register their own downloadables
     For registering, use at __init__.py of the conecto something like this:
-        from uds.core.managers.DownloadsManager import DownloadsManager
+        from uds.core.managers import DownloadsManager
         import os.path, sys
-        DownloadsManager.manager().registerDownloadable('test.exe',
+        downloadsManager().registerDownloadable('test.exe',
                                                         _('comments for test'),
                                                         os.path.join(os.path.dirname(sys.modules[__package__].__file__), 'files/test.exe'),
                                                         'application/x-msdos-program')

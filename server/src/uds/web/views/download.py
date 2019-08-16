@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,16 +28,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from uds.core.auths.auth import webLoginRequired
-from uds.core.managers.DownloadsManager import DownloadsManager
-from .modern import index
-
 import logging
 
-logger = logging.getLogger(__name__)
 
-__updated__ = '2018-10-04'
+from uds.core.auths.auth import webLoginRequired
+from uds.core.managers import downloadsManager
+from .modern import index
+
+logger = logging.getLogger(__name__)
 
 
 @webLoginRequired(admin=True)
@@ -48,4 +46,4 @@ def download(request, idDownload):
     if idDownload.strip() == '':
         return index(request)
 
-    return DownloadsManager.manager().send(request, idDownload)
+    return downloadsManager().send(request, idDownload)

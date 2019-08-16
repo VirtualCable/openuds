@@ -34,7 +34,7 @@ from datetime import timedelta
 import logging
 import typing
 
-from uds.core.managers.PublicationManager import PublicationManager
+from uds.core.managers import publicationManager
 from uds.core.util.Config import GlobalConfig
 from uds.models import ServicePoolPublication, getSqlDatetime
 from uds.core.services.Exceptions import PublishException
@@ -63,6 +63,6 @@ class PublicationCleaner(Job):
         removables: typing.Iterable[ServicePoolPublication] = ServicePoolPublication.objects.filter(state=State.REMOVABLE, deployed_service__service__provider__maintenance_mode=False)
         for removable in removables:
             try:
-                PublicationManager.manager().unpublish(removable)
+                publicationManager().unpublish(removable)
             except PublishException:  # Can say that it cant be removed right now
                 logger.debug('Delaying removal')
