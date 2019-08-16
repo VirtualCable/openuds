@@ -209,11 +209,11 @@ class Actor(Handler):
             logger.debug('Setting comms url to %s', data)
             service.setCommsUrl(data)
             return Actor.result('ok')
-        elif message == 'ssoAvailable':
+        if message == 'ssoAvailable':
             logger.debug('Setting that SSO is available')
             service.setProperty('sso_available', 1)
             return Actor.result('ok')
-        elif message == 'version':
+        if message == 'version':
             version = self._params.get('version', 'unknown')
             logger.debug('Got notified version %s', version)
             service.setProperty('actor_version', version)
@@ -237,8 +237,7 @@ class Actor(Handler):
                         service.release()  # Release for removal
                     return 'ok'
                 raise Exception('Unknown message {} for an user service without os manager'.format(message))
-            else:
-                res = osmanager.process(service, message, data, options={'scramble': False})
+            res = osmanager.process(service, message, data, options={'scramble': False})
         except Exception as e:
             logger.exception("Exception processing from OS Manager")
             return Actor.result(six.text_type(e), ERR_OSMANAGER_ERROR)

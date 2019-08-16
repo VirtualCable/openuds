@@ -34,28 +34,18 @@
 # pylint: disable=maybe-no-member
 import types
 import xmlrpc.client
+import logging
 
 from uds.core.util import xml2dict
 
 from . import storage
 from . import template
 from . import vm
-# Import submodules
-from .common import *
 
-__updated__ = '2017-03-28'
+# Import submodules
+from .common import VmState, ImageState, sanitizeName
 
 logger = logging.getLogger(__name__)
-
-module = sys.modules[__name__]
-VmState = types.ModuleType('VmState')
-ImageState = types.ModuleType('ImageState')
-
-for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED', 'DONE', 'FAILED', 'POWEROFF', 'UNDEPLOYED']):
-    setattr(VmState, i[1], i[0])
-
-for i in enumerate(['INIT', 'READY', 'USED', 'DISABLED', 'LOCKED', 'ERROR', 'CLONE', 'DELETE', 'USED_PERS', 'LOCKED_USED', 'LOCKED_USED_PERS']):
-    setattr(ImageState, i[1], i[0])
 
 
 # Decorator
@@ -83,7 +73,7 @@ def asList(element):
 
 
 # noinspection PyShadowingNames
-class OpenNebulaClient(object):
+class OpenNebulaClient:
     def __init__(self, username, password, endpoint):
         self.username = username
         self.password = password

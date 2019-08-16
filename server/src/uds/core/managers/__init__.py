@@ -37,10 +37,10 @@ import typing
 # Imports for type checking only (not on runtime), we have later to get rid of false "redefined outer names" for pylint
 if typing.TYPE_CHECKING:
     from .crypto import CryptoManager
-    from .TaskManager import TaskManager
+    from .task import TaskManager
     from .downloads import DownloadsManager
     from .log import LogManager
-    from .StatsManager import StatsManager
+    from .stats import StatsManager
     from .UserServiceManager import UserServiceManager
     from .publication import PublicationManager
 
@@ -50,7 +50,7 @@ def cryptoManager() -> 'CryptoManager':
 
 
 def taskManager() -> typing.Type['TaskManager']:
-    from .TaskManager import TaskManager  # pylint: disable=redefined-outer-name
+    from .task import TaskManager  # pylint: disable=redefined-outer-name
     return TaskManager
 
 
@@ -65,7 +65,7 @@ def logManager() -> 'LogManager':
 
 
 def statsManager() -> 'StatsManager':
-    from .StatsManager import StatsManager  # pylint: disable=redefined-outer-name
+    from .stats import StatsManager  # pylint: disable=redefined-outer-name
     return StatsManager.manager()
 
 

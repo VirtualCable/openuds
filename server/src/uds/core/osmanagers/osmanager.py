@@ -131,13 +131,6 @@ class OSManager(Module):
         """
         return None
 
-    def maxSession(self) -> typing.Optional[int]:
-        """
-        If os manager requests "max session duration", this methos will return a value distinct of None so actors will get informed on Connection
-        @return Must return None (default if not override), or a "max session duration" in seconds
-        """
-        return None
-
     @classmethod
     def transformsUserOrPasswordForService(cls: typing.Type['OSManager']) -> bool:
         """

@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import sys
+# import sys
 import types
 import re
 
@@ -39,11 +39,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-module = sys.modules[__name__]
+# module = sys.modules[__name__]
 VmState = types.ModuleType('VmState')
+ImageState = types.ModuleType('ImageState')
 
 for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED', 'DONE', 'FAILED', 'POWEROFF', 'UNDEPLOYED', 'UNKNOWN']):
     setattr(VmState, i[1], i[0])
+
+for i in enumerate(['INIT', 'READY', 'USED', 'DISABLED', 'LOCKED', 'ERROR', 'CLONE', 'DELETE', 'USED_PERS', 'LOCKED_USED', 'LOCKED_USED_PERS']):
+    setattr(ImageState, i[1], i[0])
 
 
 def sanitizeName(name):

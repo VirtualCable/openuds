@@ -44,7 +44,7 @@ def initialize():
     import pkgutil
     import sys
     from uds.core import jobs
-    from uds.core.managers.TaskManager import TaskManager
+    from uds.core.managers import taskManager
 
     # Dinamycally import children of this package.
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
@@ -59,4 +59,4 @@ def initialize():
         # Limit to autoregister just workers jobs inside this module
         if cls.__module__[0:16] == 'uds.core.workers':
             logger.debug('Added worker %s to list', cls.__module__)
-            TaskManager.registerJob(cls)
+            taskManager().registerJob(cls)

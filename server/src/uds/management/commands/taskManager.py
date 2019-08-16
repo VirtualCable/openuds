@@ -40,7 +40,7 @@ import time
 from django.core.management.base import BaseCommand  # , CommandError
 from django.conf import settings
 
-from uds.core.managers.TaskManager import TaskManager
+from uds.core.managers import taskManager
 from uds.core.util.Config import GlobalConfig
 
 logger = logging.getLogger(__name__)
@@ -137,7 +137,7 @@ class Command(BaseCommand):
 
             open(getPidFile(), 'w+').write('{}\n'.format(pid))
 
-            manager = TaskManager()
+            manager = taskManager()()
             manager.run()
 
         if start is False and stop is False:

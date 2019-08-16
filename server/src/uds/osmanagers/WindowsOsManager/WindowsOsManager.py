@@ -8,16 +8,22 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
+
 from django.utils.translation import ugettext_noop as _, ugettext_lazy
 from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
 from uds.core import osmanagers
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.managers import userServiceManager
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.models import TicketStore
 
-import logging
+# Not imported in runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import UserService
+
 
 logger = logging.getLogger(__name__)
 
@@ -148,7 +154,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def readyReceived(self, userService, data):
         pass
 
-    def process(self, userService, msg, data, options=None):
+    def process(self, userService: 'UserService', msg, data, options=None):
         """
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class) (old method)
@@ -186,11 +192,11 @@ class WindowsOsManager(osmanagers.OSManager):
             # We get the userService logged hostname & ip and returns this
             ip, hostname = userService.getConnectionSource()
             deadLine = userService.deployed_service.getDeadline()
-            if userService.getProperty('actor_version', '0.0.0') >= '2.0.0':
+            if typing.cast(str, userService.getProperty('actor_version', '0.0.0')) >= '2.0.0':
                 ret = "{0}\t{1}\t{2}".format(ip, hostname, 0 if deadLine is None else deadLine)
             else:
                 ret = "{0}\t{1}".format(ip, hostname)
-        elif msg == "logoff" or msg == 'logout':
+        elif msg in ('logoff', 'logout'):
             self.loggedOut(userService, data)
             doRemove = self.isRemovableOnLogout(userService)
         elif msg == "ip":
@@ -214,7 +220,7 @@ class WindowsOsManager(osmanagers.OSManager):
                 userService.save(update_fields=['in_use', 'in_use_date', 'os_state', 'state', 'data'])
             else:
                 logger.debug('Notifying ready')
-                UserServiceManager.manager().notifyReadyFromOsManager(userService, '')
+                userServiceManager().notifyReadyFromOsManager(userService, '')
         logger.debug('Returning {} to {} message'.format(ret, msg))
         if options is not None and options.get('scramble', True) is False:
             return ret
