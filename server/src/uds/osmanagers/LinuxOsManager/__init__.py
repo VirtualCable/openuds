@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -44,22 +44,30 @@ from .linux_randompass_osmanager import LinuxRandomPassManager
 OSManagersFactory.factory().insert(LinuxOsManager)
 OSManagersFactory.factory().insert(LinuxRandomPassManager)
 
-downloadsManager().registerDownloadable('udsactor_{version}_all.deb'.format(version=VERSION),
-                                                _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.5)</b>'),
-                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_{version}_all.deb'.format(version=VERSION),
-                                                'application/x-debian-package')
+downloadsManager().registerDownloadable(
+    'udsactor_{version}_all.deb'.format(version=VERSION),
+    _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.5)</b>'),
+    os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_{version}_all.deb'.format(version=VERSION),
+    'application/x-debian-package'
+)
 
-downloadsManager().registerDownloadable('udsactor-{version}-1.noarch.rpm'.format(version=VERSION),
-                                                _('UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'),
-                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-{version}-1.noarch.rpm'.format(version=VERSION),
-                                                'application/x-redhat-package-manager')
+downloadsManager().registerDownloadable(
+    'udsactor-{version}-1.noarch.rpm'.format(version=VERSION),
+    _('UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'),
+    os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-{version}-1.noarch.rpm'.format(version=VERSION),
+    'application/x-redhat-package-manager'
+)
 
-downloadsManager().registerDownloadable('udsactor-opensuse-{version}-1.noarch.rpm'.format(version=VERSION),
-                                                _('UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>'),
-                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-opensuse-{version}-1.noarch.rpm'.format(version=VERSION),
-                                                'application/x-redhat-package-manager')
+downloadsManager().registerDownloadable(
+    'udsactor-opensuse-{version}-1.noarch.rpm'.format(version=VERSION),
+    _('UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>'),
+    os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-opensuse-{version}-1.noarch.rpm'.format(version=VERSION),
+    'application/x-redhat-package-manager'
+)
 
-downloadsManager().registerDownloadable('udsactor_2.2.0_legacy.deb'.format(version=VERSION),
-                                                _('<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>'),
-                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_2.2.0_legacy.deb'.format(version=VERSION),
-                                                'application/x-debian-package')
+downloadsManager().registerDownloadable(
+    'udsactor_2.2.0_legacy.deb'.format(version=VERSION),
+    _('<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>'),
+    os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_2.2.0_legacy.deb'.format(version=VERSION),
+    'application/x-debian-package'
+)

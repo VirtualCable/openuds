@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.U.
+# Copyright (c) 2012-2019 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
@@ -42,6 +43,8 @@ from .linux_osmanager import LinuxOsManager
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from uds.models.user_service import UserService
 
 class LinuxRandomPassManager(LinuxOsManager):
     typeName = _('Linux Random Password OS Manager')
@@ -65,13 +68,10 @@ class LinuxRandomPassManager(LinuxOsManager):
         else:
             self._userAccount = ''
 
-    def release(self, service):
-        super(LinuxRandomPassManager, self).release(service)
-
-    def processUserPassword(self, service, username, password):
+    def processUserPassword(self, userService: 'UserService', username: str, password: str) -> typing.Tuple[str, str]:
         if username == self._userAccount:
-            return [username, service.recoverValue('linOsRandomPass')]
-        return [username, password]
+            return (username, userService.recoverValue('linOsRandomPass'))
+        return (username, password)
 
     def genPassword(self, service):
         import random
@@ -90,20 +90,20 @@ class LinuxRandomPassManager(LinuxOsManager):
     def infoValue(self, service):
         return 'rename\r{0}\t{1}\t\t{2}'.format(self.getName(service), self._userAccount, self.genPassword(service))
 
-    def marshal(self):
-        base = super(LinuxRandomPassManager, self).marshal()
-        '''
+    def marshal(self) -> bytes:
+        """
         Serializes the os manager data so we can store it in database
-        '''
-        return '\t'.join(['v1', self._userAccount, encoders.encode(base, 'hex', asText=True)]).encode('utf8')
+        """
+        base = LinuxOsManager.marshal(self)
+        return '\t'.join(['v1', self._userAccount, typing.cast(str, encoders.encode(base, 'hex', asText=True))]).encode('utf8')
 
-    def unmarshal(self, s):
-        data = s.decode('utf8').split('\t')
-        if data[0] == 'v1':
-            self._userAccount = data[1]
-            super(LinuxRandomPassManager, self).unmarshal(encoders.decode(data[2], 'hex'))
+    def unmarshal(self, data: bytes) -> None:
+        values = data.decode('utf8').split('\t')
+        if values[0] == 'v1':
+            self._userAccount = values[1]
+            LinuxOsManager.unmarshal(self, typing.cast(bytes, encoders.decode(values[2], 'hex')))
 
     def valuesDict(self):
-        dic = super(LinuxRandomPassManager, self).valuesDict()
+        dic = LinuxOsManager.valuesDict(self)
         dic['userAccount'] = self._userAccount
         return dic
