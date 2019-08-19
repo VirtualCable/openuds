@@ -81,7 +81,7 @@ class Actor(Handler):
         :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
         :return: A dictionary, suitable for response to Caller
         """
-        result = result if result is not None else ''
+        result = result or ''
         res = {'result': result, 'date': datetime.datetime.now()}
         if error is not None:
             res['error'] = error

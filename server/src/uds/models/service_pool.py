@@ -42,7 +42,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import states
 from uds.core.util.calendar import CalendarChecker
-from uds.core.services.Exceptions import InvalidServiceException
+from uds.core.services.exceptions import InvalidServiceException
 
 from .uuid_model import UUIDModel
 from .tag import TaggingMixin

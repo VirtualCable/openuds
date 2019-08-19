@@ -33,7 +33,8 @@
 import typing
 import logging
 
-from .BaseServiceProvider import ServiceProvider
+from .provider import ServiceProvider
+from .service import Service
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +106,7 @@ class ServiceProviderFactory:
         """
         return self._providers.get(typeName.lower(), None)
 
-    def servicesThatDoNotNeedPublication(self) -> typing.Iterable[typing.Type[ServiceProvider]]:
+    def servicesThatDoNotNeedPublication(self) -> typing.Iterable[typing.Type[Service]]:
         """
         Returns a list of all service providers registered that do not need
         to be published

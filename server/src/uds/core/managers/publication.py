@@ -39,7 +39,7 @@ from django.db import transaction
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.Config import GlobalConfig
-from uds.core.services.Exceptions import PublishException
+from uds.core.services.exceptions import PublishException
 from uds.core.util.State import State
 from uds.core.util import log
 

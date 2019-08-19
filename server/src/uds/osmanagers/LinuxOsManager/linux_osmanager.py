@@ -137,13 +137,13 @@ class LinuxOsManager(osmanagers.OSManager):
             try:
                 level = int(level)
             except Exception:
-                logger.debug('Do not understand level {}'.format(level))
+                logger.debug('Do not understand level %s', level)
                 level = log.INFO
             log.doLog(service, level, msg, origin)
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
-    def process(self, userService, msg, data, options=None):
+    def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str:
         """
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), old method
@@ -152,41 +152,41 @@ class LinuxOsManager(osmanagers.OSManager):
         * msg = logoff, data = Username, Informs that the username has logged out of the machine
         * msg = ready, data = None, Informs machine ready to be used
         """
-        logger.info("Invoked LinuxOsManager for {0} with params: {1},{2}".format(userService, msg, data))
+        logger.info("Invoked LinuxOsManager for %s with params: %s, %s", userService, message, data)
         # We get from storage the name for this userService. If no name, we try to assign a new one
         ret = "ok"
         notifyReady = False
         doRemove = False
         state = userService.os_state
-        if msg in ('ready', 'ip'):
-            if not isinstance(data, dict):  # Old actors, previous to 2.5, convert it information..
+        if message in ('ready', 'ip'):
+            if not isinstance(data, dict):  # Older actors?, previous to 2.5, convert it information..
                 data = {
-                    'ips': [v.split('=') for v in data.split(',')],
+                    'ips': [v.split('=') for v in typing.cast(str, data).split(',')],
                     'hostname': userService.friendly_name
                 }
 
         # Old "info" state, will be removed in a near future
-        if msg == "info":
+        if message == "info":
             ret = self.infoVal(userService)
             state = State.PREPARING
-        elif msg == "information":
+        elif message == "information":
             ret = self.infoValue(userService)
             state = State.PREPARING
-        elif msg == "log":
+        elif message == "log":
             self.doLog(userService, data, log.ACTOR)
-        elif msg == "login":
+        elif message == "login":
             self.loggedIn(userService, data)
             ip, hostname = userService.getConnectionSource()
             deadLine = userService.deployed_service.getDeadline()
-            ret = "{0}\t{1}\t{2}".format(ip, hostname, 0 if deadLine is None else deadLine)
-        elif msg == "logout":
+            ret = "{}\t{}\t{}".format(ip, hostname, 0 if deadLine is None else deadLine)
+        elif message == "logout":
             self.loggedOut(userService, data)
             doRemove = self.isRemovableOnLogout(userService)
-        elif msg == "ip":
+        elif message == "ip":
             # This ocurss on main loop inside machine, so userService is usable
             state = State.USABLE
             self.notifyIp(userService.unique_id, userService, data)
-        elif msg == "ready":
+        elif message == "ready":
             self.toReady(userService)
             state = State.USABLE
             notifyReady = True
@@ -199,8 +199,8 @@ class LinuxOsManager(osmanagers.OSManager):
             userService.release()
         else:
             if notifyReady:
-                userServiceManager.notifyReadyFromOsManager(userService, '')
-        logger.debug('Returning {0}'.format(ret))
+                userServiceManager().notifyReadyFromOsManager(userService, '')
+        logger.debug('Returning %s', ret)
         return ret
 
     def processUnused(self, userService):
@@ -214,8 +214,8 @@ class LinuxOsManager(osmanagers.OSManager):
     def isPersistent(self):
         return self._onLogout == 'keep-always'
 
-    def checkState(self, service):
-        logger.debug('Checking state for service {0}'.format(service))
+    def checkState(self, userService: 'UserService') -> str:
+        logger.debug('Checking state for service %s', userService)
         return State.RUNNING
 
     def maxIdle(self):
@@ -234,7 +234,7 @@ class LinuxOsManager(osmanagers.OSManager):
         return '\t'.join(['v2', self._onLogout, str(self._idle)]).encode('utf8')
 
     def unmarshal(self, data: bytes):
-        values = s.decode('utf8').split('\t')
+        values = data.decode('utf8').split('\t')
         if values[0] == 'v1':
             self._onLogout = values[1]
             self._idle = -1

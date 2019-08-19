@@ -37,8 +37,8 @@ from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 from uds.core.transports import protocols
 from . import types
-from .BasePublication import Publication
-from .BaseDeployed import UserDeployment
+from .publication import Publication
+from .user_deployment import UserDeployment
 
 if typing.TYPE_CHECKING:
     from uds.core import services

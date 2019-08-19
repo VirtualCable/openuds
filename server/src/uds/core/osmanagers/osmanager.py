@@ -96,7 +96,7 @@ class OSManager(Module):
         """
 
     # These methods must be overriden
-    def process(self, userService: 'UserService', message: str, data: str, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> None:
+    def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str:
         """
         This method must be overriden so your so manager can manage requests and responses from agent.
         @param userService: Service that sends the request (virtual machine or whatever)

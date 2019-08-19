@@ -43,7 +43,7 @@ from uds.models import User
 from uds.web.util import errors
 from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.Config import GlobalConfig
-from uds.core.services.Exceptions import ServiceNotReadyError
+from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION
 from uds.core.util import encoders
 

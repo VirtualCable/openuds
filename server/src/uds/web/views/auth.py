@@ -40,7 +40,7 @@ import uds.web.util.errors as errors
 from uds.core.auths.exceptions import InvalidUserException
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.core.managers import userServiceManager, cryptoManager
-from uds.core.services.Exceptions import ServiceNotReadyError
+from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.util import OsDetector
 from uds.core.util import html
 from uds.core.util.State import State

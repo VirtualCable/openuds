@@ -38,7 +38,7 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds.core.managers import userServiceManager
 from uds.core.managers import cryptoManager
-from uds.core.services.Exceptions import ServiceNotReadyError
+from uds.core.services.exceptions import ServiceNotReadyError
 from uds.web.util import errors
 
 

@@ -38,7 +38,7 @@ from django.db.models import Q
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.State import State
 from uds.core.managers import userServiceManager
-from uds.core.services.Exceptions import MaxServicesReachedError
+from uds.core.services.exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService
 from uds.core import services
 from uds.core.util import log

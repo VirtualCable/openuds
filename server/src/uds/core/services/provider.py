@@ -75,7 +75,7 @@ class ServiceProvider(Module):
     only need data that is keeped at form fields, marshal and unmarshal and in fact
     not needed.
     """
-    from .BaseService import Service
+    from .service import Service
 
     # : Services that we offers. Here is a list of service types (python types) that
     # : this class will provide. This types are the python clases, derived from

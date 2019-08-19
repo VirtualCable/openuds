@@ -115,7 +115,7 @@ def exceptionView(request, exception):
     Tries to render an error page with error information
     """
     from uds.core.auths.exceptions import InvalidUserException, InvalidAuthenticatorException
-    from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedError, ServiceInMaintenanceMode, ServiceNotReadyError
+    from uds.core.services.exceptions import InvalidServiceException, MaxServicesReachedError, ServiceInMaintenanceMode, ServiceNotReadyError
 
     logger.debug(traceback.format_exc())
 

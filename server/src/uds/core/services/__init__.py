@@ -32,14 +32,14 @@ UDS Service modules interfaces and classes.
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import Exceptions
+from . import exceptions
 from . import types
 
-from .BaseDeployed import UserDeployment
-from .BasePublication import Publication
-from .BaseService import Service
-from .BaseServiceProvider import ServiceProvider
-from .ServiceProviderFactory import ServiceProviderFactory
+from .user_deployment import UserDeployment
+from .publication import Publication
+from .service import Service
+from .provider import ServiceProvider
+from .provider_factory import ServiceProviderFactory
 
 
 def factory() -> ServiceProviderFactory:
