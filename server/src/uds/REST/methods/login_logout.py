@@ -34,7 +34,7 @@ import logging
 import random
 import string
 
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.core.util.model import processUuid
 from uds.core.auths.auth import authenticate
 from uds.core import VERSION as UDS_VERSION

@@ -35,8 +35,8 @@ import typing
 
 from django.db import transaction
 from django.db.models import Q
-from uds.core.util.Config import GlobalConfig
-from uds.core.util.State import State
+from uds.core.util.config import GlobalConfig
+from uds.core.util.state import State
 from uds.core.managers import userServiceManager
 from uds.core.services.exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService

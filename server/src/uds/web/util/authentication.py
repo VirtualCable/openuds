@@ -33,8 +33,8 @@ from django.utils.translation import ugettext as _
 
 from uds.core.auths.auth import authenticate, authLogLogin
 from uds.models import Authenticator
-from uds.core.util.Config import GlobalConfig
-from uds.core.util.Cache import Cache
+from uds.core.util.config import GlobalConfig
+from uds.core.util.cache import Cache
 from uds.core.util.model import processUuid
 
 import uds.web.util.errors as errors

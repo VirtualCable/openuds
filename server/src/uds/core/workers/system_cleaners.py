@@ -34,7 +34,7 @@ from importlib import import_module
 import logging
 
 from django.conf import settings
-from uds.core.util.Cache import Cache
+from uds.core.util.cache import Cache
 from uds.core.jobs import Job
 from uds.models import TicketStore
 

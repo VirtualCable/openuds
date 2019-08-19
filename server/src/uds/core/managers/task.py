@@ -40,7 +40,7 @@ from django.db import connection
 from uds.core.jobs.scheduler import Scheduler
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core import jobs
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 

@@ -37,7 +37,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 
 from uds.models import Provider, Service, UserService
 from uds.core import services
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util import permissions
 
 from uds.REST import NotFound, RequestError

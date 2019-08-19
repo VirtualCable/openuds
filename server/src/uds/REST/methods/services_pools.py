@@ -48,7 +48,7 @@ from uds.models.calendar_action import (
 
 from uds.core.managers import userServiceManager
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.core.util import permissions

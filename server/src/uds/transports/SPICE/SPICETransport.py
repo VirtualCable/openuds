@@ -32,7 +32,7 @@
 """
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 from uds.core.util import tools
 from .BaseSPICETransport import BaseSpiceTransport
 from .RemoteViewerFile import RemoteViewerFile

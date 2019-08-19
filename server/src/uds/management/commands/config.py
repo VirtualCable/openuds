@@ -33,7 +33,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
-from uds.core.util.Config import Config, GLOBAL_SECTION, GlobalConfig
+from uds.core.util.config import Config, GLOBAL_SECTION, GlobalConfig
 
 logger = logging.getLogger(__name__)
 

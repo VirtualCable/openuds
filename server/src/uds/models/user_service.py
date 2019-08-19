@@ -39,7 +39,7 @@ from django.db.models import signals
 from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
-from uds.core.util.State import State
+from uds.core.util.state import State
 
 from .uuid_model import UUIDModel
 from .service_pool import ServicePool
@@ -116,7 +116,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         To access this generators, use the Envirnment class, and the keys 'name' and 'mac'.
 
-        (see related classes uds.core.util.UniqueNameGenerator and uds.core.util.UniqueMacGenerator)
+        (see related classes uds.core.util.unique_name_generator and uds.core.util.unique_mac_generator)
         """
         return Environment.getEnvForTableElement(
             self._meta.verbose_name,

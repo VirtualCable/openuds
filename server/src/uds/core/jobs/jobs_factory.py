@@ -68,7 +68,7 @@ class JobsFactory:
         Ensures that uds core workers are correctly registered in database and in factory
         """
         from uds.models import Scheduler, getSqlDatetime
-        from uds.core.util.State import State
+        from uds.core.util.state import State
         from uds.core import workers
 
         try:

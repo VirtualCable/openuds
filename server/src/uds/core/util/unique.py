@@ -33,6 +33,7 @@
 # Helper to acommodate all unique generators in one place
 # pylint: disable=unused-import
 
-from .UniqueGIDGenerator import UniqueGIDGenerator
-from .UniqueMacGenerator import UniqueMacGenerator
-from .UniqueNameGenerator import UniqueNameGenerator
+from .unique_gid_generator import UniqueGIDGenerator
+from .unique_mac_generator import UniqueMacGenerator
+from .unique_name_generator import UniqueNameGenerator
+

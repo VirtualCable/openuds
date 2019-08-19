@@ -34,7 +34,7 @@ import re
 import logging
 import typing
 
-from uds.core.util.State import State
+from uds.core.util.state import State
 from .group import Group
 
 if typing.TYPE_CHECKING:

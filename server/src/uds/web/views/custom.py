@@ -31,7 +31,7 @@
 
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
-from uds.core.util.Config import Config
+from uds.core.util.config import Config
 
 
 # @cache_page(3600, key_prefix='custom', cache='memory')

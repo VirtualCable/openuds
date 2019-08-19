@@ -283,7 +283,7 @@ class SampleAuth(auths.Authenticator):
 
         Here, we will set the state to "Inactive" and realName to the same as username, but twice :-)
         """
-        from uds.core.util.State import State
+        from uds.core.util.state import State
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
 

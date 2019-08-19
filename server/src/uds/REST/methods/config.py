@@ -33,7 +33,7 @@
 import typing
 import logging
 
-from uds.core.util.Config import Config as CfgConfig
+from uds.core.util.config import Config as CfgConfig
 from uds.REST import Handler
 
 

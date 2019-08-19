@@ -31,37 +31,22 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import re
 
-from .UniqueIDGenerator import UniqueIDGenerator
+from .unique_id_generator import UniqueIDGenerator, MAX_SEQ
 
 logger = logging.getLogger(__name__)
 
 
-class UniqueMacGenerator(UniqueIDGenerator):
+class UniqueGIDGenerator(UniqueIDGenerator):
 
-    def __init__(self, owner):
-        super(UniqueMacGenerator, self).__init__('mac', owner, '\tmac')
+    def __init__(self, owner, baseName=None):
+        super(UniqueGIDGenerator, self).__init__('id', owner, baseName)
 
-    def __toInt(self, mac):
-        return int(mac.replace(':', ''), 16)
+    def __toName(self, seq):
+        if seq == -1:
+            raise KeyError('No more GIDS available.')
+        return '{:s}{:08d}'.format(self._baseName, seq)
+        # return "%s%0*d" % (self._baseName, 8, seq)
 
-    def __toMac(self, seq):
-        if seq == -1:  # No mor macs available
-            return '00:00:00:00:00:00'
-        return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
-
-    # noinspection PyMethodOverriding
-    def get(self, macRange):  # pylint: disable=arguments-differ
-        firstMac, lastMac = macRange.split('-')
-        firstMac = self.__toInt(firstMac)
-        lastMac = self.__toInt(lastMac)
-        return self.__toMac(super(UniqueMacGenerator, self).get(firstMac, lastMac))
-
-    def transfer(self, mac, toUMgen):  # pylint: disable=arguments-differ
-        super(UniqueMacGenerator, self).transfer(self.__toInt(mac), toUMgen)
-
-    def free(self, mac):  # pylint: disable=arguments-differ
-        super(UniqueMacGenerator, self).free(self.__toInt(mac))
-
-    # Release is inherited, no mod needed
+    def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
+        return self.__toName(super(UniqueGIDGenerator, self).get())

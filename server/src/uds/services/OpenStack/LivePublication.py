@@ -33,7 +33,7 @@
 
 from django.utils.translation import ugettext as _
 from uds.core.services import Publication
-from uds.core.util.State import State
+from uds.core.util.state import State
 from datetime import datetime
 
 import six

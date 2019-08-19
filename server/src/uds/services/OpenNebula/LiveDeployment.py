@@ -35,7 +35,7 @@ import logging
 import typing
 
 from uds.core.services import UserDeployment
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util import log
 
 from . import on

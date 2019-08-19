@@ -156,7 +156,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     @staticmethod
     def getRestrainedsQuerySet() -> QuerySet:
         from uds.models.user_service import UserService  # pylint: disable=redefined-outer-name
-        from uds.core.util.Config import GlobalConfig
+        from uds.core.util.config import GlobalConfig
         from django.db.models import Count
 
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
@@ -202,7 +202,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         The time that a service is in restrain mode is 20 minutes by default (1200 secs), but it can be modified
         at globalconfig variables
         """
-        from uds.core.util.Config import GlobalConfig
+        from uds.core.util.config import GlobalConfig
 
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)

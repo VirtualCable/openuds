@@ -37,7 +37,7 @@ from uds.core.managers import userServiceManager
 from uds.core.ui import gui
 from uds.core.transports.transport import Transport
 from uds.core.transports import protocols
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 from uds.core.util import connection
 
 # This transport is specific for oVirt, so we need to point to it

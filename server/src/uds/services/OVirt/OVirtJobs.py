@@ -33,7 +33,7 @@ from __future__ import unicode_literals
 
 from uds.core import jobs
 from uds.core.util import log
-from uds.core.util.State import State
+from uds.core.util.state import State
 
 from uds.models import Provider, Service, getSqlDatetime
 

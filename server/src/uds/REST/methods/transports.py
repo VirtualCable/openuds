@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Transport, Network, ServicePool
 from uds.core.transports import factory
 from uds.core.util import permissions
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 
 from uds.REST.model import ModelHandler
 

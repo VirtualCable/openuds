@@ -36,9 +36,9 @@ import sys
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
 
-from uds.core.util.Config import GlobalConfig
-from uds.core.util.Cache import Cache
-from uds.core.util.State import State
+from uds.core.util.config import GlobalConfig
+from uds.core.util.cache import Cache
+from uds.core.util.state import State
 from uds.models import Scheduler
 
 

@@ -33,7 +33,7 @@
 import logging
 
 from uds.core.services import Publication
-from uds.core.util.State import State
+from uds.core.util.state import State
 
 
 logger = logging.getLogger(__name__)

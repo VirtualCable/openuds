@@ -34,7 +34,7 @@
 from __future__ import unicode_literals
 
 from uds.core.services import UserDeployment
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util import log
 
 from uds.services.Xen.xen_client import XenPowerState

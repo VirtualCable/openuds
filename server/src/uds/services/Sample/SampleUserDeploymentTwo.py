@@ -32,7 +32,7 @@
 """
 
 from uds.core.services import UserDeployment
-from uds.core.util.State import State
+from uds.core.util.state import State
 import logging
 import codecs
 
@@ -54,8 +54,8 @@ class SampleUserDeploymentTwo(UserDeployment):
     that are classes that provides a way to generate unique items.
 
     The generators provided right now are 'mac' and 'name'. To get more info
-    about this, look at py:class:`uds.core.util.UniqueMacGenerator.UniqueNameGenerator`
-    and py:class:`uds.core.util.UniqueNameGenerator.UniqueNameGenerator`
+    about this, look at py:class:`uds.core.util.unique_mac_generator.UniqueNameGenerator`
+    and py:class:`uds.core.util.unique_name_generator.UniqueNameGenerator`
 
     As sample also of environment storage usage, wi will use here the provider
     storage to keep all our needed info, leaving marshal and unmarshal (needed

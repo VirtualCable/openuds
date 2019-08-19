@@ -35,7 +35,7 @@ import typing
 
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util import log
 from uds.core.services import UserDeployment
 from uds.models import UserService

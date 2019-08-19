@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 class UniqueId(models.Model):
     """
     Unique ID Database. Used to store unique names, unique macs, etc...
-    Managed via uds.core.util.UniqueIDGenerator.UniqueIDGenerator
+    Managed via uds.core.util.unique_id_generator.unique_id_generator
     """
     owner = models.CharField(max_length=128, db_index=True, default='')
     basename = models.CharField(max_length=32, db_index=True)

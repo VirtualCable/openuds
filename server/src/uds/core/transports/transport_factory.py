@@ -31,22 +31,35 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
-from .UniqueIDGenerator import UniqueIDGenerator, MAX_SEQ
+if typing.TYPE_CHECKING:
+    from .transport import Transport
+
 
 logger = logging.getLogger(__name__)
 
 
-class UniqueGIDGenerator(UniqueIDGenerator):
+class TransportsFactory:
+    _factory: typing.Optional['TransportsFactory'] = None
+    _transports: typing.Dict[str, typing.Type['Transport']]
 
-    def __init__(self, owner, baseName=None):
-        super(UniqueGIDGenerator, self).__init__('id', owner, baseName)
+    def __init__(self):
+        self._transports = {}
 
-    def __toName(self, seq):
-        if seq == -1:
-            raise KeyError('No more GIDS available.')
-        return '{:s}{:08d}'.format(self._baseName, seq)
-        # return "%s%0*d" % (self._baseName, 8, seq)
+    @staticmethod
+    def factory() -> 'TransportsFactory':
+        if TransportsFactory._factory is None:
+            TransportsFactory._factory = TransportsFactory()
+        return TransportsFactory._factory
 
-    def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
-        return self.__toName(super(UniqueGIDGenerator, self).get())
+    def providers(self) -> typing.Dict[str, typing.Type['Transport']]:
+        return self._transports
+
+    def insert(self, type_: typing.Type['Transport']) -> None:
+        logger.debug('Adding transport %s as %s', type_.type(), type_)
+        typeName = type_.type().lower()
+        self._transports[typeName] = type_
+
+    def lookup(self, typeName: str) -> typing.Optional[typing.Type['Transport']]:
+        return self._transports.get(typeName.lower(), None)

@@ -40,7 +40,7 @@ from uds.core.auths import Authenticator
 from uds.models import Authenticator as dbAuthenticator
 from uds.core.ui import gui
 from uds.core.managers import cryptoManager
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util.request import getRequest
 
 

@@ -28,7 +28,7 @@
 import logging
 
 from django.http import HttpResponseRedirect
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 

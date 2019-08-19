@@ -35,7 +35,7 @@ import logging
 from django.utils.translation import ugettext as _
 
 from uds.models import Group, Transport, ServicePoolPublication, User
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler

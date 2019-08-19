@@ -32,7 +32,7 @@
 """
 import logging
 
-from .UniqueIDGenerator import UniqueIDGenerator
+from .unique_id_generator import UniqueIDGenerator
 
 logger = logging.getLogger(__name__)
 

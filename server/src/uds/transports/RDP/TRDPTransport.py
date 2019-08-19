@@ -38,7 +38,7 @@ from uds.core.transports.transport import Transport
 from uds.core.transports.transport import TUNNELED_GROUP
 from uds.core.transports import protocols
 from uds.models import TicketStore
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 from uds.core.util import tools
 
 from .BaseRDPTransport import BaseRDPTransport

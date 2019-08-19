@@ -42,7 +42,7 @@ from uds.models import (
 
 from uds.core.util import log
 
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 

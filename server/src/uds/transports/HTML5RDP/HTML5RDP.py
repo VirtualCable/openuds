@@ -43,7 +43,7 @@ from uds.core.transports.transport import TUNNELED_GROUP
 
 from uds.core.transports import protocols
 from uds.core.util import connection
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 from uds.core.managers import cryptoManager
 from uds.models import TicketStore
 

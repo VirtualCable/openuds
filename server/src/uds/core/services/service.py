@@ -45,9 +45,9 @@ if typing.TYPE_CHECKING:
     from uds.core import services
     from uds.core import osmanagers
     from uds.core.environment import Environment
-    from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
-    from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
-    from uds.core.util.UniqueGIDGenerator import UniqueGIDGenerator
+    from uds.core.util.unique_name_generator import UniqueNameGenerator
+    from uds.core.util.unique_mac_generator import UniqueMacGenerator
+    from uds.core.util.unique_gid_generator import UniqueGIDGenerator
     from uds.models import ServicePoolPublication
 
 

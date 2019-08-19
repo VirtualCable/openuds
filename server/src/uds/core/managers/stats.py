@@ -34,7 +34,7 @@ import time
 import logging
 import typing
 
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.models import StatsCounters
 from uds.models import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.models import StatsEvents

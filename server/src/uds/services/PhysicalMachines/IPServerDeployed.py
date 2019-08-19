@@ -33,8 +33,8 @@
 
 from django.utils.translation import ugettext_lazy as _
 from uds.core import services
-from uds.core.util.State import State
-from uds.core.util.AutoAttributes import AutoAttributes
+from uds.core.util.state import State
+from uds.core.util.auto_attributes import AutoAttributes
 import logging
 
 logger = logging.getLogger(__name__)

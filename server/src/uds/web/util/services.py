@@ -36,7 +36,7 @@ from django.utils import formats
 from django.urls.base import reverse
 
 from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.core.util import html
 
 from uds.core.managers import userServiceManager

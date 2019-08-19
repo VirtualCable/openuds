@@ -33,7 +33,7 @@ import logging
 import typing
 
 from uds.models import ServicePool
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util.stats import counters
 from uds.core.managers import statsManager
 from uds.core.jobs import Job

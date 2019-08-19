@@ -39,7 +39,7 @@ from datetime import timedelta
 from django.db.models import Q
 from django.db import transaction, DatabaseError, connection
 from uds.models import Scheduler as DBScheduler, getSqlDatetime
-from uds.core.util.State import State
+from uds.core.util.state import State
 from .jobs_factory import JobsFactory
 
 logger = logging.getLogger(__name__)

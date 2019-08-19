@@ -39,7 +39,7 @@ from uds.models.service_pool import ServicePool
 from uds.models.user_service import UserService
 from uds.models.user import User
 
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler

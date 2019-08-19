@@ -41,7 +41,7 @@ from django.core.management.base import BaseCommand  # , CommandError
 from django.conf import settings
 
 from uds.core.managers import taskManager
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 

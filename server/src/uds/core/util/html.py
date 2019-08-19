@@ -36,7 +36,7 @@ import typing
 
 from django.utils.translation import get_language
 from django.utils import formats
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports

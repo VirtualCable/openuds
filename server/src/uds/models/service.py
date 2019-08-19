@@ -80,8 +80,8 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         Returns an environment valid for the record this object represents
         """
-        # from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
-        # from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
+        # from uds.core.util.unique_mac_generator import UniqueMacGenerator
+        # from uds.core.util.unique_name_generator import UniqueNameGenerator
 
         return Environment.getEnvForTableElement(
             self._meta.verbose_name,

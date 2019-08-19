@@ -41,9 +41,9 @@ from uds.core.auths.exceptions import InvalidUserException
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.core.managers import userServiceManager, cryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 from uds.core.util import html
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.models import Authenticator, ServicePool
 from uds.models import TicketStore

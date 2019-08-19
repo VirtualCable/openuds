@@ -36,7 +36,7 @@ import typing
 from uds.core import Module
 from uds.core.environment import Environment
 
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.core.ui import gui
 
 logger = logging.getLogger(__name__)

@@ -36,8 +36,8 @@ import typing
 
 from django.http import HttpRequest, HttpResponse
 
-from uds.core.util import OsDetector
-from uds.core.util.Config import GlobalConfig
+from uds.core.util import os_detector as OsDetector
+from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
 from uds.models import User
 

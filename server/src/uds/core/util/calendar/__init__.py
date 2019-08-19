@@ -41,7 +41,7 @@ from uds.models.util import getSqlDatetime
 
 from uds.models.calendar import Calendar
 
-from uds.core.util.Cache import Cache
+from uds.core.util.cache import Cache
 
 
 logger = logging.getLogger(__name__)

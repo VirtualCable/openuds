@@ -34,7 +34,7 @@ Created on Apr 8, 2014
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 # from uds.core.util import validators

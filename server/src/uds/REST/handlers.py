@@ -35,7 +35,7 @@ import logging
 
 from django.contrib.sessions.backends.db import SessionStore
 
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import getRootUser
 from uds.models import Authenticator
 from uds.core.managers import cryptoManager

@@ -40,8 +40,8 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds.core.managers import cryptoManager
 from uds.core.osmanagers import OSManager
-from uds.core.util import Config
-from uds.core.util.State import State
+from uds.core.util import config
+from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.models import TicketStore
 from uds.models import UserService
@@ -49,9 +49,9 @@ from uds.models import UserService
 logger = logging.getLogger(__name__)
 
 # Actor key, configurable in Security Section of administration interface
-actorKey = Config.Config.section(Config.SECURITY_SECTION).value('Master Key',
+actorKey = config.Config.section(config.SECURITY_SECTION).value('Master Key',
                                                                 cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
-                                                                type=Config.Config.TEXT_FIELD)
+                                                                type=config.Config.TEXT_FIELD)
 
 actorKey.get()
 

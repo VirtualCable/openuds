@@ -32,7 +32,7 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from uds.core.util.Config import Config
+from uds.core.util.config import Config
 from .Authenticator import IPAuth
 
 # Access configuration value as soon as we can, so it is available at db

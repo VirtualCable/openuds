@@ -39,7 +39,7 @@ from django.db.models import signals
 from uds.core import auths
 from uds.core import environment
 from uds.core.util import log
-from uds.core.util.State import State
+from uds.core.util.state import State
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
@@ -180,7 +180,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
         """
-        from uds.core.util.Config import GlobalConfig
+        from uds.core.util.config import GlobalConfig
 
         if tag is not None:
             authsList: 'QuerySet' = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')

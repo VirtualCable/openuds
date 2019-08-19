@@ -45,7 +45,7 @@ from uds.REST import AUTH_TOKEN_HEADER
 from uds.REST.methods.client import CLIENT_VERSION
 
 from uds.core.managers import downloadsManager
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 
 from uds.core import VERSION, VERSION_STAMP
 

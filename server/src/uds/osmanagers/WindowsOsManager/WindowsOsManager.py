@@ -16,7 +16,7 @@ from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
 from uds.core import osmanagers
 from uds.core.managers import userServiceManager
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util import log
 from uds.models import TicketStore
 

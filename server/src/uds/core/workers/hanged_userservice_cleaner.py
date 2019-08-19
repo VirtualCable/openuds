@@ -34,9 +34,9 @@ from datetime import timedelta
 import logging
 
 from django.db.models import Q
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.models import ServicePool, getSqlDatetime
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.jobs import Job
 from uds.core.util import log
 

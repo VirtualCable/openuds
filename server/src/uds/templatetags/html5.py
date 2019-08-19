@@ -39,7 +39,7 @@ from django.utils.html import mark_safe
 
 from uds.core.util import html
 from uds.core.auths.auth import ROOT_ID
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.models.image import Image
 from uds.core.managers.user_preferences import UserPrefsManager
 from uds.REST.methods.client import CLIENT_VERSION

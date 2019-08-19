@@ -115,7 +115,7 @@ def getLogs(wichObject: typing.Any, limit: typing.Optional[int] = None) -> typin
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
-    from uds.core.util.Config import GlobalConfig
+    from uds.core.util.config import GlobalConfig
 
     if limit is None:
         limit = GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()

@@ -43,13 +43,13 @@ from django.utils.decorators import available_attrs
 from django.urls import reverse
 
 from django.utils.translation import ugettext as _
-from uds.core.util.Config import GlobalConfig
+from uds.core.util.config import GlobalConfig
 from uds.core.util import log
 from uds.core.util.decorators import deprecated
 from uds.core import auths
 from uds.core.util.stats import events
 from uds.core.managers import cryptoManager
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.models import User, Authenticator
 from uds.core.auths import Authenticator as AuthenticatorInstance
 

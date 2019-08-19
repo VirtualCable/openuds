@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 class Cache(models.Model):
     """
-    General caching model. This model is managed via uds.core.util.Cache.Cache class
+    General caching model. This model is managed via uds.core.util.cache.Cache class
     """
     owner = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, primary_key=True)

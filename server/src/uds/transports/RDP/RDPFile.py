@@ -39,7 +39,7 @@ import urllib.parse
 import shlex
 import typing
 
-from uds.core.util import OsDetector
+from uds.core.util import os_detector as OsDetector
 
 __updated__ = '2018-11-22'
 

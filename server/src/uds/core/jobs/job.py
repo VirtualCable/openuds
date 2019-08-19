@@ -32,7 +32,7 @@ import logging
 import typing
 
 from uds.core import Environmentable
-from uds.core.util.Config import Config
+from uds.core.util.config import Config
 
 
 logger = logging.getLogger(__name__)

@@ -37,8 +37,8 @@ from datetime import timedelta
 from uds.models import User, Group, Service, UserService, ServicePool, MetaPool, getSqlDatetime
 
 from uds.core.util.stats import counters
-from uds.core.util.Cache import Cache
-from uds.core.util.State import State
+from uds.core.util.cache import Cache
+from uds.core.util.state import State
 from uds.core.util import encoders
 from uds.REST import Handler, RequestError, ResponseError
 

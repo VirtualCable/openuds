@@ -41,7 +41,7 @@ from django.utils.translation import ugettext as _
 from django.db.models import Q
 from django.db import transaction
 from uds.core.services.exceptions import OperationException
-from uds.core.util.State import State
+from uds.core.util.state import State
 from uds.core.util import log
 from uds.core.services.exceptions import (
     MaxServicesReachedError,

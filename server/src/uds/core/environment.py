@@ -32,9 +32,9 @@
 """
 import typing
 
-from uds.core.util.Cache import Cache
-from uds.core.util.Storage import Storage
-from uds.core.util.UniqueIDGenerator import UniqueIDGenerator
+from uds.core.util.cache import Cache
+from uds.core.util.storage import Storage
+from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 TEMP_ENV = 'temporary'
 GLOBAL_ENV = 'global'
@@ -194,7 +194,7 @@ class Environmentable:
 
         Returns:
             Cache for the object
-        :rtype uds.core.util.Cache.Cache
+        :rtype uds.core.util.cache.Cache
         """
         return self._env.cache
 
@@ -206,7 +206,7 @@ class Environmentable:
         Returns:
             Storage for the object
 
-        :rtype uds.core.util.Storage.Storage
+        :rtype uds.core.util.storage.Storage
         """
         return self._env.storage
 

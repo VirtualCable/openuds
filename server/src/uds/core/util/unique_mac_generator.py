@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,31 +31,37 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import re
 
-from django.core.cache import cache as djCache
-from uds.core.util.cache import Cache as uCache
-from uds.REST import Handler, RequestError
-
+from .unique_id_generator import UniqueIDGenerator
 
 logger = logging.getLogger(__name__)
 
 
-# Enclosed methods under /cache path
-class Cache(Handler):
-    authenticated = True
-    needs_admin = True
+class UniqueMacGenerator(UniqueIDGenerator):
 
-    def get(self):
-        """
-        Processes get method. Basically, clears & purges the cache, no matter what params
-        """
-        logger.debug('Params: %s', self._params)
-        if not self._args:
-            return {}
+    def __init__(self, owner):
+        super(UniqueMacGenerator, self).__init__('mac', owner, '\tmac')
 
-        if len(self._args) != 1:
-            raise RequestError('Invalid Request')
+    def __toInt(self, mac):
+        return int(mac.replace(':', ''), 16)
 
-        uCache.purge()
-        djCache.clear()
-        return 'done'
+    def __toMac(self, seq):
+        if seq == -1:  # No mor macs available
+            return '00:00:00:00:00:00'
+        return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
+
+    # noinspection PyMethodOverriding
+    def get(self, macRange):  # pylint: disable=arguments-differ
+        firstMac, lastMac = macRange.split('-')
+        firstMac = self.__toInt(firstMac)
+        lastMac = self.__toInt(lastMac)
+        return self.__toMac(super(UniqueMacGenerator, self).get(firstMac, lastMac))
+
+    def transfer(self, mac, toUMgen):  # pylint: disable=arguments-differ
+        super(UniqueMacGenerator, self).transfer(self.__toInt(mac), toUMgen)
+
+    def free(self, mac):  # pylint: disable=arguments-differ
+        super(UniqueMacGenerator, self).free(self.__toInt(mac))
+
+    # Release is inherited, no mod needed
