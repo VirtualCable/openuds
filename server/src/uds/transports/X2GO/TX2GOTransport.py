@@ -36,7 +36,7 @@ from uds.core.ui import gui
 from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.util import OsDetector
 from uds.core.util import tools
-from uds.core.transports.BaseTransport import TUNNELED_GROUP
+from uds.core.transports.transport import TUNNELED_GROUP
 from uds.models import TicketStore
 from .BaseX2GOTransport import BaseX2GOTransport
 from . import x2gofile

@@ -33,8 +33,8 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
-from uds.core.transports.BaseTransport import Transport
-from uds.core.transports.BaseTransport import TUNNELED_GROUP
+from uds.core.transports.transport import Transport
+from uds.core.transports.transport import TUNNELED_GROUP
 from uds.core.transports import protocols
 from uds.core.util import OsDetector
 from uds.core.util import tools

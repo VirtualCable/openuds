@@ -32,12 +32,12 @@ UDS Service modules interfaces and classes.
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .BaseTransport import Transport
+from .transport import Transport
 
 
 def factory():
     """
     Returns factory for register/access to service providers
     """
-    from .TransportsFactory import TransportsFactory
+    from .transport_factory import TransportsFactory
     return TransportsFactory.factory()

@@ -35,7 +35,7 @@ import os
 import logging
 from typing import Tuple
 
-from uds.core.transports.BaseTransport import Transport
+from uds.core.transports.transport import Transport
 
 logger = logging.getLogger(__name__)
 

@@ -38,8 +38,8 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 
 from uds.core.ui import gui
-from uds.core.transports.BaseTransport import Transport
-from uds.core.transports.BaseTransport import TUNNELED_GROUP
+from uds.core.transports.transport import Transport
+from uds.core.transports.transport import TUNNELED_GROUP
 
 from uds.core.transports import protocols
 from uds.core.util import connection
