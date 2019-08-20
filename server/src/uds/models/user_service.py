@@ -48,7 +48,7 @@ from .user import User
 from .util import NEVER
 from .util import getSqlDatetime
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import services
     from uds.models import OSManager, ServicePool, ServicePoolPublication

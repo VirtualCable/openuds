@@ -12,34 +12,33 @@ import logging
 import typing
 
 from django.utils.translation import ugettext_noop as _, ugettext_lazy
+from uds.core import osmanagers
 from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
-from uds.core import osmanagers
 from uds.core.managers import userServiceManager
 from uds.core.util.state import State
+from uds.core.util import encoders
 from uds.core.util import log
 from uds.models import TicketStore
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import UserService
-
 
 logger = logging.getLogger(__name__)
 
 
-def scrambleMsg(data):
+def scrambleMsg(msg: str) -> str:
     """
     Simple scrambler so password are not seen at source page
     """
-    if isinstance(data, str):
-        data = data.encode('utf8')
-    res = []
+    data = msg.encode('utf8')
+    res = b''
     n = 0x32
     for c in data[::-1]:
-        res.append(chr(ord(c) ^ n))
-        n = (n + ord(c)) & 0xFF
-    return (b''.join(res).encode('hex')).decode('utf8')
+        res += bytes([c ^ n])
+        n = (n + c) & 0xFF
+    return typing.cast(str, encoders.encode(res, 'hex', asText=True))
 
 
 class WindowsOsManager(osmanagers.OSManager):
@@ -100,61 +99,61 @@ class WindowsOsManager(osmanagers.OSManager):
         '''
         Says if a machine is removable on logout
         '''
-        if userService.in_use == False:
+        if not userService.in_use:
             if (self._onLogout == 'remove') or (not userService.isValidPublication() and self._onLogout == 'keep'):
                 return True
 
         return False
 
-    def release(self, service):
+    def release(self, userService: 'UserService') -> None:
         pass
 
-    def getName(self, service):
+    def getName(self, userService: 'UserService') -> str:
         """
         gets name from deployed
         """
-        return service.getName()
+        return userService.getName()
 
-    def infoVal(self, service):
-        return 'rename:' + self.getName(service)
+    def infoVal(self, userService: 'UserService') -> str:
+        return 'rename:' + self.getName(userService)
 
-    def infoValue(self, service):
-        return 'rename\r' + self.getName(service)
+    def infoValue(self, userService: 'UserService') -> str:
+        return 'rename\r' + self.getName(userService)
 
-    def notifyIp(self, uid, service, data):
-        si = service.getInstance()
+    def notifyIp(self, uid: str, userService, data: typing.Dict[str, typing.Any]) -> None:
+        userServiceInstance = userService.getInstance()
 
         ip = ''
         # Notifies IP to deployed
         for p in data['ips']:
             if p[0].lower() == uid.lower():
-                si.setIp(p[1])
+                userServiceInstance.setIp(p[1])
                 ip = p[1]
                 break
 
-        self.logKnownIp(service, ip)
-        service.updateData(si)
+        self.logKnownIp(userService, ip)
+        userService.updateData(userServiceInstance)
 
-    def doLog(self, service, data, origin=log.OSMANAGER):
+    def doLog(self, userService: 'UserService', data: str, origin=log.OSMANAGER):
         # Stores a log associated with this service
         try:
-            msg, level = data.split('\t')
+            msg, levelStr = data.split('\t')
             try:
-                level = int(level)
+                level = int(levelStr)
             except Exception:
-                logger.debug('Do not understand level {}'.format(level))
+                logger.debug('Do not understand level %s', level)
                 level = log.INFO
 
-            log.doLog(service, level, msg, origin)
+            log.doLog(userService, level, msg, origin)
         except Exception:
             logger.exception('WindowsOs Manager message log: ')
-            log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
+            log.doLog(userService, log.ERROR, "do not understand {0}".format(data), origin)
 
     # default "ready received" does nothing
     def readyReceived(self, userService, data):
         pass
 
-    def process(self, userService: 'UserService', msg, data, options=None):
+    def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str: # pylint: disable=too-many-branches
         """
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class) (old method)
@@ -163,29 +162,28 @@ class WindowsOsManager(osmanagers.OSManager):
         * msg = logoff, data = Username, Informs that the username has logged out of the machine
         * msg = ready, data = None, Informs machine ready to be used
         """
-        logger.info("Invoked WindowsOsManager for {0} with params: {1},{2}".format(userService, msg, data))
+        logger.info("Invoked WindowsOsManager for %s with params: %s,%s", userService, message, data)
 
-        if msg in ('ready', 'ip'):
-            if not isinstance(data, dict):  # Old actors, previous to 2.5, convert it information..
-                data = {
-                    'ips': [v.split('=') for v in data.split(',')],
-                    'hostname': userService.friendly_name
-                }
+        if message in ('ready', 'ip') and not isinstance(data, dict):  # Old actors, previous to 2.5, convert it information..
+            data = {
+                'ips': [v.split('=') for v in data.split(',')],
+                'hostname': userService.friendly_name
+            }
 
         # We get from storage the name for this userService. If no name, we try to assign a new one
         ret = "ok"
         notifyReady = False
         doRemove = False
         state = userService.os_state
-        if msg == "info":
+        if message == "info":
             ret = self.infoVal(userService)
             state = State.PREPARING
-        elif msg == "information":
+        elif message == "information":
             ret = self.infoValue(userService)
             state = State.PREPARING
-        elif msg == "log":
+        elif message == "log":
             self.doLog(userService, data, log.ACTOR)
-        elif msg == "logon" or msg == 'login':
+        elif message in("logon", 'login'):
             if '\\' not in data:
                 self.loggedIn(userService, data)
             userService.setInUse(True)
@@ -196,14 +194,14 @@ class WindowsOsManager(osmanagers.OSManager):
                 ret = "{0}\t{1}\t{2}".format(ip, hostname, 0 if deadLine is None else deadLine)
             else:
                 ret = "{0}\t{1}".format(ip, hostname)
-        elif msg in ('logoff', 'logout'):
+        elif message in ('logoff', 'logout'):
             self.loggedOut(userService, data)
             doRemove = self.isRemovableOnLogout(userService)
-        elif msg == "ip":
+        elif message == "ip":
             # This ocurss on main loop inside machine, so userService is usable
             state = State.USABLE
             self.notifyIp(userService.unique_id, userService, data)
-        elif msg == "ready":
+        elif message == "ready":
             self.toReady(userService)
             state = State.USABLE
             notifyReady = True
@@ -221,13 +219,13 @@ class WindowsOsManager(osmanagers.OSManager):
             else:
                 logger.debug('Notifying ready')
                 userServiceManager().notifyReadyFromOsManager(userService, '')
-        logger.debug('Returning {} to {} message'.format(ret, msg))
+        logger.debug('Returning %s to %s message', ret, message)
         if options is not None and options.get('scramble', True) is False:
             return ret
         return scrambleMsg(ret)
 
-    def processUserPassword(self, service, username, password):
-        if service.getProperty('sso_available') == '1':
+    def processUserPassword(self, userService: 'UserService', username: str, password: str) -> typing.Tuple[str, str]:
+        if userService.getProperty('sso_available') == '1':
             # Generate a ticket, store it and return username with no password
             domain = ''
             if '@' in username:
@@ -242,10 +240,10 @@ class WindowsOsManager(osmanagers.OSManager):
             }
             ticket = TicketStore.create(creds, validator=None, validity=300)  # , owner=SECURE_OWNER, secure=True)
             return ticket, ''
-        else:
-            return osmanagers.OSManager.processUserPassword(self, service, username, password)
 
-    def processUnused(self, userService):
+        return osmanagers.OSManager.processUserPassword(self, userService, username, password)
+
+    def processUnused(self, userService: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
@@ -256,8 +254,9 @@ class WindowsOsManager(osmanagers.OSManager):
     def isPersistent(self):
         return self._onLogout == 'keep-always'
 
-    def checkState(self, service):
-        logger.debug('Checking state for service {0}'.format(service))
+    def checkState(self, userService: 'UserService') -> str:
+        # will alway return true, because the check is done by an actor callback
+        logger.debug('Checking state for service %s', userService)
         return State.RUNNING
 
     def maxIdle(self):
@@ -269,24 +268,24 @@ class WindowsOsManager(osmanagers.OSManager):
 
         return self._idle
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Serializes the os manager data so we can store it in database
         """
         return '\t'.join(['v2', self._onLogout, str(self._idle)]).encode('utf8')
 
-    def unmarshal(self, s):
-        data = s.decode('utf8').split('\t')
+    def unmarshal(self, data: bytes) -> None:
+        vals = data.decode('utf8').split('\t')
         try:
-            if data[0] == 'v1':
-                self._onLogout = data[1]
+            if vals[0] == 'v1':
+                self._onLogout = vals[1]
                 self._idle = -1
-            elif data[0] == 'v2':
-                self._onLogout, self._idle = data[1], int(data[2])
+            elif vals[0] == 'v2':
+                self._onLogout, self._idle = vals[1], int(vals[2])
         except Exception:
             logger.exception('Exception unmarshalling. Some values left as default ones')
 
         self.__setProcessUnusedMachines()
 
-    def valuesDict(self):
+    def valuesDict(self) -> gui.ValuesDictType:
         return {'onLogout': self._onLogout, 'idle': self._idle}

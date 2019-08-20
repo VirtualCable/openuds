@@ -42,7 +42,7 @@ from uds.core.transports import protocols
 from uds.core.util import encoders
 from uds.core.util import connection
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
     from uds.core.environment import Environment

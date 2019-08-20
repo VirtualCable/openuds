@@ -44,7 +44,7 @@ from .authenticator import Authenticator
 from .user import User
 from .util import UnsavedForeignKey, getSqlDatetime
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import auths
 

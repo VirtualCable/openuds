@@ -36,7 +36,7 @@ import typing
 from uds.models import Permissions
 from uds.core.util import ot
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import User, Group
 

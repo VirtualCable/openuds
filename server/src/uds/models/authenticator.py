@@ -45,7 +45,7 @@ from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
 from .util import NEVER
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .user import User
     from django.db.models import QuerySet  # pylint: disable=ungrouped-imports

@@ -41,7 +41,7 @@ from uds.core.util import html
 
 from uds.core.managers import userServiceManager
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest # pylint: disable=ungrouped-imports
 

@@ -1,14 +1,38 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 import dns.resolver
 import ldap
@@ -21,7 +45,13 @@ from uds.core.util import log
 from uds.core.util import encoders
 from uds.core.util import ldaputil
 
-from .WindowsOsManager import WindowsOsManager
+from .windows import WindowsOsManager
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+    from uds.core.environment import Environment
+    from uds.models import UserService
 
 
 logger = logging.getLogger(__name__)
@@ -42,14 +72,23 @@ class WinDomainOsManager(WindowsOsManager):
     removeOnExit = gui.CheckBoxField(label=_('Machine clean'), order=8, tooltip=_('If checked, UDS will try to remove the machine from the domain USING the provided credentials'), tab=_('Advanced'), defvalue=gui.TRUE)
     serverHint = gui.TextField(length=64, label=_('Server Hint'), order=9, tooltip=_('In case of several AD servers, which one is preferred'), tab=_('Advanced'))
     ssl = gui.CheckBoxField(label=_('Use SSL'), order=10, tooltip=_('If checked,  a ssl connection to Active Directory will be used'), tab=_('Advanced'))
-    
+
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
 
-    def __init__(self, environment, values):
-        super(WinDomainOsManager, self).__init__(environment, values)
-        if values is not None:
+    _domain: str
+    _ou: str
+    _account: str
+    _pasword: str
+    _group: str
+    _serverHint: str
+    _removeOnExit: str
+    _ssl: str
+
+    def __init__(self, environment: 'Environment', values: 'Module.ValuesType'):
+        super().__init__(environment, values)
+        if values:
             if values['domain'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide a domain!'))
             # if values['domain'].find('.') == -1:
@@ -66,8 +105,8 @@ class WinDomainOsManager(WindowsOsManager):
             self._password = values['password']
             self._group = values['grp'].strip()
             self._serverHint = values['serverHint'].strip()
-            self._ssl = 'y' if values['ssl'] else 'n' 
-            self._removeOnExit = 'y' if values['removeOnExit'] else 'n' 
+            self._ssl = 'y' if values['ssl'] else 'n'
+            self._removeOnExit = 'y' if values['removeOnExit'] else 'n'
         else:
             self._domain = ""
             self._ou = ""
@@ -84,14 +123,14 @@ class WinDomainOsManager(WindowsOsManager):
             if self._ou.lower().find(lpath) == -1:
                 self._ou += ',' + lpath
 
-    def __getServerList(self):
+    def __getServerList(self) -> typing.Iterable[typing.Tuple[str, int]]:
         if self._serverHint != '':
             yield (self._serverHint, 389)
 
         for server in reversed(sorted(dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'), key=lambda i: i.priority * 10000 + i.weight)):
             yield (str(server.target)[:-1], server.port)
 
-    def __connectLdap(self, servers=None):
+    def __connectLdap(self, servers: typing.Optional[typing.Iterable[typing.Tuple[str, int]]] = None) -> typing.Any:
         """
         Tries to connect to LDAP
         Raises an exception if not found:
@@ -108,8 +147,8 @@ class WinDomainOsManager(WindowsOsManager):
         _str = "No servers found"
         # And if not possible, try using NON-SSL
         for server in servers:
-            port = server[1] if self._ssl != 'y' else -1
             ssl = self._ssl == 'y'
+            port = server[1] if not ssl else -1
             try:
                 return ldaputil.connection(account, self._password, server[0], port, ssl=ssl, timeout=10, debug=False)
             except Exception as e:
@@ -117,11 +156,11 @@ class WinDomainOsManager(WindowsOsManager):
 
         raise ldaputil.LDAPError(_str)
 
-    def __getGroup(self, l):
+    def __getGroup(self, ldapConnection: typing.Any) -> str:
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
         group = ldaputil.escape(self._group)
         try:
-            obj = next(ldaputil.getAsDict(l, base, "(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(group), ['dn'], sizeLimit=50))
+            obj = next(ldaputil.getAsDict(ldapConnection, base, "(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(group), ['dn'], sizeLimit=50))
         except StopIteration:
             obj = None
 
@@ -130,7 +169,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return obj['dn']  # Returns the DN
 
-    def __getMachine(self, l, machineName):
+    def __getMachine(self, ldapConnection, machineName: str) -> typing.Optional[str]:
         # if self._ou:
         #     base = self._ou
         # else:
@@ -138,7 +177,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(ldaputil.escape(machineName))
         try:
-            obj = next(ldaputil.getAsDict(l, base, fltr, ['dn'], sizeLimit=50))
+            obj = next(ldaputil.getAsDict(ldapConnection, base, fltr, ['dn'], sizeLimit=50))
         except StopIteration:
             obj = None
 
@@ -147,29 +186,27 @@ class WinDomainOsManager(WindowsOsManager):
 
         return obj['dn']  # Returns the DN
 
-    def readyReceived(self, userService, data):
+    def readyReceived(self, userService: 'UserService', data: str) -> None:
         # No group to add
         if self._group == '':
             return
 
-        if not '.' in self._domain:
+        if '.' not in self._domain:
             logger.info('Adding to a group for a non FQDN domain is not supported')
             return
 
         # The machine is on a AD for sure, and maybe they are not already sync
-        servers = list(self.__getServerList())
-
-        error = None
-        for s in servers:
+        error: typing.Optional[str] = None
+        for s in self.__getServerList():
             try:
-                l = self.__connectLdap(servers=(s,))
+                ldapConnection = self.__connectLdap(servers=(s,))
 
-                machine = self.__getMachine(l, userService.friendly_name)
-                group = self.__getGroup(l)
+                machine = self.__getMachine(ldapConnection, userService.friendly_name)
+                group = self.__getGroup(ldapConnection)
                 # #
                 # Direct LDAP operation "modify", maybe this need to be added to ldaputil? :)
                 # #
-                l.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))  # @UndefinedVariable
+                ldapConnection.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))  # @UndefinedVariable
                 error = None
                 break
             except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
@@ -186,16 +223,13 @@ class WinDomainOsManager(WindowsOsManager):
                 error = "Could not add machine {} to group {}: {}".format(userService.friendly_name, self._group, e)
                 # logger.exception('Ldap Exception caught')
 
-        if error is not None:
+        if error:
             log.doLog(userService, log.WARN, error, log.OSMANAGER)
             logger.error(error)
 
-    def release(self, service):
-        """
-        service is a db user service object
-        """
-        super(WinDomainOsManager, self).release(service)
-        
+    def release(self, userService: 'UserSrevice') -> None:
+        super().release(userService)
+
         # If no removal requested, just return
         if self._removeOnExit != 'y':
             return
@@ -205,62 +239,62 @@ class WinDomainOsManager(WindowsOsManager):
             return
 
         try:
-            l = self.__connectLdap()
+            ldapConnection = self.__connectLdap()
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
             logger.warning('Could not find _ldap._tcp.%s', self._domain)
-            log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
+            log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
             return
         except ldaputil.LDAPError:
             logger.exception('Ldap Exception caught')
-            log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
+            log.doLog(userService, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
             return
         except Exception:
             logger.exception('Exception caught')
             return
 
         try:
-            res = self.__getMachine(l, service.friendly_name)
+            res = self.__getMachine(ldapConnection, userService.friendly_name)
             if res is None:
-                raise Exception('Machine {} not found on AD (permissions?)'.format(service.friendly_name))
-            ldaputil.recursive_delete(l, res)
+                raise Exception('Machine {} not found on AD (permissions?)'.format(userService.friendly_name))
+            ldaputil.recursive_delete(ldapConnection, res)
         except IndexError:
-            logger.error('Error deleting %s from BASE %s', service.friendly_name, self._ou)
+            logger.error('Error deleting %s from BASE %s', userService.friendly_name, self._ou)
         except Exception:
             logger.exception('Deleting from AD: ')
 
-    def check(self):
+    def check(self) -> str:
         try:
-            l = self.__connectLdap()
+            ldapConnection = self.__connectLdap()
         except ldaputil.LDAPError as e:
-            return _('Check error: {0}').format(self.__getLdapError(e))
+            return _('Check error: {}').format(self.__getLdapError(e))
         except dns.resolver.NXDOMAIN:
-            return [True, _('Could not find server parameters (_ldap._tcp.{0} can\'t be resolved)').format(self._domain)]
+            return _('Could not find server parameters (_ldap._tcp.{0} can\'t be resolved)').format(self._domain)
         except Exception as e:
             logger.exception('Exception ')
-            return [False, str(e)]
+            return str(e)
 
         try:
-            l.search_st(self._ou, ldap.SCOPE_BASE)  # @UndefinedVariable
+            ldapConnection.search_st(self._ou, ldap.SCOPE_BASE)  # @UndefinedVariable
         except ldaputil.LDAPError as e:
-            return _('Check error: {0}').format(self.__getLdapError(e))
+            return _('Check error: {}').format(self.__getLdapError(e))
 
         # Group
         if self._group != '':
-            if self.__getGroup(l) is None:
+            if self.__getGroup(ldapConnection) is None:
                 return _('Check Error: group "{}" not found (using "cn" to locate it)').format(self._group)
 
         return _('Server check was successful')
 
     # pylint: disable=protected-access
     @staticmethod
-    def test(env, data):
+    def test(env: 'Environment', data: typing.Dict[str, str]) -> typing.List[typing.Any]:
         logger.debug('Test invoked')
-        wd = None
+        wd: typing.Optional[WinDomainOsManager] = None
         try:
             wd = WinDomainOsManager(env, data)
             logger.debug(wd)
             try:
-                l = wd.__connectLdap()
+                ldapConnection = wd.__connectLdap()
             except ldaputil.LDAPError as e:
                 return [False, _('Could not access AD using LDAP ({0})').format(wd.__getLdapError(e))]
 
@@ -268,15 +302,14 @@ class WinDomainOsManager(WindowsOsManager):
             if ou == '':
                 ou = 'cn=Computers,dc=' + ',dc='.join(wd._domain.split('.'))
 
-            logger.debug('Checking {0} with ou {1}'.format(wd._domain, ou))
-            r = l.search_st(ou, ldap.SCOPE_BASE)  # @UndefinedVariable
-            logger.debug('Result of search: {0}'.format(r))
+            logger.info('Checking %s with ou %s', wd._domain, ou)
+            r = ldapConnection.search_st(ou, ldap.SCOPE_BASE)  # @UndefinedVariable
+            logger.info('Result of search: %s', r)
 
         except ldaputil.LDAPError:
-            if wd._ou == '':
+            if not wd._ou:
                 return [False, _('The default path {0} for computers was not found!!!').format(wd._ou)]
-            else:
-                return [False, _('The ou path {0} was not found!!!').format(wd._ou)]
+            return [False, _('The ou path {0} was not found!!!').format(wd._ou)]
         except dns.resolver.NXDOMAIN:
             return [True, _('Could not check parameters (_ldap._tcp.{0} can\'r be resolved)').format(wd._domain)]
         except Exception as e:
@@ -285,54 +318,54 @@ class WinDomainOsManager(WindowsOsManager):
 
         return [True, _("All parameters seem to work fine.")]
 
-    def infoVal(self, service):
-        return 'domain:{0}\t{1}\t{2}\t{3}\t{4}'.format(self.getName(service), self._domain, self._ou, self._account, self._password)
+    def infoVal(self, userService: 'UserService') -> str:
+        return 'domain:{0}\t{1}\t{2}\t{3}\t{4}'.format(self.getName(userService), self._domain, self._ou, self._account, self._password)
 
-    def infoValue(self, service):
-        return 'domain\r{0}\t{1}\t{2}\t{3}\t{4}'.format(self.getName(service), self._domain, self._ou, self._account, self._password)
+    def infoValue(self, userService: 'UserService') -> str:
+        return 'domain\r{0}\t{1}\t{2}\t{3}\t{4}'.format(self.getName(userService), self._domain, self._ou, self._account, self._password)
 
-    def marshal(self):
-        base = super(WinDomainOsManager, self).marshal()
+    def marshal(self) -> bytes:
         '''
         Serializes the os manager data so we can store it in database
         '''
+        base = typing.cast(str, encoders.encode(super().marshal(), 'hex', asText=True))
         return '\t'.join([
             'v4',
             self._domain, self._ou, self._account,
             cryptoManager().encrypt(self._password),
-            encoders.encode(base, 'hex', asText=True),
-            self._group, self._serverHint, self._ssl, self._removeOnExit]
-        ).encode('utf8')
+            base,
+            self._group, self._serverHint, self._ssl, self._removeOnExit
+        ]).encode('utf8')
 
-    def unmarshal(self, s):
-        data = s.decode('utf8').split('\t')
-        if data[0] in ('v1', 'v2', 'v3', 'v4'):
-            self._domain = data[1]
-            self._ou = data[2]
-            self._account = data[3]
-            self._password = cryptoManager().decrypt(data[4])
+    def unmarshal(self, data: bytes) -> None:
+        values = data.decode('utf8').split('\t')
+        if values[0] in ('v1', 'v2', 'v3', 'v4'):
+            self._domain = values[1]
+            self._ou = values[2]
+            self._account = values[3]
+            self._password = cryptoManager().decrypt(values[4])
 
-        if data[0] in ('v2', 'v3', 'v4'):
-            self._group = data[6]
+        if values[0] in ('v2', 'v3', 'v4'):
+            self._group = values[6]
         else:
             self._group = ''
 
-        if data[0] in ('v3', 'v4'):
-            self._serverHint = data[7]
+        if values[0] in ('v3', 'v4'):
+            self._serverHint = values[7]
         else:
             self._serverHint = ''
             
-        if data[0] == 'v4':
-            self._ssl = data[8]
-            self._removeOnExit = data[9]
+        if values[0] == 'v4':
+            self._ssl = values[8]
+            self._removeOnExit = values[9]
         else:
             self._ssl = 'n'
             self._removeOnExit = 'y'
 
-        super(WinDomainOsManager, self).unmarshal(encoders.decode(data[5], 'hex'))
+        super().unmarshal(typing.cast(bytes, encoders.decode(values[5], 'hex')))
 
-    def valuesDict(self):
-        dct = super(WinDomainOsManager, self).valuesDict()
+    def valuesDict(self) -> gui.ValuesDictType:
+        dct = super().valuesDict()
         dct['domain'] = self._domain
         dct['ou'] = self._ou
         dct['account'] = self._account

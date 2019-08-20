@@ -46,7 +46,7 @@ from .tag import TaggingMixin
 from .proxy import Proxy
 from .provider import Provider
 
-# Not imported in runtime, just for type checking
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import services
 

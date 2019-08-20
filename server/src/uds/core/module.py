@@ -269,7 +269,7 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Internacionalized (using ugettext) string of result of the check.
         """
-        return _("No check method provided.")
+        return  _("No check method provided.")
 
     def getUuid(self) -> str:
         return self._uuid
