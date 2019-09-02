@@ -30,26 +30,30 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from uds.core import services
 from uds.core.util.state import State
 from uds.core.util.auto_attributes import AutoAttributes
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-class IPServerDeployed(AutoAttributes, services.UserDeployment):
+class IPServerDeployed(services.UserDeployment, AutoAttributes):
     suggestedTime = 10
 
+    # Provided by autoattributes
+    _ip: str
+    _reason: str
+    _state: str
     def __init__(self, environment, **kwargs):
         AutoAttributes.__init__(self, ip=str, reason=str, state=str)
         services.UserDeployment.__init__(self, environment, **kwargs)
         self._state = State.FINISHED
 
     def setIp(self, ip):
-        logger.debug('Setting IP to %s (ignored)' % ip)
+        logger.debug('Setting IP to %s (ignored)', ip)
 
     def getIp(self):
         return self._ip.split('~')[0]
