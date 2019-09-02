@@ -76,7 +76,7 @@ class AutoAttributes(Serializable):
     attrs: typing.Dict
 
     def __init__(self, **kwargs):
-        super().__init__()
+        Serializable.__init__(self)
         self.attrs = {}
         self.declare(**kwargs)
 
