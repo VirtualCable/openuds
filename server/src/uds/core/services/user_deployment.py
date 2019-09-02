@@ -382,7 +382,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('Base deploy for cache invoked! for class {0}'.format(self.__class__.__name__))
+        raise Exception('Base deploy for cache invoked! for class {0}'.format(self.__class__.__name__))
 
     def deployForUser(self, user: 'User') -> str:
         """
@@ -573,8 +573,8 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         This method is invoked for "reset" an user service
         This method is not intended to be a task right now, (so its one step method)
+        base method does nothing
         """
-        raise NotImplementedError('reset method for class {0} not provided!'.format(self.__class__.__name__))
 
     def __str__(self):
         """

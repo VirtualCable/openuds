@@ -679,6 +679,7 @@ class UserServiceManager:
             userServiceInstance = userService.getInstance()
             ip = userServiceInstance.getIp()
             userService.logIP(ip)  # Update known ip
+            logger.debug('IP: %s', ip)
 
             if self.checkUuid(userService) is False:  # The service is not the expected one
                 serviceNotReadyCode = 0x0004

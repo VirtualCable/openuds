@@ -30,19 +30,22 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from uds.core import services
 from uds.core.util.state import State
 from uds.core.util.auto_attributes import AutoAttributes
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-class IPMachineDeployed(AutoAttributes, services.UserDeployment):
+class IPMachineDeployed(services.UserDeployment, AutoAttributes):
     suggestedTime = 10
+
+    _ip: str
+    _reason: str
+    _state: str
 
     def __init__(self, environment, **kwargs):
         AutoAttributes.__init__(self, ip=str, reason=str, state=str)
@@ -50,7 +53,7 @@ class IPMachineDeployed(AutoAttributes, services.UserDeployment):
         self._state = State.FINISHED
 
     def setIp(self, ip):
-        logger.debug('Setting IP to %s (ignored)' % ip)
+        logger.debug('Setting IP to %s (ignored)', ip)
 
     def getIp(self):
         return self._ip.split('~')[0]
@@ -78,7 +81,7 @@ class IPMachineDeployed(AutoAttributes, services.UserDeployment):
         return self._state
 
     def deployForUser(self, user):
-        logger.debug("Starting deploy of {0} for user {1}".format(self._ip, user))
+        logger.debug("Starting deploy of %s for user %s", self._ip, user)
         return self.__deploy()
 
     def checkState(self):

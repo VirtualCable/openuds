@@ -64,7 +64,6 @@ class Attribute:
             self._value = self._type(value)
 
 
-# noinspection PyMissingConstructor
 class AutoAttributes(Serializable):
     """
     Easy creation of attributes to marshal & unmarshal at modules
@@ -74,21 +73,21 @@ class AutoAttributes(Serializable):
     Access attrs as "self._attr1, self._attr2"
     """
 
-    _dict: typing.Dict
+    attrs: typing.Dict
 
     def __init__(self, **kwargs):
         super().__init__()
-        self.dict = {}
+        self.attrs = {}
         self.declare(**kwargs)
 
     def __getattribute__(self, name):
-        if name.startswith('_') and name[1:] in self.dict:
-            return self.dict[name[1:]].getValue()
+        if name.startswith('_') and name[1:] in self.attrs:
+            return self.attrs[name[1:]].getValue()
         return object.__getattribute__(self, name)
 
     def __setattr__(self, name, value):
-        if name.startswith('_') and name[1:] in self.dict:
-            self.dict[name[1:]].setValue(value)
+        if name.startswith('_') and name[1:] in self.attrs:
+            self.attrs[name[1:]].setValue(value)
         else:
             object.__setattr__(self, name, value)
 
@@ -96,10 +95,12 @@ class AutoAttributes(Serializable):
         d = {}
         for key, typ in kwargs.items():
             d[key] = Attribute(typ)
-        self.dict = d
+        self.attrs = d
 
     def marshal(self) -> bytes:
-        return typing.cast(bytes, encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.dict.items()]), 'bz2'))
+        for k, v in self.attrs.items():
+            logger.debug('Marshall Autoattributes: %s=%s', k, v.getValue())
+        return typing.cast(bytes, encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.attrs.items()]), 'bz2'))
 
     def unmarshal(self, data: bytes):
         if not data:  # Can be empty
@@ -113,10 +114,13 @@ class AutoAttributes(Serializable):
         for pair in data.split(b'\2'):
             k, v = pair.split(b'\1')
             # logger.debug('k: %s  ---   v: %s', k, v)
-            self.dict[k.decode('utf8')] = pickle.loads(v)
+            self.attrs[k.decode('utf8')] = pickle.loads(v)
+
+        for k, v in self.attrs.items():
+            logger.debug('Marshall Autoattributes: %s=%s', k, v.getValue())
 
     def __str__(self):
         str_ = '<AutoAttribute '
-        for k, v in self.dict.items():
+        for k, v in self.attrs.items():
             str_ += "%s (%s) = %s" % (k, v.getType(), v.getStrValue())
         return str_ + '>'
