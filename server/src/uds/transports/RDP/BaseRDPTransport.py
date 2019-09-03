@@ -62,21 +62,21 @@ class BaseRDPTransport(Transport):
     allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=20, tooltip=_('If checked, this transport will allow the use of smartcards'), tab=gui.PARAMETERS_TAB)
     allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=21, tooltip=_('If checked, this transport will allow the use of user printers'), tab=gui.PARAMETERS_TAB)
     allowDrives = gui.ChoiceField(
-        label=_('Allow Drives'),
+        label=_('Local drives policy'),
         order=22,
-        tooltip=_('Local drives redirection allowed'),
+        tooltip=_('Local drives redirection policy'),
         defvalue='false',
         values=[
-            {'id': 'false', 'text': 'None' },
-            {'id': 'dynamic', 'text': 'Only PnP drives' },
-            {'id': 'true', 'text': 'All drives' },
+            {'id': 'false', 'text': 'Allow none' },
+            {'id': 'dynamic', 'text': 'Allow PnP drives' },
+            {'id': 'true', 'text': 'Allow any drive' },
         ],
         tab=gui.PARAMETERS_TAB
     )
     enforceDrives = gui.TextField(
         label=_('Force drives'),
         order=23,
-        tooltip=_('If allowed drives, the ones listed will be enforced to be shared on Windows clients. Use comma separated values, for example "C:,D:"'),
+        tooltip=_('Use comma separated values, for example "C:,D:". If drives policy is disallowed, this will be ignored'),
         tab=gui.PARAMETERS_TAB
     )
 
@@ -133,7 +133,7 @@ class BaseRDPTransport(Transport):
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
         """
-        logger.debug('Checking availability for {0}'.format(ip))
+        logger.debug('Checking availability for %s', ip)
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready

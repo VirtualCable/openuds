@@ -126,14 +126,15 @@ def udsJs(request):
         }
     }
 
+    # all plugins are under url clients...
     plugins = [
         {
-            'url': static(url.format(version=CLIENT_VERSION)),
+            'url': static('clients/' + url.format(version=CLIENT_VERSION)),
             'description': description,
             'name': name
         } for url, description, name in (
-            ('clients/UDSClientSetup-{version}.exe', gettext('Windows client'), 'Windows'),
-            ('clients/UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS'),
+            ('UDSClientSetup-{version}.exe', gettext('Windows client'), 'Windows'),
+            ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS'),
             ('udsclient_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
             ('udsclient-{version}-1.noarch.rpm', gettext('Red Hat based Linux client (RH, Fedora, Centos, ...)') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
             ('udsclient-opensuse-{version}-1.noarch.rpm', gettext('Suse based Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),

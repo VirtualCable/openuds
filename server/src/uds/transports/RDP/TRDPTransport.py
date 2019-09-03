@@ -149,6 +149,7 @@ class TRDPTransport(BaseRDPTransport):
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
         r.linuxCustomParameters = self.customParameters.value
+        r.enforcedShares = self.enforceDrives.value
 
         os = {
             OsDetector.Windows: 'windows',
