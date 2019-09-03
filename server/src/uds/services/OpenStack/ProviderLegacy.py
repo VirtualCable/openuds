@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +32,8 @@ Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import ServiceProvider
@@ -42,9 +43,11 @@ from uds.core.util import validators
 from .LiveService import LiveService
 from . import openStack
 
-import logging
 
-__updated__ = '2018-10-22'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+
 
 logger = logging.getLogger(__name__)
 
@@ -117,9 +120,9 @@ class ProviderLegacy(ServiceProvider):
     legacy = True
 
     # Own variables
-    _api = None
+    _api: typing.Optional[openStack.Client] = None
 
-    def initialize(self, values=None):
+    def initialize(self, values: 'Module.ValuesType' = None):
         '''
         We will use the "autosave" feature for form fields
         '''
@@ -128,14 +131,19 @@ class ProviderLegacy(ServiceProvider):
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
 
-    def api(self, projectId=None, region=None):
-        return openStack.Client(self.host.value, self.port.value,
-                                     self.domain.value, self.username.value, self.password.value,
-                                     legacyVersion=True,
-                                     useSSL=self.ssl.isTrue(),
-                                     projectId=projectId,
-                                     region=region,
-                                     access=self.access.value)
+    def api(self, projectId=None, region=None) -> openStack.Client:
+        return openStack.Client(
+            self.host.value,
+            self.port.value,
+            self.domain.value,
+            self.username.value,
+            self.password.value,
+            legacyVersion=True,
+            useSSL=self.ssl.isTrue(),
+            projectId=projectId,
+            region=region,
+            access=self.access.value
+        )
 
     def sanitizeVmName(self, name):
         return openStack.sanitizeName(name)

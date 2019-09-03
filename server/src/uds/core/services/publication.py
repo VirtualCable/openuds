@@ -79,7 +79,7 @@ class Publication(Environmentable, Serializable):
     # : but full clone takes a lot, so we suggest that checks are done more steady.
     # : This attribute is always accessed using an instance object, so you can
     # : change suggestedTime in your implementation.
-    suggestedTime = 10
+    suggestedTime: int = 10
 
     _osmanager: typing.Optional['osmanagers.OSManager']
     _service: 'services.Service'

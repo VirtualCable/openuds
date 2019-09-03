@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,21 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import pickle
+import logging
+import typing
+
 from uds.core.services import UserDeployment
 from uds.core.util.state import State
 from uds.core.util import log
 
 from . import openStack
 
-import pickle
-import logging
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .LiveService import LiveService
+    from .LivePublication import LivePublication
 
-__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
@@ -58,12 +63,12 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
     The logic for managing ovirt deployments (user machines in this case) is here.
     """
-    _name = ''
-    _ip = ''
-    _mac = ''
-    _vmid = ''
-    _reason = ''
-    _queue = None
+    _name: str = ''
+    _ip: str = ''
+    _mac: str = ''
+    _vmid: str = ''
+    _reason: str = ''
+    _queue: typing.List[int] = []
 
     # : Recheck every this seconds by default (for task methods)
     suggestedTime = 20
@@ -76,8 +81,16 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         self._reason = ''
         self._queue = []
 
+    # For typing check only...
+    def service(self) -> 'LiveService':
+        return typing.cast('LiveService', super().service())
+
+    # For typing check only...
+    def publication(self) -> 'LivePublication':
+        return typing.cast('LivePublication', super().publication())
+
     # Serializable needed methods
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Does nothing right here, we will use envoronment storage in this sample
         """
@@ -91,7 +104,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             pickle.dumps(self._queue, protocol=0)
         ]).encode('utf8')
 
-    def unmarshal(self, data: bytes):
+    def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are keeped at environment storage
         """
@@ -144,7 +157,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         :note: This IP is the IP of the "consumed service", so the transport can
                access it.
         """
-        logger.debug('Setting IP to {}'.format(ip))
+        logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
     def getUniqueId(self):
@@ -206,15 +219,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if self._vmid != '':
             self.service().resetMachine(self._vmid)
 
-    def getConsoleConnection(self):
-        return self.service().getConsoleConnection(self._vmid)
-
-    def desktopLogin(self, username, password, domain=''):
-        return self.service().desktopLogin(self._vmId, username, password, domain)
-
     def notifyReadyFromOsManager(self, data):
         # Here we will check for suspending the VM (when full ready)
-        logger.debug('Checking if cache 2 for {0}'.format(self._name))
+        logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
             logger.debug('Machine is ready. Moving to level 2')
             self.__popCurrentOp()  # Remove current state
@@ -245,7 +252,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._queue = [opCreate, opWait, opSuspend, opFinish]
 
     def __checkMachineState(self, chkState):
-        logger.debug('Checking that state of machine {} ({}) is {}'.format(self._vmid, self._name, chkState))
+        logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
         status = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
@@ -253,24 +260,20 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             return self.__error('Machine not available. ({})'.format(status))
 
         ret = State.RUNNING
-
-        if type(chkState) is list:
-            if status in chkState:
-                ret = State.FINISHED
-        else:
-            if status == chkState:
-                ret = State.FINISHED
+        chkState = [chkState] if not isinstance(chkState, (list, tuple)) else chkState
+        if status in chkState:
+            ret = State.FINISHED
 
         return ret
 
     def __getCurrentOp(self):
-        if len(self._queue) == 0:
+        if not self._queue:
             return opFinish
 
         return self._queue[0]
 
     def __popCurrentOp(self):
-        if len(self._queue) == 0:
+        if not self._queue:
             return opFinish
 
         res = self._queue.pop(0)
@@ -313,7 +316,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Callable[[], None]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -323,12 +326,10 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         }
 
         try:
-            execFnc = fncs.get(op, None)
-
-            if execFnc is None:
+            if op not in fncs:
                 return self.__error('Unknown operation found at execution queue ({0})'.format(op))
 
-            execFnc()
+            fncs[op]()
 
             return State.RUNNING
         except Exception as e:
@@ -432,7 +433,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Callable[[], str]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opWait: self.__wait,
@@ -442,12 +443,10 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         }
 
         try:
-            chkFnc = fncs.get(op, None)
+            if op not in fncs:
+                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
 
-            if chkFnc is None:
-                return self.__error('Unknown operation found at check queue ({0})'.format(op))
-
-            state = chkFnc()
+            state = fncs[op]()
             if state == State.FINISHED:
                 self.__popCurrentOp()  # Remove runing op
                 return self.__executeQueue()
@@ -462,7 +461,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         (No matter wether it is for cache or for an user)
         """
         self.__debug('finish')
-        pass
 
     def moveToCache(self, newLevel):
         """
@@ -477,25 +475,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._queue = [opStart, opSuspend, opFinish]
 
         return self.__executeQueue()
-
-    def userLoggedIn(self, user):
-        """
-        This method must be available so os managers can invoke it whenever
-        an user get logged into a service.
-
-        The user provided is just an string, that is provided by actor.
-        """
-        # We store the value at storage, but never get used, just an example
-        pass
-
-    def userLoggedOut(self, user):
-        """
-        This method must be available so os managers can invoke it whenever
-        an user get logged out if a service.
-
-        The user provided is just an string, that is provided by actor.
-        """
-        pass
 
     def reasonOfError(self):
         """
@@ -553,8 +532,8 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         }.get(op, '????')
 
     def __debug(self, txt):
-        logger.debug('_name {0}: {1}'.format(txt, self._name))
-        logger.debug('_ip {0}: {1}'.format(txt, self._ip))
-        logger.debug('_mac {0}: {1}'.format(txt, self._mac))
-        logger.debug('_vmid {0}: {1}'.format(txt, self._vmid))
-        logger.debug('Queue at {0}: {1}'.format(txt, [LiveDeployment.__op2str(op) for op in self._queue]))
+        logger.debug('_name %s: %s', txt, self._name)
+        logger.debug('_ip %s: %s', txt, self._ip)
+        logger.debug('_mac %s: %s', txt, self._mac)
+        logger.debug('_vmid %s: %s', txt, self._vmid)
+        logger.debug('Queue at %s: %s', txt, [LiveDeployment.__op2str(op) for op in self._queue])

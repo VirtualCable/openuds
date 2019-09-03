@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,21 +30,24 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from django.utils.translation import ugettext_noop as _, ugettext
+import logging
+import typing
+
+from django.utils.translation import ugettext_noop as _
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
+from uds.core.ui import gui
+
 from .LivePublication import LivePublication
 from .LiveDeployment import LiveDeployment
 from . import helpers
 
-from uds.core.ui import gui
-
-import six
-import logging
-
-__updated__ = '2018-10-22'
 
 logger = logging.getLogger(__name__)
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from . import openStack
 
 
 class LiveService(Service):
@@ -98,21 +101,29 @@ class LiveService(Service):
 
     # Now the form part
     region = gui.ChoiceField(label=_('Region'), order=1, tooltip=_('Service region'), required=True, rdonly=True)
-    project = gui.ChoiceField(label=_('Project'), order=2,
+    project = gui.ChoiceField(
+        label=_('Project'),
+        order=2,
         fills={
             'callbackName' : 'osFillResources',
             'function' : helpers.getResources,
             'parameters' : ['ov', 'ev', 'project', 'region', 'legacy']
-            },
-        tooltip=_('Project for this service'), required=True, rdonly=True
+        },
+        tooltip=_('Project for this service'),
+        required=True,
+        rdonly=True
     )
-    availabilityZone = gui.ChoiceField(label=_('Availability Zones'), order=3,
+    availabilityZone = gui.ChoiceField(
+        label=_('Availability Zones'),
+        order=3,
         fills={
             'callbackName' : 'osFillVolumees',
             'function' : helpers.getVolumes,
             'parameters' : ['ov', 'ev', 'project', 'region', 'availabilityZone', 'legacy']
-            },
-        tooltip=_('Service availability zones'), required=True, rdonly=True
+        },
+        tooltip=_('Service availability zones'),
+        required=True,
+        rdonly=True
     )
     volume = gui.ChoiceField(label=_('Volume'), order=4, tooltip=_('Base volume for service (restricted by availability zone)'), required=True, tab=_('Machine'))
     # volumeType = gui.ChoiceField(label=_('Volume Type'), order=5, tooltip=_('Volume type for service'), required=True)
@@ -144,6 +155,8 @@ class LiveService(Service):
     ev = gui.HiddenField(value=None)
     legacy = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
+    _api: typing.Optional['openStack.Client']
+
     def initialize(self, values):
         """
         We check here form values to see if they are valid.
@@ -151,7 +164,7 @@ class LiveService(Service):
         Note that we check them through FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
         """
-        if values is not None:
+        if values:
             length = int(self.lenName.value)
             if len(self.baseName.value) + length > 15:
                 raise Service.ValidationException(_('The length of basename plus length must not be greater than 15'))
@@ -182,30 +195,30 @@ class LiveService(Service):
         self.legacy.setDefValue(self.parent().legacy and 'true' or 'false')
 
     @property
-    def api(self):
-        if self._api is None:
+    def api(self) -> 'openStack.Client':
+        if not self._api:
             self._api = self.parent().api(projectId=self.project.value, region=self.region.value)
 
         return self._api
 
-    def sanitizeVmName(self, name):
+    def sanitizeVmName(self, name: str) -> str:
         return self.parent().sanitizeVmName(name)
 
-    def makeTemplate(self, templateName, description=None):
+    def makeTemplate(self, templateName: str, description: typing.Optional[str] = None):
         # First, ensures that volume has not any running instances
         # if self.api.getVolume(self.volume.value)['status'] != 'available':
         #    raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
 
-        description = 'UDS Template snapshot' if description is None else description
+        description = description or 'UDS Template snapshot'
         return self.api.createVolumeSnapshot(self.volume.value, templateName, description)
 
-    def getTemplate(self, snapshotId):
+    def getTemplate(self, snapshotId: str):
         """
         Checks current state of a template (an snapshot)
         """
         return self.api.getSnapshot(snapshotId)
 
-    def deployFromTemplate(self, name, snapshotId):
+    def deployFromTemplate(self, name: str, snapshotId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -217,22 +230,24 @@ class LiveService(Service):
         Returns:
             Id of the machine being created form template
         """
-        logger.debug('Deploying from template {0} machine {1}'.format(snapshotId, name))
+        logger.debug('Deploying from template %s machine %s', snapshotId, name)
         # self.datastoreHasSpace()
-        return self.api.createServerFromSnapshot(snapshotId=snapshotId,
-                                          name=name,
-                                          availabilityZone=self.availabilityZone.value,
-                                          flavorId=self.flavor.value,
-                                          networkId=self.network.value,
-                                          securityGroupsIdsList=self.securityGroups.value)['id']
+        return self.api.createServerFromSnapshot(
+            snapshotId=snapshotId,
+            name=name,
+            availabilityZone=self.availabilityZone.value,
+            flavorId=self.flavor.value,
+            networkId=self.network.value,
+            securityGroupsIdsList=self.securityGroups.value
+        )['id']
 
-    def removeTemplate(self, templateId):
+    def removeTemplate(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
         self.api.deleteSnapshot(templateId)
 
-    def getMachineState(self, machineId):
+    def getMachineState(self, machineId: str) -> str:
         """
         Invokes getServer from openstack client
 
@@ -259,9 +274,12 @@ class LiveService(Service):
                 SUSPENDED. The server is suspended, either by request or necessity. This status appears for only the XenServer/XCP, KVM, and ESXi hypervisors. Administrative users can suspend an instance if it is infrequently used or to perform system maintenance. When you suspend an instance, its VM state is stored on disk, all memory is written to disk, and the virtual machine is stopped. Suspending an instance is similar to placing a device in hibernation; memory and vCPUs become available to create other instances.
                 VERIFY_RESIZE. System is awaiting confirmation that the server is operational after a move or resize.
         """
-        return self.api.getServer(machineId)['status']
+        server = self.api.getServer(machineId)
+        if server['status'] in ('ERROR', 'DELETED'):
+            logger.warning('Got server status %s for %s: %s', server['status'], machineId, server.get('fault'))
+        return server['status']
 
-    def startMachine(self, machineId):
+    def startMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenStack.
 
@@ -274,7 +292,7 @@ class LiveService(Service):
         """
         self.api.startServer(machineId)
 
-    def stopMachine(self, machineId):
+    def stopMachine(self, machineId: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
@@ -285,7 +303,7 @@ class LiveService(Service):
         """
         self.api.stopServer(machineId)
 
-    def resetMachine(self, machineId):
+    def resetMachine(self, machineId: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
@@ -296,7 +314,7 @@ class LiveService(Service):
         """
         self.api.resetServer(machineId)
 
-    def suspendMachine(self, machineId):
+    def suspendMachine(self, machineId: str) -> None:
         """
         Tries to suspend a machine. No check is done, it is simply requested to OpenStack
 
@@ -307,7 +325,7 @@ class LiveService(Service):
         """
         self.api.suspendServer(machineId)
 
-    def resumeMachine(self, machineId):
+    def resumeMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenStack
 
@@ -318,7 +336,7 @@ class LiveService(Service):
         """
         self.api.resumeServer(machineId)
 
-    def removeMachine(self, machineId):
+    def removeMachine(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to OpenStack
 
@@ -329,21 +347,22 @@ class LiveService(Service):
         """
         self.api.deleteServer(machineId)
 
-    def getNetInfo(self, machineId):
+    def getNetInfo(self, machineId: str) -> typing.Tuple[str, str]:
         """
         Gets the mac address of first nic of the machine
         """
         net = self.api.getServer(machineId)['addresses']
-        vals = six.next(six.itervalues(net))[0]  # Returns "any" mac address of any interface. We just need only one interface info
+        vals = next(iter(net.values()))[0]  # Returns "any" mac address of any interface. We just need only one interface info
+        # vals = six.next(six.itervalues(net))[0]  
         return vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr']
 
-    def getBaseName(self):
+    def getBaseName(self) -> str:
         """
         Returns the base name
         """
         return self.baseName.value
 
-    def getLenName(self):
+    def getLenName(self) -> int:
         """
         Returns the length of numbers part
         """

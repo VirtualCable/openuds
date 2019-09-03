@@ -32,11 +32,17 @@
 """
 import logging
 import json
+import typing
 
 import requests
 # import dateutil.parser
 
 from django.utils.translation import ugettext as _
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +57,12 @@ VERIFY_SSL = False
 
 
 # Helpers
-def ensureResponseIsValid(response, errMsg=None):
+def ensureResponseIsValid(response: requests.Response, errMsg: typing.Optional[str] = None) -> None:
     if response.ok is False:
         try:
             _, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
-            errMsg += ': {message}'.format(**err)
+            msg = ': {message}'.format(**err)
+            errMsg = errMsg + msg if errMsg else msg
         except Exception:
             pass  # If error geting error message, simply ignore it (will be loged on service log anyway)
         if errMsg is None:
@@ -64,7 +71,14 @@ def ensureResponseIsValid(response, errMsg=None):
         raise Exception(errMsg)
 
 
-def getRecurringUrlJson(url, headers, key, params=None, errMsg=None, timeout=10):
+def getRecurringUrlJson(
+        url: str,
+        headers: typing.Dict[str, str],
+        key: str,
+        params: typing.Dict[str, str] = None,
+        errMsg: str = None,
+        timeout: int = 10
+    ) -> typing.Iterable[typing.Any]:
     counter = 0
     while True:
         counter += 1
@@ -86,8 +100,7 @@ def getRecurringUrlJson(url, headers, key, params=None, errMsg=None, timeout=10)
 
 # Decorators
 def authRequired(func):
-
-    def ensurer(obj, *args, **kwargs):
+    def ensurer(obj: 'Client', *args, **kwargs):
         obj.ensureAuthenticated()
         try:
             return func(obj, *args, **kwargs)
@@ -109,13 +122,41 @@ def authProjectRequired(func):
     return ensurer
 
 
-class Client(object):
+class Client:  # pylint: disable=too-many-public-methods
     PUBLIC = 'public'
     PRIVATE = 'private'
     INTERNAL = 'url'
 
+    _authenticated: bool
+    _authenticatedProjectId: typing.Optional[str]
+    _authUrl: str
+    _tokenId: typing.Optional[str]
+    _catalog: typing.Optional[typing.List[typing.Dict[str, typing.Any]]]
+    _isLegacy: bool
+    _access: typing.Optional[str]
+    _domain: str
+    _username: str
+    _password: str
+    _userId: typing.Optional[str]
+    _projectId: typing.Optional[str]
+    _project: typing.Optional[str]
+    _region: typing.Optional[str]
+    _timeout: int
+
     # Legacyversion is True for versions <= Ocata
-    def __init__(self, host, port, domain, username, password, legacyVersion=True, useSSL=False, projectId=None, region=None, access=None):
+    def __init__(
+            self,
+            host: str,
+            port: typing.Union[str, int],
+            domain: str,
+            username: str,
+            password: str,
+            legacyVersion: bool = True,
+            useSSL: bool = False,
+            projectId: typing.Optional[str] = None,
+            region: typing.Optional[str] = None,
+            access: typing.Optional[str] = None
+        ):
         self._authenticated = False
         self._authenticatedProjectId = None
         self._tokenId = None
@@ -137,21 +178,22 @@ class Client(object):
             if self._authUrl[-1] != '/':
                 self._authUrl += '/'
 
-    def _getEndpointFor(self, type_):  # If no region is indicatad, first endpoint is returned
+    def _getEndpointFor(self, type_: str) -> str:  # If no region is indicatad, first endpoint is returned
         for i in self._catalog:
             if i['type'] == type_:
                 for j in i['endpoints']:
                     if j['interface'] == self._access and (self._region is None or j['region'] == self._region):
                         return j['url']
+        raise Exception('No endpoint url found')
 
-    def _requestHeaders(self):
+    def _requestHeaders(self) -> typing.Dict[str, str]:
         headers = {'content-type': 'application/json'}
-        if self._tokenId is not None:
+        if self._tokenId:
             headers['X-Auth-Token'] = self._tokenId
 
         return headers
 
-    def authPassword(self):
+    def authPassword(self) -> None:
         # logger.debug('Authenticating...')
         data = {
             'auth': {
@@ -189,11 +231,13 @@ class Client(object):
 
         # logger.debug('Request data: {}'.format(data))
 
-        r = requests.post(self._authUrl + 'v3/auth/tokens',
-                          data=json.dumps(data),
-                          headers={'content-type': 'application/json'},
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._authUrl + 'v3/auth/tokens',
+            data=json.dumps(data),
+            headers={'content-type': 'application/json'},
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Invalid Credentials')
 
@@ -211,12 +255,12 @@ class Client(object):
         if self._projectId is not None:
             self._catalog = token['catalog']
 
-    def ensureAuthenticated(self):
+    def ensureAuthenticated(self) -> None:
         if self._authenticated is False or self._projectId != self._authenticatedProjectId:
             self.authPassword()
 
     @authRequired
-    def listProjects(self):
+    def listProjects(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
             headers=self._requestHeaders(),
@@ -226,7 +270,7 @@ class Client(object):
         )
 
     @authRequired
-    def listRegions(self):
+    def listRegions(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._authUrl + 'v3/regions/',
             headers=self._requestHeaders(),
@@ -236,7 +280,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listServers(self, detail=False, params=None):
+    def listServers(self, detail: bool = False, params: bool = None) -> typing.Iterable[typing.Any]:
         path = '/servers/' + 'detail' if detail is True else ''
         return getRecurringUrlJson(
             self._getEndpointFor('compute') + path,
@@ -248,7 +292,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listImages(self):
+    def listImages(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('image') + '/v2/images?status=active',
             headers=self._requestHeaders(),
@@ -258,7 +302,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listVolumeTypes(self):
+    def listVolumeTypes(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('volumev2') + '/types',
             headers=self._requestHeaders(),
@@ -268,7 +312,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listVolumes(self):
+    def listVolumes(self) -> typing.Iterable[typing.Any]:
         # self._getEndpointFor('volumev2') + '/volumes'
         return getRecurringUrlJson(
             self._getEndpointFor('volumev2') + '/volumes/detail',
@@ -279,7 +323,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listVolumeSnapshots(self, volumeId=None):
+    def listVolumeSnapshots(self, volumeId: typing.Optional[typing.Dict[str, typing.Any]] = None) -> typing.Iterable[typing.Any]:
         for s in getRecurringUrlJson(
                 self._getEndpointFor('volumev2') + '/snapshots',
                 headers=self._requestHeaders(),
@@ -291,7 +335,7 @@ class Client(object):
                 yield s
 
     @authProjectRequired
-    def listAvailabilityZones(self):
+    def listAvailabilityZones(self) -> typing.Iterable[typing.Any]:
         for az in getRecurringUrlJson(
                 self._getEndpointFor('compute') + '/os-availability-zone',
                 headers=self._requestHeaders(),
@@ -303,7 +347,7 @@ class Client(object):
                 yield az['zoneName']
 
     @authProjectRequired
-    def listFlavors(self):
+    def listFlavors(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('compute') + '/flavors',
             headers=self._requestHeaders(),
@@ -313,7 +357,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listNetworks(self):
+    def listNetworks(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('network') + '/v2.0/networks',
             headers=self._requestHeaders(),
@@ -323,7 +367,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listPorts(self, networkId=None, ownerId=None):
+    def listPorts(self, networkId: typing.Optional[str] = None, ownerId: typing.Optional[str] = None) -> typing.Iterable[typing.Any]:
         params = {}
         if networkId is not None:
             params['network_id'] = networkId
@@ -340,7 +384,7 @@ class Client(object):
         )
 
     @authProjectRequired
-    def listSecurityGroups(self):
+    def listSecurityGroups(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('compute') + '/os-security-groups',
             headers=self._requestHeaders(),
@@ -350,19 +394,18 @@ class Client(object):
         )
 
     @authProjectRequired
-    def getServer(self, serverId):
+    def getServer(self, serverId: str) -> typing.Dict[str, typing.Any]:
         r = requests.get(
             self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
             timeout=self._timeout
         )
-
         ensureResponseIsValid(r, 'Get Server information')
         return r.json()['server']
 
     @authProjectRequired
-    def getVolume(self, volumeId):
+    def getVolume(self, volumeId: str) -> typing.Dict[str, typing.Any]:
         r = requests.get(
             self._getEndpointFor('volumev2') + '/volumes/{volume_id}'.format(volume_id=volumeId),
             headers=self._requestHeaders(),
@@ -372,12 +415,10 @@ class Client(object):
 
         ensureResponseIsValid(r, 'Get Volume information')
 
-        v = r.json()['volume']
-
-        return v
+        return r.json()['volume']
 
     @authProjectRequired
-    def getSnapshot(self, snapshotId):
+    def getSnapshot(self, snapshotId: str) -> typing.Dict[str, typing.Any]:
         """
         States are:
             creating, available, deleting, error,  error_deleting
@@ -391,19 +432,17 @@ class Client(object):
 
         ensureResponseIsValid(r, 'Get Snaphost information')
 
-        v = r.json()['snapshot']
-
-        return v
+        return r.json()['snapshot']
 
     @authProjectRequired
-    def updateSnapshot(self, snapshotId, name=None, description=None):
+    def updateSnapshot(self, snapshotId: str, name: typing.Optional[str] = None, description: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
         data = {
             'snapshot': {}
         }
-        if name is not None:
+        if name:
             data['snapshot']['name'] = name
 
-        if description is not None:
+        if description:
             data['snapshot']['description'] = description
 
         r = requests.put(
@@ -416,13 +455,11 @@ class Client(object):
 
         ensureResponseIsValid(r, 'Update Snaphost information')
 
-        v = r.json()['snapshot']
-
-        return v
+        return r.json()['snapshot']
 
     @authProjectRequired
-    def createVolumeSnapshot(self, volumeId, name, description=None):
-        description = 'UDS Snapshot' if description is None else description
+    def createVolumeSnapshot(self, volumeId: str, name: str, description: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
+        description = description or 'UDS Snapshot'
         data = {
             'snapshot': {
                 'name': name,
@@ -447,8 +484,8 @@ class Client(object):
         return r.json()['snapshot']
 
     @authProjectRequired
-    def createVolumeFromSnapshot(self, snapshotId, name, description=None):
-        description = 'UDS Volume' if description is None else description
+    def createVolumeFromSnapshot(self, snapshotId: str, name: str, description: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
+        description = description or 'UDS Volume'
         data = {
             'volume': {
                 'name': name,
@@ -468,10 +505,19 @@ class Client(object):
 
         ensureResponseIsValid(r, 'Cannot create volume from snapshot.')
 
-        return r.json()
+        return r.json()['volume']
 
     @authProjectRequired
-    def createServerFromSnapshot(self, snapshotId, name, availabilityZone, flavorId, networkId, securityGroupsIdsList, count=1):
+    def createServerFromSnapshot(
+            self,
+            snapshotId: str,
+            name: str,
+            availabilityZone: str,
+            flavorId: str,
+            networkId: str,
+            securityGroupsIdsList: typing.Iterable[str],
+            count: int = 1
+        ) -> typing.Dict[str, typing.Any]:
         data = {
             'server': {
                 'name': name,
@@ -510,7 +556,7 @@ class Client(object):
         return r.json()['server']
 
     @authProjectRequired
-    def deleteServer(self, serverId):
+    def deleteServer(self, serverId: str) -> None:
         r = requests.post(
             self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"forceDelete": null}',
@@ -524,7 +570,7 @@ class Client(object):
         # This does not returns anything
 
     @authProjectRequired
-    def deleteSnapshot(self, snapshotId):
+    def deleteSnapshot(self, snapshotId: str) -> None:
         r = requests.delete(
             self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
@@ -537,7 +583,7 @@ class Client(object):
         # Does not returns a message body
 
     @authProjectRequired
-    def startServer(self, serverId):
+    def startServer(self, serverId: str) -> None:
         r = requests.post(
             self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-start": null}',
@@ -551,7 +597,7 @@ class Client(object):
         # This does not returns anything
 
     @authProjectRequired
-    def stopServer(self, serverId):
+    def stopServer(self, serverId: str) -> None:
         r = requests.post(
             self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-stop": null}',
@@ -563,7 +609,7 @@ class Client(object):
         ensureResponseIsValid(r, 'Stoping server')
 
     @authProjectRequired
-    def suspendServer(self, serverId):
+    def suspendServer(self, serverId: str) -> None:
         r = requests.post(
             self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"suspend": null}',
@@ -575,7 +621,7 @@ class Client(object):
         ensureResponseIsValid(r, 'Suspending server')
 
     @authProjectRequired
-    def resumeServer(self, serverId):
+    def resumeServer(self, serverId: str) -> None:
         r = requests.post(
             self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"resume": null}',
@@ -587,7 +633,7 @@ class Client(object):
         ensureResponseIsValid(r, 'Resuming server')
 
     @authProjectRequired
-    def resetServer(self, serverId):
+    def resetServer(self, serverId: str) -> None:
         r = requests.post(   # pylint: disable=unused-variable
             self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"reboot":{"type":"HARD"}}',
@@ -599,7 +645,7 @@ class Client(object):
         # Ignore response for this...
         # ensureResponseIsValid(r, 'Reseting server')
 
-    def testConnection(self):
+    def testConnection(self) -> bool:
         # First, ensure requested api is supported
         # We need api version 3.2 or greater
         try:

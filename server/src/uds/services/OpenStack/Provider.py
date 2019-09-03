@@ -34,7 +34,6 @@ import typing
 import logging
 
 from django.utils.translation import ugettext_noop as _
-from uds.core import Module
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -42,6 +41,9 @@ from uds.core.util import validators
 from .LiveService import LiveService
 from . import openStack
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +116,7 @@ class Provider(ServiceProvider):
     # Own variables
     _api: typing.Optional[openStack.Client] = None
 
-    def initialize(self, values: Module.ValuesType = None):
+    def initialize(self, values: 'Module.ValuesType' = None):
         """
         We will use the "autosave" feature for form fields
         """
@@ -123,11 +125,14 @@ class Provider(ServiceProvider):
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
 
-    def api(self, projectId=None, region=None):
+    def api(self, projectId=None, region=None) -> openStack.Client:
         if self._api is None:
             self._api = openStack.Client(
-                self.endpoint.value, -1,
-                self.domain.value, self.username.value, self.password.value,
+                self.endpoint.value,
+                -1,
+                self.domain.value,
+                self.username.value,
+                self.password.value,
                 legacyVersion=False,
                 useSSL=None,
                 projectId=projectId,
@@ -136,7 +141,7 @@ class Provider(ServiceProvider):
             )
         return self._api
 
-    def sanitizeVmName(self, name: str):
+    def sanitizeVmName(self, name: str) -> str:
         return openStack.sanitizeName(name)
 
     def testConnection(self):

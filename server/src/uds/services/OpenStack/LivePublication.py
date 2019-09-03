@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,17 +30,11 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from django.utils.translation import ugettext as _
-from uds.core.services import Publication
-from uds.core.util.state import State
-from datetime import datetime
-
-import six
-
 import logging
 
-__updated__ = '2019-02-07'
+from uds.core.services import Publication
+from uds.core.util.state import State
+
 
 logger = logging.getLogger(__name__)
 
@@ -49,13 +43,13 @@ class LivePublication(Publication):
     """
     This class provides the publication of a oVirtLinkedService
     """
-    _name = ''
-    _reason = ''
-    _templateId = ''
-    _state = 'r'
-    _destroyAfter = 'n'
+    _name: str = ''
+    _reason: str = ''
+    _templateId: str = ''
+    _state: str = 'r'
+    _destroyAfter: str = 'n'
 
-    suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime: int = 20  # : Suggested recheck time if publication is unfinished in seconds
 
     def initialize(self):
         """
@@ -73,13 +67,13 @@ class LivePublication(Publication):
         self._state = 'r'
         self._destroyAfter = 'n'
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
         return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state, self._destroyAfter]).encode('utf8')
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
@@ -97,7 +91,7 @@ class LivePublication(Publication):
 
         try:
             res = self.service().makeTemplate(self._name)
-            logger.debug('Result: {}'.format(res))
+            logger.debug('Publication result: %s', res)
             self._templateId = res['id']
             self._state = res['status']
         except Exception as e:
@@ -128,7 +122,6 @@ class LivePublication(Publication):
         """
         In our case, finish does nothing
         """
-        pass
 
     def reasonOfError(self):
         """
@@ -153,7 +146,7 @@ class LivePublication(Publication):
         """
         # We do not do anything else to destroy this instance of publication
         if self._state == 'error':
-            return  # Nothing to cancel
+            return  State.ERROR # Nothing to cancel
 
         if self._state == 'creating':
             self._destroyAfter = 'y'
@@ -163,7 +156,7 @@ class LivePublication(Publication):
             self.service().removeTemplate(self._templateId)
         except Exception as e:
             self._state = 'error'
-            self._reason = six.text_type(e)
+            self._reason = str(e)
             return State.ERROR
 
         return State.FINISHED

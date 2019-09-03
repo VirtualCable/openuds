@@ -235,7 +235,7 @@ class Service(Module):
         We will access the returned array in "name" basis. This means that the service will be assigned by "name", so be care that every single service
         returned are not repeated... :-)
         """
-        raise NotImplementedError('The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(self.__class__.__name__))
+        raise Exception('The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(self.__class__.__name__))
 
     def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
         """
