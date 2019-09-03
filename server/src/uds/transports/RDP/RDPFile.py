@@ -268,8 +268,8 @@ class RDPFile(object):
         return url
 
     def getGeneric(self):
-        password = "{password}"
-        screenMode = self.fullScreen and "2" or "1"
+        password = '{password}'
+        screenMode = '2' if self.fullScreen else '1'
         audioMode = self.redirectAudio and "0" or "2"
         serials = self.redirectSerials and "1" or "0"
         scards = self.redirectSmartcards and "1" or "0"
@@ -313,7 +313,12 @@ class RDPFile(object):
         res += 'prompt for credentials:i:0' + '\n'
         res += 'negotiate security layer:i:1\n'
         res += 'bandwidthautodetect:i:1\n'
-        res += 'connection type:i:7\n'
+
+        # 3 lines changed by Tomás Lobo recommendation (Thanks Tomás ;-))
+        # res += 'connection type:i:7\n'
+        res += 'networkautodetect:i:0\n'
+        res += 'connection type:i:6\n'
+
         res += 'videoplaybackmode:i:1\n'
         if self.smoothFonts is True:
             res += 'allow font smoothing:i:1\n'
