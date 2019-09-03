@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,13 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pylint: disable=maybe-no-member,protected-access
-from django.utils.translation import ugettext as _
-
 import logging
-import requests
 import json
-import dateutil.parser
-import six
 
-__updated__ = '2018-10-23'
+import requests
+# import dateutil.parser
+
+from django.utils.translation import ugettext as _
 
 logger = logging.getLogger(__name__)
 
@@ -57,13 +54,13 @@ VERIFY_SSL = False
 def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
         try:
-            _x, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
+            _, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
             errMsg += ': {message}'.format(**err)
         except Exception:
             pass  # If error geting error message, simply ignore it (will be loged on service log anyway)
         if errMsg is None:
             errMsg = 'Error checking response'
-        logger.error('{}: {}'.format(errMsg, response.content))
+        logger.error('%s: %s', errMsg, response.content)
         raise Exception(errMsg)
 
 
@@ -71,7 +68,7 @@ def getRecurringUrlJson(url, headers, key, params=None, errMsg=None, timeout=10)
     counter = 0
     while True:
         counter += 1
-        logger.debug('Requesting url #{}: {} / {}'.format(counter, url, params))
+        logger.debug('Requesting url #%s: %s / %s', counter, url, params)
         r = requests.get(url, params=params, headers=headers, verify=VERIFY_SSL, timeout=timeout)
 
         ensureResponseIsValid(r, errMsg)
@@ -95,7 +92,7 @@ def authRequired(func):
         try:
             return func(obj, *args, **kwargs)
         except Exception as e:
-            logger.error('Got error {} for openstack'.format(e))
+            logger.error('Got error %s for openstack', e)
             raise
 
     return ensurer
@@ -104,7 +101,7 @@ def authRequired(func):
 def authProjectRequired(func):
 
     def ensurer(obj, *args, **kwargs):
-        if obj._projectId is None:
+        if obj._projectId is None: # pylint: disable=protected-access
             raise Exception('Need a project for method {}'.format(func))
         obj.ensureAuthenticated()
         return func(obj, *args, **kwargs)
@@ -184,7 +181,9 @@ class Client(object):
             data['auth']['scope'] = {
                 'project': {
                     'id': self._projectId,
-                    'domain': { 'name': self._domain }
+                    'domain': {
+                        'name': self._domain
+                    }
                 }
             }
 
@@ -204,7 +203,7 @@ class Client(object):
         token = r.json()['token']
         # logger.debug('Got token {}'.format(token))
         self._userId = token['user']['id']
-        validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
+        # validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
 
         # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
@@ -218,90 +217,110 @@ class Client(object):
 
     @authRequired
     def listProjects(self):
-        return getRecurringUrlJson(self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
-                                     headers=self._requestHeaders(),
-                                     key='projects',
-                                     errMsg='List Projects',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
+            headers=self._requestHeaders(),
+            key='projects',
+            errMsg='List Projects',
+            timeout=self._timeout
+        )
 
     @authRequired
     def listRegions(self):
-        return getRecurringUrlJson(self._authUrl + 'v3/regions/',
-                                     headers=self._requestHeaders(),
-                                     key='regions',
-                                     errMsg='List Regions',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._authUrl + 'v3/regions/',
+            headers=self._requestHeaders(),
+            key='regions',
+            errMsg='List Regions',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listServers(self, detail=False, params=None):
         path = '/servers/' + 'detail' if detail is True else ''
-        return getRecurringUrlJson(self._getEndpointFor('compute') + path,
-                                    headers=self._requestHeaders(),
-                                    key='servers',
-                                    params=params,
-                                    errMsg='List Vms',
-                                    timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('compute') + path,
+            headers=self._requestHeaders(),
+            key='servers',
+            params=params,
+            errMsg='List Vms',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listImages(self):
-        return getRecurringUrlJson(self._getEndpointFor('image') + '/v2/images?status=active',
-                                     headers=self._requestHeaders(),
-                                     key='images',
-                                     errMsg='List Images',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('image') + '/v2/images?status=active',
+            headers=self._requestHeaders(),
+            key='images',
+            errMsg='List Images',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listVolumeTypes(self):
-        return getRecurringUrlJson(self._getEndpointFor('volumev2') + '/types',
-                                     headers=self._requestHeaders(),
-                                     key='volume_types',
-                                     errMsg='List Volume Types',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('volumev2') + '/types',
+            headers=self._requestHeaders(),
+            key='volume_types',
+            errMsg='List Volume Types',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listVolumes(self):
         # self._getEndpointFor('volumev2') + '/volumes'
-        return getRecurringUrlJson(self._getEndpointFor('volumev2') + '/volumes/detail',
-                                     headers=self._requestHeaders(),
-                                     key='volumes',
-                                     errMsg='List Volumes',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('volumev2') + '/volumes/detail',
+            headers=self._requestHeaders(),
+            key='volumes',
+            errMsg='List Volumes',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listVolumeSnapshots(self, volumeId=None):
-        for s in getRecurringUrlJson(self._getEndpointFor('volumev2') + '/snapshots',
-                                     headers=self._requestHeaders(),
-                                     key='snapshots',
-                                     errMsg='List snapshots',
-                                     timeout=self._timeout):
+        for s in getRecurringUrlJson(
+                self._getEndpointFor('volumev2') + '/snapshots',
+                headers=self._requestHeaders(),
+                key='snapshots',
+                errMsg='List snapshots',
+                timeout=self._timeout
+            ):
             if volumeId is None or s['volume_id'] == volumeId:
                 yield s
 
     @authProjectRequired
     def listAvailabilityZones(self):
-        for az in getRecurringUrlJson(self._getEndpointFor('compute') + '/os-availability-zone',
-                                     headers=self._requestHeaders(),
-                                     key='availabilityZoneInfo',
-                                     errMsg='List Availability Zones',
-                                     timeout=self._timeout):
+        for az in getRecurringUrlJson(
+                self._getEndpointFor('compute') + '/os-availability-zone',
+                headers=self._requestHeaders(),
+                key='availabilityZoneInfo',
+                errMsg='List Availability Zones',
+                timeout=self._timeout
+            ):
             if az['zoneState']['available'] is True:
                 yield az['zoneName']
 
     @authProjectRequired
     def listFlavors(self):
-        return getRecurringUrlJson(self._getEndpointFor('compute') + '/flavors',
-                                     headers=self._requestHeaders(),
-                                     key='flavors',
-                                     errMsg='List Flavors',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('compute') + '/flavors',
+            headers=self._requestHeaders(),
+            key='flavors',
+            errMsg='List Flavors',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listNetworks(self):
-        return getRecurringUrlJson(self._getEndpointFor('network') + '/v2.0/networks',
-                                     headers=self._requestHeaders(),
-                                     key='networks',
-                                     errMsg='List Networks',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('network') + '/v2.0/networks',
+            headers=self._requestHeaders(),
+            key='networks',
+            errMsg='List Networks',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listPorts(self, networkId=None, ownerId=None):
@@ -311,37 +330,45 @@ class Client(object):
         if ownerId is not None:
             params['device_owner'] = ownerId
 
-        return getRecurringUrlJson(self._getEndpointFor('network') + '/v2.0/ports',
-                                   headers=self._requestHeaders(),
-                                   key='ports',
-                                   params=params,
-                                   errMsg='List ports',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('network') + '/v2.0/ports',
+            headers=self._requestHeaders(),
+            key='ports',
+            params=params,
+            errMsg='List ports',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def listSecurityGroups(self):
-        return getRecurringUrlJson(self._getEndpointFor('compute') + '/os-security-groups',
-                                     headers=self._requestHeaders(),
-                                     key='security_groups',
-                                     errMsg='List security groups',
-                                     timeout=self._timeout)
+        return getRecurringUrlJson(
+            self._getEndpointFor('compute') + '/os-security-groups',
+            headers=self._requestHeaders(),
+            key='security_groups',
+            errMsg='List security groups',
+            timeout=self._timeout
+        )
 
     @authProjectRequired
     def getServer(self, serverId):
-        r = requests.get(self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
-                                    headers=self._requestHeaders(),
-                                    verify=VERIFY_SSL,
-                                    timeout=self._timeout)
+        r = requests.get(
+            self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Get Server information')
         return r.json()['server']
 
     @authProjectRequired
     def getVolume(self, volumeId):
-        r = requests.get(self._getEndpointFor('volumev2') + '/volumes/{volume_id}'.format(volume_id=volumeId),
-                         headers=self._requestHeaders(),
-                         verify=VERIFY_SSL,
-                         timeout=self._timeout)
+        r = requests.get(
+            self._getEndpointFor('volumev2') + '/volumes/{volume_id}'.format(volume_id=volumeId),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Get Volume information')
 
@@ -355,10 +382,12 @@ class Client(object):
         States are:
             creating, available, deleting, error,  error_deleting
         """
-        r = requests.get(self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
-                         headers=self._requestHeaders(),
-                         verify=VERIFY_SSL,
-                         timeout=self._timeout)
+        r = requests.get(
+            self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Get Snaphost information')
 
@@ -368,18 +397,22 @@ class Client(object):
 
     @authProjectRequired
     def updateSnapshot(self, snapshotId, name=None, description=None):
-        data = { 'snapshot': {} }
+        data = {
+            'snapshot': {}
+        }
         if name is not None:
             data['snapshot']['name'] = name
 
         if description is not None:
             data['snapshot']['description'] = description
 
-        r = requests.put(self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
-                         data=json.dumps(data),
-                         headers=self._requestHeaders(),
-                         verify=VERIFY_SSL,
-                         timeout=self._timeout)
+        r = requests.put(
+            self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+            data=json.dumps(data),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Update Snaphost information')
 
@@ -401,11 +434,13 @@ class Client(object):
 
         # First, ensure volume is in state "available"
 
-        r = requests.post(self._getEndpointFor('volumev2') + '/snapshots',
-                          data=json.dumps(data),
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._getEndpointFor('volumev2') + '/snapshots',
+            data=json.dumps(data),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Cannot create snapshot. Ensure volume is in state "available"')
 
@@ -415,19 +450,21 @@ class Client(object):
     def createVolumeFromSnapshot(self, snapshotId, name, description=None):
         description = 'UDS Volume' if description is None else description
         data = {
-                'volume': {
-                        'name': name,
-                        'description': description,
-                        # 'volume_type': volType,  # This seems to be the volume type name, not the id
-                        'snapshot_id': snapshotId
-                }
+            'volume': {
+                'name': name,
+                'description': description,
+                # 'volume_type': volType,  # This seems to be the volume type name, not the id
+                'snapshot_id': snapshotId
+            }
         }
 
-        r = requests.post(self._getEndpointFor('volumev2') + '/volumes',
-                          data=json.dumps(data),
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._getEndpointFor('volumev2') + '/volumes',
+            data=json.dumps(data),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Cannot create volume from snapshot.')
 
@@ -457,7 +494,7 @@ class Client(object):
                 # 'OS-DCF:diskConfig': 'AUTO',
                 'max_count': count,
                 'min_count': count,
-                'networks': [ { 'uuid': networkId } ],
+                'networks': [{'uuid': networkId}],
                 'security_groups': [{'name': sg} for sg in securityGroupsIdsList]
             }
         }
@@ -474,11 +511,13 @@ class Client(object):
 
     @authProjectRequired
     def deleteServer(self, serverId):
-        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-                          data='{"forceDelete": null}',
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+            data='{"forceDelete": null}',
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Cannot start server (probably server does not exists).')
 
@@ -486,10 +525,12 @@ class Client(object):
 
     @authProjectRequired
     def deleteSnapshot(self, snapshotId):
-        r = requests.delete(self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.delete(
+            self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Cannot remove snapshot.')
 
@@ -497,11 +538,13 @@ class Client(object):
 
     @authProjectRequired
     def startServer(self, serverId):
-        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-                          data='{"os-start": null}',
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+            data='{"os-start": null}',
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Starting server')
 
@@ -509,41 +552,49 @@ class Client(object):
 
     @authProjectRequired
     def stopServer(self, serverId):
-        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-                          data='{"os-stop": null}',
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+            data='{"os-stop": null}',
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Stoping server')
 
     @authProjectRequired
     def suspendServer(self, serverId):
-        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-                          data='{"suspend": null}',
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+            data='{"suspend": null}',
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Suspending server')
 
     @authProjectRequired
     def resumeServer(self, serverId):
-        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-                          data='{"resume": null}',
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(
+            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+            data='{"resume": null}',
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         ensureResponseIsValid(r, 'Resuming server')
 
     @authProjectRequired
     def resetServer(self, serverId):
-        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-                          data='{"reboot":{"type":"HARD"}}',
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.post(   # pylint: disable=unused-variable
+            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+            data='{"reboot":{"type":"HARD"}}',
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
         # Ignore response for this...
         # ensureResponseIsValid(r, 'Reseting server')
@@ -552,9 +603,11 @@ class Client(object):
         # First, ensure requested api is supported
         # We need api version 3.2 or greater
         try:
-            r = requests.get(self._authUrl,
-                             verify=VERIFY_SSL,
-                             headers=self._requestHeaders())
+            r = requests.get(
+                self._authUrl,
+                verify=VERIFY_SSL,
+                headers=self._requestHeaders()
+            )
         except Exception:
             logger.exception('Testing')
             raise Exception('Connection error')

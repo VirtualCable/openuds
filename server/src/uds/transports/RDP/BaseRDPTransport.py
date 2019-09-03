@@ -73,7 +73,12 @@ class BaseRDPTransport(Transport):
         ],
         tab=gui.PARAMETERS_TAB
     )
-    enforceDrives = gui.TextField(label=_('Force drives'), order=23, tooltip=_('If not empty, this drives will be enforced to be shared on Windows clients. Use comma separated values.'), tab=gui.PARAMETERS_TAB)
+    enforceDrives = gui.TextField(
+        label=_('Force drives'),
+        order=23,
+        tooltip=_('If allowed drives, the ones listed will be enforced to be shared on Windows clients. Use comma separated values, for example "C:,D:"'),
+        tab=gui.PARAMETERS_TAB
+    )
 
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=24, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
     allowClipboard = gui.CheckBoxField(label=_('Enable clipboard'), order=25, tooltip=_('If checked, copy-paste functions will be allowed'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)

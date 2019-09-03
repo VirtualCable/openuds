@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,9 +32,8 @@
 """
 
 from .UDSOpenStackClient import Client
+
 # Import submodules
 from .common import *
-
-__updated__ = '2017-10-07'
 
 logger = logging.getLogger(__name__)
