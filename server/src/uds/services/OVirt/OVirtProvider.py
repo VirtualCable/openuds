@@ -93,17 +93,17 @@ class Provider(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    ovirtVersion = gui.ChoiceField(order=1,
+    ovirtVersion = gui.ChoiceField(
+        order=1,
         label=_('oVirt Version'),
         tooltip=_('oVirt Server Version'),
         # In this case, the choice can have none value selected by default
         required=True,
         rdonly=False,
         values=[
-            gui.choiceItem('3', '3.x'),
             gui.choiceItem('4', '4.x'),
         ],
-        defvalue='3'  # Default value is the ID of the choicefield
+        defvalue='4'  # Default value is the ID of the choicefield
     )
 
     host = gui.TextField(length=64, label=_('Host'), order=2, tooltip=_('oVirt Server IP or Hostname'), required=True)
