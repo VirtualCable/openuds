@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,26 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import io
+import csv
+import datetime
+import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import events
-
-import six
-import csv
+from uds.models import ServicePool
 
 from .base import StatsReport
 
-from uds.models import ServicePool
-
-import datetime
-import logging
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-04-25'
 
 
 class UsageByPool(StatsReport):
@@ -92,7 +88,7 @@ class UsageByPool(StatsReport):
         ]
         self.pool.setValues(vals)
 
-    def getData(self):
+    def getData(self) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
         # Generate the sampling intervals and get dataUsers from db
         start = self.startDate.stamp()
         end = self.endDate.stamp()
@@ -120,7 +116,7 @@ class UsageByPool(StatsReport):
                         'time': total
                     })
 
-        logger.debug('data: {}'.format(data))
+        logger.debug('data: %s', data)
 
         return data, pool.name
 
@@ -150,10 +146,10 @@ class UsageByPoolCSV(UsageByPool):
     endDate = UsageByPool.endDate
 
     def generate(self):
-        output = six.StringIO()
+        output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData, poolName = self.getData()
+        reportData = self.getData()[0]
 
         writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds')])
 

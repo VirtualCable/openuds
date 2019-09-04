@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2018 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,21 +34,20 @@ import csv
 import io
 import datetime
 import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 import django.template.defaultfilters as filters
 
 from uds.core.ui import gui
 from uds.core.util.stats import events
+from uds.core.util import tools
 from uds.core.reports import graphs
 
 from .base import StatsReport
 
-from uds.core.util import tools
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-04-25'
 
 # several constants as Width height
 WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
@@ -94,7 +93,7 @@ class StatsReportLogin(StatsReport):
     def initGui(self):
         pass
 
-    def getRangeData(self):
+    def getRangeData(self) -> typing.Tuple[str, typing.List, typing.List]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         if self.samplingPoints.num() < 8:
@@ -112,7 +111,7 @@ class StatsReportLogin(StatsReport):
         else:
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
-        samplingIntervals = []
+        samplingIntervals: typing.List[typing.Tuple[int, int]] = []
         prevVal = None
         for val in range(start, end, int((end - start) / (samplingPoints + 1))):
             if prevVal is None:
@@ -148,7 +147,7 @@ class StatsReportLogin(StatsReport):
             dataWeek[s.weekday()] += 1
             dataHour[s.hour] += 1
             dataWeekHour[s.weekday()][s.hour] += 1
-            logger.debug('Data: {} {}'.format(s.weekday(), s.hour))
+            logger.debug('Data: %s %s', s.weekday(), s.hour)
 
         return dataWeek, dataHour, dataWeekHour
 

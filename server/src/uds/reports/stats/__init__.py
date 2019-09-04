@@ -31,16 +31,10 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-# We just need to import. Report loader will look for Report subclasses
+# Make reports visible to autoloader
 # from . import usage
-from uds.reports.stats import user_access
+from . import user_access
 from . import pools_performance
 from . import pools_usage_day
 from . import usage_by_pool
 from . import pool_usage_summary
-# from .user_access import StatsReportLogin, StatsReportLoginCSV
-# from .pools_performance import PoolPerformanceReport
-# from .pools_usage_day import CountersPoolAssigned
-# from .usage_by_pool import UsageByPool
-# from .pool_usage_summary import UsageSummaryByPool
-

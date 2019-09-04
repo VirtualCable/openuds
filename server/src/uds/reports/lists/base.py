@@ -30,11 +30,14 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+
 from django.utils.translation import ugettext_noop as _
 from uds.core import reports
 
 class ListReport(reports.Report):
-    def generate(self):
+    group = _('Lists')  # So we can make submenus with reports
+
+    def generate(self) -> typing.Union[str, bytes]:
         raise NotImplementedError('ListReport generate invoked and not implemented')
 
-    group = _('Lists')  # So we can make submenus with reports

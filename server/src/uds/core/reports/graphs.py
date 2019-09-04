@@ -45,7 +45,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def barChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO):
+def barChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO) -> None:
     d = data['x']
     ind = np.arange(len(d))
     ys = data['y']
@@ -77,7 +77,7 @@ def barChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typin
     fig.savefig(output, format='png', transparent=True)
 
 
-def lineChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO):
+def lineChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO) -> None:
     x = data['x']
     y = data['y']
 
@@ -107,7 +107,7 @@ def lineChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typi
     fig.savefig(output, format='png', transparent=True)
 
 
-def surfaceChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO):
+def surfaceChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO) -> None:
     x = data['x']
     y = data['y']
     z = data['z']

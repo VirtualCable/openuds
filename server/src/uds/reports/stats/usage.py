@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,18 +30,17 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
 
-from django.utils.translation import ugettext, ugettext_noop as _
+""" from django.utils.translation import ugettext_noop as _
 
 from .base import StatsReport
 
 
-__updated__ = '2017-05-03'
-
-
-class StatsReportUsage(object):  # Disabled from being used
-    # class StatsReportUsage(StatsReport):
+class StatsReportUsage(StatsReport):  # Disabled from being used
     name = _('Usage stats')  # Report name
     description = _('Statistics of platform use')  # Report description
     uuid = '9ae54172-ed48-11e4-b8e1-10feed05884b'
+
+    def generate(self):
+        return ''
+ """

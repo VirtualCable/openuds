@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,26 +30,21 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import io
+import csv
+import datetime
+import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import events
-
-import io
-import csv
+from uds.models import ServicePool
 
 from .base import StatsReport
 
-from uds.models import ServicePool
-
-import datetime
-import logging
-
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-04-25'
 
 
 class UsageSummaryByPool(StatsReport):
@@ -92,15 +87,15 @@ class UsageSummaryByPool(StatsReport):
         ]
         self.pool.setValues(vals)
 
-    def getPoolData(self, pool):
+    def getPoolData(self, pool) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         logger.debug(self.pool.value)
 
         items = events.statsManager().getEvents(events.OT_DEPLOYED, (events.ET_LOGIN, events.ET_LOGOUT), owner_id=pool.id, since=start, to=end).order_by('stamp')
 
-        logins = {}
-        users = {}
+        logins: typing.Dict[str, int] = {}
+        users: typing.Dict[str, typing.Dict] = {}
         for i in items:
             # if '\\' in i.fld1:
             #    continue
@@ -113,7 +108,7 @@ class UsageSummaryByPool(StatsReport):
                     del logins[username]
                     total = i.stamp - stamp
                     if username not in users:
-                        users[username] = { 'sessions': 0, 'time': 0 }
+                        users[username] = {'sessions': 0, 'time': 0}
                     users[username]['sessions'] += 1
                     users[username]['time'] += total
                     # data.append({
@@ -123,18 +118,16 @@ class UsageSummaryByPool(StatsReport):
                     # })
 
         # Extract different number of users
-        data = []
-        for k, v in users.items():
-            data.append({
-                'user': k,
-                'sessions': v['sessions'],
-                'hours': '{:.2f}'.format(float(v['time']) / 3600),
-                'average': '{:.2f}'.format(float(v['time']) / 3600 / v['sessions'])
-            })
+        data = [{
+            'user': k,
+            'sessions': v['sessions'],
+            'hours': '{:.2f}'.format(float(v['time']) / 3600),
+            'average': '{:.2f}'.format(float(v['time']) / 3600 / v['sessions'])
+        } for k, v in users.items()]
 
         return data, pool.name
 
-    def getData(self):
+    def getData(self) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
         return self.getPoolData(ServicePool.objects.get(uuid=self.pool.value))
 
     def generate(self):
@@ -168,7 +161,7 @@ class UsageSummaryByPoolCSV(UsageSummaryByPool):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData, poolName = self.getData()
+        reportData = self.getData()[0]
 
         writer.writerow([ugettext('User'), ugettext('Sessions'), ugettext('Hours'), ugettext('Average')])
 

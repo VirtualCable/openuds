@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,14 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core import reports
 
-__updated__ = '2018-02-07'
-
-
 class StatsReport(reports.Report):
-    """
-    Base report for statistics reports
-    """
     group = _('Statistics')  # So we can make submenus with reports
+
+    def generate(self) -> typing.Union[str, bytes]:
+        raise NotImplementedError('StatsReport generate invoked and not implemented')
+

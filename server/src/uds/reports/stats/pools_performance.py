@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2018 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,6 +34,7 @@ import io
 import csv
 import datetime
 import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.db.models import Count
@@ -41,17 +42,13 @@ import django.template.defaultfilters as filters
 
 from uds.core.ui import gui
 from uds.core.util.stats import events
-
+from uds.core.util import tools
 from uds.core.reports import graphs
+from uds.models import ServicePool
 
 from .base import StatsReport
 
-from uds.core.util import tools
-from uds.models import ServicePool
-
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-04-24'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
@@ -108,10 +105,10 @@ class PoolPerformanceReport(StatsReport):
         ]
         self.pools.setValues(vals)
 
-    def getPools(self):
+    def getPools(self) -> typing.List[typing.Tuple[str, str]]:
         return [(v.id, v.name) for v in ServicePool.objects.filter(uuid__in=self.pools.value)]
 
-    def getRangeData(self):
+    def getRangeData(self) -> typing.Tuple[str, typing.List, typing.List]:  # pylint: disable=too-many-locals
         start = self.startDate.stamp()
         end = self.endDate.stamp()
 
@@ -126,10 +123,10 @@ class PoolPerformanceReport(StatsReport):
 
         pools = self.getPools()
 
-        if len(pools) == 0:
+        if pools:
             raise Exception(_('Select at least a service pool for the report'))
 
-        logger.debug('Pools: {}'.format(pools))
+        logger.debug('Pools: %s', pools)
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -138,7 +135,7 @@ class PoolPerformanceReport(StatsReport):
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
         # Generate samplings interval
-        samplingIntervals = []
+        samplingIntervals: typing.List[typing.Tuple[int, int]] = []
         prevVal = None
         for val in range(start, end, int((end - start) / (samplingPoints + 1))):
             if prevVal is None:
@@ -199,12 +196,10 @@ class PoolPerformanceReport(StatsReport):
             'x': X,
             'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
             'xlabel': _('Date'),
-            'y': [
-                {
-                    'label': p['name'],
-                    'data': [v[1] for v in p['dataUsers']]
-                }
-            for p in poolsData],
+            'y': [{
+                'label': p['name'],
+                'data': [v[1] for v in p['dataUsers']]
+                } for p in poolsData],
             'ylabel': _('Users')
         }
 
@@ -216,12 +211,10 @@ class PoolPerformanceReport(StatsReport):
             'x': X,
             'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
             'xlabel': _('Date'),
-            'y': [
-                {
-                    'label': p['name'],
-                    'data': [v[1] for v in p['dataAccesses']]
-                }
-            for p in poolsData],
+            'y': [{
+                'label': p['name'],
+                'data': [v[1] for v in p['dataAccesses']]
+                } for p in poolsData],
             'ylabel': _('Accesses')
         }
 

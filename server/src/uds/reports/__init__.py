@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -39,17 +39,11 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-import six
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-07'
-
 availableReports = []
-
 
 # noinspection PyTypeChecker
 def __init__():
@@ -62,25 +56,23 @@ def __init__():
     from uds.core import reports
 
     def addReportCls(cls):
-        logger.debug('Adding report {}'.format(cls))
+        logger.debug('Adding report %s', cls)
         availableReports.append(cls)
 
-    def recursiveAdd(p):
-        if p.uuid is not None:
-            addReportCls(p)
+    def recursiveAdd(reportClass):
+        if reportClass.uuid:
+            addReportCls(reportClass)
         else:
-            logger.debug('Report class {} not added because it lacks of uuid (it is probably a base class)'.format(p))
+            logger.debug('Report class %s not added because it lacks of uuid (it is probably a base class)', reportClass)
 
-        for c in p.__subclasses__():
+        for c in reportClass.__subclasses__():
             recursiveAdd(c)
 
     # Dinamycally import children of this package. The __init__.py files must import classes
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
-    # TODO: Make this work with python3 also!!! (look for alternative, we have time...)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         __import__(name, globals(), locals(), [], 1)
 
     recursiveAdd(reports.Report)
-
 
 __init__()

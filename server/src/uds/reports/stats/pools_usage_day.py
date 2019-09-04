@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,24 +30,24 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from django.utils.translation import ugettext, ugettext_lazy as _
-
-from uds.core.ui import gui
-from uds.core.util.stats import counters
-
 import csv
 import io
 import datetime
 import logging
+import typing
+
+from django.utils.translation import ugettext, ugettext_lazy as _
+
+from uds.core.ui import gui
+from uds.core.util.stats import counters
+from uds.core.reports import graphs
+from uds.models import ServicePool
+
 
 from .base import StatsReport
 
-from uds.models import ServicePool
-from uds.core.reports import graphs
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-04-25'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
@@ -85,19 +85,19 @@ class CountersPoolAssigned(StatsReport):
         ]
         self.pools.setValues(vals)
 
-    def getData(self):
+    def getData(self) -> typing.List[typing.Dict[str, typing.Any]]:
         # Generate the sampling intervals and get dataUsers from db
         start = self.startDate.date()
         end = self.startDate.date() + datetime.timedelta(days=1)
 
         data = []
 
-        pool = None
+        pool: ServicePool
         for poolUuid in self.pools.value:
             try:
                 pool = ServicePool.objects.get(uuid=poolUuid)
             except Exception:
-                pass  # Ignore pool
+                continue
 
             hours = {}
             for i in range(24):
@@ -111,7 +111,7 @@ class CountersPoolAssigned(StatsReport):
 
             data.append({'uuid':pool.uuid, 'name': pool.name, 'hours': hours})
 
-        logger.debug('data: {}'.format(data))
+        logger.debug('data: %s', data)
 
         return data
 
@@ -124,7 +124,7 @@ class CountersPoolAssigned(StatsReport):
         d = {
             'title': _('Services by hour'),
             'x': X,
-            'xtickFnc': lambda l: '{:02d}'.format(l),
+            'xtickFnc': lambda xx: '{:02d}'.format(xx),  # pylint: disable=unnecessary-lambda
             'xlabel': _('Hour'),
             'y': [
                 {
