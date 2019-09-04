@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from uds.core import reports
 from django.utils.translation import ugettext_noop as _
-
-__updated__ = '2017-05-10'
-
+from uds.core import reports
 
 class ListReport(reports.Report):
     def generate(self):

@@ -51,3 +51,11 @@ def decode(data: typing.Union[str, bytes], encoder: str, asText: bool = False) -
     if asText:
         return res.decode('utf8')  # type: ignore
     return res
+
+
+def encodeAsStr(data: typing.Union[str, bytes], encoder: str) -> str:
+    return codecs.encode(__toBinary(data), encoder).decode('utf8')   # type: ignore
+
+
+def decodeAsStr(data: typing.Union[str, bytes], encoder: str) -> str:
+    return codecs.decode(__toBinary(data), encoder).decode('utf8')   # type: ignore

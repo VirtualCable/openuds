@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,22 +30,19 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import io
+import csv
+import logging
 
 from django.utils.translation import ugettext, ugettext_lazy as _
+
 from uds.core.ui import gui
 from uds.models import Authenticator
 
-import six
-import csv
-
 from .base import ListReport
 
-import logging
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2018-02-08'
 
 
 class ListReportUsers(ListReport):
@@ -105,7 +102,7 @@ class ListReportsUsersCSV(ListReportUsers):
             self.filename = auth.name + '.csv'
 
     def generate(self):
-        output = six.StringIO()
+        output = io.StringIO()
         writer = csv.writer(output)
         auth = Authenticator.objects.get(uuid=self.authenticator.value)
         users = auth.users.order_by('name')

@@ -32,6 +32,7 @@
 """
 
 import logging
+import typing
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -44,7 +45,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def barChart(size, data, output):
+def barChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO):
     d = data['x']
     ind = np.arange(len(d))
     ys = data['y']
@@ -76,7 +77,7 @@ def barChart(size, data, output):
     fig.savefig(output, format='png', transparent=True)
 
 
-def lineChart(size, data, output):
+def lineChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO):
     x = data['x']
     y = data['y']
 
@@ -106,7 +107,7 @@ def lineChart(size, data, output):
     fig.savefig(output, format='png', transparent=True)
 
 
-def surfaceChart(size, data, output):
+def surfaceChart(size: typing.Tuple[int, int, int], data: typing.Dict, output: typing.BinaryIO):
     x = data['x']
     y = data['y']
     z = data['z']

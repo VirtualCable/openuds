@@ -48,13 +48,13 @@ logger = logging.getLogger(__name__)
 
 
 class Report(UserInterface):
-    mime_type = 'application/pdf'  # Report returns pdfs by default, but could be anything else
-    name = _('Base Report')  # Report name
-    description = _('Base report')  # Report description
-    filename = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
-    group = ''  # So we can "group" reports by kind?
-    encoded = True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
-    uuid = None
+    mime_type: str = 'application/pdf'  # Report returns pdfs by default, but could be anything else
+    name: str = _('Base Report')  # Report name
+    description: str = _('Base report')  # Report description
+    filename: str = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
+    group: str = ''  # So we can "group" reports by kind?
+    encoded: bool = True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
+    uuid: str = ''
 
     @classmethod
     def translated_name(cls):
@@ -84,7 +84,7 @@ class Report(UserInterface):
         return cls.uuid
 
     @staticmethod
-    def asPDF(html, header: typing.Optional[str] = None, water: typing.Optional[str] = None, images: typing.Optional[typing.Dict[str, bytes]] = None):
+    def asPDF(html: str, header: typing.Optional[str] = None, water: typing.Optional[str] = None, images: typing.Optional[typing.Dict[str, bytes]] = None) -> bytes:
         """
         Renders an html as PDF.
         Uses the "report.css" as stylesheet
@@ -125,7 +125,7 @@ class Report(UserInterface):
         return h.write_pdf(stylesheets=[c])
 
     @staticmethod
-    def templateAsPDF(templateName, dct, header=None, water=None, images=None):
+    def templateAsPDF(templateName, dct, header=None, water=None, images=None) -> bytes:
         """
         Renders a template as PDF
         """
@@ -152,7 +152,7 @@ class Report(UserInterface):
         super().__init__(values)
         self.initialize(values)
 
-    def initialize(self, values):
+    def initialize(self, values: typing.Optional[gui.ValuesType]):
         """
         Invoked just right after initializing report, so we avoid rewriting __init__
         if values is None, we are initializing an "new" element, if values is a dict, is the values
@@ -161,7 +161,7 @@ class Report(UserInterface):
         This can be or can be not overriden
         """
 
-    def generate(self):
+    def generate(self) -> typing.Union[str, bytes]:
         """
         Generates the reports
 
@@ -171,16 +171,16 @@ class Report(UserInterface):
         """
         raise NotImplementedError()
 
-    def generateEncoded(self):
+    def generateEncoded(self) -> str:
         """
         Generated base 64 encoded report.
         Basically calls generate and encodes resuslt as base64
         """
         data = self.generate()
         if self.encoded:
-            data = encoders.encode(data, 'base64', asText=True).replace('\n', '')
+            return encoders.encodeAsStr(data, 'base64').replace('\n', '')
 
-        return data
+        return typing.cast(str, data)
 
     def __str__(self):
         return 'Report {} with uuid {}'.format(self.name, self.uuid)

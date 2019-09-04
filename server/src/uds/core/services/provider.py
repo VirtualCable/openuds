@@ -154,7 +154,7 @@ class ServiceProvider(Module):
         super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType) -> None:
+    def initialize(self, values: typing.Optional[Module.ValuesType]) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
