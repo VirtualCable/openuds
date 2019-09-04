@@ -183,7 +183,7 @@ class ServicesPools(ModelHandler):
             val['pool_group_thumb'] = poolGroupThumb
             val['usage'] = item.usage()
 
-        if item.osmanager is not None:
+        if item.osmanager:
             val['osmanager_id'] = item.osmanager.uuid
 
         return val
@@ -213,14 +213,6 @@ class ServicesPools(ModelHandler):
                 'type': gui.InputField.CHOICE_TYPE,
                 'rdonly': True,
                 'order': 101,
-            }, {
-                'name': 'show_transports',
-                'value': True,
-                'label': ugettext('Show transports'),
-                'tooltip': ugettext('If active, alternative transports for user will be shown'),
-                'type': gui.InputField.CHECKBOX_TYPE,
-                'order': 110,
-                'tab': ugettext('Advanced'),
             }, {
                 'name': 'allow_users_remove',
                 'value': False,
