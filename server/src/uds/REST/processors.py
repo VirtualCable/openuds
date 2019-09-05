@@ -52,13 +52,15 @@ class ContentProcessor:
     """
     Process contents (request/response) so Handlers can manage them
     """
-    mime_type: typing.ClassVar[typing.Optional[str]] = None
+    mime_type: typing.ClassVar[str] = ''
     extensions: typing.ClassVar[typing.Iterable[str]] = []
+    
+    _request: http.HttpRequest
 
-    def __init__(self, request):
+    def __init__(self, request: http.HttpRequest):
         self._request = request
 
-    def processGetParameters(self):
+    def processGetParameters(self) -> typing.MutableMapping[str, typing.Any]:
         """
         returns parameters based on request method
         GET parameters are understood
@@ -68,7 +70,7 @@ class ContentProcessor:
 
         return self._request.GET.copy()
 
-    def processParameters(self):
+    def processParameters(self) -> typing.Any:
         """
         Returns the parameter from the request
         """
@@ -81,14 +83,14 @@ class ContentProcessor:
         """
         return http.HttpResponse(content=self.render(obj), content_type=self.mime_type + "; charset=utf-8")
 
-    def render(self, obj):
+    def render(self, obj: typing.Any):
         """
         Renders an obj to the spefific type
         """
         return str(obj)
 
     @staticmethod
-    def procesForRender(obj):
+    def procesForRender(obj: typing.Any):
         """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
@@ -96,16 +98,10 @@ class ContentProcessor:
             return obj
 
         if isinstance(obj, dict):
-            res = {}
-            for k, v in obj.items():
-                res[k] = ContentProcessor.procesForRender(v)
-            return res
+            return {k:ContentProcessor.procesForRender(v) for k, v in obj.items()}
 
         if isinstance(obj, (list, tuple, types.GeneratorType)):
-            res = []
-            for v in obj:
-                res.append(ContentProcessor.procesForRender(v))
-            return res
+            return [ContentProcessor.procesForRender(v) for v in obj]
 
         if isinstance(obj, (datetime.datetime, datetime.date)):
             return int(time.mktime(obj.timetuple()))
@@ -149,7 +145,7 @@ class JsonProcessor(MarshallerProcessor):
     """
     mime_type = 'application/json'
     extensions = ['json']
-    marshaller = json
+    marshaller = json  # type: ignore
 
 # ---------------
 # XML Processor
@@ -166,9 +162,9 @@ class JsonProcessor(MarshallerProcessor):
 
 
 processors_list = (JsonProcessor,)
-default_processor = JsonProcessor
-available_processors_mime_dict = dict((cls.mime_type, cls) for cls in processors_list)
-available_processors_ext_dict = {}
+default_processor: typing.Type[ContentProcessor] = JsonProcessor
+available_processors_mime_dict: typing.Dict[str, typing.Type[ContentProcessor]] = {cls.mime_type: cls for cls in processors_list}
+available_processors_ext_dict: typing.Dict[str, typing.Type[ContentProcessor]] = {}
 for cls in processors_list:
     for ext in cls.extensions:
         available_processors_ext_dict[ext] = cls

@@ -26,7 +26,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import unicode_literals
 import logging
 
 logger = logging.getLogger(__name__)
@@ -34,9 +33,7 @@ logger = logging.getLogger(__name__)
 
 class RequestDebug:
     """
-    Add a X-UA-Compatible header to the response
-    This header tells to Internet Explorer to render page with latest
-    possible version or to use chrome frame if it is installed.
+    Used for logging some request data on develeopment
     """
     def __init__(self, get_response):
         self.get_response = get_response

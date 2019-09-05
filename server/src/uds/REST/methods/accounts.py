@@ -71,7 +71,7 @@ class Accounts(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'time_mark': item.time_mark,
-            'permission': permissions.getEffectivePermission(self._user, account)
+            'permission': permissions.getEffectivePermission(self._user, item)
         }
 
     def getGui(self, type_):
@@ -84,4 +84,3 @@ class Accounts(ModelHandler):
     def clear(self, item):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
         return item.usages.filter(user_service=None).delete()
-

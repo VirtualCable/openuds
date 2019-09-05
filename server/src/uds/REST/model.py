@@ -566,8 +566,8 @@ class ModelHandler(BaseModelHandler):
           The only detail that has types within is "Service", child of "Provider"
     """
     # Authentication related
-    authenticated: typing.ClassVar[bool] = True
-    needs_staff: typing.ClassVar[bool] = True
+    authenticated = True
+    needs_staff = True
     # Which model does this manage
     model: models.Model
 

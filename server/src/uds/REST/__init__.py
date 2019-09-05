@@ -29,8 +29,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os.path
+import pkgutil
+import sys
 import time
 import logging
+import typing
 
 from django import http
 from django.views.generic.base import View
@@ -51,7 +55,6 @@ from .handlers import (
 
 from . import processors
 
-
 logger = logging.getLogger(__name__)
 
 __all__ = [str(v) for v in ['Handler', 'Dispatcher']]
@@ -63,64 +66,62 @@ class Dispatcher(View):
     """
     This class is responsible of dispatching REST requests
     """
-    # This attribute will contain all paths-->handler relations, added at Initialized method
-    services = {'': None}  # Will include a default /rest handler, but rigth now this will be fine
+    # This attribute will contain all paths--> handler relations, filled at Initialized method
+    services: typing.ClassVar[typing.Dict[str, typing.Any]] = {'': None}  # Will include a default /rest handler, but rigth now this will be fine
 
+    # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
     @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: http.HttpRequest, *args, **kwargs):
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
-
-        # Remove session, so response middleware do nothing with this
+        # Remove session from request, so response middleware do nothing with this
         del request.session
+
         # Now we extract method and possible variables from path
-        path = kwargs['arguments'].split('/')
+        path: typing.List[str] = kwargs['arguments'].split('/')
         del kwargs['arguments']
 
-        # Transverse service nodes too look for path
+        # Transverse service nodes, so we can locate class processing this path
         service = Dispatcher.services
-        full_path = []
-        content_type = None
+        full_path_lst: typing.List[str] = []
+        # Guess content type from content type header (post) or ".xxx" to method
+        content_type: str = request.META.get('CONTENT_TYPE', 'json')
 
-        cls = None
-        while len(path) > 0:
-            # .json, .xml, ... will break path recursion
+        while path:
+            # .json, .xml, .anything will break path recursion
             if path[0].find('.') != -1:
                 content_type = path[0].split('.')[1]
 
             clean_path = path[0].split('.')[0]
             if clean_path in service:
                 service = service[clean_path]
-                full_path.append(path[0])
+                full_path_lst.append(path[0])
                 path = path[1:]
             else:
                 break
 
-        full_path = '/'.join(full_path)
-        logger.debug("REST request: %s (%s)",full_path, content_type)
+        full_path = '/'.join(full_path_lst)
+        logger.debug("REST request: %s (%s)", full_path, content_type)
 
         # Here, service points to the path
-        cls = service['']
+        cls: typing.Optional[typing.Type[Handler]] = service['']
         if cls is None:
-            return http.HttpResponseNotFound('method not found', content_type="text/plain")
+            return http.HttpResponseNotFound('Method not found', content_type="text/plain")
 
-        # Guess content type from content type header (post) or ".xxx" to method
-        try:
-            processor = processors.available_processors_ext_dict[content_type](request)
-        except Exception:
-            processor = processors.available_processors_mime_dict.get(request.META.get('CONTENT_TYPE', 'json'), processors.default_processor)(request)
+        processor = processors.available_processors_ext_dict.get(content_type, processors.default_processor)(request)
 
         # Obtain method to be invoked
-        http_method = request.method.lower()
+        http_method: str = request.method.lower()
 
-        args = path
+        # Path here has "remaining" path, that is, method part has been removed
+        args = tuple(path)
 
         handler = None
 
         try:
             handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)
-            operation = getattr(handler, http_method)
+            operation: typing.Callable[[], typing.Any] = getattr(handler, http_method)
         except processors.ParametersException as e:
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)
@@ -144,6 +145,7 @@ class Dispatcher(View):
 
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
                 response = processor.getResponse(response)
+            # Set response headers
             for k, val in handler.headers().items():
                 response[k] = val
             return response
@@ -164,25 +166,24 @@ class Dispatcher(View):
             return http.HttpResponseServerError(str(e), content_type="text/plain")
 
     @staticmethod
-    def registerSubclasses(classes):
+    def registerSubclasses(classes: typing.List[typing.Type[Handler]]):
         """
         Try to register Handler subclasses that have not been inherited
         """
         for cls in classes:
-            if len(cls.__subclasses__()) == 0:  # Only classes that has not been inherited will be registered as Handlers
-                logger.debug('Found class %s', cls)
-                if cls.name is None:
+            if not cls.__subclasses__():  # Only classes that has not been inherited will be registered as Handlers
+                if not cls.name:
                     name = cls.__name__.lower()
                 else:
                     name = cls.name
                 logger.debug('Adding handler %s for method %s in path %s', cls, name, cls.path)
-                service_node = Dispatcher.services
-                if cls.path is not None:
+                service_node = Dispatcher.services  # Root path
+                if cls.path:
                     for k in cls.path.split('/'):
-                        if service_node.get(k) is None:
+                        if k not in service_node:
                             service_node[k] = {'': None}
                         service_node = service_node[k]
-                if service_node.get(name) is None:
+                if name not in service_node:
                     service_node[name] = {'': None}
 
                 service_node[name][''] = cls
@@ -196,11 +197,7 @@ class Dispatcher(View):
         This imports all packages that are descendant of this package, and, after that,
         it register all subclases of Handler. (In fact, it looks for packages inside "methods" package, child of this)
         """
-        import os.path
-        import pkgutil
-        import sys
-
-        logger.debug('Loading Handlers')
+        logger.info('Initializing REST Handlers')
 
         # Dinamycally import children of this package.
         package = 'methods'

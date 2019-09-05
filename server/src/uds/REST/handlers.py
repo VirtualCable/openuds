@@ -40,6 +40,11 @@ from uds.core.auths.auth import getRootUser
 from uds.models import Authenticator
 from uds.core.managers import cryptoManager
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.models import User
+
 logger = logging.getLogger(__name__)
 
 AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'
@@ -88,18 +93,25 @@ class Handler:
     raw: typing.ClassVar[bool] = False  # If true, Handler will return directly an HttpResponse Object
     name: typing.ClassVar[typing.Optional[str]] = None  # If name is not used, name will be the class name in lower case
     path: typing.ClassVar[typing.Optional[str]] = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
-    authenticated: typing.ClassVar[bool] = True  # By default, all handlers needs authentication
+    authenticated: bool = True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff
     needs_admin: typing.ClassVar[bool] = False  # By default, the methods will be accessible by anyone if nothing else indicated
     needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
+    _request: 'HttpRequest'
+    _path: str
+    _operation: str
+    _params: typing.Any
+    _args: typing.Tuple[str, ...]
+    _headers: typing.Dict[str, str]
+    _authToken: typing.Optional[str]
+    _user: typing.Optional['User']
+
+
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
-    def __init__(self, request, path, operation, params, *args, **kwargs):
+    def __init__(self, request: 'HttpRequest', path: str, operation: str, params: typing.Any, *args, **kwargs):
 
-        if self.needs_admin:
+        if self.needs_admin or self.needs_staff:
             self.authenticated = True  # If needs_admin, must also be authenticated
-
-        if self.needs_staff:
-            self.authenticated = True  # Same for staff members
 
         self._request = request
         self._path = path
@@ -137,14 +149,14 @@ class Handler:
         """
         return self._headers
 
-    def header(self, headerName):
+    def header(self, headerName) -> typing.Optional[str]:
         """
         Get's an specific header name from REST request
         :param headerName: name of header to get
         """
         return self._headers.get(headerName)
 
-    def addHeader(self, header, value):
+    def addHeader(self, header: str, value: str) -> None:
         """
         Inserts a new header inside the headers list
         :param header: name of header to insert
@@ -152,7 +164,7 @@ class Handler:
         """
         self._headers[header] = value
 
-    def removeHeader(self, header):
+    def removeHeader(self, header: str) -> None:
         """
         Removes an specific header from the headers list
         :param header: Name of header to remove
@@ -163,14 +175,24 @@ class Handler:
             pass  # If not found, just ignore it
 
     # Auth related
-    def getAuthToken(self):
+    def getAuthToken(self) -> typing.Optional[str]:
         """
         Returns the authentication token for this REST request
         """
         return self._authToken
 
     @staticmethod
-    def storeSessionAuthdata(session, id_auth, username, password, locale, platform, is_admin, staff_member, scrambler):
+    def storeSessionAuthdata(
+            session: typing.MutableMapping[str, typing.Any],
+            id_auth: str,
+            username: str,
+            password: str,
+            locale: str,
+            platform: str,
+            is_admin: bool,
+            staff_member: bool,
+            scrambler: str
+        ):
         """
         Stores the authentication data inside current session
         :param session: session handler (Djano user session object)
@@ -193,7 +215,17 @@ class Handler:
             'staff_member': staff_member
         }
 
-    def genAuthToken(self, id_auth, username, password, locale, platform, is_admin, staf_member, scrambler):
+    def genAuthToken(
+            self,
+            id_auth: str,
+            username: str,
+            password: str,
+            locale: str,
+            platform: str,
+            is_admin: bool,
+            staf_member: bool,
+            scrambler: str
+        ):
         """
         Generates the authentication token from a session, that is basically
         the session key itself
@@ -211,7 +243,7 @@ class Handler:
         self._session = session
         return self._authToken
 
-    def cleanAuthToken(self):
+    def cleanAuthToken(self) -> None:
         """
         Cleans up the authentication token
         """
@@ -221,7 +253,7 @@ class Handler:
         self._session = None
 
     # Session related (from auth token)
-    def getValue(self, key):
+    def getValue(self, key) -> typing.Optional[str]:
         """
         Get REST session related value for a key
         """
@@ -230,7 +262,7 @@ class Handler:
         except Exception:
             return None  # _session['REST'] does not exists?
 
-    def setValue(self, key, value):
+    def setValue(self, key: str, value: str) -> None:
         """
         Set a session key value
         """
@@ -241,19 +273,19 @@ class Handler:
         except Exception:
             logger.exception('Got an exception setting session value %s to %s', key, value)
 
-    def is_admin(self):
+    def is_admin(self) -> bool:
         """
         True if user of this REST request is administrator
         """
         return bool(self.getValue('is_admin'))
 
-    def is_staff_member(self):
+    def is_staff_member(self) -> bool:
         """
         True if user of this REST request is member of staff
         """
         return bool(self.getValue('staff_member'))
 
-    def getUser(self):
+    def getUser(self) -> 'User':
         """
         If user is staff member, returns his Associated user on auth
         """
