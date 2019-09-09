@@ -66,6 +66,7 @@ class UDSAppConfig(AppConfig):
         logger.debug('Initializing app (ready) ***************')
 
         # Now, ensures that all dynamic elements are loadad and present
+        # pylint: disable=unused-import
         from . import services  # to make sure that the packages are initialized at this point
         from . import auths  # To make sure that the packages are initialized at this point
         from . import osmanagers  # To make sure that packages are initialized at this point

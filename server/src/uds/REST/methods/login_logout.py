@@ -116,9 +116,9 @@ class Login(Handler):
                         auth = Authenticator.objects.get(small_name=authSmallName)
 
                     if password == '':
-                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty
+                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
 
-                    logger.debug('Auth obj: {0}'.format(auth))
+                    logger.debug('Auth obj: %s', auth)
                     user = authenticate(username, password, auth)
                     if user is None:  # invalid credentials
                         raise Exception()

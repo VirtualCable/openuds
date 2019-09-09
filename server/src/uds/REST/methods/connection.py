@@ -31,8 +31,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
-
 import logging
+import typing
 
 from uds.REST import Handler
 from uds.REST import RequestError
@@ -55,7 +55,7 @@ class Connection(Handler):
     needs_staff = False
 
     @staticmethod
-    def result(result=None, error=None, errorCode=0, retryable=False):
+    def result(result: typing.Any = None, error: typing.Any = None, errorCode: int = 0, retryable: bool = False) -> typing.Dict[str, typing.Any]:
         """
         Helper method to create a "result" set for connection response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -71,7 +71,7 @@ class Connection(Handler):
                 error += ' (code {0:04X})'.format(errorCode)
             res['error'] = error
 
-        res['retryable'] = retryable and '1' or '0'
+        res['retryable'] = '1' if retryable else '0'
 
         return res
 
@@ -83,7 +83,7 @@ class Connection(Handler):
 
         return Connection.result(result=getServicesData(self._request))
 
-    def connection(self, doNotCheck=False):
+    def connection(self, doNotCheck: bool = False):
         idService = self._args[0]
         idTransport = self._args[1]
         try:
@@ -97,7 +97,7 @@ class Connection(Handler):
                 'protocol': 'unknown',
                 'ip': ip
             }
-            if doNotCheck is False:
+            if itrans:  # only will be available id doNotCheck is False
                 ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
             return Connection.result(result=ci)
         except ServiceNotReadyError as e:
@@ -131,15 +131,13 @@ class Connection(Handler):
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-        return password
-
     def get(self):
         """
         Processes get requests
         """
         logger.debug('Connection args for GET: %s', self._args)
 
-        if len(self._args) == 0:
+        if not self._args:
             # Return list of services/transports
             return self.serviceList()
         if len(self._args) == 1:

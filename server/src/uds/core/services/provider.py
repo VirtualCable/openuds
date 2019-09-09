@@ -39,6 +39,10 @@ from uds.core.environment import Environment
 from uds.core.util.config import GlobalConfig
 from uds.core.ui import gui
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .service import Service
+
 logger = logging.getLogger(__name__)
 
 
@@ -75,12 +79,11 @@ class ServiceProvider(Module):
     only need data that is keeped at form fields, marshal and unmarshal and in fact
     not needed.
     """
-    from .service import Service
 
     # : Services that we offers. Here is a list of service types (python types) that
     # : this class will provide. This types are the python clases, derived from
     # : Service, that are childs of this provider
-    offers: typing.List[typing.Type[Service]] = []
+    offers: typing.List[typing.Type['Service']] = []
 
     # : Name of type, used at administration interface to identify this
     # : provider (i.e. Xen server, oVirt Server, ...)

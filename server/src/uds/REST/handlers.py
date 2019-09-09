@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -100,15 +100,16 @@ class Handler:
     _request: 'HttpRequest'
     _path: str
     _operation: str
-    _params: typing.Any
+    _params: typing.Any  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
     _args: typing.Tuple[str, ...]
+    _kwargs: typing.Dict
     _headers: typing.Dict[str, str]
     _authToken: typing.Optional[str]
-    _user: typing.Optional['User']
+    _user: 'User'
 
 
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
-    def __init__(self, request: 'HttpRequest', path: str, operation: str, params: typing.Any, *args, **kwargs):
+    def __init__(self, request: 'HttpRequest', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
 
         if self.needs_admin or self.needs_staff:
             self.authenticated = True  # If needs_admin, must also be authenticated
@@ -121,7 +122,6 @@ class Handler:
         self._kwargs = kwargs
         self._headers = {}
         self._authToken = None
-        self._user = None
         if self.authenticated:  # Only retrieve auth related data on authenticated handlers
             try:
                 self._authToken = self._request.META.get(AUTH_TOKEN_HEADER, '')
@@ -142,8 +142,11 @@ class Handler:
                 raise AccessDenied()
 
             self._user = self.getUser()
+        else:
+            self._user = User()  # Empty user for non authenticated handlers
 
-    def headers(self):
+
+    def headers(self) -> typing.Dict[str, str]:
         """
         Returns the headers of the REST request (all)
         """
@@ -253,7 +256,7 @@ class Handler:
         self._session = None
 
     # Session related (from auth token)
-    def getValue(self, key) -> typing.Optional[str]:
+    def getValue(self, key: str) -> typing.Any:
         """
         Get REST session related value for a key
         """
@@ -262,7 +265,7 @@ class Handler:
         except Exception:
             return None  # _session['REST'] does not exists?
 
-    def setValue(self, key: str, value: str) -> None:
+    def setValue(self, key: str, value: typing.Any) -> None:
         """
         Set a session key value
         """

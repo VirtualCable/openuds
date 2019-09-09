@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext as _
 
@@ -66,9 +67,9 @@ class MetaServicesPool(DetailHandler):
             'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
         }
 
-    def getItems(self, parent: MetaPool, item: str):
+    def getItems(self, parent: MetaPool, item: typing.Optional[str]):
         try:
-            if item is None:
+            if not item:
                 return [MetaServicesPool.as_dict(i) for i in parent.members.all()]
             i = parent.members.get(uuid=processUuid(item))
             return MetaServicesPool.as_dict(i)
@@ -86,9 +87,12 @@ class MetaServicesPool(DetailHandler):
             {'enabled': {'title': _('Enabled')}},
         ]
 
-    def saveItem(self, parent: MetaPool, item):
+    def saveItem(self, parent: MetaPool, item: typing.Optional[str]):
+        if not self._user:
+            return self.accessDenied()
+
         # If already exists
-        uuid = processUuid(item) if item is not None else None
+        uuid = processUuid(item) if item else None
 
         pool = ServicePool.objects.get(uuid=processUuid(self._params['pool_id']))
         enabled = self._params['enabled'] not in ('false', False, '0', 0)
@@ -108,6 +112,8 @@ class MetaServicesPool(DetailHandler):
         return self.success()
 
     def deleteItem(self, parent: MetaPool, item: str):
+        if not self._user:
+            return
         member = parent.members.get(uuid=processUuid(self._args[0]))
         logStr = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
 

@@ -110,6 +110,9 @@ class Module(UserInterface, Environmentable, Serializable):
     # : Icon file, relative to module folders
     iconFile: typing.ClassVar[str] = 'base.png'  # This is expected to be png, use this format always
 
+    # Not defined, but declared. If module is groupable, this value will contain to which group belongs
+    group: str
+
     class ValidationException(Exception):
         """
         Exception used to indicate that the params assigned are invalid

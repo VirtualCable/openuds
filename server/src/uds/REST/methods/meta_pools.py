@@ -80,6 +80,8 @@ class MetaPools(ModelHandler):
     custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True)]
 
     def item_as_dict(self, item: MetaPool):
+        if not self._user:
+            return {}
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
         poolGroupId = None
@@ -216,4 +218,3 @@ class MetaPools(ModelHandler):
     def actionsList(self, item):
         validActions = ()
         return validActions
-

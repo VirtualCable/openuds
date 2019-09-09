@@ -64,7 +64,7 @@ class Accounts(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: Account):
         return {
             'id': item.uuid,
             'name': item.name,
@@ -77,10 +77,10 @@ class Accounts(ModelHandler):
     def getGui(self, type_):
         return self.addDefaultFields([], ['name', 'comments', 'tags'])
 
-    def timemark(self, item):
+    def timemark(self, item: Account):
         item.time_mark = datetime.datetime.now()
         item.save()
 
-    def clear(self, item):
+    def clear(self, item: Account):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
         return item.usages.filter(user_service=None).delete()

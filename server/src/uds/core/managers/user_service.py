@@ -620,7 +620,12 @@ class UserServiceManager:
             idService: str,
             idTransport: str,
             doTest: bool = True
-        ) -> typing.Tuple[typing.Optional[str], UserService, typing.Optional['services.UserDeployment'], Transport, typing.Optional[transports.Transport]]:
+        ) -> typing.Tuple[
+            typing.Optional[str],
+            UserService,
+            typing.Optional['services.UserDeployment'],
+            Transport,
+            typing.Optional[transports.Transport]]:
         """
         Get service info from user service
         """
