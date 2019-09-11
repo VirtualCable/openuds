@@ -32,16 +32,20 @@
 """
 import json
 import logging
+import typing
 
 from django.utils.translation import ugettext as _
 
-from uds.models import CalendarAction, Calendar
+from uds.models import Calendar
 from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.core.util import log, permissions
 from uds.core.util.model import processUuid
 
 from uds.REST.model import DetailHandler
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import CalendarAccess, CalendarAction, ServicePool
 
 logger = logging.getLogger(__name__)
 
@@ -50,12 +54,8 @@ DENY = 'DENY'
 
 
 class AccessCalendars(DetailHandler):
-    """
-    Processes the transports detail requests of a Service Pool
-    """
-
     @staticmethod
-    def as_dict(item):
+    def as_dict(item: 'CalendarAccess'):
         return {
             'id': item.uuid,
             'calendarId': item.calendar.uuid,
@@ -64,34 +64,32 @@ class AccessCalendars(DetailHandler):
             'priority': item.priority,
         }
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: 'ServicePool', item: typing.Optional[str]):
         try:
-            if item is None:
+            if not item:
                 return [AccessCalendars.as_dict(i) for i in parent.calendarAccess.all()]
-            else:
-                i = parent.calendarAccess.get(uuid=processUuid(item))
-                return AccessCalendars.as_dict(i)
+            return AccessCalendars.as_dict(parent.calendarAccess.get(uuid=processUuid(item)))
         except Exception:
             logger.exception('err: %s', item)
             self.invalidItemException()
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: 'ServicePool'):
         return _('Access restrictions by calendar')
 
-    def getFields(self, parent):
+    def getFields(self, parent: 'ServicePool') -> typing.List[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'calendar': {'title': _('Calendar')}},
             {'access': {'title': _('Access')}},
         ]
 
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: 'ServicePool', item: typing.Optional[str]) -> None:
         # If already exists
         uuid = processUuid(item) if item is not None else None
 
         try:
-            calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
-            access = self._params['access'].upper()
+            calendar: Calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
+            access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
                 raise Exception()
         except Exception:
@@ -99,7 +97,7 @@ class AccessCalendars(DetailHandler):
         priority = int(self._params['priority'])
 
         if uuid is not None:
-            calAccess = parent.calendarAccess.get(uuid=uuid)
+            calAccess: 'CalendarAccess' = parent.calendarAccess.get(uuid=uuid)
             calAccess.calendar = calendar
             calAccess.service_pool = parent
             calAccess.access = access
@@ -110,17 +108,13 @@ class AccessCalendars(DetailHandler):
 
         log.doLog(parent, log.INFO, "Added access calendar {}/{} by {}".format(calendar.name, access, self._user.pretty_name), log.ADMIN)
 
-        return self.success()
-
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent: 'ServicePool', item: str) -> None:
         calendarAccess = parent.calendarAccess.get(uuid=processUuid(self._args[0]))
         logStr = "Removed access calendar {} by {}".format(calendarAccess.calendar.name, self._user.pretty_name)
 
         calendarAccess.delete()
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
-
-        return self.success()
 
 
 class ActionsCalendars(DetailHandler):
@@ -130,7 +124,7 @@ class ActionsCalendars(DetailHandler):
     custom_methods = ('execute',)
 
     @staticmethod
-    def as_dict(item):
+    def as_dict(item: 'CalendarAction') -> typing.Dict[str, typing.Any]:
         action = CALENDAR_ACTION_DICT.get(item.action, {})
         params = json.loads(item.params)
         return {
@@ -147,19 +141,19 @@ class ActionsCalendars(DetailHandler):
             'lastExecution': item.last_execution
         }
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: 'ServicePool', item: typing.Optional[str]):
         try:
             if item is None:
                 return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
-            i = CalendarAction.objects.get(uuid=processUuid(item))
+            i = parent.calendaraction_set.objects.get(uuid=processUuid(item))
             return ActionsCalendars.as_dict(i)
         except Exception:
             self.invalidItemException()
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: 'ServicePool'):
         return _('Scheduled actions')
 
-    def getFields(self, parent):
+    def getFields(self, parent: 'ServicePool') -> typing.List[typing.Any]:
         return [
             {'calendar': {'title': _('Calendar')}},
             {'actionDescription': {'title': _('Action')}},
@@ -170,7 +164,7 @@ class ActionsCalendars(DetailHandler):
             {'lastExecution': {'title': _('Last execution'), 'type': 'datetime'}},
         ]
 
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: 'ServicePool', item: typing.Optional[str]) -> None:
         # If already exists
         uuid = processUuid(item) if item is not None else None
 
@@ -202,9 +196,7 @@ class ActionsCalendars(DetailHandler):
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
-        return self.success()
-
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent: 'ServicePool', item: str) -> None:
         calendarAction = CalendarAction.objects.get(uuid=processUuid(self._args[0]))
         logStr = "Removed scheduled action \"{},{},{},{},{}\" by {}".format(
             calendarAction.calendar.name, calendarAction.action,
@@ -216,9 +208,7 @@ class ActionsCalendars(DetailHandler):
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
-        return self.success()
-
-    def execute(self, parent, item):
+    def execute(self, parent: 'ServicePool', item: str):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
         logger.debug('Launching action')
         uuid = processUuid(item)
