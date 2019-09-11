@@ -31,10 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-from uds.core.osmanagers import factory
+from uds.core import osmanagers
 from uds.core.util import permissions
 from uds.models import OSManager
 from uds.REST import NotFound, RequestError
@@ -58,7 +59,7 @@ class OsManagers(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def osmToDict(self, osm):
+    def osmToDict(self, osm: OSManager) -> typing.Dict[str, typing.Any]:
         type_ = osm.getType()
         return {
             'id': osm.uuid,
@@ -72,23 +73,21 @@ class OsManagers(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, osm)
         }
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: OSManager) -> typing.Dict[str, typing.Any]:
         return self.osmToDict(item)
 
-    def checkDelete(self, item):
+    def checkDelete(self, item: OSManager) -> None:
+        # Only can delete if no ServicePools attached
         if item.deployedServices.count() > 0:
             raise RequestError(ugettext('Can\'t delete an OS Manager with services pools associated'))
 
-    def checkSave(self, item):  # Right now, always can be saved
-        pass
-
     # Types related
-    def enum_types(self):
-        return factory().providers().values()
+    def enum_types(self) -> typing.Iterable[typing.Type[osmanagers.OSManager]]:
+        return osmanagers.factory().providers().values()
 
     # Gui related
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
-            return self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags'])
+            return self.addDefaultFields(osmanagers.factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags'])
         except:
             raise NotFound('type not found')
