@@ -30,8 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import json
+import logging
+import typing
 
 from django.utils.translation import ugettext as _
 
@@ -62,7 +63,12 @@ class Client(Handler):
     authenticated = False  # Client requests are not authenticated
 
     @staticmethod
-    def result(result=None, error=None, errorCode=0, retryable=False):
+    def result(
+            result: typing.Any = None,
+            error: typing.Optional[typing.Union[str, int]] = None,
+            errorCode: int = 0,
+            retryable: bool = False
+        ) -> typing.Dict[str, typing.Any]:
         """
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -76,34 +82,34 @@ class Client(Handler):
         if error is not None:
             if isinstance(error, int):
                 error = errors.errorString(error)
+            error = str(error)  # Ensure error is an string
             if errorCode != 0:
                 error += ' (code {0:04X})'.format(errorCode)
 
             res['error'] = error
-            res['retryable'] = retryable and '1' or '0'
+            res['retryable'] = '1' if retryable else '0'
 
         logger.debug('Client Result: %s', res)
 
         return res
 
-    def test(self):
+    def test(self) -> typing.Dict[str, typing.Any]:
         """
         Executes and returns the test
         """
         return Client.result(_('Correct'))
 
-    def get(self):
+    def get(self):  # pylint: disable=too-many-locals
         """
         Processes get requests
         """
         logger.debug('Client args for GET: %s', self._args)
 
         if not self._args:  # Gets version
-            url = self._request.build_absolute_uri(reverse('page.client-download'))
             return Client.result({
                 'availableVersion': CLIENT_VERSION,
                 'requiredVersion': REQUIRED_CLIENT_VERSION,
-                'downloadUrl': url
+                'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download'))
             })
 
         if len(self._args) == 1:  # Simple test
@@ -132,9 +138,8 @@ class Client(Handler):
 
         try:
             logger.debug(data)
-            res = userServiceManager().getService(self._request.user, self._request.os, self._request.ip, data['service'], data['transport'])
-            logger.debug('Res: %s', res)
-            ip, userService, userServiceInstance, transport, transportInstance = res
+            ip, userService, userServiceInstance, transport, transportInstance = userServiceManager().getService(self._request.user, self._request.os, self._request.ip, data['service'], data['transport'])
+            logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
             password = cryptoManager().symDecrpyt(data['password'], scrambler)
 
             userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
@@ -151,11 +156,8 @@ class Client(Handler):
             })
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds
+            TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds, so 20 is fine :)
             return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=str(e))
-
-        # Will never reach this
-        raise RuntimeError('Unreachable point reached!!!')

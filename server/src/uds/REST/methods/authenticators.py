@@ -70,7 +70,7 @@ class Authenticators(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self) -> typing.Iterable[typing.Type[auths.Authenticator]]:  # override this
+    def enum_types(self) -> typing.Iterable[typing.Type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
     def typeInfo(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:

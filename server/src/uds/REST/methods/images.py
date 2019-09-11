@@ -31,6 +31,7 @@
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Image
@@ -48,29 +49,28 @@ class Images(ModelHandler):
     """
     Handles the gallery REST interface
     """
-    # needs_admin = True
-
     path = 'gallery'
     model = Image
     save_fields = ['name', 'data']
 
     table_title = _('Image Gallery')
     table_fields = [
-        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image', 'width': '96px' }},
+        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image', 'width': '96px'}},
         {'name': {'title': _('Name')}},
         {'size': {'title': _('Size')}},
     ]
 
-    def beforeSave(self, fields):
+    def beforeSave(self, fields: typing.Any) -> None:
         fields['data'] = Image.prepareForDb(Image.decode64(fields['data'].encode('utf8')))
 
-    def afterSave(self, item):
+    def afterSave(self, item: Image) -> None:
         # Updates the thumbnail and re-saves it
-        logger.debug('After save: item = {}'.format(item))
+        logger.debug('After save: item = %s', item)
         item.updateThumbnail()
         item.save()
 
-    def getGui(self, type_):
+
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addField(
             self.addDefaultFields([], ['name']), {
                 'name': 'data',
@@ -82,14 +82,14 @@ class Images(ModelHandler):
             }
         )
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: Image) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': item.name,
             'data': item.data64,
         }
 
-    def item_as_dict_overview(self, item):
+    def item_as_dict_overview(self, item: Image) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'size': '{}x{}, {} bytes (thumb {} bytes)'.format(item.width, item.height, len(item.data), len(item.thumb)),

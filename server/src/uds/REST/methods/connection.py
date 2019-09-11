@@ -55,7 +55,12 @@ class Connection(Handler):
     needs_staff = False
 
     @staticmethod
-    def result(result: typing.Any = None, error: typing.Any = None, errorCode: int = 0, retryable: bool = False) -> typing.Dict[str, typing.Any]:
+    def result(
+            result: typing.Any = None,
+            error: typing.Optional[typing.Union[str, int]] = None,
+            errorCode: int = 0,
+            retryable: bool = False
+        ) -> typing.Dict[str, typing.Any]:
         """
         Helper method to create a "result" set for connection response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -64,9 +69,10 @@ class Connection(Handler):
         """
         result = result if result is not None else ''
         res = {'result': result, 'date': datetime.datetime.now()}
-        if error is not None:
+        if error:
             if isinstance(error, int):
                 error = errors.errorString(error)
+            error = str(error)  # Ensure error is an string
             if errorCode != 0:
                 error += ' (code {0:04X})'.format(errorCode)
             res['error'] = error
@@ -79,6 +85,7 @@ class Connection(Handler):
         # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
         from uds.web.util.services import getServicesData
 
+        # Ensure user is present on request, used by web views methods
         self._request.user = self._user
 
         return Connection.result(result=getServicesData(self._request))
@@ -108,6 +115,7 @@ class Connection(Handler):
             return Connection.result(error=str(e))
 
     def script(self):
+        # Could be one-liner, (... = ..[0:4]), but mypy complains so this is fine :)
         idService = self._args[0]
         idTransport = self._args[1]
         scrambler = self._args[2]

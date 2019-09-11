@@ -670,20 +670,20 @@ class ModelHandler(BaseModelHandler):
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception
-    def checkDelete(self, item: models.Model):
+    def checkDelete(self, item: models.Model) -> None:
         pass
 
     # Save related, checks if the item can be saved
     # If it can't be saved, raises an exception
-    def checkSave(self, item: models.Model):
+    def checkSave(self, item: models.Model) -> None:
         pass
 
     # Invoked to possibily fix fields (or add new one, or check
-    def beforeSave(self, fields: typing.List[typing.Dict[str, typing.Any]]):
+    def beforeSave(self, fields: typing.Any) -> None:
         pass
 
     # Invoked right after saved an item (no matter if new or edition)
-    def afterSave(self, item: models.Model):
+    def afterSave(self, item: models.Model) -> None:
         pass
 
     # End overridable

@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 
 class ServicePoolPublicationChangelog(models.Model):
-    publication = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='changelog')
+    publication: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='changelog')
     stamp = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
     log = models.TextField(default='')

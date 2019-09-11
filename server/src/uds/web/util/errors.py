@@ -88,7 +88,7 @@ strings = [
 ]
 
 
-def errorString(errorId):
+def errorString(errorId) -> str:
     errorId = int(errorId)
     if errorId < len(strings):
         return strings[errorId]
