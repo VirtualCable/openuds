@@ -31,6 +31,7 @@
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 
@@ -62,7 +63,7 @@ class Networks(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def beforeSave(self, fields):
+    def beforeSave(self, fields: typing.Any) -> None:
         logger.debug('Before %s', fields)
         try:
             nr = net.networkFromString(fields['net_string'])
@@ -72,7 +73,7 @@ class Networks(ModelHandler):
             raise SaveException(ugettext('Invalid network: {}').format(e))
         logger.debug('Processed %s', fields)
 
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addField(
             self.addDefaultFields([], ['name', 'tags']), {
                 'name': 'net_string',
@@ -84,7 +85,7 @@ class Networks(ModelHandler):
             }
         )
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: Network) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': item.name,
