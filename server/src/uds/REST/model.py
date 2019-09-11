@@ -346,7 +346,7 @@ class DetailHandler(BaseModelHandler):
     _params: typing.Any  # _params is deserialized object from request
     _args: typing.Tuple[str, ...]
     _kwargs: typing.Dict[str, typing.Any]
-    _user: typing.Optional['User']
+    _user: 'User'
 
     def __init__(
             self,
@@ -472,7 +472,9 @@ class DetailHandler(BaseModelHandler):
         if len(self._args) != 1:
             self.invalidRequestException()
 
-        return self.deleteItem(parent, self._args[0])
+        self.deleteItem(parent, self._args[0])
+
+        return OK
 
     def fallbackGet(self) -> typing.Any:
         """
@@ -496,7 +498,7 @@ class DetailHandler(BaseModelHandler):
         raise NotImplementedError('Must provide an getItems method for {} class'.format(self.__class__))
 
     # Default save
-    def saveItem(self, parent: models.Model, item: str):
+    def saveItem(self, parent: models.Model, item: typing.Optional[str]) -> None:
         """
         Invoked for a valid "put" operation
         If this method is not overridden, the detail class will not have "Save/modify" operations.
@@ -509,7 +511,7 @@ class DetailHandler(BaseModelHandler):
         self.invalidRequestException()
 
     # Default delete
-    def deleteItem(self, parent: models.Model, item: str):
+    def deleteItem(self, parent: models.Model, item: str) -> None:
         """
         Invoked for a valid "delete" operation.
         If this method is not overriden, the detail class will not have "delete" operation.
@@ -529,7 +531,7 @@ class DetailHandler(BaseModelHandler):
         """
         return ''
 
-    def getFields(self, parent: models.Model) -> typing.List[typing.Any]:  # pylint: disable=no-self-use
+    def getFields(self, parent: models.Model) -> typing.List[typing.Any]:
         """
         A "generic" list of fields for a view based on this detail.
         If not overridden, defaults to emty list
@@ -538,7 +540,7 @@ class DetailHandler(BaseModelHandler):
         """
         return []
 
-    def getRowStyle(self, parent: models.Model) -> typing.Dict[str, typing.Any]:  # pylint: disable=no-self-use
+    def getRowStyle(self, parent: models.Model) -> typing.Dict[str, typing.Any]:
         """
         A "generic" row style based on row field content.
         If not overridden, defaults to {}
@@ -547,7 +549,7 @@ class DetailHandler(BaseModelHandler):
         """
         return {}
 
-    def getGui(self, parent: models.Model, forType: typing.Optional[str]) -> typing.Iterable[typing.Any]:  # pylint: disable=no-self-use
+    def getGui(self, parent: models.Model, forType: typing.Optional[str]) -> typing.Iterable[typing.Any]:
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
@@ -667,7 +669,7 @@ class ModelHandler(BaseModelHandler):
         return log.getLogs(item)
 
     # gui related
-    def getGui(self, type_: str) -> typing.Iterable[typing.Any]:
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         return []
         # self.invalidRequestException()
 

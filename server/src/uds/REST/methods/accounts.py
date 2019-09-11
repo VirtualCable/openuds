@@ -32,6 +32,7 @@
 """
 import datetime
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -74,12 +75,13 @@ class Accounts(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item)
         }
 
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addDefaultFields([], ['name', 'comments', 'tags'])
 
     def timemark(self, item: Account):
         item.time_mark = datetime.datetime.now()
         item.save()
+        return ''
 
     def clear(self, item: Account):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)

@@ -32,8 +32,8 @@
 """
 import datetime
 import logging
+import typing
 
-import six
 from django.utils.translation import ugettext as _
 
 from uds.REST import Handler
@@ -74,7 +74,7 @@ class Actor(Handler):
     authenticated = False  # Actor requests are not authenticated
 
     @staticmethod
-    def result(result=None, error=None):
+    def result(result: typing.Any = None, error: typing.Optional[str] = None):
         """
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -83,7 +83,7 @@ class Actor(Handler):
         """
         result = result or ''
         res = {'result': result, 'date': datetime.datetime.now()}
-        if error is not None:
+        if error:
             res['error'] = error
         return res
 
@@ -104,7 +104,7 @@ class Actor(Handler):
             return Actor.result(_('Invalid key'), error=ERR_INVALID_KEY)
         return None
 
-    def getUserServiceByIds(self):
+    def getUserServiceByIds(self) -> UserService:
         """
         This will get the client from the IDs passed from parameters
         """
@@ -114,7 +114,6 @@ class Actor(Handler):
             clientIds = [i.upper() for i in self._params.get('id').split(',')[:5]]
         except Exception:
             raise RequestError('Invalid request: (no id found)')
-
 
         services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
 
@@ -165,7 +164,7 @@ class Actor(Handler):
                 return self.test()
 
             # Returns UID of selected Machine
-            actorVersion = self._params.get('version', 'unknown')
+            actorVersion: str = self._params.get('version', 'unknown')
             service = self.getUserServiceByIds()
             if service is None:
                 logger.info('Unmanaged host request: %s', self._args)
@@ -186,7 +185,7 @@ class Actor(Handler):
         raise RequestError('Invalid request')
 
     # Must be invoked as '/rest/actor/UUID/[message], with message data in post body
-    def post(self):
+    def post(self):  # pylint: disable=too-many-branches
         """
         Processes post requests
         """
@@ -201,7 +200,7 @@ class Actor(Handler):
 
         # Right now, only "message" posts
         try:
-            service = UserService.objects.get(uuid=processUuid(uuid))
+            service: UserService = UserService.objects.get(uuid=processUuid(uuid))
         except Exception:
             return Actor.result(_('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND)
 
@@ -221,7 +220,7 @@ class Actor(Handler):
         # "Cook" some messages, common to all clients, such as "log"
         if message == 'log':
             logger.debug(self._params)
-            data = '\t'.join((self._params.get('message'), six.text_type(self._params.get('level', 10000))))
+            data = '\t'.join((self._params.get('message'), str(self._params.get('level', 10000))))
 
         osmanager = service.getInstance().osmanager()
 
@@ -240,6 +239,6 @@ class Actor(Handler):
             res = osmanager.process(service, message, data, options={'scramble': False})
         except Exception as e:
             logger.exception("Exception processing from OS Manager")
-            return Actor.result(six.text_type(e), ERR_OSMANAGER_ERROR)
+            return Actor.result(str(e), ERR_OSMANAGER_ERROR)
 
         return Actor.result(res)

@@ -93,7 +93,7 @@ class Handler:
     raw: typing.ClassVar[bool] = False  # If true, Handler will return directly an HttpResponse Object
     name: typing.ClassVar[typing.Optional[str]] = None  # If name is not used, name will be the class name in lower case
     path: typing.ClassVar[typing.Optional[str]] = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
-    authenticated: bool = True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff
+    authenticated: typing.ClassVar[bool] = True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff,
     needs_admin: typing.ClassVar[bool] = False  # By default, the methods will be accessible by anyone if nothing else indicated
     needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
@@ -111,8 +111,8 @@ class Handler:
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
     def __init__(self, request: 'HttpRequest', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
 
-        if self.needs_admin or self.needs_staff:
-            self.authenticated = True  # If needs_admin, must also be authenticated
+        if self.needs_admin or self.needs_staff and not self.authenticated:  # If needs_admin, must also be authenticated
+            raise Exception('class {} is not authenticated but has needs_admin or needs_staff set!!'.format(self.__class__))
 
         self._request = request
         self._path = path

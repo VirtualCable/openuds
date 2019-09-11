@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext as _
 
@@ -38,6 +39,10 @@ from uds.REST import RequestError
 from uds.REST.model import DetailHandler
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import AccountUsage, Account
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +53,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def usageToDict(item, perm):
+    def usageToDict(item: 'AccountUsage', perm):
         """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)
@@ -70,20 +75,19 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: Account, item: typing.Optional[str]):
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
-            if item is None:
+            if not item:
                 return [AccountsUsage.usageToDict(k, perm) for k in parent.usages.all()]
-            else:
-                k = parent.usages.get(uuid=processUuid(item))
-                return AccountsUsage.usageToDict(k, perm)
+            k = parent.usages.get(uuid=processUuid(item))
+            return AccountsUsage.usageToDict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
             self.invalidItemException()
 
-    def getFields(self, parent):
+    def getFields(self, parent: Account) -> typing.List[typing.Any]:
         return [
             {'pool_name': {'title': _('Pool name')}},
             {'user_name': {'title': _('User name')}},
@@ -94,13 +98,13 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             {'elapsed_timemark': {'title': _('Elapsed timemark')}},
         ]
 
-    def getRowStyle(self, parent):
+    def getRowStyle(self, parent: Account) -> typing.Dict[str, typing.Any]:
         return {'field': 'running', 'prefix': 'row-running-'}
 
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: Account, item: typing.Optional[str]) -> None:
         raise RequestError('Accounts usage cannot be edited')
 
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent: Account, item: str) -> None:
         logger.debug('Deleting account usage %s from %s', item, parent)
         try:
             usage = parent.usages.get(uuid=processUuid(item))
@@ -109,9 +113,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Exception')
             self.invalidItemException()
 
-        return 'deleted'
-
-    def getTitle(self, parent):
+    def getTitle(self, parent: Account) -> str:
         try:
             return _('Usages of {0}').format(parent.name)
         except Exception:

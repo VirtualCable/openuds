@@ -54,7 +54,7 @@ class ContentProcessor:
     """
     mime_type: typing.ClassVar[str] = ''
     extensions: typing.ClassVar[typing.Iterable[str]] = []
-    
+
     _request: http.HttpRequest
 
     def __init__(self, request: http.HttpRequest):

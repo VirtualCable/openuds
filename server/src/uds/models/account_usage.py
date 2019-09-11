@@ -39,7 +39,6 @@ from .account import Account
 from .user_service import UserService
 from .util import NEVER
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -55,9 +54,8 @@ class AccountUsage(UUIDModel):
     pool_uuid = models.CharField(max_length=50, db_index=True, default='')
     start = models.DateTimeField(default=NEVER)
     end = models.DateTimeField(default=NEVER)
-    user_service = models.OneToOneField(UserService, null=True, blank=True, related_name='accounting', on_delete=models.SET_NULL)
-
-    account = models.ForeignKey(Account, related_name='usages', on_delete=models.CASCADE)
+    user_service: UserService = models.OneToOneField(UserService, null=True, blank=True, related_name='accounting', on_delete=models.SET_NULL)
+    account: Account = models.ForeignKey(Account, related_name='usages', on_delete=models.CASCADE)
 
     class Meta:
         """
