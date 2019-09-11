@@ -30,9 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import random
 import string
+import logging
+import typing
 
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import processUuid
@@ -91,42 +92,48 @@ class Login(Handler):
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
 
-            scrambler = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
-            authId = self._params.get('authId', None)
-            authSmallName = self._params.get('authSmallName', None)
-            authName = self._params.get('auth', None)
-            platform = self._params.get('platform', self._request.os)
+            scrambler: str = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
+            authId: typing.Optional[str] = self._params.get('authId', None)
+            authSmallName: typing.Optional[str] = self._params.get('authSmallName', None)
+            authName: typing.Optional[str] = self._params.get('auth', None)
+            platform: str = self._params.get('platform', self._request.os)
+
+            username: str
+            password: str
 
             username, password = self._params['username'], self._params['password']
-            locale = self._params.get('locale', 'en')
+            locale: str = self._params.get('locale', 'en')
             if authName == 'admin' or authSmallName == 'admin':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
                     self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
                     return{'result': 'ok', 'token': self.getAuthToken()}
+                raise Exception('Invalid credentials')
+
+            try:
+                # Will raise an exception if no auth found
+                if authId:
+                    auth = Authenticator.objects.get(uuid=processUuid(authId))
+                elif authName:
+                    auth = Authenticator.objects.get(name=authName)
                 else:
-                    raise Exception('Invalid credentials')
-            else:
-                try:
-                    # Will raise an exception if no auth found
-                    if authId is not None:
-                        auth = Authenticator.objects.get(uuid=processUuid(authId))
-                    elif authName is not None:
-                        auth = Authenticator.objects.get(name=authName)
-                    else:
-                        auth = Authenticator.objects.get(small_name=authSmallName)
+                    auth = Authenticator.objects.get(small_name=authSmallName)
 
-                    if password == '':
-                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
+                if not password:
+                    password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
 
-                    logger.debug('Auth obj: %s', auth)
-                    user = authenticate(username, password, auth)
-                    if user is None:  # invalid credentials
-                        raise Exception()
-                    self.genAuthToken(auth.id, user.name, password, locale, platform, user.is_admin, user.staff_member, scrambler)
-                    return {'result': 'ok', 'token': self.getAuthToken(), 'version': UDS_VERSION, 'scrambler': scrambler }
-                except:
-                    logger.exception('Credentials ')
-                    raise Exception('Invalid Credentials (invalid authenticator)')
+                logger.debug('Auth obj: %s', auth)
+                user = authenticate(username, password, auth)
+                if user is None:  # invalid credentials
+                    raise Exception()
+                return {
+                    'result': 'ok',
+                    'token': self.genAuthToken(auth.id, user.name, password, locale, platform, user.is_admin, user.staff_member, scrambler),
+                    'version': UDS_VERSION,
+                    'scrambler': scrambler
+                }
+            except:
+                logger.exception('Credentials ')
+                raise Exception('Invalid Credentials (invalid authenticator)')
 
             raise Exception('Invalid Credentials')
         except Exception as e:
@@ -155,16 +162,17 @@ class Auths(Handler):
     authenticated = False  # By default, all handlers needs authentication
 
     def auths(self):
-        paramAll = self._params.get('all', 'false') == 'true'
-        for a in Authenticator.objects.all():
-            theType = a.getType()
+        paramAll: bool = self._params.get('all', 'false') == 'true'
+        auth: Authenticator
+        for auth in Authenticator.objects.all():
+            theType = auth.getType()
             if paramAll or (theType.isCustom() is False and theType.typeType not in ('IP',)):
                 yield {
-                    'authId': a.uuid,
-                    'authSmallName': str(a.small_name),
-                    'auth': a.name,
+                    'authId': auth.uuid,
+                    'authSmallName': str(auth.small_name),
+                    'auth': auth.name,
                     'type': theType.typeType,
-                    'priority': a.priority,
+                    'priority': auth.priority,
                     'isCustom': theType.isCustom()
                 }
 

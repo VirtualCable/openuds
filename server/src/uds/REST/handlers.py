@@ -37,13 +37,12 @@ from django.contrib.sessions.backends.db import SessionStore
 
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import getRootUser
-from uds.models import Authenticator
+from uds.models import Authenticator, User
 from uds.core.managers import cryptoManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
-    from uds.models import User
 
 logger = logging.getLogger(__name__)
 
