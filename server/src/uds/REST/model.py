@@ -63,7 +63,6 @@ if typing.TYPE_CHECKING:
     from uds.models import User
     from uds.core import Module
 
-
 logger = logging.getLogger(__name__)
 
 # a few constants
@@ -75,13 +74,11 @@ LOG = 'log'
 
 OK = 'ok'  # Constant to be returned when result is just "operation complete successfully"
 
-
 # Exception to "rethrow" on save error
 class SaveException(HandlerError):
     """
     Exception thrown if couldn't save
     """
-
 
 class BaseModelHandler(Handler):
     """
@@ -186,10 +183,7 @@ class BaseModelHandler(Handler):
         return gui
 
     def ensureAccess(self, obj: typing.Any, permission: int, root=False) -> int:
-        if self._user:
-            perm = permissions.getEffectivePermission(self._user, obj, root)
-        else:
-            perm = -999999
+        perm = permissions.getEffectivePermission(self._user, obj, root)
         if perm < permission:
             self.accessDenied()
         return perm
@@ -308,7 +302,7 @@ class BaseModelHandler(Handler):
         logger.debug('Returning success on %s %s', self.__class__, self._args)
         return OK
 
-    def test(self, type_: typing.Type['Module']):
+    def test(self, type_: str):
         """
         Invokes a test for an item
         """
@@ -598,8 +592,9 @@ class ModelHandler(BaseModelHandler):
     # Authentication related
     authenticated = True
     needs_staff = True
-    # Which model does this manage
-    model: models.Model
+
+    # Which model does this manage, must be a django model ofc
+    model: typing.ClassVar[models.Model]
 
     # By default, filter is empty
     fltr: typing.Optional[str] = None
@@ -638,7 +633,7 @@ class ModelHandler(BaseModelHandler):
         return self.item_as_dict(item)
 
     # types related
-    def enum_types(self) -> typing.Iterable['Module']:  # override this
+    def enum_types(self) -> typing.Iterable[typing.Type['Module']]:  # override this
         """
         Must be overriden by desdencents if they support types
         Excpetcs the list of types that the handler supports

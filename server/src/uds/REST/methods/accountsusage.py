@@ -75,7 +75,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: Account, item: typing.Optional[str]):
+    def getItems(self, parent: 'Account', item: typing.Optional[str]):
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
@@ -87,7 +87,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('itemId %s', item)
             self.invalidItemException()
 
-    def getFields(self, parent: Account) -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Account') -> typing.List[typing.Any]:
         return [
             {'pool_name': {'title': _('Pool name')}},
             {'user_name': {'title': _('User name')}},
@@ -98,13 +98,13 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             {'elapsed_timemark': {'title': _('Elapsed timemark')}},
         ]
 
-    def getRowStyle(self, parent: Account) -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Account') -> typing.Dict[str, typing.Any]:
         return {'field': 'running', 'prefix': 'row-running-'}
 
-    def saveItem(self, parent: Account, item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'Account', item: typing.Optional[str]) -> None:
         raise RequestError('Accounts usage cannot be edited')
 
-    def deleteItem(self, parent: Account, item: str) -> None:
+    def deleteItem(self, parent: 'Account', item: str) -> None:
         logger.debug('Deleting account usage %s from %s', item, parent)
         try:
             usage = parent.usages.get(uuid=processUuid(item))
@@ -113,7 +113,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Exception')
             self.invalidItemException()
 
-    def getTitle(self, parent: Account) -> str:
+    def getTitle(self, parent: 'Account') -> str:
         try:
             return _('Usages of {0}').format(parent.name)
         except Exception:

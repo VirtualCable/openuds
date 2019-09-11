@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
 from uds.models import Authenticator
@@ -42,6 +43,9 @@ from uds.core.util import permissions
 
 from .users_groups import Users, Groups
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
@@ -66,28 +70,34 @@ class Authenticators(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self):
+    def enum_types(self) -> typing.Iterable[typing.Type[auths.Authenticator]]:  # override this
         return auths.factory().providers().values()
 
-    def typeInfo(self, type_):
-        return {
-            'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,
-            'canSearchGroups': type_.searchGroups != auths.Authenticator.searchGroups,
-            'needsPassword': type_.needsPassword,
-            'userNameLabel': _(type_.userNameLabel),
-            'groupNameLabel': _(type_.groupNameLabel),
-            'passwordLabel': _(type_.passwordLabel),
-            'canCreateUsers': type_.createUser != auths.Authenticator.createUser,
-            'isExternal': type_.isExternalSource,
-        }
+    def typeInfo(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:
+        if issubclass(type_, auths.Authenticator):
+            return {
+                'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,
+                'canSearchGroups': type_.searchGroups != auths.Authenticator.searchGroups,
+                'needsPassword': type_.needsPassword,
+                'userNameLabel': _(type_.userNameLabel),
+                'groupNameLabel': _(type_.groupNameLabel),
+                'passwordLabel': _(type_.passwordLabel),
+                'canCreateUsers': type_.createUser != auths.Authenticator.createUser,
+                'isExternal': type_.isExternalSource,
+            }
+        # Not of my type
+        return {}
 
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
-            return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority', 'small_name'])
+            gui = auths.factory().lookup(type_)
+            if gui:
+                return self.addDefaultFields(gui.guiDescription(), ['name', 'comments', 'tags', 'priority', 'small_name'])
+            raise Exception()  # Not found
         except Exception:
             raise NotFound('type not found')
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: Authenticator):
         type_ = item.getType()
         return {
             'numeric_id': item.id,
@@ -105,7 +115,7 @@ class Authenticators(ModelHandler):
         }
 
     # Custom "search" method
-    def search(self, item):
+    def search(self, item: Authenticator) -> typing.List[typing.Dict]:
         self.ensureAccess(item, permissions.PERMISSION_READ)
         try:
             type_ = self._params['type']
@@ -123,18 +133,22 @@ class Authenticators(ModelHandler):
                 self.notSupported()
 
             if type_ == 'user':
-                return auth.searchUsers(term)[:limit]
+                return list(auth.searchUsers(term))[:limit]
             else:
-                return auth.searchGroups(term)[:limit]
+                return list(auth.searchGroups(term))[:limit]
         except Exception as e:
             logger.exception('Too many results: %s', e)
             return [{'id': _('Too many results...'), 'name': _('Refine your query')}]
             # self.invalidResponseException('{}'.format(e))
 
-    def test(self, type_):
+    def test(self, type_: str):
         from uds.core.environment import Environment
 
         authType = auths.factory().lookup(type_)
+        if not authType:
+            self.invalidRequestException('Invalid type: {}'.format(type_))
+            return False
+
         self.ensureAccess(authType, permissions.PERMISSION_MANAGEMENT, root=True)
 
         dct = self._params.copy()
@@ -142,10 +156,9 @@ class Authenticators(ModelHandler):
         res = authType.test(Environment.getTempEnv(), dct)
         if res[0]:
             return self.success()
-        else:
-            return res[1]
+        return res[1]
 
-    def deleteItem(self, item):
+    def deleteItem(self, item: Authenticator):
         # For every user, remove assigned services (mark them for removal)
 
         for user in item.users.all():
