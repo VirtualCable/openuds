@@ -30,6 +30,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from .uuid_model import UUIDModel
@@ -39,11 +40,19 @@ from .tag import TaggingMixin
 logger = logging.getLogger(__name__)
 
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import CalendarRule, CalendarAccess, CalendarAction
+
+
 class Calendar(UUIDModel, TaggingMixin):
 
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     modified = models.DateTimeField(auto_now=True)
+
+    # Sobmodels
+    rules: CalendarRule
 
     class Meta:
         """

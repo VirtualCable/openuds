@@ -31,6 +31,7 @@
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
 from uds.models import Calendar
@@ -62,7 +63,7 @@ class Calendars(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: Calendar) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': item.name,
@@ -72,5 +73,5 @@ class Calendars(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item)
         }
 
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addDefaultFields([], ['name', 'comments', 'tags'])

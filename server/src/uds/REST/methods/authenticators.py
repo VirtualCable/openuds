@@ -97,7 +97,7 @@ class Authenticators(ModelHandler):
         except Exception:
             raise NotFound('type not found')
 
-    def item_as_dict(self, item: Authenticator):
+    def item_as_dict(self, item: Authenticator) -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
         return {
             'numeric_id': item.id,

@@ -53,7 +53,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def usageToDict(item: 'AccountUsage', perm):
+    def usageToDict(item: 'AccountUsage', perm: int) -> typing.Dict[str, typing.Any]:
         """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)

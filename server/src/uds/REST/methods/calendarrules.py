@@ -30,8 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import datetime
+import logging
+import typing
 
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError
@@ -45,6 +46,9 @@ from uds.core.util.model import processUuid
 from uds.REST.model import DetailHandler
 from uds.REST import RequestError
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import Calendar
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +59,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def ruleToDict(item, perm):
+    def ruleToDict(item: CalendarRule, perm: int):
         """
         Convert a calRule db item to a dict for a rest response
         :param item: Rule item (db)
@@ -76,7 +80,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: 'Calendar', item: typing.Optional[str]):
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
@@ -89,7 +93,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('itemId %s', item)
             self.invalidItemException()
 
-    def getFields(self, parent):
+    def getFields(self, parent: 'Calendar') -> typing.List[typing.Any]:
         return [
             {'name': {'title': _('Rule name')}},
             {'start': {'title': _('Starts'), 'type': 'datetime'}},
@@ -100,7 +104,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             {'comments': {'title': _('Comments')}},
         ]
 
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: 'Calendar', item: typing.Optional[str]) -> None:
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving rule %s / %s', parent, item)
@@ -114,7 +118,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         if fields['end'] is not None:
             fields['end'] = datetime.datetime.fromtimestamp(fields['end'])
 
-        calRule = None
+        calRule: CalendarRule
         try:
             if item is None:  # Create new
                 calRule = parent.rules.create(**fields)
@@ -132,7 +136,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return self.getItems(parent, calRule.uuid)
 
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent: 'Calendar', item: str) -> None:
         logger.debug('Deleting rule %s from %s', item, parent)
         try:
             calRule = parent.rules.get(uuid=processUuid(item))
@@ -143,9 +147,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Exception')
             self.invalidItemException()
 
-        return 'deleted'
-
-    def getTitle(self, parent):
+    def getTitle(self, parent: 'Calendar') -> str:
         try:
             return _('Rules of {0}').format(parent.name)
         except Exception:
