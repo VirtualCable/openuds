@@ -52,7 +52,7 @@ class Calendar(UUIDModel, TaggingMixin):
     modified = models.DateTimeField(auto_now=True)
 
     # Sobmodels
-    rules: CalendarRule
+    rules: 'CalendarRule'
 
     class Meta:
         """
