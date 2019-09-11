@@ -417,8 +417,7 @@ gui.servicesPools.link = (event) ->
                 value.in_use = gettext('Yes')
               else
                 value.in_use = gettext('No')
-              value.owner = gui.fastLink(value.owner.replace /@/, '<span class="text-danger">@</span>', "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.servicesPools.fastLink', 'goAuthLink')
-
+              value.owner = gui.fastLink(value.owner.replace(/@/, '<span class="text-danger">@</span>'), "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.servicesPools.fastLink', 'goAuthLink')
             return
 
           onRefresh: () ->
