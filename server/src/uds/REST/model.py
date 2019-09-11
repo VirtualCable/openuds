@@ -436,7 +436,7 @@ class DetailHandler(BaseModelHandler):
 
         parent: models.Model = self._kwargs['parent']
 
-        # Create new item unless param received
+        # Create new item unless 1 param received (the id of the item to modify)
         item = None
         if len(self._args) == 1:
             item = self._args[0]

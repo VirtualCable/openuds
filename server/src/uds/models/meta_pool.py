@@ -184,8 +184,8 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool = models.ForeignKey(ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE)
-    meta_pool = models.ForeignKey(MetaPool, related_name='members', on_delete=models.CASCADE)
+    pool: ServicePool = models.ForeignKey(ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE)
+    meta_pool: MetaPool = models.ForeignKey(MetaPool, related_name='members', on_delete=models.CASCADE)
     priority = models.PositiveIntegerField(default=0)
     enabled = models.BooleanField(default=True)
 
@@ -197,4 +197,4 @@ class MetaPoolMember(UUIDModel):
         app_label = 'uds'
 
     def __str__(self):
-        return ''
+        return '{}/{} {} {}'.format(self.pool.name, self.meta_pool.name, self.priority, self.enabled)
