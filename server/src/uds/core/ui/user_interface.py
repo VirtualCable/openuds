@@ -119,7 +119,7 @@ class gui:
         return []
 
     @staticmethod
-    def choiceItem(id_: str, text: str) -> 'gui.ChoiceType':
+    def choiceItem(id_: typing.Union[str, int], text: str) -> 'gui.ChoiceType':
         """
         Helper method to create a single choice item.
 
@@ -138,7 +138,7 @@ class gui:
         return {'id': str(id_), 'text': str(text)}
 
     @staticmethod
-    def choiceImage(id_: str, text: str, img: str) -> typing.Dict[str, str]:
+    def choiceImage(id_: typing.Union[str, int], text: str, img: bytes) -> typing.Dict[str, typing.Union[str, bytes]]:
         return {'id': str(id_), 'text': str(text), 'img': img}
 
     @staticmethod

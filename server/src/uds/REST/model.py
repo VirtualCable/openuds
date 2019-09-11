@@ -599,7 +599,7 @@ class ModelHandler(BaseModelHandler):
     # By default, filter is empty
     fltr: typing.Optional[str] = None
 
-    # This is an array of tuples of two items, where first is method and second inticates if method needs parent id
+    # This is an array of tuples of two items, where first is method and second inticates if method needs parent id (normal behavior is it needs it)
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
     custom_methods: typing.ClassVar[typing.Iterable[typing.Tuple[str, bool]]] = []  # If this model respond to "custom" methods, we will declare them here
@@ -658,10 +658,13 @@ class ModelHandler(BaseModelHandler):
         return found
 
     # log related
-    def getLogs(self, item: models.Model):
+    def getLogs(self, item: models.Model) -> typing.List[typing.Dict]:
         self.ensureAccess(item, permissions.PERMISSION_READ)
-        logger.debug('Default getLogs invoked')
-        return log.getLogs(item)
+        try:
+            return log.getLogs(item)
+        except Exception as e:
+            logger.warning('Exception getting logs for %s: %s', item, e)
+            return []
 
     # gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:

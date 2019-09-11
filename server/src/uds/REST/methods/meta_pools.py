@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import MetaPool, Image, ServicePoolGroup
@@ -79,9 +80,7 @@ class MetaPools(ModelHandler):
 
     custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True)]
 
-    def item_as_dict(self, item: MetaPool):
-        if not self._user:
-            return {}
+    def item_as_dict(self, item: MetaPool) -> typing.Dict[str, typing.Any]:
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
         poolGroupId = None
@@ -119,11 +118,10 @@ class MetaPools(ModelHandler):
         return val
 
     # Gui related
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
+        localGUI = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
-        g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
-
-        for f in [{
+        for field in [{
                 'name': 'policy',
                 'values': [gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()],
                 'label': ugettext('Policy'),
@@ -155,11 +153,11 @@ class MetaPools(ModelHandler):
                 'order': 123,
                 'tab': ugettext('Display'),
             }]:
-            self.addField(g, f)
+            self.addField(localGUI, field)
 
-        return g
+        return localGUI
 
-    def beforeSave(self, fields):
+    def beforeSave(self, fields: typing.Any) -> None:
         # logger.debug(self._params)
         try:
             # **** IMAGE ***
@@ -191,18 +189,11 @@ class MetaPools(ModelHandler):
 
         logger.debug('Fields: %s', fields)
 
-    def deleteItem(self, item):
+    def deleteItem(self, item: MetaPool) -> None:
         item.delete()
 
-    # Logs
-    def getLogs(self, item):
-        try:
-            return log.getLogs(item)
-        except Exception:
-            return []
-
     # Set fallback status
-    def setFallbackAccess(self, item):
+    def setFallbackAccess(self, item: MetaPool):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
@@ -211,10 +202,10 @@ class MetaPools(ModelHandler):
         item.save()
         return ''
 
-    def getFallbackAccess(self, item):
+    def getFallbackAccess(self, item: MetaPool):
         return item.fallbackAccess
 
-    #  Returns the action list based on current element, for calendar
-    def actionsList(self, item):
+    #  Returns the action list based on current element, for calendars (nothing right now for metapools)
+    def actionsList(self, item: MetaPool):
         validActions = ()
         return validActions
