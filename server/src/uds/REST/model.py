@@ -274,11 +274,11 @@ class BaseModelHandler(Handler):
         message = 'Invalid response' if message is None else message
         return ResponseError(message)
 
-    def invalidMethodException(self):
+    def invalidMethodException(self) -> HandlerError:
         """
         Raises a NotFound exception with translated "Method not found" string to current locale
         """
-        raise RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
+        return RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
     def invalidItemException(self, message: typing.Optional[str] = None):
         """
@@ -307,7 +307,7 @@ class BaseModelHandler(Handler):
         Invokes a test for an item
         """
         logger.debug('Called base test for %s --> %s', self.__class__.__name__, self._params)
-        self.invalidMethodException()
+        raise self.invalidMethodException()
 
 
 # Details do not have types at all
@@ -571,7 +571,7 @@ class DetailHandler(BaseModelHandler):
         :param item:
         :return: a list of log elements (normally got using "uds.core.util.log.getLogs" method)
         """
-        self.invalidMethodException()
+        raise self.invalidMethodException()
 
 
 class ModelHandler(BaseModelHandler):
@@ -764,9 +764,9 @@ class ModelHandler(BaseModelHandler):
 
             return method()
         except KeyError:
-            self.invalidMethodException()
+            raise self.invalidMethodException()
         except AttributeError:
-            self.invalidMethodException()
+            raise self.invalidMethodException()
 
         raise Exception('Invalid code executed on processDetail')
 
@@ -810,7 +810,7 @@ class ModelHandler(BaseModelHandler):
                         item = self.model.objects.get(uuid=self._args[0].lower())
                     except Exception as e:
                         logger.error('Invalid custom method exception %s/%s/%s: %s', self.__class__.__name__, self._args, self._params, e)
-                        self.invalidMethodException()
+                        raise self.invalidMethodException()
 
                     return operation(item)
 
@@ -819,7 +819,7 @@ class ModelHandler(BaseModelHandler):
                 try:
                     operation = getattr(self, self._args[0])
                 except Exception:
-                    self.invalidMethodException()
+                    raise self.invalidMethodException()
 
                 return operation()
 
@@ -886,7 +886,7 @@ class ModelHandler(BaseModelHandler):
             if self._args[0] == 'test':
                 return self.test(self._args[1])
 
-        self.invalidMethodException()  # Will not return
+        raise self.invalidMethodException()  # Will not return
         return None  # So pylint does not complains :)
 
     def put(self):  # pylint: disable=too-many-branches, too-many-statements
