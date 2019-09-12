@@ -31,15 +31,18 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from uds.core.util import permissions
 
-from uds.models import Provider, Service, Authenticator, OSManager, Transport, Network, ServicePool, Calendar, Account, MetaPool
-from uds.models import User, Group
+from uds import models
 
 from uds.REST import Handler
 from uds.REST import RequestError
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -52,18 +55,18 @@ class Permissions(Handler):
     needs_admin = True
 
     @staticmethod
-    def getClass(arg):
+    def getClass(arg: str) -> typing.Type['Model']:
         cls = {
-            'providers': Provider,
-            'service': Service,
-            'authenticators': Authenticator,
-            'osmanagers': OSManager,
-            'transports': Transport,
-            'networks': Network,
-            'servicespools': ServicePool,
-            'calendars': Calendar,
-            'metapools': MetaPool,
-            'accounts': Account,
+            'providers': models.Provider,
+            'service': models.Service,
+            'authenticators': models.Authenticator,
+            'osmanagers': models.OSManager,
+            'transports': models.Transport,
+            'networks': models.Network,
+            'servicespools': models.ServicePool,
+            'calendars': models.Calendar,
+            'metapools': models.MetaPool,
+            'accounts': models.Account,
         }.get(arg, None)
 
         if cls is None:
@@ -72,7 +75,7 @@ class Permissions(Handler):
         return cls
 
     @staticmethod
-    def permsToDict(perms):
+    def permsToDict(perms: typing.Iterable[models.Permissions]) -> typing.List[typing.Dict[str, str]]:
         res = []
         for perm in perms:
             if perm.user is None:
@@ -104,14 +107,12 @@ class Permissions(Handler):
         if len(self._args) != 2:
             raise RequestError('Invalid request')
 
-        cls = Permissions.getClass(self._args[0])
-        obj = cls.objects.get(uuid=self._args[1])
+        itemClass = Permissions.getClass(self._args[0])
+        obj: 'Model' = itemClass.objects.get(uuid=self._args[1])
 
-        perms = permissions.getPermissions(obj)
+        return Permissions.permsToDict(permissions.getPermissions(obj))
 
-        return Permissions.permsToDict(perms)
-
-    def put(self):
+    def put(self) -> typing.List[typing.Dict]:
         """
         Processes put requests
         """
@@ -120,7 +121,7 @@ class Permissions(Handler):
         la = len(self._args)
 
         if la == 5 and self._args[3] == 'add':
-            perm = {
+            perm: int = {
                 '0': permissions.PERMISSION_NONE,
                 '1': permissions.PERMISSION_READ,
                 '2': permissions.PERMISSION_MANAGEMENT,
@@ -132,19 +133,18 @@ class Permissions(Handler):
             obj = cls.objects.get(uuid=self._args[1])
 
             if self._args[2] == 'users':
-                user = User.objects.get(uuid=self._args[4])
+                user = models.User.objects.get(uuid=self._args[4])
                 permissions.addUserPermission(user, obj, perm)
             elif self._args[2] == 'groups':
-                group = Group.objects.get(uuid=self._args[4])
+                group = models.Group.objects.get(uuid=self._args[4])
                 permissions.addGroupPermission(group, obj, perm)
             else:
                 raise RequestError('Ivalid request')
-
             return Permissions.permsToDict(permissions.getPermissions(obj))
-        elif la == 1 and self._args[0] == 'revoke':
-            items = self._params.get('items', [])
-            for permId in items:
+
+        if la == 1 and self._args[0] == 'revoke':
+            for permId in self._params.get('items', []):
                 permissions.revokePermissionById(permId)
-            return {}
-        else:
-            raise RequestError('Invalid request')
+            return []
+
+        raise RequestError('Invalid request')

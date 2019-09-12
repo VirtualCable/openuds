@@ -33,30 +33,30 @@
 import logging
 import typing
 
-from uds.models import Permissions
+from uds import models
 from uds.core.util import ot
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import User, Group
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
-PERMISSION_ALL = Permissions.PERMISSION_ALL
-PERMISSION_READ = Permissions.PERMISSION_READ
-PERMISSION_MANAGEMENT = Permissions.PERMISSION_MANAGEMENT
-PERMISSION_NONE = Permissions.PERMISSION_NONE
+PERMISSION_ALL = models.Permissions.PERMISSION_ALL
+PERMISSION_READ = models.Permissions.PERMISSION_READ
+PERMISSION_MANAGEMENT = models.Permissions.PERMISSION_MANAGEMENT
+PERMISSION_NONE = models.Permissions.PERMISSION_NONE
 
 
-def clean(obj: typing.Any) -> None:
-    Permissions.cleanPermissions(ot.getObjectType(obj), obj.pk)
+def clean(obj: 'Model') -> None:
+    models.Permissions.cleanPermissions(ot.getObjectType(obj), obj.pk)
 
 
-def getPermissions(obj: typing.Any) -> typing.List[Permissions]:
-    return list(Permissions.enumeratePermissions(object_type=ot.getObjectType(obj), object_id=obj.pk))
+def getPermissions(obj: 'Model') -> typing.List[models.Permissions]:
+    return list(models.Permissions.enumeratePermissions(object_type=ot.getObjectType(obj), object_id=obj.pk))
 
 
-def getEffectivePermission(user: 'User', obj: typing.Any, root: bool = False):
+def getEffectivePermission(user: 'models.User', obj: 'Model', root: bool = False):
     if user.is_admin is True:
         return PERMISSION_ALL
 
@@ -64,36 +64,36 @@ def getEffectivePermission(user: 'User', obj: typing.Any, root: bool = False):
         return PERMISSION_NONE
 
     if root is False:
-        return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk)
+        return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk)
 
-    return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
+    return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
 
 
-def addUserPermission(user: 'User', obj: typing.Any, permission: int = PERMISSION_READ):
+def addUserPermission(user: 'models.User', obj: 'Model', permission: int = PERMISSION_READ):
     # Some permissions added to some object types needs at least READ_PERMISSION on parent
-    Permissions.addPermission(user=user, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
+    models.Permissions.addPermission(user=user, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
 
 
-def addGroupPermission(group: 'Group', obj: typing.Any, permission: int = PERMISSION_READ):
-    Permissions.addPermission(group=group, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
+def addGroupPermission(group: 'models.Group', obj: 'Model', permission: int = PERMISSION_READ):
+    models.Permissions.addPermission(group=group, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
 
 
-def checkPermissions(user: 'User', obj: typing.Any, permission: int = PERMISSION_ALL, root: bool = False):
+def checkPermissions(user: 'models.User', obj: 'Model', permission: int = PERMISSION_ALL, root: bool = False):
     return getEffectivePermission(user, obj, root) >= permission
 
 
-def getPermissionName(perm) -> str:
-    return Permissions.permissionAsString(perm)
+def getPermissionName(perm: int) -> str:
+    return models.Permissions.permissionAsString(perm)
 
 
-def revokePermissionById(permId: str) -> None:
+def revokePermissionById(permUUID: str) -> None:
     """Revokes a permision by its uuid
 
     Arguments:
-        permId {str} -- uuid of permission
+        permUUID {str} -- uuid of permission
 
     """
     try:
-        Permissions.objects.get(uuid=permId).delete()
+        models.Permissions.objects.get(uuid=permUUID).delete()
     except Exception:
         pass

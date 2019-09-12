@@ -33,13 +33,11 @@
 import logging
 import typing
 
-from uds.models import (
-    Provider, Service, OSManager, Transport,
-    Network, ServicePool, UserService,
-    Authenticator, User, Group, StatsCounters,
-    StatsEvents, Calendar, CalendarRule,
-    Proxy, MetaPool, Account
-)
+from uds import models
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -63,24 +61,24 @@ METAPOOL_TYPE = 15
 ACCOUNT_TYPE = 16
 
 objTypeDict: typing.Dict[typing.Type, int] = {
-    Provider: PROVIDER_TYPE,
-    Service: SERVICE_TYPE,
-    OSManager: OSMANAGER_TYPE,
-    Transport: TRANSPORT_TYPE,
-    Network: NETWORK_TYPE,
-    ServicePool: POOL_TYPE,
-    UserService: USER_SERVICE_TYPE,
-    Authenticator: AUTHENTICATOR_TYPE,
-    User: USER_TYPE,
-    Group: GROUP_TYPE,
-    StatsCounters: STATS_COUNTER_TYPE,
-    StatsEvents: STATS_EVENTS_TYPE,
-    Calendar: CALENDAR_TYPE,
-    CalendarRule: CALENDAR_RULE_TYPE,
-    Proxy: PROXY_TYPE,
-    MetaPool: METAPOOL_TYPE,
-    Account: ACCOUNT_TYPE
+    models.Provider: PROVIDER_TYPE,
+    models.Service: SERVICE_TYPE,
+    models.OSManager: OSMANAGER_TYPE,
+    models.Transport: TRANSPORT_TYPE,
+    models.Network: NETWORK_TYPE,
+    models.ServicePool: POOL_TYPE,
+    models.UserService: USER_SERVICE_TYPE,
+    models.Authenticator: AUTHENTICATOR_TYPE,
+    models.User: USER_TYPE,
+    models.Group: GROUP_TYPE,
+    models.StatsCounters: STATS_COUNTER_TYPE,
+    models.StatsEvents: STATS_EVENTS_TYPE,
+    models.Calendar: CALENDAR_TYPE,
+    models.CalendarRule: CALENDAR_RULE_TYPE,
+    models.Proxy: PROXY_TYPE,
+    models.MetaPool: METAPOOL_TYPE,
+    models.Account: ACCOUNT_TYPE
 }
 
-def getObjectType(obj: typing.Any) -> typing.Optional[int]:
+def getObjectType(obj: 'Model') -> typing.Optional[int]:
     return objTypeDict.get(type(obj))
