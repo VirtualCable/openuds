@@ -93,7 +93,7 @@ class AccessCalendars(DetailHandler):
             if access not in (ALLOW, DENY):
                 raise Exception()
         except Exception:
-            self.invalidRequestException(_('Invalid parameters on request'))
+            raise self.invalidRequestException(_('Invalid parameters on request'))
         priority = int(self._params['priority'])
 
         if uuid is not None:
@@ -121,7 +121,7 @@ class ActionsCalendars(DetailHandler):
     """
     Processes the transports detail requests of a Service Pool
     """
-    custom_methods = ('execute',)
+    custom_methods = ['execute',]
 
     @staticmethod
     def as_dict(item: 'CalendarAction') -> typing.Dict[str, typing.Any]:
@@ -171,7 +171,7 @@ class ActionsCalendars(DetailHandler):
         calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
         action = self._params['action'].upper()
         if action not in CALENDAR_ACTION_DICT:
-            self.invalidRequestException()
+            raise self.invalidRequestException()
         eventsOffset = int(self._params['eventsOffset'])
         atStart = self._params['atStart'] not in ('false', False, '0', 0)
         params = json.dumps(self._params['params'])

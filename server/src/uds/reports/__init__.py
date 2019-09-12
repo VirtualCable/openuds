@@ -39,34 +39,36 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os.path
+import pkgutil
+import sys
 import logging
+import typing
+
+from uds.core import reports
 
 logger = logging.getLogger(__name__)
 
-availableReports = []
+availableReports: typing.List[typing.Type['reports.Report']] = []
 
 # noinspection PyTypeChecker
 def __init__():
     """
     This imports all packages that are descendant of this package, and, after that,
     """
-    import os.path
-    import pkgutil
-    import sys
-    from uds.core import reports
-
-    def addReportCls(cls):
+    def addReportCls(cls: typing.Type[reports.Report]):
         logger.debug('Adding report %s', cls)
         availableReports.append(cls)
 
-    def recursiveAdd(reportClass):
+    def recursiveAdd(reportClass: typing.Type[reports.Report]):
         if reportClass.uuid:
             addReportCls(reportClass)
         else:
             logger.debug('Report class %s not added because it lacks of uuid (it is probably a base class)', reportClass)
 
-        for c in reportClass.__subclasses__():
-            recursiveAdd(c)
+        subReport: typing.Type[reports.Report]
+        for subReport in reportClass.__subclasses__():
+            recursiveAdd(subReport)
 
     # Dinamycally import children of this package. The __init__.py files must import classes
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)

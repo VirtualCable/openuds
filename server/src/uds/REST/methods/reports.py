@@ -69,7 +69,7 @@ class Reports(model.BaseModelHandler):
                 break
 
         if found is None:
-            self.invalidRequestException('Invalid report!')
+            raise self.invalidRequestException('Invalid report!')
 
         return found
 
@@ -90,7 +90,7 @@ class Reports(model.BaseModelHandler):
             if self._args[0] == model.GUI:
                 return self.getGui(self._args[1])
 
-        return self.invalidRequestException()
+        raise self.invalidRequestException()
 
     def put(self):
         """
@@ -99,7 +99,7 @@ class Reports(model.BaseModelHandler):
         logger.debug('method PUT for %s, %s, %s', self.__class__.__name__, self._args, self._params)
 
         if len(self._args) != 1:
-            return self.invalidRequestException()
+            raise self.invalidRequestException()
 
         report = self._findReport(self._args[0], self._params)
 
@@ -117,7 +117,7 @@ class Reports(model.BaseModelHandler):
             return data
         except Exception as e:
             logger.exception('Generating report')
-            return self.invalidRequestException(str(e))
+            raise self.invalidRequestException(str(e))
 
     # Gui related
     def getGui(self, uuid):

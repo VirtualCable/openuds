@@ -120,7 +120,7 @@ class Authenticators(ModelHandler):
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):
-                self.invalidRequestException()
+                raise self.invalidRequestException()
 
             term = self._params['term']
 
@@ -146,8 +146,7 @@ class Authenticators(ModelHandler):
 
         authType = auths.factory().lookup(type_)
         if not authType:
-            self.invalidRequestException('Invalid type: {}'.format(type_))
-            return False
+            raise self.invalidRequestException('Invalid type: {}'.format(type_))
 
         self.ensureAccess(authType, permissions.PERMISSION_MANAGEMENT, root=True)
 

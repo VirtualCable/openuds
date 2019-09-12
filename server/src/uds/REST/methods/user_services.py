@@ -333,7 +333,7 @@ class Publications(DetailHandler):
 
         if permissions.checkPermissions(self._user, parent, permissions.PERMISSION_MANAGEMENT) is False:
             logger.debug('Management Permission failed for user %s', self._user)
-            self.accessDenied()
+            raise self.accessDenied()
 
         logger.debug('Custom "publish" invoked for %s', parent)
         parent.publish(changeLog)  # Can raise exceptions that will be processed on response
@@ -351,7 +351,7 @@ class Publications(DetailHandler):
         """
         if permissions.checkPermissions(self._user, parent, permissions.PERMISSION_MANAGEMENT) is False:
             logger.debug('Management Permission failed for user %s', self._user)
-            self.accessDenied()
+            raise self.accessDenied()
 
         try:
             ds = ServicePoolPublication.objects.get(uuid=processUuid(uuid))

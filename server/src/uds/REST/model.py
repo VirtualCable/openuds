@@ -185,7 +185,7 @@ class BaseModelHandler(Handler):
     def ensureAccess(self, obj: typing.Any, permission: int, root=False) -> int:
         perm = permissions.getEffectivePermission(self._user, obj, root)
         if perm < permission:
-            self.accessDenied()
+            raise self.accessDenied()
         return perm
 
     def typeInfo(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:
@@ -262,17 +262,17 @@ class BaseModelHandler(Handler):
         return res
 
     # Exceptions
-    def invalidRequestException(self, message: typing.Optional[str] = None):
+    def invalidRequestException(self, message: typing.Optional[str] = None) -> HandlerError:
         """
         Raises an invalid request error with a default translated string
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
         """
         message = message or _('Invalid Request')
-        raise RequestError('{} {}: {}'.format(message, self.__class__, self._args))
+        return RequestError('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def invalidResponseException(self, message: typing.Optional[str] = None):
+    def invalidResponseException(self, message: typing.Optional[str] = None) -> HandlerError:
         message = 'Invalid response' if message is None else message
-        raise ResponseError(message)
+        return ResponseError(message)
 
     def invalidMethodException(self):
         """
@@ -288,8 +288,8 @@ class BaseModelHandler(Handler):
         raise NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def accessDenied(self, message: typing.Optional[str] = None) -> None:
-        raise AccessDenied(message or _('Access denied'))
+    def accessDenied(self, message: typing.Optional[str] = None) -> HandlerError:
+        return AccessDenied(message or _('Access denied'))
 
     def notSupported(self, message: typing.Optional[str] = None) -> None:
         raise NotSupportedError(message or _('Operation not supported'))
@@ -307,7 +307,7 @@ class BaseModelHandler(Handler):
         Invokes a test for an item
         """
         logger.debug('Called base test for %s --> %s', self.__class__.__name__, self._params)
-        return self.invalidMethodException()
+        self.invalidMethodException()
 
 
 # Details do not have types at all
@@ -441,7 +441,7 @@ class DetailHandler(BaseModelHandler):
         if len(self._args) == 1:
             item = self._args[0]
         elif len(self._args) > 1:  # PUT expects 0 or 1 parameters. 0 == NEW, 1 = EDIT
-            self.invalidRequestException()
+            raise self.invalidRequestException()
 
         logger.debug('Invoking proper saving detail item %s', item)
         return self.saveItem(parent, item)
@@ -452,7 +452,7 @@ class DetailHandler(BaseModelHandler):
         Post can be used for, for example, testing.
         Right now is an invalid method for Detail elements
         """
-        self.invalidRequestException('This method does not accepts POST')
+        raise self.invalidRequestException('This method does not accepts POST')
 
     def delete(self) -> typing.Any:
         """
@@ -464,7 +464,7 @@ class DetailHandler(BaseModelHandler):
         parent = self._kwargs['parent']
 
         if len(self._args) != 1:
-            self.invalidRequestException()
+            raise self.invalidRequestException()
 
         self.deleteItem(parent, self._args[0])
 
@@ -502,7 +502,7 @@ class DetailHandler(BaseModelHandler):
         :return: Normally "success" is expected, but can throw any "exception"
         """
         logger.debug('Default saveItem handler caller for %s', self._path)
-        self.invalidRequestException()
+        raise self.invalidRequestException()
 
     # Default delete
     def deleteItem(self, parent: models.Model, item: str) -> None:
@@ -513,7 +513,7 @@ class DetailHandler(BaseModelHandler):
         :param item: Item id (uuid)
         :return: Normally "success" is expected, but can throw any "exception"
         """
-        self.invalidRequestException()
+        raise self.invalidRequestException()
 
     # A detail handler must also return title & fields for tables
     def getTitle(self, parent: models.Model) -> str:  # pylint: disable=no-self-use
@@ -669,7 +669,7 @@ class ModelHandler(BaseModelHandler):
     # gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         return []
-        # self.invalidRequestException()
+        # raise self.invalidRequestException()
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception
@@ -754,7 +754,7 @@ class ModelHandler(BaseModelHandler):
 
             if permissions.checkPermissions(self._user, item, requiredPermission) is False:
                 logger.debug('Permission for user %s does not comply with %s', self._user, requiredPermission)
-                self.accessDenied()
+                raise self.accessDenied()
 
             detailCls = self.detail[self._args[1]]  # pylint: disable=unsubscriptable-object
             args = list(self._args[2:])
@@ -850,19 +850,19 @@ class ModelHandler(BaseModelHandler):
         # Request type info or gui, or detail
         if self._args[0] == OVERVIEW:
             if nArgs != 2:
-                self.invalidRequestException()
+                raise self.invalidRequestException()
         elif self._args[0] == TYPES:
             if nArgs != 2:
-                self.invalidRequestException()
+                raise self.invalidRequestException()
             return self.getType(self._args[1])
         elif self._args[0] == GUI:
             if nArgs != 2:
-                self.invalidRequestException()
+                raise self.invalidRequestException()
             gui = self.getGui(self._args[1])
             return sorted(gui, key=lambda f: f['gui']['order'])
         elif self._args[1] == LOG:
             if nArgs != 2:
-                self.invalidRequestException()
+                raise self.invalidRequestException()
             try:
                 item = self.model.objects.get(uuid=self._args[0].lower())  # DB maybe case sensitive??, anyway, uuids are stored in lowercase
                 return self.getLogs(item)
@@ -873,8 +873,7 @@ class ModelHandler(BaseModelHandler):
         if self.detail is not None:
             return self.processDetail()
 
-        self.invalidRequestException()  # Will not return
-        return None  # So pylint does not complains :)
+        raise self.invalidRequestException()  # Will not return
 
 
     def post(self):

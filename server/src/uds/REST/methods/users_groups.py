@@ -176,7 +176,7 @@ class Users(DetailHandler):
             raise RequestError(str(e.message))
         except Exception:
             logger.exception('Saving user')
-            self.invalidRequestException()
+            raise self.invalidRequestException()
 
         return self.getItems(parent, user.uuid)
 
@@ -302,7 +302,7 @@ class Groups(DetailHandler):
         try:
             return types[forType]
         except Exception:
-            self.invalidRequestException()
+            raise self.invalidRequestException()
 
     def saveItem(self, parent, item):
         group = None  # Avoid warning on reference before assignment
@@ -356,7 +356,7 @@ class Groups(DetailHandler):
             raise RequestError(str(e))
         except Exception:
             logger.exception('Saving group')
-            self.invalidRequestException()
+            raise self.invalidRequestException()
 
         return self.getItems(parent, group.uuid)
 
@@ -413,7 +413,7 @@ class Groups(DetailHandler):
                     else:
                         tmpSet &= gSet
 
-                        if len(tmpSet) == 0 :
+                        if not tmpSet:
                             break  # If already empty, stop
             users = list(tmpSet)
             tmpSet = None
