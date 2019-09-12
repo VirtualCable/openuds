@@ -31,6 +31,7 @@
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Proxy
@@ -62,7 +63,7 @@ class Proxies(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: Proxy) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': item.name,
@@ -76,7 +77,7 @@ class Proxies(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item)
         }
 
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         g = self.addDefaultFields([], ['name', 'comments', 'tags'])
 
         for f in [
