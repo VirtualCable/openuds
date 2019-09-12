@@ -60,7 +60,10 @@ def getRequest() -> HttpRequest:
     return HttpRequest()
 
 
+
 class GlobalRequestMiddleware:
+    lastCheck: typing.ClassVar[datetime.datetime] = datetime.datetime.now()
+
     def __init__(self, get_response: typing.Callable[[HttpRequest], HttpResponse]):
         self._get_response: typing.Callable[[HttpRequest], HttpResponse] = get_response
 
@@ -95,7 +98,28 @@ class GlobalRequestMiddleware:
 
         response = self._get_response(request)
 
+        # Clean cache
+        GlobalRequestMiddleware.cleanStuckRequests()
+
         return self._process_response(request, response)
+
+    @staticmethod
+    def cleanStuckRequests() -> None:
+        # In case of some exception, keep clean very old request from time to time...
+        if GlobalRequestMiddleware.lastCheck > datetime.datetime.now() - datetime.timedelta(seconds=60):
+            return
+        logger.debug('Cleaning stuck requestws from %s', _requests)
+        cleanFrom: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=60)
+        toDelete: typing.List[int] = []
+        for ident, request in _requests.items():
+            if request[1] < cleanFrom:
+                toDelete.append(ident)
+        for ident in toDelete:
+            try:
+                del _requests[ident]
+            except Exception:
+                pass # Ignore it silently
+
 
     @staticmethod
     def fillIps(request: HttpRequest):
