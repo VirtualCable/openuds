@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -68,8 +69,8 @@ class Reports(model.BaseModelHandler):
                 found = i(values)
                 break
 
-        if found is None:
-            raise self.invalidRequestException('Invalid report!')
+        if not found:
+            raise self.invalidRequestException('Invalid report uuid!')
 
         return found
 
@@ -120,19 +121,18 @@ class Reports(model.BaseModelHandler):
             raise self.invalidRequestException(str(e))
 
     # Gui related
-    def getGui(self, uuid):
-        report = self._findReport(uuid)
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
+        report = self._findReport(type_)
         return sorted(report.guiDescription(report), key=lambda f: f['gui']['order'])
 
     # Returns the list of
-    def getItems(self):
-        return [
-            {
+    def getItems(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
+        for i in reports.availableReports:
+            yield {
                 'id': i.getUuid(),
                 'mime_type': i.mime_type,
                 'encoded': i.encoded,
                 'group': i.translated_group(),
                 'name': i.translated_name(),
                 'description': i.translated_description()
-            } for i in reports.availableReports
-        ]
+            }

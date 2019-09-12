@@ -284,7 +284,7 @@ class BaseModelHandler(Handler):
         """
         Raises a NotFound exception, with location info
         """
-        message = _('Item not found') if message is None else message
+        message = message or _('Item not found')
         return NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
@@ -887,7 +887,6 @@ class ModelHandler(BaseModelHandler):
                 return self.test(self._args[1])
 
         raise self.invalidMethodException()  # Will not return
-        return None  # So pylint does not complains :)
 
     def put(self):  # pylint: disable=too-many-branches, too-many-statements
         """

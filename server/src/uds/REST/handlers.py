@@ -110,7 +110,8 @@ class Handler:
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
     def __init__(self, request: 'HttpRequest', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
 
-        if self.needs_admin or self.needs_staff and not self.authenticated:  # If needs_admin, must also be authenticated
+        logger.debug('Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated)
+        if (self.needs_admin or self.needs_staff) and not self.authenticated:  # If needs_admin, must also be authenticated
             raise Exception('class {} is not authenticated but has needs_admin or needs_staff set!!'.format(self.__class__))
 
         self._request = request

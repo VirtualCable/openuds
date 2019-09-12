@@ -240,15 +240,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service = serviceType(Environment.getTempEnv(), parentInstance)  # Instantiate it so it has the opportunity to alter gui description based on parent
             g = self.addDefaultFields(service.guiDescription(service), ['name', 'comments', 'tags'])
             for f in [{
-                'name': 'proxy_id',
-                'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Proxy.objects.all()]),
-                'label': _('Proxy'),
-                'tooltip': _('Proxy for services behind a firewall'),
-                'type': gui.InputField.CHOICE_TYPE,
-                'tab': _('Advanced'),
-                'order': 132,
-                },
-            ]:
+                    'name': 'proxy_id',
+                    'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Proxy.objects.all()]),
+                    'label': _('Proxy'),
+                    'tooltip': _('Proxy for services behind a firewall'),
+                    'type': gui.InputField.CHOICE_TYPE,
+                    'tab': _('Advanced'),
+                    'order': 132,
+                },]:
                 self.addField(g, f)
 
             return g

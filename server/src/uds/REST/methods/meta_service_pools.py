@@ -139,8 +139,6 @@ class MetaAssignedService(DetailHandler):
         except Exception:
             pass
         raise self.invalidItemException()
-        # So mypy does not complains :), will never execute because previous sentence will raise an exception
-        return UserService()
 
 
     def getItems(self, parent: MetaPool, item: typing.Optional[str]):
@@ -217,7 +215,6 @@ class MetaAssignedService(DetailHandler):
     def saveItem(self, parent: MetaPool, item: typing.Optional[str]):
         if item is None:
             raise self.invalidItemException()
-            return None
 
         fields = self.readFieldsFromParams(['auth_id', 'user_id'])
         service = self._getAssignedService(parent, item)
