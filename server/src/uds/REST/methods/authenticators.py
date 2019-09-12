@@ -130,7 +130,7 @@ class Authenticators(ModelHandler):
 
             canDoSearch = type_ == 'user' and (auth.searchUsers != auths.Authenticator.searchUsers) or (auth.searchGroups != auths.Authenticator.searchGroups)
             if canDoSearch is False:
-                self.notSupported()
+                raise self.notSupported()
 
             if type_ == 'user':
                 return list(auth.searchUsers(term))[:limit]

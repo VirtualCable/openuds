@@ -291,8 +291,8 @@ class BaseModelHandler(Handler):
     def accessDenied(self, message: typing.Optional[str] = None) -> HandlerError:
         return AccessDenied(message or _('Access denied'))
 
-    def notSupported(self, message: typing.Optional[str] = None) -> None:
-        raise NotSupportedError(message or _('Operation not supported'))
+    def notSupported(self, message: typing.Optional[str] = None) -> HandlerError:
+        return NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
     def success(self) -> str:
