@@ -30,8 +30,9 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import threading
-import logging
 import datetime
+import weakref
+import logging
 import typing
 
 from django.http import HttpRequest, HttpResponse
@@ -41,11 +42,12 @@ from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
 from uds.models import User
 
-
 logger = logging.getLogger(__name__)
 
-_requests: typing.Dict[int, typing.Tuple[HttpRequest, datetime.datetime]] = {}
+_requests: typing.Dict[int, typing.Tuple[weakref.ref, datetime.datetime]] = {}
 
+# How often to check the requests cache for stuck objects
+CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
 def getIdent() -> int:
     ident = threading.current_thread().ident
@@ -55,10 +57,9 @@ def getIdent() -> int:
 def getRequest() -> HttpRequest:
     ident = getIdent()
     if ident in _requests:
-        return _requests[ident][0]
+        return _requests[ident][0]()  # Return obj from weakref
 
     return HttpRequest()
-
 
 
 class GlobalRequestMiddleware:
@@ -68,16 +69,15 @@ class GlobalRequestMiddleware:
         self._get_response: typing.Callable[[HttpRequest], HttpResponse] = get_response
 
     def _process_request(self, request: HttpRequest) -> None:
+        # Store request on cache
+        _requests[getIdent()] = (weakref.ref(request), datetime.datetime.now())
+
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
         # Ensures request contains os
         request.os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT', 'Unknown'))
         # Ensures that requests contains the valid user
         GlobalRequestMiddleware.getUser(request)
-
-        # Store request on cache
-        _requests[getIdent()] = (request, datetime.datetime.now())
-
 
     def _process_response(self, request: HttpRequest, response: HttpResponse):
         # Remove IP from global cache (processing responses after this will make global request unavailable,
@@ -91,6 +91,10 @@ class GlobalRequestMiddleware:
                 logger.info('Request id %s not stored in cache', ident)
         except Exception:
             logger.exception('Deleting stored request')
+
+        # Clean old stored if needed
+        GlobalRequestMiddleware.cleanStuckRequests()
+
         return response
 
     def __call__(self, request: HttpRequest):
@@ -98,17 +102,15 @@ class GlobalRequestMiddleware:
 
         response = self._get_response(request)
 
-        # Clean cache
-        GlobalRequestMiddleware.cleanStuckRequests()
-
         return self._process_response(request, response)
 
     @staticmethod
     def cleanStuckRequests() -> None:
         # In case of some exception, keep clean very old request from time to time...
-        if GlobalRequestMiddleware.lastCheck > datetime.datetime.now() - datetime.timedelta(seconds=60):
+        if GlobalRequestMiddleware.lastCheck > datetime.datetime.now() - datetime.timedelta(seconds=CHECK_SECONDS):
             return
         logger.debug('Cleaning stuck requestws from %s', _requests)
+        # No request lives 60 seconds, so 60 seconds is fine
         cleanFrom: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=60)
         toDelete: typing.List[int] = []
         for ident, request in _requests.items():

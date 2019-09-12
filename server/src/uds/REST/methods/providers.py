@@ -30,8 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -78,7 +78,7 @@ class Providers(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def item_as_dict(self, item) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: Provider) -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
@@ -86,7 +86,8 @@ class Providers(ModelHandler):
             'name': ugettext(t.name()),
             'type': t.type(),
             'description': ugettext(t.description()),
-            'icon': t.icon().replace('\n', '')} for t in type_.getServicesTypes()]
+            'icon': typing.cast(str, t.icon()).replace('\n', '')
+        } for t in type_.getServicesTypes()]
 
         return {
             'id': item.uuid,
@@ -101,22 +102,22 @@ class Providers(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item)
         }
 
-    def checkDelete(self, item):
+    def checkDelete(self, item: Provider) -> None:
         if item.services.count() > 0:
-            raise RequestError('Can\'t delete providers with services already associated')
+            raise RequestError(ugettext('Can\'t delete providers with services'))
 
     # Types related
-    def enum_types(self):
+    def enum_types(self) -> typing.Iterable[typing.Type[services.ServiceProvider]]:
         return services.factory().providers().values()
 
     # Gui related
-    def getGui(self, type_):
-        try:
-            return self.addDefaultFields(services.factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags'])
-        except Exception:
-            raise NotFound('type not found')
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
+        clsType = services.factory().lookup(type_)
+        if clsType:
+            return self.addDefaultFields(clsType.guiDescription(), ['name', 'comments', 'tags'])
+        raise NotFound('Type not found!')
 
-    def allservices(self):
+    def allservices(self) -> typing.Generator[typing.Dict, None, None]:
         """
         Custom method that returns "all existing services", no mater who's his daddy :)
         """
@@ -128,7 +129,7 @@ class Providers(ModelHandler):
             except Exception:
                 logger.exception('Passed service cause type is unknown')
 
-    def service(self):
+    def service(self) -> typing.Dict:
         """
         Custom method that returns a service by its uuid, no matter who's his daddy
         """
@@ -139,7 +140,7 @@ class Providers(ModelHandler):
         except Exception:
             raise RequestError(ugettext('Service not found'))
 
-    def maintenance(self, item):
+    def maintenance(self, item: Provider):
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:
@@ -149,11 +150,14 @@ class Providers(ModelHandler):
         item.save()
         return self.item_as_dict(item)
 
-    def test(self, type_):
+    def test(self, type_: str):
         from uds.core.environment import Environment
 
         logger.debug('Type: %s', type_)
         spType = services.factory().lookup(type_)
+
+        if not spType:
+            raise NotFound('Type not found!')
 
         self.ensureAccess(spType, permissions.PERMISSION_MANAGEMENT, root=True)
 
@@ -164,5 +168,5 @@ class Providers(ModelHandler):
         res = spType.test(Environment.getTempEnv(), dct)
         if res[0]:
             return 'ok'
-        else:
-            return res[1]
+
+        return res[1]

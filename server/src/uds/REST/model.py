@@ -334,7 +334,7 @@ class DetailHandler(BaseModelHandler):
 
     Also accepts GET methods for "custom" methods
     """
-    custom_methods: typing.ClassVar[typing.Iterable[str]] = []
+    custom_methods: typing.ClassVar[typing.List[str]] = []
     _parent: typing.Optional['ModelHandler']
     _path: str
     _params: typing.Any  # _params is deserialized object from request
@@ -602,15 +602,15 @@ class ModelHandler(BaseModelHandler):
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id (normal behavior is it needs it)
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
-    custom_methods: typing.ClassVar[typing.Iterable[typing.Tuple[str, bool]]] = []  # If this model respond to "custom" methods, we will declare them here
+    custom_methods: typing.ClassVar[typing.List[typing.Tuple[str, bool]]] = []  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
     detail: typing.ClassVar[typing.Optional[typing.Dict[str, typing.Type[DetailHandler]]]] = None  # Dictionary containing detail routing
     # Put needed fields
-    save_fields: typing.ClassVar[typing.Iterable[str]] = []
+    save_fields: typing.ClassVar[typing.List[str]] = []
     # Put removable fields before updating
-    remove_fields: typing.ClassVar[typing.Iterable[str]] = []
+    remove_fields: typing.ClassVar[typing.List[str]] = []
     # Table info needed fields and title
-    table_fields: typing.ClassVar[typing.Iterable[typing.Any]] = []
+    table_fields: typing.ClassVar[typing.List[typing.Any]] = []
     table_row_style: typing.ClassVar[typing.Dict] = {}
     table_title: typing.ClassVar[str] = ''
     table_subtitle: typing.ClassVar[str] = ''
