@@ -682,7 +682,7 @@ class ModelHandler(BaseModelHandler):
         pass
 
     # Invoked to possibily fix fields (or add new one, or check
-    def beforeSave(self, fields: typing.Any) -> None:
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         pass
 
     # Invoked right after saved an item (no matter if new or edition)

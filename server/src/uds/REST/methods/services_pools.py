@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import ServicePool, OSManager, Service, Image, ServicePoolGroup, Account
@@ -106,7 +107,7 @@ class ServicesPools(ModelHandler):
 
     custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True), ('actionsList', True)]
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: ServicePool) -> typing.Dict[str, typing.Any]:
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
@@ -189,7 +190,7 @@ class ServicesPools(ModelHandler):
         return val
 
     # Gui related
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         if OSManager.objects.count() < 1:  # No os managers, can't create db
             raise ResponseError(ugettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
@@ -318,7 +319,7 @@ class ServicesPools(ModelHandler):
 
         return g
 
-    def beforeSave(self, fields):
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         try:
             try:

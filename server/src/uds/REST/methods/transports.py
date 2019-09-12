@@ -31,6 +31,7 @@
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Transport, Network, ServicePool
@@ -62,7 +63,7 @@ class Transports(ModelHandler):
     def enum_types(self):
         return factory().providers().values()
 
-    def getGui(self, type_):
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
             field = self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority'])
             field = self.addField(field, {
@@ -106,7 +107,7 @@ class Transports(ModelHandler):
         except Exception:
             raise self.invalidItemException()
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: Transport) -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
         return {
             'id': item.uuid,
@@ -124,7 +125,7 @@ class Transports(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item)
         }
 
-    def beforeSave(self, fields):
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])
 
     def afterSave(self, item):

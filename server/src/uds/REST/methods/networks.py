@@ -63,7 +63,7 @@ class Networks(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def beforeSave(self, fields: typing.Any) -> None:
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         logger.debug('Before %s', fields)
         try:
             nr = net.networkFromString(fields['net_string'])

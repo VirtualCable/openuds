@@ -31,6 +31,7 @@
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import ServicePoolGroup, Image
@@ -63,7 +64,7 @@ class ServicesPoolGroups(ModelHandler):
         {'comments': {'title': _('Comments')}},
     ]
 
-    def beforeSave(self, fields):
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         imgId = fields['image_id']
         fields['image_id'] = None
         logger.debug('Image id: %s', imgId)
@@ -75,10 +76,10 @@ class ServicesPoolGroups(ModelHandler):
             logger.exception('At image recovering')
 
     # Gui related
-    def getGui(self, type_):
-        g = self.addDefaultFields([], ['name', 'comments', 'priority'])
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
+        localGui = self.addDefaultFields([], ['name', 'comments', 'priority'])
 
-        for f in [{
+        for field in [{
                 'name': 'image_id',
                 'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
                 'label': ugettext('Associated Image'),
@@ -86,20 +87,20 @@ class ServicesPoolGroups(ModelHandler):
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 102,
             }]:
-            self.addField(g, f)
+            self.addField(localGui, field)
 
-        return g
+        return localGui
 
-    def item_as_dict(self, item):
+    def item_as_dict(self, item: ServicePoolGroup) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'priority': item.priority,
             'name': item.name,
             'comments': item.comments,
-            'image_id': item.image.uuid if item.image is not None else None,
+            'image_id': item.image.uuid if item.image else None,
         }
 
-    def item_as_dict_overview(self, item):
+    def item_as_dict_overview(self, item: ServicePoolGroup) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'priority': item.priority,

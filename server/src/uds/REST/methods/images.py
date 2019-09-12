@@ -60,7 +60,7 @@ class Images(ModelHandler):
         {'size': {'title': _('Size')}},
     ]
 
-    def beforeSave(self, fields: typing.Any) -> None:
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         fields['data'] = Image.prepareForDb(Image.decode64(fields['data'].encode('utf8')))
 
     def afterSave(self, item: Image) -> None:

@@ -38,7 +38,6 @@ from uds.models import MetaPool, Image, ServicePoolGroup
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
-from uds.core.util import log
 from uds.core.util import permissions
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
@@ -157,7 +156,7 @@ class MetaPools(ModelHandler):
 
         return localGUI
 
-    def beforeSave(self, fields: typing.Any) -> None:
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         try:
             # **** IMAGE ***
