@@ -85,7 +85,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             return AccountsUsage.usageToDict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getFields(self, parent: 'Account') -> typing.List[typing.Any]:
         return [
@@ -111,7 +111,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             usage.delete()
         except Exception:
             logger.exception('Exception')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent: 'Account') -> str:
         try:

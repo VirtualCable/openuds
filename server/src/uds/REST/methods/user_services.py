@@ -110,7 +110,7 @@ class AssignedService(DetailHandler):
                 return AssignedService.itemToDict(parent.assignedUserServices().get(processUuid(uuid=processUuid(item))))
         except Exception:
             logger.exception('getItems')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent):
         return _('Assigned services')
@@ -140,7 +140,7 @@ class AssignedService(DetailHandler):
             logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
         service = None
@@ -148,7 +148,7 @@ class AssignedService(DetailHandler):
             service = parent.userServices.get(uuid=processUuid(item))
         except Exception:
             logger.exception('deleteItem')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
         if service.user:
             logStr = 'Deleted assigned service {} to user {} by {}'.format(service.friendly_name, service.user.pretty_name, self._user.pretty_name)
@@ -160,9 +160,9 @@ class AssignedService(DetailHandler):
         elif service.state == State.PREPARING:
             service.cancel()
         elif service.state == State.REMOVABLE:
-            self.invalidItemException(_('Item already being removed'))
+            raise self.invalidItemException(_('Item already being removed'))
         else:
-            self.invalidItemException(_('Item is not removable'))
+            raise self.invalidItemException(_('Item is not removable'))
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
@@ -205,7 +205,7 @@ class CachedService(AssignedService):
                 return AssignedService.itemToDict(k, True)
         except Exception:
             logger.exception('getItems')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent):
         return _('Cached services')
@@ -228,7 +228,7 @@ class CachedService(AssignedService):
             logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
 
 class Groups(DetailHandler):

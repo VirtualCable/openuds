@@ -91,7 +91,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 return CalendarRules.ruleToDict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getFields(self, parent: 'Calendar') -> typing.List[typing.Any]:
         return [
@@ -111,7 +111,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration', 'duration_unit'])
 
         if int(fields['interval']) < 1:
-            self.invalidItemException('Repeat must be greater than zero')
+            raise self.invalidItemException('Repeat must be greater than zero')
 
         # Convert timestamps to datetimes
         fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
@@ -127,7 +127,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 calRule.__dict__.update(fields)
                 calRule.save()
         except CalendarRule.DoesNotExist:
-            self.invalidItemException()
+            raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)'))
         except Exception as e:
@@ -145,7 +145,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             calRule.delete()
         except Exception:
             logger.exception('Exception')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent: 'Calendar') -> str:
         try:

@@ -118,7 +118,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 return self.fillIntanceFields(k, val)
         except Exception:
             logger.exception('itemId %s', item)
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getRowStyle(self, parent):
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
@@ -167,7 +167,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service.data = service.getInstance(self._params).serialize()  # This may launch an validation exception (the getInstance(...) part)
             service.save()
         except Service.DoesNotExist:
-            self.invalidItemException()
+            raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)'))
         except coreService.ValidationException as e:
@@ -192,7 +192,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         except Exception:
             logger.exception('Deleting service')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
         raise RequestError('Item has associated deployed services')
 
@@ -263,7 +263,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def servicesPools(self, parent, item):
         self.ensureAccess(item, permissions.PERMISSION_READ)

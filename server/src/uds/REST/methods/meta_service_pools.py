@@ -75,7 +75,7 @@ class MetaServicesPool(DetailHandler):
             return MetaServicesPool.as_dict(i)
         except Exception:
             logger.exception('err: %s', item)
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent: MetaPool) -> str:
         return _('Service pools')
@@ -138,7 +138,7 @@ class MetaAssignedService(DetailHandler):
             return UserService.objects.filter(uuid=processUuid(userServiceId), cache_level=0, deployed_service__meta=metaPool)[0]
         except Exception:
             pass
-        self.invalidItemException()
+        raise self.invalidItemException()
         # So mypy does not complains :), will never execute because previous sentence will raise an exception
         return UserService()
 
@@ -163,7 +163,7 @@ class MetaAssignedService(DetailHandler):
             return MetaAssignedService.itemToDict(parent, self._getAssignedService(parent, item))
         except Exception:
             logger.exception('getItems')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent: MetaPool) -> str:
         return _('Assigned services')
@@ -192,7 +192,7 @@ class MetaAssignedService(DetailHandler):
             logger.debug('Getting logs for %s', item)
             return log.getLogs(item)
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def deleteItem(self, parent: MetaPool, item: str) -> None:
         service = self._getAssignedService(parent, item)
@@ -207,16 +207,16 @@ class MetaAssignedService(DetailHandler):
         elif service.state == State.PREPARING:
             service.cancel()
         elif service.state == State.REMOVABLE:
-            self.invalidItemException(_('Item already being removed'))
+            raise self.invalidItemException(_('Item already being removed'))
         else:
-            self.invalidItemException(_('Item is not removable'))
+            raise self.invalidItemException(_('Item is not removable'))
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
     # Only owner is allowed to change right now
     def saveItem(self, parent: MetaPool, item: typing.Optional[str]):
         if item is None:
-            self.invalidItemException()
+            raise self.invalidItemException()
             return None
 
         fields = self.readFieldsFromParams(['auth_id', 'user_id'])

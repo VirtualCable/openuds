@@ -104,7 +104,7 @@ class Transports(ModelHandler):
             return field
 
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def item_as_dict(self, item):
         type_ = item.getType()

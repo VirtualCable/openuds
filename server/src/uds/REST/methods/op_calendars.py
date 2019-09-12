@@ -71,7 +71,7 @@ class AccessCalendars(DetailHandler):
             return AccessCalendars.as_dict(parent.calendarAccess.get(uuid=processUuid(item)))
         except Exception:
             logger.exception('err: %s', item)
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent: 'ServicePool'):
         return _('Access restrictions by calendar')
@@ -148,7 +148,7 @@ class ActionsCalendars(DetailHandler):
             i = parent.calendaraction_set.objects.get(uuid=processUuid(item))
             return ActionsCalendars.as_dict(i)
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent: 'ServicePool'):
         return _('Scheduled actions')

@@ -280,12 +280,12 @@ class BaseModelHandler(Handler):
         """
         return RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
-    def invalidItemException(self, message: typing.Optional[str] = None):
+    def invalidItemException(self, message: typing.Optional[str] = None) -> HandlerError:
         """
         Raises a NotFound exception, with location info
         """
         message = _('Item not found') if message is None else message
-        raise NotFound(message)
+        return NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
     def accessDenied(self, message: typing.Optional[str] = None) -> HandlerError:
@@ -844,7 +844,7 @@ class ModelHandler(BaseModelHandler):
                 return res
             except Exception:
                 logger.exception('Got Exception looking for item')
-                self.invalidItemException()
+                raise self.invalidItemException()
 
         # nArgs > 1
         # Request type info or gui, or detail
@@ -867,7 +867,7 @@ class ModelHandler(BaseModelHandler):
                 item = self.model.objects.get(uuid=self._args[0].lower())  # DB maybe case sensitive??, anyway, uuids are stored in lowercase
                 return self.getLogs(item)
             except Exception:
-                self.invalidItemException()
+                raise self.invalidItemException()
 
         # If has detail and is requesting detail
         if self.detail is not None:

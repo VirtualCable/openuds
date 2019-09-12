@@ -102,7 +102,7 @@ class Users(DetailHandler):
                 return res
         except Exception:
             logger.exception('En users')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent):
         try:
@@ -128,7 +128,7 @@ class Users(DetailHandler):
         try:
             user = parent.users.get(uuid=processUuid(item))
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
         return log.getLogs(user)
 
@@ -167,7 +167,7 @@ class Users(DetailHandler):
             user.save()
 
         except User.DoesNotExist:
-            self.invalidItemException()
+            raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
@@ -198,7 +198,7 @@ class Users(DetailHandler):
             user.delete()
         except Exception:
             logger.exception('Removing user')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
         return 'deleted'
 
@@ -269,7 +269,7 @@ class Groups(DetailHandler):
             return res
         except Exception:
             logger.exception('REST groups')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent):
         try:
@@ -349,7 +349,7 @@ class Groups(DetailHandler):
 
             group.save()
         except Group.DoesNotExist:
-            self.invalidItemException()
+            raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
@@ -366,7 +366,7 @@ class Groups(DetailHandler):
 
             group.delete()
         except Exception:
-            self.invalidItemException()
+            raise self.invalidItemException()
 
         return 'deleted'
 

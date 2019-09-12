@@ -103,7 +103,7 @@ class ServicesUsage(DetailHandler):
 
         except Exception:
             logger.exception('getItems')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
     def getTitle(self, parent):
         return _('Services Usage')
@@ -134,7 +134,7 @@ class ServicesUsage(DetailHandler):
                 raise Exception('Access denied')
         except Exception:
             logger.exception('deleteItem')
-            self.invalidItemException()
+            raise self.invalidItemException()
 
         logger.debug('Deleting user service')
         if service.state in (State.USABLE, State.REMOVING):
@@ -142,8 +142,8 @@ class ServicesUsage(DetailHandler):
         elif service.state == State.PREPARING:
             service.cancel()
         elif service.state == State.REMOVABLE:
-            self.invalidItemException(_('Item already being removed'))
+            raise self.invalidItemException(_('Item already being removed'))
         else:
-            self.invalidItemException(_('Item is not removable'))
+            raise self.invalidItemException(_('Item is not removable'))
 
         return self.success()
