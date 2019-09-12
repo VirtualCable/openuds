@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -65,7 +66,7 @@ class ServicePoolGroup(UUIDModel):
         return 'Service Pool group {}({})'.format(self.name, self.comments)
 
     @property
-    def as_dict(self):
+    def as_dict(self) -> typing.Dict[str, typing.Any]:
         return {
             'id': self.uuid,
             'name': self.name,
@@ -75,9 +76,9 @@ class ServicePoolGroup(UUIDModel):
         }
 
     @property
-    def thumb64(self):
-        return self.image.thumb64 if self.image is not None else  DEFAULT_THUMB_BASE64
+    def thumb64(self) -> str:
+        return self.image.thumb64 if self.image else  DEFAULT_THUMB_BASE64
 
     @staticmethod
-    def default():
+    def default() -> 'ServicePoolGroup':
         return ServicePoolGroup(name=_('General'), comments='', priority=-10000)

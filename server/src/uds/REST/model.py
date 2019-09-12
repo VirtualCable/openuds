@@ -182,7 +182,7 @@ class BaseModelHandler(Handler):
 
         return gui
 
-    def ensureAccess(self, obj: typing.Any, permission: int, root=False) -> int:
+    def ensureAccess(self, obj: models.Model, permission: int, root: bool = False) -> int:
         perm = permissions.getEffectivePermission(self._user, obj, root)
         if perm < permission:
             raise self.accessDenied()
@@ -967,7 +967,7 @@ class ModelHandler(BaseModelHandler):
 
         return res
 
-    def delete(self):
+    def delete(self) -> str:
         """
         Processes a DELETE request
         """
@@ -989,7 +989,7 @@ class ModelHandler(BaseModelHandler):
 
         return OK
 
-    def deleteItem(self, item: models.Model):
+    def deleteItem(self, item: models.Model) -> None:
         """
         Basic, overridable method for deleting an item
         """

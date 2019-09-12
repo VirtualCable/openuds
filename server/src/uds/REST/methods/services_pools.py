@@ -52,8 +52,8 @@ from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
-from uds.core.util import permissions
 from uds.core.ui import gui
+from uds.core.util import permissions
 
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
@@ -111,13 +111,13 @@ class ServicesPools(ModelHandler):
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
-        poolGroupId = None
-        poolGroupName = _('Default')
-        poolGroupThumb = DEFAULT_THUMB_BASE64
-        if item.servicesPoolGroup is not None:
+        poolGroupId: typing.Optional[str] = None
+        poolGroupName: str = _('Default')
+        poolGroupThumb: str = DEFAULT_THUMB_BASE64
+        if item.servicesPoolGroup:
             poolGroupId = item.servicesPoolGroup.uuid
             poolGroupName = item.servicesPoolGroup.name
-            if item.servicesPoolGroup.image is not None:
+            if item.servicesPoolGroup.image:
                 poolGroupThumb = item.servicesPoolGroup.image.thumb64
 
         state = item.state
@@ -191,8 +191,8 @@ class ServicesPools(ModelHandler):
 
     # Gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        if OSManager.objects.count() < 1:  # No os managers, can't create db
-            raise ResponseError(ugettext('Create at least one OS Manager before creating a new service pool'))
+        # if OSManager.objects.count() < 1:  # No os managers, can't create db
+        #    raise ResponseError(ugettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
             raise ResponseError(ugettext('Create at least a service before creating a new service pool'))
 
@@ -319,7 +319,7 @@ class ServicesPools(ModelHandler):
 
         return g
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None: # pylint: disable=too-many-branches,too-many-statements
         # logger.debug(self._params)
         try:
             try:
@@ -400,14 +400,14 @@ class ServicesPools(ModelHandler):
         except Exception as e:
             raise RequestError(str(e))
 
-    def afterSave(self, item):
+    def afterSave(self, item: ServicePool) -> None:
         if self._params.get('publish_on_save', False) is True:
             try:
                 item.publish()
             except Exception:
                 pass
 
-    def deleteItem(self, item):
+    def deleteItem(self, item: ServicePool) -> None:
         try:
             logger.debug('Deleting %s', item)
             item.remove()  # This will mark it for deletion, but in fact will not delete it directly
@@ -416,14 +416,14 @@ class ServicesPools(ModelHandler):
             logger.exception('deleting service pool')
 
     # Logs
-    def getLogs(self, item):
+    def getLogs(self, item: ServicePool) -> typing.List[typing.Dict]:
         try:
             return log.getLogs(item)
         except Exception:
             return []
 
     # Set fallback status
-    def setFallbackAccess(self, item):
+    def setFallbackAccess(self, item: ServicePool):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
@@ -433,12 +433,12 @@ class ServicesPools(ModelHandler):
             item.save()
         return item.fallbackAccess
 
-    def getFallbackAccess(self, item):
+    def getFallbackAccess(self, item: ServicePool):
         return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendar
-    def actionsList(self, item):
-        validActions = ()
+    def actionsList(self, item: ServicePool):
+        validActions: typing.Tuple[typing.Dict, ...] = ()
         itemInfo = item.service.getType()
         if itemInfo.usesCache is True:
             validActions += (CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_MAX)

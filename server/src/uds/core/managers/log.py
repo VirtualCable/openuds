@@ -32,33 +32,32 @@
 import logging
 import typing
 
-from uds.models import (
-    UserService, ServicePoolPublication,
-    ServicePool, Service,
-    Provider, User,
-    Group, Authenticator,
-    MetaPool
-)
+from uds import models
 
 from uds.core.util import log
 
 from uds.core.util.config import GlobalConfig
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
+
 
 logger = logging.getLogger(__name__)
 
 OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR, OT_METAPOOL = range(9)  # @UndefinedVariable
 
 # Dict for translations
-transDict = {
-    UserService: OT_USERSERVICE,
-    ServicePoolPublication: OT_PUBLICATION,
-    ServicePool: OT_DEPLOYED_SERVICE,
-    Service: OT_SERVICE,
-    Provider: OT_PROVIDER,
-    User: OT_USER,
-    Group: OT_GROUP,
-    Authenticator: OT_AUTHENTICATOR,
-    MetaPool: OT_METAPOOL,
+transDict: typing.Dict['Model', int] = {
+    models.UserService: OT_USERSERVICE,
+    models.ServicePoolPublication: OT_PUBLICATION,
+    models.ServicePool: OT_DEPLOYED_SERVICE,
+    models.Service: OT_SERVICE,
+    models.Provider: OT_PROVIDER,
+    models.User: OT_USER,
+    models.Group: OT_GROUP,
+    models.Authenticator: OT_AUTHENTICATOR,
+    models.MetaPool: OT_METAPOOL,
 }
 
 
@@ -72,7 +71,7 @@ class LogManager:
         pass
 
     @staticmethod
-    def manager():
+    def manager() -> 'LogManager':
         if not LogManager._manager:
             LogManager._manager = LogManager()
         return LogManager._manager
@@ -126,7 +125,7 @@ class LogManager:
 
         Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
-    def doLog(self, wichObject: typing.Any, level: typing.Union[int, str], message: str, source: str, avoidDuplicates: bool = True):
+    def doLog(self, wichObject: 'Model', level: typing.Union[int, str], message: str, source: str, avoidDuplicates: bool = True):
         """
         Do the logging for the requested object.
 
@@ -141,7 +140,7 @@ class LogManager:
         else:
             logger.debug('Requested doLog for a type of object not covered: %s', wichObject)
 
-    def getLogs(self, wichObject: typing.Any, limit: int) -> typing.List[typing.Dict]:
+    def getLogs(self, wichObject: 'Model', limit: int) -> typing.List[typing.Dict]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """
@@ -155,7 +154,7 @@ class LogManager:
         logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
         return []
 
-    def clearLogs(self, wichObject: typing.Any):
+    def clearLogs(self, wichObject: Model):
         """
         Clears all logs related to wichObject
 
@@ -163,7 +162,7 @@ class LogManager:
         """
 
         owner_type = transDict.get(type(wichObject), None)
-        if owner_type is not None:
+        if owner_type:
             self.__clearLogs(owner_type, wichObject.id)
         else:
             logger.debug('Requested clearLogs for a type of object not covered: %s', wichObject)

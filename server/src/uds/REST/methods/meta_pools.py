@@ -204,7 +204,7 @@ class MetaPools(ModelHandler):
     def getFallbackAccess(self, item: MetaPool):
         return item.fallbackAccess
 
-    #  Returns the action list based on current element, for calendars (nothing right now for metapools)
+    #  Returns the action list based on current element, for calendars (nothing right now for metapools, because no actions are allowed)
     def actionsList(self, item: MetaPool):
         validActions = ()
         return validActions

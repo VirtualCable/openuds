@@ -138,7 +138,7 @@ class gui:
         return {'id': str(id_), 'text': str(text)}
 
     @staticmethod
-    def choiceImage(id_: typing.Union[str, int], text: str, img: bytes) -> typing.Dict[str, typing.Union[str, bytes]]:
+    def choiceImage(id_: typing.Union[str, int], text: str, img: str) -> typing.Dict[str, str]:
         return {'id': str(id_), 'text': str(text), 'img': img}
 
     @staticmethod

@@ -33,8 +33,11 @@
 import logging
 import typing
 
-
 from uds.core.managers import logManager
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
@@ -74,15 +77,14 @@ def logStrFromLevel(level: int) -> str:
 
 def useLog(
         type_: str,
-        serviceUniqueId:
-        str,
+        serviceUniqueId: str,
         serviceIp: str,
         username: str,
         srcIP: typing.Optional[str] = None,
         srcUser: typing.Optional[str] = None,
         userServiceName: typing.Optional[str] = None,
         poolName: typing.Optional[str] = None
-    ):
+    ) -> None:
     """
     Logs an "use service" event (logged from actors)
     :param type_: Type of event (commonly 'login' or 'logout')
@@ -101,17 +103,17 @@ def useLog(
 
 
 def doLog(
-        wichObject: typing.Any,
+        wichObject: 'Model',
         level: typing.Union[int, str],
         message: str,
         source: str = UNKNOWN,
         avoidDuplicates: bool = True
-    ):
+    ) -> None:
     logger.debug('%s %s %s', wichObject, level, message)
     logManager().doLog(wichObject, level, message, source, avoidDuplicates)
 
 
-def getLogs(wichObject: typing.Any, limit: typing.Optional[int] = None) -> typing.List[typing.Dict]:
+def getLogs(wichObject: 'Model', limit: typing.Optional[int] = None) -> typing.List[typing.Dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
@@ -123,7 +125,7 @@ def getLogs(wichObject: typing.Any, limit: typing.Optional[int] = None) -> typin
     return logManager().getLogs(wichObject, limit)
 
 
-def clearLogs(wichObject: typing.Any):
+def clearLogs(wichObject: 'Model') -> None:
     """
     Clears the logs associated with the object using the logManager
     """
