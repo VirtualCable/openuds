@@ -269,7 +269,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('getGui')
             raise ResponseError(str(e))
 
-    def getLogs(self, parent: 'Provider', item: str):
+    def getLogs(self, parent: 'Provider', item: str) -> typing.List[typing.Any]:
         try:
             item = parent.services.get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', item)

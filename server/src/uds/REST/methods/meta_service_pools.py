@@ -184,7 +184,7 @@ class MetaAssignedService(DetailHandler):
     def getRowStyle(self, parent: MetaPool) -> typing.Dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: MetaPool, item: str):
+    def getLogs(self, parent: MetaPool, item: str) -> typing.List[typing.Any]:
         try:
             item = self._getAssignedService(parent, item)
             logger.debug('Getting logs for %s', item)

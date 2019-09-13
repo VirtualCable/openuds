@@ -568,7 +568,7 @@ class DetailHandler(BaseModelHandler):
         """
         return []  # Default is that details do not have types
 
-    def getLogs(self, parent: models.Model, item: str):
+    def getLogs(self, parent: models.Model, item: str) -> typing.List[typing.Any]:
         """
         If the detail has any log associated with it items, provide it overriding this method
         :param parent:

@@ -31,10 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext as _
 
-from uds.models import Group, Transport, ServicePoolPublication, User
+from uds import models
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
@@ -52,7 +53,7 @@ class AssignedService(DetailHandler):
     """
 
     @staticmethod
-    def itemToDict(item, is_cache=False):
+    def itemToDict(item: models.UserService, is_cache: bool = False) -> typing.Dict[str, typing.Any]:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
@@ -100,22 +101,21 @@ class AssignedService(DetailHandler):
             })
         return val
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         # Extract provider
         try:
-            if item is None:
+            if not item:
                 return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()
                         .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
-            else:
-                return AssignedService.itemToDict(parent.assignedUserServices().get(processUuid(uuid=processUuid(item))))
+            return AssignedService.itemToDict(parent.assignedUserServices().get(processUuid(uuid=processUuid(item))))
         except Exception:
             logger.exception('getItems')
             raise self.invalidItemException()
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: models.ServicePool) -> str:
         return _('Assigned services')
 
-    def getFields(self, parent):
+    def getFields(self, parent: models.ServicePool) -> typing.List[typing.Any]:
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
@@ -131,21 +131,21 @@ class AssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}}
         ]
 
-    def getRowStyle(self, parent):
+    def getRowStyle(self, parent: models.ServicePool) -> typing.Dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent, item):
+    def getLogs(self, parent: models.ServicePool, item: str) -> typing.List[typing.Any]:
         try:
-            item = parent.assignedUserServices().get(uuid=processUuid(item))
-            logger.debug('Getting logs for %s', item)
-            return log.getLogs(item)
+            userService: models.UserService = parent.assignedUserServices().get(uuid=processUuid(item))
+            logger.debug('Getting logs for %s', userService)
+            return log.getLogs(userService)
         except Exception:
             raise self.invalidItemException()
 
-    def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
-        service = None
+    # This is also used by CachedService, so we use "userServices" directly and is valid for both
+    def deleteItem(self, parent: models.ServicePool, item: str) -> None:
         try:
-            service = parent.userServices.get(uuid=processUuid(item))
+            service: models.UserService = parent.userServices.get(uuid=processUuid(item))
         except Exception:
             logger.exception('deleteItem')
             raise self.invalidItemException()
@@ -166,13 +166,13 @@ class AssignedService(DetailHandler):
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
-        return self.success()
-
     # Only owner is allowed to change right now
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: models.ServicePool, item: typing.Optional[str]) -> None:
+        if not item:
+            raise self.invalidItemException('Only modify is allowed')
         fields = self.readFieldsFromParams(['auth_id', 'user_id'])
         service = parent.userServices.get(uuid=processUuid(item))
-        user = User.objects.get(uuid=processUuid(fields['user_id']))
+        user = models.User.objects.get(uuid=processUuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(service.user.pretty_name, user.pretty_name, self._user.pretty_name)
 
@@ -186,31 +186,28 @@ class AssignedService(DetailHandler):
         # Log change
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
-        return self.success()
-
 
 class CachedService(AssignedService):
     """
     Rest handler for Cached Services, wich parent is Service
     """
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         # Extract provider
         try:
-            if item is None:
+            if not item:
                 return [AssignedService.itemToDict(k, True) for k in parent.cachedUserServices().all()
                         .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
-            else:
-                k = parent.cachedUserServices().get(uuid=processUuid(item))
-                return AssignedService.itemToDict(k, True)
+            cachedService: models.UserService = parent.cachedUserServices().get(uuid=processUuid(item))
+            return AssignedService.itemToDict(cachedService, True)
         except Exception:
             logger.exception('getItems')
             raise self.invalidItemException()
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: models.ServicePool) -> str:
         return _('Cached services')
 
-    def getFields(self, parent):
+    def getFields(self, parent: models.ServicePool) -> typing.List[typing.Any]:
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
@@ -222,7 +219,7 @@ class CachedService(AssignedService):
             {'actor_version': {'title': _('Actor version')}}
         ]
 
-    def getLogs(self, parent, item):
+    def getLogs(self, parent: models.ServicePool, item: str) -> typing.List[typing.Any]:
         try:
             item = parent.cachedUserServices().get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', item)
@@ -236,22 +233,23 @@ class Groups(DetailHandler):
     Processes the groups detail requests of a Service Pool
     """
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
+        group: models.Group
         return [{
-            'id': i.uuid,
-            'auth_id': i.manager.uuid,
-            'name': i.name,
-            'group_name': i.pretty_name,
-            'comments': i.comments,
-            'state': i.state,
-            'type': i.is_meta and 'meta' or 'group',
-            'auth_name': i.manager.name,
-        } for i in parent.assignedGroups.all()]
+            'id': group.uuid,
+            'auth_id': group.manager.uuid,
+            'name': group.name,
+            'group_name': group.pretty_name,
+            'comments': group.comments,
+            'state': group.state,
+            'type': 'meta' if group.is_meta else 'group',
+            'auth_name': group.manager.name,
+        } for group in parent.assignedGroups.all()]
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: models.ServicePool) -> str:
         return _('Assigned groups')
 
-    def getFields(self, parent):
+    def getFields(self, parent: models.ServicePool) -> typing.List[typing.Any]:
         return [
             # Note that this field is "self generated" on client table
             {'group_name': {'title': _('Name'), 'type': 'icon_dict', 'icon_dict': {'group': 'fa fa-group text-success', 'meta': 'fa fa-gears text-info'}}},
@@ -259,22 +257,18 @@ class Groups(DetailHandler):
             {'state': {'title': _('State'), 'type': 'dict', 'dict': State.dictionary()}},
         ]
 
-    def getRowStyle(self, parent):
+    def getRowStyle(self, parent: models.ServicePool) -> typing.Dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def saveItem(self, parent, item):
-        grp = Group.objects.get(uuid=processUuid(self._params['id']))
-        parent.assignedGroups.add(grp)
-        log.doLog(parent, log.INFO, "Added group {} by {}".format(grp.pretty_name, self._user.pretty_name), log.ADMIN)
+    def saveItem(self, parent: models.ServicePool, item: typing.Optional[str]) -> None:
+        group: models.Group = models.Group.objects.get(uuid=processUuid(self._params['id']))
+        parent.assignedGroups.add(group)
+        log.doLog(parent, log.INFO, "Added group {} by {}".format(group.pretty_name, self._user.pretty_name), log.ADMIN)
 
-        return self.success()
-
-    def deleteItem(self, parent, item):
-        grp = Group.objects.get(uuid=processUuid(self._args[0]))
-        parent.assignedGroups.remove(grp)
-        log.doLog(parent, log.INFO, "Removed group {} by {}".format(grp.pretty_name, self._user.pretty_name), log.ADMIN)
-
-        return self.success()
+    def deleteItem(self, parent: models.ServicePool, item: str) -> None:
+        group: models.Group = models.Group.objects.get(uuid=processUuid(self._args[0]))
+        parent.assignedGroups.remove(group)
+        log.doLog(parent, log.INFO, "Removed group {} by {}".format(group.pretty_name, self._user.pretty_name), log.ADMIN)
 
 
 class Transports(DetailHandler):
@@ -282,7 +276,7 @@ class Transports(DetailHandler):
     Processes the transports detail requests of a Service Pool
     """
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         return [{
             'id': i.uuid,
             'name': i.name,
@@ -292,10 +286,10 @@ class Transports(DetailHandler):
             'trans_type': _(i.getType().name()),
         } for i in parent.transports.all()]
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: models.ServicePool) -> str:
         return _('Assigned transports')
 
-    def getFields(self, parent):
+    def getFields(self, parent: models.ServicePool) -> typing.List[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Name')}},
@@ -303,19 +297,15 @@ class Transports(DetailHandler):
             {'comments': {'title': _('Comments')}},
         ]
 
-    def saveItem(self, parent, item):
-        transport = Transport.objects.get(uuid=processUuid(self._params['id']))
+    def saveItem(self, parent: models.ServicePool, item: typing.Optional[str]) -> None:
+        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._params['id']))
         parent.transports.add(transport)
         log.doLog(parent, log.INFO, "Added transport {} by {}".format(transport.name, self._user.pretty_name), log.ADMIN)
 
-        return self.success()
-
-    def deleteItem(self, parent, item):
-        transport = Transport.objects.get(uuid=processUuid(self._args[0]))
+    def deleteItem(self, parent: models.ServicePool, item: str) -> None:
+        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._args[0]))
         parent.transports.remove(transport)
         log.doLog(parent, log.INFO, "Removed transport {} by {}".format(transport.name, self._user.pretty_name), log.ADMIN)
-
-        return self.success()
 
 
 class Publications(DetailHandler):
@@ -324,7 +314,7 @@ class Publications(DetailHandler):
     """
     custom_methods = ['publish', 'cancel']  # We provided these custom methods
 
-    def publish(self, parent):
+    def publish(self, parent: models.ServicePool):
         """
         Custom method "publish", provided to initiate a publication of a deployed service
         :param parent: Parent service pool
@@ -342,7 +332,7 @@ class Publications(DetailHandler):
 
         return self.success()
 
-    def cancel(self, parent, uuid):
+    def cancel(self, parent: models.ServicePool, uuid: str):
         """
         Invoked to cancel a running publication
         Double invocation (this means, invoking cancel twice) will mean that is a "forced cancelation"
@@ -354,7 +344,7 @@ class Publications(DetailHandler):
             raise self.accessDenied()
 
         try:
-            ds = ServicePoolPublication.objects.get(uuid=processUuid(uuid))
+            ds = models.ServicePoolPublication.objects.get(uuid=processUuid(uuid))
             ds.cancel()
         except Exception as e:
             raise ResponseError("{}".format(e))
@@ -363,7 +353,7 @@ class Publications(DetailHandler):
 
         return self.success()
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         return [{
             'id': i.uuid,
             'revision': i.revision,
@@ -373,10 +363,10 @@ class Publications(DetailHandler):
             'state_date': i.state_date,
         } for i in parent.publications.all()]
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: models.ServicePool) -> str:
         return _('Publications')
 
-    def getFields(self, parent):
+    def getFields(self, parent: models.ServicePool) -> typing.List[typing.Any]:
         return [
             {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
             {'publish_date': {'title': _('Publish date'), 'type': 'datetime'}},
@@ -384,7 +374,7 @@ class Publications(DetailHandler):
             {'reason': {'title': _('Reason')}},
         ]
 
-    def getRowStyle(self, parent):
+    def getRowStyle(self, parent: models.ServicePool) -> typing.Dict[str, typing.Any]:
         return  {
             'field': 'state',
             'prefix': 'row-state-'
@@ -396,17 +386,17 @@ class Changelog(DetailHandler):
     Processes the transports detail requests of a Service Pool
     """
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         return [{
             'revision': i.revision,
             'stamp': i.stamp,
             'log': i.log,
         } for i in parent.changelog.all()]
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: models.ServicePool) -> str:
         return _('Changelog')
 
-    def getFields(self, parent):
+    def getFields(self, parent: models.ServicePool) -> typing.List[typing.Any]:
         return [
             {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
             {'stamp': {'title': _('Publish date'), 'type': 'datetime'}},
