@@ -37,12 +37,10 @@ from datetime import datetime
 from django.db import models
 from django.db import connection
 
-
 logger = logging.getLogger(__name__)
 
 NEVER = datetime(1972, 7, 1)
 NEVER_UNIX = int(mktime(NEVER.timetuple()))
-
 
 class UnsavedForeignKey(models.ForeignKey):
     """

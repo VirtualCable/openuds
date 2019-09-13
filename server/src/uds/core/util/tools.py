@@ -106,6 +106,15 @@ class CaseInsensitiveDict(dict):
             v = super(CaseInsensitiveDict, self).pop(k)
             self.__setitem__(k, v)
 
+def asList(value: typing.Any) -> typing.List[typing.Any]:
+    if isinstance(value, list):
+        return value
+    if isinstance(value, (bytes, str, int, float)):
+        return [value]
+    try:
+        return [v for v in value]
+    except Exception:
+        return [value]
 
 def packageRelativeFile(moduleName: str, fileName: str) -> str:
     """

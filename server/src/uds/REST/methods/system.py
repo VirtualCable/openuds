@@ -32,9 +32,10 @@
 """
 import pickle
 import logging
-from datetime import timedelta
+import datetime
+import typing
 
-from uds.models import User, Group, Service, UserService, ServicePool, MetaPool, getSqlDatetime
+from uds import models
 
 from uds.core.util.stats import counters
 from uds.core.util.cache import Cache
@@ -52,16 +53,16 @@ SINCE = 365  # Days
 USE_MAX = True
 
 
-def getServicesPoolsCounters(servicePool, counter_type):
+def getServicesPoolsCounters(servicePool: typing.Optional[models.ServicePool], counter_type: int) -> typing.List[typing.Dict[str, typing.Any]]:
     # pylint: disable=no-value-for-parameter
     try:
         cacheKey = (servicePool and servicePool.id or 'all') + str(counter_type) + str(POINTS) + str(SINCE)
-        to = getSqlDatetime()
-        since = to - timedelta(days=SINCE)
-        val = cache.get(cacheKey)
-        if val is None:
-            if servicePool is None:
-                us = ServicePool()
+        to = models.getSqlDatetime()
+        since: datetime.datetime = to - datetime.timedelta(days=SINCE)
+        val: typing.Any = cache.get(cacheKey)
+        if not val:
+            if not servicePool:
+                us = models.ServicePool()
                 complete = True  # Get all deployed services stats
             else:
                 us = servicePool
@@ -74,7 +75,7 @@ def getServicesPoolsCounters(servicePool, counter_type):
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
-            val = pickle.loads(encoders.decode(val, 'zip'))
+            val = pickle.loads(typing.cast(bytes, encoders.decode(val, 'zip')))
 
         return val
     except:
@@ -83,18 +84,19 @@ def getServicesPoolsCounters(servicePool, counter_type):
 
 
 class System(Handler):
+    needs_staff = True
 
     def get(self):
         logger.debug('args: %s', self._args)
         if len(self._args) == 1:
             if self._args[0] == 'overview':  # System overview
-                users = User.objects.count()
-                groups = Group.objects.count()
-                services = Service.objects.count()
-                service_pools = ServicePool.objects.count()
-                meta_pools = MetaPool.objects.count()
-                user_services = UserService.objects.exclude(state__in=(State.REMOVED, State.ERROR)).count()
-                restrained_services_pools = ServicePool.getRestrainedsQuerySet().count()
+                users: models.User = models.User.objects.count()
+                groups: models.Group = models.Group.objects.count()
+                services: models.Service = models.Service.objects.count()
+                service_pools: models.ServicePool = models.ServicePool.objects.count()
+                meta_pools: models.MetaPool = models.MetaPool.objects.count()
+                user_services: models.UserService = models.UserService.objects.exclude(state__in=(State.REMOVED, State.ERROR)).count()
+                restrained_services_pools: int = models.ServicePool.getRestrainedsQuerySet().count()
                 return {
                     'users': users,
                     'groups': groups,
@@ -115,4 +117,4 @@ class System(Handler):
         raise RequestError('invalid request')
 
     def put(self):
-        raise RequestError('todo')
+        raise RequestError()
