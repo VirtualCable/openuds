@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Transport, Network, ServicePool
-from uds.core.transports import factory
+from uds.core import transports
 from uds.core.util import permissions
 from uds.core.util import os_detector as OsDetector
 
@@ -60,12 +60,12 @@ class Transports(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self):
-        return factory().providers().values()
+    def enum_types(self) -> typing.Iterable[typing.Type[transports.Transport]]:
+        return transports.factory().providers().values()
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
-            field = self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority'])
+            field = self.addDefaultFields(transports.actory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority'])
             field = self.addField(field, {
                 'name': 'nets_positive',
                 'value': True,
@@ -77,7 +77,7 @@ class Transports(ModelHandler):
             field = self.addField(field, {
                 'name': 'networks',
                 'value': [],
-                'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
+                'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),
                 'label': ugettext('Networks'),
                 'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
                 'type': 'multichoice',
@@ -86,7 +86,7 @@ class Transports(ModelHandler):
             field = self.addField(field, {
                 'name': 'allowed_oss',
                 'value': [],
-                'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
+                'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),
                 'label': ugettext('Allowed Devices'),
                 'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
                 'type': 'multichoice',
@@ -95,7 +95,7 @@ class Transports(ModelHandler):
             field = self.addField(field, {
                 'name': 'pools',
                 'value': [],
-                'values': [{'id': x.id, 'text': x.name} for x in ServicePool.objects.all().order_by('name')],  # TODO: We will fix this behavior after current admin client is fully removed
+                'values': [{'id': x.id, 'text': x.name} for x in ServicePool.objects.all().order_by('name')],
                 'label': ugettext('Service Pools'),
                 'tooltip': ugettext('Currently assigned services pools'),
                 'type': 'multichoice',
@@ -128,7 +128,7 @@ class Transports(ModelHandler):
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])
 
-    def afterSave(self, item):
+    def afterSave(self, item: Transport) -> None:
         try:
             networks = self._params['networks']
         except Exception:  # No networks passed in, this is ok
