@@ -75,7 +75,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     state_date = models.DateTimeField(db_index=True)
     creation_date = models.DateTimeField(db_index=True)
     data = models.TextField(default='')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userServices', null=True, blank=True, default=None)
+    user: User = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userServices', null=True, blank=True, default=None)
     in_use = models.BooleanField(default=False)
     in_use_date = models.DateTimeField(default=NEVER)
     cache_level = models.PositiveSmallIntegerField(db_index=True, default=0)  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service

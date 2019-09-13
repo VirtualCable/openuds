@@ -154,7 +154,7 @@ class LogManager:
         logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
         return []
 
-    def clearLogs(self, wichObject: Model):
+    def clearLogs(self, wichObject: 'Model'):
         """
         Clears all logs related to wichObject
 

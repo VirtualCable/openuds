@@ -31,9 +31,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-# pylint: disable=too-many-public-methods
-
 import logging
+import typing
 
 from django.utils.translation import ugettext as _
 
@@ -42,6 +41,9 @@ from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.REST.model import DetailHandler
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import Provider
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +54,7 @@ class ServicesUsage(DetailHandler):
     """
 
     @staticmethod
-    def itemToDict(item):
+    def itemToDict(item: UserService) -> typing.Dict[str, typing.Any]:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
@@ -91,7 +93,7 @@ class ServicesUsage(DetailHandler):
             'in_use': item.in_use
         }
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: 'Provider', item: typing.Optional[str]):
         try:
             if item is None:
                 userServicesQuery = UserService.objects.filter(deployed_service__service__provider=parent)
@@ -105,10 +107,10 @@ class ServicesUsage(DetailHandler):
             logger.exception('getItems')
             raise self.invalidItemException()
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: 'Provider') -> str:
         return _('Services Usage')
 
-    def getFields(self, parent):
+    def getFields(self, parent: 'Provider') -> typing.List[typing.Any]:
         return [
             # {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'state_date': {'title': _('Access'), 'type': 'datetime'}},
@@ -122,28 +124,22 @@ class ServicesUsage(DetailHandler):
             {'source_host': {'title': _('Src Host')}},
         ]
 
-    def getRowStyle(self, parent):
+    def getRowStyle(self, parent: 'Provider') -> typing.Dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
-        service = None
+    def deleteItem(self, parent: 'Provider', item: str) -> None:
+        userService: UserService
         try:
-            service = UserService.objects.get(uuid=processUuid(item))
-            if service.deployed_service.service.provider.id != parent.id:
-                # Forged UUID service!!!
-                raise Exception('Access denied')
+            userService = UserService.objects.get(uuid=processUuid(item), deployed_service__service__provider=parent)
         except Exception:
-            logger.exception('deleteItem')
             raise self.invalidItemException()
 
         logger.debug('Deleting user service')
-        if service.state in (State.USABLE, State.REMOVING):
-            service.remove()
-        elif service.state == State.PREPARING:
-            service.cancel()
-        elif service.state == State.REMOVABLE:
+        if userService.state in (State.USABLE, State.REMOVING):
+            userService.remove()
+        elif userService.state == State.PREPARING:
+            userService.cancel()
+        elif userService.state == State.REMOVABLE:
             raise self.invalidItemException(_('Item already being removed'))
         else:
             raise self.invalidItemException(_('Item is not removable'))
-
-        return self.success()

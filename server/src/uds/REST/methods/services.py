@@ -31,13 +31,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
 from uds.models import Service, UserService, Tag, Proxy
 
-from uds.core.services import Service as coreService
+from uds.core import services
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
@@ -49,6 +50,9 @@ from uds.core.util.state import State
 from uds.REST.model import DetailHandler
 from uds.REST import NotFound, ResponseError, RequestError
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import Provider
 
 logger = logging.getLogger(__name__)
 
@@ -61,11 +65,11 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     custom_methods = ['servicesPools']
 
     @staticmethod
-    def serviceInfo(item):
+    def serviceInfo(item: Service) -> typing.Dict[str, typing.Any]:
         info = item.getType()
 
         return {
-            'icon': info.icon().replace('\n', ''),
+            'icon': info.icon64().replace('\n', ''),
             'needs_publication': info.publicationType is not None,
             'max_deployed': info.maxDeployed,
             'uses_cache': info.usesCache and info.cacheConstrains is None,
@@ -80,7 +84,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         }
 
     @staticmethod
-    def serviceToDict(item, perm, full=False):
+    def serviceToDict(item: Service, perm: int, full: bool = False) -> typing.Dict[str, typing.Any]:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
@@ -106,7 +110,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: 'Provider', item: typing.Optional[str]):
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
@@ -120,34 +124,34 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('itemId %s', item)
             raise self.invalidItemException()
 
-    def getRowStyle(self, parent):
+    def getRowStyle(self, parent: 'Provider') -> typing.Dict[str, typing.Any]:
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def _deleteIncompleteService(self, service):  # pylint: disable=no-self-use
+    def _deleteIncompleteService(self, service: Service):  # pylint: disable=no-self-use
         """
         Deletes a service if it is needed to (that is, if it is not None) and silently catch any exception of this operation
         :param service:  Service to delete (may be None, in which case it does nothing)
         """
-        if service is not None:
+        if service:
             try:
                 service.delete()
             except Exception:
                 pass
 
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: 'Provider', item: typing.Optional[str]) -> None:
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving service for %s / %s', parent, item)
         fields = self.readFieldsFromParams(['name', 'comments', 'data_type', 'tags', 'proxy_id'])
         tags = fields['tags']
         del fields['tags']
-        service = None
+        service: typing.Optional[Service] = None
 
         proxyId = fields['proxy_id']
         fields['proxy_id'] = None
         logger.debug('Proxy id: %s', proxyId)
 
-        proxy = None
+        proxy: typing.Optional[Proxy] = None
         if proxyId != '-1':
             try:
                 proxy = Proxy.objects.get(uuid=processUuid(proxyId))
@@ -161,6 +165,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 service = parent.services.get(uuid=processUuid(item))
                 service.__dict__.update(fields)
 
+            if service is None:
+                raise Exception('Cannot create service!')
+
             service.tags.set([Tag.objects.get_or_create(tag=val)[0] for val in tags])
             service.proxy = proxy
 
@@ -170,39 +177,37 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)'))
-        except coreService.ValidationException as e:
-            if item is None:  # Only remove partially saved element if creating new (if editing, ignore this)
+        except services.Service.ValidationException as e:
+            if not item and service:  # Only remove partially saved element if creating new (if editing, ignore this)
                 self._deleteIncompleteService(service)
             raise RequestError(_('Input error: {0}'.format(e)))
         except Exception as e:
-            if item is None:
+            if not item and service:
                 self._deleteIncompleteService(service)
             logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT: {0}'.format(e))
 
         return self.getItems(parent, service.uuid)
 
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent: 'Provider', item: str) -> None:
         try:
             service = parent.services.get(uuid=processUuid(item))
-
             if service.deployedServices.count() == 0:
                 service.delete()
-                return 'deleted'
-
+                return
         except Exception:
             logger.exception('Deleting service')
             raise self.invalidItemException()
 
         raise RequestError('Item has associated deployed services')
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: 'Provider') -> str:
         try:
             return _('Services of {}').format(parent.name)
         except Exception:
             return _('Current services')
 
-    def getFields(self, parent):
+    def getFields(self, parent: 'Provider') -> typing.List[typing.Any]:
         return [
             {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
             {'comments': {'title': _('Comments')}},
@@ -213,33 +218,41 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             {'tags': {'title': _('tags'), 'visible': False}},
         ]
 
-    def getTypes(self, parent, forType):
+    def getTypes(self, parent: 'Provider', forType: typing.Optional[str]) -> typing.Iterable[typing.Dict[str, typing.Any]]:
         logger.debug('getTypes parameters: %s, %s', parent, forType)
+        offers: typing.List[typing.Dict[str, typing.Any]]
         if forType is None:
             offers = [{
                 'name': _(t.name()),
                 'type': t.type(),
                 'description': _(t.description()),
-                'icon': t.icon().replace('\n', '')} for t in parent.getType().getServicesTypes()]
+                'icon': t.icon64().replace('\n', '')} for t in parent.getType().getServicesTypes()]
         else:
-            offers = None  # Do we really need to get one specific type?
             for t in parent.getType().getServicesTypes():
                 if forType == t.type():
-                    offers = t
+                    offers = [{
+                        'name': _(t.name()),
+                        'type': t.type(),
+                        'description': _(t.description()),
+                        'icon': t.icon64().replace('\n', '')
+                    }]
                     break
-            if offers is None:
+            if offers:
                 raise NotFound('type not found')
 
         return offers  # Default is that details do not have types
 
-    def getGui(self, parent, forType):
+    def getGui(self, parent: 'Provider', forType: str) -> typing.Iterable[typing.Any]:
         try:
             logger.debug('getGui parameters: %s, %s', parent, forType)
             parentInstance = parent.getInstance()
             serviceType = parentInstance.getServiceByType(forType)
+            if not serviceType:
+                raise self.invalidItemException('Gui for {} not found'.format(forType))
+
             service = serviceType(Environment.getTempEnv(), parentInstance)  # Instantiate it so it has the opportunity to alter gui description based on parent
-            g = self.addDefaultFields(service.guiDescription(service), ['name', 'comments', 'tags'])
-            for f in [{
+            localGui = self.addDefaultFields(service.guiDescription(service), ['name', 'comments', 'tags'])
+            for field in [{
                     'name': 'proxy_id',
                     'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Proxy.objects.all()]),
                     'label': _('Proxy'),
@@ -248,15 +261,15 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     'tab': _('Advanced'),
                     'order': 132,
                 },]:
-                self.addField(g, f)
+                self.addField(localGui, field)
 
-            return g
+            return localGui
 
         except Exception as e:
             logger.exception('getGui')
             raise ResponseError(str(e))
 
-    def getLogs(self, parent, item):
+    def getLogs(self, parent: 'Provider', item: str):
         try:
             item = parent.services.get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', item)
@@ -264,7 +277,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:
             raise self.invalidItemException()
 
-    def servicesPools(self, parent, item):
+    def servicesPools(self, parent: 'Provider', item: str):
         self.ensureAccess(item, permissions.PERMISSION_READ)
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
         uuid = processUuid(item)

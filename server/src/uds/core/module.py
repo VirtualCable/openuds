@@ -161,7 +161,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return _(cls.typeDescription)
 
     @classmethod
-    def icon(cls: typing.Type['Module'], inBase64: bool = True) -> typing.Union[str, bytes]:
+    def icon(cls: typing.Type['Module']) -> bytes:
         """
         Reads the file specified by iconFile at module folder, and returns it content.
         This is used to obtain an icon so administration can represent it.
@@ -179,10 +179,12 @@ class Module(UserInterface, Environmentable, Serializable):
         file_ = open(os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile, 'rb')
         data = file_.read()
         file_.close()
-        if inBase64:
-            return encoders.encode(data, 'base64', asText=True)
 
         return data
+
+    @classmethod
+    def icon64(cls: typing.Type['Module']) -> typing.Union[str]:
+        return encoders.encodeAsStr(cls.icon(), 'base64')
 
     @staticmethod
     def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:

@@ -74,8 +74,8 @@ def transportOwnLink(request, idService, idTransport):
 @cache_page(3600, key_prefix='img', cache='memory')
 def transportIcon(request, idTrans):
     try:
-        icon = Transport.objects.get(uuid=processUuid(idTrans)).getInstance().icon(False)
-        return HttpResponse(icon, content_type='image/png')
+        transport: Transport = Transport.objects.get(uuid=processUuid(idTrans))
+        return HttpResponse(transport.getInstance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
 
@@ -89,8 +89,8 @@ def serviceImage(request, idImage):
         pass  # Tries to get image from transport
 
     try:
-        icon = Transport.objects.get(uuid=processUuid(idImage)).getInstance().icon(False)
-        return HttpResponse(icon, content_type='image/png')
+        transport: Transport = Transport.objects.get(uuid=processUuid(idImage))
+        return HttpResponse(transport.getInstance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
 
@@ -99,7 +99,7 @@ def serviceImage(request, idImage):
 @never_cache
 def userServiceEnabler(request, idService, idTransport):
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
-    logger.debug('idService: {}, idTransport: {}'.format(idService, idTransport))
+    logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''
     error = _('Service not ready. Please, try again in a while.')
 

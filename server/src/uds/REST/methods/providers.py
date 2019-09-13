@@ -46,7 +46,6 @@ from uds.REST.model import ModelHandler
 from .services import Services as DetailServices
 from .services_usage import ServicesUsage
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -86,7 +85,7 @@ class Providers(ModelHandler):
             'name': ugettext(t.name()),
             'type': t.type(),
             'description': ugettext(t.description()),
-            'icon': typing.cast(str, t.icon()).replace('\n', '')
+            'icon': t.icon64().replace('\n', '')
         } for t in type_.getServicesTypes()]
 
         return {

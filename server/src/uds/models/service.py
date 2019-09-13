@@ -63,7 +63,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     provider: 'Provider' = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
 
     # Proxy for this service
-    proxy: 'Proxy' = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
+    proxy: typing.Optional['Proxy'] = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
 
 
     _cachedInstance: typing.Optional['services.Service'] = None

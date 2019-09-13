@@ -204,7 +204,7 @@ class BaseModelHandler(Handler):
             'name': _(type_.name()),
             'type': type_.type(),
             'description': _(type_.description()),
-            'icon': typing.cast(str, type_.icon()).replace('\n', '')
+            'icon': type_.icon64().replace('\n', '')
         })
         if hasattr(type_, 'group'):
             res['group'] = _(type_.group)  # Add group info is it is contained
@@ -400,11 +400,13 @@ class DetailHandler(BaseModelHandler):
         if nArgs == 1:
             if self._args[0] == OVERVIEW:
                 return self.getItems(parent, None)
-            if self._args[0] == GUI:
-                gui = self.getGui(parent, None)
-                return sorted(gui, key=lambda f: f['gui']['order'])
+            # if self._args[0] == GUI:
+            #     gui = self.getGui(parent, None)
+            #     return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TYPES:
-                return self.getTypes(parent, None)
+                types_ = self.getTypes(parent, None)
+                logger.debug('Types: %s', types_)
+                return types_
             if self._args[0] == TABLEINFO:
                 return self.processTableFields(self.getTitle(parent), self.getFields(parent), self.getRowStyle(parent))
 
@@ -416,7 +418,9 @@ class DetailHandler(BaseModelHandler):
                 gui = self.getGui(parent, self._args[1])
                 return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TYPES:
-                return self.getTypes(parent, self._args[1])
+                types_ = self.getTypes(parent, self._args[1])
+                logger.debug('Types: %s', types_)
+                return types_
             if self._args[1] == LOG:
                 return self.getLogs(parent, self._args[0])
 
@@ -543,7 +547,7 @@ class DetailHandler(BaseModelHandler):
         """
         return {}
 
-    def getGui(self, parent: models.Model, forType: typing.Optional[str]) -> typing.Iterable[typing.Any]:
+    def getGui(self, parent: models.Model, forType: str) -> typing.Iterable[typing.Any]:
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
@@ -554,13 +558,13 @@ class DetailHandler(BaseModelHandler):
         # raise RequestError('Gui not provided for this type of object')
         return []
 
-    def getTypes(self, parent: models.Model, forType: typing.Optional[str]) -> typing.Iterable[str]:  # pylint: disable=no-self-use
+    def getTypes(self, parent: models.Model, forType: typing.Optional[str]) -> typing.Iterable[typing.Dict[str, typing.Any]]:
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
         :param parent: Parent object
         :param forType: Request argument in fact
-        :return: list of strings that repressents the detail types
+        :return: list of dictionaries describing type/types
         """
         return []  # Default is that details do not have types
 
