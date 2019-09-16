@@ -35,12 +35,12 @@ import typing
 
 import ldap.filter
 
-
 from django.utils.translation import ugettext as _
 from uds.core.util import tools
 
 logger = logging.getLogger(__name__)
 
+LDAPResultType = typing.Dict[str, typing.Any]
 
 class LDAPError(Exception):
     @staticmethod
@@ -107,7 +107,7 @@ def getAsDict(
         attrList: typing.Optional[typing.Iterable[str]],
         sizeLimit: int,
         scope=ldap.SCOPE_SUBTREE
-    ) -> typing.Generator[typing.Dict[str, typing.Union[str, typing.List[str]]], None, None]:
+    ) -> typing.Generator[LDAPResultType, None, None]:
     """
     Makes a search on LDAP, adjusting string to required type (ascii on python2, str on python3).
     returns an generator with the results, where each result is a dictionary where it values are always a list of strings
@@ -160,7 +160,7 @@ def getFirst(
         value: str,
         attributes: typing.Optional[typing.Iterable[str]] = None,
         sizeLimit: int = 50
-    ):
+    ) -> typing.Optional[LDAPResultType]:
     """
     Searchs for the username and returns its LDAP entry
     @param username: username to search, using user provided parameters at configuration to map search entries.
@@ -184,7 +184,7 @@ def getFirst(
 
 
 # Recursive delete
-def recursive_delete(con: typing.Any, base_dn: str):
+def recursive_delete(con: typing.Any, base_dn: str) -> None:
     search = con.search_s(base_dn, ldap.SCOPE_ONELEVEL)
 
     for dn, _ in search:

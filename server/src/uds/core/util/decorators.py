@@ -100,7 +100,7 @@ def allowCache(
         cachePrefix: str,
         cacheTimeout: int,
         cachingArgs: typing.Optional[typing.Union[typing.List[int], int]] = None,
-        cachingKeyFnc: typing.Optional[typing.Callable] = None
+        cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None
     ):
     """Decorator that give us a "quick& clean" caching feature on service providers.
 
@@ -146,4 +146,3 @@ def allowCache(
         return wrapper
 
     return allowCacheDecorator
-

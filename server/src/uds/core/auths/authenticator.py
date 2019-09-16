@@ -41,9 +41,10 @@ from uds.core import Module
 from uds.core.environment import Environment
 from uds.core.auths.exceptions import InvalidUserException
 
+# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.auths.groups_manager import GroupsManager
-    from uds.models import Authenticator as DBAuthenticator
+    from uds import models
     from uds.models.user import User as DBUser
 
 
@@ -161,7 +162,9 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
     # : group class
     groupType: typing.ClassVar[typing.Type[Group]] = Group
 
-    def __init__(self, dbAuth: 'DBAuthenticator', environment: Environment, values: typing.Optional[typing.Dict[str, str]]):
+    _dbAuth: 'models.Authenticator'
+
+    def __init__(self, dbAuth: 'models.Authenticator', environment: Environment, values: typing.Optional[typing.Dict[str, str]]):
         """
         Instantiathes the authenticator.
         @param dbAuth: Database object for the authenticator
@@ -172,7 +175,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         super(Authenticator, self).__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, str]]) -> None:
+    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -188,7 +191,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         Default implementation does nothing
         """
 
-    def dbAuthenticator(self) -> 'DBAuthenticator':
+    def dbAuthenticator(self) -> 'models.Authenticator':
         """
         Helper method to access the Authenticator database object
         """
@@ -454,7 +457,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def authCallback(self, parameters: typing.Dict[str, str], gm: 'GroupsManager') -> typing.Optional[str]:
+    def authCallback(self, parameters: typing.Dict[str, typing.Any], gm: 'GroupsManager') -> typing.Optional[str]:
         """
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.

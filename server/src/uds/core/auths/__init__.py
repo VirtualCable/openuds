@@ -37,6 +37,7 @@ from .authfactory import AuthsFactory
 from .user import User
 from .group import Group
 from .groups_manager import GroupsManager
+from . import exceptions
 
 
 def factory() -> AuthsFactory:
