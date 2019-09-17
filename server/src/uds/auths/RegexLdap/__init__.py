@@ -32,4 +32,4 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .Authenticator import RegexLdap
+from .authenticator import RegexLdap
