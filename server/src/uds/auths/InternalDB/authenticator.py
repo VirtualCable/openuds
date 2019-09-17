@@ -33,21 +33,25 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
+
 import dns
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.auths import Authenticator
-from uds.models import Authenticator as dbAuthenticator
+from uds.core import auths
 from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core.util.state import State
 from uds.core.util.request import getRequest
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
 
 logger = logging.getLogger(__name__)
 
 
-class InternalDBAuth(Authenticator):
+class InternalDBAuth(auths.Authenticator):
     typeName = _('Internal Database')
     typeType = 'InternalDBAuth'
     typeDescription = _('Internal dabasase authenticator. Doesn\'t use external sources')
@@ -63,11 +67,7 @@ class InternalDBAuth(Authenticator):
     reverseDns = gui.CheckBoxField(label=_('Reverse DNS'), order=2, tooltip=_('If checked, the host will be reversed dns'), defvalue="false", rdonly=True, tab=gui.ADVANCED_TAB)
     acceptProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'), tab=gui.ADVANCED_TAB)
 
-    def initialize(self, values):
-        if values is None:
-            return
-
-    def getIp(self):
+    def getIp(self) -> str:
         ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
         if self.reverseDns.isTrue():
             try:
@@ -76,9 +76,9 @@ class InternalDBAuth(Authenticator):
                 pass
         return ip
 
-    def transformUsername(self, username):
+    def transformUsername(self, username: str) -> str:
         if self.differentForEachHost.isTrue():
-            newUsername = self.getIp() + '-' + username  # pylint: disable=maybe-no-member
+            newUsername = self.getIp() + '-' + username
             # Duplicate basic user into username.
             auth = self.dbAuthenticator()
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user
@@ -99,38 +99,32 @@ class InternalDBAuth(Authenticator):
 
         return username
 
-    def authenticate(self, username, credentials, groupsManager):
+    def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
         logger.debug('Username: %s, Password: %s', username, credentials)
-        auth = self.dbAuthenticator()
+        dbAuth = self.dbAuthenticator()
         try:
-            try:
-                usr = auth.users.get(name=username, state=State.ACTIVE)
-            except Exception:
-                return False
-
-            if usr.parent is not None and usr.parent != '':  # Direct auth not allowed for "derived" users
-                return False
-
-            # Internal Db Auth has its own groups, and if it active it is valid
-            if usr.password == cryptoManager().hash(credentials):
-                #  hashlib.sha1(credentials.encode('utf-8')).hexdigest():
-                groupsManager.validate([g.name for g in usr.groups.all()])
-                return True
-            return False
-        except dbAuthenticator.DoesNotExist:  # @UndefinedVariable
+            user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
+        except Exception:
             return False
 
-    def createUser(self, usrData):
-        pass
+        if user.parent:  # Direct auth not allowed for "derived" users
+            return False
 
-    def getGroups(self, username, groupsManager):
-        auth = self.dbAuthenticator()
+        # Internal Db Auth has its own groups, and if it active it is valid
+        if user.password == cryptoManager().hash(credentials):
+            #  hashlib.sha1(credentials.encode('utf-8')).hexdigest():
+            groupsManager.validate([g.name for g in user.groups.all()])
+            return True
+        return False
+
+    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+        dbAuth = self.dbAuthenticator()
         try:
-            usr = auth.users.get(name=username, state=State.ACTIVE)
+            user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
             return
 
-        groupsManager.validate([g.name for g in usr.groups.all()])
+        groupsManager.validate([g.name for g in user.groups.all()])
 
 
     @staticmethod

@@ -115,7 +115,7 @@ def getAsDict(
     logger.debug('Filter: %s, attr list: %s', ldapFilter, attrList)
 
     if attrList:
-        attrList = [i for i in attrList]
+        attrList = [i for i in attrList]  # Ensures iterable is a dict
 
     res = None
     try:

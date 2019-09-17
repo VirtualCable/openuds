@@ -542,7 +542,6 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
                says that user can't be created manually
 
         """
-        raise InvalidUserException(_('Users can\'t be created inside this authenticator'))
 
     def modifyUser(self, usrData: typing.Dict[str, str]) -> None:
         """
