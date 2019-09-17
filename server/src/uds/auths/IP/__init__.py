@@ -33,7 +33,4 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from uds.core.util.config import Config
-from .Authenticator import IPAuth
-
-# Access configuration value as soon as we can, so it is available at db
-Config.section('IPAUTH').value('autoLogin', '0').get()  # If 1, try to autologin
+from .authenticator import IPAuth

@@ -39,7 +39,6 @@ from django.http import HttpRequest, HttpResponse
 
 from uds.core import Module
 from uds.core.environment import Environment
-from uds.core.auths.exceptions import InvalidUserException
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

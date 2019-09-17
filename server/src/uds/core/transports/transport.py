@@ -112,8 +112,8 @@ class Transport(Module):
         """
 
     def testServer(self, userService: 'models.UserService', ip: str, port: typing.Union[str, int], timeout: int = 4) -> bool:
-        proxy: 'models.Proxy' = userService.deployed_service.service.proxy
-        if proxy is not None:
+        proxy: typing.Optional['models.Proxy'] = userService.deployed_service.service.proxy
+        if proxy:
             return proxy.doTestServer(ip, port, timeout)
         return connection.testServer(ip, str(port), timeout)
 
