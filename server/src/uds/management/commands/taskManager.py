@@ -30,12 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pylint: disable=protected-access
-import logging
 import sys
 import os
 import signal
 import time
+import logging
 
 from django.core.management.base import BaseCommand  # , CommandError
 from django.conf import settings
@@ -53,8 +52,7 @@ def getPidFile():
 
 # become_daemon seems te be removed on django 1.9
 # This is a copy of posix version from django 1.8
-def become_daemon(our_home_dir='.', out_log='/dev/null',
-                  err_log='/dev/null', umask=0o022):
+def become_daemon(our_home_dir: str = '.', out_log: str = '/dev/null', err_log: str = '/dev/null', umask: int = 0o022):
     """Robustly turn into a UNIX daemon, running in our_home_dir."""
     # First fork
     try:
@@ -70,10 +68,10 @@ def become_daemon(our_home_dir='.', out_log='/dev/null',
     # Second fork
     try:
         if os.fork() > 0:
-            os._exit(0)
+            os._exit(0)  # pylint: disable=protected-access
     except OSError as e:
         sys.stderr.write("fork #2 failed: (%d) %s\n" % (e.errno, e.strerror))
-        os._exit(1)
+        os._exit(1)  # pylint: disable=protected-access
 
     si = open('/dev/null', 'r')
     so = open(out_log, 'a+', 1)
@@ -83,7 +81,6 @@ def become_daemon(our_home_dir='.', out_log='/dev/null',
     os.dup2(se.fileno(), sys.stderr.fileno())
     # Set custom file descriptors so that they get proper buffering.
     sys.stdout, sys.stderr = so, se
-
 
 
 class Command(BaseCommand):
@@ -111,16 +108,16 @@ class Command(BaseCommand):
 
         GlobalConfig.initialize()
 
-        start = options['start'] and True or False
-        stop = options['stop'] and True or False
+        start = 'start' in options
+        stop = 'stop' in options
 
-        pid = None
+        pid: int = 0
         try:
             pid = int(open(getPidFile(), 'r').readline())
         except Exception:
-            pid = None
+            pid = 0
 
-        if stop is True and pid is not None:
+        if stop and pid:
             try:
                 logger.info('Stopping task manager. pid: %s', pid)
                 os.kill(pid, signal.SIGTERM)
@@ -130,7 +127,7 @@ class Command(BaseCommand):
                 logger.error("Could not stop task manager (maybe it's not runing?)")
                 os.unlink(getPidFile())
 
-        if start is True:
+        if start:
             logger.info('Starting task manager.')
             become_daemon(settings.BASE_DIR, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
             pid = str(os.getpid())
@@ -140,8 +137,8 @@ class Command(BaseCommand):
             manager = taskManager()()
             manager.run()
 
-        if start is False and stop is False:
-            if pid is not None:
+        if not start and  not stop:
+            if pid:
                 sys.stdout.write("Task manager found running (pid file exists: {0})\n".format(pid))
             else:
                 sys.stdout.write("Task manager not foud (pid file do not exits)\n")
