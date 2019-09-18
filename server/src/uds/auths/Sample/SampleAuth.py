@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,15 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core import auths
 
-import logging
-
-__updated__ = '2018-09-12'
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +114,7 @@ class SampleAuth(auths.Authenticator):
 
     groups = gui.EditableList(label=_('Groups'), values=['Gods', 'Daemons', 'Mortals'])
 
-    def initialize(self, values):
+    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         """
         Simply check if we have
         at least one group in the list
@@ -122,10 +124,10 @@ class SampleAuth(auths.Authenticator):
         # If values are not passed in, form data will only be available after
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
-        if values is not None and len(self.groups.value) < 2:
-            raise auths.Authenticator.ValidationException(_('We need more than two items!'))
+        if values and len(self.groups.value) < 2:
+            raise auths.Authenticator.ValidationException(_('We need more than two groups!'))
 
-    def searchUsers(self, pattern):
+    def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
         Here we will receive a pattern for searching users.
 
@@ -137,7 +139,7 @@ class SampleAuth(auths.Authenticator):
         """
         return [{'id': '{0}-{1}'.format(pattern, a), 'name': '{0} number {1}'.format(pattern, a)} for a in range(1, 10)]
 
-    def searchGroups(self, pattern):
+    def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
         Here we we will receive a patter for searching groups.
 
@@ -152,7 +154,7 @@ class SampleAuth(auths.Authenticator):
                 res.append({'id': g, 'name': ''})
         return res
 
-    def authenticate(self, username, credentials, groupsManager):
+    def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
         """
         This method is invoked by UDS whenever it needs an user to be authenticated.
         It is used from web interface, but also from administration interface to
@@ -207,7 +209,7 @@ class SampleAuth(auths.Authenticator):
 
         return True
 
-    def getGroups(self, username, groupsManager):
+    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         """
         As with authenticator part related to groupsManager, this
         method will fill the groups to which the specified username belongs to.
@@ -222,7 +224,7 @@ class SampleAuth(auths.Authenticator):
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
-    def getJavascript(self, request):
+    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
         """
         If we override this method from the base one, we are telling UDS
         that we want to draw our own authenticator.
@@ -249,7 +251,7 @@ class SampleAuth(auths.Authenticator):
         res += '\' + $(\'#logname\').val()); return false;">Login</a></p>'
         return res
 
-    def authCallback(self, parameters, gm):
+    def authCallback(self, parameters: typing.Dict[str, typing.Any], gm: 'auths.GroupsManager') -> typing.Optional[str]:
         """
         We provide this as a sample of callback for an user.
         We will accept all petitions that has "user" parameter
@@ -267,7 +269,7 @@ class SampleAuth(auths.Authenticator):
 
         return user
 
-    def createUser(self, usrData):
+    def createUser(self, usrData: typing.Dict[str, str]) -> None:
         """
         This method provides a "check oportunity" to authenticators for users created
         manually at administration interface.
@@ -287,7 +289,7 @@ class SampleAuth(auths.Authenticator):
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
 
-    def modifyUser(self, usrData):
+    def modifyUser(self, usrData: typing.Dict[str, str]) -> None:
         """
         This method provides a "check opportunity" to authenticator for users modified
         at administration interface.

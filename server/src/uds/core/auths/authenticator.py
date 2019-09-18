@@ -35,16 +35,14 @@ import logging
 import typing
 
 from django.utils.translation import ugettext_noop as _
-from django.http import HttpRequest, HttpResponse
-
 from uds.core import Module
-from uds.core.environment import Environment
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.auths.groups_manager import GroupsManager
+    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from uds.core.environment import Environment
     from uds import models
-    from uds.models.user import User as DBUser
+    from .groups_manager import GroupsManager
 
 
 logger = logging.getLogger(__name__)
@@ -163,7 +161,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
     _dbAuth: 'models.Authenticator'
 
-    def __init__(self, dbAuth: 'models.Authenticator', environment: Environment, values: typing.Optional[typing.Dict[str, str]]):
+    def __init__(self, dbAuth: 'models.Authenticator', environment: 'Environment', values: typing.Optional[typing.Dict[str, str]]):
         """
         Instantiathes the authenticator.
         @param dbAuth: Database object for the authenticator
@@ -196,7 +194,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return self._dbAuth
 
-    def recreateGroups(self, user: 'DBUser') -> None:
+    def recreateGroups(self, user: 'models.User') -> None:
         """
         Helper method, not needed to be overriden.
         It simply checks if the source is external and if so, recreates
@@ -397,7 +395,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def webLogoutHook(self, username: str, request: HttpRequest, response: HttpResponse) -> None:
+    def webLogoutHook(self, username: str, request: 'HttpRequest', response: 'HttpResponse') -> None:
         '''
         Invoked on web logout of an user
         Args:
@@ -441,7 +439,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         raise NotImplementedError
 
-    def getJavascript(self, request: HttpRequest) -> typing.Optional[str]:
+    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
         """
         If you override this method, and returns something different of None,
         UDS will consider your authenticator as "Owner draw", that is, that it
