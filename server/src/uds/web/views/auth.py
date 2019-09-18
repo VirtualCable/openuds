@@ -119,18 +119,15 @@ def authInfo(request, authName):
         if authInstance.getInfo == auths.Authenticator.getInfo:
             raise Exception()  # This authenticator do not provides info
 
-        params = request.GET.copy()
-        params['_request'] = request
-
-        info = authInstance.getInfo(params)
+        info = authInstance.getInfo(request.GET)
 
         if info is None:
             raise Exception()  # This auth do not provides info
 
-        if type(info) is list or type(info) is tuple:
-            return HttpResponse(info[0], content_type=info[1])
+        infoContent = info[0]
+        infoType = info[1] or 'text/html'
 
-        return HttpResponse(info)
+        return HttpResponse(infoContent, content_type=infoType)
     except Exception:
         logger.exception('got')
         return HttpResponse(_('Authenticator does not provide information'))

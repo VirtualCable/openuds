@@ -275,7 +275,7 @@ class gui:
             return False
 
         @property
-        def value(self):
+        def value(self) -> typing.Any:
             """
             Obtains the stored value.
             If the stored value is None (this will only happens if value is forced to be so, by default empty value is ''),

@@ -475,7 +475,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         and an error will be shown.
 
         Args:
-            parameters: all GET and POST received parameters
+            parameters: all GET and POST received parameters. Also has "_request" key, that points to HttpRequest
             gm: Groups manager, you MUST check group membership using this gm
 
         Return:
@@ -492,7 +492,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def getInfo(self, parameters: typing.Dict[str, str]) -> typing.Optional[str]:
+    def getInfo(self, parameters: typing.Dict[str, str]) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
         """
         This method is invoked whenever the authinfo url is invoked, with the name of the authenticator
         If this is implemented, information returned by this will be shown via web.
