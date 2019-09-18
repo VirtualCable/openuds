@@ -51,7 +51,7 @@ from .util import getSqlDatetime
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import services
-    from uds.models import OSManager, ServicePool, ServicePoolPublication
+    from uds.models import OSManager, ServicePool, ServicePoolPublication, UserServiceProperty
 
 logger = logging.getLogger(__name__)
 
@@ -64,8 +64,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service: 'ServicePool' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
-    publication: typing.Optional['ServicePoolPublication'] = models.ForeignKey(ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
+    deployed_service: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
+    publication: typing.Optional[ServicePoolPublication] = models.ForeignKey(ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
 
     unique_id = models.CharField(max_length=128, default='', db_index=True)  # User by agents to locate machine
     friendly_name = models.CharField(max_length=128, default='')
@@ -147,7 +147,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         # We get the service instance, publication instance and osmanager instance
         servicePool = self.deployed_service
         serviceInstance = servicePool.service.getInstance()
-        if serviceInstance.needsManager is False:
+        if serviceInstance.needsManager is False or not servicePool.osmanager:
             osmanagerInstance = None
         else:
             osmanagerInstance = servicePool.osmanager.getInstance()
@@ -258,7 +258,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         return (self.src_ip, self.src_hostname)
 
-    def getOsManager(self) -> 'OSManager':
+    def getOsManager(self) -> typing.Optional['OSManager']:
         return self.deployed_service.osmanager
 
     def needsOsManager(self) -> bool:
@@ -273,7 +273,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         return self.deployed_service.transformsUserOrPasswordForService()
 
-    def processUserPassword(self, username, password):
+    def processUserPassword(self, username: str, password: str) -> typing.Tuple[str, str]:
         """
         Before accessing a service by a transport, we can request
         the service to "transform" the username & password that the transport
@@ -292,14 +292,14 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: This method MUST be invoked by transport before using credentials passed to getJavascript.
         """
-        ds = self.deployed_service
-        serviceInstance = ds.service.getInstance()
-        if serviceInstance.needsManager is False:
-            return [username, password]
+        servicePool = self.deployed_service
+        serviceInstance = servicePool.service.getInstance()
+        if serviceInstance.needsManager is False or not servicePool.osmanager:
+            return (username, password)
 
-        return ds.osmanager.getInstance().processUserPassword(self, username, password)
+        return servicePool.osmanager.getInstance().processUserPassword(self, username, password)
 
-    def setState(self, state):
+    def setState(self, state: str) -> None:
         """
         Updates the state of this object and, optionally, saves it
 
@@ -314,7 +314,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             self.state = state
             self.save(update_fields=['state', 'state_date'])
 
-    def setOsState(self, state):
+    def setOsState(self, state: str) -> None:
         """
         Updates the os state (state of the os) of this object and, optionally, saves it
 
@@ -329,7 +329,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             self.os_state = state
             self.save(update_fields=['os_state', 'state_date'])
 
-    def assignToUser(self, user):
+    def assignToUser(self, user: User) -> None:
         """
         Assigns this user deployed service to an user.
 
@@ -365,7 +365,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             # If our publication is not current, mark this for removal
             userServiceManager().checkForRemoval(self)
 
-    def startUsageAccounting(self):
+    def startUsageAccounting(self) -> None:
         # 1.- If do not have any account associated, do nothing
         # 2.- If called but already accounting, do nothing
         # 3.- If called and not accounting, start accounting
@@ -374,7 +374,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         self.deployed_service.account.startUsageAccounting(self)
 
-    def stopUsageAccounting(self):
+    def stopUsageAccounting(self) -> None:
         # 1.- If do not have any accounter associated, do nothing
         # 2.- If called but not accounting, do nothing
         # 3.- If called and accounting, stop accounting
@@ -383,19 +383,19 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         self.deployed_service.account.stopUsageAccounting(self)
 
-    def isUsable(self):
+    def isUsable(self) -> bool:
         """
         Returns if this service is usable
         """
         return State.isUsable(self.state)
 
-    def isPreparing(self):
+    def isPreparing(self) -> bool:
         """
         Returns if this service is in preparation (not ready to use, but in its way to be so...)
         """
         return State.isPreparing(self.state)
 
-    def isReady(self):
+    def isReady(self) -> bool:
         """
         Returns if this service is ready (not preparing or marked for removal)
         """
@@ -403,29 +403,29 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         from uds.core.managers import userServiceManager
         return userServiceManager().isReady(self)
 
-    def isInMaintenance(self):
+    def isInMaintenance(self) -> bool:
         return self.deployed_service.isInMaintenance()
 
-    def remove(self):
+    def remove(self) -> None:
         """
         Mark this user deployed service for removal
         """
         self.setState(State.REMOVABLE)
 
-    def release(self):
+    def release(self) -> None:
         """
         A much more convenient method name that "remove" (i think :) )
         """
         self.remove()
 
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
         """
         from uds.core.managers import userServiceManager
         userServiceManager().cancel(self)
 
-    def removeOrCancel(self):
+    def removeOrCancel(self) -> None:
         """
         Marks for removal or cancels it, depending on state
         """
@@ -434,7 +434,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         else:
             self.cancel()
 
-    def moveToLevel(self, cacheLevel):
+    def moveToLevel(self, cacheLevel: int) -> None:
         """
         Moves cache items betwen levels, managed directly
 
@@ -451,22 +451,23 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         except Exception:
             return default
 
-    def getProperties(self):
+    def getProperties(self) -> typing.Dict[str, str]:
         """
         Retrieves all properties as a dictionary
         The number of properties per item is expected to be "relatively small" (no more than 5 items?)
         """
-        dct = {}
+        dct: typing.Dict[str, str] = {}
+        v: UserServiceProperty
         for v in self.properties.all():
             dct[v.name] = v.value
         return dct
 
-    def setProperty(self, propName: str, propValue: typing.Optional[str]):
+    def setProperty(self, propName: str, propValue: typing.Optional[str]) -> None:
         prop, _ = self.properties.get_or_create(name=propName)
         prop.value = propValue or ''
         prop.save()
 
-    def setCommsUrl(self, commsUrl=None):
+    def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
         self.setProperty('comms_url', commsUrl)
 
     def getCommsUrl(self) -> typing.Optional[str]:
@@ -475,16 +476,16 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     def logIP(self, ip: typing.Optional[str] = None) -> None:
         self.setProperty('ip', ip)
 
-    def getLoggedIP(self):
-        return self.getProperty('ip', '0.0.0.0')
+    def getLoggedIP(self) -> str:
+        return self.getProperty('ip') or '0.0.0.0'
 
-    def isValidPublication(self):
+    def isValidPublication(self) -> bool:
         """
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return self.deployed_service.service.getType().publicationType is None or self.publication == self.deployed_service.activePublication()
 
-    def testServer(self, host, port, timeout=4):
+    def testServer(self, host, port, timeout=4) -> bool:
         return self.deployed_service.testServer(host, port, timeout)
 
     def __str__(self):

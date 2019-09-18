@@ -62,7 +62,7 @@ from .util import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import UserService, ServicePoolPublication, User
+    from uds.models import UserService, ServicePoolPublication, User, Group, Proxy
 
 
 logger = logging.getLogger(__name__)
@@ -89,9 +89,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     ignores_unused = models.BooleanField(default=False)
 
-    image: Image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
+    image: typing.Optional[Image] = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
-    servicesPoolGroup: ServicePoolGroup = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
+    servicesPoolGroup: typing.Optional[ServicePoolGroup] = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
 
     accessCalendars = models.ManyToManyField(Calendar, related_name='accessSP', through='CalendarAccess')
     # Default fallback action for access
@@ -99,7 +99,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
 
     # Usage accounting
-    account: Account = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)
+    account: typing.Optional[Account] = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)
 
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
@@ -151,7 +151,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         The only function of this method is allow Transport to transform username/password in
         getConnectionInfo without knowing if it is requested by a ServicePool or an UserService
         """
-        return [username, password]
+        return username, password
 
     @staticmethod
     def getRestrainedsQuerySet() -> QuerySet:
@@ -376,16 +376,16 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 nonActivePub.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(state=states.userService.REMOVABLE, state_date=now)
                 nonActivePub.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
 
-    def validateGroups(self, grps):
+    def validateGroups(self, groups: typing.Iterable['Group']) -> None:
         """
-        Ensures that at least a group of grps (database groups) has access to this Service Pool
+        Ensures that at least a group of groups (database groups) has access to this Service Pool
         raise an InvalidUserException if fails check
         """
         from uds.core import auths
-        if not set(grps) & set(self.assignedGroups.all()):
+        if not set(groups) & set(self.assignedGroups.all()):
             raise auths.Exceptions.InvalidUserException()
 
-    def validatePublication(self):
+    def validatePublication(self) -> None:
         """
         Ensures that, if this service has publications, that a publication is active
         raises an IvalidServiceException if check fails
@@ -393,13 +393,13 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if self.activePublication() is None and self.service.getType().publicationType is not None:
             raise InvalidServiceException()
 
-    def validateTransport(self, transport):
+    def validateTransport(self, transport) -> None:
         try:
             self.transports.get(id=transport.id)
         except:
             raise InvalidServiceException()
 
-    def validateUser(self, user) -> None:
+    def validateUser(self, user: 'User') -> None:
         """
         Validates that the user has access to this deployed service
 
@@ -421,13 +421,6 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         logger.debug('ServicePool: %s', self.id)
         self.validateGroups(user.getGroups())
         self.validatePublication()
-
-    # Stores usage accounting information
-    def saveAccounting(self, userService, start, end):
-        if self.account is None:
-            return None
-
-        return self.account.addUsageAccount(userService, start, end)
 
     @staticmethod
     def getDeployedServicesForGroups(groups) -> typing.List['ServicePool']:
@@ -454,7 +447,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         # And generate a single list without duplicates
         return list(set([r for r in list1] + [r for r in list2]))
 
-    def publish(self, changeLog=None):
+    def publish(self, changeLog: typing.Optional[str] = None) -> None:
         """
         Launches the publication of this deployed service.
 
@@ -463,14 +456,14 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         from uds.core.managers import publicationManager
         publicationManager().publish(self, changeLog)
 
-    def unpublish(self):
+    def unpublish(self) -> None:
         """
         Unpublish (removes) current active publcation.
 
         It checks that there is an active publication, and then redirects the request to the publication itself
         """
         pub = self.activePublication()
-        if pub is not None:
+        if pub:
             pub.unpublish()
 
     def cachedUserServices(self):
@@ -502,7 +495,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0, user=None)
 
-    def usage(self):
+    def usage(self) -> int:
         """
         Returns the % used services, related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
@@ -516,16 +509,16 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return 100 * self.assignedUserServices().count() // maxs
 
-    def testServer(self, host, port, timeout=4):
+    def testServer(self, host, port, timeout=4) -> bool:
         return self.service.testServer(host, port, timeout)
 
     # parent accessors
     @property
-    def proxy(self):
+    def proxy(self) -> typing.Optional['Proxy']:
         return self.service.proxy
 
     # Utility for logging
-    def log(self, message, level=log.INFO):
+    def log(self, message: str, level: int = log.INFO) -> None:
         log.doLog(self, level, message, log.INTERNAL)
 
     @staticmethod
@@ -539,9 +532,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         :note: If destroy raises an exception, the deletion is not taken.
         """
         from uds.core.util.permissions import clean
-        toDelete = kwargs['instance']
+        toDelete: 'ServicePool' = kwargs['instance']
 
-        logger.debug('Deleting Deployed Service %s', toDelete)
+        logger.debug('Deleting Service Pool %s', toDelete)
         toDelete.getEnvironment().clearRelatedData()
 
         # Clears related logs
