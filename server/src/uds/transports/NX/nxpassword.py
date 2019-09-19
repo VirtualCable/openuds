@@ -34,13 +34,8 @@ Created on Apr 20, 2015
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 
 """
-from __future__ import unicode_literals
 
-import six
-import random
-
-
-class NXPassword(object):
+class NXPassword:  # pylint: disable=too-few-public-methods
     # Encoding method extracted from nomachine web site:
     # http://www.nomachine.com/ar/view.php?ar_id=AR01C00125
 
@@ -65,8 +60,8 @@ class NXPassword(object):
         if p == '':
             return ''
 
-        for i in range(len(p)):
-            sPass += '{}:'.format(ord(p[i]) + i + 1)
+        for i, ch in enumerate(p):
+            sPass += '{}:'.format(ord(ch) + i + 1)
 
         return sPass
 
@@ -103,8 +98,8 @@ class NXPassword(object):
 
         pw = startChar
 
-        for i1 in range(0, len(password)):
-            j = NXPassword._findCharInList(password[i1])
+        for i1, ch in enumerate(password):
+            j = NXPassword._findCharInList(ch)
             if j == -1:
                 return s
 

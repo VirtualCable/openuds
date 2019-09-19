@@ -2,10 +2,10 @@
 # Saved as .py for easier editing
 from __future__ import unicode_literals
 
-# pylint: disable=import-error, no-name-in-module
+# pylint: disable=import-error, no-name-in-module, undefined-variable
 import subprocess
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 
 try:
@@ -18,6 +18,6 @@ except Exception:
 <p>Please, install appropriate package for your system.</p>
 ''')
 
-filename = tools.saveTempFile(sp['as_file'])  # @UndefinedVariable
+filename = tools.saveTempFile(sp['as_file'])  # type: ignore
 tools.addTaskToWait(subprocess.Popen([cmd, '--session', filename]))
 tools.addFileToUnlink(filename)

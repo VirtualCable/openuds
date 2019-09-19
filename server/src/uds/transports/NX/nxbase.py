@@ -33,37 +33,36 @@ Created on Apr 29, 2019
 '''
 import os
 import logging
-from typing import Tuple
+import typing
 
-from uds.core.transports.transport import Transport
+from uds.core import transports
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-class BaseNXTransport(Transport):
+class BaseNXTransport(transports.Transport):
     def isAvailableFor(self, userService, ip):
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
         """
-        logger.debug('Checking availability for {0}'.format(ip))
+        logger.debug('Checking availability for %s', ip)
         ready = self.cache.get(ip)
-        if ready is None:
+        if not ready:
             # Check again for readyness
             if self.testServer(userService, ip, self._listenPort) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
-            else:
-                self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
+            self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def getScript(self, scriptName, osName, params) -> Tuple[str, str, dict]:
+    def getScript(self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
         # Reads script
-        scriptName = scriptName.format(osName)
-        with open(os.path.join(os.path.dirname(__file__), scriptName)) as f:
+        scriptNameTemplate = scriptNameTemplate.format(osName)
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
             script = f.read()
         # Reads signature
-        with open(os.path.join(os.path.dirname(__file__), scriptName + '.signature')) as f:
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')) as f:
             signature = f.read()
         return script, signature, params

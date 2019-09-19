@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,11 +34,7 @@ Created on Jul 29, 2011
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 
 """
-from __future__ import unicode_literals
-
-from .NXPassword import NXPassword
-
-import six
+from .nxpassword import NXPassword
 
 EMPTY_PASSWORD = "EMPTY_PASSWORD"
 
@@ -163,21 +159,21 @@ NXTEMPLATE = (
 )
 
 
-class NXFile(object):
-    fullScreen = False
-    width = '800'
-    height = '600'
-    cachemem = '4'
-    cachedisk = '32'
-    keyboardLayout = ''
-    linkSpeed = 'wan'
-    host = ''
-    port = ''
-    username = ''
-    password = ''
-    desktop = 'gnome'
+class NXFile:
+    fullScreen: bool = False
+    width: int = 800
+    height: int = 600
+    cachemem: str = '4'
+    cachedisk: str = '32'
+    keyboardLayout: str = ''
+    linkSpeed: str = 'wan'
+    host: str = ''
+    port: str = ''
+    username: str = ''
+    password: str = ''
+    desktop: str = 'gnome'
 
-    def __init__(self, username='', password='', width=1024, height=768):
+    def __init__(self, username: str = '', password: str = '', width: int = 1024, height: int = 768):
         self.fullScreen = width == -1 or height == -1
         self.width = int(width)
         self.height = int(height)

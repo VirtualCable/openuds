@@ -200,7 +200,7 @@ class Transport(Module):
             user: 'models.User',
             password: str,
             request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Dict[str, str]]:
+        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client

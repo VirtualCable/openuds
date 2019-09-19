@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -35,16 +35,11 @@ from django.utils.translation import ugettext_noop as _
 
 from uds.core.managers.user_preferences import UserPrefsManager, CommonPrefs
 from uds.core.util.config import Config
-from .NXTransport import NXTransport
-from .TSNXTransport import TSNXTransport
+from .nxtransport import NXTransport
+from .nxtunneltransport import TSNXTransport
 
 Config.section('NX').value('downloadUrl', 'http://sourceforge.net/projects/opennx/files/opennx/CI-win32/OpenNX-0.16.0.725-Setup.exe/download').get()
 Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()
 
 
 UserPrefsManager.manager().registerPrefs('nx', _('NX/X2GO'), [CommonPrefs.screenSizePref])
-
-# DownloadsManager.manager().registerDownloadable('udsactor-nx_1.0_all.deb',
-#                                                _('UDS Actor connector for NX <b>(requires nomachine packages)</b>'),
-#                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-nx_1.0_all.deb',
-#                                                'application/x-debian-package')
