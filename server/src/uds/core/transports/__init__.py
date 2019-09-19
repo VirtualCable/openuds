@@ -33,7 +33,8 @@ UDS Service modules interfaces and classes.
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from .transport import Transport
-
+from .transport import DIRECT_GROUP, TUNNELED_GROUP
+from . import protocols
 
 def factory():
     """

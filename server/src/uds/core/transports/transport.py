@@ -157,7 +157,7 @@ class Transport(Module):
         """
         return cls.getConnectionInfo != Transport.getConnectionInfo
 
-    def getConnectionInfo(self, userService: 'models.UserService', user: 'models.User', password: str) -> typing.Dict[str, str]:
+    def getConnectionInfo(self, userService: typing.Union['models.UserService', 'models.ServicePool'], user: 'models.User', password: str) -> typing.Dict[str, str]:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
@@ -165,7 +165,8 @@ class Transport(Module):
         kind of terminals/application will not work
 
         Args:
-            userService: DeployedUserService for witch we are rendering the connection (db model), or ServicePool (db model)
+            userService: UserService for witch we are rendering the connection (db model), or ServicePool (db model)self.
+
             user: user (dbUser) logged in
             pass: password used in authentication
 
@@ -175,9 +176,9 @@ class Transport(Module):
             'password': password (transformed if needed to) used to login to service
             'domain': domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
 
-        :note: The provided service can be an user service or an deployed service (parent of user services).
-               I have implemented processUserPassword in both so in most cases we do not need if the service is
-               ServicePool or UserService. In case of processUserPassword for an ServicePool, no transformation
+        :note: The provided service can be an user service or an service pool (parent of user services).
+               I have implemented getConnectionInfo in both so in most cases we do not need if the service is
+               ServicePool or UserService. In case of getConnectionInfo for an ServicePool, no transformation
                is done, because there is no relation at that level between user and service.
         """
         return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
