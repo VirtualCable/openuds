@@ -10,7 +10,7 @@ from uds.forward import forward  # @UnresolvedImport
 from uds import tools  # @UnresolvedImport
 
 # Inject local passed sp into globals for functions
-globals()['sp'] = sp  # @UndefinedVariable
+globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
 cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"

@@ -33,13 +33,5 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.user_preferences import UserPrefsManager, CommonPrefs
-from .RDPTransport import RDPTransport
-from .TRDPTransport import TRDPTransport
-
-# UserPrefsManager.manager().registerPrefs('rdp',
-#                                         _('Remote Desktop Protocol'),
-#                                         [
-#                                             CommonPrefs.screenSizePref,
-#                                             CommonPrefs.depthPref
-#                                         ]
-#                                         )
+from .rdp import RDPTransport
+from .rdptunnel import TRDPTransport

@@ -90,7 +90,7 @@ class Transport(Module):
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType):
+    def initialize(self, values: 'Module.ValuesType'):
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -157,7 +157,12 @@ class Transport(Module):
         """
         return cls.getConnectionInfo != Transport.getConnectionInfo
 
-    def getConnectionInfo(self, userService: typing.Union['models.UserService', 'models.ServicePool'], user: 'models.User', password: str) -> typing.Dict[str, str]:
+    def getConnectionInfo(
+            self,
+            userService: typing.Union['models.UserService', 'models.ServicePool'],
+            user: 'models.User',
+            password: str
+        ) -> typing.Dict[str, str]:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections

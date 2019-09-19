@@ -267,7 +267,7 @@ class RDPFile(object):
 
         return url
 
-    def getGeneric(self):
+    def getGeneric(self):  # pylint: disable=too-many-statements
         password = '{password}'
         screenMode = '2' if self.fullScreen else '1'
         audioMode = self.redirectAudio and "0" or "2"
@@ -275,7 +275,7 @@ class RDPFile(object):
         scards = self.redirectSmartcards and "1" or "0"
         printers = self.redirectPrinters and "1" or "0"
         compression = self.compression and "1" or "0"
-        bar = self.displayConnectionBar and "1" or "0"
+        connectionBar = self.displayConnectionBar and "1" or "0"
         disableWallpaper = self.showWallpaper and "0" or "1"
         useMultimon = self.multimon and "1" or "0"
         enableClipboard = self.enableClipboard and "1" or "0"
@@ -295,7 +295,7 @@ class RDPFile(object):
         res += 'redirectcomports:i:' + serials + '\n'
         res += 'redirectsmartcards:i:' + scards + '\n'
         res += 'redirectclipboard:i:' + enableClipboard + '\n'
-        res += 'displayconnectionbar:i:' + bar + '\n'
+        res += 'displayconnectionbar:i:' + connectionBar + '\n'
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'

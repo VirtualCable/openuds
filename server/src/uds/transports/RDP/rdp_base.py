@@ -30,28 +30,30 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
-from uds.core.transports.transport import Transport
-from uds.core.transports import protocols
-from typing import Tuple
+from uds.core import transports
 
-import logging
-import os
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
 
-class BaseRDPTransport(Transport):
+class BaseRDPTransport(transports.Transport):
     """
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
     iconFile = 'rdp.png'
-    protocol = protocols.RDP
+    protocol = transports.protocols.RDP
 
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=11, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
     fixedName = gui.TextField(label=_('Username'), order=12, tooltip=_('If not empty, this username will be always used as credential'), tab=gui.CREDENTIALS_TAB)
@@ -67,9 +69,9 @@ class BaseRDPTransport(Transport):
         tooltip=_('Local drives redirection policy'),
         defvalue='false',
         values=[
-            {'id': 'false', 'text': 'Allow none' },
-            {'id': 'dynamic', 'text': 'Allow PnP drives' },
-            {'id': 'true', 'text': 'Allow any drive' },
+            {'id': 'false', 'text': 'Allow none'},
+            {'id': 'dynamic', 'text': 'Allow PnP drives'},
+            {'id': 'true', 'text': 'Allow any drive'},
         ],
         tab=gui.PARAMETERS_TAB
     )
@@ -128,7 +130,7 @@ class BaseRDPTransport(Transport):
     smartcardString = gui.TextField(label=_('Smartcard string'), order=44, tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'), tab='Linux Client')
     customParameters = gui.TextField(label=_('Custom parameters'), order=45, tooltip=_('If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'), tab='Linux Client')
 
-    def isAvailableFor(self, userService, ip):
+    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -144,11 +146,11 @@ class BaseRDPTransport(Transport):
                 self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(self, userService, user):
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.processUserPassword(userService, user, '')
         return v['username']
 
-    def processUserPassword(self, service, user, password):
+    def processUserPassword(self, userService: 'models.UserService', user: 'models.User', password: 'str') -> typing.Dict[str, typing.Any]:
         username = user.getUsernameForAuth()
 
         if self.fixedName.value != '':
@@ -182,7 +184,7 @@ class BaseRDPTransport(Transport):
         # Temporal "fix" to check if we do something on processUserPassword
 
         # Fix username/password acording to os manager
-        username, password = service.processUserPassword(username, password)
+        username, password = userService.processUserPassword(username, password)
 
         # Recover domain name if needed
         if '\\' in username:
@@ -190,15 +192,20 @@ class BaseRDPTransport(Transport):
 
         return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
 
-    def getConnectionInfo(self, userService, user, password):
+    def getConnectionInfo(
+            self,
+            userService: typing.Union['models.UserService', 'models.ServicePool'],
+            user: 'models.User',
+            password: str
+        ) -> typing.Dict[str, str]:
         return self.processUserPassword(userService, user, password)
 
-    def getScript(self, scriptName, osName, params) -> Tuple[str, str, dict]:
+    def getScript(self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
         # Reads script
-        scriptName = scriptName.format(osName)
-        with open(os.path.join(os.path.dirname(__file__), scriptName)) as f:
+        scriptNameTemplate = scriptNameTemplate.format(osName)
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
             script = f.read()
         # Reads signature
-        with open(os.path.join(os.path.dirname(__file__), scriptName + '.signature')) as f:
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')) as f:
             signature = f.read()
         return script, signature, params

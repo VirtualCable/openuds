@@ -37,12 +37,16 @@ import typing
 
 from uds.core import transports
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
 class BaseNXTransport(transports.Transport):
-    def isAvailableFor(self, userService, ip):
+    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports

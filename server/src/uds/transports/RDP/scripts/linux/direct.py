@@ -8,8 +8,8 @@ import re
 
 from uds import tools  # @UnresolvedImport
 
-# Inject local passed sp into globals for functions
-globals()['sp'] = sp  # @UndefinedVariable
+# Inject local passed sp into globals for inner functions
+globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def execUdsRdp(udsrdp):
     # import subprocess  # @Reimport
@@ -50,7 +50,7 @@ if xfreerdp is not None:
         except subprocess.CalledProcessError as e:
             version = e.output
 
-        version = float(re.search(r'version ([0-9]*\.[0-9]*)', version).groups()[0])
+        version = float(re.search(r'version ([0-9]*\.[0-9]*)', version).groups()[0])  # type: ignore
         if version < 1.1:
             raise Exception()
         else:

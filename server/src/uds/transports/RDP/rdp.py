@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
-# All rights reserved.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
+# All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -30,47 +30,32 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-from django.utils.translation import ugettext_noop as _
-from uds.core.managers.user_preferences import CommonPrefs
-from uds.core.ui import gui
-from uds.core.transports.transport import Transport
-from uds.core.transports.transport import TUNNELED_GROUP
-from uds.core.transports import protocols
-from uds.models import TicketStore
-from uds.core.util import os_detector as OsDetector
-from uds.core.util import tools
-
-from .BaseRDPTransport import BaseRDPTransport
-from .RDPFile import RDPFile
-
 import logging
-import random
-import string
+import typing
 
-__updated__ = '2018-09-10'
+from django.utils.translation import ugettext_noop as _
+from uds.core.util import os_detector as OsDetector
+from .rdp_base import BaseRDPTransport
+from .rdp_file import RDPFile
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
 
-class TRDPTransport(BaseRDPTransport):
+class RDPTransport(BaseRDPTransport):
     '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
     typeName = _('RDP')
-    typeType = 'TSRDPTransport'
-    typeDescription = _('RDP Protocol. Tunneled connection.')
-    needsJava = True  # If this transport needs java for rendering
-    protocol = protocols.RDP
-    group = TUNNELED_GROUP
-
-    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
-    # tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
-
-    tunnelWait = gui.NumericField(length=3, label=_('Tunnel wait time'), defvalue='10', minValue=1, maxValue=65536, order=2, tooltip=_('Maximum time to wait before closing the tunnel listener'), required=True, tab=gui.TUNNEL_TAB)
+    typeType = 'RDPTransport'
+    typeDescription = _('RDP Protocol. Direct connection.')
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName
@@ -102,12 +87,16 @@ class TRDPTransport(BaseRDPTransport):
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
 
-    def initialize(self, values):
-        if values is not None:
-            if values['tunnelServer'].count(':') != 1:
-                raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
-
-    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
+    def getUDSTransportScript(  # pylint: disable=too-many-locals
+            self,
+            userService: 'models.UserService',
+            transport: 'models.Transport',
+            ip: str,
+            os: typing.Dict[str, str],
+            user: 'models.User',
+            password: str,
+            request: 'HttpRequest'
+        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
         # We use helper to keep this clean
         # prefs = user.prefs('rdp')
 
@@ -119,16 +108,9 @@ class TRDPTransport(BaseRDPTransport):
         width, height = self.screenSize.value.split('x')
         depth = self.colorDepth.value
 
-        tunpass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _i in range(12))
-        tunuser = TicketStore.create(tunpass)
-
-        sshHost, sshPort = self.tunnelServer.value.split(':')
-
-        logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
-
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os['OS'])
-        r.enablecredsspsupport = ci.get('sso', self.credssp.isTrue())
-        r.address = '{address}'
+        r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
+        r.address = '{}:{}'.format(ip, 3389)
         r.username = username
         r.password = password
         r.domain = domain
@@ -143,6 +125,7 @@ class TRDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
         r.smoothFonts = self.smooth.isTrue()
+        r.displayConnectionBar = self.showConnectionBar.isTrue()
         r.enablecredsspsupport = self.credssp.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
@@ -151,44 +134,42 @@ class TRDPTransport(BaseRDPTransport):
         r.linuxCustomParameters = self.customParameters.value
         r.enforcedShares = self.enforceDrives.value
 
-        os = {
+        osName = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
 
         }.get(os['OS'])
 
-
-        if os is None:
-            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
+        if osName is None:
+            logger.error('Os not detected for RDP Transport: %s', request.META.get('HTTP_USER_AGENT', 'Unknown'))
+            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         sp = {
-            'tunUser': tunuser,
-            'tunPass': tunpass,
-            'tunHost': sshHost,
-            'tunPort': sshPort,
-            'tunWait': self.tunnelWait.num(),
-            'ip': ip,
             'password': password,
             'this_server': request.build_absolute_uri('/'),
+            'ip': ip,
+            'port': '3389',
+            'address': r.address,
         }
 
-        if os == 'windows':
+        if osName == 'windows':
             if password != '':
                 r.password = '{password}'
             sp.update({
                 'as_file': r.as_file,
             })
-        elif os == 'linux':
+        elif osName == 'linux':
             sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 'as_rdesktop_params': r.as_rdesktop_params,
+                'address': r.address,
             })
         else:  # Mac
             sp.update({
+                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 'as_file': r.as_file,
                 'as_cord_url': r.as_cord_url,
-                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
             })
             if domain != '':
                 sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)
@@ -196,4 +177,4 @@ class TRDPTransport(BaseRDPTransport):
                 sp['usernameWithDomain'] = username
 
 
-        return self.getScript('scripts/{}/tunnel.py', os, sp)
+        return self.getScript('scripts/{}/direct.py', osName, sp)

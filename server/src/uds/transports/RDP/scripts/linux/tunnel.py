@@ -10,7 +10,7 @@ from uds.forward import forward  # @UnresolvedImport
 from uds import tools  # @UnresolvedImport
 
 # Inject local passed sp into globals for functions
-globals()['sp'] = sp  # @UndefinedVariable
+globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def execUdsRdp(udsrdp, port):
     params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{{}}'.format(port)]  # @UndefinedVariable
