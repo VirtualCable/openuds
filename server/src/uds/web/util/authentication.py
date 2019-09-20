@@ -28,6 +28,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
 
 from django.utils.translation import ugettext as _
 
@@ -36,9 +38,13 @@ from uds.models import Authenticator
 from uds.core.util.config import GlobalConfig
 from uds.core.util.cache import Cache
 from uds.core.util.model import processUuid
-
 import uds.web.util.errors as errors
-import logging
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.web.forms.LoginForm import LoginForm
+    from uds.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -47,11 +53,15 @@ logger = logging.getLogger(__name__)
 # (None, ErroString) if error
 # (None, NumericError) if errorview redirection
 # (User, password_string) if all if fine
-def checkLogin(request, form, tag=None):
+def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
+        request: 'HttpRequest',
+        form: 'LoginForm',
+        tag: typing.Optional[str] = None
+    ) -> typing.Tuple[typing.Optional['User'], typing.Any]:
     host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
     # Get Authenticators limitation
-    logger.debug('Host: {0}'.format(host))
+    logger.debug('Host: %s', host)
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
         if tag is None:
             try:
@@ -63,7 +73,7 @@ def checkLogin(request, form, tag=None):
                 except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
                     tag = None
 
-    logger.debug('Tag: {0}'.format(tag))
+    logger.debug('Tag: %s', tag)
 
     if 'uds' not in request.COOKIES:
         logger.debug('Request does not have uds cookie')
@@ -86,33 +96,33 @@ def checkLogin(request, form, tag=None):
         if authenticator.getInstance().blockUserOnLoginFailures is True and tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
             authLogLogin(request, authenticator, userName, 'Temporarily blocked')
             return (None, _('Too many authentication errrors. User temporarily blocked'))
-        else:
-            password = form.cleaned_data['password']
-            user = None
-            if password == '':
-                password = 'axd56adhg466jasd6q8sadñ€sáé--v'  # Random string, in fact, just a placeholder that will not be used :)
-            user = authenticate(userName, password, authenticator)
-            logger.debug('User: {}'.format(user))
 
-            if user is None:
-                logger.debug("Invalid user {0} (access denied)".format(userName))
-                tries += 1
-                cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
-                authLogLogin(request, authenticator, userName, 'Access denied (user not allowed by UDS)')
-                return (None, _('Access denied'))
-            else:
-                request.session.cycle_key()
+        password = form.cleaned_data['password']
+        user = None
+        if password == '':
+            password = 'axd56adhg466jasd6q8sadñ€sáé--v'  # Random string, in fact, just a placeholder that will not be used :)
+        user = authenticate(userName, password, authenticator)
+        logger.debug('User: %s', user)
 
-                logger.debug('User {} has logged in'.format(userName))
-                cache.remove(cacheKey)  # Valid login, remove cached tries
+        if user is None:
+            logger.debug("Invalid user %s (access denied)", userName)
+            tries += 1
+            cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
+            authLogLogin(request, authenticator, userName, 'Access denied (user not allowed by UDS)')
+            return (None, _('Access denied'))
 
-                # Add the "java supported" flag to session
-                request.session['OS'] = os
-                if form.cleaned_data['logouturl'] != '':
-                    logger.debug('The logoout url will be {}'.format(form.cleaned_data['logouturl']))
-                    request.session['logouturl'] = form.cleaned_data['logouturl']
-                authLogLogin(request, authenticator, user.name)
-                return (user, form.cleaned_data['password'])
+        request.session.cycle_key()
+
+        logger.debug('User %s has logged in', userName)
+        cache.remove(cacheKey)  # Valid login, remove cached tries
+
+        # Add the "java supported" flag to session
+        request.session['OS'] = os
+        if form.cleaned_data['logouturl'] != '':
+            logger.debug('The logoout url will be %s', form.cleaned_data['logouturl'])
+            request.session['logouturl'] = form.cleaned_data['logouturl']
+        authLogLogin(request, authenticator, user.name)
+        return (user, form.cleaned_data['password'])
 
     logger.info('Invalid form received')
     return (None, _('Invalid data'))

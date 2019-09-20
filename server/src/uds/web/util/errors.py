@@ -32,6 +32,7 @@
 """
 import traceback
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
@@ -41,6 +42,10 @@ from django.urls import reverse
 
 from uds.core.util import encoders
 from uds.models import ServicePool, Transport, UserService, Authenticator
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 
 logger = logging.getLogger(__name__)
@@ -95,18 +100,18 @@ def errorString(errorId) -> str:
     return strings[0]
 
 
-def errorView(request, errorCode):
-    idError = int(errorCode)
-    code = (error >> 8) & 0xFF
-    idError = idError & 0xFF
+def errorView(request: 'HttpRequest', errorCode: int) -> None:
+    errorCode = int(errorCode)
+    code = (errorCode >> 8) & 0xFF
+    errorCode = errorCode & 0xFF
 
-    errStr = errorString(idError)
+    errStr = errorString(errorCode)
     if code != 0:
         errStr += ' (code {0:04X})'.format(code)
 
-    errStr = encoders.encode(str(errStr), 'base64', asText=True).replace('\n', '')
+    errStr = encoders.encodeAsStr(str(errStr), 'base64').replace('\n', '')
 
-    logger.debug('Redirection to error view with {}'.format(errStr))
+    logger.debug('Redirection to error view with %s', errStr)
     return HttpResponseRedirect(reverse('page.error', kwargs={'error': errStr}))
 
 
