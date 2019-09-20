@@ -4,119 +4,122 @@ from __future__ import unicode_literals
 from django.db import migrations
 from uds.core.ui import gui
 from uds.core.util import encoders
-from uds.transports.RDP.RDPTransport import RDPTransport
-from uds.transports.RDP.TRDPTransport import TRDPTransport
 
-from uds.core.environment import Environment
+# Disabled, not needed on 3.0 and forward migrations... 
+# (can be squashed, this transforms data, that is nonexistant on 3.0 new install or recent migrations)
 
+# from uds.transports.RDP.RDPTransport import RDPTransport
+# from uds.transports.RDP.TRDPTransport import TRDPTransport
 
-def unmarshalRDP(str_):
-    data = str_.split('\t')
-    if data[0] in ('v1', 'v2', 'v3'):
-        useEmptyCreds = gui.strToBool(data[1])
-        allowSmartcards = gui.strToBool(data[2])
-        allowPrinters = gui.strToBool(data[3])
-        allowDrives = gui.strToBool(data[4])
-        allowSerials = gui.strToBool(data[5])
-
-        i = 0
-        wallpaper = False
-        # if data[0] == 'v1':
-        #    wallpaper = False
-        #    i = 0
-
-        if data[0] in ('v2', 'v3'):
-            wallpaper = gui.strToBool(data[6])
-            i = 1
-
-        fixedName = data[6 + i]
-        fixedPassword = data[7 + i]
-        fixedDomain = data[8 + i]
-
-        if data[0] == 'v3':
-            withoutDomain = gui.strToBool(data[9 + i])
-        else:
-            withoutDomain = False
-        return {
-            'useEmptyCreds': useEmptyCreds,
-            'allowSmartcards': allowSmartcards,
-            'allowPrinters': allowPrinters,
-            'allowDrives': allowDrives,
-            'allowSerials': allowSerials,
-            'wallpaper': wallpaper,
-            'fixedName': fixedName,
-            'fixedPassword': fixedPassword,
-            'fixedDomain': fixedDomain,
-            'withoutDomain': withoutDomain
-        }
-    # If data not recognized
-    raise Exception('Unknown data version {}'.format(data[0]))
+# from uds.core.environment import Environment
 
 
-def unmarshalTRDP(str_):
-    data = str_.split('\t')
-    if data[0] in ('v1', 'v2', 'v3'):
-        i = 0
-        useEmptyCreds = gui.strToBool(data[1])
-        allowSmartcards = gui.strToBool(data[2])
-        allowPrinters = gui.strToBool(data[3])
-        allowDrives = gui.strToBool(data[4])
-        allowSerials = gui.strToBool(data[5])
-        wallpaper = False
+# def unmarshalRDP(str_):
+#     data = str_.split('\t')
+#     if data[0] in ('v1', 'v2', 'v3'):
+#         useEmptyCreds = gui.strToBool(data[1])
+#         allowSmartcards = gui.strToBool(data[2])
+#         allowPrinters = gui.strToBool(data[3])
+#         allowDrives = gui.strToBool(data[4])
+#         allowSerials = gui.strToBool(data[5])
 
-        if data[0] == 'v1':
-            wallpaper = False
-            i = 0
+#         i = 0
+#         wallpaper = False
+#         # if data[0] == 'v1':
+#         #    wallpaper = False
+#         #    i = 0
 
-        if data[0] in ('v2', 'v3'):
-            wallpaper = gui.strToBool(data[6])
-            i = 1
+#         if data[0] in ('v2', 'v3'):
+#             wallpaper = gui.strToBool(data[6])
+#             i = 1
 
-        fixedName = data[6 + i]
-        fixedPassword = data[7 + i]
-        fixedDomain = data[8 + i]
-        tunnelServer = data[9 + i]
-        tunnelCheckServer = data[10 + i]
+#         fixedName = data[6 + i]
+#         fixedPassword = data[7 + i]
+#         fixedDomain = data[8 + i]
 
-        if data[0] == 'v3':
-            withoutDomain = gui.strToBool(data[11 + i])
-        else:
-            withoutDomain = False
-
-        return {
-            'useEmptyCreds': useEmptyCreds,
-            'allowSmartcards': allowSmartcards,
-            'allowPrinters': allowPrinters,
-            'allowDrives': allowDrives,
-            'allowSerials': allowSerials,
-            'wallpaper': wallpaper,
-            'fixedName': fixedName,
-            'fixedPassword': fixedPassword,
-            'fixedDomain': fixedDomain,
-            'withoutDomain': withoutDomain,
-            'tunnelServer': tunnelServer,
-            'tunnelCheckServer': tunnelCheckServer
-        }
+#         if data[0] == 'v3':
+#             withoutDomain = gui.strToBool(data[9 + i])
+#         else:
+#             withoutDomain = False
+#         return {
+#             'useEmptyCreds': useEmptyCreds,
+#             'allowSmartcards': allowSmartcards,
+#             'allowPrinters': allowPrinters,
+#             'allowDrives': allowDrives,
+#             'allowSerials': allowSerials,
+#             'wallpaper': wallpaper,
+#             'fixedName': fixedName,
+#             'fixedPassword': fixedPassword,
+#             'fixedDomain': fixedDomain,
+#             'withoutDomain': withoutDomain
+#         }
+#     # If data not recognized
+#     raise Exception('Unknown data version {}'.format(data[0]))
 
 
+# def unmarshalTRDP(str_):
+#     data = str_.split('\t')
+#     if data[0] in ('v1', 'v2', 'v3'):
+#         i = 0
+#         useEmptyCreds = gui.strToBool(data[1])
+#         allowSmartcards = gui.strToBool(data[2])
+#         allowPrinters = gui.strToBool(data[3])
+#         allowDrives = gui.strToBool(data[4])
+#         allowSerials = gui.strToBool(data[5])
+#         wallpaper = False
+
+#         if data[0] == 'v1':
+#             wallpaper = False
+#             i = 0
+
+#         if data[0] in ('v2', 'v3'):
+#             wallpaper = gui.strToBool(data[6])
+#             i = 1
+
+#         fixedName = data[6 + i]
+#         fixedPassword = data[7 + i]
+#         fixedDomain = data[8 + i]
+#         tunnelServer = data[9 + i]
+#         tunnelCheckServer = data[10 + i]
+
+#         if data[0] == 'v3':
+#             withoutDomain = gui.strToBool(data[11 + i])
+#         else:
+#             withoutDomain = False
+
+#         return {
+#             'useEmptyCreds': useEmptyCreds,
+#             'allowSmartcards': allowSmartcards,
+#             'allowPrinters': allowPrinters,
+#             'allowDrives': allowDrives,
+#             'allowSerials': allowSerials,
+#             'wallpaper': wallpaper,
+#             'fixedName': fixedName,
+#             'fixedPassword': fixedPassword,
+#             'fixedDomain': fixedDomain,
+#             'withoutDomain': withoutDomain,
+#             'tunnelServer': tunnelServer,
+#             'tunnelCheckServer': tunnelCheckServer
+#         }
+ 
 def transformTransports(apps, schema_editor):
     """
-    Move serialization to a better model (it's time, the mode is there since 1.1 :) )
+    Move serialization to a better model (it's time, the model WAS there since 1.1 :) )
     """
-    model = apps.get_model("uds", 'Transport')
-    for t in model.objects.all():
-        if t.data_type == RDPTransport.typeType:
-            values = unmarshalRDP(encoders.decode(t.data, 'base64'))
-            rdp = RDPTransport(Environment.getTempEnv(), values)
-            t.data = rdp.serialize()
-            t.save()
+    # model = apps.get_model("uds", 'Transport')
+    # for t in model.objects.all():
+    #     if t.data_type == RDPTransport.typeType:
+    #         values = unmarshalRDP(encoders.decode(t.data, 'base64'))
+    #         rdp = RDPTransport(Environment.getTempEnv(), values)
+    #         t.data = rdp.serialize()
+    #         t.save()
 
-        if t.data_type == TRDPTransport.typeType:
-            values = unmarshalTRDP(encoders.decode(t.data, 'base64'))
-            rdp = TRDPTransport(Environment.getTempEnv(), values)
-            t.data = rdp.serialize()
-            t.save()
-
+    #     if t.data_type == TRDPTransport.typeType:
+    #         values = unmarshalTRDP(encoders.decode(t.data, 'base64'))
+    #         rdp = TRDPTransport(Environment.getTempEnv(), values)
+    #         t.data = rdp.serialize()
+    #         t.save()
+    return
 
 def untransformTransports(apps, schema_editor):
     raise Exception('This migration can\'t be undone')
