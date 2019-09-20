@@ -83,7 +83,7 @@ class ServicesPools(ModelHandler):
     }
 
     save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id',
-                   'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs',
+                   'osmanager_id', 'image_id', 'pool_group_id', 'initial_srvs',
                    'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports', 'visible',
                    'allow_users_remove', 'allow_users_reset', 'ignores_unused', 'account_id']
 
@@ -247,7 +247,7 @@ class ServicesPools(ModelHandler):
                 'order': 120,
                 'tab': ugettext('Display'),
             }, {
-                'name': 'servicesPoolGroup_id',
+                'name': 'pool_group_id',
                 'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]),
                 'label': ugettext('Pool group'),
                 'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
@@ -385,9 +385,10 @@ class ServicesPools(ModelHandler):
                 logger.exception('At image recovering')
 
             # Servicepool Group
-            spgrpId = fields['servicesPoolGroup_id']
+            spgrpId = fields['pool_group_id']
+            del fields['pool_group_id']
             fields['servicesPoolGroup_id'] = None
-            logger.debug('servicesPoolGroup_id: %s', spgrpId)
+            logger.debug('pool_group_id: %s', spgrpId)
             try:
                 if spgrpId != '-1':
                     spgrp = ServicePoolGroup.objects.get(uuid=processUuid(spgrpId))

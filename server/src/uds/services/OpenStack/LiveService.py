@@ -36,6 +36,7 @@ import typing
 from django.utils.translation import ugettext_noop as _
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
+from uds.core.util import tools
 from uds.core.ui import gui
 
 from .LivePublication import LivePublication
@@ -48,6 +49,7 @@ logger = logging.getLogger(__name__)
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from . import openStack
+    from .Provider import Provider
 
 
 class LiveService(Service):
@@ -155,7 +157,7 @@ class LiveService(Service):
     ev = gui.HiddenField(value=None)
     legacy = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
-    _api: typing.Optional['openStack.Client']
+    _api: typing.Optional['openStack.Client'] = None
 
     def initialize(self, values):
         """
@@ -165,16 +167,10 @@ class LiveService(Service):
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            length = int(self.lenName.value)
-            if len(self.baseName.value) + length > 15:
-                raise Service.ValidationException(_('The length of basename plus length must not be greater than 15'))
-            if self.baseName.value.isdigit():
-                raise Service.ValidationException(_('The machine name can\'t be only numbers'))
+            tools.checkValidBasename(self.baseName.value, self.lenName.num())
 
         # self.ov.value = self.parent().serialize()
         # self.ev.value = self.parent().env.key
-
-        self._api = None
 
     def initGui(self):
         """
@@ -197,12 +193,12 @@ class LiveService(Service):
     @property
     def api(self) -> 'openStack.Client':
         if not self._api:
-            self._api = self.parent().api(projectId=self.project.value, region=self.region.value)
+            self._api = typing.cast('Provider', self.parent()).api(projectId=self.project.value, region=self.region.value)
 
         return self._api
 
     def sanitizeVmName(self, name: str) -> str:
-        return self.parent().sanitizeVmName(name)
+        return typing.cast('Provider', self.parent()).sanitizeVmName(name)
 
     def makeTemplate(self, templateName: str, description: typing.Optional[str] = None):
         # First, ensures that volume has not any running instances

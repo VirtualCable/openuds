@@ -134,7 +134,7 @@ class Provider(ServiceProvider):
                 self.username.value,
                 self.password.value,
                 legacyVersion=False,
-                useSSL=None,
+                useSSL=False,
                 projectId=projectId,
                 region=region,
                 access=self.access.value

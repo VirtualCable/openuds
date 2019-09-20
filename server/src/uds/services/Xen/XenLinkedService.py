@@ -33,7 +33,7 @@
 
 from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.services import Service, types as serviceTypes
-
+from uds.core.util import tools
 from uds.core.ui import gui
 
 from .XenPublication import XenPublication
@@ -105,7 +105,7 @@ class XenLinkedService(Service):
         label=_("Storage SR"),
         rdonly=False,
         order=100,
-        tooltip=_('Storage where to publish and put incrementals'),
+        tooltip=_('Storage where to publish and put incrementals (only shared storages are supported)'),
         required=True
     )
 
@@ -183,14 +183,9 @@ class XenLinkedService(Service):
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
         """
-        if values is not None:
-            length = int(self.lenName.value)
-            if len(self.baseName.value) + length > 15:
-                raise Service.ValidationException(
-                    _('The length of basename plus length must not be greater than 15'))
-            if self.baseName.value.isdigit():
-                raise Service.ValidationException(
-                    _('The machine name can\'t be only numbers'))
+        if values:
+            tools.checkValidBasename(self.baseName.value, self.lenName.num())
+
             if int(self.memory.value) < 256:
                 raise Service.ValidationException(
                     _('The minimum allowed memory is 256 Mb'))

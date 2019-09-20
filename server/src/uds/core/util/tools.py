@@ -32,6 +32,7 @@
 """
 import sys
 import os
+import re
 import datetime
 import typing
 
@@ -39,6 +40,7 @@ from django.utils import formats
 from django.utils.translation import ugettext
 import django.template.defaultfilters as filters
 
+from uds.core import services
 
 class DictAsObj:
     """
@@ -142,3 +144,29 @@ def secondsToTimeString(seconds: int) -> str:
     days = hours // 24
     hours %= 24
     return ugettext('{} days {:d}:{:02d}:{:02d}').format(days, hours, minutes, seconds)
+
+def checkValidBasename(baseName: str, length: int = -1) -> None:
+    """"Checks if the basename + length is valid for services. Raises an exception if not valid"
+
+    Arguments:
+        baseName {str} -- basename to check
+
+    Keyword Arguments:
+        length {int} -- length to check, if -1 do not checm (default: {-1})
+
+    Raises:
+        services.Service.ValidationException: If anything goes wrong
+    Returns:
+        None -- [description]
+    """
+    if re.match(r'^[a-zA-Z0-9_-]+$', baseName) is None:
+        raise services.Service.ValidationException(ugettext('The basename is not a valid for a hostname'))
+
+    if length == 0:
+        raise services.Service.ValidationException(ugettext('The length of basename plus length must be greater than 0'))
+
+    if length != -1 and len(baseName) + length > 15:
+        raise services.Service.ValidationException(ugettext('The length of basename plus length must not be greater than 15'))
+
+    if baseName.isdigit():
+        raise services.Service.ValidationException(ugettext('The machine name can\'t be only numbers'))

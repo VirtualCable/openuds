@@ -116,10 +116,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         try:
             if item is None:
                 return [Services.serviceToDict(k, perm) for k in parent.services.all()]
-            else:
-                k = parent.services.get(uuid=processUuid(item))
-                val = Services.serviceToDict(k, perm, full=True)
-                return self.fillIntanceFields(k, val)
+            k = parent.services.get(uuid=processUuid(item))
+            val = Services.serviceToDict(k, perm, full=True)
+            return self.fillIntanceFields(k, val)
         except Exception:
             logger.exception('itemId %s', item)
             raise self.invalidItemException()
