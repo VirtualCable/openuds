@@ -33,18 +33,13 @@ Created on Jul 29, 2011
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 
 """
-from __future__ import unicode_literals
-
 import urllib.parse
 import shlex
 import typing
 
 from uds.core.util import os_detector as OsDetector
 
-__updated__ = '2018-11-22'
-
-
-class RDPFile(object):
+class RDPFile:
     fullScreen = False
     width = '800'
     height = '600'
@@ -74,7 +69,14 @@ class RDPFile(object):
     linuxCustomParameters = None
     enforcedShares: typing.Optional[str] = None
 
-    def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
+    def __init__(
+            self,
+            fullScreen: bool,
+            width: typing.Union[str, int],
+            height: typing.Union[str, int],
+            bpp: str,
+            target: str = OsDetector.Windows
+        ):
         self.width = str(width)
         self.height = str(height)
         self.bpp = str(bpp)
@@ -84,7 +86,7 @@ class RDPFile(object):
     def get(self):
         if self.target in (OsDetector.Windows, OsDetector.Linux):
             return self.getGeneric()
-        elif self.target == OsDetector.Macintosh:
+        if self.target == OsDetector.Macintosh:
             return self.getMacOsX()
         # Unknown target
         return ''
@@ -94,7 +96,7 @@ class RDPFile(object):
         return self.get()
 
     @property
-    def as_new_xfreerdp_params(self):
+    def as_new_xfreerdp_params(self):  # pylint: disable=too-many-statements,too-many-branches
         """
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
@@ -182,7 +184,7 @@ class RDPFile(object):
         return params
 
     @property
-    def as_rdesktop_params(self):
+    def as_rdesktop_params(self):  # pylint: disable=too-many-branches
         """
         Parameters for rdestop with self rdp description
         Note that server is not added
@@ -543,11 +545,11 @@ class RDPFile(object):
     <string></string>
 </dict>
 </plist>'''.format(
-            desktopSize=desktopSize,
-            drives=drives,
-            audioMode=audioMode,
-            host=self.address,
-            domain=self.domain,
-            username=self.username,
-            wallpaper=wallpaper
-        )
+    desktopSize=desktopSize,
+    drives=drives,
+    audioMode=audioMode,
+    host=self.address,
+    domain=self.domain,
+    username=self.username,
+    wallpaper=wallpaper
+)

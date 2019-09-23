@@ -13,7 +13,7 @@ from uds import tools  # @UnresolvedImport
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def execUdsRdp(udsrdp, port):
-    params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{{}}'.format(port)]  # @UndefinedVariable
+    params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
 

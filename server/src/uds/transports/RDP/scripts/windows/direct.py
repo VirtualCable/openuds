@@ -23,7 +23,7 @@ except Exception:
     password = win32crypt.CryptProtectData(thePass, None, None, None, None, 0x05).encode('hex')
 
 try:
-    key = wreg.OpenKey(wreg.HKEY_CURRENT_USER, 'Software\Microsoft\Terminal Server Client\LocalDevices', 0, wreg.KEY_SET_VALUE)  # @UndefinedVariable
+    key = wreg.OpenKey(wreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Terminal Server Client\\LocalDevices', 0, wreg.KEY_SET_VALUE)  # @UndefinedVariable
     wreg.SetValueEx(key, sp['ip'], 0, wreg.REG_DWORD, 255)  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable
 except Exception as e:
