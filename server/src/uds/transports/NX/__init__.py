@@ -40,6 +40,3 @@ from .nxtunneltransport import TSNXTransport
 
 Config.section('NX').value('downloadUrl', 'http://sourceforge.net/projects/opennx/files/opennx/CI-win32/OpenNX-0.16.0.725-Setup.exe/download').get()
 Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()
-
-
-UserPrefsManager.manager().registerPrefs('nx', _('NX/X2GO'), [CommonPrefs.screenSizePref])

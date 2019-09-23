@@ -49,7 +49,7 @@ def updateAuthorizedKeys(user, pubKey):
 
     with open(authorizedKeys, 'w') as f:
         for line in lines:
-            if 'UDS@X2GOCLIENT' not in line and len(line.strip()) > 0:
+            if 'UDS@X2GOCLIENT' not in line and line.strip():
                 f.write(line)
         # Append pubkey
         f.write(six.binary_type('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey)))

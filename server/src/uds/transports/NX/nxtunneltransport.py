@@ -223,7 +223,7 @@ class TSNXTransport(BaseNXTransport):
         if self._fixedPassword is not '':
             password = self._fixedPassword
         if self._useEmptyCreds is True:
-            username, password = '', ''
+            usernamsizerd = '', ''
 
         tunpass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)

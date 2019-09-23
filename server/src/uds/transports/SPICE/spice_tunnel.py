@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,7 +40,6 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports
 from uds.core.util import os_detector as OsDetector
-from uds.core.util import tools
 from uds.models import TicketStore
 
 from .spice_base import BaseSpiceTransport
@@ -75,7 +74,7 @@ class TSPICETransport(BaseSpiceTransport):
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
 
     def initialize(self, values: 'Module.ValuesType'):
-        if values is not None:
+        if values:
             if values['tunnelServer'].count(':') != 1:
                 raise transports.Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 

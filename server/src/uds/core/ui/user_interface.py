@@ -899,10 +899,6 @@ class UserInterface(metaclass=UserInterfaceType):
                 dic[k] = gui.convertToList(v.value)
             elif v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 dic[k] = gui.convertToChoices(v.value)
-#            elif v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False and v.value == '':
-#                # This solves initializing some vars used to "pass" values to callbacks of form editors.
-#                # Now, we only need to initialize the hidden form fields on initGue
-#                dic[k] = v.defValue
             else:
                 dic[k] = v.value
         logger.debug('Values Dict: %s', dic)

@@ -33,9 +33,5 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.user_preferences import UserPrefsManager, CommonPrefs
-from .X2GOTransport import X2GOTransport
-from .TX2GOTransport import TX2GOTransport
-
-
-# We will use same prefs as for NX, X2GO is based on it
-UserPrefsManager.manager().registerPrefs('nx', _('NX/X2GO'), [CommonPrefs.screenSizePref])
+from .x2go import X2GOTransport
+from .x2go_tunnel import TX2GOTransport

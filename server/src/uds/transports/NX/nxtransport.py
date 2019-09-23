@@ -139,7 +139,6 @@ class NXTransport(BaseNXTransport):
         tab=gui.PARAMETERS_TAB
     )
 
-
     _useEmptyCreds: bool = False
     _fixedName: str = ''
     _fixedPassword: str = ''
@@ -201,7 +200,6 @@ class NXTransport(BaseNXTransport):
             password: str,
             request: 'HttpRequest'
         ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
-
         username = user.getUsernameForAuth()
         proc = username.split('@')
         username = proc[0]

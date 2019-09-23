@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -35,7 +35,6 @@ import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.util import os_detector as OsDetector
-from uds.core.util import tools
 from .spice_base import BaseSpiceTransport
 from .remote_viewer_file import RemoteViewerFile
 

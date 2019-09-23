@@ -18,12 +18,12 @@ except Exception:
 ''')
 
 # Open tunnel
-forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])  # @UndefinedVariable
+forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
 
 
-theFile = sp['as_file_for_format'].format(  # @UndefinedVariable
+theFile = sp['as_file_for_format'].format(
     address='127.0.0.1',
     port=port
 )

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,24 +30,24 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os
+import io
+import logging
+import typing
 
-from django.utils.translation import ugettext_noop as _
-from uds.core.managers.user_preferences import CommonPrefs
+import paramiko
+
+from django.utils.translation import ugettext_noop as _, ugettext_lazy
 from uds.core.managers import userServiceManager
+from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.ui import gui
-from uds.core.transports.transport import Transport
-from uds.core.transports import protocols
+from uds.core import transports
 from uds.core.util import os_detector as OsDetector
 from uds.core.util import connection
 
-# This transport is specific for oVirt, so we need to point to it
-
-import paramiko
-import six
-import os
-import logging
-
-__updated__ = '2018-03-23'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -55,13 +55,13 @@ READY_CACHE_TIMEOUT = 30
 SSH_KEY_LENGTH = 1024
 
 
-class BaseX2GOTransport(Transport):
+class BaseX2GOTransport(transports.Transport):
     """
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
     iconFile = 'x2go.png'
-    protocol = protocols.X2GO
+    protocol = transports.protocols.X2GO
     supportedOss = (OsDetector.Linux, OsDetector.Windows)
 
     fixedName = gui.TextField(
@@ -71,10 +71,19 @@ class BaseX2GOTransport(Transport):
         tab=gui.CREDENTIALS_TAB
     )
 
-    fullScreen = gui.CheckBoxField(
+    screenSize = gui.ChoiceField(
+        label=_('Scren size'),
         order=10,
-        label=_('Show fullscreen'),
-        tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
+        tooltip=_('Screen size'),
+        defvalue=CommonPrefs.SZ_FULLSCREEN,
+        values=[
+            {'id': CommonPrefs.SZ_640x480, 'text': '640x480'},
+            {'id': CommonPrefs.SZ_800x600, 'text': '800x600'},
+            {'id': CommonPrefs.SZ_1024x768, 'text': '1024x768'},
+            {'id': CommonPrefs.SZ_1366x768, 'text': '1366x768'},
+            {'id': CommonPrefs.SZ_1920x1080, 'text': '1920x1080'},
+            {'id': CommonPrefs.SZ_FULLSCREEN, 'text': ugettext_lazy('Full Screen')}
+        ],
         tab=gui.PARAMETERS_TAB
     )
 
@@ -186,41 +195,48 @@ class BaseX2GOTransport(Transport):
         tab=gui.ADVANCED_TAB
     )
 
-    def isAvailableFor(self, userService, ip):
+    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
         """
-        logger.debug('Checking availability for {0}'.format(ip))
+        logger.debug('Checking availability for %s', ip)
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if connection.testServer(ip, '22') is True:
+            if connection.testServer(ip, 22):
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
-            else:
-                self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
+            self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(self, userService, userName):
-        v = self.processUserPassword(userService, userName, '')
+    def getScreenSize(self) -> typing.Tuple[int, int]:
+        return CommonPrefs.getWidthHeight(self.screenSize.value)
+
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+        v = self.processUserPassword(userService, user, '')
         return v['username']
 
-    def processUserPassword(self, service, user, password):
+    def processUserPassword(self, userService: 'models.UserService', user: 'models.User', password: str) -> typing.Dict[str, str]:
         username = user.getUsernameForAuth()
 
         if self.fixedName.value != '':
             username = self.fixedName.value
 
         # Fix username/password acording to os manager
-        username, password = service.processUserPassword(username, password)
+        username, password = userService.processUserPassword(username, password)
 
         return {'protocol': self.protocol, 'username': username, 'password': ''}
 
-    def getConnectionInfo(self, service, user, password):  # Password is ignored in this transport, auth is done using SSH
-        return self.processUserPassword(service, user, password)
+    def getConnectionInfo(
+            self,
+            userService: typing.Union['models.UserService', 'models.ServicePool'],
+            user: 'models.User',
+            password: str
+        ) -> typing.Dict[str, str]:
+        return self.processUserPassword(userService, user, password)
 
-    def genKeyPairForSsh(self):
+    def genKeyPairForSsh(self) -> typing.Tuple[str, str]:
         """
         Generates a key pair for use with x2go
         The private part is used by client
@@ -230,28 +246,36 @@ class BaseX2GOTransport(Transport):
         On key adition, we can look for every key that has a "UDS@X2GOCLIENT" as comment, so we can remove them before adding new ones
 
         Windows (tested):
-            C:\Program Files (x86)\\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
+            C:\\Program Files (x86)\\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
         Linux (tested):
             HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
         """
         key = paramiko.RSAKey.generate(SSH_KEY_LENGTH)
-        privFile = six.StringIO()
+        privFile = io.StringIO()
         key.write_private_key(privFile)
         priv = privFile.getvalue()
 
         pub = key.get_base64()  # 'ssh-rsa {} UDS@X2GOCLIENT'.format(key.get_base64())
         return priv, pub
 
-    def getAuthorizeScript(self, user, pubKey):
-        return self.getScript('scripts/authorize.py').replace('__USER__', user).replace('__KEY__', pubKey)
+    def getAuthorizeScript(self, user: str, pubKey: str) -> str:
+        with open(os.path.join(os.path.dirname(__file__), 'scripts/authorize.py')) as f:
+            data = f.read()
 
-    def getAndPushKey(self, user, userService):
+        return data.replace('__USER__', user).replace('__KEY__', pubKey)
+
+    def getAndPushKey(self, userName: str, userService: 'models.UserService') -> typing.Tuple[str, str]:
         priv, pub = self.genKeyPairForSsh()
-        authScript = self.getAuthorizeScript(user, pub)
+        authScript = self.getAuthorizeScript(userName, pub)
         userServiceManager().sendScript(userService, authScript)
         return priv, pub
 
-    def getScript(self, script):
-        with open(os.path.join(os.path.dirname(__file__), script)) as f:
-            data = f.read()
-        return data
+    def getScript(self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        # Reads script
+        scriptNameTemplate = scriptNameTemplate.format(osName)
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
+            script = f.read()
+        # Reads signature
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')) as f:
+            signature = f.read()
+        return script, signature, params

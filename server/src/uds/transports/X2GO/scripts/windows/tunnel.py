@@ -11,9 +11,8 @@ from os.path import expanduser
 
 from uds import tools  # @UnresolvedImport
 
-import six
 
-forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 22)
+forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])
 
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
@@ -21,8 +20,8 @@ if forwardThread.status == 2:
 tools.addTaskToWait(forwardThread)
 # Care, expanduser is encoding using "mcbs", so treat it as bytes always
 home = expanduser('~').replace('\\', '\\\\') + '#1;'
-keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
+keyFile = tools.saveTempFile(sp['key'])
+theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
@@ -31,4 +30,4 @@ if executable is None:
     raise Exception('''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
 <p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>''')
 
-subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
+subprocess.Popen([executable, '--session-conf={}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])

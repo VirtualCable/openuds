@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2019 Virtual Cable S.L.
 # All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,17 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.util import os_detector as OsDetector
 from uds.core.util import tools
-from .BaseX2GOTransport import BaseX2GOTransport
-from . import x2gofile
+from .x2go_base import BaseX2GOTransport
+from . import x2go_file
 
-import logging
-
-__updated__ = '2018-03-22'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +57,7 @@ class X2GOTransport(BaseX2GOTransport):
     typeDescription = _('X2Go access (Experimental). Direct connection.')
 
     fixedName = BaseX2GOTransport.fixedName
-    # fullScreen = BaseX2GOTransport.fullScreen
+    screenSize = BaseX2GOTransport.screenSize
     desktopType = BaseX2GOTransport.desktopType
     customCmd = BaseX2GOTransport.customCmd
     sound = BaseX2GOTransport.sound
@@ -67,22 +69,29 @@ class X2GOTransport(BaseX2GOTransport):
     pack = BaseX2GOTransport.pack
     quality = BaseX2GOTransport.quality
 
-    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        prefs = user.prefs('nx')
-
+    def getUDSTransportScript(  # pylint: disable=too-many-locals
+            self,
+            userService: 'models.UserService',
+            transport: 'models.Transport',
+            ip: str,
+            os: typing.Dict[str, str],
+            user: 'models.User',
+            password: str,
+            request: 'HttpRequest'
+        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
         ci = self.getConnectionInfo(userService, user, password)
         username = ci['username']
+
         priv, pub = self.getAndPushKey(username, userService)
 
-        width, height = CommonPrefs.getWidthHeight(prefs)
-
+        width, height = self.getScreenSize()
         rootless = False
         desktop = self.desktopType.value
         if desktop == "UDSVAPP":
             desktop = "/usr/bin/udsvapp " + self.customCmd.value
             rootless = True
 
-        xf = x2gofile.getTemplate(
+        xf = x2go_file.getTemplate(
             speed=self.speed.value,
             pack=self.pack.value,
             quality=self.quality.value,
@@ -96,31 +105,20 @@ class X2GOTransport(BaseX2GOTransport):
             user=username
         )
 
-        # data
-        data = {
-            'os': os['OS'],
-            'ip': ip,
-            'port': 22,
-            'username': username,
-            'key': priv,
-            'width': width,
-            'height': height,
-            'printers': True,
-            'drives': self.exports.isTrue(),
-            'fullScreen': width == -1 or height == -1,
-            'this_server': request.build_absolute_uri('/'),
-            'xf': xf
-        }
-
-        m = tools.DictAsObj(data)
-
-        os = {
+        osName = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             # OsDetector.Macintosh: 'macosx'
-        }.get(m.os)
+        }.get(os['OS'])
 
-        if os is None:
-            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
+        if osName is None:
+            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)
+        sp = {
+            'ip': ip,
+            'port': '22',
+            'key': priv,
+            'xf': xf
+        }
+
+        return self.getScript('scripts/{}/direct.py', osName, sp)

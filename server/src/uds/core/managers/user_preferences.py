@@ -260,58 +260,27 @@ class CommonPrefs(object):
     BYPASS_PREF = 'bypassPluginDetection'
 
     @staticmethod
-    def getWidthHeight(prefsDict):
+    def getWidthHeight(size: str) -> typing.Tuple[int, int]:
         """
         Get width based on screenSizePref value
         """
-        try:
-            return {
-                CommonPrefs.SZ_640x480: (640, 480),
-                CommonPrefs.SZ_800x600: (800, 600),
-                CommonPrefs.SZ_1024x768: (1024, 768),
-                CommonPrefs.SZ_1366x768: (1366, 768),
-                CommonPrefs.SZ_1920x1080: (1920, 1080),
-                CommonPrefs.SZ_FULLSCREEN: (-1, -1)
-            }[prefsDict[CommonPrefs.SZ_PREF]]
-        except Exception:
-            return CommonPrefs.SZ_1024x768
+        return {
+            CommonPrefs.SZ_640x480: (640, 480),
+            CommonPrefs.SZ_800x600: (800, 600),
+            CommonPrefs.SZ_1024x768: (1024, 768),
+            CommonPrefs.SZ_1366x768: (1366, 768),
+            CommonPrefs.SZ_1920x1080: (1920, 1080),
+            CommonPrefs.SZ_FULLSCREEN: (-1, -1)
+        }.get(size, (1024, 768))
 
     @staticmethod
-    def getDepth(prefsDict):
+    def getDepth(depth: str) -> int:
         """
         Get depth based on depthPref value
         """
-        try:
-            return {
-                CommonPrefs.DEPTH_8: 8,
-                CommonPrefs.DEPTH_16: 16,
-                CommonPrefs.DEPTH_24: 24,
-                CommonPrefs.DEPTH_32: 32
-            }[prefsDict[CommonPrefs.DEPTH_PREF]]
-        except Exception:
-            return CommonPrefs.DEPTH_24
-
-    screenSizePref = UserChoicePreference(name=SZ_PREF,
-                                          label=ugettext_lazy('Screen Size'),
-                                          defvalue=SZ_FULLSCREEN,
-                                          values=((SZ_640x480, '640x480'),
-                                                  (SZ_800x600, '800x600'),
-                                                  (SZ_1024x768, '1024x768'),
-                                                  (SZ_1366x768, '1366x768'),
-                                                  (SZ_1920x1080, '1920x1080'),
-                                                  (SZ_FULLSCREEN, ugettext_lazy('Full Screen')))
-                                          )
-    depthPref = UserChoicePreference(name=DEPTH_PREF, label=ugettext_lazy('Screen colors'),
-                                     defvalue=DEPTH_24,
-                                     values=((DEPTH_8, ugettext_lazy('8 bits')),
-                                             (DEPTH_16, ugettext_lazy('16 bits')),
-                                             (DEPTH_24, ugettext_lazy('24 bits')),
-                                             (DEPTH_32, ugettext_lazy('32 bits')))
-                                     )
-
-    bypassPluginDetectionPref = UserChoicePreference(name=BYPASS_PREF,
-                                                     label=ugettext_lazy('Plugin detection'),
-                                                     defvalue='0',
-                                                     values=(('0', ugettext_lazy('Detect plugin')),
-                                                             ('1', ugettext_lazy('Bypass plugin detection')))
-                                                     )
+        return {
+            CommonPrefs.DEPTH_8: 8,
+            CommonPrefs.DEPTH_16: 16,
+            CommonPrefs.DEPTH_24: 24,
+            CommonPrefs.DEPTH_32: 32
+        }.get(depth, 24)
