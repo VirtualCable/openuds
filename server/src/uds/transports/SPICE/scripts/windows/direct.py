@@ -28,7 +28,7 @@ if executable is None:
 </p>
 ''')
 
-theFile = '''{m.r.as_file}'''
+theFile = sp['as_file']
 
 filename = tools.saveTempFile(theFile)
 

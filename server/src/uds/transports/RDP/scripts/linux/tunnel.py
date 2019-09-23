@@ -55,7 +55,7 @@ if xfreerdp is not None:
             fnc, app = execNewXFreeRdp, xfreerdp
 
     except Exception as e:  # Valid version not found, pass to check rdesktop
-        # QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)  # @UndefinedVariable
+        # QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)
         pass
 
 if udsrdp is not None:
@@ -68,7 +68,7 @@ if app is None or fnc is None:
 ''')
 else:
     # Open tunnel
-    forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])  # @UndefinedVariable
+    forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])
 
     if forwardThread.status == 2:
         raise Exception('Unable to open tunnel')

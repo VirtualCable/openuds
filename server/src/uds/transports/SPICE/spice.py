@@ -30,16 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.util import os_detector as OsDetector
 from uds.core.util import tools
-from .BaseSPICETransport import BaseSpiceTransport
-from .RemoteViewerFile import RemoteViewerFile
+from .spice_base import BaseSpiceTransport
+from .remote_viewer_file import RemoteViewerFile
 
-import logging
-
-__updated__ = '2017-12-20'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
@@ -62,33 +65,43 @@ class SPICETransport(BaseSpiceTransport):
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
 
-    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        userServiceInstance = userService.getInstance()
+    def getUDSTransportScript(  # pylint: disable=too-many-locals
+            self,
+            userService: 'models.UserService',
+            transport: 'models.Transport',
+            ip: str,
+            os: typing.Dict[str, str],
+            user: 'models.User',
+            password: str,
+            request: 'HttpRequest'
+        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        userServiceInstance: typing.Any = userService.getInstance()
 
         con = userServiceInstance.getConsoleConnection()
 
-        logger.debug('Connection data: {}'.format(con))
+        logger.debug('Connection data: %s', con)
 
-        port, secure_port = con['port'], con['secure_port']
-        port = -1 if port is None else port
-        secure_port = -1 if secure_port is None else secure_port
+        # Spice connection
+        con = userServiceInstance.getConsoleConnection()
+        port: str = con['port'] or '-1'
+        secure_port: str = con['secure_port'] or '-1'
 
         r = RemoteViewerFile(con['address'], port, secure_port, con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=self.fullScreen.isTrue())
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
         r.smartcard = self.smartCardRedirect.isTrue()
 
-        m = tools.DictAsObj({
-            'r': r
-        })
-
-        os = {
+        osName = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
-        }.get(os.OS)
+        }.get(os['OS'])
 
-        if os is None:
-            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
+        if osName is None:
+            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)
+        sp = {
+            'as_file': r.as_file,
+        }
+
+        return self.getScript('scripts/{}/tunnel.py', osName, sp)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,28 +30,30 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.ui import gui
-from uds.core.transports.transport import Transport
+from uds.core import transports
 from uds.core.transports import protocols
-from uds.core.util import connection
 
 # This transport is specific for oVirt, so we need to point to it
 from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 
-import logging
-import os
 
-__updated__ = '2017-12-20'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
 
-class BaseSpiceTransport(Transport):
+class BaseSpiceTransport(transports.Transport):
     """
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
@@ -114,29 +116,27 @@ class BaseSpiceTransport(Transport):
         tab=gui.ADVANCED_TAB
     )
 
-    def isAvailableFor(self, userService, ip):
+    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         """
         ready = self.cache.get(ip)
         if ready is None:
-            userServiceInstance = userService.getInstance()
+            userServiceInstance: typing.Any = userService.getInstance()  # Disable mypy checks on this
             con = userServiceInstance.getConsoleConnection()
 
-            logger.debug('Connection data: {}'.format(con))
+            logger.debug('Connection data: %s', con)
 
             if con is None:
                 return False
 
-            port, secure_port = con['port'], con['secure_port']
-            port = -1 if port is None else port
-            secure_port = -1 if secure_port is None else secure_port
+            port, secure_port = con['port'] or -1, con['secure_port'] or -1
 
             # test ANY of the ports
             port_to_test = port if port != -1 else secure_port
             if port_to_test == -1:
                 self.cache.put('cachedMsg', 'Could not find the PORT for connection', 120)  # Write a message, that will be used from getCustom
-                logger.info('SPICE didn\'t find has any port: {}'.format(con))
+                logger.info('SPICE didn\'t find has any port: %s', con)
                 return False
 
             self.cache.put('cachedMsg',
@@ -149,36 +149,47 @@ class BaseSpiceTransport(Transport):
 
         return ready == 'Y'
 
-    def getCustomAvailableErrorMsg(self, userService, ip):
+    def getCustomAvailableErrorMsg(self, userService: 'models.UserService', ip: str) -> str:
         msg = self.cache.get('cachedMsg')
         if msg is None:
-            return Transport.getCustomAvailableErrorMsg(self, userService, ip)
+            return transports.Transport.getCustomAvailableErrorMsg(self, userService, ip)
         return msg
 
-    def processedUser(self, userService, userName):
-        v = self.processUserPassword(userService, userName, '')
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+        v = self.processUserPassword(userService, user, '')
         return v['username']
 
-    def processUserPassword(self, service, user, password):
+    def processUserPassword(self, userService: 'models.UserService', user: 'models.User', password: str) -> typing.Dict[str, str]:
         username = user.getUsernameForAuth()
 
-        if self.fixedName.value != '':
+        if self.fixedName.value:
             username = self.fixedName.value
 
-        if self.fixedPassword.value != '':
+        if self.fixedPassword.value:
             password = self.fixedPassword.value
+
         if self.useEmptyCreds.isTrue():
             username, password = '', ''
 
         # Fix username/password acording to os manager
-        username, password = service.processUserPassword(username, password)
+        username, password = userService.processUserPassword(username, password)
 
         return {'protocol': self.protocol, 'username': username, 'password': password}
 
-    def getConnectionInfo(self, service, user, password):
-        return self.processUserPassword(service, user, password)
+    def getConnectionInfo(
+            self,
+            userService: typing.Union['models.UserService', 'models.ServicePool'],
+            user: 'models.User',
+            password: str
+        ) -> typing.Dict[str, str]:
+        return self.processUserPassword(userService, user, password)
 
-    def getScript(self, script):
-        with open(os.path.join(os.path.dirname(__file__), script)) as f:
-            data = f.read()
-        return data
+    def getScript(self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        # Reads script
+        scriptNameTemplate = scriptNameTemplate.format(osName)
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
+            script = f.read()
+        # Reads signature
+        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')) as f:
+            signature = f.read()
+        return script, signature, params

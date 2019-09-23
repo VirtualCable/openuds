@@ -30,24 +30,27 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import random
+import string
+import typing
+
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
-from uds.core.transports.transport import Transport
-from uds.core.transports.transport import TUNNELED_GROUP
-from uds.core.transports import protocols
+from uds.core import transports
 from uds.core.util import os_detector as OsDetector
 from uds.core.util import tools
 from uds.models import TicketStore
 
-from .BaseSPICETransport import BaseSpiceTransport
-from .RemoteViewerFile import RemoteViewerFile
+from .spice_base import BaseSpiceTransport
+from .remote_viewer_file import RemoteViewerFile
 
-import logging
-import random
-import string
-
-__updated__ = '2019-05-10'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from uds.core import Module
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +63,8 @@ class TSPICETransport(BaseSpiceTransport):
     typeName = _('SPICE')
     typeType = 'TSSPICETransport'
     typeDescription = _('SPICE Protocol. Tunneled connection.')
-    protocol = protocols.SPICE
-    group = TUNNELED_GROUP
+    protocol = transports.protocols.SPICE
+    group = transports.TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
@@ -71,19 +74,27 @@ class TSPICETransport(BaseSpiceTransport):
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
 
-    def initialize(self, values):
+    def initialize(self, values: 'Module.ValuesType'):
         if values is not None:
             if values['tunnelServer'].count(':') != 1:
-                raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
+                raise transports.Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
-    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        userServiceInstance = userService.getInstance()
+    def getUDSTransportScript(  # pylint: disable=too-many-locals
+            self,
+            userService: 'models.UserService',
+            transport: 'models.Transport',
+            ip: str,
+            os: typing.Dict[str, str],
+            user: 'models.User',
+            password: str,
+            request: 'HttpRequest'
+        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        userServiceInstance: typing.Any = userService.getInstance()
 
         # Spice connection
         con = userServiceInstance.getConsoleConnection()
-        port, secure_port = con['port'], con['secure_port']
-        port = -1 if port is None else port
-        secure_port = -1 if secure_port is None else secure_port
+        port: str = con['port'] or '-1'
+        secure_port: str = con['secure_port'] or '-1'
 
         # Ticket
         tunpass = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _i in range(12))
@@ -91,13 +102,26 @@ class TSPICETransport(BaseSpiceTransport):
 
         sshHost, sshPort = self.tunnelServer.value.split(':')
 
-        r = RemoteViewerFile('127.0.0.1', '{port}', '{secure_port}', con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=self.fullScreen.isTrue())
+        r = RemoteViewerFile(
+            '127.0.0.1', '{port}', '{secure_port}', con['ticket']['value'],
+            self.serverCertificate.value.strip(), con['cert_subject'], fullscreen=self.fullScreen.isTrue()
+        )
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
         r.smartcard = self.smartCardRedirect.isTrue()
 
-        m = tools.DictAsObj({
-            'r': r,
+        osName = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            OsDetector.Macintosh: 'macosx'
+        }.get(os['OS'])
+
+        if osName is None:
+            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+
+        sp = {
+            'as_file': r.as_file,
+            'as_file_ns': r.as_file_ns,
             'tunUser': tunuser,
             'tunPass': tunpass,
             'tunHost': sshHost,
@@ -105,15 +129,6 @@ class TSPICETransport(BaseSpiceTransport):
             'ip': con['address'],
             'port': port,
             'secure_port': secure_port
-        })
+        }
 
-        os = {
-            OsDetector.Windows: 'windows',
-            OsDetector.Linux: 'linux',
-            OsDetector.Macintosh: 'macosx'
-        }.get(os.OS)
-
-        if os is None:
-            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
-
-        return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)
+        return self.getScript('scripts/{}/tunnel.py', osName, sp)

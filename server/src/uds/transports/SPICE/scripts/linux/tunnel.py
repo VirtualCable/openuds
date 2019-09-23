@@ -21,22 +21,22 @@ if executable is None:
 ''')
 
 
-theFile = '''{m.r.as_file_ns}'''
-forwardThread1 = None
-if {m.port} != -1:  # @UndefinedVariable
-    forwardThread1, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.port})  # @UndefinedVariable
+theFile = sp['as_file_ns']
+if sp['port'] != '-1':
+    forwardThread1, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])
+
 
     if forwardThread1.status == 2:
         raise Exception('Unable to open tunnel')
 else:
     port = -1
 
-if {m.secure_port} != -1:  # @UndefinedVariable
-    theFile = '''{m.r.as_file}'''
+if sp['secure_port'] != '-1':
+    theFile = sp['as_file']
     if port != -1:
-        forwardThread2, secure_port = forwardThread1.clone('{m.ip}', {m.secure_port})  # @UndefinedVariable
+        forwardThread2, secure_port = forwardThread1.clone(sp['ip'], sp['secure_port'])
     else:
-        forwardThread2, secure_port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.secure_port})  # @UndefinedVariable
+        forwardThread2, secure_port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['secure_port'])
 
     if forwardThread2.status == 2:
         raise Exception('Unable to open tunnel')
@@ -49,6 +49,4 @@ theFile = theFile.format(
 )
 
 filename = tools.saveTempFile(theFile)
-
-
 subprocess.Popen([executable, filename])

@@ -165,7 +165,6 @@ class TRDPTransport(BaseRDPTransport):
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
-
         }.get(os['OS'])
 
         if osName is None:

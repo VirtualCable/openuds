@@ -25,7 +25,7 @@ if not os.path.isfile(remoteViewer):
 ''')
 
 
-theFile = '''{m.r.as_file}'''
+theFile = sp['as_file']
 
 filename = tools.saveTempFile(theFile)
 
