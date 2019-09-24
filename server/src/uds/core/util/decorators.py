@@ -31,9 +31,9 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from functools import wraps
-import typing
 import logging
 import inspect
+import typing
 
 from uds.core.util.html import checkBrowser
 from uds.web.util import errors
@@ -41,29 +41,28 @@ from uds.web.util import errors
 
 logger = logging.getLogger(__name__)
 
+RT = typing.TypeVar('RT')
 
 # Decorator that protects pages that needs at least a browser version
 # Default is to deny IE < 9
 def denyBrowsers(
         browsers: typing.Optional[typing.List[str]] = None,
         errorResponse: typing.Callable = lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)
-    ):
+    ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     """
 
-    if browsers is None:
-        browsers = ['ie<9']
+    denied: typing.List[str] = browsers or ['ie<9']
 
-    def wrap(view_func):
-
+    def wrap(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         @wraps(view_func)
-        def _wrapped_view(request, *args, **kwargs):
+        def _wrapped_view(request, *args, **kwargs) -> RT:
             """
             Wrapped function for decorator
             """
-            for b in browsers:
+            for b in denied:
                 if checkBrowser(request, b):
                     return errorResponse(request)
 
@@ -74,13 +73,13 @@ def denyBrowsers(
     return wrap
 
 
-def deprecated(func):
+def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used."""
 
     @wraps(func)
-    def new_func(*args, **kwargs):
+    def new_func(*args, **kwargs) -> RT:
         try:
             caller = inspect.stack()[1]
             logger.warning('Call to deprecated function %s from %s:%s.', func.__name__, caller[1], caller[2])
@@ -101,7 +100,7 @@ def allowCache(
         cacheTimeout: int,
         cachingArgs: typing.Optional[typing.Union[typing.List[int], int]] = None,
         cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None
-    ):
+    ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """Decorator that give us a "quick& clean" caching feature on service providers.
 
     Note: This decorator is intended ONLY for service providers
@@ -111,30 +110,29 @@ def allowCache(
     :param cachingArgs: The caching args. Can be a single integer or a list.
                         First arg (self) is 0, so normally cachingArgs are 1, or [1,2,..]
     """
-    if not cachingKeyFnc:
-        cachingKeyFnc = lambda x: ''
+    keyFnc = cachingKeyFnc or (lambda x: '')
 
-    def allowCacheDecorator(fnc: typing.Callable):
+    def allowCacheDecorator(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         @wraps(fnc)
-        def wrapper(*args, **kwargs):
-            if cachingArgs is not None:
+        def wrapper(*args, **kwargs) -> RT:
+            if cachingArgs:
                 if isinstance(cachingArgs, (list, tuple)):
                     argList = [args[i] if i < len(args) else '' for i in cachingArgs]
                 else:
                     argList = args[cachingArgs] if cachingArgs < len(args) else ''
-                cacheKey = '{}-{}.{}'.format(cachePrefix, cachingKeyFnc(args[0]), argList)
+                cacheKey = '{}-{}.{}'.format(cachePrefix, keyFnc(args[0]), argList)
             else:
-                cacheKey = '{}-{}.gen'.format(cachePrefix, cachingKeyFnc(args[0]))
+                cacheKey = '{}-{}.gen'.format(cachePrefix, keyFnc(args[0]))
 
-            data = None
+            data: typing.Any = None
             if kwargs.get('force', False) is False and args[0].cache is not None:
                 data = args[0].cache.get(cacheKey)
 
-            if kwargs.has_key('force'):
+            if 'force' in kwargs:
                 # Remove force key
                 del kwargs['force']
 
-            if data is None:
+            if data is None:  # Not in cache...
                 data = fnc(*args, **kwargs)
                 try:
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this

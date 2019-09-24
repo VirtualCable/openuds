@@ -85,9 +85,6 @@ class CaseInsensitiveDict(dict):
     def __contains__(self, key):
         return super(CaseInsensitiveDict, self).__contains__(self.__class__._k(key))
 
-    def has_key(self, key):
-        return super(CaseInsensitiveDict, self).has_key(self.__class__._k(key))
-
     def pop(self, key, *args, **kwargs):
         return super(CaseInsensitiveDict, self).pop(self.__class__._k(key), *args, **kwargs)
 

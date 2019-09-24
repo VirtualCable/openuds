@@ -179,11 +179,12 @@ class Client:  # pylint: disable=too-many-public-methods
                 self._authUrl += '/'
 
     def _getEndpointFor(self, type_: str) -> str:  # If no region is indicatad, first endpoint is returned
-        for i in self._catalog:
-            if i['type'] == type_:
-                for j in i['endpoints']:
-                    if j['interface'] == self._access and (self._region is None or j['region'] == self._region):
-                        return j['url']
+        if not self._catalog:
+            raise Exception('No catalog for endpoints')
+        for i in filter(lambda v: v['type'] == type_, self._catalog):
+            for j in filter(lambda v: v['interface'] == self._access, i['endpoints']):
+                if not self._region or j['region'] == self._region:
+                    return j['url']
         raise Exception('No endpoint url found')
 
     def _requestHeaders(self) -> typing.Dict[str, str]:

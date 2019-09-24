@@ -146,7 +146,7 @@ class ServiceProvider(Module):
                 return _type
         return None
 
-    def __init__(self, environment: Environment, values: Module.ValuesType = None, uuid: typing.Optional[str] = None):
+    def __init__(self, environment: Environment, values: 'Module.ValuesType' = None, uuid: typing.Optional[str] = None):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         if you override this method. Better is to provide an "__initialize__" method, that will be invoked
@@ -157,7 +157,7 @@ class ServiceProvider(Module):
         super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
-    def initialize(self, values: typing.Optional[Module.ValuesType]) -> None:
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
