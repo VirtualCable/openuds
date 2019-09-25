@@ -37,13 +37,13 @@ from uds.core import Serializable
 from uds.core.util.state import State
 
 if typing.TYPE_CHECKING:
+    from uds import models
     from uds.core import services
     from uds.core import osmanagers
     from uds.core.environment import Environment
     from uds.core.util.unique_name_generator import UniqueNameGenerator
     from uds.core.util.unique_mac_generator import UniqueMacGenerator
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
-    from uds.models import Service, User
 
 class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many-public-methods
     """
@@ -123,7 +123,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
     _service: 'services.Service'
     _publication: typing.Optional['services.Publication']
     _osmanager: typing.Optional['osmanagers.OSManager']
-    _dbService: typing.Optional['Service']
+    _dbService: typing.Optional['models.Service']
     _uuid: str
 
     def __init__(self, environment: 'Environment', **kwargs):
@@ -157,7 +157,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
 
         self.initialize()
 
-    def initialize(self):
+    def initialize(self) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -214,7 +214,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
     def getUuid(self) -> str:
         return self._uuid
 
-    def dbservice(self) -> typing.Optional['Service']:
+    def dbservice(self) -> typing.Optional['models.Service']:
         """
         Utility method to access database object for the object this represents.
 
@@ -231,7 +231,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         from uds.core.util import log
         log.doLog(self._dbService, level, message, log.SERVICE)
 
-    def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
+    def macGenerator(self) -> 'UniqueMacGenerator':
         """
         Utility method to access provided macs generator (inside environment)
 
@@ -239,7 +239,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         return typing.cast('UniqueMacGenerator', self.idGenerators('mac'))
 
-    def nameGenerator(self) -> typing.Optional['UniqueNameGenerator']:
+    def nameGenerator(self) -> 'UniqueNameGenerator':
         """
         Utility method to access provided names generator (inside environment)
 
@@ -247,7 +247,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         return typing.cast('UniqueNameGenerator', self.idGenerators('name'))
 
-    def gidGenerator(self) -> typing.Optional['UniqueGIDGenerator']:
+    def gidGenerator(self) -> 'UniqueGIDGenerator':
         """
         Utility method to access provided names generator (inside environment)
 
@@ -255,7 +255,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         return typing.cast('UniqueGIDGenerator', self.idGenerators('id'))
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         """
         Obtains an unique id for this deployed service, you MUST override this
 
@@ -305,7 +305,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         raise Exception('Base getIp for User Deployment got called!!!')
 
-    def setIp(self, ip: str):
+    def setIp(self, ip: str) -> None:
         """
         This is an utility method, invoked by some os manager to notify what they thinks is the ip for this service.
         If you assign the service IP by your own methods, do not override this
@@ -384,7 +384,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         raise Exception('Base deploy for cache invoked! for class {0}'.format(self.__class__.__name__))
 
-    def deployForUser(self, user: 'User') -> str:
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
 

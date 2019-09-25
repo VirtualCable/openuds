@@ -100,7 +100,7 @@ class Handler:
     _path: str
     _operation: str
     _params: typing.Any  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
-    _args: typing.Tuple[str, ...]
+    _args: typing.Tuple[str, ...]  # This are the "path" split by /, that is, the REST invocation arguments
     _kwargs: typing.Dict
     _headers: typing.Dict[str, str]
     _authToken: typing.Optional[str]

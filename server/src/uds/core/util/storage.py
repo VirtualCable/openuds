@@ -142,7 +142,7 @@ class Storage:
         """
         # dbStorage.objects.unlock()  # @UndefinedVariable
 
-    def locateByAttr1(self, attr1: typing.Union[typing.Iterable[str], str]) -> typing.Generator[bytes, None,None]:
+    def locateByAttr1(self, attr1: typing.Union[typing.Iterable[str], str]) -> typing.Iterable[bytes]:
         if isinstance(attr1, str):
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
         else:
@@ -151,7 +151,7 @@ class Storage:
         for v in query:
             yield typing.cast(bytes, encoders.decode(v.data, 'base64'))
 
-    def filter(self, attr1: typing.Optional[str], forUpdate: bool = False):
+    def filter(self, attr1: typing.Optional[str], forUpdate: bool = False) -> typing.Iterable[typing.Tuple[str, bytes, str]]:
         if attr1 is None:
             query = DBStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
@@ -161,14 +161,14 @@ class Storage:
             query = query.select_for_update()
 
         for v in query:  # @UndefinedVariable
-            yield (v.key, encoders.decode(v.data, 'base64'), v.attr1)
+            yield (v.key, typing.cast(bytes, encoders.decode(v.data, 'base64')), v.attr1)
 
-    def filterPickle(self, attr1: typing.Optional[str] = None, forUpdate: bool = False):
+    def filterPickle(self, attr1: typing.Optional[str] = None, forUpdate: bool = False) -> typing.Iterable[typing.Tuple[str, typing.Any, str]]:
         for v in self.filter(attr1, forUpdate):
             yield (v[0], pickle.loads(v[1]), v[2])
 
     @staticmethod
-    def delete(owner: typing.Optional[str] = None):
+    def delete(owner: typing.Optional[str] = None) -> None:
         if owner is None:
             objects = DBStorage.objects.all()  # @UndefinedVariable
         else:

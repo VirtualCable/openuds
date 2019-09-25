@@ -97,7 +97,7 @@ class gui:
     DISPLAY_TAB: typing.ClassVar[str] = ugettext_noop('Display')
 
     # : Static Callbacks simple registry
-    callbacks: typing.Dict[str, typing.Callable] = {}
+    callbacks: typing.Dict[str, typing.Callable[[typing.Dict[str, str]], typing.List[typing.Dict[str, str]]]] = {}
 
     # Helpers
     @staticmethod

@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from uds.core.ui import gui
 from uds.REST import Handler, RequestError, NotFound
@@ -46,7 +47,7 @@ class Callback(Handler):
     authenticated = True
     needs_staff = True
 
-    def get(self):
+    def get(self) -> typing.Any:
         if len(self._args) != 1:
             raise RequestError('Invalid Request')
 

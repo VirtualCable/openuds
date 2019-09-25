@@ -83,7 +83,7 @@ class Environment:
         """
         return self._storage
 
-    def idGenerators(self, generatorId) -> typing.Optional[UniqueIDGenerator]:
+    def idGenerators(self, generatorId: str) -> UniqueIDGenerator:
         """
         The idea of generator of id is to obtain at some moment Ids with a proper generator.
         If the environment do not contains generators of id, this method will return None.
@@ -91,7 +91,9 @@ class Environment:
         @param generatorId: Id of the generator to obtain
         @return: Generator for that id, or None if no generator for that id is found
         """
-        return None if not self._idGenerators else self._idGenerators.get(generatorId, None)
+        if not self._idGenerators or generatorId not in self._idGenerators:
+            raise Exception('No generator found for {}'.format(generatorId))
+        return self._idGenerators[generatorId]
 
     @property
     def key(self) -> str:
@@ -210,7 +212,7 @@ class Environmentable:
         """
         return self._env.storage
 
-    def idGenerators(self, generatorId) -> typing.Optional[UniqueIDGenerator]:
+    def idGenerators(self, generatorId: str) -> UniqueIDGenerator:
         """
         Utility method to access the id generator of the environment containe by this object
 
