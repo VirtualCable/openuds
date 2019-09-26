@@ -134,13 +134,14 @@ class PublicationFinishChecker(DelayedTask):
         Return True if it has to continue checking, False if finished
         """
         try:
-            prevState = publication.state
-            checkLater = False
+            prevState: str = publication.state
+            checkLater: bool = False
             if State.isFinished(state):
                 # Now we mark, if it exists, the previous usable publication as "Removable"
                 if State.isPreparing(prevState):
+                    old: ServicePoolPublication
                     for old in publication.deployed_service.publications.filter(state=State.USABLE):
-                        old.setstate(State.REMOVABLE)
+                        old.setState(State.REMOVABLE)
 
                         osm = publication.deployed_service.osmanager
                         # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
