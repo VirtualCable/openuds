@@ -34,12 +34,10 @@ import re
 import logging
 import typing
 
-from uds.core.module import Module
 from django.utils.translation import gettext as _
-
+from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
-
 
 def validateNumeric(
         numericStr: str,
@@ -79,24 +77,24 @@ def validateNumeric(
     return numericStr
 
 
-def validatePort(portStr: str, returnAsInteger: bool = True) -> typing.Union[str, int]:
+def validatePort(portStr: str) -> int:
     """
     Validates that a port number is valid
     :param portStr: port to validate, as string
     :param returnAsInteger: if True, returns value as integer, if not, as string
     :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
     """
-    return validateNumeric(portStr, minValue=0, maxValue=65535, returnAsInteger=returnAsInteger, fieldName='Port')
+    return typing.cast(int, validateNumeric(portStr, minValue=0, maxValue=65535, returnAsInteger=True, fieldName='Port'))
 
 
-def validateTimeout(timeOutStr, returnAsInteger: bool = True) -> typing.Union[str, int]:
+def validateTimeout(timeOutStr) -> int:
     """
     Validates that a timeout value is valid
     :param timeOutStr: timeout to validate
     :param returnAsInteger: if True, returns value as integer, if not, as string
     :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
     """
-    return validateNumeric(timeOutStr, minValue=0, returnAsInteger=returnAsInteger, fieldName='Timeout')
+    return typing.cast(int, validateNumeric(timeOutStr, minValue=0, returnAsInteger=True, fieldName='Timeout'))
 
 
 def validateMacRange(macRange: str) -> str:

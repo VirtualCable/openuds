@@ -117,8 +117,8 @@ class OGProvider(ServiceProvider):
         self._api = None
 
         if values is not None:
-            self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
-            logger.debug('Endpoint: {}'.format(self.endpoint))
+            self.timeout.value = validators.validateTimeout(self.timeout.value)
+            logger.debug('Endpoint: %s', self.endpoint)
 
             try:
                 request = values['_request']

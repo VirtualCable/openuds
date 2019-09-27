@@ -129,7 +129,7 @@ class ProviderLegacy(ServiceProvider):
         # Just reset _api connection variable
 
         if values is not None:
-            self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
+            self.timeout.value = validators.validateTimeout(self.timeout.value)
 
     def api(self, projectId=None, region=None) -> openStack.Client:
         return openStack.Client(

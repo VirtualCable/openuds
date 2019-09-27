@@ -81,7 +81,7 @@ class gui:
     """
     # Values dict type
     ValuesType = typing.Optional[typing.Dict[str, str]]
-    ValuesDictType = typing.Dict[str, typing.Union[str, typing.List[str], typing.List[typing.Dict[str, str]]]]
+    ValuesDictType = typing.Dict[str, typing.Union[str, bool, typing.List[str], typing.List[typing.Dict[str, str]]]]
     ChoiceType = typing.Dict[str, str]
 
     # : True string value
@@ -402,6 +402,10 @@ class gui:
             self._data['maxValue'] = int(options.get('maxValue', '987654321'))
 
             self._type(gui.InputField.NUMERIC_TYPE)
+
+        def _setValue(self, value: typing.Any):
+            # Internally stores an string
+            super()._setValue(str(value))
 
         def num(self) -> int:
             """

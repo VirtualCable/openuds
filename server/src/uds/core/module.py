@@ -98,7 +98,7 @@ class Module(UserInterface, Environmentable, Serializable):
     module.
     """
     # Types
-    ValuesType = typing.Optional[typing.Dict[str, str]]
+    ValuesType = typing.Optional[typing.Dict[str, typing.Any]]  # values type value will be str or list[str] int most cases
 
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module

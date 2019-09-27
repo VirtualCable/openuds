@@ -144,7 +144,7 @@ class Provider(ServiceProvider):
 
         if values is not None:
             self.macsRange.value = validators.validateMacRange(self.macsRange.value)
-            self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
+            self.timeout.value = validators.validateTimeout(self.timeout.value)
             logger.debug(self.host.value)
 
     def testConnection(self):

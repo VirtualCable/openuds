@@ -107,7 +107,7 @@ class Provider(ServiceProvider):
         self._api = None
 
         if values is not None:
-            self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
+            self.timeout.value = validators.validateTimeout(self.timeout.value)
             logger.debug('Endpoint: %s', self.endpoint)
 
     @property

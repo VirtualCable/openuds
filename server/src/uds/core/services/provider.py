@@ -111,12 +111,12 @@ class ServiceProvider(Module):
 
     # : This defines the maximum number of concurrent services that should be in state "in preparation" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
-    # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
+    # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
     maxPreparingServices: typing.Any = None
 
     # : This defines the maximum number of concurrent services that should be in state "removing" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_REMOVING_SERVICES
-    # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
+    # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
     maxRemovingServices: typing.Any = None
 
     # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
