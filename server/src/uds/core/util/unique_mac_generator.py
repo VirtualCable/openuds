@@ -40,28 +40,26 @@ logger = logging.getLogger(__name__)
 
 class UniqueMacGenerator(UniqueIDGenerator):
 
-    def __init__(self, owner):
-        super(UniqueMacGenerator, self).__init__('mac', owner, '\tmac')
+    def __init__(self, owner: str):
+        super().__init__('mac', owner, '\tmac')
 
-    def __toInt(self, mac):
+    def __toInt(self, mac: str) -> int:
         return int(mac.replace(':', ''), 16)
 
-    def __toMac(self, seq):
+    def __toMac(self, seq: int) -> str:
         if seq == -1:  # No mor macs available
             return '00:00:00:00:00:00'
         return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
 
     # noinspection PyMethodOverriding
-    def get(self, macRange):  # pylint: disable=arguments-differ
+    def get(self, macRange: str) -> str:  # type: ignore # pylint: disable=arguments-differ
         firstMac, lastMac = macRange.split('-')
-        firstMac = self.__toInt(firstMac)
-        lastMac = self.__toInt(lastMac)
-        return self.__toMac(super(UniqueMacGenerator, self).get(firstMac, lastMac))
+        return self.__toMac(super().get(self.__toInt(firstMac), self.__toInt(lastMac)))
 
-    def transfer(self, mac, toUMgen):  # pylint: disable=arguments-differ
-        super(UniqueMacGenerator, self).transfer(self.__toInt(mac), toUMgen)
+    def transfer(self, mac: str, toUMgen: 'UniqueMacGenerator'):  # type: ignore # pylint: disable=arguments-differ
+        super().transfer(self.__toInt(mac), toUMgen)
 
-    def free(self, mac):  # pylint: disable=arguments-differ
-        super(UniqueMacGenerator, self).free(self.__toInt(mac))
+    def free(self, mac: str):  # pylint: disable=arguments-differ
+        super().free(self.__toInt(mac))
 
     # Release is inherited, no mod needed

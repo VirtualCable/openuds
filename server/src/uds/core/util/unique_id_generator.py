@@ -124,7 +124,7 @@ class UniqueIDGenerator:
         # logger.debug('Seq: {}'.format(seq))
         return seq
 
-    def transfer(self, seq, toUidGen) -> bool:
+    def transfer(self, seq: int, toUidGen: 'UniqueIDGenerator') -> bool:
         self.__filter(
             0, forUpdate=True
         ).filter(

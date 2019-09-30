@@ -119,14 +119,11 @@ class Storage:
         except Exception:
             return None
 
-    def remove(self, skey: typing.Union[str, bytes]) -> None:
+    def remove(self, skey: typing.Union[typing.Iterable[typing.Union[str, bytes]], str, bytes]) -> None:
+        keys: typing.Iterable[typing.Union[str, bytes]] = [skey] if isinstance(skey, (str, bytes)) else skey
         try:
-            if isinstance(skey, (list, tuple)):
-                # Process several keys at once
-                DBStorage.objects.filter(key__in=[self.__getKey(k) for k in skey])
-            else:
-                key = self.__getKey(skey)
-                DBStorage.objects.filter(key=key).delete()  # @UndefinedVariable
+            # Process several keys at once
+            DBStorage.objects.filter(key__in=[self.__getKey(k) for k in keys]).delete()
         except Exception:
             pass
 

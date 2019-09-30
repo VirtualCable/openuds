@@ -576,6 +576,14 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         base method does nothing
         """
 
+    def getConnectionData(self) -> typing.Optional[typing.Tuple[str, str, str]]:
+        """
+        This method is only invoked on some user deployments that needs to provide
+        Credentials based on deployment itself
+        Returns an username, password and host
+        """
+        return None
+
     def __str__(self):
         """
         Mainly used for debugging purposses
