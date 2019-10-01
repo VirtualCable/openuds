@@ -30,16 +30,23 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from uds.core.services import UserDeployment
-from uds.core.util.state import State
-import logging
 import codecs
+import logging
+import typing
+
+from uds.core import services
+from uds.core.util.state import State
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from .service import ServiceOne
+    from .publication import SamplePublication
 
 logger = logging.getLogger(__name__)
 
 
-class SampleUserDeploymentTwo(UserDeployment):
+class SampleUserDeploymentTwo(services.UserDeployment):
     """
     This class generates the user consumable elements of the service tree.
 

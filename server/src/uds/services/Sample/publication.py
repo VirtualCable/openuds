@@ -30,14 +30,18 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
 
 from django.utils.translation import ugettext as _
 from uds.core.services import Publication
 from uds.core.util.state import State
-from datetime import datetime
-import logging
 
 logger = logging.getLogger(__name__)
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .service import ServiceOne, ServiceTwo
 
 
 class SamplePublication(Publication):
@@ -79,6 +83,9 @@ class SamplePublication(Publication):
     """
 
     suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
+    _name: str = ''
+    _reason: str = ''
+    _number: int = -1
 
     def initialize(self):
         """
@@ -104,9 +111,9 @@ class SamplePublication(Publication):
         """
         deserializes the data and loads it inside instance.
         """
-        logger.debug('Data: {0}'.format(data))
+        logger.debug('Data: %s', data)
         vals = data.decode('utf8').split('\t')
-        logger.debug('Values: {0}'.format(vals))
+        logger.debug('Values: %s', vals)
         self._name = vals[0]
         self._reason = vals[1]
         self._number = int(vals[2])

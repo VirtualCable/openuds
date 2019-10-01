@@ -30,20 +30,26 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.services import Service
-from .SamplePublication import SamplePublication
-from .SampleUserDeploymentOne import SampleUserDeploymentOne
-from .SampleUserDeploymentTwo import SampleUserDeploymentTwo
-
+from uds.core import services
 from uds.core.ui import gui
 
-import logging
+from .publication import SamplePublication
+from .deployment_one import SampleUserDeploymentOne
+from .deployment_two import SampleUserDeploymentTwo
+
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+    from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
 
-class ServiceOne(Service):
+class ServiceOne(services.Service):
     """
     Basic service, the first part (variables) include the description of the service.
 
@@ -114,33 +120,37 @@ class ServiceOne(Service):
     # If we don't indicate an order, the output order of fields will be
     # "random"
 
-    colour = gui.ChoiceField(order=1,
-                 label=_('Colour'),
-                 tooltip=_('Colour of the field'),
-                 # In this case, the choice can have none value selected by default
-                 required=True,
-                 values=[ gui.choiceItem('red', 'Red'),
-                     gui.choiceItem('green', 'Green'),
-                     gui.choiceItem('blue', 'Blue'),
-                     gui.choiceItem('nonsense', 'Blagenta')
-                 ],
-                 defvalue='1'  # Default value is the ID of the choicefield
-             )
+    colour = gui.ChoiceField(
+        order=1,
+        label=_('Colour'),
+        tooltip=_('Colour of the field'),
+        # In this case, the choice can have none value selected by default
+        required=True,
+        values=[
+            gui.choiceItem('red', 'Red'),
+            gui.choiceItem('green', 'Green'),
+            gui.choiceItem('blue', 'Blue'),
+            gui.choiceItem('nonsense', 'Blagenta')
+        ],
+        defvalue='1'  # Default value is the ID of the choicefield
+    )
 
-    passw = gui.PasswordField(order=2,
-                label=_('Password'),
-                tooltip=_('Password for testing purposes'),
-                required=True,
-                defvalue='1234'  # : Default password are nonsense?? :-)
-            )
+    passw = gui.PasswordField(
+        order=2,
+        label=_('Password'),
+        tooltip=_('Password for testing purposes'),
+        required=True,
+        defvalue='1234'  # : Default password are nonsense?? :-)
+    )
 
-    baseName = gui.TextField(order=3,
-                          label=_('Services names'),
-                          tooltip=_('Base name for this user services'),
-                          # In this case, the choice can have none value selected by default
-                          required=True,
-                          defvalue=''  # Default value is the ID of the choicefield
-             )
+    baseName = gui.TextField(
+        order=3,
+        label=_('Services names'),
+        tooltip=_('Base name for this user services'),
+        # In this case, the choice can have none value selected by default
+        required=True,
+        defvalue=''  # Default value is the ID of the choicefield
+    )
 
     def initialize(self, values):
         """
@@ -155,7 +165,7 @@ class ServiceOne(Service):
         # so we only need to validate params if values is not None
         if values is not None:
             if self.colour.value == 'nonsense':
-                raise Service.ValidationException('The selected colour is invalid!!!')
+                raise services.Service.ValidationException('The selected colour is invalid!!!')
 
 
     # Services itself are non testeable right now, so we don't even have
@@ -189,7 +199,7 @@ class ServiceOne(Service):
 
 
 
-class ServiceTwo(Service):
+class ServiceTwo(services.Service):
     """
     Just a second service, no comments here (almost same that ServiceOne
     """

@@ -34,11 +34,12 @@ UDS Service modules interfaces and classes.
 """
 from .transport import Transport
 from .transport import DIRECT_GROUP, TUNNELED_GROUP
+from .transport_factory import TransportsFactory
 from . import protocols
 
-def factory():
+
+def factory() -> TransportsFactory:
     """
     Returns factory for register/access to service providers
     """
-    from .transport_factory import TransportsFactory
     return TransportsFactory.factory()

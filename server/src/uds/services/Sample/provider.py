@@ -32,18 +32,24 @@ Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
+
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.services import ServiceProvider
-from .SampleService import ServiceOne, ServiceTwo
+from uds.core import services
 from uds.core.ui import gui
+from .service import ServiceOne, ServiceTwo
 
-import logging
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+    from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
 
 
-class Provider(ServiceProvider):
+class Provider(services.ServiceProvider):
     """
     This class represents the sample services provider
 
@@ -87,14 +93,16 @@ class Provider(ServiceProvider):
 
     # : Remote host. Here core will translate label and tooltip, remember to
     # : mark them as _ using ugettext_noop.
-    remoteHost = gui.TextField(oder=1,
+    remoteHost = gui.TextField(
+        oder=1,
         length=64,
         label=_('Remote host'),
         tooltip=_('This fields contains a remote host'),
         required=True,
     )
     # : Name of your pet (sample, not really needed :-) )
-    petName = gui.TextField(order=2,
+    petName = gui.TextField(
+        order=2,
         length=32,
         label=_('Your pet\'s name'),
         tooltip=_('If you like, write the name of your pet'),
@@ -104,7 +112,8 @@ class Provider(ServiceProvider):
     # : Age of Methuselah (matusalén in spanish)
     # : in Spain there is a well-known to say that something is very old,
     # : "Tiene mas años que matusalén"(is older than Methuselah)
-    methAge = gui.NumericField(order=3,
+    methAge = gui.NumericField(
+        order=3,
         length=4,  # That is, max allowed value is 9999
         label=_('Age of Methuselah'),
         tooltip=_('If you know it, please, tell me!!!'),
@@ -113,14 +122,16 @@ class Provider(ServiceProvider):
     )
 
     # : Is Methuselah istill alive?
-    methAlive = gui.CheckBoxField(order=4,
+    methAlive = gui.CheckBoxField(
+        order=4,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
         required=True,  # : Also means nothing. Check boxes has always a value
         defvalue=gui.TRUE  # : By default, at new item, check this
     )
 
-    methText = gui.TextField(order=5,
+    methText = gui.TextField(
+        order=5,
         length=512,
         multiline=5,
         label=_('Text area'),
@@ -130,7 +141,7 @@ class Provider(ServiceProvider):
     )
 
     # There is more fields type, but not here the best place to cover it
-    def initialize(self, values=None):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields, that is more than
         enought for most providers. (We simply need to store data provided by user
@@ -143,8 +154,8 @@ class Provider(ServiceProvider):
         # If you say meth is alive, you are wrong!!! (i guess..)
         # values are only passed from administration client. Internals
         # instantiations are always empty.
-        if values is not None and self.methAlive.isTrue():
-            raise ServiceProvider.ValidationException(_('Methuselah is not alive!!! :-)'))
+        if values and self.methAlive.isTrue():
+            raise services.ServiceProvider.ValidationException(_('Methuselah is not alive!!! :-)'))
 
     # Marshal and unmarshal are defaults ones, also enought
 
@@ -152,7 +163,7 @@ class Provider(ServiceProvider):
     # base class so we don't have to mess with all those things...
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'Environment', data: typing.Dict[str, str]) -> typing.List[typing.Any]:
         """
         Create your test method here so the admin can push the "check" button
         and this gets executed.
@@ -176,9 +187,8 @@ class Provider(ServiceProvider):
         try:
             # We instantiate the provider, but this may fail...
             instance = Provider(env, data)
-            logger.debug('Methuselah has {0} years and is {1} :-)'
-                         .format(instance.methAge.value, instance.methAlive.value))
-        except ServiceProvider.ValidationException as e:
+            logger.debug('Methuselah has %s years and is %s :-)', instance.methAge.value, instance.methAlive.value)
+        except services.ServiceProvider.ValidationException as e:
             # If we say that meth is alive, instantiation will
             return [False, str(e)]
         except Exception as e:
@@ -191,15 +201,15 @@ class Provider(ServiceProvider):
     #
     # From now onwards, we implement our own methods, that will be used by,
     # for example, services derived from this provider
-    def host(self):
+    def host(self) -> str:
         """
         Sample method, in fact in this we just return
         the value of host field, that is an string
         """
         return self.remoteHost.value
 
-    def methYears(self):
+    def methYears(self) -> int:
         """
         Another sample return, it will in fact return the Methuselah years
         """
-        return self.methAge.value()
+        return self.methAge.num()

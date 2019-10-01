@@ -40,5 +40,4 @@ For this, we must simply import the class at __init__, UDS will take care
 of the rest
 """
 
-from .SampleProvider import Provider
-
+from .provider import Provider

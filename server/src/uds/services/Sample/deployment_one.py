@@ -30,15 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from uds.core.services import UserDeployment
-from uds.core.util.state import State
 import logging
+import typing
+
+from uds.core import services
+from uds.core.util.state import State
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from .service import ServiceOne
+    from .publication import SamplePublication
 
 logger = logging.getLogger(__name__)
 
 
-class SampleUserDeploymentOne(UserDeployment):
+class SampleUserDeploymentOne(services.UserDeployment):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -72,17 +79,16 @@ class SampleUserDeploymentOne(UserDeployment):
     suggestedTime = 5
 
     # Serializable needed methods
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Does nothing right here, we will use environment storage in this sample
         """
         return b''
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are kept at environment storage
         """
-        pass
 
     def getName(self):
         """

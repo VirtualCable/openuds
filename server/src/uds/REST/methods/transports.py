@@ -64,48 +64,49 @@ class Transports(ModelHandler):
         return transports.factory().providers().values()
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        try:
-            field = self.addDefaultFields(transports.actory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority'])
-            field = self.addField(field, {
-                'name': 'nets_positive',
-                'value': True,
-                'label': ugettext('Network access'),
-                'tooltip': ugettext('If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'),
-                'type': 'checkbox',
-                'order': 100,  # At end
-            })
-            field = self.addField(field, {
-                'name': 'networks',
-                'value': [],
-                'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),
-                'label': ugettext('Networks'),
-                'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
-                'type': 'multichoice',
-                'order': 101
-            })
-            field = self.addField(field, {
-                'name': 'allowed_oss',
-                'value': [],
-                'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),
-                'label': ugettext('Allowed Devices'),
-                'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
-                'type': 'multichoice',
-                'order': 102
-            })
-            field = self.addField(field, {
-                'name': 'pools',
-                'value': [],
-                'values': [{'id': x.id, 'text': x.name} for x in ServicePool.objects.all().order_by('name')],
-                'label': ugettext('Service Pools'),
-                'tooltip': ugettext('Currently assigned services pools'),
-                'type': 'multichoice',
-                'order': 103
-            })
+        transport = transports.factory().lookup(type_)
 
-            return field
-
-        except Exception:
+        if not transport:
             raise self.invalidItemException()
+
+        field = self.addDefaultFields(transport.guiDescription(), ['name', 'comments', 'tags', 'priority'])
+        field = self.addField(field, {
+            'name': 'nets_positive',
+            'value': True,
+            'label': ugettext('Network access'),
+            'tooltip': ugettext('If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'),
+            'type': 'checkbox',
+            'order': 100,  # At end
+        })
+        field = self.addField(field, {
+            'name': 'networks',
+            'value': [],
+            'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),
+            'label': ugettext('Networks'),
+            'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
+            'type': 'multichoice',
+            'order': 101
+        })
+        field = self.addField(field, {
+            'name': 'allowed_oss',
+            'value': [],
+            'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),
+            'label': ugettext('Allowed Devices'),
+            'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
+            'type': 'multichoice',
+            'order': 102
+        })
+        field = self.addField(field, {
+            'name': 'pools',
+            'value': [],
+            'values': [{'id': x.id, 'text': x.name} for x in ServicePool.objects.all().order_by('name')],
+            'label': ugettext('Service Pools'),
+            'tooltip': ugettext('Currently assigned services pools'),
+            'type': 'multichoice',
+            'order': 103
+        })
+
+        return field
 
     def item_as_dict(self, item: Transport) -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
