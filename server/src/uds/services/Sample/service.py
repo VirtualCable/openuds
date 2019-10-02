@@ -152,7 +152,7 @@ class ServiceOne(services.Service):
         defvalue=''  # Default value is the ID of the choicefield
     )
 
-    def initialize(self, values):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         We check here form values to see if they are valid.
 
@@ -163,7 +163,7 @@ class ServiceOne(services.Service):
         # We don't need to check anything, bat because this is a sample, we do
         # As in provider, we receive values only at new Service creation,
         # so we only need to validate params if values is not None
-        if values is not None:
+        if values:
             if self.colour.value == 'nonsense':
                 raise services.Service.ValidationException('The selected colour is invalid!!!')
 
@@ -178,7 +178,7 @@ class ServiceOne(services.Service):
     # From now onwards, we implement our own methods, that will be used by,
     # for example, services derived from this provider
 
-    def getColour(self):
+    def getColour(self) -> str:
         """
         Simply returns colour, for deployed user services.
 
@@ -186,15 +186,13 @@ class ServiceOne(services.Service):
         """
         return self.colour.value
 
-    def getPassw(self):
+    def getPassw(self) -> str:
         """
         Simply returns passwd, for deloyed user services
         """
         return self.passw.value
 
-    def getBaseName(self):
-        """
-        """
+    def getBaseName(self) -> str:
         return self.baseName.value
 
 
@@ -239,7 +237,7 @@ class ServiceTwo(services.Service):
 
         # No checks here
 
-    def getNames(self):
+    def getNames(self) -> str:
         """
         For using at deployed services, really nothing
         """

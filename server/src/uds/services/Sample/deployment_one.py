@@ -90,7 +90,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
         Does nothing here also, all data are kept at environment storage
         """
 
-    def getName(self):
+    def getName(self) -> str:
         """
         We override this to return a name to display. Default implementation
         (in base class), returns getUniqueIde() value
@@ -111,16 +111,15 @@ class SampleUserDeploymentOne(services.UserDeployment):
         a new unique name, so we keep the first generated name cached and don't
         generate more names. (Generator are simple utility classes)
         """
-        name = self.storage.readData('name')
+        name: str = typing.cast(str, self.storage.readData('name'))
         if name is None:
-            name = self.nameGenerator().get(self.service().getBaseName()
-                            +'-' + self.service().getColour(), 3)
+            name = self.nameGenerator().get(self.service().getBaseName() + '-' + self.service().getColour(), 3)
             # Store value for persistence
             self.storage.saveData('name', name)
 
         return name
 
-    def setIp(self, ip):
+    def setIp(self, ip: str) -> None:
         """
         In our case, there is no OS manager associated with this, so this method
         will never get called, but we put here as sample.
@@ -132,9 +131,9 @@ class SampleUserDeploymentOne(services.UserDeployment):
         :note: This IP is the IP of the "consumed service", so the transport can
                access it.
         """
-        self.storage.saveData('ip', str(ip))
+        self.storage.saveData('ip', ip)
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
@@ -144,13 +143,13 @@ class SampleUserDeploymentOne(services.UserDeployment):
         The get method of a mac generator takes one param, that is the mac range
         to use to get an unused mac.
         """
-        mac = self.storage.readData('mac')
+        mac = typing.cast(str, self.storage.readData('mac'))
         if mac is None:
             mac = self.macGenerator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
             self.storage.saveData('mac', mac)
         return mac
 
-    def getIp(self):
+    def getIp(self) -> str:
         """
         We need to implement this method, so we can return the IP for transports
         use. If no IP is known for this service, this must return None
@@ -168,12 +167,12 @@ class SampleUserDeploymentOne(services.UserDeployment):
                show the IP to the administrator, this method will get called
 
         """
-        ip = self.storage.readData('ip')
+        ip = typing.cast(str, self.storage.readData('ip'))
         if ip is None:
             ip = '192.168.0.34'  # Sample IP for testing purposses only
         return ip
 
-    def setReady(self):
+    def setReady(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -206,7 +205,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
         # In our case, the service is always ready
         return State.FINISHED
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
 
@@ -243,7 +242,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
 
         return State.RUNNING
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Our deployForUser method will initiate the consumable service deployment,
         but will not finish it.
@@ -265,8 +264,10 @@ class SampleUserDeploymentOne(services.UserDeployment):
         destroying, and cancel will simply invoke destroy
         """
         import random
-
-        count = int(self.storage.readData('count')) + 1
+        countStr: typing.Optional[str] = typing.cast(str, self.storage.readData('count'))
+        count: int = 0
+        if countStr:
+            count = int(countStr) + 1
         # Count is always a valid value, because this method will never get
         # called before deployForUser, deployForCache, destroy or cancel.
         # In our sample, we only use checkState in case of deployForUser,
@@ -282,7 +283,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
         self.storage.saveData('count', str(count))
         return State.RUNNING
 
-    def finish(self):
+    def finish(self) -> None:
         """
         Invoked when the core notices that the deployment of a service has finished.
         (No matter wether it is for cache or for an user)
@@ -295,7 +296,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
         # Note that this is not really needed, is just a sample of storage use
         self.storage.remove('count')
 
-    def userLoggedIn(self, user):
+    def userLoggedIn(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
@@ -310,9 +311,9 @@ class SampleUserDeploymentOne(services.UserDeployment):
         The user provided is just an string, that is provided by actor.
         """
         # We store the value at storage, but never get used, just an example
-        self.storage.saveData('user', user)
+        self.storage.saveData('user', username)
 
-    def userLoggedOut(self, user):
+    def userLoggedOut(self, username) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.
@@ -329,7 +330,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
         # We do nothing more that remove the user
         self.storage.remove('user')
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         Returns the reason of the error.
 
@@ -337,9 +338,9 @@ class SampleUserDeploymentOne(services.UserDeployment):
         for it, and it will be asked everytime it's needed to be shown to the
         user (when the administation asks for it).
         """
-        return self.storage.readData('error') or 'No error'
+        return typing.cast(str, self.storage.readData('error')) or 'No error'
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -350,7 +351,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
         """
         return State.FINISHED
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.

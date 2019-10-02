@@ -77,7 +77,23 @@ class SampleUserDeploymentTwo(services.UserDeployment):
     # : Recheck every five seconds by default (for task methods)
     suggestedTime = 2
 
-    def initialize(self):
+    _name: str
+    _ip: str
+    _mac: str
+    _error: str
+    _count: int
+
+    # Utility overrides for type checking...
+    def service(self) -> 'ServiceOne':
+        return typing.cast('ServiceOne', super().service())
+
+    def publication(self) -> 'SamplePublication':
+        pub = super().publication()
+        if pub is None:
+            raise Exception('No publication for this element!')
+        return typing.cast('SamplePublication', pub)
+
+    def initialize(self) -> None:
         """
         Initialize default attributes values here. We can do whatever we like,
         but for this sample this is just right...
@@ -89,7 +105,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         self._count = 0
 
     # Serializable needed methods
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Marshal own data, in this sample we will marshal internal needed
         attributes.
@@ -105,21 +121,21 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         """
         data = '\t'.join(['v1', self._name, self._ip, self._mac, self._error,
                           str(self._count)])
-        return codecs.encode(data.encode('utf8'), 'zip')
+        return codecs.encode(data.encode(), encoding='zip')  # type: ignore
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         We unmarshal the content.
         """
-        data = codecs.decode(data, 'zip').decode('utf8').split('\t')
+        values: typing.List[str] = codecs.decode(data, 'zip').decode().split('\t')  # type: ignore
         # Data Version check
         # If we include some new data at some point in a future, we can
         # add "default" values at v1 check, and load new values at 'v2' check.
-        if data[0] == 'v1':
-            self._name, self._ip, self._mac, self._error, count = data[1:]
+        if values[0] == 'v1':
+            self._name, self._ip, self._mac, self._error, count = values[1:]
             self._count = int(count)
 
-    def getName(self):
+    def getName(self) -> str:
         """
         We override this to return a name to display. Default implementation
         (in base class), returns getUniqueIde() value
@@ -141,12 +157,11 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         generate more names. (Generator are simple utility classes)
         """
         if self._name == '':
-            self._name = self.nameGenerator().get(self.publication().getBaseName(),
-                                                   3)
+            self._name = self.nameGenerator().get(self.publication().getBaseName(), 3)
         # self._name will be stored when object is marshaled
         return self._name
 
-    def setIp(self, ip):
+    def setIp(self, ip: str) -> None:
         """
         In our case, there is no OS manager associated with this, so this method
         will never get called, but we put here as sample.
@@ -160,7 +175,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         """
         self._ip = ip
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
@@ -188,7 +203,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
             self._mac = self.macGenerator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
         return self._mac
 
-    def getIp(self):
+    def getIp(self) -> str:
         """
         We need to implement this method, so we can return the IP for transports
         use. If no IP is known for this service, this must return None
@@ -210,7 +225,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
             return '192.168.0.34'  # Sample IP for testing purposes only
         return self._ip
 
-    def setReady(self):
+    def setReady(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -243,7 +258,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         # In our case, the service is always ready
         return State.FINISHED
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
 
@@ -282,7 +297,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
 
         return State.RUNNING
 
-    def deployForCache(self, cacheLevel):
+    def deployForCache(self, cacheLevel: int) -> str:
         """
         Deploys a user deployment as cache.
 
@@ -301,37 +316,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         self._count = 0
         return State.RUNNING
 
-    def moveToCache(self, newLevel):
-        """
-        This method is invoked whenever the core needs to move from the current
-        cache level to a new cache level an user deployment.
-
-        This is a task method. As that, the expected return values are
-        State values RUNNING, FINISHED or ERROR.
-
-        We only provide newLevel, because there is only two cache levels, so if
-        newLevel is L1, the actual is L2, and if it is L2, the actual is L1.
-
-        Actually there is no possibility to move assigned services again back to
-        cache. If some service needs that kind of functionallity, this must be
-        provided at service level (for example, when doing publishing creating
-        a number of services that will be used, released and reused by users).
-
-        Also, user deployments that are at cache level 2 will never get directly
-        assigned to user. First, it will pass to L1 and then it will get assigned.
-
-        A good sample of a real implementation of this is moving a virtual machine
-        from a "suspended" state to  "running" state to assign it to an user.
-
-        In this sample, there is L2 cache also, but moving from L1 to L2 and
-        from L2 to L1 is doing really nothing, so this method will do nothing.
-
-        In a real scenario, we will, for example, suspend or resume virtual machine
-        and, return State.RUNNING and at checkState check if this task is completed.
-        """
-        pass
-
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Our deployForUser method will initiate the consumable service deployment,
         but will not finish it.
@@ -386,7 +371,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         # We set count to 0, not needed but for sample purposes
         self._count = 0
 
-    def userLoggedIn(self, user):
+    def userLoggedIn(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
@@ -401,9 +386,9 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         The user provided is just an string, that is provided by actors.
         """
         # We store the value at storage, but never get used, just an example
-        self.storage.saveData('user', user)
+        self.storage.saveData('user', username)
 
-    def userLoggedOut(self, user):
+    def userLoggedOut(self, username) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.
@@ -420,7 +405,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         # We do nothing more that remove the user
         self.storage.remove('user')
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         Returns the reason of the error.
 
@@ -435,7 +420,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         """
         return self._error
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -446,7 +431,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         """
         return State.FINISHED
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.

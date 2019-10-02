@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import ugettext as _
-from uds.core.services import Publication
+from uds.core import services
 from uds.core.util.state import State
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ if typing.TYPE_CHECKING:
     from .service import ServiceOne, ServiceTwo
 
 
-class SamplePublication(Publication):
+class SamplePublication(services.Publication):
     """
     This class shows how a publication is developed.
 
@@ -87,7 +87,7 @@ class SamplePublication(Publication):
     _reason: str = ''
     _number: int = -1
 
-    def initialize(self):
+    def initialize(self) -> None:
         """
         This method will be invoked by default __init__ of base class, so it gives
         us the oportunity to initialize whataver we need here.
@@ -101,13 +101,13 @@ class SamplePublication(Publication):
         self._reason = ''  # No error, no reason for it
         self._number = 1
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
         return '\t'.join([self._name, self._reason, str(self._number)]).encode('utf8')
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
@@ -118,7 +118,7 @@ class SamplePublication(Publication):
         self._reason = vals[1]
         self._number = int(vals[2])
 
-    def publish(self):
+    def publish(self) -> str:
         """
         This method is invoked whenever the administrator requests a new publication.
 
@@ -175,7 +175,7 @@ class SamplePublication(Publication):
         self._reason = ''
         return State.RUNNING
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Our publish method will initiate publication, but will not finish it.
         So in our sample, wi will only check if _number reaches 0, and if so
@@ -204,10 +204,9 @@ class SamplePublication(Publication):
 
         if self._number <= 0:
             return State.FINISHED
-        else:
-            return State.RUNNING
+        return State.RUNNING
 
-    def finish(self):
+    def finish(self) -> None:
         """
         Invoked when Publication manager noticed that the publication has finished.
         This give us the oportunity of cleaning up things (as stored vars, etc..),
@@ -221,7 +220,7 @@ class SamplePublication(Publication):
         # Make simply a random string
         self._name = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or checkState
@@ -231,7 +230,7 @@ class SamplePublication(Publication):
         """
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         This is called once a publication is no more needed.
 
@@ -248,7 +247,7 @@ class SamplePublication(Publication):
         # We do not do anything else to destroy this instance of publication
         return State.FINISHED
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         Invoked for canceling the current operation.
         This can be invoked directly by an administration or by the clean up
@@ -268,7 +267,7 @@ class SamplePublication(Publication):
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def getBaseName(self):
+    def getBaseName(self) -> str:
         """
         This sample method (just for this sample publication), provides
         the name generater for this publication. This is just a sample, and
