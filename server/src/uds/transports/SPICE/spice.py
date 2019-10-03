@@ -99,6 +99,9 @@ class SPICETransport(BaseSpiceTransport):
         if osName is None:
             return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
+        # if sso:  # If SSO requested, and when supported by platform
+        #     userServiceInstance.desktopLogin(user, password, '')
+
         sp = {
             'as_file': r.as_file,
         }

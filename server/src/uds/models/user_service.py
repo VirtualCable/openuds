@@ -457,7 +457,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         The number of properties per item is expected to be "relatively small" (no more than 5 items?)
         """
         dct: typing.Dict[str, str] = {}
-        v: UserServiceProperty
+        v: 'UserServiceProperty'
         for v in self.properties.all():
             dct[v.name] = v.value
         return dct

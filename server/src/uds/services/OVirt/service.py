@@ -30,24 +30,30 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from django.utils.translation import ugettext_noop as _, ugettext
+import re
+import logging
+import typing
+
+from django.utils.translation import ugettext_noop as _
+
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
 from uds.core.util import tools
-from .OVirtPublication import OVirtPublication
-from .OVirtLinkedDeployment import OVirtLinkedDeployment
-from .Helpers import oVirtHelpers
-
 from uds.core.ui import gui
 
-import logging
+from .publication import OVirtPublication
+from .deployment import OVirtLinkedDeployment
+from . import helpers
 
-__updated__ = '2018-03-16'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .provider import OVirtProvider
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
 
-class OVirtLinkedService(Service):
+class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
     """
     oVirt Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
@@ -106,7 +112,7 @@ class OVirtLinkedService(Service):
         order=100,
         fills={
             'callbackName': 'ovFillResourcesFromCluster',
-            'function': oVirtHelpers.getResources,
+            'function': helpers.getResources,
             'parameters': ['cluster', 'ov', 'ev']
         },
         tooltip=_("Cluster to contain services"), required=True
@@ -210,7 +216,7 @@ class OVirtLinkedService(Service):
     ov = gui.HiddenField(value=None)
     ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
-    def initialize(self, values):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         We check here form values to see if they are valid.
 
@@ -224,7 +230,7 @@ class OVirtLinkedService(Service):
             if int(self.memoryGuaranteed.value) > int(self.memory.value):
                 self.memoryGuaranteed.value = self.memory.value
 
-    def initGui(self):
+    def initGui(self) -> None:
         """
         Loads required values inside
         """
@@ -251,23 +257,33 @@ class OVirtLinkedService(Service):
 
         self.cluster.setValues(vals)
 
-    def datastoreHasSpace(self):
+    def parent(self) -> 'OVirtProvider':
+        return typing.cast('OVirtProvider', super().parent())
+
+    def datastoreHasSpace(self) -> None:
+        """Checks if datastore has enough space
+
+        Raises:
+            Exception: Raises an Exception if not enough space
+
+        Returns:
+            None -- [description]
+        """
         # Get storages for that datacenter
-        logger.debug('Checking datastore space for {0}'.format(self.datastore.value))
+        logger.debug('Checking datastore space for %s', self.datastore.value)
         info = self.parent().getStorageInfo(self.datastore.value)
-        logger.debug('Datastore Info: {0}'.format(info))
+        logger.debug('Datastore Info: %s', info)
         availableGB = info['available'] / (1024 * 1024 * 1024)
         if availableGB < self.minSpaceGB.num():
             raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(self.minSpaceGB.num(), availableGB))
 
-    def sanitizeVmName(self, name):
+    def sanitizeVmName(self, name: str) -> str:
         """
         Ovirt only allows machine names with [a-zA-Z0-9_-]
         """
-        import re
         return re.sub("[^a-zA-Z0-9_-]", "_", name)
 
-    def makeTemplate(self, name, comments):
+    def makeTemplate(self, name: str, comments: str) -> str:
         """
         Invokes makeTemplate from parent provider, completing params
 
@@ -287,7 +303,7 @@ class OVirtLinkedService(Service):
         self.datastoreHasSpace()
         return self.parent().makeTemplate(name, comments, self.machine.value, self.cluster.value, self.datastore.value, self.display.value)
 
-    def getTemplateState(self, templateId):
+    def getTemplateState(self, templateId: str) -> str:
         """
         Invokes getTemplateState from parent provider
 
@@ -300,7 +316,7 @@ class OVirtLinkedService(Service):
         """
         return self.parent().getTemplateState(templateId)
 
-    def deployFromTemplate(self, name, comments, templateId):
+    def deployFromTemplate(self, name: str, comments: str, templateId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -315,18 +331,18 @@ class OVirtLinkedService(Service):
         Returns:
             Id of the machine being created form template
         """
-        logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
+        logger.debug('Deploying from template %s machine %s', templateId, name)
         self.datastoreHasSpace()
         return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value,
                                                 self.display.value, self.usb.value, int(self.memory.value), int(self.memoryGuaranteed.value))
 
-    def removeTemplate(self, templateId):
+    def removeTemplate(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        return self.parent().removeTemplate(templateId)
+        self.parent().removeTemplate(templateId)
 
-    def getMachineState(self, machineId):
+    def getMachineState(self, machineId: str) -> str:
         """
         Invokes getMachineState from parent provider
         (returns if machine is "active" or "inactive"
@@ -344,7 +360,7 @@ class OVirtLinkedService(Service):
         """
         return self.parent().getMachineState(machineId)
 
-    def startMachine(self, machineId):
+    def startMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
@@ -355,9 +371,9 @@ class OVirtLinkedService(Service):
 
         Returns:
         """
-        return self.parent().startMachine(machineId)
+        self.parent().startMachine(machineId)
 
-    def stopMachine(self, machineId):
+    def stopMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -366,9 +382,9 @@ class OVirtLinkedService(Service):
 
         Returns:
         """
-        return self.parent().stopMachine(machineId)
+        self.parent().stopMachine(machineId)
 
-    def suspendMachine(self, machineId):
+    def suspendMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -377,9 +393,9 @@ class OVirtLinkedService(Service):
 
         Returns:
         """
-        return self.parent().suspendMachine(machineId)
+        self.parent().suspendMachine(machineId)
 
-    def removeMachine(self, machineId):
+    def removeMachine(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
@@ -388,44 +404,41 @@ class OVirtLinkedService(Service):
 
         Returns:
         """
-        return self.parent().removeMachine(machineId)
+        self.parent().removeMachine(machineId)
 
-    def updateMachineMac(self, machineId, macAddres):
+    def updateMachineMac(self, machineId: str, macAddres: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
-        return self.parent().updateMachineMac(machineId, macAddres)
+        self.parent().updateMachineMac(machineId, macAddres)
 
-    def fixUsb(self, machineId):
+    def fixUsb(self, machineId: str):
         if self.usb.value in ('native',):
             self.parent().fixUsb(machineId)
 
-    def getMacRange(self):
+    def getMacRange(self) -> str:
         """
         Returns de selected mac range
         """
         return self.parent().getMacRange()
 
-    def getBaseName(self):
+    def getBaseName(self) -> str:
         """
         Returns the base name
         """
         return self.baseName.value
 
-    def getLenName(self):
+    def getLenName(self) -> int:
         """
         Returns the length of numbers part
         """
         return int(self.lenName.value)
 
-    def getDisplay(self):
+    def getDisplay(self) -> str:
         """
         Returns the selected display type (for created machines, for administration
         """
         return self.display.value
 
-    def getConsoleConnection(self, machineId):
+    def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)
-
-    def desktopLogin(self, machineId, username, password, domain):
-        return self.parent().desktopLogin(machineId, username, password, domain)

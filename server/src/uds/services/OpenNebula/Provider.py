@@ -260,6 +260,12 @@ class Provider(ServiceProvider):
             }
         }
 
+    def desktopLogin(self, machineId, username, password, domain):
+        '''
+        Not provided by OpenNebula API right now
+        '''
+        return
+
     @staticmethod
     def test(env, data):
         '''

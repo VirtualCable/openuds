@@ -30,15 +30,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from uds.core.services import UserDeployment
-from uds.core.util.state import State
-from uds.core.util import log
-from .OVirtJobs import OVirtDeferredRemoval
-
 import pickle
 import logging
+import typing
 
-__updated__ = '2019-02-07'
+from uds.core import services
+from uds.core import managers
+from uds.core.util.state import State
+from uds.core.util import log
+
+from .jobs import OVirtDeferredRemoval
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from .service import OVirtLinkedService
+    from .publication import OVirtPublication
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +55,7 @@ NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 
 
-class OVirtLinkedDeployment(UserDeployment):
+class OVirtLinkedDeployment(services.UserDeployment):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -59,9 +66,26 @@ class OVirtLinkedDeployment(UserDeployment):
     The logic for managing ovirt deployments (user machines in this case) is here.
 
     """
-
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 6
+
+    # own vars
+    _name: str
+    _ip: str
+    _mac: str
+    _vmid: str
+    _reason: str
+    _queue: typing.List[int]
+
+    # Utility overrides for type checking...
+    def service(self) -> 'OVirtLinkedService':
+        return typing.cast('OVirtLinkedService', super().service())
+
+    def publication(self) -> 'OVirtPublication':
+        pub = super().publication()
+        if pub is None:
+            raise Exception('No publication for this element!')
+        return typing.cast('OVirtPublication', pub)
 
     def initialize(self):
         self._name = ''
@@ -72,24 +96,25 @@ class OVirtLinkedDeployment(UserDeployment):
         self._queue = []
 
     # Serializable needed methods
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Does nothing right here, we will use environment storage in this sample
         """
-        return b'\1'.join([b'v1',
-             self._name.encode('utf8'),
-             self._ip.encode('utf8'),
-             self._mac.encode('utf8'),
-             self._vmid.encode('utf8'),
-             self._reason.encode('utf8'),
-             pickle.dumps(self._queue, protocol=0)
+        return b'\1'.join([
+            b'v1',
+            self._name.encode('utf8'),
+            self._ip.encode('utf8'),
+            self._mac.encode('utf8'),
+            self._vmid.encode('utf8'),
+            self._reason.encode('utf8'),
+            pickle.dumps(self._queue, protocol=0)
         ])
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are keeped at environment storage
         """
-        vals = str_.split(b'\1')
+        vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
             self._ip = vals[2].decode('utf8')
@@ -99,27 +124,7 @@ class OVirtLinkedDeployment(UserDeployment):
             queue = pickle.loads(vals[6])
             self._queue = pickle.loads(queue)
 
-    def getName(self):
-        """
-        We override this to return a name to display. Default inplementation
-        (in base class), returns getUniqueIde() value
-        This name will help user to identify elements, and is only used
-        at administration interface.
-
-        We will use here the environment name provided generator to generate
-        a name for this element.
-
-        The namaGenerator need two params, the base name and a length for a
-        numeric incremental part for generating unique names. This are unique for
-        all UDS names generations, that is, UDS will not generate this name again
-        until this name is freed, or object is removed, what makes its environment
-        to also get removed, that makes all uniques ids (names and macs right now)
-        to also get released.
-
-        Every time get method of a generator gets called, the generator creates
-        a new unique name, so we keep the first generated name cached and don't
-        generate more names. (Generator are simple utility classes)
-        """
+    def getName(self) -> str:
         if self._name == '':
             try:
                 self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
@@ -127,7 +132,7 @@ class OVirtLinkedDeployment(UserDeployment):
                 return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip):
+    def setIp(self, ip: str) -> None:
         """
         In our case, there is no OS manager associated with this, so this method
         will never get called, but we put here as sample.
@@ -139,10 +144,10 @@ class OVirtLinkedDeployment(UserDeployment):
         :note: This IP is the IP of the "consumed service", so the transport can
                access it.
         """
-        logger.debug('Setting IP to {}'.format(ip))
+        logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
@@ -156,7 +161,7 @@ class OVirtLinkedDeployment(UserDeployment):
             self._mac = self.macGenerator().get(self.service().getMacRange())
         return self._mac
 
-    def getIp(self):
+    def getIp(self) -> str:
         """
         We need to implement this method, so we can return the IP for transports
         use. If no IP is known for this service, this must return None
@@ -207,11 +212,18 @@ class OVirtLinkedDeployment(UserDeployment):
         return self.service().getConsoleConnection(self._vmid)
 
     def desktopLogin(self, username, password, domain=''):
-        return self.service().desktopLogin(self._vmId, username, password, domain)
+        script = '''import sys
+if sys.platform == 'win32':
+    from uds import operations
+    operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", struct.pack('!IsIs', 1, '{username}'.encode('utf8'), 2, '{password}'.encode('utf8')), True)
+'''.format(username=username, password=password)
+        # Post script to service
+        #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
+        managers.userServiceManager().sendScript(self.dbservice(), script)
 
     def notifyReadyFromOsManager(self, data):
         # Here we will check for suspending the VM (when full ready)
-        logger.debug('Checking if cache 2 for {0}'.format(self._name))
+        logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
             logger.debug('Machine is ready. Moving to level 2')
             self.__popCurrentOp()  # Remove current state
@@ -242,7 +254,7 @@ class OVirtLinkedDeployment(UserDeployment):
             self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
 
     def __checkMachineState(self, chkState):
-        logger.debug('Checking that state of machine {} ({}) is {}'.format(self._vmid, self._name, chkState))
+        logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
@@ -261,33 +273,33 @@ class OVirtLinkedDeployment(UserDeployment):
 
         return ret
 
-    def __getCurrentOp(self):
-        if len(self._queue) == 0:
+    def __getCurrentOp(self) -> int:
+        if not self._queue:
             return opFinish
 
         return self._queue[0]
 
-    def __popCurrentOp(self):
-        if len(self._queue) == 0:
+    def __popCurrentOp(self) -> int:
+        if not self._queue:
             return opFinish
 
         res = self._queue.pop(0)
         return res
 
-    def __pushFrontOp(self, op):
+    def __pushFrontOp(self, op: int):
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op):
+    def __pushBackOp(self, op: int):
         self._queue.append(op)
 
-    def __error(self, reason):
+    def __error(self, reason: typing.Union[str, Exception]) -> str:
         """
         Internal method to set object as error state
 
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
         """
-        logger.debug('Setting error state, reason: {0}'.format(reason))
+        logger.debug('Setting error state, reason: %s', reason)
         self.doLog(log.ERROR, reason)
 
         if self._vmid != '':  # Powers off
@@ -297,7 +309,7 @@ class OVirtLinkedDeployment(UserDeployment):
         self._reason = str(reason)
         return State.ERROR
 
-    def __executeQueue(self):
+    def __executeQueue(self) -> str:
         self.__debug('executeQueue')
         op = self.__getCurrentOp()
 
@@ -331,7 +343,7 @@ class OVirtLinkedDeployment(UserDeployment):
             return self.__error(e)
 
     # Queue execution methods
-    def __retry(self):
+    def __retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -341,13 +353,13 @@ class OVirtLinkedDeployment(UserDeployment):
         """
         return State.FINISHED
 
-    def __wait(self):
+    def __wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self):
+    def __create(self) -> None:
         """
         Deploys a machine from template for user/cache
         """
@@ -363,7 +375,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if self._vmid is None:
             raise Exception('Can\'t create machine')
 
-    def __remove(self):
+    def __remove(self) -> None:
         """
         Removes a machine from system
         """
@@ -378,7 +390,7 @@ class OVirtLinkedDeployment(UserDeployment):
         else:
             self.service().removeMachine(self._vmid)
 
-    def __startMachine(self):
+    def __startMachine(self) -> None:
         """
         Powers on the machine
         """
@@ -392,10 +404,9 @@ class OVirtLinkedDeployment(UserDeployment):
 
         if state != 'down' and state != 'suspended':
             self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
-        else:
-            self.service().startMachine(self._vmid)
+        self.service().startMachine(self._vmid)
 
-    def __stopMachine(self):
+    def __stopMachine(self) -> None:
         """
         Powers off the machine
         """
@@ -412,7 +423,7 @@ class OVirtLinkedDeployment(UserDeployment):
         else:
             self.service().stopMachine(self._vmid)
 
-    def __suspendMachine(self):
+    def __suspendMachine(self) -> None:
         """
         Suspends the machine
         """
@@ -429,7 +440,7 @@ class OVirtLinkedDeployment(UserDeployment):
         else:
             self.service().suspendMachine(self._vmid)
 
-    def __changeMac(self):
+    def __changeMac(self) -> None:
         """
         Changes the mac of the first nic
         """
@@ -438,37 +449,37 @@ class OVirtLinkedDeployment(UserDeployment):
         self.service().fixUsb(self._vmid)
 
     # Check methods
-    def __checkCreate(self):
+    def __checkCreate(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
         return self.__checkMachineState('down')
 
-    def __checkStart(self):
+    def __checkStart(self) -> str:
         """
         Checks if machine has started
         """
         return self.__checkMachineState(UP_STATES)
 
-    def __checkStop(self):
+    def __checkStop(self) -> str:
         """
         Checks if machine has stoped
         """
         return self.__checkMachineState('down')
 
-    def __checkSuspend(self):
+    def __checkSuspend(self) -> str:
         """
         Check if the machine has suspended
         """
         return self.__checkMachineState('suspended')
 
-    def __checkRemoved(self):
+    def __checkRemoved(self) -> str:
         """
         Checks if a machine has been removed
         """
         return self.__checkMachineState('unknown')
 
-    def __checkMac(self):
+    def __checkMac(self) -> str:
         """
         Checks if change mac operation has finished.
 
@@ -476,7 +487,7 @@ class OVirtLinkedDeployment(UserDeployment):
         """
         return State.FINISHED
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -515,15 +526,7 @@ class OVirtLinkedDeployment(UserDeployment):
         except Exception as e:
             return self.__error(e)
 
-    def finish(self):
-        """
-        Invoked when the core notices that the deployment of a service has finished.
-        (No matter wether it is for cache or for an user)
-        """
-        self.__debug('finish')
-        pass
-
-    def moveToCache(self, newLevel):
+    def moveToCache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
@@ -537,7 +540,7 @@ class OVirtLinkedDeployment(UserDeployment):
 
         return self.__executeQueue()
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         Returns the reason of the error.
 
@@ -547,7 +550,7 @@ class OVirtLinkedDeployment(UserDeployment):
         """
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         Invoked for destroying a deployed service
         """
@@ -572,7 +575,7 @@ class OVirtLinkedDeployment(UserDeployment):
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -585,7 +588,7 @@ class OVirtLinkedDeployment(UserDeployment):
         return self.destroy()
 
     @staticmethod
-    def __op2str(op):
+    def __op2str(op: int) -> str:
         return {
             opCreate: 'create',
             opStart: 'start',
@@ -599,9 +602,9 @@ class OVirtLinkedDeployment(UserDeployment):
             opChangeMac: 'changing mac'
         }.get(op, '????')
 
-    def __debug(self, txt):
-        logger.debug('_name {0}: {1}'.format(txt, self._name))
-        logger.debug('_ip {0}: {1}'.format(txt, self._ip))
-        logger.debug('_mac {0}: {1}'.format(txt, self._mac))
-        logger.debug('_vmid {0}: {1}'.format(txt, self._vmid))
-        logger.debug('Queue at {0}: {1}'.format(txt, [OVirtLinkedDeployment.__op2str(op) for op in self._queue]))
+    def __debug(self, txt: str):
+        logger.debug('_name %s: %s', txt, self._name)
+        logger.debug('_ip %s: %s', txt, self._ip)
+        logger.debug('_mac %s: %s', txt, self._mac)
+        logger.debug('_vmid %s: %s', txt, self._vmid)
+        logger.debug('Queue at %s: %s', txt, [OVirtLinkedDeployment.__op2str(op) for op in self._queue])

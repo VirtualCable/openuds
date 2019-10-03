@@ -123,7 +123,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
     _service: 'services.Service'
     _publication: typing.Optional['services.Publication']
     _osmanager: typing.Optional['osmanagers.OSManager']
-    _dbService: typing.Optional['models.Service']
+    _dbService: typing.Optional['models.UserService']
     _uuid: str
 
     def __init__(self, environment: 'Environment', **kwargs):
@@ -214,7 +214,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
     def getUuid(self) -> str:
         return self._uuid
 
-    def dbservice(self) -> typing.Optional['models.Service']:
+    def dbservice(self) -> typing.Optional['models.UserService']:
         """
         Utility method to access database object for the object this represents.
 

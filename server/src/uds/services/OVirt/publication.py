@@ -30,17 +30,19 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from datetime import datetime
+import logging
+import typing
 
 from django.utils.translation import ugettext as _
 from uds.core.services import Publication
 from uds.core.util.state import State
-from datetime import datetime
-import logging
-
-__updated__ = '2019-02-07'
 
 logger = logging.getLogger(__name__)
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .service import OVirtLinkedService
 
 class OVirtPublication(Publication):
     """
@@ -48,6 +50,14 @@ class OVirtPublication(Publication):
     """
 
     suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
+    _name: str
+    _reason: str
+    _destroyAfter: str
+    _templateId: str
+    _state: str
+
+    def service(self) -> 'OVirtLinkedService':
+        return typing.cast('OVirtLinkedService', super().service())
 
     def initialize(self):
         """
@@ -65,17 +75,17 @@ class OVirtPublication(Publication):
         self._templateId = ''
         self._state = 'r'
 
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
         return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state]).encode('utf8')
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
-        logger.debug('Data: {0}'.format(data))
+        logger.debug('Data: %s', data)
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
             self._name, self._reason, self._destroyAfter, self._templateId, self._state = vals[1:]
@@ -99,7 +109,7 @@ class OVirtPublication(Publication):
 
         return State.RUNNING
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Checks state of publication creation
         """
@@ -111,14 +121,11 @@ class OVirtPublication(Publication):
 
         try:
             self._state = self.service().getTemplateState(self._templateId)
+            if self._state == 'removed':
+                raise  Exception('Template has been removed!')
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return State.ERROR
-
-        if self._state == 'removed':
-            self._state = 'error'
-            self._reason = 'Template has been removed!'
             return State.ERROR
 
         # If publication os done (template is ready), and cancel was requested, do it just after template becomes ready
@@ -129,13 +136,7 @@ class OVirtPublication(Publication):
 
         return State.RUNNING
 
-    def finish(self):
-        """
-        In our case, finish does nothing
-        """
-        pass
-
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or checkState
@@ -145,7 +146,7 @@ class OVirtPublication(Publication):
         """
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         This is called once a publication is no more needed.
 
@@ -170,7 +171,7 @@ class OVirtPublication(Publication):
 
         return State.FINISHED
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         Do same thing as destroy
         """
@@ -180,7 +181,7 @@ class OVirtPublication(Publication):
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def getTemplateId(self):
+    def getTemplateId(self) -> str:
         """
         Returns the template id associated with the publication
         """

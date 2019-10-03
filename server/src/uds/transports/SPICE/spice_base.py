@@ -39,10 +39,6 @@ from uds.core.ui import gui
 from uds.core import transports
 from uds.core.transports import protocols
 
-# This transport is specific for oVirt, so we need to point to it
-from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
-
-
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
@@ -60,7 +56,6 @@ class BaseSpiceTransport(transports.Transport):
     """
     iconFile = 'spice.png'
     protocol = protocols.SPICE
-    allowedProviders = oVirtProvider.offers
 
     useEmptyCreds = gui.CheckBoxField(
         order=1,

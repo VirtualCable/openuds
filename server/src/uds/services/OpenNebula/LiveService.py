@@ -286,3 +286,6 @@ class LiveService(Service):
 
     def getConsoleConnection(self, machineId):
         return self.parent().getConsoleConnection(machineId)
+
+    def desktopLogin(self, machineId, username, password, domain):
+        return self.parent().desktopLogin(machineId, username, password, domain)

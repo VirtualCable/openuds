@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,11 +27,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-from .OVirtProvider import Provider
-from .OVirtJobs import OVirtHouseKeeping, OVirtDeferredRemoval
-
 from uds.core import managers
+
+from .provider import OVirtProvider
+from .jobs import OVirtHouseKeeping, OVirtDeferredRemoval
 
 # Scheduled task to do clean processes
 for cls in (OVirtDeferredRemoval, OVirtHouseKeeping):

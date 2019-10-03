@@ -479,7 +479,7 @@ class UserServiceManager:
 
         return True
 
-    def sendScript(self, userService: UserService, script: str) -> None:
+    def sendScript(self, userService: UserService, script: str, forUser: bool = False) -> None:
         """
         If allowed, send script to user service
         """
@@ -495,6 +495,8 @@ class UserServiceManager:
 
         try:
             data = {'script': script}
+            if forUser:
+                data['user'] = ''
             if proxy:
                 r = proxy.doProxyRequest(url=url, data=data, timeout=5)
             else:

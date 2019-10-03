@@ -83,7 +83,7 @@ class Transport(Module):
     protocol: str = protocols.NONE
 
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
-    group: str = DIRECT_GROUP
+    group: typing.ClassVar[str] = DIRECT_GROUP
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)

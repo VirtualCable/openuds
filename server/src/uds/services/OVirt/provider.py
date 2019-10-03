@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,31 +28,32 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-Created on Jun 22, 2012
-
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.services import ServiceProvider
+
+from uds.core import services
 from uds.core.ui import gui
 from uds.core.util import validators
 
-from .OVirtLinkedService import OVirtLinkedService
+from .service import OVirtLinkedService
 
 from . import client
 
-import logging
-
-__updated__ = '2017-03-17'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+    from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
 
 CACHE_TIME_FOR_SERVER = 1800
 
 
-class Provider(ServiceProvider):
+class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-public-methods
     """
     This class represents the sample services provider
 
@@ -118,23 +119,23 @@ class Provider(ServiceProvider):
                               tooltip=_('Range of valid macs for UDS managed machines'), required=True, tab=gui.ADVANCED_TAB)
 
     # Own variables
-    _api = None
+    _api: typing.Optional[client.Client] = None
 
     # oVirt engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def __getApi(self):
+    def __getApi(self) -> client.Client:
         """
         Returns the connection API object for oVirt (using ovirtsdk)
         """
         if self._api is None:
-            APIClass = self._api = client.getClient(self.ovirtVersion.value)
-            self._api = APIClass(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache)
+            self._api = client.Client(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache)
+
         return self._api
 
     # There is more fields type, but not here the best place to cover it
-    def initialize(self, values=None):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -147,7 +148,7 @@ class Provider(ServiceProvider):
             self.timeout.value = validators.validateTimeout(self.timeout.value)
             logger.debug(self.host.value)
 
-    def testConnection(self):
+    def testConnection(self) -> bool:
         """
         Test that conection to oVirt server is fine
 
@@ -162,9 +163,9 @@ class Provider(ServiceProvider):
         """
         Checks that this version of ovirt if "fully functional" and does not needs "patchs'
         """
-        return self.__getApi().isFullyFunctionalVersion()
+        return list(self.__getApi().isFullyFunctionalVersion())
 
-    def getMachines(self, force=False):
+    def getMachines(self, force: bool = False) -> typing.List[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside oVirt.
         Machines starting with UDS are filtered out
@@ -182,7 +183,7 @@ class Provider(ServiceProvider):
 
         return self.__getApi().getVms(force)
 
-    def getClusters(self, force=False):
+    def getClusters(self, force: bool = False) -> typing.List[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside oVirt.
 
@@ -200,7 +201,7 @@ class Provider(ServiceProvider):
 
         return self.__getApi().getClusters(force)
 
-    def getClusterInfo(self, clusterId, force=False):
+    def getClusterInfo(self, clusterId: str, force: bool = False) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the cluster info
 
@@ -218,7 +219,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getClusterInfo(clusterId, force)
 
-    def getDatacenterInfo(self, datacenterId, force=False):
+    def getDatacenterInfo(self, datacenterId: str, force: bool = False) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the datacenter info
 
@@ -246,7 +247,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getDatacenterInfo(datacenterId, force)
 
-    def getStorageInfo(self, storageId, force=False):
+    def getStorageInfo(self, storageId: str, force: bool = False) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the storage info
 
@@ -268,7 +269,15 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getStorageInfo(storageId, force)
 
-    def makeTemplate(self, name, comments, machineId, clusterId, storageId, displayType):
+    def makeTemplate(
+            self,
+            name: str,
+            comments: str,
+            machineId: str,
+            clusterId: str,
+            storageId: str,
+            displayType: str
+        ) -> str:
         """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -285,7 +294,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().makeTemplate(name, comments, machineId, clusterId, storageId, displayType)
 
-    def getTemplateState(self, templateId):
+    def getTemplateState(self, templateId: str) -> str:
         """
         Returns current template state.
 
@@ -298,7 +307,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getTemplateState(templateId)
 
-    def getMachineState(self, machineId):
+    def getMachineState(self, machineId: str) -> str:
         """
         Returns the state of the machine
         This method do not uses cache at all (it always tries to get machine state from oVirt server)
@@ -316,7 +325,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getMachineState(machineId)
 
-    def removeTemplate(self, templateId):
+    def removeTemplate(self, templateId: str) -> None:
         """
         Removes a template from ovirt server
 
@@ -324,7 +333,17 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().removeTemplate(templateId)
 
-    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB):
+    def deployFromTemplate(
+            self,
+            name: str,
+            comments: str,
+            templateId: str,
+            clusterId: str,
+            displayType: str,
+            usbType: str,
+            memoryMB: int,
+            guaranteedMB: int
+        ) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -342,7 +361,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB)
 
-    def startMachine(self, machineId):
+    def startMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
@@ -353,9 +372,9 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().startMachine(machineId)
+        self.__getApi().startMachine(machineId)
 
-    def stopMachine(self, machineId):
+    def stopMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -364,9 +383,9 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().stopMachine(machineId)
+        self.__getApi().stopMachine(machineId)
 
-    def suspendMachine(self, machineId):
+    def suspendMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -375,9 +394,9 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().suspendMachine(machineId)
+        self.__getApi().suspendMachine(machineId)
 
-    def removeMachine(self, machineId):
+    def removeMachine(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
@@ -386,27 +405,22 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().removeMachine(machineId)
+        self.__getApi().removeMachine(machineId)
 
-    def updateMachineMac(self, machineId, macAddres):
+    def updateMachineMac(self, machineId: str, macAddres: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
-        return self.__getApi().updateMachineMac(machineId, macAddres)
+        self.__getApi().updateMachineMac(machineId, macAddres)
 
-    def fixUsb(self, machineId):
+    def fixUsb(self, machineId: str) -> None:
         self.__getApi().fixUsb(machineId)
 
-    def getMacRange(self):
+    def getMacRange(self) -> str:
         return self.macsRange.value
 
-    def getConsoleConnection(self, machineId):
+    def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.__getApi().getConsoleConnection(machineId)
-
-    def desktopLogin(self, machineId, username, password, domain):
-        """
-        """
-        return self.__getApi().desktopLogin(machineId, username, password, domain)
 
     @staticmethod
     def test(env, data):
@@ -437,13 +451,8 @@ class Provider(ServiceProvider):
         #    logger.exception("Exception caugth!!!")
         #    return [False, str(e)]
         # return [True, _('Nothing tested, but all went fine..')]
-        ov = Provider(env, data)
+        ov = OVirtProvider(env, data)
         if ov.testConnection() is True:
             return ov.testValidVersion()
 
         return [False, _("Connection failed. Check connection params")]
-
-
-
-
-

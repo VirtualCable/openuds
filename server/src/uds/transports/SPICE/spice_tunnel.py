@@ -63,7 +63,7 @@ class TSPICETransport(BaseSpiceTransport):
     typeType = 'TSSPICETransport'
     typeDescription = _('SPICE Protocol. Tunneled connection.')
     protocol = transports.protocols.SPICE
-    group = transports.TUNNELED_GROUP
+    group: typing.ClassVar[str] = transports.TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
@@ -117,6 +117,9 @@ class TSPICETransport(BaseSpiceTransport):
 
         if osName is None:
             return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+
+        # if sso:  # If SSO requested, and when supported by platform
+        #     userServiceInstance.desktopLogin(user, password, '')
 
         sp = {
             'as_file': r.as_file,
