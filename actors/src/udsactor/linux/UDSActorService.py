@@ -122,7 +122,8 @@ class UDSActorSvc(Daemon, CommonService):
         return 'ok'
 
     def ovLogon(self, username, password):
-        pass
+        # Ignored right now on Linux
+        logger.info('ovLogon ignored right now on Linux')
 
     def run(self):
         cfg = initCfg()  # Gets a local copy of config to get "reboot"
