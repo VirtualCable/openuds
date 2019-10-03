@@ -159,7 +159,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             HTTPServerHandler.service.ipc.sendScriptMessage(params['script'])
         else:
             # Execute script at server space, that is, here
-            # as a secondary thread
+            # as a parallel thread
             th = ScriptExecutorThread(params['script'])
             th.start()
         return 'ok'
@@ -169,12 +169,6 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if 'user' not in params or 'protocol' not in params:
             raise Exception('Invalid preConnect parameters')
         return HTTPServerHandler.service.preConnect(params.get('user'), params.get('protocol'))
-
-    def post_ovLogon(self, params):
-        logger.debug('Received ov logon')
-        if 'username' not in params or 'pasword' not in params:
-            raise Exception('Invalid ovLogon parameters')
-        return HTTPServerHandler.service.ovLogon(params.get('username'), params.get('pasword'))
 
     def get_information(self, params):
         # TODO: Return something useful? :)
