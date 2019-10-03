@@ -181,7 +181,7 @@ class OVirtLinkedDeployment(services.UserDeployment):
         """
         return self._ip
 
-    def setReady(self):
+    def setReady(self) -> str:
         """
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
@@ -201,14 +201,14 @@ class OVirtLinkedDeployment(services.UserDeployment):
         self.cache.put('ready', '1')
         return State.FINISHED
 
-    def reset(self):
+    def reset(self) -> None:
         """
         o oVirt, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
             self.service().stopMachine(self._vmid)
 
-    def getConsoleConnection(self):
+    def getConsoleConnection(self) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
     def desktopLogin(self, username, password, domain=''):

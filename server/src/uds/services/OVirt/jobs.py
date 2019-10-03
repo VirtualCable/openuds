@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2017 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,17 +29,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from uds.core import jobs
-from uds.core.util import log
-from uds.core.util.state import State
 
-from uds.models import Provider, Service, getSqlDatetime
-
-
-import logging
-import time
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .provider import OVirtProvider
 
 logger = logging.getLogger(__name__)
 
@@ -58,8 +55,8 @@ class OVirtDeferredRemoval(jobs.Job):
     counter = 0
 
     @staticmethod
-    def remove(providerInstance, vmId):
-        logger.debug('Adding {} from {} to defeffed removal process'.format(vmId, providerInstance))
+    def remove(providerInstance: 'OVirtProvider', vmId: str) -> None:
+        logger.debug('Adding %s from %s to defeffed removal process', vmId, providerInstance)
         OVirtDeferredRemoval.counter += 1
         try:
             # Tries to stop machine sync when found, if any error is done, defer removal for a scheduled task
@@ -73,19 +70,20 @@ class OVirtDeferredRemoval(jobs.Job):
 
             except Exception as e:
                 providerInstance.storage.saveData('tr' + vmId, vmId, attr1='tRm')
-                logger.info('Machine {} could not be removed right now, queued for later: {}'.format(vmId, e))
+                logger.info('Machine %s could not be removed right now, queued for later: %s', vmId, e)
 
         except Exception as e:
-            logger.warning('Exception got queuing for Removal: {}'.format(e))
+            logger.warning('Exception got queuing for Removal: %s', e)
 
     def run(self):
-        from .OVirtProvider import Provider as OVirtProvider
+        from .provider import OVirtProvider
 
         logger.debug('Looking for deferred vm removals')
 
+        provider: OVirtProvider
         # Look for Providers of type VCServiceProvider
-        for provider in Provider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.typeType):
-            logger.debug('Provider {} if os type ovirt'.format(provider))
+        for provider in OVirtProvider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.typeType):
+            logger.debug('Provider %s if os type ovirt', provider)
 
             storage = provider.getEnvironment().storage
             instance = provider.getInstance()
@@ -93,7 +91,7 @@ class OVirtDeferredRemoval(jobs.Job):
             for i in storage.filter('tRm'):
                 vmId = i[1]
                 try:
-                    logger.debug('Found {} for removal {}'.format(vmId, i))
+                    logger.debug('Found %s for removal %s', vmId, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
                     state = instance.getMachineState(vmId)
@@ -107,7 +105,7 @@ class OVirtDeferredRemoval(jobs.Job):
                     # It this is reached, remove check
                     storage.remove('tr' + vmId)
                 except Exception as e:  # Any other exception wil be threated again
-                    instance.doLog('Delayed removal of {} has failed: {}. Will retry later'.format(vmId, e))
-                    logger.error('Delayed removal of {} failed: {}'.format(i, e))
+                    instance.doLog('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
+                    logger.error('Delayed removal of %s failed: %s', i, e)
 
         logger.debug('Deferred removal finished')

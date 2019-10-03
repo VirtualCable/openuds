@@ -38,11 +38,12 @@ from django.utils.translation import ugettext as _
 from uds.core.services import Publication
 from uds.core.util.state import State
 
-logger = logging.getLogger(__name__)
-
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .service import OVirtLinkedService
+
+logger = logging.getLogger(__name__)
+
 
 class OVirtPublication(Publication):
     """
@@ -59,7 +60,7 @@ class OVirtPublication(Publication):
     def service(self) -> 'OVirtLinkedService':
         return typing.cast('OVirtLinkedService', super().service())
 
-    def initialize(self):
+    def initialize(self) -> None:
         """
         This method will be invoked by default __init__ of base class, so it gives
         us the oportunity to initialize whataver we need here.
@@ -90,7 +91,7 @@ class OVirtPublication(Publication):
         if vals[0] == 'v1':
             self._name, self._reason, self._destroyAfter, self._templateId, self._state = vals[1:]
 
-    def publish(self):
+    def publish(self) -> str:
         """
         Realizes the publication of the service
         """
