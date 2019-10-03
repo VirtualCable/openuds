@@ -42,11 +42,14 @@ if sys.platform.startswith('linux'):
 else:
     logFile = os.path.join(tempfile.gettempdir(), b'udsclient.log')
 
-logging.basicConfig(
-    filename=logFile,
-    filemode='a',
-    format='%(levelname)s %(asctime)s %(message)s',
-    level=logging.INFO
-)
+try:
+    logging.basicConfig(
+        filename=logFile,
+        filemode='a',
+        format='%(levelname)s %(asctime)s %(message)s',
+        level=logging.INFO
+    )
+except Exception:
+    logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s', level=logging.INFO)
 
 logger = logging.getLogger('udsclient')
