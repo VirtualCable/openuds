@@ -121,6 +121,9 @@ class UDSActorSvc(Daemon, CommonService):
 
         return 'ok'
 
+    def ovLogon(self, username, password):
+        pass
+
     def run(self):
         cfg = initCfg()  # Gets a local copy of config to get "reboot"
 

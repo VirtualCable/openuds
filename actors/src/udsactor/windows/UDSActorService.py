@@ -32,6 +32,7 @@
 from __future__ import unicode_literals
 # pylint: disable=unused-wildcard-import, wildcard-import
 
+import struct
 import subprocess
 import os
 import stat
@@ -222,6 +223,15 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             logger.error('Executing preconnect command give')
 
         return 'ok'
+
+    def ovLogon(self, username, password):
+        # Compose packet for ov
+        ub = username.encode('utf8')
+        up = username.encode('utf8')
+        packet = struct.pack('!I', len(ub)) + ub + struct.pack('!I', len(up)) + up
+        # Send packet with username/password to ov pipe
+        operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
+        return 'done'
 
     def onLogout(self, user):
         logger.debug('Windows onLogout invoked: {}, {}'.format(user, self._user))

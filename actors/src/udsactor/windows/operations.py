@@ -229,3 +229,15 @@ def getCurrentUser():
     Returns current logged in username
     '''
     return os.environ['USERNAME']
+
+def writeToPipe(pipeName, bytesPayload, waitForResponse):
+    # (str, bytes, bool) -> Optional[bytes]
+    try:
+        with open(pipeName, 'r+b', 0) as f:
+            f.write(bytesPayload)
+            # f.seek(0)  # As recommended on intenet, but seems to work fin without thos
+            if waitForResponse:
+                return f.read()
+        return b'ok'
+    except Exception as e:
+        None

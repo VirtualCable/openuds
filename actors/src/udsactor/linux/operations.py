@@ -188,6 +188,9 @@ class XScreenSaverInfo(ctypes.Structure):
 try:
     xlibPath = ctypes.util.find_library('X11')
     xssPath = ctypes.util.find_library('Xss')
+    xlib = xss = None
+    if not xlibPath or not xssPath:
+        raise Exception()
     xlib = ctypes.cdll.LoadLibrary(xlibPath)
     xss = ctypes.cdll.LoadLibrary(xssPath)
 
