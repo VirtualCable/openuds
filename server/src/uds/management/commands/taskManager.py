@@ -103,13 +103,15 @@ class Command(BaseCommand):
             help='Stop any running daemon'
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         logger.info("Running task manager command")
 
         GlobalConfig.initialize()
 
-        start = 'start' in options
-        stop = 'stop' in options
+        start = options.get('start', False)
+        stop = options.get('stop', False)
+
+        logger.debug('Start: %s, Stop: %s', start, stop)
 
         pid: int = 0
         try:

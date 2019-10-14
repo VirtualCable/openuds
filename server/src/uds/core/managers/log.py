@@ -84,7 +84,7 @@ class LogManager:
         from uds.models import Log
 
         # Ensure message fits on space
-        message = message[:255]
+        message = str(message)[:255]
 
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
@@ -148,7 +148,7 @@ class LogManager:
         owner_type = transDict.get(type(wichObject), None)
         logger.debug('Getting log: %s -> %s', wichObject, owner_type)
 
-        if owner_type:
+        if owner_type is not None:  # 0 is valid owner type
             return self.__getLogs(owner_type, wichObject.id, limit)
 
         logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
