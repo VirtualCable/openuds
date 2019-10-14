@@ -73,7 +73,7 @@ class DelayedTask(Environmentable):
         """
         Utility method that allows to register a Delayedtask
         """
-        from .DelayedTaskRunner import DelayedTaskRunner
+        from .delayed_task_runner import DelayedTaskRunner
 
         if check is True and DelayedTaskRunner.runner().checkExists(tag):
             return
