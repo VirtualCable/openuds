@@ -263,7 +263,7 @@ GuacUI.Client = {
     "min_zoom"        : 1,
     "max_zoom"        : 3,
 
-    "connectionName"  : "Guacamole",
+    "connectionName"  : "UDS Remote Connection",
     "attachedClient"  : null,
 
     /* Mouse emulation */
@@ -1433,7 +1433,11 @@ GuacUI.Client.attach = function(guac) {
      * Route document-level keyboard events to the client.
      */
 
+    var sink = new Guacamole.InputSink();
+    document.body.appendChild(sink.getElement());
+
     var keyboard = new Guacamole.Keyboard(document);
+    keyboard.listenTo(sink.getElement());
     var show_keyboard_gesture_possible = true;
 
     function __send_key(pressed, keysym) {
