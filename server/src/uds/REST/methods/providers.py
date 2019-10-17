@@ -68,6 +68,7 @@ class Providers(ModelHandler):
     # Table info fields
     table_fields = [
         {'name': {'title': _('Name'), 'type': 'iconType'}},
+        {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'maintenance_state': {'title': _('Status')}},
         {'services_count': {'title': _('Services'), 'type': 'numeric'}},
@@ -97,6 +98,7 @@ class Providers(ModelHandler):
             'maintenance_mode': item.maintenance_mode,
             'offers': offers,
             'type': type_.type(),
+            'type_name': type_.name(),
             'comments': item.comments,
             'permission': permissions.getEffectivePermission(self._user, item)
         }

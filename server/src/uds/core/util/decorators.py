@@ -125,14 +125,14 @@ def allowCache(
                 cacheKey = '{}-{}.gen'.format(cachePrefix, keyFnc(args[0]))
 
             data: typing.Any = None
-            if kwargs.get('force', False) is False and args[0].cache is not None:
+            if kwargs.get('force', False) is False and args[0].cache:
                 data = args[0].cache.get(cacheKey)
 
             if 'force' in kwargs:
                 # Remove force key
                 del kwargs['force']
 
-            if data is None:  # Not in cache...
+            if data is None and args[0].cache:  # Not in cache and object can cache it
                 data = fnc(*args, **kwargs)
                 try:
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this

@@ -55,6 +55,7 @@ class Transports(ModelHandler):
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+        {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'allowed_oss': {'title': _('Devices'), 'width': '8em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
@@ -122,6 +123,7 @@ class Transports(ModelHandler):
             'pools': [{'id': x.id} for x in item.deployedServices.all()],
             'deployed_count': item.deployedServices.count(),
             'type': type_.type(),
+            'type_name': type_.name(),
             'protocol': type_.protocol,
             'permission': permissions.getEffectivePermission(self._user, item)
         }
