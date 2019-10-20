@@ -676,7 +676,7 @@ class gui:
                 gui.callbacks[fills['callbackName']] = fnc
             self._type(gui.InputField.CHOICE_TYPE)
 
-        def setValues(self, values):
+        def setValues(self, values: typing.List[typing.Any]):
             """
             Set the values for this choice field
             """
@@ -690,7 +690,7 @@ class gui:
 
             self._type(gui.InputField.IMAGECHOICE_TYPE)
 
-        def setValues(self, values):
+        def setValues(self, values: typing.List[typing.Any]):
             """
             Set the values for this choice field
             """
@@ -736,7 +736,7 @@ class gui:
             self._data['rows'] = options.get('rows', -1)
             self._type(gui.InputField.MULTI_CHOICE_TYPE)
 
-        def setValues(self, values):
+        def setValues(self, values: typing.List[typing.Any]) -> None:
             """
             Set the values for this multi choice field
             """
