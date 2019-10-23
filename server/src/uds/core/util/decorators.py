@@ -98,7 +98,8 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 def allowCache(
         cachePrefix: str,
         cacheTimeout: int,
-        cachingArgs: typing.Optional[typing.Union[typing.List[int], int]] = None,
+        cachingArgs: typing.Optional[typing.Union[typing.List[int], typing.Tuple[int], int]] = None,
+        cachingKWArgs: typing.Optional[typing.Union[typing.List[str], typing.Tuple[str], str]] = None,
         cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None
     ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """Decorator that give us a "quick& clean" caching feature on service providers.
@@ -115,11 +116,16 @@ def allowCache(
     def allowCacheDecorator(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         @wraps(fnc)
         def wrapper(*args, **kwargs) -> RT:
+            argList: typing.List[str] = []
             if cachingArgs:
-                if isinstance(cachingArgs, (list, tuple)):
-                    argList = [args[i] if i < len(args) else '' for i in cachingArgs]
-                else:
-                    argList = args[cachingArgs] if cachingArgs < len(args) else ''
+                ar = [cachingArgs] if not isinstance(cachingArgs, (list, tuple)) else cachingArgs
+                argList = [args[i] if i < len(args) else '' for i in ar]
+
+            if cachingKWArgs:
+                kw = [cachingKWArgs] if not isinstance(cachingKWArgs, (list, tuple)) else cachingKWArgs
+                argList += [str(kwargs.get(i, '')) for i in kw]
+
+            if argList:
                 cacheKey = '{}-{}.{}'.format(cachePrefix, keyFnc(args[0]), argList)
             else:
                 cacheKey = '{}-{}.gen'.format(cachePrefix, keyFnc(args[0]))
