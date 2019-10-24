@@ -30,10 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import base64
 import typing
-
-from uds.core.util import encoders
-
 
 class Serializable:
     """
@@ -80,10 +78,10 @@ class Serializable:
         """
         Serializes and "obfuscates' the data.
         """
-        return typing.cast(str, (encoders.encode(self.marshal(), 'base64', asText=True)))
+        return base64.b64encode(self.marshal()).decode()
 
     def unserialize(self, data: str) -> None:
         """
         des-obfuscates the data and then de-serializes it via unmarshal method
         """
-        self.unmarshal(typing.cast(bytes, encoders.decode(data, 'base64')))
+        self.unmarshal(base64.b64decode(data))
