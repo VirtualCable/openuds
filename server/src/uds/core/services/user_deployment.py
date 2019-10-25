@@ -224,7 +224,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         return self._dbService
 
-    def doLog(self, level, message) -> None:
+    def doLog(self, level: typing.Union[str, int], message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
