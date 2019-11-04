@@ -48,6 +48,8 @@ USERSERVICE_TAG = 'cm-'
 # State updaters
 # This will be executed on current service state for checking transitions to new state, task states, etc..
 class StateUpdater:
+    userService: UserService
+    userServiceInstalce: UserDeployment
 
     def __init__(self, userService: UserService, userServiceInstance: typing.Optional[UserDeployment] = None):
         self.userService = userService
@@ -81,12 +83,14 @@ class StateUpdater:
             State.FINISHED: self.finish
         }.get(state, self.error)
 
-        logger.debug('Running updater with state %s and executor %s', State.toString(state), executor)
+        logger.debug('Running Executor for %s with state %s and executor %s', self.userService.friendly_name, State.toString(state), executor)
 
         try:
             executor()
         except Exception as e:
             self.setError('Exception: {}'.format(e))
+
+        logger.debug('Executor for %s done', self.userService.friendly_name)
 
     def finish(self):
         raise NotImplementedError('finish method must be overriden')
@@ -101,7 +105,7 @@ class StateUpdater:
 
 class UpdateFromPreparing(StateUpdater):
 
-    def checkOsManagerRelated(self):
+    def checkOsManagerRelated(self) -> str:
         osManager = self.userServiceInstance.osmanager()
 
         state = State.USABLE
@@ -133,6 +137,11 @@ class UpdateFromPreparing(StateUpdater):
         return state
 
     def finish(self):
+        if self.userService.getProperty('destroy_after'):  # Marked for destroyal
+            self.userService.setProperty('destroy_after', '')  # Cleanup..
+            self.save(State.REMOVABLE)  # And start removing it
+            return
+
         state = State.REMOVABLE  # By default, if not valid publication, service will be marked for removal on preparation finished
         if self.userService.isValidPublication():
             logger.debug('Publication is valid for %s', self.userService.friendly_name)
@@ -203,7 +212,7 @@ class UserServiceOpChecker(DelayedTask):
                 State.CANCELING: UpdateFromCanceling
             }.get(userService.state, UpdateFromOther)
 
-            logger.debug('Updating from %s with updater %s and state %s', State.toString(userService.state), updater, state)
+            logger.debug('Updating %s from %s with updater %s and state %s', userService.friendly_name, State.toString(userService.state), updater, state)
 
             updater(userService, userServiceInstance).run(state)
 

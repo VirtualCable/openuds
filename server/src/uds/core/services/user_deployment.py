@@ -567,7 +567,14 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('cancel method for class {0} not provided!'.format(self.__class__.__name__))
+        return State.RUNNING
+
+    @classmethod
+    def supportsCancel(cls) -> bool:
+        """
+        Helper to query if a class is custom (implements getJavascript method)
+        """
+        return cls.cancel != UserDeployment.cancel
 
     def reset(self) -> None:
         """

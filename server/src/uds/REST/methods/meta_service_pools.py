@@ -193,18 +193,18 @@ class MetaAssignedService(DetailHandler):
             raise self.invalidItemException()
 
     def deleteItem(self, parent: MetaPool, item: str) -> None:
-        service = self._getAssignedService(parent, item)
+        userService = self._getAssignedService(parent, item)
 
-        if service.user:
-            logStr = 'Deleted assigned service {} to user {} by {}'.format(service.friendly_name, service.user.pretty_name, self._user.pretty_name)
+        if userService.user:
+            logStr = 'Deleted assigned service {} to user {} by {}'.format(userService.friendly_name, userService.user.pretty_name, self._user.pretty_name)
         else:
-            logStr = 'Deleted cached service {} by {}'.format(service.friendly_name, self._user.pretty_name)
+            logStr = 'Deleted cached service {} by {}'.format(userService.friendly_name, self._user.pretty_name)
 
-        if service.state in (State.USABLE, State.REMOVING):
-            service.remove()
-        elif service.state == State.PREPARING:
-            service.cancel()
-        elif service.state == State.REMOVABLE:
+        if userService.state in (State.USABLE, State.REMOVING):
+            userService.remove()
+        elif userService.state == State.PREPARING:
+            userService.cancel()
+        elif userService.state == State.REMOVABLE:
             raise self.invalidItemException(_('Item already being removed'))
         else:
             raise self.invalidItemException(_('Item is not removable'))

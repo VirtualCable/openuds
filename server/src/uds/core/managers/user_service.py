@@ -215,18 +215,28 @@ class UserServiceManager:
         Cancels an user service creation
         @return: the Uservice canceling
         """
-        userService = UserService.objects.get(pk=userService.id)
+        userService.refresh_from_db()
         logger.debug('Canceling userService %s creation', userService)
+
         if userService.isPreparing() is False:
             logger.info('Cancel requested for a non running operation, performing removal instead')
             return self.remove(userService)
 
         userServiceInstance = userService.getInstance()
-        # We simply notify service that it should cancel operation
-        state = userServiceInstance.cancel()
-        userService.setState(State.CANCELING)
-        # Data will be serialized on makeUnique process
-        UserServiceOpChecker.makeUnique(userService, userServiceInstance, state)
+
+        if not userServiceInstance.supportsCancel(): # Does not supports cancel, but destroy, so mark it for "later" destroy
+            # State is kept, just mark it for destroy after finished preparing
+            userService.setProperty('destroy_after', 'y')
+        else:
+            userService.setState(State.CANCELING)
+            # We simply notify service that it should cancel operation
+            state = userServiceInstance.cancel()
+
+            # Data will be serialized on makeUnique process
+            # If cancel is not supported, base cancel always returns "FINISHED", and
+            # opchecker will set state to "removable"
+            UserServiceOpChecker.makeUnique(userService, userServiceInstance, state)
+
         return userService
 
     def remove(self, userService: UserService) -> UserService:

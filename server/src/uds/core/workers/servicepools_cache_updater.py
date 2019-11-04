@@ -98,7 +98,11 @@ class ServiceCacheUpdater(Job):
                 continue
 
             # Get data related to actual state of cache
-            inCacheL1: int = servicePool.cachedUserServices().filter(userServiceManager().getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
+            inCacheL1: int = servicePool.cachedUserServices().filter(
+                userServiceManager().getCacheStateFilter(services.UserDeployment.L1_CACHE)
+            ).exclude(
+                Q(properties__name='destroy_after') & Q(properties__value='y')
+            ).count()
             inCacheL2: int = servicePool.cachedUserServices().filter(userServiceManager().getCacheStateFilter(services.UserDeployment.L2_CACHE)).count()
             inAssigned: int = servicePool.assignedUserServices().filter(userServiceManager().getStateFilter()).count()
             # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
@@ -204,9 +208,15 @@ class ServiceCacheUpdater(Job):
     def reduceL1Cache(self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int):
         logger.debug("Reducing L1 cache erasing a service in cache for %s", servicePool)
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
-        cacheItems: typing.List[UserService] = list(servicePool.cachedUserServices().filter(
-            userServiceManager().getCacheStateFilter(services.UserDeployment.L1_CACHE)
-        ).order_by('-creation_date').iterator())
+        cacheItems: typing.List[UserService] = list(
+            servicePool.cachedUserServices().filter(
+                userServiceManager().getCacheStateFilter(services.UserDeployment.L1_CACHE)
+            ).exclude(
+                Q(properties__name='destroy_after') & Q(properties__value='y')
+            ).order_by(
+                '-creation_date'
+            ).iterator()
+        )
 
         if not cacheItems:
             logger.debug('There is more services than max configured, but could not reduce cache L1 cause its already empty')

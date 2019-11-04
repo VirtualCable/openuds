@@ -30,7 +30,7 @@
 """
 
 from django.http import HttpResponse
-from django.views.decorators.cache import cache_page
+# from django.views.decorators.cache import cache_page
 from uds.core.util.config import Config
 
 

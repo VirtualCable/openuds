@@ -66,7 +66,7 @@ class AssignedService(DetailHandler):
             'id_deployed_service': item.deployed_service.uuid,
             'unique_id': item.unique_id,
             'friendly_name': item.friendly_name,
-            'state': item.state,
+            'state': item.state if not props.get('destroy_after') else State.CANCELING,
             'os_state': item.os_state,
             'state_date': item.state_date,
             'creation_date': item.creation_date,
@@ -145,21 +145,21 @@ class AssignedService(DetailHandler):
     # This is also used by CachedService, so we use "userServices" directly and is valid for both
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
         try:
-            service: models.UserService = parent.userServices.get(uuid=processUuid(item))
+            userService: models.UserService = parent.userServices.get(uuid=processUuid(item))
         except Exception:
             logger.exception('deleteItem')
             raise self.invalidItemException()
 
-        if service.user:
-            logStr = 'Deleted assigned service {} to user {} by {}'.format(service.friendly_name, service.user.pretty_name, self._user.pretty_name)
+        if userService.user:
+            logStr = 'Deleted assigned service {} to user {} by {}'.format(userService.friendly_name, userService.user.pretty_name, self._user.pretty_name)
         else:
-            logStr = 'Deleted cached service {} by {}'.format(service.friendly_name, self._user.pretty_name)
+            logStr = 'Deleted cached service {} by {}'.format(userService.friendly_name, self._user.pretty_name)
 
-        if service.state in (State.USABLE, State.REMOVING):
-            service.remove()
-        elif service.state == State.PREPARING:
-            service.cancel()
-        elif service.state == State.REMOVABLE:
+        if userService.state in (State.USABLE, State.REMOVING):
+            userService.remove()
+        elif userService.state == State.PREPARING:
+            userService.cancel()
+        elif userService.state == State.REMOVABLE:
             raise self.invalidItemException(_('Item already being removed'))
         else:
             raise self.invalidItemException(_('Item is not removable'))
