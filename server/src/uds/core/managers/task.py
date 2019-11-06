@@ -44,8 +44,11 @@ from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 
+class BaseThread(threading.Thread):
+    def notifyTermination(self):
+        raise NotImplementedError
 
-class SchedulerThread(threading.Thread):
+class SchedulerThread(BaseThread):
     def run(self):
         Scheduler.scheduler().run()
 
@@ -53,7 +56,7 @@ class SchedulerThread(threading.Thread):
         Scheduler.scheduler().notifyTermination()
 
 
-class DelayedTaskThread(threading.Thread):
+class DelayedTaskThread(BaseThread):
     def run(self):
         DelayedTaskRunner.runner().run()
 
@@ -78,12 +81,12 @@ class TaskManager:
         TaskManager.keepRunning = False
 
     @staticmethod
-    def registerJob(jobType: typing.Type[jobs.Job]):
+    def registerJob(jobType: typing.Type[jobs.Job]) -> None:
         jobName = jobType.friendly_name
         jobs.factory().insert(jobName, jobType)
 
     @staticmethod
-    def registerScheduledTasks():
+    def registerScheduledTasks() -> None:
 
         logger.info("Registering sheduled tasks")
 
@@ -91,7 +94,7 @@ class TaskManager:
         from uds.core import workers  # @UnusedImport pylint: disable=unused-import
 
     @staticmethod
-    def run():
+    def run() -> None:
         TaskManager.keepRunning = True
 
         # Don't know why, but with django 1.8, must "reset" connections so them do not fail on first access...
@@ -108,7 +111,9 @@ class TaskManager:
 
         logger.info('Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks)
 
-        threads = []
+        threads: typing.List[BaseThread] = []
+        thread: BaseThread
+
         for _ in range(noSchedulers):
             thread = SchedulerThread()
             thread.start()

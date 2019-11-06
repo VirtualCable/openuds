@@ -46,7 +46,7 @@ class Job(Environmentable):
     friendly_name = 'Unknown'
 
     @classmethod
-    def setup(cls):
+    def setup(cls: typing.Type['Job']) -> None:
         """
         Sets ups frequency from configuration values
         """
@@ -57,14 +57,14 @@ class Job(Environmentable):
             except Exception as e:
                 logger.error('Error setting default frequency for %s ()%s. Got default value of %s', cls, e, cls.frecuency)
 
-    def execute(self):
+    def execute(self) -> None:
         try:
             self.run()
         except Exception:
             logger.exception('Job %s raised an exception:', self.__class__)
 
-    def run(self):
+    def run(self) -> None:
         """
         You must provide your own "run" method to do whatever you need
         """
-        logging.debug("Base run of job called for class")
+        logging.debug("Base run of job called for class %s", self.__class__)
