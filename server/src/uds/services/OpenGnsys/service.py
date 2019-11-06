@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2017-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,18 +30,23 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from django.utils.translation import ugettext_noop as _, ugettext
+import logging
+import typing
+
+from django.utils.translation import ugettext_noop as _
+
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
-from .OGDeployment import OGDeployment
-from .OGPublication import OGPublication
-from . import helpers
-
 from uds.core.ui import gui
 
-import logging
+from . import helpers
+from .deployment import OGDeployment
+from .publication import OGPublication
 
-__updated__ = '2018-11-08'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .provider import OGProvider
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
@@ -134,17 +139,7 @@ class OGService(Service):
     ov = gui.HiddenField(value=None)
     ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
-    def initialize(self, values):
-        """
-        We check here form values to see if they are valid.
-
-        Note that we check them FROM variables, that already has been
-        initialized by __init__ method of base class, before invoking this.
-        """
-        if values is not None:
-            pass
-
-    def initGui(self):
+    def initGui(self) -> None:
         """
         Loads required values inside
         """
@@ -154,22 +149,25 @@ class OGService(Service):
         self.ov.setDefValue(self.parent().serialize())
         self.ev.setDefValue(self.parent().env.key)
 
-    def status(self, machineId):
+    def parent(self) -> 'OGProvider':
+        return typing.cast('OGProvider', super().parent())
+
+    def status(self, machineId: str) -> typing.Any:
         return self.parent().status(machineId)
 
-    def reserve(self):
+    def reserve(self) -> typing.Any:
         return self.parent().reserve(self.ou.value, self.image.value, self.lab.value, self.maxReservationTime.num())
 
-    def unreserve(self, machineId):
+    def unreserve(self, machineId: str) -> typing.Any:
         return self.parent().unreserve(machineId)
 
-    def notifyEvents(self, machineId, serviceUUID):
+    def notifyEvents(self, machineId: str, serviceUUID: str) -> typing.Any:
         return self.parent().notifyEvents(machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
 
-    def notifyDeadline(self, machineId, deadLine):
+    def notifyDeadline(self, machineId: str, deadLine: typing.Optional[int]) -> typing.Any:
         return self.parent().notifyDeadline(machineId, deadLine)
 
-    def _notifyURL(self, uuid, message):
+    def _notifyURL(self, uuid: str, message: str) -> str:
         # The URL is "GET messages URL".
         return '{accessURL}rest/actor/PostThoughGet/{uuid}/{message}'.format(
             accessURL=self.parent().getUDSServerAccessUrl(),
@@ -177,8 +175,8 @@ class OGService(Service):
             message=message
         )
 
-    def getLoginNotifyURL(self, serviceUUID):
+    def getLoginNotifyURL(self, serviceUUID: str) -> str:
         return self._notifyURL(serviceUUID, 'login')
 
-    def getLogoutNotifyURL(self, serviceUUID):
+    def getLogoutNotifyURL(self, serviceUUID: str) -> str:
         return self._notifyURL(serviceUUID, 'logout')

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2017-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,6 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 # API URL 1: https://www.informatica.us.es/~ramon/opengnsys/?url=opengnsys-api.yml
 # API URL 2: http://opengnsys.es/wiki/ApiRest
 

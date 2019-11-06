@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -32,16 +31,19 @@
 """
 import pickle
 import logging
-
+import typing
 
 from uds.core.services import UserDeployment
 from uds.core.util.state import State
 from uds.core.util import log
 from uds.models.util import getSqlDatetimeAsUnix
 
-from . import og
-
-__updated__ = '2019-02-07'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from .service import OGService
+    from .publication import OGPublication
+    from uds.core.util.storage import Storage
 
 logger = logging.getLogger(__name__)
 
@@ -63,18 +65,32 @@ class OGDeployment(UserDeployment):
     # : Recheck every N seconds by default (for task methods)
     suggestedTime = 20
 
-    def initialize(self):
-        self._name = 'unknown'
-        self._ip = ''
-        self._mac = ''
-        self._machineId = ''
-        self._stamp = 0
-        self._reason = ''
+    _name: str = 'unknown'
+    _ip: str = ''
+    _mac: str = ''
+    _machineId: str = ''
+    _stamp: int = 0
+    _reason: str = ''
+
+    _queue: typing.List[int]  # Do not initialize mutable, just declare and it is initialized on "initialize"
+    _uuid: str
+
+    def initialize(self) -> None:
         self._queue = []
-        self._uuid = self.dbservice().uuid
+        dbs = self.dbservice()
+        self._uuid = dbs.uuid if dbs else ''
+
+    def service(self) -> 'OGService':
+        return typing.cast('OGService', super().service())
+
+    def publication(self) -> 'OGPublication':
+        pub = super().publication()
+        if pub is None:
+            raise Exception('No publication for this element!')
+        return typing.cast('OGPublication', pub)
 
     # Serializable needed methods
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Does nothing right here, we will use environment storage in this sample
         """
@@ -89,11 +105,11 @@ class OGDeployment(UserDeployment):
             pickle.dumps(self._queue, protocol=0)
         ])
 
-    def unmarshal(self, str_):
+    def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are kept at environment storage
         """
-        vals = str_.split(b'\1')
+        vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
             self._ip = vals[2].decode('utf8')
@@ -103,27 +119,29 @@ class OGDeployment(UserDeployment):
             self._stamp = int(vals[6].decode('utf8'))
             self._queue = pickle.loads(vals[7])
 
-    def getName(self):
+    def getName(self) -> str:
         return self._name
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         return self._mac.upper()
 
-    def getIp(self):
+    def getIp(self) -> str:
         return self._ip
 
-    def setReady(self):
+    def setReady(self) -> str:
         """
         Notifies the current "deadline" to the user, before accessing by UDS
         The machine has been already been started.
         The problem is that currently there is no way that a machine is in FACT started.
         OpenGnsys will try it best by sending an WOL
         """
-        self.service().notifyDeadline(self._machineId, self.dbservice().deployed_service.getDeadline())
+        dbs = self.dbservice()
+        deadline = dbs.deployed_service.getDeadline() if dbs else 0
+        self.service().notifyDeadline(self._machineId, deadline)
 
         return State.FINISHED
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -131,19 +149,18 @@ class OGDeployment(UserDeployment):
         self.__initQueueForDeploy()
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel):
+    def deployForCache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
         self.__initQueueForDeploy()  # No Level2 Cache possible
         return self.__executeQueue()
 
-    def __initQueueForDeploy(self):
-
+    def __initQueueForDeploy(self) -> None:
         self._queue = [opCreate, opFinish]
 
-    def __checkMachineReady(self):
-        logger.debug('Checking that state of machine {} ({}) is ready'.format(self._machineId, self._name))
+    def __checkMachineReady(self) -> str:
+        logger.debug('Checking that state of machine %s (%s) is ready', self._machineId, self._name)
 
         try:
             status = self.service().status(self._machineId)
@@ -157,33 +174,33 @@ class OGDeployment(UserDeployment):
 
         return State.RUNNING
 
-    def __getCurrentOp(self):
+    def __getCurrentOp(self) -> int:
         if len(self._queue) == 0:
             return opFinish
 
         return self._queue[0]
 
-    def __popCurrentOp(self):
+    def __popCurrentOp(self) -> int:
         if len(self._queue) == 0:
             return opFinish
 
         res = self._queue.pop(0)
         return res
 
-    def __pushFrontOp(self, op):
+    def __pushFrontOp(self, op: int) -> None:
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op):
+    def __pushBackOp(self, op: int) -> None:
         self._queue.append(op)
 
-    def __error(self, reason):
+    def __error(self, reason: typing.Any) -> str:
         """
         Internal method to set object as error state
 
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
         """
-        logger.debug('Setting error state, reason: {0}'.format(reason))
+        logger.debug('Setting error state, reason: %s', reason)
         self.doLog(log.ERROR, reason)
 
         # TODO: Unreserve machine?? Maybe it just better to keep it assigned so UDS don't get it again in a while...
@@ -192,7 +209,7 @@ class OGDeployment(UserDeployment):
         self._reason = str(reason)
         return State.ERROR
 
-    def __executeQueue(self):
+    def __executeQueue(self) -> str:
         self.__debug('executeQueue')
         op = self.__getCurrentOp()
 
@@ -202,14 +219,14 @@ class OGDeployment(UserDeployment):
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opRemove: self.__remove,
         }
 
         try:
-            execFnc = fncs.get(op, None)
+            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error('Unknown operation found at execution queue ({0})'.format(op))
@@ -218,11 +235,11 @@ class OGDeployment(UserDeployment):
 
             return State.RUNNING
         except Exception as e:
-            logger.exception('Got Exception')
+            # logger.exception('Got Exception')
             return self.__error(e)
 
     # Queue execution methods
-    def __retry(self):
+    def __retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -232,7 +249,7 @@ class OGDeployment(UserDeployment):
         """
         return State.FINISHED
 
-    def __create(self):
+    def __create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
@@ -241,7 +258,7 @@ class OGDeployment(UserDeployment):
             self.service().notifyEvents(r['id'], self._uuid)
         except Exception as e:
             # logger.exception('Creating machine')
-            return self.__error('Error creating reservation: {}'.format(e))
+            raise Exception('Error creating reservation: {}'.format(e))
 
         self._machineId = r['id']
         self._name = r['name']
@@ -250,29 +267,34 @@ class OGDeployment(UserDeployment):
         self._stamp = getSqlDatetimeAsUnix()
 
         # Store actor version & Known ip
-        self.dbservice().setProperty('actor_version', '1.0-OpenGnsys')
-        self.dbservice().logIP(self._ip)
+        dbs = self.dbservice()
+        if dbs:
+            dbs.setProperty('actor_version', '1.0-OpenGnsys')
+            dbs.logIP(self._ip)
 
-    def __remove(self):
+        return State.RUNNING
+
+    def __remove(self) -> str:
         """
         Removes a machine from system
         """
         self.service().unreserve(self._machineId)
+        return State.RUNNING
 
     # Check methods
-    def __checkCreate(self):
+    def __checkCreate(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
         return self.__checkMachineReady()
 
-    def __checkRemoved(self):
+    def __checkRemoved(self) -> str:
         """
         Checks if a machine has been removed
         """
         return State.FINISHED  # No check at all, always true
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -285,14 +307,14 @@ class OGDeployment(UserDeployment):
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opRemove: self.__checkRemoved,
         }
 
         try:
-            chkFnc = fncs.get(op, None)
+            chkFnc: typing.Optional[typing.Optional[typing.Callable[[], str]]] = fncs.get(op, None)
 
             if chkFnc is None:
                 return self.__error('Unknown operation found at check queue ({0})'.format(op))
@@ -306,15 +328,7 @@ class OGDeployment(UserDeployment):
         except Exception as e:
             return self.__error(e)
 
-    def finish(self):
-        """
-        Invoked when the core notices that the deployment of a service has finished.
-        (No matter wether it is for cache or for an user)
-        """
-        self.__debug('finish')
-        pass
-
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         Returns the reason of the error.
 
@@ -324,7 +338,7 @@ class OGDeployment(UserDeployment):
         """
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         Invoked for destroying a deployed service
         """
@@ -334,7 +348,7 @@ class OGDeployment(UserDeployment):
         self._queue = [opRemove, opFinish]
         return self.__executeQueue()
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -347,7 +361,7 @@ class OGDeployment(UserDeployment):
         return self.destroy()
 
     @staticmethod
-    def __op2str(op):
+    def __op2str(op: int) -> str:
         return {
             opCreate: 'create',
             opRemove: 'remove',
@@ -357,8 +371,4 @@ class OGDeployment(UserDeployment):
         }.get(op, '????')
 
     def __debug(self, txt):
-        logger.debug('_name {0}: {1}'.format(txt, self._name))
-        logger.debug('_ip {0}: {1}'.format(txt, self._ip))
-        logger.debug('_mac {0}: {1}'.format(txt, self._mac))
-        logger.debug('_machineId {0}: {1}'.format(txt, self._machineId))
-        logger.debug('Queue at {0}: {1}'.format(txt, [OGDeployment.__op2str(op) for op in self._queue]))
+        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmId, [OGDeployment.__op2str(op) for op in self._queue])

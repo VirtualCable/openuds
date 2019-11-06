@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2017-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,14 +30,16 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
+
 from uds.core.services import Publication
 from uds.core.util.state import State
 from uds.models.util import getSqlDatetime
 
-import logging
-
-__updated__ = '2019-02-07'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .service import OGService
 
 logger = logging.getLogger(__name__)
 
@@ -46,29 +48,20 @@ class OGPublication(Publication):
     """
     This class provides the publication of a oVirtLinkedService
     """
-    _name = ''
+    _name: str = ''
 
     suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
 
-    def initialize(self):
-        """
-        This method will be invoked by default __init__ of base class, so it gives
-        us the oportunity to initialize whataver we need here.
+    def service(self) -> 'OGService':
+        return typing.cast('OGService', super().service())
 
-        In our case, we setup a few attributes..
-        """
-
-        # We do not check anything at marshal method, so we ensure that
-        # default values are correctly handled by marshal.
-        self._name = ''
-
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
         return '\t'.join(['v1', self._name]).encode('utf8')
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
@@ -76,50 +69,24 @@ class OGPublication(Publication):
         if vals[0] == 'v1':
             self._name = vals[1]
 
-    def publish(self):
+    def publish(self) -> str:
         """
         Realizes the publication of the service
         """
         self._name = 'Publication {}'.format(getSqlDatetime())
         return State.FINISHED
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Checks state of publication creation
         """
         return State.FINISHED
 
-    def finish(self):
-        """
-        In our case, finish does nothing
-        """
-        pass
-
-    def reasonOfError(self):
-        """
-        If a publication produces an error, here we must notify the reason why
-        it happened. This will be called just after publish or checkState
-        if they return State.ERROR
-
-        Returns an string, in our case, set at checkState
-        """
+    def reasonOfError(self) -> str:
         return 'No error possible :)'
 
-    def destroy(self):
-        """
-        This is called once a publication is no more needed.
-
-        This method do whatever needed to clean up things, such as
-        removing created "external" data (environment gets cleaned by core),
-        etc..
-
-        The retunred value is the same as when publishing, State.RUNNING,
-        State.FINISHED or State.ERROR.
-        """
+    def destroy(self) -> str:
         return State.FINISHED
 
-    def cancel(self):
-        """
-        Do same thing as destroy
-        """
+    def cancel(self) -> str:
         return self.destroy()

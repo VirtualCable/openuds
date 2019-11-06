@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2017-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,14 +30,13 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-from . import urls
 import copy
 import random
-import six
 import logging
+import typing
 
-__updated__ = '2017-09-29'
+from . import urls
+
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +144,7 @@ IMAGES = [
     },
 ]
 
-RESERVE = {
+RESERVE: typing.Dict[str, typing.Any] = {
     "id": 4,
     "name": "pcpruebas",
     "mac": "4061860521FE",
@@ -184,13 +183,14 @@ STATUS_READY_WINDOWS = {
 
 
 # FAKE post
-def post(path, data, errMsg):
-    logger.info('FAKE POST request to {} with {} data. ({})'.format(path, data, errMsg))
+def post(path: str, data: typing.Any, errMsg: typing.Optional[str] = None) -> typing.Any:
+    logger.info('FAKE POST request to %s with %s data. (%s)', path, data, errMsg)
     if path == urls.LOGIN:
         return AUTH
-    elif path == urls.RESERVE.format(ou=1, image=1) or path == urls.RESERVE.format(ou=1, image=2):
+
+    if path == urls.RESERVE.format(ou=1, image=1) or path == urls.RESERVE.format(ou=1, image=2):
         res = copy.deepcopy(RESERVE)
-        res['name'] += six.text_type(random.randint(5000, 100000))
+        res['name'] += str(random.randint(5000, 100000))
         res['mac'] = ''.join(random.choice('0123456789ABCDEF') for _ in range(12))
         return res
 
@@ -198,33 +198,33 @@ def post(path, data, errMsg):
 
 
 # FAKE get
-def get(path, errMsg):
-    logger.info('FAKE GET request to {}. ({})'.format(path, errMsg))
+def get(path, errMsg: typing.Optional[str]) -> typing.Any:  # pylint: disable=too-many-return-statements
+    logger.info('FAKE GET request to %s. (%s)', path, errMsg)
     if path == urls.INFO:
         return INFO
-    elif path == urls.OUS:
+    if path == urls.OUS:
         return OUS
-    elif path == urls.LABS.format(ou=1):
+    if path == urls.LABS.format(ou=1):
         return LABS
-    elif path == urls.LABS.format(ou=2):
+    if path == urls.LABS.format(ou=2):
         return []  # Empty
-    elif path == urls.IMAGES.format(ou=1):
+    if path == urls.IMAGES.format(ou=1):
         return IMAGES
-    elif path == urls.IMAGES.format(ou=2):
+    if path == urls.IMAGES.format(ou=2):
         return []
-    elif path[-6:] == 'status':
+    if path[-6:] == 'status':
         rnd = random.randint(0, 100)
         if rnd < 25:
             return STATUS_READY_LINUX
         return STATUS_OFF
-    elif path[-6:] == 'events':
+    if path[-6:] == 'events':
         return ''
 
     raise Exception('Unknown FAKE URL on GET: {}'.format(path))
 
 
-def delete(path, errMsg):
-    logger.info('FAKE DELETE request to {}. ({})'.format(path, errMsg))
+def delete(path: str, errMsg: typing.Optional[str]):
+    logger.info('FAKE DELETE request to %s. (%s)', path, errMsg)
     # Right now, only "unreserve" uses delete, so simply return
     return UNRESERVE
     # raise Exception('Unknown FAKE URL on DELETE: {}'.format(path))

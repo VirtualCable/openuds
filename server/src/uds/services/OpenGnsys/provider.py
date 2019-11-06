@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,20 +32,23 @@ Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
+
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
-from defusedxml import minidom
 
-from .OGService import OGService
+from .service import OGService
 from . import og
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+    from uds.core.environment import Environment
 
-import logging
-import six
 
 
 __updated__ = '2017-10-16'
@@ -106,9 +109,9 @@ class OGProvider(ServiceProvider):
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to OpenGnsys'), required=True, tab=gui.ADVANCED_TAB)
 
     # Own variables
-    _api = None
+    _api: typing.Optional[og.OpenGnsysClient] = None
 
-    def initialize(self, values=None):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -116,7 +119,7 @@ class OGProvider(ServiceProvider):
         # Just reset _api connection variable
         self._api = None
 
-        if values is not None:
+        if values:
             self.timeout.value = validators.validateTimeout(self.timeout.value)
             logger.debug('Endpoint: %s', self.endpoint)
 
@@ -132,21 +135,21 @@ class OGProvider(ServiceProvider):
                 pass
 
     @property
-    def endpoint(self):
+    def endpoint(self) -> str:
         return 'https://{}:{}/opengnsys/rest'.format(self.host.value, self.port.value)
 
     @property
-    def api(self):
-        if self._api is None:
+    def api(self) -> og.OpenGnsysClient:
+        if not self._api:
             self._api = og.OpenGnsysClient(self.username.value, self.password.value, self.endpoint, self.cache, self.checkCert.isTrue())
 
-        logger.debug('Api: {}'.format(self._api))
+        logger.debug('Api: %s', self._api)
         return self._api
 
-    def resetApi(self):
+    def resetApi(self) -> None:
         self._api = None
 
-    def testConnection(self):
+    def testConnection(self) -> typing.List[typing.Any]:
         """
         Test that conection to OpenGnsys server is fine
 
@@ -164,7 +167,7 @@ class OGProvider(ServiceProvider):
         return [True, _('OpenGnsys test connection passed')]
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
         """
         Test ovirt Connectivity
 
@@ -182,20 +185,20 @@ class OGProvider(ServiceProvider):
         """
         return OGProvider(env, data).testConnection()
 
-    def getUDSServerAccessUrl(self):
+    def getUDSServerAccessUrl(self) -> str:
         return self.udsServerAccessUrl.value
 
-    def reserve(self, ou, image, lab=0, maxtime=0):
+    def reserve(self, ou: str, image: str, lab: int = 0, maxtime: int = 0) -> typing.Any:
         return self.api.reserve(ou, image, lab, maxtime)
 
-    def unreserve(self, machineId):
+    def unreserve(self, machineId: str) -> typing.Any:
         return self.api.unreserve(machineId)
 
-    def notifyEvents(self, machineId, loginURL, logoutURL):
+    def notifyEvents(self, machineId: str, loginURL: str, logoutURL: str) -> typing.Any:
         return self.api.notifyURLs(machineId, loginURL, logoutURL)
 
-    def notifyDeadline(self, machineId, deadLine):
+    def notifyDeadline(self, machineId: str, deadLine: typing.Optional[int]) -> typing.Any:
         return self.api.notifyDeadline(machineId, deadLine)
 
-    def status(self, machineId):
+    def status(self, machineId: str) -> typing.Any:
         return self.api.status(machineId)
