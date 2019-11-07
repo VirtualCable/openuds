@@ -30,19 +30,21 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
 import logging
-# import oca
+import typing
 
 from defusedxml import minidom
-# Python bindings for OpenNebula
-from .common import VmState
 
+from . import types
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from . import client
 
 logger = logging.getLogger(__name__)
 
 
-def getMachineState(api, machineId):
+def getMachineState(api: 'client.OpenNebulaClient', machineId: str) -> types.VmState:
     '''
     Returns the state of the machine
     This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
@@ -54,17 +56,14 @@ def getMachineState(api, machineId):
         one of the on.VmState Values
     '''
     try:
-        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
-        # vm.info()
-        # return vm.state
         return api.getVMState(machineId)
     except Exception as e:
         logger.error('Error obtaining machine state for %s on OpenNebula: %s', machineId, e)
 
-    return VmState.UNKNOWN
+    return types.VmState.UNKNOWN
 
 
-def getMachineSubstate(api, machineId):
+def getMachineSubstate(api: 'client.OpenNebulaClient', machineId: str) -> int:
     '''
     Returns the lcm_state
     '''
@@ -73,10 +72,10 @@ def getMachineSubstate(api, machineId):
     except Exception as e:
         logger.error('Error obtaining machine substate for %s on OpenNebula: %s', machineId, e)
 
-    return VmState.UNKNOWN
+    return types.VmState.UNKNOWN.value
 
 
-def startMachine(api, machineId):
+def startMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
@@ -94,7 +93,7 @@ def startMachine(api, machineId):
         pass
 
 
-def stopMachine(api, machineId):
+def stopMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
@@ -109,7 +108,7 @@ def stopMachine(api, machineId):
         logger.error('Error powering off %s on OpenNebula: %s', machineId, e)
 
 
-def suspendMachine(api, machineId):
+def suspendMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
@@ -124,7 +123,7 @@ def suspendMachine(api, machineId):
         logger.error('Error suspending %s on OpenNebula: %s', machineId, e)
 
 
-def resetMachine(api, machineId):
+def resetMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
@@ -139,7 +138,7 @@ def resetMachine(api, machineId):
         logger.error('Error reseting %s on OpenNebula: %s', machineId, e)
 
 
-def removeMachine(api, machineId):
+def removeMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
@@ -158,7 +157,7 @@ def removeMachine(api, machineId):
         raise Exception(err)
 
 
-def enumerateMachines(api):
+def enumerateMachines(api: 'client.OpenNebulaClient') -> typing.Iterable[types.VirtualMachineType]:
     '''
     Obtains the list of machines inside OpenNebula.
     Machines starting with UDS are filtered out
@@ -173,7 +172,7 @@ def enumerateMachines(api):
             'id'
             'cluster_id'
     '''
-    return api.enumVMs()
+    yield from api.enumVMs()
 
 
 def getNetInfo(api, machineId, networkId=None):

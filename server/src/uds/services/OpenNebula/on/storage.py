@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
@@ -30,14 +29,18 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
 import logging
+import typing
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from . import client
+    from . import types
 
 logger = logging.getLogger(__name__)
 
-def enumerateDatastores(api, datastoreType=0):
+def enumerateDatastores(api: 'client.OpenNebulaClient', datastoreType: int = 0) -> typing.Iterable['types.StorageType']:
     """
     0 seems to be images datastore
     """
-    return api.enumStorage(datastoreType)
+    yield from api.enumStorage(datastoreType)

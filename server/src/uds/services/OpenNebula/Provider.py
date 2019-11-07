@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import ServiceProvider
@@ -43,7 +44,7 @@ from . import on
 logger = logging.getLogger(__name__)
 
 
-class Provider(ServiceProvider):
+class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
     '''
     This class represents the sample services provider
 
@@ -96,7 +97,7 @@ class Provider(ServiceProvider):
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to OpenNebula'), required=True, tab=gui.ADVANCED_TAB)
 
     # Own variables
-    _api = None
+    _api: typing.Optional[on.client.OpenNebulaClient] = None
 
     def initialize(self, values=None):
         '''
@@ -106,18 +107,18 @@ class Provider(ServiceProvider):
         # Just reset _api connection variable
         self._api = None
 
-        if values is not None:
+        if values:
             self.timeout.value = validators.validateTimeout(self.timeout.value)
             logger.debug('Endpoint: %s', self.endpoint)
 
     @property
-    def endpoint(self):
+    def endpoint(self) -> str:
         return 'http{}://{}:{}/RPC2'.format('s' if self.ssl.isTrue() else '', self.host.value, self.port.value)
 
     @property
-    def api(self):
+    def api(self) -> on.client.OpenNebulaClient:
         if self._api is None:
-            self._api = on.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
+            self._api = on.client.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
 
         logger.debug('Api: %s', self._api)
         return self._api

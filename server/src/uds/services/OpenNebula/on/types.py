@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
@@ -30,17 +29,82 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import enum
+import typing
 
-# import sys
-import re
+class VmState(enum.Enum):  # pylint: disable=too-few-public-methods
+    INIT = 0
+    PENDING = 1
+    HOLD = 2
+    ACTIVE = 3
+    STOPPED = 4
+    SUSPENDED = 5
+    DONE = 6
+    FAILED = 7
+    POWEROFF = 8
+    UNDEPLOYED = 9
 
-import logging
+    UNKNOWN = 99
 
-logger = logging.getLogger(__name__)
+    @staticmethod
+    def fromState(state: str) -> 'VmState':
+        try:
+            return VmState(int(state))
+        except Exception:
+            return VmState.UNKNOWN
 
-# module = sys.modules[__name__]
-def sanitizeName(name):
-    """
-    machine names with [a-zA-Z0-9_-]
-    """
-    return re.sub("[^a-zA-Z0-9._-]", "_", name)
+
+class ImageState(enum.Enum):  # pylint: disable=too-few-public-methods
+    INIT = 0
+    READY = 1
+    USED = 2
+    DISABLED = 3
+    LOCKED = 4
+    ERROR = 5
+    CLONE = 6
+    DELETE = 7
+    USED_PERS = 8
+    LOCKED_USED = 9
+    LOCKED_USED_PERS = 10
+
+    UNKNOWN = 99
+
+    @staticmethod
+    def fromState(state: str) -> 'ImageState':
+        try:
+            return ImageState(int(state))
+        except Exception:
+            return ImageState.UNKNOWN
+
+
+class StorageType(typing.NamedTuple):
+    id: str
+    name: str
+    total: int  # In Megabytes
+    free: int   # In Megabytes
+    xml: typing.Optional[str]
+
+
+class TemplateType(typing.NamedTuple):
+    id: str
+    name: str
+    memory: int
+    xml: typing.Optional[str]
+
+
+class ImageType(typing.NamedTuple):
+    id: str
+    name: str
+    size: int   # In Megabytes
+    persistent: bool
+    running_vms: int
+    state: ImageState
+    xml: typing.Optional[str]
+
+
+class VirtualMachineType(typing.NamedTuple):
+    id: str
+    name: str
+    memory: int
+    state: VmState
+    xml: typing.Optional[str]

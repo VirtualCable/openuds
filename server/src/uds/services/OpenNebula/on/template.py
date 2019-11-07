@@ -32,22 +32,26 @@
 """
 
 import logging
+import typing
 
 from defusedxml import minidom
-# Python bindings for OpenNebula
+
+from . import types
 from .common import sanitizeName
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from . import client
 
 logger = logging.getLogger(__name__)
 
-def getTemplates(api, force=False):
-
+def getTemplates(api: 'client.OpenNebulaClient', force: bool = False) -> typing.Iterable[types.TemplateType]:
     for t in api.enumTemplates():
-        if t[1][:4] != 'UDSP':  # 0 = id, 1 = name
+        if t.name[:4] != 'UDSP':
             yield t
 
 
-def create(api, fromTemplateId, name, toDataStore):
+def create(api: 'client.OpenNebulaClient', fromTemplateId: str, name: str, toDataStore: str) -> str:
     """
     Publish the machine (makes a template from it so we can create COWs) and returns the template id of
     the creating machine
@@ -69,15 +73,13 @@ def create(api, fromTemplateId, name, toDataStore):
         templateId = api.cloneTemplate(fromTemplateId, name)
 
         # Now copy cloned images if possible
-        imgs = dict(((i[1], i[0]) for i in api.enumImages()))
+        imgs = {i.name: i.id for i in api.enumImages()}
 
-        info = api.templateInfo(templateId)[1]
+        info = api.templateInfo(templateId).xml
         template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
         logger.debug('XML: %s', template.toxml())
 
-        counter = 0
-        for dsk in template.getElementsByTagName('DISK'):
-            counter += 1
+        for counter, dsk in enumerate(template.getElementsByTagName('DISK')):
             imgIds = dsk.getElementsByTagName('IMAGE_ID')
             if not imgIds:
                 fromId = False
@@ -114,7 +116,7 @@ def create(api, fromTemplateId, name, toDataStore):
         # api.call('template.update', templateId, template.toxml())
         api.updateTemplate(templateId, template.toxml())
 
-        return str(templateId)
+        return templateId
     except Exception as e:
         logger.exception('Creating template on OpenNebula')
         try:
@@ -124,7 +126,7 @@ def create(api, fromTemplateId, name, toDataStore):
         raise e
 
 
-def remove(api, templateId):
+def remove(api: 'client.OpenNebulaClient', templateId: str) -> None:
     """
     Removes a template from ovirt server
 
@@ -134,9 +136,9 @@ def remove(api, templateId):
         # First, remove Images (wont be possible if there is any images already in use, but will try)
         # Now copy cloned images if possible
         try:
-            imgs = dict(((i[1], i[0]) for i in api.enumImages()))
+            imgs = {i.name: i.id for i in api.enumImages()}
 
-            info = api.templateInfo(templateId)[1]
+            info = api.templateInfo(templateId).xml
             template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
             logger.debug('XML: %s', template.toxml())
 
@@ -163,7 +165,7 @@ def remove(api, templateId):
     except Exception:
         logger.error('Removing template on OpenNebula')
 
-def deployFrom(api, templateId, name):
+def deployFrom(api: 'client.OpenNebulaClient', templateId: str, name: str) -> str:
     """
     Deploys a virtual machine on selected cluster from selected template
 
@@ -176,16 +178,16 @@ def deployFrom(api, templateId, name):
         Id of the machine being created form template
     """
     vmId = api.instantiateTemplate(templateId, name, False, '', False)  # api.call('template.instantiate', int(templateId), name, False, '')
-    return str(vmId)
+    return vmId
 
-def checkPublished(api, templateId):
+def checkPublished(api: 'client.OpenNebulaClient', templateId):
     """
     checks if the template is fully published (images are ready...)
     """
     try:
-        imgs = dict(((i[1], i[0]) for i in api.enumImages()))
+        imgs = {i.name: i.id for i in api.enumImages()}
 
-        info = api.templateInfo(templateId)[1]
+        info = api.templateInfo(templateId).xml
         template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
         logger.debug('XML: %s', template.toxml())
 
@@ -203,12 +205,13 @@ def checkPublished(api, templateId):
 
             logger.debug('Found %s for checking', imgId)
 
-            state = api.imageInfo(imgId)[0]['IMAGE']['STATE']
-            if state in ('0', '4'):
+            state = api.imageInfo(imgId).state
+            if state in (types.ImageState.INIT, types.ImageState.LOCKED):
                 return False
-            if state != '1':  # If error is not READY
+            if state != types.ImageState.READY:  # If error is not READY
                 raise Exception('Error publishing. Image is in an invalid state. (Check it and delete it if not needed anymore)')
-            # Ensure image is non persistent. This may be invoked more than once, but idoes not matters
+
+            # Ensure image is non persistent. This may be invoked more than once, but it does not matters
             api.makePersistentImage(imgId, False)
 
     except Exception:
