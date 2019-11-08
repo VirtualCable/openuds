@@ -28,5 +28,4 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from .Provider import Provider
-
+from .provider import OpenNebulaProvider

@@ -49,10 +49,6 @@ if typing.TYPE_CHECKING:
     from uds.core import Module
     from uds.core.environment import Environment
 
-
-
-__updated__ = '2017-10-16'
-
 logger = logging.getLogger(__name__)
 
 class OGProvider(ServiceProvider):

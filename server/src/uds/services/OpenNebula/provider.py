@@ -38,29 +38,18 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
 
-from .LiveService import LiveService
+from .service import LiveService
 from . import on
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+    from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
 
 
-class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
-    '''
-    This class represents the sample services provider
-
-    In this class we provide:
-       * The Provider functionality
-       * The basic configuration parameters for the provider
-       * The form fields needed by administrators to configure this provider
-
-       :note: At class level, the translation must be simply marked as so
-       using ugettext_noop. This is so cause we will translate the string when
-       sent to the administration client.
-
-    For this class to get visible at administration client as a provider type,
-    we MUST register it at package __init__.
-
-    '''
+class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # : What kind of services we offer, this are classes inherited from Service
     offers = [LiveService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -99,7 +88,7 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # Own variables
     _api: typing.Optional[on.client.OpenNebulaClient] = None
 
-    def initialize(self, values=None):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         '''
         We will use the "autosave" feature for form fields
         '''
@@ -120,16 +109,15 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
         if self._api is None:
             self._api = on.client.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
 
-        logger.debug('Api: %s', self._api)
         return self._api
 
-    def resetApi(self):
+    def resetApi(self) -> None:
         self._api = None
 
-    def sanitizeVmName(self, name):
+    def sanitizeVmName(self, name: str) -> str:
         return on.sanitizeName(name)
 
-    def testConnection(self):
+    def testConnection(self) -> typing.List[typing.Any]:
         '''
         Test that conection to OpenNebula server is fine
 
@@ -146,25 +134,25 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         return [True, _('Opennebula test connection passed')]
 
-    def getDatastores(self, datastoreType=0):
-        return on.storage.enumerateDatastores(self.api, datastoreType)
+    def getDatastores(self, datastoreType: int = 0) -> typing.Iterable[on.types.StorageType]:
+        yield from on.storage.enumerateDatastores(self.api, datastoreType)
 
-    def getTemplates(self, force=False):
-        return on.template.getTemplates(self.api, force)
+    def getTemplates(self, force: bool = False) -> typing.Iterable[on.types.TemplateType]:
+        yield from on.template.getTemplates(self.api, force)
 
-    def makeTemplate(self, fromTemplateId, name, toDataStore):
+    def makeTemplate(self, fromTemplateId: str, name, toDataStore: str) -> str:
         return on.template.create(self.api, fromTemplateId, name, toDataStore)
 
-    def checkTemplatePublished(self, templateId):
+    def checkTemplatePublished(self, templateId: str) -> bool:
         return on.template.checkPublished(self.api, templateId)
 
-    def removeTemplate(self, templateId):
-        return on.template.remove(self.api, templateId)
+    def removeTemplate(self, templateId: str) -> None:
+        on.template.remove(self.api, templateId)
 
-    def deployFromTemplate(self, name, templateId):
+    def deployFromTemplate(self, name: str, templateId: str) -> str:
         return on.template.deployFrom(self.api, templateId, name)
 
-    def getMachineState(self, machineId):
+    def getMachineState(self, machineId: str) -> on.types.VmState:
         '''
         Returns the state of the machine
         This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
@@ -177,13 +165,13 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
         '''
         return on.vm.getMachineState(self.api, machineId)
 
-    def getMachineSubstate(self, machineId):
+    def getMachineSubstate(self, machineId: str) -> int:
         '''
-        Returns the  LCM_STATE of a machine (must be ready)
+        Returns the  LCM_STATE of a machine (STATE must be ready or this will return -1)
         '''
         return on.vm.getMachineSubstate(self.api, machineId)
 
-    def startMachine(self, machineId):
+    def startMachine(self, machineId: str) -> None:
         '''
         Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
@@ -195,9 +183,8 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns:
         '''
         on.vm.startMachine(self.api, machineId)
-        return True
 
-    def stopMachine(self, machineId):
+    def stopMachine(self, machineId: str) -> None:
         '''
         Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
@@ -207,9 +194,8 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns:
         '''
         on.vm.stopMachine(self.api, machineId)
-        return True
 
-    def suspendMachine(self, machineId):
+    def suspendMachine(self, machineId: str) -> None:
         '''
         Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
@@ -219,15 +205,14 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns:
         '''
         on.vm.suspendMachine(self.api, machineId)
-        return True
 
-    def resetMachine(self, machineId):
+    def resetMachine(self, machineId: str) -> None:
         '''
         Resets a machine (hard-reboot)
         '''
         on.vm.resetMachine(self.api, machineId)
 
-    def removeMachine(self, machineId):
+    def removeMachine(self, machineId: str) -> None:
         '''
         Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
@@ -237,16 +222,18 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns:
         '''
         on.vm.removeMachine(self.api, machineId)
-        return True
 
-    def getNetInfo(self, machineId, networkId=None):
+    def getNetInfo(self, machineId: str, networkId: typing.Optional[str] = None) -> typing.Tuple[str, str]:
         '''
         Changes the mac address of first nic of the machine to the one specified
         '''
         return on.vm.getNetInfo(self.api, machineId, networkId)
 
-    def getConsoleConnection(self, machineId):
+    def getConsoleConnection(self, machineId: str) -> typing.Dict[str, typing.Any]:
         display = on.vm.getDisplayConnection(self.api, machineId)
+
+        if display is None:
+            raise Exception('Invalid console connection on OpenNebula!!!')
 
         return {
             'type': display['type'],
@@ -261,27 +248,12 @@ class Provider(ServiceProvider):  # pylint: disable=too-many-public-methods
             }
         }
 
-    def desktopLogin(self, machineId, username, password, domain):
+    def desktopLogin(self, machineId: str, username: str, password: str, domain: str):
         '''
         Not provided by OpenNebula API right now
         '''
         return
 
     @staticmethod
-    def test(env, data):
-        '''
-        Test ovirt Connectivity
-
-        Args:
-            env: environment passed for testing (temporal environment passed)
-
-            data: data passed for testing (data obtained from the form
-            definition)
-
-        Returns:
-            Array of two elements, first is True of False, depending on test
-            (True is all right, false is error),
-            second is an String with error, preferably internacionalizated..
-
-        '''
-        return Provider(env, data).testConnection()
+    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
+        return OpenNebulaProvider(env, data).testConnection()

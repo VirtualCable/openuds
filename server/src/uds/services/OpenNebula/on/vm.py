@@ -175,12 +175,12 @@ def enumerateMachines(api: 'client.OpenNebulaClient') -> typing.Iterable[types.V
     yield from api.enumVMs()
 
 
-def getNetInfo(api, machineId, networkId=None):
+def getNetInfo(api: 'client.OpenNebulaClient', machineId: str, networkId: typing.Optional[str] = None) -> typing.Tuple[str, str]:
     '''
-    Changes the mac address of first nic of the machine to the one specified
+    Get the MAC and the IP for the network and machine. If network is None, for the first network
     '''
     # md = minidom.parseString(api.call('vm.info', int(machineId)))
-    md = minidom.parseString(api.VMInfo(machineId)[1])
+    md = minidom.parseString(api.VMInfo(machineId).xml)
     node = md
 
     try:
@@ -206,12 +206,12 @@ def getNetInfo(api, machineId, networkId=None):
         raise Exception('No network interface found on template. Please, add a network and republish.')
 
 
-def getDisplayConnection(api, machineId):
+def getDisplayConnection(api: 'client.OpenNebulaClient', machineId: str) -> typing.Optional[typing.Dict[str, typing.Any]]:
     '''
     If machine is not running or there is not a display, will return NONE
     SPICE connections should check that 'type' is 'SPICE'
     '''
-    md = minidom.parseString(api.VMInfo(machineId)[1])
+    md = minidom.parseString(api.VMInfo(machineId).xml)
     try:
         graphics = md.getElementsByTagName('GRAPHICS')[0]
 

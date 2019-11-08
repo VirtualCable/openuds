@@ -2,6 +2,6 @@ from . import storage
 from . import template
 from . import vm
 from . import client
+from . import types
 
-# Import common
-from .common import VmState, ImageState, sanitizeName
+from .common import sanitizeName

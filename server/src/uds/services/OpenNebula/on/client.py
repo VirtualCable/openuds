@@ -62,7 +62,7 @@ def checkResultRaw(lst: typing.List) -> str:
     if not lst[0]:
         raise Exception('OpenNebula error {}: "{}"'.format(lst[2], lst[1]))
 
-    return lst[1]
+    return str(lst[1])
 
 
 def checkResult(lst: typing.List) -> typing.Tuple[typing.Dict, str]:

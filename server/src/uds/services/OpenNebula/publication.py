@@ -31,10 +31,14 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from uds.core.services import Publication
 from uds.core.util.state import State
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .service import LiveService
 
 logger = logging.getLogger(__name__)
 
@@ -46,33 +50,21 @@ class LivePublication(Publication):
 
     suggestedTime = 2  # : Suggested recheck time if publication is unfinished in seconds
 
-    _name = ''
-    _reason = ''
-    _templateId = ''
-    _state = ''
+    _name: str = ''
+    _reason: str = ''
+    _templateId: str = ''
+    _state: str = 'r'
 
-    def initialize(self):
-        """
-        This method will be invoked by default __init__ of base class, so it gives
-        us the oportunity to initialize whataver we need here.
+    def service(self) -> 'LiveService':
+        return typing.cast('LiveService', super().service())
 
-        In our case, we setup a few attributes..
-        """
-
-        # We do not check anything at marshal method, so we ensure that
-        # default values are correctly handled by marshal.
-        self._name = ''
-        self._reason = ''
-        self._templateId = ''
-        self._state = 'r'
-
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
         return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state]).encode('utf8')
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
@@ -81,7 +73,7 @@ class LivePublication(Publication):
         if vals[0] == 'v1':
             self._name, self._reason, self._templateId, self._state = vals[1:]
 
-    def publish(self):
+    def publish(self) -> str:
         """
         Realizes the publication of the service
         """
@@ -98,14 +90,14 @@ class LivePublication(Publication):
 
         return State.RUNNING
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Checks state of publication creation
         """
         if self._state == 'running':
             try:
                 if self.service().checkTemplatePublished(self._templateId) is False:
-                    return
+                    return State.RUNNING
                 self._state = 'ok'
             except Exception as e:
                 self._state = 'error'
@@ -120,12 +112,7 @@ class LivePublication(Publication):
         self._state = 'ok'
         return State.FINISHED
 
-    def finish(self):
-        """
-        In our case, finish does nothing
-        """
-
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or checkState
@@ -135,7 +122,7 @@ class LivePublication(Publication):
         """
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         This is called once a publication is no more needed.
 
@@ -156,7 +143,7 @@ class LivePublication(Publication):
 
         return State.FINISHED
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         Do same thing as destroy
         """
@@ -166,7 +153,7 @@ class LivePublication(Publication):
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def getTemplateId(self):
+    def getTemplateId(self) -> str:
         """
         Returns the template id associated with the publication
         """

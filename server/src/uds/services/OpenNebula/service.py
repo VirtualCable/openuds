@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.transports import protocols
@@ -38,9 +39,14 @@ from uds.core.services import Service, types as serviceTypes
 from uds.core.util import tools
 from uds.core.ui import gui
 
-from .LivePublication import LivePublication
-from .LiveDeployment import LiveDeployment
+from .publication import LivePublication
+from .deployment import LiveDeployment
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from . import on
+    from .provider import OpenNebulaProvider
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +133,7 @@ class LiveService(Service):
         required=True
     )
 
-    def initialize(self, values):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         We check here form values to see if they are valid.
 
@@ -137,37 +143,34 @@ class LiveService(Service):
         if values:
             tools.checkValidBasename(self.baseName.value, self.lenName.num())
 
-    def initGui(self):
+    def parent(self) -> 'OpenNebulaProvider':
+        return typing.cast('OpenNebulaProvider', super().parent())
+
+    def initGui(self) -> None:
         """
         Loads required values inside
         """
 
-        templates = self.parent().getTemplates()
-        vals = []
-        for t in templates:
-            vals.append(gui.choiceItem(t[0], t[1]))
+        t: 'on.types.TemplateType'
+        self.template.setValues(
+            [gui.choiceItem(t.id, t.name) for t in self.parent().getTemplates()]
+        )
 
-        # This is not the same case, values is not the "value" of the field, but
-        # the list of values shown because this is a "ChoiceField"
-        self.template.setValues(vals)
+        d: 'on.types.StorageType'
+        self.datastore.setValues(
+            [gui.choiceItem(d.id, d.name) for d in self.parent().getDatastores()]
+        )
 
-        datastores = self.parent().getDatastores()
-        vals = []
-        for d in datastores:
-            vals.append(gui.choiceItem(d[0], d[1]))
-
-        self.datastore.setValues(vals)
-
-    def sanitizeVmName(self, name):
+    def sanitizeVmName(self, name: str) -> str:
         return self.parent().sanitizeVmName(name)
 
-    def makeTemplate(self, templateName):
+    def makeTemplate(self, templateName: str) -> str:
         return self.parent().makeTemplate(self.template.value, templateName, self.datastore.value)
 
-    def checkTemplatePublished(self, templateId):
+    def checkTemplatePublished(self, templateId: str) -> bool:
         return self.parent().checkTemplatePublished(templateId)
 
-    def deployFromTemplate(self, name, templateId):
+    def deployFromTemplate(self, name: str, templateId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -186,13 +189,13 @@ class LiveService(Service):
         # self.datastoreHasSpace()
         return self.parent().deployFromTemplate(name, templateId)
 
-    def removeTemplate(self, templateId):
+    def removeTemplate(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        return self.parent().removeTemplate(templateId)
+        self.parent().removeTemplate(templateId)
 
-    def getMachineState(self, machineId):
+    def getMachineState(self, machineId: str) -> 'on.types.VmState':
         """
         Invokes getMachineState from parent provider
         (returns if machine is "active" or "inactive"
@@ -210,14 +213,14 @@ class LiveService(Service):
         """
         return self.parent().getMachineState(machineId)
 
-    def getMachineSubstate(self, machineId):
+    def getMachineSubstate(self, machineId: str) -> int:
         """
         On OpenNebula, the machine can be "active" but not "running".
         Any active machine will have a LCM_STATE, that is what we get here
         """
         return self.parent().getMachineSubstate(machineId)
 
-    def startMachine(self, machineId):
+    def startMachine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
@@ -228,9 +231,9 @@ class LiveService(Service):
 
         Returns:
         """
-        return self.parent().startMachine(machineId)
+        self.parent().startMachine(machineId)
 
-    def stopMachine(self, machineId):
+    def stopMachine(self, machineId: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenNebula
 
@@ -239,9 +242,9 @@ class LiveService(Service):
 
         Returns:
         """
-        return self.parent().stopMachine(machineId)
+        self.parent().stopMachine(machineId)
 
-    def suspendMachine(self, machineId):
+    def suspendMachine(self, machineId: str) -> None:
         """
         Tries to suspend machine. No check is done, it is simply requested to OpenNebula
 
@@ -250,12 +253,12 @@ class LiveService(Service):
 
         Returns:
         """
-        return self.parent().suspendMachine(machineId)
+        self.parent().suspendMachine(machineId)
 
-    def resetMachine(self, machineId):
-        return self.parent().resetMachine(machineId)
+    def resetMachine(self, machineId: str) -> None:
+        self.parent().resetMachine(machineId)
 
-    def removeMachine(self, machineId):
+    def removeMachine(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
@@ -264,28 +267,28 @@ class LiveService(Service):
 
         Returns:
         """
-        return self.parent().removeMachine(machineId)
+        self.parent().removeMachine(machineId)
 
-    def getNetInfo(self, machineId, networkId=None):
+    def getNetInfo(self, machineId: str, networkId: typing.Optional[str] = None) -> typing.Tuple[str, str]:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
         return self.parent().getNetInfo(machineId, networkId=None)
 
-    def getBaseName(self):
+    def getBaseName(self) -> str:
         """
         Returns the base name
         """
         return self.baseName.value
 
-    def getLenName(self):
+    def getLenName(self) -> int:
         """
         Returns the length of numbers part
         """
-        return int(self.lenName.value)
+        return self.lenName.num()
 
-    def getConsoleConnection(self, machineId):
+    def getConsoleConnection(self, machineId: str) -> typing.Dict[str, typing.Any]:
         return self.parent().getConsoleConnection(machineId)
 
-    def desktopLogin(self, machineId, username, password, domain):
+    def desktopLogin(self, machineId: str, username: str, password: str, domain: str) -> typing.Dict[str, typing.Any]:
         return self.parent().desktopLogin(machineId, username, password, domain)

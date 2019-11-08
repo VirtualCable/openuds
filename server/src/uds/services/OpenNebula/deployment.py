@@ -40,6 +40,12 @@ from uds.core.util import log
 
 from . import on
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from .service import LiveService
+    from .publication import LivePublication
+    from uds.core.util.storage import Storage
 
 logger = logging.getLogger(__name__)
 
@@ -62,11 +68,11 @@ class LiveDeployment(UserDeployment):
     suggestedTime = 6
 
     #
-    _name = ''
-    _ip = ''
-    _mac = ''
-    _vmid = ''
-    _reason = ''
+    _name: str = ''
+    _ip: str = ''
+    _mac: str = ''
+    _vmid: str = ''
+    _reason: str = ''
     _queue: typing.List[int] = []
 
 
@@ -78,8 +84,17 @@ class LiveDeployment(UserDeployment):
         self._reason = ''
         self._queue = []
 
+    def service(self) -> 'LiveService':
+        return typing.cast('LiveService', super().service())
+
+    def publication(self) -> 'LivePublication':
+        pub = super().publication()
+        if pub is None:
+            raise Exception('No publication for this element!')
+        return typing.cast('LivePublication', pub)
+
     # Serializable needed methods
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         Does nothing right here, we will use envoronment storage in this sample
         """
@@ -93,7 +108,7 @@ class LiveDeployment(UserDeployment):
             pickle.dumps(self._queue, protocol=0)
         ])
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are keeped at environment storage
         """
@@ -106,7 +121,7 @@ class LiveDeployment(UserDeployment):
             self._reason = vals[5].decode('utf8')
             self._queue = pickle.loads(vals[6])
 
-    def getName(self):
+    def getName(self) -> str:
         """
         We override this to return a name to display. Default inplementation
         (in base class), returns getUniqueIde() value
@@ -134,7 +149,7 @@ class LiveDeployment(UserDeployment):
                 return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip):
+    def setIp(self, ip: str) -> None:
         """
         In our case, there is no OS manager associated with this, so this method
         will never get called, but we put here as sample.
@@ -149,7 +164,7 @@ class LiveDeployment(UserDeployment):
         logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
@@ -161,7 +176,7 @@ class LiveDeployment(UserDeployment):
         """
         return self._mac.upper()
 
-    def getIp(self):
+    def getIp(self) -> str:
         """
         We need to implement this method, so we can return the IP for transports
         use. If no IP is known for this service, this must return None
@@ -181,7 +196,7 @@ class LiveDeployment(UserDeployment):
         """
         return self._ip
 
-    def setReady(self):
+    def setReady(self) -> str:
         """
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
@@ -191,7 +206,7 @@ class LiveDeployment(UserDeployment):
 
         state = self.service().getMachineState(self._vmid)
 
-        if state == on.VmState.UNKNOWN:  # @UndefinedVariable
+        if state == on.types.VmState.UNKNOWN:  # @UndefinedVariable
             return self.__error('Machine is not available anymore')
 
         self.service().startMachine(self._vmid)
@@ -199,17 +214,17 @@ class LiveDeployment(UserDeployment):
         self.cache.put('ready', '1')
         return State.FINISHED
 
-    def reset(self):
+    def reset(self) -> None:
         if self._vmid != '':
             self.service().resetMachine(self._vmid)
 
-    def getConsoleConnection(self):
+    def getConsoleConnection(self) -> typing.Dict[str, typing.Any]:
         return self.service().getConsoleConnection(self._vmid)
 
-    def desktopLogin(self, username, password, domain=''):
-        return self.service().desktopLogin(self._vmId, username, password, domain)
+    def desktopLogin(self, username: str, password: str, domain: str = ''):
+        return self.service().desktopLogin(self._vmid, username, password, domain)
 
-    def notifyReadyFromOsManager(self, data):
+    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
@@ -219,7 +234,7 @@ class LiveDeployment(UserDeployment):
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -227,26 +242,25 @@ class LiveDeployment(UserDeployment):
         self.__initQueueForDeploy(False)
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel):
+    def deployForCache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
         self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
         return self.__executeQueue()
 
-    def __initQueueForDeploy(self, forLevel2=False):
-
+    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
             self._queue = [opCreate, opStart, opFinish]
         else:
             self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
 
-    def __checkMachineState(self, chkState):
+    def __checkMachineState(self, chkState: on.types.VmState) -> str:
         logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state in [on.VmState.UNKNOWN, on.VmState.DONE]:  # @UndefinedVariable
+        if state in [on.types.VmState.UNKNOWN, on.types.VmState.DONE]:  # @UndefinedVariable
             return self.__error('Machine not found')
 
         ret = State.RUNNING
@@ -260,46 +274,47 @@ class LiveDeployment(UserDeployment):
 
         return ret
 
-    def __getCurrentOp(self):
+    def __getCurrentOp(self) -> int:
         if not self._queue:
             return opFinish
 
         return self._queue[0]
 
-    def __popCurrentOp(self):
+    def __popCurrentOp(self) -> int:
         if not self._queue:
             return opFinish
 
         res = self._queue.pop(0)
         return res
 
-    def __pushFrontOp(self, op):
+    def __pushFrontOp(self, op) -> None:
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op):
+    def __pushBackOp(self, op) -> None:
         self._queue.append(op)
 
-    def __error(self, reason):
+    def __error(self, reason: typing.Any) -> str:
         """
         Internal method to set object as error state
 
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
         """
+        reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
         self.doLog(log.ERROR, reason)
 
-        if self._vmid != '':  # Powers off & delete it
+        if self._vmid:  # Powers off & delete it
             try:
                 self.service().removeMachine(self._vmid)
             except Exception:
-                logger.debug('Can\'t set machine state to stopped')
+                logger.warning('Can\'t set remove errored machine: %s', self._vmid)
 
         self._queue = [opError]
         self._reason = str(reason)
         return State.ERROR
 
-    def __executeQueue(self):
+    def __executeQueue(self) -> str:
         self.__debug('executeQueue')
         op = self.__getCurrentOp()
 
@@ -309,7 +324,7 @@ class LiveDeployment(UserDeployment):
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -319,7 +334,7 @@ class LiveDeployment(UserDeployment):
         }
 
         try:
-            execFnc = fncs.get(op, None)
+            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error('Unknown operation found at execution queue ({0})'.format(op))
@@ -332,7 +347,7 @@ class LiveDeployment(UserDeployment):
             return self.__error(e)
 
     # Queue execution methods
-    def __retry(self):
+    def __retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -342,13 +357,13 @@ class LiveDeployment(UserDeployment):
         """
         return State.FINISHED
 
-    def __wait(self):
+    def __wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self):
+    def __create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
@@ -366,62 +381,68 @@ class LiveDeployment(UserDeployment):
         # Get IP & MAC (early stage)
         self._mac, self._ip = self.service().getNetInfo(self._vmid)
 
-    def __remove(self):
+        return State.RUNNING
+
+    def __remove(self) -> str:
         """
         Removes a machine from system
         """
         state = self.service().getMachineState(self._vmid)
 
-        if state == on.VmState.UNKNOWN:  # @UndefinedVariable
+        if state == on.types.VmState.UNKNOWN:  # @UndefinedVariable
             raise Exception('Machine not found')
 
-        if state == on.VmState.ACTIVE:  # @UndefinedVariable
+        if state == on.types.VmState.ACTIVE:  # @UndefinedVariable
             subState = self.service().getMachineSubstate(self._vmid)
             if subState < 3:  # Less than running
                 logger.info('Must wait before remove: %s', subState)
                 self.__pushFrontOp(opRetry)
-                return
+                return State.RUNNING
 
         self.service().removeMachine(self._vmid)
 
-    def __startMachine(self):
+        return State.RUNNING
+
+    def __startMachine(self) -> str:
         """
         Powers on the machine
         """
         self.service().startMachine(self._vmid)
+        return State.RUNNING
 
-    def __suspendMachine(self):
+    def __suspendMachine(self) -> str:
         """
         Suspends the machine
         """
         self.service().suspendMachine(self._vmid)
+        return State.RUNNING
 
     # Check methods
-    def __checkCreate(self):
+    def __checkCreate(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
-        return self.__checkMachineState(on.VmState.ACTIVE)  # @UndefinedVariable
+        return self.__checkMachineState(on.types.VmState.ACTIVE)  # @UndefinedVariable
 
-    def __checkStart(self):
+    def __checkStart(self) -> str:
         """
         Checks if machine has started
         """
-        return self.__checkMachineState(on.VmState.ACTIVE)  # @UndefinedVariable
+        return self.__checkMachineState(on.types.VmState.ACTIVE)  # @UndefinedVariable
 
-    def __checkSuspend(self):
+    def __checkSuspend(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState(on.VmState.SUSPENDED)  # @UndefinedVariable
+        return self.__checkMachineState(on.types.VmState.SUSPENDED)  # @UndefinedVariable
 
-    def __checkRemoved(self):
+    def __checkRemoved(self) -> str:
         """
         Checks if a machine has been removed
         """
         return State.FINISHED  # No check at all, always true
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Check what operation is going on, and acts based on it
         """
@@ -434,7 +455,7 @@ class LiveDeployment(UserDeployment):
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opWait: self.__wait,
@@ -444,7 +465,7 @@ class LiveDeployment(UserDeployment):
         }
 
         try:
-            chkFnc = fncs.get(op, None)
+            chkFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
                 return self.__error('Unknown operation found at check queue ({0})'.format(op))
@@ -458,14 +479,7 @@ class LiveDeployment(UserDeployment):
         except Exception as e:
             return self.__error(e)
 
-    def finish(self):
-        """
-        Invoked when the core notices that the deployment of a service has finished.
-        (No matter wether it is for cache or for an user)
-        """
-        self.__debug('finish')
-
-    def moveToCache(self, newLevel):
+    def moveToCache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
@@ -479,7 +493,7 @@ class LiveDeployment(UserDeployment):
 
         return self.__executeQueue()
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         Returns the reason of the error.
 
@@ -489,7 +503,7 @@ class LiveDeployment(UserDeployment):
         """
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         Invoked for destroying a deployed service
         """
@@ -509,7 +523,7 @@ class LiveDeployment(UserDeployment):
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -522,7 +536,7 @@ class LiveDeployment(UserDeployment):
         return self.destroy()
 
     @staticmethod
-    def __op2str(op):
+    def __op2str(op) -> str:
         return {
             opCreate: 'create',
             opStart: 'start',
@@ -534,9 +548,5 @@ class LiveDeployment(UserDeployment):
             opRetry: 'retry',
         }.get(op, '????')
 
-    def __debug(self, txt):
-        logger.debug('_name %s: %s', txt, self._name)
-        logger.debug('_ip %s: %s', txt, self._ip)
-        logger.debug('_mac %s: %s', txt, self._mac)
-        logger.debug('_vmid %s: %s', txt, self._vmid)
-        logger.debug('Queue at %s: %s', txt, [LiveDeployment.__op2str(op) for op in self._queue])
+    def __debug(self, txt: str) -> None:
+        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [LiveDeployment.__op2str(op) for op in self._queue])
