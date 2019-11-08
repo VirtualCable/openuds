@@ -97,10 +97,11 @@ def getRecurringUrlJson(
 
         url = j['next']
 
+RT = typing.TypeVar('RT')
 
 # Decorators
-def authRequired(func):
-    def ensurer(obj: 'Client', *args, **kwargs):
+def authRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+    def ensurer(obj: 'Client', *args, **kwargs) -> RT:
         obj.ensureAuthenticated()
         try:
             return func(obj, *args, **kwargs)
@@ -111,9 +112,8 @@ def authRequired(func):
     return ensurer
 
 
-def authProjectRequired(func):
-
-    def ensurer(obj, *args, **kwargs):
+def authProjectRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+    def ensurer(obj, *args, **kwargs) -> RT:
         if obj._projectId is None: # pylint: disable=protected-access
             raise Exception('Need a project for method {}'.format(func))
         obj.ensureAuthenticated()
@@ -196,7 +196,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
     def authPassword(self) -> None:
         # logger.debug('Authenticating...')
-        data = {
+        data: typing.Dict[str, typing.Any] = {
             'auth': {
                 'identity': {
                     'methods': [
@@ -281,7 +281,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def listServers(self, detail: bool = False, params: bool = None) -> typing.Iterable[typing.Any]:
+    def listServers(self, detail: bool = False, params: typing.Optional[typing.Dict[str, str]] = None) -> typing.Iterable[typing.Any]:
         path = '/servers/' + 'detail' if detail is True else ''
         return getRecurringUrlJson(
             self._getEndpointFor('compute') + path,
@@ -437,7 +437,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def updateSnapshot(self, snapshotId: str, name: typing.Optional[str] = None, description: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
-        data = {
+        data: typing.Dict[str, typing.Any] = {
             'snapshot': {}
         }
         if name:

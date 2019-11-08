@@ -35,23 +35,32 @@ import typing
 from django.utils.translation import ugettext as _
 from uds.core.ui import gui
 
+from . import openStack
+
 logger = logging.getLogger(__name__)
+
+def getApi(parameters: typing.Dict[str, str]) -> openStack.Client:
+    from .provider_legacy import ProviderLegacy
+    from .provider import OpenStackProvider
+    from uds.core.environment import Environment
+
+    env = Environment(parameters['ev'])
+    provider: typing.Union[ProviderLegacy, OpenStackProvider]
+    if parameters['legacy'] == 'true':
+        provider = ProviderLegacy(env)
+    else:
+        provider = OpenStackProvider(env)
+
+    provider.unserialize(parameters['ov'])
+
+    return provider.api(parameters['project'], parameters['region'])
+
 
 def getResources(parameters: typing.Dict[str, str]) -> typing.List[typing.Dict[str, typing.Any]]:
     '''
     This helper is designed as a callback for Project Selector
     '''
-    if parameters['legacy'] == 'true':
-        from .ProviderLegacy import ProviderLegacy as Provider
-    else:
-        from .Provider import Provider
-    from uds.core.environment import Environment
-    logger.debug('Parameters received by getResources Helper: %s', parameters)
-    env = Environment(parameters['ev'])
-    provider = Provider(env)
-    provider.unserialize(parameters['ov'])
-
-    api = provider.api(parameters['project'], parameters['region'])
+    api = getApi(parameters)
 
     zones = [gui.choiceItem(z, z) for z in api.listAvailabilityZones()]
     networks = [gui.choiceItem(z['id'], z['name']) for z in api.listNetworks()]
@@ -73,18 +82,7 @@ def getVolumes(parameters: typing.Dict[str, str]) -> typing.List[typing.Dict[str
     '''
     This helper is designed as a callback for Zone Selector
     '''
-    if parameters['legacy'] == 'true':
-        from .ProviderLegacy import ProviderLegacy as Provider
-    else:
-        from .Provider import Provider
-    from uds.core.environment import Environment
-    logger.debug('Parameters received by getVolumes Helper: %s', parameters)
-    env = Environment(parameters['ev'])
-    provider = Provider(env)
-    provider.unserialize(parameters['ov'])
-
-    api = provider.api(parameters['project'], parameters['region'])
-
+    api = getApi(parameters)
     # Source volumes are all available for us
     # volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
     volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '']

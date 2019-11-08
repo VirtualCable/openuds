@@ -40,7 +40,7 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
 
-from .LiveService import LiveService
+from .service import LiveService
 from . import openStack
 
 
@@ -145,7 +145,7 @@ class ProviderLegacy(ServiceProvider):
             access=self.access.value
         )
 
-    def sanitizeVmName(self, name):
+    def sanitizeVmName(self, name: str) -> str:
         return openStack.sanitizeName(name)
 
     def testConnection(self):

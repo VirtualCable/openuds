@@ -31,10 +31,14 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from uds.core.services import Publication
 from uds.core.util.state import State
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .service import LiveService
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +53,7 @@ class LivePublication(Publication):
     _state: str = 'r'
     _destroyAfter: str = 'n'
 
-    suggestedTime: int = 20  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
 
     def initialize(self):
         """
@@ -67,6 +71,9 @@ class LivePublication(Publication):
         self._state = 'r'
         self._destroyAfter = 'n'
 
+    def service(self) -> 'LiveService':
+        return typing.cast('LiveService', super().service())
+
     def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
@@ -81,7 +88,7 @@ class LivePublication(Publication):
         if vals[0] == 'v1':
             self._name, self._reason, self._templateId, self._state, self._destroyAfter = vals[1:]
 
-    def publish(self):
+    def publish(self) -> str:
         """
         Realizes the publication of the service
         """
@@ -101,7 +108,7 @@ class LivePublication(Publication):
 
         return State.RUNNING
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Checks state of publication creation
         """
@@ -118,32 +125,10 @@ class LivePublication(Publication):
 
         return State.RUNNING
 
-    def finish(self):
-        """
-        In our case, finish does nothing
-        """
-
-    def reasonOfError(self):
-        """
-        If a publication produces an error, here we must notify the reason why
-        it happened. This will be called just after publish or checkState
-        if they return State.ERROR
-
-        Returns an string, in our case, set at checkState
-        """
+    def reasonOfError(self) -> str:
         return self._reason
 
-    def destroy(self):
-        """
-        This is called once a publication is no more needed.
-
-        This method do whatever needed to clean up things, such as
-        removing created "external" data (environment gets cleaned by core),
-        etc..
-
-        The retunred value is the same as when publishing, State.RUNNING,
-        State.FINISHED or State.ERROR.
-        """
+    def destroy(self) -> str:
         # We do not do anything else to destroy this instance of publication
         if self._state == 'error':
             return  State.ERROR # Nothing to cancel
@@ -161,17 +146,14 @@ class LivePublication(Publication):
 
         return State.FINISHED
 
-    def cancel(self):
-        """
-        Do same thing as destroy
-        """
+    def cancel(self) -> str:
         return self.destroy()
 
     # Here ends the publication needed methods.
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def getTemplateId(self):
+    def getTemplateId(self) -> str:
         """
         Returns the template id associated with the publication
         """

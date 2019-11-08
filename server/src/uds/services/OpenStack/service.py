@@ -39,8 +39,8 @@ from uds.core.services import Service, types as serviceTypes
 from uds.core.util import tools
 from uds.core.ui import gui
 
-from .LivePublication import LivePublication
-from .LiveDeployment import LiveDeployment
+from .publication import LivePublication
+from .deployment import LiveDeployment
 from . import helpers
 
 
@@ -49,7 +49,9 @@ logger = logging.getLogger(__name__)
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from . import openStack
-    from .Provider import Provider
+    from .provider import OpenStackProvider
+    from .provider_legacy import ProviderLegacy
+    Provider = typing.Union[OpenStackProvider, ProviderLegacy]
 
 
 class LiveService(Service):
@@ -172,6 +174,9 @@ class LiveService(Service):
         # self.ov.value = self.parent().serialize()
         # self.ev.value = self.parent().env.key
 
+    def parent(self) -> 'Provider':
+        return typing.cast('Provider', super().parent())
+
     def initGui(self):
         """
         Loads required values inside
@@ -193,12 +198,12 @@ class LiveService(Service):
     @property
     def api(self) -> 'openStack.Client':
         if not self._api:
-            self._api = typing.cast('Provider', self.parent()).api(projectId=self.project.value, region=self.region.value)
+            self._api = self.parent().api(projectId=self.project.value, region=self.region.value)
 
         return self._api
 
     def sanitizeVmName(self, name: str) -> str:
-        return typing.cast('Provider', self.parent()).sanitizeVmName(name)
+        return self.parent().sanitizeVmName(name)
 
     def makeTemplate(self, templateName: str, description: typing.Optional[str] = None):
         # First, ensures that volume has not any running instances

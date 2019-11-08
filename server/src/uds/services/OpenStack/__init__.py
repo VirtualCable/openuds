@@ -27,5 +27,5 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .ProviderLegacy import ProviderLegacy
-from .Provider import Provider
+from .provider_legacy import ProviderLegacy
+from .provider import OpenStackProvider

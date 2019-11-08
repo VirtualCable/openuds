@@ -42,8 +42,8 @@ from . import openStack
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .LiveService import LiveService
-    from .LivePublication import LivePublication
+    from .service import LiveService
+    from .publication import LivePublication
 
 
 logger = logging.getLogger(__name__)
@@ -102,7 +102,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._vmid.encode('utf8'),
             self._reason.encode('utf8'),
             pickle.dumps(self._queue, protocol=0)
-        ]).encode('utf8')
+        ])
 
     def unmarshal(self, data: bytes) -> None:
         """

@@ -38,7 +38,7 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
 
-from .LiveService import LiveService
+from .service import LiveService
 from . import openStack
 
 # Not imported at runtime, just for type checking
@@ -54,7 +54,7 @@ INTERFACE_VALUES: typing.List[gui.ChoiceType] = [
 ]
 
 
-class Provider(ServiceProvider):
+class OpenStackProvider(ServiceProvider):
     """
     This class represents the sample services provider
 
@@ -179,4 +179,4 @@ class Provider(ServiceProvider):
             second is an String with error, preferably internacionalizated..
 
         """
-        return Provider(env, data).testConnection()
+        return OpenStackProvider(env, data).testConnection()
