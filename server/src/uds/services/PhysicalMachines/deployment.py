@@ -97,6 +97,23 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         return self.__deploy()
 
+
+    def assign(self, ip: str) -> str:
+        logger.debug('Assigning from assignable with ip %s', ip)
+        self._ip = ip
+        self._state = State.FINISHED
+        dbService = self.dbservice()
+        if dbService:
+            dbService.setInUse(True)
+            dbService.save()
+        return self._state
+
+    def error(self, reason: str) -> str:
+        self._state = State.ERROR
+        self._ip = ''
+        self._reason = reason
+        return self._state
+
     def checkState(self) -> str:
         return self._state
 

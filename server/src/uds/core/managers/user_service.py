@@ -192,6 +192,34 @@ class UserServiceManager:
 
         return assigned
 
+    def createFromAssignable(self, servicePool: ServicePool, user: User, assignableId: str) -> UserService:
+        """
+        Creates an assigned service from an "assignable" id
+        """
+        serviceInstance = servicePool.service.getInstance()
+        if not serviceInstance.canAssign():
+            raise Exception('This service type cannot assign asignables')
+
+        if servicePool.service.getType().publicationType is not None:
+            publication = servicePool.activePublication()
+            logger.debug('Creating an assigned element from assignable %s for user %s por publication %s', user, assignableId, publication)
+            if publication:
+                assigned = self.__createAssignedAtDb(publication, user)
+            else:
+                raise Exception('Invalid publication creating service assignation: {} {}'.format(servicePool, user))
+        else:
+            logger.debug('Creating an assigned element from assignable %s for user %s', assignableId, user)
+            assigned = self.__createAssignedAtDbForNoPublication(servicePool, user)
+
+        # Now, get from serviceInstance the data
+        assignedInstance = assigned.getInstance()
+        state = serviceInstance.assignFromAssignables(assignableId, user, assignedInstance)
+        # assigned.updateData(assignedInstance)
+
+        UserServiceOpChecker.makeUnique(assigned, assignedInstance, state)
+
+        return assigned
+
     def moveToLevel(self, cache: UserService, cacheLevel: int) -> None:
         """
         Moves a cache element from one level to another

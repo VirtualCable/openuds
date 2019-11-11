@@ -81,6 +81,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'servicesTypeProvided': info.servicesTypeProvided,
             'must_assign_manually': info.mustAssignManually,
             'can_reset': info.canReset,
+            'can_list_assignables': info.canAssign()
         }
 
     @staticmethod

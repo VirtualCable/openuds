@@ -36,6 +36,7 @@ import typing
 from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 from uds.core.transports import protocols
+from uds.core.util.state import State
 
 from . import types
 from .publication import Publication
@@ -48,7 +49,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_name_generator import UniqueNameGenerator
     from uds.core.util.unique_mac_generator import UniqueMacGenerator
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
-    from uds.models import ServicePoolPublication
+    from uds.models import ServicePoolPublication, User
 
 
 class Service(Module):
@@ -252,6 +253,37 @@ class Service(Module):
         Returns the environment unique name generator
         """
         return typing.cast('UniqueNameGenerator', self.idGenerators('name'))
+
+    def listAssignables(self) -> typing.Iterable[typing.Tuple[str, str]]:
+        """
+        If overrided, will provide list of assignables elements, so we can "add" an element manually to the list of assigned user services
+        If not overriden, means that it cannot assign manually
+
+        Returns:
+            typing.List[typing.Tuple[str, str]] -- List of asignables services, first element is id, second is name of the element
+        """
+        return []
+
+    def assignFromAssignables(self, assignableId: str, user: 'User', userDeployment: UserDeployment) -> str:
+        """
+        Assigns from it internal assignable list to an user
+
+        Arguments:
+            assignableId {str} -- [description]
+            user {[type]} -- [description]
+            userDeployment {UserDeployment} -- [description]
+
+        Returns:
+            str -- State
+        """
+        return State.FINISHED
+
+    @classmethod
+    def canAssign(cls) -> bool:
+        """
+        Helper to query if a class is custom (implements getJavascript method)
+        """
+        return cls.listAssignables != Service.listAssignables  and cls.assignFromAssignables != Service.assignFromAssignables
 
     def __str__(self):
         """

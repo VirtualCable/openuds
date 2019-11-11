@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import ServicePool, OSManager, Service, Image, ServicePoolGroup, Account
+from uds.models import ServicePool, OSManager, Service, Image, ServicePoolGroup, Account, User
 from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
@@ -105,7 +105,13 @@ class ServicesPools(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
 
-    custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True), ('actionsList', True)]
+    custom_methods = [
+        ('setFallbackAccess', True),
+        ('getFallbackAccess', True),
+        ('actionsList', True),
+        ('listAssignables', True),
+        ('createFromAssignable', True),
+    ]
 
     def item_as_dict(self, item: ServicePool) -> typing.Dict[str, typing.Any]:
         summary = 'summarize' in self._params
@@ -438,7 +444,7 @@ class ServicesPools(ModelHandler):
         return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendar
-    def actionsList(self, item: ServicePool):
+    def actionsList(self, item: ServicePool) -> typing.Any:
         validActions: typing.Tuple[typing.Dict, ...] = ()
         itemInfo = item.service.getType()
         if itemInfo.usesCache is True:
@@ -452,3 +458,16 @@ class ServicesPools(ModelHandler):
         # Transport & groups actions
         validActions += (CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT, CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP)
         return validActions
+
+    def listAssignables(self, item: ServicePool) -> typing.Any:
+        service = item.service.getInstance()
+        return [gui.choiceItem(i[0], i[1]) for i in service.listAssignables()]
+
+    def createFromAssignable(self, item: ServicePool) ->typing.Any:
+        if 'user_id' not in self._params or 'assignable_id' not in self._params:
+            return self.invalidRequestException('Invalid parameters')
+
+        logger.debug('Creating from assignable: %s', self._params)
+        userServiceManager().createFromAssignable(item, User.objects.get(uuid=processUuid(self._params['user_id'])), self._params['assignable_id'])
+
+        return True

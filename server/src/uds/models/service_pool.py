@@ -72,7 +72,6 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
-    # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
@@ -383,7 +382,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import auths
         if not set(groups) & set(self.assignedGroups.all()):
-            raise auths.Exceptions.InvalidUserException()
+            raise auths.exceptions.InvalidUserException()
 
     def validatePublication(self) -> None:
         """
