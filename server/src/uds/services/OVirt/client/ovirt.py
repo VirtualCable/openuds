@@ -94,7 +94,7 @@ class Client:
         # if cached_api_key == aKey:
         #    return cached_api
 
-        if Client.cached_api is not None:
+        if Client.cached_api:
             try:
                 Client.cached_api.close()
             except Exception:
@@ -286,7 +286,6 @@ class Client:
                 'name'
                 'id'
                 'storage_type' -> ('isisi', 'nfs', ....)
-                # 'storage_format' -> ('v1', v2') --> Removed
                 'description'
                 'storage' -> array of dictionaries, with:
                    'id' -> Storage id

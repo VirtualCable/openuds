@@ -42,6 +42,7 @@ from . import openStack
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from uds import models
     from .service import LiveService
     from .publication import LivePublication
 
@@ -73,7 +74,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     # : Recheck every this seconds by default (for task methods)
     suggestedTime = 20
 
-    def initialize(self):
+    def initialize(self) -> None:
         self._name = ''
         self._ip = ''
         self._mac = ''
@@ -91,9 +92,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
     # Serializable needed methods
     def marshal(self) -> bytes:
-        """
-        Does nothing right here, we will use envoronment storage in this sample
-        """
         return b'\1'.join([
             b'v1',
             self._name.encode('utf8'),
@@ -105,9 +103,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         ])
 
     def unmarshal(self, data: bytes) -> None:
-        """
-        Does nothing here also, all data are keeped at environment storage
-        """
         vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
@@ -117,27 +112,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._reason = vals[5].decode('utf8')
             self._queue = pickle.loads(vals[6])
 
-    def getName(self):
-        """
-        We override this to return a name to display. Default inplementation
-        (in base class), returns getUniqueIde() value
-        This name will help user to identify elements, and is only used
-        at administration interface.
-
-        We will use here the environment name provided generator to generate
-        a name for this element.
-
-        The namaGenerator need two params, the base name and a length for a
-        numeric incremental part for generating unique names. This are unique for
-        all UDS names generations, that is, UDS will not generate this name again
-        until this name is freed, or object is removed, what makes its environment
-        to also get removed, that makes all uniques ids (names and macs right now)
-        to also get released.
-
-        Every time get method of a generator gets called, the generator creates
-        a new unique name, so we keep the first generated name cached and don't
-        generate more names. (Generator are simple utility classes)
-        """
+    def getName(self) -> str:
         if self._name == '':
             try:
                 self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
@@ -145,54 +120,16 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
                 return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip):
-        """
-        In our case, there is no OS manager associated with this, so this method
-        will never get called, but we put here as sample.
-
-        Whenever an os manager actor notifies the broker the state of the service
-        (mainly machines), the implementation of that os manager can (an probably will)
-        need to notify the IP of the deployed service. Remember that UDS treats with
-        IP services, so will probable needed in every service that you will create.
-        :note: This IP is the IP of the "consumed service", so the transport can
-               access it.
-        """
-        logger.debug('Setting IP to %s', ip)
+    def setIp(self, ip) -> None:
         self._ip = ip
 
-    def getUniqueId(self):
-        """
-        Return and unique identifier for this service.
-        In our case, we will generate a mac name, that can be also as sample
-        of 'mac' generator use, and probably will get used something like this
-        at some services.
-
-        The get method of a mac generator takes one param, that is the mac range
-        to use to get an unused mac.
-        """
+    def getUniqueId(self) -> str:
         return self._mac
 
-    def getIp(self):
-        """
-        We need to implement this method, so we can return the IP for transports
-        use. If no IP is known for this service, this must return None
-
-        If our sample do not returns an IP, IP transport will never work with
-        this service. Remember in real cases to return a valid IP address if
-        the service is accesible and you alredy know that (for example, because
-        the IP has been assigend via setIp by an os manager) or because
-        you get it for some other method.
-
-        Storage returns None if key is not stored.
-
-        :note: Keeping the IP address is responsibility of the User Deployment.
-               Every time the core needs to provide the service to the user, or
-               show the IP to the administrator, this method will get called
-
-        """
+    def getIp(self) -> str:
         return self._ip
 
-    def setReady(self):
+    def setReady(self) -> str:
         """
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
@@ -215,11 +152,11 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         self.cache.put('ready', '1')
         return State.FINISHED
 
-    def reset(self):
+    def reset(self) -> None:
         if self._vmid != '':
             self.service().resetMachine(self._vmid)
 
-    def notifyReadyFromOsManager(self, data):
+    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
@@ -229,7 +166,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -237,21 +174,20 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         self.__initQueueForDeploy(False)
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel):
+    def deployForCache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
         self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
         return self.__executeQueue()
 
-    def __initQueueForDeploy(self, forLevel2=False):
-
+    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
             self._queue = [opCreate, opFinish]
         else:
             self._queue = [opCreate, opWait, opSuspend, opFinish]
 
-    def __checkMachineState(self, chkState):
+    def __checkMachineState(self, chkState: str) -> str:
         logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
         status = self.service().getMachineState(self._vmid)
 
@@ -260,32 +196,32 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             return self.__error('Machine not available. ({})'.format(status))
 
         ret = State.RUNNING
-        chkState = [chkState] if not isinstance(chkState, (list, tuple)) else chkState
-        if status in chkState:
+        chkStates = [chkState] if not isinstance(chkState, (list, tuple)) else chkState
+        if status in chkStates:
             ret = State.FINISHED
 
         return ret
 
-    def __getCurrentOp(self):
+    def __getCurrentOp(self) -> int:
         if not self._queue:
             return opFinish
 
         return self._queue[0]
 
-    def __popCurrentOp(self):
+    def __popCurrentOp(self) -> int:
         if not self._queue:
             return opFinish
 
         res = self._queue.pop(0)
         return res
 
-    def __pushFrontOp(self, op):
+    def __pushFrontOp(self, op: int) -> None:
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op):
+    def __pushBackOp(self, op: int) -> None:
         self._queue.append(op)
 
-    def __error(self, reason):
+    def __error(self, reason: typing.Any) -> str:
         """
         Internal method to set object as error state
 
@@ -298,7 +234,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         self.doLog(log.ERROR, self._reason)
 
-        if self._vmid != '':  # Powers off & delete it
+        if self._vmid:  # Powers off & delete it
             try:
                 self.service().removeMachine(self._vmid)
             except Exception:
@@ -306,7 +242,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         return State.ERROR
 
-    def __executeQueue(self):
+    def __executeQueue(self) -> str:
         self.__debug('executeQueue')
         op = self.__getCurrentOp()
 
@@ -316,7 +252,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Callable[[], None]] = {
+        fncs: typing.Dict[int, typing.Callable[[], str]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -336,7 +272,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             return self.__error(e)
 
     # Queue execution methods
-    def __retry(self):
+    def __retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -346,13 +282,13 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         """
         return State.FINISHED
 
-    def __wait(self):
+    def __wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self):
+    def __create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
@@ -367,7 +303,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if self._vmid is None:
             raise Exception('Can\'t create machine')
 
-    def __remove(self):
+        return State.RUNNING
+
+    def __remove(self) -> str:
         """
         Removes a machine from system
         """
@@ -378,20 +316,26 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         self.service().removeMachine(self._vmid)
 
-    def __startMachine(self):
+        return State.RUNNING
+
+    def __startMachine(self) -> str:
         """
         Powers on the machine
         """
         self.service().startMachine(self._vmid)
 
-    def __suspendMachine(self):
+        return State.RUNNING
+
+    def __suspendMachine(self) -> str:
         """
         Suspends the machine
         """
         self.service().suspendMachine(self._vmid)
 
+        return State.RUNNING
+
     # Check methods
-    def __checkCreate(self):
+    def __checkCreate(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
@@ -402,25 +346,25 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         return ret
 
-    def __checkStart(self):
+    def __checkStart(self) -> str:
         """
         Checks if machine has started
         """
         return self.__checkMachineState(openStack.ACTIVE)
 
-    def __checkSuspend(self):
+    def __checkSuspend(self) -> str:
         """
         Check if the machine has suspended
         """
         return self.__checkMachineState(openStack.SUSPENDED)
 
-    def __checkRemoved(self):
+    def __checkRemoved(self) -> str:
         """
         Checks if a machine has been removed
         """
         return State.FINISHED  # No check at all, always true
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -455,14 +399,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         except Exception as e:
             return self.__error(e)
 
-    def finish(self):
-        """
-        Invoked when the core notices that the deployment of a service has finished.
-        (No matter wether it is for cache or for an user)
-        """
-        self.__debug('finish')
-
-    def moveToCache(self, newLevel):
+    def moveToCache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
@@ -476,17 +413,10 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         return self.__executeQueue()
 
-    def reasonOfError(self):
-        """
-        Returns the reason of the error.
-
-        Remember that the class is responsible of returning this whenever asked
-        for it, and it will be asked everytime it's needed to be shown to the
-        user (when the administation asks for it).
-        """
+    def reasonOfError(self) -> str:
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         Invoked for destroying a deployed service
         """
@@ -506,7 +436,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -531,9 +461,5 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             opRetry: 'retry',
         }.get(op, '????')
 
-    def __debug(self, txt):
-        logger.debug('_name %s: %s', txt, self._name)
-        logger.debug('_ip %s: %s', txt, self._ip)
-        logger.debug('_mac %s: %s', txt, self._mac)
-        logger.debug('_vmid %s: %s', txt, self._vmid)
-        logger.debug('Queue at %s: %s', txt, [LiveDeployment.__op2str(op) for op in self._queue])
+    def __debug(self, txt: str) -> None:
+        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [LiveDeployment.__op2str(op) for op in self._queue])

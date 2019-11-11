@@ -53,7 +53,6 @@ INTERFACE_VALUES: typing.List[gui.ChoiceType] = [
     gui.choiceItem('admin', 'admin'),
 ]
 
-
 class OpenStackProvider(ServiceProvider):
     """
     This class represents the sample services provider

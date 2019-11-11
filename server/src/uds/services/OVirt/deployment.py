@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2017 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -299,6 +299,7 @@ if sys.platform == 'win32':
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
         """
+        reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
         self.doLog(log.ERROR, reason)
 
@@ -306,7 +307,7 @@ if sys.platform == 'win32':
             OVirtDeferredRemoval.remove(self.service().parent(), self._vmid)
 
         self._queue = [opError]
-        self._reason = str(reason)
+        self._reason = reason
         return State.ERROR
 
     def __executeQueue(self) -> str:
@@ -319,7 +320,7 @@ if sys.platform == 'win32':
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -359,7 +360,7 @@ if sys.platform == 'win32':
         """
         return State.RUNNING
 
-    def __create(self) -> None:
+    def __create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
@@ -375,7 +376,9 @@ if sys.platform == 'win32':
         if self._vmid is None:
             raise Exception('Can\'t create machine')
 
-    def __remove(self) -> None:
+        return State.RUNNING
+
+    def __remove(self) -> str:
         """
         Removes a machine from system
         """
@@ -390,7 +393,9 @@ if sys.platform == 'win32':
         else:
             self.service().removeMachine(self._vmid)
 
-    def __startMachine(self) -> None:
+        return State.RUNNING
+
+    def __startMachine(self) -> str:
         """
         Powers on the machine
         """
@@ -400,13 +405,15 @@ if sys.platform == 'win32':
             raise Exception('Machine not found')
 
         if state in UP_STATES:  # Already started, return
-            return
+            return State.RUNNING
 
         if state != 'down' and state != 'suspended':
             self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
         self.service().startMachine(self._vmid)
 
-    def __stopMachine(self) -> None:
+        return State.RUNNING
+
+    def __stopMachine(self) -> str:
         """
         Powers off the machine
         """
@@ -416,14 +423,16 @@ if sys.platform == 'win32':
             raise Exception('Machine not found')
 
         if state == 'down':  # Already stoped, return
-            return
+            return State.RUNNING
 
         if state != 'up' and state != 'suspended':
             self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
         else:
             self.service().stopMachine(self._vmid)
 
-    def __suspendMachine(self) -> None:
+        return State.RUNNING
+
+    def __suspendMachine(self) -> str:
         """
         Suspends the machine
         """
@@ -433,20 +442,24 @@ if sys.platform == 'win32':
             raise Exception('Machine not found')
 
         if state == 'suspended':  # Already suspended, return
-            return
+            return State.RUNNING
 
         if state != 'up':
             self.__pushFrontOp(opRetry)  # Remember here, the return State.FINISH will make this retry be "poped" right ar return
         else:
             self.service().suspendMachine(self._vmid)
 
-    def __changeMac(self) -> None:
+        return State.RUNNING
+
+    def __changeMac(self) -> str:
         """
         Changes the mac of the first nic
         """
         self.service().updateMachineMac(self._vmid, self.getUniqueId())
         # Fix usb if needed
         self.service().fixUsb(self._vmid)
+
+        return State.RUNNING
 
     # Check methods
     def __checkCreate(self) -> str:
@@ -602,9 +615,5 @@ if sys.platform == 'win32':
             opChangeMac: 'changing mac'
         }.get(op, '????')
 
-    def __debug(self, txt: str):
-        logger.debug('_name %s: %s', txt, self._name)
-        logger.debug('_ip %s: %s', txt, self._ip)
-        logger.debug('_mac %s: %s', txt, self._mac)
-        logger.debug('_vmid %s: %s', txt, self._vmid)
-        logger.debug('Queue at %s: %s', txt, [OVirtLinkedDeployment.__op2str(op) for op in self._queue])
+    def __debug(self, txt):
+        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [OVirtLinkedDeployment.__op2str(op) for op in self._queue])
