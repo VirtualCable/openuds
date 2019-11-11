@@ -31,7 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from .ServiceProvider import PhysicalMachinesProvider
+from .provider import PhysicalMachinesProvider
 
 # Now we use __subclasses__ method to locate Service Providers
 # and register them inside factory

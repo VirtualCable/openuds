@@ -35,7 +35,7 @@ from django.utils.translation import ugettext_lazy as _
 from uds.core import services
 from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
-from .IPMachineDeployed import IPMachineDeployed
+from .deployment import IPMachineDeployed
 import logging
 import pickle
 
