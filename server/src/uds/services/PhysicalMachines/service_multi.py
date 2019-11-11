@@ -30,32 +30,34 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import pickle
+import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
-from uds.core import services
-from uds.core.services import types as serviceTypes
+
 from uds.core.ui import gui
-from .IPMachineDeployed import IPMachineDeployed
-import logging
+from uds.core.services import types as serviceTypes
+
+from .deployment import IPMachineDeployed
+from .service_base import IPServiceBase
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
 
-class IPServerService(services.Service):
-
+class IPMachinesService(IPServiceBase):
     # Gui
-    remoteHost = gui.TextField(oder=1,
-        length=64,
-        label=_('Remote Server'),
-        tooltip=_('IP or Hostname of remote host (must be resolvable by clients)'),
-        required=True,
-    )
+    ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
 
     # Description of service
-    typeName = _('Single server service by IP')
-    typeType = 'IPServerService'
-    typeDescription = _('This service provides access to POWERED-ON Server by IP')
-    iconFile = 'machine.png'
+    typeName = _('Static Multiple IP')
+    typeType = 'IPMachinesService'
+    typeDescription = _('This service provides access to POWERED-ON Machines by IP')
+    iconFile = 'machines.png'
 
     # Characteristics of service
     maxDeployed = -1  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
@@ -68,21 +70,53 @@ class IPServerService(services.Service):
 
     servicesTypeProvided = (serviceTypes.VDI,)
 
-    def initialize(self, values):
-        """
-        We check here form values to see if they are valid.
+    _ips: typing.List[str]
 
-        Note that we check them throught FROM variables, that already has been
-        initialized by __init__ method of base class, before invoking this.
-        """
-        if values is not None:
-            if self.remoteHost.value == '':
-                raise services.Service.ValidationException('No remote host found')
+    def initialize(self, values: 'Module.ValuesType') -> None:
+        if values is None or values.get('ipList', None) is None:
+            self._ips = []
+        else:
+            self._ips = list('{}~{}'.format(ip, i) for i, ip in enumerate(values['ipList']))  # Allow duplicates right now
+            # self._ips.sort()
 
-    # 172.27.0.1~00000
-    def getData(self):
-        return self.nameGenerator().get(self.remoteHost.value + '~')
+    def valuesDict(self) -> gui.ValuesDictType:
+        ips = (i.split('~')[0] for i in self._ips)
 
-    def releaseData(self, data):
-        baseName = data.split('~')[0] + '~'
-        self.nameGenerator().free(baseName, data)
+        return {'ipList': gui.convertToList(ips)}
+
+    def marshal(self) -> bytes:
+        logger.debug('Marshal: %s', self._ips)
+        self.storage.saveData('ips', pickle.dumps(self._ips))
+        return b'v1'
+
+    def unmarshal(self, data: bytes) -> None:
+        logger.debug('Vals %s', data)
+        if data == b'v1':
+            d = self.storage.readData('ips')
+            if isinstance(d, bytes):
+                self._ips = pickle.loads(d)
+            elif isinstance(d, str):  # "legacy" saved elements
+                self._ips = pickle.loads(d.encode('utf8'))
+                self.marshal()  # Ensure now is bytes..
+            else:
+                self._ips = []
+
+        logger.debug('Unmarshal: %s', self._ips)
+
+    def getUnassignedMachine(self) -> typing.Optional[str]:
+        # Search first unassigned machine
+        try:
+            for ip in self._ips:
+                if self.storage.readData(ip) is None:
+                    self.storage.saveData(ip, ip)
+                    return ip
+            return None
+        except Exception:
+            logger.exception("Exception at getUnassignedMachine")
+            return None
+
+    def unassignMachine(self, ip: str) -> None:
+        try:
+            self.storage.remove(ip)
+        except Exception:
+            logger.exception("Exception at getUnassignedMachine")

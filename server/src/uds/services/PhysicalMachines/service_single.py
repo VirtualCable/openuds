@@ -30,20 +30,25 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
-from uds.core import services
-from uds.core.services import types as serviceTypes
+
 from uds.core.ui import gui
+from uds.core.services import types as serviceTypes
+
 from .deployment import IPMachineDeployed
-import logging
-import pickle
+from .service_base import IPServiceBase
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
 
-class IPSingleMachineService(services.Service):
-
+class IPSingleMachineService(IPServiceBase):
     # Gui
     ip = gui.TextField(length=64, label=_('Machine IP'), order=1, tooltip=_('Machine IP'), required=True)
 
@@ -64,11 +69,8 @@ class IPSingleMachineService(services.Service):
 
     servicesTypeProvided = (serviceTypes.VDI,)
 
-    def initialize(self, values):
-        pass
-
-    def getUnassignedMachine(self):
-        ip = None
+    def getUnassignedMachine(self) -> typing.Optional[str]:
+        ip: typing.Optional[str] = None
         try:
             counter = self.storage.getPickle('counter')
             counter = counter + 1 if counter is not None else 1
@@ -80,5 +82,5 @@ class IPSingleMachineService(services.Service):
 
         return ip
 
-    def unassignMachine(self, ip):
+    def unassignMachine(self, ip: str) -> None:
         pass

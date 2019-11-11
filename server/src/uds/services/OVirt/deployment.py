@@ -211,7 +211,7 @@ class OVirtLinkedDeployment(services.UserDeployment):
     def getConsoleConnection(self) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
-    def desktopLogin(self, username, password, domain=''):
+    def desktopLogin(self, username: str, password: str, domain: str = '') -> None:
         script = '''import sys
 if sys.platform == 'win32':
     from uds import operations
@@ -219,9 +219,11 @@ if sys.platform == 'win32':
 '''.format(username=username, password=password)
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
-        managers.userServiceManager().sendScript(self.dbservice(), script)
+        dbService = self.dbservice()
+        if dbService:
+            managers.userServiceManager().sendScript(dbService, script)
 
-    def notifyReadyFromOsManager(self, data):
+    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
@@ -231,7 +233,7 @@ if sys.platform == 'win32':
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -239,21 +241,21 @@ if sys.platform == 'win32':
         self.__initQueueForDeploy(False)
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel):
+    def deployForCache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
         self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
         return self.__executeQueue()
 
-    def __initQueueForDeploy(self, forLevel2=False):
+    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
 
         if forLevel2 is False:
             self._queue = [opCreate, opChangeMac, opStart, opFinish]
         else:
             self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
 
-    def __checkMachineState(self, chkState):
+    def __checkMachineState(self, chkState: typing.Union[typing.List[str], typing.Tuple[str, ...], str]) -> str:
         logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
         state = self.service().getMachineState(self._vmid)
 
@@ -332,7 +334,7 @@ if sys.platform == 'win32':
         }
 
         try:
-            execFnc = fncs.get(op, None)
+            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error('Unknown operation found at execution queue ({0})'.format(op))
@@ -525,7 +527,7 @@ if sys.platform == 'win32':
         }
 
         try:
-            chkFnc = fncs.get(op, None)
+            chkFnc: typing.Optional[typing.Optional[typing.Callable[[], str]]] = fncs.get(op, None)            
 
             if chkFnc is None:
                 return self.__error('Unknown operation found at check queue ({0})'.format(op))

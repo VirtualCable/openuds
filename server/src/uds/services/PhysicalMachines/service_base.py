@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,22 +30,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 
 from uds.core import services
 
+class IPServiceBase(services.Service):
 
-class PhysicalMachinesProvider(services.ServiceProvider):
-    # No extra data needed
+    def getUnassignedMachine(self) -> typing.Optional[str]:
+        raise NotADirectoryError('getUnassignedMachine')
 
-    # What services do we offer?
-    typeName = 'Static IP Machines Provider'
-    typeType = 'PhysicalMachinesServiceProvider'
-    typeDescription = 'Provides connection to machines by IP'
-    iconFile = 'provider.png'
-
-    from .service_multi import IPMachinesService
-    from .service_single import IPSingleMachineService
-    offers = [IPMachinesService, IPSingleMachineService]
-
-    def __str__(self):
-        return "Physical Machines Provider"
+    def unassignMachine(self, ip: str) -> None:
+        raise NotADirectoryError('unassignMachine')

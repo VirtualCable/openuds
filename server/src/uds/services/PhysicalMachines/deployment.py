@@ -31,11 +31,18 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext_lazy as _
+
 from uds.core import services
 from uds.core.util.state import State
 from uds.core.util.auto_attributes import AutoAttributes
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from .service_base import IPServiceBase
 
 logger = logging.getLogger(__name__)
 
@@ -52,23 +59,27 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         services.UserDeployment.__init__(self, environment, **kwargs)
         self._state = State.FINISHED
 
-    def setIp(self, ip):
+    # Utility overrides for type checking...
+    def service(self) -> 'IPServiceBase':
+        return typing.cast('IPServiceBase', super().service())
+
+    def setIp(self, ip: str) -> None:
         logger.debug('Setting IP to %s (ignored)', ip)
 
-    def getIp(self):
+    def getIp(self) -> str:
         return self._ip.split('~')[0]
 
-    def getName(self):
+    def getName(self) -> str:
         return _("IP ") + self._ip.replace('~', ':')
 
-    def getUniqueId(self):
+    def getUniqueId(self) -> str:
         return self._ip.replace('~', ':')
 
-    def setReady(self):
+    def setReady(self) -> str:
         self._state = State.FINISHED
         return self._state
 
-    def __deploy(self):
+    def __deploy(self) -> str:
         ip = self.service().getUnassignedMachine()
         if ip is None:
             self._reason = 'No machines left'
@@ -76,32 +87,31 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         else:
             self._ip = ip
             self._state = State.FINISHED
-        self.dbservice().setInUse(True)
-        self.dbservice().save()
+        dbService = self.dbservice()
+        if dbService:
+            dbService.setInUse(True)
+            dbService.save()
         return self._state
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         return self.__deploy()
 
-    def checkState(self):
+    def checkState(self) -> str:
         return self._state
 
-    def finish(self):
-        pass
-
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why it happened. This will be called just after
         publish or checkPublishingState if they return State.ERROR
         """
         return self._reason
 
-    def cancel(self):
-        return self.destroy()
-
-    def destroy(self):
+    def destroy(self) -> str:
         if self._ip != '':
             self.service().unassignMachine(self._ip)
         self._state = State.FINISHED
         return self._state
+
+    def cancel(self) -> str:
+        return self.destroy()
