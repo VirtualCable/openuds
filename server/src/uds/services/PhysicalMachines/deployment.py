@@ -97,7 +97,6 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         return self.__deploy()
 
-
     def assign(self, ip: str) -> str:
         logger.debug('Assigning from assignable with ip %s', ip)
         self._ip = ip

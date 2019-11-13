@@ -38,7 +38,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.services import types as serviceTypes
-from uds.core.util.state import State
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
@@ -125,9 +124,11 @@ class IPMachinesService(IPServiceBase):
             logger.exception("Exception at getUnassignedMachine")
 
     def listAssignables(self):
-        return [(ip, ip.split('~')[0]) for ip in self._ips]
+        return [(ip, ip.split('~')[0]) for ip in self._ips if self.storage.readData(ip) is None]
 
     def assignFromAssignables(self, assignableId: str, user: 'models.User', userDeployment: 'services.UserDeployment') -> str:
-        userServiceInstance = typing.cast(IPMachineDeployed, userDeployment)
-
-        return userServiceInstance.assign(assignableId)
+        userServiceInstance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
+        if self.storage.readData(assignableId) is None:
+            self.storage.saveData(assignableId, assignableId)
+            return userServiceInstance.assign(assignableId)
+        return userServiceInstance.error('IP already assigned')
