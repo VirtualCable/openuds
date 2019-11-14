@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import random
+import string
 import logging
 import typing
 
@@ -193,7 +195,6 @@ class SamplePublication(services.Publication):
         In our case, destroy is 1-step action so this will no get called while
         destroying...
         """
-        import random
         self._number -= 1
         # Serialization will take care of storing self._number
 
@@ -215,10 +216,8 @@ class SamplePublication(services.Publication):
 
         Returned value, if any, is ignored
         """
-        import string
-        import random
         # Make simply a random string
-        self._name = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+        self._name = ''.join(random.SystemRandom().choices(string.ascii_uppercase + string.digits, k=10))
 
     def reasonOfError(self) -> str:
         """

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
@@ -423,7 +422,7 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         return self.__getApi().getConsoleConnection(machineId)
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
         """
         Test ovirt Connectivity
 
