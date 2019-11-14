@@ -11,3 +11,6 @@ OpenUDS (Universal Desktop Services) is a multiplatform connection broker for:
 This is an Open Source Source project, initiated by Spanish Company ​Virtualcable and released Open Source with the help of several Spanish Universities.
 
 Any help provided will be welcome.
+
+Note: Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.
+      For use, please use the latest stable branch.
