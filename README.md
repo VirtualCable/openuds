@@ -12,5 +12,5 @@ This is an Open Source Source project, initiated by Spanish Company ​Virtualca
 
 Any help provided will be welcome.
 
-Note: Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.
-      For use, please use the latest stable branch.
+**Note: Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.
+      For use, please use the latest stable branch.**
