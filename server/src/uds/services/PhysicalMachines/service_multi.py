@@ -87,12 +87,10 @@ class IPMachinesService(IPServiceBase):
         return {'ipList': gui.convertToList(ips)}
 
     def marshal(self) -> bytes:
-        logger.debug('Marshal: %s', self._ips)
         self.storage.saveData('ips', pickle.dumps(self._ips))
         return b'v1'
 
     def unmarshal(self, data: bytes) -> None:
-        logger.debug('Vals %s', data)
         if data == b'v1':
             d = self.storage.readData('ips')
             if isinstance(d, bytes):
@@ -102,8 +100,6 @@ class IPMachinesService(IPServiceBase):
                 self.marshal()  # Ensure now is bytes..
             else:
                 self._ips = []
-
-        logger.debug('Unmarshal: %s', self._ips)
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine

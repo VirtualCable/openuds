@@ -121,8 +121,7 @@ class OVirtLinkedDeployment(services.UserDeployment):
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            queue = pickle.loads(vals[6])
-            self._queue = pickle.loads(queue)
+            self._queue = pickle.loads(vals[6])
 
     def getName(self) -> str:
         if self._name == '':
@@ -527,7 +526,7 @@ if sys.platform == 'win32':
         }
 
         try:
-            chkFnc: typing.Optional[typing.Optional[typing.Callable[[], str]]] = fncs.get(op, None)            
+            chkFnc: typing.Optional[typing.Optional[typing.Callable[[], str]]] = fncs.get(op, None)
 
             if chkFnc is None:
                 return self.__error('Unknown operation found at check queue ({0})'.format(op))
