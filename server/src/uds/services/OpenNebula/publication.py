@@ -38,7 +38,7 @@ from uds.core.util.state import State
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service import LiveService
+    from . import service
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +55,8 @@ class LivePublication(Publication):
     _templateId: str = ''
     _state: str = 'r'
 
-    def service(self) -> 'LiveService':
-        return typing.cast('LiveService', super().service())
+    def service(self) -> 'service.LiveService':
+        return typing.cast('service.LiveService', super().service())
 
     def marshal(self) -> bytes:
         """
