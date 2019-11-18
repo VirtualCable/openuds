@@ -42,7 +42,7 @@ from uds.core.ui import gui
 from .xen_client import XenServer
 # from xen_client import XenFailure, XenFault
 
-from .XenLinkedService import XenLinkedService
+from .service import XenLinkedService
 
 import six
 import logging
