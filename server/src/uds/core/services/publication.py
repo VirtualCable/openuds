@@ -226,6 +226,7 @@ class Publication(Environmentable, Serializable):
         Default implementation does nothing. You can leave default method if you
         are going to do nothing.
         """
+        return
 
     def reasonOfError(self) -> str:
         """

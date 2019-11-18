@@ -53,17 +53,7 @@ opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = ran
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
-class LiveDeployment(UserDeployment):
-    """
-    This class generates the user consumable elements of the service tree.
-
-    After creating at administration interface an Deployed Service, UDS will
-    create consumable services for users using UserDeployment class as
-    provider of this elements.
-
-    The logic for managing ovirt deployments (user machines in this case) is here.
-
-    """
+class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 6
 
@@ -73,7 +63,7 @@ class LiveDeployment(UserDeployment):
     _mac: str = ''
     _vmid: str = ''
     _reason: str = ''
-    _queue: typing.List[int] = []
+    _queue: typing.List[int]
 
 
     def initialize(self):

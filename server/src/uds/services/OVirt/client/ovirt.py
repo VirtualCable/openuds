@@ -212,6 +212,7 @@ class Client:
 
             res: typing.List[typing.MutableMapping[str, typing.Any]] = []
 
+            cluster: typing.Any
             for cluster in clusters:
                 dc = cluster.data_center
 
@@ -258,7 +259,7 @@ class Client:
 
             api = self.__getApi()
 
-            c = api.system_service().clusters_service().service(clusterId.encode()).get()
+            c = api.system_service().clusters_service().service(clusterId).get()
 
             dc = c.data_center
 
@@ -307,7 +308,7 @@ class Client:
 
             api = self.__getApi()
 
-            datacenter_service = api.system_service().data_centers_service().service(datacenterId.encode())
+            datacenter_service = api.system_service().data_centers_service().service(datacenterId)
             d = datacenter_service.get()
 
             storage = []
@@ -365,7 +366,7 @@ class Client:
 
             api = self.__getApi()
 
-            dd = api.system_service().storage_domains_service().service(storageId.encode()).get()
+            dd = api.system_service().storage_domains_service().service(storageId).get()
 
             res = {
                 'id': dd.id,
@@ -413,9 +414,9 @@ class Client:
             # cluster = ov.clusters_service().service('00000002-0002-0002-0002-0000000002e4') # .get()
             # vm = ov.vms_service().service('e7ff4e00-b175-4e80-9c1f-e50a5e76d347') # .get()
 
-            vms = api.system_service().vms_service().service(machineId.encode())
+            vms = api.system_service().vms_service().service(machineId)
 
-            cluster = api.system_service().clusters_service().service(clusterId.encode()).get()
+            cluster = api.system_service().clusters_service().service(clusterId).get()
             vm = vms.get()
 
             if vm is None:
@@ -468,7 +469,7 @@ class Client:
             api = self.__getApi()
 
             try:
-                template = api.system_service().templates_service().service(templateId.encode()).get()
+                template = api.system_service().templates_service().service(templateId).get()
 
                 if not template:
                     return 'removed'
@@ -515,8 +516,8 @@ class Client:
 
             logger.debug('Deploying machine %s', name)
 
-            cluster = ovirt.types.Cluster(id=clusterId.encode())
-            template = ovirt.types.Template(id=templateId.encode())
+            cluster = ovirt.types.Cluster(id=clusterId)
+            template = ovirt.types.Template(id=templateId)
 
             if self._needsUsbFix is False and usbType in ('native',):  # Removed 'legacy', from 3.6 is not used anymore, and from 4.0 not available
                 usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
@@ -545,7 +546,7 @@ class Client:
 
             api = self.__getApi()
 
-            api.system_service().templates_service().service(templateId.encode()).remove()
+            api.system_service().templates_service().service(templateId).remove()
             # This returns nothing, if it fails it raises an exception
         finally:
             lock.release()
@@ -572,7 +573,7 @@ class Client:
             api = self.__getApi()
 
             try:
-                vm = api.system_service().vms_service().service(machineId.encode()).get()
+                vm = api.system_service().vms_service().service(machineId).get()
 
                 if vm is None or vm.status is None:
                     return 'unknown'
@@ -600,7 +601,7 @@ class Client:
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId.encode())
+            vmService = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -624,7 +625,7 @@ class Client:
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId.encode())
+            vmService = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -648,7 +649,7 @@ class Client:
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId.encode())
+            vmService = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -672,7 +673,7 @@ class Client:
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId.encode())
+            vmService = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -691,7 +692,7 @@ class Client:
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId.encode())
+            vmService = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -714,7 +715,7 @@ class Client:
 
                 api = self.__getApi()
                 usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
-                vms = api.system_service().vms_service().service(machineId.encode())
+                vms = api.system_service().vms_service().service(machineId)
                 vmu = ovirt.types.Vm(usb=usb)
                 vms.update(vmu)
             finally:
@@ -728,7 +729,7 @@ class Client:
             lock.acquire(True)
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId.encode())
+            vmService = api.system_service().vms_service().service(machineId)
             vm = vmService.get()
 
             if vm is None:
