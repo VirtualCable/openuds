@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,16 +25,13 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-Created on Apr 8, 2014
-
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.util.state import State
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 # from uds.core.util import validators
@@ -44,17 +41,16 @@ from .xen_client import XenServer
 
 from .service import XenLinkedService
 
-import six
-import logging
-
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-09-21'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import Module
+    from uds.core.environment import Environment
 
 CACHE_TIME_FOR_SERVER = 1800
 
-
-class Provider(ServiceProvider):
+class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     """
     This class represents the sample services provider
 
@@ -107,21 +103,23 @@ class Provider(ServiceProvider):
     verifySSL = gui.CheckBoxField(label=_('Verify Certificate'), order=91,
                                   tooltip=_('If selected, certificate will be checked against system valid certificate providers'), required=True, tab=gui.ADVANCED_TAB)
 
+    _api: typing.Optional[XenServer]
+
     # XenServer engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def __getApi(self, force=False):
+    def __getApi(self, force: bool = False) -> XenServer:
         """
         Returns the connection API object for XenServer (using XenServersdk)
         """
-        logger.debug('API verifySSL: {} {}'.format(self.verifySSL.value, self.verifySSL.isTrue()))
-        if self._api is None or force:
-            self._api = XenServer(self.host.value, '443', self.username.value, self.password.value, True, self.verifySSL.isTrue())
+        if not self._api or force:
+            self._api = XenServer(self.host.value, 443, self.username.value, self.password.value, True, self.verifySSL.isTrue())
+
         return self._api
 
     # There is more fields type, but not here the best place to cover it
-    def initialize(self, values=None):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -139,26 +137,27 @@ class Provider(ServiceProvider):
         """
         self.__getApi().test()
 
-    def checkTaskFinished(self, task):
+    def checkTaskFinished(self, task: typing.Optional[str]) -> typing.Tuple[bool, str]:
         """
         Checks a task state.
         Returns None if task is Finished
         Returns a number indicating % of completion if running
         Raises an exception with status else ('cancelled', 'unknown', 'failure')
         """
-        if task is None or task == '':
+        if not task:
             return True, ''
+
         ts = self.__getApi().getTaskInfo(task)
-        logger.debug('Task status: {0}'.format(ts))
+        logger.debug('Task status: %s', ts)
         if ts['status'] == 'running':
             return False, ts['progress']
         if ts['status'] == 'success':
             return True, ts['result']
 
         # Any other state, raises an exception
-        raise Exception(six.text_type(ts['result']))  # Should be error message
+        raise Exception(str(ts['result']))  # Should be error message
 
-    def getMachines(self, force=False):
+    def getMachines(self, force: bool = False) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside XenServer.
         Machines starting with UDS are filtered out
@@ -179,7 +178,7 @@ class Provider(ServiceProvider):
                 continue
             yield m
 
-    def getStorages(self, force=False):
+    def getStorages(self, force: bool = False) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of storages inside XenServer.
 
@@ -196,7 +195,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getSRs()
 
-    def getStorageInfo(self, storageId, force=False):
+    def getStorageInfo(self, storageId: str, force=False) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the storage info
 
@@ -218,15 +217,15 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().getSRInfo(storageId)
 
-    def getNetworks(self, force=False):
+    def getNetworks(self, force: bool = False) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         return self.__getApi().getNetworks()
 
-    def cloneForTemplate(self, name, comments, machineId, sr):
+    def cloneForTemplate(self, name: str, comments: str, machineId: str, sr: str):
         task = self.__getApi().cloneVM(machineId, name, sr)
-        logger.debug('Task for cloneForTemplate: {0}'.format(task))
+        logger.debug('Task for cloneForTemplate: %s', task)
         return task
 
-    def convertToTemplate(self, machineId, shadowMultiplier=4):
+    def convertToTemplate(self, machineId: str, shadowMultiplier: int = 4) -> None:
         """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -243,33 +242,15 @@ class Provider(ServiceProvider):
         """
         self.__getApi().convertToTemplate(machineId, shadowMultiplier)
 
-    def getMachineState(self, machineId):
-        """
-        Returns the state of the machine
-        This method do not uses cache at all (it always tries to get machine state from XenServer server)
-
-        Args:
-            machineId: Id of the machine to get state
-
-        Returns:
-            one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
-        """
-        return self.__getApi().getMachineState(machineId)
-
-    def removeTemplate(self, templateId):
+    def removeTemplate(self, templateId: str) -> None:
         """
         Removes a template from XenServer server
 
         Returns nothing, and raises an Exception if it fails
         """
-        return self.__getApi().removeTemplate(templateId)
+        self.__getApi().removeTemplate(templateId)
 
-    def startDeployFromTemplate(self, name, comments, templateId):
+    def startDeployFromTemplate(self, name: str, comments: str, templateId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -287,13 +268,13 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().cloneTemplate(templateId, name)
 
-    def getVMPowerState(self, machineId):
+    def getVMPowerState(self, machineId: str) -> str:
         """
         Returns current machine power state
         """
         return self.__getApi().getVMPowerState(machineId)
 
-    def startVM(self, machineId, asnc=True):
+    def startVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer.
 
@@ -306,7 +287,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().startVM(machineId, asnc)
 
-    def stopVM(self, machineId, asnc=True):
+    def stopVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -317,7 +298,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().stopVM(machineId, asnc)
 
-    def resetVM(self, machineId, asnc=True):
+    def resetVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -328,7 +309,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().resetVM(machineId, asnc)
 
-    def canSuspendVM(self, machineId):
+    def canSuspendVM(self, machineId: str) -> bool:
         """
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
 
@@ -340,7 +321,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().canSuspendVM(machineId)
 
-    def suspendVM(self, machineId, asnc=True):
+    def suspendVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -351,7 +332,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().suspendVM(machineId, asnc)
 
-    def resumeVM(self, machineId, asnc=True):
+    def resumeVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -362,7 +343,7 @@ class Provider(ServiceProvider):
         """
         return self.__getApi().resumeVM(machineId, asnc)
 
-    def removeVM(self, machineId):
+    def removeVM(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to XenServer
 
@@ -371,19 +352,19 @@ class Provider(ServiceProvider):
 
         Returns:
         """
-        return self.__getApi().removeVM(machineId)
+        self.__getApi().removeVM(machineId)
 
-    def configureVM(self, machineId, netId, mac, memory):
+    def configureVM(self, machineId: str, netId: str, mac: str, memory: int) -> None:
         self.__getApi().configureVM(machineId, mac={'network': netId, 'mac': mac}, memory=memory)
 
-    def provisionVM(self, machineId, asnc):
+    def provisionVM(self, machineId: str, asnc: bool = True) -> str:
         return self.__getApi().provisionVM(machineId, asnc=asnc)
 
-    def getMacRange(self):
+    def getMacRange(self) -> str:
         return self.macsRange.value
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
         """
         Test XenServer Connectivity
 
@@ -411,9 +392,9 @@ class Provider(ServiceProvider):
         #    logger.exception("Exception caugth!!!")
         #    return [False, str(e)]
         # return [True, _('Nothing tested, but all went fine..')]
-        xe = Provider(env, data)
+        xe = XenProvider(env, data)
         try:
             xe.testConnection()
             return [True, _('Connection test successful')]
         except Exception as e:
-            return [False, _("Connection failed: {0}").format(six.text_type(e))]
+            return [False, _("Connection failed: {}").format(str(e))]

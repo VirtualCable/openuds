@@ -85,9 +85,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
     # Serializable needed methods
     def marshal(self) -> bytes:
-        """
-        Does nothing right here, we will use envoronment storage in this sample
-        """
         return b'\1'.join([
             b'v1',
             self._name.encode('utf8'),
@@ -99,9 +96,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         ])
 
     def unmarshal(self, data: bytes) -> None:
-        """
-        Does nothing here also, all data are keeped at environment storage
-        """
         vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
@@ -112,26 +106,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._queue = pickle.loads(vals[6])
 
     def getName(self) -> str:
-        """
-        We override this to return a name to display. Default inplementation
-        (in base class), returns getUniqueIde() value
-        This name will help user to identify elements, and is only used
-        at administration interface.
-
-        We will use here the environment name provided generator to generate
-        a name for this element.
-
-        The namaGenerator need two params, the base name and a length for a
-        numeric incremental part for generating unique names. This are unique for
-        all UDS names generations, that is, UDS will not generate this name again
-        until this name is freed, or object is removed, what makes its environment
-        to also get removed, that makes all uniques ids (names and macs right now)
-        to also get released.
-
-        Every time get method of a generator gets called, the generator creates
-        a new unique name, so we keep the first generated name cached and don't
-        generate more names. (Generator are simple utility classes)
-        """
         if self._name == '':
             try:
                 self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
@@ -140,57 +114,16 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         return self._name
 
     def setIp(self, ip: str) -> None:
-        """
-        In our case, there is no OS manager associated with this, so this method
-        will never get called, but we put here as sample.
-
-        Whenever an os manager actor notifies the broker the state of the service
-        (mainly machines), the implementation of that os manager can (an probably will)
-        need to notify the IP of the deployed service. Remember that UDS treats with
-        IP services, so will probable needed in every service that you will create.
-        :note: This IP is the IP of the "consumed service", so the transport can
-               access it.
-        """
         logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
     def getUniqueId(self) -> str:
-        """
-        Return and unique identifier for this service.
-        In our case, we will generate a mac name, that can be also as sample
-        of 'mac' generator use, and probably will get used something like this
-        at some services.
-
-        The get method of a mac generator takes one param, that is the mac range
-        to use to get an unused mac.
-        """
         return self._mac.upper()
 
     def getIp(self) -> str:
-        """
-        We need to implement this method, so we can return the IP for transports
-        use. If no IP is known for this service, this must return None
-
-        If our sample do not returns an IP, IP transport will never work with
-        this service. Remember in real cases to return a valid IP address if
-        the service is accesible and you alredy know that (for example, because
-        the IP has been assigend via setIp by an os manager) or because
-        you get it for some other method.
-
-        Storage returns None if key is not stored.
-
-        :note: Keeping the IP address is responsibility of the User Deployment.
-               Every time the core needs to provide the service to the user, or
-               show the IP to the administrator, this method will get called
-
-        """
         return self._ip
 
     def setReady(self) -> str:
-        """
-        The method is invoked whenever a machine is provided to an user, right
-        before presenting it (via transport rendering) to the user.
-        """
         if self.cache.get('ready') == '1':
             return State.FINISHED
 

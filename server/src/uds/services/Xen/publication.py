@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,53 +29,41 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from datetime import datetime
+import logging
+import typing
 
 from django.utils.translation import ugettext as _
 from uds.core.services import Publication
 from uds.core.util.state import State
-from datetime import datetime
-import logging
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .service import XenLinkedService
 
 logger = logging.getLogger(__name__)
 
 
 class XenPublication(Publication):
-    """
-    This class provides the publication of a oVirtLinkedService
-    """
-    _name = ''
-    _reason = ''
-    _destroyAfter = 'f'
-    _templateId = ''
-    _state = ''
-    _task = ''
-
     suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
 
-    def initialize(self):
-        """
-        This method will be invoked by default __init__ of base class, so it gives
-        us the oportunity to initialize whataver we need here.
+    _name: str = ''
+    _reason: str = ''
+    _destroyAfter: str = 'f'
+    _templateId: str = ''
+    _state: str = ''
+    _task: str = ''
 
-        In our case, we setup a few attributes..
-        """
+    def service(self) -> 'XenLinkedService':
+        return typing.cast('XenLinkedService', super().service())
 
-        # We do not check anything at marshal method, so we ensure that
-        # default values are correctly handled by marshal.
-        self._name = ''
-        self._reason = ''
-        self._destroyAfter = 'f'
-        self._templateId = ''
-        self._state = ''
-        self._task = ''
-
-    def marshal(self):
+    def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
         return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task]).encode('utf8')
 
-    def unmarshal(self, data):
+    def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
@@ -85,7 +72,7 @@ class XenPublication(Publication):
         if vals[0] == 'v1':
             self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task = vals[1:]
 
-    def publish(self):
+    def publish(self) -> str:
         """
         Realizes the publication of the service
         """
@@ -104,7 +91,7 @@ class XenPublication(Publication):
 
         return State.RUNNING
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Checks state of publication creation
         """
@@ -115,10 +102,10 @@ class XenPublication(Publication):
             return State.ERROR
 
         try:
-            state = self.service().checkTaskFinished(self._task)
-            if state[0]:  # Finished
+            state, result = self.service().checkTaskFinished(self._task)
+            if state:  # Finished
                 self._state = 'finished'
-                self._templateId = state[1]
+                self._templateId = result
                 if self._destroyAfter == 't':
                     return self.destroy()
 
@@ -131,33 +118,10 @@ class XenPublication(Publication):
 
         return State.RUNNING
 
-    def finish(self):
-        """
-        In our case, finish does nothing
-        """
-        pass
-
-    def reasonOfError(self):
-        """
-        If a publication produces an error, here we must notify the reason why
-        it happened. This will be called just after publish or checkState
-        if they return State.ERROR
-
-        Returns an string, in our case, set at checkState
-        """
+    def reasonOfError(self) -> str:
         return self._reason
 
-    def destroy(self):
-        """
-        This is called once a publication is no more needed.
-
-        This method do whatever needed to clean up things, such as
-        removing created "external" data (environment gets cleaned by core),
-        etc..
-
-        The retunred value is the same as when publishing, State.RUNNING,
-        State.FINISHED or State.ERROR.
-        """
+    def destroy(self) -> str:
         # We do not do anything else to destroy this instance of publication
         if self._state == 'ok':
             self._destroyAfter = 't'
@@ -172,17 +136,14 @@ class XenPublication(Publication):
 
         return State.FINISHED
 
-    def cancel(self):
-        """
-        Do same thing as destroy
-        """
+    def cancel(self) -> str:
         return self.destroy()
 
     # Here ends the publication needed methods.
-    # Methods provided below are specific for this publication
+    # Methods provided below are specific for this publication type
     # and will be used by user deployments that uses this kind of publication
 
-    def getTemplateId(self):
+    def getTemplateId(self) -> str:
         """
         Returns the template id associated with the publication
         """

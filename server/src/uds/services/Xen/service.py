@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +29,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+import typing
 
-from django.utils.translation import ugettext_noop as _, ugettext
+from django.utils.translation import ugettext_noop as _
 from uds.core.services import Service, types as serviceTypes
 from uds.core.util import tools
 from uds.core.ui import gui
@@ -39,12 +40,15 @@ from uds.core.ui import gui
 from .publication import XenPublication
 from .deployment import XenLinkedDeployment
 
-import logging
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .provider import XenProvider
+    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
 
-class XenLinkedService(Service):
+class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
     """
     Xen Linked clones service. This is based on creating a template from selected vm, and then use it to
 
@@ -190,56 +194,45 @@ class XenLinkedService(Service):
                 raise Service.ValidationException(
                     _('The minimum allowed memory is 256 Mb'))
 
-    def initGui(self):
-        """
-        Loads required values inside
-        """
+    def parent(self) -> 'XenProvider':
+        return typing.cast('XenProvider', super().parent())
 
+    def initGui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
 
-        machines = self.parent().getMachines()
-        storages = self.parent().getStorages()
-        networks = self.parent().getNetworks()
-        machines_list = []
-        for m in machines:
-            machines_list.append(gui.choiceItem(m['id'], m['name']))
+        machines_list = [gui.choiceItem(m['id'], m['name']) for m in self.parent().getMachines()]
+
         storages_list = []
-        for storage in storages:
-            space, free = storage['size'] / \
-                1024, (storage['size'] - storage['used']) / 1024
-            storages_list.append(gui.choiceItem(
-                storage['id'], "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free)))
-        network_list = []
-        for net in networks:
-            network_list.append(gui.choiceItem(net['id'], net['name']))
+        for storage in self.parent().getStorages():
+            space, free = storage['size'] / 1024, (storage['size'] - storage['used']) / 1024
+            storages_list.append(gui.choiceItem(storage['id'], "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free)))
+
+        network_list = [gui.choiceItem(net['id'], net['name']) for net in self.parent().getNetworks()]
 
         self.machine.setValues(machines_list)
         self.datastore.setValues(storages_list)
         self.network.setValues(network_list)
 
-    def checkTaskFinished(self, task):
+    def checkTaskFinished(self, task: str) -> typing.Tuple[bool, str]:
         return self.parent().checkTaskFinished(task)
 
-    def datastoreHasSpace(self):
+    def datastoreHasSpace(self) -> None:
         # Get storages for that datacenter
-        logger.debug('Checking datastore space for {0}'.format(
-            self.datastore.value))
         info = self.parent().getStorageInfo(self.datastore.value)
-        logger.debug('Datastore Info: {0}'.format(info))
+        logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
         availableGB = (info['size'] - info['used']) / 1024
         if availableGB < self.minSpaceGB.num():
-            raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(
-                self.minSpaceGB.num(), availableGB))
+            raise Exception('Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(self.minSpaceGB.num(), availableGB))
 
-    def sanitizeVmName(self, name):
+    def sanitizeVmName(self, name: str) -> str:
         """
         Xen Seems to allow all kind of names
         """
         return name
 
-    def startDeployTemplate(self, name, comments):
+    def startDeployTemplate(self, name: str, comments: str) -> str:
         """
         Invokes makeTemplate from parent provider, completing params
 
@@ -253,20 +246,20 @@ class XenLinkedService(Service):
         Raises an exception if operation fails.
         """
 
-        logger.debug('Starting deploy of template from machine {0} on datastore {1}'.format(
-            self.machine.value, self.datastore.value))
+        logger.debug('Starting deploy of template from machine %s on datastore %s', self.machine.value, self.datastore.value)
 
-        # Checks datastore size
+        # Checks datastore available space, raises exeception in no min available
         self.datastoreHasSpace()
+
         return self.parent().cloneForTemplate(name, comments, self.machine.value, self.datastore.value)
 
-    def convertToTemplate(self, machineId):
+    def convertToTemplate(self, machineId: str) -> None:
         """
         converts machine to template
         """
         self.parent().convertToTemplate(machineId, self.shadow.value)
 
-    def startDeployFromTemplate(self, name, comments, templateId):
+    def startDeployFromTemplate(self, name: str, comments: str, templateId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -281,19 +274,18 @@ class XenLinkedService(Service):
         Returns:
             Id of the machine being created form template
         """
-        logger.debug(
-            'Deploying from template {0} machine {1}'.format(templateId, name))
+        logger.debug('Deploying from template %s machine %s', templateId, name)
         self.datastoreHasSpace()
 
         return self.parent().startDeployFromTemplate(name, comments, templateId)
 
-    def removeTemplate(self, templateId):
+    def removeTemplate(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        return self.parent().removeTemplate(templateId)
+        self.parent().removeTemplate(templateId)
 
-    def getVMPowerState(self, machineId):
+    def getVMPowerState(self, machineId: str) -> str:
         """
         Invokes getMachineState from parent provider
 
@@ -305,7 +297,7 @@ class XenLinkedService(Service):
         """
         return self.parent().getVMPowerState(machineId)
 
-    def startVM(self, machineId, asnc=True):
+    def startVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
@@ -318,7 +310,7 @@ class XenLinkedService(Service):
         """
         return self.parent().startVM(machineId, asnc)
 
-    def stopVM(self, machineId, asnc=True):
+    def stopVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -329,7 +321,7 @@ class XenLinkedService(Service):
         """
         return self.parent().stopVM(machineId, asnc)
 
-    def resetVM(self, machineId, asnc=True):
+    def resetVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -340,7 +332,7 @@ class XenLinkedService(Service):
         """
         return self.parent().resetVM(machineId, asnc)
 
-    def canSuspendVM(self, machineId):
+    def canSuspendVM(self, machineId: str) -> bool:
         """
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
 
@@ -352,7 +344,7 @@ class XenLinkedService(Service):
         """
         return self.parent().canSuspendVM(machineId)
 
-    def suspendVM(self, machineId, asnc=True):
+    def suspendVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to suspend a machine. No check is done, it is simply requested to Xen
 
@@ -363,7 +355,7 @@ class XenLinkedService(Service):
         """
         return self.parent().suspendVM(machineId, asnc)
 
-    def resumeVM(self, machineId, asnc=True):
+    def resumeVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to resume a machine. No check is done, it is simply requested to Xen
 
@@ -374,7 +366,7 @@ class XenLinkedService(Service):
         """
         return self.parent().suspendVM(machineId, asnc)
 
-    def removeVM(self, machineId):
+    def removeVM(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to Xen
 
@@ -383,34 +375,28 @@ class XenLinkedService(Service):
 
         Returns:
         """
-        return self.parent().removeVM(machineId)
+        self.parent().removeVM(machineId)
 
-    def configureVM(self, machineId, mac):
-        return self.parent().configureVM(machineId, self.network.value, mac, self.memory.value)
+    def configureVM(self, machineId: str, mac: str) -> None:
+        self.parent().configureVM(machineId, self.network.value, mac, self.memory.value)
 
-    def provisionVM(self, machineId, asnc=True):
+    def provisionVM(self, machineId: str, asnc: bool = True) -> str:
         return self.parent().provisionVM(machineId, asnc)
 
-    def getMacRange(self):
+    def getMacRange(self) -> str:
         """
         Returns de selected mac range
         """
         return self.parent().getMacRange()
 
-    def getBaseName(self):
+    def getBaseName(self) -> str:
         """
         Returns the base name
         """
         return self.baseName.value
 
-    def getLenName(self):
+    def getLenName(self) -> int:
         """
         Returns the length of numbers part
         """
         return int(self.lenName.value)
-
-    def getDisplay(self):
-        """
-        Returns the selected display type (for created machines, for administration
-        """
-        return self.display.value

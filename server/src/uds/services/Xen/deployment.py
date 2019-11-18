@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,18 +29,22 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
+import pickle
+import logging
+import typing
 
 from uds.core.services import UserDeployment
 from uds.core.util.state import State
 from uds.core.util import log
 
-from uds.services.Xen.xen_client import XenPowerState
+from .xen_client import XenPowerState
 
-import pickle
-import logging
-import six
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds import models
+    from .service import XenLinkedService
+    from .publication import XenPublication
+    from uds.core.util.storage import Storage
 
 logger = logging.getLogger(__name__)
 
@@ -51,34 +54,32 @@ NO_MORE_NAMES = 'NO-NAME-ERROR'
 
 
 class XenLinkedDeployment(UserDeployment):
-    """
-    This class generates the user consumable elements of the service tree.
-
-    After creating at administration interface an Deployed Service, UDS will
-    create consumable services for users using UserDeployment class as
-    provider of this elements.
-
-    The logic for managing ovirt deployments (user machines in this case) is here.
-
-    """
-
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 7
 
-    def initialize(self):
-        self._name = ''
-        self._ip = ''
-        self._mac = ''
-        self._vmid = ''
-        self._reason = ''
-        self._task = ''
+    _name: str = ''
+    _ip: str = ''
+    _mac: str = ''
+    _man: str = ''
+    _vmid: str = ''
+    _reason: str = ''
+    _task = ''
+    _queue: typing.List[int]
+
+    def initialize(self) -> None:
         self._queue = []
 
+    def service(self) -> 'XenLinkedService':
+        return typing.cast('XenLinkedService', super().service())
+
+    def publication(self) -> 'XenPublication':
+        pub = super().publication()
+        if pub is None:
+            raise Exception('No publication for this element!')
+        return typing.cast('XenPublication', pub)
+
     # Serializable needed methods
-    def marshal(self):
-        """
-        Does nothing right here, we will use envoronment storage in this sample
-        """
+    def marshal(self) -> bytes:
         return b'\1'.join([
             b'v1',
             self._name.encode('utf8'),
@@ -90,11 +91,8 @@ class XenLinkedDeployment(UserDeployment):
             self._task.encode('utf8')
         ])
 
-    def unmarshal(self, str_):
-        """
-        Does nothing here also, all data are keeped at environment storage
-        """
-        vals = str_.split(b'\1')
+    def unmarshal(self, data: bytes) -> None:
+        vals = data.split(b'\1')
         logger.debug('Values: %s', vals)
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
@@ -105,106 +103,45 @@ class XenLinkedDeployment(UserDeployment):
             self._queue = pickle.loads(vals[6])
             self._task = vals[7].decode('utf8')
 
-    def getName(self):
-        """
-        We override this to return a name to display. Default inplementation
-        (in base class), returns getUniqueIde() value
-        This name will help user to identify elements, and is only used
-        at administration interface.
-
-        We will use here the environment name provided generator to generate
-        a name for this element.
-
-        The namaGenerator need two params, the base name and a length for a
-        numeric incremental part for generating unique names. This are unique for
-        all UDS names generations, that is, UDS will not generate this name again
-        until this name is freed, or object is removed, what makes its environment
-        to also get removed, that makes all uniques ids (names and macs right now)
-        to also get released.
-
-        Every time get method of a generator gets called, the generator creates
-        a new unique name, so we keep the first generated name cached and don't
-        generate more names. (Generator are simple utility classes)
-        """
-        if self._name == '':
+    def getName(self) -> str:
+        if not self._name:
             try:
                 self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip):
-        """
-        In our case, there is no OS manager associated with this, so this method
-        will never get called, but we put here as sample.
-
-        Whenever an os manager actor notifies the broker the state of the service
-        (mainly machines), the implementation of that os manager can (an probably will)
-        need to notify the IP of the deployed service. Remember that UDS treats with
-        IP services, so will probable needed in every service that you will create.
-        :note: This IP is the IP of the "consumed service", so the transport can
-               access it.
-        """
-        logger.debug('Setting IP to %s' % ip)
+    def setIp(self, ip: str) -> None:
+        logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
-    def getUniqueId(self):
-        """
-        Return and unique identifier for this service.
-        In our case, we will generate a mac name, that can be also as sample
-        of 'mac' generator use, and probably will get used something like this
-        at some services.
-
-        The get method of a mac generator takes one param, that is the mac range
-        to use to get an unused mac.
-        """
-        if self._mac == '':
+    def getUniqueId(self) -> str:
+        if not self._mac:
             self._mac = self.macGenerator().get(self.service().getMacRange())
         return self._mac
 
-    def getIp(self):
-        """
-        We need to implement this method, so we can return the IP for transports
-        use. If no IP is known for this service, this must return None
-
-        If our sample do not returns an IP, IP transport will never work with
-        this service. Remember in real cases to return a valid IP address if
-        the service is accesible and you alredy know that (for example, because
-        the IP has been assigend via setIp by an os manager) or because
-        you get it for some other method.
-
-        Storage returns None if key is not stored.
-
-        :note: Keeping the IP address is responsibility of the User Deployment.
-               Every time the core needs to provide the service to the user, or
-               show the IP to the administrator, this method will get called
-
-        """
+    def getIp(self) -> str:
         return self._ip
 
-    def setReady(self):
-        """
-        The method is invoked whenever a machine is provided to an user, right
-        before presenting it (via transport rendering) to the user.
-        """
+    def setReady(self) -> str:
         try:
             state = self.service().getVMPowerState(self._vmid)
 
             if state != XenPowerState.running:
                 self._queue = [opStart, opFinish]
                 return self.__executeQueue()
-        except:
+        except Exception:
             return self.__error('Machine is not available anymore')
 
         return State.FINISHED
 
-    def reset(self):
-        if self._vmid != '':
+    def reset(self) -> None:
+        if self._vmid:
             self.service().resetVM(self._vmid)  # Reset in sync
 
-    def notifyReadyFromOsManager(self, data):
+    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
-        logger.debug('Checking if cache 2 for {0}'.format(self._name))
+        logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
             logger.debug('Machine is ready. Moving to level 2')
             self.__popCurrentOp()  # Remove current state
@@ -212,7 +149,7 @@ class XenLinkedDeployment(UserDeployment):
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
-    def deployForUser(self, user):
+    def deployForUser(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -220,63 +157,56 @@ class XenLinkedDeployment(UserDeployment):
         self.__initQueueForDeploy(False)
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel):
+    def deployForCache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
         self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
         return self.__executeQueue()
 
-    def __initQueueForDeploy(self, forLevel2=False):
-
+    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
             self._queue = [opCreate, opConfigure, opProvision, opStart, opFinish]
         else:
             self._queue = [opCreate, opConfigure, opProvision, opStart, opWait, opWaitSuspend, opSuspend, opFinish]
 
-    def __getCurrentOp(self):
+    def __getCurrentOp(self) -> int:
         if len(self._queue) == 0:
             return opFinish
 
         return self._queue[0]
 
-    def __popCurrentOp(self):
+    def __popCurrentOp(self) -> int:
         if len(self._queue) == 0:
             return opFinish
 
         res = self._queue.pop(0)
         return res
 
-    def __pushFrontOp(self, op):
+    def __pushFrontOp(self, op: int) -> None:
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op):
+    def __pushBackOp(self, op: int) -> None:
         self._queue.append(op)
 
-    def __error(self, reason):
-        """
-        Internal method to set object as error state
-
-        Returns:
-            State.ERROR, so we can do "return self.__error(reason)"
-        """
-        logger.debug('Setting error state, reason: {0}'.format(reason))
+    def __error(self, reason: typing.Any) -> str:
+        logger.debug('Setting error state, reason: %s', reason)
         self.doLog(log.ERROR, reason)
 
-        if self._vmid != '':  # Powers off
+        if self._vmid != '':  # Powers off and delete VM
             try:
                 state = self.service().getVMPowerState(self._vmid)
                 if state in (XenPowerState.running, XenPowerState.paused, XenPowerState.suspended):
                     self.service().stopVM(self._vmid, False)  # In sync mode
-                    self.service().removeVM(self._vmid)
-            except:
-                logger.debug('Can\t set machine state to stopped')
+                self.service().removeVM(self._vmid)
+            except Exception:
+                logger.debug('Can\'t set machine %s state to stopped', self._vmid)
 
         self._queue = [opError]
         self._reason = str(reason)
         return State.ERROR
 
-    def __executeQueue(self):
+    def __executeQueue(self) -> str:
         self.__debug('executeQueue')
         op = self.__getCurrentOp()
 
@@ -286,7 +216,7 @@ class XenLinkedDeployment(UserDeployment):
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -300,7 +230,7 @@ class XenLinkedDeployment(UserDeployment):
         }
 
         try:
-            execFnc = fncs.get(op, None)
+            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error('Unknown operation found at execution queue ({0})'.format(op))
@@ -312,7 +242,7 @@ class XenLinkedDeployment(UserDeployment):
             return self.__error(e)
 
     # Queue execution methods
-    def __retry(self):
+    def __retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -322,13 +252,13 @@ class XenLinkedDeployment(UserDeployment):
         """
         return State.FINISHED
 
-    def __wait(self):
+    def __wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self):
+    def __create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
@@ -344,7 +274,9 @@ class XenLinkedDeployment(UserDeployment):
         if self._task is None:
             raise Exception('Can\'t create machine')
 
-    def __remove(self):
+        return State.RUNNING
+
+    def __remove(self) -> str:
         """
         Removes a machine from system
         """
@@ -356,7 +288,9 @@ class XenLinkedDeployment(UserDeployment):
         else:
             self.service().removeVM(self._vmid)
 
-    def __startMachine(self):
+        return State.RUNNING
+
+    def __startMachine(self) -> str:
         """
         Powers on the machine
         """
@@ -367,7 +301,9 @@ class XenLinkedDeployment(UserDeployment):
         else:
             self._task = ''
 
-    def __stopMachine(self):
+        return State.RUNNING
+
+    def __stopMachine(self) -> str:
         """
         Powers off the machine
         """
@@ -378,13 +314,16 @@ class XenLinkedDeployment(UserDeployment):
         else:
             self._task = ''
 
-    def __waitSuspend(self):
+        return State.RUNNING
+
+    def __waitSuspend(self) -> str:
         """
         Before suspending, wait for machine to have the SUSPEND feature
         """
-        self.task = ''
+        self._task = ''
+        return State.RUNNING
 
-    def __suspendMachine(self):
+    def __suspendMachine(self) -> str:
         """
         Suspends the machine
         """
@@ -395,17 +334,23 @@ class XenLinkedDeployment(UserDeployment):
         else:
             self._task = ''
 
+        return State.RUNNING
+
     def __configure(self):
         """
         Provisions machine & changes the mac of the indicated nic
         """
         self.service().configureVM(self._vmid, self.getUniqueId())
 
+        return State.RUNNING
+
     def __provision(self):
         """
         Makes machine usable on Xen
         """
         self.service().provisionVM(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
+
+        return State.RUNNING
 
     # Check methods
     def __checkCreate(self):
@@ -466,7 +411,7 @@ class XenLinkedDeployment(UserDeployment):
     def __checkProvision(self):
         return State.FINISHED
 
-    def checkState(self):
+    def checkState(self) -> str:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -479,7 +424,7 @@ class XenLinkedDeployment(UserDeployment):
         if op == opFinish:
             return State.FINISHED
 
-        fncs = {
+        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opWait: self.__wait,
@@ -493,10 +438,10 @@ class XenLinkedDeployment(UserDeployment):
         }
 
         try:
-            chkFnc = fncs.get(op, None)
+            chkFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
-                return self.__error('Unknown operation found at check queue ({0})'.format(op))
+                return self.__error('Unknown operation found at check queue ({})'.format(op))
 
             state = chkFnc()
             if state == State.FINISHED:
@@ -507,15 +452,7 @@ class XenLinkedDeployment(UserDeployment):
         except Exception as e:
             return self.__error(e)
 
-    def finish(self):
-        """
-        Invoked when the core notices that the deployment of a service has finished.
-        (No matter wether it is for cache or for an user)
-        """
-        self.__debug('finish')
-        pass
-
-    def moveToCache(self, newLevel):
+    def moveToCache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
@@ -529,7 +466,7 @@ class XenLinkedDeployment(UserDeployment):
 
         return self.__executeQueue()
 
-    def reasonOfError(self):
+    def reasonOfError(self) -> str:
         """
         Returns the reason of the error.
 
@@ -539,7 +476,7 @@ class XenLinkedDeployment(UserDeployment):
         """
         return self._reason
 
-    def destroy(self):
+    def destroy(self) -> str:
         """
         Invoked for destroying a deployed service
         """
@@ -559,7 +496,7 @@ class XenLinkedDeployment(UserDeployment):
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
-    def cancel(self):
+    def cancel(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -572,7 +509,7 @@ class XenLinkedDeployment(UserDeployment):
         return self.destroy()
 
     @staticmethod
-    def __op2str(op):
+    def __op2str(op) -> str:
         return {
             opCreate: 'create',
             opStart: 'start',
@@ -588,9 +525,5 @@ class XenLinkedDeployment(UserDeployment):
             opProvision: 'provisioning'
         }.get(op, '????')
 
-    def __debug(self, txt):
-        logger.debug('_name {0}: {1}'.format(txt, self._name))
-        logger.debug('_ip {0}: {1}'.format(txt, self._ip))
-        logger.debug('_mac {0}: {1}'.format(txt, self._mac))
-        logger.debug('_vmid {0}: {1}'.format(txt, self._vmid))
-        logger.debug('Queue at {0}: {1}'.format(txt, [XenLinkedDeployment.__op2str(op) for op in self._queue]))
+    def __debug(self, txt: str) -> None:
+        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [XenLinkedDeployment.__op2str(op) for op in self._queue])

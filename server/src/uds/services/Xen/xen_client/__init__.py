@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,14 +25,13 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from __future__ import unicode_literals
-
-import xmlrpc.client
-from . import XenAPI
-
 import ssl
-
+import enum
+import xmlrpc.client
 import logging
+import typing
+
+from . import XenAPI
 
 logger = logging.getLogger(__name__)
 
@@ -51,23 +49,23 @@ class XenFailure(XenAPI.Failure, XenFault):
     exHostIsSlave = 'HOST_IS_SLAVE'
     exSRError = 'SR_BACKEND_FAILURE_44'
 
-    def __init__(self, details=None):
+    def __init__(self, details: typing.Optional[typing.List] = None):
         details = [] if details is None else details
         super(XenFailure, self).__init__(details)
 
-    def isHandleInvalid(self):
+    def isHandleInvalid(self) -> bool:
         return self.details[0] == XenFailure.exHandleInvalid
 
-    def needsXenTools(self):
+    def needsXenTools(self) -> bool:
         return self.details[0] == XenFailure.exVmMissingPVDrivers
 
-    def badPowerState(self):
+    def badPowerState(self) -> bool:
         return self.details[0] == XenFailure.exBadVmPowerState
 
-    def isSlave(self):
+    def isSlave(self) -> bool:
         return self.details[0] == XenFailure.exHostIsSlave
 
-    def asHumanReadable(self):
+    def asHumanReadable(self) -> str:
         try:
             errList = {
                 XenFailure.exBadVmPowerState: 'Machine state is invalid for requested operation (needs {2} and state is {3})',
@@ -82,33 +80,45 @@ class XenFailure(XenAPI.Failure, XenFault):
         except Exception:
             return 'Unknown exception: {0}'.format(self.details)
 
-    def __unicode__(self):
+    def __str__(self) -> str:
         return self.asHumanReadable()
 
 
 class XenException(XenFault):
-
-    def __init__(self, message):
+    def __init__(self, message: typing.Any):
         XenFault.__init__(self, message)
-        logger.debug('Exception create: {0}'.format(message))
+        logger.debug('Exception create: %s', message)
 
 
-class XenPowerState(object):
-    halted = 'Halted'
-    running = 'Running'
-    suspended = 'Suspended'
-    paused = 'Paused'
+class XenPowerState:  # pylint: disable=too-few-public-methods
+    halted: str = 'Halted'
+    running: str = 'Running'
+    suspended: str = 'Suspended'
+    paused: str = 'Paused'
 
 
-class XenServer(object):
+class XenServer:  # pylint: disable=too-many-public-methods
+    _originalHost: str
+    _host: str
+    _port: str
+    _useSSL: bool
+    _verifySSL: bool
+    _protocol: str
+    _url: str
+    _loggedIn: bool
+    _username: str
+    _password: str
+    _session: typing.Any
+    _poolName: str
+    _apiVersion: str
 
-    def __init__(self, host, port, username, password, useSSL=False, verifySSL=False):
+    def __init__(self, host: str, port: int, username: str, password: str, useSSL: bool = False, verifySSL: bool = False):
         self._originalHost = self._host = host
         self._port = str(port)
-        self._useSSL = useSSL and True or False
-        self._verifySSL = verifySSL and True or False
-        self._protocol = 'http' + (self._useSSL and 's' or '') + '://'
-        self._url = None
+        self._useSSL = bool(useSSL)
+        self._verifySSL = bool(verifySSL)
+        self._protocol = 'http' + ('s' if self._useSSL else '') + '://'
+        self._url = ''
         self._loggedIn = False
         self._username = username
         self._password = password
@@ -116,16 +126,16 @@ class XenServer(object):
         self._poolName = self._apiVersion = ''
 
     @staticmethod
-    def toMb(number):
-        return int(number) / (1024 * 1024)
+    def toMb(number: typing.Union[str, int]) -> int:
+        return int(number) // (1024 * 1024)
 
-    def checkLogin(self):
-        if self._loggedIn is False:
+    def checkLogin(self) -> bool:
+        if not self._loggedIn:
             self.login()
         return self._loggedIn
 
-    def getXenapiProperty(self, prop):
-        if self.checkLogin() is False:
+    def getXenapiProperty(self, prop: str) -> typing.Any:
+        if not self.checkLogin():
             raise Exception("Can't log in")
         return getattr(self._session.xenapi, prop)
 
@@ -145,16 +155,16 @@ class XenServer(object):
     poolName = property(lambda self: self.checkLogin() and self._poolName)
     hasPool = property(lambda self: self.checkLogin() and self._poolName != '')
 
-    def getPoolName(self):
+    def getPoolName(self) -> str:
         pool = self.pool.get_all()[0]
         return self.pool.get_name_label(pool)
 
     # Login/Logout
-
-    def login(self, switchToMaster=False):
+    def login(self, switchToMaster: bool = False) -> None:
         try:
+            # We recalculate here url, because we can "switch host" on any moment
             self._url = self._protocol + self._host + ':' + self._port
-            # On modern python's, HTTPS is verified by default,
+
             if self._useSSL:
                 context = ssl.SSLContext(ssl.PROTOCOL_TLS)
                 if self._verifySSL is False:
@@ -169,7 +179,7 @@ class XenServer(object):
             self._poolName = str(self.getPoolName())
         except XenAPI.Failure as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
             if switchToMaster and e.details[0] == 'HOST_IS_SLAVE':
-                logger.info('{0} is an Slave, connecting to master at {1} cause switchToMaster is True'.format(self._host, e.details[1]))
+                logger.info('%s is an Slave, connecting to master at %s cause switchToMaster is True', self._host, e.details[1])
                 self._host = e.details[1]
                 self.login()
             else:
@@ -178,28 +188,28 @@ class XenServer(object):
             logger.exception('Unrecognized xenapi exception')
             raise
 
-    def test(self):
+    def test(self) -> None:
         self.login(False)
 
-    def logout(self):
+    def logout(self) -> None:
         self._session.logout()
         self._loggedIn = False
         self._session = None
         self._poolName = self._apiVersion = ''
 
-    def getHost(self):
+    def getHost(self) -> str:
         return self._host
 
-    def setHost(self, host):
+    def setHost(self, host: str) -> None:
         self._host = host
 
-    def getTaskInfo(self, task):
+    def getTaskInfo(self, task: str) -> typing.MutableMapping[str, typing.Any]:
         progress = 0
         result = None
         destroyTask = False
         try:
             status = self.task.get_status(task)
-            logger.debug('Task {0} in state {1}'.format(task, status))
+            logger.debug('Task %s in state %s', task, status)
             if status == 'pending':
                 status = 'running'
                 progress = int(self.task.get_progress(task) * 100)
@@ -210,7 +220,7 @@ class XenServer(object):
                 result = XenFailure(self.task.get_error_info(task))
                 destroyTask = True
         except XenAPI.Failure as e:
-            logger.debug('XenServer Failure: {0}'.format(e.details[0]))
+            logger.debug('XenServer Failure: %s', e.details[0])
             if e.details[0] == 'HANDLE_INVALID':
                 result = None
                 status = 'unknown'
@@ -232,11 +242,11 @@ class XenServer(object):
             try:
                 self.task.destroy(task)
             except Exception as e:
-                logger.info('Task {0} returned error {1}'.format(task, str(e)))
+                logger.warning('Destroy task %s returned error %s', task, str(e))
 
         return {'result': result, 'progress': progress, 'status':str(status)}
 
-    def getSRs(self):
+    def getSRs(self) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         for srId in self.SR.get_all():
             # Only valid SR shared, non iso
             name_label = self.SR.get_name_label(srId)
@@ -261,7 +271,7 @@ class XenServer(object):
                 'used': XenServer.toMb(self.SR.get_physical_utilisation(srId))
             }
 
-    def getSRInfo(self, srId):
+    def getSRInfo(self, srId: str) -> typing.MutableMapping[str, typing.Any]:
         return {
             'id': srId,
             'name': self.SR.get_name_label(srId),
@@ -269,7 +279,7 @@ class XenServer(object):
             'used': XenServer.toMb(self.SR.get_physical_utilisation(srId))
         }
 
-    def getNetworks(self):
+    def getNetworks(self) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         for netId in self.network.get_all():
             if self.network.get_other_config(netId).get('is_host_internal_management_network', False) is False:
                 yield {
@@ -277,13 +287,13 @@ class XenServer(object):
                     'name': self.network.get_name_label(netId),
                 }
 
-    def getNetworkInfo(self, netId):
+    def getNetworkInfo(self, netId: str) -> typing.MutableMapping[str, typing.Any]:
         return {
             'id': netId,
             'name': self.network.get_name_label(netId)
         }
 
-    def getVMs(self):
+    def getVMs(self) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         try:
             vms = self.VM.get_all()
             for vm in vms:
@@ -300,21 +310,21 @@ class XenServer(object):
         except Exception as e:
             raise XenException(str(e))
 
-    def getVMPowerState(self, vmId):
+    def getVMPowerState(self, vmId: str) -> str:
         try:
             power_state = self.VM.get_power_state(vmId)
-            logger.debug('Power state of {0}: {1}'.format(vmId, power_state))
+            logger.debug('Power state of %s: %s', vmId, power_state)
             return power_state
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    def getVMInfo(self, vmId):
+    def getVMInfo(self, vmId: str) -> typing.Any:
         try:
             return self.VM.get_record(vmId)
         except XenAPI.Failure as e:
-            return XenFailure(e.details)
+            raise XenFailure(e.details)
 
-    def startVM(self, vmId, asnc=True):
+    def startVM(self, vmId: str, asnc: bool = True) -> typing.Optional[str]:
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.running:
             return None  # Already powered on
@@ -326,7 +336,7 @@ class XenServer(object):
             return self.Async.VM.start(vmId, False, False)
         return self.VM.start(vmId, False, False)
 
-    def stopVM(self, vmId, asnc=True):
+    def stopVM(self, vmId: str, asnc: bool = True) -> typing.Optional[str]:
         vmState = self.getVMPowerState(vmId)
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
             return None  # Already powered off
@@ -334,20 +344,21 @@ class XenServer(object):
             return self.Async.VM.hard_shutdown(vmId)
         return self.VM.hard_shutdown(vmId)
 
-    def resetVM(self, vmId, asnc=True):
+    def resetVM(self, vmId, asnc=True) -> typing.Optional[str]:
         vmState = self.getVMPowerState(vmId)
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
-            return None  # Already powered off
+            return None  # Already powered off, cannot reboot
+
         if asnc:
             return self.Async.VM.hard_reboot(vmId)
         return self.VM.hard_reboot(vmId)
 
-    def canSuspendVM(self, vmId):
+    def canSuspendVM(self, vmId: str) -> bool:
         operations = self.VM.get_allowed_operations(vmId)
-        logger.debug('Operations: {}'.format(operations))
+        logger.debug('Operations: %s', operations)
         return 'suspend' in operations
 
-    def suspendVM(self, vmId, asnc=True):
+    def suspendVM(self, vmId: str, asnc: bool = True) -> typing.Optional[str]:
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.suspended:
             return None
@@ -355,7 +366,7 @@ class XenServer(object):
             return self.Async.VM.suspend(vmId)
         return self.VM.suspend(vmId)
 
-    def resumeVM(self, vmId, asnc=True):
+    def resumeVM(self, vmId: str, asnc: bool = True) -> typing.Optional[str]:
         vmState = self.getVMPowerState(vmId)
         if vmState != XenPowerState.suspended:
             return None
@@ -363,7 +374,7 @@ class XenServer(object):
             return self.Async.VM.resume(vmId, False, False)
         return self.VM.resume(vmId, False, False)
 
-    def cloneVM(self, vmId, targetName, targetSR=None):
+    def cloneVM(self, vmId: str, targetName: str, targetSR: typing.Optional[str] = None) -> str:
         """
         If targetSR is NONE:
             Clones the specified VM, making a new VM.
@@ -376,9 +387,9 @@ class XenServer(object):
             'full disks' - i.e. not part of a CoW chain.
         This function can only be called when the VM is in the Halted State.
         """
-        logger.debug('Cloning VM {0} to {1} on sr {2}'.format(vmId, targetName, targetSR))
+        logger.debug('Cloning VM %s to %s on sr %s', vmId, targetName, targetSR)
         operations = self.VM.get_allowed_operations(vmId)
-        logger.debug('Allowed operations: {0}'.format(operations))
+        logger.debug('Allowed operations: %s', operations)
 
         try:
             if targetSR:
@@ -393,7 +404,7 @@ class XenServer(object):
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    def removeVM(self, vmId):
+    def removeVM(self, vmId: str) -> None:
         logger.debug('Removing machine')
         vdisToDelete = []
         for vdb in self.VM.get_VBDs(vmId):
@@ -403,19 +414,19 @@ class XenServer(object):
                 if vdi == 'OpaqueRef:NULL':
                     logger.debug('VDB without VDI')
                     continue
-                logger.debug('VDI: {0}'.format(vdi))
+                logger.debug('VDI: %s', vdi)
             except Exception:
                 logger.exception('Exception getting VDI from VDB')
             if self.VDI.get_read_only(vdi) is True:
-                logger.debug('{0} is read only, skipping'.format(vdi))
+                logger.debug('%s is read only, skipping', vdi)
                 continue
-            logger.debug('VDI to delete: {0}'.format(vdi))
+            logger.debug('VDI to delete: %s', vdi)
             vdisToDelete.append(vdi)
         self.VM.destroy(vmId)
         for vdi in vdisToDelete:
             self.VDI.destroy(vdi)
 
-    def configureVM(self, vmId, **kwargs):
+    def configureVM(self, vmId: str, **kwargs):
         """
         Optional args:
             mac = { 'network': netId, 'mac': mac }
@@ -423,8 +434,8 @@ class XenServer(object):
 
         Mac address should be in the range 02:xx:xx:xx:xx (recommended, but not a "have to")
         """
-        mac = kwargs.get('mac', None)
-        memory = kwargs.get('memory', None)
+        mac: typing.Optional[typing.Dict[str, str]] = kwargs.get('mac', None)
+        memory: typing.Optional[typing.Union[str, int]] = kwargs.get('memory', None)
 
         # If requested mac address change
         try:
@@ -433,7 +444,7 @@ class XenServer(object):
                     vif = self.VIF.get_record(vifId)
 
                     if vif['network'] == mac['network']:
-                        logger.debug('Found VIF: {0}'.format(vif['network']))
+                        logger.debug('Found VIF: %s', vif['network'])
                         self.VIF.destroy(vifId)
 
                         # for k in ['status_code', 'status_detail', 'uuid']:
@@ -445,15 +456,15 @@ class XenServer(object):
                         vif['MAC_autogenerated'] = False
                         self.VIF.create(vif)
             # If requested memory change
-            if memory is not None:
-                logger.debug('Setting up memory to {0} MB'.format(memory))
+            if memory:
+                logger.debug('Setting up memory to %s MB', memory)
                 # Convert memory to MB
                 memory = str(int(memory) * 1024 * 1024)
                 self.VM.set_memory_limits(vmId, memory, memory, memory, memory)
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    def provisionVM(self, vmId, **kwargs):
+    def provisionVM(self, vmId: str, **kwargs):
         tags = self.VM.get_tags(vmId)
         try:
             del tags[tags.index(TAG_TEMPLATE)]
@@ -466,10 +477,10 @@ class XenServer(object):
             return self.Async.VM.provision(vmId)
         return self.VM.provision(vmId)
 
-    def convertToTemplate(self, vmId, shadowMultiplier=4):
+    def convertToTemplate(self, vmId: str, shadowMultiplier: int = 4) -> None:
         try:
             operations = self.VM.get_allowed_operations(vmId)
-            logger.debug('Allowed operations: {0}'.format(operations))
+            logger.debug('Allowed operations: %s', operations)
             if 'make_into_template' not in operations:
                 raise XenException('Convert in template is not supported for this machine')
             self.VM.set_is_a_template(vmId, True)
@@ -487,15 +498,14 @@ class XenServer(object):
             try:
                 self.VM.set_HVM_shadow_multiplier(vmId, float(shadowMultiplier))
             except Exception:
-                # Can't set shadowMultiplier, nothing happens
-                pass  # TODO: Log this?
+                pass  # Can't set shadowMultiplier, nothing happens
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    def removeTemplate(self, templateId):
+    def removeTemplate(self, templateId: str) -> None:
         self.removeVM(templateId)
 
-    def cloneTemplate(self, templateId, targetName):
+    def cloneTemplate(self, templateId: str, targetName: str) -> str:
         """
         After cloning template, we must deploy the VM so it's a full usable VM
         """

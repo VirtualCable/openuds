@@ -54,19 +54,25 @@
 # OF THIS SOFTWARE.
 # --------------------------------------------------------------------
 
+# Fixes and adaption by agomez@virtualcable.net
+
+import ssl
 import gettext
-import six.moves.xmlrpc_client as xmlrpclib
-import six.moves.http_client as httplib
+import xmlrpc.client as xmlrpclib
+import http.client as httplib
 import socket
 import sys
+import typing
 
-translation = gettext.translation('xen-xm', fallback = True)
+translation = gettext.translation('xen-xm', fallback=True)
 
 API_VERSION_1_1 = '1.1'
 API_VERSION_1_2 = '1.2'
 
 class Failure(Exception):
-    def __init__(self, details):
+    details: typing.List[typing.Any]
+    def __init__(self, details: typing.List[typing.Any]):
+        super().__init__()
         self.details = details
 
     def __str__(self):
@@ -78,9 +84,8 @@ class Failure(Exception):
             return msg
 
     def _details_map(self):
-        return dict([(str(i), self.details[i])
-                     for i in range(len(self.details))])
-
+        # dict([(str(i), self.details[i]) for i in range(len(self.details))])
+        return {str(i): d for i, d in enumerate(self.details)}
 
 # Just a "constant" that we use to decide whether to retry the RPC
 _RECONNECT_AND_RETRY = object()
@@ -96,19 +101,23 @@ class UDSHTTP(httplib.HTTPConnection):
     _connection_class = UDSHTTPConnection
 
 class UDSTransport(xmlrpclib.Transport):
-    def __init__(self, use_datetime=0):
+    _use_datetime: bool
+    _extra_headers: typing.List[typing.Tuple[str, str]]
+    _connection: typing.Tuple[typing.Any, typing.Any]
+
+    def __init__(self, use_datetime: bool = False):
+        super().__init__()
         self._use_datetime = use_datetime
-        self._extra_headers=[]
+        self._extra_headers = []
         self._connection = (None, None)
-    def add_extra_header(self, key, value):
-        self._extra_headers += [ (key,value) ]
-    def make_connection(self, host):
-        # Python 2.4 compatibility
-        if sys.version_info[0] <= 2 and sys.version_info[1] < 7:
-            return UDSHTTP(host)
-        else:
-            return UDSHTTPConnection(host)
-    def send_request(self, connection, handler, request_body):
+
+    def add_extra_header(self, key: str, value: str) -> None:
+        self._extra_headers += [(key, value)]
+
+    def make_connection(self, host: str) -> httplib.HTTPConnection:
+        return UDSHTTPConnection(host)
+
+    def send_request(self, connection, handler, request_body, debug):  # pylint: disable=arguments-differ
         connection.putrequest("POST", handler)
         for key, value in self._extra_headers:
             connection.putheader(key, value)
@@ -130,9 +139,7 @@ class Session(xmlrpclib.ServerProxy):
 
         # Fix for CA-172901 (+ Python 2.4 compatibility)
         # Fix for context=ctx ( < Python 2.7.9 compatibility)
-        if not (sys.version_info[0] <= 2 and sys.version_info[1] <= 7 and sys.version_info[2] <= 9 ) \
-                and ignore_ssl:
-            import ssl
+        if not (sys.version_info[0] <= 2 and sys.version_info[1] <= 7 and sys.version_info[2] <= 9) and ignore_ssl:
             ctx = ssl._create_unverified_context()
             xmlrpclib.ServerProxy.__init__(self, uri, transport, encoding,
                                            verbose, allow_none, context=ctx)
@@ -204,7 +211,7 @@ class Session(xmlrpclib.ServerProxy):
         host = self.xenapi.pool.get_master(pool)
         major = self.xenapi.host.get_API_version_major(host)
         minor = self.xenapi.host.get_API_version_minor(host)
-        return "%s.%s"%(major,minor)
+        return "%s.%s"%(major, minor)
 
     def __getattr__(self, name):
         if name == 'handle':
@@ -222,23 +229,18 @@ def xapi_local():
     return Session("http://_var_lib_xcp_xapi/", transport=UDSTransport())
 
 def _parse_result(result):
-    if type(result) != dict or 'Status' not in result:
+    if not isinstance(result, dict) or 'Status' not in result:
         raise xmlrpclib.Fault(500, 'Missing Status in response from server' + result)
     if result['Status'] == 'Success':
         if 'Value' in result:
             return result['Value']
-        else:
-            raise xmlrpclib.Fault(500,
-                                  'Missing Value in response from server')
-    else:
-        if 'ErrorDescription' in result:
-            if result['ErrorDescription'][0] == 'SESSION_INVALID':
-                return _RECONNECT_AND_RETRY
-            else:
-                raise Failure(result['ErrorDescription'])
-        else:
-            raise xmlrpclib.Fault(
-                500, 'Missing ErrorDescription in response from server')
+        raise xmlrpclib.Fault(500, 'Missing Value in response from server')
+
+    if 'ErrorDescription' in result:
+        if result['ErrorDescription'][0] == 'SESSION_INVALID':
+            return _RECONNECT_AND_RETRY
+        raise Failure(result['ErrorDescription'])
+    raise xmlrpclib.Fault(500, 'Missing ErrorDescription in response from server')
 
 
 # Based upon _Method from xmlrpclib.
@@ -251,8 +253,7 @@ class _Dispatcher:
     def __repr__(self):
         if self.__name:
             return '<XenAPI._Dispatcher for %s>' % self.__name
-        else:
-            return '<XenAPI._Dispatcher>'
+        return '<XenAPI._Dispatcher>'
 
     def __getattr__(self, name):
         if self.__name is None:
