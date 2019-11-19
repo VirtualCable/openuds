@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import logging
+import typing
 
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
@@ -37,16 +38,15 @@ from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Image
 
-
-import logging
-
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-15'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def image(request, idImage):
+def image(request: 'HttpRequest', idImage: str) -> 'HttpResponse':
     try:
         icon = Image.objects.get(uuid=processUuid(idImage))
         return icon.imageResponse()

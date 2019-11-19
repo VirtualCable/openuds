@@ -29,55 +29,49 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import  HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
-from uds.web.util.errors import errorView
-from uds.core.auths.auth import (
-    getUDSCookie,
-    denyNonAuthenticated,
-    webLoginRequired,
-    authLogLogout,
-    webLogout,
-)
+from uds.web.util import errors
+from uds.core.auths import auth
+
+from uds.web.forms.LoginForm import LoginForm
+from uds.web.util.authentication import checkLogin
+
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 
 logger = logging.getLogger(__name__)
 
 
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     # return errorView(request, 1)
     response = render(request, 'uds/modern/index.html', {})
 
     logger.debug('Session expires at %s', request.session.get_expiry_date())
 
     # Ensure UDS cookie is present
-    getUDSCookie(request, response)
+    auth.getUDSCookie(request, response)
 
     return response
 
 
 # Basically, the original /login method, but fixed for modern interface
-def login(request, tag=None):
-    from uds.web.forms.LoginForm import LoginForm
-    from uds.web.util.authentication import checkLogin
-    from uds.core.auths.auth import webLogin
-    from django.http import HttpResponseRedirect
-
+def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
     if request.method == 'POST':
         form = LoginForm(request.POST, tag=tag)
         user, data = checkLogin(request, form, tag)
         if user:
             response = HttpResponseRedirect(reverse('page.index'))
-            webLogin(request, response, user, data)  # data is user password here
+            auth.webLogin(request, response, user, data)  # data is user password here
         else:
             # If error is numeric, redirect...
             # Error, set error on session for process for js
             if isinstance(data, int):
-                return errorView(request, data)
+                return errors.errorView(request, data)
 
             request.session['errors'] = [data]
             return index(request)
@@ -87,19 +81,19 @@ def login(request, tag=None):
     return response
 
 
-@webLoginRequired(admin=False)
-def logout(request):
-    authLogLogout(request)
+@auth.webLoginRequired(admin=False)
+def logout(request: HttpRequest) -> HttpResponse:
+    auth.authLogLogout(request)
     logoutUrl = request.user.logout()
     if logoutUrl is None:
         logoutUrl = request.session.get('logouturl', None)
-    return webLogout(request, logoutUrl)
+    return auth.webLogout(request, logoutUrl)
 
 
-def js(request):
+def js(request: HttpRequest) -> HttpResponse:
     return HttpResponse(content=configjs.udsJs(request), content_type='application/javascript')
 
 
-@denyNonAuthenticated
-def servicesData(request):
+@auth.denyNonAuthenticated
+def servicesData(request: HttpRequest) -> HttpResponse:
     return JsonResponse(getServicesData(request))

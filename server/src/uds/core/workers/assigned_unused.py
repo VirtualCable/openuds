@@ -26,7 +26,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
@@ -42,12 +41,12 @@ logger = logging.getLogger(__name__)
 
 
 class AssignedAndUnused(Job):
-    frecuency = 631
-    frecuency_cfg = GlobalConfig.CHECK_UNUSED_TIME
+    frecuency = 61  # Once every minute, but look for GlobalConfig.CHECK_UNUSED_TIME since
+    # frecuency_cfg = GlobalConfig.CHECK_UNUSED_TIME
     friendly_name = 'Unused services checker'
 
     def run(self):
-        since_state = getSqlDatetime() - timedelta(seconds=self.frecuency)
+        since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.CHECK_UNUSED_TIME)
         for ds in ServicePool.objects.all():
             # Skips checking deployed services in maintenance mode or ignores assigned and unused
             if ds.isInMaintenance() is True or ds.ignores_unused:

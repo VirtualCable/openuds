@@ -61,6 +61,7 @@ USER_KEY = 'uk'
 PASS_KEY = 'pk'
 ROOT_ID = -20091204  # Any negative number will do the trick
 
+RT = typing.TypeVar('RT')
 
 def getUDSCookie(request: HttpRequest, response: typing.Optional[HttpResponse] = None, force: bool = False) -> str:
     '''
@@ -74,7 +75,7 @@ def getUDSCookie(request: HttpRequest, response: typing.Optional[HttpResponse] =
     else:
         cookie = request.COOKIES['uds']
 
-    if response is not None and force is True:
+    if response and force:
         response.set_cookie('uds', cookie)
 
     return cookie
@@ -82,34 +83,33 @@ def getUDSCookie(request: HttpRequest, response: typing.Optional[HttpResponse] =
 
 def getRootUser() -> User:
     # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-    u = User(id=ROOT_ID, name=GlobalConfig.SUPER_USER_LOGIN.get(True), real_name=_(
-        'System Administrator'), state=State.ACTIVE, staff_member=True, is_admin=True)
-    u.manager = Authenticator()
+    user = User(
+        id=ROOT_ID,
+        name=GlobalConfig.SUPER_USER_LOGIN.get(True),
+        real_name=_('System Administrator'),
+        state=State.ACTIVE,
+        staff_member=True,
+        is_admin=True
+    )
+    user.manager = Authenticator()
     # Fake overwrite some methods, a bit cheating? maybe? :)
-    u.getGroups = lambda: []  # type: ignore
-    u.updateLastAccess = lambda: None  # type: ignore
-    u.logout = lambda: None  # type: ignore
-    return u
-
-
-@deprecated
-def getIp(request):
-    logger.info('Deprecated IP')
-    return request.ip
+    user.getGroups = lambda: []  # type: ignore
+    user.updateLastAccess = lambda: None  # type: ignore
+    user.logout = lambda: None  # type: ignore
+    return user
 
 
 # Decorator to make easier protect pages that needs to be logged in
-def webLoginRequired(admin: typing.Union[bool, str] = False):
+def webLoginRequired(admin: typing.Union[bool, str] = False) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     if admin == True, needs admin or staff
     if admin == 'admin', needs admin
     """
-
-    def decorator(view_func: typing.Callable):
+    def decorator(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         @wraps(view_func, assigned=available_attrs(view_func))
-        def _wrapped_view(request: HttpRequest, *args, **kwargs):
+        def _wrapped_view(request: HttpRequest, *args, **kwargs) -> RT:
             """
             Wrapped function for decorator
             """
@@ -132,14 +132,13 @@ def webLoginRequired(admin: typing.Union[bool, str] = False):
 
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
-def trustedSourceRequired(view_func: typing.Callable):
+def trustedSourceRequired(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     """
     Decorator to set protection to access page
     look for sample at uds.dispatchers.pam
     """
-
     @wraps(view_func)
-    def _wrapped_view(request: HttpRequest, *args, **kwargs):
+    def _wrapped_view(request: HttpRequest, *args, **kwargs) -> RT:
         """
         Wrapped function for decorator
         """
@@ -152,10 +151,10 @@ def trustedSourceRequired(view_func: typing.Callable):
 
 
 # decorator to deny non authenticated requests
-def denyNonAuthenticated(view_func: typing.Callable):
+def denyNonAuthenticated(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
     @wraps(view_func)
-    def _wrapped_view(request: HttpRequest, *args, **kwargs):
+    def _wrapped_view(request: HttpRequest, *args, **kwargs) -> RT:
         if request.user is None:
             return HttpResponseForbidden()
         return view_func(request, *args, **kwargs)
@@ -251,17 +250,17 @@ def authenticateViaCallback(authenticator: Authenticator, params: typing.Any) ->
 
     # If there is no callback for this authenticator...
     if authInstance.authCallback == auths.Authenticator.authCallback:
-        raise auths.Exceptions.InvalidAuthenticatorException()
+        raise auths.exceptions.InvalidAuthenticatorException()
 
     username = authInstance.authCallback(params, gm)
 
     if username is None or username == '' or gm.hasValidGroups() is False:
-        raise auths.Exceptions.InvalidUserException('User doesn\'t has access to UDS')
+        raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
     return __registerUser(authenticator, authInstance, username)
 
 
-def authCallbackUrl(authenticator) -> str:
+def authCallbackUrl(authenticator: Authenticator) -> str:
     """
     Helper method, so we can get the auth call back url for an authenticator
     """
@@ -354,9 +353,8 @@ def authLogLogin(request: HttpRequest, authenticator: Authenticator, userName: s
         logStr = 'Logged in'
 
     authLogger.info('|'.join([authenticator.name, userName, request.ip, request.os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
-    level = (logStr == 'Logged in') and log.INFO or log.ERROR
-    log.doLog(authenticator, level, 'user {0} has {1} from {2} where os is {3}'.format(userName, logStr,
-                                                                                       request.ip, request.os['OS']), log.WEB)
+    level = log.INFO if logStr == 'Logged in' else log.ERROR
+    log.doLog(authenticator, level, 'user {} has {} from {} where os is {}'.format(userName, logStr, request.ip, request.os['OS']), log.WEB)
 
     try:
         user = authenticator.users.get(name=userName)
@@ -365,6 +363,6 @@ def authLogLogin(request: HttpRequest, authenticator: Authenticator, userName: s
         pass
 
 
-def authLogLogout(request: HttpRequest):
-    log.doLog(request.user.manager, log.INFO, 'user {0} has logged out from {1}'.format(request.user.name, request.ip), log.WEB)
-    log.doLog(request.user, log.INFO, 'has logged out from {0}'.format(request.ip), log.WEB)
+def authLogLogout(request: HttpRequest) -> None:
+    log.doLog(request.user.manager, log.INFO, 'user {} has logged out from {}'.format(request.user.name, request.ip), log.WEB)
+    log.doLog(request.user, log.INFO, 'has logged out from {}'.format(request.ip), log.WEB)

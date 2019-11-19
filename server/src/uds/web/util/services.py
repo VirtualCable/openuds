@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -206,7 +206,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             'to_be_replaced_text': tbrt,
         })
 
-    logger.debug('Services: {0}'.format(services))
+    logger.debug('Services: %s', services)
 
     # Sort services and remove services with no transports...
     services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']]

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,44 +29,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
-from django.utils.translation import ugettext_lazy as _, ugettext
-from django import forms
-from django.utils.safestring import mark_safe
-from uds.models import Authenticator
-
-import six
 import logging
 
+from django.utils.translation import ugettext_lazy as _
+from django import forms
+from uds.models import Authenticator
+
+
 logger = logging.getLogger(__name__)
-
-# pylint: disable=no-value-for-parameter, unexpected-keyword-arg
-
-
-class CustomSelect(forms.Select):
-
-    bootstrap = False
-
-    def render(self, name, value, attrs=None, **kwargs):
-        if len(self.choices) < 2:
-            visible = ' style="display: none;"'
-        else:
-            visible = ''
-        res = '<select id="id_{0}" name="{0}" class="selectpicker show-menu-arrow" data-header="{1}" data-size="8" data-width="100%" >'.format(name, ugettext('Select authenticator'))
-        for choice in self.choices:
-            res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
-        res += '</select>'
-        return mark_safe('<div class="form-group"{0}><label>'.format(visible) + six.text_type(_('authenticator')) + '</label>' + res + '</div>')
-
 
 class LoginForm(forms.Form):
     user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())
     password = forms.CharField(label=_('Password'), widget=forms.PasswordInput(attrs={'title': _('Password')}), required=False)
-    authenticator = forms.ChoiceField(label=_('Authenticator'), choices=(), widget=CustomSelect(), required=False)
-    standard = forms.CharField(widget=forms.HiddenInput(), required=False)
-    nonStandard = forms.CharField(widget=forms.HiddenInput(), required=False)
-    logouturl = forms.CharField(widget=forms.HiddenInput(), required=False)
+    authenticator = forms.ChoiceField(label=_('Authenticator'), choices=(), required=False)
 
     def __init__(self, *args, **kwargs):
         # If an specified login is passed in, retrieve it & remove it from kwargs dict
@@ -75,26 +49,16 @@ class LoginForm(forms.Form):
         if 'tag' in kwargs:
             del kwargs['tag']
 
-        logger.debug('tag is "{0}"'.format(tag))
-
+        # Parent init
         super(LoginForm, self).__init__(*args, **kwargs)
+
         choices = []
-        nonStandard = []
-        standard = []
 
-        auths = Authenticator.getByTag(tag)
-
-        for a in auths:
-            if a.getType() is None:
+        for a in Authenticator.getByTag(tag):
+            if not a.getType():  # Not existing manager for the auth?
                 continue
             if a.getType().isCustom() and tag == 'disabled':
                 continue
             choices.append((a.uuid, a.name))
-            if a.getType().isCustom():
-                nonStandard.append(a.uuid)
-            else:
-                standard.append(a.uuid)
 
         self.fields['authenticator'].choices = choices
-        self.fields['nonStandard'].initial = ','.join(nonStandard)
-        self.fields['standard'].initial = ','.join(standard)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2018 Virtual Cable S.L.
+# Copyright (c) 2018-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,8 +30,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import json
-
 import logging
+import typing
 
 from django import template
 from django.conf import settings
@@ -43,13 +42,14 @@ from django.templatetags.static import static
 
 from uds.REST import AUTH_TOKEN_HEADER
 from uds.REST.methods.client import CLIENT_VERSION
-
 from uds.core.managers import downloadsManager
 from uds.core.util.config import GlobalConfig
-
 from uds.core import VERSION, VERSION_STAMP
-
 from uds.models import Authenticator, Image
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
@@ -59,11 +59,11 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
 @register.simple_tag(takes_context=True)
-def udsJs(request):
+def udsJs(request: 'HttpRequest') -> str:
     auth_host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
     profile = {
-        'user': None if request.user is None else request.user.name,
+        'user': None if not request.user else request.user.name,
         'role': 'staff' if request.user and request.user.staff_member else 'user',
     }
 
@@ -84,7 +84,7 @@ def udsJs(request):
         authenticators = Authenticator.objects.all()
 
     # the auths for client
-    def getAuth(auth):
+    def getAuthInfo(auth: Authenticator):
         theType = auth.getType()
         return {
             'id': auth.uuid,
@@ -99,7 +99,7 @@ def udsJs(request):
         'version_stamp': VERSION_STAMP,
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
-        'authenticators': [getAuth(auth) for auth in authenticators if auth.getType()],
+        'authenticators': [getAuthInfo(auth) for auth in authenticators if auth.getType()],
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
@@ -142,7 +142,7 @@ def udsJs(request):
         )
     ]
 
-    actors = []
+    actors: typing.List[typing.Dict[str, str]] = []
 
     if profile['role'] == 'staff':  # Add staff things
         # If is admin (informational, REST api checks users privileges anyway...)
@@ -156,7 +156,7 @@ def udsJs(request):
         config['urls']['admin'] = reverse('uds.admin.views.index')
         config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
 
-    errors = []
+    errors: typing.List = []
     if 'errors' in request.session:
         errors = request.session['errors']
         del request.session['errors']

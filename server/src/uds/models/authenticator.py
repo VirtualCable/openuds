@@ -162,8 +162,8 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         This is done so we can check non existing or non blocked users (state != Active, or do not exists)
         """
         try:
-            u: User = self.users.get(name=username)
-            return State.isActive(u.state)
+            usr: 'User' = self.users.get(name=username)
+            return State.isActive(usr.state)
         except Exception:
             return falseIfNotExists
 

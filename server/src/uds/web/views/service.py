@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import json
+import logging
+import typing
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
@@ -44,23 +46,23 @@ from uds.core.util import html, log
 from uds.core.services.exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
 from uds.web.util import errors
-from uds.web.util import  services
+from uds.web.util import services
 
-import json
-import logging
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2019-02-08'
-
 
 @webLoginRequired(admin=False)
-def transportOwnLink(request, idService, idTransport):
+def transportOwnLink(request: 'HttpRequest', idService: str, idTransport: str):
     try:
         res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport)
-        ip, userService, iads, trans, itrans = res  # @UnusedVariable
+        ip, userService, iads, trans, itrans = res  # pylint: disable=unused-variable
         # This returns a response object in fact
-        return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
+        if itrans and ip:
+            return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
     except ServiceNotReadyError as e:
         return errors.exceptionView(request, e)
     except Exception as e:
@@ -68,11 +70,11 @@ def transportOwnLink(request, idService, idTransport):
         return errors.exceptionView(request, e)
 
     # Will never reach this
-    raise RuntimeError('Unreachable point reached!!!')
+    return errors.errorView(request, errors.UNKNOWN_ERROR)
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def transportIcon(request, idTrans):
+def transportIcon(request: 'HttpRequest', idTrans: str) -> HttpResponse:
     try:
         transport: Transport = Transport.objects.get(uuid=processUuid(idTrans))
         return HttpResponse(transport.getInstance().icon(), content_type='image/png')
@@ -81,7 +83,7 @@ def transportIcon(request, idTrans):
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def serviceImage(request, idImage):
+def serviceImage(request: 'HttpRequest', idImage: str) -> HttpResponse:
     try:
         icon = Image.objects.get(uuid=processUuid(idImage))
         return icon.imageResponse()
@@ -97,7 +99,7 @@ def serviceImage(request, idImage):
 
 @webLoginRequired(admin=False)
 @never_cache
-def userServiceEnabler(request, idService, idTransport):
+def userServiceEnabler(request: 'HttpRequest', idService: str, idTransport: str) -> HttpResponse:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''
@@ -110,7 +112,7 @@ def userServiceEnabler(request, idService, idTransport):
         scrambler = cryptoManager().randomString(32)
         password = cryptoManager().symCrypt(webPassword(request), scrambler)
 
-        _x, userService, _x, trans, _x = res
+        userService, trans = res[1], res[3]
 
         data = {
             'service': 'A' + userService.uuid,
@@ -127,10 +129,10 @@ def userServiceEnabler(request, idService, idTransport):
         # Not ready, show message and return to this page in a while
         error += ' (code {0:04X})'.format(e.code)
     except MaxServicesReachedError:
-        logger.info('Number of service reached MAX for service pool "{}"'.format(idService))
+        logger.info('Number of service reached MAX for service pool "%s"', idService)
         error = errors.errorString(errors.MAX_SERVICES_REACHED)
     except ServiceAccessDeniedByCalendar:
-        logger.info('Access tried to a calendar limited access pool "{}"'.format(idService))
+        logger.info('Access tried to a calendar limited access pool "%s"', idService)
         error = errors.errorString(errors.SERVICE_CALENDAR_DENIED)
     except Exception as e:
         logger.exception('Error')
@@ -144,17 +146,17 @@ def userServiceEnabler(request, idService, idTransport):
         content_type='application/json'
     )
 
-def closer(request):
+def closer(request: 'HttpRequest') -> HttpResponse:
     return HttpResponse('<html><body onload="window.close()"></body></html>')
 
 @webLoginRequired(admin=False)
 @never_cache
-def action(request, idService, action):
+def action(request: 'HttpRequest', idService: str, actionString: str) -> HttpResponse:
     userService = userServiceManager().locateUserService(request.user, idService, create=False)
-    response = None
-    rebuild = False
+    response: typing.Any = None
+    rebuild: bool = False
     if userService:
-        if action == 'release' and userService.deployed_service.allow_users_remove:
+        if actionString == 'release' and userService.deployed_service.allow_users_remove:
             rebuild = True
             log.doLog(
                 userService.deployed_service,
@@ -164,7 +166,7 @@ def action(request, idService, action):
             )
             userServiceManager().requestLogoff(userService)
             userService.release()
-        elif (action == 'reset'
+        elif (actionString == 'reset'
               and userService.deployed_service.allow_users_reset
               and userService.deployed_service.service.getType().canReset):
             rebuild = True
@@ -180,7 +182,6 @@ def action(request, idService, action):
     if rebuild:
         # Rebuild services data, but return only "this" service
         for v in services.getServicesData(request)['services']:
-            logger.debug('{} ==? {}'.format(v['id'], idService))
             if v['id'] == idService:
                 response = v
                 break

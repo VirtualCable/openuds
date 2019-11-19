@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,15 +29,16 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 import uds.web.util.errors as errors
-from uds.core.auths.exceptions import InvalidUserException
+from uds.core import auths
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.core.managers import userServiceManager, cryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
@@ -50,11 +51,9 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2019-02-08'
-
 
 @csrf_exempt
-def authCallback(request, authName):
+def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
     """
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
@@ -62,7 +61,6 @@ def authCallback(request, authName):
     This will invoke authCallback of the requested idAuth and, if this represents
     an authenticator that has an authCallback
     """
-    from uds.core import auths
     try:
         authenticator = Authenticator.objects.get(name=authName)
         params = request.GET.copy()
@@ -73,7 +71,7 @@ def authCallback(request, authName):
         # params['_session'] = request.session
         # params['_user'] = request.user
 
-        logger.debug('Auth callback for {0} with params {1}'.format(authenticator, params.keys()))
+        logger.debug('Auth callback for %s with params %s', authenticator, params.keys())
 
         user = authenticateViaCallback(authenticator, params)
 
@@ -81,7 +79,7 @@ def authCallback(request, authName):
 
         if user is None:
             authLogLogin(request, authenticator, '{0}'.format(params), 'Invalid at auth callback')
-            raise auths.Exceptions.InvalidUserException()
+            raise auths.exceptions.InvalidUserException()
 
         response = HttpResponseRedirect(reverse('Index'))
 
@@ -91,9 +89,9 @@ def authCallback(request, authName):
         # It will only detect java, and them redirect to Java
 
         return response
-    except auths.Exceptions.Redirect as e:
+    except auths.exceptions.Redirect as e:
         return HttpResponseRedirect(request.build_absolute_uri(str(e)))
-    except auths.Exceptions.Logout as e:
+    except auths.exceptions.Logout as e:
         return webLogout(request, request.build_absolute_uri(str(e)))
     except Exception as e:
         logger.exception('authCallback')
@@ -104,14 +102,13 @@ def authCallback(request, authName):
 
 
 @csrf_exempt
-def authInfo(request, authName):
+def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
     """
     This url is provided so authenticators can provide info (such as SAML metadata)
 
     This will invoke getInfo on requested authName. The search of the authenticator is done
     by name, so it's easier to access from external sources
     """
-    from uds.core import auths
     try:
         logger.debug('Getting info for %s', authName)
         authenticator = Authenticator.objects.get(name=authName)
@@ -135,7 +132,7 @@ def authInfo(request, authName):
 
 # Gets the javascript from the custom authtenticator
 @never_cache
-def customAuth(request, idAuth):
+def customAuth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
     res = ''
     try:
         try:
@@ -143,7 +140,7 @@ def customAuth(request, idAuth):
         except Authenticator.DoesNotExist:
             auth = Authenticator.objects.get(pk=idAuth)
         res = auth.getInstance().getJavascript(request)
-        if res is None:
+        if not res:
             res = ''
     except Exception:
         logger.exception('customAuth')
@@ -152,7 +149,7 @@ def customAuth(request, idAuth):
 
 
 @never_cache
-def ticketAuth(request, ticketId):
+def ticketAuth(request: 'HttpRequest', ticketId: str) -> HttpResponse:  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     """
     Used to authenticate an user via a ticket
     """
@@ -170,25 +167,25 @@ def ticketAuth(request, ticketId):
             transport = data['transport']
         except Exception:
             logger.error('Ticket stored is not valid')
-            raise InvalidUserException()
+            raise auths.exceptions.InvalidUserException()
 
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
         # Add user to groups, if they exists...
-        grps = []
+        grps: typing.List = []
         for g in groups:
             try:
                 grps.append(auth.groups.get(uuid=g))
             except Exception:
                 logger.debug('Group list has changed since ticket assignment')
 
-        if len(grps) == 0:
+        if not grps:
             logger.error('Ticket has no valid groups')
             raise Exception('Invalid ticket authentication')
 
         usr = auth.getOrCreateUser(username, realname)
         if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
-            raise InvalidUserException()
+            raise auths.exceptions.InvalidUserException()
 
         # Add groups to user (replace existing groups)
         usr.groups.set(grps)
@@ -199,15 +196,15 @@ def ticketAuth(request, ticketId):
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
-        logger.debug("Service & transport: {}, {}".format(servicePool, transport))
+        logger.debug("Service & transport: %s, %s", servicePool, transport)
         for v in ServicePool.objects.all():
-            logger.debug("{} {}".format(v.uuid, v.name))
+            logger.debug("%s %s", v.uuid, v.name)
 
         # Check if servicePool is part of the ticket
-        if servicePool is not None:
+        if servicePool:
             # If service pool is in there, also is transport
             res = userServiceManager().getService(request.user, request.os, request.ip, 'F' + servicePool, transport, False)
-            _x, userService, _x, transport, _x = res
+            _, userService, _, transport, _ = res
 
             transportInstance = transport.getInstance()
             if transportInstance.ownLink is True:
@@ -215,7 +212,7 @@ def ticketAuth(request, ticketId):
             else:
                 link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 
-            request.session['launch'] = link;
+            request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))
         else:
             response = HttpResponsePermanentRedirect(reverse('page.index'))

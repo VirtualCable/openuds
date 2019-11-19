@@ -29,17 +29,21 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-
+import typing
 
 from uds.core.auths.auth import webLoginRequired
 from uds.core.managers import downloadsManager
 from .modern import index
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+
 logger = logging.getLogger(__name__)
 
 
 @webLoginRequired(admin=True)
-def download(request, idDownload):
+def download(request: 'HttpRequest', idDownload: str) -> 'HttpResponse':
     """
     Downloadables management
     """

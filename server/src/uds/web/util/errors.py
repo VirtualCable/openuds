@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,7 +44,7 @@ from uds.models import ServicePool, Transport, UserService, Authenticator
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
 
 
 logger = logging.getLogger(__name__)
@@ -93,14 +92,14 @@ strings = [
 ]
 
 
-def errorString(errorId) -> str:
+def errorString(errorId: int) -> str:
     errorId = int(errorId)
     if errorId < len(strings):
         return strings[errorId]
     return strings[0]
 
 
-def errorView(request: 'HttpRequest', errorCode: int) -> None:
+def errorView(request: 'HttpRequest', errorCode: int) -> HttpResponseRedirect:
     errorCode = int(errorCode)
     code = (errorCode >> 8) & 0xFF
     errorCode = errorCode & 0xFF
@@ -115,7 +114,7 @@ def errorView(request: 'HttpRequest', errorCode: int) -> None:
     return HttpResponseRedirect(reverse('page.error', kwargs={'error': errStr}))
 
 
-def exceptionView(request, exception):
+def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseRedirect:
     """
     Tries to render an error page with error information
     """
@@ -125,7 +124,7 @@ def exceptionView(request, exception):
     logger.debug(traceback.format_exc())
 
     try:
-        raise exception
+        raise exception # Raise it so we can "catch" and redirect
     except UserService.DoesNotExist:
         return errorView(request, ERR_USER_SERVICE_NOT_FOUND)
     except ServicePool.DoesNotExist:
@@ -153,11 +152,9 @@ def exceptionView(request, exception):
         # raise e
 
 
-def error(request, error):
+def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
     """
     Error view, responsible of error display
-    :param request:
-    :param idError:
     """
     return render(request, 'uds/modern/index.html', {})
 
