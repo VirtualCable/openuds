@@ -30,15 +30,14 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+# DEPRECATED AND NOT USED. TO BE REMOVED! (avoid this)
+import re
+import logging
 
 from django import template
 from django.conf import settings
 from django.utils import safestring
 from uds.REST import AUTH_TOKEN_HEADER
-import re
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -83,5 +82,5 @@ def js_template_jade(context, template_name, template_id=None):
         context.flatten())
     # Clean tmpl
     if not settings.DEBUG:
-        tmpl = re.sub('\s+', ' ', tmpl)
+        tmpl = re.sub(r'\s+', ' ', tmpl)
     return safestring.mark_safe('<script id="{0}" type="template/uds">{1}</script>'.format(template_id, tmpl))

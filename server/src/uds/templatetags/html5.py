@@ -30,21 +30,17 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+# Note: DEPRECATED, module will be removed
+import logging
 
 from django import template
 from django.utils.translation import ugettext as _
 from django.templatetags.static import static
-from django.utils.html import mark_safe
 
 from uds.core.util import html
-from uds.core.auths.auth import ROOT_ID
 from uds.core.util.config import GlobalConfig
-from uds.models.image import Image
-from uds.core.managers.user_preferences import UserPrefsManager
 from uds.REST.methods.client import CLIENT_VERSION
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -107,10 +103,9 @@ def ifbrowser(parser, token):
 def osName(os):
     if os == 'windows':
         return 'Windows'
-    elif os == 'linux':
+    if os == 'linux':
         return 'Linux'
-    else:
-        return 'Mac OS X'
+    return 'Mac OS X'
 
 
 @register.filter(name='pluginDownloadUrl')
@@ -119,7 +114,7 @@ def pluginDownloadUrl(os):
 
     if os == 'windows':
         return tmpl.format(url=static('clients/UDSClientSetup-{version}.exe'.format(version=CLIENT_VERSION)), os='Windows')
-    elif os == 'linux':
+    if os == 'linux':
         linux_packages = (
             ('udsclient_{version}_all.deb'.format(version=CLIENT_VERSION), _('Debian based Linux') + ' ' + _('(requires Python-2.7)')),
             ('udsclient-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), _('Red Hat based Linux (RH, Fedora, Centos, ...)') + ' ' + _('(requires Python-2.7)')),
@@ -130,5 +125,4 @@ def pluginDownloadUrl(os):
         for v in linux_packages:
             res += '<p class="text-center">' + tmpl.format(url=static('clients/' + v[0]), os=v[1]) + '</p>'
         return res
-    else:
-        return tmpl.format(url=static('clients/UDSClient-{version}.pkg'.format(version=CLIENT_VERSION)), os='Mac OSX')
+    return tmpl.format(url=static('clients/UDSClient-{version}.pkg'.format(version=CLIENT_VERSION)), os='Mac OSX')

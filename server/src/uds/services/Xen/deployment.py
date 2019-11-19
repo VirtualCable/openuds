@@ -467,19 +467,9 @@ class XenLinkedDeployment(UserDeployment):
         return self.__executeQueue()
 
     def reasonOfError(self) -> str:
-        """
-        Returns the reason of the error.
-
-        Remember that the class is responsible of returning this whenever asked
-        for it, and it will be asked everytime it's needed to be shown to the
-        user (when the administation asks for it).
-        """
         return self._reason
 
     def destroy(self) -> str:
-        """
-        Invoked for destroying a deployed service
-        """
         self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
@@ -497,15 +487,6 @@ class XenLinkedDeployment(UserDeployment):
         return State.RUNNING
 
     def cancel(self) -> str:
-        """
-        This is a task method. As that, the excepted return values are
-        State values RUNNING, FINISHED or ERROR.
-
-        This can be invoked directly by an administration or by the clean up
-        of the deployed service (indirectly).
-        When administrator requests it, the cancel is "delayed" and not
-        invoked directly.
-        """
         return self.destroy()
 
     @staticmethod
