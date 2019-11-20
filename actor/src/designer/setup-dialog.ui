@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Adolfo Gómez</author>
+ <class>UdsActorSetupDialog</class>
+ <widget class="QDialog" name="UdsActorSetupDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>293</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <family>Verdana</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>UDS Actor Setup</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="uds.qrc">
+    <normaloff>:/img/img/uds-icon.png</normaloff>:/img/img/uds-icon.png</iconset>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QPushButton" name="testButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>220</y>
+     <width>361</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Click to test the selecter parameters</string>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to test the server host and master key parameters.&lt;/p&gt;&lt;p&gt;A window will be displayed with results after the test is executed.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This button will only be active if all parameters are filled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Test parameters</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="saveButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>250</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="toolTip">
+    <string>Accepts changes and saves them</string>
+   </property>
+   <property name="whatsThis">
+    <string>Clicking on this button will accept all changes and save them, closing the configuration window</string>
+   </property>
+   <property name="text">
+    <string>Accept &amp;&amp; Save</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancelButton">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>250</y>
+     <width>121</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="toolTip">
+    <string>Cancel all changes and discard them</string>
+   </property>
+   <property name="whatsThis">
+    <string>Discards all changes and closes the configuration window</string>
+   </property>
+   <property name="text">
+    <string>Cancel &amp;&amp; Discard</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>361</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <property name="verticalSpacing">
+     <number>16</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_host">
+      <property name="text">
+       <string>UDS Server</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="host">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="toolTip">
+       <string>Uds Broker Server Addres. Use IP or FQDN</string>
+      </property>
+      <property name="whatsThis">
+       <string>Enter here the UDS Broker Addres using either its IP address or its FQDN address</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_username">
+      <property name="text">
+       <string>Username</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="username">
+      <property name="toolTip">
+       <string>UDS user with administration rights (Will not be stored on template)</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Administrator user on UDS Server.&lt;/p&gt;&lt;p&gt;Note: This credential will not be stored on client. Will be used to obtain an unique key for this image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="password">
+      <property name="toolTip">
+       <string>Password for user (Will not be stored on template)</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Administrator password for the user on UDS Server.&lt;/p&gt;&lt;p&gt;Note: This credential will not be stored on client. Will be used to obtain an unique key for this image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_password">
+      <property name="text">
+       <string>Password</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_security">
+      <property name="text">
+       <string>Security</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="validateCertificate">
+      <property name="toolTip">
+       <string>Select communication security with broker</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the security for communications with UDS Broker.&lt;/p&gt;&lt;p&gt;The recommended method of communication is &lt;span style=&quot; font-weight:600;&quot;&gt;Use SSL&lt;/span&gt;, but selection needs to be acording to your broker configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Ignore certificate</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Verify certificate</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="logLevelComboBox">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string notr="true">DEBUG</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string notr="true">INFO</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string notr="true">ERROR</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string notr="true">FATAL</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_loglevel">
+      <property name="text">
+       <string>Log Level</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources>
+  <include location="uds.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>pressed()</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>cancelAndDiscard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>315</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>testButton</sender>
+   <signal>pressed()</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>testParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>239</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveButton</sender>
+   <signal>pressed()</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>acceptAndSave()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>124</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>host</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>textChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>146</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>username</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>textChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>146</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>password</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>textChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>146</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>textChanged()</slot>
+  <slot>cancelAndDiscard()</slot>
+  <slot>testParameters()</slot>
+  <slot>acceptAndSave()</slot>
+ </slots>
+</ui>
