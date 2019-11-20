@@ -37,9 +37,12 @@ import typing
 
 import requests
 
+from . import types
+
 from .info import VERSION
 from .utils import exceptionToMessage
 from .log import logger
+
 
 class RESTError(Exception):
     ERRCODE = 0
@@ -92,7 +95,7 @@ class REST:
     def __init__(self, host: str, validateCert: bool) -> None:
         self.host = host
         self.validateCert = validateCert
-        self.url = "https://{}/uds/rest/actor/v2".format(self.host)
+        self.url = "https://{}/uds/rest/".format(self.host)
         # Disable logging requests messages except for errors, ...
         logging.getLogger("requests").setLevel(logging.CRITICAL)
         # Tries to disable all warnings
@@ -101,14 +104,33 @@ class REST:
         except Exception:
             pass
 
-    @staticmethod
-    def headers():
+    @property
+    def headers(self) -> typing.MutableMapping[str, str]:
         return {'content-type': 'application/json'}
 
-    def register(self, username: str, password: str, ip: str, mac: str, preCommand: str, runOnceCommand: str, postCommand: str) -> str:
+    def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
+        try:
+            result = requests.get(self.url + 'auth/auths', headers=self.headers, verify=self.validateCert, timeout=4)
+            if result.ok:
+                for v in sorted(result.json(), key=lambda x: x['priority']):
+                    yield types.AuthenticatorType(
+                        authId=v['authId'],
+                        authSmallName=v['authSmallName'],
+                        auth=v['auth'],
+                        type=v['type'],
+                        priority=v['priority'],
+                        isCustom=v['isCustom']
+                    )
+        except Exception:
+            pass
+
+
+    def register(self, auth: str, username: str, password: str, ip: str, mac: str, preCommand: str, runOnceCommand: str, postCommand: str) -> str:
+        """
+        Raises an exception if could not register, or registers and returns the "authorization token"
+        """
         data = {
             'username': username,
-            'password': password,
             'ip': ip,
             'mac': mac,
             'preCommand': preCommand,
@@ -116,9 +138,15 @@ class REST:
             'postCommand': postCommand
         }
         try:
-            result: requests.Response = requests.post(self.url + '/register', data=json.dumps(data), headers=REST.headers(), verify=self.validateCert)
+            # First, try to login
+            authInfo = {'auth': auth, 'username': username, 'password': password }
+            headers = self.headers
+            result = requests.post(self.url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self.validateCert)
             if result.ok:
-                return result.json()['result']
+                headers['X-Auth-Token'] = result.json()['token']
+                result = requests.post(self.url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self.validateCert)
+                if result.ok:
+                    return result.json()['result']
         except (requests.ConnectionError, requests.ConnectTimeout) as e:
             raise RESTConnectionError(str(e))
         except Exception as e:

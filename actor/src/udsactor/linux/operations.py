@@ -113,11 +113,11 @@ def getComputerName() -> str:
     return socket.gethostname().split('.')[0]
 
 
-def getNetworkInfo() -> typing.Iterable[types.InterfaceInfo]:
+def getNetworkInfo() -> typing.Iterable[types.InterfaceInfoType]:
     for ifname in _getInterfaces():
         ip, mac = _getIpAndMac(ifname)
         if mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs
-            yield types.InterfaceInfo(name=ifname, mac=mac, ip=ip)
+            yield types.InterfaceInfoType(name=ifname, mac=mac, ip=ip)
 
 
 def getDomainName() -> str:
@@ -213,7 +213,7 @@ def getIdleDuration() -> float:
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), xssInfo)
 
     # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
-    if xssInfo.contents.state != 0 and 'centos' not in platform.linux_distribution()[0].lower().strip():
+    if xssInfo.contents.state != 0 and 'centos' not in getLinuxVersion().lower().strip():
         return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
 
     return xssInfo.contents.idle / 1000.0

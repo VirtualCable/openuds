@@ -36,7 +36,7 @@ import logging
 import typing
 
 import PyQt5  # pylint: disable=unused-import
-from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
 
 import udsactor
 
@@ -50,6 +50,7 @@ logger = logging.getLogger('actor')
 
 
 class UDSConfigDialog(QDialog):
+    _host: str = ''
 
     def __init__(self):
         QDialog.__init__(self, None)
@@ -61,6 +62,10 @@ class UDSConfigDialog(QDialog):
         self.ui.postConfigCommand.setText(r'c:\windows\post-uds.bat')
         self.ui.preCommand.setText(r'c:\windows\pre-uds.bat')
         self.ui.runonceCommand.setText(r'c:\windows\runonce.bat')
+
+    @property
+    def api(self) -> udsactor.rest.REST:
+        return udsactor.rest.REST(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
 
     def browse(self, lineEdit: 'QLineEdit', caption: str) -> None:
         name = QFileDialog.getOpenFileName(parent=self, caption='')[0]  # Returns tuple (filename, filter)
@@ -76,6 +81,14 @@ class UDSConfigDialog(QDialog):
     def browsePostConfig(self) -> None:
         self.browse(self.ui.postConfigCommand, 'Select Postconfig command')
 
+    def updateAuthenticators(self) -> None:
+        if self.ui.host.text() != self._host:
+            self._host = self.ui.host.text()
+            self.ui.authenticators.clear()
+            auth: udsactor.types.AuthenticatorType
+            for auth in self.api.enumerateAuthenticators():
+                self.ui.authenticators.addItem(auth.auth, userData=auth)
+
     def textChanged(self):
         enableButtons = self.ui.host.text() != '' and self.ui.username.text() != '' and self.ui.password.text() != ''
         self.ui.registerButton.setEnabled(enableButtons)
@@ -84,15 +97,15 @@ class UDSConfigDialog(QDialog):
         self.close()
 
     def registerWithUDS(self):
-        api = udsactor.rest.REST(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
-
+        # Get network card. Will fail if no network card is available, but don't mind (not contempled)
         data: udsactor.types.InterfaceInfo = next(udsactor.operations.getNetworkInfo())
 
-        key = api.register(
+        key = self.api.register(
+            self.ui.authenticators.currentData().auth,
             self.ui.username.text(),
             self.ui.password.text(),
             data.ip or '',           # IP
-            data.mac or '',    # first mac
+            data.mac or '',          # MAC
             self.ui.preCommand.text(),
             self.ui.runonceCommand.text(),
             self.ui.postConfigCommand.text()

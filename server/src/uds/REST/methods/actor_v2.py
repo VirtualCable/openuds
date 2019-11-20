@@ -53,11 +53,11 @@ class ActorV2(Handler):
     """
     Processes actor requests
     """
-    authenticated = False  # Actor requests are not authenticated normally
+    authenticated = False  # Actor requests are not authenticated by REST api (except register)
     path = 'actor'
     name = 'v2'
 
-    def get(self):  # pylint: disable=too-many-return-statements
+    def get(self):
         """
         Processes get requests
         """
@@ -65,16 +65,82 @@ class ActorV2(Handler):
 
         return actorResult({'version': VERSION, 'required': '3.0.0'})
 
-class ActorV2Register(Handler):
-    """
-    Tests the process
-    """
+class ActorV2Action(Handler):
     authenticated = False  # Actor requests are not authenticated normally
     path = 'actor/v2'
-    name = 'register'
 
     def get(self):
-        return actorResult('Ok')
+        return actorResult('')
+
+
+
+class ActorV2Register(ActorV2Action):
+    """
+    Registers an actor
+    """
+    authenticated = True
+    name = 'register'
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2Initiialize(ActorV2Action):
+    """
+    Information about machine action.
+    Also returns the id used for the rest of the actions. (Only this one will use actor key)
+    """
+    name = 'initiaize'
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2Login(ActorV2Action):
+    """
+    Information about machine
+    """
+    name = 'login'
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2Logout(ActorV2Action):
+    """
+    Information about machine
+    """
+    name = 'logout'
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2Log(ActorV2Action):
+    """
+    Information about machine
+    """
+    name = 'log'
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2IpChange(ActorV2Action):
+    """
+    Information about machine
+    """
+    name = 'ipchange'
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2Ready(ActorV2Action):
+    """
+    Information about machine
+    """
+    name = 'ready'
 
     def post(self):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
