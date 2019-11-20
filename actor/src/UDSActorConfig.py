@@ -26,7 +26,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
@@ -34,11 +33,12 @@ import sys
 import os
 import logging
 
-
+import PyQt5  # pylint: disable=unused-import
 from PyQt5.QtWidgets import QApplication, QDialog
 
 from ui.setup_dialog_ui import Ui_UdsActorSetupDialog
 
+# pylint: disable=invalid-name
 
 logger = logging.getLogger('actor')
 
@@ -57,7 +57,7 @@ class UDSConfigDialog(QDialog):
             'host': self.ui.host.text(),
             'username': self.ui.username.text(),
             'password': self.ui.password.text(),
-            'validateCertificate': self.ui.useSSl.currentIndex() == 1,
+            'validateCertificate': self.ui.validateCertificate.currentIndex() == 1,
             'logLevel': (self.ui.logLevelComboBox.currentIndex() + 1) * 10000
         }
 
