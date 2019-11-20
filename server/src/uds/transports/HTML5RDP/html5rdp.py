@@ -251,9 +251,11 @@ class HTML5RDPTransport(transports.Transport):
 
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
-        return HttpResponseRedirect("{}/transport/?{}.{}&{}".format(
-            self.guacamoleServer.value,
-            ticket,
-            scrambler,
-            request.build_absolute_uri(reverse('utility.closer'))
-            ))
+        return HttpResponseRedirect(
+            "{}/transport/?{}.{}&{}".format(
+                self.guacamoleServer.value,
+                ticket,
+                scrambler,
+                'javascript:window.close();'
+            )
+        )

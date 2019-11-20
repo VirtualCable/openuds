@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +29,11 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
-import win32com.client  # @UnresolvedImport, pylint: disable=import-error
-import win32net  # @UnresolvedImport, pylint: disable=import-error
-import win32security  # @UnresolvedImport, pylint: disable=import-error
-import win32api  # @UnresolvedImport, pylint: disable=import-error
-import win32con  # @UnresolvedImport, pylint: disable=import-error
+import win32com.client
+import win32net
+import win32security
+import win32api
+import win32con
 import ctypes
 from ctypes.wintypes import DWORD, LPCWSTR
 import os

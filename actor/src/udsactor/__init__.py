@@ -25,11 +25,21 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-VERSION = '3.0.0'
+import sys
+
+from . import types
+from . import rest
+
+if sys.platform == 'win32':
+    from .windows import operations
+else:
+    from .linux import operations
+
+from .info import VERSION
+
 
 __title__ = 'udsactor'
 __version__ = VERSION
@@ -37,3 +47,4 @@ __build__ = 0x010756
 __author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
 __license__ = "BSD 3-clause"
 __copyright__ = "Copyright 2014-2019 VirtualCable S.L.U."
+

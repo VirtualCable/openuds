@@ -29,52 +29,76 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=invalid-name
 import sys
 import os
 import logging
+import typing
 
 import PyQt5  # pylint: disable=unused-import
-from PyQt5.QtWidgets import QApplication, QDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog
+
+import udsactor
 
 from ui.setup_dialog_ui import Ui_UdsActorSetupDialog
 
-# pylint: disable=invalid-name
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from PyQt5.QtWidgets import QLineEdit  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger('actor')
 
 
 class UDSConfigDialog(QDialog):
 
-    def __init__(self, data=None, parent=None):
-        QDialog.__init__(self, parent)
+    def __init__(self):
+        QDialog.__init__(self, None)
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
-        if data is not None:
-            pass
+        self.ui.host.setText('172.27.0.1:8443')
+        self.ui.username.setText('admin')
+        self.ui.password.setText('temporal')
+        self.ui.postConfigCommand.setText(r'c:\windows\post-uds.bat')
+        self.ui.preCommand.setText(r'c:\windows\pre-uds.bat')
+        self.ui.runonceCommand.setText(r'c:\windows\runonce.bat')
 
-    def _getCfg(self):
-        return {
-            'host': self.ui.host.text(),
-            'username': self.ui.username.text(),
-            'password': self.ui.password.text(),
-            'validateCertificate': self.ui.validateCertificate.currentIndex() == 1,
-            'logLevel': (self.ui.logLevelComboBox.currentIndex() + 1) * 10000
-        }
+    def browse(self, lineEdit: 'QLineEdit', caption: str) -> None:
+        name = QFileDialog.getOpenFileName(parent=self, caption='')[0]  # Returns tuple (filename, filter)
+        if name:
+            lineEdit.setText(name)
+
+    def browsePreconnect(self) -> None:
+        self.browse(self.ui.preCommand, 'Select Preconnect command')
+
+    def browseRunOnce(self) -> None:
+        self.browse(self.ui.runonceCommand, 'Select Runonce command')
+
+    def browsePostConfig(self) -> None:
+        self.browse(self.ui.postConfigCommand, 'Select Postconfig command')
 
     def textChanged(self):
         enableButtons = self.ui.host.text() != '' and self.ui.username.text() != '' and self.ui.password.text() != ''
-        self.ui.testButton.setEnabled(enableButtons)
-        self.ui.saveButton.setEnabled(enableButtons)
+        self.ui.registerButton.setEnabled(enableButtons)
 
-    def cancelAndDiscard(self):
-        logger.debug('Cancelling changes')
+    def finish(self):
         self.close()
 
-    def testParameters(self):
-        pass
+    def registerWithUDS(self):
+        api = udsactor.rest.REST(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
 
-    def acceptAndSave(self):
-        pass
+        data: udsactor.types.InterfaceInfo = next(udsactor.operations.getNetworkInfo())
+
+        key = api.register(
+            self.ui.username.text(),
+            self.ui.password.text(),
+            data.ip or '',           # IP
+            data.mac or '',    # first mac
+            self.ui.preCommand.text(),
+            self.ui.runonceCommand.text(),
+            self.ui.postConfigCommand.text()
+        )
+
+        print(key)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,15 +27,55 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
-# pylint: disable=unused-wildcard-import,wildcard-import
+"""
+import logging
+import typing
 
-from __future__ import unicode_literals
+from django.utils.translation import ugettext as _
 
-import sys
-if sys.platform == 'win32':
-    from .windows.operations import *  # @UnusedWildImport
-else:
-    from .linux.operations import *  # @UnusedWildImport
+from uds.models.util import getSqlDatetimeAsUnix
+from uds.core import VERSION
+from ..handlers import Handler
+
+logger = logging.getLogger(__name__)
+
+def actorResult(result: typing.Any = None, error: typing.Optional[str] = None) -> typing.MutableMapping[str, typing.Any]:
+    result = result or ''
+    res = {'result': result, 'stamp': getSqlDatetimeAsUnix()}
+    if error:
+        res['error'] = error
+    return res
+
+# Enclosed methods under /actor path
+class ActorV2(Handler):
+    """
+    Processes actor requests
+    """
+    authenticated = False  # Actor requests are not authenticated normally
+    path = 'actor'
+    name = 'v2'
+
+    def get(self):  # pylint: disable=too-many-return-statements
+        """
+        Processes get requests
+        """
+        logger.debug('Actor args for GET: %s', self._args)
+
+        return actorResult({'version': VERSION, 'required': '3.0.0'})
+
+class ActorV2Register(Handler):
+    """
+    Tests the process
+    """
+    authenticated = False  # Actor requests are not authenticated normally
+    path = 'actor/v2'
+    name = 'register'
+
+    def get(self):
+        return actorResult('Ok')
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')

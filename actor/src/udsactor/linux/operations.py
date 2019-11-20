@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,8 +29,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
 import socket
 import platform
 import fcntl
@@ -40,49 +38,45 @@ import ctypes.util
 import subprocess
 import struct
 import array
-import six
-from udsactor import utils
+import typing
+
+from udsactor import types
+
 from .renamer import rename
 
 
-def _getMacAddr(ifname):
+def _getMacAddr(ifname: str) -> typing.Optional[str]:
     '''
     Returns the mac address of an interface
     Mac is returned as unicode utf-8 encoded
     '''
-    if isinstance(ifname, list):
-        return dict([(name, _getMacAddr(name)) for name in ifname])
-    if isinstance(ifname, six.text_type):
-        ifname = ifname.encode('utf-8')  # If unicode, convert to bytes (or str in python 2.7)
+    ifnameBytes = ifname.encode('utf-8')  # If unicode, convert to bytes
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifname[:15])))
-        return six.text_type(''.join(['%02x:' % char for char in info[18:24]])[:-1]).upper()
+        info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifnameBytes[:15])))
+        return str(''.join(['%02x:' % char for char in info[18:24]])[:-1]).upper()
     except Exception:
         return None
 
 
-def _getIpAddr(ifname):
+def _getIpAddr(ifname: str) -> typing.Optional[str]:
     '''
     Returns the ip address of an interface
     Ip is returned as unicode utf-8 encoded
     '''
-    if isinstance(ifname, list):
-        return dict([(name, _getIpAddr(name)) for name in ifname])
-    if isinstance(ifname, six.text_type):
-        ifname = ifname.encode('utf-8')  # If unicode, convert to bytes (or str in python 2.7)
+    ifnameBytes = ifname.encode('utf-8')  # If unicode, convert to bytes (or str in python 2.7)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        return six.text_type(socket.inet_ntoa(fcntl.ioctl(
+        return str(socket.inet_ntoa(fcntl.ioctl(
             s.fileno(),
             0x8915,  # SIOCGIFADDR
-            struct.pack(str('256s'), ifname[:15])
+            struct.pack(str('256s'), ifnameBytes[:15])
         )[20:24]))
     except Exception:
         return None
 
 
-def _getInterfaces():
+def _getInterfaces() -> typing.List[str]:
     '''
     Returns a list of interfaces names coded in utf-8
     '''
@@ -107,76 +101,68 @@ def _getInterfaces():
     return [namestr[i:i + offset].split(b'\0', 1)[0].decode('utf-8') for i in range(0, outbytes, length)]
 
 
-def _getIpAndMac(ifname):
+def _getIpAndMac(ifname: str) -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
     ip, mac = _getIpAddr(ifname), _getMacAddr(ifname)
     return (ip, mac)
 
 
-def getComputerName():
+def getComputerName() -> str:
     '''
     Returns computer name, with no domain
     '''
     return socket.gethostname().split('.')[0]
 
 
-def getNetworkInfo():
+def getNetworkInfo() -> typing.Iterable[types.InterfaceInfo]:
     for ifname in _getInterfaces():
         ip, mac = _getIpAndMac(ifname)
-        if mac != '00:00:00:00:00:00' and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs
-            yield utils.Bunch(name=ifname, mac=mac, ip=ip)
+        if mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs
+            yield types.InterfaceInfo(name=ifname, mac=mac, ip=ip)
 
 
-def getDomainName():
+def getDomainName() -> str:
     return ''
 
 
-def getLinuxVersion():
-    lv = platform.linux_distribution()
+def getLinuxVersion() -> str:
+    import distro
+
+    lv = distro.linux_distribution()
     return lv[0] + ', ' + lv[1]
 
 
-def reboot(flags=0):
+def reboot(flags: int = 0):
     '''
     Simple reboot using os command
     '''
-    # Workaround for dummy thread
-    if six.PY3 is False:
-        import threading
-        threading._DummyThread._Thread__stop = lambda x: 42
-
     subprocess.call(['/sbin/shutdown', 'now', '-r'])
 
 
-def loggoff():
+def loggoff() -> None:
     '''
     Right now restarts the machine...
     '''
-    # Workaround for dummy thread
-    if six.PY3 is False:
-        import threading
-        threading._DummyThread._Thread__stop = lambda x: 42
-
     subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])
     # subprocess.call(['/sbin/shutdown', 'now', '-r'])
     # subprocess.call(['/usr/bin/systemctl', 'reboot', '-i'])
 
 
-def renameComputer(newName):
+def renameComputer(newName: str) -> None:
     rename(newName)
 
 
-def joinDomain(domain, ou, account, password, executeInOneStep=False):
+def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False):
     pass
 
 
-def changeUserPassword(user, oldPassword, newPassword):
+def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
     '''
     Simple password change for user using command line
     '''
     os.system('echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(user, newPassword))
 
 
-class XScreenSaverInfo(ctypes.Structure):
+class XScreenSaverInfo(ctypes.Structure):  # pylint: disable=too-few-public-methods
     _fields_ = [('window', ctypes.c_long),
                 ('state', ctypes.c_int),
                 ('kind', ctypes.c_int),
@@ -198,26 +184,18 @@ try:
     xss.XScreenSaverQueryExtension.restype = ctypes.c_int
     xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
     display = xlib.XOpenDisplay(None)
-    info = xss.XScreenSaverAllocInfo()
+    xssInfo = xss.XScreenSaverAllocInfo()
 except Exception:  # Libraries not accesible, not found or whatever..
-    xlib = xss = display = info = None
+    xlib = xss = display = xssInfo = None
 
 
-def initIdleDuration(atLeastSeconds):
-    '''
-    On linux we set the screensaver to at least required seconds, or we never will get "idle"
-    '''
-    # Workaround for dummy thread
-    if six.PY3 is False:
-        import threading
-        threading._DummyThread._Thread__stop = lambda x: 42
-
+def initIdleDuration(atLeastSeconds: int) -> None:
     subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
     # And now reset it
     subprocess.call(['/usr/bin/xset', 's', 'reset'])
 
 
-def getIdleDuration():
+def getIdleDuration() -> float:
     '''
     Returns idle duration, in seconds
     '''
@@ -232,16 +210,16 @@ def getIdleDuration():
     if available != 1:
         return 0  # No screen saver is available, no way of getting idle
 
-    xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), info)
+    xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), xssInfo)
 
     # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
-    if info.contents.state != 0 and 'centos' not in platform.linux_distribution()[0].lower().strip():
+    if xssInfo.contents.state != 0 and 'centos' not in platform.linux_distribution()[0].lower().strip():
         return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
 
-    return info.contents.idle / 1000.0
+    return xssInfo.contents.idle / 1000.0
 
 
-def getCurrentUser():
+def getCurrentUser() -> str:
     '''
     Returns current logged in user
     '''

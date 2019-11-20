@@ -37,8 +37,7 @@ import typing
 
 import requests
 
-from udsactor import VERSION
-
+from .info import VERSION
 from .utils import exceptionToMessage
 from .log import logger
 
@@ -74,6 +73,7 @@ try:
 except Exception:
     pass  # In fact, isn't too important, but will log warns to logging file
 
+# Constants
 
 def ensureResultIsOk(result: typing.Any) -> None:
     if 'error' not in result:
@@ -92,7 +92,7 @@ class REST:
     def __init__(self, host: str, validateCert: bool) -> None:
         self.host = host
         self.validateCert = validateCert
-        self.url = "{}://{}/rest/actor/".format(('https', 'https'), self.host)
+        self.url = "https://{}/uds/rest/actor/v2".format(self.host)
         # Disable logging requests messages except for errors, ...
         logging.getLogger("requests").setLevel(logging.CRITICAL)
         # Tries to disable all warnings
@@ -100,6 +100,31 @@ class REST:
             warnings.simplefilter("ignore")  # Disables all warnings
         except Exception:
             pass
+
+    @staticmethod
+    def headers():
+        return {'content-type': 'application/json'}
+
+    def register(self, username: str, password: str, ip: str, mac: str, preCommand: str, runOnceCommand: str, postCommand: str) -> str:
+        data = {
+            'username': username,
+            'password': password,
+            'ip': ip,
+            'mac': mac,
+            'preCommand': preCommand,
+            'runOnceCommand': runOnceCommand,
+            'postCommand': postCommand
+        }
+        try:
+            result: requests.Response = requests.post(self.url + '/register', data=json.dumps(data), headers=REST.headers(), verify=self.validateCert)
+            if result.ok:
+                return result.json()['result']
+        except (requests.ConnectionError, requests.ConnectTimeout) as e:
+            raise RESTConnectionError(str(e))
+        except Exception as e:
+            pass
+
+        raise RESTError(result.content)
 
     def _getUrl(self, method, key=None, ids=None):
         url = self.url + method
@@ -120,7 +145,7 @@ class REST:
             if data is None:
                 # Old requests version does not support verify, but they do not checks ssl certificate by default
                 if self.newerRequestLib:
-                    r = requests.get(url, verify=VERIFY_CERT)
+                    r = requests.get(url, verify=self.validateCert)
                 else:
                     logger.debug('Requesting with old')
                     r = requests.get(url)  # Always ignore certs??
@@ -128,14 +153,14 @@ class REST:
                 if data == '':
                     data = '{"dummy": true}'  # Ensures no proxy rewrites POST as GET because body is empty...
                 if self.newerRequestLib:
-                    r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=VERIFY_CERT)
+                    r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=self.validateCert)
                 else:
                     logger.debug('Requesting with old')
                     r = requests.post(url, data=data, headers={'content-type': 'application/json'})
 
             # From versions of requests, content maybe bytes or str. We need str for json.loads
             content = r.content
-            if not isinstance(content, six.text_type):
+            if not isinstance(content, str):
                 content = content.decode('utf8')
             r = json.loads(content)  # Using instead of r.json() to make compatible with oooold rquests lib versions
         except requests.exceptions.RequestException as e:
@@ -184,7 +209,7 @@ class REST:
             raise ConnectionError('REST api has not been initialized')
 
         if processData:
-            if data and not isinstance(data, six.text_type):
+            if data and not isinstance(data, str):
                 data = data.decode('utf8')
             data = json.dumps({'data': data})
         url = self._getUrl('/'.join([self.uuid, msg]))

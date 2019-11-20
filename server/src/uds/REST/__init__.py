@@ -57,7 +57,7 @@ from . import processors
 
 logger = logging.getLogger(__name__)
 
-__all__ = [str(v) for v in ['Handler', 'Dispatcher']]
+__all__ = ['Handler', 'Dispatcher']
 
 AUTH_TOKEN_HEADER = 'X-Auth-Token'
 
