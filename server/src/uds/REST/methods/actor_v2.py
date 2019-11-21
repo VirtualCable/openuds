@@ -30,12 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import secrets
 import logging
 import typing
 
-from django.utils.translation import ugettext as _
+from uds.models import getSqlDatetimeAsUnix, getSqlDatetime, ActorToken
 
-from uds.models.util import getSqlDatetimeAsUnix
 from uds.core import VERSION
 from ..handlers import Handler
 
@@ -72,8 +72,6 @@ class ActorV2Action(Handler):
     def get(self):
         return actorResult('')
 
-
-
 class ActorV2Register(ActorV2Action):
     """
     Registers an actor
@@ -81,9 +79,34 @@ class ActorV2Register(ActorV2Action):
     authenticated = True
     name = 'register'
 
-    def post(self):
-        logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        actorToken: ActorToken
+        try:
+            # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
+            actorToken = ActorToken.objects.get(mac=self._params['mac'])
+            # Update parameters
+            actorToken.ip_from = self._request.ip
+            actorToken.ip = self._params['ip']
+            actorToken.pre_command = self._params['pre_command']
+            actorToken.post_command = self._params['post_command']
+            actorToken.runonce_command = self._params['run_once_command']
+            actorToken.log_level = self._params['log_level']
+            actorToken.stamp = getSqlDatetime()
+            actorToken.save()
+        except Exception:
+            actorToken = ActorToken.objects.create(
+                username=self._params['username'],
+                ip_from=self._request.ip,
+                ip=self._params['ip'],
+                mac=self._params['mac'],
+                pre_command=self._params['pre_command'],
+                post_command=self._params['post_command'],
+                runonce_command=self._params['run_once_command'],
+                log_level=self._params['log_level'],
+                token=secrets.token_urlsafe(36),
+                stamp=getSqlDatetime()
+            )
+        return actorResult(actorToken.token)
 
 class ActorV2Initiialize(ActorV2Action):
     """

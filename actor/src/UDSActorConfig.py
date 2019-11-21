@@ -88,9 +88,11 @@ class UDSConfigDialog(QDialog):
             auth: udsactor.types.AuthenticatorType
             for auth in self.api.enumerateAuthenticators():
                 self.ui.authenticators.addItem(auth.auth, userData=auth)
+            # Last, add "admin" authenticator (for uds root user)
+            self.ui.authenticators.addItem('Administration', userData=udsactor.types.AuthenticatorType('admin', 'admin', 'admin', 'admin', 1, False))
 
     def textChanged(self):
-        enableButtons = self.ui.host.text() != '' and self.ui.username.text() != '' and self.ui.password.text() != ''
+        enableButtons = bool(self.ui.host.text() and self.ui.username.text() and self.ui.password.text() and self.ui.authenticators.currentText())
         self.ui.registerButton.setEnabled(enableButtons)
 
     def finish(self):
@@ -100,18 +102,24 @@ class UDSConfigDialog(QDialog):
         # Get network card. Will fail if no network card is available, but don't mind (not contempled)
         data: udsactor.types.InterfaceInfo = next(udsactor.operations.getNetworkInfo())
 
-        key = self.api.register(
-            self.ui.authenticators.currentData().auth,
-            self.ui.username.text(),
-            self.ui.password.text(),
-            data.ip or '',           # IP
-            data.mac or '',          # MAC
-            self.ui.preCommand.text(),
-            self.ui.runonceCommand.text(),
-            self.ui.postConfigCommand.text()
-        )
+        try:
+            key = self.api.register(
+                self.ui.authenticators.currentData().auth,
+                self.ui.username.text(),
+                self.ui.password.text(),
+                data.ip or '',           # IP
+                data.mac or '',          # MAC
+                self.ui.preCommand.text(),
+                self.ui.runonceCommand.text(),
+                self.ui.postConfigCommand.text(),
+                (self.ui.logLevelComboBox.currentIndex() + 1) * 10000  # Loglevel
+            )
+            # Store parameters on register for later use, notify user of registration
 
-        print(key)
+            # Inform the user
+            QMessageBox.information(self, 'UDS Registration', 'Registration with UDS completed.', QMessageBox.Ok)
+        except udsactor.rest.RESTError as e:
+            QMessageBox.critical(self, 'UDS Registration', 'UDS Registration error: {}'.format(e), QMessageBox.Ok)
 
 
 if __name__ == "__main__":

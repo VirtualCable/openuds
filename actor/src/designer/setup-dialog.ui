@@ -579,6 +579,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>authenticators</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>textChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>343</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>294</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>textChanged()</slot>

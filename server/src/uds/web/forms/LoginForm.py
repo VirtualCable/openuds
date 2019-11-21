@@ -42,6 +42,7 @@ class LoginForm(forms.Form):
     user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())
     password = forms.CharField(label=_('Password'), widget=forms.PasswordInput(attrs={'title': _('Password')}), required=False)
     authenticator = forms.ChoiceField(label=_('Authenticator'), choices=(), required=False)
+    logouturl = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         # If an specified login is passed in, retrieve it & remove it from kwargs dict

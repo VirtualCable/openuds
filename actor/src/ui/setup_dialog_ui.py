@@ -193,6 +193,7 @@ class Ui_UdsActorSetupDialog(object):
         self.browsePostConfigButton.clicked.connect(UdsActorSetupDialog.browsePostConfig)
         self.browseRunOnceButton.clicked.connect(UdsActorSetupDialog.browseRunOnce)
         self.host.editingFinished.connect(UdsActorSetupDialog.updateAuthenticators)
+        self.authenticators.currentTextChanged['QString'].connect(UdsActorSetupDialog.textChanged)
         QtCore.QMetaObject.connectSlotsByName(UdsActorSetupDialog)
 
     def retranslateUi(self, UdsActorSetupDialog):

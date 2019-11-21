@@ -112,4 +112,7 @@ from .tag import Tag
 # Utility
 from .dbfile import DBFile
 
+# Actor tokens
+from .actor_token import ActorToken
+
 logger = logging.getLogger(__name__)

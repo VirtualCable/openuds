@@ -125,7 +125,7 @@ class REST:
             pass
 
 
-    def register(self, auth: str, username: str, password: str, ip: str, mac: str, preCommand: str, runOnceCommand: str, postCommand: str) -> str:
+    def register(self, auth: str, username: str, password: str, ip: str, mac: str, preCommand: str, runOnceCommand: str, postCommand: str, logLevel: int) -> str:
         """
         Raises an exception if could not register, or registers and returns the "authorization token"
         """
@@ -133,20 +133,28 @@ class REST:
             'username': username,
             'ip': ip,
             'mac': mac,
-            'preCommand': preCommand,
-            'runOnceCommand': runOnceCommand,
-            'postCommand': postCommand
+            'pre_command': preCommand,
+            'run_once_command': runOnceCommand,
+            'post_command': postCommand,
+            'log_level': logLevel
         }
         try:
             # First, try to login
             authInfo = {'auth': auth, 'username': username, 'password': password }
             headers = self.headers
             result = requests.post(self.url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self.validateCert)
+            if not result.ok or result.json()['result'] == 'error':
+                raise Exception()  # Invalid credentials
+        except (requests.ConnectionError, requests.ConnectTimeout) as e:
+            raise RESTConnectionError(str(e))
+        except Exception as e:
+            raise RESTError('Invalid credentials')
+
+        try:
+            headers['X-Auth-Token'] = result.json()['token']
+            result = requests.post(self.url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self.validateCert)
             if result.ok:
-                headers['X-Auth-Token'] = result.json()['token']
-                result = requests.post(self.url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self.validateCert)
-                if result.ok:
-                    return result.json()['result']
+                return result.json()['result']
         except (requests.ConnectionError, requests.ConnectTimeout) as e:
             raise RESTConnectionError(str(e))
         except Exception as e:
