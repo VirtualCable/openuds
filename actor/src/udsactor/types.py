@@ -12,3 +12,10 @@ class AuthenticatorType(typing.NamedTuple):
     type: str
     priority: int
     isCustom: bool
+
+class ActorConfigurationType(typing.NamedTuple):
+    host: str
+    validateCertificate: bool
+    master_token: typing.Optional[str] = None
+    own_token: typing.Optional[str] = None
+    data: typing.Optional[typing.Dict[str, str]] = None

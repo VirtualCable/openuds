@@ -34,9 +34,9 @@ from . import types
 from . import rest
 
 if sys.platform == 'win32':
-    from .windows import operations
+    from .windows import operations, store
 else:
-    from .linux import operations
+    from .linux import operations, store
 
 from .info import VERSION
 

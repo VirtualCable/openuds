@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,45 +29,50 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
-import six
 import os
+import configparser
+import base64
+import pickle
 
-DEBUG = False
+from .. import types
 
-CONFIGFILE = '/etc/udsactor/udsactor.cfg' if DEBUG is False else '/tmp/udsactor.cfg'
-PRECONNECT_CMD = '/etc/udsactor/pre'
+CONFIGFILE = '/etc/udsactor/udsactor.cfg'
 
+def checkPermissions() -> bool:
+    return os.getuid() == 0
 
-def checkPermissions():
-    return True if DEBUG else os.getuid() == 0
-
-
-def readConfig():
-    res = {}
+def readConfig() -> types.ActorConfigurationType:
     try:
-        cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
-        cfg.optionxform = six.text_type
+        cfg = configparser.ConfigParser()
         cfg.read(CONFIGFILE)
-        # Just reads 'uds' section
-        for key in cfg.options('uds'):
-            res[key] = cfg.get('uds', key)
-            if res[key].lower() in ('true', 'yes', 'si'):
-                res[key] = True
-            elif res[key].lower() in ('false', 'no'):
-                res[key] = False
+        uds: configparser.SectionProxy = cfg['uds']
+        # Extract data:
+        base64Data = uds.get('data', None)
+        data = pickle.loads(base64.b64decode(base64Data.encode())) if base64Data else None
+
+        return types.ActorConfigurationType(
+            host=uds.get('host', ''),
+            validateCertificate=uds.getboolean('validate', fallback=False),
+            master_token=uds.get('master_token', None),
+            own_token=uds.get('own_token', None),
+            data=data
+        )
     except Exception:
-        pass
-
-    return res
+        return types.ActorConfigurationType('', False)
 
 
-def writeConfig(data):
-    cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
-    cfg.optionxform = six.text_type
+def writeConfig(config: types.ActorConfigurationType) -> None:
+    cfg = configparser.ConfigParser()
     cfg.add_section('uds')
-    for key, val in data.items():
-        cfg.set('uds', key, str(val))
+    uds: configparser.SectionProxy = cfg['uds']
+    uds['host'] = config.host
+    uds['validate'] = 'yes' if config.validateCertificate else 'no'
+    if config.master_token:
+        uds['master_token'] = config.master_token
+    if config.own_token:
+        uds['own_token'] = config.own_token
+    if config.data:
+        uds['data'] = base64.b64encode(pickle.dumps(config.data)).decode()
 
     # Ensures exists destination folder
     dirname = os.path.dirname(CONFIGFILE)
@@ -77,17 +82,8 @@ def writeConfig(data):
     with open(CONFIGFILE, 'w') as f:
         cfg.write(f)
 
-    os.chmod(CONFIGFILE, 0o0600)
+    os.chmod(CONFIGFILE, 0o0600)  # Ensure only readable by root
 
 
 def useOldJoinSystem():
     return False
-
-
-# Right now, we do not really need an application to be run on "startup" as could ocur with windows
-def runApplication():
-    return None
-
-
-def preApplication():
-    return PRECONNECT_CMD

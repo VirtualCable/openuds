@@ -48,7 +48,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger('actor')
 
-
 class UDSConfigDialog(QDialog):
     _host: str = ''
 
@@ -103,7 +102,7 @@ class UDSConfigDialog(QDialog):
         data: udsactor.types.InterfaceInfo = next(udsactor.operations.getNetworkInfo())
 
         try:
-            key = self.api.register(
+            token = self.api.register(
                 self.ui.authenticators.currentData().auth,
                 self.ui.username.text(),
                 self.ui.password.text(),
@@ -115,7 +114,13 @@ class UDSConfigDialog(QDialog):
                 (self.ui.logLevelComboBox.currentIndex() + 1) * 10000  # Loglevel
             )
             # Store parameters on register for later use, notify user of registration
-
+            udsactor.store.writeConfig(
+                udsactor.types.ActorConfigurationType(
+                    host=self.ui.host.text(),
+                    validateCertificate=self.ui.validateCertificate.currentIndex() == 1,
+                    master_token=token
+                )
+            )
             # Inform the user
             QMessageBox.information(self, 'UDS Registration', 'Registration with UDS completed.', QMessageBox.Ok)
         except udsactor.rest.RESTError as e:

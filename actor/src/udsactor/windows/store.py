@@ -29,115 +29,75 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
 import pickle
-from win32com.shell import shell  # @UnresolvedImport, pylint: disable=import-error
-try:
-    import winreg as wreg
-except ImportError:  # Python 2.7 fallback
-    import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
-import win32security  # @UnresolvedImport, pylint: disable=import-error
+import typing
 
-DEBUG = False
+from win32com.shell import shell
+import winreg as wreg
+import win32security
 
+from .. import types
 
-# Can be changed to whatever we want, but registry key is protected by permissions
-def encoder(data):
-    return data.encode('bz2')
+PATH = 'Software\\UDSActor'
+BASEKEY = wreg.HKEY_LOCAL_MACHINE
 
 
-def decoder(data):
-    return data.decode('bz2')
+def checkPermissions() -> bool:
+    return shell.IsUserAnAdmin()
 
 
-path = 'Software\\UDSActor'
-baseKey = wreg.HKEY_CURRENT_USER if DEBUG is True else wreg.HKEY_LOCAL_MACHINE  # @UndefinedVariable
-
-
-def checkPermissions():
-    return True if DEBUG else shell.IsUserAnAdmin()
-
-
-def fixRegistryPermissions(handle):
-    if DEBUG:
-        return
+def fixRegistryPermissions(handle) -> None:
     # Fix permissions so users can't read this key
     v = win32security.GetSecurityInfo(handle, win32security.SE_REGISTRY_KEY, win32security.DACL_SECURITY_INFORMATION)
     dacl = v.GetSecurityDescriptorDacl()
     n = 0
     # Remove all normal users access permissions to the registry key
     while n < dacl.GetAceCount():
-        if unicode(dacl.GetAce(n)[2]) == u'PySID:S-1-5-32-545':  # Whell known Users SID
+        if str(dacl.GetAce(n)[2]) == 'PySID:S-1-5-32-545':  # Whell known Users SID
             dacl.DeleteAce(n)
         else:
             n += 1
-    win32security.SetSecurityInfo(handle, win32security.SE_REGISTRY_KEY,
-                                  win32security.DACL_SECURITY_INFORMATION | win32security.PROTECTED_DACL_SECURITY_INFORMATION,
-                                  None, None, dacl, None)
+    win32security.SetSecurityInfo(
+        handle,
+        win32security.SE_REGISTRY_KEY,
+        win32security.DACL_SECURITY_INFORMATION | win32security.PROTECTED_DACL_SECURITY_INFORMATION,
+        None,
+        None,
+        dacl,
+        None
+    )
 
 
-def readConfig():
+def readConfig() -> types.ActorConfigurationType:
     try:
-        key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
+        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
         data, _ = wreg.QueryValueEx(key, '')  # @UndefinedVariable
         wreg.CloseKey(key)  # @UndefinedVariable
-        return pickle.loads(decoder(data))
+        return pickle.loads(data)
     except Exception:
-        return None
+        return types.ActorConfigurationType('', False)
 
 
-def writeConfig(data, fixPermissions=True):
+def writeConfig(config: types.ActorConfigurationType) -> None:
     try:
-        key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
+        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
     except Exception:
-        key = wreg.CreateKeyEx(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
-        if fixPermissions is True:
-            fixRegistryPermissions(key.handle)
+        key = wreg.CreateKeyEx(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
+        fixRegistryPermissions(key.handle)
 
-    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(pickle.dumps(data)))  # @UndefinedVariable
+    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, pickle.dumps(config))  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable
 
 
-def useOldJoinSystem():
+def useOldJoinSystem() -> bool:
     try:
-        key = wreg.OpenKey(baseKey, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
+        key = wreg.OpenKey(BASEKEY, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
         try:
             data, _ = wreg.QueryValueEx(key, 'join')  # @UndefinedVariable
         except Exception:
             data = ''
         wreg.CloseKey(key)  # @UndefinedVariable
-    except:
+    except Exception:
         data = ''
 
     return data == 'old'
-
-
-# Gives the oportunity to run an application ONE TIME (because, the registry key "run" will be deleted after read)
-def runApplication():
-    try:
-        key = wreg.OpenKey(baseKey, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
-        try:
-            data, _ = wreg.QueryValueEx(key, 'run')  # @UndefinedVariable
-            wreg.DeleteValue(key, 'run')  # @UndefinedVariable
-        except Exception:
-            data = None
-        wreg.CloseKey(key)  # @UndefinedVariable
-    except Exception:
-        data = None
-
-    return data
-
-
-def preApplication():
-    try:
-        key = wreg.OpenKey(baseKey, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
-        try:
-            data, _ = wreg.QueryValueEx(key, 'pre')  # @UndefinedVariable
-        except Exception:
-            data = None
-        wreg.CloseKey(key)  # @UndefinedVariable
-    except Exception:
-        data = None
-
-    return data

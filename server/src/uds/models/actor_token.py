@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,15 +25,26 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=unused-wildcard-import, wildcard-import
-from __future__ import unicode_literals
+from django.db import models
 
-import sys
-if sys.platform == 'win32':
-    from udsactor.windows.store import *  # @UnusedWildImport
-else:
-    from udsactor.linux.store import *  # @UnusedWildImport
+class ActorToken(models.Model):
+    """
+    UDS Actors tokens on DB
+    """
+    username = models.CharField(max_length=128)
+    ip_from = models.CharField(max_length=128)
+    ip = models.CharField(max_length=128)
+    mac = models.CharField(max_length=128, db_index=True, unique=True)
+    pre_command = models.CharField(max_length=255, blank=True, default='')
+    post_command = models.CharField(max_length=255, blank=True, default='')
+    runonce_command = models.CharField(max_length=255, blank=True, default='')
+    log_level = models.IntegerField()
+
+    token = models.CharField(max_length=48, db_index=True, unique=True)
+    stamp = models.DateTimeField()  # Date creation or validation of this entry
+
+    def __str__(self):
+        return '<ActorToken {} created on {} by {} from {}/{}>'.format(self.token, self.stamp, self.username, self.ip_from, self.ip)
