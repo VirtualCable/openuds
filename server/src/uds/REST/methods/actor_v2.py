@@ -37,7 +37,7 @@ import typing
 from uds.models import getSqlDatetimeAsUnix, getSqlDatetime, ActorToken
 
 from uds.core import VERSION
-from ..handlers import Handler, NotFound
+from ..handlers import Handler
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +87,7 @@ class ActorV2Register(ActorV2Action):
             # Update parameters
             actorToken.ip_from = self._request.ip
             actorToken.ip = self._params['ip']
+            actorToken.hostname = self._params['hostname']
             actorToken.pre_command = self._params['pre_command']
             actorToken.post_command = self._params['post_command']
             actorToken.runonce_command = self._params['run_once_command']
@@ -98,6 +99,7 @@ class ActorV2Register(ActorV2Action):
                 username=self._params['username'],
                 ip_from=self._request.ip,
                 ip=self._params['ip'],
+                hostname=self._params['hostname'],
                 mac=self._params['mac'],
                 pre_command=self._params['pre_command'],
                 post_command=self._params['post_command'],

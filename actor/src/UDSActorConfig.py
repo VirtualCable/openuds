@@ -115,6 +115,7 @@ class UDSConfigDialog(QDialog):
                 self.ui.authenticators.currentData().auth,
                 self.ui.username.text(),
                 self.ui.password.text(),
+                udsactor.operations.getComputerName(),
                 data.ip or '',           # IP
                 data.mac or '',          # MAC
                 self.ui.preCommand.text(),

@@ -37,6 +37,7 @@ class ActorToken(models.Model):
     username = models.CharField(max_length=128)
     ip_from = models.CharField(max_length=128)
     ip = models.CharField(max_length=128)
+    hostname = models.CharField(max_length=128)
     mac = models.CharField(max_length=128, db_index=True, unique=True)
     pre_command = models.CharField(max_length=255, blank=True, default='')
     post_command = models.CharField(max_length=255, blank=True, default='')

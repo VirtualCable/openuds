@@ -137,11 +137,12 @@ class REST:
             pass
 
 
-    def register(  #pylint: disable=too-many-arguments
+    def register(  #pylint: disable=too-many-arguments, too-many-locals
             self,
             auth: str,
             username: str,
             password: str,
+            hostname: str,
             ip: str,
             mac: str,
             preCommand: str,
@@ -154,6 +155,7 @@ class REST:
         """
         data = {
             'username': username,
+            'hostname': hostname,
             'ip': ip,
             'mac': mac,
             'pre_command': preCommand,
