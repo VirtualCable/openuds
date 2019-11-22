@@ -37,7 +37,7 @@ import typing
 from uds.models import getSqlDatetimeAsUnix, getSqlDatetime, ActorToken
 
 from uds.core import VERSION
-from ..handlers import Handler
+from ..handlers import Handler, NotFound
 
 logger = logging.getLogger(__name__)
 

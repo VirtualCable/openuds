@@ -175,24 +175,3 @@ class REST:
             pass
 
         raise RESTError(result.content)
-
-    def readConfig(
-            self,
-            auth: str,
-            username: str,
-            password: str,
-            mac: str,
-            config: typing.Optional[types.ActorConfigurationType] = None
-        ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
-        try:
-            res = None
-            headers = self._login(auth, username, password)
-            result = requests.post(self.url + 'actor/v2/config', data=json.dumps(mac), headers=headers, verify=self.validateCert)
-            if result.ok:
-                res = result.json()['result']
-        except Exception:
-            pass
-
-        if config:
-            config
-        return None

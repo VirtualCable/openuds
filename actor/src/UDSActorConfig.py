@@ -55,15 +55,20 @@ class UDSConfigDialog(QDialog):
         QDialog.__init__(self, None)
         # Get local config config
         config: udsactor.types.ActorConfigurationType = udsactor.store.readConfig()
-
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
         self.ui.host.setText(config.host)
+        self.ui.validateCertificate.setCurrentIndex(1 if config.validateCertificate else 0)
+        self.ui.postConfigCommand.setText(config.post_command or '')
+        self.ui.preCommand.setText(config.pre_command or '')
+        self.ui.runonceCommand.setText(config.runonce_command or '')
+        self.ui.logLevelComboBox.setCurrentIndex(config.log_level)
+
+        if config.host:
+            self.updateAuthenticators()
+
         self.ui.username.setText('')
         self.ui.password.setText('')
-        self.ui.postConfigCommand.setText('')
-        self.ui.preCommand.setText('')
-        self.ui.runonceCommand.setText(r'c:\windows\runonce.bat')
 
     @property
     def api(self) -> udsactor.rest.REST:
@@ -115,14 +120,18 @@ class UDSConfigDialog(QDialog):
                 self.ui.preCommand.text(),
                 self.ui.runonceCommand.text(),
                 self.ui.postConfigCommand.text(),
-                (self.ui.logLevelComboBox.currentIndex() + 1) * 10000  # Loglevel
+                self.ui.logLevelComboBox.currentIndex()  # Loglevel
             )
             # Store parameters on register for later use, notify user of registration
             udsactor.store.writeConfig(
                 udsactor.types.ActorConfigurationType(
                     host=self.ui.host.text(),
                     validateCertificate=self.ui.validateCertificate.currentIndex() == 1,
-                    master_token=token
+                    master_token=token,
+                    pre_command=self.ui.preCommand.text(),
+                    post_command=self.ui.postConfigCommand.text(),
+                    runonce_command=self.ui.runonceCommand.text(),
+                    log_level=self.ui.logLevelComboBox.currentIndex()
                 )
             )
             # Inform the user

@@ -55,6 +55,10 @@ def readConfig() -> types.ActorConfigurationType:
             validateCertificate=uds.getboolean('validate', fallback=False),
             master_token=uds.get('master_token', None),
             own_token=uds.get('own_token', None),
+            pre_command=uds.get('pre_command', None),
+            runonce_command=uds.get('runonce_command', None),
+            post_command=uds.get('post_command', None),
+            log_level=int(uds.get('log_level', '1')),
             data=data
         )
     except Exception:
@@ -67,11 +71,16 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     uds: configparser.SectionProxy = cfg['uds']
     uds['host'] = config.host
     uds['validate'] = 'yes' if config.validateCertificate else 'no'
-    if config.master_token:
-        uds['master_token'] = config.master_token
-    if config.own_token:
-        uds['own_token'] = config.own_token
-    if config.data:
+    def writeIfValue(val, name):
+        if val:
+            uds[name] = val
+    writeIfValue(config.master_token, 'master_token')
+    writeIfValue(config.own_token, 'own_token')
+    writeIfValue(config.pre_command, 'pre_command')
+    writeIfValue(config.post_command, 'post_command')
+    writeIfValue(config.runonce_command, 'runonce_command')
+    uds['log_level'] = str(config.log_level)
+    if config.data:  # Special case, encoded & dumped
         uds['data'] = base64.b64encode(pickle.dumps(config.data)).decode()
 
     # Ensures exists destination folder
