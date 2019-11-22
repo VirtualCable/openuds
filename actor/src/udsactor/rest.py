@@ -154,7 +154,7 @@ class REST:
         Raises an exception if could not register, or registers and returns the "authorization token"
         """
         data = {
-            'username': username,
+            'username': username + '@' + auth,
             'hostname': hostname,
             'ip': ip,
             'mac': mac,
