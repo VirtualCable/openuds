@@ -25,22 +25,22 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=invalid-name
 import socket
 import platform
 import fcntl
 import os
-import ctypes  # @UnusedImport
+import ctypes
 import ctypes.util
 import subprocess
 import struct
 import array
 import typing
 
-from udsactor import types
+from .. import types
 
 from .renamer import rename
 
@@ -122,7 +122,6 @@ def getNetworkInfo() -> typing.Iterable[types.InterfaceInfoType]:
 
 def getDomainName() -> str:
     return ''
-
 
 def getLinuxVersion() -> str:
     import distro

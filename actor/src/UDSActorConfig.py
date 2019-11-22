@@ -75,9 +75,9 @@ class UDSConfigDialog(QDialog):
         return udsactor.rest.REST(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
 
     def browse(self, lineEdit: 'QLineEdit', caption: str) -> None:
-        name = QFileDialog.getOpenFileName(parent=self, caption=caption)[0]  # Returns tuple (filename, filter)
+        name = QFileDialog.getOpenFileName(parent=self, caption=caption, directory=os.path.dirname(lineEdit.text()))[0]
         if name:
-            lineEdit.setText(name)
+            lineEdit.setText(os.path.normpath(name))
 
     def browsePreconnect(self) -> None:
         self.browse(self.ui.preCommand, 'Select Preconnect command')
