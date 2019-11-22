@@ -53,13 +53,16 @@ class UDSConfigDialog(QDialog):
 
     def __init__(self):
         QDialog.__init__(self, None)
+        # Get local config config
+        config: udsactor.types.ActorConfigurationType = udsactor.store.readConfig()
+
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
-        self.ui.host.setText('172.27.0.1:8443')
-        self.ui.username.setText('admin')
-        self.ui.password.setText('temporal')
-        self.ui.postConfigCommand.setText(r'c:\windows\post-uds.bat')
-        self.ui.preCommand.setText(r'c:\windows\pre-uds.bat')
+        self.ui.host.setText(config.host)
+        self.ui.username.setText('')
+        self.ui.password.setText('')
+        self.ui.postConfigCommand.setText('')
+        self.ui.preCommand.setText('')
         self.ui.runonceCommand.setText(r'c:\windows\runonce.bat')
 
     @property
@@ -67,7 +70,7 @@ class UDSConfigDialog(QDialog):
         return udsactor.rest.REST(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
 
     def browse(self, lineEdit: 'QLineEdit', caption: str) -> None:
-        name = QFileDialog.getOpenFileName(parent=self, caption='')[0]  # Returns tuple (filename, filter)
+        name = QFileDialog.getOpenFileName(parent=self, caption=caption)[0]  # Returns tuple (filename, filter)
         if name:
             lineEdit.setText(name)
 
@@ -85,10 +88,12 @@ class UDSConfigDialog(QDialog):
             self._host = self.ui.host.text()
             self.ui.authenticators.clear()
             auth: udsactor.types.AuthenticatorType
-            for auth in self.api.enumerateAuthenticators():
-                self.ui.authenticators.addItem(auth.auth, userData=auth)
-            # Last, add "admin" authenticator (for uds root user)
-            self.ui.authenticators.addItem('Administration', userData=udsactor.types.AuthenticatorType('admin', 'admin', 'admin', 'admin', 1, False))
+            auths = list(self.api.enumerateAuthenticators())
+            if auths:
+                for auth in auths:
+                    self.ui.authenticators.addItem(auth.auth, userData=auth)
+                # Last, add "admin" authenticator (for uds root user)
+                self.ui.authenticators.addItem('Administration', userData=udsactor.types.AuthenticatorType('admin', 'admin', 'admin', 'admin', 1, False))
 
     def textChanged(self):
         enableButtons = bool(self.ui.host.text() and self.ui.username.text() and self.ui.password.text() and self.ui.authenticators.currentText())
@@ -99,8 +104,7 @@ class UDSConfigDialog(QDialog):
 
     def registerWithUDS(self):
         # Get network card. Will fail if no network card is available, but don't mind (not contempled)
-        data: udsactor.types.InterfaceInfo = next(udsactor.operations.getNetworkInfo())
-
+        data: udsactor.types.InterfaceInfoType = next(udsactor.operations.getNetworkInfo())
         try:
             token = self.api.register(
                 self.ui.authenticators.currentData().auth,
@@ -134,9 +138,9 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
-    # if store.checkPermissions() is False:
-    #    QtGui.QMessageBox.critical(None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
-    #    sys.exit(1)
+    if udsactor.store.checkPermissions() is False:
+        QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)
+        sys.exit(1)
 
     myapp = UDSConfigDialog()
     myapp.show()

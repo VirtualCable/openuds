@@ -25,26 +25,24 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=invalid-name
 import pickle
-import typing
 
-from win32com.shell import shell
 import winreg as wreg
 import win32security
+
+from win32com.shell import shell  # pylint: disable=no-name-in-module,import-error
 
 from .. import types
 
 PATH = 'Software\\UDSActor'
 BASEKEY = wreg.HKEY_LOCAL_MACHINE
 
-
 def checkPermissions() -> bool:
     return shell.IsUserAnAdmin()
-
 
 def fixRegistryPermissions(handle) -> None:
     # Fix permissions so users can't read this key
@@ -83,7 +81,8 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
         key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
     except Exception:
         key = wreg.CreateKeyEx(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
-        fixRegistryPermissions(key.handle)
+
+    fixRegistryPermissions(key.handle)
 
     wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, pickle.dumps(config))  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable

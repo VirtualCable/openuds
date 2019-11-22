@@ -18,4 +18,7 @@ class ActorConfigurationType(typing.NamedTuple):
     validateCertificate: bool
     master_token: typing.Optional[str] = None
     own_token: typing.Optional[str] = None
+    pre_command: typing.Optional[str] = None
+    run_once_command: typing.Optional[str] = None
+    post_command: typing.Optional[str] = None
     data: typing.Optional[typing.Dict[str, str]] = None

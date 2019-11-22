@@ -29,7 +29,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 # pylint: disable=invalid-name
-import uuid
 import warnings
 import json
 import logging
@@ -38,11 +37,6 @@ import typing
 import requests
 
 from . import types
-
-from .info import VERSION
-from .utils import exceptionToMessage
-from .log import logger
-
 
 class RESTError(Exception):
     ERRCODE = 0
@@ -105,12 +99,30 @@ class REST:
             pass
 
     @property
-    def headers(self) -> typing.MutableMapping[str, str]:
+    def _headers(self) -> typing.MutableMapping[str, str]:
         return {'content-type': 'application/json'}
+
+    def _login(self, auth: str, username: str, password: str) -> typing.MutableMapping[str, str]:
+        try:
+            # First, try to login
+            authInfo = {'auth': auth, 'username': username, 'password': password}
+            headers = self._headers
+            result = requests.post(self.url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self.validateCert)
+            if not result.ok or result.json()['result'] == 'error':
+                raise Exception()  # Invalid credentials
+        except requests.ConnectionError as e:
+            raise RESTConnectionError(str(e))
+        except Exception as e:
+            raise RESTError('Invalid credentials')
+
+        headers['X-Auth-Token'] = result.json()['token']
+
+        return headers
+
 
     def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
         try:
-            result = requests.get(self.url + 'auth/auths', headers=self.headers, verify=self.validateCert, timeout=4)
+            result = requests.get(self.url + 'auth/auths', headers=self._headers, verify=self.validateCert, timeout=4)
             if result.ok:
                 for v in sorted(result.json(), key=lambda x: x['priority']):
                     yield types.AuthenticatorType(
@@ -125,7 +137,18 @@ class REST:
             pass
 
 
-    def register(self, auth: str, username: str, password: str, ip: str, mac: str, preCommand: str, runOnceCommand: str, postCommand: str, logLevel: int) -> str:
+    def register(  #pylint: disable=too-many-arguments
+            self,
+            auth: str,
+            username: str,
+            password: str,
+            ip: str,
+            mac: str,
+            preCommand: str,
+            runOnceCommand: str,
+            postCommand: str,
+            logLevel: int
+        ) -> str:
         """
         Raises an exception if could not register, or registers and returns the "authorization token"
         """
@@ -138,155 +161,38 @@ class REST:
             'post_command': postCommand,
             'log_level': logLevel
         }
-        try:
-            # First, try to login
-            authInfo = {'auth': auth, 'username': username, 'password': password }
-            headers = self.headers
-            result = requests.post(self.url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self.validateCert)
-            if not result.ok or result.json()['result'] == 'error':
-                raise Exception()  # Invalid credentials
-        except (requests.ConnectionError, requests.ConnectTimeout) as e:
-            raise RESTConnectionError(str(e))
-        except Exception as e:
-            raise RESTError('Invalid credentials')
 
         try:
-            headers['X-Auth-Token'] = result.json()['token']
+            headers = self._login(auth, username, password)
             result = requests.post(self.url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self.validateCert)
             if result.ok:
                 return result.json()['result']
-        except (requests.ConnectionError, requests.ConnectTimeout) as e:
+        except requests.ConnectionError as e:
             raise RESTConnectionError(str(e))
-        except Exception as e:
+        except RESTError:
+            raise
+        except Exception:
             pass
 
         raise RESTError(result.content)
 
-    def _getUrl(self, method, key=None, ids=None):
-        url = self.url + method
-        params = []
-        if key is not None:
-            params.append('key=' + key)
-        if ids is not None:
-            params.append('id=' + ids)
-            params.append('version=' + VERSION)
-
-        if len(params) > 0:
-            url += '?' + '&'.join(params)
-
-        return url
-
-    def _request(self, url, data=None):
+    def readConfig(
+            self,
+            auth: str,
+            username: str,
+            password: str,
+            mac: str,
+            config: typing.Optional[types.ActorConfigurationType] = None
+        ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         try:
-            if data is None:
-                # Old requests version does not support verify, but they do not checks ssl certificate by default
-                if self.newerRequestLib:
-                    r = requests.get(url, verify=self.validateCert)
-                else:
-                    logger.debug('Requesting with old')
-                    r = requests.get(url)  # Always ignore certs??
-            else:
-                if data == '':
-                    data = '{"dummy": true}'  # Ensures no proxy rewrites POST as GET because body is empty...
-                if self.newerRequestLib:
-                    r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=self.validateCert)
-                else:
-                    logger.debug('Requesting with old')
-                    r = requests.post(url, data=data, headers={'content-type': 'application/json'})
-
-            # From versions of requests, content maybe bytes or str. We need str for json.loads
-            content = r.content
-            if not isinstance(content, str):
-                content = content.decode('utf8')
-            r = json.loads(content)  # Using instead of r.json() to make compatible with oooold rquests lib versions
-        except requests.exceptions.RequestException as e:
-            raise ConnectionError(e)
-        except Exception as e:
-            raise ConnectionError(exceptionToMessage(e))
-
-        ensureResultIsOk(r)
-
-        return r
-
-    @property
-    def isConnected(self):
-        return self.uuid is not None
-
-    def test(self):
-        url = self._getUrl('test', self.masterKey)
-        return self._request(url)['result']
-
-    def init(self, ids):
-        '''
-        Ids is a comma separated values indicating MAC=ip
-        Server returns:
-          uuid, mac
-          Optionally can return an third parameter, that is max "idle" request time
-        '''
-        logger.debug('Invoking init')
-        url = self._getUrl('init', key=self.masterKey, ids=ids)
-        res = self._request(url)['result']
-        logger.debug('Got response parameters: {}'.format(res))
-        self.uuid, self.mac = res[0:2]
-        # Optional idle parameter
-        try:
-            self.idle = int(res[2])
-            if self.idle < 30:
-                self.idle = None  # No values under 30 seconds are allowed :)
+            res = None
+            headers = self._login(auth, username, password)
+            result = requests.post(self.url + 'actor/v2/config', data=json.dumps(mac), headers=headers, verify=self.validateCert)
+            if result.ok:
+                res = result.json()['result']
         except Exception:
-            self.idle = None
+            pass
 
-        return self.uuid
-
-    def postMessage(self, msg, data, processData=True):
-        logger.debug('Invoking post message {} with data {}'.format(msg, data))
-
-        if self.uuid is None:
-            raise ConnectionError('REST api has not been initialized')
-
-        if processData:
-            if data and not isinstance(data, str):
-                data = data.decode('utf8')
-            data = json.dumps({'data': data})
-        url = self._getUrl('/'.join([self.uuid, msg]))
-        return self._request(url, data)['result']
-
-    def notifyComm(self, url):
-        logger.debug('Notifying comms {}'.format(url))
-        return self.postMessage('notifyComms', url)
-
-    def login(self, username):
-        logger.debug('Notifying login {}'.format(username))
-        return self.postMessage('login', username)
-
-    def logout(self, username):
-        logger.debug('Notifying logout {}'.format(username))
-        return self.postMessage('logout', username)
-
-    def information(self):
-        logger.debug('Requesting information'.format())
-        return self.postMessage('information', '')
-
-    def setReady(self, ipsInfo, hostName=None):
-        logger.debug('Notifying readyness: {}'.format(ipsInfo))
-        #    data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
-        data = {
-            'ips': ipsInfo,
-            'hostname': hostName
-        }
-        return self.postMessage('ready', data)
-
-    def notifyIpChanges(self, ipsInfo):
-        logger.debug('Notifying ip changes: {}'.format(ipsInfo))
-        data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
-        return self.postMessage('ip', data)
-
-    def getTicket(self, ticketId, secure=False):
-        url = self._getUrl('ticket/' + ticketId, self.masterKey) + "&secure={}".format('1' if secure else '0')
-        return self._request(url)['result']
-
-
-    def log(self, logLevel, message):
-        data = json.dumps({'message': message, 'level': logLevel})
-        return self.postMessage('log', data, processData=False)
-
+        if config:
+            config
+        return None
