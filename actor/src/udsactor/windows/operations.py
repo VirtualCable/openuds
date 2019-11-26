@@ -35,6 +35,7 @@ from ctypes.wintypes import DWORD, LPCWSTR
 import typing
 
 import win32com.client
+from win32com.shell import shell  # pylint: disable=no-name-in-module,import-error
 import win32net
 import win32security
 import win32api
@@ -42,6 +43,9 @@ import win32con
 
 from .. import types
 from ..log import logger
+
+def checkPermissions() -> bool:
+    return shell.IsUserAnAdmin()
 
 def getErrorMessage(resultCode: int = 0) -> str:
     # sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'

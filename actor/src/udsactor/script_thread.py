@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 201 Virtual Cable S.L.
+# Copyright (c) 2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,27 +25,23 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
-# pylint: disable-msg=E1101,W0703
+# pylint: disable=invalid-name
+import threading
 
 from udsactor.log import logger
 
-import threading
-import six
-
 
 class ScriptExecutorThread(threading.Thread):
-    def __init__(self, script):
+    def __init__(self, script: str) -> None:
         super(ScriptExecutorThread, self).__init__()
         self.script = script
 
-    def run(self):
+    def run(self) -> None:
         try:
             logger.debug('Executing script: {}'.format(self.script))
-            six.exec_(self.script, globals(), None)
+            exec(self.script, globals(), None)  # pylint: disable=exec-used
         except Exception as e:
             logger.error('Error executing script: {}'.format(e))

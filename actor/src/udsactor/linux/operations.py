@@ -106,6 +106,10 @@ def _getIpAndMac(ifname: str) -> typing.Tuple[typing.Optional[str], typing.Optio
     return (ip, mac)
 
 
+def checkPermissions() -> bool:
+    return os.getuid() == 0
+
+
 def getComputerName() -> str:
     '''
     Returns computer name, with no domain

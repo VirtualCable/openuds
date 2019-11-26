@@ -25,35 +25,40 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
-import servicemanager  # @UnresolvedImport, pylint: disable=import-error
+# pylint: disable=invalid-name
 import logging
 import os
 import tempfile
 
+import servicemanager  # @UnresolvedImport, pylint: disable=import-error
+
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))
 
+class LocalLogger:  # pylint: disable=too-few-public-methods
+    linux = False
+    windows = True
 
-class LocalLogger(object):
     def __init__(self):
         # tempdir is different for "user application" and "service"
         # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        logging.basicConfig(
-            filename=os.path.join(tempfile.gettempdir(), 'udsactor.log'),
-            filemode='a',
-            format='%(levelname)s %(asctime)s %(message)s',
-            level=logging.INFO
-        )
+        try:
+            logging.basicConfig(
+                filename=os.path.join(tempfile.gettempdir(), 'udsactor.log'),
+                filemode='a',
+                format='%(levelname)s %(asctime)s %(message)s',
+                level=logging.INFO
+            )
+        except Exception:
+            logging.basicConfig()  # basic init
+
         self.logger = logging.getLogger('udsactor')
         self.serviceLogger = False
 
-    def log(self, level, message):
+    def log(self, level: int, message: str) -> None:
         # Debug messages are logged to a file
         # our loglevels are 10000 (other), 20000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
@@ -69,9 +74,3 @@ class LocalLogger(object):
             servicemanager.LogWarningMsg(message)
         else:  # Error & Fatal
             servicemanager.LogErrorMsg(message)
-
-    def isWindows(self):
-        return True
-
-    def isLinux(self):
-        return False

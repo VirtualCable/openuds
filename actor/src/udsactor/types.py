@@ -13,6 +13,20 @@ class AuthenticatorType(typing.NamedTuple):
     priority: int
     isCustom: bool
 
+class ActorOsConfigurationType(typing.NamedTuple):
+    action: str
+    name: str
+    username: typing.Optional[str] = None
+    password: typing.Optional[str] = None
+    new_password: typing.Optional[str] = None
+    ad: typing.Optional[str] = None
+    ou: typing.Optional[str] = None
+
+class ActorDataConfigurationType(typing.NamedTuple):
+    unique_id: typing.Optional[str] = None
+    max_idle: typing.Optional[int] = None
+    os: typing.Optional[ActorOsConfigurationType] = None
+
 class ActorConfigurationType(typing.NamedTuple):
     host: str
     validateCertificate: bool
@@ -25,4 +39,9 @@ class ActorConfigurationType(typing.NamedTuple):
 
     log_level: int = 0
 
-    data: typing.Optional[typing.Dict[str, str]] = None
+    config: typing.Optional[ActorDataConfigurationType] = None
+
+    data: typing.Optional[typing.Dict[str, typing.Any]] = None
+
+class InitializationResultType(ActorDataConfigurationType):
+    own_token: typing.Optional[str] = None

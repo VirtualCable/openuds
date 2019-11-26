@@ -25,12 +25,10 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
+# pylint: disable=invalid-name
 import logging
 import os
 import tempfile
@@ -40,14 +38,16 @@ import six
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
 
 
-class LocalLogger(object):
+class LocalLogger:  # pylint: disable=too-few-public-methods
+    linux = False
+    windows = True
+
     def __init__(self):
         # tempdir is different for "user application" and "service"
         # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
         # Try to open logger at /var/log path
         # If it fails (access denied normally), will try to open one at user's home folder, and if
         # agaim it fails, open it at the tmpPath
-
         for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
             try:
                 fname = os.path.join(logDir, 'udsactor.log')
@@ -66,15 +66,9 @@ class LocalLogger(object):
         # Logger can't be set
         self.logger = None
 
-    def log(self, level, message):
+    def log(self, level: int, message: str) -> None:
         # Debug messages are logged to a file
         # our loglevels are 10000 (other), 20000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
         self.logger.log(int(level / 1000) - 10, message)
-
-    def isWindows(self):
-        return False
-
-    def isLinux(self):
-        return True

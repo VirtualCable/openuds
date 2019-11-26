@@ -34,15 +34,10 @@ import pickle
 import winreg as wreg
 import win32security
 
-from win32com.shell import shell  # pylint: disable=no-name-in-module,import-error
-
 from .. import types
 
 PATH = 'Software\\UDSActor'
 BASEKEY = wreg.HKEY_LOCAL_MACHINE
-
-def checkPermissions() -> bool:
-    return shell.IsUserAnAdmin()
 
 def fixRegistryPermissions(handle) -> None:
     # Fix permissions so users can't read this key
@@ -64,7 +59,6 @@ def fixRegistryPermissions(handle) -> None:
         dacl,
         None
     )
-
 
 def readConfig() -> types.ActorConfigurationType:
     try:

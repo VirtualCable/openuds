@@ -54,7 +54,7 @@ class UDSConfigDialog(QDialog):
     def __init__(self):
         QDialog.__init__(self, None)
         # Get local config config
-        config: udsactor.types.ActorConfigurationType = udsactor.store.readConfig()
+        config: udsactor.types.ActorConfigurationType = udsactor.platform.store.readConfig()
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
         self.ui.host.setText(config.host)
@@ -109,13 +109,13 @@ class UDSConfigDialog(QDialog):
 
     def registerWithUDS(self):
         # Get network card. Will fail if no network card is available, but don't mind (not contempled)
-        data: udsactor.types.InterfaceInfoType = next(udsactor.operations.getNetworkInfo())
+        data: udsactor.types.InterfaceInfoType = next(udsactor.platform.operations.getNetworkInfo())
         try:
             token = self.api.register(
                 self.ui.authenticators.currentData().auth,
                 self.ui.username.text(),
                 self.ui.password.text(),
-                udsactor.operations.getComputerName(),
+                udsactor.platform.operations.getComputerName(),
                 data.ip or '',           # IP
                 data.mac or '',          # MAC
                 self.ui.preCommand.text(),
@@ -124,7 +124,7 @@ class UDSConfigDialog(QDialog):
                 self.ui.logLevelComboBox.currentIndex()  # Loglevel
             )
             # Store parameters on register for later use, notify user of registration
-            udsactor.store.writeConfig(
+            udsactor.platform.store.writeConfig(
                 udsactor.types.ActorConfigurationType(
                     host=self.ui.host.text(),
                     validateCertificate=self.ui.validateCertificate.currentIndex() == 1,
@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
-    if udsactor.store.checkPermissions() is False:
+    if udsactor.platform.operations.checkPermissions() is False:
         QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)
         sys.exit(1)
 

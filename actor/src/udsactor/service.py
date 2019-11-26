@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,21 +25,10 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
-from udsactor.log import logger
-
-from . import operations
-from . import store
-from . import REST
-from . import ipc
-from . import httpserver
-from .scriptThread import ScriptExecutorThread
-from .utils import exceptionToMessage
+# pylint: disable=invalid-name
 
 import socket
 import time
@@ -49,51 +38,39 @@ import subprocess
 import shlex
 import stat
 import json
+import typing
 
-IPC_PORT = 39188
-
-cfg = None
-
-
-def initCfg():
-    global cfg  # pylint: disable=global-statement
-    cfg = store.readConfig()
-
-    if logger.logger.isWindows():
-        # Logs will also go to windows event log for services
-        logger.logger.serviceLogger = True
-
-    if cfg is not None:
-        logger.setLevel(cfg.get('logLevel', 20000))
-    else:
-        logger.setLevel(20000)
-        cfg = {}
-
-    # If ANY var is missing, reset cfg
-    for v in ('host', 'ssl', 'masterKey'):
-        if v not in cfg:
-            cfg = None
-            break
-
-    return cfg
+from . import platform
+from . import rest
+from . import types
+from .script_thread import ScriptExecutorThread
+from .utils import exceptionToMessage
+from .log import logger
 
 
-class CommonService(object):
+# def setup() -> None:
+#     cfg = platform.store.readConfig()
 
-    def __init__(self):
-        self.isAlive = True
-        self.api = None
-        self.ipc = None
-        self.httpServer = None
-        self.rebootRequested = False
-        self.knownIps = []
-        self.loggedIn = False
-        socket.setdefaulttimeout(20)
+#     if logger.logger.windows:
+#         # Logs will also go to windows event log for services
+#         logger.logger.serviceLogger = True
 
-    def reboot(self):
-        self.rebootRequested = True
+#     if cfg.x:
+#         logger.setLevel(cfg.get('logLevel', 20000))
+#     else:
+#         logger.setLevel(20000)
 
-    def execute(self, cmdLine, section):  # pylint: disable=no-self-use
+
+class CommonService:
+    _isAlive: bool = True
+    _rebootRequested: bool = False
+    _loggedIn = False
+    _cfg: types.ActorConfigurationType
+    _api: rest.REST
+    _interfaces: typing.List[types.InterfaceInfoType]
+
+    @staticmethod
+    def execute(cmdLine: str, section: str):
         cmd = shlex.split(cmdLine, posix=False)
 
         if os.path.isfile(cmd[0]):
@@ -105,70 +82,59 @@ class CommonService(object):
                     return False
                 logger.info('Result of executing cmd was {}'.format(res))
                 return True
-            else:
-                logger.error('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
+            logger.error('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
         else:
             logger.error('{} file not found & not executed'.format(section))
 
         return False
 
-    def setReady(self):
-        self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
+    def __init__(self):
+        self._cfg = platform.store.readConfig()
+        self._interfaces = []
+        self._api = rest.REST(self._cfg.host, self._cfg.validateCert)
 
-    def interactWithBroker(self):
-        '''
-        Returns True to continue to main loop, false to stop & exit service
-        '''
-        # If no configuration is found, stop service
-        if cfg is None:
-            logger.fatal('No configuration found, stopping service')
+        socket.setdefaulttimeout(20)
+
+    def reboot(self) -> None:
+        self._rebootRequested = True
+
+    def setReady(self) -> None:
+        if self._cfg.own_token and self._interfaces:
+            self._api.ready(self._cfg.own_token, self._interfaces)
+
+    def initialize(self) -> bool:
+        if not self._cfg.host:  # Not configured
             return False
 
-        self.api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'])
-
         # Wait for Broker to be ready
-        counter = 0
-        while self.isAlive:
-            try:
-                # getNetworkInfo is a generator function
-                netInfo = tuple(operations.getNetworkInfo())
-                self.knownIps = dict(((i.mac, i.ip) for i in netInfo))
-                ids = ','.join([i.mac for i in netInfo])
-                if ids == '':
-                    # Wait for any network interface to be ready
-                    logger.debug('No valid network interfaces found, retrying in a while...')
-                    raise Exception()
-                logger.debug('Ids: {}'.format(ids))
-                self.api.init(ids)
-                # Set remote logger to notify log info to broker
-                logger.setRemoteLogger(self.api)
+        while self._isAlive:
+            if not self._interfaces:
+                self._interfaces = list(platform.operations.getNetworkInfo())
+                continue
 
-                break
-            except REST.InvalidKeyError:
-                logger.fatal('Can\'t sync with broker: Invalid broker Master Key')
-                return False
-            except REST.UnmanagedHostError:
-                # Maybe interface that is registered with broker is not enabled already?
-                # Right now, we thing that the interface connected to broker is
-                # the interface that broker will know, let's see how this works
-                logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
-                return False  # On unmanaged hosts, there is no reason right now to continue running
-            except Exception as e:
-                logger.debug('Exception on network info: retrying')
-                # Any other error is expectable and recoverable, so let's wait a bit and retry again
-                # but, if too many errors, will log it (one every minute, for
-                # example)
-                counter += 1
-                if counter % 60 == 0:  # Every 5 minutes, raise a log
-                    logger.info('Trying to inititialize connection with broker (last error: {})'.format(exceptionToMessage(e)))
-                # Wait a bit before next check
-                self.doWait(5000)
+            try:
+                # If master token is present, initialize and get configuration data
+                if self._cfg.master_token:
+                    initResult: types.InitializationResultType = self._api.initialize(self._cfg.master_token, self._interfaces)
+                    if not initResult.own_token:  # Not managed
+                        logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
+                        return False
+                break  # Initial configuration done..
+            except rest.RESTConnectionError:
+                logger.info('Trying to inititialize connection with broker (last error: {})'.format(exceptionToMessage(e)))
+                self.doWait(5000)  # Wait a bit and retry
+            except rest.RESTError as e: # Invalid key?
+                logger.error('Error validating with broker. (Invalid token?): {}'.format(e))
+
+        self._cfg.own_token = initResult.own_token
+        self._cfg.master_token = None
 
         # Now try to run the "runonce" element
-        runOnce = store.runApplication()
-        if runOnce is not None:
+        if self._cfg.runonce_command:
             logger.info('Executing runOnce app: {}'.format(runOnce))
-            if self.execute(runOnce, 'RunOnce') is True:
+            if self.execute(self._cfg.runonce_command, 'RunOnce'):
+                self._cfg.runonce_command = None
+                platform.store.writeConfig(self._cfg)
                 # operations.reboot()
                 return False
 

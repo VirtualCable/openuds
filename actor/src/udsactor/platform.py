@@ -28,11 +28,9 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from . import types
-from . import rest
-from . import platform
+import sys
 
-__title__ = 'udsactor'
-__author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
-__license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014-2019 VirtualCable S.L.U."
+if sys.platform == 'win32':
+    from .windows import operations, store  # pylint: disable=unused-import
+else:
+    from .linux import operations, store  # pylint: disable=unused-import

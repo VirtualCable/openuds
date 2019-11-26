@@ -25,10 +25,10 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=invalid-name
 import os
 import configparser
 import base64
@@ -38,15 +38,15 @@ from .. import types
 
 CONFIGFILE = '/etc/udsactor/udsactor.cfg'
 
-def checkPermissions() -> bool:
-    return os.getuid() == 0
-
 def readConfig() -> types.ActorConfigurationType:
     try:
         cfg = configparser.ConfigParser()
         cfg.read(CONFIGFILE)
         uds: configparser.SectionProxy = cfg['uds']
         # Extract data:
+        base64Config = uds.get('config', None)
+        config = pickle.loads(base64.b64decode(base64Config.encode())) if base64Config else None
+
         base64Data = uds.get('data', None)
         data = pickle.loads(base64.b64decode(base64Data.encode())) if base64Data else None
 
@@ -59,6 +59,7 @@ def readConfig() -> types.ActorConfigurationType:
             runonce_command=uds.get('runonce_command', None),
             post_command=uds.get('post_command', None),
             log_level=int(uds.get('log_level', '1')),
+            config=config,
             data=data
         )
     except Exception:
@@ -80,6 +81,9 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     writeIfValue(config.post_command, 'post_command')
     writeIfValue(config.runonce_command, 'runonce_command')
     uds['log_level'] = str(config.log_level)
+    if config.config:  # Special case, encoded & dumped
+        uds['config'] = base64.b64encode(pickle.dumps(config.config)).decode()
+
     if config.data:  # Special case, encoded & dumped
         uds['data'] = base64.b64encode(pickle.dumps(config.data)).decode()
 
