@@ -45,7 +45,7 @@ class UUIDModel(models.Model):
     """
     uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         abstract = True
 
     def genUuid(self) -> str:
@@ -53,7 +53,7 @@ class UUIDModel(models.Model):
 
     # Override default save to add uuid
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if self.uuid is None or self.uuid == '':
+        if not self.uuid:
             self.uuid = self.genUuid()
         elif self.uuid != self.uuid.lower():
             self.uuid = self.uuid.lower()  # If we modify uuid elsewhere, ensure that it's stored in lower case

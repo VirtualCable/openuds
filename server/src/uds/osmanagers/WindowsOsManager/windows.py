@@ -109,9 +109,6 @@ class WindowsOsManager(osmanagers.OSManager):
         pass
 
     def getName(self, userService: 'UserService') -> str:
-        """
-        gets name from deployed
-        """
         return userService.getName()
 
     def infoVal(self, userService: 'UserService') -> str:
@@ -152,6 +149,24 @@ class WindowsOsManager(osmanagers.OSManager):
     # default "ready received" does nothing
     def readyReceived(self, userService, data):
         pass
+
+    def loginNotified(self, userService, userName=None):
+        if '\\' not in userName:
+            self.loggedIn(userService, userName)
+
+    def logoutNotified(self, userService, userName=None):
+        self.loggedOut(userService, userName)
+        if self.isRemovableOnLogout(userService):
+            userService.release()
+
+    def readyNotified(self, userService):
+        return
+
+    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+        return {
+            'action': 'rename',
+            'name': userService.getName()
+        }
 
     def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str: # pylint: disable=too-many-branches
         """

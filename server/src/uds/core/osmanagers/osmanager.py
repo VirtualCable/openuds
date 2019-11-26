@@ -95,14 +95,47 @@ class OSManager(Module):
         @return nothing
         """
 
-    # These methods must be overriden
     def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str:
         """
-        This method must be overriden so your so manager can manage requests and responses from agent.
         @param userService: Service that sends the request (virtual machine or whatever)
         @param message: message to process (os manager dependent)
         @param data: Data for this message
+
+        Note: this method is deprecated and will be removed on a future release, when pre 3.0 actors support will be drop
+        For now, this method will be kept on exising os managers for compatibility with old actors, but is not required for
+        new os managers (that will only be available on actor 3.0) anymore
         """
+        return ''
+
+    # These methods must be overriden
+    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+        """
+        This method provides information to actor, so actor can complete os configuration.
+        Currently exists 3 types of os managers
+        * rename vm and do NOT ADD to AD
+          {
+              'action': 'rename',
+              'name': 'xxxxxx'
+          }
+        * rename vm and ADD to AD
+          {
+              'action': 'renameAD',
+              'name': 'xxxxxxx',
+              'ad': 'domain.xxx'
+              'ou': 'ou'   # or '' if default ou
+              'username': 'userwithaddmachineperms@domain.xxxx'
+              'password': 'passwordForTheUserWithPerms',
+          }
+        * rename vm, do NOT ADD to AD, and change password for an user
+          {
+              'action': 'rename_and_pw'
+              'name': 'xxxxx'
+              'username': 'username to change pass'
+              'password': 'current password for username to change password'
+              'newpassword': 'new password to be set for the username'
+          }
+        """
+        return {}
 
     def checkState(self, userService: 'UserService') -> str:
         """
@@ -239,6 +272,17 @@ class OSManager(Module):
         log.doLog(userService, log.INFO, "User {0} has logged out".format(userName), log.OSMANAGER)
 
         log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
+
+    def loginNotified(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+        self.loggedIn(userService, userName)
+
+    def logoutNotified(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+        self.loggedOut(userService, userName)
+
+    def readyNotified(self, userService: 'UserService') -> None:
+        """
+        Invoked by actor v2 whenever a service is set as "ready"
+        """
 
     def isPersistent(self) -> bool:
         """

@@ -90,10 +90,10 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
 
         cache = Cache('auth')
         cacheKey = str(authenticator.id) + userName
-        tries = cache.get(cacheKey)
-        if tries is None:
-            tries = 0
-        if authenticator.getInstance().blockUserOnLoginFailures is True and tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
+        tries = cache.get(cacheKey) or 0
+        triesByIp = cache.get(request.ip) or 0
+        maxTries = GlobalConfig.MAX_LOGIN_TRIES.getInt()
+        if (authenticator.getInstance().blockUserOnLoginFailures is True and (tries >= maxTries) or triesByIp >= maxTries):
             authLogLogin(request, authenticator, userName, 'Temporarily blocked')
             return (None, _('Too many authentication errrors. User temporarily blocked'))
 
@@ -106,8 +106,8 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
 
         if user is None:
             logger.debug("Invalid user %s (access denied)", userName)
-            tries += 1
-            cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
+            cache.put(cacheKey, tries+1, GlobalConfig.LOGIN_BLOCK.getInt())
+            cache.put(request.ip, triesByIp+1, GlobalConfig.LOGIN_BLOCK.getInt())
             authLogLogin(request, authenticator, userName, 'Access denied (user not allowed by UDS)')
             return (None, _('Access denied'))
 

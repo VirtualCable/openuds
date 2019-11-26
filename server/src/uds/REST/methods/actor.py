@@ -237,6 +237,8 @@ class Actor(Handler):
                     return 'ok'
                 raise Exception('Unknown message {} for an user service without os manager'.format(message))
             res = osmanager.process(service, message, data, options={'scramble': False})
+            if not res:
+                raise Exception('Old Actors not supported by this os Manager!')
         except Exception as e:
             logger.exception("Exception processing from OS Manager")
             return Actor.result(str(e), ERR_OSMANAGER_ERROR)

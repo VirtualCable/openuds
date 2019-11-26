@@ -48,4 +48,4 @@ class ActorToken(models.Model):
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
     def __str__(self):
-        return '<ActorToken {} created on {} by {} from {}/{}>'.format(self.token, self.stamp, self.username, self.ip_from, self.ip)
+        return '<ActorToken {} created on {} by {} from {}/{}>'.format(self.token, self.stamp, self.username, self.hostname, self.ip_from)

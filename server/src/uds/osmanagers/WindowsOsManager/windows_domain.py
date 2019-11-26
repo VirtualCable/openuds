@@ -156,9 +156,10 @@ class WinDomainOsManager(WindowsOsManager):
 
         raise ldaputil.LDAPError(_str)
 
-    def __getGroup(self, ldapConnection: typing.Any) -> str:
+    def __getGroup(self, ldapConnection: typing.Any) -> typing.Optional[str]:
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
         group = ldaputil.escape(self._group)
+        obj: typing.Optional[typing.MutableMapping[str, typing.Any]]
         try:
             obj = next(ldaputil.getAsDict(ldapConnection, base, "(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(group), ['dn'], sizeLimit=50))
         except StopIteration:
@@ -176,6 +177,7 @@ class WinDomainOsManager(WindowsOsManager):
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
 
         fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(ldaputil.escape(machineName))
+        obj: typing.Optional[typing.MutableMapping[str, typing.Any]]
         try:
             obj = next(ldaputil.getAsDict(ldapConnection, base, fltr, ['dn'], sizeLimit=50))
         except StopIteration:
@@ -186,7 +188,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return obj['dn']  # Returns the DN
 
-    def readyReceived(self, userService: 'UserService', data: str) -> None:
+    def readyNotified(self, userService: 'UserService') -> None:
         # No group to add
         if self._group == '':
             return
@@ -227,7 +229,7 @@ class WinDomainOsManager(WindowsOsManager):
             log.doLog(userService, log.WARN, error, log.OSMANAGER)
             logger.error(error)
 
-    def release(self, userService: 'UserSrevice') -> None:
+    def release(self, userService: 'UserService') -> None:
         super().release(userService)
 
         # If no removal requested, just return
@@ -266,7 +268,7 @@ class WinDomainOsManager(WindowsOsManager):
         try:
             ldapConnection = self.__connectLdap()
         except ldaputil.LDAPError as e:
-            return _('Check error: {}').format(self.__getLdapError(e))
+            return _('Check error: {}').format(e)
         except dns.resolver.NXDOMAIN:
             return _('Could not find server parameters (_ldap._tcp.{0} can\'t be resolved)').format(self._domain)
         except Exception as e:
@@ -276,7 +278,7 @@ class WinDomainOsManager(WindowsOsManager):
         try:
             ldapConnection.search_st(self._ou, ldap.SCOPE_BASE)  # @UndefinedVariable
         except ldaputil.LDAPError as e:
-            return _('Check error: {}').format(self.__getLdapError(e))
+            return _('Check error: {}').format(e)
 
         # Group
         if self._group != '':
@@ -289,14 +291,13 @@ class WinDomainOsManager(WindowsOsManager):
     @staticmethod
     def test(env: 'Environment', data: typing.Dict[str, str]) -> typing.List[typing.Any]:
         logger.debug('Test invoked')
-        wd: typing.Optional[WinDomainOsManager] = None
         try:
-            wd = WinDomainOsManager(env, data)
+            wd: WinDomainOsManager = WinDomainOsManager(env, data)
             logger.debug(wd)
             try:
                 ldapConnection = wd.__connectLdap()
             except ldaputil.LDAPError as e:
-                return [False, _('Could not access AD using LDAP ({0})').format(wd.__getLdapError(e))]
+                return [False, _('Could not access AD using LDAP ({0})').format(e)]
 
             ou = wd._ou
             if ou == '':
@@ -317,6 +318,16 @@ class WinDomainOsManager(WindowsOsManager):
             return [False, str(e)]
 
         return [True, _("All parameters seem to work fine.")]
+
+    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+        return {
+            'action': 'rename_and_pw',
+            'name': userService.getName(),
+            'ad': self._domain,
+            'ou': self._ou,
+            'username': self._account,
+            'password': self._password,
+        }
 
     def infoVal(self, userService: 'UserService') -> str:
         return 'domain:{0}\t{1}\t{2}\t{3}\t{4}'.format(self.getName(userService), self._domain, self._ou, self._account, self._password)
@@ -354,7 +365,7 @@ class WinDomainOsManager(WindowsOsManager):
             self._serverHint = values[7]
         else:
             self._serverHint = ''
-            
+
         if values[0] == 'v4':
             self._ssl = values[8]
             self._removeOnExit = values[9]
@@ -373,5 +384,5 @@ class WinDomainOsManager(WindowsOsManager):
         dct['grp'] = self._group
         dct['serverHint'] = self._serverHint
         dct['ssl'] = self._ssl == 'y'
-        dct['removeOnExit'] = self._removeOnExit == 'y' 
+        dct['removeOnExit'] = self._removeOnExit == 'y'
         return dct

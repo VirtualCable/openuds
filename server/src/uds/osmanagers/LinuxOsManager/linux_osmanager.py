@@ -143,6 +143,28 @@ class LinuxOsManager(osmanagers.OSManager):
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
+    # default "ready received" does nothing
+    def readyReceived(self, userService, data):
+        pass
+
+    def loginNotified(self, userService, userName=None):
+        if '\\' not in userName:
+            self.loggedIn(userService, userName)
+
+    def logoutNotified(self, userService, userName=None):
+        self.loggedOut(userService, userName)
+        if self.isRemovableOnLogout(userService):
+            userService.release()
+
+    def readyNotified(self, userService):
+        return
+
+    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+        return {
+            'action': 'rename',
+            'name': userService.getName()
+        }
+
     def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str:
         """
         We understand this messages:

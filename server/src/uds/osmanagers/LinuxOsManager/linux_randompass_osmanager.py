@@ -30,6 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import random
+import string
 import logging
 import typing
 
@@ -74,8 +76,6 @@ class LinuxRandomPassManager(LinuxOsManager):
         return username, password
 
     def genPassword(self, service):
-        import random
-        import string
         randomPass = service.recoverValue('linOsRandomPass')
         if randomPass is None:
             randomPass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16))
@@ -89,6 +89,15 @@ class LinuxRandomPassManager(LinuxOsManager):
 
     def infoValue(self, service):
         return 'rename\r{0}\t{1}\t\t{2}'.format(self.getName(service), self._userAccount, self.genPassword(service))
+
+    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+        return {
+            'action': 'rename_and_pw',
+            'name': userService.getName(),
+            'username': self._userAccount,
+            'password': '',  # On linux, user password is not needed so we provide an empty one
+            'newpassword': self.genPassword(userService)
+        }
 
     def marshal(self) -> bytes:
         """

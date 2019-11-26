@@ -34,12 +34,27 @@ import secrets
 import logging
 import typing
 
-from uds.models import getSqlDatetimeAsUnix, getSqlDatetime, ActorToken
+from uds.models import (
+    getSqlDatetimeAsUnix,
+    getSqlDatetime,
+    ActorToken,
+    UserService
+)
 
 from uds.core import VERSION
-from ..handlers import Handler
+from uds.core.util.state import State
+from uds.core.util.cache import Cache
+from uds.core.util.config import GlobalConfig
+
+from ..handlers import Handler, AccessDenied, RequestError
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core import osmanagers
 
 logger = logging.getLogger(__name__)
+
+ALLOWED_FAILS = 5
 
 def actorResult(result: typing.Any = None, error: typing.Optional[str] = None) -> typing.MutableMapping[str, typing.Any]:
     result = result or ''
@@ -47,6 +62,19 @@ def actorResult(result: typing.Any = None, error: typing.Optional[str] = None) -
     if error:
         res['error'] = error
     return res
+
+def checkBlockedIp(ip: str)-> None:
+    cache = Cache('actorv2')
+    fails = cache.get(ip) or 0
+    if fails > ALLOWED_FAILS:
+        logger.info('Access to actor from %s is blocked for %s seconds since last fail', ip, GlobalConfig.LOGIN_BLOCK.getInt())
+        raise Exception()
+
+def incFailedIp(ip: str) -> None:
+    cache = Cache('actorv2')
+    fails = (cache.get(ip) or 0) + 1
+    cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
+
 
 # Enclosed methods under /actor path
 class ActorV2(Handler):
@@ -70,7 +98,7 @@ class ActorV2Action(Handler):
     path = 'actor/v2'
 
     def get(self):
-        return actorResult('')
+        return actorResult(VERSION)
 
 class ActorV2Register(ActorV2Action):
     """
@@ -115,15 +143,92 @@ class ActorV2Initiialize(ActorV2Action):
     Information about machine action.
     Also returns the id used for the rest of the actions. (Only this one will use actor key)
     """
-    name = 'initiaize'
+    name = 'initialize'
 
-    def post(self):
+    def get(self) -> typing.MutableMapping[str, typing.Any]:
+        """
+        Processes get requests. Basically checks if this is a "postThoughGet" for OpenGnsys or similar
+        """
+        if self._args[0] == 'PostThoughGet':
+            self._args = self._args[1:]  # Remove first argument
+            return self.post()
+
+        raise RequestError('Invalid request')
+
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        """
+        Initialize method expect a json POST with this fields:
+            * version: str -> Actor version
+            * token: str -> Valid Actor Token (if invalid, will return an error)
+            * id: List[dict] -> List of dictionary containing id and mac:
+        Will return on field "result" a dictinary with:
+            * own_token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
+            * unique_id: Optional[str] -> If not None, unique id for the service
+            * max_idle: Optional[int] -> If not None, max configured Idle for the vm
+            * os: Optional[dict] -> Data returned by os manager for setting up this service. 
+        On  error, will return Empty (None) result, and error field
+        Example:
+             {
+                 'version': '3.0',
+                 'token': 'asbdasdf',
+                 'maxIdle': 99999 or None,
+                 'id': [
+                     {
+                        'mac': 'xxxxx',
+                        'ip': 'vvvvvvvv'
+                     }, ...
+                 ]
+             }
+        """
+        # First, validate token...
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
+        try:
+            checkBlockedIp(self._request.ip)  # Raises an exception if ip is temporarily blocked
+            ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
+            # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
+            try:
+                userService: UserService = next(
+                    iter(UserService.objects.filter(
+                        unique_id__in=[i['mac'] for i in self._params.get('id')[:5]],
+                        state__in=[State.USABLE, State.PREPARING]
+                    ))
+                )
+            except Exception as e:
+                logger.info('Unmanaged host request: %s, %s', self._params, e)
+                return actorResult({
+                    'own_token': None,
+                    'max_idle': None,
+                    'unique_id': None,
+                    'os': None
+                })
+
+            # Managed by UDS, get initialization data from osmanager and return it
+            # Set last seen actor version
+            userService.setProperty('actor_version', self._params['version'])
+            maxIdle = None
+            osData: typing.MutableMapping[str, typing.Any] = {}
+            if userService.deployed_service.osmanager:
+                osManager: 'osmanagers.OSManager' = userService.deployed_service.osmanager.getInstance()
+                maxIdle = osManager.maxIdle()
+                logger.debug('Max idle: %s', maxIdle)
+                osData = osManager.actorData(userService)
+
+            return actorResult({
+                'own_token': userService.uuid,
+                'unique_id': userService.unique_id,
+                'max_idle': maxIdle,
+                'os': osData
+            })
+        except ActorToken.DoesNotExist:
+            incFailedIp(self._request.ip)  # For blocking attacks
+        except Exception:
+            pass
+
+        raise AccessDenied('Access denied')
 
 class ActorV2Login(ActorV2Action):
     """
-    Information about machine
+    Notifies user logged out
     """
     name = 'login'
 
@@ -133,7 +238,7 @@ class ActorV2Login(ActorV2Action):
 
 class ActorV2Logout(ActorV2Action):
     """
-    Information about machine
+    Notifies user logged in
     """
     name = 'logout'
 
@@ -143,7 +248,7 @@ class ActorV2Logout(ActorV2Action):
 
 class ActorV2Log(ActorV2Action):
     """
-    Information about machine
+    Sends a log from the service
     """
     name = 'log'
 
@@ -153,7 +258,7 @@ class ActorV2Log(ActorV2Action):
 
 class ActorV2IpChange(ActorV2Action):
     """
-    Information about machine
+    Notifies an IP change
     """
     name = 'ipchange'
 
@@ -163,9 +268,19 @@ class ActorV2IpChange(ActorV2Action):
 
 class ActorV2Ready(ActorV2Action):
     """
-    Information about machine
+    Notifies the service is ready
     """
     name = 'ready'
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2Ticket(ActorV2Action):
+    """
+    Gets an stored ticket
+    """
+    name = 'ticket'
 
     def post(self):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)

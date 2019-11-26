@@ -96,6 +96,15 @@ class WinRandomPassManager(WindowsOsManager):
             log.doLog(userService, log.INFO, "Password set to \"{}\"".format(randomPass), log.OSMANAGER)
         return randomPass
 
+    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+        return {
+            'action': 'rename_and_pw',
+            'name': userService.getName(),
+            'username': self._userAccount,
+            'password': self._password,
+            'newpassword': self.genPassword(userService)
+        }
+
     def infoVal(self, userService: 'UserService') -> str:
         return 'rename:{0}\t{1}\t{2}\t{3}'.format(self.getName(userService), self._userAccount, self._password, self.genPassword(userService))
 
