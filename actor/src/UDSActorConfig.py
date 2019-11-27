@@ -77,6 +77,8 @@ class UDSConfigDialog(QDialog):
     def browse(self, lineEdit: 'QLineEdit', caption: str) -> None:
         name = QFileDialog.getOpenFileName(parent=self, caption=caption, directory=os.path.dirname(lineEdit.text()))[0]
         if name:
+            if ' ' in name:
+                name = '"' + name + '"'
             lineEdit.setText(os.path.normpath(name))
 
     def browsePreconnect(self) -> None:

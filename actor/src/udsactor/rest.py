@@ -193,7 +193,7 @@ class REST:
                 os = r['os']
                 return types.InitializationResultType(
                     own_token=r['own_token'],
-                    unique_id=r['unique_id'],
+                    unique_id=r['unique_id'].lower(),
                     max_idle=r['max_idle'],
                     os=types.ActorOsConfigurationType(
                         action=os['action'],

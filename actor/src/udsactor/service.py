@@ -67,28 +67,19 @@ class CommonService:
     _interfaces: typing.List[types.InterfaceInfoType]
 
     @staticmethod
-    def execute(cmdLine: str, section: str):
-        cmd = shlex.split(cmdLine, posix=False)
+    def execute(cmdLine: str, section: str) -> bool:
+        try:
+            res = subprocess.check_call(cmdLine)
+        except Exception as e:
+            logger.error('Got exception executing: {} - {} - {}'.format(section, cmdLine, e))
+            return False
+        logger.info('Result of executing cmd for {} was {}'.format(section, res))
+        return True
 
-        if os.path.isfile(cmd[0]):
-            if (os.stat(cmd[0]).st_mode & stat.S_IXUSR) != 0:
-                try:
-                    res = subprocess.check_call(cmd)
-                except Exception as e:
-                    logger.error('Got exception executing: {} - {}'.format(cmdLine, e))
-                    return False
-                logger.info('Result of executing cmd was {}'.format(res))
-                return True
-            logger.error('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
-        else:
-            logger.error('{} file not found & not executed'.format(section))
-
-        return False
-
-    def __init__(self):
+    def __init__(self) -> None:
         self._cfg = platform.store.readConfig()
         self._interfaces = []
-        self._api = rest.REST(self._cfg.host, self._cfg.validateCert)
+        self._api = rest.REST(self._cfg.host, self._cfg.validateCertificate)
 
         socket.setdefaulttimeout(20)
 
@@ -96,18 +87,34 @@ class CommonService:
         self._rebootRequested = True
 
     def setReady(self) -> None:
+        # First, if postconfig is available, execute it and disable it
+        if self._cfg.post_command:
+            self.execute(self._cfg.post_command, 'postConfig')
+            self._cfg = self._cfg._replace(post_command=None)
+            platform.store.writeConfig(self._cfg)
+
         if self._cfg.own_token and self._interfaces:
             self._api.ready(self._cfg.own_token, self._interfaces)
             # Cleans sensible data
-            if self._cfg.config:
-                self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
-                platform.store.writeConfig(self._cfg)
+        if self._cfg.config:
+            self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
+            platform.store.writeConfig(self._cfg)
 
     def configureMachine(self) -> bool:
-        # Retry configurations, config in case of error 10 times
-        counter = 1
-        while counter < 10 and self._isAlive:
-            counter += 1
+        # First, if runonce is present, honor it and remove it from config
+        # Return values is "True" for keep service (or daemon) running, False if Stop it.
+        if self._cfg.runonce_command:
+            runOnce = self._cfg.runonce_command
+            self._cfg = self._cfg._replace(runonce_command=None)
+            platform.store.writeConfig(self._cfg)
+            if self.execute(runOnce, "runOnce"):
+            # If runonce is present, will not do anythin more
+            # So we have to ensure that, when runonce command is finished, reboots the machine.
+            # That is, the COMMAND itself has to restart the machine!
+                return False   # If the command fails, continue with the rest of the operations...
+
+        # Retry configuration while not stop service, config in case of error 10 times
+        while self._isAlive:
             try:
                 if self._cfg.config and self._cfg.config.os:
                     osData = self._cfg.config.os
@@ -121,10 +128,10 @@ class CommonService:
                             platform.operations.reboot()
                         except Exception as e:
                             logger.error('Exception on reboot: {}'.format(e))
-                        return False  # Stops service
+                        return False  # Stops service if reboot was requested ofc
                 break
             except Exception as e:
-                logger.error('Got exception operationg machine: {}'.format(e))
+                logger.error('Got exception operating machine: {}'.format(e))
                 self.doWait(5000)
 
         return True
@@ -169,29 +176,28 @@ class CommonService:
             except rest.RESTError as e: # Invalid key?
                 logger.error('Error validating with broker. (Invalid token?): {}'.format(e))
 
-        self.configureMachine()
-
-        return True
+        return self.configureMachine()
 
     def checkIpsChanged(self):
         if not self._cfg.own_token or not self._cfg.config or not self._cfg.config.unique_id:
             # Not enouth data do check
             return
 
+        unique_id = self._cfg.config.unique_id
         def locateMac(interfaces: typing.Iterable[types.InterfaceInfoType]) -> typing.Optional[types.InterfaceInfoType]:
             try:
-                return next(x for x in interfaces if x.mac.lower() == self._cfg.config.unique_id.lower())
+                return next(x for x in interfaces if x.mac.lower() == unique_id)
             except StopIteration:
                 return None
 
         try:
-            oldIp = locateMac(self._interfaces)
-            newIp = locateMac(platform.operations.getNetworkInfo())
-            if not newIp:
+            old: types.InterfaceInfoType = locateMac(self._interfaces)
+            new: types.InterfaceInfoType = locateMac(platform.operations.getNetworkInfo())
+            if not new:
                 raise Exception('No ip currently available for {}'.format(self._cfg.config.unique_id))
-            if oldIp != newIp:
-                self._api.notifyIpChange(self._cfg.own_token, newIp)
-                logger.info('Ip changed from {} to {}. Notified to UDS'.format(oldIp, newIp))
+            if old.ip != new.ip:
+                self._api.notifyIpChange(self._cfg.own_token, new.ip)
+                logger.info('Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip))
         except Exception as e:
             # No ip changed, log exception for info
             logger.warn('Checking ips faield: {}'.format(e))
@@ -199,45 +205,58 @@ class CommonService:
     # ***************************************************
     # Methods that ARE overriden by linux & windows Actor
     # ***************************************************
-    def rename(self, name: str, user: typing.Optional[str] = None, oldPassword: typing.Optional[str] = None, newPassword: typing.Optional[str] = None):
+    def rename(  # pylint: disable=unused-argument
+            self,
+            name: str,
+            user: typing.Optional[str] = None,
+            oldPassword: typing.Optional[str] = None,
+            newPassword: typing.Optional[str] = None
+        ) -> None:
         '''
         Invoked when broker requests a rename action
-        MUST BE OVERRIDEN
+        default does nothing
         '''
-        raise NotImplementedError('Method renamed has not been implemented!')
+        logger.info('Base renamed invoked: {}'.format(name))
 
-    def joinDomain(self, name: str, domain: str, ou: str, account: str, password: str):
+    def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
+            self,
+            name: str,
+            domain: str,
+            ou: str,
+            account: str,
+            password: str
+        ) -> None:
         '''
         Invoked when broker requests a "domain" action
-        MUST BE OVERRIDEN
+        default does nothing
         '''
-        raise NotImplementedError('Method renamed has not been implemented!')
+        logger.info('Base join invode: {} on {}, {}'.format(name, domain, ou))
 
     # ****************************************
     # Methods that CAN BE overriden by actors
     # ****************************************
-    def notifyLocal(self):
+    def notifyLocal(self) -> None:
         self.setReady()
 
-    def doWait(self, miliseconds):
+    def doWait(self, miliseconds: int) -> None:
         '''
         Invoked to wait a bit
         CAN be OVERRIDEN
         '''
         time.sleep(float(miliseconds) / 1000)
 
-    def notifyStop(self):
+    def notifyStop(self) -> None:
         '''
         Overriden to log stop
         '''
         logger.info('Service is being stopped')
 
-    def preConnect(self, user: str, protocol: str):
+    def preConnect(self, user: str, protocol: str) -> str:  # pylint: disable=unused-argument
         '''
         Invoked when received a PRE Connection request via REST
         '''
         logger.debug('Pre-connect does nothing')
         return 'ok'
 
-    def onLogout(self, user: str):
+    def onLogout(self, user: str) -> None:
         logger.debug('On logout invoked for {}'.format(user))
