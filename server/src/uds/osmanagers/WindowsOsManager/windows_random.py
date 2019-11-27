@@ -98,7 +98,7 @@ class WinRandomPassManager(WindowsOsManager):
 
     def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
         return {
-            'action': 'rename_and_pw',
+            'action': 'rename',
             'name': userService.getName(),
             'username': self._userAccount,
             'password': self._password,

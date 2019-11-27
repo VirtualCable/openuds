@@ -111,7 +111,7 @@ class OSManager(Module):
     def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
         """
         This method provides information to actor, so actor can complete os configuration.
-        Currently exists 3 types of os managers
+        Currently exists 3 types of os managers actions
         * rename vm and do NOT ADD to AD
           {
               'action': 'rename',
@@ -119,7 +119,7 @@ class OSManager(Module):
           }
         * rename vm and ADD to AD
           {
-              'action': 'renameAD',
+              'action': 'rename_ad',
               'name': 'xxxxxxx',
               'ad': 'domain.xxx'
               'ou': 'ou'   # or '' if default ou
@@ -128,7 +128,7 @@ class OSManager(Module):
           }
         * rename vm, do NOT ADD to AD, and change password for an user
           {
-              'action': 'rename_and_pw'
+              'action': 'rename'
               'name': 'xxxxx'
               'username': 'username to change pass'
               'password': 'current password for username to change password'

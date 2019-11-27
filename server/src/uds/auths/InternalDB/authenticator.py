@@ -35,7 +35,7 @@
 import logging
 import typing
 
-import dns
+import dns.resolver
 
 from django.utils.translation import ugettext_noop as _
 from uds.core import auths
@@ -126,6 +126,8 @@ class InternalDBAuth(auths.Authenticator):
 
         groupsManager.validate([g.name for g in user.groups.all()])
 
+    def createUser(self, usrData):
+        pass
 
     @staticmethod
     def test(env, data):

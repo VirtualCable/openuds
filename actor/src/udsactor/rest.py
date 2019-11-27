@@ -190,11 +190,20 @@ class REST:
             result = requests.post(self.url + 'actor/v2/initialize', data=json.dumps(payload), headers=self._headers, verify=self.validateCert)
             if result.ok:
                 r = result.json()['result']
+                os = r['os']
                 return types.InitializationResultType(
                     own_token=r['own_token'],
                     unique_id=r['unique_id'],
                     max_idle=r['max_idle'],
-                    os=r['os']
+                    os=types.ActorOsConfigurationType(
+                        action=os['action'],
+                        name=os['name'],
+                        username=os.get('username'),
+                        password=os.get('password'),
+                        new_password=os.get('new_password'),
+                        ad=os.get('ad'),
+                        ou=os.get('ou')
+                    )
                 )
         except requests.ConnectionError as e:
             raise RESTConnectionError(str(e))
@@ -205,4 +214,8 @@ class REST:
 
     def ready(self, own_token: str, interfaces: typing.Iterable[types.InterfaceInfoType]) -> None:
         # TODO: implement ready
+        return
+
+    def notifyIpChange(self, own_token: str, ip: str) -> None:
+        # TODO: implement notifyIpChange
         return

@@ -92,7 +92,7 @@ class LinuxRandomPassManager(LinuxOsManager):
 
     def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
         return {
-            'action': 'rename_and_pw',
+            'action': 'rename',
             'name': userService.getName(),
             'username': self._userAccount,
             'password': '',  # On linux, user password is not needed so we provide an empty one

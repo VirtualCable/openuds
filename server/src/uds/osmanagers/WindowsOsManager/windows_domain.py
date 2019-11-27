@@ -321,7 +321,7 @@ class WinDomainOsManager(WindowsOsManager):
 
     def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
         return {
-            'action': 'rename_and_pw',
+            'action': 'rename_ad',
             'name': userService.getName(),
             'ad': self._domain,
             'ou': self._ou,

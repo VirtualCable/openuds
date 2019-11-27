@@ -2,8 +2,8 @@ import typing
 
 class InterfaceInfoType(typing.NamedTuple):
     name: str
-    mac: typing.Optional[str]
-    ip: typing.Optional[str]
+    mac: str
+    ip: str
 
 class AuthenticatorType(typing.NamedTuple):
     authId: str
@@ -43,5 +43,8 @@ class ActorConfigurationType(typing.NamedTuple):
 
     data: typing.Optional[typing.Dict[str, typing.Any]] = None
 
-class InitializationResultType(ActorDataConfigurationType):
+class InitializationResultType(typing.NamedTuple):
     own_token: typing.Optional[str] = None
+    unique_id: typing.Optional[str] = None
+    max_idle: typing.Optional[int] = None
+    os: typing.Optional[ActorOsConfigurationType] = None
