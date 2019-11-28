@@ -69,7 +69,7 @@ class CommonService:
     @staticmethod
     def execute(cmdLine: str, section: str) -> bool:
         try:
-            res = subprocess.check_call(cmdLine)
+            res = subprocess.check_call(cmdLine, shell=True)
         except Exception as e:
             logger.error('Got exception executing: {} - {} - {}'.format(section, cmdLine, e))
             return False

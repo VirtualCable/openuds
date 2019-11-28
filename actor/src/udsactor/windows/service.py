@@ -364,8 +364,3 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         self.endAPI()  # And deinitializes REST api if needed
 
         self.notifyStop()
-
-
-if __name__ == '__main__':
-    initCfg()
-    win32serviceutil.HandleCommandLine(UDSActorSvc)

@@ -34,8 +34,6 @@ import platform
 import socket
 import fcntl
 import os
-import ctypes
-import ctypes.util
 import subprocess
 import struct
 import array
@@ -44,6 +42,7 @@ import typing
 from .. import types
 
 from .renamer import rename
+from . import xss
 
 
 def _getMacAddr(ifname: str) -> typing.Optional[str]:
@@ -106,7 +105,6 @@ def _getIpAndMac(ifname: str) -> typing.Tuple[typing.Optional[str], typing.Optio
     ip, mac = _getIpAddr(ifname), _getMacAddr(ifname)
     return (ip, mac)
 
-
 def checkPermissions() -> bool:
     return os.getuid() == 0
 
@@ -166,33 +164,6 @@ def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
     os.system('echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(user, newPassword))
 
 
-class XScreenSaverInfo(ctypes.Structure):  # pylint: disable=too-few-public-methods
-    _fields_ = [('window', ctypes.c_long),
-                ('state', ctypes.c_int),
-                ('kind', ctypes.c_int),
-                ('til_or_since', ctypes.c_ulong),
-                ('idle', ctypes.c_ulong),
-                ('eventMask', ctypes.c_ulong)]
-
-# Initialize xlib & xss
-try:
-    xlibPath = ctypes.util.find_library('X11')
-    xssPath = ctypes.util.find_library('Xss')
-    xlib = xss = None
-    if not xlibPath or not xssPath:
-        raise Exception()
-    xlib = ctypes.cdll.LoadLibrary(xlibPath)
-    xss = ctypes.cdll.LoadLibrary(xssPath)
-
-    # Fix result type to XScreenSaverInfo Structure
-    xss.XScreenSaverQueryExtension.restype = ctypes.c_int
-    xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
-    display = xlib.XOpenDisplay(None)
-    xssInfo = xss.XScreenSaverAllocInfo()
-except Exception:  # Libraries not accesible, not found or whatever..
-    xlib = xss = display = xssInfo = None
-
-
 def initIdleDuration(atLeastSeconds: int) -> None:
     subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
     # And now reset it
@@ -200,28 +171,7 @@ def initIdleDuration(atLeastSeconds: int) -> None:
 
 
 def getIdleDuration() -> float:
-    '''
-    Returns idle duration, in seconds
-    '''
-    if xlib is None or xss is None:
-        return 0  # Libraries not available
-
-    event_base = ctypes.c_int()
-    error_base = ctypes.c_int()
-
-    available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
-
-    if available != 1:
-        return 0  # No screen saver is available, no way of getting idle
-
-    xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), xssInfo)
-
-    # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
-    if xssInfo.contents.state != 0 and 'centos' not in getLinuxOs().lower().strip():
-        return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
-
-    return xssInfo.contents.idle / 1000.0
-
+    return xss.getIdleDuration()
 
 def getCurrentUser() -> str:
     '''

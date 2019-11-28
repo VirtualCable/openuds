@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,11 +25,13 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from .common import rename
+# pylint: disable=invalid-name
+import win32serviceutil
 
-# Import packages
-from . import debian, opensuse, redhat
+from .service import UDSActorSvc
+
+if __name__ == '__main__':
+    win32serviceutil.HandleCommandLine(UDSActorSvc)

@@ -1,3 +1,4 @@
 Linux:
 python3-prctl (recommended, but not required in fact)
+python3-pyqt5
 

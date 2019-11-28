@@ -29,7 +29,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import sys
 import signal
 import typing
 
@@ -57,9 +56,8 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         signal.signal(signal.SIGTERM, self.markForExit)
 
 
-    def markForExit(self, signum, frame):
+    def markForExit(self, signum, frame) -> None:
         self._isAlive = False
-
 
     def rename(  # pylint: disable=unused-argument
             self,
@@ -77,6 +75,8 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         if hostName.lower() == name.lower():
             logger.info('Computer name is already {}'.format(hostName))
             return
+
+        logger.debug('Data: {}'.format((name, userName, oldPassword, newPassword)))
 
         # Check for password change request for an user
         if userName and oldPassword and newPassword:
@@ -100,14 +100,15 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         ) -> None:
         logger.fatal('Join domain is not supported on linux platforms right now')
 
-    def run(self):
-        logger.debug('Running Daemon')
+    def run(self) -> None:
+        logger.debug('Running Daemon: {}'.format(self._isAlive))
         set_proctitle('UDSActorDaemon')
 
         # Linux daemon will continue running unless something is requested to
         if not self.initialize():
             return # Stop daemon if initializes told to do so
 
+        logger.debug('Initialized, setting ready')
         # Initialization is done, set machine to ready for UDS, communicate urls, etc...
         self.setReady()
 
@@ -117,7 +118,7 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         # Counter used to check ip changes only once every 10 seconds, for
         # example
         counter = 0
-        while self.isAlive:
+        while self._isAlive:
             counter += 1
             if counter % 10 == 0:
                 self.checkIpsChanged()
@@ -125,45 +126,3 @@ class UDSActorSvc(daemon.Daemon, CommonService):
             self.doWait(1000)
 
         self.notifyStop()
-
-
-def usage():
-    sys.stderr.write("usage: {} start|stop|restart|login 'username'|logout 'username'\n".format(sys.argv[0]))
-    sys.exit(2)
-
-
-if __name__ == '__main__':
-    logger.setLevel(20000)
-
-    if len(sys.argv) == 3 and sys.argv[1] in ('login', 'logout'):
-        logger.debug('Running client udsactor')
-        # client = None
-        # try:
-        #     client = ipc.ClientIPC(IPC_PORT)
-        #     if 'login' == sys.argv[1]:
-        #         client.sendLogin(sys.argv[2])
-        #         sys.exit(0)
-        #     elif 'logout' == sys.argv[1]:
-        #         client.sendLogout(sys.argv[2])
-        #         sys.exit(0)
-        #     else:
-        #         usage()
-        # except Exception as e:
-        #     logger.error(e)
-    elif len(sys.argv) != 2:
-        usage()
-
-    logger.debug('Executing actor')
-    daemonSvr = UDSActorSvc()
-    if len(sys.argv) == 2:
-        if sys.argv[1] == 'start':
-            daemonSvr.start()
-        elif sys.argv[1] == 'stop':
-            daemonSvr.stop()
-        elif sys.argv[1] == 'restart':
-            daemonSvr.restart()
-        else:
-            usage()
-        sys.exit(0)
-    else:
-        usage()

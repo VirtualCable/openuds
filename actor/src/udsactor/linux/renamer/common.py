@@ -49,11 +49,3 @@ def rename(newName: str) -> bool:
     logger.info('Renamer for platform "{0}" not found, tryin debian renamer'.format(distribution))
     return renamers['debian'](newName)
 
-
-# Do load of packages
-def _init():
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(__name__ + '.' + name, globals(), locals())
-
-_init()
