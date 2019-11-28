@@ -193,7 +193,7 @@ class REST:
                 os = r['os']
                 return types.InitializationResultType(
                     own_token=r['own_token'],
-                    unique_id=r['unique_id'].lower(),
+                    unique_id=r['unique_id'].lower() if r['unique_id'] else None,
                     max_idle=r['max_idle'],
                     os=types.ActorOsConfigurationType(
                         action=os['action'],
@@ -203,11 +203,11 @@ class REST:
                         new_password=os.get('new_password'),
                         ad=os.get('ad'),
                         ou=os.get('ou')
-                    )
+                    ) if r['os'] else None
                 )
         except requests.ConnectionError as e:
             raise RESTConnectionError(str(e))
-        except Exception:
+        except Exception as e:
             pass
 
         raise RESTError(result.content)

@@ -36,15 +36,15 @@ import sys
 import six
 
 if sys.platform == 'win32':
-    from udsactor.windows.log import LocalLogger  # @UnusedImport
+    from .windows.log import LocalLogger  # @UnusedImport
 else:
-    from udsactor.linux.log import LocalLogger  # @Reimport
+    from .linux.log import LocalLogger  # @Reimport
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
 
 
-class Logger(object):
+class Logger:
 
     def __init__(self):
         self.logLevel = INFO

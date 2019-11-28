@@ -208,7 +208,7 @@ class CommonService:
     def rename(  # pylint: disable=unused-argument
             self,
             name: str,
-            user: typing.Optional[str] = None,
+            userName: typing.Optional[str] = None,
             oldPassword: typing.Optional[str] = None,
             newPassword: typing.Optional[str] = None
         ) -> None:
@@ -216,7 +216,7 @@ class CommonService:
         Invoked when broker requests a rename action
         default does nothing
         '''
-        logger.info('Base renamed invoked: {}'.format(name))
+        logger.info('Base renamed invoked: {}, {}'.format(name, userName))
 
     def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
             self,
@@ -230,14 +230,11 @@ class CommonService:
         Invoked when broker requests a "domain" action
         default does nothing
         '''
-        logger.info('Base join invode: {} on {}, {}'.format(name, domain, ou))
+        logger.info('Base join invoked: {} on {}, {}'.format(name, domain, ou))
 
     # ****************************************
     # Methods that CAN BE overriden by actors
     # ****************************************
-    def notifyLocal(self) -> None:
-        self.setReady()
-
     def doWait(self, miliseconds: int) -> None:
         '''
         Invoked to wait a bit
@@ -254,8 +251,11 @@ class CommonService:
     def preConnect(self, user: str, protocol: str) -> str:  # pylint: disable=unused-argument
         '''
         Invoked when received a PRE Connection request via REST
+        Base preconnect executes the preconnect command
         '''
-        logger.debug('Pre-connect does nothing')
+        if self._cfg.pre_command:
+            self.execute(self._cfg.pre_command, 'preConnect')
+
         return 'ok'
 
     def onLogout(self, user: str) -> None:

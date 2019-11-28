@@ -29,8 +29,9 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 # pylint: disable=invalid-name
-import socket
+import configparser
 import platform
+import socket
 import fcntl
 import os
 import ctypes
@@ -109,13 +110,11 @@ def _getIpAndMac(ifname: str) -> typing.Tuple[typing.Optional[str], typing.Optio
 def checkPermissions() -> bool:
     return os.getuid() == 0
 
-
 def getComputerName() -> str:
     '''
     Returns computer name, with no domain
     '''
     return socket.gethostname().split('.')[0]
-
 
 def getNetworkInfo() -> typing.Iterable[types.InterfaceInfoType]:
     for ifname in _getInterfaces():
@@ -123,16 +122,18 @@ def getNetworkInfo() -> typing.Iterable[types.InterfaceInfoType]:
         if mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs
             yield types.InterfaceInfoType(name=ifname, mac=mac, ip=ip)
 
-
 def getDomainName() -> str:
     return ''
 
-def getLinuxVersion() -> str:
-    import distro
-
-    lv = distro.linux_distribution()
-    return lv[0] + ', ' + lv[1]
-
+def getLinuxOs() -> str:
+    try:
+        with open('/etc/os-release', 'r') as f:
+            data = f.read()
+        cfg = configparser.ConfigParser()
+        cfg.read_string('[os]\n' + data)
+        return cfg['os'].get('id', 'unknown')
+    except Exception:
+        return 'unknown'
 
 def reboot(flags: int = 0):
     '''
@@ -216,7 +217,7 @@ def getIdleDuration() -> float:
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), xssInfo)
 
     # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
-    if xssInfo.contents.state != 0 and 'centos' not in getLinuxVersion().lower().strip():
+    if xssInfo.contents.state != 0 and 'centos' not in getLinuxOs().lower().strip():
         return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
 
     return xssInfo.contents.idle / 1000.0

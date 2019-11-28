@@ -165,7 +165,7 @@ class ActorV2Initiialize(ActorV2Action):
             * own_token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
             * unique_id: Optional[str] -> If not None, unique id for the service
             * max_idle: Optional[int] -> If not None, max configured Idle for the vm
-            * os: Optional[dict] -> Data returned by os manager for setting up this service. 
+            * os: Optional[dict] -> Data returned by os manager for setting up this service.
         On  error, will return Empty (None) result, and error field
         Example:
              {
@@ -263,6 +263,9 @@ class ActorV2IpChange(ActorV2Action):
     name = 'ipchange'
 
     def post(self):
+        """
+        Records the ip change, and also fix notifyComms url
+        """
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         return actorResult('ok')
 

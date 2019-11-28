@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2018 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,18 +26,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-@author: : http://www.jejik.com/authors/sander_marechal/
-@see: : http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
-from __future__ import unicode_literals
 import sys
 import os
 import time
 import atexit
-from udsactor.log import logger
-
 from signal import SIGTERM
+
+from udsactor.log import logger
 
 
 class Daemon:
@@ -47,13 +44,13 @@ class Daemon:
     Usage: subclass the Daemon class and override the run() method
     """
 
-    def __init__(self, pidfile, stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
+    def __init__(self, pidfile: str, stdin: str = '/dev/null', stdout: str = '/dev/null', stderr: str = '/dev/null'):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
         self.pidfile = pidfile
 
-    def daemonize(self):
+    def daemonize(self) -> None:
         """
         do the UNIX double-fork magic, see Stevens' "Advanced
         Programming in the UNIX Environment" for details (ISBN 0201563177)
@@ -96,33 +93,26 @@ class Daemon:
         os.dup2(se.fileno(), sys.stderr.fileno())
 
         # write pidfile
-        atexit.register(self.delpid)
-        pid = str(os.getpid())
+        atexit.register(self.removePidFile)
+        pidStr = str(os.getpid())
         with open(self.pidfile, 'w+') as f:
-            f.write("{}\n".format(pid))
+            f.write("{}\n".format(pidStr))
 
-    def delpid(self):
+    def removePidFile(self) -> None:
         try:
             os.remove(self.pidfile)
         except Exception:
-            # Not found/not permissions or whatever...
+            # Not found/not permissions or whatever, ignore it
             pass
 
-    def start(self):
+    def start(self) -> None:
         """
         Start the daemon
         """
         logger.debug('Starting daemon')
         # Check for a pidfile to see if the daemon already runs
-        try:
-            pf = open(self.pidfile, 'r')
-            pid = int(pf.read().strip())
-            pf.close()
-        except IOError:
-            pid = None
-
-        if pid:
-            message = "pidfile {} already exist. Daemon already running?\n".format(pid)
+        if os.path.exists(self.pidfile):
+            message = "pidfile {} already exist. Daemon already running?\n".format(self.pidfile)
             logger.error(message)
             sys.stderr.write(message)
             sys.exit(1)
@@ -134,10 +124,9 @@ class Daemon:
         except Exception as e:
             logger.error('Exception running process: {}'.format(e))
 
-        if os.path.exists(self.pidfile):
-            os.remove(self.pidfile)
+        self.removePidFile()
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stop the daemon
         """
@@ -147,9 +136,6 @@ class Daemon:
             pid = int(pf.read().strip())
             pf.close()
         except IOError:
-            pid = None
-
-        if pid is None:
             message = "pidfile {} does not exist. Daemon not running?\n".format(self.pidfile)
             logger.info(message)
             # sys.stderr.write(message)
@@ -165,10 +151,10 @@ class Daemon:
                 if os.path.exists(self.pidfile):
                     os.remove(self.pidfile)
             else:
-                sys.stderr.write(err)
+                sys.stderr.write('Error: {}'.format(err))
                 sys.exit(1)
 
-    def restart(self):
+    def restart(self) -> None:
         """
         Restart the daemon
         """
@@ -176,8 +162,7 @@ class Daemon:
         self.start()
 
     # Overridables
-    def run(self):
+    def run(self) -> None:
         """
-        You should override this method when you subclass Daemon. It will be called after the process has been
-        daemonized by start() or restart().
+        override this to provide your own daemon
         """

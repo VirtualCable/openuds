@@ -1,0 +1,3 @@
+Linux:
+python3-prctl (recommended, but not required in fact)
+

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,20 +29,22 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 # pylint: disable=invalid-name
-import logging
 import os
 import tempfile
-import six
+import logging
+import typing
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))  # @UndefinedVariable
 
 
 class LocalLogger:  # pylint: disable=too-few-public-methods
     linux = False
     windows = True
 
-    def __init__(self):
+    logger: typing.Optional[logging.Logger]
+
+    def __init__(self) -> None:
         # tempdir is different for "user application" and "service"
         # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
         # Try to open logger at /var/log path
@@ -71,4 +73,5 @@ class LocalLogger:  # pylint: disable=too-few-public-methods
         # our loglevels are 10000 (other), 20000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
-        self.logger.log(int(level / 1000) - 10, message)
+        if self.logger:
+            self.logger.log(int(level / 1000) - 10, message)

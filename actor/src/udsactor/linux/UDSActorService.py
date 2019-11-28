@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,44 +29,45 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
 import sys
-import os
-import stat
-import subprocess
+import signal
+import typing
 
-from udsactor import operations
+from . import operations
+from . import renamer
+from . import daemon
 
-from udsactor.service import CommonService
-from udsactor.service import initCfg
-from udsactor.service import IPC_PORT
+from ..log import logger
+from ..service import CommonService
 
-from udsactor import ipc
-from udsactor import store
-from udsactor.log import logger
-
-from udsactor.linux.daemon import Daemon
-from udsactor.linux import renamer
-
-POST_CMD = '/etc/udsactor/post'
 
 try:
     from prctl import set_proctitle  # @UnresolvedImport
-except Exception:  # Platform may not include prctl, so in case it's not available, we let the "name" as is
-
+except ImportError:  # Platform may not include prctl, so in case it's not available, we let the "name" as is
     def set_proctitle(_):
         pass
 
 
-class UDSActorSvc(Daemon, CommonService):
-    rebootMachineAfterOp = False
-
-    def __init__(self, args=None):
-        Daemon.__init__(self, '/var/run/udsa.pid')
+class UDSActorSvc(daemon.Daemon, CommonService):
+    def __init__(self, args=None) -> None:
+        daemon.Daemon.__init__(self, '/var/run/udsactor.pid')
         CommonService.__init__(self)
 
-    def rename(self, name, user=None, oldPassword=None, newPassword=None):
+        signal.signal(signal.SIGINT, self.markForExit)
+        signal.signal(signal.SIGTERM, self.markForExit)
+
+
+    def markForExit(self, signum, frame):
+        self._isAlive = False
+
+
+    def rename(  # pylint: disable=unused-argument
+            self,
+            name: str,
+            userName: typing.Optional[str] = None,
+            oldPassword: typing.Optional[str] = None,
+            newPassword: typing.Optional[str] = None
+        ) -> None:
         '''
         Renames the computer, and optionally sets a password for an user
         before this
@@ -75,103 +76,40 @@ class UDSActorSvc(Daemon, CommonService):
 
         if hostName.lower() == name.lower():
             logger.info('Computer name is already {}'.format(hostName))
-            self.setReady()
             return
 
         # Check for password change request for an user
-        if user is not None:
-            logger.info('Setting password for user {}'.format(user))
+        if userName and oldPassword and newPassword:
+            logger.info('Setting password for user {}'.format(userName))
             try:
-                operations.changeUserPassword(user, oldPassword, newPassword)
+                operations.changeUserPassword(userName, oldPassword, newPassword)
             except Exception as e:
                 # We stop here without even renaming computer, because the
                 # process has failed
-                raise Exception(
-                    'Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(user, unicode(e)))
+                raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(userName, e))
 
         renamer.rename(name)
 
-        if self.rebootMachineAfterOp is False:
-            self.setReady()
-        else:
-            logger.info('Rebooting computer to activate new name {}'.format(name))
-            self.reboot()
-
-    def joinDomain(self, name, domain, ou, account, password):
+    def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
+            self,
+            name: str,
+            domain: str,
+            ou: str,
+            account: str,
+            password: str
+        ) -> None:
         logger.fatal('Join domain is not supported on linux platforms right now')
 
-    def preConnect(self, user, protocol):
-        '''
-        Invoked when received a PRE Connection request via REST
-        '''
-        # Execute script in /etc/udsactor/post after interacting with broker, if no reboot is requested ofc
-        # This will be executed only when machine gets "ready"
-        try:
-            pre_cmd = store.preApplication()
-            if os.path.isfile(pre_cmd):
-                if (os.stat(pre_cmd).st_mode & stat.S_IXUSR) != 0:
-                    subprocess.call([pre_cmd, user, protocol])
-                else:
-                    logger.info('PRECONNECT file exists but it it is not executable (needs execution permission by root)')
-            else:
-                logger.info('PRECONNECT file not found & not executed')
-        except Exception:
-            # Ignore output of execution command
-            logger.error('Executing preconnect command give')
-
-        return 'ok'
-
     def run(self):
-        cfg = initCfg()  # Gets a local copy of config to get "reboot"
-
-        logger.debug('CFG: {}'.format(cfg))
-
-        if cfg is not None:
-            self.rebootMachineAfterOp = cfg.get('reboot', True)
-        else:
-            self.rebootMachineAfterOp = False
-
-        logger.info('Reboot after is {}'.format(self.rebootMachineAfterOp))
-
         logger.debug('Running Daemon')
         set_proctitle('UDSActorDaemon')
 
         # Linux daemon will continue running unless something is requested to
-        while True:
-            brokerConnected = self.interactWithBroker()
-            if brokerConnected is False:
-                logger.debug('Interact with broker returned false, stopping service after a while')
-                return
-            elif brokerConnected is True:
-                break
+        if not self.initialize():
+            return # Stop daemon if initializes told to do so
 
-            # If brokerConnected returns None, repeat the cycle
-            self.doWait(16000)  # Wait for a looong while
-
-        if self.isAlive is False:
-            logger.debug('The service is not alive after broker interaction, stopping it')
-            return
-
-        if self.rebootRequested is True:
-            logger.debug('Reboot has been requested, stopping service')
-            return
-
-        # Execute script in /etc/udsactor/post after interacting with broker, if no reboot is requested ofc
-        # This will be executed only when machine gets "ready"
-        try:
-
-            if os.path.isfile(POST_CMD):
-                if (os.stat(POST_CMD).st_mode & stat.S_IXUSR) != 0:
-                    subprocess.call([POST_CMD, ])
-                else:
-                    logger.info('POST file exists but it it is not executable (needs execution permission by root)')
-            else:
-                logger.info('POST file not found & not executed')
-        except Exception as e:
-            # Ignore output of execution command
-            logger.error('Executing post command give')
-
-        self.initIPC()
+        # Initialization is done, set machine to ready for UDS, communicate urls, etc...
+        self.setReady()
 
         # *********************
         # * Main Service loop *
@@ -186,9 +124,6 @@ class UDSActorSvc(Daemon, CommonService):
             # In milliseconds, will break
             self.doWait(1000)
 
-        self.endIPC()
-        self.endAPI()
-
         self.notifyStop()
 
 
@@ -202,31 +137,31 @@ if __name__ == '__main__':
 
     if len(sys.argv) == 3 and sys.argv[1] in ('login', 'logout'):
         logger.debug('Running client udsactor')
-        client = None
-        try:
-            client = ipc.ClientIPC(IPC_PORT)
-            if 'login' == sys.argv[1]:
-                client.sendLogin(sys.argv[2])
-                sys.exit(0)
-            elif 'logout' == sys.argv[1]:
-                client.sendLogout(sys.argv[2])
-                sys.exit(0)
-            else:
-                usage()
-        except Exception as e:
-            logger.error(e)
+        # client = None
+        # try:
+        #     client = ipc.ClientIPC(IPC_PORT)
+        #     if 'login' == sys.argv[1]:
+        #         client.sendLogin(sys.argv[2])
+        #         sys.exit(0)
+        #     elif 'logout' == sys.argv[1]:
+        #         client.sendLogout(sys.argv[2])
+        #         sys.exit(0)
+        #     else:
+        #         usage()
+        # except Exception as e:
+        #     logger.error(e)
     elif len(sys.argv) != 2:
         usage()
 
     logger.debug('Executing actor')
-    daemon = UDSActorSvc()
+    daemonSvr = UDSActorSvc()
     if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
-            daemon.start()
-        elif 'stop' == sys.argv[1]:
-            daemon.stop()
-        elif 'restart' == sys.argv[1]:
-            daemon.restart()
+        if sys.argv[1] == 'start':
+            daemonSvr.start()
+        elif sys.argv[1] == 'stop':
+            daemonSvr.stop()
+        elif sys.argv[1] == 'restart':
+            daemonSvr.restart()
         else:
             usage()
         sys.exit(0)

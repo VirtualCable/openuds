@@ -98,5 +98,5 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     os.chmod(CONFIGFILE, 0o0600)  # Ensure only readable by root
 
 
-def useOldJoinSystem():
+def useOldJoinSystem() -> bool:
     return False

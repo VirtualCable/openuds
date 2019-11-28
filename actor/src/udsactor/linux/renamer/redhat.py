@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,15 +28,13 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
-from udsactor.linux.renamer import renamers
-from udsactor.log import logger
-
 import os
 
+from .common import renamers
+from ...log import logger
 
-def rename(newName):
+
+def rename(newName: str) -> bool:
     '''
     RH, Centos, Fedora Renamer
     Expects new host name on newName

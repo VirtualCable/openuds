@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,33 +29,4 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
-import platform
-import os
-import sys
-import pkgutil
-
-from udsactor.log import logger
-
-renamers = {}
-
-
-# Renamers now are for IPv4 only addresses
-def rename(newName):
-    distribution = platform.linux_distribution()[0].lower().strip()
-    if distribution in renamers:
-        return renamers[distribution](newName)
-
-    # Try Debian renamer, simplest one
-    logger.info('Renamer for platform "{0}" not found, tryin debian renamer'.format(distribution))
-    return renamers['debian'](newName)
-
-
-# Do load of packages
-def _init():
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(__name__ + '.' + name, globals(), locals())
-
-_init()
+from .common import rename

@@ -489,8 +489,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         return self.deployed_service.testServer(host, port, timeout)
 
     def __str__(self):
-        return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.name, self.cache_level, self.user, self.friendly_name,
-                                                                                             State.toString(self.state), State.toString(self.os_state))
+        return "User service {}, unique_id {}, cache_level {}, user {}, name {}, state {}:{}".format(
+            self.name, self.unique_id, self.cache_level, self.user, self.friendly_name,
+            State.toString(self.state), State.toString(self.os_state)
+        )
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
