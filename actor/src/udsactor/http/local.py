@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,9 +28,19 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=invalid-name
-import win32serviceutil
+import typing
 
-from .service import UDSActorSvc
+from . import handler
 
-win32serviceutil.HandleCommandLine(UDSActorSvc)
+if typing.TYPE_CHECKING:
+    from ..service import CommonService
+
+class LocalProvider(handler.Handler):
+    def post_login(self) -> typing.Any:
+        return 'ok'
+
+    def post_logout(self) -> typing.Any:
+        return 'ok'
+
+    def post_ping(self) -> typing.Any:
+        return 'ok'

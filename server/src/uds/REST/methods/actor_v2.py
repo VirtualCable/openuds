@@ -256,7 +256,21 @@ class ActorV2Log(ActorV2Action):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         return actorResult('ok')
 
-class ActorV2IpChange(ActorV2Action):
+class ActorV2Ready(ActorV2Action):
+    """
+    Notifies the service is ready
+    """
+    name = 'ready'
+
+    def setCommsUrl(self, userService: UserService):
+        url = 'https://{}/actor/{}'.format(userService.getLoggedIP(), userService.uuid)
+        userService.setCommsUrl(url)
+
+    def post(self):
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        return actorResult('ok')
+
+class ActorV2IpChange(ActorV2Ready):
     """
     Notifies an IP change
     """
@@ -266,16 +280,6 @@ class ActorV2IpChange(ActorV2Action):
         """
         Records the ip change, and also fix notifyComms url
         """
-        logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
-
-class ActorV2Ready(ActorV2Action):
-    """
-    Notifies the service is ready
-    """
-    name = 'ready'
-
-    def post(self):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         return actorResult('ok')
 

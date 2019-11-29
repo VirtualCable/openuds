@@ -491,7 +491,7 @@ class UserServiceManager:
             logger.debug('No uuid to retrieve because agent does not supports notifications')
             return True  # UUid is valid because it is not supported checking it
 
-        version = typing.cast(str, userService.getProperty('actor_version', ''))
+        version = userService.getProperty('actor_version') or ''
         # Just for 2.0 or newer, previous actors will not support this method.
         # Also externally supported agents will not support this method (as OpenGnsys)
         if '-' in version or version < '2.0.0':
@@ -504,7 +504,11 @@ class UserServiceManager:
                 r = proxy.doProxyRequest(url=url, timeout=5)
             else:
                 r = requests.get(url, verify=False, timeout=5)
-            uuid = json.loads(r.content)
+
+            if version >= '3.0.0':  # New type of response: {'result': uuid}
+                uuid = json.loads(r.content)['result']
+            else:
+                uuid = json.loads(r.content)
 
             if uuid != userService.uuid:
                 logger.info('The requested machine has uuid %s and the expected was %s', uuid, userService.uuid)
