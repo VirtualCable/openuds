@@ -262,15 +262,15 @@ class ActorV2Ready(ActorV2Action):
     """
     name = 'ready'
 
-    def setCommsUrl(self, userService: UserService):
-        url = 'https://{}/actor/{}'.format(userService.getLoggedIP(), userService.uuid)
+    def setCommsUrl(self, userService: UserService, secret: str):
+        url = 'https://{}/actor/{}'.format(userService.getLoggedIP(), secret)
         userService.setCommsUrl(url)
 
     def post(self):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         return actorResult('ok')
 
-class ActorV2IpChange(ActorV2Ready):
+class ActorV2IpChange(ActorV2Action):
     """
     Notifies an IP change
     """

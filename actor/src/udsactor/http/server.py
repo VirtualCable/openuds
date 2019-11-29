@@ -55,7 +55,6 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
     server_version = 'UDS Actor Server'
     sys_version = ''
 
-    _uuid: typing.Optional[str] = None
     _service: typing.Optional['CommonService'] = None
 
     def sendJsonResponse(self, result: typing.Optional[typing.Any] = None, error: typing.Optional[str] = None, code: int = 200) -> None:
@@ -68,21 +67,23 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(data.encode())
 
     def process(self, method: str, params: typing.MutableMapping[str, str]) -> None:
+        if not self._service:
+            self.sendJsonResponse(error='Not initialized', code=500)
+            return
+
         # Very simple path & params splitter
         path = self.path.split('?')[0][1:].split('/')
 
         handlerType: typing.Optional[typing.Type['Handler']] = None
 
-        logger.debug('Path: {}, uuid: {}'.format(path, self._uuid))
-
-        if len(path) == 3 and path[0] == 'actor' and path[1] == self._uuid:
+        if len(path) == 3 and path[0] == 'actor' and path[1] == self._service._secret:  # pylint: disable=protected-access
             # public method
             handlerType = PublicProvider
         elif len(path) == 2 and path[0] == 'ui':
             # private method, only from localhost
             handlerType = LocalProvider
 
-        if not handlerType or not self._service:
+        if not handlerType:
             self.sendJsonResponse(error='Forbidden', code=403)
             return
 
@@ -133,7 +134,6 @@ class HTTPServerThread(threading.Thread):
     def __init__(self, service: 'CommonService'):
         super().__init__()
 
-        HTTPServerHandler._uuid = service._cfg.own_token  # pylint: disable=protected-access
         HTTPServerHandler._service = service  # pylint: disable=protected-access
 
         self.certFile = certs.createSelfSignedCert()

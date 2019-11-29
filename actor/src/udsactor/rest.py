@@ -212,10 +212,10 @@ class REST:
 
         raise RESTError(result.content)
 
-    def ready(self, own_token: str, interfaces: typing.Iterable[types.InterfaceInfoType]) -> None:
+    def ready(self, own_token: str, secret: str, interfaces: typing.Iterable[types.InterfaceInfoType]) -> None:
         # TODO: implement ready
         return
 
-    def notifyIpChange(self, own_token: str, ip: str) -> None:
+    def notifyIpChange(self, own_token: str, secret: str, ip: str) -> None:
         # TODO: implement notifyIpChange
         return

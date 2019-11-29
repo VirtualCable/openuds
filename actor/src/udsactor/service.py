@@ -32,10 +32,8 @@
 
 import socket
 import time
-import os
+import secrets
 import subprocess
-import shlex
-import stat
 import typing
 
 from . import platform
@@ -65,6 +63,7 @@ class CommonService:
     _cfg: types.ActorConfigurationType
     _api: rest.REST
     _interfaces: typing.List[types.InterfaceInfoType]
+    _secret: str
 
     @staticmethod
     def execute(cmdLine: str, section: str) -> bool:
@@ -80,6 +79,7 @@ class CommonService:
         self._cfg = platform.store.readConfig()
         self._interfaces = []
         self._api = rest.REST(self._cfg.host, self._cfg.validateCertificate)
+        self._secret = secrets.token_urlsafe(33)
 
         socket.setdefaulttimeout(20)
 
@@ -94,7 +94,7 @@ class CommonService:
             platform.store.writeConfig(self._cfg)
 
         if self._cfg.own_token and self._interfaces:
-            self._api.ready(self._cfg.own_token, self._interfaces)
+            self._api.ready(self._cfg.own_token, self._secret, self._interfaces)
             # Cleans sensible data
         if self._cfg.config:
             self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
@@ -196,7 +196,7 @@ class CommonService:
             if not new:
                 raise Exception('No ip currently available for {}'.format(self._cfg.config.unique_id))
             if old.ip != new.ip:
-                self._api.notifyIpChange(self._cfg.own_token, new.ip)
+                self._api.notifyIpChange(self._cfg.own_token, self._secret, new.ip)
                 logger.info('Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip))
         except Exception as e:
             # No ip changed, log exception for info
