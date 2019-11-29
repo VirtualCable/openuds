@@ -86,7 +86,7 @@ def getDomainName() -> str:
 
     return domain
 
-def getWindowsVersion() -> str:
+def getWindowsVersion() -> typing.Tuple[int, int, int, int, str]:
     return win32api.GetVersionEx()
 
 EWX_LOGOFF = 0x00000000
@@ -106,7 +106,11 @@ def reboot(flags: int = EWX_FORCEIFHUNG | EWX_REBOOT) -> None:
 def loggoff() -> None:
     win32api.ExitWindowsEx(EWX_LOGOFF)
 
-def renameComputer(newName: str) -> None:
+def renameComputer(newName: str) -> bool:
+    '''
+    Changes the computer name
+    Returns True if reboot needed
+    '''
     # Needs admin privileges to work
     if ctypes.windll.kernel32.SetComputerNameExW(DWORD(win32con.ComputerNamePhysicalDnsHostname), LPCWSTR(newName)) == 0:  # @UndefinedVariable
         # win32api.FormatMessage -> returns error string
@@ -115,6 +119,7 @@ def renameComputer(newName: str) -> None:
         error = getErrorMessage()
         computerName = win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname)
         raise Exception('Error renaming computer from {} to {}: {}'.format(computerName, newName, error))
+    return True
 
 NETSETUP_JOIN_DOMAIN = 0x00000001
 NETSETUP_ACCT_CREATE = 0x00000002
@@ -171,16 +176,18 @@ def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneSt
         raise Exception('Error joining domain {}, with credentials {}/*****{}: {}, {}'.format(domain, account, ', under OU {}'.format(ou) if ou is not None else '', res, error))
 
 def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
-    lpUser = LPCWSTR(user)
-    lpOldPassword = LPCWSTR(oldPassword)
-    lpNewPassword = LPCWSTR(newPassword)
+    # lpUser = LPCWSTR(user)
+    # lpOldPassword = LPCWSTR(oldPassword)
+    # lpNewPassword = LPCWSTR(newPassword)
 
-    res = ctypes.windll.netapi32.NetUserChangePassword(None, lpUser, lpOldPassword, lpNewPassword)
+    # res = ctypes.windll.netapi32.NetUserChangePassword(None, lpUser, lpOldPassword, lpNewPassword)
+    # Try to set new password "a las bravas", ignoring old one. This will not work with domain users
+    res = win32net.NetUserSetInfo(None, user, 1003, {'password': newPassword})
 
     if res != 0:
         # Log the error, and raise exception to parent
         error = getErrorMessage(res)
-        raise Exception('Error changing password for user {}: {} {}'.format(lpUser.value, res, error))
+        raise Exception('Error changing password for user {}: {} {}'.format(user, res, error))
 
 class LASTINPUTINFO(ctypes.Structure):  # pylint: disable=too-few-public-methods
     _fields_ = [

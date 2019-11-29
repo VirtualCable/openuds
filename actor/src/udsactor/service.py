@@ -202,9 +202,6 @@ class CommonService:
             # No ip changed, log exception for info
             logger.warn('Checking ips faield: {}'.format(e))
 
-    # ***************************************************
-    # Methods that ARE overriden by linux & windows Actor
-    # ***************************************************
     def rename(  # pylint: disable=unused-argument
             self,
             name: str,
@@ -216,8 +213,28 @@ class CommonService:
         Invoked when broker requests a rename action
         default does nothing
         '''
-        logger.info('Base renamed invoked: {}, {}'.format(name, userName))
+        hostName = platform.operations.getComputerName()
 
+        if hostName.lower() == name.lower():
+            logger.info('Computer name is already {}'.format(hostName))
+            return
+
+        # Check for password change request for an user
+        if userName and newPassword:
+            logger.info('Setting password for user {}'.format(userName))
+            try:
+                platform.operations.changeUserPassword(userName, oldPassword or '', newPassword)
+            except Exception as e:
+                raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(userName, str(e)))
+
+        if platform.operations.renameComputer(name):
+            # Reboot just after renaming
+            logger.info('Rebooting computer to activate new name {}'.format(name))
+            self.reboot()
+
+    # ******************************************************
+    # Methods that can be overriden by linux & windows Actor
+    # ******************************************************
     def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
             self,
             name: str,
@@ -248,7 +265,7 @@ class CommonService:
         '''
         logger.info('Service is being stopped')
 
-    def preConnect(self, user: str, protocol: str) -> str:  # pylint: disable=unused-argument
+    def preConnect(self, userName: str, protocol: str) -> str:  # pylint: disable=unused-argument
         '''
         Invoked when received a PRE Connection request via REST
         Base preconnect executes the preconnect command
@@ -258,5 +275,5 @@ class CommonService:
 
         return 'ok'
 
-    def onLogout(self, user: str) -> None:
-        logger.debug('On logout invoked for {}'.format(user))
+    def onLogout(self, userName: str) -> None:
+        logger.debug('On logout invoked for {}'.format(userName))

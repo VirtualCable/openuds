@@ -149,8 +149,13 @@ def loggoff() -> None:
     # subprocess.call(['/usr/bin/systemctl', 'reboot', '-i'])
 
 
-def renameComputer(newName: str) -> None:
+def renameComputer(newName: str) -> bool:
+    '''
+    Changes the computer name
+    Returns True if reboot needed
+    '''
     rename(newName)
+    return False
 
 
 def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False):

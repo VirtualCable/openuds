@@ -33,7 +33,6 @@ import signal
 import typing
 
 from . import operations
-from . import renamer
 from . import daemon
 
 from ..log import logger
@@ -59,37 +58,6 @@ class UDSActorSvc(daemon.Daemon, CommonService):
     def markForExit(self, signum, frame) -> None:
         self._isAlive = False
 
-    def rename(  # pylint: disable=unused-argument
-            self,
-            name: str,
-            userName: typing.Optional[str] = None,
-            oldPassword: typing.Optional[str] = None,
-            newPassword: typing.Optional[str] = None
-        ) -> None:
-        '''
-        Renames the computer, and optionally sets a password for an user
-        before this
-        '''
-        hostName = operations.getComputerName()
-
-        if hostName.lower() == name.lower():
-            logger.info('Computer name is already {}'.format(hostName))
-            return
-
-        logger.debug('Data: {}'.format((name, userName, oldPassword, newPassword)))
-
-        # Check for password change request for an user
-        if userName and oldPassword and newPassword:
-            logger.info('Setting password for user {}'.format(userName))
-            try:
-                operations.changeUserPassword(userName, oldPassword, newPassword)
-            except Exception as e:
-                # We stop here without even renaming computer, because the
-                # process has failed
-                raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(userName, e))
-
-        renamer.rename(name)
-
     def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
             self,
             name: str,
@@ -106,6 +74,7 @@ class UDSActorSvc(daemon.Daemon, CommonService):
 
         # Linux daemon will continue running unless something is requested to
         if not self.initialize():
+            self.notifyStop()
             return # Stop daemon if initializes told to do so
 
         logger.debug('Initialized, setting ready')
