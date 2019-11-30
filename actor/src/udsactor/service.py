@@ -60,6 +60,8 @@ class CommonService:
     _isAlive: bool = True
     _rebootRequested: bool = False
     _loggedIn = False
+    _cachedInteface: typing.Optional[types.InterfaceInfoType] = None
+
     _cfg: types.ActorConfigurationType
     _api: rest.REST
     _interfaces: typing.List[types.InterfaceInfoType]
@@ -83,6 +85,19 @@ class CommonService:
 
         socket.setdefaulttimeout(20)
 
+    def serviceInterfaceInfo(self, interfaces: typing.Optional[typing.List[types.InterfaceInfoType]] = None) -> typing.Optional[types.InterfaceInfoType]:
+        """
+        returns the inteface with unique_id mac or first interface or None if no interfaces...
+        """
+        interfaces = interfaces or self._interfaces
+        if self._cfg.config and interfaces:
+            try:
+                return next(x for x in self._interfaces if x.mac.lower() == self._cfg.config.unique_id)
+            except StopIteration:
+                return interfaces[0]
+
+        return None
+
     def reboot(self) -> None:
         self._rebootRequested = True
 
@@ -94,8 +109,13 @@ class CommonService:
             platform.store.writeConfig(self._cfg)
 
         if self._cfg.own_token and self._interfaces:
-            self._api.ready(self._cfg.own_token, self._secret, self._interfaces)
-            # Cleans sensible data
+            srvInterface = self.serviceInterfaceInfo()
+            if srvInterface:
+                self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip)
+            else:
+                logger.error('Could not locate IP address!!!. (Not registered with UDS)')
+
+        # Cleans sensible data
         if self._cfg.config:
             self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
             platform.store.writeConfig(self._cfg)
@@ -183,17 +203,10 @@ class CommonService:
             # Not enouth data do check
             return
 
-        unique_id = self._cfg.config.unique_id
-        def locateMac(interfaces: typing.Iterable[types.InterfaceInfoType]) -> typing.Optional[types.InterfaceInfoType]:
-            try:
-                return next(x for x in interfaces if x.mac.lower() == unique_id)
-            except StopIteration:
-                return None
-
         try:
-            old: types.InterfaceInfoType = locateMac(self._interfaces)
-            new: types.InterfaceInfoType = locateMac(platform.operations.getNetworkInfo())
-            if not new:
+            old = self.serviceInterfaceInfo()
+            new = self.serviceInterfaceInfo(platform.operations.getNetworkInfo())
+            if not new or not old:
                 raise Exception('No ip currently available for {}'.format(self._cfg.config.unique_id))
             if old.ip != new.ip:
                 self._api.notifyIpChange(self._cfg.own_token, self._secret, new.ip)
@@ -265,7 +278,7 @@ class CommonService:
         '''
         logger.info('Service is being stopped')
 
-    def preConnect(self, userName: str, protocol: str) -> str:  # pylint: disable=unused-argument
+    def preConnect(self, userName: str, protocol: str, ip: str, hostname: str) -> str:  # pylint: disable=unused-argument
         '''
         Invoked when received a PRE Connection request via REST
         Base preconnect executes the preconnect command

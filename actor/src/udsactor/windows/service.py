@@ -147,7 +147,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             logger.info('Using multiple step join because configuration requests to do so')
             self.multiStepJoin(name, domain, ou, account, password)
 
-    def preConnect(self, userName: str, protocol: str) -> str:
+    def preConnect(self, userName: str, protocol: str, ip: str, hostname: str) -> str:
         logger.debug('Pre connect invoked')
 
         if protocol == 'rdp':  # If connection is not using rdp, skip adding user
@@ -176,7 +176,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
                 self._user = None
                 logger.debug('User {} already in group'.format(userName))
 
-        return super().preConnect(userName, protocol)
+        return super().preConnect(userName, protocol, ip, hostname)
 
     def ovLogon(self, username: str, password: str) -> str:
         """

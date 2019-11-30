@@ -76,7 +76,7 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     except Exception:
         key = wreg.CreateKeyEx(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
 
-    fixRegistryPermissions(key.handle)
+    # fixRegistryPermissions(key.handle)
 
     wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, pickle.dumps(config))  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable

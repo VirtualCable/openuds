@@ -58,34 +58,6 @@ class RESTUserServiceNotFoundError(RESTError):
 class RESTOsManagerError(RESTError):
     ERRCODE = 4
 
-
-# Disable warnings log messages
-try:
-    import urllib3  # @UnusedImport @UnresolvedImport
-except Exception:
-    from requests.packages import urllib3  # @Reimport @UnresolvedImport
-
-try:
-    urllib3.disable_warnings()  # @UndefinedVariable
-    warnings.simplefilter("ignore")
-except Exception:
-    pass  # In fact, isn't too important, but will log warns to logging file
-
-# Constants
-
-def ensureResultIsOk(result: typing.Any) -> None:
-    if 'error' not in result:
-        return
-
-    for i in (RESTInvalidKeyError, RESTUnmanagedHostError, RESTUserServiceNotFoundError, RESTOsManagerError):
-        if result['error'] == i.ERRCODE:
-            raise i(result['result'])
-
-    err = RESTError(result['result'])
-    err.ERRCODE = result['error']
-    raise err
-
-
 class REST:
     def __init__(self, host: str, validateCert: bool) -> None:
         self.host = host
@@ -93,7 +65,7 @@ class REST:
         self.url = "https://{}/uds/rest/".format(self.host)
         # Disable logging requests messages except for errors, ...
         logging.getLogger("requests").setLevel(logging.CRITICAL)
-        # Tries to disable all warnings
+        logging.getLogger("urllib3").setLevel(logging.ERROR)
         try:
             warnings.simplefilter("ignore")  # Disables all warnings
         except Exception:
@@ -102,6 +74,24 @@ class REST:
     @property
     def _headers(self) -> typing.MutableMapping[str, str]:
         return {'content-type': 'application/json'}
+
+    def _actorPost(
+            self,
+            method: str,  # i.e. 'initialize', 'ready', ....
+            payLoad: typing.MutableMapping[str, typing.Any],
+            headers: typing.Optional[typing.MutableMapping[str, str]] = None
+        ) -> typing.Any:
+        headers = headers or self._headers
+        try:
+            result = requests.post(self.url + 'actor/v2/' + method, data=json.dumps(payLoad), headers=headers, verify=self.validateCert)
+            if result.ok:
+                return result.json()['result']
+        except requests.ConnectionError as e:
+            raise RESTConnectionError(str(e))
+        except Exception as e:
+            pass
+
+        raise RESTError(result.content)
 
     def _login(self, auth: str, username: str, password: str) -> typing.MutableMapping[str, str]:
         try:
@@ -120,7 +110,6 @@ class REST:
 
         return headers
 
-
     def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
         try:
             result = requests.get(self.url + 'auth/auths', headers=self._headers, verify=self.validateCert, timeout=4)
@@ -136,7 +125,6 @@ class REST:
                     )
         except Exception:
             pass
-
 
     def register(  #pylint: disable=too-many-arguments, too-many-locals
             self,
@@ -186,36 +174,31 @@ class REST:
             'version': VERSION,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces]
         }
-        try:
-            result = requests.post(self.url + 'actor/v2/initialize', data=json.dumps(payload), headers=self._headers, verify=self.validateCert)
-            if result.ok:
-                r = result.json()['result']
-                os = r['os']
-                return types.InitializationResultType(
-                    own_token=r['own_token'],
-                    unique_id=r['unique_id'].lower() if r['unique_id'] else None,
-                    max_idle=r['max_idle'],
-                    os=types.ActorOsConfigurationType(
-                        action=os['action'],
-                        name=os['name'],
-                        username=os.get('username'),
-                        password=os.get('password'),
-                        new_password=os.get('new_password'),
-                        ad=os.get('ad'),
-                        ou=os.get('ou')
-                    ) if r['os'] else None
-                )
-        except requests.ConnectionError as e:
-            raise RESTConnectionError(str(e))
-        except Exception as e:
-            pass
+        r = self._actorPost('initialize', payload)
+        os = r['os']
+        return types.InitializationResultType(
+            own_token=r['own_token'],
+            unique_id=r['unique_id'].lower() if r['unique_id'] else None,
+            max_idle=r['max_idle'],
+            os=types.ActorOsConfigurationType(
+                action=os['action'],
+                name=os['name'],
+                username=os.get('username'),
+                password=os.get('password'),
+                new_password=os.get('new_password'),
+                ad=os.get('ad'),
+                ou=os.get('ou')
+            ) if r['os'] else None
+        )
 
-        raise RESTError(result.content)
-
-    def ready(self, own_token: str, secret: str, interfaces: typing.Iterable[types.InterfaceInfoType]) -> None:
-        # TODO: implement ready
-        return
+    def ready(self, own_token: str, secret: str, ip: str) -> None:
+        payload = {
+            'token': own_token,
+            'secret': secret,
+            'ip': ip
+        }
+        self._actorPost('ready', payload)  # Ignores result...
 
     def notifyIpChange(self, own_token: str, secret: str, ip: str) -> None:
-        # TODO: implement notifyIpChange
-        return
+        # In fact, notifyingIpChange is same as ready right now
+        self.ready(own_token, secret, ip)

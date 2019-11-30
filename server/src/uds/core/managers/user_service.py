@@ -455,6 +455,8 @@ class UserServiceManager:
         '''
         proxy = userService.deployed_service.proxy
         url = userService.getCommsUrl()
+        ip, hostname = userService.getConnectionSource()
+
         if not url:
             logger.debug('No notification is made because agent does not supports notifications')
             return
@@ -462,7 +464,7 @@ class UserServiceManager:
         url += '/preConnect'
 
         try:
-            data = {'user': userName, 'protocol': protocol}
+            data = {'user': userName, 'protocol': protocol, 'ip': ip, 'hostname': hostname}
             if proxy is not None:
                 r = proxy.doProxyRequest(url=url, data=data, timeout=2)
             else:

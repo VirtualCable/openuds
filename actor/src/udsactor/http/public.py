@@ -72,7 +72,7 @@ class PublicProvider(handler.Handler):
         logger.debug('Received Pre connection')
         if 'user' not in self._params or 'protocol' not in self._params:
             raise Exception('Invalid preConnect parameters')
-        return self._service.preConnect(self._params['user'], self._params['protocol'])
+        return self._service.preConnect(self._params['user'], self._params['protocol'], self._params.get('ip', 'unknown'), self._params.get('hostname', 'unknown'))
 
     def get_information(self) -> typing.Any:
         # Return something useful? :)

@@ -51,9 +51,9 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         daemon.Daemon.__init__(self, '/var/run/udsactor.pid')
         CommonService.__init__(self)
 
+        # Captures signals so we can stop gracefully
         signal.signal(signal.SIGINT, self.markForExit)
         signal.signal(signal.SIGTERM, self.markForExit)
-
 
     def markForExit(self, signum, frame) -> None:
         self._isAlive = False

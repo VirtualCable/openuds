@@ -71,7 +71,7 @@ class WinDomainOsManager(WindowsOsManager):
     grp = gui.TextField(length=64, label=_('Machine Group'), order=7, tooltip=_('Group to which add machines on creation. If empty, no group will be used. (experimental)'), tab=_('Advanced'))
     removeOnExit = gui.CheckBoxField(label=_('Machine clean'), order=8, tooltip=_('If checked, UDS will try to remove the machine from the domain USING the provided credentials'), tab=_('Advanced'), defvalue=gui.TRUE)
     serverHint = gui.TextField(length=64, label=_('Server Hint'), order=9, tooltip=_('In case of several AD servers, which one is preferred'), tab=_('Advanced'))
-    ssl = gui.CheckBoxField(label=_('Use SSL'), order=10, tooltip=_('If checked,  a ssl connection to Active Directory will be used'), tab=_('Advanced'))
+    ssl = gui.CheckBoxField(label=_('Use SSL'), order=10, tooltip=_('If checked,  a ssl connection to Active Directory will be used'), tab=_('Advanced'), defvalue=gui.TRUE)
 
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout

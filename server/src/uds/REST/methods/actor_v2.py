@@ -41,7 +41,8 @@ from uds.models import (
     UserService
 )
 
-from uds.core import VERSION
+#from uds.core import VERSION
+from uds.core.managers import userServiceManager
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
@@ -56,49 +57,65 @@ logger = logging.getLogger(__name__)
 
 ALLOWED_FAILS = 5
 
-def actorResult(result: typing.Any = None, error: typing.Optional[str] = None) -> typing.MutableMapping[str, typing.Any]:
-    result = result or ''
-    res = {'result': result, 'stamp': getSqlDatetimeAsUnix()}
-    if error:
-        res['error'] = error
-    return res
+class BlockAccess(Exception):
+    pass
 
+# Helpers
 def checkBlockedIp(ip: str)-> None:
     cache = Cache('actorv2')
     fails = cache.get(ip) or 0
     if fails > ALLOWED_FAILS:
         logger.info('Access to actor from %s is blocked for %s seconds since last fail', ip, GlobalConfig.LOGIN_BLOCK.getInt())
-        raise Exception()
+        raise BlockAccess()
 
 def incFailedIp(ip: str) -> None:
     cache = Cache('actorv2')
     fails = (cache.get(ip) or 0) + 1
     cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
 
-
-# Enclosed methods under /actor path
-class ActorV2(Handler):
-    """
-    Processes actor requests
-    """
-    authenticated = False  # Actor requests are not authenticated by REST api (except register)
-    path = 'actor'
-    name = 'v2'
-
-    def get(self):
-        """
-        Processes get requests
-        """
-        logger.debug('Actor args for GET: %s', self._args)
-
-        return actorResult({'version': VERSION, 'required': '3.0.0'})
-
 class ActorV2Action(Handler):
     authenticated = False  # Actor requests are not authenticated normally
     path = 'actor/v2'
 
-    def get(self):
-        return actorResult(VERSION)
+    @staticmethod
+    def actorResult(result: typing.Any = None, error: typing.Optional[str] = None) -> typing.MutableMapping[str, typing.Any]:
+        result = result or ''
+        res = {'result': result, 'stamp': getSqlDatetimeAsUnix()}
+        if error:
+            res['error'] = error
+        return res
+
+    @staticmethod
+    def setCommsUrl(userService: UserService, ip: str, secret: str):
+        url = 'https://{}/actor/{}'.format(userService.getLoggedIP(), secret)
+        userService.setCommsUrl(url)
+
+    def getUserService(self) -> UserService:
+        '''
+        Looks for an userService and, if not found, raises a BlockAccess request
+        '''
+        try:
+            return UserService.objects.get(uuid=self._params['token'])
+        except UserService.DoesNotExist:
+            raise BlockAccess()
+
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
+        return ActorV2Action.actorResult(error='Base action invoked')
+
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        try:
+            checkBlockedIp(self._request.ip)  # pylint: disable=protected-access
+            result = self.action()
+            logger.debug('Action result: %s', result)
+            return result
+        except BlockAccess:
+            # For blocking attacks
+            incFailedIp(self._request.ip)  # pylint: disable=protected-access
+        except Exception:
+            logger.exception('Posting')
+            pass
+
+        raise AccessDenied('Access denied')
 
 class ActorV2Register(ActorV2Action):
     """
@@ -136,7 +153,7 @@ class ActorV2Register(ActorV2Action):
                 token=secrets.token_urlsafe(36),
                 stamp=getSqlDatetime()
             )
-        return actorResult(actorToken.token)
+        return ActorV2Action.actorResult(actorToken.token)
 
 class ActorV2Initiialize(ActorV2Action):
     """
@@ -145,17 +162,7 @@ class ActorV2Initiialize(ActorV2Action):
     """
     name = 'initialize'
 
-    def get(self) -> typing.MutableMapping[str, typing.Any]:
-        """
-        Processes get requests. Basically checks if this is a "postThoughGet" for OpenGnsys or similar
-        """
-        if self._args[0] == 'PostThoughGet':
-            self._args = self._args[1:]  # Remove first argument
-            return self.post()
-
-        raise RequestError('Invalid request')
-
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
         """
         Initialize method expect a json POST with this fields:
             * version: str -> Actor version
@@ -183,7 +190,6 @@ class ActorV2Initiialize(ActorV2Action):
         # First, validate token...
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
-            checkBlockedIp(self._request.ip)  # Raises an exception if ip is temporarily blocked
             ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
@@ -195,7 +201,7 @@ class ActorV2Initiialize(ActorV2Action):
                 )
             except Exception as e:
                 logger.info('Unmanaged host request: %s, %s', self._params, e)
-                return actorResult({
+                return ActorV2Action.actorResult({
                     'own_token': None,
                     'max_idle': None,
                     'unique_id': None,
@@ -207,44 +213,88 @@ class ActorV2Initiialize(ActorV2Action):
             userService.setProperty('actor_version', self._params['version'])
             maxIdle = None
             osData: typing.MutableMapping[str, typing.Any] = {}
-            if userService.deployed_service.osmanager:
-                osManager: 'osmanagers.OSManager' = userService.deployed_service.osmanager.getInstance()
+            osManager: typing.Optional['osmanagers.OSManager'] = userService.getOsManager()
+            if osManager:
                 maxIdle = osManager.maxIdle()
                 logger.debug('Max idle: %s', maxIdle)
                 osData = osManager.actorData(userService)
 
-            return actorResult({
+            return ActorV2Action.actorResult({
                 'own_token': userService.uuid,
                 'unique_id': userService.unique_id,
                 'max_idle': maxIdle,
                 'os': osData
             })
         except ActorToken.DoesNotExist:
-            incFailedIp(self._request.ip)  # For blocking attacks
-        except Exception:
-            pass
+            raise BlockAccess()
 
-        raise AccessDenied('Access denied')
+
+class ActorV2Ready(ActorV2Action):
+    """
+    Notifies the user service is ready
+    """
+    name = 'ready'
+
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
+        """
+        Initialize method expect a json POST with this fields:
+            * token: str -> Valid Actor "own_token" (if invalid, will return an error).
+              Currently it is the same as user service uuid, but this could change
+            * secret: Secret for commsUrl for actor
+            * ip: ip accesible by uds
+        """
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        userService = self.getUserService()
+        # Stores known IP and notifies it to deployment
+        userService.logIP(self._params['ip'])
+        userServiceInstance = userService.getInstance()
+        userServiceInstance.setIp(self._params['ip'])
+        userService.updateData(userServiceInstance)
+
+        # Store communications url also
+        ActorV2Action.setCommsUrl(userService, self._params['ip'], self._params['secret'])
+
+        if userService.os_state != State.USABLE:
+            userService.setOsState(State.USABLE)
+            # Notify osManager or readyness if has os manager
+            osManager: typing.Optional['osmanagers.OSManager'] = userService.getOsManager()
+
+            if osManager:
+                osManager.toReady(userService)
+                userServiceManager().notifyReadyFromOsManager(userService, '')
+
+        return ActorV2Action.actorResult('ok')
 
 class ActorV2Login(ActorV2Action):
     """
-    Notifies user logged out
+    Notifies user logged id
     """
     name = 'login'
 
-    def post(self):
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
+        userService = self.getUserService()
+        osManager: typing.Optional['osmanagers.OSManager'] = userService.getOsManager()
+        if osManager:
+            osManager.loggedIn(userService, self._params.get('username') or '')
+
+        ip, hostname = userService.getConnectionSource()
+        deadLine = userService.deployed_service.getDeadline()
+        return ActorV2Action.actorResult({
+            'ip': ip,
+            'hostname': hostname,
+            'dead_line': deadLine
+        })
 
 class ActorV2Logout(ActorV2Action):
     """
-    Notifies user logged in
+    Notifies user logged out
     """
     name = 'logout'
 
-    def post(self):
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
+        return ActorV2Action.actorResult('ok')
 
 class ActorV2Log(ActorV2Action):
     """
@@ -252,36 +302,9 @@ class ActorV2Log(ActorV2Action):
     """
     name = 'log'
 
-    def post(self):
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
-
-class ActorV2Ready(ActorV2Action):
-    """
-    Notifies the service is ready
-    """
-    name = 'ready'
-
-    def setCommsUrl(self, userService: UserService, secret: str):
-        url = 'https://{}/actor/{}'.format(userService.getLoggedIP(), secret)
-        userService.setCommsUrl(url)
-
-    def post(self):
-        logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
-
-class ActorV2IpChange(ActorV2Action):
-    """
-    Notifies an IP change
-    """
-    name = 'ipchange'
-
-    def post(self):
-        """
-        Records the ip change, and also fix notifyComms url
-        """
-        logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
+        return ActorV2Action.actorResult('ok')
 
 class ActorV2Ticket(ActorV2Action):
     """
@@ -289,6 +312,29 @@ class ActorV2Ticket(ActorV2Action):
     """
     name = 'ticket'
 
-    def post(self):
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return actorResult('ok')
+        return ActorV2Action.actorResult('ok')
+
+class ActorV2Notify(ActorV2Action):
+    name = 'notify'
+
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        raise AccessDenied('Access denied')
+
+    def get(self) -> typing.MutableMapping[str, typing.Any]:
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        if 'action' not in self._params or 'token' not in self._params or self._params['action'] not in ('login', 'logout'):
+            # Requested login or logout
+            raise RequestError('Invalid parameters')
+
+        try:
+            checkBlockedIp(self._request.ip)  # pylint: disable=protected-access
+            userService = UserService.objects.get(uuid=self._params['token'])
+            # TODO: finish this
+            return ActorV2Action.actorResult('ok')
+        except UserService.DoesNotExist:
+            # For blocking attacks
+            incFailedIp(self._request.ip)  # pylint: disable=protected-access
+
+        raise AccessDenied('Access denied')
