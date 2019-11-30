@@ -259,7 +259,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         return (self.src_ip, self.src_hostname)
 
     def getOsManager(self) -> typing.Optional['OSManager']:
-        return self.deployed_service.osmanager.getInstance()
+        return self.deployed_service.osmanager
 
     def needsOsManager(self) -> bool:
         """
