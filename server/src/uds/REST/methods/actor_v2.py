@@ -257,7 +257,7 @@ class ActorV2Ready(ActorV2Action):
         if userService.os_state != State.USABLE:
             userService.setOsState(State.USABLE)
             # Notify osManager or readyness if has os manager
-            osManager: typing.Optional['osmanagers.OSManager'] = userService.getOsManager()
+            osManager = userService.getOsManagerInstance()
 
             if osManager:
                 osManager.toReady(userService)
@@ -274,7 +274,7 @@ class ActorV2Login(ActorV2Action):
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
-        osManager: typing.Optional['osmanagers.OSManager'] = userService.getOsManager()
+        osManager = userService.getOsManagerInstance()
         if osManager:
             osManager.loggedIn(userService, self._params.get('username') or '')
 

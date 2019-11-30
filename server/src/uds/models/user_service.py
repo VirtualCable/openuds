@@ -50,6 +50,7 @@ from .util import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from uds.core import osmanagers
     from uds.core import services
     from uds.models import OSManager, ServicePool, ServicePoolPublication, UserServiceProperty
 
@@ -260,6 +261,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     def getOsManager(self) -> typing.Optional['OSManager']:
         return self.deployed_service.osmanager
+
+    def getOsManagerInstance(self) -> typing.Optional['osmanagers.OSManager']:
+        osManager = self.getOsManager()
+        if osManager:
+            return osManager.getInstance()
+        return None
 
     def needsOsManager(self) -> bool:
         """
