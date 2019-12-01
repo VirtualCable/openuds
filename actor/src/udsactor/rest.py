@@ -200,5 +200,17 @@ class REST:
         self._actorPost('ready', payload)  # Ignores result...
 
     def notifyIpChange(self, own_token: str, secret: str, ip: str) -> None:
-        # In fact, notifyingIpChange is same as ready right now
-        self.ready(own_token, secret, ip)
+        payload = {
+            'token': own_token,
+            'secret': secret,
+            'ip': ip
+        }
+        self._actorPost('ipchange', payload)  # Ignores result...
+
+    def log(self, own_token: str, level: int, message: str) -> None:
+        payLoad = {
+            'token': own_token,
+            'level': level,
+            'message': message
+        }
+        self._actorPost('log', payLoad)  # Ignores result...

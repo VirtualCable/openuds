@@ -60,7 +60,6 @@ class CommonService:
     _isAlive: bool = True
     _rebootRequested: bool = False
     _loggedIn = False
-    _cachedInteface: typing.Optional[types.InterfaceInfoType] = None
 
     _cfg: types.ActorConfigurationType
     _api: rest.REST
@@ -83,22 +82,27 @@ class CommonService:
         self._api = rest.REST(self._cfg.host, self._cfg.validateCertificate)
         self._secret = secrets.token_urlsafe(33)
 
+        # Initialzies loglevel
+        logger.setLevel(self._cfg.log_level * 10000)
+
         socket.setdefaulttimeout(20)
 
     def serviceInterfaceInfo(self, interfaces: typing.Optional[typing.List[types.InterfaceInfoType]] = None) -> typing.Optional[types.InterfaceInfoType]:
         """
         returns the inteface with unique_id mac or first interface or None if no interfaces...
         """
-        interfaces = interfaces or self._interfaces
+        interfaces = interfaces or self._interfaces  # Emty interfaces is like "no ip change" because cannot be notified
         if self._cfg.config and interfaces:
             try:
-                return next(x for x in self._interfaces if x.mac.lower() == self._cfg.config.unique_id)
+                return next(x for x in interfaces if x.mac.lower() == self._cfg.config.unique_id)
             except StopIteration:
                 return interfaces[0]
 
         return None
 
     def reboot(self) -> None:
+        # Reboot just after renaming
+        logger.info('Rebooting...')
         self._rebootRequested = True
 
     def setReady(self) -> None:
@@ -118,6 +122,8 @@ class CommonService:
                     except rest.RESTConnectionError:
                         self.doWait(5000)
                         continue
+                    except Exception:
+                        pass
                     # Success or any error that is not recoverable (retunerd by UDS). if Error, service will be cleaned in a while.
                     break
 
@@ -197,6 +203,9 @@ class CommonService:
 
                 # On first successfull initialization request, master token will dissapear so it will be no more available (not needed anyway)
                 platform.store.writeConfig(self._cfg)
+                # Setup logger now
+                if self._cfg.own_token:
+                    logger.setRemoteLogger(self._api, self._cfg.own_token)
 
                 break  # Initial configuration done..
             except rest.RESTConnectionError as e:
@@ -204,25 +213,28 @@ class CommonService:
                 self.doWait(5000)  # Wait a bit and retry
             except rest.RESTError as e: # Invalid key?
                 logger.error('Error validating with broker. (Invalid token?): {}'.format(e))
+                return False
 
         return self.configureMachine()
 
     def checkIpsChanged(self):
-        if not self._cfg.own_token or not self._cfg.config or not self._cfg.config.unique_id:
-            # Not enouth data do check
-            return
-
         try:
+            if not self._cfg.own_token or not self._cfg.config or not self._cfg.config.unique_id:
+                # Not enouth data do check
+                return
+            currentInterfaces = list(platform.operations.getNetworkInfo())
             old = self.serviceInterfaceInfo()
-            new = self.serviceInterfaceInfo(platform.operations.getNetworkInfo())
+            new = self.serviceInterfaceInfo(currentInterfaces)
             if not new or not old:
                 raise Exception('No ip currently available for {}'.format(self._cfg.config.unique_id))
             if old.ip != new.ip:
                 self._api.notifyIpChange(self._cfg.own_token, self._secret, new.ip)
+                # Now store new addresses & interfaces...
+                self._interfaces = currentInterfaces
                 logger.info('Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip))
         except Exception as e:
             # No ip changed, log exception for info
-            logger.warn('Checking ips faield: {}'.format(e))
+            logger.warn('Checking ips failed: {}'.format(e))
 
     def rename(  # pylint: disable=unused-argument
             self,
@@ -250,8 +262,6 @@ class CommonService:
                 raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(userName, str(e)))
 
         if platform.operations.renameComputer(name):
-            # Reboot just after renaming
-            logger.info('Rebooting computer to activate new name {}'.format(name))
             self.reboot()
 
     # ******************************************************

@@ -41,8 +41,6 @@ def rename(newName: str) -> bool:
     Expects new host name on newName
     Host does not needs to be rebooted after renaming
     '''
-    logger.debug('using Debian renamer')
-
     with open('/etc/hostname', 'w') as hostname:
         hostname.write(newName)
 

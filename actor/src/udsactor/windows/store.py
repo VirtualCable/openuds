@@ -62,9 +62,9 @@ def fixRegistryPermissions(handle) -> None:
 
 def readConfig() -> types.ActorConfigurationType:
     try:
-        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
-        data, _ = wreg.QueryValueEx(key, '')  # @UndefinedVariable
-        wreg.CloseKey(key)  # @UndefinedVariable
+        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_QUERY_VALUE)
+        data, _ = wreg.QueryValueEx(key, '')
+        wreg.CloseKey(key)
         return pickle.loads(data)
     except Exception:
         return types.ActorConfigurationType('', False)
@@ -72,24 +72,24 @@ def readConfig() -> types.ActorConfigurationType:
 
 def writeConfig(config: types.ActorConfigurationType) -> None:
     try:
-        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
+        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)
     except Exception:
-        key = wreg.CreateKeyEx(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
+        key = wreg.CreateKeyEx(BASEKEY, PATH, 0, wreg.KEY_ALL_ACCESS)
 
-    # fixRegistryPermissions(key.handle)
+    fixRegistryPermissions(key.handle)
 
-    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, pickle.dumps(config))  # @UndefinedVariable
-    wreg.CloseKey(key)  # @UndefinedVariable
+    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, pickle.dumps(config))
+    wreg.CloseKey(key)
 
 
 def useOldJoinSystem() -> bool:
     try:
-        key = wreg.OpenKey(BASEKEY, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
+        key = wreg.OpenKey(BASEKEY, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_QUERY_VALUE)
         try:
-            data, _ = wreg.QueryValueEx(key, 'join')  # @UndefinedVariable
+            data, _ = wreg.QueryValueEx(key, 'join')
         except Exception:
             data = ''
-        wreg.CloseKey(key)  # @UndefinedVariable
+        wreg.CloseKey(key)
     except Exception:
         data = ''
 

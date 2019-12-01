@@ -29,67 +29,76 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
 import traceback
 import sys
-import six
+import typing
 
 if sys.platform == 'win32':
-    from .windows.log import LocalLogger  # @UnusedImport
+    from .windows.log import LocalLogger
 else:
-    from .linux.log import LocalLogger  # @Reimport
+    from .linux.log import LocalLogger
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from . import rest
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))
 
 
 class Logger:
+    remoteLogger: typing.Optional['rest.REST']
+    own_token: str
+    logLevel: int
+    localLogger: LocalLogger
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logLevel = INFO
-        self.logger = LocalLogger()
+        self.localLogger = LocalLogger()
         self.remoteLogger = None
+        self.own_token = ''
 
-    def setLevel(self, level):
+    def setLevel(self, level: typing.Union[str, int]) -> None:
         '''
         Sets log level filter (minimum level required for a log message to be processed)
         :param level: Any message with a level below this will be filtered out
         '''
         self.logLevel = int(level)  # Ensures level is an integer or fails
 
-    def setRemoteLogger(self, remoteLogger):
+    def setRemoteLogger(self, remoteLogger: 'rest.REST', own_token: str) -> None:
         self.remoteLogger = remoteLogger
+        self.own_token = own_token
 
-    def log(self, level, message):
+    def log(self, level: typing.Union[str, int], message: str) -> None:
+        level = int(level)
         if level < self.logLevel:  # Skip not wanted messages
             return
 
         # If remote logger is available, notify message to it
         try:
-            if self.remoteLogger is not None and self.remoteLogger.isConnected and level >= INFO:
-                self.remoteLogger.log(level, message)
+            if self.remoteLogger:
+                self.remoteLogger.log(self.own_token, level, message)
         except Exception as e:
-            self.logger.log(FATAL, 'Error notifying log to broker: {}'.format(e.message))
+            self.localLogger.log(FATAL, 'Error notifying log to broker: {}'.format(e))
 
-        self.logger.log(level, message)
+        self.localLogger.log(level, message)
 
-    def debug(self, message):
+    def debug(self, message: str) -> None:
         self.log(DEBUG, message)
 
-    def warn(self, message):
+    def warn(self, message: str) -> None:
         self.log(WARN, message)
 
-    def info(self, message):
+    def info(self, message: str) -> None:
         self.log(INFO, message)
 
-    def error(self, message):
+    def error(self, message: str) -> None:
         self.log(ERROR, message)
 
-    def fatal(self, message):
+    def fatal(self, message: str) -> None:
         self.log(FATAL, message)
 
-    def exception(self):
+    def exception(self) -> None:
         try:
             tb = traceback.format_exc()
         except Exception:
@@ -97,7 +106,7 @@ class Logger:
 
         self.log(DEBUG, tb)
 
-    def flush(self):
+    def flush(self) -> None:
         pass
 
 

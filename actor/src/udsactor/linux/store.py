@@ -65,7 +65,6 @@ def readConfig() -> types.ActorConfigurationType:
     except Exception:
         return types.ActorConfigurationType('', False)
 
-
 def writeConfig(config: types.ActorConfigurationType) -> None:
     cfg = configparser.ConfigParser()
     cfg.add_section('uds')
@@ -90,13 +89,12 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     # Ensures exists destination folder
     dirname = os.path.dirname(CONFIGFILE)
     if not os.path.exists(dirname):
-        os.mkdir(dirname, mode=0o755)  # Will create only if route to path already exists, for example, /etc (that must... :-))
+        os.mkdir(dirname, mode=0o700)  # Will create only if route to path already exists, for example, /etc (that must... :-))
 
     with open(CONFIGFILE, 'w') as f:
         cfg.write(f)
 
-    os.chmod(CONFIGFILE, 0o0644)  # Ensure only readable by root
-
+    os.chmod(CONFIGFILE, 0o0600)  # Ensure only readable by root
 
 def useOldJoinSystem() -> bool:
     return False

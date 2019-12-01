@@ -43,6 +43,7 @@ renamers: typing.MutableMapping[str, typing.Callable[[str], bool]] = {}
 def rename(newName: str) -> bool:
     distribution = operations.getLinuxOs().lower().strip()
     if distribution in renamers:
+        logger.info('Renaming to {}'.format(newName))
         return renamers[distribution](newName)
 
     # Try Debian renamer, simplest one

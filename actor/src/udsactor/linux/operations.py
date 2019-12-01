@@ -155,7 +155,7 @@ def renameComputer(newName: str) -> bool:
     Returns True if reboot needed
     '''
     rename(newName)
-    return False
+    return True  # Always reboot right now. Not much slower but much more better
 
 
 def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False):
