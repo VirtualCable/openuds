@@ -111,7 +111,16 @@ class CommonService:
         if self._cfg.own_token and self._interfaces:
             srvInterface = self.serviceInterfaceInfo()
             if srvInterface:
-                self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip)
+                # Rery while RESTConnectionError (that is, cannot connect)
+                while self._isAlive:
+                    try:
+                        self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip)
+                    except rest.RESTConnectionError:
+                        self.doWait(5000)
+                        continue
+                    # Success or any error that is not recoverable (retunerd by UDS). if Error, service will be cleaned in a while.
+                    break
+
             else:
                 logger.error('Could not locate IP address!!!. (Not registered with UDS)')
 

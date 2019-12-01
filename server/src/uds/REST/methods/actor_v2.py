@@ -38,11 +38,13 @@ from uds.models import (
     getSqlDatetimeAsUnix,
     getSqlDatetime,
     ActorToken,
-    UserService
+    UserService,
+    TicketStore
 )
 
 #from uds.core import VERSION
 from uds.core.managers import userServiceManager
+from uds.core.util import log
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
@@ -111,9 +113,8 @@ class ActorV2Action(Handler):
         except BlockAccess:
             # For blocking attacks
             incFailedIp(self._request.ip)  # pylint: disable=protected-access
-        except Exception:
-            logger.exception('Posting')
-            pass
+        except Exception as e:
+            logger.exception('Posting %s: %s', self.__class__, e)
 
         raise AccessDenied('Access denied')
 
@@ -294,6 +295,12 @@ class ActorV2Logout(ActorV2Action):
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        userService = self.getUserService()
+        osManager = userService.getOsManagerInstance()
+        if osManager:
+            osManager.loggedOut(userService, self._params.get('username') or '')
+            osManager.processUnused(userService)
+
         return ActorV2Action.actorResult('ok')
 
 class ActorV2Log(ActorV2Action):
@@ -304,6 +311,9 @@ class ActorV2Log(ActorV2Action):
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        userService = self.getUserService()
+        log.doLog(userService, int(self._params['level'])* 1000, self._params['message'], log.ACTOR)
+
         return ActorV2Action.actorResult('ok')
 
 class ActorV2Ticket(ActorV2Action):
@@ -314,12 +324,17 @@ class ActorV2Ticket(ActorV2Action):
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        return ActorV2Action.actorResult('ok')
+
+        try:
+            return ActorV2Action.actorResult(TicketStore.get(self._params['ticket'], invalidate=True))
+        except TicketStore.DoesNotExist:
+            raise BlockAccess()  # If too many blocks...
 
 class ActorV2Notify(ActorV2Action):
     name = 'notify'
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
+        # Raplaces original post (non existent here)
         raise AccessDenied('Access denied')
 
     def get(self) -> typing.MutableMapping[str, typing.Any]:
@@ -329,6 +344,7 @@ class ActorV2Notify(ActorV2Action):
             raise RequestError('Invalid parameters')
 
         try:
+            # Check block manually
             checkBlockedIp(self._request.ip)  # pylint: disable=protected-access
             userService = UserService.objects.get(uuid=self._params['token'])
             # TODO: finish this
