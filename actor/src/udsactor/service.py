@@ -41,7 +41,7 @@ from . import rest
 from . import types
 # from .script_thread import ScriptExecutorThread
 from .log import logger
-
+from .http import registry
 
 # def setup() -> None:
 #     cfg = platform.store.readConfig()
@@ -55,7 +55,6 @@ from .log import logger
 #     else:
 #         logger.setLevel(20000)
 
-
 class CommonService:
     _isAlive: bool = True
     _rebootRequested: bool = False
@@ -65,6 +64,7 @@ class CommonService:
     _api: rest.REST
     _interfaces: typing.List[types.InterfaceInfoType]
     _secret: str
+    _registry: registry.UDSActorClientRegistry
 
     @staticmethod
     def execute(cmdLine: str, section: str) -> bool:
@@ -81,6 +81,7 @@ class CommonService:
         self._interfaces = []
         self._api = rest.REST(self._cfg.host, self._cfg.validateCertificate)
         self._secret = secrets.token_urlsafe(33)
+        self._registry = registry.UDSActorClientRegistry()
 
         # Initialzies loglevel
         logger.setLevel(self._cfg.log_level * 10000)
@@ -179,7 +180,7 @@ class CommonService:
         while self._isAlive:
             if not self._interfaces:
                 self._interfaces = list(platform.operations.getNetworkInfo())
-                if not self._interfaces:  # Wait a bit for interfaces to get initialized...
+                if not self._interfaces:  # Wait a bit for interfaces to get initialized... (has valid IPs)
                     self.doWait(5000)
                     continue
 
@@ -280,6 +281,16 @@ class CommonService:
         default does nothing
         '''
         logger.info('Base join invoked: {} on {}, {}'.format(name, domain, ou))
+
+    # Client notifications
+    def login(self, username: str) -> types.LoginResultInfoType:
+        if self._cfg.own_token:
+            return self._api.login(self._cfg.own_token, username)
+        return types.LoginResultInfoType(ip='', hostname='', dead_line=None)
+
+    def logout(self, username: str) -> None:
+        if self._cfg.own_token:
+            self._api.logout(self._cfg.own_token, username)
 
     # ****************************************
     # Methods that CAN BE overriden by actors

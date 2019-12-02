@@ -69,7 +69,7 @@ class Logger:
         self.remoteLogger = remoteLogger
         self.own_token = own_token
 
-    def log(self, level: typing.Union[str, int], message: str) -> None:
+    def log(self, level: typing.Union[str, int], message: str, *args) -> None:
         level = int(level)
         if level < self.logLevel:  # Skip not wanted messages
             return
@@ -77,26 +77,26 @@ class Logger:
         # If remote logger is available, notify message to it
         try:
             if self.remoteLogger:
-                self.remoteLogger.log(self.own_token, level, message)
+                self.remoteLogger.log(self.own_token, level, message % args)
         except Exception as e:
             self.localLogger.log(FATAL, 'Error notifying log to broker: {}'.format(e))
 
         self.localLogger.log(level, message)
 
-    def debug(self, message: str) -> None:
-        self.log(DEBUG, message)
+    def debug(self, message: str, *args) -> None:
+        self.log(DEBUG, message, *args)
 
-    def warn(self, message: str) -> None:
-        self.log(WARN, message)
+    def warn(self, message: str, *args) -> None:
+        self.log(WARN, message, *args)
 
-    def info(self, message: str) -> None:
-        self.log(INFO, message)
+    def info(self, message: str, *args) -> None:
+        self.log(INFO, message, *args)
 
-    def error(self, message: str) -> None:
-        self.log(ERROR, message)
+    def error(self, message: str, *args) -> None:
+        self.log(ERROR, message, *args)
 
-    def fatal(self, message: str) -> None:
-        self.log(FATAL, message)
+    def fatal(self, message: str, *args) -> None:
+        self.log(FATAL, message, *args)
 
     def exception(self) -> None:
         try:

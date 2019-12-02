@@ -192,7 +192,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         return 'done'
 
     def onLogout(self, userName) -> None:
-        logger.debug('Windows onLogout invoked: {}, {}'.format(user, self._user))
+        logger.debug('Windows onLogout invoked: {}, {}'.format(userName, self._user))
         try:
             p = win32security.GetBinarySid(REMOTE_USERS_SID)
             groupName = win32security.LookupAccountSid(None, p)[0]
@@ -216,7 +216,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # call the CoInitialize to allow the registration to run in an other
         # thread
         logger.debug('Initializing com...')
-        
+
         pythoncom.CoInitialize()
 
         if not self.initialize():

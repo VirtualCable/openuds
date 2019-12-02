@@ -48,3 +48,8 @@ class InitializationResultType(typing.NamedTuple):
     unique_id: typing.Optional[str] = None
     max_idle: typing.Optional[int] = None
     os: typing.Optional[ActorOsConfigurationType] = None
+
+class LoginResultInfoType(typing.NamedTuple):
+    ip: str
+    hostname: str
+    dead_line: typing.Optional[int]

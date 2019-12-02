@@ -93,23 +93,6 @@ class REST:
 
         raise RESTError(result.content)
 
-    def _login(self, auth: str, username: str, password: str) -> typing.MutableMapping[str, str]:
-        try:
-            # First, try to login
-            authInfo = {'auth': auth, 'username': username, 'password': password}
-            headers = self._headers
-            result = requests.post(self.url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self.validateCert)
-            if not result.ok or result.json()['result'] == 'error':
-                raise Exception()  # Invalid credentials
-        except requests.ConnectionError as e:
-            raise RESTConnectionError(str(e))
-        except Exception as e:
-            raise RESTError('Invalid credentials')
-
-        headers['X-Auth-Token'] = result.json()['token']
-
-        return headers
-
     def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
         try:
             result = requests.get(self.url + 'auth/auths', headers=self._headers, verify=self.validateCert, timeout=4)
@@ -153,8 +136,17 @@ class REST:
             'log_level': logLevel
         }
 
+        # First, try to login to REST api
         try:
-            headers = self._login(auth, username, password)
+            # First, try to login
+            authInfo = {'auth': auth, 'username': username, 'password': password}
+            headers = self._headers
+            result = requests.post(self.url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self.validateCert)
+            if not result.ok or result.json()['result'] == 'error':
+                raise Exception()  # Invalid credentials
+
+            headers['X-Auth-Token'] = result.json()['token']
+
             result = requests.post(self.url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self.validateCert)
             if result.ok:
                 return result.json()['result']
@@ -162,8 +154,8 @@ class REST:
             raise RESTConnectionError(str(e))
         except RESTError:
             raise
-        except Exception:
-            pass
+        except Exception as e:
+            raise RESTError('Invalid credentials')
 
         raise RESTError(result.content)
 
@@ -206,6 +198,23 @@ class REST:
             'ip': ip
         }
         self._actorPost('ipchange', payload)  # Ignores result...
+
+    def login(self, own_token: str, username: str) -> types.LoginResultInfoType:
+        payload = {
+            'token': own_token,
+            'username': username
+        }
+        result = self._actorPost('login', payload)
+        return types.LoginResultInfoType(ip=result['ip'], hostname=result['hostname'], dead_line=result['dead_line'])
+
+
+    def logout(self, own_token: str, username: str) -> None:
+        payload = {
+            'token': own_token,
+            'username': username
+        }
+        self._actorPost('logout', payload)
+
 
     def log(self, own_token: str, level: int, message: str) -> None:
         payLoad = {

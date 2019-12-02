@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -81,14 +81,15 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
             handlerType = PublicProvider
         elif len(path) == 2 and path[0] == 'ui':
             # private method, only from localhost
-            handlerType = LocalProvider
+            if self.client_address[0][:3] == '127':
+                handlerType = LocalProvider
 
         if not handlerType:
             self.sendJsonResponse(error='Forbidden', code=403)
             return
 
         try:
-            result = getattr(handlerType(self._service, method, params), method + '_' + path[-1])()
+            result = getattr(handlerType(self._service, method, params), method + '_' + path[-1])()  # last part of path is method
         except AttributeError:
             self.sendJsonResponse(error='Method not found', code=404)
             return

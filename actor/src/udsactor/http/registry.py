@@ -28,26 +28,48 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import json
 import typing
 
-from . import handler
+import requests
 
-if typing.TYPE_CHECKING:
-    from ..service import CommonService
+from ..log import logger
 
-class LocalProvider(handler.Handler):
+class UDSActorClientRegistry:
+    _clientUrl: typing.List[str]
 
-    def post_login(self) -> typing.Any:
-        result = self._service.login(self._params['username'])
-        return result._asdict()
+    def __init__(self) -> None:
+        self._clientUrl = []
 
-    def post_logout(self) -> typing.Any:
-        self._service.logout(self._params['username'])
-        return 'ok'
+    def _post(self, method: str, data: typing.Any = None) -> None:
+        removables: typing.List[str] = []
+        for clientUrl in self._clientUrl:
+            try:
+                requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False)
+            except Exception as e:
+                # If cannot request to a clientUrl, remove it from list
+                logger.info('Could not coneect with client %s: %s. Removed from registry.', e, clientUrl)
+                removables.append(clientUrl)
 
-    def post_ping(self) -> typing.Any:
-        return 'pong'
+        # Remove failed connections
+        for clientUrl in removables:
+            self.unregister(clientUrl)
 
-    def post_register(self) -> typing.Any:
-        self._service._registry.register(self._params['url'])  # pylint: disable=protected-access
-        return 'ok'
+    def register(self, clientUrl: str) -> None:
+        # Remove first if exists, to avoid duplicates
+        self.unregister(clientUrl)
+        # And add it again
+        self._clientUrl.append(clientUrl)
+
+    def unregister(self, clientUrl: str) -> None:
+        self._clientUrl = list((i for i in self._clientUrl if i != clientUrl))
+
+    def executeScript(self, script: str) -> None:
+        self._post('script', script)
+
+    def logout(self) -> None:
+        self._post('logout', None)
+
+    def ping(self) -> bool:
+        self._post('ping', None)
+        return bool(self._clientUrl)  # if no clients available
