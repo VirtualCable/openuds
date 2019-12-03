@@ -26,7 +26,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
@@ -44,7 +43,7 @@ from uds.models import (
 
 #from uds.core import VERSION
 from uds.core.managers import userServiceManager
-from uds.core.util import log
+from uds.core.util import log, certs
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
@@ -88,9 +87,8 @@ class ActorV3Action(Handler):
         return res
 
     @staticmethod
-    def setCommsUrl(userService: UserService, ip: str, secret: str):
-        url = 'https://{}/actor/{}'.format(userService.getLoggedIP(), secret)
-        userService.setCommsUrl(url)
+    def setCommsUrl(userService: UserService, ip: str, port: int, secret: str):
+        userService.setCommsUrl('https://{}:{}/actor/{}'.format(ip, port, secret))
 
     def getUserService(self) -> UserService:
         '''
@@ -243,6 +241,14 @@ class ChangeIp(ActorV3Action):
               Currently it is the same as user service uuid, but this could change
             * secret: Secret for commsUrl for actor
             * ip: ip accesible by uds
+            * port: port of the listener (normally 43910)
+
+        This method will also regenerater the public-private key pair for client, that will be needed for the new ip
+
+        Returns: {
+            private_key: str -> Generated private key, PEM
+            server_certificate: str -> Generated public key, PEM
+        }
         """
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
@@ -253,7 +259,7 @@ class ChangeIp(ActorV3Action):
         userService.updateData(userServiceInstance)
 
         # Store communications url also
-        ActorV3Action.setCommsUrl(userService, self._params['ip'], self._params['secret'])
+        ActorV3Action.setCommsUrl(userService, self._params['ip'], int(self._params['port']), self._params['secret'])
 
         if userService.os_state != State.USABLE:
             userService.setOsState(State.USABLE)
@@ -264,8 +270,10 @@ class ChangeIp(ActorV3Action):
                 osManager.toReady(userService)
                 userServiceManager().notifyReadyFromOsManager(userService, '')
 
-        return ActorV3Action.actorResult('ok')
+        # Generates a certificate and send it to client. Currently, we do not store it locally
+        privateKey, cert, password = certs.selfSignedCert(self._params['ip'])
 
+        return ActorV3Action.actorResult({'private_key': privateKey, 'server_certificate': cert, 'password': password})
 
 class Ready(ChangeIp):
     """
@@ -280,6 +288,12 @@ class Ready(ChangeIp):
               Currently it is the same as user service uuid, but this could change
             * secret: Secret for commsUrl for actor
             * ip: ip accesible by uds
+            * port: port of the listener (normally 43910)
+
+        Returns: {
+            private_key: str -> Generated private key, PEM
+            server_cert: str -> Generated public key, PEM
+        }
         """
         result = super().action()
 

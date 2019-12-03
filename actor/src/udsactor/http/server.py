@@ -28,6 +28,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import os
 import threading
 import http.server
 import json
@@ -45,8 +46,6 @@ from .local import LocalProvider
 if typing.TYPE_CHECKING:
     from ..service import CommonService
     from .handler import Handler
-
-LISTEN_PORT = 43910
 
 startTime = time.time()
 
@@ -108,7 +107,6 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
         self.process('get', params)
 
-
     def do_POST(self) -> None:
         try:
             length = int(str(self.headers.get('content-length', '0')))
@@ -128,22 +126,41 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):  # pylint: disable=redefined-builtin
         logger.info('INFO  ' + format % args)
 
-
 class HTTPServerThread(threading.Thread):
-    _server: http.server.HTTPServer
+    _server: typing.Optional[http.server.HTTPServer]
+    _service: 'CommonService'
+    _certFile: typing.Optional[str]
 
     def __init__(self, service: 'CommonService'):
         super().__init__()
 
-        HTTPServerHandler._service = service  # pylint: disable=protected-access
-
-        self.certFile = certs.createSelfSignedCert()
-        self._server = http.server.HTTPServer(('0.0.0.0', LISTEN_PORT), HTTPServerHandler)
-        self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
+        self._server = None
+        self._service = service
+        self._certFile = None
 
     def stop(self) -> None:
         logger.debug('Stopping REST Service')
-        self._server.shutdown()
+        if self._server:
+            self._server.shutdown()
+            self._server = None
+
+        if self._certFile:
+            try:
+                os.unlink(self._certFile)
+            except Exception as e:
+                logger.error('Error removing certificate file: %s', e)
 
     def run(self):
+        HTTPServerHandler._service = self._service  # pylint: disable=protected-access
+
+        self._certFile, password = certs.saveCertificate(self._service._certificate)  # pylint: disable=protected-access
+
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.options = ssl.CERT_NONE
+        context.load_cert_chain(self._certFile, password=password)
+
+        self._server = http.server.HTTPServer(('0.0.0.0', self._service._cfg.port), HTTPServerHandler)  # pylint: disable=protected-access
+        # self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
+        self._server.socket = context.wrap_socket(self._server.socket, server_side=True)
+
         self._server.serve_forever()

@@ -183,21 +183,35 @@ class REST:
             ) if r['os'] else None
         )
 
-    def ready(self, own_token: str, secret: str, ip: str) -> None:
+    def ready(self, own_token: str, secret: str, ip: str, port: int) -> types.CertificateInfoType:
         payload = {
             'token': own_token,
             'secret': secret,
-            'ip': ip
+            'ip': ip,
+            'port': port
         }
-        self._actorPost('ready', payload)  # Ignores result...
+        result = self._actorPost('ready', payload)
 
-    def notifyIpChange(self, own_token: str, secret: str, ip: str) -> None:
+        return types.CertificateInfoType(
+            private_key=result['private_key'],
+            server_certificate=result['server_certificate'],
+            password=result['password']
+        )
+
+    def notifyIpChange(self, own_token: str, secret: str, ip: str, port: int) -> types.CertificateInfoType:
         payload = {
             'token': own_token,
             'secret': secret,
-            'ip': ip
+            'ip': ip,
+            'port': port
         }
-        self._actorPost('ipchange', payload)  # Ignores result...
+        result = self._actorPost('ipchange', payload)
+
+        return types.CertificateInfoType(
+            private_key=result['private_key'],
+            server_certificate=result['server_certificate'],
+            password=result['password']
+        )
 
     def login(self, own_token: str, username: str) -> types.LoginResultInfoType:
         payload = {
@@ -206,7 +220,6 @@ class REST:
         }
         result = self._actorPost('login', payload)
         return types.LoginResultInfoType(ip=result['ip'], hostname=result['hostname'], dead_line=result['dead_line'])
-
 
     def logout(self, own_token: str, username: str) -> None:
         payload = {

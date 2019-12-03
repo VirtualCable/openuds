@@ -39,9 +39,9 @@ import typing
 from . import platform
 from . import rest
 from . import types
-# from .script_thread import ScriptExecutorThread
+
 from .log import logger
-from .http import registry
+from .http import registry, server
 
 # def setup() -> None:
 #     cfg = platform.store.readConfig()
@@ -64,7 +64,9 @@ class CommonService:
     _api: rest.REST
     _interfaces: typing.List[types.InterfaceInfoType]
     _secret: str
+    _certificate: types.CertificateInfoType
     _registry: registry.UDSActorClientRegistry
+    _http: typing.Optional[server.HTTPServerThread]
 
     @staticmethod
     def execute(cmdLine: str, section: str) -> bool:
@@ -82,11 +84,24 @@ class CommonService:
         self._api = rest.REST(self._cfg.host, self._cfg.validateCertificate)
         self._secret = secrets.token_urlsafe(33)
         self._registry = registry.UDSActorClientRegistry()
+        self._certificate = types.CertificateInfoType('', '', '')
+        self._http = None
 
         # Initialzies loglevel
         logger.setLevel(self._cfg.log_level * 10000)
 
         socket.setdefaulttimeout(20)
+
+    def _startHttpServer(self):
+        # Starts the http thread
+        if self._http:
+            try:
+                self._http.stop()
+            except Exception:
+                pass
+
+        self._http = server.HTTPServerThread(self)
+        self._http.start()
 
     def serviceInterfaceInfo(self, interfaces: typing.Optional[typing.List[types.InterfaceInfoType]] = None) -> typing.Optional[types.InterfaceInfoType]:
         """
@@ -119,12 +134,12 @@ class CommonService:
                 # Rery while RESTConnectionError (that is, cannot connect)
                 while self._isAlive:
                     try:
-                        self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip)
+                        self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, self._cfg.port)
                     except rest.RESTConnectionError:
                         self.doWait(5000)
                         continue
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.error('Unhandled exception while setting ready: %s', e)
                     # Success or any error that is not recoverable (retunerd by UDS). if Error, service will be cleaned in a while.
                     break
 
@@ -135,6 +150,8 @@ class CommonService:
         if self._cfg.config:
             self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
             platform.store.writeConfig(self._cfg)
+
+        self._startHttpServer()
 
     def configureMachine(self) -> bool:
         # First, if runonce is present, honor it and remove it from config
@@ -218,6 +235,12 @@ class CommonService:
 
         return self.configureMachine()
 
+    def finish(self):
+        if self._http:
+            self._http.stop()
+
+        self.notifyStop()
+
     def checkIpsChanged(self):
         try:
             if not self._cfg.own_token or not self._cfg.config or not self._cfg.config.unique_id:
@@ -229,10 +252,12 @@ class CommonService:
             if not new or not old:
                 raise Exception('No ip currently available for {}'.format(self._cfg.config.unique_id))
             if old.ip != new.ip:
-                self._api.notifyIpChange(self._cfg.own_token, self._secret, new.ip)
+                self._certificate = self._api.notifyIpChange(self._cfg.own_token, self._secret, new.ip, self._cfg.port)
                 # Now store new addresses & interfaces...
                 self._interfaces = currentInterfaces
                 logger.info('Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip))
+                # Stop the running HTTP Thread and start a new one, with new generated cert
+                self._startHttpServer()
         except Exception as e:
             # No ip changed, log exception for info
             logger.warn('Checking ips failed: {}'.format(e))
@@ -304,9 +329,9 @@ class CommonService:
 
     def notifyStop(self) -> None:
         '''
-        Overriden to log stop
+        Overriden to log stop (on windows, notify to service manager)
         '''
-        logger.info('Service is being stopped')
+        logger.info('Service stopped')
 
     def preConnect(self, userName: str, protocol: str, ip: str, hostname: str) -> str:  # pylint: disable=unused-argument
         '''

@@ -41,7 +41,7 @@ if typing.TYPE_CHECKING:
 class PublicProvider(handler.Handler):
     def post_logoff(self) -> typing.Any:
         logger.debug('Sending LOGOFF to clients')
-        # TODO: invoke through service
+        self._service._registry.logout()  # pylint: disable=protected-access
         return 'ok'
 
     # Alias
@@ -51,7 +51,7 @@ class PublicProvider(handler.Handler):
         logger.debug('Sending MESSAGE to clients')
         if 'message' not in self._params:
             raise Exception('Invalid message parameters')
-        # TODO: invoke through service
+        self._service._registry.message(self._params['message'])  # pylint: disable=protected-access
         return 'ok'
 
     def post_script(self) -> typing.Any:
@@ -60,7 +60,7 @@ class PublicProvider(handler.Handler):
             raise Exception('Invalid script parameters')
         if 'user' in self._params:
             logger.debug('Sending SCRIPT to client')
-            # TODO: invoke through service
+            self._service._registry.message(self._params['scripts'])  # pylint: disable=protected-access
         else:
             # Execute script at server space, that is, here
             # as a parallel thread

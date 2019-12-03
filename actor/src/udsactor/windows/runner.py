@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,27 +25,13 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import tempfile
-import os.path
-import secrets
-import typing
+# pylint: disable=invalid-name
+import win32serviceutil
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from . import types
+from .service import UDSActorSvc
 
-
-def saveCertificate(certInfo: 'types.CertificateInfoType') -> typing.Tuple[str, str]:
-    """
-    Returns CertificateFile, Password tuple generated from certInfo
-    """
-    certFile = os.path.join(tempfile.gettempdir(), secrets.token_hex(16))
-
-    with open(certFile, "w") as f:
-        f.write(certInfo.private_key+certInfo.server_certificate)
-
-    return certFile, certInfo.password
+def run() -> None:
+    win32serviceutil.HandleCommandLine(UDSActorSvc)

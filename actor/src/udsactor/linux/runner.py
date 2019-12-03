@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,9 +28,47 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=invalid-name
-import win32serviceutil
+import sys
 
+from ..log import logger
 from .service import UDSActorSvc
 
-win32serviceutil.HandleCommandLine(UDSActorSvc)
+def usage():
+    sys.stderr.write('usage: udsactor start|stop|restart|login "username"|logout "username"\n')
+    sys.exit(2)
+
+def run() -> None:
+    logger.setLevel(20000)
+
+    if len(sys.argv) == 3 and sys.argv[1] in ('login', 'logout'):
+        logger.debug('Running client udsactor')
+        # client = None
+        # try:
+        #     client = ipc.ClientIPC(IPC_PORT)
+        #     if 'login' == sys.argv[1]:
+        #         client.sendLogin(sys.argv[2])
+        #         sys.exit(0)
+        #     elif 'logout' == sys.argv[1]:
+        #         client.sendLogout(sys.argv[2])
+        #         sys.exit(0)
+        #     else:
+        #         usage()
+        # except Exception as e:
+        #     logger.error(e)
+        sys.exit(0)
+    elif len(sys.argv) != 2:
+        usage()
+
+    daemonSvr = UDSActorSvc()
+    if len(sys.argv) == 2:
+        if sys.argv[1] == 'start':
+            daemonSvr.start()
+        elif sys.argv[1] == 'stop':
+            daemonSvr.stop()
+        elif sys.argv[1] == 'restart':
+            daemonSvr.restart()
+        else:
+            usage()
+        sys.exit(0)
+    else:
+        usage()

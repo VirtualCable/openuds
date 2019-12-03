@@ -90,6 +90,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
     def notifyStop(self) -> None:
         servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE, servicemanager.PYS_SERVICE_STOPPED, (self._svc_name_, ''))
+        super().notifyStop()
 
     def doWait(self, miliseconds: int) -> None:
         win32event.WaitForSingleObject(self.hWaitStop, miliseconds)
@@ -220,7 +221,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         pythoncom.CoInitialize()
 
         if not self.initialize():
-            self.notifyStop()
+            self.finish()
             win32event.WaitForSingleObject(self.hWaitStop, 5000)
             return # Stop daemon if initializes told to do so
 
@@ -257,14 +258,19 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         counter = 0
         while self._isAlive:
             counter += 1
-            # Process SENS messages, This will be a bit asyncronous (1 second delay)
-            pythoncom.PumpWaitingMessages()
+            try:
+                # Process SENS messages, This will be a bit asyncronous (1 second delay)
+                pythoncom.PumpWaitingMessages()
 
-            if counter >= 10:  # Once every 15 seconds
-                counter = 0
-                self.checkIpsChanged()
+                if counter >= 10:  # Once every 10 seconds
+                    counter = 0
+                    self.checkIpsChanged()
 
-            # In milliseconds, will break
+            except Exception as e:
+                logger.error('Got exception on main loop: %s', e)
+                # Continue after a while...
+
+            # In milliseconds, will break if event hWaitStop is set
             win32event.WaitForSingleObject(self.hWaitStop, 1000)
 
         logger.debug('Exited main loop, deregistering SENS')
@@ -274,4 +280,4 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # *******************************************
         event_system.Remove(PROGID_EventSubscription, "SubscriptionID == " + subscription_guid)
 
-        self.notifyStop()
+        self.finish()

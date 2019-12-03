@@ -30,14 +30,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import signal
-import typing
 
-from . import operations
 from . import daemon
 
 from ..log import logger
 from ..service import CommonService
-
 
 try:
     from prctl import set_proctitle  # @UnresolvedImport
@@ -45,9 +42,8 @@ except ImportError:  # Platform may not include prctl, so in case it's not avail
     def set_proctitle(_):
         pass
 
-
 class UDSActorSvc(daemon.Daemon, CommonService):
-    def __init__(self, args=None) -> None:
+    def __init__(self) -> None:
         daemon.Daemon.__init__(self, '/var/run/udsactor.pid')
         CommonService.__init__(self)
 
@@ -74,7 +70,7 @@ class UDSActorSvc(daemon.Daemon, CommonService):
 
         # Linux daemon will continue running unless something is requested to
         if not self.initialize():
-            self.notifyStop()
+            self.finish()
             return # Stop daemon if initializes told to do so
 
         logger.debug('Initialized, setting ready')
@@ -89,9 +85,12 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         counter = 0
         while self._isAlive:
             counter += 1
-            if counter % 10 == 0:
-                self.checkIpsChanged()
+            try:
+                if counter % 10 == 0:
+                    self.checkIpsChanged()
+            except Exception as e:
+                logger.error('Got exception on main loop: %s', e)
             # In milliseconds, will break
             self.doWait(1000)
 
-        self.notifyStop()
+        self.finish()

@@ -1,5 +1,8 @@
 import typing
 
+# Default public listen port
+LISTEN_PORT = 43910
+
 class InterfaceInfoType(typing.NamedTuple):
     name: str
     mac: str
@@ -39,6 +42,8 @@ class ActorConfigurationType(typing.NamedTuple):
 
     log_level: int = 0
 
+    port: int = LISTEN_PORT
+
     config: typing.Optional[ActorDataConfigurationType] = None
 
     data: typing.Optional[typing.Dict[str, typing.Any]] = None
@@ -53,3 +58,8 @@ class LoginResultInfoType(typing.NamedTuple):
     ip: str
     hostname: str
     dead_line: typing.Optional[int]
+
+class CertificateInfoType(typing.NamedTuple):
+    private_key: str
+    server_certificate: str
+    password: str

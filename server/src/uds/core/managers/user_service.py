@@ -508,9 +508,9 @@ class UserServiceManager:
                 r = requests.get(url, verify=False, timeout=5)
 
             if version >= '3.0.0':  # New type of response: {'result': uuid}
-                uuid = json.loads(r.content)['result']
+                uuid = r.json()['result']
             else:
-                uuid = json.loads(r.content)
+                uuid = r.json()
 
             if uuid != userService.uuid:
                 logger.info('The requested machine has uuid %s and the expected was %s', uuid, userService.uuid)
@@ -540,7 +540,7 @@ class UserServiceManager:
         try:
             data = {'script': script}
             if forUser:
-                data['user'] = ''
+                data['user'] = '1'  # Just must exists "user" parameter, don't mind value
             if proxy:
                 r = proxy.doProxyRequest(url=url, data=data, timeout=5)
             else:

@@ -70,6 +70,9 @@ class UDSActorClientRegistry:
     def logout(self) -> None:
         self._post('logout', None)
 
+    def message(self, message: str) -> None:
+        self._post('message', message)
+
     def ping(self) -> bool:
         self._post('ping', None)
         return bool(self._clientUrl)  # if no clients available

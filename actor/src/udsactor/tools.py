@@ -33,7 +33,6 @@ import threading
 
 from udsactor.log import logger
 
-
 class ScriptExecutorThread(threading.Thread):
     def __init__(self, script: str) -> None:
         super(ScriptExecutorThread, self).__init__()
