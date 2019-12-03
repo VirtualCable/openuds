@@ -102,7 +102,7 @@ class WinRandomPassManager(WindowsOsManager):
             'name': userService.getName(),
             'username': self._userAccount,
             'password': self._password,
-            'newpassword': self.genPassword(userService)
+            'new_password': self.genPassword(userService)
         }
 
     def infoVal(self, userService: 'UserService') -> str:

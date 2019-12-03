@@ -262,7 +262,7 @@ class CommonService:
             # No ip changed, log exception for info
             logger.warn('Checking ips failed: {}'.format(e))
 
-    def rename(  # pylint: disable=unused-argument
+    def rename(
             self,
             name: str,
             userName: typing.Optional[str] = None,

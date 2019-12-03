@@ -132,7 +132,7 @@ class OSManager(Module):
               'name': 'xxxxx'
               'username': 'username to change pass'
               'password': 'current password for username to change password'
-              'newpassword': 'new password to be set for the username'
+              'new_password': 'new password to be set for the username'
           }
         """
         return {}

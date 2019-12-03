@@ -96,7 +96,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             'name': userService.getName(),
             'username': self._userAccount,
             'password': '',  # On linux, user password is not needed so we provide an empty one
-            'newpassword': self.genPassword(userService)
+            'new_password': self.genPassword(userService)
         }
 
     def marshal(self) -> bytes:
