@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,9 +29,18 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 # pylint: disable=invalid-name
+import sys
 import win32serviceutil
+import servicemanager
+
+import win32timezone  # pylint: disable=unused-import
 
 from .service import UDSActorSvc
 
 def run() -> None:
-    win32serviceutil.HandleCommandLine(UDSActorSvc)
+    if len(sys.argv) == 1:
+        servicemanager.Initialize()
+        servicemanager.PrepareToHostSingle(UDSActorSvc)
+        servicemanager.StartServiceCtrlDispatcher()
+    else:
+        win32serviceutil.HandleCommandLine(UDSActorSvc)

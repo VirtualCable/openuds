@@ -30,9 +30,6 @@
 '''
 # pylint: disable=invalid-name
 import struct
-import subprocess
-import os
-import stat
 import typing
 
 import win32serviceutil
@@ -84,7 +81,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
     def SvcStop(self) -> None:
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         self._isAlive = False
-        win32event.SetEvent(self.hWaitStop)
+        win32event.SetEvent(self._hWaitStop)
 
     SvcShutdown = SvcStop
 
@@ -93,7 +90,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         super().notifyStop()
 
     def doWait(self, miliseconds: int) -> None:
-        win32event.WaitForSingleObject(self.hWaitStop, miliseconds)
+        win32event.WaitForSingleObject(self._hWaitStop, miliseconds)
 
     def oneStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:
         '''
@@ -186,7 +183,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         """
         # Compose packet for ov
         usernameBytes = username.encode()
-        passwordBytes = username.encode()
+        passwordBytes = password.encode()
         packet = struct.pack('!I', len(usernameBytes)) + usernameBytes + struct.pack('!I', len(passwordBytes)) + passwordBytes
         # Send packet with username/password to ov pipe
         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
@@ -211,27 +208,26 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         '''
         Main service loop
         '''
-        logger.debug('running SvcDoRun')
         servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE, servicemanager.PYS_SERVICE_STARTED, (self._svc_name_, ''))
 
         # call the CoInitialize to allow the registration to run in an other
         # thread
-        logger.debug('Initializing com...')
+        logger.debug('Initializing coms')
 
-        pythoncom.CoInitialize()
+        pythoncom.CoInitialize()  # pylint: disable=no-member
 
         if not self.initialize():
             self.finish()
-            win32event.WaitForSingleObject(self.hWaitStop, 5000)
+            win32event.WaitForSingleObject(self._hWaitStop, 5000)
             return # Stop daemon if initializes told to do so
 
-        # ********************************
-        # * Registers SENS subscriptions *
-        # ********************************
-        logevent('Registering ISensLogon')
+        # # ********************************
+        # # * Registers SENS subscriptions *
+        # # ********************************
+        logger.debug('Registering isens logon')
         subscription_guid = '{41099152-498E-11E4-8FD3-10FEED05884B}'
         sl = SensLogon(self)
-        subscription_interface = pythoncom.WrapObject(sl)
+        subscription_interface = pythoncom.WrapObject(sl)  # pylint: disable=no-member
 
         event_system = win32com.client.Dispatch(PROGID_EventSystem)
 
@@ -253,14 +249,13 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # *********************
         # * Main Service loop *
         # *********************
-        # Counter used to check ip changes only once every 10 seconds, for
-        # example
+        # Counter used to check ip changes only once every 10 seconds
         counter = 0
         while self._isAlive:
             counter += 1
             try:
                 # Process SENS messages, This will be a bit asyncronous (1 second delay)
-                pythoncom.PumpWaitingMessages()
+                pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
 
                 if counter >= 10:  # Once every 10 seconds
                     counter = 0
@@ -271,7 +266,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
                 # Continue after a while...
 
             # In milliseconds, will break if event hWaitStop is set
-            win32event.WaitForSingleObject(self.hWaitStop, 1000)
+            win32event.WaitForSingleObject(self._hWaitStop, 1000)
 
         logger.debug('Exited main loop, deregistering SENS')
 

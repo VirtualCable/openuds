@@ -55,7 +55,7 @@ from .http import registry, server
 #     else:
 #         logger.setLevel(20000)
 
-class CommonService:
+class CommonService:  # pylint: disable=too-many-instance-attributes
     _isAlive: bool = True
     _rebootRequested: bool = False
     _loggedIn = False
@@ -87,8 +87,11 @@ class CommonService:
         self._certificate = types.CertificateInfoType('', '', '')
         self._http = None
 
-        # Initialzies loglevel
+        # Initialzies loglevel and serviceLogger
         logger.setLevel(self._cfg.log_level * 10000)
+        # If windows, enable service logger
+        if logger.localLogger.windows:
+            logger.localLogger.serviceLogger = True
 
         socket.setdefaulttimeout(20)
 

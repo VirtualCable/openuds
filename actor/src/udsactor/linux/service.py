@@ -51,7 +51,7 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         signal.signal(signal.SIGINT, self.markForExit)
         signal.signal(signal.SIGTERM, self.markForExit)
 
-    def markForExit(self, signum, frame) -> None:
+    def markForExit(self, signum, frame) -> None:  # pylint: disable=unused-argument
         self._isAlive = False
 
     def joinDomain(  # pylint: disable=unused-argument, too-many-arguments

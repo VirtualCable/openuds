@@ -184,7 +184,7 @@ def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
     # Try to set new password "a las bravas", ignoring old one. This will not work with domain users
     res = win32net.NetUserSetInfo(None, user, 1003, {'password': newPassword})
 
-    if res != 0:
+    if res:
         # Log the error, and raise exception to parent
         error = getErrorMessage(res)
         raise Exception('Error changing password for user {}: {} {}'.format(user, res, error))
