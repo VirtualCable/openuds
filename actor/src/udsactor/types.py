@@ -27,7 +27,6 @@ class ActorOsConfigurationType(typing.NamedTuple):
 
 class ActorDataConfigurationType(typing.NamedTuple):
     unique_id: typing.Optional[str] = None
-    max_idle: typing.Optional[int] = None
     os: typing.Optional[ActorOsConfigurationType] = None
 
 class ActorConfigurationType(typing.NamedTuple):
@@ -51,14 +50,13 @@ class ActorConfigurationType(typing.NamedTuple):
 class InitializationResultType(typing.NamedTuple):
     own_token: typing.Optional[str] = None
     unique_id: typing.Optional[str] = None
-    max_idle: typing.Optional[int] = None
     os: typing.Optional[ActorOsConfigurationType] = None
 
 class LoginResultInfoType(typing.NamedTuple):
     ip: str
     hostname: str
     dead_line: typing.Optional[int]
-    max_idle: typing.Optional[int] = None  # Not provided by broker
+    max_idle: typing.Optional[int]  # Not provided by broker
 
 class CertificateInfoType(typing.NamedTuple):
     private_key: str

@@ -215,8 +215,9 @@ def getIdleDuration():
             return 0
         # if lastInputInfo.dwTime > 1000000000:  # Value toooo high, nonsense...
         #    return 0
-        millis = ctypes.windll.kernel32.GetTickCount() - lastInputInfo.dwTime  # @UndefinedVariable
-        if millis < 0 or millis > 1000000000:
+        current = ctypes.c_uint(ctypes.windll.kernel32.GetTickCount())
+        millis = current.value - lastInputInfo.dwTime  # @UndefinedVariable
+        if millis < 0:
             return 0
         return millis / 1000.0
     except Exception as e:

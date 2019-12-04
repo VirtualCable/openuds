@@ -186,7 +186,6 @@ class UDSServerApi(UDSApi):
         return types.InitializationResultType(
             own_token=r['own_token'],
             unique_id=r['unique_id'].lower() if r['unique_id'] else None,
-            max_idle=r['max_idle'],
             os=types.ActorOsConfigurationType(
                 action=os['action'],
                 name=os['name'],
@@ -234,7 +233,12 @@ class UDSServerApi(UDSApi):
             'username': username
         }
         result = self._doPost('login', payload)
-        return types.LoginResultInfoType(ip=result['ip'], hostname=result['hostname'], dead_line=result['dead_line'])
+        return types.LoginResultInfoType(
+            ip=result['ip'],
+            hostname=result['hostname'],
+            dead_line=result['dead_line'],
+            max_idle=result['max_idle']
+        )
 
     def logout(self, own_token: str, username: str) -> None:
         payload = {

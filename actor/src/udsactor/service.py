@@ -232,7 +232,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         own_token=initResult.own_token,
                         config=types.ActorDataConfigurationType(
                             unique_id=initResult.unique_id,
-                            max_idle=initResult.max_idle,
                             os=initResult.os
                         )
                     )

@@ -210,18 +210,14 @@ class Initiialize(ActorV3Action):
             # Managed by UDS, get initialization data from osmanager and return it
             # Set last seen actor version
             userService.setProperty('actor_version', self._params['version'])
-            maxIdle = None
             osData: typing.MutableMapping[str, typing.Any] = {}
             osManager = userService.getOsManagerInstance()
             if osManager:
-                maxIdle = osManager.maxIdle()
-                logger.debug('Max idle: %s', maxIdle)
                 osData = osManager.actorData(userService)
 
             return ActorV3Action.actorResult({
                 'own_token': userService.uuid,
                 'unique_id': userService.unique_id,
-                'max_idle': maxIdle,
                 'os': osData
             })
         except ActorToken.DoesNotExist:
@@ -316,13 +312,16 @@ class Login(ActorV3Action):
         osManager = userService.getOsManagerInstance()
         if osManager:
             osManager.loggedIn(userService, self._params.get('username') or '')
+            maxIdle = osManager.maxIdle()
+            logger.debug('Max idle: %s', maxIdle)
 
         ip, hostname = userService.getConnectionSource()
         deadLine = userService.deployed_service.getDeadline()
         return ActorV3Action.actorResult({
             'ip': ip,
             'hostname': hostname,
-            'dead_line': deadLine
+            'dead_line': deadLine,
+            'max_idle': maxIdle
         })
 
 class Logout(ActorV3Action):
