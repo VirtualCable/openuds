@@ -58,6 +58,7 @@ class LoginResultInfoType(typing.NamedTuple):
     ip: str
     hostname: str
     dead_line: typing.Optional[int]
+    max_idle: typing.Optional[int] = None  # Not provided by broker
 
 class CertificateInfoType(typing.NamedTuple):
     private_key: str

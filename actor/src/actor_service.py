@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import sys
+
 if sys.platform == 'win32':
     from udsactor.windows import runner
 else:

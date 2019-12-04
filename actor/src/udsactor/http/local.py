@@ -49,5 +49,8 @@ class LocalProvider(handler.Handler):
         return 'pong'
 
     def post_register(self) -> typing.Any:
-        self._service._registry.register(self._params['url'])  # pylint: disable=protected-access
+        self._service._clientsPool.register(self._params['callback_url'])  # pylint: disable=protected-access
         return 'ok'
+
+    def post_unregister(self) -> typing.Any:
+        self._service._clientsPool.unregister(self._params['callback_url'])  # pylint: disable=protected-access

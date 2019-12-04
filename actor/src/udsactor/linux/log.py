@@ -34,10 +34,6 @@ import tempfile
 import logging
 import typing
 
-# Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))  # @UndefinedVariable
-
-
 class LocalLogger:  # pylint: disable=too-few-public-methods
     linux = False
     windows = True

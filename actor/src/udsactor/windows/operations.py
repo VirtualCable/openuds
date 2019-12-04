@@ -30,6 +30,7 @@
 '''
 # pylint: disable=invalid-name
 import os
+import subprocess
 import ctypes
 from ctypes.wintypes import DWORD, LPCWSTR
 import typing
@@ -217,7 +218,6 @@ def getIdleDuration() -> float:
         logger.error('Getting idle duration: {}'.format(e))
         return 0
 
-
 def getCurrentUser() -> str:
     '''
     Returns current logged in username
@@ -235,3 +235,9 @@ def writeToPipe(pipeName: str, bytesPayload: bytes, waitForResponse: bool) -> ty
         return b'ok'
     except Exception:
         return None
+
+def forceTimeSync() -> None:
+    try:
+        subprocess.call([r'c:\WINDOWS\System32\w32tm.exe', ' /resync'])  # , '/rediscover'])
+    except Exception as e:
+        logger.error('Error invoking time sync command: %s', e)

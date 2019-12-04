@@ -71,8 +71,8 @@ class UDSConfigDialog(QDialog):
         self.ui.password.setText('')
 
     @property
-    def api(self) -> udsactor.rest.REST:
-        return udsactor.rest.REST(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
+    def api(self) -> udsactor.rest.UDSServerApi:
+        return udsactor.rest.UDSServerApi(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
 
     def browse(self, lineEdit: 'QLineEdit', caption: str) -> None:
         name = QFileDialog.getOpenFileName(parent=self, caption=caption, directory=os.path.dirname(lineEdit.text()))[0]

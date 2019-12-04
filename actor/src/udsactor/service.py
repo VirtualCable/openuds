@@ -41,7 +41,7 @@ from . import rest
 from . import types
 
 from .log import logger
-from .http import registry, server
+from .http import clients_pool, server
 
 # def setup() -> None:
 #     cfg = platform.store.readConfig()
@@ -61,11 +61,11 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     _loggedIn = False
 
     _cfg: types.ActorConfigurationType
-    _api: rest.REST
+    _api: rest.UDSServerApi
     _interfaces: typing.List[types.InterfaceInfoType]
     _secret: str
     _certificate: types.CertificateInfoType
-    _registry: registry.UDSActorClientRegistry
+    _clientsPool: clients_pool.UDSActorClientPool
     _http: typing.Optional[server.HTTPServerThread]
 
     @staticmethod
@@ -81,17 +81,16 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     def __init__(self) -> None:
         self._cfg = platform.store.readConfig()
         self._interfaces = []
-        self._api = rest.REST(self._cfg.host, self._cfg.validateCertificate)
+        self._api = rest.UDSServerApi(self._cfg.host, self._cfg.validateCertificate)
         self._secret = secrets.token_urlsafe(33)
-        self._registry = registry.UDSActorClientRegistry()
+        self._clientsPool = clients_pool.UDSActorClientPool()
         self._certificate = types.CertificateInfoType('', '', '')
         self._http = None
 
         # Initialzies loglevel and serviceLogger
         logger.setLevel(self._cfg.log_level * 10000)
         # If windows, enable service logger
-        if logger.localLogger.windows:
-            logger.localLogger.serviceLogger = True
+        logger.enableServiceLogger()
 
         socket.setdefaulttimeout(20)
 
@@ -135,14 +134,21 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             srvInterface = self.serviceInterfaceInfo()
             if srvInterface:
                 # Rery while RESTConnectionError (that is, cannot connect)
+                counter = 8
                 while self._isAlive:
+                    counter -= 1
                     try:
                         self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, self._cfg.port)
-                    except rest.RESTConnectionError:
+                    except rest.RESTConnectionError as e:
+                        logger.info('Error connecting with UDS Broker: %s', e)
                         self.doWait(5000)
                         continue
                     except Exception as e:
                         logger.error('Unhandled exception while setting ready: %s', e)
+                        if counter > 0:
+                            self.doWait(10000)  # A long wait on other error...
+                            continue
+                        platform.operations.reboot()  # On too many errors, simply reboot
                     # Success or any error that is not recoverable (retunerd by UDS). if Error, service will be cleaned in a while.
                     break
 
@@ -169,8 +175,10 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             # That is, the COMMAND itself has to restart the machine!
                 return False   # If the command fails, continue with the rest of the operations...
 
-        # Retry configuration while not stop service, config in case of error 10 times
+        # Retry configuration while not stop service, config in case of error 10 times, reboot vm
+        counter = 10
         while self._isAlive:
+            counter -= 1
             try:
                 if self._cfg.config and self._cfg.config.os:
                     osData = self._cfg.config.os
@@ -188,13 +196,20 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 break
             except Exception as e:
                 logger.error('Got exception operating machine: {}'.format(e))
-                self.doWait(5000)
+                if counter > 0:
+                    self.doWait(5000)
+                else:
+                    platform.operations.reboot()
+                    return False
 
         return True
 
     def initialize(self) -> bool:
         if not self._cfg.host:  # Not configured
             return False
+
+        # Force time sync, just in case...
+        platform.operations.forceTimeSync()
 
         # Wait for Broker to be ready
         while self._isAlive:
@@ -312,11 +327,14 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
     # Client notifications
     def login(self, username: str) -> types.LoginResultInfoType:
+        result = types.LoginResultInfoType(ip='', hostname='', dead_line=None, max_idle=None)
+        self._loggedIn = True
         if self._cfg.own_token:
-            return self._api.login(self._cfg.own_token, username)
-        return types.LoginResultInfoType(ip='', hostname='', dead_line=None)
+            result = self._api.login(self._cfg.own_token, username)
+        return result
 
     def logout(self, username: str) -> None:
+        self._loggedIn = False
         if self._cfg.own_token:
             self._api.logout(self._cfg.own_token, username)
 

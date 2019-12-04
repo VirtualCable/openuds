@@ -32,7 +32,6 @@ import os
 import threading
 import http.server
 import json
-import time
 import ssl
 import typing
 
@@ -46,8 +45,6 @@ from .local import LocalProvider
 if typing.TYPE_CHECKING:
     from ..service import CommonService
     from .handler import Handler
-
-startTime = time.time()
 
 class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = 'HTTP/1.0'
@@ -111,11 +108,10 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         try:
             length = int(str(self.headers.get('content-length', '0')))
             content = self.rfile.read(length)
-            logger.debug('length: {}, content >>{}<<'.format(length, content))
             params: typing.MutableMapping[str, str] = json.loads(content)
         except Exception as e:
             logger.error('Got exception executing POST {}: {}'.format(self.path, str(e)))
-            self.sendJsonResponse(error=str(e), code=500)
+            self.sendJsonResponse(error='Invalid parameters', code=400)
             return
 
         self.process('post', params)
@@ -139,7 +135,7 @@ class HTTPServerThread(threading.Thread):
         self._certFile = None
 
     def stop(self) -> None:
-        logger.debug('Stopping REST Service')
+        logger.debug('Stopping Http-server Service')
         if self._server:
             self._server.shutdown()
             self._server = None

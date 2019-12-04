@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019 Virtual Cable S.L.
@@ -28,51 +29,26 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import json
-import typing
+# pylint: disable=invalid-name
+import sys
+import os
 
-import requests
+import PyQt5  # pylint: disable=unused-import
+from PyQt5.QtWidgets import QApplication
 
-from ..log import logger
+from udsactor.log import logger, DEBUG
 
-class UDSActorClientRegistry:
-    _clientUrl: typing.List[str]
 
-    def __init__(self) -> None:
-        self._clientUrl = []
+if __name__ == "__main__":
+    logger.setLevel(DEBUG)
 
-    def _post(self, method: str, data: typing.Any = None) -> None:
-        removables: typing.List[str] = []
-        for clientUrl in self._clientUrl:
-            try:
-                requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False)
-            except Exception as e:
-                # If cannot request to a clientUrl, remove it from list
-                logger.info('Could not coneect with client %s: %s. Removed from registry.', e, clientUrl)
-                removables.append(clientUrl)
+    if 'linux' in sys.platform:
+        os.environ['QT_X11_NO_MITSHM'] = '1'
 
-        # Remove failed connections
-        for clientUrl in removables:
-            self.unregister(clientUrl)
+    logger.info('Started UDS Client Actor')
 
-    def register(self, clientUrl: str) -> None:
-        # Remove first if exists, to avoid duplicates
-        self.unregister(clientUrl)
-        # And add it again
-        self._clientUrl.append(clientUrl)
+    QApplication.setQuitOnLastWindowClosed(False)
 
-    def unregister(self, clientUrl: str) -> None:
-        self._clientUrl = list((i for i in self._clientUrl if i != clientUrl))
+    app = QApplication(sys.argv)
 
-    def executeScript(self, script: str) -> None:
-        self._post('script', script)
-
-    def logout(self) -> None:
-        self._post('logout', None)
-
-    def message(self, message: str) -> None:
-        self._post('message', message)
-
-    def ping(self) -> bool:
-        self._post('ping', None)
-        return bool(self._clientUrl)  # if no clients available
+    # Execute backgroup thread for actions

@@ -183,3 +183,6 @@ def getCurrentUser() -> str:
     Returns current logged in user
     '''
     return os.environ['USER']
+
+def forceTimeSync() -> None:
+    return

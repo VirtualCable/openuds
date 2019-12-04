@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,9 +45,8 @@ if typing.TYPE_CHECKING:
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))
 
-
 class Logger:
-    remoteLogger: typing.Optional['rest.REST']
+    remoteLogger: typing.Optional['rest.UDSServerApi']
     own_token: str
     logLevel: int
     localLogger: LocalLogger
@@ -68,6 +67,10 @@ class Logger:
     def setRemoteLogger(self, remoteLogger: 'rest.REST', own_token: str) -> None:
         self.remoteLogger = remoteLogger
         self.own_token = own_token
+
+    def enableServiceLogger(self):
+        if self.localLogger.windows:
+            self.localLogger.serviceLogger = True
 
     def log(self, level: typing.Union[str, int], message: str, *args) -> None:
         level = int(level)

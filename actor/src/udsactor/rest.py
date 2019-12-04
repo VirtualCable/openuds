@@ -58,11 +58,21 @@ class RESTUserServiceNotFoundError(RESTError):
 class RESTOsManagerError(RESTError):
     ERRCODE = 4
 
-class REST:
+#
+#
+#
+class UDSApi:
+    """
+    Base for remote api accesses
+    """
+    _host: str
+    _validateCert: bool
+    _url: str
+
     def __init__(self, host: str, validateCert: bool) -> None:
-        self.host = host
-        self.validateCert = validateCert
-        self.url = "https://{}/uds/rest/".format(self.host)
+        self._host = host
+        self._validateCert = validateCert
+        self._url = "https://{}/uds/rest/".format(self._host)
         # Disable logging requests messages except for errors, ...
         logging.getLogger("requests").setLevel(logging.CRITICAL)
         logging.getLogger("urllib3").setLevel(logging.ERROR)
@@ -75,7 +85,7 @@ class REST:
     def _headers(self) -> typing.MutableMapping[str, str]:
         return {'content-type': 'application/json'}
 
-    def _actorPost(
+    def _doPost(
             self,
             method: str,  # i.e. 'initialize', 'ready', ....
             payLoad: typing.MutableMapping[str, typing.Any],
@@ -83,7 +93,7 @@ class REST:
         ) -> typing.Any:
         headers = headers or self._headers
         try:
-            result = requests.post(self.url + 'actor/v2/' + method, data=json.dumps(payLoad), headers=headers, verify=self.validateCert)
+            result = requests.post(self._url + 'actor/v2/' + method, data=json.dumps(payLoad), headers=headers, verify=self._validateCert)
             if result.ok:
                 return result.json()['result']
         except requests.ConnectionError as e:
@@ -93,9 +103,14 @@ class REST:
 
         raise RESTError(result.content)
 
+
+#
+# UDS Broker API access
+#
+class UDSServerApi(UDSApi):
     def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
         try:
-            result = requests.get(self.url + 'auth/auths', headers=self._headers, verify=self.validateCert, timeout=4)
+            result = requests.get(self._url + 'auth/auths', headers=self._headers, verify=self._validateCert, timeout=4)
             if result.ok:
                 for v in sorted(result.json(), key=lambda x: x['priority']):
                     yield types.AuthenticatorType(
@@ -141,13 +156,13 @@ class REST:
             # First, try to login
             authInfo = {'auth': auth, 'username': username, 'password': password}
             headers = self._headers
-            result = requests.post(self.url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self.validateCert)
+            result = requests.post(self._url + 'auth/login', data=json.dumps(authInfo), headers=headers, verify=self._validateCert)
             if not result.ok or result.json()['result'] == 'error':
                 raise Exception()  # Invalid credentials
 
             headers['X-Auth-Token'] = result.json()['token']
 
-            result = requests.post(self.url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self.validateCert)
+            result = requests.post(self._url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self._validateCert)
             if result.ok:
                 return result.json()['result']
         except requests.ConnectionError as e:
@@ -166,7 +181,7 @@ class REST:
             'version': VERSION,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces]
         }
-        r = self._actorPost('initialize', payload)
+        r = self._doPost('initialize', payload)
         os = r['os']
         return types.InitializationResultType(
             own_token=r['own_token'],
@@ -190,7 +205,7 @@ class REST:
             'ip': ip,
             'port': port
         }
-        result = self._actorPost('ready', payload)
+        result = self._doPost('ready', payload)
 
         return types.CertificateInfoType(
             private_key=result['private_key'],
@@ -205,7 +220,7 @@ class REST:
             'ip': ip,
             'port': port
         }
-        result = self._actorPost('ipchange', payload)
+        result = self._doPost('ipchange', payload)
 
         return types.CertificateInfoType(
             private_key=result['private_key'],
@@ -218,7 +233,7 @@ class REST:
             'token': own_token,
             'username': username
         }
-        result = self._actorPost('login', payload)
+        result = self._doPost('login', payload)
         return types.LoginResultInfoType(ip=result['ip'], hostname=result['hostname'], dead_line=result['dead_line'])
 
     def logout(self, own_token: str, username: str) -> None:
@@ -226,7 +241,7 @@ class REST:
             'token': own_token,
             'username': username
         }
-        self._actorPost('logout', payload)
+        self._doPost('logout', payload)
 
 
     def log(self, own_token: str, level: int, message: str) -> None:
@@ -235,4 +250,39 @@ class REST:
             'level': level,
             'message': message
         }
-        self._actorPost('log', payLoad)  # Ignores result...
+        self._doPost('log', payLoad)  # Ignores result...
+
+
+class UDSClientApi(UDSApi):
+    def register(self, callbackUrl: str) -> None:
+        payLoad = {
+            'callback_url': callbackUrl
+        }
+        self._doPost('register', payLoad)
+
+    def unregister(self, callbackUrl: str) -> None:
+        payLoad = {
+            'callback_url': callbackUrl
+        }
+        self._doPost('unregister', payLoad)
+
+    def login(self, username: str) -> types.LoginResultInfoType:
+        payLoad = {
+            'username': username
+        }
+        result = self._doPost('login', payLoad)
+        return types.LoginResultInfoType(
+            ip=result['ip'],
+            hostname=result['hostname'],
+            dead_line=result['dead_line'],
+            max_idle=result['max_idle']
+        )
+
+    def logout(self, username: str) -> None:
+        payLoad = {
+            'username': username
+        }
+        self._doPost('logout', payLoad)
+
+    def ping(self) -> bool:
+        return self._doPost('ping', {}) == 'pong'
