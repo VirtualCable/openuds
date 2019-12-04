@@ -107,12 +107,15 @@ class WinDomainOsManager(WindowsOsManager):
             _str = ''
 
             try:
-                uri = "%s://%s:%d" % ('ldap', server[0], server[1])
+                uri = "%s://%s" % ('ldaps', server[0])
                 logger.debug('URI: {0}'.format(uri))
 
                 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # Disable certificate check
                 l = ldap.initialize(uri=uri)
                 l.set_option(ldap.OPT_REFERRALS, 0)
+                # l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
+                # l.set_option(ldap.OPT_X_TLS,ldap.OPT_X_TLS_DEMAND)
+                # l.set_option( ldap.OPT_X_TLS_DEMAND, True )
                 l.network_timeout = l.timeout = 5
                 l.protocol_version = ldap.VERSION3
 
