@@ -208,12 +208,10 @@ def getIdleDuration() -> float:
         lastInputInfo.cbSize = ctypes.sizeof(lastInputInfo)  # pylint: disable=attribute-defined-outside-init
         if ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo)) == 0:
             return 0
-        # if lastInputInfo.dwTime > 1000000000:  # Value toooo high, nonsense...
-        #    return 0
-        current = ctypes.c_uint(ctypes.windll.kernel32.GetTickCount())
-        millis = current.value - lastInputInfo.dwTime  # @UndefinedVariable
-        if millis < 0:
-            return 0
+        current = ctypes.c_uint(ctypes.windll.kernel32.GetTickCount()).value
+        if current < lastInputInfo.dwTime:
+            current += 4294967296  # If current has "rolled" to zero, adjust it so it is greater than lastInputInfo
+        millis = current - lastInputInfo.dwTime  # @UndefinedVariable
         return millis / 1000.0
     except Exception as e:
         logger.error('Getting idle duration: {}'.format(e))

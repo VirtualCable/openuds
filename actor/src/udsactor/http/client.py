@@ -38,7 +38,7 @@ from ..log import logger
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    UDSActorClient = typing.Any
+    from ..client import UDSActorClient
 
 class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = 'HTTP/1.0'
@@ -100,6 +100,9 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
     def method_screenshot(self, params: typing.MutableMapping[str, str]) -> typing.Any:
         return self._app.screenshot()
+
+    def method_script(self, params: typing.MutableMapping[str, str]) -> typing.Any:
+        return self._app.script(params['script'])
 
     def do_GET(self) -> None:
         self.sendJsonResponse(error='Forbidden', code=403)

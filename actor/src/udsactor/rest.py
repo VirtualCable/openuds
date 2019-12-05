@@ -39,6 +39,9 @@ import requests
 from . import types
 from .info import VERSION
 
+# Default public listen port
+LISTEN_PORT = 43910
+
 class RESTError(Exception):
     ERRCODE = 0
 
@@ -59,9 +62,9 @@ class RESTOsManagerError(RESTError):
     ERRCODE = 4
 
 #
+# Basic UDS Api
 #
-#
-class UDSApi:
+class UDSApi:  # pylint: disable=too-few-public-methods
     """
     Base for remote api accesses
     """
@@ -258,6 +261,9 @@ class UDSServerApi(UDSApi):
 
 
 class UDSClientApi(UDSApi):
+    def __init__(self) -> None:
+        super().__init__('127.0.0.1:{}'.format(LISTEN_PORT), False)
+
     def register(self, callbackUrl: str) -> None:
         payLoad = {
             'callback_url': callbackUrl

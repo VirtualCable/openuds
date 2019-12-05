@@ -37,7 +37,7 @@ import PyQt5  # pylint: disable=unused-import
 from PyQt5.QtWidgets import QApplication
 
 from udsactor.log import logger, DEBUG
-
+from udsactor.client import UDSActorClient
 
 if __name__ == "__main__":
     logger.setLevel(DEBUG)
@@ -49,6 +49,12 @@ if __name__ == "__main__":
 
     QApplication.setQuitOnLastWindowClosed(False)
 
-    app = QApplication(sys.argv)
+    qApp = QApplication(sys.argv)
 
     # Execute backgroup thread for actions
+    app = UDSActorClient(qApp)
+
+    app.start()
+    qApp.exec_()
+
+    app.join()

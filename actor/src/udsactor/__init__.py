@@ -35,4 +35,4 @@ from . import platform
 __title__ = 'udsactor'
 __author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
 __license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014-2019 VirtualCable S.L.U."
+__copyright__ = "Copyright 2014-2020 VirtualCable S.L.U."

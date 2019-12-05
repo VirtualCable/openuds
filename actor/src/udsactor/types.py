@@ -1,8 +1,5 @@
 import typing
 
-# Default public listen port
-LISTEN_PORT = 43910
-
 class InterfaceInfoType(typing.NamedTuple):
     name: str
     mac: str
@@ -40,8 +37,6 @@ class ActorConfigurationType(typing.NamedTuple):
     post_command: typing.Optional[str] = None
 
     log_level: int = 0
-
-    port: int = LISTEN_PORT
 
     config: typing.Optional[ActorDataConfigurationType] = None
 

@@ -37,6 +37,7 @@ import typing
 
 from ..log import logger
 from .. import certs
+from .. import rest
 
 from .public import PublicProvider
 from .local import LocalProvider
@@ -151,12 +152,12 @@ class HTTPServerThread(threading.Thread):
 
         self._certFile, password = certs.saveCertificate(self._service._certificate)  # pylint: disable=protected-access
 
+        self._server = http.server.HTTPServer(('0.0.0.0', rest.LISTEN_PORT), HTTPServerHandler)
+        # self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
+
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.options = ssl.CERT_NONE
         context.load_cert_chain(self._certFile, password=password)
-
-        self._server = http.server.HTTPServer(('0.0.0.0', self._service._cfg.port), HTTPServerHandler)  # pylint: disable=protected-access
-        # self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
         self._server.socket = context.wrap_socket(self._server.socket, server_side=True)
 
         self._server.serve_forever()
