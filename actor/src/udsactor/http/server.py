@@ -71,6 +71,8 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         # Very simple path & params splitter
         path = self.path.split('?')[0][1:].split('/')
 
+        logger.debug('Path: %s, params: %s', path, params)
+
         handlerType: typing.Optional[typing.Type['Handler']] = None
 
         if len(path) == 3 and path[0] == 'actor' and path[1] == self._service._secret:  # pylint: disable=protected-access
@@ -118,10 +120,10 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         self.process('post', params)
 
     def log_error(self, format, *args):  # pylint: disable=redefined-builtin
-        logger.error('ERROR ' + format % args)
+        logger.error(format, *args)
 
     def log_message(self, format, *args):  # pylint: disable=redefined-builtin
-        logger.info('INFO  ' + format % args)
+        logger.debug(format, *args)
 
 class HTTPServerThread(threading.Thread):
     _server: typing.Optional[http.server.HTTPServer]

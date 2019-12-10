@@ -94,7 +94,7 @@ class LinuxOsManager(osmanagers.OSManager):
     def release(self, userService: 'UserService') -> None:
         pass
 
-    def isRemovableOnLogout(self, userService: 'UserService'):
+    def isRemovableOnLogout(self, userService: 'UserService') -> bool:
         '''
         Says if a machine is removable on logout
         '''

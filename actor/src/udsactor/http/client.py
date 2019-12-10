@@ -55,7 +55,10 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Content-Length', str(len(data)))
         self.send_header('Server: ', self.server_version)
         self.end_headers()
-        self.wfile.write(data.encode())
+        try:
+            self.wfile.write(data.encode())
+        except Exception:
+            pass  # Evict "broken pipe" when sending errors
 
     def do_POST(self) -> None:
         # Only allows requests from localhost
@@ -70,7 +73,7 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         try:
             length = int(str(self.headers.get('content-length', '0')))
             content = self.rfile.read(length)
-            params: typing.MutableMapping[str, str] = json.loads(content)
+            params: typing.MutableMapping[str, str] = json.loads(content or '{}')
         except Exception as e:
             logger.error('Got exception executing POST {}: {}'.format(self.path, str(e)))
             self.sendJsonResponse(error='Invalid request', code=400)
@@ -108,10 +111,10 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         self.sendJsonResponse(error='Forbidden', code=403)
 
     def log_error(self, format: str, *args):  # pylint: disable=redefined-builtin
-        logger.error('ERROR ' + format, *args)
+        logger.error(format, *args)
 
     def log_message(self, format: str, *args):  # pylint: disable=redefined-builtin
-        logger.info('INFO  ' + format, *args)
+        logger.debug(format, *args)
 
 class HTTPServerThread(threading.Thread):
     _server: typing.Optional[http.server.HTTPServer]
@@ -129,9 +132,14 @@ class HTTPServerThread(threading.Thread):
         self.port = -1
         self.id = secrets.token_urlsafe(16)
 
+    @property
+    def url(self) -> str:
+        return 'http://127.0.0.1:{}/{}'.format(self.port, self.id)
+
     def stop(self) -> None:
-        logger.debug('Stopping Http-client Service')
         if self._server:
+            logger.debug('Stopping Http-client Service')
+            self._app.api.unregister(self.url)
             self._server.shutdown()
             self._server = None
 
@@ -139,8 +147,12 @@ class HTTPServerThread(threading.Thread):
         HTTPServerHandler._app = self._app  # pylint: disable=protected-access
         HTTPServerHandler._id = self.id  # pylint: disable=protected-access
 
-        self._server = http.server.HTTPServer(('0.0.0.0', 0), HTTPServerHandler)
+        self._server = http.server.HTTPServer(('127.0.0.1', 0), HTTPServerHandler)
 
         self.port = self._server.socket.getsockname()[1]
+
+        # Register using app api
+        logger.debug('Registered %s', self.url)
+        self._app.api.register(self.url)
 
         self._server.serve_forever()

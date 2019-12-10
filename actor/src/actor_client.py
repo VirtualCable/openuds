@@ -35,9 +35,40 @@ import os
 
 import PyQt5  # pylint: disable=unused-import
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QTimer
 
 from udsactor.log import logger, DEBUG
 from udsactor.client import UDSActorClient
+
+class UDSClientQApp(QApplication):
+    _app: UDSActorClient
+    _initialized: bool
+
+    def __init__(self, args) -> None:
+        super().__init__(args)
+
+        # This will be invoked on session close
+        self.commitDataRequest.connect(self.end)  # Will be invoked on session close, to gracely close app
+
+        # Execute backgroup thread for actions
+        self._app = UDSActorClient(self)
+
+    def init(self) -> None:
+        # Notify loging and mark it
+        logger.debug('Starting APP')
+        self._app.start()
+        self._initialized = True
+
+    def end(self, sessionManager=None) -> None:
+        if not self._initialized:
+            return
+
+        self._initialized = False
+
+        logger.debug('Stopping app thread')
+        self._app.stop()
+
+        self._app.join()
 
 if __name__ == "__main__":
     logger.setLevel(DEBUG)
@@ -49,12 +80,16 @@ if __name__ == "__main__":
 
     QApplication.setQuitOnLastWindowClosed(False)
 
-    qApp = QApplication(sys.argv)
+    qApp = UDSClientQApp(sys.argv)
 
-    # Execute backgroup thread for actions
-    app = UDSActorClient(qApp)
+    # Crate a timer, so we can check signals from time to time by executing python interpreter
+    # Note: Signals are only checked on python code execution, so we create a
+    timer = QTimer(qApp)
+    timer.start(1000)
+    timer.timeout.connect(lambda *a: None)
 
-    app.start()
+    qApp.init()
     qApp.exec_()
+    qApp.end()
 
-    app.join()
+    logger.debug('Exiting...')

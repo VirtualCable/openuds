@@ -157,6 +157,13 @@ class OSManager(Module):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
 
+    def isRemovableOnLogout(self, userService: 'UserService') -> bool:
+        """
+        If returns true, when actor notifies "logout", UDS will mark service for removal
+        can be overriden
+        """
+        return True
+
     def maxIdle(self) -> typing.Optional[int]:
         """
         If os manager request "max idle", this method will return a value different to None so actors will get informed on Connection

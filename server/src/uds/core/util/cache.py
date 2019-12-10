@@ -67,17 +67,17 @@ class Cache:
 
     def get(self, skey: typing.Union[str, bytes], defValue: typing.Any = None) -> typing.Any:
         now: datetime = typing.cast(datetime, getSqlDatetime())
-        logger.debug('Requesting key "%s" for cache "%s"', skey, self._owner)
+        # logger.debug('Requesting key "%s" for cache "%s"', skey, self._owner)
         try:
             key = self.__getKey(skey)
-            logger.debug('Key: %s', key)
+            # logger.debug('Key: %s', key)
             c: DBCache = DBCache.objects.get(pk=key)  # @UndefinedVariable
             # If expired
             if now > c.created + timedelta(seconds=c.validity):
                 return defValue
 
             try:
-                logger.debug('value: %s', c.value)
+                # logger.debug('value: %s', c.value)
                 val = pickle.loads(typing.cast(bytes, encoders.decode(c.value, 'base64')))
             except Exception:  # If invalid, simple do no tuse it
                 logger.exception('Invalid pickle from cache. Removing it.')
@@ -88,11 +88,11 @@ class Cache:
             return val
         except DBCache.DoesNotExist:  # @UndefinedVariable
             Cache.misses += 1
-            logger.debug('key not found: %s', skey)
+            # logger.debug('key not found: %s', skey)
             return defValue
-        except Exception as e:
+        except Exception:
             Cache.misses += 1
-            logger.debug('Cache inaccesible: %s:%s', skey, e)
+            # logger.debug('Cache inaccesible: %s:%s', skey, e)
             return defValue
 
     def remove(self, skey: typing.Union[str, bytes]) -> bool:

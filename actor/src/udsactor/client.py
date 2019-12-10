@@ -31,6 +31,7 @@
 import threading
 import time
 import typing
+import signal
 
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
@@ -40,6 +41,8 @@ from . import platform
 
 from .log import logger
 
+from .http import client
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from . import types
@@ -48,28 +51,44 @@ class UDSActorClient(threading.Thread):
     _running: bool
     _forceLogoff: bool
     _qApp: QApplication
-    _api: rest.UDSClientApi
+    api: rest.UDSClientApi
+    _listener: client.HTTPServerThread
 
     def __init__(self, qApp: QApplication):
         super().__init__()
 
-        self._api = rest.UDSClientApi()  # Self initialized
+        self.api = rest.UDSClientApi()  # Self initialized
         self._qApp = qApp
         self._running = False
         self._forceLogoff = False
+        self._listener = client.HTTPServerThread(self)
+
+        # Capture stop signals..
+        logger.debug('Setting signals...')
+        signal.signal(signal.SIGINT, self.stopSignal)
+        signal.signal(signal.SIGTERM, self.stopSignal)
+
+    def stopSignal(self, signum, frame) -> None:  # pylint: disable=unused-argument
+        logger.info('Stop signal received')
+        self.stop()
 
     def run(self):
+        logger.debug('UDS Actor thread')
+        self._listener.start()  # async listener for service
         self._running = True
 
+        time.sleep(0.4)  # Wait a bit before sending login
         # Notify loging and mark it
-        self._api.login(platform.operations.getCurrentUser())
+        self.api.login(platform.operations.getCurrentUser())
 
         while self._running:
-            time.sleep(1.1)  # Sleep between loop iteration
+            time.sleep(1.1)  # Sleeps between loop iterations
 
-        self._api.logout(platform.operations.getCurrentUser())
+        self.api.logout(platform.operations.getCurrentUser())
 
-        # Notify Qapllication to exit
+        self._listener.stop() # async listener for service
+
+        # Notify exit to qt
         QApplication.quit()
 
         if self._forceLogoff:

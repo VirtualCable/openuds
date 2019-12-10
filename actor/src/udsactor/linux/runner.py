@@ -30,6 +30,7 @@
 '''
 import sys
 
+from .. import rest
 from ..log import logger
 from .service import UDSActorSvc
 
@@ -42,19 +43,18 @@ def run() -> None:
 
     if len(sys.argv) == 3 and sys.argv[1] in ('login', 'logout'):
         logger.debug('Running client udsactor')
-        # client = None
-        # try:
-        #     client = ipc.ClientIPC(IPC_PORT)
-        #     if 'login' == sys.argv[1]:
-        #         client.sendLogin(sys.argv[2])
-        #         sys.exit(0)
-        #     elif 'logout' == sys.argv[1]:
-        #         client.sendLogout(sys.argv[2])
-        #         sys.exit(0)
-        #     else:
-        #         usage()
-        # except Exception as e:
-        #     logger.error(e)
+        try:
+            client: rest.UDSClientApi = rest.UDSClientApi()
+            if sys.argv[1] == 'login':
+                r = client.login(sys.argv[2])
+                print('{},{},{},{}\n'.format(r.ip, r.hostname, r.max_idle, r.dead_line or ''))
+            elif sys.argv[1] == 'logout':
+                client.logout(sys.argv[2])
+            else:
+                usage()
+        except Exception as e:
+            logger.exception()
+            logger.error('Got exception while processing command: %s', e)
         sys.exit(0)
     elif len(sys.argv) != 2:
         usage()

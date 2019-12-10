@@ -88,6 +88,9 @@ class UDSApi:  # pylint: disable=too-few-public-methods
     def _headers(self) -> typing.MutableMapping[str, str]:
         return {'content-type': 'application/json'}
 
+    def _apiURL(self, method: str) -> str:
+        raise NotImplementedError
+
     def _doPost(
             self,
             method: str,  # i.e. 'initialize', 'ready', ....
@@ -96,7 +99,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         ) -> typing.Any:
         headers = headers or self._headers
         try:
-            result = requests.post(self._url + 'actor/v2/' + method, data=json.dumps(payLoad), headers=headers, verify=self._validateCert)
+            result = requests.post(self._apiURL(method), data=json.dumps(payLoad), headers=headers, verify=self._validateCert)
             if result.ok:
                 return result.json()['result']
         except requests.ConnectionError as e:
@@ -104,13 +107,21 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         except Exception as e:
             pass
 
-        raise RESTError(result.content)
+        try:
+            data = result.json()
+        except Exception:
+            data = result.content.decode()
+
+        raise RESTError(data)
 
 
 #
 # UDS Broker API access
 #
 class UDSServerApi(UDSApi):
+    def _apiURL(self, method: str) -> str:
+        return self._url + 'actor/v3/' + method
+
     def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
         try:
             result = requests.get(self._url + 'auth/auths', headers=self._headers, verify=self._validateCert, timeout=4)
@@ -165,7 +176,7 @@ class UDSServerApi(UDSApi):
 
             headers['X-Auth-Token'] = result.json()['token']
 
-            result = requests.post(self._url + 'actor/v2/register', data=json.dumps(data), headers=headers, verify=self._validateCert)
+            result = requests.post(self._apiURL('register'), data=json.dumps(data), headers=headers, verify=self._validateCert)
             if result.ok:
                 return result.json()['result']
         except requests.ConnectionError as e:
@@ -263,6 +274,11 @@ class UDSServerApi(UDSApi):
 class UDSClientApi(UDSApi):
     def __init__(self) -> None:
         super().__init__('127.0.0.1:{}'.format(LISTEN_PORT), False)
+        # Override base url
+        self._url = "https://{}/ui/".format(self._host)
+
+    def _apiURL(self, method: str) -> str:
+        return self._url + method
 
     def register(self, callbackUrl: str) -> None:
         payLoad = {

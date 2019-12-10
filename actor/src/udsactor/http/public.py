@@ -60,7 +60,7 @@ class PublicProvider(handler.Handler):
             raise Exception('Invalid script parameters')
         if 'user' in self._params:
             logger.debug('Sending SCRIPT to client')
-            self._service._clientsPool.message(self._params['scripts'])  # pylint: disable=protected-access
+            self._service._clientsPool.executeScript(self._params['script'])  # pylint: disable=protected-access
         else:
             # Execute script at server space, that is, here
             # as a parallel thread

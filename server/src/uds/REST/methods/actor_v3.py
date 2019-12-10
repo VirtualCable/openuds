@@ -63,20 +63,20 @@ class BlockAccess(Exception):
 
 # Helpers
 def checkBlockedIp(ip: str)-> None:
-    cache = Cache('actorv2')
+    cache = Cache('actorv3')
     fails = cache.get(ip) or 0
     if fails > ALLOWED_FAILS:
         logger.info('Access to actor from %s is blocked for %s seconds since last fail', ip, GlobalConfig.LOGIN_BLOCK.getInt())
         raise BlockAccess()
 
 def incFailedIp(ip: str) -> None:
-    cache = Cache('actorv2')
+    cache = Cache('actorv3')
     fails = (cache.get(ip) or 0) + 1
     cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
 
 class ActorV3Action(Handler):
     authenticated = False  # Actor requests are not authenticated normally
-    path = 'actor/v2'
+    path = 'actor/v3'
 
     @staticmethod
     def actorResult(result: typing.Any = None, error: typing.Optional[str] = None) -> typing.MutableMapping[str, typing.Any]:
@@ -299,7 +299,6 @@ class Ready(ChangeIp):
 
         return result
 
-
 class Login(ActorV3Action):
     """
     Notifies user logged id
@@ -307,7 +306,7 @@ class Login(ActorV3Action):
     name = 'login'
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
-        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        logger.debug('Login Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
         osManager = userService.getOsManagerInstance()
         if osManager:
@@ -336,7 +335,9 @@ class Logout(ActorV3Action):
         osManager = userService.getOsManagerInstance()
         if osManager:
             osManager.loggedOut(userService, self._params.get('username') or '')
-            osManager.processUnused(userService)
+            if osManager.isRemovableOnLogout(userService):
+                logger.debug('Removable on logout: %s', osManager)
+                userService.remove()
 
         return ActorV3Action.actorResult('ok')
 

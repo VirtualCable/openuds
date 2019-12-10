@@ -95,7 +95,7 @@ class WindowsOsManager(osmanagers.OSManager):
 
         self.__setProcessUnusedMachines()
 
-    def isRemovableOnLogout(self, userService):
+    def isRemovableOnLogout(self, userService: 'UserService') -> bool:
         '''
         Says if a machine is removable on logout
         '''

@@ -77,14 +77,15 @@ class Logger:
         if level < self.logLevel:  # Skip not wanted messages
             return
 
+        msg = message % args
         # If remote logger is available, notify message to it
         try:
             if self.remoteLogger:
-                self.remoteLogger.log(self.own_token, level, message % args)
+                self.remoteLogger.log(self.own_token, level, msg)
         except Exception as e:
             self.localLogger.log(FATAL, 'Error notifying log to broker: {}'.format(e))
 
-        self.localLogger.log(level, message)
+        self.localLogger.log(level, msg)
 
     def debug(self, message: str, *args) -> None:
         self.log(DEBUG, message, *args)

@@ -138,7 +138,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 while self._isAlive:
                     counter -= 1
                     try:
-                        self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, self._cfg.port)
+                        self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, rest.LISTEN_PORT)
                     except rest.RESTConnectionError as e:
                         logger.info('Error connecting with UDS Broker: %s', e)
                         self.doWait(5000)
@@ -252,13 +252,13 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         return self.configureMachine()
 
-    def finish(self):
+    def finish(self) -> None:
         if self._http:
             self._http.stop()
 
         self.notifyStop()
 
-    def checkIpsChanged(self):
+    def checkIpsChanged(self) -> None:
         try:
             if not self._cfg.own_token or not self._cfg.config or not self._cfg.config.unique_id:
                 # Not enouth data do check
@@ -269,7 +269,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             if not new or not old:
                 raise Exception('No ip currently available for {}'.format(self._cfg.config.unique_id))
             if old.ip != new.ip:
-                self._certificate = self._api.notifyIpChange(self._cfg.own_token, self._secret, new.ip, self._cfg.port)
+                self._certificate = self._api.notifyIpChange(self._cfg.own_token, self._secret, new.ip, rest.LISTEN_PORT)
                 # Now store new addresses & interfaces...
                 self._interfaces = currentInterfaces
                 logger.info('Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip))
