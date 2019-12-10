@@ -34,6 +34,7 @@ import typing
 import signal
 
 from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtCore import QByteArray, QBuffer, QIODevice
 
 from . import rest
 from . import tools
@@ -46,6 +47,7 @@ from .http import client
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from . import types
+    from PyQt5.QtGui import QPixmap
 
 class UDSActorClient(threading.Thread):
     _running: bool
@@ -111,7 +113,12 @@ class UDSActorClient(threading.Thread):
         return 'ok'
 
     def screenshot(self) -> typing.Any:
-        pass
+        pixmap: QPixmap = self._qApp.primaryScreen().grabWindow(0)
+        ba = QByteArray()
+        buffer = QBuffer(ba)
+        buffer.open(QIODevice.WriteOnly)
+        pixmap.save(buffer)
+        return bytes(ba.toBase64()).decode()  # 'result' of JSON will contain base64 of screen
 
     def script(self, script: str) -> typing.Any:
         tools.ScriptExecutorThread(script).start()
