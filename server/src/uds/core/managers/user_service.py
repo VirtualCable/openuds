@@ -54,8 +54,8 @@ from uds.models import MetaPool, ServicePool, UserService, getSqlDatetime, Trans
 from uds.core import services, transports
 from uds.core.util.stats import events
 
+from .userservice import comms
 from .userservice.opchecker  import UserServiceOpChecker
-
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -450,148 +450,19 @@ class UserServiceManager:
             logger.exception('Reseting service')
 
     def notifyPreconnect(self, userService: UserService, userName: str, protocol: str) -> None:
-        '''
-        Notifies a preconnect to an user service
-        '''
-        proxy = userService.deployed_service.proxy
-        url = userService.getCommsUrl()
-        ip, hostname = userService.getConnectionSource()
-
-        if not url:
-            logger.debug('No notification is made because agent does not supports notifications')
-            return
-
-        url += '/preConnect'
-
-        try:
-            data = {'user': userName, 'protocol': protocol, 'ip': ip, 'hostname': hostname}
-            if proxy is not None:
-                r = proxy.doProxyRequest(url=url, data=data, timeout=2)
-            else:
-                r = requests.post(
-                    url,
-                    data=json.dumps(data),
-                    headers={'content-type': 'application/json'},
-                    verify=False,
-                    timeout=2
-                )
-            r = json.loads(r.content)
-            logger.debug('Sent pre-connection to client using %s: %s', url, r)
-            # In fact we ignore result right now
-        except Exception as e:
-            logger.info('preConnection failed: %s. Check connection on destination machine: %s', e, url)
+        comms.notifyPreconnect(userService, userName, protocol)
 
     def checkUuid(self, userService: UserService) ->  bool:
-        '''
-        Checks if the uuid of the service is the same of our known uuid on DB
-        '''
-        proxy = userService.deployed_service.proxy
+        return comms.checkUuid(userService)
 
-        url = userService.getCommsUrl()
-
-        if not url:
-            logger.debug('No uuid to retrieve because agent does not supports notifications')
-            return True  # UUid is valid because it is not supported checking it
-
-        version = userService.getProperty('actor_version') or ''
-        # Just for 2.0 or newer, previous actors will not support this method.
-        # Also externally supported agents will not support this method (as OpenGnsys)
-        if '-' in version or version < '2.0.0':
-            return True
-
-        url += '/uuid'
-
-        try:
-            if proxy:
-                r = proxy.doProxyRequest(url=url, timeout=5)
-            else:
-                r = requests.get(url, verify=False, timeout=5)
-
-            if version >= '3.0.0':  # New type of response: {'result': uuid}
-                uuid = r.json()['result']
-            else:
-                uuid = r.json()
-
-            if uuid != userService.uuid:
-                logger.info('The requested machine has uuid %s and the expected was %s', uuid, userService.uuid)
-                return False
-
-            logger.debug('Got uuid from machine: %s %s %s', url, uuid, userService.uuid)
-            # In fact we ignore result right now
-        except Exception as e:
-            logger.error('Get uuid failed: %s. Check connection on destination machine: %s', e, url)
-
-        return True
+    def requestScreenshot(self, userService: UserService) -> bytes:
+        return comms.requestScreenshot(userService)
 
     def sendScript(self, userService: UserService, script: str, forUser: bool = False) -> None:
-        """
-        If allowed, send script to user service
-        """
-        proxy = userService.deployed_service.proxy
-
-        # logger.debug('Senging script: {}'.format(script))
-        url = userService.getCommsUrl()
-        if not url:
-            logger.error('Can\'t connect with actor (no actor or legacy actor)')
-            return
-
-        url += '/script'
-
-        try:
-            data = {'script': script}
-            if forUser:
-                data['user'] = '1'  # Just must exists "user" parameter, don't mind value
-            if proxy:
-                r = proxy.doProxyRequest(url=url, data=data, timeout=5)
-            else:
-                r = requests.post(
-                    url,
-                    data=json.dumps(data),
-                    headers={'content-type': 'application/json'},
-                    verify=False,
-                    timeout=5
-                )
-            r = json.loads(r.content)
-            logger.debug('Sent script to client using %s: %s', url, r)
-            # In fact we ignore result right now
-        except Exception as e:
-            logger.error('Exception caught sending script: %s. Check connection on destination machine: %s', e, url)
-
-        # All done
+        comms.sendScript(userService, script, forUser)
 
     def requestLogoff(self, userService: UserService) -> None:
-        """
-        Ask client to logoff user
-        """
-        proxy = userService.deployed_service.proxy
-
-        url = userService.getCommsUrl()
-        if not url:
-            logger.error('Can\'t connect with actor (no actor or legacy actor)')
-            return
-
-        url += '/logoff'
-
-        try:
-            data: typing.Dict = {}
-            if proxy:
-                r = proxy.doProxyRequest(url=url, data=data, timeout=5)
-            else:
-                r = requests.post(
-                    url,
-                    data=json.dumps(data),
-                    headers={'content-type': 'application/json'},
-                    verify=False,
-                    timeout=4
-                )
-            r = json.loads(r.content)
-            logger.debug('Sent logoff to client using %s: %s', url, r)
-            # In fact we ignore result right now
-        except Exception:
-            # logger.info('Logoff requested but service was not listening: %s', e, url)
-            pass
-
-        # All done
+        comms.requestLogoff(userService)
 
     def checkForRemoval(self, userService: UserService) -> None:
         """

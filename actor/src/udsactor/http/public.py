@@ -79,8 +79,7 @@ class PublicProvider(handler.Handler):
         return 'UDS Actor Secure Server'
 
     def get_screenshot(self) -> typing.Any:
-        return ''
-
+        return self._service._clientsPool.screenshot()  # pylint: disable=protected-access
 
     def get_uuid(self) -> typing.Any:
         return self._service._cfg.own_token  # pylint: disable=protected-access

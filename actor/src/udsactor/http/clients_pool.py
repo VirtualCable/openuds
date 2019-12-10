@@ -80,5 +80,10 @@ class UDSActorClientPool:
         self._post('ping', {})
         return bool(self._clientUrl)  # if no clients available
 
-    def screenshot(self) -> typing.List[bytes]:
-        return []
+    def screenshot(self) -> typing.Optional[str]:  # Screenshot are returned as base64
+        for r in self._post('screenshot', {}):
+            try:
+                return r.json()['result']
+            except Exception:
+                pass
+        return None
