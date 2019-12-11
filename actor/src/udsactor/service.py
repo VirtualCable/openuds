@@ -124,6 +124,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self._rebootRequested = True
 
     def setReady(self) -> None:
+        if not self._isAlive:
+            return
+
         # First, if postconfig is available, execute it and disable it
         if self._cfg.post_command:
             self.execute(self._cfg.post_command, 'postConfig')
@@ -140,7 +143,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     try:
                         self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, rest.LISTEN_PORT)
                     except rest.RESTConnectionError as e:
-                        logger.info('Error connecting with UDS Broker: %s', e)
+                        logger.info('Error connecting with UDS Broker')
                         self.doWait(5000)
                         continue
                     except Exception as e:
@@ -151,18 +154,24 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         platform.operations.reboot()  # On too many errors, simply reboot
                     # Success or any error that is not recoverable (retunerd by UDS). if Error, service will be cleaned in a while.
                     break
-
             else:
                 logger.error('Could not locate IP address!!!. (Not registered with UDS)')
 
+        # Do not continue if not alive...
+        if not self._isAlive:
+            return
         # Cleans sensible data
         if self._cfg.config:
             self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
             platform.store.writeConfig(self._cfg)
 
+        logger.debug('Done setReady')
         self._startHttpServer()
 
     def configureMachine(self) -> bool:
+        if not self._isAlive:
+            return False
+
         # First, if runonce is present, honor it and remove it from config
         # Return values is "True" for keep service (or daemon) running, False if Stop it.
         if self._cfg.runonce_command:
@@ -205,7 +214,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         return True
 
     def initialize(self) -> bool:
-        if not self._cfg.host:  # Not configured
+        if not self._cfg.host or not self._isAlive:  # Not configured or not running
             return False
 
         # Force time sync, just in case...
@@ -345,7 +354,12 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         Invoked to wait a bit
         CAN be OVERRIDEN
         '''
-        time.sleep(float(miliseconds) / 1000)
+        seconds = miliseconds / 1000.0
+        # So it can be broken by "stop"
+        while self._isAlive and seconds > 1:
+            time.sleep(1)
+            seconds -= 1
+        time.sleep(seconds)
 
     def notifyStop(self) -> None:
         '''

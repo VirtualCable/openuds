@@ -180,7 +180,7 @@ class UDSServerApi(UDSApi):
             if result.ok:
                 return result.json()['result']
         except requests.ConnectionError as e:
-            raise RESTConnectionError(str(e))
+            raise RESTConnectionError(e)
         except RESTError:
             raise
         except Exception as e:

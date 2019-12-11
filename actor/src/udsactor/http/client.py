@@ -139,7 +139,10 @@ class HTTPServerThread(threading.Thread):
     def stop(self) -> None:
         if self._server:
             logger.debug('Stopping Http-client Service')
-            self._app.api.unregister(self.url)
+            try:
+                self._app.api.unregister(self.url)
+            except Exception as e:
+                logger.error('Error unregistering on actor service: %s', e)
             self._server.shutdown()
             self._server = None
 
@@ -153,6 +156,9 @@ class HTTPServerThread(threading.Thread):
 
         # Register using app api
         logger.debug('Registered %s', self.url)
-        self._app.api.register(self.url)
+        try:
+            self._app.api.register(self.url)
+        except Exception as e:
+            logger.error('Error registering on actor service: %s', e)
 
         self._server.serve_forever()

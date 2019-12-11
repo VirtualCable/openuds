@@ -83,7 +83,7 @@ class Logger:
             if self.remoteLogger:
                 self.remoteLogger.log(self.own_token, level, msg)
         except Exception as e:
-            self.localLogger.log(FATAL, 'Error notifying log to broker: {}'.format(e))
+            self.localLogger.log(DEBUG, 'Log to broker: {}'.format(e))
 
         self.localLogger.log(level, msg)
 

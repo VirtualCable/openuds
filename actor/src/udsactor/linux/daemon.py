@@ -32,7 +32,7 @@ import sys
 import os
 import time
 import atexit
-from signal import SIGTERM
+from signal import SIGTERM, SIGKILL
 
 from udsactor.log import logger
 
@@ -143,9 +143,14 @@ class Daemon:
 
         # Try killing the daemon process
         try:
-            while True:
+            cnt = 10
+            while cnt:
+                cnt -= 1
                 os.kill(pid, SIGTERM)
                 time.sleep(1)
+
+            if not cnt:
+                os.kill(pid, SIGKILL)
         except OSError as err:
             if err.errno == 3:  # No such process
                 if os.path.exists(self.pidfile):

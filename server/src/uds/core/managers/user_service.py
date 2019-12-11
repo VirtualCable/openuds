@@ -30,12 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import json
 import logging
 import random
 import typing
-
-import requests
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q

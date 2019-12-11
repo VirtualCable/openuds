@@ -148,6 +148,7 @@ class HTTPServerThread(threading.Thread):
                 os.unlink(self._certFile)
             except Exception as e:
                 logger.error('Error removing certificate file: %s', e)
+        logger.debug('Http-server stopped')
 
     def run(self):
         HTTPServerHandler._service = self._service  # pylint: disable=protected-access

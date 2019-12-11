@@ -10,116 +10,101 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+TIMEOUT = 2
 
-def notifyPreconnect(userService: 'UserService', userName: str, protocol: str) -> None:
-    '''
-    Notifies a preconnect to an user service
-    '''
-    proxy = userService.deployed_service.proxy
+class NoActorComms(Exception):
+    pass
+
+class OldActorVersion(NoActorComms):
+    pass
+
+def _requestActor(
+        userService: 'UserService',
+        method: str,
+        data: typing.Optional[typing.MutableMapping[str, typing.Any]] = None,
+        minVersion: typing.Optional[str] = None
+    ) -> typing.Any:
+    """
+    Makes a request to actor using "method"
+    if data is None, request is done using GET, else POST
+    if no communications url is provided or no min version, raises a "NoActorComms" exception (or OldActorVersion, derived from NoActorComms)
+    Returns request response value interpreted as json
+    """
     url = userService.getCommsUrl()
-    ip, hostname = userService.getConnectionSource()
-
     if not url:
-        logger.debug('No notification is made because agent does not supports notifications')
-        return
+        logger.warning('No notification is made because agent does not supports notifications: %s', userService.friendly_name)
+        raise NoActorComms('No notification urls for {}'.format(userService.friendly_name))
 
-    url += '/preConnect'
+    minVersion = minVersion or '2.0.0'
+    version = userService.getProperty('actor_version') or '0.0.0'
+    if '-' in version or version < minVersion:
+        logger.warning('Pool %s has old actors (%s)', userService.deployed_service.name, version)
+        raise OldActorVersion('Old actor version {} for {}'.format(version, userService.friendly_name))
 
+    url += '/' + method
+
+    proxy = userService.deployed_service.proxy
     try:
-        data = {'user': userName, 'protocol': protocol, 'ip': ip, 'hostname': hostname}
         if proxy is not None:
-            r = proxy.doProxyRequest(url=url, data=data, timeout=2)
+            r = proxy.doProxyRequest(url=url, data=data, timeout=TIMEOUT)
         else:
-            r = requests.post(
-                url,
-                data=json.dumps(data),
-                headers={'content-type': 'application/json'},
-                verify=False,
-                timeout=2
-            )
-        r = json.loads(r.content)
-        logger.debug('Sent pre-connection to client using %s: %s', url, r)
-        # In fact we ignore result right now
-    except Exception as e:
-        logger.info('preConnection failed: %s. Check connection on destination machine: %s', e, url)
-
-def checkUuid(userService: 'UserService') ->  bool:
-    '''
-    Checks if the uuid of the service is the same of our known uuid on DB
-    '''
-    proxy = userService.deployed_service.proxy
-
-    url = userService.getCommsUrl()
-
-    if not url:
-        logger.debug('No uuid to retrieve because agent does not supports notifications')
-        return True  # UUid is valid because it is not supported checking it
-
-    version = userService.getProperty('actor_version') or ''
-    # Just for 2.0 or newer, previous actors will not support this method.
-    # Also externally supported agents will not support this method (as OpenGnsys)
-    if '-' in version or version < '2.0.0':
-        return True
-
-    url += '/uuid'
-
-    try:
-        if proxy:
-            r = proxy.doProxyRequest(url=url, timeout=5)
-        else:
-            r = requests.get(url, verify=False, timeout=5)
-
-        if version >= '3.0.0':  # New type of response: {'result': uuid}
-            uuid = r.json()['result']
-        else:
-            uuid = r.json()
-
-        if uuid != userService.uuid:
-            logger.info('The requested machine has uuid %s and the expected was %s', uuid, userService.uuid)
-            return False
-
-        logger.debug('Got uuid from machine: %s %s %s', url, uuid, userService.uuid)
-        # In fact we ignore result right now
-    except Exception as e:
-        logger.error('Get uuid failed: %s. Check connection on destination machine: %s', e, url)
-
-    return True
-
-def requestScreenshot(userService: 'UserService') -> bytes:
-    """
-    Returns an screenshot in PNG format (bytes) or empty png if not supported
-    """
-    png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-    proxy = userService.deployed_service.proxy
-    url = userService.getCommsUrl()
-
-    version = userService.getProperty('actor_version') or ''
-
-    # Just for 3.0 or newer, previous actors will not support this method.
-    # Also externally supported agents will not support this method (as OpenGnsys)
-    if '-' in version or version < '3.0.0':
-        url = ''
-
-    if url:
-        try:
-            data: typing.Dict[str, str] = {}
-            if proxy is not None:
-                r = proxy.doProxyRequest(url=url, data=data, timeout=2)
+            if data is None:
+                r = requests.get(url, verify=False, timeout=TIMEOUT)
             else:
                 r = requests.post(
                     url,
                     data=json.dumps(data),
                     headers={'content-type': 'application/json'},
                     verify=False,
-                    timeout=2
+                    timeout=TIMEOUT
                 )
-            png = json.loads(r.content)['result']
+        js = r.json()
 
-            # In fact we ignore result right now
-        except Exception as e:
-            logger.error('Get uuid failed: %s. Check connection on destination machine: %s', e, url)
+        if version >= '3.0.0':
+            js = js['result']
+        logger.debug('Requested %s to actor. Url=%s, Result=%s', method, url, js)
+        # In fact we ignore result right now
+    except Exception as e:
+        logger.warning('Request %s failed: %s. Check connection on destination machine: %s', method, e, url)
+        js = None
 
-    return base64.b64decode(png)
+    return js
+
+def notifyPreconnect(userService: 'UserService', userName: str, protocol: str) -> None:
+    '''
+    Notifies a preconnect to an user service
+    '''
+    ip, hostname = userService.getConnectionSource()
+    try:
+        _requestActor(userService, 'preConnect', {'user': userName, 'protocol': protocol, 'ip': ip, 'hostname': hostname})
+    except NoActorComms:
+        pass  # If no preconnect, warning will appear on UDS log
+
+def checkUuid(userService: 'UserService') ->  bool:
+    '''
+    Checks if the uuid of the service is the same of our known uuid on DB
+    '''
+    try:
+        uuid = _requestActor(userService, 'uuid')
+        if uuid != userService.uuid:
+            logger.info('Machine %s do not have expected uuid %s, instead has %s', userService.friendly_name, userService.uuid, uuid)
+            return False
+    except NoActorComms:
+        pass
+
+    return True   # Actor does not supports checking
+
+def requestScreenshot(userService: 'UserService') -> bytes:
+    """
+    Returns an screenshot in PNG format (bytes) or empty png if not supported
+    """
+    emptyPng = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+    try:
+        png = _requestActor(userService, 'screenshot', minVersion='3.0.0')  # First valid version with screenshot is 3.0
+    except NoActorComms:
+        png = None
+
+    return base64.b64decode(png or emptyPng)
 
 
 def sendScript(userService: 'UserService', script: str, forUser: bool = False) -> None:

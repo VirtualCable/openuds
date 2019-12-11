@@ -80,13 +80,17 @@ class UDSActorClient(threading.Thread):
         self._running = True
 
         time.sleep(0.4)  # Wait a bit before sending login
-        # Notify loging and mark it
-        self.api.login(platform.operations.getCurrentUser())
 
-        while self._running:
-            time.sleep(1.1)  # Sleeps between loop iterations
+        try:
+            # Notify loging and mark it
+            self.api.login(platform.operations.getCurrentUser())
 
-        self.api.logout(platform.operations.getCurrentUser())
+            while self._running:
+                time.sleep(1.1)  # Sleeps between loop iterations
+
+            self.api.logout(platform.operations.getCurrentUser())
+        except Exception as e:
+            logger.error('Error on client loop: %s', e)
 
         self._listener.stop() # async listener for service
 
@@ -117,8 +121,11 @@ class UDSActorClient(threading.Thread):
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.WriteOnly)
-        pixmap.save(buffer)
-        return bytes(ba.toBase64()).decode()  # 'result' of JSON will contain base64 of screen
+        pixmap.save(buffer, 'PNG')
+        buffer.close()
+        scrBase64 = bytes(ba.toBase64()).decode()
+        logger.debug('Screenshot length: %s', len(scrBase64))
+        return scrBase64  # 'result' of JSON will contain base64 of screen
 
     def script(self, script: str) -> typing.Any:
         tools.ScriptExecutorThread(script).start()
