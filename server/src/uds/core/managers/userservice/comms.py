@@ -63,7 +63,6 @@ def _requestActor(
         if version >= '3.0.0':
             js = js['result']
         logger.debug('Requested %s to actor. Url=%s, Result=%s', method, url, js)
-        # In fact we ignore result right now
     except Exception as e:
         logger.warning('Request %s failed: %s. Check connection on destination machine: %s', method, e, url)
         js = None
@@ -106,73 +105,20 @@ def requestScreenshot(userService: 'UserService') -> bytes:
 
     return base64.b64decode(png or emptyPng)
 
-
 def sendScript(userService: 'UserService', script: str, forUser: bool = False) -> None:
     """
     If allowed, send script to user service
     """
-    proxy = userService.deployed_service.proxy
-
-    # logger.debug('Senging script: {}'.format(script))
-    url = userService.getCommsUrl()
-    if not url:
-        logger.error('Can\'t connect with actor (no actor or legacy actor)')
-        return
-
-    url += '/script'
-
-    try:
-        data = {'script': script}
-        if forUser:
-            data['user'] = '1'  # Just must exists "user" parameter, don't mind value
-        if proxy:
-            r = proxy.doProxyRequest(url=url, data=data, timeout=5)
-        else:
-            r = requests.post(
-                url,
-                data=json.dumps(data),
-                headers={'content-type': 'application/json'},
-                verify=False,
-                timeout=5
-            )
-        r = json.loads(r.content)
-        logger.debug('Sent script to client using %s: %s', url, r)
-        # In fact we ignore result right now
-    except Exception as e:
-        logger.error('Exception caught sending script: %s. Check connection on destination machine: %s', e, url)
-
-    # All done
+    _requestActor(userService, 'script', data={'script': script, 'user': forUser}, minVersion='3.0.0')
 
 def requestLogoff(userService: 'UserService') -> None:
     """
     Ask client to logoff user
     """
-    proxy = userService.deployed_service.proxy
+    _requestActor(userService, 'logout', data={})
 
-    url = userService.getCommsUrl()
-    if not url:
-        logger.error('Can\'t connect with actor (no actor or legacy actor)')
-        return
-
-    url += '/logoff'
-
-    try:
-        data: typing.Dict = {}
-        if proxy:
-            r = proxy.doProxyRequest(url=url, data=data, timeout=5)
-        else:
-            r = requests.post(
-                url,
-                data=json.dumps(data),
-                headers={'content-type': 'application/json'},
-                verify=False,
-                timeout=4
-            )
-        r = json.loads(r.content)
-        logger.debug('Sent logoff to client using %s: %s', url, r)
-        # In fact we ignore result right now
-    except Exception:
-        # logger.info('Logoff requested but service was not listening: %s', e, url)
-        pass
-
-    # All done
+def sendMessage(userService: 'UserService', message: str) -> None:
+    """
+    Sends an screen message to client
+    """
+    _requestActor(userService, 'message', data={'message':message})

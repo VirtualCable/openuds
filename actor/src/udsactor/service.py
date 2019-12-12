@@ -265,6 +265,14 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if self._http:
             self._http.stop()
 
+        # If logged in, notify UDS of logout (daemon stoped = no control = logout)
+        if self._loggedIn and self._cfg.own_token:
+            self._loggedIn = False
+            try:
+                self._api.logout(self._cfg.own_token, '')
+            except Exception as e:
+                logger.error('Error notifying final logout to UDS: %s', e)
+
         self.notifyStop()
 
     def checkIpsChanged(self) -> None:
