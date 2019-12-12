@@ -38,37 +38,8 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QTimer
 
 from udsactor.log import logger, DEBUG
-from udsactor.client import UDSActorClient
+from udsactor.client import UDSClientQApp
 
-class UDSClientQApp(QApplication):
-    _app: UDSActorClient
-    _initialized: bool
-
-    def __init__(self, args) -> None:
-        super().__init__(args)
-
-        # This will be invoked on session close
-        self.commitDataRequest.connect(self.end)  # Will be invoked on session close, to gracely close app
-
-        # Execute backgroup thread for actions
-        self._app = UDSActorClient(self)
-
-    def init(self) -> None:
-        # Notify loging and mark it
-        logger.debug('Starting APP')
-        self._app.start()
-        self._initialized = True
-
-    def end(self, sessionManager=None) -> None:
-        if not self._initialized:
-            return
-
-        self._initialized = False
-
-        logger.debug('Stopping app thread')
-        self._app.stop()
-
-        self._app.join()
 
 if __name__ == "__main__":
     logger.setLevel(DEBUG)

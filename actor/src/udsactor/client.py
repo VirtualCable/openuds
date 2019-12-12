@@ -34,7 +34,7 @@ import typing
 import signal
 
 from PyQt5.QtWidgets import QApplication, QMessageBox
-from PyQt5.QtCore import QByteArray, QBuffer, QIODevice
+from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, pyqtSignal
 
 from . import rest
 from . import tools
@@ -49,10 +49,47 @@ if typing.TYPE_CHECKING:
     from . import types
     from PyQt5.QtGui import QPixmap
 
+class UDSClientQApp(QApplication):
+    _app: 'UDSActorClient'
+    _initialized: bool
+
+    message = pyqtSignal(str, name='message')
+
+    def __init__(self, args) -> None:
+        super().__init__(args)
+
+        # This will be invoked on session close
+        self.commitDataRequest.connect(self.end)  # Will be invoked on session close, to gracely close app
+        self.message.connect(self.showMessage)
+
+        # Execute backgroup thread for actions
+        self._app = UDSActorClient(self)
+
+    def init(self) -> None:
+        # Notify loging and mark it
+        logger.debug('Starting APP')
+        self._app.start()
+        self._initialized = True
+
+    def end(self, sessionManager=None) -> None:
+        if not self._initialized:
+            return
+
+        self._initialized = False
+
+        logger.debug('Stopping app thread')
+        self._app.stop()
+
+        self._app.join()
+
+    def showMessage(self, message: str) -> None:
+        QMessageBox.information(None, 'Message', message)
+
+
 class UDSActorClient(threading.Thread):
     _running: bool
     _forceLogoff: bool
-    _qApp: QApplication
+    _qApp: UDSClientQApp
     api: rest.UDSClientApi
     _listener: client.HTTPServerThread
 
@@ -101,7 +138,7 @@ class UDSActorClient(threading.Thread):
             platform.operations.loggoff()
 
     def _showMessage(self, message: str) -> None:
-        QMessageBox.information(None, 'Message', message)
+        self._qApp.message.emit(message)
 
     def stop(self) -> None:
         logger.debug('Stopping client Service')

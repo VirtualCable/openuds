@@ -461,6 +461,9 @@ class UserServiceManager:
     def requestLogoff(self, userService: UserService) -> None:
         comms.requestLogoff(userService)
 
+    def sendMessage(self, userService: UserService, message: str) -> None:
+        comms.sendMessage(userService, message)
+
     def checkForRemoval(self, userService: UserService) -> None:
         """
         This method is used by UserService when a request for setInUse(False) is made
