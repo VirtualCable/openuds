@@ -34,12 +34,10 @@ import sys
 import os
 
 import PyQt5  # pylint: disable=unused-import
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QTimer
 
 from udsactor.log import logger, DEBUG
 from udsactor.client import UDSClientQApp
-
 
 if __name__ == "__main__":
     logger.setLevel(DEBUG)
@@ -49,9 +47,11 @@ if __name__ == "__main__":
 
     logger.info('Started UDS Client Actor')
 
-    QApplication.setQuitOnLastWindowClosed(False)
+    # QApplication.setQuitOnLastWindowClosed(False)
 
     qApp = UDSClientQApp(sys.argv)
+
+    qApp.init()
 
     # Crate a timer, so we can check signals from time to time by executing python interpreter
     # Note: Signals are only checked on python code execution, so we create a
@@ -59,8 +59,9 @@ if __name__ == "__main__":
     timer.start(1000)
     timer.timeout.connect(lambda *a: None)
 
-    qApp.init()
     qApp.exec_()
+
+    # On windows, this point will never be reached :)
     qApp.end()
 
     logger.debug('Exiting...')

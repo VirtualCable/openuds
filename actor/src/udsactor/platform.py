@@ -30,6 +30,7 @@
 '''
 import sys
 
+name = sys.platform
 if sys.platform == 'win32':
     from .windows import operations, store  # pylint: disable=unused-import
 else:

@@ -28,10 +28,11 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=invalid-name
 import threading
 import time
-import typing
 import signal
+import typing
 
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, pyqtSignal
@@ -49,6 +50,7 @@ if typing.TYPE_CHECKING:
     from . import types
     from PyQt5.QtGui import QPixmap
 
+
 class UDSClientQApp(QApplication):
     _app: 'UDSActorClient'
     _initialized: bool
@@ -60,6 +62,9 @@ class UDSClientQApp(QApplication):
 
         # This will be invoked on session close
         self.commitDataRequest.connect(self.end)  # Will be invoked on session close, to gracely close app
+        self.aboutToQuit.connect(self.end)
+
+
         self.message.connect(self.showMessage)
 
         # Execute backgroup thread for actions
@@ -69,9 +74,13 @@ class UDSClientQApp(QApplication):
         # Notify loging and mark it
         logger.debug('Starting APP')
         self._app.start()
+
+        self.aboutToQuit.connect(lambda: logger.debug('About to quit'))
+
         self._initialized = True
 
     def end(self, sessionManager=None) -> None:
+        logger.debug('Stopping App')
         if not self._initialized:
             return
 
@@ -120,12 +129,14 @@ class UDSActorClient(threading.Thread):
 
         try:
             # Notify loging and mark it
-            self.api.login(platform.operations.getCurrentUser())
+            if platform.name != 'win32':  # On win32, SENS will send login/logouts
+                self.api.login(platform.operations.getCurrentUser())
 
             while self._running:
                 time.sleep(1.1)  # Sleeps between loop iterations
 
-            self.api.logout(platform.operations.getCurrentUser())
+            if platform.name != 'win32':  # On win32, SENS will send login/logouts
+                self.api.logout(platform.operations.getCurrentUser())
         except Exception as e:
             logger.error('Error on client loop: %s', e)
 
@@ -154,7 +165,11 @@ class UDSActorClient(threading.Thread):
         return 'ok'
 
     def screenshot(self) -> typing.Any:
-        pixmap: QPixmap = self._qApp.primaryScreen().grabWindow(0)
+        '''
+        On windows, an RDP session with minimized screen will render "black screen"
+        So only when user is using RDP connection will return an "actual" screenshot
+        '''
+        pixmap: 'QPixmap' = self._qApp.primaryScreen().grabWindow(0)
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.WriteOnly)

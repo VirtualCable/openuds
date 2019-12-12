@@ -28,6 +28,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=invalid-name
 import threading
 import http.server
 import secrets
@@ -81,7 +82,8 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
         try:
             result = getattr(self, 'method_' + path[1])(params)  # last part of path is method
-        except AttributeError:
+        except AttributeError as e:
+            logger.error('Invoked invalid method: %s: %s', path[1], e)
             self.sendJsonResponse(error='Invalid request', code=400)
             return
         except Exception as e:

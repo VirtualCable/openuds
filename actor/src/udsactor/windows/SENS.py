@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,15 +29,12 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# _*_ coding: iso-8859-1 _*_
-
-from __future__ import unicode_literals
+import typing
 
 import win32com.client  # @UnresolvedImport, pylint: disable=import-error
 import win32com.server.policy  # @UnresolvedImport, pylint: disable=import-error
-import os
 
-from udsactor.log import logger
+from ..log import logger
 
 # based on python SENS example from
 # http://timgolden.me.uk/python/win32_how_do_i/track-session-events.html
@@ -52,6 +49,9 @@ PROGID_EventSubscription = "EventSystem.EventSubscription"
 
 IID_ISensLogon = "{d597bab3-5b9f-11d1-8dd2-00aa004abd5e}"
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from ..service import CommonService
 
 class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
     _com_interfaces_ = [IID_ISensLogon]
@@ -65,38 +65,19 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
         'StopScreenSaver'
     ]
 
-    def __init__(self, service):
+    _service: 'CommonService'
+
+    def __init__(self, service: 'CommonService'):  # pylint: disable=super-init-not-called
         self._wrap_(self)
-        self.service = service
+        self._service = service
 
     def Logon(self, *args):
         logger.debug('Logon event: {}'.format(args))
-        if self.service.api is not None and self.service.api.isConnected:
-            try:
-                data = self.service.api.login(args[0])
-                logger.debug('Data received for login: {}'.format(data))
-                data = data.split('\t')
-                if len(data) >= 2:
-                    logger.debug('Data is valid: {}'.format(data))
-                    windir = os.environ['windir']
-                    with open(os.path.join(windir, 'remoteip.txt'), 'w') as f:
-                        f.write(data[0])
-                    with open(os.path.join(windir, 'remoteh.txt'), 'w') as f:
-                        f.write(data[1])
-            except Exception as e:
-                logger.fatal('Error notifying logon to server: {}'.format(e))
+        self._service.login(args[0] or '')
 
     def Logoff(self, *args):
         logger.debug('Logoff event: arguments: {}'.format(args))
-        if self.service is not None and self.service.api is not None and self.service.api.isConnected:
-            try:
-                self.service.api.logout(args[0])
-            except Exception as e:
-                logger.fatal('Error notifying logoff to server: {}'.format(e))
-
-        logger.debug('Invoking onLogout: {}'.format(self.service))
-        self.service.onLogout(args[0])
-        logger.debug('Invoked!!')
+        self._service.logout(args[0] or '')
 
     def StartShell(self, *args):
         # logevent('StartShell : %s' % [args])
