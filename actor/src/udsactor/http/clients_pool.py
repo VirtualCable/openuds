@@ -41,12 +41,12 @@ class UDSActorClientPool:
     def __init__(self) -> None:
         self._clientUrl = []
 
-    def _post(self, method: str, data: typing.MutableMapping[str, str]) -> typing.List[requests.Response]:
+    def _post(self, method: str, data: typing.MutableMapping[str, str], timeout=2) -> typing.List[requests.Response]:
         removables: typing.List[str] = []
         result: typing.List[typing.Any] = []
         for clientUrl in self._clientUrl:
             try:
-                result.append(requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False))
+                result.append(requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False, timeout=timeout))
             except Exception as e:
                 # If cannot request to a clientUrl, remove it from list
                 logger.info('Could not coneect with client %s: %s. Removed from registry.', e, clientUrl)
@@ -68,7 +68,7 @@ class UDSActorClientPool:
         self._clientUrl = list((i for i in self._clientUrl if i != clientUrl))
 
     def executeScript(self, script: str) -> None:
-        self._post('script', {'script': script})
+        self._post('script', {'script': script}, timeout=30)
 
     def logout(self) -> None:
         self._post('logout', {})
@@ -77,11 +77,11 @@ class UDSActorClientPool:
         self._post('message', {'message': message})
 
     def ping(self) -> bool:
-        self._post('ping', {})
+        self._post('ping', {}, timeout=1)
         return bool(self._clientUrl)  # if no clients available
 
     def screenshot(self) -> typing.Optional[str]:  # Screenshot are returned as base64
-        for r in self._post('screenshot', {}):
+        for r in self._post('screenshot', {}, timeout=3):
             try:
                 return r.json()['result']
             except Exception:

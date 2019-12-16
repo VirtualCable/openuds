@@ -86,8 +86,8 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         while self._isAlive:
             counter += 1
             try:
-                if counter % 10 == 0:
-                    self.checkIpsChanged()
+                if counter % 5 == 0:
+                    self.loop()
             except Exception as e:
                 logger.error('Got exception on main loop: %s', e)
             # In milliseconds, will break

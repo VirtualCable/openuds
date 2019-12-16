@@ -324,6 +324,16 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if platform.operations.renameComputer(name):
             self.reboot()
 
+    def loop(self):
+        # Main common luop
+
+        # Checks if ips has changed
+        self.checkIpsChanged()
+
+        # Now check if every registered client is already there (if logged in OFC)
+        if self._loggedIn and self._clientsPool.ping():
+            self.logout('client_unavailable')
+
     # ******************************************************
     # Methods that can be overriden by linux & windows Actor
     # ******************************************************

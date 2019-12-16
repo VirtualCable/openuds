@@ -257,9 +257,8 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
                 # Process SENS messages, This will be a bit asyncronous (1 second delay)
                 pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
 
-                if counter >= 10:  # Once every 10 seconds
-                    counter = 0
-                    self.checkIpsChanged()
+                if counter % 5 == 0:  # Once every 5 seconds
+                    self.loop()
 
             except Exception as e:
                 logger.error('Got exception on main loop: %s', e)

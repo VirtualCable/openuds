@@ -30,8 +30,9 @@
 '''
 import threading
 import time
-import typing
+import datetime
 import signal
+import typing
 
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, pyqtSignal
@@ -90,8 +91,11 @@ class UDSActorClient(threading.Thread):
     _running: bool
     _forceLogoff: bool
     _qApp: UDSClientQApp
-    api: rest.UDSClientApi
     _listener: client.HTTPServerThread
+    _loginInfo: typing.Optional[types.LoginResultInfoType]
+    _notified: bool
+    _sessionStartTime: datetime.datetime
+    api: rest.UDSClientApi
 
     def __init__(self, qApp: QApplication):
         super().__init__()
@@ -101,6 +105,8 @@ class UDSActorClient(threading.Thread):
         self._running = False
         self._forceLogoff = False
         self._listener = client.HTTPServerThread(self)
+        self._loginInfo = None
+        self._notified = False
 
         # Capture stop signals..
         logger.debug('Setting signals...')
@@ -111,20 +117,66 @@ class UDSActorClient(threading.Thread):
         logger.info('Stop signal received')
         self.stop()
 
+    def checkDeadLine(self):
+        if self._userInfo is None or not self._userInfo.dead_line:  # No deadline check
+            return
+
+        remainingTime = self._loginInfo.dead_line - (datetime.datetime.now() - self._sessionStartTime).total_seconds()
+        logger.debug('Remaining time: {}'.format(remainingTime))
+
+        if not self._notified and remainingTime < 300:  # With five minutes, show a warning message
+            self._notified = True
+            self._showMessage('Your session will expire in less that 5 minutes. Please, save your work and disconnect.')
+            return
+
+        if remainingTime <= 0:
+            logger.debug('Session dead line reached. Logging out')
+            self._running = False
+            self._forceLogoff = True
+
+    def checkIdle(self):
+        if self._userInfo is None or not self._userInfo.max_idle:  # No idle check
+            return
+
+        idleTime = platform.operations.getIdleDuration()
+        remainingTime = self._loginInfo.max_idle - idleTime
+
+        if remainingTime > 120:  # Reset show Warning dialog if we have more than 5 minutes left
+            self._notified = False
+            return
+
+        logger.debug('User has been idle for: {}'.format(idleTime))
+
+        if not self._idleNotified and remainingTime < 120:  # With two minutes, show a warning message
+            self._notified = True
+            self._showMessage('You have been idle for too long. The session will end if you don\'t resume operations.')
+
+        if remainingTime <= 0:
+            logger.info('User has been idle for too long, exiting from session')
+            self._running = False
+            self._forceLogoff = True
+
     def run(self):
         logger.debug('UDS Actor thread')
         self._listener.start()  # async listener for service
         self._running = True
 
+        self._sessionStartTime = datetime.datetime.now()
+
         time.sleep(0.4)  # Wait a bit before sending login
 
         try:
             # Notify loging and mark it
-            self.api.login(platform.operations.getCurrentUser())
+            self._loginInfo = self.api.login(platform.operations.getCurrentUser())
 
             while self._running:
                 time.sleep(1.1)  # Sleeps between loop iterations
 
+                # Check Idle & dead line
+                self.checkIdle()
+                self.checkDeadLine()
+
+            self._loginInfo = None
             self.api.logout(platform.operations.getCurrentUser())
         except Exception as e:
             logger.error('Error on client loop: %s', e)
@@ -135,6 +187,7 @@ class UDSActorClient(threading.Thread):
         QApplication.quit()
 
         if self._forceLogoff:
+            time.sleep(1.3)  # Wait a bit before forcing logoff
             platform.operations.loggoff()
 
     def _showMessage(self, message: str) -> None:

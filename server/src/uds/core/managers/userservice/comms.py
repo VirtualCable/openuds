@@ -62,7 +62,7 @@ def _requestActor(
 
         if version >= '3.0.0':
             js = js['result']
-        logger.debug('Requested %s to actor. Url=%s, Result=%s', method, url, js)
+        logger.debug('Requested %s to actor. Url=%s', method, url)
     except Exception as e:
         logger.warning('Request %s failed: %s. Check connection on destination machine: %s', method, e, url)
         js = None
