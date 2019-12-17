@@ -78,9 +78,9 @@ class Logger:
             return
 
         msg = message % args
-        # If remote logger is available, notify message to it
+        # If remote logger is available, notify message to it (except DEBUG messages OFC)
         try:
-            if self.remoteLogger:
+            if self.remoteLogger and level <= DEBUG:
                 self.remoteLogger.log(self.own_token, level, msg)
         except Exception as e:
             self.localLogger.log(DEBUG, 'Log to broker: {}'.format(e))

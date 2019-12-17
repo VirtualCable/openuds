@@ -78,8 +78,10 @@ class UDSActorClientPool:
         self._post('message', {'message': message})
 
     def ping(self) -> bool:
+        if not self._clientUrl:
+            return True                  # No clients, ping ok
         self._post('ping', {}, timeout=1)
-        return bool(self._clientUrl)  # if no clients available
+        return bool(self._clientUrl)     # There was clients, but they are now lost!!!
 
     def screenshot(self) -> typing.Optional[str]:  # Screenshot are returned as base64
         for r in self._post('screenshot', {}, timeout=3):

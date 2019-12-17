@@ -72,7 +72,7 @@ class UDSClientQApp(QApplication):
         self._app.start()
         self._initialized = True
 
-    def end(self, sessionManager=None) -> None:
+    def end(self, sessionManager=None) -> None:  # pylint: disable=unused-argument
         if not self._initialized:
             return
 
@@ -87,12 +87,12 @@ class UDSClientQApp(QApplication):
         QMessageBox.information(None, 'Message', message)
 
 
-class UDSActorClient(threading.Thread):
+class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-attributes
     _running: bool
     _forceLogoff: bool
     _qApp: UDSClientQApp
     _listener: client.HTTPServerThread
-    _loginInfo: typing.Optional[types.LoginResultInfoType]
+    _loginInfo: typing.Optional['types.LoginResultInfoType']
     _notified: bool
     _sessionStartTime: datetime.datetime
     api: rest.UDSClientApi
@@ -118,7 +118,7 @@ class UDSActorClient(threading.Thread):
         self.stop()
 
     def checkDeadLine(self):
-        if self._userInfo is None or not self._userInfo.dead_line:  # No deadline check
+        if self._loginInfo is None or not self._loginInfo.dead_line:  # No deadline check
             return
 
         remainingTime = self._loginInfo.dead_line - (datetime.datetime.now() - self._sessionStartTime).total_seconds()
@@ -135,7 +135,7 @@ class UDSActorClient(threading.Thread):
             self._forceLogoff = True
 
     def checkIdle(self):
-        if self._userInfo is None or not self._userInfo.max_idle:  # No idle check
+        if self._loginInfo is None or not self._loginInfo.max_idle:  # No idle check
             return
 
         idleTime = platform.operations.getIdleDuration()
@@ -147,7 +147,7 @@ class UDSActorClient(threading.Thread):
 
         logger.debug('User has been idle for: {}'.format(idleTime))
 
-        if not self._idleNotified and remainingTime < 120:  # With two minutes, show a warning message
+        if not self._notified and remainingTime < 120:  # With two minutes, show a warning message
             self._notified = True
             self._showMessage('You have been idle for too long. The session will end if you don\'t resume operations.')
 

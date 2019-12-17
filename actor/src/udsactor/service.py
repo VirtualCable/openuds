@@ -138,12 +138,15 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             if srvInterface:
                 # Rery while RESTConnectionError (that is, cannot connect)
                 counter = 8
+                logged = False
                 while self._isAlive:
                     counter -= 1
                     try:
                         self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, rest.LISTEN_PORT)
                     except rest.RESTConnectionError as e:
-                        logger.info('Error connecting with UDS Broker')
+                        if not logged:  # Only log connection problems ONCE
+                            logged = True
+                            logger.error('Error connecting with UDS Broker')
                         self.doWait(5000)
                         continue
                     except Exception as e:
@@ -165,7 +168,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
             platform.store.writeConfig(self._cfg)
 
-        logger.debug('Done setReady')
+        logger.info('Service ready')
         self._startHttpServer()
 
     def configureMachine(self) -> bool:
@@ -325,14 +328,16 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             self.reboot()
 
     def loop(self):
-        # Main common luop
+        # Main common loop
+        try:
+            # Checks if ips has changed
+            self.checkIpsChanged()
 
-        # Checks if ips has changed
-        self.checkIpsChanged()
-
-        # Now check if every registered client is already there (if logged in OFC)
-        if self._loggedIn and self._clientsPool.ping():
-            self.logout('client_unavailable')
+            # Now check if every registered client is already there (if logged in OFC)
+            if self._loggedIn and not self._clientsPool.ping():
+                self.logout('client_unavailable')
+        except Exception as e:
+            logger.error('Exception on main service loop: %s', e)
 
     # ******************************************************
     # Methods that can be overriden by linux & windows Actor
