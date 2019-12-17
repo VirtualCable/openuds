@@ -363,6 +363,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self._loggedIn = False
         if self._cfg.own_token:
             self._api.logout(self._cfg.own_token, username)
+        self.onLogout(username)
 
     # ****************************************
     # Methods that CAN BE overriden by actors

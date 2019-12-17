@@ -92,7 +92,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
     def doWait(self, miliseconds: int) -> None:
         win32event.WaitForSingleObject(self._hWaitStop, miliseconds)
 
-    def oneStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:
+    def oneStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:  # pylint: disable=too-many-arguments
         '''
         Ejecutes the join domain in exactly one step
         '''
@@ -109,7 +109,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         logger.debug('Requested join domain {} without errors'.format(domain))
         self.reboot()
 
-    def multiStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:
+    def multiStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:  # pylint: disable=too-many-arguments
         currName = operations.getComputerName()
         if currName.lower() == name.lower():
             currDomain = operations.getDomainName()

@@ -28,6 +28,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=invalid-name
 import json
 import typing
 

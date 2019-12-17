@@ -167,7 +167,8 @@ class UDSActorClient(threading.Thread):
 
         try:
             # Notify loging and mark it
-            self._loginInfo = self.api.login(platform.operations.getCurrentUser())
+            if platform.name != 'win32':  # On win32, SENS will send login/logouts
+                self.api.login(platform.operations.getCurrentUser())
 
             while self._running:
                 time.sleep(1.1)  # Sleeps between loop iterations
@@ -177,7 +178,8 @@ class UDSActorClient(threading.Thread):
                 self.checkDeadLine()
 
             self._loginInfo = None
-            self.api.logout(platform.operations.getCurrentUser())
+            if platform.name != 'win32':  # On win32, SENS will send login/logouts
+                self.api.logout(platform.operations.getCurrentUser())
         except Exception as e:
             logger.error('Error on client loop: %s', e)
 
@@ -207,7 +209,11 @@ class UDSActorClient(threading.Thread):
         return 'ok'
 
     def screenshot(self) -> typing.Any:
-        pixmap: QPixmap = self._qApp.primaryScreen().grabWindow(0)
+        '''
+        On windows, an RDP session with minimized screen will render "black screen"
+        So only when user is using RDP connection will return an "actual" screenshot
+        '''
+        pixmap: 'QPixmap' = self._qApp.primaryScreen().grabWindow(0)
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.WriteOnly)
