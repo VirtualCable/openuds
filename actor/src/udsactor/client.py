@@ -141,11 +141,11 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
         idleTime = platform.operations.getIdleDuration()
         remainingTime = self._loginInfo.max_idle - idleTime
 
+        logger.debug('Idle: %s Remaining: %s', idleTime, remainingTime)
+
         if remainingTime > 120:  # Reset show Warning dialog if we have more than 5 minutes left
             self._notified = False
             return
-
-        logger.debug('User has been idle for: {}'.format(idleTime))
 
         if not self._notified and remainingTime < 120:  # With two minutes, show a warning message
             self._notified = True
@@ -167,19 +167,17 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
 
         try:
             # Notify loging and mark it
-            if platform.name != 'win32':  # On win32, SENS will send login/logouts
-                self.api.login(platform.operations.getCurrentUser())
+            self._loginInfo = self.api.login(platform.operations.getCurrentUser())
 
             while self._running:
-                time.sleep(1.1)  # Sleeps between loop iterations
+                time.sleep(1.3)  # Sleeps between loop iterations
 
                 # Check Idle & dead line
                 self.checkIdle()
                 self.checkDeadLine()
 
             self._loginInfo = None
-            if platform.name != 'win32':  # On win32, SENS will send login/logouts
-                self.api.logout(platform.operations.getCurrentUser())
+            self.api.logout(platform.operations.getCurrentUser())
         except Exception as e:
             logger.error('Error on client loop: %s', e)
 

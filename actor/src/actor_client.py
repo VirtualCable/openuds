@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     logger.info('Started UDS Client Actor')
 
-    # QApplication.setQuitOnLastWindowClosed(False)
+    UDSClientQApp.setQuitOnLastWindowClosed(False)
 
     qApp = UDSClientQApp(sys.argv)
 
