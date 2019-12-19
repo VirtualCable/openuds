@@ -66,11 +66,14 @@
      <height>0</height>
     </size>
    </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::DefaultContextMenu</enum>
+   </property>
    <property name="toolTip">
-    <string>Click to test the selecter parameters</string>
+    <string>Click to register Actor with UDS Broker</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to test the server host and master key parameters.&lt;/p&gt;&lt;p&gt;A window will be displayed with results after the test is executed.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This button will only be active if all parameters are filled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to register Actor with UDS Broker.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>Register with UDS</string>
@@ -98,10 +101,10 @@
     </size>
    </property>
    <property name="toolTip">
-    <string>Cancel all changes and discard them</string>
+    <string>Closes UDS Actor Configuration (discard pending changes if any)</string>
    </property>
    <property name="whatsThis">
-    <string>Discards all changes and closes the configuration window</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exits the UDS Actor Configuration Tool&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>Close</string>
@@ -117,7 +120,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab_uds">
     <attribute name="title">
@@ -170,7 +173,11 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QComboBox" name="authenticators"/>
+       <widget class="QComboBox" name="authenticators">
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the UDS Broker authenticator for credentials validation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_username">
@@ -185,7 +192,7 @@
          <string>UDS user with administration rights (Will not be stored on template)</string>
         </property>
         <property name="whatsThis">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Administrator user on UDS Server.&lt;/p&gt;&lt;p&gt;Note: This credential will not be stored on client. Will be used to obtain an unique key for this image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Administrator user on UDS Server.&lt;/p&gt;&lt;p&gt;Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -430,6 +437,34 @@
     </widget>
    </widget>
   </widget>
+  <widget class="QPushButton" name="testButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>270</y>
+     <width>181</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>181</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Click to test existing configuration (disabled if no config found)</string>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to test the server host and assigned toen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Test configuration</string>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="uds.qrc"/>
@@ -595,6 +630,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>testButton</sender>
+   <signal>clicked()</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>testUDSServer()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>294</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>textChanged()</slot>
@@ -604,5 +655,6 @@
   <slot>browseRunOnce()</slot>
   <slot>browsePostConfig()</slot>
   <slot>updateAuthenticators()</slot>
+  <slot>testUDSServer()</slot>
  </slots>
 </ui>

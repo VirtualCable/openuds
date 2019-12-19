@@ -101,7 +101,9 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         try:
             result = requests.post(self._apiURL(method), data=json.dumps(payLoad), headers=headers, verify=self._validateCert)
             if result.ok:
-                return result.json()['result']
+                j = result.json()
+                if 'error' not in j:
+                    return j['result']
         except requests.ConnectionError as e:
             raise RESTConnectionError(str(e))
         except Exception as e:
@@ -113,7 +115,6 @@ class UDSApi:  # pylint: disable=too-few-public-methods
             data = result.content.decode()
 
         raise RESTError(data)
-
 
 #
 # UDS Broker API access
@@ -269,6 +270,12 @@ class UDSServerApi(UDSApi):
             'message': message
         }
         self._doPost('log', payLoad)  # Ignores result...
+
+    def test(self, master_token: str) -> bool:
+        payLoad = {
+            'token': master_token,
+        }
+        return self._doPost('test', payLoad) == 'ok'
 
 
 class UDSClientApi(UDSApi):

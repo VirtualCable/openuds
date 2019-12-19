@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_UdsActorSetupDialog(object):
     def setupUi(self, UdsActorSetupDialog):
@@ -34,6 +36,7 @@ class Ui_UdsActorSetupDialog(object):
         self.registerButton.setEnabled(False)
         self.registerButton.setGeometry(QtCore.QRect(10, 270, 181, 23))
         self.registerButton.setMinimumSize(QtCore.QSize(181, 0))
+        self.registerButton.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.registerButton.setObjectName("registerButton")
         self.closeButton = QtWidgets.QPushButton(UdsActorSetupDialog)
         self.closeButton.setGeometry(QtCore.QRect(410, 270, 171, 23))
@@ -180,9 +183,14 @@ class Ui_UdsActorSetupDialog(object):
         self.logLevelComboBox.setItemText(3, "FATAL")
         self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.logLevelComboBox)
         self.tabWidget.addTab(self.tab_advanced, "")
+        self.testButton = QtWidgets.QPushButton(UdsActorSetupDialog)
+        self.testButton.setEnabled(False)
+        self.testButton.setGeometry(QtCore.QRect(210, 270, 181, 23))
+        self.testButton.setMinimumSize(QtCore.QSize(181, 0))
+        self.testButton.setObjectName("testButton")
 
         self.retranslateUi(UdsActorSetupDialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         self.logLevelComboBox.setCurrentIndex(1)
         self.closeButton.clicked.connect(UdsActorSetupDialog.finish)
         self.registerButton.clicked.connect(UdsActorSetupDialog.registerWithUDS)
@@ -194,24 +202,26 @@ class Ui_UdsActorSetupDialog(object):
         self.browseRunOnceButton.clicked.connect(UdsActorSetupDialog.browseRunOnce)
         self.host.editingFinished.connect(UdsActorSetupDialog.updateAuthenticators)
         self.authenticators.currentTextChanged['QString'].connect(UdsActorSetupDialog.textChanged)
+        self.testButton.clicked.connect(UdsActorSetupDialog.testUDSServer)
         QtCore.QMetaObject.connectSlotsByName(UdsActorSetupDialog)
 
     def retranslateUi(self, UdsActorSetupDialog):
         _translate = QtCore.QCoreApplication.translate
         UdsActorSetupDialog.setWindowTitle(_translate("UdsActorSetupDialog", "UDS Actor Configuration Tool"))
-        self.registerButton.setToolTip(_translate("UdsActorSetupDialog", "Click to test the selecter parameters"))
-        self.registerButton.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Click on this button to test the server host and master key parameters.</p><p>A window will be displayed with results after the test is executed.</p><p><br/></p><p>This button will only be active if all parameters are filled.</p></body></html>"))
+        self.registerButton.setToolTip(_translate("UdsActorSetupDialog", "Click to register Actor with UDS Broker"))
+        self.registerButton.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Click on this button to register Actor with UDS Broker.</p></body></html>"))
         self.registerButton.setText(_translate("UdsActorSetupDialog", "Register with UDS"))
-        self.closeButton.setToolTip(_translate("UdsActorSetupDialog", "Cancel all changes and discard them"))
-        self.closeButton.setWhatsThis(_translate("UdsActorSetupDialog", "Discards all changes and closes the configuration window"))
+        self.closeButton.setToolTip(_translate("UdsActorSetupDialog", "Closes UDS Actor Configuration (discard pending changes if any)"))
+        self.closeButton.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Exits the UDS Actor Configuration Tool</p></body></html>"))
         self.closeButton.setText(_translate("UdsActorSetupDialog", "Close"))
         self.label_host.setText(_translate("UdsActorSetupDialog", "UDS Server"))
         self.host.setToolTip(_translate("UdsActorSetupDialog", "Uds Broker Server Addres. Use IP or FQDN"))
         self.host.setWhatsThis(_translate("UdsActorSetupDialog", "Enter here the UDS Broker Addres using either its IP address or its FQDN address"))
         self.label_auth.setText(_translate("UdsActorSetupDialog", "Authenticator"))
+        self.authenticators.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Select the UDS Broker authenticator for credentials validation</p></body></html>"))
         self.label_username.setText(_translate("UdsActorSetupDialog", "Username"))
         self.username.setToolTip(_translate("UdsActorSetupDialog", "UDS user with administration rights (Will not be stored on template)"))
-        self.username.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Administrator user on UDS Server.</p><p>Note: This credential will not be stored on client. Will be used to obtain an unique key for this image.</p></body></html>"))
+        self.username.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Administrator user on UDS Server.</p><p>Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.</p></body></html>"))
         self.label_password.setText(_translate("UdsActorSetupDialog", "Password"))
         self.password.setToolTip(_translate("UdsActorSetupDialog", "Password for user (Will not be stored on template)"))
         self.password.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Administrator password for the user on UDS Server.</p><p>Note: This credential will not be stored on client. Will be used to obtain an unique key for this image.</p></body></html>"))
@@ -232,5 +242,7 @@ class Ui_UdsActorSetupDialog(object):
         self.browsePostConfigButton.setText(_translate("UdsActorSetupDialog", "Browse"))
         self.label_loglevel.setText(_translate("UdsActorSetupDialog", "Log Level"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_advanced), _translate("UdsActorSetupDialog", "Advanced"))
-
+        self.testButton.setToolTip(_translate("UdsActorSetupDialog", "Click to test existing configuration (disabled if no config found)"))
+        self.testButton.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Click on this button to test the server host and assigned toen.</p></body></html>"))
+        self.testButton.setText(_translate("UdsActorSetupDialog", "Test configuration"))
 from ui import uds_rc

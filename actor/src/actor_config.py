@@ -70,6 +70,8 @@ class UDSConfigDialog(QDialog):
         self.ui.username.setText('')
         self.ui.password.setText('')
 
+        self.ui.testButton.setEnabled(bool(config.master_token and config.host))
+
     @property
     def api(self) -> udsactor.rest.UDSServerApi:
         return udsactor.rest.UDSServerApi(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
@@ -105,9 +107,39 @@ class UDSConfigDialog(QDialog):
     def textChanged(self):
         enableButtons = bool(self.ui.host.text() and self.ui.username.text() and self.ui.password.text() and self.ui.authenticators.currentText())
         self.ui.registerButton.setEnabled(enableButtons)
+        self.ui.testButton.setEnabled(False)  # Only registered information can be checked
 
     def finish(self):
         self.close()
+
+    def testUDSServer(self):
+        config: udsactor.types.ActorConfigurationType = udsactor.platform.store.readConfig()
+        if not config.master_token:
+            self.ui.testButton.setEnabled(False)
+            return
+        try:
+            api = udsactor.rest.UDSServerApi(config.host, config.validateCertificate)
+            if not api.test(config.master_token):
+                QMessageBox.information(
+                    self,
+                    'UDS Test',
+                    'Current configured token seems to be invalid for {}. Please, request e new one.'.format(config.host),
+                    QMessageBox.Ok
+                )
+            else:
+                QMessageBox.information(
+                    self,
+                    'UDS Test',
+                    'Configuration for {} seems to be correct.'.format(config.host),
+                    QMessageBox.Ok
+                )
+        except Exception:
+            QMessageBox.information(
+                self,
+                'UDS Test',
+                'Configured host {} seems to be inaccesible.'.format(config.host),
+                QMessageBox.Ok
+            )
 
     def registerWithUDS(self):
         # Get network card. Will fail if no network card is available, but don't mind (not contempled)
@@ -137,9 +169,12 @@ class UDSConfigDialog(QDialog):
                     log_level=self.ui.logLevelComboBox.currentIndex()
                 )
             )
-            # Inform the user
+            # Enables test button
+            self.ui.testButton.setEnabled(True)
+            # Informs the user
             QMessageBox.information(self, 'UDS Registration', 'Registration with UDS completed.', QMessageBox.Ok)
         except udsactor.rest.RESTError as e:
+            self.ui.testButton.setEnabled(False)
             QMessageBox.critical(self, 'UDS Registration', 'UDS Registration error: {}'.format(e), QMessageBox.Ok)
 
 
