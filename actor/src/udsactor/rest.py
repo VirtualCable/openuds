@@ -102,7 +102,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
             result = requests.post(self._apiURL(method), data=json.dumps(payLoad), headers=headers, verify=self._validateCert)
             if result.ok:
                 j = result.json()
-                if 'error' not in j:
+                if not j.get('error', None):
                     return j['result']
         except requests.ConnectionError as e:
             raise RESTConnectionError(str(e))

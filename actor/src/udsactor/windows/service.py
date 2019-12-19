@@ -48,7 +48,7 @@ from ..service import CommonService
 from ..log import logger
 
 from .SENS import SensLogon
-from .SENS import logevent
+# from .SENS import logevent
 from .SENS import SENSGUID_EVENTCLASS_LOGON
 from .SENS import SENSGUID_PUBLISHER
 from .SENS import PROGID_EventSubscription

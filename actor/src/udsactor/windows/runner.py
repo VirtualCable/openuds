@@ -30,6 +30,7 @@
 '''
 # pylint: disable=invalid-name
 import sys
+import win32service
 import win32serviceutil
 import servicemanager
 
@@ -37,10 +38,36 @@ import win32timezone  # pylint: disable=unused-import
 
 from .service import UDSActorSvc
 
+def setupRecoverService():
+    svc_name = UDSActorSvc._svc_name_  # pylint: disable=protected-access
+
+    try:
+        hscm = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+
+        try:
+            hs = win32serviceutil.SmartOpenService(hscm, svc_name, win32service.SERVICE_ALL_ACCESS)
+            service_failure_actions = {
+                'ResetPeriod': 864000,  # Time in ms after which to reset the failure count to zero.
+                'RebootMsg': u'',  # Not using reboot option
+                'Command': u'',  # Not using run-command option
+                'Actions': [
+                    (win32service.SC_ACTION_RESTART, 5000),  # action, delay in ms
+                    (win32service.SC_ACTION_RESTART, 5000)
+                ]
+            }
+            win32service.ChangeServiceConfig2(hs, win32service.SERVICE_CONFIG_FAILURE_ACTIONS, service_failure_actions)
+        finally:
+            win32service.CloseServiceHandle(hs)
+    finally:
+        win32service.CloseServiceHandle(hscm)
+
+
 def run() -> None:
     if len(sys.argv) == 1:
         servicemanager.Initialize()
         servicemanager.PrepareToHostSingle(UDSActorSvc)
         servicemanager.StartServiceCtrlDispatcher()
+    elif sys.argv[1] == '--setup-recovery':
+        setupRecoverService()
     else:
         win32serviceutil.HandleCommandLine(UDSActorSvc)
