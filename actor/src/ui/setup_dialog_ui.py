@@ -190,7 +190,7 @@ class Ui_UdsActorSetupDialog(object):
         self.testButton.setObjectName("testButton")
 
         self.retranslateUi(UdsActorSetupDialog)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.logLevelComboBox.setCurrentIndex(1)
         self.closeButton.clicked.connect(UdsActorSetupDialog.finish)
         self.registerButton.clicked.connect(UdsActorSetupDialog.registerWithUDS)
