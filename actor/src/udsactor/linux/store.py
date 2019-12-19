@@ -58,7 +58,7 @@ def readConfig() -> types.ActorConfigurationType:
             pre_command=uds.get('pre_command', None),
             runonce_command=uds.get('runonce_command', None),
             post_command=uds.get('post_command', None),
-            log_level=int(uds.get('log_level', '3')),
+            log_level=int(uds.get('log_level', '2')),
             config=config,
             data=data
         )
