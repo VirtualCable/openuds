@@ -116,6 +116,20 @@ class ActorV3Action(Handler):
 
         raise AccessDenied('Access denied')
 
+class test(ActorV3Action):
+    """
+    Tests UDS Broker actor connectivity & key
+    """
+    name = 'test'
+
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        try:
+            ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
+        except Exception:
+            return ActorV3Action.actorResult('invalid token')
+
+        return ActorV3Action.actorResult('ok')
+
 class Register(ActorV3Action):
     """
     Registers an actor
@@ -310,7 +324,8 @@ class Login(ActorV3Action):
         userService = self.getUserService()
         osManager = userService.getOsManagerInstance()
         if osManager:
-            osManager.loggedIn(userService, self._params.get('username') or '')
+            if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
+                osManager.loggedIn(userService, self._params.get('username') or '')
             maxIdle = osManager.maxIdle()
             logger.debug('Max idle: %s', maxIdle)
 
@@ -333,7 +348,7 @@ class Logout(ActorV3Action):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
         osManager = userService.getOsManagerInstance()
-        if osManager:
+        if osManager and userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
             osManager.loggedOut(userService, self._params.get('username') or '')
             if osManager.isRemovableOnLogout(userService):
                 logger.debug('Removable on logout: %s', osManager)
