@@ -36,7 +36,7 @@ class ActorConfigurationType(typing.NamedTuple):
     runonce_command: typing.Optional[str] = None
     post_command: typing.Optional[str] = None
 
-    log_level: int = 0
+    log_level: int = 2
 
     config: typing.Optional[ActorDataConfigurationType] = None
 
