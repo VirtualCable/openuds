@@ -302,7 +302,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             raise Exception('Can\'t create machine')
 
         # Get IP & MAC (early stage)
-        self._mac, self._ip = self.service().getNetInfo(self._vmid)
+        # self._mac, self._ip = self.service().getNetInfo(self._vmid)
 
         return State.RUNNING
 
@@ -331,6 +331,10 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         Powers on the machine
         """
         self.service().startMachine(self._vmid)
+
+        # Get IP & MAC (later stage, after "powering on")
+        self._mac, self._ip = self.service().getNetInfo(self._vmid)
+
         return State.RUNNING
 
     def __suspendMachine(self) -> str:
