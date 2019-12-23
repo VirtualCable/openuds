@@ -39,7 +39,6 @@ import typing
 from functools import wraps
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse, HttpRequest
 from django.utils.translation import get_language
-from django.utils.decorators import available_attrs
 from django.urls import reverse
 
 from django.utils.translation import ugettext as _
@@ -108,7 +107,6 @@ def webLoginRequired(admin: typing.Union[bool, str] = False) -> typing.Callable[
     if admin == 'admin', needs admin
     """
     def decorator(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-        @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request: HttpRequest, *args, **kwargs) -> RT:
             """
             Wrapped function for decorator
