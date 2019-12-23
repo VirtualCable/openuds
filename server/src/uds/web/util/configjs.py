@@ -81,7 +81,7 @@ def udsJs(request: 'HttpRequest') -> str:
             except Exception:  # There is no authenticators yet...
                 authenticators = []
     else:
-        authenticators = Authenticator.objects.all()
+        authenticators = Authenticator.objects.all().exclude(visible=False)
 
     # the auths for client
     def getAuthInfo(auth: Authenticator):
@@ -105,6 +105,9 @@ def udsJs(request: 'HttpRequest') -> str:
         'csrf': csrf_token,
         'image_size': Image.MAX_IMAGE_SIZE,
         'reload_time': GlobalConfig.RELOAD_TIME.getInt(True),
+        'site_name': GlobalConfig.SITE_NAME.get(),
+        'site_copyright_info': GlobalConfig.SITE_COPYRIGHT.get(),
+        'site_copyright_link': GlobalConfig.SITE_COPYRIGHT_LINK.get(),
         'messages': {
             # Calendar denied message
             'calendarDenied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip() or gettext("Access limited by calendar")

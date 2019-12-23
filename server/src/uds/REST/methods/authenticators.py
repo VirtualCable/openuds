@@ -33,13 +33,14 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Authenticator
 from uds.core import auths
 
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
 from uds.core.util import permissions
+from uds.core.ui import gui
 
 from .users_groups import Users, Groups
 
@@ -56,7 +57,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible']
 
     table_title = _('Authenticators')
     table_fields = [
@@ -65,6 +66,7 @@ class Authenticators(ModelHandler):
         {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
+        {'visible': {'title': _('Visible'), 'type': 'callback', 'width': '3em'}},
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
@@ -90,9 +92,19 @@ class Authenticators(ModelHandler):
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
-            gui = auths.factory().lookup(type_)
-            if gui:
-                return self.addDefaultFields(gui.guiDescription(), ['name', 'comments', 'tags', 'priority', 'small_name'])
+            tgui = auths.factory().lookup(type_)
+            if tgui:
+                g = self.addDefaultFields(tgui.guiDescription(), ['name', 'comments', 'tags', 'priority', 'small_name'])
+                self.addField(g, {
+                    'name': 'visible',
+                    'value': True,
+                    'label': ugettext('Visible'),
+                    'tooltip': ugettext('If active, transport will be visible for users'),
+                    'type': gui.InputField.CHECKBOX_TYPE,
+                    'order': 107,
+                    'tab': ugettext('Display'),
+                })
+                return g
             raise Exception()  # Not found
         except Exception:
             raise NotFound('type not found')
@@ -106,6 +118,7 @@ class Authenticators(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'priority': item.priority,
+            'visible': item.visible,
             'small_name': item.small_name,
             'users_count': item.users.count(),
             'type': type_.type(),

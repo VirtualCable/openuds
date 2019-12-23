@@ -337,6 +337,11 @@ class GlobalConfig:
     # Global UDS ID (common for all servers on the same cluster)
     UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value('UDS ID', cryptoManager().uuid(), type=Config.READ_FIELD)
 
+    # Site display name & copyright info
+    SITE_NAME: Config.Value = Config.section(GLOBAL_SECTION).value('Site name', 'UDS Enterprise', type=Config.TEXT_FIELD)
+    SITE_COPYRIGHT: Config.Value = Config.section(GLOBAL_SECTION).value('Site copyright info', '© 2012-2018 Virtual Cable S.L.U.', type=Config.TEXT_FIELD)
+    SITE_COPYRIGHT_LINK: Config.Value = Config.section(GLOBAL_SECTION).value('Site copyright link', 'https://www.udsenterprise.com', type=Config.TEXT_FIELD)
+
     _initDone = False
 
     @staticmethod

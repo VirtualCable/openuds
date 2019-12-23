@@ -62,8 +62,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
+    visible = models.BooleanField(default=True)
 
-    class Meta(ManagedObjectModel.Meta):
+    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order
         """
