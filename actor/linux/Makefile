@@ -50,13 +50,11 @@ install-udsactor:
 	rm -f $(PYC) $(CACHES)
 	
 	cp -r $(SOURCEDIR)/udsactor $(LIBDIR)/udsactor
-	cp $(SOURCEDIR)/img/uds.png $(LIBDIR)/img
+	cp $(SOURCEDIR)/img/uds-icon.png $(LIBDIR)/img
 
-	cp $(SOURCEDIR)/UDSActorConfig.py $(LIBDIR)
-	cp $(SOURCEDIR)/UDSActorUser.py $(LIBDIR)
+	cp $(SOURCEDIR)/actor_*.py $(LIBDIR)
 	# QT Dialogs & resources
-	cp $(SOURCEDIR)/*_ui.py $(LIBDIR)
-	cp $(SOURCEDIR)/UDSActor_rc.py $(LIBDIR)
+	cp -r $(SOURCEDIR)/ui $(LIBDIR)/ui
 	
 	# Menu GUI app
 	cp desktop/UDS_Actor_Configuration.desktop $(APPSDIR)
@@ -80,9 +78,8 @@ install-udsactor:
 	chmod 755 $(BINDIR)/udsactor
 	chmod 755 $(BINDIR)/udsvapp
 	chmod 755 $(BINDIR)/UDSActorTool-startup
-	chmod 755 $(SBINDIR)/UDSActorConfig-pkexec
-	chmod 755 $(LIBDIR)/UDSActorConfig.py
-	chmod 755 $(LIBDIR)/UDSActorUser.py
+	chmod 755 $(SBINDIR)/UDSActor*
+	chmod 755 $(LIBDIR)/actor_*.py
 	chmod 644 $(POLKITDIR)/org.openuds.pkexec.UDSActorConfig.policy
 	
 	# If for red hat based, copy init.d

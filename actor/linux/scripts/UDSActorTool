@@ -3,4 +3,4 @@
 FOLDER=/usr/share/UDSActor
 
 cd $FOLDER
-exec python3 actor_tool.py $@
+exec python3 actor_client.py $@
