@@ -34,6 +34,8 @@ import typing
 
 from uds.core import jobs
 
+from uds.models import Provider
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import OVirtProvider
@@ -75,21 +77,21 @@ class OVirtDeferredRemoval(jobs.Job):
         except Exception as e:
             logger.warning('Exception got queuing for Removal: %s', e)
 
-    def run(self):
+    def run(self) -> None:
         from .provider import OVirtProvider
 
         logger.debug('Looking for deferred vm removals')
 
-        provider: OVirtProvider
+        provider: Provider
         # Look for Providers of type VCServiceProvider
-        for provider in OVirtProvider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.typeType):
+        for provider in Provider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.typeType):
             logger.debug('Provider %s if os type ovirt', provider)
 
             storage = provider.getEnvironment().storage
-            instance = provider.getInstance()
+            instance: OVirtProvider = typing.cast(OVirtProvider, provider.getInstance())
 
             for i in storage.filter('tRm'):
-                vmId = i[1]
+                vmId = i[1].decode()
                 try:
                     logger.debug('Found %s for removal %s', vmId, i)
                     # If machine is powered on, tries to stop it
@@ -105,7 +107,7 @@ class OVirtDeferredRemoval(jobs.Job):
                     # It this is reached, remove check
                     storage.remove('tr' + vmId)
                 except Exception as e:  # Any other exception wil be threated again
-                    instance.doLog('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
+                    # instance.doLog('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
                     logger.error('Delayed removal of %s failed: %s', i, e)
 
         logger.debug('Deferred removal finished')

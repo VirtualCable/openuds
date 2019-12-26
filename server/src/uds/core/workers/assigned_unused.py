@@ -45,8 +45,8 @@ class AssignedAndUnused(Job):
     # frecuency_cfg = GlobalConfig.CHECK_UNUSED_TIME
     friendly_name = 'Unused services checker'
 
-    def run(self):
-        since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.CHECK_UNUSED_TIME)
+    def run(self) -> None:
+        since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.CHECK_UNUSED_TIME.getInt())
         for ds in ServicePool.objects.all():
             # Skips checking deployed services in maintenance mode or ignores assigned and unused
             if ds.isInMaintenance() is True or ds.ignores_unused:
