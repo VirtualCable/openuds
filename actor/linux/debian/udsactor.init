@@ -1,0 +1,23 @@
+#!/bin/sh -e
+### BEGIN INIT INFO
+# Provides:          udsactor
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: UDS Actor
+### END INIT INFO
+#
+
+# . /lib/lsb/init-functions
+
+case "$1" in
+  start|stop|restart) 
+    /usr/bin/udsactor $1
+	;;
+  force-reload)
+  	/usr/bin/udsactor restart 
+	;;
+  *) echo "Usage: $0 {start|stop|restart|force-reload}" >&2; exit 1 ;;
+esac
+

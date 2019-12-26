@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/usr/bin/udsactor login "$USER"
+$@
+/usr/bin/udsactor logout "$USER"

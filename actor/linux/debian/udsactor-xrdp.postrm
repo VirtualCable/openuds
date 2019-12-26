@@ -1,0 +1,30 @@
+#!/bin/sh -e
+
+SESMANFILE=/etc/pam.d/xrdp-sesman
+
+. /usr/share/debconf/confmodule
+
+set -e
+
+case "$1" in
+    purge)
+    ;;
+    remove)
+        if [ -f $SESMANFILE ]; then
+            TMPFILE=$(mktemp /tmp/sesman.XXXXX)
+            trap "rm -f $TMPFILE" 0
+            grep -v uds $SESMANFILE > $TMPFILE  # Removes all UDS lines from sesman if they exists
+            cp $TMPFILE $SESMANFILE
+            trap "rm -f $TMPFILE" 0
+        fi
+    ;;
+	upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#

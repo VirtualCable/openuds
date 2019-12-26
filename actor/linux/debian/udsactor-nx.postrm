@@ -1,0 +1,30 @@
+#!/bin/sh
+
+NXNODECFG=/usr/NX/etc/node.cfg
+
+. /usr/share/debconf/confmodule
+
+set -e
+
+case "$1" in
+    purge)
+    ;;
+    remove)
+        if [ -f $NXNODECFG ]; then
+            TMPFILE=$(mktemp /tmp/node.cfg.XXXXX)
+            trap "rm -f $TMPFILE" 0
+            cat $NXNODECFG | sed -e "s/.*udsnxst.*//" > $TMPFILE
+            cp $TMPFILE $NXNODECFG
+            invoke-rc.d nxserver restart
+        fi
+    ;;
+	upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
