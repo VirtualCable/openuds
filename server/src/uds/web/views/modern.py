@@ -76,6 +76,7 @@ def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpRespons
             request.session['errors'] = [data]
             return index(request)
     else:
+        request.session['tag'] = tag
         response = index(request)
 
     return response

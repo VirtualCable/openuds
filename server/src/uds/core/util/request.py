@@ -135,13 +135,13 @@ class GlobalRequestMiddleware:
             request.ip = request.META['REMOTE_ADDR']
         except Exception:
             logger.exception('Request ip not found!!')
-            request.ip = '0.0.0.0'  # No remote addr?? set this IP to a "basic" one, anyway, this should never ocur
+            request.ip = ''  # No remote addr?? ...
 
         try:
             proxies = request.META['HTTP_X_FORWARDED_FOR'].split(",")
             request.ip_proxy = proxies[0]
 
-            if  request.ip is None or behind_proxy is True:  # Request.IP will be None in case of nginx & gunicorn
+            if not request.ip or behind_proxy is True:  # Request.IP will be None in case of nginx & gunicorn
                 request.ip = request.ip_proxy  # Stores the ip
                 # will raise "list out of range", leaving ip_proxy = proxy in case of no other proxy apart of nginx
                 request.ip_proxy = proxies[1]

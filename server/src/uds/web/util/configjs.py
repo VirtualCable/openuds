@@ -72,6 +72,8 @@ def udsJs(request: 'HttpRequest') -> str:
     if csrf_token is not None:
         csrf_token = str(csrf_token)
 
+    tag = request.session.get('tag', None)
+
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
         try:
             authenticators = [Authenticator.objects.get(small_name=auth_host)]
@@ -82,6 +84,9 @@ def udsJs(request: 'HttpRequest') -> str:
                 authenticators = []
     else:
         authenticators = Authenticator.objects.all().exclude(visible=False)
+
+    if tag:
+        authenticators = [x for x in authenticators if x.small_name == tag]
 
     # the auths for client
     def getAuthInfo(auth: Authenticator):

@@ -64,12 +64,12 @@ urlpatterns = [
 
     # Login/logout
     path(r'uds/page/login/', uds.web.views.modern.login, name='page.login'),
-    re_path(r'^uds/page/login/(?P<tag>[a-zA-Z0-9-])$', uds.web.views.modern.login, name='page.login.tag'),
+    re_path(r'^uds/page/login/(?P<tag>[a-zA-Z0-9-]+)$', uds.web.views.modern.login, name='page.login.tag'),
 
     path(r'uds/page/logout/', uds.web.views.modern.logout, name='page.logout'),
 
     # Error URL (just a placeholder, calls index with data on url for angular)
-    re_path(r'^uds/page/error/(?P<error>[a-zA-Z0-9=-]+)$', uds.web.views.error, name='page.error'),
+    re_path(r'^uds/page/error/(?P<err>[a-zA-Z0-9=-]+)$', uds.web.views.error, name='page.error'),
     # Download plugins URL  (just a placeholder, calls index with data on url for angular)
     path(r'uds/page/client-download', uds.web.views.modern.index, name='page.client-download'),
 
