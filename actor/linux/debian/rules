@@ -22,8 +22,6 @@ install: build
 	dh_prep
 	dh_installdirs
 	$(MAKE) DESTDIR=$(CURDIR)/debian/udsactor install-udsactor
-	$(MAKE) DESTDIR=$(CURDIR)/debian/udsactor-xrdp install-udsactor-xrdp
-	$(MAKE) DESTDIR=$(CURDIR)/debian/udsactor-nx install-udsactor-nx
 binary-arch: build install
 	# emptyness
 binary-indep: build install
@@ -32,7 +30,9 @@ binary-indep: build install
 	dh_installchangelogs
 	dh_installdocs
 	dh_installdebconf
-	dh_installinit --no-start
+	dh_systemd_enable
+	dh_installinit --no-restart-on-upgrade --no-start --name=udsactor
+	dh_systemd_start
 	dh_python2=python
 	dh_compress
 	dh_link

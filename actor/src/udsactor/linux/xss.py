@@ -47,8 +47,11 @@ class XScreenSaverInfo(ctypes.Structure):  # pylint: disable=too-few-public-meth
                 ('idle', ctypes.c_ulong),
                 ('eventMask', ctypes.c_ulong)]
 
-def _init():
+def _ensureInitialized():
     global xlib, xss, xssInfo, display, initialized  # pylint: disable=global-statement
+    if initialized:
+        return
+
     initialized = True
 
     # Initialize xlib & xss
@@ -73,19 +76,18 @@ def _init():
 
 
 def initIdleDuration(atLeastSeconds: int) -> None:
-    subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
-    # And now reset it
-    subprocess.call(['/usr/bin/xset', 's', 'reset'])
+    _ensureInitialized()
+    if atLeastSeconds:
+        subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
+        # And now reset it
+        subprocess.call(['/usr/bin/xset', 's', 'reset'])
 
 
 def getIdleDuration() -> float:
     '''
     Returns idle duration, in seconds
     '''
-    if not initialized:
-        _init()
-
-    if not xlib or not xss or not xssInfo:
+    if not initialized or not xlib or not xss or not xssInfo:
         return 0  # Libraries not available
 
     event_base = ctypes.c_int()

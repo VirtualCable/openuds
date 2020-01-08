@@ -44,7 +44,7 @@ except ImportError:  # Platform may not include prctl, so in case it's not avail
 
 class UDSActorSvc(daemon.Daemon, CommonService):
     def __init__(self) -> None:
-        daemon.Daemon.__init__(self, '/var/run/udsactor.pid')
+        daemon.Daemon.__init__(self, '/run/udsactor.pid')
         CommonService.__init__(self)
 
         # Captures signals so we can stop gracefully

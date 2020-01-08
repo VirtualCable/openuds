@@ -196,7 +196,7 @@ class LASTINPUTINFO(ctypes.Structure):  # pylint: disable=too-few-public-methods
         ('dwTime', ctypes.c_uint),
     ]
 
-def initIdleDuration(atLeastSeconds: int = 0):  # pylint: disable=unused-argument
+def initIdleDuration(atLeastSeconds: int):  # pylint: disable=unused-argument
     '''
     In windows, there is no need to set screensaver
     '''

@@ -170,19 +170,19 @@ def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
 
 
 def initIdleDuration(atLeastSeconds: int) -> None:
-    subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
-    # And now reset it
-    subprocess.call(['/usr/bin/xset', 's', 'reset'])
+    xss.initIdleDuration(atLeastSeconds)
 
 
 def getIdleDuration() -> float:
     return xss.getIdleDuration()
+
 
 def getCurrentUser() -> str:
     '''
     Returns current logged in user
     '''
     return os.environ['USER']
+
 
 def forceTimeSync() -> None:
     return

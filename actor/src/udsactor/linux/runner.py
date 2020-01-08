@@ -61,12 +61,15 @@ def run() -> None:
 
     daemonSvr = UDSActorSvc()
     if len(sys.argv) == 2:
+        # Daemon mode...
         if sys.argv[1] == 'start':
             daemonSvr.start()
         elif sys.argv[1] == 'stop':
             daemonSvr.stop()
         elif sys.argv[1] == 'restart':
             daemonSvr.restart()
+        elif sys.argv[1] == 'start-foreground':
+            daemonSvr.run()  # Esecute in foreground
         else:
             usage()
         sys.exit(0)

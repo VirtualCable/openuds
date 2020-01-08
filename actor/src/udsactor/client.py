@@ -169,6 +169,9 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
             # Notify loging and mark it
             self._loginInfo = self.api.login(platform.operations.getCurrentUser())
 
+            if self._loginInfo.max_idle:
+                platform.operations.initIdleDuration(self._loginInfo.max_idle)
+
             while self._running:
                 time.sleep(1.3)  # Sleeps between loop iterations
 
