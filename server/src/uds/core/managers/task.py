@@ -127,6 +127,7 @@ class TaskManager:
             time.sleep(0.5)  # Wait a bit before next delayed task runner is started
 
         signal.signal(signal.SIGTERM, TaskManager.sigTerm)
+        signal.signal(signal.SIGINT, TaskManager.sigTerm)
 
         # Debugging stuff
         # import guppy

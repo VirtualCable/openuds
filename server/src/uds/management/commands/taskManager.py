@@ -102,6 +102,13 @@ class Command(BaseCommand):
             default=False,
             help='Stop any running daemon'
         )
+        parser.add_argument(
+            '--foreground',
+            action='store_true',
+            dest='foreground',
+            default=False,
+            help='Stop any running daemon'
+        )
 
     def handle(self, *args, **options) -> None:
         logger.info("Running task manager command")
@@ -110,8 +117,9 @@ class Command(BaseCommand):
 
         start = options.get('start', False)
         stop = options.get('stop', False)
+        foreground = options.get('foreground', False)
 
-        logger.debug('Start: %s, Stop: %s', start, stop)
+        logger.debug('Start: %s, Stop: %s, Foreground: %s', start, stop, foreground)
 
         pid: int = 0
         try:
@@ -131,10 +139,12 @@ class Command(BaseCommand):
 
         if start:
             logger.info('Starting task manager.')
-            become_daemon(settings.BASE_DIR, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
-            pid = str(os.getpid())
 
-            open(getPidFile(), 'w+').write('{}\n'.format(pid))
+            if not foreground:
+                become_daemon(settings.BASE_DIR, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
+                pid = os.getpid()
+
+                open(getPidFile(), 'w+').write('{}\n'.format(pid))
 
             manager = taskManager()()
             manager.run()

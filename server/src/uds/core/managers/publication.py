@@ -192,7 +192,10 @@ class PublicationFinishChecker(DelayedTask):
             else:
                 publicationInstance = publication.getInstance()
                 logger.debug("publication instance class: %s", publicationInstance.__class__)
-                state = publicationInstance.checkState()
+                try:
+                    state = publicationInstance.checkState()
+                except Exception:
+                    state = State.ERROR
                 PublicationFinishChecker.checkAndUpdateState(publication, publicationInstance, state)
         except Exception as e:
             logger.debug('Deployed service not found (erased from database) %s : %s', e.__class__, e)

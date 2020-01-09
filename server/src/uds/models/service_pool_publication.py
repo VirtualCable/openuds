@@ -72,7 +72,6 @@ class ServicePoolPublication(UUIDModel):
     """
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
-    # pylint: disable=model-missing-unicode
     deployed_service: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='publications')
     publish_date = models.DateTimeField(db_index=True)
     # data_type = models.CharField(max_length=128) # The data type is specified by the service itself
