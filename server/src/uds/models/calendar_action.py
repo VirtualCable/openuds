@@ -65,13 +65,16 @@ CALENDAR_ACTION_ADD_TRANSPORT = {'id': 'ADD_TRANSPORT', 'description': _('Add a 
 CALENDAR_ACTION_DEL_TRANSPORT = {'id': 'REMOVE_TRANSPORT', 'description': _('Remove a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Trasport'), 'default': ''},)}
 CALENDAR_ACTION_ADD_GROUP = {'id': 'ADD_GROUP', 'description': _('Add a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
 CALENDAR_ACTION_DEL_GROUP = {'id': 'REMOVE_GROUP', 'description': _('Remove a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
+CALENDAR_ACTION_IGNORE_UNUSED = {'id': 'IGNORE_UNUSED', 'description': _('Sets the ignore unused'), 'params': ({'type': 'bool', 'name': 'state', 'description': _('Ignore assigned and unused'), 'default': False},)}
+
 
 CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {c['id']: c for c in (
     CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
     CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
     CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT,
-    CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP
+    CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP,
+    CALENDAR_ACTION_IGNORE_UNUSED
 )}
 
 
@@ -133,7 +136,7 @@ class CalendarAction(UUIDModel):
             logger.exception('error')
             return '(invalid action)'
 
-    def execute(self, save: bool = True) -> None:  # pylinf: disable=too-many-branches, too-many-statements
+    def execute(self, save: bool = True) -> None:  # pylint: disable=too-many-branches, too-many-statements
         """Executes the calendar action
 
         Keyword Arguments:
@@ -166,6 +169,8 @@ class CalendarAction(UUIDModel):
             self.service_pool.publish(changeLog='Scheduled publication action')
             saveServicePool = False
             executed = True
+        elif CALENDAR_ACTION_IGNORE_UNUSED['id'] == self.action:
+            self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
         else:
             caTransports = (CALENDAR_ACTION_ADD_TRANSPORT['id'], CALENDAR_ACTION_DEL_TRANSPORT['id'])
             caGroups = (CALENDAR_ACTION_ADD_GROUP['id'], CALENDAR_ACTION_DEL_GROUP['id'])

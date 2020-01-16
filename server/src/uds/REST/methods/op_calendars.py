@@ -36,7 +36,7 @@ import typing
 
 from django.utils.translation import ugettext as _
 
-from uds.models import Calendar
+from uds.models import Calendar, CalendarAction
 from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.core.util import log, permissions
 from uds.core.util.model import processUuid
@@ -45,7 +45,7 @@ from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import CalendarAccess, CalendarAction, ServicePool
+    from uds.models import CalendarAccess, ServicePool
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +145,7 @@ class ActionsCalendars(DetailHandler):
         try:
             if item is None:
                 return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
-            i = parent.calendaraction_set.objects.get(uuid=processUuid(item))
+            i = parent.calendaraction_set.get(uuid=processUuid(item))
             return ActionsCalendars.as_dict(i)
         except Exception:
             raise self.invalidItemException()
