@@ -383,13 +383,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     # ****************************************
     # Methods that CAN BE overriden by actors
     # ****************************************
-    def idle(self) -> None:
-        '''
-        When needs to "pump" messages for example on Windows...
-        '''
-        return
-
-
     def doWait(self, miliseconds: int) -> None:
         '''
         Invoked to wait a bit

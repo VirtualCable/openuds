@@ -91,6 +91,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
     def doWait(self, miliseconds: int) -> None:
         win32event.WaitForSingleObject(self._hWaitStop, miliseconds)
+        pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
 
     def oneStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:  # pylint: disable=too-many-arguments
         '''
@@ -203,9 +204,6 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
                 win32net.NetLocalGroupDelMembers(None, groupName, [self._user])
             except Exception as e:
                 logger.error('Exception removing user from Remote Desktop Users: {}'.format(e))
-
-    def idle(self) -> None:
-        pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
 
     def SvcDoRun(self) -> None:  # pylint: disable=too-many-statements, too-many-branches
         '''
