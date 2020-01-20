@@ -204,6 +204,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             except Exception as e:
                 logger.error('Exception removing user from Remote Desktop Users: {}'.format(e))
 
+    def idle(self) -> None:
+        pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
+
     def SvcDoRun(self) -> None:  # pylint: disable=too-many-statements, too-many-branches
         '''
         Main service loop
@@ -220,6 +223,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             self.finish()
             win32event.WaitForSingleObject(self._hWaitStop, 5000)
             return # Stop daemon if initializes told to do so
+
+        # Initialization is done, set machine to ready for UDS, communicate urls, etc...
+        self.setReady()
 
         # # ********************************
         # # * Registers SENS subscriptions *
@@ -242,9 +248,6 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
         # logger.debug('Registered SENS')
         # logger.debug('Initialized, setting ready')
-
-        # Initialization is done, set machine to ready for UDS, communicate urls, etc...
-        self.setReady()
 
         # *********************
         # * Main Service loop *

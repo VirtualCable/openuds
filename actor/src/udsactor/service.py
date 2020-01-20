@@ -148,7 +148,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, rest.LISTEN_PORT)
                         self._ready = True
                     except rest.RESTConnectionError as e:
-                        logger.error('Error en ready: %s', e)
+                        logger.error('Error en ready: %s -- %s', e, self._isAlive)
                         if not logged:  # Only log connection problems ONCE
                             logged = True
                             logger.error('Error connecting with UDS Broker')
@@ -383,6 +383,13 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     # ****************************************
     # Methods that CAN BE overriden by actors
     # ****************************************
+    def idle(self) -> None:
+        '''
+        When needs to "pump" messages for example on Windows...
+        '''
+        return
+
+
     def doWait(self, miliseconds: int) -> None:
         '''
         Invoked to wait a bit
