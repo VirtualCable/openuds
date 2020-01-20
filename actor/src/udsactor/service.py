@@ -59,7 +59,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     _isAlive: bool = True
     _rebootRequested: bool = False
     _loggedIn = False
-    _ready = False
 
     _cfg: types.ActorConfigurationType
     _api: rest.UDSServerApi
@@ -128,8 +127,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if not self._isAlive:
             return
 
-        self._ready = False
-
         # First, if postconfig is available, execute it and disable it
         if self._cfg.post_command:
             self.execute(self._cfg.post_command, 'postConfig')
@@ -146,9 +143,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     counter -= 1
                     try:
                         self._certificate = self._api.ready(self._cfg.own_token, self._secret, srvInterface.ip, rest.LISTEN_PORT)
-                        self._ready = True
                     except rest.RESTConnectionError as e:
-                        logger.error('Error en ready: %s -- %s', e, self._isAlive)
                         if not logged:  # Only log connection problems ONCE
                             logged = True
                             logger.error('Error connecting with UDS Broker')
@@ -277,8 +272,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if self._loggedIn and self._cfg.own_token:
             self._loggedIn = False
             try:
-                if self._ready:
-                    self._api.logout(self._cfg.own_token, '')
+                self._api.logout(self._cfg.own_token, '')
             except Exception as e:
                 logger.error('Error notifying final logout to UDS: %s', e)
 
@@ -364,8 +358,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
     # Client notifications
     def login(self, username: str) -> types.LoginResultInfoType:
-        if not self._ready:
-            return types.LoginResultInfoType('', '', 0, 0)
         result = types.LoginResultInfoType(ip='', hostname='', dead_line=None, max_idle=None)
         self._loggedIn = True
         if self._cfg.own_token:
@@ -373,8 +365,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         return result
 
     def logout(self, username: str) -> None:
-        if not self._ready:
-            return
         self._loggedIn = False
         if self._cfg.own_token:
             self._api.logout(self._cfg.own_token, username)

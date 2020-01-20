@@ -91,6 +91,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
     def doWait(self, miliseconds: int) -> None:
         win32event.WaitForSingleObject(self._hWaitStop, miliseconds)
+        # On windows, and while on tasks, ensure that our app processes waiting messages on "wait times"
         pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
 
     def oneStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:  # pylint: disable=too-many-arguments
