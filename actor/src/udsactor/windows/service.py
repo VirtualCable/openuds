@@ -240,8 +240,8 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
         event_system.Store(PROGID_EventSubscription, event_subscription)
 
-        logger.debug('Registered SENS')
-        logger.debug('Initialized, setting ready')
+        # logger.debug('Registered SENS')
+        # logger.debug('Initialized, setting ready')
 
         # Initialization is done, set machine to ready for UDS, communicate urls, etc...
         self.setReady()

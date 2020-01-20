@@ -73,7 +73,7 @@ class UDSActorSvc(daemon.Daemon, CommonService):
             self.finish()
             return # Stop daemon if initializes told to do so
 
-        logger.debug('Initialized, setting ready')
+        # logger.debug('Initialized, setting ready')
         # Initialization is done, set machine to ready for UDS, communicate urls, etc...
         self.setReady()
 
