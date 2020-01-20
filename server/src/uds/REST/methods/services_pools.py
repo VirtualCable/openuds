@@ -189,7 +189,7 @@ class ServicesPools(ModelHandler):
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb
-            val['usage'] = item.usage()
+            val['usage'] = str(item.usage()) + '%'
 
         if item.osmanager:
             val['osmanager_id'] = item.osmanager.uuid

@@ -42,6 +42,9 @@ from .info import VERSION
 # Default public listen port
 LISTEN_PORT = 43910
 
+# Default timeout
+TIMEOUT = 5   # 5 seconds is more than enought
+
 class RESTError(Exception):
     ERRCODE = 0
 
@@ -99,7 +102,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         ) -> typing.Any:
         headers = headers or self._headers
         try:
-            result = requests.post(self._apiURL(method), data=json.dumps(payLoad), headers=headers, verify=self._validateCert)
+            result = requests.post(self._apiURL(method), data=json.dumps(payLoad), headers=headers, verify=self._validateCert, timeout=TIMEOUT)
             if result.ok:
                 j = result.json()
                 if not j.get('error', None):

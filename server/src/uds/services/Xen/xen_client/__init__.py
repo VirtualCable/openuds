@@ -165,10 +165,15 @@ class XenServer:  # pylint: disable=too-many-public-methods
             # We recalculate here url, because we can "switch host" on any moment
             self._url = self._protocol + self._host + ':' + self._port
 
+            transport = None
+
             if self._useSSL:
                 context = ssl.SSLContext(ssl.PROTOCOL_TLS)
                 if self._verifySSL is False:
                     context.verify_mode = ssl.CERT_NONE
+                else:
+                    context.verify_mode = ssl.CERT_REQUIRED
+                    context.check_hostname = True
                 transport = xmlrpc.client.SafeTransport(context=context)
                 logger.debug('Transport: %s', transport)
 
