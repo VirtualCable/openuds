@@ -62,15 +62,15 @@ class RestRequest(object):
         if params is not None:
             url += '?' + '&'.join('{}={}'.format(k, six.moves.urllib.parse.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())  # @UndefinedVariable
 
-        logger.debug('Requesting {}'.format(url))
+        logger.debug('Requesting %s', url)
 
         try:
-            r = requests.get(url, headers={'Content-type': 'application/json', 'User-Agent': osDetector.getOs() + " - UDS Connector " + VERSION }, verify=False)
-        except requests.exceptions.ConnectionError as e:
+            r = requests.get(url, headers={'Content-type': 'application/json', 'User-Agent': osDetector.getOs() + " - UDS Connector " + VERSION}, verify=False)
+        except requests.exceptions.ConnectionError:
             raise Exception('Error connecting to UDS Server at {}'.format(self.restApiUrl[0:-11]))
 
         if r.ok:
-            logger.debug('Request was OK. {}'.format(r.text))
+            logger.debug('Request was OK. %s', r.text)
             data = json.loads(r.text)
             if not 'error' in data:
                 return data['result']
@@ -79,8 +79,6 @@ class RestRequest(object):
                 raise RetryException(data['error'])
 
             raise Exception(data['error'])
-        else:
-            logger.error('Error requesting {}: {}, {}'.format(url, r.code. r.text))
-            raise Exception('Error {}: {}'.format(r.code, r.text))
 
-        return data
+        logger.error('Error requesting %s: %s, %s', url, r.code, r.text)
+        raise Exception('Error {}: {}'.format(r.code, r.text))

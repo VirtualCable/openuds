@@ -30,20 +30,23 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
+import sys
+import json
+
+import six
 
 from uds import ui
 from uds.rest import RestRequest, RetryException
-from uds.forward import forward
+from uds.forward import forward  # pylint: disable=unused-import
 from uds import VERSION
 from uds.log import logger  # @UnresolvedImport
 from uds import tools
 
-import six
-import sys
-import pickle
 
+# Server before this version uses "unsigned" scripts
+OLD_METHOD_VERSION = '2.4.0'
 
-def approveHost(host):
+def approveHost(hostName):
     from os.path import expanduser
     hostsFile = expanduser('~/.udsclient.hosts')
 
@@ -53,33 +56,32 @@ def approveHost(host):
     except Exception:
         approvedHosts = []
 
-    host = host.lower()
+    hostName = hostName.lower()
 
-    if host in approvedHosts:
+    if hostName in approvedHosts:
         return True
 
-    errorString = 'The server {} must be approved:\n'.format(host)
+    errorString = 'The server {} must be approved:\n'.format(hostName)
     errorString += 'Only approve UDS servers that you trust to avoid security issues.'
 
     approved = ui.question("ACCESS Warning", errorString)
 
     if approved:
-        approvedHosts.append(host)
+        approvedHosts.append(hostName)
         logger.debug('Host was approved, saving to approvedHosts file')
         try:
             with open(hostsFile, 'w') as f:
                 f.write('\n'.join(approvedHosts))
         except Exception:
-            logger.warn('Got exception writing to {}'.format(hostsFile))
+            logger.warning('Got exception writing to %s', hostsFile)
 
     return approved
 
 
-def getWithRetry(rest, url, params=None):
+def getWithRetry(api, url, parameters=None):
     while True:
         try:
-            res = rest.get(url, params)
-            return res
+            return api.get(url, parameters)
         except RetryException as e:
             if ui.question('Service not available', 'Error {}.\nPlease, wait a minute and press "OK" to retry, or "CANCEL" to abort'.format(e)) is True:
                 continue
@@ -92,7 +94,7 @@ if __name__ == "__main__":
     if six.PY3 is False:
         logger.debug('Fixing threaded execution of commands')
         import threading
-        threading._DummyThread._Thread__stop = lambda x: 42
+        threading._DummyThread._Thread__stop = lambda x: 42  # type: ignore,  pylint:disable=protected-access
 
     # First parameter must be url
     try:
@@ -101,13 +103,13 @@ if __name__ == "__main__":
         if uri == '--test':
             sys.exit(0)
 
-        logger.debug('URI: {}'.format(uri))
+        logger.debug('URI: %s', uri)
         if uri[:6] != 'uds://' and uri[:7] != 'udss://':
             raise Exception()
 
         ssl = uri[3] == 's'
         host, ticket, scrambler = uri.split('//')[1].split('/')
-        logger.debug('ssl: {}, host:{}, ticket:{}, scrambler:{}'.format(ssl, host, ticket, scrambler))
+        logger.debug('ssl: %s, host:%s, ticket:%s, scrambler:%s', ssl, host, ticket, scrambler)
 
     except Exception:
         logger.debug('Detected execution without valid URI, exiting')
@@ -115,26 +117,40 @@ if __name__ == "__main__":
         sys.exit(1)
 
     rest = RestRequest(host, ssl)
-    logger.debug('Setting request URL to {}'.format(rest.restApiUrl))
+    logger.debug('Setting request URL to %s', rest.restApiUrl)
 
     # Main requests part
     # First, get version
     try:
         res = getWithRetry(rest, '')
 
-        logger.debug('Got information {}'.format(res))
+        logger.debug('Got information %s', res)
+        requiredVersion = res['requiredVersion']
 
-        if res['requiredVersion'] > VERSION:
+        if requiredVersion > VERSION:
             ui.message("New UDS Client available", "A new uds version is needed in order to access this version of UDS.\nPlease, download and install it")
             sys.exit(1)
 
-        res = getWithRetry(rest, '/{}/{}'.format(ticket, scrambler), params={'hostname': tools.getHostName(), 'version': VERSION})
+        res = getWithRetry(rest, '/{}/{}'.format(ticket, scrambler), parameters={'hostname': tools.getHostName(), 'version': VERSION})
 
-        script = res.decode('base64').decode('bz2')
+        params = None
 
-        logger.debug('Script: {}'.format(script))
+        if requiredVersion <= OLD_METHOD_VERSION:
+            script = res.decode('base64').decode('bz2')
+        else:
+            # We have three elements on result:
+            # * Script
+            # * Signature
+            # * Script data
+            # We test that the Script has correct signature, and them execute it with the parameters
+            script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
+            if tools.verifySignature(script, signature) is False:
+                logger.error('Signature is invalid')
 
-        six.exec_(script, globals(), {'parent': None})
+                raise Exception('Invalid UDS code signature. Please, report to administrator')
+
+        logger.debug('Script: %s', script)
+        six.exec_(script, globals(), {'parent': None, 'sp':  params})
     except Exception as e:
         error = 'ERROR: {}'.format(e)
         logger.error(error)
