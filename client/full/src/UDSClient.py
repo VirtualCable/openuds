@@ -30,20 +30,21 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=c-extension-no-member
 from __future__ import unicode_literals
 
 import sys
+import webbrowser
+import json
+
 from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 import six
 
 from uds.rest import RestRequest
-from uds.forward import forward
+from uds.forward import forward  # pylint: disable=unused-import
 from uds.log import logger
 from uds import tools
 from uds import VERSION
-
-import webbrowser
-import json
 
 from UDSWindow import Ui_MainWindow
 
@@ -62,6 +63,7 @@ class UDSClient(QtGui.QMainWindow):
     anim = 0
     animInverted = False
     serverVersion = 'X.Y.Z'  # Will be overwriten on getVersion
+    req = None
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -103,8 +105,8 @@ class UDSClient(QtGui.QMainWindow):
             # self.closeWindow()
             # return
 
-    def showError(self, e):
-        logger.error('got error: {}'.format(e))
+    def showError(self, error):
+        logger.error('got error: %s', error)
         self.stopAnim()
         self.ui.info.setText('UDS Plugin Error')  # In fact, main window is hidden, so this is not visible... :)
         self.closeWindow()
@@ -169,7 +171,7 @@ class UDSClient(QtGui.QMainWindow):
             self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName(), 'version': VERSION})
             self.req.get()
         except Exception as e:
-            logger.exception('Got exception: {}'.format(e))
+            logger.exception('Got exception on getTransportData')
             raise e
 
 
@@ -254,17 +256,17 @@ def done(data):
     sys.exit(0)
 
 # Ask user to approve endpoint
-def approveHost(host, parentWindow=None):
+def approveHost(hostName, parentWindow=None):
     settings = QtCore.QSettings()
     settings.beginGroup('endpoints')
 
-    approved = settings.value(host, False).toBool()
+    approved = settings.value(hostName, False).toBool()
 
-    errorString = '<p>The server <b>{}</b> must be approved:</p>'.format(host)
+    errorString = '<p>The server <b>{}</b> must be approved:</p>'.format(hostName)
     errorString += '<p>Only approve UDS servers that you trust to avoid security issues.</p>'
 
     if approved or QtGui.QMessageBox.warning(parentWindow, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
-        settings.setValue(host, True)
+        settings.setValue(hostName, True)
         approved = True
 
     settings.endGroup()
@@ -286,7 +288,7 @@ if __name__ == "__main__":
     if six.PY3 is False:
         logger.debug('Fixing threaded execution of commands')
         import threading
-        threading._DummyThread._Thread__stop = lambda x: 42
+        threading._DummyThread._Thread__stop = lambda x: 42  # type: ignore, pylint: disable=protected-access
 
     # First parameter must be url
     try:
@@ -295,14 +297,13 @@ if __name__ == "__main__":
         if uri == '--test':
             sys.exit(0)
 
-        logger.debug('URI: {}'.format(uri))
+        logger.debug('URI: %s', uri)
         if uri[:6] != 'uds://' and uri[:7] != 'udss://':
             raise Exception()
 
         ssl = uri[3] == 's'
-        host, UDSClient.ticket, UDSClient.scrambler = uri.split('//')[1].split('/')
-        logger.debug('ssl: {}, host:{}, ticket:{}, scrambler:{}'.format(ssl, host, UDSClient.ticket, UDSClient.scrambler))
-
+        host, UDSClient.ticket, UDSClient.scrambler = uri.split('//')[1].split('/')  # type: ignore
+        logger.debug('ssl:%s, host:%s, ticket:%s, scrambler:%s', ssl, host, UDSClient.ticket, UDSClient.scrambler)
     except Exception:
         logger.debug('Detected execution without valid URI, exiting')
         QtGui.QMessageBox.critical(None, 'Notice', 'UDS Client Version {}'.format(VERSION), QtGui.QMessageBox.Ok)
@@ -310,7 +311,7 @@ if __name__ == "__main__":
 
     # Setup REST api endpoint
     RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
-    logger.debug('Setting request URL to {}'.format(RestRequest.restApiUrl))
+    logger.debug('Setting request URL to %s', RestRequest.restApiUrl)
     # RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
 
     try:
@@ -322,7 +323,6 @@ if __name__ == "__main__":
 
         win = UDSClient()
         win.show()
-
 
         win.start()
 
@@ -336,4 +336,3 @@ if __name__ == "__main__":
 
     logger.debug('Exiting')
     sys.exit(exitVal)
-

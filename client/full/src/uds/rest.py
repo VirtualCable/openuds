@@ -30,19 +30,24 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=c-extension-no-member,no-name-in-module
 from __future__ import unicode_literals
+
+import json
+import urllib
+
+import six
 
 from PyQt4.QtCore import pyqtSignal, pyqtSlot
 from PyQt4.QtCore import QObject, QUrl, QSettings
 from PyQt4.QtCore import Qt
 from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
 from PyQt4.QtGui import QMessageBox
+
+from . import osDetector
+
 from . import VERSION
 
-import json
-import osDetector
-import six
-import urllib
 
 
 class RestRequest(QObject):

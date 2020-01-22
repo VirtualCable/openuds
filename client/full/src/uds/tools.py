@@ -40,11 +40,12 @@ import random
 import os
 import socket
 import stat
-import six
 import sys
 import time
 
-from log import logger
+import six
+
+from .log import logger
 
 _unlinkFiles = []
 _tasksToWait = []
@@ -132,7 +133,7 @@ def getHostName():
         hostname = hostname.decode(sys_fs_enc)
 
     hostname = six.text_type(hostname)
-    logger.info('Hostname: {}'.format(hostname))
+    logger.info('Hostname: %s', hostname)
     return hostname
 
 # Queing operations (to be executed before exit)
@@ -149,13 +150,14 @@ def unlinkFiles():
     '''
     Removes all wait-and-unlink files
     '''
-    if len(_unlinkFiles) > 0:
+    if _unlinkFiles:
         time.sleep(5)  # Wait 5 seconds before deleting anything
-    for f in _unlinkFiles:
-        try:
-            os.unlink(f)
-        except Exception:
-            pass
+
+        for f in _unlinkFiles:
+            try:
+                os.unlink(f)
+            except Exception:
+                pass
 
 
 def addTaskToWait(taks):

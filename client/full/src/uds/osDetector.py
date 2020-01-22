@@ -34,16 +34,15 @@ from __future__ import unicode_literals
 
 import sys
 
-
 LINUX = 'Linux'
 WINDOWS = 'Windows'
 MAC_OS_X = 'Mac os x'
 
-
 def getOs():
     if sys.platform.startswith('linux'):
         return LINUX
-    elif sys.platform.startswith('win'):
+    if sys.platform.startswith('win'):
         return WINDOWS
-    elif sys.platform.startswith('darwin'):
+    if sys.platform.startswith('darwin'):
         return MAC_OS_X
+    return 'other'

@@ -4,22 +4,28 @@
 
 from __future__ import unicode_literals
 
-import select
-import SocketServer
-
-import paramiko
 import threading
 import random
 import time
+import select
+
+import paramiko
+import six
 
 from .log import logger
 
-class ForwardServer(SocketServer.ThreadingTCPServer):
+if six.PY2:
+    import SocketServer as socketserver  # pylint: disable=import-error
+else:
+    import socketserver
+
+
+class ForwardServer(socketserver.ThreadingTCPServer):
     daemon_threads = True
     allow_reuse_address = True
 
 
-class Handler(SocketServer.BaseRequestHandler):
+class Handler(socketserver.BaseRequestHandler):
 
     def handle(self):
         self.thread.currentConnections += 1
@@ -29,29 +35,25 @@ class Handler(SocketServer.BaseRequestHandler):
                                                    (self.chain_host, self.chain_port),
                                                    self.request.getpeername())
         except Exception as e:
-            logger.exception('Incoming request to %s:%d failed: %s' % (self.chain_host,
-                                                              self.chain_port,
-                                                              repr(e)))
+            logger.exception('Incoming request to %s:%d failed: %s', self.chain_host, self.chain_port, repr(e))
             return
         if chan is None:
-            logger.error('Incoming request to %s:%d was rejected by the SSH server.' %
-                    (self.chain_host, self.chain_port))
+            logger.error('Incoming request to %s:%d was rejected by the SSH server.', self.chain_host, self.chain_port)
             return
 
-        logger.debug('Connected!  Tunnel open %r -> %r -> %r' % (self.request.getpeername(),
-                                                            chan.getpeername(), (self.chain_host, self.chain_port)))
+        logger.debug('Connected!  Tunnel open %r -> %r -> %r', self.request.getpeername(), chan.getpeername(), (self.chain_host, self.chain_port))
         try:
             while self.event.is_set() is False:
-                r, _w, _x = select.select([self.request, chan], [], [], 1)
+                r, _w, _x = select.select([self.request, chan], [], [], 1)  # pylint: disable=unused-variable
 
                 if self.request in r:
                     data = self.request.recv(1024)
-                    if len(data) == 0:
+                    if not data:
                         break
                     chan.send(data)
                 if chan in r:
                     data = chan.recv(1024)
-                    if len(data) == 0:
+                    if not data:
                         break
                     self.request.send(data)
         except Exception:
@@ -61,7 +63,7 @@ class Handler(SocketServer.BaseRequestHandler):
             peername = self.request.getpeername()
             chan.close()
             self.request.close()
-            logger.debug('Tunnel closed from %r' % (peername,))
+            logger.debug('Tunnel closed from %r', peername,)
         except Exception:
             pass
 
@@ -114,7 +116,7 @@ class ForwardThread(threading.Thread):
 
     def _timerFnc(self):
         self.timer = None
-        logger.debug('Timer fnc: {}'.format(self.currentConnections))
+        logger.debug('Timer fnc: %s', self.currentConnections)
         self.stoppable = True
         if self.currentConnections <= 0:
             self.stop()
@@ -126,11 +128,11 @@ class ForwardThread(threading.Thread):
             self.client.load_system_host_keys()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-            logger.debug('Connecting to ssh host %s:%d ...' % (self.server, self.port))
+            logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
 
             try:
                 self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
-            except Exception as e:
+            except Exception:
                 logger.exception('Exception connecting: ')
                 self.status = 2  # Error
                 return
@@ -142,7 +144,7 @@ class ForwardThread(threading.Thread):
             event = self.stopEvent
             thread = self
 
-        logger.debug('Wait Time: {}'.format(self.waitTime))
+        logger.debug('Wait Time: %s', self.waitTime)
         self.timer = threading.Timer(self.waitTime, self._timerFnc)
         self.timer.start()
 
@@ -166,7 +168,6 @@ class ForwardThread(threading.Thread):
                 self.client = None  # Clean up
         except Exception:
             logger.exception('Exception stopping')
-            pass
 
 
 def forward(server, port, username, password, redirectHost, redirectPort, localPort=None, waitTime=10):
@@ -179,8 +180,8 @@ def forward(server, port, username, password, redirectHost, redirectPort, localP
     if localPort is None:
         localPort = random.randrange(40000, 50000)
 
-    logger.debug('Connecting to {}:{} using {}/{} redirecting to {}:{}, listening on 127.0.0.1:{}'.format(
-        server, port, username, password, redirectHost, redirectPort, localPort))
+    logger.debug('Connecting to %s:%s using %s/%s redirecting to %s:%s, listening on 127.0.0.1:%s',
+                 server, port, username, password, redirectHost, redirectPort, localPort)
 
     ft = ForwardThread(server, port, username, password, localPort, redirectHost, redirectPort, waitTime)
 
@@ -190,4 +191,3 @@ def forward(server, port, username, password, redirectHost, redirectPort, localP
         time.sleep(0.1)
 
     return (ft, localPort)
-
