@@ -71,6 +71,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def execute(cmdLine: str, section: str) -> bool:
         try:
+            logger.info('Executing command on {}: {}'.format(section, cmdLine))
             res = subprocess.check_call(cmdLine, shell=True)
         except Exception as e:
             logger.error('Got exception executing: {} - {} - {}'.format(section, cmdLine, e))
@@ -137,7 +138,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             srvInterface = self.serviceInterfaceInfo()
             if srvInterface:
                 # Rery while RESTConnectionError (that is, cannot connect)
-                counter = 8
+                counter = 60
                 logged = False
                 while self._isAlive:
                     counter -= 1
