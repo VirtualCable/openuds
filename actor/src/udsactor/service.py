@@ -398,7 +398,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         Base preconnect executes the preconnect command
         '''
         if self._cfg.pre_command:
-            self.execute(self._cfg.pre_command, 'preConnect')
+            self.execute(self._cfg.pre_command + ' "{}" "{}" "{}" "{}"'.format(userName.replace('"', '%22'), protocol, ip, hostname), 'preConnect')
 
         return 'ok'
 
