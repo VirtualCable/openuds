@@ -536,7 +536,8 @@ class UserServiceManager:
             srcIp: str,
             idService: str,
             idTransport: str,
-            doTest: bool = True
+            doTest: bool = True,
+            clientHostname: typing.Optional[str] = None
         ) -> typing.Tuple[
             typing.Optional[str],
             UserService,
@@ -555,7 +556,7 @@ class UserServiceManager:
             raise InvalidServiceException(_('The requested service is not available'))
 
         # Early log of "access try" so we can imagine what is going on
-        userService.setConnectionSource(srcIp, 'unknown')
+        userService.setConnectionSource(srcIp, clientHostname or srcIp)
 
         if userService.isInMaintenance():
             raise ServiceInMaintenanceMode()
@@ -635,7 +636,8 @@ class UserServiceManager:
             user: User,
             srcIp: str,
             os: typing.Dict,
-            idMetaPool: str
+            idMetaPool: str,
+            clientHostName: typing.Optional[str] = None
         ) -> typing.Tuple[typing.Optional[str], UserService, typing.Optional['services.UserDeployment'], Transport, typing.Optional[transports.Transport]]:
         logger.debug('This is meta')
         # We need to locate the service pool related to this meta, and also the transport
@@ -686,7 +688,7 @@ class UserServiceManager:
             usable = ensureTransport(alreadyAssigned.deployed_service)
             # Found already assigned, ensure everythinf is fine
             if usable:
-                self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
+                self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False, clientHostname=clientHostName)
 
         except Exception:  # No service already assigned, lets find a suitable one
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
@@ -696,7 +698,7 @@ class UserServiceManager:
                 # Stop if a pool-transport is found and can be assigned to user
                 if usable:
                     try:
-                        self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False)
+                        self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False, clientHostname=clientHostName)
                         break  # If all goes fine, stop here
                     except Exception as e:
                         logger.info('Meta service %s:%s could not be assigned, trying a new one', usable[0].name, e)
