@@ -123,7 +123,7 @@ class UDSConfigDialog(QDialog):
                 QMessageBox.information(
                     self,
                     'UDS Test',
-                    'Current configured token seems to be invalid for {}. Please, request e new one.'.format(config.host),
+                    'Current configured token seems to be invalid for {}. Please, request a new one.'.format(config.host),
                     QMessageBox.Ok
                 )
             else:
