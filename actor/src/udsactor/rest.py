@@ -190,7 +190,7 @@ class UDSServerApi(UDSApi):
         except Exception as e:
             raise RESTError('Invalid credentials')
 
-        raise RESTError(result.content)
+        raise RESTError(result.content.decode())
 
     def initialize(self, token: str, interfaces: typing.Iterable[types.InterfaceInfoType]) -> types.InitializationResultType:
         # Generate id list from netork cards

@@ -187,7 +187,7 @@ class Handler:
     @staticmethod
     def storeSessionAuthdata(
             session: typing.MutableMapping[str, typing.Any],
-            id_auth: str,
+            id_auth: int,
             username: str,
             password: str,
             locale: str,
@@ -220,7 +220,7 @@ class Handler:
 
     def genAuthToken(
             self,
-            id_auth: str,
+            id_auth: int,
             username: str,
             password: str,
             locale: str,

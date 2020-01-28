@@ -135,6 +135,8 @@ class Register(ActorV3Action):
     Registers an actor
     """
     authenticated = True
+    needs_staff = True
+
     name = 'register'
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:

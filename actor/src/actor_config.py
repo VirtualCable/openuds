@@ -101,8 +101,8 @@ class UDSConfigDialog(QDialog):
             if auths:
                 for auth in auths:
                     self.ui.authenticators.addItem(auth.auth, userData=auth)
-                # Last, add "admin" authenticator (for uds root user)
-                self.ui.authenticators.addItem('Administration', userData=udsactor.types.AuthenticatorType('admin', 'admin', 'admin', 'admin', 1, False))
+            # Last, add "admin" authenticator (for uds root user)
+            self.ui.authenticators.addItem('Administration', userData=udsactor.types.AuthenticatorType('admin', 'admin', 'admin', 'admin', 1, False))
 
     def textChanged(self):
         enableButtons = bool(self.ui.host.text() and self.ui.username.text() and self.ui.password.text() and self.ui.authenticators.currentText())
@@ -123,7 +123,7 @@ class UDSConfigDialog(QDialog):
                 QMessageBox.information(
                     self,
                     'UDS Test',
-                    'Current configured token seems to be invalid for {}. Please, request e new one.'.format(config.host),
+                    'Current configured token seems to be invalid for {}. Please, request a new one.'.format(config.host),
                     QMessageBox.Ok
                 )
             else:
