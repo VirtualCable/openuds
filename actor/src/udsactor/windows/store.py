@@ -84,7 +84,7 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
 
 def useOldJoinSystem() -> bool:
     try:
-        key = wreg.OpenKey(BASEKEY, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_QUERY_VALUE)
+        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_QUERY_VALUE)
         try:
             data, _ = wreg.QueryValueEx(key, 'join')
         except Exception:

@@ -379,9 +379,15 @@ class Ticket(ActorV3Action):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
 
         try:
-            return ActorV3Action.actorResult(TicketStore.get(self._params['ticket'], invalidate=True))
-        except TicketStore.DoesNotExist:
+            # Simple check that token exists
+            ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
+        except ActorToken.DoesNotExist:
             raise BlockAccess()  # If too many blocks...
+
+        try:
+            return ActorV3Action.actorResult(TicketStore.get(self._params['ticket'], invalidate=True))
+        except TicketStore.DoesNotExists:
+            return ActorV3Action.actorResult(error='Invalid ticket')
 
 class Notify(ActorV3Action):
     name = 'notify'
@@ -400,7 +406,8 @@ class Notify(ActorV3Action):
             # Check block manually
             checkBlockedIp(self._request.ip)  # pylint: disable=protected-access
             userService = UserService.objects.get(uuid=self._params['token'])
-            # TODO: finish this
+            # TODO: finish this when needed :)
+
             return ActorV3Action.actorResult('ok')
         except UserService.DoesNotExist:
             # For blocking attacks
