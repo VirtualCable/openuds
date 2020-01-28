@@ -50,7 +50,6 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /auth path
 
-
 class Login(Handler):
     """
     Responsible of user authentication
@@ -58,7 +57,22 @@ class Login(Handler):
     path = 'auth'
     authenticated = False  # Public method
 
-    def post(self):
+    @staticmethod
+    def result(result: str = 'error', token: str = None, scrambler: str = None, error: str = None) -> typing.MutableMapping[str, typing.Any]:
+        res = {
+            'result': result,
+            'token': token,
+            'version': UDS_VERSION,
+        }
+        if error:
+            res['error'] = error
+
+        if scrambler:
+            res['scrambler'] = scrambler
+
+        return res
+
+    def post(self) -> typing.Any:
         """
         This login uses parameters to generate auth token
         The alternative is to use the template tag inside "REST" that is called auth_token, that extracts an auth token from an user session
@@ -105,40 +119,36 @@ class Login(Handler):
             locale: str = self._params.get('locale', 'en')
             if authName == 'admin' or authSmallName == 'admin':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
-                    self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
-                    return{'result': 'ok', 'token': self.getAuthToken()}
-                raise Exception('Invalid credentials')
+                    self.genAuthToken('¡-1', username, password, locale, platform, True, True, scrambler)
+                    return Login.result(result='ok', token=self.getAuthToken())
+                return Login.result(error='Invalid credentials')
 
-            try:
-                # Will raise an exception if no auth found
-                if authId:
-                    auth = Authenticator.objects.get(uuid=processUuid(authId))
-                elif authName:
-                    auth = Authenticator.objects.get(name=authName)
-                else:
-                    auth = Authenticator.objects.get(small_name=authSmallName)
+            # Will raise an exception if no auth found
+            if authId:
+                auth = Authenticator.objects.get(uuid=processUuid(authId))
+            elif authName:
+                auth = Authenticator.objects.get(name=authName)
+            else:
+                auth = Authenticator.objects.get(small_name=authSmallName)
 
-                if not password:
-                    password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
+            if not password:
+                password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
 
-                logger.debug('Auth obj: %s', auth)
-                user = authenticate(username, password, auth)
-                if user is None:  # invalid credentials
-                    raise Exception()
-                return {
-                    'result': 'ok',
-                    'token': self.genAuthToken(auth.id, user.name, password, locale, platform, user.is_admin, user.staff_member, scrambler),
-                    'version': UDS_VERSION,
-                    'scrambler': scrambler
-                }
-            except:
-                logger.exception('Credentials ')
-                raise Exception('Invalid Credentials (invalid authenticator)')
+            logger.debug('Auth obj: %s', auth)
+            user = authenticate(username, password, auth)
+            if user is None:  # invalid credentials
+                return Login.result(error='Invalid credentials')
+            return Login.result(
+                result='ok',
+                token=self.genAuthToken(auth.id, user.name, password, locale, platform, user.is_admin, user.staff_member, scrambler),
+                scrambler=scrambler
+            )
 
-            raise Exception('Invalid Credentials')
-        except Exception as e:
-            logger.exception('exception')
-            return {'result': 'error', 'error': str(e)}
+        except Exception:
+            # logger.exception('exception')
+            pass
+
+        return Login.result(error='Invalid credentials')
 
 
 class Logout(Handler):
