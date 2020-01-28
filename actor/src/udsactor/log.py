@@ -64,7 +64,7 @@ class Logger:
         '''
         self.logLevel = int(level)  # Ensures level is an integer or fails
 
-    def setRemoteLogger(self, remoteLogger: 'rest.REST', own_token: str) -> None:
+    def setRemoteLogger(self, remoteLogger: 'rest.UDSServerApi', own_token: str) -> None:
         self.remoteLogger = remoteLogger
         self.own_token = own_token
 
