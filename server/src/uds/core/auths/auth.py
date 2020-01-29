@@ -201,7 +201,7 @@ def authenticate(username: str, password: str, authenticator: Authenticator, use
     logger.debug('Authenticating user %s with authenticator %s', username, authenticator)
 
     # If global root auth is enabled && user/password is correct,
-    if GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True) and username == GlobalConfig.SUPER_USER_LOGIN.get(True) and password == GlobalConfig.SUPER_USER_PASS.get(True):
+    if not useInternalAuthenticate and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True) and username == GlobalConfig.SUPER_USER_LOGIN.get(True) and password == GlobalConfig.SUPER_USER_PASS.get(True):
         return getRootUser()
 
     gm = auths.GroupsManager(authenticator)

@@ -49,8 +49,6 @@ if __name__ == "__main__":
     if 'linux' in sys.platform:
         os.environ['QT_X11_NO_MITSHM'] = '1'
 
-    logger.info('Started UDS Client Actor')
-
     UDSClientQApp.setQuitOnLastWindowClosed(False)
 
     qApp = UDSClientQApp(sys.argv)

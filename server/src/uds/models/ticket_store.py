@@ -31,6 +31,7 @@
 import datetime
 import pickle
 import logging
+import typing
 
 from django.db import models
 
@@ -41,6 +42,8 @@ from .util import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)
+
+ValidatorType = typing.Callable[[typing.Any], bool]
 
 
 class TicketStore(UUIDModel):
@@ -68,22 +71,25 @@ class TicketStore(UUIDModel):
         db_table = 'uds_tickets'
         app_label = 'uds'
 
-    def genUuid(self):
+    def genUuid(self) -> str:
         return TicketStore.generateUuid()
 
     @staticmethod
-    def generateUuid():
-        # more secure is this:
-        # ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(40))
+    def generateUuid() -> str:
         return cryptoManager().randomString(40)
 
     @staticmethod
-    def create(data, validator=None, validity=DEFAULT_VALIDITY, owner=None, secure=False):
+    def create(
+            data: typing.Any,
+            validatorFnc: typing.Optional[ValidatorType] = None,
+            validity: int = DEFAULT_VALIDITY,
+            owner: typing.Optional[str]=None,
+            secure: bool = False
+        ) -> str:
         """
         validity is in seconds
         """
-        if validator is not None:
-            validator = pickle.dumps(validator)
+        validator = pickle.dumps(validatorFnc) if validatorFnc else None
         data = pickle.dumps(data)
         if secure:
             pass
@@ -91,16 +97,21 @@ class TicketStore(UUIDModel):
         return TicketStore.objects.create(stamp=getSqlDatetime(), data=data, validator=validator, validity=validity, owner=owner).uuid
 
     @staticmethod
-    def store(uuid, data, validator=None, validity=DEFAULT_VALIDITY, owner=owner, secure=False):
+    def store(
+            uuid: str,
+            data: str,
+            validatorFnc: typing.Optional[ValidatorType] = None,
+            validity: int = DEFAULT_VALIDITY,
+            owner: typing.Optional[str] = owner,
+            secure: bool = False
+        ) -> None:
         """
         Stores an ticketstore. If one with this uuid already exists, replaces it. Else, creates a new one
         validity is in seconds
         """
-        if validator is not None:
-            validator = pickle.dumps(validator)
+        validator = pickle.dumps(validatorFnc) if validatorFnc else None
 
-        data = pickle.dumps(data)
-        if secure:
+        if secure:  # TODO: maybe in the future? what will mean "secure?" :)
             pass
 
         try:
@@ -110,10 +121,15 @@ class TicketStore(UUIDModel):
             t.validity = validity
             t.save()
         except TicketStore.DoesNotExist:
-            t = TicketStore.objects.create(uuid=uuid, stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity)
+            TicketStore.objects.create(uuid=uuid, stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity)
 
     @staticmethod
-    def get(uuid, invalidate=True, owner=None, secure=False):
+    def get(
+            uuid: str,
+            invalidate: bool = True,
+            owner: typing.Optional[str] = None,
+            secure: bool = False
+        ) -> typing.Any:
         try:
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
             validity = datetime.timedelta(seconds=t.validity)
@@ -127,8 +143,8 @@ class TicketStore(UUIDModel):
             data = pickle.loads(t.data)
 
             # If has validator, execute it
-            if t.validator is not None:
-                validator = pickle.loads(t.validator)
+            if t.validator:
+                validator: ValidatorType = pickle.loads(t.validator)
 
                 if validator(data) is False:
                     raise TicketStore.InvalidTicket('Validation failed')
