@@ -36,12 +36,12 @@ import os
 import PyQt5  # pylint: disable=unused-import
 from PyQt5.QtCore import QTimer
 
-from udsactor.log import logger, DEBUG
+from udsactor.log import logger, INFO
 from udsactor.client import UDSClientQApp
 from udsactor.platform import operations
 
 if __name__ == "__main__":
-    logger.setLevel(DEBUG)
+    logger.setLevel(INFO)
 
     # Ensure idle operations is initialized on start
     operations.initIdleDuration(0)
