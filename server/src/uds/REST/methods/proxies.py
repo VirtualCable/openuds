@@ -54,7 +54,7 @@ class Proxies(ModelHandler):
 
     save_fields = ['name', 'host', 'port', 'ssl', 'check_cert', 'comments', 'tags']
 
-    table_title = _('Proxies')
+    table_title = _('Proxies (Experimental)')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True}},
         {'url': {'title': _('Server'), 'visible': True}},
