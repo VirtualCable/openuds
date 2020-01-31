@@ -116,7 +116,6 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         # If no usable pools, this is not visible
         if hasUsablePools:
             group = meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
-            calendar_text = ''
 
             services.append({
                 'id': 'M' + meta.uuid,
@@ -139,7 +138,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
                 'in_use': in_use,
                 'to_be_replaced': None,
                 'to_be_replaced_text': '',
-                'custom_calendar_text': calendar_text,
+                'custom_calendar_text': meta.calendar_message,
             })
 
     # Now generic user service
@@ -184,7 +183,6 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             in_use = ads.in_use
 
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
-        calendar_text = ''
 
         tbr = svr.toBeReplaced(request.user)
         if tbr:
@@ -209,7 +207,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             'in_use': in_use,
             'to_be_replaced': tbr,
             'to_be_replaced_text': tbrt,
-            'custom_calendar_text': calendar_text,
+            'custom_calendar_text': svr.calendar_message,
         })
 
     logger.debug('Services: %s', services)

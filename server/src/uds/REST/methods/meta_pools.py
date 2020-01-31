@@ -63,7 +63,7 @@ class MetaPools(ModelHandler):
     }
 
     save_fields = ['name', 'short_name', 'comments', 'tags',
-                   'image_id', 'servicesPoolGroup_id', 'visible', 'policy']
+                   'image_id', 'servicesPoolGroup_id', 'visible', 'policy', 'calendar_message']
 
     table_title = _('Meta Pools')
     table_fields = [
@@ -112,6 +112,7 @@ class MetaPools(ModelHandler):
             'policy': item.policy,
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
+            'calendar_message': item.calendar_message,
         }
 
         return val
@@ -150,6 +151,14 @@ class MetaPools(ModelHandler):
                 'tooltip': ugettext('If active, metapool will be visible for users'),
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 123,
+                'tab': ugettext('Display'),
+            }, {
+                'name': 'calendar_message',
+                'value': '',
+                'label': ugettext('Calendar access denied text'),
+                'tooltip': ugettext('Custom message to be shown to users if access is limited by calendar rules.'),
+                'type': gui.InputField.TEXT_TYPE,
+                'order': 124,
                 'tab': ugettext('Display'),
             }]:
             self.addField(localGUI, field)

@@ -134,6 +134,7 @@ class BaseModelHandler(Handler):
         if 'name' in flds:
             self.addField(gui, {
                 'name': 'name',
+                'type': 'text',
                 'required': True,
                 'label': _('Name'),
                 'length': 128,

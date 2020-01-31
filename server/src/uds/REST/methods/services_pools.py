@@ -86,7 +86,7 @@ class ServicesPools(ModelHandler):
     save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id',
                    'osmanager_id', 'image_id', 'pool_group_id', 'initial_srvs',
                    'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports', 'visible',
-                   'allow_users_remove', 'allow_users_reset', 'ignores_unused', 'account_id']
+                   'allow_users_remove', 'allow_users_reset', 'ignores_unused', 'account_id', 'calendar_message']
 
     remove_fields = ['osmanager_id', 'service_id']
 
@@ -159,6 +159,7 @@ class ServicesPools(ModelHandler):
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
             'meta_member': [{'id': i.uuid, 'name': i.name} for i in item.meta.all()],
+            'calendar_message': item.calendar_message,
         }
 
         # Extended info
@@ -246,6 +247,14 @@ class ServicesPools(ModelHandler):
                 'order': 113,
                 'tab': ugettext('Advanced'),
             }, {
+                'name': 'visible',
+                'value': True,
+                'label': ugettext('Visible'),
+                'tooltip': ugettext('If active, transport will be visible for users'),
+                'type': gui.InputField.CHECKBOX_TYPE,
+                'order': 107,
+                'tab': ugettext('Display'),
+            }, {
                 'name': 'image_id',
                 'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
                 'label': ugettext('Associated Image'),
@@ -262,12 +271,12 @@ class ServicesPools(ModelHandler):
                 'order': 121,
                 'tab': ugettext('Display'),
             }, {
-                'name': 'visible',
-                'value': True,
-                'label': ugettext('Visible'),
-                'tooltip': ugettext('If active, transport will be visible for users'),
-                'type': gui.InputField.CHECKBOX_TYPE,
-                'order': 107,
+                'name': 'calendar_message',
+                'value': '',
+                'label': ugettext('Calendar access denied text'),
+                'tooltip': ugettext('Custom message to be shown to users if access is limited by calendar rules.'),
+                'type': gui.InputField.TEXT_TYPE,
+                'order': 122,
                 'tab': ugettext('Display'),
             }, {
                 'name': 'initial_srvs',
