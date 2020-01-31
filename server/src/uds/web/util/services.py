@@ -88,8 +88,10 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
 
     logger.debug('Checking meta pools: %s', availMetaPools)
     services = []
+    meta: MetaPool
     # Add meta pools data first
     for meta in availMetaPools:
+
         # Check that we have access to at least one transport on some of its children
         hasUsablePools = False
         in_use = False
@@ -114,6 +116,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         # If no usable pools, this is not visible
         if hasUsablePools:
             group = meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
+            calendar_text = ''
 
             services.append({
                 'id': 'M' + meta.uuid,
@@ -136,6 +139,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
                 'in_use': in_use,
                 'to_be_replaced': None,
                 'to_be_replaced_text': '',
+                'custom_calendar_text': calendar_text,
             })
 
     # Now generic user service
@@ -180,6 +184,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             in_use = ads.in_use
 
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
+        calendar_text = ''
 
         tbr = svr.toBeReplaced(request.user)
         if tbr:
@@ -204,6 +209,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             'in_use': in_use,
             'to_be_replaced': tbr,
             'to_be_replaced_text': tbrt,
+            'custom_calendar_text': calendar_text,
         })
 
     logger.debug('Services: %s', services)

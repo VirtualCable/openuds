@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-30 10:16+0200\n"
+"POT-Creation-Date: 2020-01-31 12:06+0100\n"
 "PO-Revision-Date: 2019-01-09 12:43+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -25,59 +25,67 @@ msgid "seconds"
 msgstr "秒"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:49
-#: static/admin/translations-fakejs.js:58
-#: static/admin/translations-fakejs.js:79
-#: static/admin/translations-fakejs.js:81
+#: static/admin/translations-fakejs.js:60
 #: static/admin/translations-fakejs.js:83
-#: static/admin/translations-fakejs.js:163
-#: static/admin/translations-fakejs.js:165
+#: static/admin/translations-fakejs.js:85
+#: static/admin/translations-fakejs.js:87
 #: static/admin/translations-fakejs.js:167
-#: static/admin/translations-fakejs.js:249
+#: static/admin/translations-fakejs.js:169
+#: static/admin/translations-fakejs.js:171
+#: static/admin/translations-fakejs.js:193
+#: static/admin/translations-fakejs.js:256
 msgid "Error"
 msgstr "错误"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:50
-#: static/admin/translations-fakejs.js:59
+#: static/admin/translations-fakejs.js:61
 msgid "Please, fill in require fields: "
 msgstr "请填写要求字段："
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:60
-msgid "Testing..."
-msgstr "测试..."
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:58
+#: static/admin/translations-fakejs.js:70
+msgid "Loading data..."
+msgstr "加载数据中..."
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:61
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:59
 #: static/admin/translations-fakejs.js:63
 #: static/admin/translations-fakejs.js:65
 #: static/admin/translations-fakejs.js:67
-#: static/admin/translations-fakejs.js:70
-#: static/admin/translations-fakejs.js:72
+#: static/admin/translations-fakejs.js:69
+#: static/admin/translations-fakejs.js:71
+#: static/admin/translations-fakejs.js:74
 #: static/admin/translations-fakejs.js:76
-#: static/admin/translations-fakejs.js:86
-#: static/admin/translations-fakejs.js:88
-#: static/admin/translations-fakejs.js:181
+#: static/admin/translations-fakejs.js:80
+#: static/admin/translations-fakejs.js:90
+#: static/admin/translations-fakejs.js:92
 #: static/admin/translations-fakejs.js:186
-#: static/admin/translations-fakejs.js:201
+#: static/admin/translations-fakejs.js:191
+#: static/admin/translations-fakejs.js:208
 msgid "dismiss"
 msgstr "解雇"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:62
+msgid "Testing..."
+msgstr "测试..."
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:64
 msgid "Test failed:"
 msgstr "测试失败："
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:64
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:66
 msgid "Test passed successfully"
 msgstr "测试顺利通过"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:66
-#: static/admin/translations-fakejs.js:85
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:68
+#: static/admin/translations-fakejs.js:89
 msgid "Successfully saved"
 msgstr "成功保存"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:68
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:72
 msgid "Are you sure do you want to delete the following items?"
 msgstr "您确定要删除以下项目吗？"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:69
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:73
 msgid "Deletion finished"
 msgstr "删除完成"
 
@@ -133,35 +141,31 @@ msgstr "是"
 msgid "no"
 msgstr "没有"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:258
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:265
 msgid "Error saving: "
 msgstr "保存时出错："
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:259
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:266
 msgid "Save error"
 msgstr "保存错误"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:260
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:267
 msgid "Communication error"
 msgstr "通信故障"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:92
-#| msgid "$USERS users, $GROUPS groups"
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:96
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
 msgstr "＃USR_NUMBER＃个用户，＃GRP_NUMBER＃个组"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:93
-#| msgid "$POOLS service pools"
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#POOLS_NUMBER# service pools"
 msgstr "＃POOLS_NUMBER＃个服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-#| msgid "$SERVICES user services"
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:98
 msgid "#SERVICES_NUMBER# user services"
 msgstr "＃SERVICES_NUMBER＃个用户服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-#| msgid "$RESTRAINED restrained services!"
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "#RESTRAINED_NUMBER# restrained services!"
 msgstr "＃RESTRAINED_NUMBER＃个受限制的服务！"
 
@@ -174,23 +178,25 @@ msgid "Full Access"
 msgstr "完全访问"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:43
-#: static/admin/translations-fakejs.js:345
-#: static/admin/translations-fakejs.js:392
+#: static/admin/translations-fakejs.js:352
+#: static/admin/translations-fakejs.js:399
+#: static/admin/translations-fakejs.js:418
 msgid "User"
 msgstr "用户"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:44
-#: static/admin/translations-fakejs.js:110
-#: static/admin/translations-fakejs.js:135
-#: static/admin/translations-fakejs.js:387
-#: static/admin/translations-fakejs.js:401
+#: static/admin/translations-fakejs.js:114
+#: static/admin/translations-fakejs.js:139
+#: static/admin/translations-fakejs.js:394
+#: static/admin/translations-fakejs.js:408
 msgid "Group"
 msgstr "组"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:45
-#: static/admin/translations-fakejs.js:386
-#: static/admin/translations-fakejs.js:391
-#: static/admin/translations-fakejs.js:400
+#: static/admin/translations-fakejs.js:393
+#: static/admin/translations-fakejs.js:398
+#: static/admin/translations-fakejs.js:407
+#: static/admin/translations-fakejs.js:417
 #: static/modern/translations-fakejs.js:39
 msgid "Authenticator"
 msgstr "认证"
@@ -208,37 +214,37 @@ msgid "Confirm revokation of permission"
 msgstr "确认撤销许可"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:5
-#: static/admin/translations-fakejs.js:225
+#: static/admin/translations-fakejs.js:232
 msgid "Sunday"
 msgstr "星期日"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:6
-#: static/admin/translations-fakejs.js:226
+#: static/admin/translations-fakejs.js:233
 msgid "Monday"
 msgstr "星期一"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:7
-#: static/admin/translations-fakejs.js:227
+#: static/admin/translations-fakejs.js:234
 msgid "Tuesday"
 msgstr "星期二"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:8
-#: static/admin/translations-fakejs.js:228
+#: static/admin/translations-fakejs.js:235
 msgid "Wednesday"
 msgstr "星期三"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:9
-#: static/admin/translations-fakejs.js:229
+#: static/admin/translations-fakejs.js:236
 msgid "Thursday"
 msgstr "星期四"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:10
-#: static/admin/translations-fakejs.js:230
+#: static/admin/translations-fakejs.js:237
 msgid "Friday"
 msgstr "星期五"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:11
-#: static/admin/translations-fakejs.js:231
+#: static/admin/translations-fakejs.js:238
 msgid "Saturday"
 msgstr "星期六"
 
@@ -294,62 +300,62 @@ msgstr "十二月"
 msgid "Never"
 msgstr "决不"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:143
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:147
 msgid "Maintenance"
 msgstr "保养"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:144
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:148
 msgid "Exit maintenance mode"
 msgstr "退出维护模式"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:145
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:149
 msgid "Enter maintenance mode"
 msgstr "进入维护模式"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:146
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:150
 msgid "New provider"
 msgstr "新提供者"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:147
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:151
 msgid "Edit provider"
 msgstr "编辑提供者"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:148
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:152
 msgid "Delete provider"
 msgstr "删除提供商"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:149
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:153
 msgid "Exit maintenance mode?"
 msgstr "退出维护模式？"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:150
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:154
 msgid "Enter maintenance mode?"
 msgstr "进入维护模式？"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:151
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:155
 msgid "Maintenance mode for"
 msgstr "维护模式"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:124
-#: static/admin/translations-fakejs.js:152
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:128
+#: static/admin/translations-fakejs.js:156
 msgid "In Maintenance"
 msgstr "在维护中"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:125
-#: static/admin/translations-fakejs.js:153
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:129
+#: static/admin/translations-fakejs.js:157
 msgid "Active"
 msgstr "活性"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:39
 #: static/admin/translations-fakejs.js:54
-#: static/admin/translations-fakejs.js:263
+#: static/admin/translations-fakejs.js:270
 #: static/modern/translations-fakejs.js:26
 msgid "Yes"
 msgstr "是"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:40
 #: static/admin/translations-fakejs.js:55
-#: static/admin/translations-fakejs.js:264
+#: static/admin/translations-fakejs.js:271
 #: static/modern/translations-fakejs.js:27
 msgid "No"
 msgstr "没有"
@@ -362,584 +368,591 @@ msgstr "（隐）"
 msgid "Selected items :"
 msgstr "选定项目："
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:112
-#: static/admin/translations-fakejs.js:128
-#: static/admin/translations-fakejs.js:154
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:116
+#: static/admin/translations-fakejs.js:132
+#: static/admin/translations-fakejs.js:158
 msgid "Pool"
 msgstr "池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:113
-#: static/admin/translations-fakejs.js:129
-#: static/admin/translations-fakejs.js:155
-#: static/admin/translations-fakejs.js:338
-#: static/admin/translations-fakejs.js:353
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:117
+#: static/admin/translations-fakejs.js:133
+#: static/admin/translations-fakejs.js:159
+#: static/admin/translations-fakejs.js:345
+#: static/admin/translations-fakejs.js:360
 msgid "State"
 msgstr "州"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:114
-#: static/admin/translations-fakejs.js:130
-#: static/admin/translations-fakejs.js:156
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:118
+#: static/admin/translations-fakejs.js:134
+#: static/admin/translations-fakejs.js:160
 msgid "User Services"
 msgstr "用户服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:140
-#: static/admin/translations-fakejs.js:157
-#: static/admin/translations-fakejs.js:303
-#: static/admin/translations-fakejs.js:443
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:144
+#: static/admin/translations-fakejs.js:161
+#: static/admin/translations-fakejs.js:310
+#: static/admin/translations-fakejs.js:456
 msgid "Service pools"
 msgstr "服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:123
-#: static/admin/translations-fakejs.js:158
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:127
+#: static/admin/translations-fakejs.js:162
 msgid "Information"
 msgstr "信息"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:159
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:163
 msgid "New service"
 msgstr "新服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:160
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:164
 msgid "Edit service"
 msgstr "编辑服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:161
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:165
 msgid "Delete service"
 msgstr "删除服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:162
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:166
 msgid "Delete user service"
 msgstr "删除用户服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:89
-#: static/admin/translations-fakejs.js:105
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:93
+#: static/admin/translations-fakejs.js:109
 msgid "New Authenticator"
 msgstr "新认证"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:90
-#: static/admin/translations-fakejs.js:106
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:94
+#: static/admin/translations-fakejs.js:110
 msgid "Edit Authenticator"
 msgstr "编辑身份验证器"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:107
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:111
 msgid "Delete Authenticator"
 msgstr "删除身份验证器"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:108
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:112
 msgid "Any"
 msgstr "任何"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:109
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:113
 msgid "All"
 msgstr "所有"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:111
-#: static/admin/translations-fakejs.js:136
-#: static/admin/translations-fakejs.js:337
-#: static/admin/translations-fakejs.js:352
-#: static/admin/translations-fakejs.js:429
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:115
+#: static/admin/translations-fakejs.js:140
+#: static/admin/translations-fakejs.js:344
+#: static/admin/translations-fakejs.js:359
+#: static/admin/translations-fakejs.js:442
 msgid "Comments"
 msgstr "评论"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:115
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:119
 msgid "Unique ID"
 msgstr "唯一身份"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:116
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:120
 msgid "Friendly Name"
 msgstr "友好名称"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:117
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:121
 msgid "In Use"
 msgstr "正在使用"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:118
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:122
 msgid "IP"
 msgstr "IP"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:119
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:123
 msgid "Services Pool"
 msgstr "服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:120
-#: static/admin/translations-fakejs.js:142
-#: static/admin/translations-fakejs.js:305
-#: static/admin/translations-fakejs.js:332
-#: static/admin/translations-fakejs.js:346
-#: static/admin/translations-fakejs.js:362
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:124
+#: static/admin/translations-fakejs.js:146
+#: static/admin/translations-fakejs.js:312
+#: static/admin/translations-fakejs.js:339
+#: static/admin/translations-fakejs.js:353
 #: static/admin/translations-fakejs.js:369
-#: static/admin/translations-fakejs.js:420
-#: static/admin/translations-fakejs.js:445
+#: static/admin/translations-fakejs.js:376
+#: static/admin/translations-fakejs.js:433
+#: static/admin/translations-fakejs.js:458
 msgid "Groups"
 msgstr "组"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:121
-#: static/admin/translations-fakejs.js:363
-#: static/admin/translations-fakejs.js:367
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:125
+#: static/admin/translations-fakejs.js:370
+#: static/admin/translations-fakejs.js:374
 msgid "Services Pools"
 msgstr "服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:122
-#: static/admin/translations-fakejs.js:418
-#: static/admin/translations-fakejs.js:444
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:126
+#: static/admin/translations-fakejs.js:431
+#: static/admin/translations-fakejs.js:457
 msgid "Assigned services"
 msgstr "分配的服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:131
-#: static/admin/translations-fakejs.js:428
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:135
+#: static/admin/translations-fakejs.js:441
 msgid "Name"
 msgstr "名称"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:132
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:136
 msgid "Real Name"
 msgstr "真正的名字"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:133
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:137
 msgid "state"
 msgstr "州"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:134
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:138
 msgid "Last access"
 msgstr "上次访问"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:141
-#: static/admin/translations-fakejs.js:331
-#: static/admin/translations-fakejs.js:368
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:145
+#: static/admin/translations-fakejs.js:338
+#: static/admin/translations-fakejs.js:375
 msgid "Users"
 msgstr "用户"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:137
-#: static/admin/translations-fakejs.js:339
-#: static/admin/translations-fakejs.js:354
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:141
+#: static/admin/translations-fakejs.js:346
+#: static/admin/translations-fakejs.js:361
 msgid "Enabled"
 msgstr "启用"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:138
-#: static/admin/translations-fakejs.js:340
-#: static/admin/translations-fakejs.js:355
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:142
+#: static/admin/translations-fakejs.js:347
+#: static/admin/translations-fakejs.js:362
 msgid "Disabled"
 msgstr "残"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:139
-#: static/admin/translations-fakejs.js:341
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:143
+#: static/admin/translations-fakejs.js:348
 msgid "Blocked"
 msgstr "阻止"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:126
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:130
 msgid "Delete user"
 msgstr "删除用户"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:127
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:131
 msgid "Delete group"
 msgstr "删除组"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:91
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:95
 msgid "Delete authencitator"
 msgstr "删除authencitator"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:96
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:100
 msgid "New Transport"
 msgstr "新运输"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:97
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:101
 msgid "Edit Transport"
 msgstr "编辑传输"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:98
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:102
 msgid "Delete Transport"
 msgstr "删除传输"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:102
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:106
 msgid "New Network"
 msgstr "新网络"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:103
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:107
 msgid "Edit Network"
 msgstr "编辑网络"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:104
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:108
 msgid "Delete Network"
 msgstr "删除网络"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:99
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:103
 msgid "New Proxy"
 msgstr "新代理"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:100
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:104
 msgid "Edit Proxy"
 msgstr "编辑代理"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:101
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:105
 msgid "Delete Proxy"
 msgstr "删除代理"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:188
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:195
 msgid "(This service does not requires an OS Manager)"
 msgstr "（此服务不需要OS Manager）"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:189
-#: static/admin/translations-fakejs.js:247
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:196
+#: static/admin/translations-fakejs.js:254
 msgid "New service Pool"
 msgstr "新服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:190
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:197
 msgid "Publish on creation"
 msgstr "发布创作"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:191
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:198
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr "如果选中，将在创建后立即启动发布"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:192
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:199
 msgid "Edit Service Pool"
 msgstr "编辑服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:193
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:200
 msgid "Delete service pool"
 msgstr "删除服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:164
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:168
+#: static/admin/translations-fakejs.js:194
 msgid "Please, select a valid user"
 msgstr "请选择有效用户"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:168
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:172
 msgid "Please, select a valid group"
 msgstr "请选择一个有效的组"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:166
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:170
 msgid "Please, select a valid transport"
 msgstr "请选择有效的交通工具"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:169
-#: static/admin/translations-fakejs.js:292
-#: static/admin/translations-fakejs.js:333
-#: static/admin/translations-fakejs.js:374
-#: static/admin/translations-fakejs.js:377
-#: static/admin/translations-fakejs.js:425
-#: static/admin/translations-fakejs.js:447
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:173
+#: static/admin/translations-fakejs.js:299
+#: static/admin/translations-fakejs.js:340
+#: static/admin/translations-fakejs.js:381
+#: static/admin/translations-fakejs.js:384
+#: static/admin/translations-fakejs.js:438
+#: static/admin/translations-fakejs.js:460
 msgid "Logs"
 msgstr "日志"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:170
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:174
 msgid "Launch now"
 msgstr "现在发射"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:171
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:175
 msgid "Change owner"
 msgstr "改变所有者"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:172
-#: static/admin/translations-fakejs.js:269
-#: static/admin/translations-fakejs.js:275
-#: static/admin/translations-fakejs.js:317
-#: static/admin/translations-fakejs.js:347
-#: static/admin/translations-fakejs.js:359
-#: static/admin/translations-fakejs.js:388
-#: static/admin/translations-fakejs.js:393
-#: static/admin/translations-fakejs.js:397
-#: static/admin/translations-fakejs.js:402
-#: static/admin/translations-fakejs.js:411
-#: static/admin/translations-fakejs.js:415
-#: static/admin/translations-fakejs.js:440
-#: static/admin/translations-fakejs.js:451
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:176
+#| msgid "Assigned services"
+msgid "Assign service"
+msgstr "分配服务"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:177
+#: static/admin/translations-fakejs.js:276
+#: static/admin/translations-fakejs.js:282
+#: static/admin/translations-fakejs.js:324
+#: static/admin/translations-fakejs.js:354
+#: static/admin/translations-fakejs.js:366
+#: static/admin/translations-fakejs.js:395
+#: static/admin/translations-fakejs.js:400
+#: static/admin/translations-fakejs.js:404
+#: static/admin/translations-fakejs.js:409
+#: static/admin/translations-fakejs.js:419
+#: static/admin/translations-fakejs.js:424
+#: static/admin/translations-fakejs.js:428
+#: static/admin/translations-fakejs.js:453
+#: static/admin/translations-fakejs.js:464
 msgid "Cancel"
 msgstr "取消"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:173
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:178
 msgid "Changelog"
 msgstr "更新日志"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:174
-#: static/admin/translations-fakejs.js:252
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:179
+#: static/admin/translations-fakejs.js:259
 msgid "Delete assigned service"
 msgstr "删除已分配的服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:175
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:180
 msgid "Delete cached service"
 msgstr "删除缓存的服务"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:176
-#: static/admin/translations-fakejs.js:253
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:181
+#: static/admin/translations-fakejs.js:260
 msgid "Delete assigned group"
 msgstr "删除已分配的组"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:177
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:182
 msgid "Delete assigned transport"
 msgstr "删除分配的传输"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:178
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:183
 msgid "Publication"
 msgstr "出版物"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:179
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:184
 msgid "Cancel publication?"
 msgstr "取消发布？"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:180
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:185
 msgid "Publication canceled"
 msgstr "出版物已取消"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:182
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:187
 msgid "Delete scheduled action"
 msgstr "删除预定的操作"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:183
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:188
 msgid "Execute scheduled action"
 msgstr "执行计划的操作"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:184
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:189
 msgid "Execute scheduled action right now?"
 msgstr "立即执行预定的操作？"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:185
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:190
 msgid "Scheduled action executed"
 msgstr "已执行计划的操作"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:187
-#: static/admin/translations-fakejs.js:254
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:192
+#: static/admin/translations-fakejs.js:261
 msgid "Delete calendar access rule"
 msgstr "删除日历访问规则"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:255
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:262
 msgid "New meta pool"
 msgstr "新的元池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:256
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:263
 msgid "Edit meta pool"
 msgstr "编辑元池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:257
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:264
 msgid "Delete meta pool"
 msgstr "删除元池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:250
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:257
 msgid "Please, select a valid service pool"
 msgstr "请选择有效的服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:251
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:258
 msgid "Remove member pool"
 msgstr "删除成员池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:248
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:255
 msgid "New Service Pool"
 msgstr "新服务池"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:204
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:211
 msgid "New calendar"
 msgstr "新日历"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:205
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:212
 msgid "Edit calendar"
 msgstr "编辑日历"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:206
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:213
 msgid "Delete calendar"
 msgstr "删除日历"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:208
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:215
 msgid "day"
 msgstr "天"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:209
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:216
 msgid "days"
 msgstr "天"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:210
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:217
 msgid "Daily"
 msgstr "日常"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:211
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:218
 msgid "week"
 msgstr "周"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:212
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:219
 msgid "weeks"
 msgstr "周"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:213
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:220
 msgid "Weekly"
 msgstr "每周"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:214
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:221
 msgid "month"
 msgstr "月"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:215
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:222
 msgid "months"
 msgstr "个月"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:216
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:223
 msgid "Monthly"
 msgstr "每月一次"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:217
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:224
 msgid "year"
 msgstr "年"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:218
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:225
 msgid "years"
 msgstr "年份"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:219
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:226
 msgid "Yearly"
 msgstr "每年"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:220
-#: static/admin/translations-fakejs.js:437
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:227
+#: static/admin/translations-fakejs.js:450
 msgid "Weekdays"
 msgstr "平日"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:221
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:228
 msgid "Minutes"
 msgstr "分钟"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:222
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:229
 msgid "Hours"
 msgstr "小时"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:223
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:230
 msgid "Days"
 msgstr "天"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:224
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:231
 msgid "Weeks"
 msgstr "周"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:232
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:239
 msgid "(no days)"
 msgstr "（没有日子）"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:233
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:240
 msgid "Forever"
 msgstr "永远"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:234
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:241
 msgid "Start date/time"
 msgstr "开始日期/时间"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:235
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:242
 msgid "End date"
 msgstr "结束日期"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:236
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:243
 msgid "Interval"
 msgstr "间隔"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:237
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:244
 msgid "Week days"
 msgstr "周日"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:238
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:245
 msgid "Invalid or incomplete rule. Please, fix field $FIELD"
 msgstr "规则无效或不完整。请修复字段$ FIELD"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:239
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:246
 msgid "This rule will be valid every"
 msgstr "这条规则将是有效的"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:240
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:247
 msgid "of any week"
 msgstr "任何一周"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:241
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:248
 msgid "from"
 msgstr "从"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:242
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:249
 msgid "until"
 msgstr "直到"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:243
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:250
 msgid "onwards"
 msgstr "向前"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:244
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:251
 msgid "starting at"
 msgstr "开始于"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:245
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:252
 msgid "and every event will be active for"
 msgstr "每个活动都会活跃起来"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:246
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:253
 msgid "with no duration"
 msgstr "没有持续时间"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:207
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:214
 msgid "Delete calendar rule"
 msgstr "删除日历规则"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:194
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:201
 msgid "Set time mark"
 msgstr "设定时间标记"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:195
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:202
 msgid "New account"
 msgstr "新账户"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:196
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:203
 msgid "Edit account"
 msgstr "编辑账户"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:197
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:204
 msgid "Delete account"
 msgstr "删除帐户"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:198
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:205
 msgid "Time mark"
 msgstr "时间标记"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:199
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:206
 msgid "Set time mark for $NAME to current date/time?"
 msgstr "将$ NAME的时间标记设置为当前日期/时间？"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:200
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:207
 msgid "Time mark stabliched"
 msgstr "时间标记stabliched"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:202
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:209
 msgid "No time mark"
 msgstr "没有时间标记"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:203
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:210
 msgid "Delete account usage"
 msgstr "删除帐户使用情况"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:80
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:84
 msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "图像太大（最大上传大小为256Kb）"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:82
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "Invalid image type (only supports JPEG, PNG and GIF"
 msgstr "图像类型无效（仅支持JPEG，PNG和GIF"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:84
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:88
 msgid "Please, provide a name and a image"
 msgstr "请提供名称和图像"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:78
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:82
 msgid "Delete image"
 msgstr "删除图片"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:73
-#: static/admin/translations-fakejs.js:77
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:77
+#: static/admin/translations-fakejs.js:81
 msgid "Generate report"
 msgstr "生成报告"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:74
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:78
 msgid "Generating report..."
 msgstr "生成报告......"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:75
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:79
 msgid "Report finished"
 msgstr "报告完了"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:87
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:91
 msgid "Configuration saved"
 msgstr "配置已保存"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:52
-#: static/admin/translations-fakejs.js:286
 #: static/admin/translations-fakejs.js:293
+#: static/admin/translations-fakejs.js:300
 msgid "Filter"
 msgstr "过滤"
 
@@ -955,7 +968,7 @@ msgstr "，（％i更多项目）"
 msgid "Main"
 msgstr "主要"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:71
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:75
 msgid "Cache flushed"
 msgstr "缓存已刷新"
 
@@ -963,424 +976,435 @@ msgstr "缓存已刷新"
 msgid "Items per page"
 msgstr "每页项目"
 
-#: static/admin/translations-fakejs.js:262
+#: static/admin/translations-fakejs.js:269
 #: static/modern/translations-fakejs.js:25
 msgid "Close"
 msgstr "关"
 
-#: static/admin/translations-fakejs.js:265
+#: static/admin/translations-fakejs.js:272
 msgid "User mode"
 msgstr "用户模式"
 
-#: static/admin/translations-fakejs.js:266
+#: static/admin/translations-fakejs.js:273
 #: static/modern/translations-fakejs.js:30
 msgid "Logout"
 msgstr "登出"
 
-#: static/admin/translations-fakejs.js:267
+#: static/admin/translations-fakejs.js:274
 msgid "Remove all"
 msgstr "移除所有"
 
-#: static/admin/translations-fakejs.js:268
+#: static/admin/translations-fakejs.js:275
 msgid "Add"
 msgstr "加"
 
-#: static/admin/translations-fakejs.js:270
-#: static/admin/translations-fakejs.js:273
-#: static/admin/translations-fakejs.js:276
-#: static/admin/translations-fakejs.js:318
-#: static/admin/translations-fakejs.js:348
-#: static/admin/translations-fakejs.js:360
-#: static/admin/translations-fakejs.js:365
-#: static/admin/translations-fakejs.js:370
-#: static/admin/translations-fakejs.js:378
-#: static/admin/translations-fakejs.js:389
-#: static/admin/translations-fakejs.js:394
-#: static/admin/translations-fakejs.js:398
-#: static/admin/translations-fakejs.js:403
+#: static/admin/translations-fakejs.js:277
+#: static/admin/translations-fakejs.js:280
+#: static/admin/translations-fakejs.js:283
+#: static/admin/translations-fakejs.js:325
+#: static/admin/translations-fakejs.js:355
+#: static/admin/translations-fakejs.js:367
+#: static/admin/translations-fakejs.js:372
+#: static/admin/translations-fakejs.js:377
+#: static/admin/translations-fakejs.js:385
+#: static/admin/translations-fakejs.js:396
+#: static/admin/translations-fakejs.js:401
 #: static/admin/translations-fakejs.js:405
-#: static/admin/translations-fakejs.js:407
+#: static/admin/translations-fakejs.js:410
 #: static/admin/translations-fakejs.js:412
-#: static/admin/translations-fakejs.js:416
-#: static/admin/translations-fakejs.js:441
-#: static/admin/translations-fakejs.js:452
+#: static/admin/translations-fakejs.js:414
+#: static/admin/translations-fakejs.js:420
+#: static/admin/translations-fakejs.js:425
+#: static/admin/translations-fakejs.js:429
+#: static/admin/translations-fakejs.js:454
+#: static/admin/translations-fakejs.js:465
 msgid "Ok"
 msgstr "好"
 
-#: static/admin/translations-fakejs.js:271
+#: static/admin/translations-fakejs.js:278
 msgid "Permissions for"
 msgstr "权限"
 
-#: static/admin/translations-fakejs.js:272
+#: static/admin/translations-fakejs.js:279
 msgid "New permission..."
 msgstr "新许可......"
 
-#: static/admin/translations-fakejs.js:274
+#: static/admin/translations-fakejs.js:281
 msgid "New group permission for"
 msgstr "新的组权限"
 
-#: static/admin/translations-fakejs.js:277
+#: static/admin/translations-fakejs.js:284
 msgid "Discard & close"
 msgstr "放弃并关闭"
 
-#: static/admin/translations-fakejs.js:278
-#: static/admin/translations-fakejs.js:320
+#: static/admin/translations-fakejs.js:285
+#: static/admin/translations-fakejs.js:327
 msgid "Save"
 msgstr "保存"
 
-#: static/admin/translations-fakejs.js:279
-#: static/admin/translations-fakejs.js:280
-#: static/admin/translations-fakejs.js:281
+#: static/admin/translations-fakejs.js:286
+#: static/admin/translations-fakejs.js:287
+#: static/admin/translations-fakejs.js:288
 msgid "New"
 msgstr "新"
 
-#: static/admin/translations-fakejs.js:282
 #: static/admin/translations-fakejs.js:289
+#: static/admin/translations-fakejs.js:296
 msgid "Edit"
 msgstr "编辑"
 
-#: static/admin/translations-fakejs.js:283
 #: static/admin/translations-fakejs.js:290
+#: static/admin/translations-fakejs.js:297
 msgid "Permissions"
 msgstr "权限"
 
-#: static/admin/translations-fakejs.js:284
+#: static/admin/translations-fakejs.js:291
 msgid "Export"
 msgstr "出口"
 
-#: static/admin/translations-fakejs.js:285
-#: static/admin/translations-fakejs.js:291
+#: static/admin/translations-fakejs.js:292
+#: static/admin/translations-fakejs.js:298
 msgid "Delete"
 msgstr "删除"
 
-#: static/admin/translations-fakejs.js:287
+#: static/admin/translations-fakejs.js:294
 msgid "Selected items"
 msgstr "选定的项目"
 
-#: static/admin/translations-fakejs.js:288
+#: static/admin/translations-fakejs.js:295
 msgid "Detail"
 msgstr "详情"
 
-#: static/admin/translations-fakejs.js:294
-#: static/admin/translations-fakejs.js:330
-#: static/admin/translations-fakejs.js:371
-#: static/admin/translations-fakejs.js:417
-#: static/admin/translations-fakejs.js:439
-#: static/admin/translations-fakejs.js:442
+#: static/admin/translations-fakejs.js:301
+#: static/admin/translations-fakejs.js:337
+#: static/admin/translations-fakejs.js:378
+#: static/admin/translations-fakejs.js:430
+#: static/admin/translations-fakejs.js:452
+#: static/admin/translations-fakejs.js:455
 msgid "Summary"
 msgstr "摘要"
 
-#: static/admin/translations-fakejs.js:295
-#: static/admin/translations-fakejs.js:372
+#: static/admin/translations-fakejs.js:302
+#: static/admin/translations-fakejs.js:379
 msgid "Services"
 msgstr "服务"
 
-#: static/admin/translations-fakejs.js:296
+#: static/admin/translations-fakejs.js:303
 msgid "Authenticators"
 msgstr "验证器"
 
-#: static/admin/translations-fakejs.js:297
+#: static/admin/translations-fakejs.js:304
 msgid "Os Managers"
 msgstr "Os经理"
 
-#: static/admin/translations-fakejs.js:298
+#: static/admin/translations-fakejs.js:305
 msgid "Connectivity"
 msgstr "连接"
 
-#: static/admin/translations-fakejs.js:299
-#: static/admin/translations-fakejs.js:421
+#: static/admin/translations-fakejs.js:306
+#: static/admin/translations-fakejs.js:434
 msgid "Transports"
 msgstr "运输"
 
-#: static/admin/translations-fakejs.js:300
+#: static/admin/translations-fakejs.js:307
 msgid "Networks"
 msgstr "网络"
 
-#: static/admin/translations-fakejs.js:301
+#: static/admin/translations-fakejs.js:308
 msgid "Proxies"
 msgstr "代理"
 
-#: static/admin/translations-fakejs.js:302
+#: static/admin/translations-fakejs.js:309
 msgid "Pools"
 msgstr "池"
 
-#: static/admin/translations-fakejs.js:304
+#: static/admin/translations-fakejs.js:311
 msgid "Meta pools"
 msgstr "元池"
 
-#: static/admin/translations-fakejs.js:306
+#: static/admin/translations-fakejs.js:313
 msgid "Calendars"
 msgstr "日历"
 
-#: static/admin/translations-fakejs.js:307
+#: static/admin/translations-fakejs.js:314
 msgid "Accounts"
 msgstr "帐号"
 
-#: static/admin/translations-fakejs.js:308
+#: static/admin/translations-fakejs.js:315
 msgid "Tools"
 msgstr "工具"
 
-#: static/admin/translations-fakejs.js:309
+#: static/admin/translations-fakejs.js:316
 msgid "Gallery"
 msgstr "画廊"
 
-#: static/admin/translations-fakejs.js:310
+#: static/admin/translations-fakejs.js:317
 msgid "Reports"
 msgstr "报告"
 
-#: static/admin/translations-fakejs.js:311
+#: static/admin/translations-fakejs.js:318
 msgid "Configuration"
 msgstr "组态"
 
-#: static/admin/translations-fakejs.js:312
+#: static/admin/translations-fakejs.js:319
 msgid "Flush Cache"
 msgstr "刷新缓存"
 
-#: static/admin/translations-fakejs.js:313
+#: static/admin/translations-fakejs.js:320
 msgid "Image name"
 msgstr "图像名称"
 
-#: static/admin/translations-fakejs.js:314
+#: static/admin/translations-fakejs.js:321
 msgid "Image (click to change)"
 msgstr "图片（点击更改）"
 
-#: static/admin/translations-fakejs.js:315
+#: static/admin/translations-fakejs.js:322
 msgid "For optimal results, use "
 msgstr "为获得最佳效果，请使用"
 
-#: static/admin/translations-fakejs.js:316
+#: static/admin/translations-fakejs.js:323
 msgid "The image will be resized on upload to"
 msgstr "图片将在上传时调整大小"
 
-#: static/admin/translations-fakejs.js:319
+#: static/admin/translations-fakejs.js:326
 msgid "UDS Configuration"
 msgstr "UDS配置"
 
-#: static/admin/translations-fakejs.js:321
+#: static/admin/translations-fakejs.js:328
 #: static/modern/translations-fakejs.js:28
 msgid "Dashboard"
 msgstr "仪表板"
 
-#: static/admin/translations-fakejs.js:322
+#: static/admin/translations-fakejs.js:329
 msgid "View authenticators"
 msgstr "查看验证者"
 
-#: static/admin/translations-fakejs.js:323
-#: static/admin/translations-fakejs.js:324
-#: static/admin/translations-fakejs.js:325
+#: static/admin/translations-fakejs.js:330
+#: static/admin/translations-fakejs.js:331
+#: static/admin/translations-fakejs.js:332
 msgid "View service pools"
 msgstr "查看服务池"
 
-#: static/admin/translations-fakejs.js:326
+#: static/admin/translations-fakejs.js:333
 msgid "You are accessing UDS Administration as staff member."
 msgstr "您正在以工作人员身份访问UDS管理。"
 
-#: static/admin/translations-fakejs.js:327
+#: static/admin/translations-fakejs.js:334
 msgid "This means that you have restricted access to elements."
 msgstr "这意味着您具有对元素的限制访问权限。"
 
-#: static/admin/translations-fakejs.js:328
+#: static/admin/translations-fakejs.js:335
 msgid ""
 "In order to increase your access privileges, please contact your local UDS "
 "administrator."
 msgstr "要增加访问权限，请与当地的UDS管理员联系。"
 
-#: static/admin/translations-fakejs.js:329
+#: static/admin/translations-fakejs.js:336
 msgid "Thank you."
 msgstr "谢谢。"
 
-#: static/admin/translations-fakejs.js:334
+#: static/admin/translations-fakejs.js:341
 msgid "Edit user"
 msgstr "编辑用户"
 
-#: static/admin/translations-fakejs.js:335
+#: static/admin/translations-fakejs.js:342
 msgid "New user"
 msgstr "新用户"
 
-#: static/admin/translations-fakejs.js:336
+#: static/admin/translations-fakejs.js:343
 msgid "Real name"
 msgstr "真正的名字"
 
-#: static/admin/translations-fakejs.js:342
+#: static/admin/translations-fakejs.js:349
 msgid "Role"
 msgstr "角色"
 
-#: static/admin/translations-fakejs.js:343
+#: static/admin/translations-fakejs.js:350
 msgid "Admin"
 msgstr "管理员"
 
-#: static/admin/translations-fakejs.js:344
+#: static/admin/translations-fakejs.js:351
 msgid "Staff member"
 msgstr "工作人员"
 
-#: static/admin/translations-fakejs.js:349
+#: static/admin/translations-fakejs.js:356
 msgid "Edit group"
 msgstr "编辑组"
 
-#: static/admin/translations-fakejs.js:350
+#: static/admin/translations-fakejs.js:357
 msgid "New group"
 msgstr "新组"
 
-#: static/admin/translations-fakejs.js:351
+#: static/admin/translations-fakejs.js:358
 msgid "Meta group name"
 msgstr "元组名称"
 
-#: static/admin/translations-fakejs.js:356
+#: static/admin/translations-fakejs.js:363
 msgid "Service Pools"
 msgstr "服务池"
 
-#: static/admin/translations-fakejs.js:357
+#: static/admin/translations-fakejs.js:364
 msgid "Match mode"
 msgstr "比赛模式"
 
-#: static/admin/translations-fakejs.js:358
+#: static/admin/translations-fakejs.js:365
 msgid "Selected Groups"
 msgstr "选定的团体"
 
-#: static/admin/translations-fakejs.js:361
-#: static/admin/translations-fakejs.js:366
-#: static/admin/translations-fakejs.js:375
+#: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:373
+#: static/admin/translations-fakejs.js:382
 msgid "Information for"
 msgstr "信息"
 
-#: static/admin/translations-fakejs.js:364
+#: static/admin/translations-fakejs.js:371
 msgid "Assigned Services"
 msgstr "指定服务"
 
-#: static/admin/translations-fakejs.js:373
+#: static/admin/translations-fakejs.js:380
 msgid "Usage"
 msgstr "用法"
 
-#: static/admin/translations-fakejs.js:376
+#: static/admin/translations-fakejs.js:383
 msgid "Services pools"
 msgstr "服务池"
 
-#: static/admin/translations-fakejs.js:379
+#: static/admin/translations-fakejs.js:386
 msgid "Edit action for"
 msgstr "编辑动作"
 
-#: static/admin/translations-fakejs.js:380
+#: static/admin/translations-fakejs.js:387
 msgid "New action for"
 msgstr "新的行动"
 
-#: static/admin/translations-fakejs.js:381
-#: static/admin/translations-fakejs.js:409
+#: static/admin/translations-fakejs.js:388
+#: static/admin/translations-fakejs.js:422
 msgid "Calendar"
 msgstr "日历"
 
-#: static/admin/translations-fakejs.js:382
+#: static/admin/translations-fakejs.js:389
 msgid "Events offset (minutes)"
 msgstr "事件抵消（分钟）"
 
-#: static/admin/translations-fakejs.js:383
+#: static/admin/translations-fakejs.js:390
 msgid "At the beginning of the interval?"
 msgstr "在间隔的开始？"
 
-#: static/admin/translations-fakejs.js:384
-#: static/admin/translations-fakejs.js:410
+#: static/admin/translations-fakejs.js:391
+#: static/admin/translations-fakejs.js:423
 msgid "Action"
 msgstr "行动"
 
-#: static/admin/translations-fakejs.js:385
-#: static/admin/translations-fakejs.js:396
+#: static/admin/translations-fakejs.js:392
+#: static/admin/translations-fakejs.js:403
 msgid "Transport"
 msgstr "运输"
 
-#: static/admin/translations-fakejs.js:390
+#: static/admin/translations-fakejs.js:397
 msgid "Change owner of assigned service"
 msgstr "更改已分配服务的所有者"
 
-#: static/admin/translations-fakejs.js:395
+#: static/admin/translations-fakejs.js:402
 msgid "New transport for"
 msgstr "新的运输"
 
-#: static/admin/translations-fakejs.js:399
+#: static/admin/translations-fakejs.js:406
 msgid "New group for"
 msgstr "新组"
 
-#: static/admin/translations-fakejs.js:404
+#: static/admin/translations-fakejs.js:411
 msgid "Logs of"
 msgstr "日志"
 
-#: static/admin/translations-fakejs.js:406
+#: static/admin/translations-fakejs.js:413
 msgid "Changelog of"
 msgstr "更改日志"
 
-#: static/admin/translations-fakejs.js:408
-#: static/admin/translations-fakejs.js:448
+#: static/admin/translations-fakejs.js:415
+#| msgid "Assigned services"
+msgid "Assign service to user manually"
+msgstr "手动为用户分配服务"
+
+#: static/admin/translations-fakejs.js:416
+#| msgid "Services"
+msgid "Service"
+msgstr "服务"
+
+#: static/admin/translations-fakejs.js:421
+#: static/admin/translations-fakejs.js:461
 msgid "Priority"
 msgstr "优先"
 
-#: static/admin/translations-fakejs.js:413
+#: static/admin/translations-fakejs.js:426
 msgid "New publication for"
 msgstr "新出版物"
 
-#: static/admin/translations-fakejs.js:414
+#: static/admin/translations-fakejs.js:427
 msgid "Reason"
 msgstr "原因"
 
-#: static/admin/translations-fakejs.js:419
+#: static/admin/translations-fakejs.js:432
 msgid "Cache"
 msgstr "高速缓存"
 
-#: static/admin/translations-fakejs.js:422
+#: static/admin/translations-fakejs.js:435
 msgid "Publications"
 msgstr "出版物"
 
-#: static/admin/translations-fakejs.js:423
+#: static/admin/translations-fakejs.js:436
 msgid "Scheduled actions"
 msgstr "预定的行动"
 
-#: static/admin/translations-fakejs.js:424
-#: static/admin/translations-fakejs.js:446
+#: static/admin/translations-fakejs.js:437
+#: static/admin/translations-fakejs.js:459
 msgid "Access calendars"
 msgstr "访问日历"
 
-#: static/admin/translations-fakejs.js:426
+#: static/admin/translations-fakejs.js:439
 msgid "Account usage"
 msgstr "帐户使用情况"
 
-#: static/admin/translations-fakejs.js:427
+#: static/admin/translations-fakejs.js:440
 msgid "Rules"
 msgstr "规则"
 
-#: static/admin/translations-fakejs.js:430
+#: static/admin/translations-fakejs.js:443
 msgid "Event"
 msgstr "事件"
 
-#: static/admin/translations-fakejs.js:431
+#: static/admin/translations-fakejs.js:444
 msgid "Start time"
 msgstr "开始时间"
 
-#: static/admin/translations-fakejs.js:432
+#: static/admin/translations-fakejs.js:445
 msgid "Duration"
 msgstr "持续时间"
 
-#: static/admin/translations-fakejs.js:433
+#: static/admin/translations-fakejs.js:446
 msgid "Duration units"
 msgstr "持续时间单位"
 
-#: static/admin/translations-fakejs.js:434
+#: static/admin/translations-fakejs.js:447
 msgid "Start date"
 msgstr "开始日期"
 
-#: static/admin/translations-fakejs.js:435
+#: static/admin/translations-fakejs.js:448
 msgid "Repeat until date"
 msgstr "重复直到日期"
 
-#: static/admin/translations-fakejs.js:436
+#: static/admin/translations-fakejs.js:449
 msgid "Frequency"
 msgstr "频率"
 
-#: static/admin/translations-fakejs.js:438
+#: static/admin/translations-fakejs.js:451
 msgid "Repeat every"
 msgstr "重复一遍"
 
-#: static/admin/translations-fakejs.js:449
+#: static/admin/translations-fakejs.js:462
 msgid "Service pool"
 msgstr "服务池"
 
-#: static/admin/translations-fakejs.js:450
+#: static/admin/translations-fakejs.js:463
 msgid "Enabled?"
 msgstr "启用？"
 
@@ -1421,6 +1445,16 @@ msgid "Learn more"
 msgstr "学到更多"
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
+#: static/modern/translations-fakejs.js:8
+msgid "Service is in maintenance"
+msgstr "服务正在维护中"
+
+#: static/modern/main-es5.js:1 static/modern/main.js:1
+#: static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr "由于时间表限制，目前无法访问此服务。"
+
+#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:10
 msgid "Launcher"
 msgstr "发射台"
@@ -1459,16 +1493,6 @@ msgstr "服务重置"
 #: static/modern/translations-fakejs.js:17
 msgid "Are you sure?"
 msgstr "你确定吗？"
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:8
-msgid "Service is in maintenance"
-msgstr "服务正在维护中"
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr "由于时间表限制，目前无法访问此服务。"
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:18
@@ -1516,7 +1540,6 @@ msgid "Reset service"
 msgstr "重置服务"
 
 #: static/modern/translations-fakejs.js:35
-#| msgid "Connectivity"
 msgid "Connections"
 msgstr "连接"
 
@@ -1557,7 +1580,6 @@ msgid "If you find that we missed any component, please let us know"
 msgstr "如果您发现我们错过了任何组件，请告诉我们"
 
 #: static/modern/translations-fakejs.js:46
-#| msgid "Service released"
 msgid "UDS Service launcher"
 msgstr "UDS服务启动器"
 

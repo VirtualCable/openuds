@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-30 10:16+0200\n"
+"POT-Creation-Date: 2020-01-31 12:06+0100\n"
 "PO-Revision-Date: 2019-01-10 10:04+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -24,24 +24,24 @@ msgstr ""
 msgid "Accounts"
 msgstr "Comptes"
 
-#: REST/methods/accounts.py:62 REST/methods/authenticators.py:64
+#: REST/methods/accounts.py:62 REST/methods/authenticators.py:65
 #: REST/methods/calendars.py:60 REST/methods/images.py:59
 #: REST/methods/meta_pools.py:70 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
-#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:94
+#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:95
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
 #: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
 #: REST/model.py:138
 msgid "Name"
 msgstr "Nom"
 
-#: REST/methods/accounts.py:63 REST/methods/authenticators.py:66
+#: REST/methods/accounts.py:63 REST/methods/authenticators.py:67
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
-#: REST/methods/providers.py:71 REST/methods/proxies.py:62
-#: REST/methods/services.py:212 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:58 REST/methods/user_services.py:297
+#: REST/methods/providers.py:72 REST/methods/proxies.py:62
+#: REST/methods/services.py:213 REST/methods/services_pool_groups.py:64
+#: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
 #: REST/model.py:156
 msgid "Comments"
@@ -51,12 +51,12 @@ msgstr "Comentaris"
 msgid "Time mark"
 msgstr "Marca de temps"
 
-#: REST/methods/accounts.py:65 REST/methods/authenticators.py:70
+#: REST/methods/accounts.py:65 REST/methods/authenticators.py:72
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
-#: REST/methods/providers.py:75 REST/methods/proxies.py:63
-#: REST/methods/services.py:217 REST/methods/services_pools.py:103
-#: REST/methods/transports.py:60
+#: REST/methods/providers.py:76 REST/methods/proxies.py:63
+#: REST/methods/services.py:218 REST/methods/services_pools.py:104
+#: REST/methods/transports.py:61
 msgid "tags"
 msgstr "etiquetes"
 
@@ -111,47 +111,66 @@ msgstr "Clau incorrecta"
 msgid "Unmanaged host"
 msgstr "Host no administrat"
 
-#: REST/methods/actor.py:205 web/util/errors.py:81
+#: REST/methods/actor.py:205 web/util/errors.py:80
 msgid "User service not found"
 msgstr "Servei d'usuari no trobat"
 
-#: REST/methods/authenticators.py:61
+#: REST/methods/authenticators.py:62
 msgid "Authenticators"
 msgstr "Autenticadors"
 
-#: REST/methods/authenticators.py:63
+#: REST/methods/authenticators.py:64
 msgid "Id"
 msgstr "ID"
 
-#: REST/methods/authenticators.py:65 REST/methods/osmanagers.py:56
-#: REST/methods/services.py:213 REST/methods/user_services.py:296
+#: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
+#: REST/methods/providers.py:71 REST/methods/services.py:214
+#: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr "Tipus"
 
-#: REST/methods/authenticators.py:67 REST/methods/meta_service_pools.py:85
+#: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:81 REST/methods/services_pool_groups.py:61
 #: REST/methods/transports.py:56 REST/methods/user_services.py:294
 #: REST/model.py:165 models/meta_pool.py:72
 msgid "Priority"
 msgstr "Prioritat"
 
-#: REST/methods/authenticators.py:68 REST/model.py:176
+#: REST/methods/authenticators.py:69 REST/methods/authenticators.py:101
+#: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:149
+#: REST/methods/services_pools.py:100 REST/methods/services_pools.py:267
+msgid "Visible"
+msgstr "Visible"
+
+#: REST/methods/authenticators.py:70 REST/model.py:176
 msgid "Label"
 msgstr "Etiqueta"
 
-#: REST/methods/authenticators.py:69 reports/stats/pools_performance.py:203
+#: REST/methods/authenticators.py:71 reports/stats/pools_performance.py:203
 #: reports/stats/pools_performance.py:258 reports/stats/user_access.py:236
-#: reports/stats/user_access.py:275 services/RDS_enterprise/RDSProvider.py:44
+#: reports/stats/user_access.py:275 services/RDS_enterprise/provider.py:46
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
 msgstr "Usuaris"
 
-#: REST/methods/authenticators.py:141
+#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:268
+msgid "If active, transport will be visible for users"
+msgstr "Si està actiu, el transport serà visible per als usuaris"
+
+#: REST/methods/authenticators.py:105 REST/methods/meta_pools.py:137
+#: REST/methods/meta_pools.py:145 REST/methods/meta_pools.py:153
+#: REST/methods/services_pools.py:255 REST/methods/services_pools.py:263
+#: REST/methods/services_pools.py:271 core/ui/user_interface.py:97
+#: services/OVirt/service.py:186
+msgid "Display"
+msgstr "Pantalla"
+
+#: REST/methods/authenticators.py:154
 msgid "Too many results..."
 msgstr "Hi ha massa resultats ..."
 
-#: REST/methods/authenticators.py:141
+#: REST/methods/authenticators.py:154
 msgid "Refine your query"
 msgstr "Refineu la vostra consulta"
 
@@ -172,7 +191,7 @@ msgstr "Cada"
 msgid "Duration"
 msgstr "Durada"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:178
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:179
 msgid "Element already exists (duplicate key error)"
 msgstr "L'element ja existeix (error clau duplicada)"
 
@@ -218,27 +237,22 @@ msgstr "Meta Pools"
 msgid "Policy"
 msgstr "Política"
 
-#: REST/methods/meta_pools.py:73 REST/methods/services.py:216
-#: REST/methods/services_pools.py:96
+#: REST/methods/meta_pools.py:73 REST/methods/services.py:217
+#: REST/methods/services_pools.py:97
 msgid "User services"
 msgstr "Serveis d'usuari"
 
-#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:97
+#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:98
 msgid "In Preparation"
 msgstr "En preparació"
-
-#: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:149
-#: REST/methods/services_pools.py:99 REST/methods/services_pools.py:260
-msgid "Visible"
-msgstr "Visible"
 
 #: REST/methods/meta_pools.py:76
 msgid "Pool Group"
 msgstr "Grup de pool"
 
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:140
-#: REST/methods/services_pools.py:115 REST/methods/services_pools.py:166
-#: REST/methods/services_pools.py:251
+#: REST/methods/services_pools.py:122 REST/methods/services_pools.py:173
+#: REST/methods/services_pools.py:258
 msgid "Default"
 msgstr "Per defecte"
 
@@ -247,28 +261,21 @@ msgid "Service pool policy"
 msgstr "Política de pool de serveis"
 
 #: REST/methods/meta_pools.py:133 REST/methods/services_pool_groups.py:85
-#: REST/methods/services_pools.py:244
+#: REST/methods/services_pools.py:251
 msgid "Associated Image"
 msgstr "Imatge associada"
 
 #: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:86
-#: REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:252
 msgid "Image assocciated with this service"
 msgstr "Imatge associada amb aquest servei"
 
-#: REST/methods/meta_pools.py:137 REST/methods/meta_pools.py:145
-#: REST/methods/meta_pools.py:153 REST/methods/services_pools.py:248
-#: REST/methods/services_pools.py:256 REST/methods/services_pools.py:264
-#: core/ui/user_interface.py:97 services/OVirt/OVirtLinkedService.py:180
-msgid "Display"
-msgstr "Pantalla"
-
-#: REST/methods/meta_pools.py:141 REST/methods/services_pools.py:101
-#: REST/methods/services_pools.py:252
+#: REST/methods/meta_pools.py:141 REST/methods/services_pools.py:102
+#: REST/methods/services_pools.py:259
 msgid "Pool group"
 msgstr "Grup de pool"
 
-#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:253
+#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:260
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr ""
 "Grup de pool per a aquest pool  (per a classificar el pool en pantalla)"
@@ -356,7 +363,7 @@ msgstr "Element ja eliminat"
 msgid "Item is not removable"
 msgstr "Aquest element no es pot eliminar"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:81
+#: REST/methods/networks.py:58 REST/methods/transports.py:86
 msgid "Networks"
 msgstr "Xarxes"
 
@@ -369,7 +376,6 @@ msgid "Used by"
 msgstr "Utilitzat per"
 
 #: REST/methods/networks.py:73
-#| msgid "Invalid network: "
 msgid "Invalid network: {}"
 msgstr "Xarxa no vàlida: {}"
 
@@ -441,32 +447,32 @@ msgstr "No es pot esborrar un Gestor de SO amb pools de serveis associats"
 msgid "Service providers"
 msgstr "Proveïdors de servei"
 
-#: REST/methods/providers.py:72 REST/methods/services_pools.py:95
+#: REST/methods/providers.py:73 REST/methods/services_pools.py:96
 msgid "Status"
 msgstr "Estat"
 
-#: REST/methods/providers.py:73 reports/stats/pools_usage_day.py:166
+#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:166
 #: templates/uds/reports/stats/pools-usage-day.html:29
 msgid "Services"
 msgstr "Serveis"
 
-#: REST/methods/providers.py:74
+#: REST/methods/providers.py:75
 msgid "User Services"
 msgstr "Serveis d'usuari"
 
-#: REST/methods/providers.py:106
-#| msgid "Can't delete an OS Manager with services pools associated"
+#: REST/methods/providers.py:108
 msgid "Can't delete providers with services"
 msgstr "No es poden suprimir els proveïdors amb serveis"
 
-#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:252
-#: web/util/errors.py:76
+#: REST/methods/providers.py:142 dispatchers/wyse_enterprise/views.py:256
+#: web/util/errors.py:75
 msgid "Service not found"
 msgstr "Servei no trobat"
 
 #: REST/methods/proxies.py:57
-msgid "Proxies"
-msgstr "Proxies"
+#| msgid "HyperV Linked Clone (Experimental)"
+msgid "Proxies (Experimental)"
+msgstr "Proxies (experimentals)"
 
 #: REST/methods/proxies.py:60
 msgid "Server"
@@ -480,12 +486,13 @@ msgstr "Comprova el certificat"
 #: auths/ActiveDirectory_enterprise/authenticator.py:41
 #: auths/EDirectory_enterprise/authenticator.py:44
 #: auths/RegexLdap/authenticator.py:64 auths/SimpleLDAP/authenticator.py:57
-#: services/HyperV_enterprise/HyperVProvider.py:82
-#: services/Nutanix_enterprise/NutanixProvider.py:33
-#: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
-#: services/OpenNebula/Provider.py:87 services/OpenStack/ProviderLegacy.py:102
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
-#: services/Vmware_enterprise/vc_provider.py:37 services/Xen/XenProvider.py:98
+#: services/HyperV_enterprise/legacy/provider.py:83
+#: services/HyperV_enterprise/provider.py:60
+#: services/Nutanix_enterprise/provider.py:36 services/OVirt/provider.py:109
+#: services/OpenGnsys/provider.py:95 services/OpenNebula/provider.py:77
+#: services/OpenStack/provider_legacy.py:102
+#: services/VCloud_enterprise/provider.py:32
+#: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:94
 msgid "Host"
 msgstr "Servidor"
 
@@ -495,12 +502,12 @@ msgstr "Servidor (IP o FQDN) que servirà de servidor intermediari."
 
 #: REST/methods/proxies.py:95 auths/EDirectory_enterprise/authenticator.py:45
 #: auths/RegexLdap/authenticator.py:65 auths/SimpleLDAP/authenticator.py:58
-#: services/HyperV_enterprise/HyperVProvider.py:83
-#: services/Nutanix_enterprise/NutanixProvider.py:34
-#: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:88
-#: services/OpenStack/ProviderLegacy.py:103
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
-#: services/Vmware_enterprise/vc_provider.py:38
+#: services/HyperV_enterprise/legacy/provider.py:84
+#: services/HyperV_enterprise/provider.py:116
+#: services/Nutanix_enterprise/provider.py:37 services/OpenGnsys/provider.py:96
+#: services/OpenNebula/provider.py:78 services/OpenStack/provider_legacy.py:103
+#: services/VCloud_enterprise/provider.py:33
+#: services/Vmware_enterprise/provider.py:42
 msgid "Port"
 msgstr "Port"
 
@@ -513,7 +520,7 @@ msgstr "Port de servidor proxy"
 #: auths/EDirectory_enterprise/authenticator.py:46
 #: auths/RegexLdap/authenticator.py:66 auths/SimpleLDAP/authenticator.py:59
 #: osmanagers/WindowsOsManager/windows_domain.py:74
-#: services/OpenNebula/Provider.py:89 services/OpenStack/ProviderLegacy.py:104
+#: services/OpenNebula/provider.py:79 services/OpenStack/provider_legacy.py:104
 msgid "Use SSL"
 msgstr "Utilitza SSL"
 
@@ -556,54 +563,53 @@ msgstr "Descripció"
 msgid "Generates"
 msgstr "Genera"
 
-#: REST/methods/services.py:182
+#: REST/methods/services.py:183
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Error d'entrada: {0}"
 
-#: REST/methods/services.py:205
-#| msgid "Services of {0}"
+#: REST/methods/services.py:206
 msgid "Services of {}"
 msgstr "Serveis de {}"
 
-#: REST/methods/services.py:207
+#: REST/methods/services.py:208
 msgid "Current services"
 msgstr "Serveis actuals"
 
-#: REST/methods/services.py:211
+#: REST/methods/services.py:212
 msgid "Service name"
 msgstr "Nom del servei"
 
-#: REST/methods/services.py:214 REST/methods/services.py:257
+#: REST/methods/services.py:215 REST/methods/services.py:258
 msgid "Proxy"
 msgstr "Proxy"
 
-#: REST/methods/services.py:215
+#: REST/methods/services.py:216
 msgid "Services Pools"
 msgstr "Pools de serveis"
 
-#: REST/methods/services.py:258
+#: REST/methods/services.py:259
 msgid "Proxy for services behind a firewall"
 msgstr "Proxy per serveis darrere d&#39;un servidor de seguretat"
 
-#: REST/methods/services.py:260 REST/methods/services_pools.py:224
-#: REST/methods/services_pools.py:232 REST/methods/services_pools.py:240
-#: REST/methods/services_pools.py:307 REST/methods/services_pools.py:315
+#: REST/methods/services.py:261 REST/methods/services_pools.py:231
+#: REST/methods/services_pools.py:239 REST/methods/services_pools.py:247
+#: REST/methods/services_pools.py:314 REST/methods/services_pools.py:322
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:93
 #: osmanagers/WindowsOsManager/windows_domain.py:71
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:73
 #: osmanagers/WindowsOsManager/windows_domain.py:74
-#: services/OpenGnsys/OGService.py:130
+#: services/OpenGnsys/service.py:135
 msgid "Advanced"
 msgstr "Avançat"
 
-#: REST/methods/services.py:291 REST/methods/users_groups.py:216
+#: REST/methods/services.py:292 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "With errors"
 msgstr "Amb errors"
 
-#: REST/methods/services.py:291 REST/methods/users_groups.py:216
+#: REST/methods/services.py:292 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "Ok"
 msgstr "D'acord"
@@ -612,47 +618,47 @@ msgstr "D'acord"
 msgid "Services Pool Groups"
 msgstr "Grups de pool de serveis"
 
-#: REST/methods/services_pools.py:92 REST/methods/transports.py:99
+#: REST/methods/services_pools.py:93 REST/methods/transports.py:104
 msgid "Service Pools"
 msgstr "Pools de servei"
 
-#: REST/methods/services_pools.py:98
+#: REST/methods/services_pools.py:99
 msgid "Usage"
 msgstr "Ús"
 
-#: REST/methods/services_pools.py:100
+#: REST/methods/services_pools.py:101
 msgid "Shows transports"
 msgstr "Mostra transports"
 
-#: REST/methods/services_pools.py:102
+#: REST/methods/services_pools.py:103
 msgid "Parent service"
 msgstr "Servei per a pares"
 
-#: REST/methods/services_pools.py:197
+#: REST/methods/services_pools.py:204
 msgid "Create at least a service before creating a new service pool"
 msgstr "Abans de crear un pool de servei nou cal crear al menys un servei"
 
-#: REST/methods/services_pools.py:204
+#: REST/methods/services_pools.py:211
 msgid "Base service"
 msgstr "Servei base"
 
-#: REST/methods/services_pools.py:205
+#: REST/methods/services_pools.py:212
 msgid "Service used as base of this service pool"
 msgstr "Servei utilitzat com a base d'aquest pool de servei"
 
-#: REST/methods/services_pools.py:212
+#: REST/methods/services_pools.py:219
 msgid "OS Manager"
 msgstr "Gestor de SO"
 
-#: REST/methods/services_pools.py:213
+#: REST/methods/services_pools.py:220
 msgid "OS Manager used as base of this service pool"
 msgstr "Gestor de SO utilitzat com a base d'aquest pool de servei"
 
-#: REST/methods/services_pools.py:220
+#: REST/methods/services_pools.py:227
 msgid "Allow removal by users"
 msgstr "Permetre l'eliminació als usuaris"
 
-#: REST/methods/services_pools.py:221
+#: REST/methods/services_pools.py:228
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -662,19 +668,19 @@ msgstr ""
 "compte amb això, perquè l'usuari tindrà el \"poder\" per a eliminar el seu "
 "propi servei"
 
-#: REST/methods/services_pools.py:228
+#: REST/methods/services_pools.py:235
 msgid "Allow reset by users"
 msgstr "Permet reiniciar els usuaris"
 
-#: REST/methods/services_pools.py:229
+#: REST/methods/services_pools.py:236
 msgid "If active, the user will be allowed to reset the service"
 msgstr "Si està activat, l'usuari podrà reiniciar el servei"
 
-#: REST/methods/services_pools.py:236
+#: REST/methods/services_pools.py:243
 msgid "Ignores unused"
 msgstr "Ignora els que no s'utilitzen"
 
-#: REST/methods/services_pools.py:237
+#: REST/methods/services_pools.py:244
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -682,48 +688,44 @@ msgstr ""
 "Si l'opció està habilitada, UDS no intentarà detectar ni eliminar els "
 "serveis d'usuari assignats que no s'utilitzin."
 
-#: REST/methods/services_pools.py:261
-msgid "If active, transport will be visible for users"
-msgstr "Si està actiu, el transport serà visible per als usuaris"
-
-#: REST/methods/services_pools.py:269
+#: REST/methods/services_pools.py:276
 msgid "Initial available services"
 msgstr "Serveis inicialment disponibles"
 
-#: REST/methods/services_pools.py:270
+#: REST/methods/services_pools.py:277
 msgid "Services created initially for this service pool"
 msgstr "Serveis creats inicialment per a aquest pool de serveis"
 
-#: REST/methods/services_pools.py:273 REST/methods/services_pools.py:282
-#: REST/methods/services_pools.py:291 REST/methods/services_pools.py:300
+#: REST/methods/services_pools.py:280 REST/methods/services_pools.py:289
+#: REST/methods/services_pools.py:298 REST/methods/services_pools.py:307
 msgid "Availability"
 msgstr "Disponibilitat"
 
-#: REST/methods/services_pools.py:278
+#: REST/methods/services_pools.py:285
 msgid "Services to keep in cache"
 msgstr "Serveis per a mantenir en memòria cau"
 
-#: REST/methods/services_pools.py:279
+#: REST/methods/services_pools.py:286
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
 "Serveis guardats en memòria cau per a millorar l'assignació de servei "
 "d'usuari"
 
-#: REST/methods/services_pools.py:287
+#: REST/methods/services_pools.py:294
 msgid "Services to keep in L2 cache"
 msgstr "Serveis per a mantenir en memòria cau nivell 2"
 
-#: REST/methods/services_pools.py:288
+#: REST/methods/services_pools.py:295
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr ""
 "Serveis guardats en memòria cau de nivell 2 per a millorar la generació de "
 "serveis"
 
-#: REST/methods/services_pools.py:296
+#: REST/methods/services_pools.py:303
 msgid "Maximum number of services to provide"
 msgstr "Nombre màxim de serveis a proveir"
 
-#: REST/methods/services_pools.py:297
+#: REST/methods/services_pools.py:304
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -731,27 +733,27 @@ msgstr ""
 "Nombre màxim de serveis (assignats i en memòria cau de nivell 1) que poden "
 "crear-se per a aquest servei"
 
-#: REST/methods/services_pools.py:304
+#: REST/methods/services_pools.py:311
 msgid "Show transports"
 msgstr "Mostra transports"
 
-#: REST/methods/services_pools.py:305
+#: REST/methods/services_pools.py:312
 msgid "If active, alternative transports for user will be shown"
 msgstr "Si està activat, es mostraran transports alternatius per a l'usuari"
 
-#: REST/methods/services_pools.py:312
+#: REST/methods/services_pools.py:319
 msgid "Accounting"
 msgstr "Comptabilitat"
 
-#: REST/methods/services_pools.py:313
+#: REST/methods/services_pools.py:320
 msgid "Account associated to this service pool"
 msgstr "Compte associat a aquest grup de serveis"
 
-#: REST/methods/services_pools.py:329
+#: REST/methods/services_pools.py:336
 msgid "Base service does not exist anymore"
 msgstr "Ja no existeix cap servei base"
 
-#: REST/methods/services_pools.py:360
+#: REST/methods/services_pools.py:367
 msgid "This service requires an OS Manager"
 msgstr "Aquest servei requereix un gestor de SO"
 
@@ -772,15 +774,15 @@ msgstr "Servei"
 msgid "Transports"
 msgstr "Transports"
 
-#: REST/methods/transports.py:59
+#: REST/methods/transports.py:60
 msgid "Devices"
 msgstr "Dispositius"
 
-#: REST/methods/transports.py:72
+#: REST/methods/transports.py:77
 msgid "Network access"
 msgstr "Accés a la xarxa"
 
-#: REST/methods/transports.py:73
+#: REST/methods/transports.py:78
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -789,7 +791,7 @@ msgstr ""
 "seleccionades. Si no està seleccionat, el transport es deshabilitarà per a "
 "les xarxes seleccionades."
 
-#: REST/methods/transports.py:82
+#: REST/methods/transports.py:87
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
@@ -797,11 +799,11 @@ msgstr ""
 "Xarxes associades amb aquest transport. Si no hi ha cap xarxa seleccionada, "
 "vol dir \"totes les xarxes\""
 
-#: REST/methods/transports.py:90
+#: REST/methods/transports.py:95
 msgid "Allowed Devices"
 msgstr "Dispositius permesos"
 
-#: REST/methods/transports.py:91
+#: REST/methods/transports.py:96
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
@@ -810,7 +812,7 @@ msgstr ""
 "aquest transport. Sinó, només es permetran els dispositius compatibles amb "
 "els valors seleccionats"
 
-#: REST/methods/transports.py:100
+#: REST/methods/transports.py:105
 msgid "Currently assigned services pools"
 msgstr "Pools de servei actualment assignats"
 
@@ -900,19 +902,19 @@ msgstr "Usuaris actuals"
 #: auths/ActiveDirectory_enterprise/authenticator.py:63
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
-#: services/HyperV_enterprise/HyperVProvider.py:84
-#: services/Nutanix_enterprise/NutanixProvider.py:35
-#: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
-#: services/OpenNebula/Provider.py:90 services/OpenStack/Provider.py:103
-#: services/OpenStack/ProviderLegacy.py:109
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
-#: services/Vmware_enterprise/vc_provider.py:39 services/Xen/XenProvider.py:99
+#: services/HyperV_enterprise/legacy/provider.py:85
+#: services/HyperV_enterprise/provider.py:76
+#: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
+#: services/OpenGnsys/provider.py:98 services/OpenNebula/provider.py:80
+#: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
+#: services/VCloud_enterprise/provider.py:35
+#: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
 #: transports/NX/nxtunneltransport.py:77
 #: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
 #: transports/RGS_enterprise/rgs.py:45
-#: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:73
-#: transports/X2GO/x2go_base.py:69 web/forms/LoginForm.py:65
+#: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:68
+#: transports/X2GO/x2go_base.py:69 web/forms/LoginForm.py:42
 msgid "Username"
 msgstr "Nom d'usuari"
 
@@ -1000,7 +1002,7 @@ msgstr "Mètode no trobat a {}: {}"
 msgid "Item not found"
 msgstr "Element no trobat"
 
-#: REST/model.py:292 web/util/authentication.py:112 web/util/errors.py:77
+#: REST/model.py:292 web/util/authentication.py:112 web/util/errors.py:76
 msgid "Access denied"
 msgstr "Accés denegat"
 
@@ -1023,6 +1025,7 @@ msgstr ""
 "Si està seleccionat, s'utilitzarà una connexió SSL amb el Directori Actiu"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:43
+#: services/VCloud_enterprise/provider.py:38
 msgid "Compatibility"
 msgstr "Compatibilitat"
 
@@ -1048,20 +1051,19 @@ msgstr ""
 #: core/auths/authenticator.py:144
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 #: osmanagers/WindowsOsManager/windows_random.py:66
-#: services/HyperV_enterprise/HyperVProvider.py:85
-#: services/Nutanix_enterprise/NutanixProvider.py:36
-#: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
-#: services/OpenNebula/Provider.py:91 services/OpenStack/Provider.py:104
-#: services/OpenStack/ProviderLegacy.py:110
-#: services/Sample/SampleService.py:131
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:31
-#: services/Vmware_enterprise/vc_provider.py:40 services/Xen/XenProvider.py:100
+#: services/HyperV_enterprise/legacy/provider.py:86
+#: services/HyperV_enterprise/provider.py:77
+#: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
+#: services/OpenGnsys/provider.py:99 services/OpenNebula/provider.py:81
+#: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
+#: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
+#: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
 #: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
 #: transports/RGS_enterprise/rgs.py:46
-#: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:79
-#: web/forms/LoginForm.py:66
+#: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:74
+#: web/forms/LoginForm.py:43
 msgid "Password"
 msgstr "Contrasenya"
 
@@ -1074,14 +1076,14 @@ msgstr "Contrasenya de l'usuari LDAP"
 #: auths/ActiveDirectory_enterprise/authenticator.py:48
 #: auths/EDirectory_enterprise/authenticator.py:49
 #: auths/RegexLdap/authenticator.py:69 auths/SimpleLDAP/authenticator.py:62
-#: services/Azure_enterprise/azure_provider.py:48
-#: services/HyperV_enterprise/HyperVProvider.py:90
-#: services/Nutanix_enterprise/NutanixProvider.py:40
-#: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
-#: services/OpenNebula/Provider.py:96 services/OpenStack/Provider.py:109
-#: services/OpenStack/ProviderLegacy.py:115
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
-#: services/Vmware_enterprise/vc_provider.py:46
+#: services/Azure_enterprise/provider.py:48
+#: services/HyperV_enterprise/legacy/provider.py:93
+#: services/HyperV_enterprise/provider.py:134
+#: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
+#: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
+#: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
+#: services/VCloud_enterprise/provider.py:54
+#: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "Temps d'espera"
 
@@ -1168,32 +1170,32 @@ msgid "Azure Active Directory Authenticator"
 msgstr "Autenticador d'Azure Directori Actiu"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/azure_provider.py:40
+#: services/Azure_enterprise/provider.py:40
 msgid "Tenant ID"
 msgstr "Tenant ID"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/azure_provider.py:40
+#: services/Azure_enterprise/provider.py:40
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "Obtingut d'Azure Directori Actiu - Propietats - ID de directori"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/azure_provider.py:41
+#: services/Azure_enterprise/provider.py:41
 msgid "Client ID"
 msgstr "ID de client"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/azure_provider.py:41
+#: services/Azure_enterprise/provider.py:41
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr "Obtingut amb l'App creada amb Azure per a UDS Enterprise"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/azure_provider.py:42
+#: services/Azure_enterprise/provider.py:42
 msgid "Client Secret"
 msgstr "Clau de Client"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/azure_provider.py:42
+#: services/Azure_enterprise/provider.py:42
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr "Obtinguts amb l'App creada amb Azure per a UDS Enterprise - Claus"
 
@@ -1256,7 +1258,6 @@ msgid "Authenticate against eDirectory"
 msgstr "Autenticar sobre eDirectory"
 
 #: auths/EDirectory_enterprise/authenticator.py:262
-#| msgid "Connection error: "
 msgid "Edirectory connection error: {}"
 msgstr "Error de connexió de direcció: {}"
 
@@ -1342,11 +1343,11 @@ msgstr "DNS invers"
 msgid "If checked, the host will be reversed dns"
 msgstr "Si està seleccionat, el host serà DNS invers"
 
-#: auths/InternalDB/authenticator.py:132
+#: auths/InternalDB/authenticator.py:134
 msgid "Internal structures seems ok"
 msgstr "Les estructures internes semblen correctes"
 
-#: auths/InternalDB/authenticator.py:135
+#: auths/InternalDB/authenticator.py:137
 msgid "All seems fine in the authenticator."
 msgstr "Tot sembla correcte a l'autenticador"
 
@@ -1396,8 +1397,6 @@ msgid "User Name Attr"
 msgstr "Atribut Nom d'usuari"
 
 #: auths/RegexLdap/authenticator.py:74
-#| msgid ""
-#| "Attributes that contains the user name (list of comma separated values)"
 msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
@@ -1410,8 +1409,6 @@ msgid "Group Name Attr"
 msgstr "Atribut Nom de grup"
 
 #: auths/RegexLdap/authenticator.py:75
-#| msgid ""
-#| "Attributes that contains the user name (list of comma separated values)"
 msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
@@ -1479,7 +1476,7 @@ msgstr ""
 msgid "Certificates"
 msgstr "Certificats"
 
-#: auths/SAML_enterprise/saml.py:132 transports/SPICE/spice_base.py:87
+#: auths/SAML_enterprise/saml.py:132 transports/SPICE/spice_base.py:82
 msgid "Certificate"
 msgstr "Certificat"
 
@@ -1606,7 +1603,6 @@ msgid "Groups"
 msgstr "Grups"
 
 #: auths/Sample/SampleAuth.py:128
-#| msgid "We need more than two items!"
 msgid "We need more than two groups!"
 msgstr "Necessitem més de dos grups!"
 
@@ -1681,11 +1677,11 @@ msgstr ""
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "No es pot localitzar cap grup amb l’atribut de membres especificat"
 
-#: core/auths/auth.py:86
+#: core/auths/auth.py:88
 msgid "System Administrator"
 msgstr "Administrador del sistema"
 
-#: core/auths/auth.py:125
+#: core/auths/auth.py:123
 msgid "Forbidden"
 msgstr "Prohibit"
 
@@ -1697,52 +1693,50 @@ msgstr "Autenticador base"
 msgid "Group name"
 msgstr "Nom de grup"
 
-#: core/managers/publication.py:226
+#: core/managers/publication.py:229
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Ja s'està publicant. Espereu que la publicació anterior acabi i torneu-ho a "
 "provar"
 
-#: core/managers/publication.py:229
+#: core/managers/publication.py:232
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr "El servei està en mode manteniment i no es permeten publicacions noves"
 
-#: core/managers/publication.py:262
+#: core/managers/publication.py:265
 msgid "Can't cancel non running publication"
 msgstr "No es pot cancel·lar una publicació que no s'està executant"
 
-#: core/managers/publication.py:285
+#: core/managers/publication.py:288
 msgid "Can't unpublish non usable publication"
 msgstr "No es pot anul·lar una publicació que no es pot utilitzar"
 
-#: core/managers/publication.py:288
+#: core/managers/publication.py:291
 msgid "Can't unpublish publications with services in process"
 msgstr "No es poden anul·lar publicacions amb serveis en procés"
 
-#: core/managers/user_service.py:240
+#: core/managers/user_service.py:275
 msgid "Can't remove a non active element"
 msgstr "No es pot eliminar un element no actiu"
 
-#: core/managers/user_service.py:261
-#| msgid "Can't remove nor cancel {0} cause its states don't allow it"
+#: core/managers/user_service.py:296
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "No es pot eliminar ni cancel·lar {} perquè el seu estat no ho permeti"
 
-#: core/managers/user_service.py:283
-#| msgid "The requested service is not available"
+#: core/managers/user_service.py:318
 msgid "The requested service is restrained"
 msgstr "Es restringeix el servei sol·licitat"
 
-#: core/managers/user_service.py:638
+#: core/managers/user_service.py:556
 msgid "The requested service is not available"
 msgstr "El servei sol·licitat no està disponible"
 
-#: core/managers/user_service.py:667
+#: core/managers/user_service.py:585
 msgid "The requested transport {} is not valid for {}"
 msgstr "El transport sol·licitat {} no és vàlid per a {}"
 
-#: core/managers/user_service.py:790
+#: core/managers/user_service.py:709
 msgid "The service is not accessible from this device"
 msgstr "El servei no és accessible des d&#39;aquest dispositiu"
 
@@ -1786,16 +1780,15 @@ msgstr "de"
 msgid "Printed in {now:%Y, %b %d} at {now:%H:%M}"
 msgstr "S&#39;ha imprès en {ara:% Y,% b% d} a {ara:% H:% M}"
 
-#: core/services/service.py:100 core/services/service.py:112
+#: core/services/service.py:101 core/services/service.py:113
 msgid "Base Service"
 msgstr "Servei base"
 
-#: core/services/service.py:136 core/services/service.py:145
+#: core/services/service.py:137 core/services/service.py:146
 #: models/permissions.py:72 models/permissions.py:76
-#: services/Azure_enterprise/azure_helpers.py:97
-#: services/OpenStack/helpers.py:60 services/Sample/SampleService.py:92
-#: services/Sample/SampleService.py:98
-#: services/TestService_enterprise/TestService.py:29
+#: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
+#: services/Sample/service.py:98 services/Sample/service.py:104
+#: services/TestService_enterprise/service.py:28
 msgid "None"
 msgstr "Cap"
 
@@ -1924,7 +1917,6 @@ msgid "The basename is not a valid for a hostname"
 msgstr "El nom de base no és vàlid per a un nom d&#39;amfitrió"
 
 #: core/util/tools.py:163
-#| msgid "The length of basename plus length must not be greater than 15"
 msgid "The length of basename plus length must be greater than 0"
 msgstr "La longitud del nom basic i la longitud han de ser més grans que 0"
 
@@ -1963,55 +1955,55 @@ msgstr ""
 "Rang mac no vàlid. El rang mac ha d'estar en format XX:XX:XX:XX:XX:XX-XX:XX:"
 "XX:XX:XX:XX"
 
-#: dispatchers/wyse_enterprise/views.py:117
+#: dispatchers/wyse_enterprise/views.py:118
 msgid "There are no authenticators available for login"
 msgstr "No hi ha autenticadors disponibles per a iniciar sessió"
 
-#: dispatchers/wyse_enterprise/views.py:130
+#: dispatchers/wyse_enterprise/views.py:131
 #, python-brace-format
 msgid "The authenticator {0} is not usable"
 msgstr "L'autenticador {0} no es pot utilitzar"
 
-#: dispatchers/wyse_enterprise/views.py:137
+#: dispatchers/wyse_enterprise/views.py:138
 msgid "Invalid credentials"
 msgstr "Credencials no vàlides"
 
-#: dispatchers/wyse_enterprise/views.py:144
+#: dispatchers/wyse_enterprise/views.py:145
 #, python-brace-format
 msgid "The domain {0} does not exists"
 msgstr "El domini {0} no existeix"
 
-#: dispatchers/wyse_enterprise/views.py:208
+#: dispatchers/wyse_enterprise/views.py:209
 msgid "No services available"
 msgstr "No hi ha serveis disponibles"
 
-#: dispatchers/wyse_enterprise/views.py:224
-#: dispatchers/wyse_enterprise/views.py:304
+#: dispatchers/wyse_enterprise/views.py:225
+#: dispatchers/wyse_enterprise/views.py:308
 msgid "Invalid session"
 msgstr "Sessió no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:228
-#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:229
+#: dispatchers/wyse_enterprise/views.py:312
 msgid "Invalid authorization"
 msgstr "Autorització no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:239
-#: dispatchers/wyse_enterprise/views.py:314
+#: dispatchers/wyse_enterprise/views.py:240
+#: dispatchers/wyse_enterprise/views.py:318
 msgid "Invalid request"
 msgstr "Petició no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:242
-#: dispatchers/wyse_enterprise/views.py:317
+#: dispatchers/wyse_enterprise/views.py:243
+#: dispatchers/wyse_enterprise/views.py:321
 msgid "Invalid credentials used"
 msgstr "Credencials utilitzades no vàlides"
 
-#: dispatchers/wyse_enterprise/views.py:266 web/util/errors.py:75
+#: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
 msgid "Transport not found"
 msgstr "Transport no trobat"
 
-#: dispatchers/wyse_enterprise/views.py:270
-#: dispatchers/wyse_enterprise/views.py:276
-#: dispatchers/wyse_enterprise/views.py:281
+#: dispatchers/wyse_enterprise/views.py:274
+#: dispatchers/wyse_enterprise/views.py:280
+#: dispatchers/wyse_enterprise/views.py:285
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "Servei no disponible en aquest moment. Si us plau, proveu-ho més tard."
 
@@ -2074,6 +2066,16 @@ msgstr "Afegeix un grup"
 #: models/calendar_action.py:67
 msgid "Remove a group"
 msgstr "Suprimeix un grup"
+
+#: models/calendar_action.py:68
+#| msgid "Ignores unused"
+msgid "Sets the ignore unused"
+msgstr "Defineix la ignoració no utilitzada"
+
+#: models/calendar_action.py:68
+#| msgid "Ignores unused"
+msgid "Ignore assigned and unused"
+msgstr "Ignoreu assignats i no utilitzats"
 
 #: models/calendar_rule.py:53
 msgid "Yearly"
@@ -2211,28 +2213,28 @@ msgstr ""
 "Temps màxim d'inactivitat (en segons) abans que una sessió es tanqui "
 "automàticament (<=0 vol dir que no hi ha temps màxim d'inactivitat)"
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:50
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:52
 msgid "Linux Random Password OS Manager"
 msgstr "Gestor de SO per a Linux amb contrasenya aleatòria"
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:52
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:54
 msgid "Os Manager to control linux machines, with user password set randomly."
 msgstr ""
 "Gestor de SO per a controlar màquines Linux, amb contrasenya d'usuari "
 "assignada de manera aleatòria."
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:56
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:58
 #: osmanagers/WindowsOsManager/windows_domain.py:68
 #: osmanagers/WindowsOsManager/windows_random.py:65
 msgid "Account"
 msgstr "Compte"
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:56
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:58
 #: osmanagers/WindowsOsManager/windows_random.py:65
 msgid "User account to change password"
 msgstr "Compte d'usuari al qual cal canviar la contrasenya"
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:66
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:68
 #: osmanagers/WindowsOsManager/windows_random.py:76
 msgid "Must provide an user account!!!"
 msgstr "Cal indicar un compte d'usuari!!!"
@@ -2300,7 +2302,7 @@ msgid "Os Manager to control windows machines with domain."
 msgstr "Gestor de SO per a controlar màquines Windows amb domini"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:67
-#: services/OpenStack/Provider.py:102 services/OpenStack/ProviderLegacy.py:108
+#: services/OpenStack/provider.py:101 services/OpenStack/provider_legacy.py:108
 #: transports/HTML5RDP/html5rdp.py:78
 #: transports/HTML5RDS_enterprise/html5rds.py:80
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:62
@@ -2326,7 +2328,7 @@ msgid "Password of the account"
 msgstr "Contrasenya del compte"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:70
-#: services/OpenGnsys/OGService.py:97
+#: services/OpenGnsys/service.py:102
 msgid "OU"
 msgstr "UO"
 
@@ -2386,50 +2388,49 @@ msgstr "El format DOM\\USUARI no està permès!"
 msgid "Must provide a password for the account!"
 msgstr "Cal indicar una contrasenya per al compte!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:269
-#: osmanagers/WindowsOsManager/windows_domain.py:279
-#| msgid "Check error: {0}"
+#: osmanagers/WindowsOsManager/windows_domain.py:271
+#: osmanagers/WindowsOsManager/windows_domain.py:281
 msgid "Check error: {}"
 msgstr "Error de comprovació: {}"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:271
+#: osmanagers/WindowsOsManager/windows_domain.py:273
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr ""
 "No s'han trobat els paràmetres del servidor (_ldap._tcp. {0} no es pot "
 "resoldre)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:284
+#: osmanagers/WindowsOsManager/windows_domain.py:286
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
 msgstr ""
 "Comproveu l'error: no s'ha trobat el grup {0} (utilitzeu \"cn\" per a "
 "localitzar-lo)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:286
+#: osmanagers/WindowsOsManager/windows_domain.py:288
 msgid "Server check was successful"
 msgstr "Servidor verificat amb èxit"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:299
+#: osmanagers/WindowsOsManager/windows_domain.py:300
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
 msgstr "No es pot accedir al Directori Actiu utilitzant LDAP ({0})"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:311
+#: osmanagers/WindowsOsManager/windows_domain.py:312
 #, python-brace-format
 msgid "The default path {0} for computers was not found!!!"
 msgstr "No s'ha trobat la ruta per defecte {0} dels ordinadors!!!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:312
+#: osmanagers/WindowsOsManager/windows_domain.py:313
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
 msgstr "No s'ha trobat la ruta de l'UO {0}!!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:314
+#: osmanagers/WindowsOsManager/windows_domain.py:315
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr "No s'han verificat els paràmetres (_ldap._tcp. {0} no es pot resoldre)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:319
+#: osmanagers/WindowsOsManager/windows_domain.py:320
 msgid "All parameters seem to work fine."
 msgstr "Tots els paràmetres semblen funcionar correctament."
 
@@ -2456,7 +2457,7 @@ msgstr "Cal indicar una contrasenya per al compte!"
 msgid "Lists"
 msgstr "Llistes"
 
-#: reports/lists/users.py:57 web/forms/LoginForm.py:67
+#: reports/lists/users.py:57 web/forms/LoginForm.py:44
 msgid "Authenticator"
 msgstr "Autenticador"
 
@@ -2700,219 +2701,217 @@ msgstr "Accés d'usuaris a UDS"
 msgid "UDS Report for users access"
 msgstr "Informe UDS per a l&#39;accés dels usuaris"
 
-#: services/Azure_enterprise/azure_provider.py:43
+#: services/Azure_enterprise/provider.py:43
 msgid "Subscription ID"
 msgstr "ID de subscripció"
 
-#: services/Azure_enterprise/azure_provider.py:43
+#: services/Azure_enterprise/provider.py:43
 msgid "Obtained from subscriptions"
 msgstr "Obtingut de les subscripcions"
 
-#: services/Azure_enterprise/azure_provider.py:46
-#: services/HyperV_enterprise/HyperVProvider.py:87
-#: services/Nutanix_enterprise/NutanixProvider.py:38
-#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:93 services/OpenStack/Provider.py:106
-#: services/OpenStack/ProviderLegacy.py:112
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/vc_provider.py:43
-#: services/Vmware_enterprise/vc_provider.py:98 services/Xen/XenProvider.py:102
+#: services/Azure_enterprise/provider.py:46
+#: services/HyperV_enterprise/legacy/provider.py:88
+#: services/HyperV_enterprise/provider.py:81
+#: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
+#: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
+#: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
+#: services/VCloud_enterprise/provider.py:51
+#: services/Vmware_enterprise/provider.py:47
+#: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:98
 msgid "Creation concurrency"
 msgstr "Concurrència de creació"
 
-#: services/Azure_enterprise/azure_provider.py:46
-#: services/HyperV_enterprise/HyperVProvider.py:87
-#: services/Nutanix_enterprise/NutanixProvider.py:38
-#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
-#: services/OpenNebula/Provider.py:93 services/OpenStack/Provider.py:106
-#: services/OpenStack/ProviderLegacy.py:112
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/vc_provider.py:43 services/Xen/XenProvider.py:102
+#: services/Azure_enterprise/provider.py:46
+#: services/HyperV_enterprise/legacy/provider.py:89
+#: services/HyperV_enterprise/provider.py:86
+#: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
+#: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
+#: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
+#: services/VCloud_enterprise/provider.py:51
+#: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Nombre màxim de màquines virtuals creant-se simultàniament "
 
-#: services/Azure_enterprise/azure_provider.py:47
-#: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:39
-#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:94 services/OpenStack/Provider.py:107
-#: services/OpenStack/ProviderLegacy.py:113
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
-#: services/Vmware_enterprise/vc_provider.py:44
-#: services/Vmware_enterprise/vc_provider.py:99 services/Xen/XenProvider.py:103
+#: services/Azure_enterprise/provider.py:47
+#: services/HyperV_enterprise/legacy/provider.py:90
+#: services/HyperV_enterprise/provider.py:93
+#: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
+#: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
+#: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
+#: services/VCloud_enterprise/provider.py:52
+#: services/Vmware_enterprise/provider.py:48
+#: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:99
 msgid "Removal concurrency"
 msgstr "Concurrència d'eliminació"
 
-#: services/Azure_enterprise/azure_provider.py:47
-#: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:39
-#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
-#: services/OpenNebula/Provider.py:94 services/OpenStack/Provider.py:107
-#: services/OpenStack/ProviderLegacy.py:113
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
-#: services/Vmware_enterprise/vc_provider.py:44 services/Xen/XenProvider.py:103
+#: services/Azure_enterprise/provider.py:47
+#: services/HyperV_enterprise/legacy/provider.py:91
+#: services/HyperV_enterprise/provider.py:98
+#: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
+#: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
+#: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
+#: services/VCloud_enterprise/provider.py:52
+#: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Nombre màxim de màquines virtuals eliminant-se simultàniament "
 
-#: services/Azure_enterprise/azure_provider.py:48
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
+#: services/Azure_enterprise/provider.py:48
+#: services/VCloud_enterprise/provider.py:54
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "Temps d'espera de la connexió a vCloud en segons"
 
-#: services/Azure_enterprise/azure_provider.py:53
+#: services/Azure_enterprise/provider.py:53
 msgid "Azure Platform Provider"
 msgstr "Proveïdor de la Plataforma Azure"
 
-#: services/Azure_enterprise/azure_provider.py:55
+#: services/Azure_enterprise/provider.py:55
 msgid "Provides connection to Azure Platform"
 msgstr "Proporciona connexió a la Plataforma Azure"
 
-#: services/Azure_enterprise/azure_provider.py:99
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:80
+#: services/Azure_enterprise/provider.py:99
+#: services/VCloud_enterprise/provider.py:98
 msgid "Connection parameters seems correct"
 msgstr "Els paràmetres de connexió semblen correctes"
 
-#: services/Azure_enterprise/azure_provider.py:275
+#: services/Azure_enterprise/provider.py:275
 msgid "Azure Provider: "
 msgstr "Proveïdor Azure:"
 
-#: services/Azure_enterprise/azure_service.py:35
+#: services/Azure_enterprise/service.py:34
 msgid "Azure Clone Service"
 msgstr "Servei de Clons d'Azure"
 
-#: services/Azure_enterprise/azure_service.py:37
+#: services/Azure_enterprise/service.py:36
 msgid "This service provides access to Azure VMs based VDI"
 msgstr ""
 "Aquest servei proporciona accés a VDI basat en màquines virtuals d'Azure"
 
-#: services/Azure_enterprise/azure_service.py:43
+#: services/Azure_enterprise/service.py:42
 msgid "Number of desired VMs to keep running waiting for an user"
 msgstr ""
 "Nombre desitjat de màquines virtuals que es mantenen en execució esperant un "
 "usuari"
 
-#: services/Azure_enterprise/azure_service.py:45
+#: services/Azure_enterprise/service.py:44
 msgid "Number of desired VMs to keep suspended waiting for use"
 msgstr ""
 "Nombre desitjat de màquines virtuals que es mantenen en suspens esperant per "
 "a utilitzar-se"
 
-#: services/Azure_enterprise/azure_service.py:59
+#: services/Azure_enterprise/service.py:58
 msgid "Resource Group"
 msgstr "Grup de Recursos"
 
-#: services/Azure_enterprise/azure_service.py:60
+#: services/Azure_enterprise/service.py:59
 msgid "Resource group container of this VDI service"
 msgstr "Contenidor de grups de recursos d'aquest servei VDI"
 
-#: services/Azure_enterprise/azure_service.py:71
+#: services/Azure_enterprise/service.py:70
 msgid "Virtual Machine"
 msgstr "Màquina Virtual"
 
-#: services/Azure_enterprise/azure_service.py:72
+#: services/Azure_enterprise/service.py:71
 msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
 msgstr ""
 "Màquina virtual base. (S'ocultaran les màquines virtuals iniciades amb UDS)"
 
-#: services/Azure_enterprise/azure_service.py:84
+#: services/Azure_enterprise/service.py:83
 msgid "Machine size"
 msgstr "Mida de la màquina"
 
-#: services/Azure_enterprise/azure_service.py:85
+#: services/Azure_enterprise/service.py:84
 msgid "Size for machines created from this service."
 msgstr "Mida de les màquines creades des d'aquest servei"
 
-#: services/Azure_enterprise/azure_service.py:90
-#: services/HyperV_enterprise/HyperVLinkedService.py:150
-#: services/Nutanix_enterprise/NutanixService.py:73
-#: services/OVirt/OVirtLinkedService.py:192
-#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:138
-#: services/VCloud_enterprise/VCloudCloneService.py:84
-#: services/Vmware_enterprise/vc_service_linked.py:124
-#: services/Xen/XenLinkedService.py:160
+#: services/Azure_enterprise/service.py:89
+#: services/HyperV_enterprise/legacy/service.py:127
+#: services/HyperV_enterprise/service.py:128
+#: services/Nutanix_enterprise/service.py:82 services/OVirt/service.py:198
+#: services/OpenNebula/service.py:118 services/OpenStack/service.py:140
+#: services/VCloud_enterprise/service.py:87
+#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:164
 msgid "Machine Names"
 msgstr "Noms de màquina"
 
-#: services/Azure_enterprise/azure_service.py:90
-#: services/HyperV_enterprise/HyperVLinkedService.py:153
-#: services/Nutanix_enterprise/NutanixService.py:76
-#: services/OVirt/OVirtLinkedService.py:195
-#: services/OpenNebula/LiveService.py:115 services/OpenStack/LiveService.py:141
-#: services/VCloud_enterprise/VCloudCloneService.py:84
-#: services/Vmware_enterprise/vc_service_linked.py:124
-#: services/Xen/XenLinkedService.py:163
+#: services/Azure_enterprise/service.py:89
+#: services/HyperV_enterprise/legacy/service.py:130
+#: services/HyperV_enterprise/service.py:131
+#: services/Nutanix_enterprise/service.py:85 services/OVirt/service.py:201
+#: services/OpenNebula/service.py:121 services/OpenStack/service.py:143
+#: services/VCloud_enterprise/service.py:87
+#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:167
 msgid "Base name for clones from this machine"
 msgstr "Nom base per als clons d'aquesta màquina"
 
-#: services/Azure_enterprise/azure_service.py:91
-#: services/HyperV_enterprise/HyperVLinkedService.py:160
-#: services/Nutanix_enterprise/NutanixService.py:82
-#: services/OVirt/OVirtLinkedService.py:202
-#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:148
-#: services/VCloud_enterprise/VCloudCloneService.py:85
-#: services/Vmware_enterprise/vc_service_linked.py:125
-#: services/Xen/XenLinkedService.py:170
+#: services/Azure_enterprise/service.py:90
+#: services/HyperV_enterprise/legacy/service.py:137
+#: services/HyperV_enterprise/service.py:138
+#: services/Nutanix_enterprise/service.py:91 services/OVirt/service.py:208
+#: services/OpenNebula/service.py:128 services/OpenStack/service.py:150
+#: services/VCloud_enterprise/service.py:88
+#: services/Vmware_enterprise/service_linked.py:125 services/Xen/service.py:174
 msgid "Name Length"
 msgstr "Llargada del nom"
 
-#: services/Azure_enterprise/azure_service.py:92
-#: services/HyperV_enterprise/HyperVLinkedService.py:163
-#: services/Nutanix_enterprise/NutanixService.py:85
-#: services/OVirt/OVirtLinkedService.py:205
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:151
-#: services/VCloud_enterprise/VCloudCloneService.py:86
-#: services/Vmware_enterprise/vc_service_linked.py:126
+#: services/Azure_enterprise/service.py:91
+#: services/HyperV_enterprise/legacy/service.py:140
+#: services/HyperV_enterprise/service.py:141
+#: services/Nutanix_enterprise/service.py:94 services/OVirt/service.py:211
+#: services/OpenNebula/service.py:131 services/OpenStack/service.py:153
+#: services/VCloud_enterprise/service.py:89
+#: services/Vmware_enterprise/service_linked.py:126
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr "Mida de la part numèrica dels noms d'aquestes màquines (entre 3 i 6)"
 
-#: services/Azure_enterprise/azure_service.py:96
-#: services/HyperV_enterprise/HyperVLinkedService.py:130
-#: services/Nutanix_enterprise/NutanixService.py:66
-#: services/OpenStack/LiveService.py:132 services/Xen/XenLinkedService.py:130
+#: services/Azure_enterprise/service.py:95
+#: services/HyperV_enterprise/legacy/service.py:107
+#: services/HyperV_enterprise/service.py:108
+#: services/Nutanix_enterprise/service.py:75 services/OpenStack/service.py:134
+#: services/Xen/service.py:134
 msgid "Network"
 msgstr "Xarxa"
 
-#: services/Azure_enterprise/azure_service.py:97
+#: services/Azure_enterprise/service.py:96
 msgid "Network where the clones will be attached"
 msgstr "Xarxa on s'associaran els clons"
 
-#: services/Azure_enterprise/azure_service.py:110
+#: services/Azure_enterprise/service.py:109
 msgid "Subnet"
 msgstr "Subxarxa"
 
-#: services/Azure_enterprise/azure_service.py:111
+#: services/Azure_enterprise/service.py:110
 msgid "Subnet where the clones will be attached"
 msgstr "Subxarxa on s'associaran els clons"
 
-#: services/Azure_enterprise/azure_service.py:119
+#: services/Azure_enterprise/service.py:118
 msgid "Security Group"
 msgstr "Grup de seguretat"
 
-#: services/Azure_enterprise/azure_service.py:120
+#: services/Azure_enterprise/service.py:119
 msgid "Security group where to attach the virtual machine"
 msgstr "Grup de seguretat on associar la màquina virtual"
 
-#: services/Azure_enterprise/azure_service.py:128
+#: services/Azure_enterprise/service.py:127
 msgid "Caching policy"
 msgstr "Directiva de memòria cau"
 
-#: services/Azure_enterprise/azure_service.py:129
+#: services/Azure_enterprise/service.py:128
 msgid "Disk Caching policy"
 msgstr "Política de memòria cau de discs"
 
-#: services/Azure_enterprise/azure_service.py:137
+#: services/Azure_enterprise/service.py:136
 msgid "Pricing tier"
 msgstr "Nivell de preus"
 
-#: services/Azure_enterprise/azure_service.py:138
+#: services/Azure_enterprise/service.py:137
 msgid "SKU (pricing tier)"
 msgstr "SKU (nivell de preus)"
 
-#: services/Azure_enterprise/azure_service.py:146
+#: services/Azure_enterprise/service.py:145
 msgid "Accelerated network"
 msgstr "Xarxa accelerada"
 
-#: services/Azure_enterprise/azure_service.py:147
+#: services/Azure_enterprise/service.py:146
 msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
@@ -2921,236 +2920,313 @@ msgstr ""
 "Assegureu-vos que la vostra màquina i la mida de la màquina suporten aquesta "
 "opció abans d'activar-la."
 
-#: services/Azure_enterprise/azure_service.py:161
+#: services/Azure_enterprise/service.py:160
 msgid "You must select a network for the service"
 msgstr "Heu de seleccionar una xarxa per a aquest servei"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:57
+#: services/HyperV_enterprise/legacy/provider.py:64
+#| msgid "OpenStack LEGACY Platform Provider"
+msgid "HyperV LEGACY Platform Provider"
+msgstr "Proveïdor de plataformes HyperV LEGACY"
+
+#: services/HyperV_enterprise/legacy/provider.py:68
+msgid ""
+"HyperV platform service provider (legacy, recommended upgraded to new hyperv "
+"platform provider)"
+msgstr ""
+"Proveïdor de serveis de plataforma HyperV (heretat, recomanat actualitzat al "
+"nou proveïdor de plataformes hiperv)"
+
+#: services/HyperV_enterprise/legacy/provider.py:83
+msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
+msgstr ""
+"Nom de host o IP del servidor HyperV (cal habilitar primer l'accés WSMAN)"
+
+#: services/HyperV_enterprise/legacy/provider.py:84
+msgid "WSMan Port (normally 5985)"
+msgstr "Port WSMAN (generalment el 5985)"
+
+#: services/HyperV_enterprise/legacy/provider.py:85
+#: services/HyperV_enterprise/provider.py:76
+msgid "User with valid privileges on HyperV Server"
+msgstr "Usuari amb privilegis vàlids sobre el servidor HyperV"
+
+#: services/HyperV_enterprise/legacy/provider.py:86
+#: services/HyperV_enterprise/provider.py:77
+msgid "Password of the user of HyperV"
+msgstr "Contrasenya de l'usuari d'HyperV"
+
+#: services/HyperV_enterprise/legacy/provider.py:94
+msgid "Timeout in seconds of connection to HyperV"
+msgstr "Temps d'espera de la connexió a HyperV en segons"
+
+#: services/HyperV_enterprise/legacy/provider.py:95
+#: services/HyperV_enterprise/provider.py:105
+#: services/Nutanix_enterprise/provider.py:45 services/OVirt/provider.py:117
+#: services/Vmware_enterprise/provider.py:51 services/Xen/provider.py:101
+msgid "Macs range"
+msgstr "Rang d'adreces mac"
+
+#: services/HyperV_enterprise/legacy/provider.py:96
+#: services/HyperV_enterprise/provider.py:109 services/Xen/provider.py:102
+msgid "Range of valid macs for created machines"
+msgstr "Rang d'adreces mac vàlides per a màquines creades"
+
+#: services/HyperV_enterprise/legacy/provider.py:267
+#: services/Xen/provider.py:399
+msgid "Connection test successful"
+msgstr "La prova de connexió s'ha realitzat correctament"
+
+#: services/HyperV_enterprise/legacy/provider.py:268
+#: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
+#: services/Vmware_enterprise/provider.py:167
+msgid "Connection failed. Check connection params"
+msgstr "La connexió ha fallat. Verifiqueu els paràmetres de connexió"
+
+#: services/HyperV_enterprise/legacy/publication.py:96
+#: services/HyperV_enterprise/publication.py:98
+#: services/OVirt/publication.py:99 services/Xen/publication.py:80
+#, python-brace-format
+msgid "UDS pub for {0} at {1}"
+msgstr "Publicació d'UDS per a {0} a {1}"
+
+#: services/HyperV_enterprise/legacy/service.py:57
+#: services/HyperV_enterprise/service.py:57
 msgid "HyperV Linked Clone (Experimental)"
 msgstr "HyperV Linked Clone (experimental)"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:61
+#: services/HyperV_enterprise/legacy/service.py:59
+#: services/HyperV_enterprise/service.py:59
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr ""
 "Serveis HyperV basats en plantilles i discs diferencials (experimental)"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:78
-#: services/OVirt/OVirtLinkedService.py:78
-#: services/TestService_enterprise/TestService.py:27
-#: services/Xen/XenLinkedService.py:78
+#: services/HyperV_enterprise/legacy/service.py:66
+#: services/HyperV_enterprise/service.py:66 services/OVirt/service.py:84
+#: services/TestService_enterprise/service.py:26 services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
 "Nombre desitjat de màquines que es mantenen en execució esperant un usuari"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:84
-#: services/OVirt/OVirtLinkedService.py:84 services/OpenStack/LiveService.py:86
-#: services/Vmware_enterprise/vc_service_full.py:43
-#: services/Vmware_enterprise/vc_service_linked.py:47
-#: services/Xen/XenLinkedService.py:85
+#: services/HyperV_enterprise/legacy/service.py:68
+#: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:90
+#: services/OpenStack/service.py:88
+#: services/Vmware_enterprise/service_full.py:40
+#: services/Vmware_enterprise/service_linked.py:47 services/Xen/service.py:89
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr ""
 " Nombre desitjat de màquines que es mantenen en suspens esperant per a "
 "utilitzar-se"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:104
+#: services/HyperV_enterprise/legacy/service.py:81
+#: services/HyperV_enterprise/service.py:82
 msgid "Datastore Drives"
 msgstr "Unitats d'emmagatzematge de dades"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:108
+#: services/HyperV_enterprise/legacy/service.py:85
+#: services/HyperV_enterprise/service.py:86
 msgid "Datastores where to put incrementals & publications"
 msgstr "Unitats d'emmagatzematge on guardar incrementals i publicacions"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:114
-#: services/OVirt/OVirtLinkedService.py:125
-#: services/Vmware_enterprise/vc_service_linked.py:130
-#: services/Xen/XenLinkedService.py:114
+#: services/HyperV_enterprise/legacy/service.py:91
+#: services/HyperV_enterprise/service.py:92 services/OVirt/service.py:131
+#: services/Vmware_enterprise/service_linked.py:130 services/Xen/service.py:118
 msgid "Reserved Space"
 msgstr "Espai reservat"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:117
-#: services/OVirt/OVirtLinkedService.py:129
-#: services/Vmware_enterprise/vc_service_linked.py:133
-#: services/Xen/XenLinkedService.py:117
+#: services/HyperV_enterprise/legacy/service.py:94
+#: services/HyperV_enterprise/service.py:95 services/OVirt/service.py:135
+#: services/Vmware_enterprise/service_linked.py:133 services/Xen/service.py:121
 msgid "Minimal free space in GB"
 msgstr "Espai lliure mínim en GB"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:122
-#: services/Nutanix_enterprise/NutanixService.py:46
-#: services/OVirt/OVirtLinkedService.py:134
-#: services/Vmware_enterprise/vc_service_linked.py:114
-#: services/Xen/XenLinkedService.py:122
+#: services/HyperV_enterprise/legacy/service.py:99
+#: services/HyperV_enterprise/service.py:100
+#: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:140
+#: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:126
 msgid "Base Machine"
 msgstr "Màquina base"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:124
-#: services/Nutanix_enterprise/NutanixService.py:47
-#: services/OVirt/OVirtLinkedService.py:136
-#: services/Xen/XenLinkedService.py:124
+#: services/HyperV_enterprise/legacy/service.py:101
+#: services/HyperV_enterprise/service.py:102
+#: services/Nutanix_enterprise/service.py:56 services/OVirt/service.py:142
+#: services/Xen/service.py:128
 msgid "Service base machine"
 msgstr "Màquina base de servei"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:125
-#: services/HyperV_enterprise/HyperVLinkedService.py:134
-#: services/HyperV_enterprise/HyperVLinkedService.py:145
-#: services/HyperV_enterprise/HyperVLinkedService.py:154
-#: services/HyperV_enterprise/HyperVLinkedService.py:164
-#: services/Nutanix_enterprise/NutanixService.py:48
-#: services/Nutanix_enterprise/NutanixService.py:60
-#: services/Nutanix_enterprise/NutanixService.py:68
-#: services/OVirt/OVirtLinkedService.py:137
-#: services/OVirt/OVirtLinkedService.py:149
-#: services/OVirt/OVirtLinkedService.py:161
-#: services/OVirt/OVirtLinkedService.py:175
-#: services/OVirt/OVirtLinkedService.py:188
-#: services/OVirt/OVirtLinkedService.py:196
-#: services/OVirt/OVirtLinkedService.py:206
-#: services/OpenNebula/LiveService.py:107
-#: services/OpenNebula/LiveService.py:116
-#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:130
-#: services/OpenStack/LiveService.py:132 services/OpenStack/LiveService.py:133
-#: services/OpenStack/LiveService.py:135 services/OpenStack/LiveService.py:143
-#: services/OpenStack/LiveService.py:153
-#: services/Vmware_enterprise/vc_service_full.py:71
-#: services/Vmware_enterprise/vc_service_linked.py:110
-#: services/Vmware_enterprise/vc_service_linked.py:114
-#: services/Vmware_enterprise/vc_service_linked.py:116
-#: services/Vmware_enterprise/vc_service_linked.py:118
-#: services/Vmware_enterprise/vc_service_linked.py:120
-#: services/Vmware_enterprise/vc_service_linked.py:121
-#: services/Vmware_enterprise/vc_service_linked.py:123
-#: services/Vmware_enterprise/vc_service_linked.py:124
-#: services/Vmware_enterprise/vc_service_linked.py:126
-#: services/Xen/XenLinkedService.py:125 services/Xen/XenLinkedService.py:134
-#: services/Xen/XenLinkedService.py:144 services/Xen/XenLinkedService.py:155
-#: services/Xen/XenLinkedService.py:164 services/Xen/XenLinkedService.py:175
+#: services/HyperV_enterprise/legacy/service.py:102
+#: services/HyperV_enterprise/legacy/service.py:111
+#: services/HyperV_enterprise/legacy/service.py:122
+#: services/HyperV_enterprise/legacy/service.py:131
+#: services/HyperV_enterprise/legacy/service.py:141
+#: services/HyperV_enterprise/service.py:103
+#: services/HyperV_enterprise/service.py:112
+#: services/HyperV_enterprise/service.py:123
+#: services/HyperV_enterprise/service.py:132
+#: services/HyperV_enterprise/service.py:142
+#: services/Nutanix_enterprise/service.py:57
+#: services/Nutanix_enterprise/service.py:69
+#: services/Nutanix_enterprise/service.py:77 services/OVirt/service.py:143
+#: services/OVirt/service.py:155 services/OVirt/service.py:167
+#: services/OVirt/service.py:181 services/OVirt/service.py:194
+#: services/OVirt/service.py:202 services/OVirt/service.py:212
+#: services/OpenNebula/service.py:113 services/OpenNebula/service.py:122
+#: services/OpenNebula/service.py:132 services/OpenStack/service.py:132
+#: services/OpenStack/service.py:134 services/OpenStack/service.py:135
+#: services/OpenStack/service.py:137 services/OpenStack/service.py:145
+#: services/OpenStack/service.py:155
+#: services/Vmware_enterprise/service_full.py:68
+#: services/Vmware_enterprise/service_linked.py:110
+#: services/Vmware_enterprise/service_linked.py:114
+#: services/Vmware_enterprise/service_linked.py:116
+#: services/Vmware_enterprise/service_linked.py:118
+#: services/Vmware_enterprise/service_linked.py:120
+#: services/Vmware_enterprise/service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:123
+#: services/Vmware_enterprise/service_linked.py:124
+#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:129
+#: services/Xen/service.py:138 services/Xen/service.py:148
+#: services/Xen/service.py:159 services/Xen/service.py:168
+#: services/Xen/service.py:179
 msgid "Machine"
 msgstr "Màquina"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:133
+#: services/HyperV_enterprise/legacy/service.py:110
+#: services/HyperV_enterprise/service.py:111
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
 "Si es troba més d'una interfície a la màquina, utilitzeu una d'aquestes "
 "xarxes com a principal"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:139
-#: services/Nutanix_enterprise/NutanixService.py:53
-#: services/OVirt/OVirtLinkedService.py:142
-#: services/Vmware_enterprise/vc_service_linked.py:115
-#: services/Xen/XenLinkedService.py:139
+#: services/HyperV_enterprise/legacy/service.py:116
+#: services/HyperV_enterprise/service.py:117
+#: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:148
+#: services/Vmware_enterprise/service_linked.py:115 services/Xen/service.py:143
 msgid "Memory (Mb)"
 msgstr "Memòria (Mb)"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:144
-#: services/Vmware_enterprise/vc_service_linked.py:116
+#: services/HyperV_enterprise/legacy/service.py:121
+#: services/HyperV_enterprise/service.py:122
+#: services/Vmware_enterprise/service_linked.py:116
 msgid "Memory for machines deployed from this service"
 msgstr "Memòria per a les màquines desplegades des d'aquest servei"
 
-#: services/HyperV_enterprise/HyperVProvider.py:63
-msgid "HyperV Platform Provider (experimental)"
-msgstr "Proveïdor de plataforma HyperV (experimental)"
+#: services/HyperV_enterprise/provider.py:41
+#| msgid "Azure Platform Provider"
+msgid "HyperV Platform Provider"
+msgstr "Proveïdor de plataformes HyperV"
 
-#: services/HyperV_enterprise/HyperVProvider.py:67
-msgid "HyperV platform service provider (experimental)"
-msgstr "Proveïdor del servei de plataforma HyperV (experimental)"
+#: services/HyperV_enterprise/provider.py:45
+#| msgid "HyperV platform service provider (experimental)"
+msgid "HyperV platform service provider with cluster support"
+msgstr "Proveïdor de serveis de plataforma HyperV amb suport de clúster"
 
-#: services/HyperV_enterprise/HyperVProvider.py:82
-msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
+#: services/HyperV_enterprise/provider.py:60
+msgid "HyperV Server or HyperV Cluster IP or FQDN"
+msgstr "Servidor HyperV o HyperV Cluster IP o FQDN"
+
+#: services/HyperV_enterprise/provider.py:62 services/OVirt/service.py:111
+msgid "Cluster"
+msgstr "Clúster"
+
+#: services/HyperV_enterprise/provider.py:65
+msgid ""
+"If you are using a clustered HyperV server, enable this option. Also, use the"
 msgstr ""
-"Nom de host o IP del servidor HyperV (cal habilitar primer l'accés WSMAN)"
+"Si utilitzeu un servidor HyperV en clúster, activeu aquesta opció. A més, "
+"utilitzeu el botó"
 
-#: services/HyperV_enterprise/HyperVProvider.py:83
-msgid "WSMan Port (normally 5985)"
-msgstr "Port WSMAN (generalment el 5985)"
+#: services/HyperV_enterprise/provider.py:70
+#| msgid "Enable USB"
+msgid "Enable SSL"
+msgstr "Activa SSL"
 
-#: services/HyperV_enterprise/HyperVProvider.py:84
-msgid "User with valid privileges on HyperV Server"
-msgstr "Usuari amb privilegis vàlids sobre el servidor HyperV"
+#: services/HyperV_enterprise/provider.py:72
+#| msgid "If active, the proxied connections will be done using HTTPS"
+msgid ""
+"If active, the connections to HyperV will be made using SSL (Recommended)."
+msgstr ""
+"Si està actiu, les connexions a HyperV es faran mitjançant SSL (Recomanat)."
 
-#: services/HyperV_enterprise/HyperVProvider.py:85
-msgid "Password of the user of HyperV"
-msgstr "Contrasenya de l'usuari d'HyperV"
+#: services/HyperV_enterprise/provider.py:118
+msgid "Remote WSman port.Leave to zero for default."
+msgstr "Port remot WSman.Deu-ne el valor per defecte a zero."
 
-#: services/HyperV_enterprise/HyperVProvider.py:90
-msgid "Timeout in seconds of connection to HyperV"
-msgstr "Temps d'espera de la connexió a HyperV en segons"
+#: services/HyperV_enterprise/provider.py:125
+msgid "Force SSL certificate verification"
+msgstr "Força la verificació del certificat SSL"
 
-#: services/HyperV_enterprise/HyperVProvider.py:91
-#: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/OVirt/OVirtProvider.py:117
-#: services/Vmware_enterprise/vc_provider.py:47 services/Xen/XenProvider.py:105
-msgid "Macs range"
-msgstr "Rang d'adreces mac"
+#: services/HyperV_enterprise/provider.py:127
+#| msgid "If active, the proxied connections will be done using HTTPS"
+msgid ""
+"If active, the certificate on cluster connection will be enforced to be "
+"verified."
+msgstr ""
+"Si està actiu, el certificat de connexió de clúster s&#39;ha d&#39;aplicar "
+"per verificar-lo."
 
-#: services/HyperV_enterprise/HyperVProvider.py:92
-#: services/Xen/XenProvider.py:106
-msgid "Range of valid macs for created machines"
-msgstr "Rang d'adreces mac vàlides per a màquines creades"
+#: services/HyperV_enterprise/provider.py:138
+#| msgid "Timeout in seconds of connection to HyperV"
+msgid ""
+"Timeout in seconds for connection to HyperV. (Keep this value high enough)"
+msgstr ""
+"Retard en segons per a la connexió a HyperV. (Mantingueu aquest valor prou "
+"alt)"
 
-#: services/HyperV_enterprise/HyperVProvider.py:258
-#: services/Xen/XenProvider.py:417
-msgid "Connection test successful"
-msgstr "La prova de connexió s'ha realitzat correctament"
+#: services/HyperV_enterprise/provider.py:159
+msgid ""
+"For clusters, username must be a domain user name (user@domain or DOMAIN"
+"\\user"
+msgstr ""
+"Per als clústers, el nom d’usuari ha de ser un nom d’usuari del domini (user "
+"@ domain o DOMAIN \\ user"
 
-#: services/HyperV_enterprise/HyperVProvider.py:259
-#: services/Nutanix_enterprise/NutanixProvider.py:184
-#: services/OVirt/OVirtProvider.py:444
-#: services/Vmware_enterprise/vc_provider.py:166
-msgid "Connection failed. Check connection params"
-msgstr "La connexió ha fallat. Verifiqueu els paràmetres de connexió"
-
-#: services/HyperV_enterprise/HyperVPublication.py:104
-#: services/OVirt/OVirtPublication.py:88 services/Xen/XenPublication.py:93
-#, python-brace-format
-msgid "UDS pub for {0} at {1}"
-msgstr "Publicació d'UDS per a {0} a {1}"
-
-#: services/Nutanix_enterprise/NutanixProvider.py:27
+#: services/Nutanix_enterprise/provider.py:30
 msgid "Nutanix Acropolis Platform Provider"
 msgstr "Proveïdor de plataforma Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:29
+#: services/Nutanix_enterprise/provider.py:32
 msgid "Nutanix based VM provider"
 msgstr "Proveïdor de màquines virtuals basades en Nutanix"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:33
+#: services/Nutanix_enterprise/provider.py:36
 msgid "Nutanix Acropolis Server IP or Hostname"
 msgstr "Nom de host o IP del servidor Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:34
+#: services/Nutanix_enterprise/provider.py:37
 msgid "Nutanix Acropolis server Port (default 9440)"
 msgstr "Port del servidor Nutanix Acropolis (per defecte el 9440)"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:35
+#: services/Nutanix_enterprise/provider.py:38
 msgid "User with valid privileges on Nutanix Acropolis"
 msgstr "Usuari amb privilegis vàlids sobre Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:36
+#: services/Nutanix_enterprise/provider.py:39
 msgid "Password of the user of Nutanix Acropolis"
 msgstr "Contrasenya de l'usuari de Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:40
+#: services/Nutanix_enterprise/provider.py:43
 msgid "Timeout in seconds of connection to Nutanix"
 msgstr "Temps d'espera de la connexió a Nutanix Acropolis en segons"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:43
-#: services/OVirt/OVirtProvider.py:118
+#: services/Nutanix_enterprise/provider.py:46 services/OVirt/provider.py:118
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Rang d'adreces mac vàlides per a màquines gestionades per UDS"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:182
+#: services/Nutanix_enterprise/provider.py:200
 msgid "Connection works fine"
 msgstr "La connexió funciona perfectament"
 
-#: services/Nutanix_enterprise/NutanixService.py:22
+#: services/Nutanix_enterprise/service.py:31
 msgid "Nutanix Acropolis Service"
 msgstr "Servei Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/NutanixService.py:24
+#: services/Nutanix_enterprise/service.py:33
 msgid "Nutanix Acropolis based service"
 msgstr "Servei basat en Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/NutanixService.py:59
+#: services/Nutanix_enterprise/service.py:68
 msgid ""
 "Memory assigned to machines. (Zero value means \"keep original machine memory"
 "\")"
@@ -3158,182 +3234,133 @@ msgstr ""
 "Memòria assignada a les màquines. (Zero significa \"conservar la memòria "
 "original de la màquina\")"
 
-#: services/Nutanix_enterprise/NutanixService.py:67
+#: services/Nutanix_enterprise/service.py:76
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
 msgstr ""
 "Xarxa per a les màquines (tota màquina creada s'associarà a aquesta xarxa)"
 
-#: services/Nutanix_enterprise/NutanixService.py:90
-#: services/VCloud_enterprise/VCloudCloneService.py:61
-#: services/Vmware_enterprise/vc_service_linked.py:86
+#: services/Nutanix_enterprise/service.py:99
+#: services/VCloud_enterprise/service.py:64
+#: services/Vmware_enterprise/service_linked.py:86
 msgid "Remove found duplicates"
 msgstr "Elimina els duplicats trobats"
 
-#: services/Nutanix_enterprise/NutanixService.py:93
-#: services/VCloud_enterprise/VCloudCloneService.py:61
+#: services/Nutanix_enterprise/service.py:102
+#: services/VCloud_enterprise/service.py:64
 msgid "If active, found duplicates vApps for this service will be removed"
 msgstr ""
 "Si està activat, s'eliminarà la cerca de vApps duplicades per a aquest servei"
 
-#: services/OVirt/OVirtLinkedService.py:57
-msgid "oVirt/RHEV Linked Clone"
-msgstr "oVirt/RHEV Linked Clone"
-
-#: services/OVirt/OVirtLinkedService.py:61
-msgid "oVirt Services based on templates and COW (experimental)"
-msgstr "Serveis oVirt basats en plantilles i COW (experimental)"
-
-#: services/OVirt/OVirtLinkedService.py:105
-msgid "Cluster"
-msgstr "Clúster"
-
-#: services/OVirt/OVirtLinkedService.py:112
-msgid "Cluster to contain services"
-msgstr "Clúster per a contenir serveis"
-
-#: services/OVirt/OVirtLinkedService.py:116
-msgid "Datastore Domain"
-msgstr "Domini d'emmagatzematge de dades"
-
-#: services/OVirt/OVirtLinkedService.py:119
-msgid "Datastore domain where to publish and put incrementals"
-msgstr "Domini d'emmagatzematge on guardar incrementals i publicacions"
-
-#: services/OVirt/OVirtLinkedService.py:148
-#: services/Xen/XenLinkedService.py:143
-msgid "Memory assigned to machines"
-msgstr "Memòria assignada a les màquines"
-
-#: services/OVirt/OVirtLinkedService.py:154
-msgid "Memory Guaranteed (Mb)"
-msgstr "Memòria garantida (Mb)"
-
-#: services/OVirt/OVirtLinkedService.py:160
-msgid "Physical memory guaranteed to machines"
-msgstr "Memòria física garantida a les màquines"
-
-#: services/OVirt/OVirtLinkedService.py:166
-msgid "USB"
-msgstr "USB"
-
-#: services/OVirt/OVirtLinkedService.py:169
-msgid "Enable usb redirection for SPICE"
-msgstr "Activa redirecció USB per a SPICE"
-
-#: services/OVirt/OVirtLinkedService.py:183
-msgid "Display type (only for administration purposes)"
-msgstr "Tipus de pantalla (només per a tasques administratives)"
-
-#: services/OVirt/OVirtLinkedService.py:223
-#: services/Xen/XenLinkedService.py:191
-msgid "The minimum allowed memory is 256 Mb"
-msgstr "El mínim de memòria permès és de 256 Mb"
-
-#: services/OVirt/OVirtProvider.py:77
+#: services/OVirt/provider.py:77
 msgid "oVirt/RHEV Platform Provider"
 msgstr "Proveïdor de plataforma oVirt/RHEV"
 
-#: services/OVirt/OVirtProvider.py:81
+#: services/OVirt/provider.py:81
 msgid "oVirt platform service provider"
 msgstr "Proveïdor de serveis per a la plataforma oVirt"
 
-#: services/OVirt/OVirtProvider.py:98
+#: services/OVirt/provider.py:98
 msgid "oVirt Version"
 msgstr "Versió d'oVirt"
 
-#: services/OVirt/OVirtProvider.py:99
+#: services/OVirt/provider.py:99
 msgid "oVirt Server Version"
 msgstr "Versió de servidor oVirt"
 
-#: services/OVirt/OVirtProvider.py:109
+#: services/OVirt/provider.py:109
 msgid "oVirt Server IP or Hostname"
 msgstr "Nom de host o IP del servidor oVirt"
 
-#: services/OVirt/OVirtProvider.py:110
+#: services/OVirt/provider.py:110
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
 msgstr ""
 "Usuari amb privilegis vàlids sobre oVirt (utilitzeu el format \"usuari@domini"
 "\")"
 
-#: services/OVirt/OVirtProvider.py:111
+#: services/OVirt/provider.py:111
 msgid "Password of the user of oVirt"
 msgstr "Contrasenya de l'usuari d'oVirt"
 
-#: services/OVirt/OVirtProvider.py:116
+#: services/OVirt/provider.py:116
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "Temps d'espera de la connexió a oVirt en segons"
 
-#: services/OpenGnsys/OGService.py:56
-msgid "OpenGnsys Machines Service"
-msgstr "Servei de màquines OpenGnsys"
+#: services/OVirt/service.py:63
+msgid "oVirt/RHEV Linked Clone"
+msgstr "oVirt/RHEV Linked Clone"
 
-#: services/OpenGnsys/OGService.py:60
-msgid "OpenGnsys physical machines"
-msgstr "Màquines físiques OpenGnsys"
+#: services/OVirt/service.py:67
+msgid "oVirt Services based on templates and COW (experimental)"
+msgstr "Serveis oVirt basats en plantilles i COW (experimental)"
 
-#: services/OpenGnsys/OGService.py:77 services/OpenNebula/LiveService.py:76
-#: services/OpenStack/LiveService.py:83
-#: services/Vmware_enterprise/vc_service_full.py:41
-#: services/Vmware_enterprise/vc_service_linked.py:45
-msgid "Number of desired machines to keep running waiting for an user"
-msgstr ""
-"Nombre desitjat de màquines que es mantenen en execució esperant un usuari"
+#: services/OVirt/service.py:118
+msgid "Cluster to contain services"
+msgstr "Clúster per a contenir serveis"
 
-#: services/OpenGnsys/OGService.py:104
-msgid "Organizational Unit"
-msgstr "Unitat organitzativa"
+#: services/OVirt/service.py:122
+msgid "Datastore Domain"
+msgstr "Domini d'emmagatzematge de dades"
 
-#: services/OpenGnsys/OGService.py:110
-msgid "lab"
-msgstr "laboratori"
+#: services/OVirt/service.py:125
+msgid "Datastore domain where to publish and put incrementals"
+msgstr "Domini d'emmagatzematge on guardar incrementals i publicacions"
 
-#: services/OpenGnsys/OGService.py:112
-msgid "Laboratory"
-msgstr "Laboratori"
+#: services/OVirt/service.py:154 services/Xen/service.py:147
+msgid "Memory assigned to machines"
+msgstr "Memòria assignada a les màquines"
 
-#: services/OpenGnsys/OGService.py:118
-msgid "OS Image"
-msgstr "Imatge d'SO"
+#: services/OVirt/service.py:160
+msgid "Memory Guaranteed (Mb)"
+msgstr "Memòria garantida (Mb)"
 
-#: services/OpenGnsys/OGService.py:120
-msgid "OpenGnsys Operating System Image"
-msgstr "Imatge de sistema operatiu d'OpenGnsys"
+#: services/OVirt/service.py:166
+msgid "Physical memory guaranteed to machines"
+msgstr "Memòria física garantida a les màquines"
 
-#: services/OpenGnsys/OGService.py:126
-msgid "Max. reservation time"
-msgstr "Temps màxim de reserva"
+#: services/OVirt/service.py:172
+msgid "USB"
+msgstr "USB"
 
-#: services/OpenGnsys/OGService.py:128
-msgid ""
-"Security parameter for OpenGnsys to keep reservations at most this hours"
-msgstr ""
-"Paràmetre de seguretat per a OpenGnsys per a conservar les reserves almenys "
-"durant aquestes hores"
+#: services/OVirt/service.py:175
+msgid "Enable usb redirection for SPICE"
+msgstr "Activa redirecció USB per a SPICE"
 
-#: services/OpenGnsys/Provider.py:77
+#: services/OVirt/service.py:189
+msgid "Display type (only for administration purposes)"
+msgstr "Tipus de pantalla (només per a tasques administratives)"
+
+#: services/OVirt/service.py:229 services/Xen/service.py:195
+msgid "The minimum allowed memory is 256 Mb"
+msgstr "El mínim de memòria permès és de 256 Mb"
+
+#: services/OpenGnsys/helpers.py:56
+msgid "All Labs"
+msgstr "Tots els laboratoris"
+
+#: services/OpenGnsys/provider.py:76
 msgid "OpenGnsys Platform Provider"
 msgstr "Proveïdor de plataforma OpenGnsys"
 
-#: services/OpenGnsys/Provider.py:81
+#: services/OpenGnsys/provider.py:80
 msgid "OpenGnsys platform service provider (experimental)"
 msgstr "Proveïdor del servei de plataforma OpenGnsys (experimental)"
 
-#: services/OpenGnsys/Provider.py:96
+#: services/OpenGnsys/provider.py:95
 msgid "OpenGnsys Host"
 msgstr "Host OpenGnsys"
 
-#: services/OpenGnsys/Provider.py:97
+#: services/OpenGnsys/provider.py:96
 msgid "OpenGnsys Port (default is 443, and only ssl connection is allowed)"
 msgstr ""
 "Port OpenGnsys (per defecte és el 443, i només es permeten connexions SSL)"
 
-#: services/OpenGnsys/Provider.py:98
+#: services/OpenGnsys/provider.py:97
 msgid "Check Cert."
 msgstr "Comprovar certificat."
 
-#: services/OpenGnsys/Provider.py:98
+#: services/OpenGnsys/provider.py:97
 msgid ""
 "If checked, ssl certificate of OpenGnsys server must be valid (not self "
 "signed)"
@@ -3341,77 +3368,96 @@ msgstr ""
 "Si està seleccionat, el certificat SSL del servidor OpenGnsys ha de ser "
 "vàlid, no autosignat"
 
-#: services/OpenGnsys/Provider.py:99
+#: services/OpenGnsys/provider.py:98
 msgid "User with valid privileges on OpenGnsys"
 msgstr "Usuari amb privilegis vàlids sobre OpenGnsys"
 
-#: services/OpenGnsys/Provider.py:100
+#: services/OpenGnsys/provider.py:99
 msgid "Password of the user of OpenGnsys"
 msgstr "Contrasenya de l'usuari d'OpenGnsys"
 
-#: services/OpenGnsys/Provider.py:101
+#: services/OpenGnsys/provider.py:100
 msgid "UDS Server URL"
 msgstr "URL del servidor UDS"
 
-#: services/OpenGnsys/Provider.py:101
+#: services/OpenGnsys/provider.py:100
 msgid "URL used by OpenGnsys to access UDS. If empty, UDS will guess it."
 msgstr ""
 "URL utilitzada per OpenGnsys per a accedir a UDS. Si està buit, UDS ho "
 "detectarà"
 
-#: services/OpenGnsys/Provider.py:106
+#: services/OpenGnsys/provider.py:105
 msgid "Timeout in seconds of connection to OpenGnsys"
 msgstr "Temps d'espera de la connexió a OpenGnsys en segons"
 
-#: services/OpenGnsys/Provider.py:164
+#: services/OpenGnsys/provider.py:163
 msgid "OpenGnsys test connection passed"
 msgstr "La prova de connexió amb OpenGnsys s'ha realitzat correctament"
 
-#: services/OpenGnsys/helpers.py:32
-msgid "All Labs"
-msgstr "Tots els laboratoris"
+#: services/OpenGnsys/service.py:61
+msgid "OpenGnsys Machines Service"
+msgstr "Servei de màquines OpenGnsys"
 
-#: services/OpenNebula/LiveService.py:55
-msgid "OpenNebula Live Images"
-msgstr "Imatges OpenNebula"
+#: services/OpenGnsys/service.py:65
+msgid "OpenGnsys physical machines"
+msgstr "Màquines físiques OpenGnsys"
 
-#: services/OpenNebula/LiveService.py:59
-msgid "OpenNebula live images based service"
-msgstr "Servei basat en imatges OpenNebula"
+#: services/OpenGnsys/service.py:82 services/OpenNebula/service.py:82
+#: services/OpenStack/service.py:85
+#: services/Vmware_enterprise/service_full.py:38
+#: services/Vmware_enterprise/service_linked.py:45
+msgid "Number of desired machines to keep running waiting for an user"
+msgstr ""
+"Nombre desitjat de màquines que es mantenen en execució esperant un usuari"
 
-#: services/OpenNebula/LiveService.py:97
-msgid "Datastore"
-msgstr "Emmagatzematge de dades"
+#: services/OpenGnsys/service.py:109
+msgid "Organizational Unit"
+msgstr "Unitat organitzativa"
 
-#: services/OpenNebula/LiveService.py:99
-msgid "Service clones datastore"
-msgstr "Emmagatzematge de dades per als clons del servei"
+#: services/OpenGnsys/service.py:115
+msgid "lab"
+msgstr "laboratori"
 
-#: services/OpenNebula/LiveService.py:104
-msgid "Base Template"
-msgstr "Plantilla base"
+#: services/OpenGnsys/service.py:117
+msgid "Laboratory"
+msgstr "Laboratori"
 
-#: services/OpenNebula/LiveService.py:106
-msgid "Service base template"
-msgstr "Plantilla base de servei"
+#: services/OpenGnsys/service.py:123
+msgid "OS Image"
+msgstr "Imatge d'SO"
 
-#: services/OpenNebula/Provider.py:68
+#: services/OpenGnsys/service.py:125
+msgid "OpenGnsys Operating System Image"
+msgstr "Imatge de sistema operatiu d'OpenGnsys"
+
+#: services/OpenGnsys/service.py:131
+msgid "Max. reservation time"
+msgstr "Temps màxim de reserva"
+
+#: services/OpenGnsys/service.py:133
+msgid ""
+"Security parameter for OpenGnsys to keep reservations at most this hours"
+msgstr ""
+"Paràmetre de seguretat per a OpenGnsys per a conservar les reserves almenys "
+"durant aquestes hores"
+
+#: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
 msgstr "Proveïdor de plataforma OpenNebula"
 
-#: services/OpenNebula/Provider.py:72
+#: services/OpenNebula/provider.py:62
 msgid "OpenNebula platform service provider"
 msgstr "Proveïdor de serveis de la plataforma OpenNebula"
 
-#: services/OpenNebula/Provider.py:87
+#: services/OpenNebula/provider.py:77
 msgid "OpenNebula Host"
 msgstr "Host OpenNebula"
 
-#: services/OpenNebula/Provider.py:88
+#: services/OpenNebula/provider.py:78
 msgid "OpenNebula Port (default is 2633 for non ssl connection)"
 msgstr "Port OpenNebula (per defecte és el 2633 per a connexions no SSL)"
 
-#: services/OpenNebula/Provider.py:89 services/OpenStack/ProviderLegacy.py:104
+#: services/OpenNebula/provider.py:79 services/OpenStack/provider_legacy.py:104
 msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
@@ -3419,151 +3465,45 @@ msgstr ""
 "Si està seleccionat, la connexió es forçarà a ser SSL (no funcionarà si el "
 "servidor no suporta SSL)"
 
-#: services/OpenNebula/Provider.py:90
+#: services/OpenNebula/provider.py:80
 msgid "User with valid privileges on OpenNebula"
 msgstr "Usuari amb privilegis vàlids sobre OpenNebula"
 
-#: services/OpenNebula/Provider.py:91
+#: services/OpenNebula/provider.py:81
 msgid "Password of the user of OpenNebula"
 msgstr "Contrasenya de l'usuari d'OpenNebula"
 
-#: services/OpenNebula/Provider.py:96
+#: services/OpenNebula/provider.py:86
 msgid "Timeout in seconds of connection to OpenNebula"
 msgstr "Temps d'espera de la connexió a OpenNebula en segons"
 
-#: services/OpenNebula/Provider.py:146
+#: services/OpenNebula/provider.py:135
 msgid "Opennebula test connection passed"
 msgstr "La prova de connexió amb OpenNebula s'ha realitzat correctament"
 
-#: services/OpenStack/LiveService.py:62
-msgid "OpenStack Live Volume"
-msgstr "Volum OpenStack Live"
+#: services/OpenNebula/service.py:61
+msgid "OpenNebula Live Images"
+msgstr "Imatges OpenNebula"
 
-#: services/OpenStack/LiveService.py:66
-msgid "OpenStack live images based service"
-msgstr "Servei basat en imatges OpenStack Live"
+#: services/OpenNebula/service.py:65
+msgid "OpenNebula live images based service"
+msgstr "Servei basat en imatges OpenNebula"
 
-#: services/OpenStack/LiveService.py:105
-msgid "Region"
-msgstr "Regió"
+#: services/OpenNebula/service.py:103
+msgid "Datastore"
+msgstr "Emmagatzematge de dades"
 
-#: services/OpenStack/LiveService.py:105
-msgid "Service region"
-msgstr "Regió de Servei"
+#: services/OpenNebula/service.py:105
+msgid "Service clones datastore"
+msgstr "Emmagatzematge de dades per als clons del servei"
 
-#: services/OpenStack/LiveService.py:107
-msgid "Project"
-msgstr "Projecte"
+#: services/OpenNebula/service.py:110
+msgid "Base Template"
+msgstr "Plantilla base"
 
-#: services/OpenStack/LiveService.py:114
-msgid "Project for this service"
-msgstr "Projecte per a aquest servei"
-
-#: services/OpenStack/LiveService.py:119
-msgid "Availability Zones"
-msgstr "Zones amb disponibilitat"
-
-#: services/OpenStack/LiveService.py:126
-msgid "Service availability zones"
-msgstr "Zones amb disponibilitat del servei"
-
-#: services/OpenStack/LiveService.py:130
-msgid "Volume"
-msgstr "Volum"
-
-#: services/OpenStack/LiveService.py:130
-msgid "Base volume for service (restricted by availability zone)"
-msgstr "Volum base per al servei (restringit a zones amb disponibilitat)"
-
-#: services/OpenStack/LiveService.py:132
-msgid "Network to attach to this service"
-msgstr "Xarxa per a associar a aquest servei"
-
-#: services/OpenStack/LiveService.py:133
-msgid "Flavor"
-msgstr "Essència"
-
-#: services/OpenStack/LiveService.py:133
-msgid "Flavor for service"
-msgstr "Essència per al servei"
-
-#: services/OpenStack/LiveService.py:135
-msgid "Security Groups"
-msgstr "Grups de seguretat"
-
-#: services/OpenStack/LiveService.py:135
-msgid "Service security groups"
-msgstr "Grups de seguretat de servei"
-
-#: services/OpenStack/Provider.py:79
-msgid "OpenStack Platform Provider"
-msgstr "Proveïdor de plataforma OpenStack"
-
-#: services/OpenStack/Provider.py:83
-msgid "OpenStack platform service provider"
-msgstr "Proveïdor de serveis de la plataforma OpenStack"
-
-#: services/OpenStack/Provider.py:98
-msgid "Identity endpoint"
-msgstr "Punt final de la identitat"
-
-#: services/OpenStack/Provider.py:98
-msgid ""
-"OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
-"identity)"
-msgstr ""
-"Accés a l'API de punt final de la identitat d'OpenStack  (per exemple, "
-"https://10.0.0.0/identitat)"
-
-#: services/OpenStack/Provider.py:100 services/OpenStack/ProviderLegacy.py:106
-msgid "Access interface"
-msgstr "Interfície d'accés"
-
-#: services/OpenStack/Provider.py:100 services/OpenStack/ProviderLegacy.py:106
-msgid "Access interface to be used"
-msgstr "Interfície d'accés per a ser utilitzada"
-
-#: services/OpenStack/Provider.py:102 services/OpenStack/ProviderLegacy.py:108
-msgid "Domain name (default is Default)"
-msgstr "Nom de domini (per defecte és Default)"
-
-#: services/OpenStack/Provider.py:103 services/OpenStack/ProviderLegacy.py:109
-msgid "User with valid privileges on OpenStack"
-msgstr "Usuari amb privilegis vàlids sobre OpenStack"
-
-#: services/OpenStack/Provider.py:104 services/OpenStack/ProviderLegacy.py:110
-msgid "Password of the user of OpenStack"
-msgstr "Contrasenya de l'usuari d'OpenStack"
-
-#: services/OpenStack/Provider.py:109 services/OpenStack/ProviderLegacy.py:115
-msgid "Timeout in seconds of connection to OpenStack"
-msgstr "Temps d'espera de la connexió a OpenStack en segons"
-
-#: services/OpenStack/Provider.py:163 services/OpenStack/ProviderLegacy.py:166
-msgid "OpenStack test connection passed"
-msgstr "La prova de connexió amb OpenStack s'ha realitzat correctament"
-
-#: services/OpenStack/ProviderLegacy.py:83
-msgid "OpenStack LEGACY Platform Provider"
-msgstr "Proveïdor de plataforma OpenStack Legacy"
-
-#: services/OpenStack/ProviderLegacy.py:87
-msgid ""
-"OpenStack LEGACY platform service provider (for older Openstack Releases, "
-"previous to OCATA)"
-msgstr ""
-"Proveïdor de serveis de plataforma OpenStack Legacy (per a versions antigues "
-"d'OpenStack, anteriors a OCATA)"
-
-#: services/OpenStack/ProviderLegacy.py:102
-msgid "OpenStack Host"
-msgstr "Host OpenStack"
-
-#: services/OpenStack/ProviderLegacy.py:103
-msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
-msgstr ""
-"5000 per a versions antigues, 80/443 (ssl) per a versions més modernes que "
-"OCATA"
+#: services/OpenNebula/service.py:112
+msgid "Service base template"
+msgstr "Plantilla base de servei"
 
 #: services/OpenStack/openStack/UDSOpenStackClient.py:671
 msgid "Authentication error"
@@ -3577,70 +3517,182 @@ msgstr ""
 "Openstack no suporta identitat API 3.2 o superior. Aquest servidor OpenStack "
 "no és compatible amb UDS."
 
-#: services/PhysicalMachines/IPMachineDeployed.py:62
-#: services/PhysicalMachines/IPServerDeployed.py:62
+#: services/OpenStack/provider.py:78
+msgid "OpenStack Platform Provider"
+msgstr "Proveïdor de plataforma OpenStack"
+
+#: services/OpenStack/provider.py:82
+msgid "OpenStack platform service provider"
+msgstr "Proveïdor de serveis de la plataforma OpenStack"
+
+#: services/OpenStack/provider.py:97
+msgid "Identity endpoint"
+msgstr "Punt final de la identitat"
+
+#: services/OpenStack/provider.py:97
+msgid ""
+"OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
+"identity)"
+msgstr ""
+"Accés a l'API de punt final de la identitat d'OpenStack  (per exemple, "
+"https://10.0.0.0/identitat)"
+
+#: services/OpenStack/provider.py:99 services/OpenStack/provider_legacy.py:106
+msgid "Access interface"
+msgstr "Interfície d'accés"
+
+#: services/OpenStack/provider.py:99 services/OpenStack/provider_legacy.py:106
+msgid "Access interface to be used"
+msgstr "Interfície d'accés per a ser utilitzada"
+
+#: services/OpenStack/provider.py:101 services/OpenStack/provider_legacy.py:108
+msgid "Domain name (default is Default)"
+msgstr "Nom de domini (per defecte és Default)"
+
+#: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
+msgid "User with valid privileges on OpenStack"
+msgstr "Usuari amb privilegis vàlids sobre OpenStack"
+
+#: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
+msgid "Password of the user of OpenStack"
+msgstr "Contrasenya de l'usuari d'OpenStack"
+
+#: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
+msgid "Timeout in seconds of connection to OpenStack"
+msgstr "Temps d'espera de la connexió a OpenStack en segons"
+
+#: services/OpenStack/provider.py:162 services/OpenStack/provider_legacy.py:166
+msgid "OpenStack test connection passed"
+msgstr "La prova de connexió amb OpenStack s'ha realitzat correctament"
+
+#: services/OpenStack/provider_legacy.py:83
+msgid "OpenStack LEGACY Platform Provider"
+msgstr "Proveïdor de plataforma OpenStack Legacy"
+
+#: services/OpenStack/provider_legacy.py:87
+msgid ""
+"OpenStack LEGACY platform service provider (for older Openstack Releases, "
+"previous to OCATA)"
+msgstr ""
+"Proveïdor de serveis de plataforma OpenStack Legacy (per a versions antigues "
+"d'OpenStack, anteriors a OCATA)"
+
+#: services/OpenStack/provider_legacy.py:102
+msgid "OpenStack Host"
+msgstr "Host OpenStack"
+
+#: services/OpenStack/provider_legacy.py:103
+msgid "5000 for older releases, 80/443 (ssl) for releases newer than OCATA"
+msgstr ""
+"5000 per a versions antigues, 80/443 (ssl) per a versions més modernes que "
+"OCATA"
+
+#: services/OpenStack/service.py:64
+msgid "OpenStack Live Volume"
+msgstr "Volum OpenStack Live"
+
+#: services/OpenStack/service.py:68
+msgid "OpenStack live images based service"
+msgstr "Servei basat en imatges OpenStack Live"
+
+#: services/OpenStack/service.py:107
+msgid "Region"
+msgstr "Regió"
+
+#: services/OpenStack/service.py:107
+msgid "Service region"
+msgstr "Regió de Servei"
+
+#: services/OpenStack/service.py:109
+msgid "Project"
+msgstr "Projecte"
+
+#: services/OpenStack/service.py:116
+msgid "Project for this service"
+msgstr "Projecte per a aquest servei"
+
+#: services/OpenStack/service.py:121
+msgid "Availability Zones"
+msgstr "Zones amb disponibilitat"
+
+#: services/OpenStack/service.py:128
+msgid "Service availability zones"
+msgstr "Zones amb disponibilitat del servei"
+
+#: services/OpenStack/service.py:132
+msgid "Volume"
+msgstr "Volum"
+
+#: services/OpenStack/service.py:132
+msgid "Base volume for service (restricted by availability zone)"
+msgstr "Volum base per al servei (restringit a zones amb disponibilitat)"
+
+#: services/OpenStack/service.py:134
+msgid "Network to attach to this service"
+msgstr "Xarxa per a associar a aquest servei"
+
+#: services/OpenStack/service.py:135
+msgid "Flavor"
+msgstr "Essència"
+
+#: services/OpenStack/service.py:135
+msgid "Flavor for service"
+msgstr "Essència per al servei"
+
+#: services/OpenStack/service.py:137
+msgid "Security Groups"
+msgstr "Grups de seguretat"
+
+#: services/OpenStack/service.py:137
+msgid "Service security groups"
+msgstr "Grups de seguretat de servei"
+
+#: services/PhysicalMachines/deployment.py:73
 msgid "IP "
 msgstr "IP"
 
-#: services/PhysicalMachines/IPMachinesService.py:48
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/PhysicalMachines/service_multi.py:56
+#: services/RDS_enterprise/provider.py:42
 msgid "List of servers"
 msgstr "Llistat de servidors"
 
-#: services/PhysicalMachines/IPMachinesService.py:48
+#: services/PhysicalMachines/service_multi.py:56
 msgid "List of servers available for this service"
 msgstr "Llista de servidors disponibles per a aquest servei"
 
-#: services/PhysicalMachines/IPMachinesService.py:51
+#: services/PhysicalMachines/service_multi.py:59
 msgid "Static Multiple IP"
 msgstr "IP múltiple estàtica"
 
-#: services/PhysicalMachines/IPMachinesService.py:53
+#: services/PhysicalMachines/service_multi.py:61
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Aquest servei proporciona accés  per IP a màquines engegades"
 
-#: services/PhysicalMachines/IPServerService.py:49
-msgid "Remote Server"
-msgstr "Servidor remot"
-
-#: services/PhysicalMachines/IPServerService.py:50
-msgid "IP or Hostname of remote host (must be resolvable by clients)"
-msgstr ""
-"IP o nom d&#39;amfitrió de host remot (ha de ser resoluble pels clients)"
-
-#: services/PhysicalMachines/IPServerService.py:55
-msgid "Single server service by IP"
-msgstr "Servei de servidor únic per IP"
-
-#: services/PhysicalMachines/IPServerService.py:57
-msgid "This service provides access to POWERED-ON Server by IP"
-msgstr "Aquest servei proporciona accés al servidor POWERED-ON per IP"
-
-#: services/PhysicalMachines/IPSingleMachineService.py:48
+#: services/PhysicalMachines/service_single.py:53
 msgid "Machine IP"
 msgstr "IP de la màquina"
 
-#: services/PhysicalMachines/IPSingleMachineService.py:51
+#: services/PhysicalMachines/service_single.py:56
 msgid "Static Single IP"
 msgstr "IP simple estàtica"
 
-#: services/PhysicalMachines/IPSingleMachineService.py:53
+#: services/PhysicalMachines/service_single.py:58
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "Aquest servei proporciona accés  per IP a màquines engegades"
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/provider.py:36
 msgid "RDS Platform Provider"
 msgstr "Proveïdor de plataforma RDS"
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/provider.py:38
 msgid "Microsoft RDS based provider"
 msgstr "ProveÏdor basat en Microsoft RDS"
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/provider.py:44
 msgid "User mapping"
 msgstr "\"Mapping\" d'usuaris"
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/provider.py:44
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -3648,17 +3700,17 @@ msgstr ""
 "Si està activat, es farà \"mapping\" d'usuari. Sinó, les credencials "
 "d'usuari es redirigiran al servidor RDS."
 
-#: services/RDS_enterprise/RDSProvider.py:44
+#: services/RDS_enterprise/provider.py:46
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
 "Llista d'usuaris per a \"mapping\" (no s'utilitza si el \"mapping\" d'usuari "
 "està deshabilitat)."
 
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/provider.py:47
 msgid "User's password"
 msgstr "Contrasenya d'usuari"
 
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/provider.py:47
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3666,65 +3718,73 @@ msgstr ""
 "Contrasenya per defecte per a usuaris de la llista de \"mapping\" (no "
 "s'utilitza si el \"mapping\" d'usuari està deshabilitat)."
 
-#: services/RDS_enterprise/RDSProvider.py:48
+#: services/RDS_enterprise/provider.py:50
 msgid "Server Checking"
 msgstr "Verificació del servidor"
 
-#: services/RDS_enterprise/RDSProvider.py:49
+#: services/RDS_enterprise/provider.py:51
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr ""
 "Si està seleccionat, es verificarà el servidor abans d'assignar-lo o "
 "utilitzar-lo"
 
-#: services/RDS_enterprise/RDSProvider.py:75
+#: services/RDS_enterprise/provider.py:75
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Error: L'usuari {} o el host {} està en ús i no es pot eliminar en aquests "
 "moments"
 
-#: services/RDS_enterprise/RDSProvider.py:103
-#: services/Sample/SampleProvider.py:187
-#: services/TestService_enterprise/TestProvider.py:73
-msgid "Nothing tested, but all went fine.."
-msgstr "No s'ha fet cap comprovació, però tot ha funcionat..."
+#: services/RDS_enterprise/provider.py:103
+#| msgid "Nothing tested, but all went fine.."
+msgid "Nothing tested, but all went fine..."
+msgstr "Res va provar, però tot va anar bé ..."
 
-#: services/RDS_enterprise/RDSService.py:23
+#: services/RDS_enterprise/service.py:30
 msgid "RDS Platform RemoteAPP"
 msgstr "RemoteAPP en plataforma RDS"
 
-#: services/RDS_enterprise/RDSService.py:25
+#: services/RDS_enterprise/service.py:32
 msgid "RDS Platform RemoteAPP based service"
 msgstr "Servei basat en RemoteAPP en plataforma RDS"
 
-#: services/RDS_enterprise/RDSService.py:47
+#: services/RDS_enterprise/service.py:54
 msgid "Application path"
 msgstr "Ruta de l'aplicació"
 
-#: services/RDS_enterprise/RDSService.py:48
+#: services/RDS_enterprise/service.py:55
 msgid "Full path of the application this service will represent"
 msgstr "Ruta completa de l'aplicació que representarà aquest servei "
 
-#: services/RDS_enterprise/RDSService.py:56
+#: services/RDS_enterprise/service.py:63
 msgid "Application parameters"
 msgstr "Paràmetres de l'aplicació"
 
-#: services/RDS_enterprise/RDSService.py:57
+#: services/RDS_enterprise/service.py:64
 msgid "Applications parameters, as will be passed in command line"
 msgstr "Paràmetres de les aplicacions, com es passaran per línia de comandes"
 
-#: services/RDS_enterprise/RDSService.py:65
+#: services/RDS_enterprise/service.py:72
+#| msgid "Start date:"
+msgid "Start path"
+msgstr "Camí d’inici"
+
+#: services/RDS_enterprise/service.py:73
+msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
+msgstr "Camí on s’iniciarà l’aplicació. (és a dir, f: \\ exemple \\ carpeta)"
+
+#: services/RDS_enterprise/service.py:81
 msgid "Max. Allowd services"
 msgstr "Màxim de serveis permesos"
 
-#: services/RDS_enterprise/RDSService.py:70
+#: services/RDS_enterprise/service.py:86
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr "Nombre màxim de serveis permesos (0 vol dir sense límit)"
 
-#: services/RDS_enterprise/RDSService.py:75
+#: services/RDS_enterprise/service.py:91
 msgid "Wait spawned processes"
 msgstr "Espereu els processos generats"
 
-#: services/RDS_enterprise/RDSService.py:78
+#: services/RDS_enterprise/service.py:94
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -3732,216 +3792,222 @@ msgstr ""
 "Si està activat, l'agent de RDS esperarà fins que l'aplicació i tots els "
 "processos generats finalitzin abans de considerar-ne la sortida"
 
-#: services/RDS_enterprise/RDSService.py:96
+#: services/RDS_enterprise/service.py:105
 msgid "A valid application path is required"
 msgstr "Es necessita una ruta d'aplicació vàlida"
 
-#: services/Sample/SampleProvider.py:68
+#: services/Sample/provider.py:74
 msgid "Sample Provider"
 msgstr "Proveïdor de mostra"
 
-#: services/Sample/SampleProvider.py:72
+#: services/Sample/provider.py:78
 msgid "Sample (and dummy) service provider"
 msgstr "Proveïdor de serveis de mostra (i simulació)"
 
-#: services/Sample/SampleProvider.py:92
+#: services/Sample/provider.py:99
 msgid "Remote host"
 msgstr "Host remot"
 
-#: services/Sample/SampleProvider.py:93
+#: services/Sample/provider.py:100
 msgid "This fields contains a remote host"
 msgstr "Aquests camps contenen un host remot"
 
-#: services/Sample/SampleProvider.py:99
+#: services/Sample/provider.py:107
 msgid "Your pet's name"
 msgstr "El nom de la vostra mascota"
 
-#: services/Sample/SampleProvider.py:100
+#: services/Sample/provider.py:108
 msgid "If you like, write the name of your pet"
 msgstr "Si voleu, escriu el nom de la vostra mascota"
 
-#: services/Sample/SampleProvider.py:109
+#: services/Sample/provider.py:118
 msgid "Age of Methuselah"
 msgstr "Edat de Matusalen"
 
-#: services/Sample/SampleProvider.py:110
+#: services/Sample/provider.py:119
 msgid "If you know it, please, tell me!!!"
 msgstr "Si ho sabeu, per favor digueu-m'ho!!"
 
-#: services/Sample/SampleProvider.py:117
+#: services/Sample/provider.py:127
 msgid "Is Methuselah still alive?"
 msgstr "Encara és viu Matusalen?"
 
-#: services/Sample/SampleProvider.py:118
+#: services/Sample/provider.py:128
 msgid "If you fail, this will not get saved :-)"
 msgstr "Si s'equivoqueu, això no es desarà :-)"
 
-#: services/Sample/SampleProvider.py:126
+#: services/Sample/provider.py:137
 msgid "Text area"
 msgstr "Àrea de text"
 
-#: services/Sample/SampleProvider.py:127
+#: services/Sample/provider.py:138
 msgid "This is a text area"
 msgstr "Aquesta és una àrea de text"
 
-#: services/Sample/SampleProvider.py:147
+#: services/Sample/provider.py:158
 msgid "Methuselah is not alive!!! :-)"
 msgstr "Matusalen no és viu!!! :-)"
 
-#: services/Sample/SamplePublication.py:195
+#: services/Sample/provider.py:197
+#: services/TestService_enterprise/provider.py:54
+msgid "Nothing tested, but all went fine.."
+msgstr "No s'ha fet cap comprovació, però tot ha funcionat..."
+
+#: services/Sample/publication.py:203
 msgid "Random integer was 9!!! :-)"
 msgstr "El sencer aleatori era el 9!!! :-)"
 
-#: services/Sample/SampleService.py:71
+#: services/Sample/service.py:77
 msgid "Sample Service One"
 msgstr "Mostra de Servei U"
 
-#: services/Sample/SampleService.py:75
+#: services/Sample/service.py:81
 msgid "Sample (and dummy) service ONE"
 msgstr "Mostra (i simulació) del servei U"
 
-#: services/Sample/SampleService.py:118
+#: services/Sample/service.py:125
 msgid "Colour"
 msgstr "Color"
 
-#: services/Sample/SampleService.py:119
+#: services/Sample/service.py:126
 msgid "Colour of the field"
 msgstr "Color del camp"
 
-#: services/Sample/SampleService.py:132
+#: services/Sample/service.py:141
 msgid "Password for testing purposes"
 msgstr "Contrasenya per a proves"
 
-#: services/Sample/SampleService.py:138
+#: services/Sample/service.py:148
 msgid "Services names"
 msgstr "Noms de serveis"
 
-#: services/Sample/SampleService.py:139
+#: services/Sample/service.py:149
 msgid "Base name for this user services"
 msgstr "Nom base per als serveis d'aquest usuari"
 
-#: services/Sample/SampleService.py:196
+#: services/Sample/service.py:203
 msgid "Sample Service Two"
 msgstr "Mostra del servei DOS"
 
-#: services/Sample/SampleService.py:198
+#: services/Sample/service.py:205
 msgid "Sample (and dummy) service ONE+ONE"
 msgstr "Mostra (i simulació) del servei U+U"
 
-#: services/Sample/SampleService.py:204
+#: services/Sample/service.py:211
 msgid "L1 cache for dummy elements"
 msgstr "Memòria cau de nivell 1 per a elements simulats"
 
-#: services/Sample/SampleService.py:206
+#: services/Sample/service.py:213
 msgid "L2 cache for dummy elements"
 msgstr "Memòria cau de nivell 2 per a elements simulats"
 
-#: services/Sample/SampleService.py:220
+#: services/Sample/service.py:227
 msgid "List of names"
 msgstr "Llista de noms"
 
-#: services/TestService_enterprise/TestProvider.py:23
+#: services/TestService_enterprise/provider.py:47
 msgid "Test Provider"
 msgstr "Proveïdor de prova"
 
-#: services/TestService_enterprise/TestProvider.py:25
+#: services/TestService_enterprise/provider.py:49
 msgid "Test (and dummy) service provider"
 msgstr "Proveïdor de serveis de prova (i simulació)"
 
-#: services/TestService_enterprise/TestService.py:18
+#: services/TestService_enterprise/service.py:17
 msgid "Test Service with cache"
 msgstr "Serveis de prova amb memòria cau"
 
-#: services/TestService_enterprise/TestService.py:20
+#: services/TestService_enterprise/service.py:19
 msgid "Test service for cache L1 only"
 msgstr "Servei de prova només per a memòria cau nivell 1"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
+#: services/VCloud_enterprise/provider.py:32
 msgid "vCloud Server IP or Hostname"
 msgstr "Nom de host o IP del servidor vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
+#: services/VCloud_enterprise/provider.py:33
 msgid "vCloud Server Port (usually 443)"
 msgstr "Port del servidor vCloud (generalment el 443)"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
+#: services/VCloud_enterprise/provider.py:34
 msgid "Organization"
 msgstr "Organització"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
+#: services/VCloud_enterprise/provider.py:34
 msgid "Organization to use on vCloud"
 msgstr "Organització per a utilitzar a vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
+#: services/VCloud_enterprise/provider.py:35
 msgid "User with valid privileges on vCloud"
 msgstr "Usuari amb privilegis vàlids sobre vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:31
+#: services/VCloud_enterprise/provider.py:36
 msgid "Password of the user of vCloud"
 msgstr "Contrasenya de l'usuari de vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:42
+#: services/VCloud_enterprise/provider.py:40
+#| msgid "Actor version"
+msgid "Select your vCloud version"
+msgstr "Seleccioneu la vostra versió vCloud"
+
+#: services/VCloud_enterprise/provider.py:58
 msgid "VCloud Director Platform Provider"
 msgstr "Proveïdor de plataforma vCloud Director"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:44
+#: services/VCloud_enterprise/provider.py:60
 msgid "Provides connection to vCloud Director platform"
 msgstr "Proporciona connexió a la plataforma vCloud Director"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:192
-msgid "vCloud Provider: "
-msgstr "Proveïdor vCloud"
-
-#: services/VCloud_enterprise/VCloudCloneService.py:32
+#: services/VCloud_enterprise/service.py:35
 msgid "VCloud Platform vApp"
 msgstr "Plataforma vCloud vApp"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:34
+#: services/VCloud_enterprise/service.py:37
 msgid "This service provides access to vApp based VDI"
 msgstr "Aquest servei proporciona accés a VDI basat en vApp"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:40
+#: services/VCloud_enterprise/service.py:43
 msgid "Number of desired vApps to keep running waiting for an user"
 msgstr ""
 "Nombre desitjat de vApps que es mantenen en execució esperant un usuari"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:42
+#: services/VCloud_enterprise/service.py:45
 msgid "Number of desired vApps to keep suspended waiting for use"
 msgstr ""
 "Nombre desitjat de vApps que es mantenen en suspens esperant per a ser "
 "utilitzades"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:55
+#: services/VCloud_enterprise/service.py:58
 msgid "vDatacenter"
 msgstr "vDatacenter"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:57
+#: services/VCloud_enterprise/service.py:60
 msgid "Virtual Datacenter"
 msgstr "Datacenter Virtual"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:64
+#: services/VCloud_enterprise/service.py:67
 msgid "Catalog"
 msgstr "Catàleg"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:64
+#: services/VCloud_enterprise/service.py:67
 msgid "vApps source catalog"
 msgstr "Catàleg font de vApps"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:74
+#: services/VCloud_enterprise/service.py:77
 msgid "vApp Template"
 msgstr "Plantilla vApp"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:75
+#: services/VCloud_enterprise/service.py:78
 msgid "vApp template for the service"
 msgstr "Plantilla vApp per a aquest servei"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:79
-#: services/Vmware_enterprise/vc_service_linked.py:117
+#: services/VCloud_enterprise/service.py:82
+#: services/Vmware_enterprise/service_linked.py:117
 msgid "Main Network"
 msgstr "Xarxa principal"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:80
-#: services/Vmware_enterprise/vc_service_linked.py:118
+#: services/VCloud_enterprise/service.py:83
+#: services/Vmware_enterprise/service_linked.py:118
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -3949,39 +4015,39 @@ msgstr ""
 "Si es troba més d'una interfície a la màquina, s'utilitza la trobada primer "
 "en aquesta xarxa com a principal"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:97
+#: services/VCloud_enterprise/service.py:100
 msgid "Only vApp Templates with 1 VM are allowed"
 msgstr "Només es permeten plantilles vApp amb una màquina virtual"
 
-#: services/Vmware_enterprise/vc_helpers.py:73
+#: services/Vmware_enterprise/helpers.py:84
 msgid "Local"
 msgstr "Local"
 
-#: services/Vmware_enterprise/vc_helpers.py:75
+#: services/Vmware_enterprise/helpers.py:86
 msgid "Remote"
 msgstr "Remot"
 
-#: services/Vmware_enterprise/vc_provider.py:37
+#: services/Vmware_enterprise/provider.py:41
 msgid "VMWare VCenter Server IP or Hostname"
 msgstr "Nom de host o IP del servidor VMWare VCenter"
 
-#: services/Vmware_enterprise/vc_provider.py:38
+#: services/Vmware_enterprise/provider.py:42
 msgid "VMWare VC Server Port (usually 443)"
 msgstr "Port del servidor VMWare VCenter (generalment el 443)"
 
-#: services/Vmware_enterprise/vc_provider.py:39
+#: services/Vmware_enterprise/provider.py:43
 msgid "User with valid privileges on VC"
 msgstr "Usuari amb privilegis vàlids sobre VC"
 
-#: services/Vmware_enterprise/vc_provider.py:40
+#: services/Vmware_enterprise/provider.py:44
 msgid "Password of the user of the VC"
 msgstr "Contrasenya de l'usuari de VC"
 
-#: services/Vmware_enterprise/vc_provider.py:46
+#: services/Vmware_enterprise/provider.py:50
 msgid "Timeout in seconds of connection to VC"
 msgstr "Temps d'espera de la connexió a VC en segons"
 
-#: services/Vmware_enterprise/vc_provider.py:48
+#: services/Vmware_enterprise/provider.py:52
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
@@ -3989,32 +4055,32 @@ msgstr ""
 "Rang d'adreces mac vàlides per a màquines creades. Ha d'estar entre "
 "00:50:56:00:00:00 i 00:50:56:3F:FF:FF"
 
-#: services/Vmware_enterprise/vc_provider.py:55
+#: services/Vmware_enterprise/provider.py:56
 msgid "VMWare VCenter Platform Provider"
 msgstr "Proveïdor de plataforma VMWare VCenter"
 
-#: services/Vmware_enterprise/vc_provider.py:57
+#: services/Vmware_enterprise/provider.py:58
 msgid "Provides connection to Virtual Center Services"
 msgstr "Proporciona connexió a serveis VMWare VCenter"
 
-#: services/Vmware_enterprise/vc_provider.py:164
+#: services/Vmware_enterprise/provider.py:165
 msgid "Connection params ok"
 msgstr "Paràmetres de connexió correctes"
 
-#: services/Vmware_enterprise/vc_publication.py:50
+#: services/Vmware_enterprise/publication.py:67
 msgid "Publication"
 msgstr "Publicació"
 
-#: services/Vmware_enterprise/vc_publication.py:51
+#: services/Vmware_enterprise/publication.py:68
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
 msgstr "Publicació d'UDS per a {0} creat a {1}"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:33
+#: services/Vmware_enterprise/service_fixed.py:35
 msgid "Fixed Machines Pool"
 msgstr "Pool de Màquines Fixes"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:35
+#: services/Vmware_enterprise/service_fixed.py:37
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
@@ -4022,197 +4088,159 @@ msgstr ""
 "Aquest servei proporciona accés a un grup fix de màquines seleccionades de "
 "la infrastructura"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:54
-#: services/Vmware_enterprise/vc_service_linked.py:60
+#: services/Vmware_enterprise/service_fixed.py:56
+#: services/Vmware_enterprise/service_linked.py:60
 msgid "Datacenter"
 msgstr "Datacenter"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:61
-#: services/Vmware_enterprise/vc_service_fixed.py:76
-#: services/Vmware_enterprise/vc_service_fixed.py:81
+#: services/Vmware_enterprise/service_fixed.py:63
+#: services/Vmware_enterprise/service_fixed.py:78
+#: services/Vmware_enterprise/service_fixed.py:83
 msgid "Machines"
 msgstr "Màquines"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:62
-#: services/Vmware_enterprise/vc_service_linked.py:67
+#: services/Vmware_enterprise/service_fixed.py:64
+#: services/Vmware_enterprise/service_linked.py:67
 msgid "Datacenter containing base machine"
 msgstr "Datacenter que conté la base de dades"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:66
-#: services/Vmware_enterprise/vc_service_linked.py:100
+#: services/Vmware_enterprise/service_fixed.py:68
+#: services/Vmware_enterprise/service_linked.py:100
 msgid "Resource Pool"
 msgstr "Pool de recursos"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:74
+#: services/Vmware_enterprise/service_fixed.py:76
 msgid "Resource Pool containing base machines"
 msgstr "Pool de recursos que conté les màquines base"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:81
+#: services/Vmware_enterprise/service_fixed.py:83
 msgid "Base Machines"
 msgstr "Màquines base"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:81
+#: services/Vmware_enterprise/service_fixed.py:83
 msgid "Base machines for this service"
 msgstr "Màquines base per a aquest servei"
 
-#: services/Vmware_enterprise/vc_service_fixed.py:101
+#: services/Vmware_enterprise/service_fixed.py:103
 msgid "We need at least a machine"
 msgstr "Es necessita al menys una màquina"
 
-#: services/Vmware_enterprise/vc_service_full.py:33
+#: services/Vmware_enterprise/service_full.py:30
 msgid "Clone based - Full"
 msgstr "Basat en clonat -  Full Clone"
 
-#: services/Vmware_enterprise/vc_service_full.py:35
+#: services/Vmware_enterprise/service_full.py:32
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
 msgstr ""
 "Aquest servei proporciona accés a màquines Full Clone d'un Virtual Center"
 
-#: services/Vmware_enterprise/vc_service_full.py:70
+#: services/Vmware_enterprise/service_full.py:67
 msgid "VMs Datastores"
 msgstr "Emmagatzematge de dades de les Màquines Virtuals"
 
-#: services/Vmware_enterprise/vc_service_full.py:71
+#: services/Vmware_enterprise/service_full.py:68
 msgid "Datastores where to put machines"
 msgstr "Unitats d'emmagatzematge on guardar màquines"
 
-#: services/Vmware_enterprise/vc_service_linked.py:37
+#: services/Vmware_enterprise/service_linked.py:37
 msgid "Clone based - Linked"
 msgstr "Basat en clons -  Linked Clone"
 
-#: services/Vmware_enterprise/vc_service_linked.py:39
+#: services/Vmware_enterprise/service_linked.py:39
 msgid ""
 "This service provides access to Linked Clones machines on a Virtual Center"
 msgstr ""
 "Aquest servei proporciona accés a màquines Linked clone d'un Virtual Center"
 
-#: services/Vmware_enterprise/vc_service_linked.py:70
+#: services/Vmware_enterprise/service_linked.py:70
 msgid "Pub. Resource Pool"
 msgstr "Pub. pool de recursos"
 
-#: services/Vmware_enterprise/vc_service_linked.py:73
+#: services/Vmware_enterprise/service_linked.py:73
 msgid "Resource Pool where deploy clones"
 msgstr "Pool de recursos on desplegar els clons"
 
-#: services/Vmware_enterprise/vc_service_linked.py:78
+#: services/Vmware_enterprise/service_linked.py:78
 msgid "Pub.Datastores"
 msgstr "Pub. Unitats d'emmagatzematge"
 
-#: services/Vmware_enterprise/vc_service_linked.py:82
+#: services/Vmware_enterprise/service_linked.py:82
 msgid "Datastores where to put publications"
 msgstr "Unitats d'emmagatzematge on guardar publicacions"
 
-#: services/Vmware_enterprise/vc_service_linked.py:89
+#: services/Vmware_enterprise/service_linked.py:89
 msgid "If active, found duplicates clones for this service will be removed"
 msgstr ""
 "Si està activat, s'eliminarà la cerca de clons duplicats per a aquest servei"
 
-#: services/Vmware_enterprise/vc_service_linked.py:93
+#: services/Vmware_enterprise/service_linked.py:93
 msgid "Keep on error"
 msgstr "Mantenir si error"
 
-#: services/Vmware_enterprise/vc_service_linked.py:96
+#: services/Vmware_enterprise/service_linked.py:96
 msgid "If active, access errors found on machine will not mark is as error."
 msgstr ""
 "Si està activat, els errors d'accés trobats a la màquina no es marcaran com "
 "a error."
 
-#: services/Vmware_enterprise/vc_service_linked.py:108
+#: services/Vmware_enterprise/service_linked.py:108
 msgid "Resource Pool containing base machine"
 msgstr "Pool de recursos que conté la màquina base"
 
-#: services/Vmware_enterprise/vc_service_linked.py:114
+#: services/Vmware_enterprise/service_linked.py:114
 msgid "Base machine for this service"
 msgstr "Màquina base per a aquest servei"
 
-#: services/Vmware_enterprise/vc_service_linked.py:119
+#: services/Vmware_enterprise/service_linked.py:119
 msgid "Pub. Network"
 msgstr "Xarxa pública"
 
-#: services/Vmware_enterprise/vc_service_linked.py:120
+#: services/Vmware_enterprise/service_linked.py:120
 msgid "Network on which the machine will be deployed"
 msgstr "Xarxa sobre la que la màquina serà desplegada"
 
-#: services/Vmware_enterprise/vc_service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:121
 msgid "Clones Folder"
 msgstr "Carpeta de clons"
 
-#: services/Vmware_enterprise/vc_service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:121
 msgid "Folder where deploy clones"
 msgstr "Carpeta on desplegar els clons"
 
-#: services/Vmware_enterprise/vc_service_linked.py:122
+#: services/Vmware_enterprise/service_linked.py:122
 msgid "Inc.Datastores"
 msgstr "Inc. unitats d'emmagatzematge"
 
-#: services/Vmware_enterprise/vc_service_linked.py:123
+#: services/Vmware_enterprise/service_linked.py:123
 msgid "Datastores where to put incrementals"
 msgstr "Unitats d'emmagatzematge on guardar incrementals i publicacions"
 
-#: services/Xen/XenLinkedService.py:56
-msgid "Xen Linked Clone"
-msgstr "Linked Clone Xen"
-
-#: services/Xen/XenLinkedService.py:60
-msgid "Xen Services based on templates"
-msgstr "Serveis Xen basats en plantilles"
-
-#: services/Xen/XenLinkedService.py:105
-msgid "Storage SR"
-msgstr "Emmagatzematge SR"
-
-#: services/Xen/XenLinkedService.py:108
-#| msgid "Storage where to publish and put incrementals"
-msgid ""
-"Storage where to publish and put incrementals (only shared storages are "
-"supported)"
-msgstr ""
-"Emmagatzematge on publicar i posar incrementals (només s’admeten els "
-"emmagatzematges compartits)"
-
-#: services/Xen/XenLinkedService.py:133
-msgid "Network used for virtual machines"
-msgstr "Xarxa utilitzada per a màquines virtuals"
-
-#: services/Xen/XenLinkedService.py:149
-msgid "Shadow"
-msgstr "Shadow"
-
-#: services/Xen/XenLinkedService.py:154
-msgid "Shadow memory multiplier (memory overcommit)"
-msgstr "Multiplicador de memòria \"shadow\" (sobrecàrrega de memòria)"
-
-#: services/Xen/XenLinkedService.py:174
-msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
-msgstr ""
-"Longitud de la part numèrica dels noms d'aquestes màquines (entre 3 i 6)"
-
-#: services/Xen/XenProvider.py:79
+#: services/Xen/provider.py:75
 msgid "Xenserver/XCP-NG Platforms Provider"
 msgstr "Proveïdor de les plataformes XenServer/XCP-NG"
 
-#: services/Xen/XenProvider.py:83
+#: services/Xen/provider.py:79
 msgid "XenServer and XCP-NG platforms service provider"
 msgstr "Proveïdor de serveis de les plataformes XenServer i XCP-NG"
 
-#: services/Xen/XenProvider.py:98
+#: services/Xen/provider.py:94
 msgid "XenServer Server IP or Hostname"
 msgstr "IP o nom de host del servidor Xenserver"
 
-#: services/Xen/XenProvider.py:99
+#: services/Xen/provider.py:95
 msgid "User with valid privileges on XenServer"
 msgstr "Usuari amb privilegis vàlids sobre Xenserver"
 
-#: services/Xen/XenProvider.py:100
+#: services/Xen/provider.py:96
 msgid "Password of the user of XenServer"
 msgstr "Contrasenya de l'usuari Xenserver"
 
-#: services/Xen/XenProvider.py:107
+#: services/Xen/provider.py:103
 msgid "Verify Certificate"
 msgstr "Verifica el certificat"
 
-#: services/Xen/XenProvider.py:108
+#: services/Xen/provider.py:104
 msgid ""
 "If selected, certificate will be checked against system valid certificate "
 "providers"
@@ -4220,10 +4248,47 @@ msgstr ""
 "Si està seleccionat, el certificat es verificarà sobre el sistema proveïdor "
 "de certificats vàlids"
 
-#: services/Xen/XenProvider.py:419
-#, python-brace-format
-msgid "Connection failed: {0}"
-msgstr "Connexió fallida:{0}"
+#: services/Xen/provider.py:401
+#| msgid "Connection failed: {0}"
+msgid "Connection failed: {}"
+msgstr "Connexió fallida: {}"
+
+#: services/Xen/service.py:60
+msgid "Xen Linked Clone"
+msgstr "Linked Clone Xen"
+
+#: services/Xen/service.py:64
+msgid "Xen Services based on templates"
+msgstr "Serveis Xen basats en plantilles"
+
+#: services/Xen/service.py:109
+msgid "Storage SR"
+msgstr "Emmagatzematge SR"
+
+#: services/Xen/service.py:112
+msgid ""
+"Storage where to publish and put incrementals (only shared storages are "
+"supported)"
+msgstr ""
+"Emmagatzematge on publicar i posar incrementals (només s’admeten els "
+"emmagatzematges compartits)"
+
+#: services/Xen/service.py:137
+msgid "Network used for virtual machines"
+msgstr "Xarxa utilitzada per a màquines virtuals"
+
+#: services/Xen/service.py:153
+msgid "Shadow"
+msgstr "Shadow"
+
+#: services/Xen/service.py:158
+msgid "Shadow memory multiplier (memory overcommit)"
+msgstr "Multiplicador de memòria \"shadow\" (sobrecàrrega de memòria)"
+
+#: services/Xen/service.py:178
+msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
+msgstr ""
+"Longitud de la part numèrica dels noms d'aquestes màquines (entre 3 i 6)"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -4336,36 +4401,6 @@ msgstr "Accés per hora a usuaris"
 msgid "Users Access by day of week/hour"
 msgstr "Els usuaris accedeixen per dia de setmana / hora"
 
-#: templatetags/html5.py:58 web/util/configjs.py:110
-msgid "Access limited by calendar"
-msgstr "Accés limitat per calendari"
-
-#: templatetags/html5.py:118
-msgid "Download UDS Plugin for"
-msgstr "Descarrega complement UDS per a "
-
-#: templatetags/html5.py:124
-msgid "Debian based Linux"
-msgstr "Linux basat en Debian"
-
-#: templatetags/html5.py:124 templatetags/html5.py:125
-#: templatetags/html5.py:126 templatetags/html5.py:127 web/util/configjs.py:138
-#: web/util/configjs.py:139 web/util/configjs.py:140 web/util/configjs.py:141
-msgid "(requires Python-2.7)"
-msgstr "(requereix Python-2.7)"
-
-#: templatetags/html5.py:125
-msgid "Red Hat based Linux (RH, Fedora, Centos, ...)"
-msgstr "Linux basat en Red Hat (RH, Fedora, Centos...)"
-
-#: templatetags/html5.py:126
-msgid "Suse based Linux"
-msgstr "Linux basat en Suse"
-
-#: templatetags/html5.py:127
-msgid "Generic .tar.gz Linux"
-msgstr ".tar .gz linux genèric"
-
 #: transports/HTML5RDP/html5rdp.py:63
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
@@ -4401,7 +4436,7 @@ msgstr "Credencials buides"
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
 #: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
-#: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:68
+#: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
 "Si està seleccionat, les credencials utilitzades per a connectar-se estaran "
@@ -4411,7 +4446,7 @@ msgstr ""
 #: transports/NX/nxtunneltransport.py:77
 #: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
 #: transports/RGS_enterprise/rgs.py:45
-#: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:74
+#: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:69
 #: transports/X2GO/x2go_base.py:70
 msgid "If not empty, this username will be always used as credential"
 msgstr "Si no està buit, el nom d'usuari s'utilitzarà sempre a les credencials"
@@ -4420,7 +4455,7 @@ msgstr "Si no està buit, el nom d'usuari s'utilitzarà sempre a les credencials
 #: transports/NX/nxtunneltransport.py:78
 #: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
 #: transports/RGS_enterprise/rgs.py:46
-#: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:80
+#: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:75
 msgid "If not empty, this password will be always used as credential"
 msgstr ""
 "Si no està buit, aquesta contrasenya s'utilitzarà sempre a les credencials"
@@ -4549,19 +4584,16 @@ msgstr "Teclat anglès (Estats Units)"
 
 #: transports/HTML5RDP/html5rdp.py:93
 #: transports/HTML5RDS_enterprise/html5rds.py:95
-#| msgid "English (US) keyboard"
 msgid "English (GB) keyboard"
 msgstr "Teclat anglès (GB)"
 
 #: transports/HTML5RDP/html5rdp.py:94
 #: transports/HTML5RDS_enterprise/html5rds.py:96
-#| msgid "Swedish keyboard"
 msgid "Spanish keyboard"
 msgstr "Teclat espanyol"
 
 #: transports/HTML5RDP/html5rdp.py:95
 #: transports/HTML5RDS_enterprise/html5rds.py:97
-#| msgid "Italian keyboard"
 msgid "Latin American keyboard"
 msgstr "Teclat llatinoamericà"
 
@@ -4577,13 +4609,11 @@ msgstr "Teclat francès (azerty)"
 
 #: transports/HTML5RDP/html5rdp.py:98
 #: transports/HTML5RDS_enterprise/html5rds.py:100
-#| msgid "French keyboard (azerty)"
 msgid "Swiss French keyboard (qwertz)"
 msgstr "Teclat suís francès (qwertz)"
 
 #: transports/HTML5RDP/html5rdp.py:99
 #: transports/HTML5RDS_enterprise/html5rds.py:101
-#| msgid "German keyboard (qwertz)"
 msgid "Swiss German keyboard (qwertz)"
 msgstr "Teclat suís alemany (qwertz)"
 
@@ -4599,13 +4629,11 @@ msgstr "Teclat suec"
 
 #: transports/HTML5RDP/html5rdp.py:102
 #: transports/HTML5RDS_enterprise/html5rds.py:104
-#| msgid "Italian keyboard"
 msgid "Japanese keyboard"
 msgstr "Teclat japonès"
 
 #: transports/HTML5RDP/html5rdp.py:103
 #: transports/HTML5RDS_enterprise/html5rds.py:105
-#| msgid "Italian keyboard"
 msgid "Brazilian keyboard"
 msgstr "Teclat brasiler"
 
@@ -4736,13 +4764,11 @@ msgstr "Mida de memòria cau en Mb que es conserva en memòria"
 
 #: transports/NX/nxtransport.py:127 transports/NX/nxtunneltransport.py:129
 #: transports/X2GO/x2go_base.py:75
-#| msgid "Screen Size"
 msgid "Scren size"
 msgstr "Mida de l&#39;escena"
 
 #: transports/NX/nxtransport.py:129 transports/NX/nxtunneltransport.py:131
 #: transports/X2GO/x2go_base.py:77
-#| msgid "Screen Size"
 msgid "Screen size"
 msgstr "Mida de la pantalla"
 
@@ -4847,12 +4873,10 @@ msgid "Local drives policy"
 msgstr "Política de discs locals"
 
 #: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:51
-#| msgid "Local drives redirection allowed"
 msgid "Local drives redirection policy"
 msgstr "Política de redirecció de les unitats locals"
 
 #: transports/RDP/rdp_base.py:79 transports/RDS_enterprise/rds_base.py:61
-#| msgid "Datastore Drives"
 msgid "Force drives"
 msgstr "Força dels impulsors"
 
@@ -5043,7 +5067,6 @@ msgid "RGS Protocol. Direct connection."
 msgstr "Protocol RGS. Connexió directa."
 
 #: transports/RGS_enterprise/rgs.py:44
-#| msgid "If checked, the credentials used to connect will be emtpy"
 msgid "If checked, the credentials used to cscriptNameTemplatel be emtpy"
 msgstr ""
 "Si es comprova, les credencials utilitzades per a cscriptNameTemplatel són "
@@ -5152,11 +5175,11 @@ msgstr "SPICE"
 msgid "SPICE Protocol. Direct connection."
 msgstr "Protocol SPICE. Connexió directa."
 
-#: transports/SPICE/spice_base.py:67
+#: transports/SPICE/spice_base.py:62
 msgid "Empty credentials"
 msgstr "Credencials buides"
 
-#: transports/SPICE/spice_base.py:88
+#: transports/SPICE/spice_base.py:83
 msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
 "etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
@@ -5165,37 +5188,37 @@ msgstr ""
 "a /etc/pki/ovirt-engine/certs/ca.der (utilitzeu el contingut d'aquest "
 "fitxer)."
 
-#: transports/SPICE/spice_base.py:93
+#: transports/SPICE/spice_base.py:88
 msgid "Fullscreen Mode"
 msgstr "Mode pantalla completa"
 
-#: transports/SPICE/spice_base.py:94
+#: transports/SPICE/spice_base.py:89
 msgid "If checked, viewer will be shown on fullscreen mode-"
 msgstr "Si està seleccionat, el visor apareixerà en mode pantalla completa"
 
-#: transports/SPICE/spice_base.py:99
+#: transports/SPICE/spice_base.py:94
 msgid "Smartcard Redirect"
 msgstr "Redirecció de Targetes intel·ligents"
 
-#: transports/SPICE/spice_base.py:100
+#: transports/SPICE/spice_base.py:95
 msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgstr ""
 "Si està seleccionat, el protocol SPICE permetrà la redirecció de targetes "
 "intel·ligents"
 
-#: transports/SPICE/spice_base.py:106
+#: transports/SPICE/spice_base.py:101
 msgid "Enable USB"
 msgstr "Activa USB"
 
-#: transports/SPICE/spice_base.py:107
+#: transports/SPICE/spice_base.py:102
 msgid "If checked, USB redirection will be allowed."
 msgstr "Si està seleccionat, es permetrà la redirecció USB"
 
-#: transports/SPICE/spice_base.py:113
+#: transports/SPICE/spice_base.py:108
 msgid "New USB Auto Sharing"
 msgstr "Nou Autocompartir USB"
 
-#: transports/SPICE/spice_base.py:114
+#: transports/SPICE/spice_base.py:109
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Autoredirecció dels dispositius USB quan es connectin"
 
@@ -5285,14 +5308,6 @@ msgstr "Valor de qualitat utilitzat en alguns formats de paquet"
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "Accés X2Go (experimental). Connexió via túnel"
 
-#: web/forms/LoginForm.py:57
-msgid "Select authenticator"
-msgstr "Selecciona autenticador"
-
-#: web/forms/LoginForm.py:61
-msgid "authenticator"
-msgstr "autenticador"
-
 #: web/util/authentication.py:98
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "Hi ha massa errors d&#39;autenticació. Usuari bloquejat temporalment"
@@ -5301,35 +5316,44 @@ msgstr "Hi ha massa errors d&#39;autenticació. Usuari bloquejat temporalment"
 msgid "Invalid data"
 msgstr "Dades no vàlides"
 
-#: web/util/configjs.py:136
+#: web/util/configjs.py:118
+msgid "Access limited by calendar"
+msgstr "Accés limitat per calendari"
+
+#: web/util/configjs.py:144
 msgid "Windows client"
 msgstr "Client de Windows"
 
-#: web/util/configjs.py:137
+#: web/util/configjs.py:145
 msgid "Mac OS X client"
 msgstr "Mac OS X client"
 
-#: web/util/configjs.py:138
+#: web/util/configjs.py:146
 msgid "Debian based Linux client"
 msgstr "Client Linux basat en Debian"
 
-#: web/util/configjs.py:139
+#: web/util/configjs.py:146 web/util/configjs.py:147 web/util/configjs.py:148
+#: web/util/configjs.py:149
+msgid "(requires Python-2.7)"
+msgstr "(requereix Python-2.7)"
+
+#: web/util/configjs.py:147
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Client Linux basat en Red Hat (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:140
+#: web/util/configjs.py:148
 msgid "Suse based Linux client"
 msgstr "Client Linux basat en Suse"
 
-#: web/util/configjs.py:141
+#: web/util/configjs.py:149
 msgid "Generic .tar.gz Linux client"
 msgstr "Genèric .tar.gz client de Linux"
 
-#: web/util/errors.py:74
+#: web/util/errors.py:73
 msgid "Unknown error"
 msgstr "Error desconegut"
 
-#: web/util/errors.py:78
+#: web/util/errors.py:77
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -5337,30 +5361,30 @@ msgstr ""
 "Servei no vàlid. El servei no està disponible ara mateix. Si us plau, proveu-"
 "ho més tard"
 
-#: web/util/errors.py:79
+#: web/util/errors.py:78
 msgid "Maximum services limit reached. Please, contact administrator"
 msgstr ""
 "S'ha assolit el límit màxim de serveis. Si us plau contacteu amb "
 "l'administrador"
 
-#: web/util/errors.py:80
+#: web/util/errors.py:79
 msgid "You need to enable cookies to let this application work"
 msgstr ""
 "Necessiteu activar les cookies per a permetre que aquesta aplicació funcioni"
 
-#: web/util/errors.py:82
+#: web/util/errors.py:81
 msgid "Authenticator not found"
 msgstr "No s'ha trobat l'autenticador"
 
-#: web/util/errors.py:83
+#: web/util/errors.py:82
 msgid "Invalid authenticator"
 msgstr "Autenticador no vàlid"
 
-#: web/util/errors.py:84
+#: web/util/errors.py:83
 msgid "Invalid request received"
 msgstr "S'ha rebut una petició no vàlida"
 
-#: web/util/errors.py:85
+#: web/util/errors.py:84
 msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
@@ -5368,11 +5392,11 @@ msgstr ""
 "El vostre navegador no està suportat. Si us plau actualitzeu-lo a una versió "
 "que suporti HTML5, Firefox o Chrome"
 
-#: web/util/errors.py:86
+#: web/util/errors.py:85
 msgid "The requested service is in maintenance mode"
 msgstr "El servei sol·licitat està en mode manteniment"
 
-#: web/util/errors.py:87
+#: web/util/errors.py:86
 msgid ""
 "The service is not ready.\n"
 "Please, try again in a few moments."
@@ -5380,30 +5404,30 @@ msgstr ""
 "El servei no està preparat.\n"
 "Si us plau, torneu-ho a provar en uns moments."
 
-#: web/util/errors.py:88
+#: web/util/errors.py:87
 msgid "Preparing service"
 msgstr "Preparant el servei"
 
-#: web/util/errors.py:89
+#: web/util/errors.py:88
 msgid "Service access denied by calendars"
 msgstr "Accés al servei denegat per calendaris"
 
-#: web/util/errors.py:90
+#: web/util/errors.py:89
 msgid "Page not found"
 msgstr "Pàgina no trobada"
 
-#: web/util/errors.py:91
+#: web/util/errors.py:90
 msgid "Unexpected error"
 msgstr "Error inesperat"
 
-#: web/util/errors.py:92
+#: web/util/errors.py:91
 msgid ""
 "Reloading this page is not supported. Please, reopen service from origin."
 msgstr ""
 "No es permet carregar de nou aquesta pàgina. Torneu a obrir el servei d&#39;"
 "origen."
 
-#: web/util/services.py:187
+#: web/util/services.py:192
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -5411,10 +5435,10 @@ msgstr ""
 "Aquest servei està a punt de ser reemplaçat per una nova versió. Si us plau, "
 "tanqueu la sessió abans {} i deseu tot el treball per evitar-ne pèrdues."
 
-#: web/views/auth.py:133
+#: web/views/auth.py:130
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 
-#: web/views/service.py:104
+#: web/views/service.py:106
 msgid "Service not ready. Please, try again in a while."
 msgstr "Servei no disponible ara mateix. Si us plau, proveu-ho més tard."
