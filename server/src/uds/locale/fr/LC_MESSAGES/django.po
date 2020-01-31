@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-01-10 09:42+0000\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:09+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -469,7 +469,6 @@ msgid "Service not found"
 msgstr "Service introuvable"
 
 #: REST/methods/proxies.py:57
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "Proxies (Experimental)"
 msgstr "Procurations (expérimentales)"
 
@@ -2084,12 +2083,10 @@ msgid "Remove a group"
 msgstr "Supprimer un groupe"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Sets the ignore unused"
 msgstr "Définit l&#39;ignorer inutilisé"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Ignore assigned and unused"
 msgstr "Ignorer les affectations attribuées et inutilisées"
 
@@ -2941,7 +2938,6 @@ msgid "You must select a network for the service"
 msgstr "Vous devez sélectionner un réseau pour le service"
 
 #: services/HyperV_enterprise/legacy/provider.py:64
-#| msgid "OpenStack LEGACY Platform Provider"
 msgid "HyperV LEGACY Platform Provider"
 msgstr "Fournisseur de plate-forme HyperV LEGACY"
 
@@ -3131,12 +3127,10 @@ msgid "Memory for machines deployed from this service"
 msgstr "Mémoire pour les machines déployées à partir de ce service"
 
 #: services/HyperV_enterprise/provider.py:41
-#| msgid "Azure Platform Provider"
 msgid "HyperV Platform Provider"
 msgstr "Fournisseur de plate-forme HyperV"
 
 #: services/HyperV_enterprise/provider.py:45
-#| msgid "HyperV platform service provider (experimental)"
 msgid "HyperV platform service provider with cluster support"
 msgstr ""
 "Fournisseur de services de plateforme HyperV avec prise en charge de cluster"
@@ -3157,12 +3151,10 @@ msgstr ""
 "Utilisez également le"
 
 #: services/HyperV_enterprise/provider.py:70
-#| msgid "Enable USB"
 msgid "Enable SSL"
 msgstr "Activer SSL"
 
 #: services/HyperV_enterprise/provider.py:72
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr ""
@@ -3178,7 +3170,6 @@ msgid "Force SSL certificate verification"
 msgstr "Forcer la vérification du certificat SSL"
 
 #: services/HyperV_enterprise/provider.py:127
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -3187,7 +3178,6 @@ msgstr ""
 "pour être vérifié."
 
 #: services/HyperV_enterprise/provider.py:138
-#| msgid "Timeout in seconds of connection to HyperV"
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr ""
@@ -3762,7 +3752,6 @@ msgstr ""
 "maintenant"
 
 #: services/RDS_enterprise/provider.py:103
-#| msgid "Nothing tested, but all went fine.."
 msgid "Nothing tested, but all went fine..."
 msgstr "Rien de testé, mais tout s&#39;est bien passé ..."
 
@@ -3792,15 +3781,14 @@ msgstr ""
 "Paramètres des applications, tel qu’il est passé dans la ligne de commande"
 
 #: services/RDS_enterprise/service.py:72
-#| msgid "Start date:"
 msgid "Start path"
 msgstr "Chemin de départ"
 
 #: services/RDS_enterprise/service.py:73
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr ""
-"Chemin d&#39;accès au démarrage de l&#39;application. (c&#39;est-à-dire f: \\"
-" exemple \\ dossier)"
+"Chemin d&#39;accès au démarrage de l&#39;application. (c&#39;est-à-dire f: "
+"\\ exemple \\ dossier)"
 
 #: services/RDS_enterprise/service.py:81
 msgid "Max. Allowd services"
@@ -3976,7 +3964,6 @@ msgid "Password of the user of vCloud"
 msgstr "Mot de passe de l’utilisateur de vCloud"
 
 #: services/VCloud_enterprise/provider.py:40
-#| msgid "Actor version"
 msgid "Select your vCloud version"
 msgstr "Sélectionnez votre version de vCloud"
 
@@ -4279,7 +4266,6 @@ msgstr ""
 "fournisseurs de certificats valides du système."
 
 #: services/Xen/provider.py:401
-#| msgid "Connection failed: {0}"
 msgid "Connection failed: {}"
 msgstr "La connexion a échoué: {}"
 

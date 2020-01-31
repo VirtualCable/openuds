@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Adolfo Gómez <dkmaster@dkmon.com>, 2017
+# Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020
 # albert clar <albert.clar@uib.cat>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2018-11-27 10:18+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:14+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -157,19 +157,19 @@ msgstr "Error de comunicació"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
-msgstr "# USR_NUMBER # usuaris, # GRP_NUMBER # grups"
+msgstr "#USR_NUMBER# usuaris, #GRP_NUMBER# grups"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#POOLS_NUMBER# service pools"
-msgstr "# POOLS_NUMBER # piscines de serveis"
+msgstr "#POOLS_NUMBER# piscines de serveis"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:98
 msgid "#SERVICES_NUMBER# user services"
-msgstr "# SERVICES_NUMBER # serveis per a l&#39;usuari"
+msgstr "#SERVICES_NUMBER# serveis per a l&#39;usuari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "#RESTRAINED_NUMBER# restrained services!"
-msgstr "# RESTRAINED_NUMBER # serveis restringits!"
+msgstr "#RESTRAINED_NUMBER# serveis restringits!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:41
 msgid "Read only"
@@ -638,7 +638,6 @@ msgid "Change owner"
 msgstr "Canvia el propietari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:176
-#| msgid "Assigned services"
 msgid "Assign service"
 msgstr "Assignació de servei"
 
@@ -1326,12 +1325,10 @@ msgid "Changelog of"
 msgstr "Canvi de canvis de"
 
 #: static/admin/translations-fakejs.js:415
-#| msgid "Assigned services"
 msgid "Assign service to user manually"
 msgstr "Assigna el servei a l&#39;usuari manualment"
 
 #: static/admin/translations-fakejs.js:416
-#| msgid "Services"
 msgid "Service"
 msgstr "Servei"
 

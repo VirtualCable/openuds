@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-01-10 09:34+0000\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:09+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -469,7 +469,6 @@ msgid "Service not found"
 msgstr "Service nicht gefunden"
 
 #: REST/methods/proxies.py:57
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "Proxies (Experimental)"
 msgstr "Proxies (experimentell)"
 
@@ -2084,12 +2083,10 @@ msgid "Remove a group"
 msgstr "Eine Gruppe entfernen"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Sets the ignore unused"
 msgstr "Legt fest, dass das Ignorieren nicht verwendet wird"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Ignore assigned and unused"
 msgstr "Zugeordnete und nicht verwendete ignorieren"
 
@@ -2940,7 +2937,6 @@ msgid "You must select a network for the service"
 msgstr "Sie müssen ein Netzwerk für den Dienst auswählen"
 
 #: services/HyperV_enterprise/legacy/provider.py:64
-#| msgid "OpenStack LEGACY Platform Provider"
 msgid "HyperV LEGACY Platform Provider"
 msgstr "HyperV LEGACY-Plattformanbieter"
 
@@ -3126,12 +3122,10 @@ msgid "Memory for machines deployed from this service"
 msgstr "Speicher für Maschinen, die von diesem Dienst bereitgestellt werden"
 
 #: services/HyperV_enterprise/provider.py:41
-#| msgid "Azure Platform Provider"
 msgid "HyperV Platform Provider"
 msgstr "HyperV-Plattformanbieter"
 
 #: services/HyperV_enterprise/provider.py:45
-#| msgid "HyperV platform service provider (experimental)"
 msgid "HyperV platform service provider with cluster support"
 msgstr "HyperV Platform Service Provider mit Clusterunterstützung"
 
@@ -3151,12 +3145,10 @@ msgstr ""
 "Verwenden Sie auch die"
 
 #: services/HyperV_enterprise/provider.py:70
-#| msgid "Enable USB"
 msgid "Enable SSL"
 msgstr "SSL aktivieren"
 
 #: services/HyperV_enterprise/provider.py:72
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr ""
@@ -3172,7 +3164,6 @@ msgid "Force SSL certificate verification"
 msgstr "SSL-Zertifikatsüberprüfung erzwingen"
 
 #: services/HyperV_enterprise/provider.py:127
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -3181,7 +3172,6 @@ msgstr ""
 "die Clusterverbindung erzwungen."
 
 #: services/HyperV_enterprise/provider.py:138
-#| msgid "Timeout in seconds of connection to HyperV"
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr ""
@@ -3751,7 +3741,6 @@ msgstr ""
 "entfernt werden"
 
 #: services/RDS_enterprise/provider.py:103
-#| msgid "Nothing tested, but all went fine.."
 msgid "Nothing tested, but all went fine..."
 msgstr "Nichts getestet, aber alles lief gut ..."
 
@@ -3780,7 +3769,6 @@ msgid "Applications parameters, as will be passed in command line"
 msgstr "Anwendungsparameter, wie in der Befehlszeile übergeben"
 
 #: services/RDS_enterprise/service.py:72
-#| msgid "Start date:"
 msgid "Start path"
 msgstr "Pfad starten"
 
@@ -3962,7 +3950,6 @@ msgid "Password of the user of vCloud"
 msgstr "Passwort des Benutzers von vCloud"
 
 #: services/VCloud_enterprise/provider.py:40
-#| msgid "Actor version"
 msgid "Select your vCloud version"
 msgstr "Wählen Sie Ihre vCloud-Version aus"
 
@@ -4266,7 +4253,6 @@ msgstr ""
 "geprüft"
 
 #: services/Xen/provider.py:401
-#| msgid "Connection failed: {0}"
 msgid "Connection failed: {}"
 msgstr "Verbindung fehlgeschlagen: {}"
 

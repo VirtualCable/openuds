@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-01-10 08:52+0000\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:10+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -638,7 +638,6 @@ msgid "Change owner"
 msgstr "Besitzer wechseln"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:176
-#| msgid "Assigned services"
 msgid "Assign service"
 msgstr "Service zuweisen"
 
@@ -1327,12 +1326,10 @@ msgid "Changelog of"
 msgstr "Änderungsprotokoll von"
 
 #: static/admin/translations-fakejs.js:415
-#| msgid "Assigned services"
 msgid "Assign service to user manually"
 msgstr "Ordnen Sie den Dienst manuell dem Benutzer zu"
 
 #: static/admin/translations-fakejs.js:416
-#| msgid "Services"
 msgid "Service"
 msgstr "Bedienung"
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-01-10 09:34+0000\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:09+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -465,7 +465,6 @@ msgid "Service not found"
 msgstr "无法提供服务"
 
 #: REST/methods/proxies.py:57
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "Proxies (Experimental)"
 msgstr "代理（实验性）"
 
@@ -1991,12 +1990,10 @@ msgid "Remove a group"
 msgstr "删除一个组"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Sets the ignore unused"
 msgstr "设置忽略未使用"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Ignore assigned and unused"
 msgstr "忽略分配和未使用"
 
@@ -2818,7 +2815,6 @@ msgid "You must select a network for the service"
 msgstr "您必须为服务选择网络"
 
 #: services/HyperV_enterprise/legacy/provider.py:64
-#| msgid "OpenStack LEGACY Platform Provider"
 msgid "HyperV LEGACY Platform Provider"
 msgstr "HyperV LEGACY平台提供商"
 
@@ -2997,12 +2993,10 @@ msgid "Memory for machines deployed from this service"
 msgstr "从此服务部署的计算机的内存"
 
 #: services/HyperV_enterprise/provider.py:41
-#| msgid "Azure Platform Provider"
 msgid "HyperV Platform Provider"
 msgstr "HyperV平台提供商"
 
 #: services/HyperV_enterprise/provider.py:45
-#| msgid "HyperV platform service provider (experimental)"
 msgid "HyperV platform service provider with cluster support"
 msgstr "具有群集支持的HyperV平台服务提供商"
 
@@ -3020,12 +3014,10 @@ msgid ""
 msgstr "如果使用群集HyperV服务器，请启用此选项。另外，使用"
 
 #: services/HyperV_enterprise/provider.py:70
-#| msgid "Enable USB"
 msgid "Enable SSL"
 msgstr "启用SSL"
 
 #: services/HyperV_enterprise/provider.py:72
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr "如果处于活动状态，则将使用SSL（推荐）建立与HyperV的连接。"
@@ -3039,14 +3031,12 @@ msgid "Force SSL certificate verification"
 msgstr "强制SSL证书验证"
 
 #: services/HyperV_enterprise/provider.py:127
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
 msgstr "如果处于活动状态，则将强制对群集连接上的证书进行验证。"
 
 #: services/HyperV_enterprise/provider.py:138
-#| msgid "Timeout in seconds of connection to HyperV"
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr "连接到HyperV的超时时间（以秒为单位）。 （将此值保持足够高）"
@@ -3580,7 +3570,6 @@ msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "错误：正在使用主机{}上的用户{}，目前无法删除"
 
 #: services/RDS_enterprise/provider.py:103
-#| msgid "Nothing tested, but all went fine.."
 msgid "Nothing tested, but all went fine..."
 msgstr "没有测试，但一切都很好..."
 
@@ -3609,7 +3598,6 @@ msgid "Applications parameters, as will be passed in command line"
 msgstr "应用程序参数，将在命令行中传递"
 
 #: services/RDS_enterprise/service.py:72
-#| msgid "Start date:"
 msgid "Start path"
 msgstr "开始路径"
 
@@ -3791,7 +3779,6 @@ msgid "Password of the user of vCloud"
 msgstr "vCloud用户的密码"
 
 #: services/VCloud_enterprise/provider.py:40
-#| msgid "Actor version"
 msgid "Select your vCloud version"
 msgstr "选择您的vCloud版本"
 
@@ -4080,7 +4067,6 @@ msgid ""
 msgstr "如果选中，将根据系统有效证书提供程序检查证书"
 
 #: services/Xen/provider.py:401
-#| msgid "Connection failed: {0}"
 msgid "Connection failed: {}"
 msgstr "连接失败： {}"
 

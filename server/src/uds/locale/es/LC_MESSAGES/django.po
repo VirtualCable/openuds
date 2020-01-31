@@ -1,29 +1,32 @@
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Adolfo Gómez <dkmaster at dkmon dot com>, 2012-2014.
-# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2018, 2019.
-# albert clar <albert.clar@uib.cat>, 2017.
-# blafuente <blafuente@virtualcable.es>, 2014.
-# blafuente <blafuente@virtualcable.es>, 2014-2016.
-# Javier <jgonzalez@virtualcable.es>, 2014.
-# Javier <jgonzalez@virtualcable.es>, 2014,2018.
-# Luis Fagundez <lframses@gmail.com>, 2018.
+# Adolfo Gómez <dkmaster at dkmon dot com>, 2012-2014
+# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2018
+# Adolfo Gómez <dkmaster@dkmon.com>, 2019
+# albert clar <albert.clar@uib.cat>, 2017
+# blafuente <blafuente@virtualcable.es>, 2014
+# blafuente <blafuente@virtualcable.es>, 2014-2016
+# Javier <jgonzalez@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014,2018
+# Javier <jgonzalez@virtualcable.es>, 2014
+# Luis Fagundez <lframses@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-02-07 07:21+0100\n"
-"Last-Translator: dkmaster <dkmaster@dkmon.com>\n"
-"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:10+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
+"es/)\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 2.0\n"
 
 #: REST/methods/accounts.py:60
 msgid "Accounts"
@@ -475,7 +478,6 @@ msgid "Service not found"
 msgstr "Servicio no encontrado"
 
 #: REST/methods/proxies.py:57
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "Proxies (Experimental)"
 msgstr "Proxies (Experimental)"
 
@@ -2077,12 +2079,10 @@ msgid "Remove a group"
 msgstr "Quitar un grupo"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Sets the ignore unused"
 msgstr "Establece el ignorar sin usar"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Ignore assigned and unused"
 msgstr "Ignorar asignado y no utilizado"
 
@@ -2933,7 +2933,6 @@ msgid "You must select a network for the service"
 msgstr "Debe seleccionar una red para el servicio"
 
 #: services/HyperV_enterprise/legacy/provider.py:64
-#| msgid "OpenStack LEGACY Platform Provider"
 msgid "HyperV LEGACY Platform Provider"
 msgstr "Proveedor de plataforma HyperV LEGACY"
 
@@ -3122,12 +3121,10 @@ msgid "Memory for machines deployed from this service"
 msgstr "Memoria para las máquinas desplegada desde este servicio"
 
 #: services/HyperV_enterprise/provider.py:41
-#| msgid "Azure Platform Provider"
 msgid "HyperV Platform Provider"
 msgstr "Proveedor de plataforma HyperV"
 
 #: services/HyperV_enterprise/provider.py:45
-#| msgid "HyperV platform service provider (experimental)"
 msgid "HyperV platform service provider with cluster support"
 msgstr "Proveedor de servicios de plataforma HyperV con soporte de clúster"
 
@@ -3147,12 +3144,10 @@ msgstr ""
 "Además, use el"
 
 #: services/HyperV_enterprise/provider.py:70
-#| msgid "Enable USB"
 msgid "Enable SSL"
 msgstr "Habilitar SSL"
 
 #: services/HyperV_enterprise/provider.py:72
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr ""
@@ -3168,7 +3163,6 @@ msgid "Force SSL certificate verification"
 msgstr "Forzar verificación de certificado SSL"
 
 #: services/HyperV_enterprise/provider.py:127
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -3177,7 +3171,6 @@ msgstr ""
 "ser verificado."
 
 #: services/HyperV_enterprise/provider.py:138
-#| msgid "Timeout in seconds of connection to HyperV"
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr ""
@@ -3745,7 +3738,6 @@ msgstr ""
 "ahora"
 
 #: services/RDS_enterprise/provider.py:103
-#| msgid "Nothing tested, but all went fine.."
 msgid "Nothing tested, but all went fine..."
 msgstr "Nada probado, pero todo salió bien ..."
 
@@ -3775,7 +3767,6 @@ msgid "Applications parameters, as will be passed in command line"
 msgstr "Parámetros de aplicaciones, como se pasará en línea de comandos"
 
 #: services/RDS_enterprise/service.py:72
-#| msgid "Start date:"
 msgid "Start path"
 msgstr "Camino de inicio"
 
@@ -3958,7 +3949,6 @@ msgid "Password of the user of vCloud"
 msgstr "Contraseña de los usuarios de vCloud"
 
 #: services/VCloud_enterprise/provider.py:40
-#| msgid "Actor version"
 msgid "Select your vCloud version"
 msgstr "Seleccione su versión de vCloud"
 
@@ -4261,7 +4251,6 @@ msgstr ""
 "proveedores de certificados válidos "
 
 #: services/Xen/provider.py:401
-#| msgid "Connection failed: {0}"
 msgid "Connection failed: {}"
 msgstr "La conexión falló: {}"
 

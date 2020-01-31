@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-01-09 12:29+0000\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:10+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -638,7 +638,6 @@ msgid "Change owner"
 msgstr "Aldatu jabea"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:176
-#| msgid "Assigned services"
 msgid "Assign service"
 msgstr "Esleitzeko zerbitzua"
 
@@ -1326,12 +1325,10 @@ msgid "Changelog of"
 msgstr "Changelog of"
 
 #: static/admin/translations-fakejs.js:415
-#| msgid "Assigned services"
 msgid "Assign service to user manually"
 msgstr "Esleitu zerbitzua erabiltzaileari eskuz"
 
 #: static/admin/translations-fakejs.js:416
-#| msgid "Services"
 msgid "Service"
 msgstr "zerbitzua"
 

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-01-10 11:38+0000\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:10+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -469,7 +469,6 @@ msgid "Service not found"
 msgstr "Serviço não encontrado"
 
 #: REST/methods/proxies.py:57
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "Proxies (Experimental)"
 msgstr "Proxies (Experimental)"
 
@@ -2062,12 +2061,10 @@ msgid "Remove a group"
 msgstr "Remover um grupo"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Sets the ignore unused"
 msgstr "Define a ignorar não utilizada"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Ignore assigned and unused"
 msgstr "Ignorar atribuídos e não utilizados"
 
@@ -2912,7 +2909,6 @@ msgid "You must select a network for the service"
 msgstr "Você deve selecionar uma rede para o serviço"
 
 #: services/HyperV_enterprise/legacy/provider.py:64
-#| msgid "OpenStack LEGACY Platform Provider"
 msgid "HyperV LEGACY Platform Provider"
 msgstr "Fornecedor de plataformas HyperV LEGACY"
 
@@ -3098,12 +3094,10 @@ msgid "Memory for machines deployed from this service"
 msgstr "Memória para máquinas implantadas deste serviço"
 
 #: services/HyperV_enterprise/provider.py:41
-#| msgid "Azure Platform Provider"
 msgid "HyperV Platform Provider"
 msgstr "Fornecedor de plataforma HyperV"
 
 #: services/HyperV_enterprise/provider.py:45
-#| msgid "HyperV platform service provider (experimental)"
 msgid "HyperV platform service provider with cluster support"
 msgstr "Provedor de serviços da plataforma HyperV com suporte a cluster"
 
@@ -3123,12 +3117,10 @@ msgstr ""
 "disso, use o"
 
 #: services/HyperV_enterprise/provider.py:70
-#| msgid "Enable USB"
 msgid "Enable SSL"
 msgstr "Ativar SSL"
 
 #: services/HyperV_enterprise/provider.py:72
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr ""
@@ -3143,7 +3135,6 @@ msgid "Force SSL certificate verification"
 msgstr "Forçar verificação de certificado SSL"
 
 #: services/HyperV_enterprise/provider.py:127
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -3152,7 +3143,6 @@ msgstr ""
 "verificado."
 
 #: services/HyperV_enterprise/provider.py:138
-#| msgid "Timeout in seconds of connection to HyperV"
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr ""
@@ -3164,8 +3154,8 @@ msgid ""
 "For clusters, username must be a domain user name (user@domain or DOMAIN"
 "\\user"
 msgstr ""
-"Para clusters, o nome de usuário deve ser um nome de usuário de domínio ("
-"usuário @ domínio ou DOMAIN \\ user"
+"Para clusters, o nome de usuário deve ser um nome de usuário de domínio "
+"(usuário @ domínio ou DOMAIN \\ user"
 
 #: services/Nutanix_enterprise/provider.py:30
 msgid "Nutanix Acropolis Platform Provider"
@@ -3715,7 +3705,6 @@ msgstr ""
 "Erro: o usuário {} no host {} está sendo usado e não pode ser removido agora"
 
 #: services/RDS_enterprise/provider.py:103
-#| msgid "Nothing tested, but all went fine.."
 msgid "Nothing tested, but all went fine..."
 msgstr "Nada testado, mas tudo correu bem ..."
 
@@ -3744,7 +3733,6 @@ msgid "Applications parameters, as will be passed in command line"
 msgstr "Parâmetros de aplicativos, como será passado na linha de comando"
 
 #: services/RDS_enterprise/service.py:72
-#| msgid "Start date:"
 msgid "Start path"
 msgstr "Caminho inicial"
 
@@ -3928,7 +3916,6 @@ msgid "Password of the user of vCloud"
 msgstr "Senha do usuário do vCloud"
 
 #: services/VCloud_enterprise/provider.py:40
-#| msgid "Actor version"
 msgid "Select your vCloud version"
 msgstr "Selecione sua versão do vCloud"
 
@@ -4230,7 +4217,6 @@ msgstr ""
 "certificados válidos do sistema"
 
 #: services/Xen/provider.py:401
-#| msgid "Connection failed: {0}"
 msgid "Connection failed: {}"
 msgstr "Falha na conexão: {}"
 

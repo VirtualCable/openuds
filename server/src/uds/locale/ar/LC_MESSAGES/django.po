@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-01-10 09:34+0000\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -469,7 +469,6 @@ msgid "Service not found"
 msgstr "لم يتم العثور على الخدمة"
 
 #: REST/methods/proxies.py:57
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "Proxies (Experimental)"
 msgstr "الوكلاء (تجريبي)"
 
@@ -2033,12 +2032,10 @@ msgid "Remove a group"
 msgstr "إزالة مجموعة"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Sets the ignore unused"
 msgstr "يجهل تجاهل غير المستخدمة"
 
 #: models/calendar_action.py:68
-#| msgid "Ignores unused"
 msgid "Ignore assigned and unused"
 msgstr "تجاهل المعينة وغير المستخدمة"
 
@@ -2877,7 +2874,6 @@ msgid "You must select a network for the service"
 msgstr "يجب عليك تحديد شبكة للخدمة"
 
 #: services/HyperV_enterprise/legacy/provider.py:64
-#| msgid "OpenStack LEGACY Platform Provider"
 msgid "HyperV LEGACY Platform Provider"
 msgstr "HyperV LEGACY Platform Provider"
 
@@ -3060,12 +3056,10 @@ msgid "Memory for machines deployed from this service"
 msgstr "الذاكرة لآلات تم نشرها من هذه الخدمة"
 
 #: services/HyperV_enterprise/provider.py:41
-#| msgid "Azure Platform Provider"
 msgid "HyperV Platform Provider"
 msgstr "HyperV Platform Provider"
 
 #: services/HyperV_enterprise/provider.py:45
-#| msgid "HyperV platform service provider (experimental)"
 msgid "HyperV platform service provider with cluster support"
 msgstr "مزود خدمة النظام الأساسي HyperV مع دعم نظام المجموعة"
 
@@ -3085,12 +3079,10 @@ msgstr ""
 "استخدم"
 
 #: services/HyperV_enterprise/provider.py:70
-#| msgid "Enable USB"
 msgid "Enable SSL"
 msgstr "تمكين SSL"
 
 #: services/HyperV_enterprise/provider.py:72
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr "إذا كانت نشطة ، سيتم إجراء اتصالات HyperV باستخدام SSL (مستحسن)."
@@ -3104,14 +3096,12 @@ msgid "Force SSL certificate verification"
 msgstr "فرض التحقق من شهادة SSL"
 
 #: services/HyperV_enterprise/provider.py:127
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
 msgstr "إذا كانت نشطة ، سيتم فرض الشهادة على اتصال الكتلة للتحقق منها."
 
 #: services/HyperV_enterprise/provider.py:138
-#| msgid "Timeout in seconds of connection to HyperV"
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr ""
@@ -3664,7 +3654,6 @@ msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "الخطأ: العضو {} على المضيف {} يستخدم ولا يمكن إزالتها في الوقت الحالي"
 
 #: services/RDS_enterprise/provider.py:103
-#| msgid "Nothing tested, but all went fine.."
 msgid "Nothing tested, but all went fine..."
 msgstr "لم يتم اختبار أي شيء ، لكن كل شيء سار ..."
 
@@ -3693,7 +3682,6 @@ msgid "Applications parameters, as will be passed in command line"
 msgstr "معلمات التطبيقات، كما سيتم تمريرها في سطر الأوامر"
 
 #: services/RDS_enterprise/service.py:72
-#| msgid "Start date:"
 msgid "Start path"
 msgstr "بداية المسار"
 
@@ -3875,7 +3863,6 @@ msgid "Password of the user of vCloud"
 msgstr "كلمة المرور للمستخدم ل vCloud"
 
 #: services/VCloud_enterprise/provider.py:40
-#| msgid "Actor version"
 msgid "Select your vCloud version"
 msgstr "اختر نسخة vCloud الخاصة بك"
 
@@ -4169,7 +4156,6 @@ msgid ""
 msgstr "إذا حدد، سيتم فحص الشهادة ضد نظام مقدمي الشهادة."
 
 #: services/Xen/provider.py:401
-#| msgid "Connection failed: {0}"
 msgid "Connection failed: {}"
 msgstr "فشل الاتصال: {}"
 

@@ -1,26 +1,31 @@
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2018, 2019.
-# blafuente <blafuente@virtualcable.es>, 2014.
-# blafuente <blafuente@virtualcable.es>, 2014-2015.
-# Javier <jgonzalez@virtualcable.es>, 2014.
-# Luis Fagundez <lframses@gmail.com>, 2018.
+# , 2014
+# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2018,2020
+# Adolfo Gómez <dkmaster@dkmon.com>, 2019
+# blafuente <blafuente@virtualcable.es>, 2014
+# blafuente <blafuente@virtualcable.es>, 2014-2015
+# Javier <jgonzalez@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014
+# Luis Fagundez <lframses@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:06+0100\n"
-"PO-Revision-Date: 2019-02-07 07:32+0100\n"
-"Last-Translator: dkmaster <dkmaster@dkmon.com>\n"
-"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"PO-Revision-Date: 2020-01-31 11:16+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
+"es/)\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 2.0\n"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:37
 #: static/modern/main-es5.js:1 static/modern/main.js:1
@@ -159,19 +164,19 @@ msgstr "Error de comunicación"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
-msgstr "# USR_NUMBER # usuarios, # GRP_NUMBER # grupos"
+msgstr "#USR_NUMBER# usuarios, #GRP_NUMBER# grupos"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#POOLS_NUMBER# service pools"
-msgstr "# POOLS_NUMBER # agrupaciones de servicios"
+msgstr "#POOLS_NUMBER# agrupaciones de servicios"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:98
 msgid "#SERVICES_NUMBER# user services"
-msgstr "# SERVICES_NUMBER # servicios de usuario"
+msgstr "#SERVICES_NUMBER# servicios de usuario"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "#RESTRAINED_NUMBER# restrained services!"
-msgstr "# RESTRAINED_NUMBER # servicios restringidos"
+msgstr "#RESTRAINED_NUMBER# servicios restringidos"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:41
 msgid "Read only"
@@ -641,7 +646,6 @@ msgid "Change owner"
 msgstr "Cambio de propietario"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:176
-#| msgid "Assigned services"
 msgid "Assign service"
 msgstr "Asignar servicio"
 
@@ -1330,12 +1334,10 @@ msgid "Changelog of"
 msgstr "Registro de cambios de"
 
 #: static/admin/translations-fakejs.js:415
-#| msgid "Assigned services"
 msgid "Assign service to user manually"
 msgstr "Asignar servicio al usuario manualmente"
 
 #: static/admin/translations-fakejs.js:416
-#| msgid "Services"
 msgid "Service"
 msgstr "Servicio"
 
