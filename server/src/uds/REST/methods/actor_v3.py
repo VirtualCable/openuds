@@ -156,7 +156,7 @@ class Register(ActorV3Action):
             actorToken.save()
         except Exception:
             actorToken = ActorToken.objects.create(
-                username=self._params['username'],
+                username=self._user.pretty_name,
                 ip_from=self._request.ip,
                 ip=self._params['ip'],
                 hostname=self._params['hostname'],

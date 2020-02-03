@@ -57,7 +57,7 @@ class User(UUIDModel):
     """
     This class represents a single user, associated with one authenticator
     """
-    # pylint: disable=model-missing-unicode, maybe-no-member
+    # pylint: disable=maybe-no-member
     manager = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
     name = models.CharField(max_length=128, db_index=True)
     real_name = models.CharField(max_length=128)
