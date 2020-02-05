@@ -82,7 +82,7 @@ class Transports(ModelHandler):
         field = self.addField(field, {
             'name': 'networks',
             'value': [],
-            'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),
+            'values': sorted([{'id': x.uuid, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),
             'label': ugettext('Networks'),
             'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
             'type': 'multichoice',
@@ -100,7 +100,7 @@ class Transports(ModelHandler):
         field = self.addField(field, {
             'name': 'pools',
             'value': [],
-            'values': [{'id': x.id, 'text': x.name} for x in ServicePool.objects.all().order_by('name')],
+            'values': [{'id': x.uuid, 'text': x.name} for x in ServicePool.objects.all().order_by('name') if transport.protocol in x.service.getType().allowedProtocols],
             'label': ugettext('Service Pools'),
             'tooltip': ugettext('Currently assigned services pools'),
             'type': 'multichoice',
@@ -118,9 +118,9 @@ class Transports(ModelHandler):
             'comments': item.comments,
             'priority': item.priority,
             'nets_positive': item.nets_positive,
-            'networks': [{'id': n.id} for n in item.networks.all()],
+            'networks': [{'id': n.uuid} for n in item.networks.all()],
             'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
-            'pools': [{'id': x.id} for x in item.deployedServices.all()],
+            'pools': [{'id': x.uuid} for x in item.deployedServices.all()],
             'deployed_count': item.deployedServices.count(),
             'type': type_.type(),
             'type_name': type_.name(),
@@ -140,7 +140,7 @@ class Transports(ModelHandler):
         if networks is None:
             return
         logger.debug('Networks: %s', networks)
-        item.networks.set(Network.objects.filter(id__in=networks))
+        item.networks.set(Network.objects.filter(uuid__in=networks))
 
         try:
             pools = self._params['pools']
@@ -152,7 +152,7 @@ class Transports(ModelHandler):
             return
 
         logger.debug('Pools: %s', pools)
-        item.deployedServices.set(pools)
+        item.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))
 
         # try:
         #    oss = ','.join(self._params['allowed_oss'])
