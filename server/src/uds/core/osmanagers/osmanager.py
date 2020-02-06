@@ -210,7 +210,8 @@ class OSManager(Module):
         '''
         userService.setProperty('loginsCounter', '0')
 
-    def loggedIn(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    @staticmethod
+    def loggedIn(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -241,8 +242,8 @@ class OSManager(Module):
         counter = int(typing.cast(str, userService.getProperty('loginsCounter', '0'))) + 1
         userService.setProperty('loginsCounter', str(counter))
 
-
-    def loggedOut(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    @staticmethod
+    def loggedOut(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -281,10 +282,10 @@ class OSManager(Module):
         log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
     def loginNotified(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
-        self.loggedIn(userService, userName)
+        OSManager.loggedIn(userService, userName)
 
     def logoutNotified(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
-        self.loggedOut(userService, userName)
+        OSManager.loggedOut(userService, userName)
 
     def readyNotified(self, userService: 'UserService') -> None:
         """

@@ -152,10 +152,10 @@ class WindowsOsManager(osmanagers.OSManager):
 
     def loginNotified(self, userService, userName=None):
         if '\\' not in userName:
-            self.loggedIn(userService, userName)
+            osmanagers.OSManager.loggedIn(userService, userName)
 
     def logoutNotified(self, userService, userName=None):
-        self.loggedOut(userService, userName)
+        osmanagers.OSManager.loggedOut(userService, userName)
         if self.isRemovableOnLogout(userService):
             userService.release()
 
@@ -200,7 +200,7 @@ class WindowsOsManager(osmanagers.OSManager):
             self.doLog(userService, data, log.ACTOR)
         elif message in("logon", 'login'):
             if '\\' not in data:
-                self.loggedIn(userService, data)
+                osmanagers.OSManager.loggedIn(userService, data)
             userService.setInUse(True)
             # We get the userService logged hostname & ip and returns this
             ip, hostname = userService.getConnectionSource()
@@ -210,7 +210,7 @@ class WindowsOsManager(osmanagers.OSManager):
             else:
                 ret = "{0}\t{1}".format(ip, hostname)
         elif message in ('logoff', 'logout'):
-            self.loggedOut(userService, data)
+            osmanagers.OSManager.loggedOut(userService, data)
             doRemove = self.isRemovableOnLogout(userService)
         elif message == "ip":
             # This ocurss on main loop inside machine, so userService is usable
@@ -253,7 +253,7 @@ class WindowsOsManager(osmanagers.OSManager):
                 'password': password,
                 'domain': domain
             }
-            ticket = TicketStore.create(creds, validator=None, validity=300)  # , owner=SECURE_OWNER, secure=True)
+            ticket = TicketStore.create(creds, validatorFnc=None, validity=300)  # , owner=SECURE_OWNER, secure=True)
             return ticket, ''
 
         return osmanagers.OSManager.processUserPassword(self, userService, username, password)

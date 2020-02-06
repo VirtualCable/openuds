@@ -227,11 +227,10 @@ class Actor(Handler):
         try:
             if osmanager is None:
                 if message in ('login', 'logout'):
-                    osm = OSManager(None, None)  # Dummy os manager, just for using "logging" capability
                     if message == 'login':
-                        osm.loggedIn(service)
+                        OSManager.loggedIn(service)
                     else:
-                        osm.loggedOut(service)
+                        OSManager.loggedOut(service)
                         # Mark for removal...
                         service.release()  # Release for removal
                     return 'ok'

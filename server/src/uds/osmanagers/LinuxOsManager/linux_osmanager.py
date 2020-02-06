@@ -149,10 +149,10 @@ class LinuxOsManager(osmanagers.OSManager):
 
     def loginNotified(self, userService, userName=None):
         if '\\' not in userName:
-            self.loggedIn(userService, userName)
+            osmanagers.OSManager.loggedIn(userService, userName)
 
     def logoutNotified(self, userService, userName=None):
-        self.loggedOut(userService, userName)
+        osmanagers.OSManager.loggedOut(userService, userName)
         if self.isRemovableOnLogout(userService):
             userService.release()
 
@@ -197,12 +197,12 @@ class LinuxOsManager(osmanagers.OSManager):
         elif message == "log":
             self.doLog(userService, data, log.ACTOR)
         elif message == "login":
-            self.loggedIn(userService, data)
+            osmanagers.OSManager.loggedIn(userService, data)
             ip, hostname = userService.getConnectionSource()
             deadLine = userService.deployed_service.getDeadline()
             ret = "{}\t{}\t{}".format(ip, hostname, 0 if deadLine is None else deadLine)
         elif message == "logout":
-            self.loggedOut(userService, data)
+            osmanagers.OSManager.loggedOut(userService, data)
             doRemove = self.isRemovableOnLogout(userService)
         elif message == "ip":
             # This ocurss on main loop inside machine, so userService is usable

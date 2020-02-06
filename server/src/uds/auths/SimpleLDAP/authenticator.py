@@ -68,9 +68,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     groupIdAttr = gui.TextField(length=64, label=_('Group Id Attr'), defvalue='cn', order=12, tooltip=_('Attribute that contains the group id'), required=True, tab=_('Ldap info'))
     memberAttr = gui.TextField(length=64, label=_('Group membership attr'), defvalue='memberUid', order=13, tooltip=_('Attribute of the group that contains the users belonging to it'), required=True, tab=_('Ldap info'))
 
-    typeName = _('SimpleLDAP Authenticator')
+    typeName = _('SimpleLDAP (DEPRECATED)')
     typeType = 'SimpleLdapAuthenticator'
-    typeDescription = _('Simple LDAP authenticator')
+    typeDescription = _('Simple LDAP authenticator (DEPRECATED)')
     iconFile = 'auth.png'
 
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
@@ -267,7 +267,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         '''
         res = self.__getUser(usrData['name'])
         if res is None:
-            raise auths.AuthenticatorException(_('Username not found'))
+            raise auths.exceptions.AuthenticatorException(_('Username not found'))
         # Fills back realName field
         usrData['real_name'] = self.__getUserRealName(res)
 
@@ -300,7 +300,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         '''
         res = self.__getGroup(groupData['name'])
         if res is None:
-            raise auths.AuthenticatorException(_('Group not found'))
+            raise auths.exceptions.AuthenticatorException(_('Group not found'))
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         '''
@@ -310,7 +310,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         '''
         user = self.__getUser(username)
         if user is None:
-            raise auths.AuthenticatorException(_('Username not found'))
+            raise auths.exceptions.AuthenticatorException(_('Username not found'))
         groupsManager.validate(self.__getGroups(user))
 
     def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
@@ -331,7 +331,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return res
         except Exception:
             logger.exception("Exception: ")
-            raise auths.AuthenticatorException(_('Too many results, be more specific'))
+            raise auths.exceptions.AuthenticatorException(_('Too many results, be more specific'))
 
     def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         try:
@@ -351,7 +351,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return res
         except Exception:
             logger.exception("Exception: ")
-            raise auths.AuthenticatorException(_('Too many results, be more specific'))
+            raise auths.exceptions.AuthenticatorException(_('Too many results, be more specific'))
 
     @staticmethod
     def test(env, data):

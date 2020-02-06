@@ -43,6 +43,7 @@ from uds.models import (
 
 #from uds.core import VERSION
 from uds.core.managers import userServiceManager
+from uds.core import osmanagers
 from uds.core.util import log, certs
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
@@ -51,8 +52,7 @@ from uds.core.util.config import GlobalConfig
 from ..handlers import Handler, AccessDenied, RequestError
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from uds.core import osmanagers
+# if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
@@ -239,7 +239,6 @@ class Initiialize(ActorV3Action):
         except ActorToken.DoesNotExist:
             raise BlockAccess()
 
-
 class ChangeIp(ActorV3Action):
     """
     Records the IP change of actor
@@ -324,12 +323,13 @@ class Login(ActorV3Action):
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Login Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
-        osManager = userService.getOsManagerInstance()
-        if osManager:
-            if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
-                osManager.loggedIn(userService, self._params.get('username') or '')
-            maxIdle = osManager.maxIdle()
-            logger.debug('Max idle: %s', maxIdle)
+        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+        if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
+            osmanagers.OSManager.loggedIn(userService, self._params.get('username') or '')
+
+        maxIdle = osManager.maxIdle() if osManager else None
+
+        logger.debug('Max idle: %s', maxIdle)
 
         ip, hostname = userService.getConnectionSource()
         deadLine = userService.deployed_service.getDeadline()
@@ -349,12 +349,13 @@ class Logout(ActorV3Action):
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
-        osManager = userService.getOsManagerInstance()
-        if osManager and userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
-            osManager.loggedOut(userService, self._params.get('username') or '')
-            if osManager.isRemovableOnLogout(userService):
-                logger.debug('Removable on logout: %s', osManager)
-                userService.remove()
+        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+        if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
+            osmanagers.OSManager.loggedOut(userService, self._params.get('username') or '')
+            if osManager:
+                if osManager.isRemovableOnLogout(userService):
+                    logger.debug('Removable on logout: %s', osManager)
+                    userService.remove()
 
         return ActorV3Action.actorResult('ok')
 
@@ -407,8 +408,10 @@ class Notify(ActorV3Action):
         try:
             # Check block manually
             checkBlockedIp(self._request.ip)  # pylint: disable=protected-access
-            userService = UserService.objects.get(uuid=self._params['token'])
-            # TODO: finish this when needed :)
+            if 'action' == 'login':
+                Login.action(typing.cast(Login, self))
+            else:
+                Logout.action(typing.cast(Logout, self))
 
             return ActorV3Action.actorResult('ok')
         except UserService.DoesNotExist:
