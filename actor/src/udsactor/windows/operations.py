@@ -56,7 +56,7 @@ def getErrorMessage(resultCode: int = 0) -> str:
 def getComputerName() -> str:
     return win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname)
 
-def getNetworkInfo() -> typing.Iterable[types.InterfaceInfoType]:
+def getNetworkInfo() -> typing.Iterator[types.InterfaceInfoType]:
     obj = win32com.client.Dispatch("WbemScripting.SWbemLocator")
     wmobj = obj.ConnectServer("localhost", "root\\cimv2")
     adapters = wmobj.ExecQuery("Select * from Win32_NetworkAdapterConfiguration where IpEnabled=True")

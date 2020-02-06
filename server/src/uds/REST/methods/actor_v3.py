@@ -294,7 +294,7 @@ class Ready(ChangeIp):
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         """
-        Changeip method expect a json POST with this fields:
+        Ready method expect a json POST with this fields:
             * token: str -> Valid Actor "own_token" (if invalid, will return an error).
               Currently it is the same as user service uuid, but this could change
             * secret: Secret for commsUrl for actor
@@ -313,6 +313,22 @@ class Ready(ChangeIp):
         userService.setInUse(False)
 
         return result
+
+class Version(ActorV3Action):
+    """
+    Notifies the version.
+    Used on possible "customized" actors.
+    """
+    name = 'version'
+
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
+        logger.debug('Version Args: %s,  Params: %s', self._args, self._params)
+        userService = self.getUserService()
+        userService.setProperty('actor_version', self._params['version'])
+        userService.logIP(self._params['ip'])
+
+        return ActorV3Action.actorResult()
+
 
 class Login(ActorV3Action):
     """

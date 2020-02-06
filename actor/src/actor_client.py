@@ -56,7 +56,7 @@ if __name__ == "__main__":
     qApp.init()
 
     # Crate a timer, so we can check signals from time to time by executing python interpreter
-    # Note: Signals are only checked on python code execution, so we create a
+    # Note: Signals are only checked on python code execution, so we create a timer to force call back to python
     timer = QTimer(qApp)
     timer.start(1000)
     timer.timeout.connect(lambda *a: None)
