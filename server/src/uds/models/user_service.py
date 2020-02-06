@@ -492,6 +492,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         return self.deployed_service.service.getType().publicationType is None or self.publication == self.deployed_service.activePublication()
 
+    # Utility for logging
+    def log(self, message: str, level: int = log.INFO) -> None:
+        log.doLog(self, level, message, log.INTERNAL)
+
     def testServer(self, host, port, timeout=4) -> bool:
         return self.deployed_service.testServer(host, port, timeout)
 
