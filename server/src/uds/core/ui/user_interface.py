@@ -237,7 +237,7 @@ class gui:
 
         def __init__(self, **options):
             self._data = {
-                'length': options.get('length', gui.InputField.DEFAULT_LENTGH),
+                'length': options.get('length', gui.InputField.DEFAULT_LENTGH),  # Length is not used on some kinds of fields, but present in all anyway
                 'required': options.get('required', False),
                 'label': options.get('label', ''),
                 'defvalue': str(options.get('defvalue', '')),
