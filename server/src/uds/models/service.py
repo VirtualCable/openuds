@@ -59,16 +59,16 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
     or a Terminal Server configuration).
     """
-    # pylint: disable=model-missing-unicode
     provider: 'Provider' = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
 
     # Proxy for this service
     proxy: typing.Optional['Proxy'] = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
 
+    token = models.CharField(max_length=32, default=None, null=True, blank=True, unique=True)
 
     _cachedInstance: typing.Optional['services.Service'] = None
 
-    class Meta(ManagedObjectModel.Meta):
+    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """

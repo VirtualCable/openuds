@@ -236,11 +236,14 @@ class gui:
         _data: typing.Dict[str, typing.Any]
 
         def __init__(self, **options):
+            defvalue = options.get('defvalue', '')
+            if callable(defvalue):
+                defvalue = defvalue()
             self._data = {
                 'length': options.get('length', gui.InputField.DEFAULT_LENTGH),  # Length is not used on some kinds of fields, but present in all anyway
                 'required': options.get('required', False),
                 'label': options.get('label', ''),
-                'defvalue': str(options.get('defvalue', '')),
+                'defvalue': str(defvalue),
                 'rdonly': options.get('rdonly', False),  # This property only affects in "modify" operations
                 'order': options.get('order', 0),
                 'tooltip': options.get('tooltip', ''),

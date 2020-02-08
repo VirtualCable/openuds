@@ -38,7 +38,9 @@ from uds.models import (
     getSqlDatetime,
     ActorToken,
     UserService,
-    TicketStore
+    Service,
+    TicketStore,
+
 )
 
 #from uds.core import VERSION
@@ -182,35 +184,56 @@ class Initiialize(ActorV3Action):
         Initialize method expect a json POST with this fields:
             * version: str -> Actor version
             * token: str -> Valid Actor Token (if invalid, will return an error)
-            * id: List[dict] -> List of dictionary containing id and mac:
-        Will return on field "result" a dictinary with:
-            * own_token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
-            * unique_id: Optional[str] -> If not None, unique id for the service
-            * max_idle: Optional[int] -> If not None, max configured Idle for the vm
-            * os: Optional[dict] -> Data returned by os manager for setting up this service.
-        On  error, will return Empty (None) result, and error field
+            * id: List[dict] -> List of dictionary containing ip and mac:
         Example:
              {
                  'version': '3.0',
                  'token': 'asbdasdf',
-                 'maxIdle': 99999 or None,
                  'id': [
                      {
-                        'mac': 'xxxxx',
+                        'mac': 'aa:bb:cc:dd:ee:ff',
                         'ip': 'vvvvvvvv'
                      }, ...
                  ]
              }
+        Will return on field "result" a dictinary with:
+            * own_token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
+            * unique_id: Optional[str] -> If not None, unique id for the service (normally, mac adress of recognized interface)
+            * max_idle: Optional[int] -> If not None, max configured Idle for the vm. Remember it can be a null value
+            * os: Optional[dict] -> Data returned by os manager for setting up this service.
+        Example:
+            {
+                'own_token' 'asdfasdfasdffsadfasfd'
+                'unique_ids': 'aa:bb:cc:dd:ee:ff'
+                'maxIdle': 34
+            }
+        On  error, will return Empty (None) result, and error field
         """
         # First, validate token...
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
-            ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
+            # First, try to locate an user service providing this token.
+            # User service has precedence over ActorToken
+
+            try:
+                service: Service = Service.objects.get(token=self._params['token'])
+                # Locate an userService that belongs to this service and which
+                # Build the possible ids and make initial filter to match service
+                idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
+                dbFilter = UserService.objects.filter(deployed_service__service=service)
+
+            except Service.DoesNotExist:
+                # If not service provided token, use actor tokens
+                ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
+                # Build the possible ids and make initial filter to match ANY userservice with provided MAC
+                idsList = [i['mac'] for i in self._params['id'][:5]]
+                dbFilter = UserService.objects.all()
+
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
                 userService: UserService = next(
-                    iter(UserService.objects.filter(
-                        unique_id__in=[i['mac'] for i in self._params.get('id')[:5]],
+                    iter(dbFilter.filter(
+                        unique_id__in=idsList,
                         state__in=[State.USABLE, State.PREPARING]
                     ))
                 )
@@ -371,7 +394,7 @@ class Logout(ActorV3Action):
             if osManager:
                 if osManager.isRemovableOnLogout(userService):
                     logger.debug('Removable on logout: %s', osManager)
-                    userService.remove()
+            userService.remove()
 
         return ActorV3Action.actorResult('ok')
 

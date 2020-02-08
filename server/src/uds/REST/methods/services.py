@@ -36,7 +36,7 @@ import typing
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
-from uds.models import Service, UserService, Tag, Proxy
+from uds import models
 
 from uds.core import services
 from uds.core.util import log
@@ -65,7 +65,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     custom_methods = ['servicesPools']
 
     @staticmethod
-    def serviceInfo(item: Service) -> typing.Dict[str, typing.Any]:
+    def serviceInfo(item: models.Service) -> typing.Dict[str, typing.Any]:
         info = item.getType()
 
         return {
@@ -85,7 +85,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         }
 
     @staticmethod
-    def serviceToDict(item: Service, perm: int, full: bool = False) -> typing.Dict[str, typing.Any]:
+    def serviceToDict(item: models.Service, perm: int, full: bool = False) -> typing.Dict[str, typing.Any]:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
@@ -102,7 +102,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'proxy_id': item.proxy.uuid if item.proxy is not None else '-1',
             'proxy': item.proxy.name if item.proxy is not None else '',
             'deployed_services_count': item.deployedServices.count(),
-            'user_services_count': UserService.objects.filter(deployed_service__service=item).exclude(state__in=State.INFO_STATES).count(),
+            'user_services_count': models.UserService.objects.filter(deployed_service__service=item).exclude(state__in=State.INFO_STATES).count(),
             'maintenance_mode': item.provider.maintenance_mode,
             'permission': perm
         }
@@ -127,7 +127,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     def getRowStyle(self, parent: 'Provider') -> typing.Dict[str, typing.Any]:
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def _deleteIncompleteService(self, service: Service):  # pylint: disable=no-self-use
+    def _deleteIncompleteService(self, service: models.Service):  # pylint: disable=no-self-use
         """
         Deletes a service if it is needed to (that is, if it is not None) and silently catch any exception of this operation
         :param service:  Service to delete (may be None, in which case it does nothing)
@@ -145,21 +145,21 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         fields = self.readFieldsFromParams(['name', 'comments', 'data_type', 'tags', 'proxy_id'])
         tags = fields['tags']
         del fields['tags']
-        service: typing.Optional[Service] = None
+        service: typing.Optional[models.Service] = None
 
         proxyId = fields['proxy_id']
         fields['proxy_id'] = None
         logger.debug('Proxy id: %s', proxyId)
 
-        proxy: typing.Optional[Proxy] = None
+        proxy: typing.Optional[models.Proxy] = None
         if proxyId != '-1':
             try:
-                proxy = Proxy.objects.get(uuid=processUuid(proxyId))
+                proxy = models.Proxy.objects.get(uuid=processUuid(proxyId))
             except Exception:
                 logger.exception('Getting proxy ID')
 
         try:
-            if item is None:  # Create new
+            if not item:  # Create new
                 service = parent.services.create(**fields)
             else:
                 service = parent.services.get(uuid=processUuid(item))
@@ -168,14 +168,22 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             if service is None:
                 raise Exception('Cannot create service!')
 
-            service.tags.set([Tag.objects.get_or_create(tag=val)[0] for val in tags])
+            service.tags.set([models.Tag.objects.get_or_create(tag=val)[0] for val in tags])
             service.proxy = proxy
 
-            service.data = service.getInstance(self._params).serialize()  # This may launch an validation exception (the getInstance(...) part)
+            serviceInstance = service.getInstance(self._params)
+
+            # Store token if this service provides one
+            service.token = serviceInstance.getToken()
+
+            service.data = serviceInstance.serialize()  # This may launch an validation exception (the getInstance(...) part)
+
             service.save()
-        except Service.DoesNotExist:
+        except models.Service.DoesNotExist:
             raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
+            if service and service.token:
+                raise RequestError(_('Service token seems to be in use by other service. Please, select a new one.'))
             raise RequestError(_('Element already exists (duplicate key error)'))
         except services.Service.ValidationException as e:
             if not item and service:  # Only remove partially saved element if creating new (if editing, ignore this)
@@ -254,7 +262,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             localGui = self.addDefaultFields(service.guiDescription(service), ['name', 'comments', 'tags'])
             for field in [{
                     'name': 'proxy_id',
-                    'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Proxy.objects.all()]),
+                    'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in models.Proxy.objects.all()]),
                     'label': _('Proxy'),
                     'tooltip': _('Proxy for services behind a firewall'),
                     'type': gui.InputField.CHOICE_TYPE,

@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_name_generator import UniqueNameGenerator
     from uds.core.util.unique_mac_generator import UniqueMacGenerator
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
-    from uds.models import ServicePoolPublication, User
+    from uds import models
 
 
 class Service(Module):
@@ -264,7 +264,7 @@ class Service(Module):
         """
         return []
 
-    def assignFromAssignables(self, assignableId: str, user: 'User', userDeployment: UserDeployment) -> str:
+    def assignFromAssignables(self, assignableId: str, user: 'models.User', userDeployment: UserDeployment) -> str:
         """
         Assigns from it internal assignable list to an user
 
@@ -277,6 +277,15 @@ class Service(Module):
             str -- State
         """
         return State.FINISHED
+
+    def getToken(self) -> typing.Optional[str]:
+        """
+        This method is to allow some kind of services to register a "token", so special actors
+        (for example, those for static pool of machines) can communicate with UDS services for
+        several actor.
+        By default, services does not have a token
+        """
+        return None
 
     @classmethod
     def canAssign(cls) -> bool:
