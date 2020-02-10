@@ -32,15 +32,16 @@
 # pylint: disable=invalid-name
 import sys
 import os
+import pickle
 import logging
 import typing
 
 import PyQt5  # pylint: disable=unused-import
-from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox
 
 import udsactor
 
-from ui.setup_dialog_ui import Ui_UdsActorSetupDialog
+from ui.setup_dialog_unmanaged_ui import Ui_UdsActorSetupDialog
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -50,132 +51,74 @@ logger = logging.getLogger('actor')
 
 class UDSConfigDialog(QDialog):
     _host: str = ''
+    _config: udsactor.types.ActorConfigurationType
 
-    def __init__(self):
+    def __init__(self) -> None:
         QDialog.__init__(self, None)
         # Get local config config
-        config: udsactor.types.ActorConfigurationType = udsactor.platform.store.readConfig()
+        self._config = udsactor.platform.store.readConfig()
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
-        self.ui.host.setText(config.host)
-        self.ui.validateCertificate.setCurrentIndex(1 if config.validateCertificate else 0)
-        self.ui.postConfigCommand.setText(config.post_command or '')
-        self.ui.preCommand.setText(config.pre_command or '')
-        self.ui.runonceCommand.setText(config.runonce_command or '')
-        self.ui.logLevelComboBox.setCurrentIndex(config.log_level)
+        self.ui.host.setText(self._config.host)
+        self.ui.validateCertificate.setCurrentIndex(1 if self._config.validateCertificate else 0)
+        self.ui.logLevelComboBox.setCurrentIndex(self._config.log_level)
+        self.ui.serviceToken.setText(self._config.master_token)
 
-        if config.host:
-            self.updateAuthenticators()
-
-        self.ui.username.setText('')
-        self.ui.password.setText('')
-
-        self.ui.testButton.setEnabled(bool(config.master_token and config.host))
+        self.ui.testButton.setEnabled(bool(self._config.master_token and self._config.host))
 
     @property
     def api(self) -> udsactor.rest.UDSServerApi:
         return udsactor.rest.UDSServerApi(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
 
-    def browse(self, lineEdit: 'QLineEdit', caption: str) -> None:
-        name = QFileDialog.getOpenFileName(parent=self, caption=caption, directory=os.path.dirname(lineEdit.text()))[0]
-        if name:
-            if ' ' in name:
-                name = '"' + name + '"'
-            lineEdit.setText(os.path.normpath(name))
-
-    def browsePreconnect(self) -> None:
-        self.browse(self.ui.preCommand, 'Select Preconnect command')
-
-    def browseRunOnce(self) -> None:
-        self.browse(self.ui.runonceCommand, 'Select Runonce command')
-
-    def browsePostConfig(self) -> None:
-        self.browse(self.ui.postConfigCommand, 'Select Postconfig command')
-
-    def updateAuthenticators(self) -> None:
-        if self.ui.host.text() != self._host:
-            self._host = self.ui.host.text()
-            self.ui.authenticators.clear()
-            auth: udsactor.types.AuthenticatorType
-            auths = list(self.api.enumerateAuthenticators())
-            if auths:
-                for auth in auths:
-                    self.ui.authenticators.addItem(auth.auth, userData=auth)
-            # Last, add "admin" authenticator (for uds root user)
-            self.ui.authenticators.addItem('Administration', userData=udsactor.types.AuthenticatorType('admin', 'admin', 'admin', 'admin', 1, False))
-
-    def textChanged(self):
-        enableButtons = bool(self.ui.host.text() and self.ui.username.text() and self.ui.password.text() and self.ui.authenticators.currentText())
-        self.ui.registerButton.setEnabled(enableButtons)
-        self.ui.testButton.setEnabled(False)  # Only registered information can be checked
-
-    def finish(self):
+    def finish(self) -> None:
         self.close()
 
-    def testUDSServer(self):
-        config: udsactor.types.ActorConfigurationType = udsactor.platform.store.readConfig()
-        if not config.master_token:
+    def configChanged(self, text: str) -> None:
+        self.ui.testButton.setEnabled(self.ui.host.text() == self._config.host and self.ui.serviceToken.text() == self._config.master_token)
+
+    def testUDSServer(self) -> None:
+        if not self._config.master_token or not self._config.host:
             self.ui.testButton.setEnabled(False)
             return
         try:
-            api = udsactor.rest.UDSServerApi(config.host, config.validateCertificate)
-            if not api.test(config.master_token):
+            api = udsactor.rest.UDSServerApi(self._config.host, self._config.validateCertificate)
+            if not api.test(self._config.master_token, udsactor.types.UNMANAGED):
                 QMessageBox.information(
                     self,
                     'UDS Test',
-                    'Current configured token seems to be invalid for {}. Please, request a new one.'.format(config.host),
+                    'Service token seems to be invalid . Please, check token validity.',
                     QMessageBox.Ok
                 )
             else:
                 QMessageBox.information(
                     self,
                     'UDS Test',
-                    'Configuration for {} seems to be correct.'.format(config.host),
+                    'Configuration for {} seems to be correct.'.format(self._config.host),
                     QMessageBox.Ok
                 )
         except Exception:
             QMessageBox.information(
                 self,
                 'UDS Test',
-                'Configured host {} seems to be inaccesible.'.format(config.host),
+                'Configured host {} seems to be inaccesible.'.format(self._config.host),
                 QMessageBox.Ok
             )
 
-    def registerWithUDS(self):
-        # Get network card. Will fail if no network card is available, but don't mind (not contempled)
-        data: udsactor.types.InterfaceInfoType = next(udsactor.platform.operations.getNetworkInfo())
-        try:
-            token = self.api.register(
-                self.ui.authenticators.currentData().auth,
-                self.ui.username.text(),
-                self.ui.password.text(),
-                udsactor.platform.operations.getComputerName(),
-                data.ip or '',           # IP
-                data.mac or '',          # MAC
-                self.ui.preCommand.text(),
-                self.ui.runonceCommand.text(),
-                self.ui.postConfigCommand.text(),
-                self.ui.logLevelComboBox.currentIndex()  # Loglevel
-            )
-            # Store parameters on register for later use, notify user of registration
-            udsactor.platform.store.writeConfig(
-                udsactor.types.ActorConfigurationType(
-                    host=self.ui.host.text(),
-                    validateCertificate=self.ui.validateCertificate.currentIndex() == 1,
-                    master_token=token,
-                    pre_command=self.ui.preCommand.text(),
-                    post_command=self.ui.postConfigCommand.text(),
-                    runonce_command=self.ui.runonceCommand.text(),
-                    log_level=self.ui.logLevelComboBox.currentIndex()
-                )
-            )
-            # Enables test button
-            self.ui.testButton.setEnabled(True)
-            # Informs the user
-            QMessageBox.information(self, 'UDS Registration', 'Registration with UDS completed.', QMessageBox.Ok)
-        except udsactor.rest.RESTError as e:
-            self.ui.testButton.setEnabled(False)
-            QMessageBox.critical(self, 'UDS Registration', 'UDS Registration error: {}'.format(e), QMessageBox.Ok)
+    def saveConfig(self) -> None:
+        # Store parameters on register for later use, notify user of registration
+        self._config = udsactor.types.ActorConfigurationType(
+            actorType=udsactor.types.UNMANAGED,
+            host=self.ui.host.text(),
+            validateCertificate=self.ui.validateCertificate.currentIndex() == 1,
+            master_token=self.ui.serviceToken.text(),
+            log_level=self.ui.logLevelComboBox.currentIndex()
+        )
+
+        udsactor.platform.store.writeConfig(self._config)
+        # Enables test button
+        self.ui.testButton.setEnabled(True)
+        # Informs the user
+        QMessageBox.information(self, 'UDS Configuration', 'Configuration saved.', QMessageBox.Ok)
 
 
 if __name__ == "__main__":
@@ -184,10 +127,29 @@ if __name__ == "__main__":
         os.environ['QT_X11_NO_MITSHM'] = '1'
 
     app = QApplication(sys.argv)
-
+    
     if udsactor.platform.operations.checkPermissions() is False:
         QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)
         sys.exit(1)
+
+    if len(sys.argv) > 2:
+        if sys.argv[1] == 'export':
+            try:
+                with open(sys.argv[2], 'wb') as f:
+                    pickle.dump(udsactor.platform.store.readConfig(), f, protocol=3)
+            except Exception as e:
+                print('Error exporting configuration file: {}'.format(e))
+                sys.exit(1)
+            sys.exit(0)
+        if sys.argv[1] == 'import':
+            try:
+                with open(sys.argv[2], 'rb') as f:
+                    config = pickle.load(f)
+                udsactor.platform.store.writeConfig(config)
+            except Exception as e:
+                print('Error importing configuration file: {}'.format(e))
+                sys.exit(1)
+            sys.exit(0)
 
     myapp = UDSConfigDialog()
     myapp.show()

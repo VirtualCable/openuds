@@ -40,7 +40,6 @@ from uds.models import (
     UserService,
     Service,
     TicketStore,
-
 )
 
 #from uds.core import VERSION
@@ -59,6 +58,7 @@ from ..handlers import Handler, AccessDenied, RequestError
 logger = logging.getLogger(__name__)
 
 ALLOWED_FAILS = 5
+UNMANAGED = 'unmanaged'  # matches the definition of UDS Actors OFC
 
 class BlockAccess(Exception):
     pass
@@ -125,8 +125,12 @@ class test(ActorV3Action):
     name = 'test'
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
+        # First, try to locate an user service providing this token.
         try:
-            ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
+            if self._params['type'] == UNMANAGED:
+                Service.objects.get(token=self._params['token'])
+            else:
+                ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
         except Exception:
             return ActorV3Action.actorResult('invalid token')
 
@@ -182,11 +186,13 @@ class Initiialize(ActorV3Action):
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         """
         Initialize method expect a json POST with this fields:
+            * type: Actor type. (Currently "managed" or "unmanaged")
             * version: str -> Actor version
             * token: str -> Valid Actor Token (if invalid, will return an error)
             * id: List[dict] -> List of dictionary containing ip and mac:
         Example:
              {
+                 'type': 'managed,
                  'version': '3.0',
                  'token': 'asbdasdf',
                  'id': [
@@ -213,16 +219,14 @@ class Initiialize(ActorV3Action):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
             # First, try to locate an user service providing this token.
-            # User service has precedence over ActorToken
-
-            try:
+            if self._params['type'] == UNMANAGED:
+                # If unmanaged, use Service locator
                 service: Service = Service.objects.get(token=self._params['token'])
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service
                 idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
-
-            except Service.DoesNotExist:
+            else:
                 # If not service provided token, use actor tokens
                 ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
@@ -259,7 +263,7 @@ class Initiialize(ActorV3Action):
                 'unique_id': userService.unique_id,
                 'os': osData
             })
-        except ActorToken.DoesNotExist:
+        except (ActorToken.DoesNotExist, Service.DoesNotExist):
             raise BlockAccess()
 
 class ChangeIp(ActorV3Action):

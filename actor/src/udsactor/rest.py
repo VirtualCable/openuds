@@ -275,8 +275,9 @@ class UDSServerApi(UDSApi):
         }
         self._doPost('log', payLoad)  # Ignores result...
 
-    def test(self, master_token: str) -> bool:
+    def test(self, master_token: str, actorType: typing.Optional[str]) -> bool:
         payLoad = {
+            'type': actorType or types.MANAGED,
             'token': master_token,
         }
         return self._doPost('test', payLoad) == 'ok'

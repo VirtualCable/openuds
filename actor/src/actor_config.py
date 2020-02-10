@@ -51,7 +51,7 @@ logger = logging.getLogger('actor')
 class UDSConfigDialog(QDialog):
     _host: str = ''
 
-    def __init__(self):
+    def __init__(self) -> None:
         QDialog.__init__(self, None)
         # Get local config config
         config: udsactor.types.ActorConfigurationType = udsactor.platform.store.readConfig()
@@ -104,22 +104,22 @@ class UDSConfigDialog(QDialog):
             # Last, add "admin" authenticator (for uds root user)
             self.ui.authenticators.addItem('Administration', userData=udsactor.types.AuthenticatorType('admin', 'admin', 'admin', 'admin', 1, False))
 
-    def textChanged(self):
+    def textChanged(self) -> None:
         enableButtons = bool(self.ui.host.text() and self.ui.username.text() and self.ui.password.text() and self.ui.authenticators.currentText())
         self.ui.registerButton.setEnabled(enableButtons)
         self.ui.testButton.setEnabled(False)  # Only registered information can be checked
 
-    def finish(self):
+    def finish(self) -> None:
         self.close()
 
-    def testUDSServer(self):
+    def testUDSServer(self) -> None:
         config: udsactor.types.ActorConfigurationType = udsactor.platform.store.readConfig()
-        if not config.master_token:
+        if not config.master_token or not config.host:
             self.ui.testButton.setEnabled(False)
             return
         try:
             api = udsactor.rest.UDSServerApi(config.host, config.validateCertificate)
-            if not api.test(config.master_token):
+            if not api.test(config.master_token, udsactor.types.MANAGED):
                 QMessageBox.information(
                     self,
                     'UDS Test',
@@ -141,7 +141,7 @@ class UDSConfigDialog(QDialog):
                 QMessageBox.Ok
             )
 
-    def registerWithUDS(self):
+    def registerWithUDS(self) -> None:
         # Get network card. Will fail if no network card is available, but don't mind (not contempled)
         data: udsactor.types.InterfaceInfoType = next(udsactor.platform.operations.getNetworkInfo())
         try:
@@ -160,6 +160,7 @@ class UDSConfigDialog(QDialog):
             # Store parameters on register for later use, notify user of registration
             udsactor.platform.store.writeConfig(
                 udsactor.types.ActorConfigurationType(
+                    actorType=udsactor.types.MANAGED,
                     host=self.ui.host.text(),
                     validateCertificate=self.ui.validateCertificate.currentIndex() == 1,
                     master_token=token,
