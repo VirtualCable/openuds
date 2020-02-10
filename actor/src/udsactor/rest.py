@@ -192,9 +192,10 @@ class UDSServerApi(UDSApi):
 
         raise RESTError(result.content.decode())
 
-    def initialize(self, token: str, interfaces: typing.Iterable[types.InterfaceInfoType]) -> types.InitializationResultType:
+    def initialize(self, token: str, interfaces: typing.Iterable[types.InterfaceInfoType], actorType: typing.Optional[str]) -> types.InitializationResultType:
         # Generate id list from netork cards
         payload = {
+            'type': actorType or types.MANAGED,
             'token': token,
             'version': VERSION,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces]

@@ -69,13 +69,15 @@ class UDSActorSvc(daemon.Daemon, CommonService):
         set_proctitle('UDSActorDaemon')
 
         # Linux daemon will continue running unless something is requested to
-        if not self.initialize():
-            self.finish()
-            return # Stop daemon if initializes told to do so
+        # Unmanaged services does not initializes "on start", but rather when user logs in (because userservice does not exists "as such" before that)
+        if self.isManaged():
+            if not self.initialize():
+                self.finish()
+                return # Stop daemon if initializes told to do so
 
-        # logger.debug('Initialized, setting ready')
-        # Initialization is done, set machine to ready for UDS, communicate urls, etc...
-        self.setReady()
+            # logger.debug('Initialized, setting ready')
+            # Initialization is done, set machine to ready for UDS, communicate urls, etc...
+            self.setReady()
 
         # *********************
         # * Main Service loop *

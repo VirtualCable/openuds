@@ -106,6 +106,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self._http = server.HTTPServerThread(self)
         self._http.start()
 
+    def isManaged(self) -> bool:
+        return self._cfg.actorType != types.UNMANAGED  # Only "unmanaged" hosts are unmanaged, the rest are "managed"
+
     def serviceInterfaceInfo(self, interfaces: typing.Optional[typing.List[types.InterfaceInfoType]] = None) -> typing.Optional[types.InterfaceInfoType]:
         """
         returns the inteface with unique_id mac or first interface or None if no interfaces...
@@ -125,8 +128,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self._rebootRequested = True
 
     def setReady(self) -> None:
-        if not self._isAlive:
+        if not self._isAlive or not self.isManaged():
             return
+        # Unamanged actor types does not set ready never (has no osmanagers, no needing for this)
 
         # First, if postconfig is available, execute it and disable it
         if self._cfg.post_command:
@@ -176,6 +180,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if not self._isAlive:
             return False
 
+        if not self.isManaged():
+            return True
+
         # First, if runonce is present, honor it and remove it from config
         # Return values is "True" for keep service (or daemon) running, False if Stop it.
         if self._cfg.runonce_command:
@@ -222,7 +229,8 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             return False
 
         # Force time sync, just in case...
-        platform.operations.forceTimeSync()
+        if self.isManaged():
+            platform.operations.forceTimeSync()
 
         # Wait for Broker to be ready
         while self._isAlive:
@@ -235,13 +243,15 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             try:
                 # If master token is present, initialize and get configuration data
                 if self._cfg.master_token:
-                    initResult: types.InitializationResultType = self._api.initialize(self._cfg.master_token, self._interfaces)
+                    initResult: types.InitializationResultType = self._api.initialize(self._cfg.master_token, self._interfaces, self._cfg.actorType)
                     if not initResult.own_token:  # Not managed
                         logger.debug('This host is not managed by UDS Broker (ids: {})'.format(self._interfaces))
                         return False
 
+                    # Only removes token for managed machines
+                    master_token = None if self.isManaged() else self._cfg.master_token
                     self._cfg = self._cfg._replace(
-                        master_token=None,
+                        master_token=master_token,
                         own_token=initResult.own_token,
                         config=types.ActorDataConfigurationType(
                             unique_id=initResult.unique_id,
@@ -249,7 +259,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         )
                     )
 
-                # On first successfull initialization request, master token will dissapear so it will be no more available (not needed anyway)
+                # On first successfull initialization request, master token will dissapear for managed hosts so it will be no more available (not needed anyway)
                 platform.store.writeConfig(self._cfg)
                 # Setup logger now
                 if self._cfg.own_token:
@@ -280,6 +290,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self.notifyStop()
 
     def checkIpsChanged(self) -> None:
+        if not self.isManaged():
+            return  # Unamanaged hosts does not changes ips. (The full initialize-login-logout process is done in a row, so at login the IP is correct)
+
         try:
             if not self._cfg.own_token or not self._cfg.config or not self._cfg.config.unique_id:
                 # Not enouth data do check
@@ -361,6 +374,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     def login(self, username: str) -> types.LoginResultInfoType:
         result = types.LoginResultInfoType(ip='', hostname='', dead_line=None, max_idle=None)
         self._loggedIn = True
+        if not self.isManaged():
+            self.initialize()
+
         if self._cfg.own_token:
             result = self._api.login(self._cfg.own_token, username)
         return result

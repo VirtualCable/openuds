@@ -1,5 +1,8 @@
 import typing
 
+MANAGED = 'managed'
+UNMANAGED = 'unmanaged'
+
 class InterfaceInfoType(typing.NamedTuple):
     name: str
     mac: str
@@ -29,6 +32,7 @@ class ActorDataConfigurationType(typing.NamedTuple):
 class ActorConfigurationType(typing.NamedTuple):
     host: str
     validateCertificate: bool
+    actorType: typing.Optional[str] = None
     master_token: typing.Optional[str] = None
     own_token: typing.Optional[str] = None
 

@@ -218,14 +218,16 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
         pythoncom.CoInitialize()  # pylint: disable=no-member
 
-        if not self.initialize():
-            logger.info('Service stopped due to init')
-            self.finish()
-            win32event.WaitForSingleObject(self._hWaitStop, 5000)
-            return # Stop daemon if initializes told to do so
+        # Unmanaged services does not initializes "on start", but rather when user logs in (because userservice does not exists "as such" before that)
+        if self.isManaged():
+            if not self.initialize():
+                logger.info('Service stopped due to init')
+                self.finish()
+                win32event.WaitForSingleObject(self._hWaitStop, 5000)
+                return # Stop daemon if initializes told to do so
 
-        # Initialization is done, set machine to ready for UDS, communicate urls, etc...
-        self.setReady()
+            # Initialization is done, set machine to ready for UDS, communicate urls, etc...
+            self.setReady()
 
         # # ********************************
         # # * Registers SENS subscriptions *

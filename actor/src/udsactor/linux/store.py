@@ -51,6 +51,7 @@ def readConfig() -> types.ActorConfigurationType:
         data = pickle.loads(base64.b64decode(base64Data.encode())) if base64Data else None
 
         return types.ActorConfigurationType(
+            actorType=uds.get('type', types.MANAGED),
             host=uds.get('host', ''),
             validateCertificate=uds.getboolean('validate', fallback=False),
             master_token=uds.get('master_token', None),
@@ -74,6 +75,7 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     def writeIfValue(val, name):
         if val:
             uds[name] = val
+    writeIfValue(config.actorType, 'type')
     writeIfValue(config.master_token, 'master_token')
     writeIfValue(config.own_token, 'own_token')
     writeIfValue(config.pre_command, 'pre_command')
