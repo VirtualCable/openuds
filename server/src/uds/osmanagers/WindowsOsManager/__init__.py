@@ -52,3 +52,9 @@ managers.downloadsManager().registerDownloadable(
     _('UDS Actor for windows machines'),
     os.path.dirname(sys.modules[__package__].__file__) + '/files/UDSActorSetup-{version}.exe'.format(version=VERSION),
     'application/x-msdos-program')
+
+managers.downloadsManager().registerDownloadable(
+    'UDSActorUnmanagedSetup-{version}.exe'.format(version=VERSION),
+    _('UDS Actor for Unmanaged windows machines. Used ONLY for static machines.'),
+    os.path.dirname(sys.modules[__package__].__file__) + '/files/UDSActorSetup-{version}.exe'.format(version=VERSION),
+    'application/x-msdos-program')
