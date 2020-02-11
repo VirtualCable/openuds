@@ -260,7 +260,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     )
 
                 # On first successfull initialization request, master token will dissapear for managed hosts so it will be no more available (not needed anyway)
-                platform.store.writeConfig(self._cfg)
+                if self.isManaged():
+                    platform.store.writeConfig(self._cfg)
+
                 # Setup logger now
                 if self._cfg.own_token:
                     logger.setRemoteLogger(self._api, self._cfg.own_token)
@@ -386,6 +388,8 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if self._cfg.own_token:
             self._api.logout(self._cfg.own_token, username)
         self.onLogout(username)
+
+        self._cfg = self._cfg._replace(own_token=None)
 
     # ****************************************
     # Methods that CAN BE overriden by actors

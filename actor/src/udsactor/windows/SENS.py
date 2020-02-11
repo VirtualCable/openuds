@@ -72,8 +72,8 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
         self._service = service
 
     def Logon(self, *args):
-        logger.debug('Logon event: {}'.format(args))
         self._service.login(args[0] or '')
+        logger.debug('Logon event: {}'.format(args))
 
     def Logoff(self, *args):
         logger.debug('Logoff event: arguments: {}'.format(args))
