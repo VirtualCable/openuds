@@ -381,15 +381,17 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         if self._cfg.own_token:
             result = self._api.login(self._cfg.own_token, username)
+
         return result
 
     def logout(self, username: str) -> None:
         self._loggedIn = False
         if self._cfg.own_token:
             self._api.logout(self._cfg.own_token, username)
+
         self.onLogout(username)
 
-        self._cfg = self._cfg._replace(own_token=None)
+        self._cfg = self._cfg._replace(own_token=None)  # Ensures assigned token is cleared
 
     # ****************************************
     # Methods that CAN BE overriden by actors

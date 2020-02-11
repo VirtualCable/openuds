@@ -247,6 +247,8 @@ class UDSServerApi(UDSApi):
         )
 
     def login(self, own_token: str, username: str) -> types.LoginResultInfoType:
+        if not own_token:
+            return
         payload = {
             'token': own_token,
             'username': username
@@ -260,6 +262,8 @@ class UDSServerApi(UDSApi):
         )
 
     def logout(self, own_token: str, username: str) -> None:
+        if not own_token:
+            return
         payload = {
             'token': own_token,
             'username': username
@@ -268,6 +272,8 @@ class UDSServerApi(UDSApi):
 
 
     def log(self, own_token: str, level: int, message: str) -> None:
+        if not own_token:
+            return
         payLoad = {
             'token': own_token,
             'level': level,
