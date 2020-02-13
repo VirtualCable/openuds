@@ -1,6 +1,8 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
+.PHONY: install-udsactor install-udsactor-static
+
 # Directories
 SOURCEDIR := ../src
 LIBDIR := $(DESTDIR)/usr/share/UDSActor
@@ -18,22 +20,16 @@ CACHES := $(shell find $(SOURCEDIR) -name '__pycache__')
 
 clean:
 	rm -rf $(PYC) $(CACHES) $(DESTDIR)
-install-udsactor-xrdp:
-	mkdir -p $(BINDIR)
-	cp scripts/uds-sesman.sh $(BINDIR)/uds-sesman
-	cp scripts/uds-wait-session.sh $(BINDIR)/uds-wait-session
-	
-	chmod 0755 $(BINDIR)/uds-sesman
-	chmod 0755 $(BINDIR)/uds-wait-session
 
-install-udsactor-nx:
-	mkdir -p $(BINDIR)
-	cp scripts/udsnxstart.sh $(BINDIR)/udsnxstart
-	cp scripts/udsnxstop.sh $(BINDIR)/udsnxstop
-	
-	chmod 0755 $(BINDIR)/udsnxstart
-	chmod 0755 $(BINDIR)/udsnxstop
-install-udsactor:
+install-udsactor: udsactor
+
+install-udsactor-static: udsactor udsactor-static
+
+udsactor-static:
+	# Overwrite udsactor config is what to be done
+	cp scripts/UDSActorConfig-unmanaged $(SBINDIR)/UDSActorConfig
+
+udsactor:
 	rm -rf $(DESTDIR)
 	mkdir -p $(LIBDIR)
 	mkdir -p $(BINDIR)

@@ -22,6 +22,7 @@ install: build
 	dh_prep
 	dh_installdirs
 	$(MAKE) DESTDIR=$(CURDIR)/debian/udsactor install-udsactor
+	$(MAKE) DESTDIR=$(CURDIR)/debian/udsactor-static install-udsactor-static
 binary-arch: build install
 	# emptyness
 binary-indep: build install
