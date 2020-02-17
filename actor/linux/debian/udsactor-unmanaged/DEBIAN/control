@@ -1,0 +1,13 @@
+Package: udsactor-unmanaged
+Source: udsactor
+Version: 3.0.0
+Architecture: all
+Maintainer: Adolfo Gómez García <agomez@virtualcable.net>
+Installed-Size: 18
+Depends: policykit-1 (>= 0.100), python3-requests (>= 0.8.2), python3-pyqt5 (>= 4.9), python3-six (>= 1.1), python3 (>= 3.4), libxss1, xscreensaver, debconf (>= 0.5) | debconf-2.0
+Recommends: python3-prctl (>= 1.1.1)
+Section: admin
+Priority: optional
+Homepage: http://www.udsenterprise.com
+Description: Actor for Universal Desktop Services (UDS) Broker Static Unmanaged machines
+ This package provides the required components to allow unmanaged machines (static, independent machines) to work on an environment managed by UDS Broker.
