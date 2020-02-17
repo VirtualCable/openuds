@@ -229,6 +229,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             # Initialization is done, set machine to ready for UDS, communicate urls, etc...
             self.setReady()
 
+        # Start listening for petitions
+        self.startHttpServer()
+
         # # ********************************
         # # * Registers SENS subscriptions *
         # # ********************************

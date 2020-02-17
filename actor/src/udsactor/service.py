@@ -41,7 +41,7 @@ from . import rest
 from . import types
 
 from .log import logger, DEBUG, INFO, ERROR, FATAL
-from .http import clients_pool, server
+from .http import clients_pool, server, cert
 
 # def setup() -> None:
 #     cfg = platform.store.readConfig()
@@ -85,7 +85,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self._api = rest.UDSServerApi(self._cfg.host, self._cfg.validateCertificate)
         self._secret = secrets.token_urlsafe(33)
         self._clientsPool = clients_pool.UDSActorClientPool()
-        self._certificate = types.CertificateInfoType('', '', '')
+        self._certificate = cert.defaultCertificate  # For being used on "unmanaged" hosts only
         self._http = None
 
         # Initialzies loglevel and serviceLogger
@@ -99,7 +99,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         socket.setdefaulttimeout(20)
 
-    def _startHttpServer(self):
+    def startHttpServer(self):
         # Starts the http thread
         if self._http:
             try:
@@ -178,7 +178,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             platform.store.writeConfig(self._cfg)
 
         logger.info('Service ready')
-        self._startHttpServer()
 
     def configureMachine(self) -> bool:
         if not self._isAlive:
@@ -314,7 +313,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 self._interfaces = currentInterfaces
                 logger.info('Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip))
                 # Stop the running HTTP Thread and start a new one, with new generated cert
-                self._startHttpServer()
+                self.startHttpServer()
         except Exception as e:
             # No ip changed, log exception for info
             logger.warn('Checking ips failed: {}'.format(e))

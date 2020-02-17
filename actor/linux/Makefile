@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-.PHONY: install-udsactor install-udsactor-static
+.PHONY: install-udsactor install-udsactor-unmanaged
 
 # Directories
 SOURCEDIR := ../src
@@ -23,9 +23,9 @@ clean:
 
 install-udsactor: udsactor
 
-install-udsactor-static: udsactor udsactor-static
+install-udsactor-unmanaged: udsactor udsactor-unmanaged
 
-udsactor-static:
+udsactor-unmanaged:
 	# Overwrite udsactor config is what to be done
 	cp scripts/UDSActorConfig-unmanaged $(SBINDIR)/UDSActorConfig
 

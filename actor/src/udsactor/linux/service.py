@@ -79,6 +79,9 @@ class UDSActorSvc(daemon.Daemon, CommonService):
             # Initialization is done, set machine to ready for UDS, communicate urls, etc...
             self.setReady()
 
+        # Start listening for petitions
+        self.startHttpServer()
+
         # *********************
         # * Main Service loop *
         # *********************
