@@ -40,7 +40,7 @@ from . import platform
 from . import rest
 from . import types
 
-from .log import logger
+from .log import logger, DEBUG, INFO, ERROR, FATAL
 from .http import clients_pool, server
 
 # def setup() -> None:
@@ -89,7 +89,11 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self._http = None
 
         # Initialzies loglevel and serviceLogger
-        logger.setLevel(self._cfg.log_level * 10000)
+        # 0 = DEBUG, 1 = INFO, 2 = ERROR, 3 = FATAL in combobox
+        # BUT!!!:
+        # 0 = OTHER, 10000 = DEBUG, 20000 = WARN, 30000 = INFO, 40000 = ERROR, 50000 = FATAL
+        # So this comes:
+        logger.setLevel([DEBUG, INFO, ERROR, FATAL][self._cfg.log_level])
         # If windows, enable service logger
         logger.enableServiceLogger()
 

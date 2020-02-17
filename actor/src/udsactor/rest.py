@@ -248,7 +248,12 @@ class UDSServerApi(UDSApi):
 
     def login(self, own_token: str, username: str) -> types.LoginResultInfoType:
         if not own_token:
-            return
+            return types.LoginResultInfoType(
+                ip='0.0.0.0',
+                hostname='unknown',
+                dead_line=None,
+                max_idle=None
+            )
         payload = {
             'token': own_token,
             'username': username

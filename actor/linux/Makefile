@@ -16,7 +16,7 @@ XDGAUTOSTARTDIR := $(DESTDIR)/etc/xdg/autostart
 KDEAUTOSTARTDIR := $(DESTDIR)/usr/share/autostart
 
 PYC := $(shell find $(SOURCEDIR) -name '*.py[co]')
-CACHES := $(shell find $(SOURCEDIR) -name '__pycache__')
+CACHES := $(shell find $(SOURCEDIR) -name '__pycache__' -o -name '.mypy_cache')
 
 clean:
 	rm -rf $(PYC) $(CACHES) $(DESTDIR)
@@ -39,9 +39,9 @@ udsactor:
 	mkdir -p $(POLKITDIR)
 	mkdir -p $(XDGAUTOSTARTDIR)
 	mkdir -p $(KDEAUTOSTARTDIR)
-	
+
 	mkdir $(LIBDIR)/img
-	
+
 	# Cleans up .pyc and cache folders
 	rm -f $(PYC) $(CACHES)
 	
