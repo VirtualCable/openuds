@@ -85,24 +85,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-@angular/material/button
-
-@angular/material/core
-
-@angular/material/dialog
-
-@angular/material/expansion
-
-@angular/material/form-field
-
-@angular/material/menu
-
-@angular/material/select
-
-@angular/material/toolbar
-
-@angular/material/tooltip
-
 @angular/platform-browser
 MIT
 
@@ -370,7 +352,7 @@ zone.js
 MIT
 The MIT License
 
-Copyright (c) 2016-2018 Google, Inc.
+Copyright (c) 2010-2019 Google LLC. http://angular.io/license
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
