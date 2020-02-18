@@ -172,6 +172,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         # Do not continue if not alive...
         if not self._isAlive:
             return
+
         # Cleans sensible data
         if self._cfg.config:
             self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
