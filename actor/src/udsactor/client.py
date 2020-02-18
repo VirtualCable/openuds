@@ -90,6 +90,7 @@ class UDSClientQApp(QApplication):
 class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-attributes
     _running: bool
     _forceLogoff: bool
+    _extraLogoff: str
     _qApp: UDSClientQApp
     _listener: client.HTTPServerThread
     _loginInfo: typing.Optional['types.LoginResultInfoType']
@@ -104,6 +105,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
         self._qApp = qApp
         self._running = False
         self._forceLogoff = False
+        self._extraLogoff = ''
         self._listener = client.HTTPServerThread(self)
         self._loginInfo = None
         self._notified = False
@@ -153,6 +155,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
 
         if remainingTime <= 0:
             logger.info('User has been idle for too long, exiting from session')
+            self._extraLogoff=' (idle: {} vs {})'.format(idleTime, self.maxIdleTime)
             self._running = False
             self._forceLogoff = True
 
@@ -180,7 +183,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
                 self.checkDeadLine()
 
             self._loginInfo = None
-            self.api.logout(platform.operations.getCurrentUser())
+            self.api.logout(platform.operations.getCurrentUser() + self._extraLogoff)
         except Exception as e:
             logger.error('Error on client loop: %s', e)
 
