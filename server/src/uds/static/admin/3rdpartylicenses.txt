@@ -85,46 +85,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-@angular/material/autocomplete
-
-@angular/material/button
-
-@angular/material/button-toggle
-
-@angular/material/chips
-
-@angular/material/core
-
-@angular/material/datepicker
-
-@angular/material/dialog
-
-@angular/material/divider
-
-@angular/material/form-field
-
-@angular/material/menu
-
-@angular/material/paginator
-
-@angular/material/progress-spinner
-
-@angular/material/select
-
-@angular/material/slide-toggle
-
-@angular/material/snack-bar
-
-@angular/material/sort
-
-@angular/material/table
-
-@angular/material/tabs
-
-@angular/material/toolbar
-
-@angular/material/tooltip
-
 @angular/platform-browser
 MIT
 
@@ -533,7 +493,7 @@ zone.js
 MIT
 The MIT License
 
-Copyright (c) 2016-2018 Google, Inc.
+Copyright (c) 2010-2019 Google LLC. http://angular.io/license
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
