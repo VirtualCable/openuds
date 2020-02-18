@@ -136,7 +136,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
             self._running = False
             self._forceLogoff = True
 
-    def checkIdle(self):
+    def checkIdle(self) -> None:
         if self._loginInfo is None or not self._loginInfo.max_idle:  # No idle check
             return
 
@@ -155,11 +155,11 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
 
         if remainingTime <= 0:
             logger.info('User has been idle for too long, exiting from session')
-            self._extraLogoff=' (idle: {} vs {})'.format(idleTime, self.maxIdleTime)
+            self._extraLogoff = ' (idle: {} vs {})'.format(int(idleTime), self._loginInfo.max_idle)
             self._running = False
             self._forceLogoff = True
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('UDS Actor thread')
         self._listener.start()  # async listener for service
         self._running = True
