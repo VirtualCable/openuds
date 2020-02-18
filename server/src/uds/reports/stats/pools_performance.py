@@ -123,7 +123,7 @@ class PoolPerformanceReport(StatsReport):
 
         pools = self.getPools()
 
-        if pools:
+        if not pools:
             raise Exception(_('Select at least a service pool for the report'))
 
         logger.debug('Pools: %s', pools)
