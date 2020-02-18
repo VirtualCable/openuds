@@ -130,7 +130,7 @@ class DelayedTaskRunner:
         now = getSqlDatetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
-        instanceDump = encoders.encode(pickle.dumps(instance), 'base64', asText=True)
+        instanceDump = encoders.encodeAsStr(pickle.dumps(instance), 'base64')
         typeName = str(cls.__module__ + '.' + cls.__name__)
 
         logger.debug('Inserting delayed task %s with %s bytes (%s)', typeName, len(instanceDump), exec_time)

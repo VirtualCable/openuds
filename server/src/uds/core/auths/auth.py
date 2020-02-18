@@ -308,8 +308,6 @@ def webPassword(request: HttpRequest) -> str:
     The password is stored at session using a simple scramble algorithm that keeps the password splited at
     session (db) and client browser cookies. This method uses this two values to recompose the user password
     so we can provide it to remote sessions.
-    @param request: DJango Request
-    @return: Unscrambled user password
     """
     return cryptoManager().symDecrpyt(request.session.get(PASS_KEY, ''), getUDSCookie(request))  # recover as original unicode string
 
