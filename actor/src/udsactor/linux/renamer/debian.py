@@ -45,7 +45,8 @@ def rename(newName: str) -> bool:
         hostname.write(newName)
 
     # Force system new name
-    os.system('/bin/hostname %s' % newName)
+    os.system('/bin/hostname {}'.format(newName))
+    os.system('/usr/bin/hostnamectl set-hostname {}'.format(newName))
 
     # add name to "hosts"
     with open('/etc/hosts', 'r') as hosts:

@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import ugettext_noop as _
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
-from uds.core.util import tools
+from uds.core.util import validators
 from uds.core.ui import gui
 
 from .publication import LivePublication
@@ -140,8 +140,10 @@ class LiveService(Service):
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
         """
-        if values:
-            tools.checkValidBasename(self.baseName.value, self.lenName.num())
+        if not values:
+            return
+
+        self.baseName.value = validators.validateHostname(self.baseName.value, maxLength=15-self.lenName.num(), asPattern=True)
 
     def parent(self) -> 'OpenNebulaProvider':
         return typing.cast('OpenNebulaProvider', super().parent())

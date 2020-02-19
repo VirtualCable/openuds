@@ -76,6 +76,23 @@ def validateNumeric(
 
     return numericStr
 
+def validateHostname(hostname: str, maxLength: int, asPattern: bool) -> str:
+    if len(hostname) > maxLength:
+        raise Module.ValidationException(_('{} exceeds maximum host name length.').format(hostname))
+
+    if hostname[-1] == ".":
+        hostname = hostname[:-1] # strip exactly one dot from the right, if present
+
+    if asPattern:
+        allowed = re.compile("(?!-)[A-Z\d-]{1,63}$", re.IGNORECASE)
+    else:
+        allowed = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
+
+    if not all(allowed.match(x) for x in hostname.split(".")):
+        raise Module.ValidationException(_('{} is not a valid hostname').format(hostname))
+
+    return hostname
+
 
 def validatePort(portStr: str) -> int:
     """
