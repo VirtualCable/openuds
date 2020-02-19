@@ -298,6 +298,7 @@ gettext("Edit");
 gettext("Permissions");
 gettext("Delete");
 gettext("Logs");
+gettext("Export");
 gettext("Filter");
 gettext("Summary");
 gettext("Services");
