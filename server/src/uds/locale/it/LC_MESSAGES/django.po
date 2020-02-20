@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 12:16+0100\n"
+"POT-Creation-Date: 2020-02-20 11:33+0100\n"
 "PO-Revision-Date: 2020-01-31 11:09+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -32,7 +32,7 @@ msgstr "conti"
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:95
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
 #: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
-#: REST/model.py:138
+#: REST/model.py:139
 msgid "Name"
 msgstr "Nome"
 
@@ -40,10 +40,10 @@ msgstr "Nome"
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
-#: REST/methods/services.py:213 REST/methods/services_pool_groups.py:64
+#: REST/methods/services.py:221 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
-#: REST/model.py:156
+#: REST/model.py:157
 msgid "Comments"
 msgstr "Commenti"
 
@@ -55,7 +55,7 @@ msgstr "Segno di tempo"
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:218 REST/methods/services_pools.py:104
+#: REST/methods/services.py:226 REST/methods/services_pools.py:104
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr "tag"
@@ -115,6 +115,52 @@ msgstr "Host non gestito"
 msgid "User service not found"
 msgstr "Servizio utente non trovato"
 
+#: REST/methods/actor_token.py:51
+#| msgid "Actor version"
+msgid "Actor tokens"
+msgstr "Token attore"
+
+#: REST/methods/actor_token.py:54 reports/stats/pools_performance.py:198
+#: reports/stats/pools_performance.py:213 reports/stats/pools_usage_day.py:65
+#: reports/stats/usage_by_pool.py:154 reports/stats/user_access.py:174
+msgid "Date"
+msgstr "Data"
+
+#: REST/methods/actor_token.py:55
+#| msgid "Used by"
+msgid "Issued by"
+msgstr "Rilasciato da"
+
+#: REST/methods/actor_token.py:56
+msgid "Origin"
+msgstr "Origine"
+
+#: REST/methods/actor_token.py:57
+#| msgid "Host"
+msgid "Hostname"
+msgstr "Nome host"
+
+#: REST/methods/actor_token.py:58
+msgid "Pre-connect"
+msgstr "Pre-connect"
+
+#: REST/methods/actor_token.py:59
+msgid "Post-Configure"
+msgstr "Post-Configura"
+
+#: REST/methods/actor_token.py:60
+msgid "Run Once"
+msgstr "Esegui una volta"
+
+#: REST/methods/actor_token.py:61
+#| msgid "Cache level"
+msgid "Log level"
+msgstr "Livello di registro"
+
+#: REST/methods/actor_token.py:67
+msgid "Token isued by {} from {}"
+msgstr "Il token è contrassegnato da {} da {}"
+
 #: REST/methods/authenticators.py:62
 msgid "Authenticators"
 msgstr "autenticatori"
@@ -124,7 +170,7 @@ msgid "Id"
 msgstr "Id"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:71 REST/methods/services.py:214
+#: REST/methods/providers.py:71 REST/methods/services.py:222
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr "genere"
@@ -132,36 +178,37 @@ msgstr "genere"
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:81 REST/methods/services_pool_groups.py:61
 #: REST/methods/transports.py:56 REST/methods/user_services.py:294
-#: REST/model.py:165 models/meta_pool.py:72
+#: REST/model.py:166 models/meta_pool.py:72
 msgid "Priority"
 msgstr "Priorità"
 
 #: REST/methods/authenticators.py:69 REST/methods/authenticators.py:101
-#: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:149
-#: REST/methods/services_pools.py:100 REST/methods/services_pools.py:267
+#: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:150
+#: REST/methods/services_pools.py:100 REST/methods/services_pools.py:252
 msgid "Visible"
 msgstr "Visibile"
 
-#: REST/methods/authenticators.py:70 REST/model.py:176
+#: REST/methods/authenticators.py:70 REST/model.py:177
 msgid "Label"
 msgstr "Etichetta"
 
 #: REST/methods/authenticators.py:71 reports/stats/pools_performance.py:203
 #: reports/stats/pools_performance.py:258 reports/stats/user_access.py:236
-#: reports/stats/user_access.py:275 services/RDS_enterprise/provider.py:46
+#: reports/stats/user_access.py:275 services/RDS_enterprise/provider.py:67
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
 msgstr "utenti"
 
-#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:268
+#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:253
 msgid "If active, transport will be visible for users"
 msgstr "Se attivo, il trasporto sarà visibile agli utenti"
 
-#: REST/methods/authenticators.py:105 REST/methods/meta_pools.py:137
-#: REST/methods/meta_pools.py:145 REST/methods/meta_pools.py:153
-#: REST/methods/services_pools.py:255 REST/methods/services_pools.py:263
-#: REST/methods/services_pools.py:271 core/ui/user_interface.py:97
+#: REST/methods/authenticators.py:105 REST/methods/meta_pools.py:138
+#: REST/methods/meta_pools.py:146 REST/methods/meta_pools.py:154
+#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:256
+#: REST/methods/services_pools.py:264 REST/methods/services_pools.py:272
+#: REST/methods/services_pools.py:280 core/ui/user_interface.py:97
 #: services/OVirt/service.py:186
 msgid "Display"
 msgstr "Display"
@@ -191,7 +238,7 @@ msgstr "Ogni"
 msgid "Duration"
 msgstr "Durata"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:179
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:187
 msgid "Element already exists (duplicate key error)"
 msgstr "L&#39;elemento esiste già (errore chiave duplicato)"
 
@@ -233,11 +280,11 @@ msgstr "Oggetto dell&#39;immagine"
 msgid "Meta Pools"
 msgstr "Meta Pools"
 
-#: REST/methods/meta_pools.py:72 REST/methods/meta_pools.py:126
+#: REST/methods/meta_pools.py:72 REST/methods/meta_pools.py:127
 msgid "Policy"
 msgstr "Politica"
 
-#: REST/methods/meta_pools.py:73 REST/methods/services.py:217
+#: REST/methods/meta_pools.py:73 REST/methods/services.py:225
 #: REST/methods/services_pools.py:97
 msgid "User services"
 msgstr "Servizi utente"
@@ -250,38 +297,50 @@ msgstr "In preparazione"
 msgid "Pool Group"
 msgstr "Pool Group"
 
-#: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:140
-#: REST/methods/services_pools.py:122 REST/methods/services_pools.py:173
-#: REST/methods/services_pools.py:258
+#: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:141
+#: REST/methods/services_pools.py:122 REST/methods/services_pools.py:174
+#: REST/methods/services_pools.py:267
 msgid "Default"
 msgstr "Predefinito"
 
-#: REST/methods/meta_pools.py:127
+#: REST/methods/meta_pools.py:128
 msgid "Service pool policy"
 msgstr "Politica del pool di servizi"
 
-#: REST/methods/meta_pools.py:133 REST/methods/services_pool_groups.py:85
-#: REST/methods/services_pools.py:251
+#: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:85
+#: REST/methods/services_pools.py:260
 msgid "Associated Image"
 msgstr "Immagine associata"
 
-#: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:86
-#: REST/methods/services_pools.py:252
+#: REST/methods/meta_pools.py:135 REST/methods/services_pool_groups.py:86
+#: REST/methods/services_pools.py:261
 msgid "Image assocciated with this service"
 msgstr "Immagine associata a questo servizio"
 
-#: REST/methods/meta_pools.py:141 REST/methods/services_pools.py:102
-#: REST/methods/services_pools.py:259
+#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:102
+#: REST/methods/services_pools.py:268
 msgid "Pool group"
 msgstr "Gruppo di pool"
 
-#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:260
+#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:269
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "Gruppo di poll per questa piscina (per classificare sul display)"
 
-#: REST/methods/meta_pools.py:150
+#: REST/methods/meta_pools.py:151
 msgid "If active, metapool will be visible for users"
 msgstr "Se attivo, metapool sarà visibile agli utenti"
+
+#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:276
+#| msgid "Can't access idp metadata"
+msgid "Calendar access denied text"
+msgstr "Accesso negato al testo"
+
+#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:277
+msgid ""
+"Custom message to be shown to users if access is limited by calendar rules."
+msgstr ""
+"Messaggio personalizzato da mostrare agli utenti se l&#39;accesso è limitato "
+"dalle regole del calendario."
 
 #: REST/methods/meta_service_pools.py:81
 msgid "Service pools"
@@ -506,6 +565,7 @@ msgstr "Server (IP o FQDN) che fungerà da proxy."
 #: services/HyperV_enterprise/provider.py:116
 #: services/Nutanix_enterprise/provider.py:37 services/OpenGnsys/provider.py:96
 #: services/OpenNebula/provider.py:78 services/OpenStack/provider_legacy.py:103
+#: services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
 #: services/Vmware_enterprise/provider.py:42
 msgid "Port"
@@ -563,38 +623,45 @@ msgstr "Descrizione"
 msgid "Generates"
 msgstr "genera"
 
-#: REST/methods/services.py:183
+#: REST/methods/services.py:186
+msgid ""
+"Service token seems to be in use by other service. Please, select a new one."
+msgstr ""
+"Il token di servizio sembra essere utilizzato da altri servizi. Per favore, "
+"selezionane uno nuovo."
+
+#: REST/methods/services.py:191
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Errore di input: {0}"
 
-#: REST/methods/services.py:206
+#: REST/methods/services.py:214
 msgid "Services of {}"
 msgstr "Servizi di {}"
 
-#: REST/methods/services.py:208
+#: REST/methods/services.py:216
 msgid "Current services"
 msgstr "Servizi attuali"
 
-#: REST/methods/services.py:212
+#: REST/methods/services.py:220
 msgid "Service name"
 msgstr "Nome di Servizio"
 
-#: REST/methods/services.py:215 REST/methods/services.py:258
+#: REST/methods/services.py:223 REST/methods/services.py:266
 msgid "Proxy"
 msgstr "delega"
 
-#: REST/methods/services.py:216
+#: REST/methods/services.py:224
 msgid "Services Pools"
 msgstr "Pool di servizi "
 
-#: REST/methods/services.py:259
+#: REST/methods/services.py:267
 msgid "Proxy for services behind a firewall"
 msgstr "Proxy per servizi dietro un firewall"
 
-#: REST/methods/services.py:261 REST/methods/services_pools.py:231
-#: REST/methods/services_pools.py:239 REST/methods/services_pools.py:247
-#: REST/methods/services_pools.py:314 REST/methods/services_pools.py:322
+#: REST/methods/services.py:269 REST/methods/services_pools.py:232
+#: REST/methods/services_pools.py:240 REST/methods/services_pools.py:248
+#: REST/methods/services_pools.py:323 REST/methods/services_pools.py:331
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:93
 #: osmanagers/WindowsOsManager/windows_domain.py:71
 #: osmanagers/WindowsOsManager/windows_domain.py:72
@@ -604,12 +671,12 @@ msgstr "Proxy per servizi dietro un firewall"
 msgid "Advanced"
 msgstr "Avanzate"
 
-#: REST/methods/services.py:292 REST/methods/users_groups.py:216
+#: REST/methods/services.py:300 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "With errors"
 msgstr "Con errori"
 
-#: REST/methods/services.py:292 REST/methods/users_groups.py:216
+#: REST/methods/services.py:300 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "Ok"
 msgstr "Ok"
@@ -634,32 +701,32 @@ msgstr "Mostra i trasporti"
 msgid "Parent service"
 msgstr "Servizio genitore"
 
-#: REST/methods/services_pools.py:204
+#: REST/methods/services_pools.py:205
 msgid "Create at least a service before creating a new service pool"
 msgstr "Creare almeno un servizio prima di creare un nuovo pool di servizi"
 
-#: REST/methods/services_pools.py:211
+#: REST/methods/services_pools.py:212
 msgid "Base service"
 msgstr "Servizio di base"
 
-#: REST/methods/services_pools.py:212
+#: REST/methods/services_pools.py:213
 msgid "Service used as base of this service pool"
 msgstr "Servizio utilizzato come base di questo pool di servizi"
 
-#: REST/methods/services_pools.py:219
+#: REST/methods/services_pools.py:220
 msgid "OS Manager"
 msgstr "OS Manager"
 
-#: REST/methods/services_pools.py:220
+#: REST/methods/services_pools.py:221
 msgid "OS Manager used as base of this service pool"
 msgstr ""
 "Gestore del sistema operativo utilizzato come base di questo pool di servizi"
 
-#: REST/methods/services_pools.py:227
+#: REST/methods/services_pools.py:228
 msgid "Allow removal by users"
 msgstr "Consenti la rimozione da parte degli utenti"
 
-#: REST/methods/services_pools.py:228
+#: REST/methods/services_pools.py:229
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -669,19 +736,19 @@ msgstr ""
 "\"manualmente\". Fai attenzione, perché l&#39;utente avrà il \"potere\" di "
 "cancellare il proprio servizio"
 
-#: REST/methods/services_pools.py:235
+#: REST/methods/services_pools.py:236
 msgid "Allow reset by users"
 msgstr "Permetti il reset da parte degli utenti"
 
-#: REST/methods/services_pools.py:236
+#: REST/methods/services_pools.py:237
 msgid "If active, the user will be allowed to reset the service"
 msgstr "Se attivo, l&#39;utente sarà autorizzato a ripristinare il servizio"
 
-#: REST/methods/services_pools.py:243
+#: REST/methods/services_pools.py:244
 msgid "Ignores unused"
 msgstr "Ignora inutilizzato"
 
-#: REST/methods/services_pools.py:244
+#: REST/methods/services_pools.py:245
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -689,43 +756,43 @@ msgstr ""
 "Se l&#39;opzione è abilitata, UDS non tenterà di rilevare e rimuovere i "
 "servizi utente assegnati ma non in uso."
 
-#: REST/methods/services_pools.py:276
+#: REST/methods/services_pools.py:285
 msgid "Initial available services"
 msgstr "Servizi disponibili iniziali"
 
-#: REST/methods/services_pools.py:277
+#: REST/methods/services_pools.py:286
 msgid "Services created initially for this service pool"
 msgstr "Servizi creati inizialmente per questo pool di servizi"
 
-#: REST/methods/services_pools.py:280 REST/methods/services_pools.py:289
-#: REST/methods/services_pools.py:298 REST/methods/services_pools.py:307
+#: REST/methods/services_pools.py:289 REST/methods/services_pools.py:298
+#: REST/methods/services_pools.py:307 REST/methods/services_pools.py:316
 msgid "Availability"
 msgstr "Disponibilità"
 
-#: REST/methods/services_pools.py:285
+#: REST/methods/services_pools.py:294
 msgid "Services to keep in cache"
 msgstr "Servizi da tenere nella cache"
 
-#: REST/methods/services_pools.py:286
+#: REST/methods/services_pools.py:295
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
 "Servizi tenuti nella cache per una migliore assegnazione del servizio utente"
 
-#: REST/methods/services_pools.py:294
+#: REST/methods/services_pools.py:303
 msgid "Services to keep in L2 cache"
 msgstr "Servizi da tenere nella cache L2"
 
-#: REST/methods/services_pools.py:295
+#: REST/methods/services_pools.py:304
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr ""
 "Servizi mantenuti nella cache di level2 per una migliore generazione di "
 "servizi"
 
-#: REST/methods/services_pools.py:303
+#: REST/methods/services_pools.py:312
 msgid "Maximum number of services to provide"
 msgstr "Numero massimo di servizi da fornire"
 
-#: REST/methods/services_pools.py:304
+#: REST/methods/services_pools.py:313
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -733,27 +800,27 @@ msgstr ""
 "Numero massimo di servizi (assegnati e cache L1) che possono essere creati "
 "per questo servizio"
 
-#: REST/methods/services_pools.py:311
+#: REST/methods/services_pools.py:320
 msgid "Show transports"
 msgstr "Mostra trasporti"
 
-#: REST/methods/services_pools.py:312
+#: REST/methods/services_pools.py:321
 msgid "If active, alternative transports for user will be shown"
 msgstr "Se attivo, verranno mostrati i trasporti alternativi per l&#39;utente"
 
-#: REST/methods/services_pools.py:319
+#: REST/methods/services_pools.py:328
 msgid "Accounting"
 msgstr "Contabilità"
 
-#: REST/methods/services_pools.py:320
+#: REST/methods/services_pools.py:329
 msgid "Account associated to this service pool"
 msgstr "Account associato a questo pool di servizi"
 
-#: REST/methods/services_pools.py:336
+#: REST/methods/services_pools.py:345
 msgid "Base service does not exist anymore"
 msgstr "Il servizio base non esiste più"
 
-#: REST/methods/services_pools.py:367
+#: REST/methods/services_pools.py:376
 msgid "This service requires an OS Manager"
 msgstr "Questo servizio richiede un gestore del sistema operativo"
 
@@ -906,6 +973,7 @@ msgstr "Utenti attuali"
 #: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
 #: services/OpenGnsys/provider.py:98 services/OpenNebula/provider.py:80
 #: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
+#: services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
@@ -962,50 +1030,50 @@ msgstr "tag"
 msgid "Tags for this element"
 msgstr "Tag per questo elemento"
 
-#: REST/model.py:140
+#: REST/model.py:141
 msgid "Name of this element"
 msgstr "Nome di questo elemento"
 
-#: REST/model.py:147
+#: REST/model.py:148
 msgid "Short name"
 msgstr "Nome corto"
 
-#: REST/model.py:148
+#: REST/model.py:149
 msgid "Short name for user service visualization"
 msgstr "Nome breve per la visualizzazione del servizio utente"
 
-#: REST/model.py:157
+#: REST/model.py:158
 msgid "Comments for this element"
 msgstr "Commenti per questo elemento"
 
-#: REST/model.py:166
+#: REST/model.py:167
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Seleziona la priorità di questo elemento (numero più basso significa "
 "priorità più alta)"
 
-#: REST/model.py:177
+#: REST/model.py:178
 msgid "Label for this element"
 msgstr "Etichetta per questo elemento"
 
-#: REST/model.py:270
+#: REST/model.py:271
 msgid "Invalid Request"
 msgstr "richiesta non valida"
 
-#: REST/model.py:281
+#: REST/model.py:282
 msgid "Method not found in {}: {}"
 msgstr "Metodo non trovato in {}: {}"
 
-#: REST/model.py:287
+#: REST/model.py:288
 msgid "Item not found"
 msgstr "Oggetto non trovato"
 
-#: REST/model.py:292 web/util/authentication.py:112 web/util/errors.py:76
+#: REST/model.py:293 web/util/authentication.py:112 web/util/errors.py:76
 msgid "Access denied"
 msgstr "Accesso negato"
 
-#: REST/model.py:295
+#: REST/model.py:296
 msgid "Operation not supported"
 msgstr "Operazione non supportata"
 
@@ -1055,7 +1123,8 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
 #: services/OpenGnsys/provider.py:99 services/OpenNebula/provider.py:81
 #: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
-#: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
+#: services/RDS_enterprise/provider.py:126 services/Sample/service.py:140
+#: services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
@@ -1641,12 +1710,14 @@ msgid "Attribute of the group that contains the users belonging to it"
 msgstr "Attributo del gruppo che contiene gli utenti ad esso appartenenti"
 
 #: auths/SimpleLDAP/authenticator.py:71
-msgid "SimpleLDAP Authenticator"
-msgstr "SimpleLDAP Authenticator"
+#| msgid "NX v3.5 (DEPRECATED)"
+msgid "SimpleLDAP (DEPRECATED)"
+msgstr "SimpleLDAP (DEPRECATED)"
 
 #: auths/SimpleLDAP/authenticator.py:73
-msgid "Simple LDAP authenticator"
-msgstr "Autenticatore LDAP semplice"
+#| msgid "Simple LDAP authenticator"
+msgid "Simple LDAP authenticator (DEPRECATED)"
+msgstr "Autenticatore LDAP semplice (DEPRECATED)"
 
 #: auths/SimpleLDAP/authenticator.py:387
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
@@ -1952,7 +2023,16 @@ msgstr "{0} deve essere inferiore o uguale a {1}"
 msgid "{0} contains invalid characters"
 msgstr "{0} contiene caratteri non validi"
 
-#: core/util/validators.py:119
+#: core/util/validators.py:81
+msgid "{} exceeds maximum host name length."
+msgstr "{} supera la lunghezza massima del nome host."
+
+#: core/util/validators.py:92
+#| msgid "The basename is not a valid for a hostname"
+msgid "{} is not a valid hostname"
+msgstr "{} non è un nome host valido"
+
+#: core/util/validators.py:136
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
@@ -2142,6 +2222,7 @@ msgid "General"
 msgstr "Generale"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
+#: osmanagers/LinuxOsManager/__init__.py:77
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.5)</b>"
@@ -2270,6 +2351,13 @@ msgstr ""
 #: osmanagers/WindowsOsManager/__init__.py:52
 msgid "UDS Actor for windows machines"
 msgstr "Attore UDS per macchine Windows"
+
+#: osmanagers/WindowsOsManager/__init__.py:58
+msgid ""
+"UDS Actor for Unmanaged windows machines. Used ONLY for static machines."
+msgstr ""
+"Attore UDS per macchine Windows non gestite. Utilizzato SOLO per macchine "
+"statiche."
 
 #: osmanagers/WindowsOsManager/windows.py:45
 msgid "Windows Basic OS Manager"
@@ -2575,12 +2663,6 @@ msgstr "Selezionare almeno un pool di servizi per il report"
 #: reports/stats/pools_performance.py:195
 msgid "Distinct Users"
 msgstr "Utenti distinti"
-
-#: reports/stats/pools_performance.py:198
-#: reports/stats/pools_performance.py:213 reports/stats/pools_usage_day.py:65
-#: reports/stats/usage_by_pool.py:154 reports/stats/user_access.py:174
-msgid "Date"
-msgstr "Data"
 
 #: reports/stats/pools_performance.py:210
 #: reports/stats/pools_performance.py:218
@@ -3642,20 +3724,35 @@ msgstr "Gruppi di sicurezza del servizio"
 msgid "IP "
 msgstr "IP"
 
-#: services/PhysicalMachines/service_multi.py:56
-#: services/RDS_enterprise/provider.py:42
+#: services/PhysicalMachines/service_multi.py:59
+#: services/Vmware_enterprise/service_fixed.py:54
+#| msgid "Service region"
+msgid "Service Token"
+msgstr "Token di servizio"
+
+#: services/PhysicalMachines/service_multi.py:61
+#: services/Vmware_enterprise/service_fixed.py:56
+msgid ""
+"Service token that will be used by actors to communicate with service. Leave "
+"empty for persistent assignation."
+msgstr ""
+"Token di servizio che verrà utilizzato dagli attori per comunicare con il "
+"servizio. Lascia vuoto per assegnazione persistente."
+
+#: services/PhysicalMachines/service_multi.py:67
+#: services/RDS_enterprise/provider.py:47
 msgid "List of servers"
 msgstr "Elenco di server"
 
-#: services/PhysicalMachines/service_multi.py:56
+#: services/PhysicalMachines/service_multi.py:67
 msgid "List of servers available for this service"
 msgstr "Elenco dei server disponibili per questo servizio"
 
-#: services/PhysicalMachines/service_multi.py:59
+#: services/PhysicalMachines/service_multi.py:71
 msgid "Static Multiple IP"
 msgstr "IP statico multiplo"
 
-#: services/PhysicalMachines/service_multi.py:61
+#: services/PhysicalMachines/service_multi.py:73
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr ""
 "Questo servizio fornisce l&#39;accesso ai computer POWERED-ON tramite IP"
@@ -3673,43 +3770,13 @@ msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr ""
 "Questo servizio fornisce l&#39;accesso alla macchina POWERED-ON tramite IP"
 
-#: services/RDS_enterprise/provider.py:36
+#: services/RDS_enterprise/provider.py:41
 msgid "RDS Platform Provider"
 msgstr "Provider di piattaforme RDS"
 
-#: services/RDS_enterprise/provider.py:38
+#: services/RDS_enterprise/provider.py:43
 msgid "Microsoft RDS based provider"
 msgstr "Provider basato su Microsoft RDS"
-
-#: services/RDS_enterprise/provider.py:44
-msgid "User mapping"
-msgstr "Mappatura utente"
-
-#: services/RDS_enterprise/provider.py:44
-msgid ""
-"If active, user mapping will be done. If not, credential from user will be "
-"redirected to RDS server."
-msgstr ""
-"Se attivo, verrà eseguita la mappatura dell&#39;utente. In caso contrario, "
-"le credenziali dell&#39;utente verranno reindirizzate al server RDS."
-
-#: services/RDS_enterprise/provider.py:46
-msgid "User list for mapping. (Not used if User mapping is disabled)"
-msgstr ""
-"Elenco utenti per la mappatura. (Non utilizzato se la mappatura utente è "
-"disabilitata)"
-
-#: services/RDS_enterprise/provider.py:47
-msgid "User's password"
-msgstr "Password dell&#39;utente"
-
-#: services/RDS_enterprise/provider.py:47
-msgid ""
-"Default password for users in list mapping. (Not used if User mapping is "
-"disabled)"
-msgstr ""
-"Password predefinita per gli utenti nella mappatura degli elenchi. (Non "
-"utilizzato se la mappatura utente è disabilitata)"
 
 #: services/RDS_enterprise/provider.py:50
 msgid "Server Checking"
@@ -3721,15 +3788,196 @@ msgstr ""
 "Se selezionato, il server verrà controllato prima di assegnarlo o "
 "utilizzarlo."
 
+#: services/RDS_enterprise/provider.py:58
+#: services/RDS_enterprise/provider.py:63
+#: services/RDS_enterprise/provider.py:69
+#: services/RDS_enterprise/provider.py:77
+msgid "User mapping"
+msgstr "Mappatura utente"
+
+#: services/RDS_enterprise/provider.py:61
+msgid ""
+"If active, user mapping will be done. If not, credential from user will be "
+"redirected to RDS server."
+msgstr ""
+"Se attivo, verrà eseguita la mappatura dell&#39;utente. In caso contrario, "
+"le credenziali dell&#39;utente verranno reindirizzate al server RDS."
+
+#: services/RDS_enterprise/provider.py:68
+msgid "User list for mapping. (Not used if User mapping is disabled)"
+msgstr ""
+"Elenco utenti per la mappatura. (Non utilizzato se la mappatura utente è "
+"disabilitata)"
+
+#: services/RDS_enterprise/provider.py:74
+msgid "User's password"
+msgstr "Password dell&#39;utente"
+
 #: services/RDS_enterprise/provider.py:75
+msgid ""
+"Default password for users in list mapping. (Not used if User mapping is "
+"disabled)"
+msgstr ""
+"Password predefinita per gli utenti nella mappatura degli elenchi. (Non "
+"utilizzato se la mappatura utente è disabilitata)"
+
+#: services/RDS_enterprise/provider.py:83
+msgid "User auto creation on AD"
+msgstr "Creazione automatica dell&#39;utente su AD"
+
+#: services/RDS_enterprise/provider.py:86
+msgid ""
+"If active, uds will mirror the user on your active director. WARNING!! "
+"Existing coincident users may be deleted!."
+msgstr ""
+"Se attivo, uds rispecchierà l&#39;utente sul tuo direttore attivo. "
+"AVVERTIMENTO!! Gli utenti coincidenti esistenti possono essere eliminati !."
+
+#: services/RDS_enterprise/provider.py:88
+#: services/RDS_enterprise/provider.py:96
+#: services/RDS_enterprise/provider.py:105
+#: services/RDS_enterprise/provider.py:113
+#: services/RDS_enterprise/provider.py:121
+#: services/RDS_enterprise/provider.py:129
+#: services/RDS_enterprise/provider.py:138
+#: services/RDS_enterprise/provider.py:146
+#: services/RDS_enterprise/provider.py:154
+#| msgid "User name"
+msgid "AD User management"
+msgstr "Gestione utenti AD"
+
+#: services/RDS_enterprise/provider.py:93
+#| msgid "Server"
+msgid "AD Server"
+msgstr "Server AD"
+
+#: services/RDS_enterprise/provider.py:94
+msgid "IP or HOST of AD Server. Must have LDAPS support enabled"
+msgstr "IP o HOST del server AD. Il supporto LDAPS deve essere abilitato"
+
+#: services/RDS_enterprise/provider.py:103
+msgid "AD LDAPS port (default is 636)"
+msgstr "Porta AD LDAPS (il valore predefinito è 636)"
+
+#: services/RDS_enterprise/provider.py:110
+msgid "AD server OU for created users"
+msgstr "Unità organizzativa server AD per utenti creati"
+
+#: services/RDS_enterprise/provider.py:111
+msgid "AD Server branch where users will be created by UDS"
+msgstr "Filiale del server AD in cui gli utenti verranno creati da UDS"
+
+#: services/RDS_enterprise/provider.py:119
+#| msgid ""
+#| "Username with read privileges on the base selected (use USER@DOMAIN.DOM "
+#| "form for this)"
+msgid ""
+"Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
+msgstr ""
+"Nome utente con privilegi per creare / eliminare account. Usa il modulo "
+"USER@DOMAIN.XXX."
+
+#: services/RDS_enterprise/provider.py:127
+#| msgid "Password of the user of HyperV"
+msgid "Password of the user with privileges"
+msgstr "Password dell&#39;utente con privilegi"
+
+#: services/RDS_enterprise/provider.py:134
+msgid "Prefix for created users"
+msgstr "Prefisso per gli utenti creati"
+
+#: services/RDS_enterprise/provider.py:135
+msgid ""
+"User will be created on AD with the format \"PREFIX...\", where ... will be "
+"the original UDS own username. Max 4 characters"
+msgstr ""
+"L&#39;utente verrà creato su AD con il formato \"PREFIX ...\", dove ... sarà "
+"il nome utente UDS originale. Max 4 caratteri"
+
+#: services/RDS_enterprise/provider.py:143
+#| msgid "Domain"
+msgid "AD Domain"
+msgstr "Dominio AD"
+
+#: services/RDS_enterprise/provider.py:144
+msgid ""
+"Domain for newly created users (i.e. example.com, example.local). If empty, "
+"will be deduced from username"
+msgstr ""
+"Dominio per gli utenti appena creati (ad esempio esempio.com, esempio.locale)"
+". Se vuoto, verrà dedotto dal nome utente"
+
+#: services/RDS_enterprise/provider.py:151
+#| msgid "UDS Group"
+msgid "AD Group"
+msgstr "Gruppo AD"
+
+#: services/RDS_enterprise/provider.py:152
+msgid "If not empty, UDS will try to add managed users to this group"
+msgstr "Se non vuoto, UDS proverà ad aggiungere utenti gestiti a questo gruppo"
+
+#: services/RDS_enterprise/provider.py:162
+msgid "Select only one of \"User mapping\" or \"User creation\" methods."
+msgstr ""
+"Seleziona solo uno dei metodi \"Mappatura utente\" o \"Creazione utente\"."
+
+#: services/RDS_enterprise/provider.py:166
+msgid "AD User Management: you must provide the AD server host."
+msgstr "Gestione utenti AD: è necessario fornire l&#39;host del server AD."
+
+#: services/RDS_enterprise/provider.py:169
+msgid "AD User Management: you must provide the user prefix."
+msgstr "Gestione utenti AD: è necessario fornire il prefisso utente."
+
+#: services/RDS_enterprise/provider.py:172
+msgid "AD User Management: the username should be in USER@DOMAIN form."
+msgstr ""
+"Gestione utenti AD: il nome utente deve essere nel formato USER @ DOMAIN."
+
+#: services/RDS_enterprise/provider.py:175
+msgid "AD User Management: you must provide the password."
+msgstr "Gestione utenti AD: è necessario fornire la password."
+
+#: services/RDS_enterprise/provider.py:179
+msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
+msgstr ""
+"Gestione utenti AD: è necessario fornire il prefisso utente. (1-4 caratteri)"
+
+#: services/RDS_enterprise/provider.py:182
+msgid "AD User Management: you must provide the user creation domain FQDN."
+msgstr ""
+"Gestione utenti AD: è necessario fornire il nome FQDN del dominio di "
+"creazione utente."
+
+#: services/RDS_enterprise/provider.py:215
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Errore: l&#39;utente {} su host {} è in uso e non può essere rimosso in "
 "questo momento"
 
-#: services/RDS_enterprise/provider.py:103
-msgid "Nothing tested, but all went fine..."
-msgstr "Niente di testato, ma tutto è andato bene ..."
+#: services/RDS_enterprise/provider.py:249
+#| msgid "Connection failed: {}"
+msgid "Connection to {}, port {} failed."
+msgstr "Connessione a {}, porta {} non riuscita."
+
+#: services/RDS_enterprise/provider.py:265
+msgid "The group {} could not be found. Please, check it."
+msgstr "Impossibile trovare il gruppo {}. Per favore controllalo."
+
+#: services/RDS_enterprise/provider.py:267
+msgid "User creation test failed. Please, check parameters."
+msgstr ""
+"Test di creazione dell&#39;utente non riuscito. Per favore, controlla i "
+"parametri."
+
+#: services/RDS_enterprise/provider.py:272
+msgid "Server {} is not accesible and Server checking is enabled"
+msgstr "Il server {} non è accessibile e il controllo del server è abilitato"
+
+#: services/RDS_enterprise/provider.py:274
+#| msgid "Connection speed"
+msgid "Connectivity test passed"
+msgstr "Test di connettività superato"
 
 #: services/RDS_enterprise/service.py:30
 msgid "RDS Platform RemoteAPP"
@@ -4065,11 +4313,11 @@ msgstr "Pubblicazione"
 msgid "UDS Publication for {0} created at {1}"
 msgstr "Pubblicazione UDS per {0} creata in {1}"
 
-#: services/Vmware_enterprise/service_fixed.py:35
+#: services/Vmware_enterprise/service_fixed.py:32
 msgid "Fixed Machines Pool"
 msgstr "Pool di macchine fisse"
 
-#: services/Vmware_enterprise/service_fixed.py:37
+#: services/Vmware_enterprise/service_fixed.py:34
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
@@ -4077,40 +4325,37 @@ msgstr ""
 "Questo servizio fornisce l&#39;accesso a un gruppo fisso di macchine "
 "selezionate sull&#39;infrastruttura"
 
-#: services/Vmware_enterprise/service_fixed.py:56
+#: services/Vmware_enterprise/service_fixed.py:62
 #: services/Vmware_enterprise/service_linked.py:60
 msgid "Datacenter"
 msgstr "Banca dati"
 
-#: services/Vmware_enterprise/service_fixed.py:63
-#: services/Vmware_enterprise/service_fixed.py:78
-#: services/Vmware_enterprise/service_fixed.py:83
+#: services/Vmware_enterprise/service_fixed.py:69
+#: services/Vmware_enterprise/service_fixed.py:84
+#: services/Vmware_enterprise/service_fixed.py:89
 msgid "Machines"
 msgstr "macchine"
 
-#: services/Vmware_enterprise/service_fixed.py:64
+#: services/Vmware_enterprise/service_fixed.py:70
 #: services/Vmware_enterprise/service_linked.py:67
 msgid "Datacenter containing base machine"
 msgstr "Datacenter contenente macchina base"
 
-#: services/Vmware_enterprise/service_fixed.py:68
+#: services/Vmware_enterprise/service_fixed.py:74
 #: services/Vmware_enterprise/service_linked.py:100
 msgid "Resource Pool"
 msgstr "Pool di risorse"
 
-#: services/Vmware_enterprise/service_fixed.py:76
+#: services/Vmware_enterprise/service_fixed.py:82
 msgid "Resource Pool containing base machines"
 msgstr "Pool di risorse contenente macchine di base"
 
-#: services/Vmware_enterprise/service_fixed.py:83
-msgid "Base Machines"
-msgstr "Macchine base"
+#: services/Vmware_enterprise/service_fixed.py:89
+#| msgid "Base machines for this service"
+msgid "Machines for this service"
+msgstr "Macchine per questo servizio"
 
-#: services/Vmware_enterprise/service_fixed.py:83
-msgid "Base machines for this service"
-msgstr "Macchine base per questo servizio"
-
-#: services/Vmware_enterprise/service_fixed.py:103
+#: services/Vmware_enterprise/service_fixed.py:109
 msgid "We need at least a machine"
 msgstr "Abbiamo bisogno di almeno una macchina"
 
@@ -5419,7 +5664,7 @@ msgstr ""
 "Il ricaricamento di questa pagina non è supportato. Si prega di riaprire il "
 "servizio dall&#39;origine."
 
-#: web/util/services.py:192
+#: web/util/services.py:190
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
