@@ -87,10 +87,13 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         else:
             self._ip = ip
             self._state = State.FINISHED
-        dbService = self.dbservice()
-        if dbService:
-            dbService.setInUse(True)
-            dbService.save()
+
+        # If not to be managed by a token, autologin user
+        if not self.service().getToken():
+            userService = self.dbservice()
+            if userService:
+                userService.setInUse(True)
+
         return self._state
 
     def deployForUser(self, user: 'models.User') -> str:
@@ -101,10 +104,11 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         logger.debug('Assigning from assignable with ip %s', ip)
         self._ip = ip
         self._state = State.FINISHED
-        dbService = self.dbservice()
-        if dbService:
-            dbService.setInUse(True)
-            dbService.save()
+        if not self.service().getToken():
+            dbService = self.dbservice()
+            if dbService:
+                dbService.setInUse(True)
+                dbService.save()
         return self._state
 
     def error(self, reason: str) -> str:

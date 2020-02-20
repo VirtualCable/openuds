@@ -53,7 +53,19 @@ logger = logging.getLogger(__name__)
 
 class IPMachinesService(IPServiceBase):
     # Gui
+    # Gui
+    token = gui.TextField(
+        order=1,
+        label=_('Service Token'),
+        length=16,
+        tooltip=_('Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'),
+        defvalue='',
+        required=False,
+        rdonly=False
+    )
+
     ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
+
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -72,26 +84,36 @@ class IPMachinesService(IPServiceBase):
 
     servicesTypeProvided = (serviceTypes.VDI,)
 
-    _ips: typing.List[str]
+    _ips: typing.List[str] = []
+    _token: str = ''
 
     def initialize(self, values: 'Module.ValuesType') -> None:
-        if values is None or values.get('ipList', None) is None:
+        if values is None:
+            return
+
+        if values.get('ipList', None) is None:
             self._ips = []
         else:
             self._ips = list('{}~{}'.format(ip, i) for i, ip in enumerate(values['ipList']))  # Allow duplicates right now
             # self._ips.sort()
 
+        self._token = self.token.value.strip()
+
+    def getToken(self):
+        return self._token
+
     def valuesDict(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
 
-        return {'ipList': gui.convertToList(ips)}
+        return {'ipList': gui.convertToList(ips), 'token': self._token}
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
-        return b'v1'
+        return b'\0'.join([b'v2', self.token.value.encode()])
 
     def unmarshal(self, data: bytes) -> None:
-        if data == b'v1':
+        values: typing.List[bytes] = data.split(b'\0')
+        if values[0] in (b'v1', b'v2'):
             d = self.storage.readData('ips')
             if isinstance(d, bytes):
                 self._ips = pickle.loads(d)
@@ -101,13 +123,17 @@ class IPMachinesService(IPServiceBase):
             else:
                 self._ips = []
 
+        if values[0] == b'v2':
+            self._token = values[1].decode()
+
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
         try:
             for ip in self._ips:
-                if self.storage.readData(ip) is None:
-                    self.storage.saveData(ip, ip)
-                    return ip
+                theIP = ip.split('~')[0]
+                if self.storage.readData(theIP) is None:
+                    self.storage.saveData(theIP, theIP)
+                    return theIP
             return None
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
@@ -124,7 +150,8 @@ class IPMachinesService(IPServiceBase):
 
     def assignFromAssignables(self, assignableId: str, user: 'models.User', userDeployment: 'services.UserDeployment') -> str:
         userServiceInstance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
-        if self.storage.readData(assignableId) is None:
-            self.storage.saveData(assignableId, assignableId)
-            return userServiceInstance.assign(assignableId)
+        theIP = assignableId.split('~')[0]
+        if self.storage.readData(theIP) is None:
+            self.storage.saveData(theIP, theIP)
+            return userServiceInstance.assign(theIP)
         return userServiceInstance.error('IP already assigned')
