@@ -31,12 +31,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import random
+import time
 import string
 import logging
 import typing
 
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import processUuid
+from uds.core.util.cache import Cache
 from uds.core.auths.auth import authenticate
 from uds.core import VERSION as UDS_VERSION
 
@@ -45,6 +47,7 @@ from uds.REST import Handler
 
 from uds.models import Authenticator
 
+ALLOWED_FAILS = 5
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +105,12 @@ class Login(Handler):
         Locale comes on "Header", as any HTTP Request (Accept-Language header)
         Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
         """
+        # Checks if client is "blocked"
+        cache = Cache('RESTapi')
+        fails = cache.get(self._request.ip) or 0
+        if fails > ALLOWED_FAILS:
+            logger.info('Access to REST API %s is blocked for %s seconds since last fail', self._request.ip, GlobalConfig.LOGIN_BLOCK.getInt())
+        
         try:
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
@@ -137,6 +146,11 @@ class Login(Handler):
             logger.debug('Auth obj: %s', auth)
             user = authenticate(username, password, auth, True)
             if user is None:  # invalid credentials
+                # Sleep a while here to "prottect"
+                time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
+                # And store in cache for blocking for a while if fails
+                cache.put(self._request.ip, fails+1, GlobalConfig.LOGIN_BLOCK.getInt())
+                
                 return Login.result(error='Invalid credentials')
             return Login.result(
                 result='ok',

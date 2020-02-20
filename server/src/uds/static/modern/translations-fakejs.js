@@ -15,6 +15,7 @@ gettext("Reset service: ");
 gettext("Service released");
 gettext("Service reseted");
 gettext("Are you sure?");
+gettext("Errors found");
 gettext("Warning");
 gettext("Service is in maintenance and cannot be executed");
 gettext("Invalid error string");
