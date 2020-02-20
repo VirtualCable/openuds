@@ -28,6 +28,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import time
 import logging
 import typing
 
@@ -70,6 +71,7 @@ def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpRespons
         else:
             # If error is numeric, redirect...
             # Error, set error on session for process for js
+            time.sleep(2)  # On failure, wait a bit...
             if isinstance(data, int):
                 return errors.errorView(request, data)
 
