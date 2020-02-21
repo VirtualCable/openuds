@@ -118,7 +118,7 @@ class ActorV3Action(Handler):
 
         raise AccessDenied('Access denied')
 
-class test(ActorV3Action):
+class Test(ActorV3Action):
     """
     Tests UDS Broker actor connectivity & key
     """
