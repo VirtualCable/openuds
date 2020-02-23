@@ -91,6 +91,18 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     return new_func
 
 
+def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+    """This decorator calls "connect" method of the class of the wrapped object
+    """
+    @wraps(func)
+    def new_func(*args, **kwargs) -> RT:
+        args[0].connect()
+        return func(*args, **kwargs)
+    
+    return new_func
+
+    
+
 # Decorator that allows us a "fast&clean" caching system on service providers
 #
 # Decorator for caching
