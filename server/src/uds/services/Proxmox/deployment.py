@@ -46,10 +46,11 @@ if typing.TYPE_CHECKING:
     from uds import models
     from .service import ProxmoxLinkedService
     from .publication import ProxmoxPublication
+    from . import client
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opChangeMac = range(10)
+opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opGetMac = range(10)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
@@ -73,6 +74,7 @@ class ProxmoxDeployment(services.UserDeployment):
     _name: str
     _ip: str
     _mac: str
+    _task: str
     _vmid: str
     _reason: str
     _queue: typing.List[int]
@@ -91,6 +93,7 @@ class ProxmoxDeployment(services.UserDeployment):
         self._name = ''
         self._ip = ''
         self._mac = ''
+        self._task = ''
         self._vmid = ''
         self._reason = ''
         self._queue = []
@@ -105,6 +108,7 @@ class ProxmoxDeployment(services.UserDeployment):
             self._name.encode('utf8'),
             self._ip.encode('utf8'),
             self._mac.encode('utf8'),
+            self._task.encode('utf8'),
             self._vmid.encode('utf8'),
             self._reason.encode('utf8'),
             pickle.dumps(self._queue, protocol=0)
@@ -119,9 +123,10 @@ class ProxmoxDeployment(services.UserDeployment):
             self._name = vals[1].decode('utf8')
             self._ip = vals[2].decode('utf8')
             self._mac = vals[3].decode('utf8')
-            self._vmid = vals[4].decode('utf8')
-            self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(vals[6])
+            self._task = vals[4].decode('utf8')
+            self._vmid = vals[5].decode('utf8')
+            self._reason = vals[6].decode('utf8')
+            self._queue = pickle.loads(vals[7])
 
     def getName(self) -> str:
         if self._name == '':
@@ -132,72 +137,29 @@ class ProxmoxDeployment(services.UserDeployment):
         return self._name
 
     def setIp(self, ip: str) -> None:
-        """
-        In our case, there is no OS manager associated with this, so this method
-        will never get called, but we put here as sample.
-
-        Whenever an os manager actor notifies the broker the state of the service
-        (mainly machines), the implementation of that os manager can (an probably will)
-        need to notify the IP of the deployed service. Remember that UDS treats with
-        IP services, so will probable needed in every service that you will create.
-        :note: This IP is the IP of the "consumed service", so the transport can
-               access it.
-        """
         logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
     def getUniqueId(self) -> str:
-        """
-        Return and unique identifier for this service.
-        In our case, we will generate a mac name, that can be also as sample
-        of 'mac' generator use, and probably will get used something like this
-        at some services.
-
-        The get method of a mac generator takes one param, that is the mac range
-        to use to get an unused mac.
-        """
-        if self._mac == '':
-            self._mac = self.macGenerator().get(self.service().getMacRange())
         return self._mac
 
     def getIp(self) -> str:
-        """
-        We need to implement this method, so we can return the IP for transports
-        use. If no IP is known for this service, this must return None
-
-        If our sample do not returns an IP, IP transport will never work with
-        this service. Remember in real cases to return a valid IP address if
-        the service is accesible and you alredy know that (for example, because
-        the IP has been assigend via setIp by an os manager) or because
-        you get it for some other method.
-
-        Storage returns None if key is not stored.
-
-        :note: Keeping the IP address is responsibility of the User Deployment.
-               Every time the core needs to provide the service to the user, or
-               show the IP to the administrator, this method will get called
-
-        """
         return self._ip
 
     def setReady(self) -> str:
-        """
-        The method is invoked whenever a machine is provided to an user, right
-        before presenting it (via transport rendering) to the user.
-        """
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
-        state = self.service().getMachineState(self._vmid)
+        try:
+            vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except Exception:
+            return self.__error('Machine not found')
 
-        if state == 'unknown':
-            return self.__error('Machine is not available anymore')
-
-        if state not in UP_STATES:
+        if vmInfo.status == 'stopped':
             self._queue = [opStart, opFinish]
             return self.__executeQueue()
 
-        self.cache.put('ready', '1')
+            self.cache.put('ready', '1')
         return State.FINISHED
 
     def reset(self) -> None:
@@ -205,7 +167,7 @@ class ProxmoxDeployment(services.UserDeployment):
         o oVirt, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
-            self.service().stopMachine(self._vmid)
+            self.service().stopMachine(int(self._vmid))
 
     def getConsoleConnection(self) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
@@ -250,29 +212,16 @@ if sys.platform == 'win32':
     def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
 
         if forLevel2 is False:
-            self._queue = [opCreate, opChangeMac, opStart, opFinish]
+            self._queue = [opCreate, opGetMac, opStart, opFinish]
         else:
-            self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opGetMac, opStart, opWait, opSuspend, opFinish]
 
-    def __checkMachineState(self, chkState: typing.Union[typing.List[str], typing.Tuple[str, ...], str]) -> str:
-        logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
-        state = self.service().getMachineState(self._vmid)
+    def __setTask(self, upid: 'client.types.UPID'):
+        self._task = ','.join([upid.node, upid.upid])
 
-        # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == 'unknown' and chkState != 'unknown':
-            return self.__error('Machine not found')
-
-        ret = State.RUNNING
-        if isinstance(chkState, (list, tuple)):
-            for cks in chkState:
-                if state == cks:
-                    ret = State.FINISHED
-                    break
-        else:
-            if state == chkState:
-                ret = State.FINISHED
-
-        return ret
+    def __getTask(self) -> typing.Tuple[str, str]:
+        vals = self._task.split(',')
+        return (vals[0], vals[1])
 
     def __getCurrentOp(self) -> int:
         if not self._queue:
@@ -305,7 +254,7 @@ if sys.platform == 'win32':
         self.doLog(log.ERROR, reason)
 
         if self._vmid != '':  # Powers off
-            OVirtDeferredRemoval.remove(self.service().parent(), self._vmid)
+            ProxmoxDeferredRemoval.remove(self.service().parent(), int(self._vmid))
 
         self._queue = [opError]
         self._reason = reason
@@ -329,7 +278,6 @@ if sys.platform == 'win32':
             opSuspend: self.__suspendMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
-            opChangeMac: self.__changeMac
         }
 
         try:
@@ -365,15 +313,17 @@ if sys.platform == 'win32':
         """
         Deploys a machine from template for user/cache
         """
-        templateId = self.publication().getTemplateId()
+        templateId = self.publication().machine()
         name = self.getName()
         if name == NO_MORE_NAMES:
             raise Exception('No more names available for this service. (Increase digits for this service to fix)')
 
-        name = self.service().sanitizeVmName(name)  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
-        self._vmid = self.service().deployFromTemplate(name, comments, templateId)
+        taskResult = self.service().cloneMachine(name, comments, templateId)
+        
+        self.__setTask(taskResult.upid)
+
         if self._vmid is None:
             raise Exception('Can\'t create machine')
 
@@ -383,115 +333,105 @@ if sys.platform == 'win32':
         """
         Removes a machine from system
         """
-        state = self.service().getMachineState(self._vmid)
-
-        if state == 'unknown':
+        try:
+            vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except Exception:
             raise Exception('Machine not found')
 
-        if state != 'down':
+        if vmInfo.status != 'stopped':
             self.__pushFrontOp(opStop)
             self.__executeQueue()
         else:
-            self.service().removeMachine(self._vmid)
+            self.__setTask(self.service().removeMachine(int(self._vmid)))
 
         return State.RUNNING
 
     def __startMachine(self) -> str:
-        """
-        Powers on the machine
-        """
-        state = self.service().getMachineState(self._vmid)
-
-        if state == 'unknown':
+        try:
+            vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except Exception:
             raise Exception('Machine not found')
 
-        if state in UP_STATES:  # Already started, return
-            return State.RUNNING
-
-        if state != 'down' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
-        self.service().startMachine(self._vmid)
+        if vmInfo.status == 'stopped':
+            self.__setTask(self.service().startMachine(int(self._vmid)))
 
         return State.RUNNING
 
     def __stopMachine(self) -> str:
-        """
-        Powers off the machine
-        """
-        state = self.service().getMachineState(self._vmid)
-
-        if state == 'unknown':
+        try:
+            vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except Exception:
             raise Exception('Machine not found')
 
-        if state == 'down':  # Already stoped, return
-            return State.RUNNING
-
-        if state != 'up' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
-        else:
-            self.service().stopMachine(self._vmid)
+        if vmInfo.status == 'stopped':
+            self.__setTask(self.service().startMachine(int(self._vmid)))
 
         return State.RUNNING
 
     def __suspendMachine(self) -> str:
-        """
-        Suspends the machine
-        """
-        state = self.service().getMachineState(self._vmid)
-
-        if state == 'unknown':
+        try:
+            vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except Exception:
             raise Exception('Machine not found')
 
-        if state == 'suspended':  # Already suspended, return
-            return State.RUNNING
-
-        if state != 'up':
-            self.__pushFrontOp(opRetry)  # Remember here, the return State.FINISH will make this retry be "poped" right ar return
-        else:
-            self.service().suspendMachine(self._vmid)
+        if vmInfo.status == 'stopped':
+            self.__setTask(self.service().suspendMachine(int(self._vmid)))
 
         return State.RUNNING
 
     def __changeMac(self) -> str:
-        """
-        Changes the mac of the first nic
-        """
-        self.service().updateMachineMac(self._vmid, self.getUniqueId())
-        # Fix usb if needed
-        self.service().fixUsb(self._vmid)
-
+        try:
+            self._mac = self.service().getMac(int(self._vmid))
+        except Exception:
+            raise Exception('Machine not found')
         return State.RUNNING
 
     # Check methods
+    def __checkTaskFinished(self):
+        if self._task == '':
+            return State.FINISHED
+
+        node, upid = self.__getTask()
+
+        task = self.service().getTaskInfo(node, upid)
+
+        if task.isErrored():
+            return self.__error(task.exitstatus)
+
+        if task.isCompleted():
+            return State.FINISHED
+
+        return State.RUNNING
+
     def __checkCreate(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
-        return self.__checkMachineState('down')
+        return self.__checkTaskFinished()
 
     def __checkStart(self) -> str:
         """
         Checks if machine has started
         """
-        return self.__checkMachineState(UP_STATES)
+        return self.__checkTaskFinished()
 
     def __checkStop(self) -> str:
         """
         Checks if machine has stoped
         """
-        return self.__checkMachineState('down')
+        return self.__checkTaskFinished()
 
     def __checkSuspend(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState('suspended')
+        return self.__checkTaskFinished()
 
     def __checkRemoved(self) -> str:
         """
         Checks if a machine has been removed
         """
-        return self.__checkMachineState('unknown')
+        return self.__checkTaskFinished()
 
     def __checkMac(self) -> str:
         """
@@ -522,7 +462,7 @@ if sys.platform == 'win32':
             opStop: self.__checkStop,
             opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
-            opChangeMac: self.__checkMac
+            opGetMac: self.__checkMac
         }
 
         try:
@@ -613,8 +553,8 @@ if sys.platform == 'win32':
             opError: 'error',
             opFinish: 'finish',
             opRetry: 'retry',
-            opChangeMac: 'changing mac'
+            opGetMac: 'changing mac'
         }.get(op, '????')
 
     def __debug(self, txt):
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [OVirtLinkedDeployment.__op2str(op) for op in self._queue])
+        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [ProxmoxDeployment.__op2str(op) for op in self._queue])

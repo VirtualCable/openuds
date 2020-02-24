@@ -203,7 +203,14 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
             node = self.parent().getMachineInfo(self.machine.value).node
             return self.parent().cloneMachine(self.machine.value, name, description, linkedClone=False, toNode=node, toStorage=self.datastore.value)
 
-        return self.parent().cloneMachine(vmId, name, description, linkedClone=True, toStorage=self.datastore.value)
+        return self.parent().cloneMachine(vmId, name, description, linkedClone=True, toStorage=self.datastore.value, memory=self.memory.num()*1024*1024)
+
+    def getMachineInfo(self, vmId: int) -> 'client.types.VMInfo':
+        return self.parent().getMachineInfo(vmId)
+
+    def getMac(self, vmId: int) -> str:
+        config = self.parent().getMachineConfiguration(vmId)
+        return config.networks[0].mac
 
     def getTaskInfo(self, node: str, upid: str) -> 'client.types.TaskStatus':
         return self.parent().getTaskInfo(node, upid)

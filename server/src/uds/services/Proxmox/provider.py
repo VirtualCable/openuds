@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
@@ -25,7 +24,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
@@ -112,6 +110,9 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     def getMachineInfo(self, vmId: int) -> client.types.VMInfo:
         return self.__getApi().getVmInfo(vmId)
 
+    def getMachineConfiguration(self, vmId: int) -> client.types.VMConfiguration:
+        return self.__getApi().getVmConfiguration(vmId)
+  
     def getStorageInfo(self, storageId: str, node: str) -> client.types.StorageInfo:
         return self.__getApi().getStorage(storageId, node)
 
