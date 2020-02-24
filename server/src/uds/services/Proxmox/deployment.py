@@ -67,8 +67,8 @@ class ProxmoxDeployment(services.UserDeployment):
     The logic for managing ovirt deployments (user machines in this case) is here.
 
     """
-    # : Recheck every six seconds by default (for task methods)
-    suggestedTime = 6
+    # : Recheck every this seconds by default (for task methods)
+    suggestedTime = 15
 
     # own vars
     _name: str
@@ -278,6 +278,7 @@ if sys.platform == 'win32':
             opSuspend: self.__suspendMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
+            opGetMac: self.__getMac
         }
 
         try:
@@ -324,8 +325,7 @@ if sys.platform == 'win32':
         
         self.__setTask(taskResult.upid)
 
-        if self._vmid is None:
-            raise Exception('Can\'t create machine')
+        self._vmid = str(taskResult.vmid)
 
         return State.RUNNING
 
@@ -336,11 +336,12 @@ if sys.platform == 'win32':
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except Exception:
-            raise Exception('Machine not found')
+            raise Exception('Machine not found on remove machine')
 
         if vmInfo.status != 'stopped':
-            self.__pushFrontOp(opStop)
-            self.__executeQueue()
+            logger.debug('Info status: %s', vmInfo)
+            self._queue = [opStop, opRemove, opFinish]
+            return self.__executeQueue()
         else:
             self.__setTask(self.service().removeMachine(int(self._vmid)))
 
@@ -350,7 +351,7 @@ if sys.platform == 'win32':
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except Exception:
-            raise Exception('Machine not found')
+            raise Exception('Machine not found on start machine')
 
         if vmInfo.status == 'stopped':
             self.__setTask(self.service().startMachine(int(self._vmid)))
@@ -361,10 +362,11 @@ if sys.platform == 'win32':
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except Exception:
-            raise Exception('Machine not found')
+            raise Exception('Machine not found on stop machine')
 
-        if vmInfo.status == 'stopped':
-            self.__setTask(self.service().startMachine(int(self._vmid)))
+        if vmInfo.status != 'stopped':
+            logger.debug('Stopping machine %s', vmInfo)
+            self.__setTask(self.service().stopMachine(int(self._vmid)))
 
         return State.RUNNING
 
@@ -372,18 +374,19 @@ if sys.platform == 'win32':
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except Exception:
-            raise Exception('Machine not found')
+            raise Exception('Machine not found on suspend machine')
 
-        if vmInfo.status == 'stopped':
+        if vmInfo.status != 'stopped':
             self.__setTask(self.service().suspendMachine(int(self._vmid)))
 
         return State.RUNNING
 
-    def __changeMac(self) -> str:
+    def __getMac(self) -> str:
         try:
             self._mac = self.service().getMac(int(self._vmid))
         except Exception:
-            raise Exception('Machine not found')
+            logger.exception('Getting MAC on proxmox')
+            raise Exception('Machine not found getting mac')
         return State.RUNNING
 
     # Check methods
@@ -553,7 +556,7 @@ if sys.platform == 'win32':
             opError: 'error',
             opFinish: 'finish',
             opRetry: 'retry',
-            opGetMac: 'changing mac'
+            opGetMac: 'getting mac'
         }.get(op, '????')
 
     def __debug(self, txt):

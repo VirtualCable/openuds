@@ -34,7 +34,10 @@ class ProxmoxAuthError(ProxmoxError):
     pass
 
 
-class PromxmoxNotFound(ProxmoxError):
+class ProxmoxNotFound(ProxmoxError):
+    pass
+
+class ProxmoxNodeUnavailableError(ProxmoxConnectionError):
     pass
 
 # caching helper
@@ -87,6 +90,19 @@ class ProxmoxClient:
             'CSRFPreventionToken': self._csrf
         }
 
+    @staticmethod
+    def checkError(response: requests.Response) -> typing.Any:
+        if not response.ok:
+            if response.status_code == 595:
+                raise ProxmoxNodeUnavailableError()
+
+            if response.status_code // 100 == 4:
+                raise ProxmoxAuthError()
+
+            raise ProxmoxError()
+
+        return response.json()
+
     def _getPath(self, path: str) -> str:
         return self._url + path
 
@@ -101,10 +117,7 @@ class ProxmoxClient:
 
         logger.debug('GET result to %s: %s -- %s', path, result.status_code, result.content)
 
-        if not result.ok:
-            raise ProxmoxAuthError()
-
-        return result.json()
+        return ProxmoxClient.checkError(result)
 
     def _post(self, path: str, data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None) -> typing.Any:
         result = requests.post(
@@ -118,10 +131,7 @@ class ProxmoxClient:
 
         logger.debug('POST result to %s: %s -- %s', path, result.status_code, result.content)
 
-        if not result.ok:
-            raise ProxmoxError(result.content)
-
-        return result.json()
+        return ProxmoxClient.checkError(result)
 
     def _delete(self, path: str, data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None) -> typing.Any:
         result = requests.delete(
@@ -133,16 +143,21 @@ class ProxmoxClient:
             timeout=self._timeout
         )
 
-        logger.debug('POST result to %s: %s -- %s', path, result.status_code, result.content)
+        logger.debug('DELETE result to %s: %s -- %s', path, result.status_code, result.content)
 
-        if not result.ok:
-            raise ProxmoxError(result.content)
+        return ProxmoxClient.checkError(result)
 
-        return result.json()
-
-    def connect(self) -> None:
+    def connect(self, force=False) -> None:
         if self._ticket:
-            return
+            return  # Already connected
+
+        # we could cache this for a while, we know that at least for 30 minutes
+        if self.cache and not force:
+            dc = self.cache.get(self._host + 'conn')
+            if dc:  # Stored on cache
+                self._ticket, self._csrf = dc
+                return
+
         try:
             result = requests.post(
                 url=self._getPath('access/ticket'),
@@ -156,6 +171,9 @@ class ProxmoxClient:
             data = result.json()['data']
             self._ticket = data['ticket']
             self._csrf = data['CSRFPreventionToken']
+
+            if self.cache:
+                self.cache.put(self._host + 'conn', (self._ticket, self._csrf), validity=1800)  # 30 minutes 
         except requests.RequestException as e:
             raise ProxmoxConnectionError from e
 
@@ -188,15 +206,16 @@ class ProxmoxClient:
         weightFnc = lambda x: (x.mem /x .maxmem) + x.cpu
 
         for node in self.getNodesStats():
-            if node.status != 'online':
+            if node.status != 'online':  # Offline nodes are not "the best"
                 continue
+
             if minMemory and node.mem < minMemory + 512000000:  # 512 MB reserved
                 continue  # Skips nodes with not enouhg memory
             
             if weightFnc(node) < weightFnc(best):
                 best = node
 
-            print(node.name, node.mem / node.maxmem * 100, node.cpu)
+            # logger.debug('Node values for best: %s %f %f', node.name, node.mem / node.maxmem * 100, node.cpu)
 
         return best if best.status == 'online' else None
 
@@ -209,6 +228,7 @@ class ProxmoxClient:
         linkedClone: bool,
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
+        toPool: typing.Optional[str] = None,
         memory: int = 0
     ) -> types.VmCreationResult:
         newVmId = self.getNextVMId()
@@ -217,6 +237,7 @@ class ProxmoxClient:
         fromNode = vmInfo.node
 
         if not toNode:
+            logger.debug('Selecting best node')
             # If storage is not shared, must be done on same as origin
             if toStorage and self.getStorage(toStorage, vmInfo.node).shared:
                 node = self.getBestNodeForVm(minMemory=-1)
@@ -242,6 +263,9 @@ class ProxmoxClient:
 
         if toStorage and linkedClone is False:
             params.append(('storage', toStorage))
+
+        if toPool:
+            params.append(('pool', toPool))
 
         logger.debug('PARAMS: %s', params)
 
@@ -274,7 +298,7 @@ class ProxmoxClient:
     def listVms(self, node: typing.Union[None, str, typing.Iterable[str]] = None) -> typing.List[types.VMInfo]:
         nodeList: typing.Iterable[str]
         if node is None:
-            nodeList = [n.name for n in self.getClusterInfo().nodes]
+            nodeList = [n.name for n in self.getClusterInfo().nodes if n.online]
         elif isinstance(node, str):
             nodeList = [node]
         else:
@@ -289,22 +313,30 @@ class ProxmoxClient:
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
     @ensureConected
-    @allowCache('vmi', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
+    # @allowCache('vmi', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
     def getVmInfo(self, vmId: int, node: typing.Optional[str] = None, **kwargs) -> types.VMInfo:
-        # TODO: try first form cache?
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.getClusterInfo().nodes
+        anyNodeIsDown = False
         for n in nodes:
             try:
                 vm = self._get('nodes/{}/qemu/{}/status/current'.format(n.name, vmId))['data']
                 vm['node'] = n.name
                 return types.VMInfo.fromDict(vm)
+            except ProxmoxConnectionError:
+                anyNodeIsDown = True
+            except ProxmoxAuthError:
+                raise
             except ProxmoxError:
-                pass  # Not found, try next
-        raise PromxmoxNotFound()
+                pass  # Any other error, ignore this node (not found in that node)
+
+        if anyNodeIsDown:
+            raise ProxmoxNodeUnavailableError()
+
+        raise ProxmoxNotFound()
 
        
     @ensureConected
-    @allowCache('vmc', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
+    # @allowCache('vmc', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
     def getVmConfiguration(self, vmId: int, node: typing.Optional[str] = None, **kwargs):
         node = node or self.getVmInfo(vmId).node
         return types.VMConfiguration.fromDict(self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data'])
@@ -364,6 +396,11 @@ class ProxmoxClient:
         return result
 
     @ensureConected
-    @allowCache('nodeStats', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
+    @allowCache('nodeStats', CACHE_DURATION//6, cachingKeyFnc=cachingKeyHelper)
     def getNodesStats(self, **kwargs) -> typing.List[types.NodeStats]:
         return [types.NodeStats.fromDict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']]
+
+    @ensureConected
+    @allowCache('pools', CACHE_DURATION//6, cachingKeyFnc=cachingKeyHelper)
+    def listPools(self) -> typing.List[types.PoolInfo]:
+        return [types.PoolInfo.fromDict(nodeStat) for nodeStat in self._get('pools')['data']]

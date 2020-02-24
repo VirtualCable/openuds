@@ -36,10 +36,9 @@ from uds.core import jobs
 from uds.models import Provider
 
 from . import provider
+from . import client
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from . import client
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +59,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
                 ProxmoxDeferredRemoval.waitForTaskFinish(providerInstance, providerInstance.stopMachine(vmId))
 
             ProxmoxDeferredRemoval.waitForTaskFinish(providerInstance, providerInstance.removeMachine(vmId))
-
-        except client.PromxmoxNotFound:
+        except client.ProxmoxNotFound:
             return  # Machine does not exists
         except Exception as e:
             providerInstance.storage.saveData('tr' + str(vmId), str(vmId), attr1='tRm')
@@ -78,7 +76,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
 
     def run(self) -> None:
         dbProvider: Provider
-        # Look for Providers of type VCServiceProvider
+        # Look for Providers of type proxmox
         for dbProvider in Provider.objects.filter(maintenance_mode=False, data_type=provider.ProxmoxProvider.typeType):
             logger.debug('Provider %s if os type proxmox', dbProvider)
 
@@ -103,10 +101,10 @@ class ProxmoxDeferredRemoval(jobs.Job):
 
                     # It this is reached, remove check
                     storage.remove('tr' + str(vmId))
-                except client.PromxmoxNotFound:
+                except client.ProxmoxNotFound:
                     storage.remove('tr' + str(vmId))  # VM does not exists anymore
                 except Exception as e:  # Any other exception wil be threated again
                     # instance.doLog('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
                     logger.error('Delayed removal of %s failed: %s', i, e)
 
-        logger.debug('Deferred removal finished')
+        logger.debug('Deferred removal for proxmox finished')

@@ -60,13 +60,13 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('Proxmox Server IP or Hostname'), required=True)
     port = gui.NumericField(lengh=5, label=_('Port'), order=2, tooltip=_('Proxmox API port (default is 8006)'), required=True, defvalue='8006')
 
-    username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on Proxmox, (use "user@domain" form)'), required=True, defvalue='root@pam')
+    username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on Proxmox, (use "user@authenticator" form)'), required=True, defvalue='root@pam')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of oVirt'), required=True)
 
     maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
     maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to oVirt'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='20', order=90, tooltip=_('Timeout in seconds of connection to oVirt'), required=True, tab=gui.ADVANCED_TAB)
 
     # Own variables
     _api: typing.Optional[client.ProxmoxClient] = None
@@ -108,16 +108,19 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         return self.__getApi().listVms()
 
     def getMachineInfo(self, vmId: int) -> client.types.VMInfo:
-        return self.__getApi().getVmInfo(vmId)
+        return self.__getApi().getVmInfo(vmId, force=True)
 
     def getMachineConfiguration(self, vmId: int) -> client.types.VMConfiguration:
-        return self.__getApi().getVmConfiguration(vmId)
+        return self.__getApi().getVmConfiguration(vmId, force=True)
   
     def getStorageInfo(self, storageId: str, node: str) -> client.types.StorageInfo:
         return self.__getApi().getStorage(storageId, node)
 
     def listStorages(self, node: typing.Optional[str]) -> typing.List[client.types.StorageInfo]:
-        return self.__getApi().listStorages(node=node)
+        return self.__getApi().listStorages(node=node, content='images')
+
+    def listPools(self) -> typing.List[client.types.PoolInfo]:
+        return self.__getApi().listPools()
 
     def makeTemplate(self, vmId: int) -> None:
         return self.__getApi().convertToTemplate(vmId)
@@ -130,9 +133,10 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         linkedClone: bool,
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
+        toPool: typing.Optional[str] = None,
         memory: int = 0
     ) -> client.types.VmCreationResult:
-        return self.__getApi().cloneVm(vmId, name, description, linkedClone, toNode, toStorage, memory)
+        return self.__getApi().cloneVm(vmId, name, description, linkedClone, toNode, toStorage, toPool, memory)
 
     def startMachine(self,vmId: int) -> client.types.UPID:
         return self.__getApi().startVm(vmId)

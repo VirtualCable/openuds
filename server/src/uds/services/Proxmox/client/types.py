@@ -219,3 +219,12 @@ class StorageInfo(typing.NamedTuple):
     @staticmethod
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'StorageInfo':
         return convertFromDict(StorageInfo, dictionary)
+
+class PoolInfo(typing.NamedTuple):
+    poolid: str
+    comments: str
+
+    @staticmethod
+    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'PoolInfo':
+
+        return convertFromDict(PoolInfo, dictionary)

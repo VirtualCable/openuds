@@ -83,7 +83,7 @@ class OVirtDeferredRemoval(jobs.Job):
         logger.debug('Looking for deferred vm removals')
 
         provider: Provider
-        # Look for Providers of type VCServiceProvider
+        # Look for Providers of type Ovirt
         for provider in Provider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.typeType):
             logger.debug('Provider %s if os type ovirt', provider)
 

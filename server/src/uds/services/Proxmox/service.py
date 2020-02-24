@@ -103,8 +103,17 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = ProxmoxDeployment
 
-    allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
+    allowedProtocols = protocols.GENERIC # + (protocols.SPICE,)
     servicesTypeProvided = (serviceTypes.VDI,)
+
+    pool = gui.ChoiceField(
+        label=_("Pool"),
+        order=109,
+        tooltip=_('Pool that will contain UDS created vms'),
+        # tab=_('Machine'),
+        # required=True,
+        defvalue=''
+    )
 
     machine = gui.ChoiceField(
         label=_("Base Machine"),
@@ -175,15 +184,10 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         self.ov.defValue = self.parent().serialize()
         self.ev.defValue = self.parent().env.key
 
-        vals = []
-        m: client.types.VMInfo
-        for m in self.parent().listMachines():
-            if m.name and m.name[:3] != 'UDS':
-                vals.append(gui.choiceItem(str(m.vmid), '{}\{}'.format(m.node, m.name)))
-
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.setValues(vals)
+        self.machine.setValues([gui.choiceItem(str(m.vmid), '{}\{}'.format(m.node, m.name or m.vmid)) for m in self.parent().listMachines() if m.name and m.name[:3] != 'UDS'])
+        self.pool.setValues([gui.choiceItem('', _('None'))] + [gui.choiceItem(p.poolid, p.poolid) for p in self.parent().listPools()])
 
     def parent(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().parent())
@@ -199,11 +203,26 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     def cloneMachine(self, name: str, description: str, vmId: int = -1) -> 'client.types.VmCreationResult':
         name = self.sanitizeVmName(name)
-        if vmId == -1:
-            node = self.parent().getMachineInfo(self.machine.value).node
-            return self.parent().cloneMachine(self.machine.value, name, description, linkedClone=False, toNode=node, toStorage=self.datastore.value)
+        pool = self.pool.value or None
+        if vmId == -1:  # vmId == -1 if cloning for template
+            return self.parent().cloneMachine(
+                self.machine.value,
+                name,
+                description,
+                linkedClone=False,
+                toStorage=self.datastore.value,
+                toPool=pool
+            )
 
-        return self.parent().cloneMachine(vmId, name, description, linkedClone=True, toStorage=self.datastore.value, memory=self.memory.num()*1024*1024)
+        return self.parent().cloneMachine(
+            vmId,
+            name,
+            description,
+            linkedClone=True,
+            toStorage=self.datastore.value,
+            toPool=pool,
+            memory=self.memory.num()*1024*1024
+        )
 
     def getMachineInfo(self, vmId: int) -> 'client.types.VMInfo':
         return self.parent().getMachineInfo(vmId)
