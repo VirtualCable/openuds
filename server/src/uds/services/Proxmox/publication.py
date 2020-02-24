@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
@@ -35,52 +33,47 @@ import logging
 import typing
 
 from django.utils.translation import ugettext as _
-from uds.core.services import Publication
+from uds.core import services
 from uds.core.util.state import State
+from uds.core.util.auto_attributes import AutoAttributes
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service import OVirtLinkedService
+    from .service import ProxmoxLinkedService
+    from . import client
 
 logger = logging.getLogger(__name__)
 
+class ProxmoxPublication(services.Publication):
+    suggestedTime = 20
 
-class OVirtPublication(Publication):
-    """
-    This class provides the publication of a oVirtLinkedService
-    """
-
-    suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
     _name: str
-    _reason: str
-    _destroyAfter: str
-    _templateId: str
+    _vm: str
+    _task: str
     _state: str
+    _operation: str
+    _destroyAfter: str
+    _reason: str
 
-    def service(self) -> 'OVirtLinkedService':
-        return typing.cast('OVirtLinkedService', super().service())
-
-    def initialize(self) -> None:
-        """
-        This method will be invoked by default __init__ of base class, so it gives
-        us the oportunity to initialize whataver we need here.
-
-        In our case, we setup a few attributes..
-        """
-
-        # We do not check anything at marshal method, so we ensure that
-        # default values are correctly handled by marshal.
+    def __init__(self, environment, **kwargs):
+        services.Publication.__init__(self, environment, **kwargs)
         self._name = ''
+        self._vm = ''
+        self._task = ''
+        self._state = ''
+        self._operation = ''
+        self._destroyAfter = ''
         self._reason = ''
-        self._destroyAfter = 'f'
-        self._templateId = ''
-        self._state = 'r'
+
+    # Utility overrides for type checking...
+    def service(self) -> 'ProxmoxLinkedService':
+        return typing.cast('ProxmoxLinkedService', super().service())
 
     def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state]).encode('utf8')
+        return '\t'.join(['v1', self._name, self._vm, self._task, self._state,  self._operation, self._destroyAfter, self._reason]).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -89,101 +82,79 @@ class OVirtPublication(Publication):
         logger.debug('Data: %s', data)
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            self._name, self._reason, self._destroyAfter, self._templateId, self._state = vals[1:]
+            self._name, self._vm, self._task, self._state,  self._operation, self._destroyAfter, self._reason = vals[1:]
 
     def publish(self) -> str:
         """
-        Realizes the publication of the service
+        If no space is available, publication will fail with an error
         """
-        self._name = self.service().sanitizeVmName('UDSP ' + self.dsName() + "-" + str(self.revision()))
-        comments = _('UDS pub for {0} at {1}').format(self.dsName(), str(datetime.now()).split('.')[0])
-        self._reason = ''  # No error, no reason for it
-        self._destroyAfter = 'f'
-        self._state = 'locked'
-
         try:
-            self._templateId = self.service().makeTemplate(self._name, comments)
+            # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
+            self._name = 'UDS ' + _('Publication') + ' ' + self.dsName() + "-" + str(self.revision())
+            comments = _('UDS Publication for {0} created at {1}').format(self.dsName(), str(datetime.now()).split('.')[0])
+            task = self.service().cloneMachine(self._name, comments)
+            self._vm = str(task.vmid)
+            self._task = ','.join((task.upid.node, task.upid.upid))
+            self._state = State.RUNNING
+            self._operation = 'p'  # Publishing
+            self._destroyAfter = ''
+            return State.RUNNING
         except Exception as e:
-            self._state = 'error'
+            logger.exception('Caught exception %s', e)
             self._reason = str(e)
             return State.ERROR
 
-        return State.RUNNING
-
-    def checkState(self) -> str:
-        """
-        Checks state of publication creation
-        """
-        if self._state == 'ok':
-            return State.FINISHED
-
-        if self._state == 'error':
-            return State.ERROR
-
+    def checkState(self) -> str:  # pylint: disable = too-many-branches,too-many-return-statements
+        if self._state != State.RUNNING:
+            return self._state
+        node, upid = self._task.split(',')
         try:
-            self._state = self.service().getTemplateState(self._templateId)
-            if self._state == 'removed':
-                raise  Exception('Template has been removed!')
+            task = self.service().getTaskInfo(node, upid)
+            if task.isRunning():
+                return State.RUNNING
         except Exception as e:
-            self._state = 'error'
+            logger.exception('Proxmox publication')
+            self._state = State.ERROR
             self._reason = str(e)
-            return State.ERROR
+            return self._state
 
-        # If publication os done (template is ready), and cancel was requested, do it just after template becomes ready
-        if self._state == 'ok':
-            if self._destroyAfter == 't':
+
+        if task.isErrored():
+            self._reason = task.exitstatus
+            self._state = State.ERROR
+        else: # Finished
+            if self._destroyAfter:
                 return self.destroy()
-            return State.FINISHED
+            self._state = State.FINISHED
+            if self._operation == 'p':  # not Destroying
+                logger.debug('Marking as template')
+                # Mark vm as template
+                self.service().makeTemplate(int(self._vm))
 
-        return State.RUNNING
+        return self._state
 
-    def reasonOfError(self) -> str:
-        """
-        If a publication produces an error, here we must notify the reason why
-        it happened. This will be called just after publish or checkState
-        if they return State.ERROR
-
-        Returns an string, in our case, set at checkState
-        """
-        return self._reason
+    def finish(self) -> None:
+        self._task = ''
+        self._destroyAfter = ''
 
     def destroy(self) -> str:
-        """
-        This is called once a publication is no more needed.
-
-        This method do whatever needed to clean up things, such as
-        removing created "external" data (environment gets cleaned by core),
-        etc..
-
-        The retunred value is the same as when publishing, State.RUNNING,
-        State.FINISHED or State.ERROR.
-        """
-        # We do not do anything else to destroy this instance of publication
-        if self._state == 'locked':
-            self._destroyAfter = 't'
+        if self._state == State.RUNNING and self._destroyAfter is False:  # If called destroy twice, will BREAK STOP publication
+            self._destroyAfter = 'y'
             return State.RUNNING
 
-        try:
-            self.service().removeTemplate(self._templateId)
-        except Exception as e:
-            self._state = 'error'
-            self._reason = str(e)
-            return State.ERROR
-
-        return State.FINISHED
+        self.state = State.RUNNING
+        self._operation = 'd'
+        self._destroyAfter = ''
+        self.service()
+        task = self.service().removeMachine(self.machine())
+        self._task = ','.join((task.node, task.upid))
+        return State.RUNNING
 
     def cancel(self) -> str:
-        """
-        Do same thing as destroy
-        """
         return self.destroy()
 
-    # Here ends the publication needed methods.
-    # Methods provided below are specific for this publication
-    # and will be used by user deployments that uses this kind of publication
+    def reasonOfError(self) -> str:
+        return self._reason
 
-    def getTemplateId(self) -> str:
-        """
-        Returns the template id associated with the publication
-        """
-        return self._templateId
+    def machine(self) -> int:
+        return int(self._vm)

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
@@ -42,8 +40,8 @@ from uds.core.util import validators
 from uds.core.util import tools
 from uds.core.ui import gui
 
-from .publication import OVirtPublication
-from .deployment import OVirtLinkedDeployment
+from .publication import ProxmoxPublication
+from .deployment import ProxmoxDeployment
 from . import helpers
 
 # Not imported at runtime, just for type checking
@@ -101,9 +99,9 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publicationType = OVirtPublication
+    publicationType = ProxmoxPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = OVirtLinkedDeployment
+    deployedType = ProxmoxDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
     servicesTypeProvided = (serviceTypes.VDI,)
@@ -111,16 +109,21 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     machine = gui.ChoiceField(
         label=_("Base Machine"),
         order=110,
+        fills={
+            'callbackName': 'pmFillResourcesFromMachine',
+            'function': helpers.getStorage,
+            'parameters': ['machine', 'ov', 'ev']
+        },
         tooltip=_('Service base machine'),
         tab=_('Machine'),
         required=True
     )
 
     datastore = gui.ChoiceField(
-        label=_("Datastore Domain"),
+        label=_("Storage"),
         rdonly=False,
         order=111,
-        tooltip=_('Datastore for publications & machines.'),
+        tooltip=_('Storage for publications & machines.'),
         tab=_('Machine'),
         required=True
     )
@@ -160,33 +163,23 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values: 'Module.ValuesType') -> None:
-        """
-        We check here form values to see if they are valid.
-
-        Note that we check them throught FROM variables, that already has been
-        initialized by __init__ method of base class, before invoking this.
-        """
         if values:
             self.baseName.value = validators.validateHostname(self.baseName.value, 15, asPattern=True)
             if int(self.memory.value) < 128:
                 raise Service.ValidationException(_('The minimum allowed memory is 128 Mb'))
 
     def initGui(self) -> None:
-        """
-        Loads required values inside
-        """
-
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
         self.ov.defValue = self.parent().serialize()
         self.ev.defValue = self.parent().env.key
 
-
         vals = []
         m: client.types.VMInfo
-        for m in self.parent().getMachines():
-            vals.append(gui.choiceItem(str(m.vmid), '{}\{}'.format(m.node, m.name)))
+        for m in self.parent().listMachines():
+            if m.name and m.name[:3] != 'UDS':
+                vals.append(gui.choiceItem(str(m.vmid), '{}\{}'.format(m.node, m.name)))
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
@@ -199,162 +192,39 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         """
         Ovirt only allows machine names with [a-zA-Z0-9_-]
         """
-        return re.sub("[^a-zA-Z0-9_-]", "_", name)
+        return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
-    def makeTemplate(self, vmId: int) -> str:
-        """
-        Invokes makeTemplate from parent provider, completing params
+    def makeTemplate(self, vmId: int) -> None:
+        self.parent().makeTemplate(vmId)
 
-        Args:
-            name: Name to assign to template (must be previously "sanitized"
-            comments: Comments (UTF-8) to add to template
+    def cloneMachine(self, name: str, description: str, vmId: int = -1) -> 'client.types.VmCreationResult':
+        name = self.sanitizeVmName(name)
+        if vmId == -1:
+            node = self.parent().getMachineInfo(self.machine.value).node
+            return self.parent().cloneMachine(self.machine.value, name, description, linkedClone=False, toNode=node, toStorage=self.datastore.value)
 
-        Returns:
-            template Id of the template created
+        return self.parent().cloneMachine(vmId, name, description, linkedClone=True, toStorage=self.datastore.value)
 
-        Raises an exception if operation fails.
-        """
+    def getTaskInfo(self, node: str, upid: str) -> 'client.types.TaskStatus':
+        return self.parent().getTaskInfo(node, upid)
 
-        # Checks datastore size
-        # Get storages for that datacenter
-        return self.parent().makeTemplate(name, comments, self.machine.value, self.cluster.value, self.datastore.value, self.display.value)
+    def startMachine(self,vmId: int) -> 'client.types.UPID':
+        return self.parent().startMachine(vmId)
 
-    def getTemplateState(self, templateId: str) -> str:
-        """
-        Invokes getTemplateState from parent provider
+    def stopMachine(self, vmId: int) -> 'client.types.UPID':
+        return self.parent().stopMachine(vmId)
 
-        Args:
-            templateId: templateId to remove
+    def suspendMachine(self, vmId: int) -> 'client.types.UPID':
+        return self.parent().suspendMachine(vmId)
 
-        Returns nothing
-
-        Raises an exception if operation fails.
-        """
-        return self.parent().getTemplateState(templateId)
-
-    def deployFromTemplate(self, name: str, comments: str, templateId: str) -> str:
-        """
-        Deploys a virtual machine on selected cluster from selected template
-
-        Args:
-            name: Name (sanitized) of the machine
-            comments: Comments for machine
-            templateId: Id of the template to deploy from
-            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
-
-        Returns:
-            Id of the machine being created form template
-        """
-        logger.debug('Deploying from template %s machine %s', templateId, name)
-        self.datastoreHasSpace()
-        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value,
-                                                self.display.value, self.usb.value, int(self.memory.value), int(self.memoryGuaranteed.value))
-
-    def removeTemplate(self, templateId: str) -> None:
-        """
-        invokes removeTemplate from parent provider
-        """
-        self.parent().removeTemplate(templateId)
-
-    def getMachineState(self, machineId: str) -> str:
-        """
-        Invokes getMachineState from parent provider
-        (returns if machine is "active" or "inactive"
-
-        Args:
-            machineId: If of the machine to get state
-
-        Returns:
-            one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
-        """
-        return self.parent().getMachineState(machineId)
-
-    def startMachine(self, machineId: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.parent().startMachine(machineId)
-
-    def stopMachine(self, machineId: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.parent().stopMachine(machineId)
-
-    def suspendMachine(self, machineId: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.parent().suspendMachine(machineId)
-
-    def removeMachine(self, machineId: str) -> None:
-        """
-        Tries to delete a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.parent().removeMachine(machineId)
-
-    def updateMachineMac(self, machineId: str, macAddres: str) -> None:
-        """
-        Changes the mac address of first nic of the machine to the one specified
-        """
-        self.parent().updateMachineMac(machineId, macAddres)
-
-    def fixUsb(self, machineId: str):
-        if self.usb.value in ('native',):
-            self.parent().fixUsb(machineId)
-
-    def getMacRange(self) -> str:
-        """
-        Returns de selected mac range
-        """
-        return self.parent().getMacRange()
+    def removeMachine(self, vmId: int) -> 'client.types.UPID':
+        return self.parent().removeMachine(vmId)
 
     def getBaseName(self) -> str:
-        """
-        Returns the base name
-        """
         return self.baseName.value
 
     def getLenName(self) -> int:
-        """
-        Returns the length of numbers part
-        """
         return int(self.lenName.value)
-
-    def getDisplay(self) -> str:
-        """
-        Returns the selected display type (for created machines, for administration
-        """
-        return self.display.value
 
     def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)

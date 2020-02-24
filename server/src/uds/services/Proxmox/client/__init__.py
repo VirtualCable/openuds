@@ -342,7 +342,7 @@ class ProxmoxClient:
 
     @ensureConected
     @allowCache('storages', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['node', 'content'], cachingKeyFnc=cachingKeyHelper)
-    def listStorage(self, node: typing.Union[None, str, typing.Iterable[str]] = None, content: typing.Optional[str] = None, **kwargs)  -> typing.List[types.StorageInfo]:
+    def listStorages(self, node: typing.Union[None, str, typing.Iterable[str]] = None, content: typing.Optional[str] = None, **kwargs)  -> typing.List[types.StorageInfo]:
         """We use a list for storage instead of an iterator, so we can cache it...
         """
         nodeList: typing.Iterable[str]

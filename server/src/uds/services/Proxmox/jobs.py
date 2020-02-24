@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +27,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import time
 import logging
 import typing
 
@@ -36,76 +35,76 @@ from uds.core import jobs
 
 from uds.models import Provider
 
+from . import provider
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .provider import OVirtProvider
+    from . import client
 
 logger = logging.getLogger(__name__)
 
-
-class OVirtHouseKeeping(jobs.Job):
-    frecuency = 60 * 60 * 24 * 15 + 1  # Once every 15 days
-    friendly_name = 'Ovirt house keeping'
-
-    def run(self):
-        return
-
-
-class OVirtDeferredRemoval(jobs.Job):
+class ProxmoxDeferredRemoval(jobs.Job):
     frecuency = 60 * 5  # Once every NN minutes
     friendly_name = 'Ovirt removal'
     counter = 0
 
     @staticmethod
-    def remove(providerInstance: 'OVirtProvider', vmId: str) -> None:
+    def remove(providerInstance: 'provider.ProxmoxProvider', vmId: int) -> None:
         logger.debug('Adding %s from %s to defeffed removal process', vmId, providerInstance)
-        OVirtDeferredRemoval.counter += 1
+        ProxmoxDeferredRemoval.counter += 1
         try:
-            # Tries to stop machine sync when found, if any error is done, defer removal for a scheduled task
-            try:
-                # First check state & stop machine if needed
-                state = providerInstance.getMachineState(vmId)
-                if state in ('up', 'powering_up', 'suspended'):
-                    providerInstance.stopMachine(vmId)
-                elif state != 'unknown':  # Machine exists, remove it later
-                    providerInstance.storage.saveData('tr' + vmId, vmId, attr1='tRm')
+            # First check state & stop machine if needed
+            vmInfo = providerInstance.getMachineInfo(vmId)
+            if vmInfo.status == 'running':
+                # If running vm,  simply stops it and wait for next 
+                ProxmoxDeferredRemoval.waitForTaskFinish(providerInstance, providerInstance.stopMachine(vmId))
 
-            except Exception as e:
-                providerInstance.storage.saveData('tr' + vmId, vmId, attr1='tRm')
-                logger.info('Machine %s could not be removed right now, queued for later: %s', vmId, e)
+            ProxmoxDeferredRemoval.waitForTaskFinish(providerInstance, providerInstance.removeMachine(vmId))
 
+        except client.PromxmoxNotFound:
+            return  # Machine does not exists
         except Exception as e:
-            logger.warning('Exception got queuing for Removal: %s', e)
+            providerInstance.storage.saveData('tr' + str(vmId), str(vmId), attr1='tRm')
+            logger.info('Machine %s could not be removed right now, queued for later: %s', vmId, e)
+
+    @staticmethod
+    def waitForTaskFinish(providerInstance: 'provider.ProxmoxProvider', upid: 'client.types.UPID', maxWait: int = 30) -> bool:
+        counter = 0
+        while providerInstance.getTaskInfo(upid.node, upid.upid).isRunning() and counter < maxWait:
+            time.sleep(0.3)
+            counter += 1
+        
+        return counter < maxWait
 
     def run(self) -> None:
-        from .provider import OVirtProvider
-
-        logger.debug('Looking for deferred vm removals')
-
-        provider: Provider
+        dbProvider: Provider
         # Look for Providers of type VCServiceProvider
-        for provider in Provider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.typeType):
-            logger.debug('Provider %s if os type ovirt', provider)
+        for dbProvider in Provider.objects.filter(maintenance_mode=False, data_type=provider.ProxmoxProvider.typeType):
+            logger.debug('Provider %s if os type proxmox', dbProvider)
 
-            storage = provider.getEnvironment().storage
-            instance: OVirtProvider = typing.cast(OVirtProvider, provider.getInstance())
+            storage = dbProvider.getEnvironment().storage
+            instance: provider.ProxmoxProvider = typing.cast(provider.ProxmoxProvider, dbProvider.getInstance())
 
             for i in storage.filter('tRm'):
-                vmId = i[1].decode()
+                vmId = int(i[1].decode())
+                
                 try:
+                    vmInfo = instance.getMachineInfo(vmId)
                     logger.debug('Found %s for removal %s', vmId, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
-                    state = instance.getMachineState(vmId)
-                    if state in ('up', 'powering_up', 'suspended'):
-                        instance.stopMachine(vmId)
+                    if vmInfo.status == 'running':
+                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.stopMachine(vmId))
                         return
 
-                    if state != 'unknown':  # Machine exists, try to remove it now
-                        instance.removeMachine(vmId)
+                    if vmInfo.status == 'stopped':  # Machine exists, try to remove it now
+                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.removeMachine(vmId))
+
 
                     # It this is reached, remove check
-                    storage.remove('tr' + vmId)
+                    storage.remove('tr' + str(vmId))
+                except client.PromxmoxNotFound:
+                    storage.remove('tr' + str(vmId))  # VM does not exists anymore
                 except Exception as e:  # Any other exception wil be threated again
                     # instance.doLog('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
                     logger.error('Delayed removal of %s failed: %s', i, e)

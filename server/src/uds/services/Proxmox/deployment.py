@@ -39,13 +39,13 @@ from uds.core import managers
 from uds.core.util.state import State
 from uds.core.util import log
 
-from .jobs import OVirtDeferredRemoval
+from .jobs import ProxmoxDeferredRemoval
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import OVirtLinkedService
-    from .publication import OVirtPublication
+    from .service import ProxmoxLinkedService
+    from .publication import ProxmoxPublication
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 
 
-class OVirtLinkedDeployment(services.UserDeployment):
+class ProxmoxDeployment(services.UserDeployment):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -78,14 +78,14 @@ class OVirtLinkedDeployment(services.UserDeployment):
     _queue: typing.List[int]
 
     # Utility overrides for type checking...
-    def service(self) -> 'OVirtLinkedService':
-        return typing.cast('OVirtLinkedService', super().service())
+    def service(self) -> 'ProxmoxLinkedService':
+        return typing.cast('ProxmoxLinkedService', super().service())
 
-    def publication(self) -> 'OVirtPublication':
+    def publication(self) -> 'ProxmoxPublication':
         pub = super().publication()
         if pub is None:
             raise Exception('No publication for this element!')
-        return typing.cast('OVirtPublication', pub)
+        return typing.cast('ProxmoxPublication', pub)
 
     def initialize(self):
         self._name = ''

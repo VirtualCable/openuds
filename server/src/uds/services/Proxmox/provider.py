@@ -106,39 +106,32 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
 
         return self.__getApi().test()
 
-    def getMachines(self) -> typing.List[client.types.VMInfo]:
+    def listMachines(self) -> typing.List[client.types.VMInfo]:
         return self.__getApi().listVms()
 
-    def getStorageInfo(self, storageId: str, force: bool = False) -> client.types.StorageInfo:
-        """
-        Obtains the storage info
+    def getMachineInfo(self, vmId: int) -> client.types.VMInfo:
+        return self.__getApi().getVmInfo(vmId)
 
-        Args:
-            storageId: Id of the storage to get information about it
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
+    def getStorageInfo(self, storageId: str, node: str) -> client.types.StorageInfo:
+        return self.__getApi().getStorage(storageId, node)
 
-        Returns
+    def listStorages(self, node: typing.Optional[str]) -> typing.List[client.types.StorageInfo]:
+        return self.__getApi().listStorages(node=node)
 
-            A dictionary with following values
-               'id' -> Storage id
-               'name' -> Storage name
-               'type' -> Storage type ('data', 'iso')
-               'available' -> Space available, in bytes
-               'used' -> Space used, in bytes
-               # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
-
-        """
-        return self.__getApi().getStorage(storageId, force)
-
-    def makeTemplate(
-            self,
-            vmId: int
-        ) -> None:
+    def makeTemplate(self, vmId: int) -> None:
         return self.__getApi().convertToTemplate(vmId)
 
-    def getMachineState(self, vmId: int) -> client.types.VMInfo:
-        return self.__getApi().getVmInfo(vmId)
+    def cloneMachine(
+        self,
+        vmId: int,
+        name: str,
+        description: typing.Optional[str],
+        linkedClone: bool,
+        toNode: typing.Optional[str] = None,
+        toStorage: typing.Optional[str] = None,
+        memory: int = 0
+    ) -> client.types.VmCreationResult:
+        return self.__getApi().cloneVm(vmId, name, description, linkedClone, toNode, toStorage, memory)
 
     def startMachine(self,vmId: int) -> client.types.UPID:
         return self.__getApi().startVm(vmId)
@@ -151,6 +144,9 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
 
     def removeMachine(self, vmId: int) -> client.types.UPID:
         return self.__getApi().deleteVm(vmId)
+
+    def getTaskInfo(self, node: str, upid: str) -> client.types.TaskStatus:
+        return self.__getApi().getTask(node, upid)
 
 
     def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:

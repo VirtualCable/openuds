@@ -33,7 +33,7 @@ def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.
         if storage['type'] == 'data':
             space, free = (storage['available'] + storage['used']) / 1024 / 1024 / 1024, storage['available'] / 1024 / 1024 / 1024
 
-            res.append({'id': storage['id'], 'text': "%s (%4.2f Gb/%4.2f Gb) %s" % (storage['name'], space, free, storage['active'] and '(ok)' or '(disabled)')})
+            res.append({'id': storage['id'], 'text': "%s (%4.2f GB/%4.2f GB) %s" % (storage['name'], space, free, storage['active'] and '(ok)' or '(disabled)')})
     data = [
         {
             'name': 'datastore',
