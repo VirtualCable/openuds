@@ -84,7 +84,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     cacheTooltip = _('Number of desired machines to keep running waiting for a user')
     # : If we need to generate a "Level 2" cache for this service (i.e., L1
     # : could be running machines and L2 suspended machines)
-    usesCache_L2 = True
+    usesCache_L2 = False
     # : Tooltip shown to user when this item is pointed at admin interface, None
     # : also because we don't use it
     cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use')
@@ -115,13 +115,11 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         defvalue=''
     )
 
-    ha = gui.CheckBoxField(
-        label=_('Enable HA'),
-        defvalue=gui.TRUE,
+    ha = gui.ChoiceField(
+        label=_('HA'),
         order=2,
-        tooltip=_('If active, UDS will register automatically the VMS created from this service into HA'),
-        required=True,
-        rdonly=True,
+        tooltip=_('Select if HA is enabled and HA group for machines of this service'),
+        rdonly=True
     )
 
     machine = gui.ChoiceField(
@@ -197,6 +195,14 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         # the list of values shown because this is a "ChoiceField"
         self.machine.setValues([gui.choiceItem(str(m.vmid), '{}\{}'.format(m.node, m.name or m.vmid)) for m in self.parent().listMachines() if m.name and m.name[:3] != 'UDS'])
         self.pool.setValues([gui.choiceItem('', _('None'))] + [gui.choiceItem(p.poolid, p.poolid) for p in self.parent().listPools()])
+        self.ha.setValues(
+            [
+                gui.choiceItem('', _('Enabled')), gui.choiceItem('__', _('Disabled'))
+            ] + 
+            [
+                gui.choiceItem(group, group) for group in self.parent().listHaGroups()
+            ]
+        )
 
     def parent(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().parent())
@@ -258,13 +264,15 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         # And remove it
         return self.parent().removeMachine(vmId)
 
-    def enableHA(self, vmId: int) -> None:
-        if self.ha.isTrue():
-            self.parent().enableHA(vmId)
+    def enableHA(self, vmId: int, started: bool = False) -> None:
+        if self.ha.value == '__':
+            return
+        self.parent().enableHA(vmId, started, self.ha.value or None)
 
     def disableHA(self, vmId: int) -> None:
-        if self.ha.isTrue():
-            self.parent().disableHA(vmId)
+        if self.ha.value == '__':
+            return
+        self.parent().disableHA(vmId)
 
     def getBaseName(self) -> str:
         return self.baseName.value

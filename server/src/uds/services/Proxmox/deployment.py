@@ -68,7 +68,7 @@ class ProxmoxDeployment(services.UserDeployment):
 
     """
     # : Recheck every this seconds by default (for task methods)
-    suggestedTime = 10
+    suggestedTime = 12
 
     # own vars
     _name: str
@@ -383,7 +383,7 @@ if sys.platform == 'win32':
 
     def __getMac(self) -> str:
         try:
-            self.service().enableHA(int(self._vmid))  # Enable HA before continuing here
+            self.service().enableHA(int(self._vmid), True)  # Enable HA before continuing here
             self._mac = self.service().getMac(int(self._vmid))
         except Exception:
             logger.exception('Getting MAC on proxmox')

@@ -292,16 +292,21 @@ class ProxmoxClient:
         )
 
     @ensureConected
-    def enableVmHA(self, vmId: int, started: bool = False) -> None:
+    @allowCache('hagrps', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
+    def listHAGroups(self) -> typing.List[str]:
+        return [g['group'] for g in self._get('cluster/ha/groups')['data']]
+
+    @ensureConected
+    def enableVmHA(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
         self._post(
             'cluster/ha/resources',
-            data=(
+            data=[
                 ('sid', 'vm:{}'.format(vmId)),
                 ('comment', 'UDS HA VM'),
                 ('state',  'started' if started else 'stopped'),
                 ('max_restart', '4'),
                 ('max_relocate', '4')
-            )
+            ] + ([('group', group)] if group else [])
         )
 
     @ensureConected
