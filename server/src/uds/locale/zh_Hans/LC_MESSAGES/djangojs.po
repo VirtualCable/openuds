@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-01-31 11:10+0000\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -150,12 +150,12 @@ msgid "Error saving: "
 msgstr "保存时出错："
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-msgid "Save error"
-msgstr "保存错误"
+msgid "Error saving element"
+msgstr "错误保存元素"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-msgid "Communication error"
-msgstr "通信故障"
+msgid "Error handling your request"
+msgstr "处理您的请求时出错"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
@@ -551,17 +551,14 @@ msgid "Delete group"
 msgstr "删除组"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-#| msgid "OS manager"
 msgid "New OS Manager"
 msgstr "新的OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-#| msgid "OS manager"
 msgid "Edit OS Manager"
 msgstr "编辑OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
-#| msgid "Delete image"
 msgid "Delete OS Manager"
 msgstr "删除操作系统管理器"
 
@@ -1425,7 +1422,6 @@ msgstr "启用？"
 
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
-#| msgid "No entries found"
 msgid "Errors found"
 msgstr "发现错误"
 
@@ -1496,11 +1492,6 @@ msgid "Service is in maintenance"
 msgstr "服务正在维护中"
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr "由于时间表限制，目前无法访问此服务。"
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "警告"
@@ -1537,6 +1528,10 @@ msgstr "根"
 #: static/modern/main.js:1
 msgid "any"
 msgstr "任何"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr "由于时间表限制，目前无法访问此服务。"
 
 #: static/modern/main.js:1
 msgid "Please, retry access in a while."

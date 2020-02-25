@@ -7,13 +7,14 @@
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017
 # Naroa Uriarte <nuriarte@lanmedia.es>, 2017
 # Víctor Alonso <valonso@virtualcable.net>, 2020
+# Víctor Alonso <valonso@virtualcable.net>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-02-05 14:42+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
 "Language: eu\n"
@@ -154,12 +155,12 @@ msgid "Error saving: "
 msgstr "Errorea gordetzean:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-msgid "Save error"
-msgstr "Gorde errorea"
+msgid "Error saving element"
+msgstr "Errorea gertatu da"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-msgid "Communication error"
-msgstr "Komunikazio errorea"
+msgid "Error handling your request"
+msgstr "Errorea gertatu da eskaera kudeatzean"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
@@ -555,17 +556,14 @@ msgid "Delete group"
 msgstr "Taldea ezabatu"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-#| msgid "OS manager"
 msgid "New OS Manager"
 msgstr "OS kudeatzaile berria"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-#| msgid "OS manager"
 msgid "Edit OS Manager"
 msgstr "Editatu OS kudeatzailea"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
-#| msgid "Delete image"
 msgid "Delete OS Manager"
 msgstr "Ezabatu OS kudeatzailea"
 
@@ -1431,7 +1429,6 @@ msgstr "Gaituta?"
 
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
-#| msgid "No entries found"
 msgid "Errors found"
 msgstr "Aurkitutako akatsak"
 
@@ -1502,11 +1499,6 @@ msgid "Service is in maintenance"
 msgstr "Zerbitzua mantentze-lanetan dago"
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr "Une honetan zerbitzua ez dago eskuragarri ordutegia murrizteko."
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "Abisua"
@@ -1543,6 +1535,10 @@ msgstr "erro"
 #: static/modern/main.js:1
 msgid "any"
 msgstr "edozein"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr "Une honetan zerbitzua ez dago eskuragarri ordutegia murrizteko."
 
 #: static/modern/main.js:1
 msgid "Please, retry access in a while."

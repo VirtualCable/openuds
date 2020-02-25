@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-01-31 11:09+0000\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -40,7 +40,7 @@ msgstr "Izena"
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
-#: REST/methods/services.py:221 REST/methods/services_pool_groups.py:64
+#: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
 #: REST/model.py:157
@@ -116,7 +116,6 @@ msgid "User service not found"
 msgstr "Ez da Erabiltzaile-zerbitzurik aurkitu"
 
 #: REST/methods/actor_token.py:51
-#| msgid "Actor version"
 msgid "Actor tokens"
 msgstr "Aktoreen tokenak"
 
@@ -127,7 +126,6 @@ msgid "Date"
 msgstr "Data"
 
 #: REST/methods/actor_token.py:55
-#| msgid "Used by"
 msgid "Issued by"
 msgstr "Jaulkia"
 
@@ -136,7 +134,6 @@ msgid "Origin"
 msgstr "Origin"
 
 #: REST/methods/actor_token.py:57
-#| msgid "Host"
 msgid "Hostname"
 msgstr "hostname"
 
@@ -153,7 +150,6 @@ msgid "Run Once"
 msgstr "Exekutatu behin"
 
 #: REST/methods/actor_token.py:61
-#| msgid "Cache level"
 msgid "Log level"
 msgstr "Erregistro maila"
 
@@ -170,7 +166,7 @@ msgid "Id"
 msgstr "Id"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:71 REST/methods/services.py:222
+#: REST/methods/providers.py:71 REST/methods/services.py:223
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr "Mota"
@@ -238,7 +234,7 @@ msgstr "Bakoitza"
 msgid "Duration"
 msgstr "Iraupena"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:187
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:188
 msgid "Element already exists (duplicate key error)"
 msgstr "Elementua existitzen da (Hutsa, gako bikoiztua)"
 
@@ -332,7 +328,6 @@ msgid "If active, metapool will be visible for users"
 msgstr "Aktibatuta badago, metapak erabiltzaileentzat ikusgai egongo da"
 
 #: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:276
-#| msgid "Can't access idp metadata"
 msgid "Calendar access denied text"
 msgstr "Egutegiaren sarbidea ukatu gabeko testua da"
 
@@ -351,7 +346,7 @@ msgstr "Zerbitzu-igerilekuak"
 msgid "Service Pool name"
 msgstr "Zerbitzu Pool izena"
 
-#: REST/methods/meta_service_pools.py:87
+#: REST/methods/meta_service_pools.py:87 services/Proxmox/service.py:200
 msgid "Enabled"
 msgstr "Gaituta"
 
@@ -367,7 +362,7 @@ msgstr "Sortze data"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_usage_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/usage_by_pool.py:60
+#: reports/stats/usage_by_pool.py:60 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 msgid "Pool"
@@ -525,11 +520,6 @@ msgstr "Erabiltzaile Zerbitzuak"
 msgid "Can't delete providers with services"
 msgstr "Ezin dira zerbitzuak dituzten hornitzaileak ezabatu"
 
-#: REST/methods/providers.py:142 dispatchers/wyse_enterprise/views.py:256
-#: web/util/errors.py:75
-msgid "Service not found"
-msgstr "Ez da aurkitu Zerbitzurik"
-
 #: REST/methods/proxies.py:57
 msgid "Proxies (Experimental)"
 msgstr "Proxiak (Esperimentalak)"
@@ -550,7 +540,7 @@ msgstr "Egiaztatu ziurtagiria"
 #: services/HyperV_enterprise/provider.py:60
 #: services/Nutanix_enterprise/provider.py:36 services/OVirt/provider.py:109
 #: services/OpenGnsys/provider.py:95 services/OpenNebula/provider.py:77
-#: services/OpenStack/provider_legacy.py:102
+#: services/OpenStack/provider_legacy.py:102 services/Proxmox/provider.py:60
 #: services/VCloud_enterprise/provider.py:32
 #: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:94
 msgid "Host"
@@ -566,7 +556,7 @@ msgstr "Zerbitzaria (IP edo FQDN) proxy gisa balioko du."
 #: services/HyperV_enterprise/provider.py:116
 #: services/Nutanix_enterprise/provider.py:37 services/OpenGnsys/provider.py:96
 #: services/OpenNebula/provider.py:78 services/OpenStack/provider_legacy.py:103
-#: services/RDS_enterprise/provider.py:101
+#: services/Proxmox/provider.py:61 services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
 #: services/Vmware_enterprise/provider.py:42
 msgid "Port"
@@ -624,43 +614,43 @@ msgstr "Deskribapena"
 msgid "Generates"
 msgstr "Sortzen du"
 
-#: REST/methods/services.py:186
+#: REST/methods/services.py:187
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr ""
 "Badirudi beste zerbitzu batzuek erabiltzen dutela zerbitzua. Mesedez, "
 "hautatu berri bat."
 
-#: REST/methods/services.py:191
+#: REST/methods/services.py:192
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Sarrera-erroreak:{0}"
 
-#: REST/methods/services.py:214
+#: REST/methods/services.py:215
 msgid "Services of {}"
 msgstr "{} Zerbitzuko zerbitzuak"
 
-#: REST/methods/services.py:216
+#: REST/methods/services.py:217
 msgid "Current services"
 msgstr "Momentuko zerbitzuak"
 
-#: REST/methods/services.py:220
+#: REST/methods/services.py:221
 msgid "Service name"
 msgstr "Zerbitzu izena"
-
-#: REST/methods/services.py:223 REST/methods/services.py:266
-msgid "Proxy"
-msgstr "Proxy"
 
 #: REST/methods/services.py:224
 msgid "Services Pools"
 msgstr "Pool-Zerbitzua"
 
-#: REST/methods/services.py:267
+#: REST/methods/services.py:227 REST/methods/services.py:267
+msgid "Proxy"
+msgstr "Proxy"
+
+#: REST/methods/services.py:268
 msgid "Proxy for services behind a firewall"
 msgstr "Suebaki baten atzean zerbitzuen proxya"
 
-#: REST/methods/services.py:269 REST/methods/services_pools.py:232
+#: REST/methods/services.py:270 REST/methods/services_pools.py:232
 #: REST/methods/services_pools.py:240 REST/methods/services_pools.py:248
 #: REST/methods/services_pools.py:323 REST/methods/services_pools.py:331
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:93
@@ -672,12 +662,12 @@ msgstr "Suebaki baten atzean zerbitzuen proxya"
 msgid "Advanced"
 msgstr "Aurreratua"
 
-#: REST/methods/services.py:300 REST/methods/users_groups.py:216
+#: REST/methods/services.py:307 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "With errors"
 msgstr "Erroreekin"
 
-#: REST/methods/services.py:300 REST/methods/users_groups.py:216
+#: REST/methods/services.py:307 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "Ok"
 msgstr "Ondo"
@@ -971,7 +961,7 @@ msgstr "Momentuko erabiltzaileak"
 #: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
 #: services/OpenGnsys/provider.py:98 services/OpenNebula/provider.py:80
 #: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
-#: services/RDS_enterprise/provider.py:118
+#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
@@ -1117,8 +1107,8 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
 #: services/OpenGnsys/provider.py:99 services/OpenNebula/provider.py:81
 #: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
-#: services/RDS_enterprise/provider.py:126 services/Sample/service.py:140
-#: services/VCloud_enterprise/provider.py:36
+#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:126
+#: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
@@ -1144,7 +1134,7 @@ msgstr "LDAP erabiltzailearen pasahitza"
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
-#: services/VCloud_enterprise/provider.py:54
+#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:54
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "Demboraz kampo"
@@ -1704,12 +1694,10 @@ msgid "Attribute of the group that contains the users belonging to it"
 msgstr "Bertako erabiltzaileak dituen taldearen atributua"
 
 #: auths/SimpleLDAP/authenticator.py:71
-#| msgid "NX v3.5 (DEPRECATED)"
 msgid "SimpleLDAP (DEPRECATED)"
 msgstr "SimpleLDAP (DEPRECATED)"
 
 #: auths/SimpleLDAP/authenticator.py:73
-#| msgid "Simple LDAP authenticator"
 msgid "Simple LDAP authenticator (DEPRECATED)"
 msgstr "LDAP autentifikatzaile sinplea (DEPRECATED)"
 
@@ -1848,8 +1836,8 @@ msgstr "Oinarrizko Zerbitzua"
 #: core/services/service.py:137 core/services/service.py:146
 #: models/permissions.py:72 models/permissions.py:76
 #: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
-#: services/Sample/service.py:98 services/Sample/service.py:104
-#: services/TestService_enterprise/service.py:28
+#: services/Proxmox/service.py:197 services/Sample/service.py:98
+#: services/Sample/service.py:104 services/TestService_enterprise/service.py:28
 msgid "None"
 msgstr "Bat ere"
 
@@ -1965,7 +1953,7 @@ msgstr "Erabiltzen"
 msgid "Load"
 msgstr "Karga"
 
-#: core/util/stats/counters.py:204
+#: core/util/stats/counters.py:204 services/Proxmox/service.py:139
 msgid "Storage"
 msgstr "Biltegiratzea"
 
@@ -2013,7 +2001,6 @@ msgid "{} exceeds maximum host name length."
 msgstr "{}-k ostalariaren izenaren luzera gainditzen du."
 
 #: core/util/validators.py:92
-#| msgid "The basename is not a valid for a hostname"
 msgid "{} is not a valid hostname"
 msgstr "{} ez da baliozko ostalari izena"
 
@@ -2066,6 +2053,10 @@ msgstr "Eskaera baliogabea"
 #: dispatchers/wyse_enterprise/views.py:321
 msgid "Invalid credentials used"
 msgstr "Erabilitako kredentzial baliogabeak"
+
+#: dispatchers/wyse_enterprise/views.py:256 web/util/errors.py:75
+msgid "Service not found"
+msgstr "Ez da aurkitu Zerbitzurik"
 
 #: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
 msgid "Transport not found"
@@ -2783,7 +2774,7 @@ msgstr "Harpidetzak lortu dira"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:98
 msgid "Creation concurrency"
@@ -2795,7 +2786,7 @@ msgstr "Sorkuntza konkurrentzia"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr "VMak aldi berean sortzeko gehienezko kopurua"
@@ -2806,7 +2797,7 @@ msgstr "VMak aldi berean sortzeko gehienezko kopurua"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:99
 msgid "Removal concurrency"
@@ -2818,7 +2809,7 @@ msgstr "Kentzea"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr "VMak aldi berean kentzen diren gehienezko kopurua"
@@ -2891,7 +2882,7 @@ msgstr "Zerbitzu honetatik sortutako makinen tamaina."
 #: services/HyperV_enterprise/service.py:128
 #: services/Nutanix_enterprise/service.py:82 services/OVirt/service.py:198
 #: services/OpenNebula/service.py:118 services/OpenStack/service.py:140
-#: services/VCloud_enterprise/service.py:87
+#: services/Proxmox/service.py:160 services/VCloud_enterprise/service.py:87
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:164
 msgid "Machine Names"
 msgstr "Makina izenak"
@@ -2901,7 +2892,7 @@ msgstr "Makina izenak"
 #: services/HyperV_enterprise/service.py:131
 #: services/Nutanix_enterprise/service.py:85 services/OVirt/service.py:201
 #: services/OpenNebula/service.py:121 services/OpenStack/service.py:143
-#: services/VCloud_enterprise/service.py:87
+#: services/Proxmox/service.py:163 services/VCloud_enterprise/service.py:87
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:167
 msgid "Base name for clones from this machine"
 msgstr "Makinaren klonak oinarrizko izena"
@@ -2911,7 +2902,7 @@ msgstr "Makinaren klonak oinarrizko izena"
 #: services/HyperV_enterprise/service.py:138
 #: services/Nutanix_enterprise/service.py:91 services/OVirt/service.py:208
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:150
-#: services/VCloud_enterprise/service.py:88
+#: services/Proxmox/service.py:170 services/VCloud_enterprise/service.py:88
 #: services/Vmware_enterprise/service_linked.py:125 services/Xen/service.py:174
 msgid "Name Length"
 msgstr "Izen luzeera"
@@ -2921,10 +2912,10 @@ msgstr "Izen luzeera"
 #: services/HyperV_enterprise/service.py:141
 #: services/Nutanix_enterprise/service.py:94 services/OVirt/service.py:211
 #: services/OpenNebula/service.py:131 services/OpenStack/service.py:153
-#: services/VCloud_enterprise/service.py:89
-#: services/Vmware_enterprise/service_linked.py:126
-msgid "Size of numeric part for the names of these machines (between 3 and 6)"
-msgstr "Makina hauen izenen zenbakizko zatiaren tamaina (3 eta 6 artean)"
+#: services/Proxmox/service.py:173 services/VCloud_enterprise/service.py:89
+#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:177
+msgid "Size of numeric part for the names of these machines"
+msgstr "Makina horien izenetarako zati numerikoaren tamaina"
 
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:107
@@ -3039,7 +3030,7 @@ msgstr "Konexioaren proba arrakastatsua"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
-#: services/Vmware_enterprise/provider.py:167
+#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:167
 msgid "Connection failed. Check connection params"
 msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
 
@@ -3064,14 +3055,15 @@ msgstr ""
 
 #: services/HyperV_enterprise/legacy/service.py:66
 #: services/HyperV_enterprise/service.py:66 services/OVirt/service.py:84
-#: services/TestService_enterprise/service.py:26 services/Xen/service.py:82
+#: services/Proxmox/service.py:84 services/TestService_enterprise/service.py:26
+#: services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
 "Nahi duzun makina kopurua erabiltzaile baten zain exekutatzen jarraitzeko"
 
 #: services/HyperV_enterprise/legacy/service.py:68
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:90
-#: services/OpenStack/service.py:88
+#: services/OpenStack/service.py:88 services/Proxmox/service.py:90
 #: services/Vmware_enterprise/service_full.py:40
 #: services/Vmware_enterprise/service_linked.py:47 services/Xen/service.py:89
 msgid "Number of desired machines to keep suspended waiting for use"
@@ -3102,6 +3094,7 @@ msgstr "Gutxieneko doako espazioa GB-an"
 #: services/HyperV_enterprise/legacy/service.py:99
 #: services/HyperV_enterprise/service.py:100
 #: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:140
+#: services/Proxmox/service.py:126
 #: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:126
 msgid "Base Machine"
 msgstr "Oinarri makina"
@@ -3109,7 +3102,7 @@ msgstr "Oinarri makina"
 #: services/HyperV_enterprise/legacy/service.py:101
 #: services/HyperV_enterprise/service.py:102
 #: services/Nutanix_enterprise/service.py:56 services/OVirt/service.py:142
-#: services/Xen/service.py:128
+#: services/Proxmox/service.py:133 services/Xen/service.py:128
 msgid "Service base machine"
 msgstr "Oinarrizko makina zerbitzua"
 
@@ -3133,7 +3126,9 @@ msgstr "Oinarrizko makina zerbitzua"
 #: services/OpenNebula/service.py:132 services/OpenStack/service.py:132
 #: services/OpenStack/service.py:134 services/OpenStack/service.py:135
 #: services/OpenStack/service.py:137 services/OpenStack/service.py:145
-#: services/OpenStack/service.py:155
+#: services/OpenStack/service.py:155 services/Proxmox/service.py:134
+#: services/Proxmox/service.py:143 services/Proxmox/service.py:155
+#: services/Proxmox/service.py:164 services/Proxmox/service.py:174
 #: services/Vmware_enterprise/service_full.py:68
 #: services/Vmware_enterprise/service_linked.py:110
 #: services/Vmware_enterprise/service_linked.py:114
@@ -3146,7 +3141,7 @@ msgstr "Oinarrizko makina zerbitzua"
 #: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:129
 #: services/Xen/service.py:138 services/Xen/service.py:148
 #: services/Xen/service.py:159 services/Xen/service.py:168
-#: services/Xen/service.py:179
+#: services/Xen/service.py:178
 msgid "Machine"
 msgstr "Makina"
 
@@ -3161,6 +3156,7 @@ msgstr ""
 #: services/HyperV_enterprise/legacy/service.py:116
 #: services/HyperV_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:148
+#: services/Proxmox/service.py:148
 #: services/Vmware_enterprise/service_linked.py:115 services/Xen/service.py:143
 msgid "Memory (Mb)"
 msgstr "Memoria (Mb)"
@@ -3329,19 +3325,19 @@ msgstr ""
 "Erabiltzaileak oVirt-ekin dituen baliozko pribilegioak (erabili "
 "\"erabiltzailea @ domeinua\" inprimakia)"
 
-#: services/OVirt/provider.py:111
+#: services/OVirt/provider.py:111 services/Proxmox/provider.py:64
 msgid "Password of the user of oVirt"
 msgstr "OVirt-eko erabiltzailearen pasahitza"
 
-#: services/OVirt/provider.py:116
+#: services/OVirt/provider.py:116 services/Proxmox/provider.py:69
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "Denbora-muga oVirt-ekin konexioaren segundotan"
 
-#: services/OVirt/service.py:63
+#: services/OVirt/service.py:63 services/Proxmox/service.py:63
 msgid "oVirt/RHEV Linked Clone"
 msgstr "oVirt/RHEV Linked Clone"
 
-#: services/OVirt/service.py:67
+#: services/OVirt/service.py:67 services/Proxmox/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "OVirt Zerbitzuak txantiloietan eta COW (esperimentaletan) oinarrituta"
 
@@ -3357,7 +3353,8 @@ msgstr "Datastore domeinua"
 msgid "Datastore domain where to publish and put incrementals"
 msgstr "Datastore domeinua non argitaratu eta jarri igoerak"
 
-#: services/OVirt/service.py:154 services/Xen/service.py:147
+#: services/OVirt/service.py:154 services/Proxmox/service.py:154
+#: services/Xen/service.py:147
 msgid "Memory assigned to machines"
 msgstr "Makinak esleitutako memoria"
 
@@ -3381,7 +3378,7 @@ msgstr "Gaitu USBen birbideratzea SPICErekin"
 msgid "Display type (only for administration purposes)"
 msgstr "Bistaratze mota (administrazio helburuetarako soilik)"
 
-#: services/OVirt/service.py:229 services/Xen/service.py:195
+#: services/OVirt/service.py:229 services/Xen/service.py:194
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "Gutxieneko memoria onartzen da 256 Mb"
 
@@ -3701,7 +3698,6 @@ msgstr "IP"
 
 #: services/PhysicalMachines/service_multi.py:59
 #: services/Vmware_enterprise/service_fixed.py:54
-#| msgid "Service region"
 msgid "Service Token"
 msgstr "Zerbitzuaren toka"
 
@@ -3743,6 +3739,73 @@ msgstr "IP estatiko bakarra"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr ""
 "Zerbitzu honek IP bidez emandako POWERED-ON Machine sarbidea eskaintzen du"
+
+#: services/Proxmox/helpers.py:59
+msgid " shared"
+msgstr "elkarbanatu"
+
+#: services/Proxmox/helpers.py:59
+msgid " (bound to {})"
+msgstr "(lotua {})"
+
+#: services/Proxmox/provider.py:55
+msgid "Proxmox Platform Provider"
+msgstr "Proxmox Plataforma hornitzailea"
+
+#: services/Proxmox/provider.py:57
+msgid "Proxmox platform service provider"
+msgstr "Proxmox plataformako zerbitzu hornitzailea"
+
+#: services/Proxmox/provider.py:60
+msgid "Proxmox Server IP or Hostname"
+msgstr "Proxmox zerbitzariaren IP edo ostalariaren izena"
+
+#: services/Proxmox/provider.py:61
+msgid "Proxmox API port (default is 8006)"
+msgstr "Proxmox API ataka (lehenetsia 8006 da)"
+
+#: services/Proxmox/provider.py:63
+msgid ""
+"User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
+msgstr ""
+"Proxmox-en baliozko pribilegioak dituen erabiltzailea (erabili "
+"\"erabiltzailea @ autentifikatzailea\" inprimakia)"
+
+#: services/Proxmox/publication.py:93
+#: services/Vmware_enterprise/publication.py:67
+msgid "Publication"
+msgstr "Argitalpena"
+
+#: services/Proxmox/publication.py:94
+#: services/Vmware_enterprise/publication.py:68
+#, python-brace-format
+msgid "UDS Publication for {0} created at {1}"
+msgstr "UDS {0} (e) k {1} (e) n sortutako argitalpena"
+
+#: services/Proxmox/service.py:112
+msgid "Pool that will contain UDS created vms"
+msgstr "UDS-ek sortutako vms-a edukiko duen igerilekua"
+
+#: services/Proxmox/service.py:119
+msgid "HA"
+msgstr "HA"
+
+#: services/Proxmox/service.py:121
+msgid "Select if HA is enabled and HA group for machines of this service"
+msgstr "Hautatu HA gaituta badago eta HA taldea zerbitzu honetako makinentzat"
+
+#: services/Proxmox/service.py:142
+msgid "Storage for publications & machines."
+msgstr "Argitalpenak eta makinak gordetzea."
+
+#: services/Proxmox/service.py:185
+msgid "The minimum allowed memory is 128 Mb"
+msgstr "Onartutako memoria minimoa 128 Mb-koa da"
+
+#: services/Proxmox/service.py:200
+#| msgid "Enabled"
+msgid "Disabled"
+msgstr "Desgaituta"
 
 #: services/RDS_enterprise/provider.py:41
 msgid "RDS Platform Provider"
@@ -3816,12 +3879,10 @@ msgstr ""
 #: services/RDS_enterprise/provider.py:138
 #: services/RDS_enterprise/provider.py:146
 #: services/RDS_enterprise/provider.py:154
-#| msgid "User name"
 msgid "AD User management"
 msgstr "AD erabiltzailearen kudeaketa"
 
 #: services/RDS_enterprise/provider.py:93
-#| msgid "Server"
 msgid "AD Server"
 msgstr "AD zerbitzaria"
 
@@ -3842,17 +3903,13 @@ msgid "AD Server branch where users will be created by UDS"
 msgstr "AD zerbitzariaren adarra non erabiltzaileak UDS-k sortuko dituen"
 
 #: services/RDS_enterprise/provider.py:119
-#| msgid ""
-#| "Username with read privileges on the base selected (use USER@DOMAIN.DOM "
-#| "form for this)"
 msgid ""
 "Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
 msgstr ""
-"Erabiltzaile izena kontuak sortzeko / ezabatzeko pribilegioak. Erabili USER@"
-"DOMAIN.XXX inprimakia."
+"Erabiltzaile izena kontuak sortzeko / ezabatzeko pribilegioak. Erabili "
+"USER@DOMAIN.XXX inprimakia."
 
 #: services/RDS_enterprise/provider.py:127
-#| msgid "Password of the user of HyperV"
 msgid "Password of the user with privileges"
 msgstr "Erabiltzailearen pasahitza pribilegioak"
 
@@ -3869,7 +3926,6 @@ msgstr ""
 "jatorrizko UDS erabiltzaile izena izango duen. Gehienez 4 karaktere"
 
 #: services/RDS_enterprise/provider.py:143
-#| msgid "Domain"
 msgid "AD Domain"
 msgstr "AD domeinua"
 
@@ -3878,11 +3934,10 @@ msgid ""
 "Domain for newly created users (i.e. example.com, example.local). If empty, "
 "will be deduced from username"
 msgstr ""
-"Sortu berri diren erabiltzaileentzako domeinua (hau da, adibidez.com, "
-"adib.local). Hutsik badago, erabiltzaile-izenetik aterako da"
+"Sortu berri diren erabiltzaileentzako domeinua (hau da, adibidez.com, adib."
+"local). Hutsik badago, erabiltzaile-izenetik aterako da"
 
 #: services/RDS_enterprise/provider.py:151
-#| msgid "UDS Group"
 msgid "AD Group"
 msgstr "AD taldea"
 
@@ -3921,8 +3976,8 @@ msgstr "AD erabiltzailearen kudeaketa: pasahitza eman behar duzu."
 #: services/RDS_enterprise/provider.py:179
 msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr ""
-"AD Erabiltzaileen Kudeaketa: erabiltzailearen aurrizkia eman behar duzu. (1-"
-"4 karaktere)"
+"AD Erabiltzaileen Kudeaketa: erabiltzailearen aurrizkia eman behar duzu. "
+"(1-4 karaktere)"
 
 #: services/RDS_enterprise/provider.py:182
 msgid "AD User Management: you must provide the user creation domain FQDN."
@@ -3937,7 +3992,6 @@ msgstr ""
 "oraingoan"
 
 #: services/RDS_enterprise/provider.py:249
-#| msgid "Connection failed: {}"
 msgid "Connection to {}, port {} failed."
 msgstr "{} Portuarekin konexioak huts egin du."
 
@@ -3957,7 +4011,6 @@ msgstr ""
 "gaituta dago"
 
 #: services/RDS_enterprise/provider.py:274
-#| msgid "Connection speed"
 msgid "Connectivity test passed"
 msgstr "Konektagarritasun proba gainditu da"
 
@@ -4285,15 +4338,6 @@ msgstr "Zentro birtualeko zerbitzuetarako konexioa eskaintzen du"
 msgid "Connection params ok"
 msgstr "Konexio parametroak ondo daude"
 
-#: services/Vmware_enterprise/publication.py:67
-msgid "Publication"
-msgstr "Argitalpena"
-
-#: services/Vmware_enterprise/publication.py:68
-#, python-brace-format
-msgid "UDS Publication for {0} created at {1}"
-msgstr "UDS {0} (e) k {1} (e) n sortutako argitalpena"
-
 #: services/Vmware_enterprise/service_fixed.py:32
 msgid "Fixed Machines Pool"
 msgstr "Makina finkoak igerilekua"
@@ -4332,7 +4376,6 @@ msgid "Resource Pool containing base machines"
 msgstr "Base-makinak dituen baliabide-igerilekua"
 
 #: services/Vmware_enterprise/service_fixed.py:89
-#| msgid "Base machines for this service"
 msgid "Machines for this service"
 msgstr "Zerbitzu honetarako makinak"
 
@@ -4499,11 +4542,6 @@ msgstr "Itzala"
 #: services/Xen/service.py:158
 msgid "Shadow memory multiplier (memory overcommit)"
 msgstr "Itzalaren memoria biderkatzailea (memoria gainkargatzea)"
-
-#: services/Xen/service.py:178
-msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
-msgstr ""
-"Zenbakiaren zatiaren luzera makinen izenen arabera (3 eta 6 bitartekoa)"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -5522,36 +5560,36 @@ msgstr "Autentifikazio errore gehiegi. Erabiltzailea aldi baterako blokeatu da"
 msgid "Invalid data"
 msgstr "Datu baliogabeak"
 
-#: web/util/configjs.py:118
+#: web/util/configjs.py:119
 msgid "Access limited by calendar"
 msgstr "Sarbidea egutegian mugatua"
 
-#: web/util/configjs.py:144
+#: web/util/configjs.py:145
 msgid "Windows client"
 msgstr "Windows bezeroa"
 
-#: web/util/configjs.py:145
+#: web/util/configjs.py:146
 msgid "Mac OS X client"
 msgstr "Mac OS X bezeroa"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:147
 msgid "Debian based Linux client"
 msgstr "Debian oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:146 web/util/configjs.py:147 web/util/configjs.py:148
-#: web/util/configjs.py:149
+#: web/util/configjs.py:147 web/util/configjs.py:148 web/util/configjs.py:149
+#: web/util/configjs.py:150
 msgid "(requires Python-2.7)"
 msgstr "(Python-2.7 behar da)"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:148
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Red Hat Linux bezeroaren (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:149
 msgid "Suse based Linux client"
 msgstr "Suse oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:150
 msgid "Generic .tar.gz Linux client"
 msgstr "Generic .tar.gz Linux bezeroa"
 

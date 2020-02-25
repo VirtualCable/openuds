@@ -5,13 +5,14 @@
 # Translators:
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
 # Víctor Alonso <valonso@virtualcable.net>, 2020
+# Víctor Alonso <valonso@virtualcable.net>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-02-05 14:49+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -154,12 +155,12 @@ msgid "Error saving: "
 msgstr "Ошибка сохранения:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-msgid "Save error"
-msgstr "Сохранить ошибку"
+msgid "Error saving element"
+msgstr "Ошибка сохранения элемента"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-msgid "Communication error"
-msgstr "Ошибка связи"
+msgid "Error handling your request"
+msgstr "Ошибка обработки вашего запроса"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
@@ -555,17 +556,14 @@ msgid "Delete group"
 msgstr "Удалить группу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-#| msgid "OS manager"
 msgid "New OS Manager"
 msgstr "Новый OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-#| msgid "OS manager"
 msgid "Edit OS Manager"
 msgstr "Редактировать OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
-#| msgid "Delete image"
 msgid "Delete OS Manager"
 msgstr "Удалить OS Manager"
 
@@ -1430,7 +1428,6 @@ msgstr "Включено?"
 
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
-#| msgid "No entries found"
 msgid "Errors found"
 msgstr "Ошибки найдены"
 
@@ -1501,12 +1498,6 @@ msgid "Service is in maintenance"
 msgstr "Сервис находится в обслуживании"
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr ""
-"Эта услуга в настоящее время недоступна из-за ограничений по расписанию."
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "Предупреждение"
@@ -1543,6 +1534,11 @@ msgstr "корень"
 #: static/modern/main.js:1
 msgid "any"
 msgstr "любой"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr ""
+"Эта услуга в настоящее время недоступна из-за ограничений по расписанию."
 
 #: static/modern/main.js:1
 msgid "Please, retry access in a while."

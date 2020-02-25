@@ -4,13 +4,14 @@
 #
 # Translators:
 # Víctor Alonso <valonso@virtualcable.net>, 2020
+# Víctor Alonso <valonso@virtualcable.net>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-02-05 14:48+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
 "Language: pt\n"
@@ -151,12 +152,12 @@ msgid "Error saving: "
 msgstr "Erro ao salvar:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-msgid "Save error"
-msgstr "Salvar erro"
+msgid "Error saving element"
+msgstr "Erro ao salvar o elemento"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-msgid "Communication error"
-msgstr "Erro de comunicação"
+msgid "Error handling your request"
+msgstr "Erro ao processar sua solicitação"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
@@ -552,17 +553,14 @@ msgid "Delete group"
 msgstr "Excluir grupo"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-#| msgid "OS manager"
 msgid "New OS Manager"
 msgstr "Novo gerenciador de SO"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-#| msgid "OS manager"
 msgid "Edit OS Manager"
 msgstr "Editar Gerenciador do SO"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
-#| msgid "Delete image"
 msgid "Delete OS Manager"
 msgstr "Excluir OS Manager"
 
@@ -1428,7 +1426,6 @@ msgstr "Ativado?"
 
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
-#| msgid "No entries found"
 msgid "Errors found"
 msgstr "Erros encontrados"
 
@@ -1501,12 +1498,6 @@ msgid "Service is in maintenance"
 msgstr "O serviço está em manutenção"
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr ""
-"Atualmente, este serviço não está acessível devido a restrições de horário."
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "Aviso"
@@ -1543,6 +1534,11 @@ msgstr "raiz"
 #: static/modern/main.js:1
 msgid "any"
 msgstr "qualquer"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr ""
+"Atualmente, este serviço não está acessível devido a restrições de horário."
 
 #: static/modern/main.js:1
 msgid "Please, retry access in a while."

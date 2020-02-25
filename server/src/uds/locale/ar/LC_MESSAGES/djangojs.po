@@ -5,13 +5,14 @@
 # Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016-2018
 # Víctor Alonso <valonso@virtualcable.net>, 2020
+# Víctor Alonso <valonso@virtualcable.net>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-02-05 14:41+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
 "Language: ar\n"
@@ -153,12 +154,12 @@ msgid "Error saving: "
 msgstr "خطأ في الحفظ:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-msgid "Save error"
-msgstr "حفظ الخطأ"
+msgid "Error saving element"
+msgstr "خطأ في حفظ العنصر"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-msgid "Communication error"
-msgstr "خطأ في الاتصال"
+msgid "Error handling your request"
+msgstr "خطأ في معالجة طلبك"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
@@ -554,17 +555,14 @@ msgid "Delete group"
 msgstr "حذف مجموعة"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-#| msgid "OS manager"
 msgid "New OS Manager"
 msgstr "مدير نظام التشغيل الجديد"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-#| msgid "OS manager"
 msgid "Edit OS Manager"
 msgstr "تحرير مدير OS"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
-#| msgid "Delete image"
 msgid "Delete OS Manager"
 msgstr "حذف OS Manager"
 
@@ -1429,7 +1427,6 @@ msgstr "تمكين؟"
 
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
-#| msgid "No entries found"
 msgid "Errors found"
 msgstr "العثور على أخطاء"
 
@@ -1500,11 +1497,6 @@ msgid "Service is in maintenance"
 msgstr "الخدمة في الصيانة"
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr "هذه الخدمة غير متاحة حاليًا بسبب قيود الجدول الزمني."
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "تحذير"
@@ -1541,6 +1533,10 @@ msgstr "جذر"
 #: static/modern/main.js:1
 msgid "any"
 msgstr "أي"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr "هذه الخدمة غير متاحة حاليًا بسبب قيود الجدول الزمني."
 
 #: static/modern/main.js:1
 msgid "Please, retry access in a while."

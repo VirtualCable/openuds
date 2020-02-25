@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-01-31 11:09+0000\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -40,7 +40,7 @@ msgstr "Nom"
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
-#: REST/methods/services.py:221 REST/methods/services_pool_groups.py:64
+#: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
 #: REST/model.py:157
@@ -116,7 +116,6 @@ msgid "User service not found"
 msgstr "Service utilisateur introuvable"
 
 #: REST/methods/actor_token.py:51
-#| msgid "Actor version"
 msgid "Actor tokens"
 msgstr "Jetons d&#39;acteur"
 
@@ -127,7 +126,6 @@ msgid "Date"
 msgstr "Date"
 
 #: REST/methods/actor_token.py:55
-#| msgid "Used by"
 msgid "Issued by"
 msgstr "Délivré par"
 
@@ -136,7 +134,6 @@ msgid "Origin"
 msgstr "Origine"
 
 #: REST/methods/actor_token.py:57
-#| msgid "Host"
 msgid "Hostname"
 msgstr "Nom d&#39;hôte"
 
@@ -153,7 +150,6 @@ msgid "Run Once"
 msgstr "Exécuter une fois"
 
 #: REST/methods/actor_token.py:61
-#| msgid "Cache level"
 msgid "Log level"
 msgstr "Niveau de journal"
 
@@ -170,7 +166,7 @@ msgid "Id"
 msgstr "ID"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:71 REST/methods/services.py:222
+#: REST/methods/providers.py:71 REST/methods/services.py:223
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr "Type"
@@ -238,7 +234,7 @@ msgstr "Chaque"
 msgid "Duration"
 msgstr "Durée"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:187
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:188
 msgid "Element already exists (duplicate key error)"
 msgstr "Élément existe déjà (erreur de clé en double)"
 
@@ -331,7 +327,6 @@ msgid "If active, metapool will be visible for users"
 msgstr "Si actif, metapool sera visible pour les utilisateurs"
 
 #: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:276
-#| msgid "Can't access idp metadata"
 msgid "Calendar access denied text"
 msgstr "Accès au calendrier refusé"
 
@@ -350,7 +345,7 @@ msgstr "Piscines de service"
 msgid "Service Pool name"
 msgstr "Nom du pool de services"
 
-#: REST/methods/meta_service_pools.py:87
+#: REST/methods/meta_service_pools.py:87 services/Proxmox/service.py:200
 msgid "Enabled"
 msgstr "Activé"
 
@@ -366,7 +361,7 @@ msgstr "Date de création"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_usage_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/usage_by_pool.py:60
+#: reports/stats/usage_by_pool.py:60 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 msgid "Pool"
@@ -522,11 +517,6 @@ msgstr "Services aux utilisateurs"
 msgid "Can't delete providers with services"
 msgstr "Impossible de supprimer des fournisseurs avec des services"
 
-#: REST/methods/providers.py:142 dispatchers/wyse_enterprise/views.py:256
-#: web/util/errors.py:75
-msgid "Service not found"
-msgstr "Service introuvable"
-
 #: REST/methods/proxies.py:57
 msgid "Proxies (Experimental)"
 msgstr "Procurations (expérimentales)"
@@ -547,7 +537,7 @@ msgstr "Certificat de vérification"
 #: services/HyperV_enterprise/provider.py:60
 #: services/Nutanix_enterprise/provider.py:36 services/OVirt/provider.py:109
 #: services/OpenGnsys/provider.py:95 services/OpenNebula/provider.py:77
-#: services/OpenStack/provider_legacy.py:102
+#: services/OpenStack/provider_legacy.py:102 services/Proxmox/provider.py:60
 #: services/VCloud_enterprise/provider.py:32
 #: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:94
 msgid "Host"
@@ -563,7 +553,7 @@ msgstr "Serveur (IP ou FQDN) qui servira de proxy."
 #: services/HyperV_enterprise/provider.py:116
 #: services/Nutanix_enterprise/provider.py:37 services/OpenGnsys/provider.py:96
 #: services/OpenNebula/provider.py:78 services/OpenStack/provider_legacy.py:103
-#: services/RDS_enterprise/provider.py:101
+#: services/Proxmox/provider.py:61 services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
 #: services/Vmware_enterprise/provider.py:42
 msgid "Port"
@@ -623,43 +613,43 @@ msgstr "Description"
 msgid "Generates"
 msgstr "Génère"
 
-#: REST/methods/services.py:186
+#: REST/methods/services.py:187
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr ""
 "Le jeton de service semble être utilisé par un autre service. Veuillez en "
 "sélectionner un nouveau."
 
-#: REST/methods/services.py:191
+#: REST/methods/services.py:192
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Erreur d'entrée : {0}"
 
-#: REST/methods/services.py:214
+#: REST/methods/services.py:215
 msgid "Services of {}"
 msgstr "Services de {}"
 
-#: REST/methods/services.py:216
+#: REST/methods/services.py:217
 msgid "Current services"
 msgstr "Services actuels"
 
-#: REST/methods/services.py:220
+#: REST/methods/services.py:221
 msgid "Service name"
 msgstr "Nom du service"
-
-#: REST/methods/services.py:223 REST/methods/services.py:266
-msgid "Proxy"
-msgstr "Procuration"
 
 #: REST/methods/services.py:224
 msgid "Services Pools"
 msgstr "Pools de services"
 
-#: REST/methods/services.py:267
+#: REST/methods/services.py:227 REST/methods/services.py:267
+msgid "Proxy"
+msgstr "Procuration"
+
+#: REST/methods/services.py:268
 msgid "Proxy for services behind a firewall"
 msgstr "Proxy pour les services derrière un pare-feu"
 
-#: REST/methods/services.py:269 REST/methods/services_pools.py:232
+#: REST/methods/services.py:270 REST/methods/services_pools.py:232
 #: REST/methods/services_pools.py:240 REST/methods/services_pools.py:248
 #: REST/methods/services_pools.py:323 REST/methods/services_pools.py:331
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:93
@@ -671,12 +661,12 @@ msgstr "Proxy pour les services derrière un pare-feu"
 msgid "Advanced"
 msgstr "Avancé"
 
-#: REST/methods/services.py:300 REST/methods/users_groups.py:216
+#: REST/methods/services.py:307 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "With errors"
 msgstr "Avec Erreurs"
 
-#: REST/methods/services.py:300 REST/methods/users_groups.py:216
+#: REST/methods/services.py:307 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "Ok"
 msgstr "Bien"
@@ -976,7 +966,7 @@ msgstr "Utilisateurs actuels"
 #: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
 #: services/OpenGnsys/provider.py:98 services/OpenNebula/provider.py:80
 #: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
-#: services/RDS_enterprise/provider.py:118
+#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
@@ -1125,8 +1115,8 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
 #: services/OpenGnsys/provider.py:99 services/OpenNebula/provider.py:81
 #: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
-#: services/RDS_enterprise/provider.py:126 services/Sample/service.py:140
-#: services/VCloud_enterprise/provider.py:36
+#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:126
+#: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
@@ -1152,7 +1142,7 @@ msgstr "Mot de passe de l'utilisateur ldap"
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
-#: services/VCloud_enterprise/provider.py:54
+#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:54
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "Délai d'attente"
@@ -1721,12 +1711,10 @@ msgid "Attribute of the group that contains the users belonging to it"
 msgstr "Attribut du groupe contenant les utilisateurs qui lui appartiennent"
 
 #: auths/SimpleLDAP/authenticator.py:71
-#| msgid "NX v3.5 (DEPRECATED)"
 msgid "SimpleLDAP (DEPRECATED)"
 msgstr "SimpleLDAP (obsolète)"
 
 #: auths/SimpleLDAP/authenticator.py:73
-#| msgid "Simple LDAP authenticator"
 msgid "Simple LDAP authenticator (DEPRECATED)"
 msgstr "Authentificateur LDAP simple (obsolète)"
 
@@ -1871,8 +1859,8 @@ msgstr "Service de base"
 #: core/services/service.py:137 core/services/service.py:146
 #: models/permissions.py:72 models/permissions.py:76
 #: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
-#: services/Sample/service.py:98 services/Sample/service.py:104
-#: services/TestService_enterprise/service.py:28
+#: services/Proxmox/service.py:197 services/Sample/service.py:98
+#: services/Sample/service.py:104 services/TestService_enterprise/service.py:28
 msgid "None"
 msgstr "Aucun"
 
@@ -1988,7 +1976,7 @@ msgstr "En cours d'utilisation"
 msgid "Load"
 msgstr "Charge"
 
-#: core/util/stats/counters.py:204
+#: core/util/stats/counters.py:204 services/Proxmox/service.py:139
 msgid "Storage"
 msgstr "Stockage"
 
@@ -2037,7 +2025,6 @@ msgid "{} exceeds maximum host name length."
 msgstr "{} dépasse la longueur maximale du nom d&#39;hôte."
 
 #: core/util/validators.py:92
-#| msgid "The basename is not a valid for a hostname"
 msgid "{} is not a valid hostname"
 msgstr "{} n&#39;est pas un nom d&#39;hôte valide"
 
@@ -2089,6 +2076,10 @@ msgstr "Requête non valide"
 #: dispatchers/wyse_enterprise/views.py:321
 msgid "Invalid credentials used"
 msgstr "Informations d'identification non valides utilisées"
+
+#: dispatchers/wyse_enterprise/views.py:256 web/util/errors.py:75
+msgid "Service not found"
+msgstr "Service introuvable"
 
 #: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
 msgid "Transport not found"
@@ -2812,7 +2803,7 @@ msgstr "Obtenu à partir des abonnements"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:98
 msgid "Creation concurrency"
@@ -2824,7 +2815,7 @@ msgstr "Simultanéité de la création"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Nombre maximal de machines virtuelles en création simultanée"
@@ -2835,7 +2826,7 @@ msgstr "Nombre maximal de machines virtuelles en création simultanée"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:99
 msgid "Removal concurrency"
@@ -2847,7 +2838,7 @@ msgstr "Simultanéité de supression"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Nombre maximal de suppression simultanée de machines virtuelles"
@@ -2922,7 +2913,7 @@ msgstr "Taille pour machines créé à partir de ce service."
 #: services/HyperV_enterprise/service.py:128
 #: services/Nutanix_enterprise/service.py:82 services/OVirt/service.py:198
 #: services/OpenNebula/service.py:118 services/OpenStack/service.py:140
-#: services/VCloud_enterprise/service.py:87
+#: services/Proxmox/service.py:160 services/VCloud_enterprise/service.py:87
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:164
 msgid "Machine Names"
 msgstr "Noms de machines"
@@ -2932,7 +2923,7 @@ msgstr "Noms de machines"
 #: services/HyperV_enterprise/service.py:131
 #: services/Nutanix_enterprise/service.py:85 services/OVirt/service.py:201
 #: services/OpenNebula/service.py:121 services/OpenStack/service.py:143
-#: services/VCloud_enterprise/service.py:87
+#: services/Proxmox/service.py:163 services/VCloud_enterprise/service.py:87
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:167
 msgid "Base name for clones from this machine"
 msgstr "Nom de base des clones de cette machine"
@@ -2942,7 +2933,7 @@ msgstr "Nom de base des clones de cette machine"
 #: services/HyperV_enterprise/service.py:138
 #: services/Nutanix_enterprise/service.py:91 services/OVirt/service.py:208
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:150
-#: services/VCloud_enterprise/service.py:88
+#: services/Proxmox/service.py:170 services/VCloud_enterprise/service.py:88
 #: services/Vmware_enterprise/service_linked.py:125 services/Xen/service.py:174
 msgid "Name Length"
 msgstr "Longueur du nom"
@@ -2952,11 +2943,10 @@ msgstr "Longueur du nom"
 #: services/HyperV_enterprise/service.py:141
 #: services/Nutanix_enterprise/service.py:94 services/OVirt/service.py:211
 #: services/OpenNebula/service.py:131 services/OpenStack/service.py:153
-#: services/VCloud_enterprise/service.py:89
-#: services/Vmware_enterprise/service_linked.py:126
-msgid "Size of numeric part for the names of these machines (between 3 and 6)"
-msgstr ""
-"Taille de la partie numérique pour les noms de ces machines (entre 3 et 6)"
+#: services/Proxmox/service.py:173 services/VCloud_enterprise/service.py:89
+#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:177
+msgid "Size of numeric part for the names of these machines"
+msgstr "Taille de la partie numérique pour les noms de ces machines"
 
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:107
@@ -3074,7 +3064,7 @@ msgstr "Test de connexion réussie"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
-#: services/Vmware_enterprise/provider.py:167
+#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:167
 msgid "Connection failed. Check connection params"
 msgstr "La connexion a échoué. Vérifiez les paramètres de connexion"
 
@@ -3099,7 +3089,8 @@ msgstr ""
 
 #: services/HyperV_enterprise/legacy/service.py:66
 #: services/HyperV_enterprise/service.py:66 services/OVirt/service.py:84
-#: services/TestService_enterprise/service.py:26 services/Xen/service.py:82
+#: services/Proxmox/service.py:84 services/TestService_enterprise/service.py:26
+#: services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
 "Nombre de machines souhaitées pour continuer à s'executer en attente d'un "
@@ -3107,7 +3098,7 @@ msgstr ""
 
 #: services/HyperV_enterprise/legacy/service.py:68
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:90
-#: services/OpenStack/service.py:88
+#: services/OpenStack/service.py:88 services/Proxmox/service.py:90
 #: services/Vmware_enterprise/service_full.py:40
 #: services/Vmware_enterprise/service_linked.py:47 services/Xen/service.py:89
 msgid "Number of desired machines to keep suspended waiting for use"
@@ -3139,6 +3130,7 @@ msgstr "Espace libre minimal en GB"
 #: services/HyperV_enterprise/legacy/service.py:99
 #: services/HyperV_enterprise/service.py:100
 #: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:140
+#: services/Proxmox/service.py:126
 #: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:126
 msgid "Base Machine"
 msgstr "Machine de base"
@@ -3146,7 +3138,7 @@ msgstr "Machine de base"
 #: services/HyperV_enterprise/legacy/service.py:101
 #: services/HyperV_enterprise/service.py:102
 #: services/Nutanix_enterprise/service.py:56 services/OVirt/service.py:142
-#: services/Xen/service.py:128
+#: services/Proxmox/service.py:133 services/Xen/service.py:128
 msgid "Service base machine"
 msgstr "Machine de base de service"
 
@@ -3170,7 +3162,9 @@ msgstr "Machine de base de service"
 #: services/OpenNebula/service.py:132 services/OpenStack/service.py:132
 #: services/OpenStack/service.py:134 services/OpenStack/service.py:135
 #: services/OpenStack/service.py:137 services/OpenStack/service.py:145
-#: services/OpenStack/service.py:155
+#: services/OpenStack/service.py:155 services/Proxmox/service.py:134
+#: services/Proxmox/service.py:143 services/Proxmox/service.py:155
+#: services/Proxmox/service.py:164 services/Proxmox/service.py:174
 #: services/Vmware_enterprise/service_full.py:68
 #: services/Vmware_enterprise/service_linked.py:110
 #: services/Vmware_enterprise/service_linked.py:114
@@ -3183,7 +3177,7 @@ msgstr "Machine de base de service"
 #: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:129
 #: services/Xen/service.py:138 services/Xen/service.py:148
 #: services/Xen/service.py:159 services/Xen/service.py:168
-#: services/Xen/service.py:179
+#: services/Xen/service.py:178
 msgid "Machine"
 msgstr "Machine"
 
@@ -3198,6 +3192,7 @@ msgstr ""
 #: services/HyperV_enterprise/legacy/service.py:116
 #: services/HyperV_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:148
+#: services/Proxmox/service.py:148
 #: services/Vmware_enterprise/service_linked.py:115 services/Xen/service.py:143
 msgid "Memory (Mb)"
 msgstr "Mémoire (Mb)"
@@ -3372,19 +3367,19 @@ msgstr ""
 "Utilisateur avec des privilèges valides sur oVirt, (formulaire « user@domain "
 "»)"
 
-#: services/OVirt/provider.py:111
+#: services/OVirt/provider.py:111 services/Proxmox/provider.py:64
 msgid "Password of the user of oVirt"
 msgstr "Mot de passe de l'utilisateur d'oVirt"
 
-#: services/OVirt/provider.py:116
+#: services/OVirt/provider.py:116 services/Proxmox/provider.py:69
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "Délai d'attente en secondes de connexion à oVirt"
 
-#: services/OVirt/service.py:63
+#: services/OVirt/service.py:63 services/Proxmox/service.py:63
 msgid "oVirt/RHEV Linked Clone"
 msgstr "oVirt/VEHR Clone lié"
 
-#: services/OVirt/service.py:67
+#: services/OVirt/service.py:67 services/Proxmox/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "Services oVirt basés sur des modèles et COW (expérimental)"
 
@@ -3402,7 +3397,8 @@ msgstr ""
 "Domaine de banque de données où les publier et de mettre des sauvegardes "
 "incrémentales"
 
-#: services/OVirt/service.py:154 services/Xen/service.py:147
+#: services/OVirt/service.py:154 services/Proxmox/service.py:154
+#: services/Xen/service.py:147
 msgid "Memory assigned to machines"
 msgstr "Mémoire attribuée aux machines"
 
@@ -3426,7 +3422,7 @@ msgstr "Activer la redirection usb pour SPICE"
 msgid "Display type (only for administration purposes)"
 msgstr "Type d'affichage (uniquement à des fins administratives)"
 
-#: services/OVirt/service.py:229 services/Xen/service.py:195
+#: services/OVirt/service.py:229 services/Xen/service.py:194
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "La mémoire minimale autorisée est de 256 Mo."
 
@@ -3752,7 +3748,6 @@ msgstr "IP "
 
 #: services/PhysicalMachines/service_multi.py:59
 #: services/Vmware_enterprise/service_fixed.py:54
-#| msgid "Service region"
 msgid "Service Token"
 msgstr "Jeton de service"
 
@@ -3793,6 +3788,74 @@ msgstr "Statique IP unique"
 #: services/PhysicalMachines/service_single.py:58
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "Ce service fournit un accès aux machines sous tension par IP"
+
+#: services/Proxmox/helpers.py:59
+msgid " shared"
+msgstr "partagé"
+
+#: services/Proxmox/helpers.py:59
+msgid " (bound to {})"
+msgstr "(lié à {})"
+
+#: services/Proxmox/provider.py:55
+msgid "Proxmox Platform Provider"
+msgstr "Fournisseur de plate-forme Proxmox"
+
+#: services/Proxmox/provider.py:57
+msgid "Proxmox platform service provider"
+msgstr "Fournisseur de services de plate-forme Proxmox"
+
+#: services/Proxmox/provider.py:60
+msgid "Proxmox Server IP or Hostname"
+msgstr "IP ou nom d&#39;hôte du serveur Proxmox"
+
+#: services/Proxmox/provider.py:61
+msgid "Proxmox API port (default is 8006)"
+msgstr "Port API Proxmox (par défaut 8006)"
+
+#: services/Proxmox/provider.py:63
+msgid ""
+"User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
+msgstr ""
+"Utilisateur disposant de privilèges valides sur Proxmox, (utilisez le "
+"formulaire \"user @ authentifier\")"
+
+#: services/Proxmox/publication.py:93
+#: services/Vmware_enterprise/publication.py:67
+msgid "Publication"
+msgstr "Publication"
+
+#: services/Proxmox/publication.py:94
+#: services/Vmware_enterprise/publication.py:68
+#, python-brace-format
+msgid "UDS Publication for {0} created at {1}"
+msgstr "Publication UDS pour {0} créée à {1}"
+
+#: services/Proxmox/service.py:112
+msgid "Pool that will contain UDS created vms"
+msgstr "Pool qui contiendra les vms créés par UDS"
+
+#: services/Proxmox/service.py:119
+msgid "HA"
+msgstr "HA"
+
+#: services/Proxmox/service.py:121
+msgid "Select if HA is enabled and HA group for machines of this service"
+msgstr ""
+"Sélectionnez si HA est activé et groupe HA pour les machines de ce service"
+
+#: services/Proxmox/service.py:142
+msgid "Storage for publications & machines."
+msgstr "Stockage pour publications et machines."
+
+#: services/Proxmox/service.py:185
+msgid "The minimum allowed memory is 128 Mb"
+msgstr "La mémoire minimale autorisée est de 128 Mo"
+
+#: services/Proxmox/service.py:200
+#| msgid "Enabled"
+msgid "Disabled"
+msgstr "désactivé"
 
 #: services/RDS_enterprise/provider.py:41
 msgid "RDS Platform Provider"
@@ -3867,12 +3930,10 @@ msgstr ""
 #: services/RDS_enterprise/provider.py:138
 #: services/RDS_enterprise/provider.py:146
 #: services/RDS_enterprise/provider.py:154
-#| msgid "User name"
 msgid "AD User management"
 msgstr "Gestion des utilisateurs AD"
 
 #: services/RDS_enterprise/provider.py:93
-#| msgid "Server"
 msgid "AD Server"
 msgstr "Serveur AD"
 
@@ -3893,9 +3954,6 @@ msgid "AD Server branch where users will be created by UDS"
 msgstr "Branche AD Server où les utilisateurs seront créés par UDS"
 
 #: services/RDS_enterprise/provider.py:119
-#| msgid ""
-#| "Username with read privileges on the base selected (use USER@DOMAIN.DOM "
-#| "form for this)"
 msgid ""
 "Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
 msgstr ""
@@ -3903,7 +3961,6 @@ msgstr ""
 "Utilisez le formulaire USER@DOMAIN.XXX."
 
 #: services/RDS_enterprise/provider.py:127
-#| msgid "Password of the user of HyperV"
 msgid "Password of the user with privileges"
 msgstr "Mot de passe de l&#39;utilisateur avec privilèges"
 
@@ -3920,7 +3977,6 @@ msgstr ""
 "nom d&#39;utilisateur d&#39;origine UDS. 4 caractères maximum"
 
 #: services/RDS_enterprise/provider.py:143
-#| msgid "Domain"
 msgid "AD Domain"
 msgstr "Domaine AD"
 
@@ -3933,7 +3989,6 @@ msgstr ""
 "example.local). Si vide, sera déduit du nom d&#39;utilisateur"
 
 #: services/RDS_enterprise/provider.py:151
-#| msgid "UDS Group"
 msgid "AD Group"
 msgstr "Groupe AD"
 
@@ -3955,7 +4010,8 @@ msgstr ""
 
 #: services/RDS_enterprise/provider.py:169
 msgid "AD User Management: you must provide the user prefix."
-msgstr "Gestion des utilisateurs AD: vous devez fournir le préfixe utilisateur."
+msgstr ""
+"Gestion des utilisateurs AD: vous devez fournir le préfixe utilisateur."
 
 #: services/RDS_enterprise/provider.py:172
 msgid "AD User Management: the username should be in USER@DOMAIN form."
@@ -3986,7 +4042,6 @@ msgstr ""
 "maintenant"
 
 #: services/RDS_enterprise/provider.py:249
-#| msgid "Connection failed: {}"
 msgid "Connection to {}, port {} failed."
 msgstr "La connexion à {}, le port {} a échoué."
 
@@ -4007,7 +4062,6 @@ msgstr ""
 "activée"
 
 #: services/RDS_enterprise/provider.py:274
-#| msgid "Connection speed"
 msgid "Connectivity test passed"
 msgstr "Test de connectivité réussi"
 
@@ -4339,15 +4393,6 @@ msgstr "Fournit la connexion à des Services de centre virtuel"
 msgid "Connection params ok"
 msgstr "Connexion params ok"
 
-#: services/Vmware_enterprise/publication.py:67
-msgid "Publication"
-msgstr "Publication"
-
-#: services/Vmware_enterprise/publication.py:68
-#, python-brace-format
-msgid "UDS Publication for {0} created at {1}"
-msgstr "Publication UDS pour {0} créée à {1}"
-
 #: services/Vmware_enterprise/service_fixed.py:32
 msgid "Fixed Machines Pool"
 msgstr "Pool de Machines fixes"
@@ -4386,7 +4431,6 @@ msgid "Resource Pool containing base machines"
 msgstr "Pool de ressources contenant des machines de base"
 
 #: services/Vmware_enterprise/service_fixed.py:89
-#| msgid "Base machines for this service"
 msgid "Machines for this service"
 msgstr "Machines pour ce service"
 
@@ -4553,12 +4597,6 @@ msgstr "Ombre"
 #: services/Xen/service.py:158
 msgid "Shadow memory multiplier (memory overcommit)"
 msgstr "Multiplicateur de mémoire fantôme (dépassement de mémoire)"
-
-#: services/Xen/service.py:178
-msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
-msgstr ""
-"Longueur de la partie numérique pour les noms de cette machines (entre 3 et "
-"6)"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -5586,36 +5624,36 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Données invalides"
 
-#: web/util/configjs.py:118
+#: web/util/configjs.py:119
 msgid "Access limited by calendar"
 msgstr "Accès limité par calendrier"
 
-#: web/util/configjs.py:144
+#: web/util/configjs.py:145
 msgid "Windows client"
 msgstr "Client Windows"
 
-#: web/util/configjs.py:145
+#: web/util/configjs.py:146
 msgid "Mac OS X client"
 msgstr "Client Mac OS X"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:147
 msgid "Debian based Linux client"
 msgstr "Client Linux basé sur Debian"
 
-#: web/util/configjs.py:146 web/util/configjs.py:147 web/util/configjs.py:148
-#: web/util/configjs.py:149
+#: web/util/configjs.py:147 web/util/configjs.py:148 web/util/configjs.py:149
+#: web/util/configjs.py:150
 msgid "(requires Python-2.7)"
 msgstr "(nécessite Python-2,7)"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:148
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Client Linux basé sur Red Hat (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:149
 msgid "Suse based Linux client"
 msgstr "Client Linux basé sur Suse"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:150
 msgid "Generic .tar.gz Linux client"
 msgstr "Client Linux générique .tar.gz"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,11 +149,11 @@ msgid "Error saving: "
 msgstr ""
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-msgid "Save error"
+msgid "Error saving element"
 msgstr ""
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-msgid "Communication error"
+msgid "Error handling your request"
 msgstr ""
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
@@ -1491,11 +1491,6 @@ msgid "Service is in maintenance"
 msgstr ""
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr ""
@@ -1531,6 +1526,10 @@ msgstr ""
 
 #: static/modern/main.js:1
 msgid "any"
+msgstr ""
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
 msgstr ""
 
 #: static/modern/main.js:1

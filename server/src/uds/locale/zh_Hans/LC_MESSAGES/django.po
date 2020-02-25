@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-01-31 11:09+0000\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -38,7 +38,7 @@ msgstr "名称"
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
-#: REST/methods/services.py:221 REST/methods/services_pool_groups.py:64
+#: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
 #: REST/model.py:157
@@ -114,7 +114,6 @@ msgid "User service not found"
 msgstr "找不到用户服务"
 
 #: REST/methods/actor_token.py:51
-#| msgid "Actor version"
 msgid "Actor tokens"
 msgstr "演员代币"
 
@@ -125,7 +124,6 @@ msgid "Date"
 msgstr "日期"
 
 #: REST/methods/actor_token.py:55
-#| msgid "Used by"
 msgid "Issued by"
 msgstr "由...发出"
 
@@ -134,7 +132,6 @@ msgid "Origin"
 msgstr "起源"
 
 #: REST/methods/actor_token.py:57
-#| msgid "Host"
 msgid "Hostname"
 msgstr "主机名"
 
@@ -151,7 +148,6 @@ msgid "Run Once"
 msgstr "运行一次"
 
 #: REST/methods/actor_token.py:61
-#| msgid "Cache level"
 msgid "Log level"
 msgstr "日志级别"
 
@@ -168,7 +164,7 @@ msgid "Id"
 msgstr "ID"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:71 REST/methods/services.py:222
+#: REST/methods/providers.py:71 REST/methods/services.py:223
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr "类型"
@@ -236,7 +232,7 @@ msgstr "一切"
 msgid "Duration"
 msgstr "持续时间"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:187
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:188
 msgid "Element already exists (duplicate key error)"
 msgstr "元素已存在（重复键错误）"
 
@@ -329,7 +325,6 @@ msgid "If active, metapool will be visible for users"
 msgstr "如果处于活动状态，则元数将对用户可见"
 
 #: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:276
-#| msgid "Can't access idp metadata"
 msgid "Calendar access denied text"
 msgstr "日历访问被拒绝的文本"
 
@@ -346,7 +341,7 @@ msgstr "服务池"
 msgid "Service Pool name"
 msgstr "服务池名称"
 
-#: REST/methods/meta_service_pools.py:87
+#: REST/methods/meta_service_pools.py:87 services/Proxmox/service.py:200
 msgid "Enabled"
 msgstr "启用"
 
@@ -362,7 +357,7 @@ msgstr "创立日期"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_usage_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/usage_by_pool.py:60
+#: reports/stats/usage_by_pool.py:60 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 msgid "Pool"
@@ -516,11 +511,6 @@ msgstr "用户服务"
 msgid "Can't delete providers with services"
 msgstr "无法删除具有服务的提供商"
 
-#: REST/methods/providers.py:142 dispatchers/wyse_enterprise/views.py:256
-#: web/util/errors.py:75
-msgid "Service not found"
-msgstr "无法提供服务"
-
 #: REST/methods/proxies.py:57
 msgid "Proxies (Experimental)"
 msgstr "代理（实验性）"
@@ -541,7 +531,7 @@ msgstr "检查证书"
 #: services/HyperV_enterprise/provider.py:60
 #: services/Nutanix_enterprise/provider.py:36 services/OVirt/provider.py:109
 #: services/OpenGnsys/provider.py:95 services/OpenNebula/provider.py:77
-#: services/OpenStack/provider_legacy.py:102
+#: services/OpenStack/provider_legacy.py:102 services/Proxmox/provider.py:60
 #: services/VCloud_enterprise/provider.py:32
 #: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:94
 msgid "Host"
@@ -557,7 +547,7 @@ msgstr "将充当代理的服务器（IP或FQDN）。"
 #: services/HyperV_enterprise/provider.py:116
 #: services/Nutanix_enterprise/provider.py:37 services/OpenGnsys/provider.py:96
 #: services/OpenNebula/provider.py:78 services/OpenStack/provider_legacy.py:103
-#: services/RDS_enterprise/provider.py:101
+#: services/Proxmox/provider.py:61 services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
 #: services/Vmware_enterprise/provider.py:42
 msgid "Port"
@@ -613,41 +603,41 @@ msgstr "描述"
 msgid "Generates"
 msgstr "生成"
 
-#: REST/methods/services.py:186
+#: REST/methods/services.py:187
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr "服务令牌似乎正在被其他服务使用。请选择一个新的。"
 
-#: REST/methods/services.py:191
+#: REST/methods/services.py:192
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "输入错误：{0}"
 
-#: REST/methods/services.py:214
+#: REST/methods/services.py:215
 msgid "Services of {}"
 msgstr "{}的服务"
 
-#: REST/methods/services.py:216
+#: REST/methods/services.py:217
 msgid "Current services"
 msgstr "目前的服务"
 
-#: REST/methods/services.py:220
+#: REST/methods/services.py:221
 msgid "Service name"
 msgstr "服务名称"
-
-#: REST/methods/services.py:223 REST/methods/services.py:266
-msgid "Proxy"
-msgstr "代理"
 
 #: REST/methods/services.py:224
 msgid "Services Pools"
 msgstr "服务池"
 
-#: REST/methods/services.py:267
+#: REST/methods/services.py:227 REST/methods/services.py:267
+msgid "Proxy"
+msgstr "代理"
+
+#: REST/methods/services.py:268
 msgid "Proxy for services behind a firewall"
 msgstr "防火墙后面的服务代理"
 
-#: REST/methods/services.py:269 REST/methods/services_pools.py:232
+#: REST/methods/services.py:270 REST/methods/services_pools.py:232
 #: REST/methods/services_pools.py:240 REST/methods/services_pools.py:248
 #: REST/methods/services_pools.py:323 REST/methods/services_pools.py:331
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:93
@@ -659,12 +649,12 @@ msgstr "防火墙后面的服务代理"
 msgid "Advanced"
 msgstr "高级"
 
-#: REST/methods/services.py:300 REST/methods/users_groups.py:216
+#: REST/methods/services.py:307 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "With errors"
 msgstr "有错误"
 
-#: REST/methods/services.py:300 REST/methods/users_groups.py:216
+#: REST/methods/services.py:307 REST/methods/users_groups.py:216
 #: REST/methods/users_groups.py:383
 msgid "Ok"
 msgstr "好"
@@ -945,7 +935,7 @@ msgstr "目前的用户"
 #: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
 #: services/OpenGnsys/provider.py:98 services/OpenNebula/provider.py:80
 #: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
-#: services/RDS_enterprise/provider.py:118
+#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
@@ -1088,8 +1078,8 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
 #: services/OpenGnsys/provider.py:99 services/OpenNebula/provider.py:81
 #: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
-#: services/RDS_enterprise/provider.py:126 services/Sample/service.py:140
-#: services/VCloud_enterprise/provider.py:36
+#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:126
+#: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
@@ -1115,7 +1105,7 @@ msgstr "ldap用户的密码"
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
-#: services/VCloud_enterprise/provider.py:54
+#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:54
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "超时"
@@ -1639,12 +1629,10 @@ msgid "Attribute of the group that contains the users belonging to it"
 msgstr "包含属于它的用户的组的属性"
 
 #: auths/SimpleLDAP/authenticator.py:71
-#| msgid "NX v3.5 (DEPRECATED)"
 msgid "SimpleLDAP (DEPRECATED)"
 msgstr "SimpleLDAP（不建议使用）"
 
 #: auths/SimpleLDAP/authenticator.py:73
-#| msgid "Simple LDAP authenticator"
 msgid "Simple LDAP authenticator (DEPRECATED)"
 msgstr "简单LDAP身份验证器（不推荐使用）"
 
@@ -1776,8 +1764,8 @@ msgstr "基础服务"
 #: core/services/service.py:137 core/services/service.py:146
 #: models/permissions.py:72 models/permissions.py:76
 #: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
-#: services/Sample/service.py:98 services/Sample/service.py:104
-#: services/TestService_enterprise/service.py:28
+#: services/Proxmox/service.py:197 services/Sample/service.py:98
+#: services/Sample/service.py:104 services/TestService_enterprise/service.py:28
 msgid "None"
 msgstr "没有"
 
@@ -1893,7 +1881,7 @@ msgstr "正在使用"
 msgid "Load"
 msgstr "加载"
 
-#: core/util/stats/counters.py:204
+#: core/util/stats/counters.py:204 services/Proxmox/service.py:139
 msgid "Storage"
 msgstr "存储"
 
@@ -1941,7 +1929,6 @@ msgid "{} exceeds maximum host name length."
 msgstr "{}超过了主机名的最大长度。"
 
 #: core/util/validators.py:92
-#| msgid "The basename is not a valid for a hostname"
 msgid "{} is not a valid hostname"
 msgstr "{}不是有效的主机名"
 
@@ -1994,6 +1981,10 @@ msgstr "非法请求"
 #: dispatchers/wyse_enterprise/views.py:321
 msgid "Invalid credentials used"
 msgstr "使用的凭据无效"
+
+#: dispatchers/wyse_enterprise/views.py:256 web/util/errors.py:75
+msgid "Service not found"
+msgstr "无法提供服务"
 
 #: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
 msgid "Transport not found"
@@ -2688,7 +2679,7 @@ msgstr "从订阅中获得"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:98
 msgid "Creation concurrency"
@@ -2700,7 +2691,7 @@ msgstr "创建并发"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr "最大并发创建VM的数量"
@@ -2711,7 +2702,7 @@ msgstr "最大并发创建VM的数量"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:99
 msgid "Removal concurrency"
@@ -2723,7 +2714,7 @@ msgstr "删除并发"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr "最大并发删除VM数"
@@ -2795,7 +2786,7 @@ msgstr "从此服务创建的计算机的大小。"
 #: services/HyperV_enterprise/service.py:128
 #: services/Nutanix_enterprise/service.py:82 services/OVirt/service.py:198
 #: services/OpenNebula/service.py:118 services/OpenStack/service.py:140
-#: services/VCloud_enterprise/service.py:87
+#: services/Proxmox/service.py:160 services/VCloud_enterprise/service.py:87
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:164
 msgid "Machine Names"
 msgstr "机器名称"
@@ -2805,7 +2796,7 @@ msgstr "机器名称"
 #: services/HyperV_enterprise/service.py:131
 #: services/Nutanix_enterprise/service.py:85 services/OVirt/service.py:201
 #: services/OpenNebula/service.py:121 services/OpenStack/service.py:143
-#: services/VCloud_enterprise/service.py:87
+#: services/Proxmox/service.py:163 services/VCloud_enterprise/service.py:87
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:167
 msgid "Base name for clones from this machine"
 msgstr "来自此计算机的克隆的基本名称"
@@ -2815,7 +2806,7 @@ msgstr "来自此计算机的克隆的基本名称"
 #: services/HyperV_enterprise/service.py:138
 #: services/Nutanix_enterprise/service.py:91 services/OVirt/service.py:208
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:150
-#: services/VCloud_enterprise/service.py:88
+#: services/Proxmox/service.py:170 services/VCloud_enterprise/service.py:88
 #: services/Vmware_enterprise/service_linked.py:125 services/Xen/service.py:174
 msgid "Name Length"
 msgstr "名称长度"
@@ -2825,10 +2816,10 @@ msgstr "名称长度"
 #: services/HyperV_enterprise/service.py:141
 #: services/Nutanix_enterprise/service.py:94 services/OVirt/service.py:211
 #: services/OpenNebula/service.py:131 services/OpenStack/service.py:153
-#: services/VCloud_enterprise/service.py:89
-#: services/Vmware_enterprise/service_linked.py:126
-msgid "Size of numeric part for the names of these machines (between 3 and 6)"
-msgstr "这些机器名称的数字部分大小（3到6之间）"
+#: services/Proxmox/service.py:173 services/VCloud_enterprise/service.py:89
+#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:177
+msgid "Size of numeric part for the names of these machines"
+msgstr "这些机器名称的数字部分的大小"
 
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:107
@@ -2941,7 +2932,7 @@ msgstr "连接测试成功"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
-#: services/Vmware_enterprise/provider.py:167
+#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:167
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
 
@@ -2964,13 +2955,14 @@ msgstr "基于模板和差异磁盘的超级服务（实验性）"
 
 #: services/HyperV_enterprise/legacy/service.py:66
 #: services/HyperV_enterprise/service.py:66 services/OVirt/service.py:84
-#: services/TestService_enterprise/service.py:26 services/Xen/service.py:82
+#: services/Proxmox/service.py:84 services/TestService_enterprise/service.py:26
+#: services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "要继续运行等待用户的所需机器数"
 
 #: services/HyperV_enterprise/legacy/service.py:68
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:90
-#: services/OpenStack/service.py:88
+#: services/OpenStack/service.py:88 services/Proxmox/service.py:90
 #: services/Vmware_enterprise/service_full.py:40
 #: services/Vmware_enterprise/service_linked.py:47 services/Xen/service.py:89
 msgid "Number of desired machines to keep suspended waiting for use"
@@ -3001,6 +2993,7 @@ msgstr "GB中最小的可用空间"
 #: services/HyperV_enterprise/legacy/service.py:99
 #: services/HyperV_enterprise/service.py:100
 #: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:140
+#: services/Proxmox/service.py:126
 #: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:126
 msgid "Base Machine"
 msgstr "基础机器"
@@ -3008,7 +3001,7 @@ msgstr "基础机器"
 #: services/HyperV_enterprise/legacy/service.py:101
 #: services/HyperV_enterprise/service.py:102
 #: services/Nutanix_enterprise/service.py:56 services/OVirt/service.py:142
-#: services/Xen/service.py:128
+#: services/Proxmox/service.py:133 services/Xen/service.py:128
 msgid "Service base machine"
 msgstr "服务基础机器"
 
@@ -3032,7 +3025,9 @@ msgstr "服务基础机器"
 #: services/OpenNebula/service.py:132 services/OpenStack/service.py:132
 #: services/OpenStack/service.py:134 services/OpenStack/service.py:135
 #: services/OpenStack/service.py:137 services/OpenStack/service.py:145
-#: services/OpenStack/service.py:155
+#: services/OpenStack/service.py:155 services/Proxmox/service.py:134
+#: services/Proxmox/service.py:143 services/Proxmox/service.py:155
+#: services/Proxmox/service.py:164 services/Proxmox/service.py:174
 #: services/Vmware_enterprise/service_full.py:68
 #: services/Vmware_enterprise/service_linked.py:110
 #: services/Vmware_enterprise/service_linked.py:114
@@ -3045,7 +3040,7 @@ msgstr "服务基础机器"
 #: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:129
 #: services/Xen/service.py:138 services/Xen/service.py:148
 #: services/Xen/service.py:159 services/Xen/service.py:168
-#: services/Xen/service.py:179
+#: services/Xen/service.py:178
 msgid "Machine"
 msgstr "机"
 
@@ -3058,6 +3053,7 @@ msgstr "如果在计算机中找到多个接口，请在此网络上使用一个
 #: services/HyperV_enterprise/legacy/service.py:116
 #: services/HyperV_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:148
+#: services/Proxmox/service.py:148
 #: services/Vmware_enterprise/service_linked.py:115 services/Xen/service.py:143
 msgid "Memory (Mb)"
 msgstr "记忆（Mb）"
@@ -3214,19 +3210,19 @@ msgstr "oVirt服务器IP或主机名"
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
 msgstr "在oVirt上拥有有效权限的用户（使用“user @ domain”表单）"
 
-#: services/OVirt/provider.py:111
+#: services/OVirt/provider.py:111 services/Proxmox/provider.py:64
 msgid "Password of the user of oVirt"
 msgstr "oVirt用户的密码"
 
-#: services/OVirt/provider.py:116
+#: services/OVirt/provider.py:116 services/Proxmox/provider.py:69
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "连接到oVirt的超时时间"
 
-#: services/OVirt/service.py:63
+#: services/OVirt/service.py:63 services/Proxmox/service.py:63
 msgid "oVirt/RHEV Linked Clone"
 msgstr "oVirt / RHEV链接克隆"
 
-#: services/OVirt/service.py:67
+#: services/OVirt/service.py:67 services/Proxmox/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "基于模板和COW的oVirt服务（实验性）"
 
@@ -3242,7 +3238,8 @@ msgstr "数据存储域"
 msgid "Datastore domain where to publish and put incrementals"
 msgstr "数据存储域在哪里发布和放置增量"
 
-#: services/OVirt/service.py:154 services/Xen/service.py:147
+#: services/OVirt/service.py:154 services/Proxmox/service.py:154
+#: services/Xen/service.py:147
 msgid "Memory assigned to machines"
 msgstr "分配给机器的内存"
 
@@ -3266,7 +3263,7 @@ msgstr "为SPICE启用USB重定向"
 msgid "Display type (only for administration purposes)"
 msgstr "显示类型（仅用于管理目的）"
 
-#: services/OVirt/service.py:229 services/Xen/service.py:195
+#: services/OVirt/service.py:229 services/Xen/service.py:194
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "允许的最小内存为256 Mb"
 
@@ -3572,7 +3569,6 @@ msgstr "IP"
 
 #: services/PhysicalMachines/service_multi.py:59
 #: services/Vmware_enterprise/service_fixed.py:54
-#| msgid "Service region"
 msgid "Service Token"
 msgstr "服务令牌"
 
@@ -3611,6 +3607,71 @@ msgstr "静态单IP"
 #: services/PhysicalMachines/service_single.py:58
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
+
+#: services/Proxmox/helpers.py:59
+msgid " shared"
+msgstr "共享"
+
+#: services/Proxmox/helpers.py:59
+msgid " (bound to {})"
+msgstr "（势必 {}）"
+
+#: services/Proxmox/provider.py:55
+msgid "Proxmox Platform Provider"
+msgstr "Proxmox平台提供商"
+
+#: services/Proxmox/provider.py:57
+msgid "Proxmox platform service provider"
+msgstr "Proxmox平台服务提供商"
+
+#: services/Proxmox/provider.py:60
+msgid "Proxmox Server IP or Hostname"
+msgstr "Proxmox服务器IP或主机名"
+
+#: services/Proxmox/provider.py:61
+msgid "Proxmox API port (default is 8006)"
+msgstr "Proxmox API端口（默认为8006）"
+
+#: services/Proxmox/provider.py:63
+msgid ""
+"User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
+msgstr "在Proxmox上具有有效特权的用户（使用“ user @ authenticator”表格）"
+
+#: services/Proxmox/publication.py:93
+#: services/Vmware_enterprise/publication.py:67
+msgid "Publication"
+msgstr "出版物"
+
+#: services/Proxmox/publication.py:94
+#: services/Vmware_enterprise/publication.py:68
+#, python-brace-format
+msgid "UDS Publication for {0} created at {1}"
+msgstr "在{1}创建的{0}的UDS发布"
+
+#: services/Proxmox/service.py:112
+msgid "Pool that will contain UDS created vms"
+msgstr "包含UDS创建的VM的池"
+
+#: services/Proxmox/service.py:119
+msgid "HA"
+msgstr "哈"
+
+#: services/Proxmox/service.py:121
+msgid "Select if HA is enabled and HA group for machines of this service"
+msgstr "选择是否启用此服务的计算机的HA以及HA组"
+
+#: services/Proxmox/service.py:142
+msgid "Storage for publications & machines."
+msgstr "出版物和机器的存储。"
+
+#: services/Proxmox/service.py:185
+msgid "The minimum allowed memory is 128 Mb"
+msgstr "最小允许内存为128 Mb"
+
+#: services/Proxmox/service.py:200
+#| msgid "Enabled"
+msgid "Disabled"
+msgstr "残障人士"
 
 #: services/RDS_enterprise/provider.py:41
 msgid "RDS Platform Provider"
@@ -3665,7 +3726,9 @@ msgstr "用户在AD上自动创建"
 msgid ""
 "If active, uds will mirror the user on your active director. WARNING!! "
 "Existing coincident users may be deleted!."
-msgstr "如果处于活动状态，uds会将用户镜像到您的活动控制器上。警告！！现有的重合用户可能会被删除！。"
+msgstr ""
+"如果处于活动状态，uds会将用户镜像到您的活动控制器上。警告！！现有的重合用户可"
+"能会被删除！。"
 
 #: services/RDS_enterprise/provider.py:88
 #: services/RDS_enterprise/provider.py:96
@@ -3676,12 +3739,10 @@ msgstr "如果处于活动状态，uds会将用户镜像到您的活动控制器
 #: services/RDS_enterprise/provider.py:138
 #: services/RDS_enterprise/provider.py:146
 #: services/RDS_enterprise/provider.py:154
-#| msgid "User name"
 msgid "AD User management"
 msgstr "AD用户管理"
 
 #: services/RDS_enterprise/provider.py:93
-#| msgid "Server"
 msgid "AD Server"
 msgstr "广告服务器"
 
@@ -3702,15 +3763,11 @@ msgid "AD Server branch where users will be created by UDS"
 msgstr "UDS将在其中创建用户的AD Server分支"
 
 #: services/RDS_enterprise/provider.py:119
-#| msgid ""
-#| "Username with read privileges on the base selected (use USER@DOMAIN.DOM "
-#| "form for this)"
 msgid ""
 "Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
 msgstr "具有创建/删除帐户特权的用户名。使用USER@DOMAIN.XXX表单。"
 
 #: services/RDS_enterprise/provider.py:127
-#| msgid "Password of the user of HyperV"
 msgid "Password of the user with privileges"
 msgstr "具有特权的用户密码"
 
@@ -3722,10 +3779,11 @@ msgstr "创建用户的前缀"
 msgid ""
 "User will be created on AD with the format \"PREFIX...\", where ... will be "
 "the original UDS own username. Max 4 characters"
-msgstr "将在AD上以“ PREFIX ...”格式创建用户，其中...将是原始UDS自己的用户名。最多4个字符"
+msgstr ""
+"将在AD上以“ PREFIX ...”格式创建用户，其中...将是原始UDS自己的用户名。最多4个"
+"字符"
 
 #: services/RDS_enterprise/provider.py:143
-#| msgid "Domain"
 msgid "AD Domain"
 msgstr "广告域"
 
@@ -3733,10 +3791,10 @@ msgstr "广告域"
 msgid ""
 "Domain for newly created users (i.e. example.com, example.local). If empty, "
 "will be deduced from username"
-msgstr "新创建用户的域（例如example.com，example.local）。如果为空，将从用户名中推导"
+msgstr ""
+"新创建用户的域（例如example.com，example.local）。如果为空，将从用户名中推导"
 
 #: services/RDS_enterprise/provider.py:151
-#| msgid "UDS Group"
 msgid "AD Group"
 msgstr "广告组"
 
@@ -3777,7 +3835,6 @@ msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "错误：正在使用主机{}上的用户{}，目前无法删除"
 
 #: services/RDS_enterprise/provider.py:249
-#| msgid "Connection failed: {}"
 msgid "Connection to {}, port {} failed."
 msgstr "与{}，端口{}的连接失败。"
 
@@ -3794,7 +3851,6 @@ msgid "Server {} is not accesible and Server checking is enabled"
 msgstr "服务器{}无法访问并且已启用服务器检查"
 
 #: services/RDS_enterprise/provider.py:274
-#| msgid "Connection speed"
 msgid "Connectivity test passed"
 msgstr "连接测试通过"
 
@@ -4119,15 +4175,6 @@ msgstr "提供与Virtual Center Services的连接"
 msgid "Connection params ok"
 msgstr "连接参数确定"
 
-#: services/Vmware_enterprise/publication.py:67
-msgid "Publication"
-msgstr "出版物"
-
-#: services/Vmware_enterprise/publication.py:68
-#, python-brace-format
-msgid "UDS Publication for {0} created at {1}"
-msgstr "在{1}创建的{0}的UDS发布"
-
 #: services/Vmware_enterprise/service_fixed.py:32
 msgid "Fixed Machines Pool"
 msgstr "固定机器池"
@@ -4164,7 +4211,6 @@ msgid "Resource Pool containing base machines"
 msgstr "包含基本机器的资源池"
 
 #: services/Vmware_enterprise/service_fixed.py:89
-#| msgid "Base machines for this service"
 msgid "Machines for this service"
 msgstr "这项服务的机器"
 
@@ -4321,10 +4367,6 @@ msgstr "阴影"
 #: services/Xen/service.py:158
 msgid "Shadow memory multiplier (memory overcommit)"
 msgstr "影子记忆倍增器（内存过量使用）"
-
-#: services/Xen/service.py:178
-msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
-msgstr "此机器名称的数字部分长度（beetwen 3和6"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -5291,36 +5333,36 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:118
+#: web/util/configjs.py:119
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:144
+#: web/util/configjs.py:145
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:145
+#: web/util/configjs.py:146
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:147
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:146 web/util/configjs.py:147 web/util/configjs.py:148
-#: web/util/configjs.py:149
+#: web/util/configjs.py:147 web/util/configjs.py:148 web/util/configjs.py:149
+#: web/util/configjs.py:150
 msgid "(requires Python-2.7)"
 msgstr "（需要Python-2.7）"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:148
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "基于Red Hat的Linux客户端（RH，Fedora，Centos，...）"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:149
 msgid "Suse based Linux client"
 msgstr "基于Suse的Linux客户端"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:150
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 

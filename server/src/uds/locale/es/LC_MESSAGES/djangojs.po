@@ -4,7 +4,7 @@
 #
 # Translators:
 # , 2014
-# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2018,2020
+# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2020
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
 # blafuente <blafuente@virtualcable.es>, 2014
 # blafuente <blafuente@virtualcable.es>, 2014-2015
@@ -13,13 +13,14 @@
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Luis Fagundez <lframses@gmail.com>, 2018
 # Víctor Alonso <valonso@virtualcable.net>, 2020
+# Víctor Alonso <valonso@virtualcable.net>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 11:33+0100\n"
-"PO-Revision-Date: 2020-02-05 11:27+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>\n"
+"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -160,12 +161,12 @@ msgid "Error saving: "
 msgstr "Error al guardar:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-msgid "Save error"
-msgstr "Guardar error"
+msgid "Error saving element"
+msgstr "Error al guardar el elemento"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-msgid "Communication error"
-msgstr "Error de comunicación"
+msgid "Error handling your request"
+msgstr "Error al manejar su solicitud"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
@@ -561,17 +562,14 @@ msgid "Delete group"
 msgstr "Borrar grupo"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-#| msgid "OS manager"
 msgid "New OS Manager"
 msgstr "Nuevo administrador del sistema operativo"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-#| msgid "OS manager"
 msgid "Edit OS Manager"
 msgstr "Editar OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
-#| msgid "Delete image"
 msgid "Delete OS Manager"
 msgstr "Eliminar OS Manager"
 
@@ -1440,7 +1438,6 @@ msgstr "Habilitado?"
 
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
-#| msgid "No entries found"
 msgid "Errors found"
 msgstr "Errores encontrados"
 
@@ -1513,12 +1510,6 @@ msgid "Service is in maintenance"
 msgstr "El servicio está en mantenimiento."
 
 #: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr ""
-"Este servicio actualmente no es accesible debido a restricciones de horario."
-
-#: static/modern/main-es5.js:1 static/modern/main.js:1
 #: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "Advertencia"
@@ -1555,6 +1546,11 @@ msgstr "root"
 #: static/modern/main.js:1
 msgid "any"
 msgstr "alguna"
+
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr ""
+"Este servicio actualmente no es accesible debido a restricciones de horario."
 
 #: static/modern/main.js:1
 msgid "Please, retry access in a while."
