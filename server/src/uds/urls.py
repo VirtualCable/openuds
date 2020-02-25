@@ -103,7 +103,7 @@ urlpatterns = [
 
     re_path(r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9-]+)$', uds.web.views.userServiceEnabler, name='webapi.enabler'),
 
-    re_path(r'^uds/webapi/action/(?P<idService>.+)/(?P<action>[a-zA-Z0-9-]+)$', uds.web.views.action, name='webapi.action'),
+    re_path(r'^uds/webapi/action/(?P<idService>.+)/(?P<actionString>[a-zA-Z0-9-]+)$', uds.web.views.action, name='webapi.action'),
 
     # Services list, ...
     path(r'uds/webapi/services', uds.web.views.modern.servicesData, name='webapi.services'),

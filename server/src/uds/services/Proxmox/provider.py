@@ -153,6 +153,11 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     def getTaskInfo(self, node: str, upid: str) -> client.types.TaskStatus:
         return self.__getApi().getTask(node, upid)
 
+    def enableHA(self, vmId: int) -> None:
+        self.__getApi().enableVmHA(vmId)
+
+    def disableHA(self, vmId: int) -> None:
+        self.__getApi().disableVmHA(vmId)
 
     def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         # TODO: maybe proxmox also supports "spice"? for future release...

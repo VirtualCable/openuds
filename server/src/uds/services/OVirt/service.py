@@ -208,7 +208,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         label=_('Name Length'),
         defvalue=5,
         order=116,
-        tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
+        tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
         required=True
     )

@@ -174,8 +174,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         label=_('Name Length'),
         defvalue=5,
         order=115,
-        tooltip=_(
-            'Length of numeric part for the names of this machines (beetwen 3 and 6'),
+        tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
         required=True
     )

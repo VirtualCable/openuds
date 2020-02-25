@@ -52,6 +52,7 @@ class NodeStats(typing.NamedTuple):
     mem: int
     maxmem: int
     cpu: float
+    maxcpu: int
 
     @staticmethod
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'NodeStats':
@@ -60,7 +61,7 @@ class NodeStats(typing.NamedTuple):
 
     @staticmethod
     def empty():
-        return NodeStats(name='', status='offline', uptime=0, disk=0, maxdisk=0, level='', id='', mem=1, maxmem=1, cpu=1)
+        return NodeStats(name='', status='offline', uptime=0, disk=0, maxdisk=0, level='', id='', mem=1, maxmem=1, cpu=1, maxcpu=1)
 
 class ClusterStatus(typing.NamedTuple):
     cluster: typing.Optional[Cluster]

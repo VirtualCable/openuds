@@ -128,7 +128,7 @@ class LiveService(Service):
         label=_('Name Length'),
         defvalue=5,
         order=112,
-        tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
+        tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
         required=True
     )

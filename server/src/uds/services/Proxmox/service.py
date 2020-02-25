@@ -108,11 +108,20 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     pool = gui.ChoiceField(
         label=_("Pool"),
-        order=109,
+        order=1,
         tooltip=_('Pool that will contain UDS created vms'),
         # tab=_('Machine'),
         # required=True,
         defvalue=''
+    )
+
+    ha = gui.CheckBoxField(
+        label=_('Enable HA'),
+        defvalue=gui.TRUE,
+        order=2,
+        tooltip=_('If active, UDS will register automatically the VMS created from this service into HA'),
+        required=True,
+        rdonly=True,
     )
 
     machine = gui.ChoiceField(
@@ -163,7 +172,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         label=_('Name Length'),
         defvalue=5,
         order=116,
-        tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
+        tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
         required=True
     )
@@ -244,13 +253,27 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         return self.parent().suspendMachine(vmId)
 
     def removeMachine(self, vmId: int) -> 'client.types.UPID':
+        # First, remove from HA if needed
+        self.disableHA(vmId)
+        # And remove it
         return self.parent().removeMachine(vmId)
+
+    def enableHA(self, vmId: int) -> None:
+        if self.ha.isTrue():
+            self.parent().enableHA(vmId)
+
+    def disableHA(self, vmId: int) -> None:
+        if self.ha.isTrue():
+            self.parent().disableHA(vmId)
 
     def getBaseName(self) -> str:
         return self.baseName.value
 
     def getLenName(self) -> int:
         return int(self.lenName.value)
+
+    def isHaEnabled(self) -> bool:
+        return self.ha.isTrue()
 
     def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)

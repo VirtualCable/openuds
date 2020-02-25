@@ -136,10 +136,11 @@ class Providers(ModelHandler):
         """
         try:
             service = Service.objects.get(uuid=self._args[1])
-            perm = self.ensureAccess(service, permissions.PERMISSION_READ)  # Ensures that we can read this item
+            perm = self.ensureAccess(service.provider, permissions.PERMISSION_READ)  # Ensures that we can read this item
             return DetailServices.serviceToDict(service, perm, True)
         except Exception:
-            raise RequestError(ugettext('Service not found'))
+            # logger.exception('Exception')
+            return {}
 
     def maintenance(self, item: Provider):
         """

@@ -264,8 +264,8 @@ gettext("New meta pool");
 gettext("Edit meta pool");
 gettext("Delete meta pool");
 gettext("Error saving: ");
-gettext("Save error");
-gettext("Communication error");
+gettext("Error saving element");
+gettext("Error handling your request");
 // HTML
 gettext("Close");
 gettext("Yes");

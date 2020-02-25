@@ -130,7 +130,9 @@ class ProxmoxPublication(services.Publication):
                 logger.debug('Marking as template')
                 # Mark vm as template
                 self.service().makeTemplate(int(self._vm))
-
+                # And add it to HA if
+                self.service().enableHA(int(self._vm))
+                
         return self._state
 
     def finish(self) -> None:

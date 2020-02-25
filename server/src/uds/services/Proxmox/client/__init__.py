@@ -79,7 +79,7 @@ class ProxmoxClient:
         self._ticket = ''
         self._csrf = ''
 
-        # Disable warnings from urllib
+        # Disable warnings from urllib for 
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     @property
@@ -93,13 +93,20 @@ class ProxmoxClient:
     @staticmethod
     def checkError(response: requests.Response) -> typing.Any:
         if not response.ok:
+            errMsg = 'Status code {}'.format(response.status_code)
             if response.status_code == 595:
                 raise ProxmoxNodeUnavailableError()
 
-            if response.status_code // 100 == 4:
+            if response.status_code == 403:
                 raise ProxmoxAuthError()
 
-            raise ProxmoxError()
+            if response.status_code == 400:
+                try:
+                    errMsg = 'Errors on request: {}'.format(response.json()['errors'])
+                except Exception:  # No joson or no errors
+                    pass
+
+            raise ProxmoxError(errMsg)
 
         return response.json()
 
@@ -203,7 +210,7 @@ class ProxmoxClient:
     def getBestNodeForVm(self, minMemory: int = 0) -> typing.Optional[types.NodeStats]:
         best = types.NodeStats.empty()
         node: types.NodeStats
-        weightFnc = lambda x: (x.mem /x .maxmem) + x.cpu
+        weightFnc = lambda x: (x.mem / x .maxmem) + (x.cpu / x.maxcpu) * 1.3
 
         for node in self.getNodesStats():
             if node.status != 'online':  # Offline nodes are not "the best"
@@ -267,6 +274,10 @@ class ProxmoxClient:
         if toPool:
             params.append(('pool', toPool))
 
+        if linkedClone is False:
+            params.append(('format', 'qcow2'))  # Ensure clone for templates is on qcow2 format
+
+
         logger.debug('PARAMS: %s', params)
 
         return types.VmCreationResult(
@@ -279,6 +290,26 @@ class ProxmoxClient:
                 )
             )
         )
+
+    @ensureConected
+    def enableVmHA(self, vmId: int, started: bool = False) -> None:
+        self._post(
+            'cluster/ha/resources',
+            data=(
+                ('sid', 'vm:{}'.format(vmId)),
+                ('comment', 'UDS HA VM'),
+                ('state',  'started' if started else 'stopped'),
+                ('max_restart', '4'),
+                ('max_relocate', '4')
+            )
+        )
+
+    @ensureConected
+    def disableVmHA(self, vmId: int) -> None:
+        try:
+            self._delete('cluster/ha/resources/vm%3A{}'.format(vmId))
+        except Exception:
+            logger.exception('removeFromHA')
 
     @ensureConected
     def deleteVm(self, vmId: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
