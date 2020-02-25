@@ -126,7 +126,7 @@ def udsJs(request: 'HttpRequest') -> str:
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('webapi.services'),
             'enabler': reverse('webapi.enabler', kwargs={'idService': 'param1', 'idTransport': 'param2'}),
-            'action': reverse('webapi.action', kwargs={'idService': 'param1', 'action': 'param2'}),
+            'action': reverse('webapi.action', kwargs={'idService': 'param1', 'actionString': 'param2'}),
             'galleryImage': reverse('webapi.galleryImage', kwargs={'idImage': 'param1'}),
             'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
             'static': static(''),
