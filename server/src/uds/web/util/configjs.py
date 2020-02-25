@@ -109,6 +109,7 @@ def udsJs(request: 'HttpRequest') -> str:
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
         'image_size': Image.MAX_IMAGE_SIZE,
+        'experimental_features': GlobalConfig.EXPERIMENTAL_FEATURES.getBool(),
         'reload_time': GlobalConfig.RELOAD_TIME.getInt(True),
         'site_name': GlobalConfig.SITE_NAME.get(),
         'site_copyright_info': GlobalConfig.SITE_COPYRIGHT.get(),

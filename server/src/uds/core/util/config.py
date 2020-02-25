@@ -40,22 +40,17 @@ from uds.core.managers import cryptoManager
 logger = logging.getLogger(__name__)
 
 GLOBAL_SECTION: str = 'UDS'
-SECURITY_SECTION: str = 'Security'
-CLUSTER_SECTION: str = 'Cluster'
-
 # For save when initialized
+SECURITY_SECTION: str = 'Security'
+# CLUSTER_SECTION: str = 'Cluster'
+
 _saveLater = []
 _getLater = []
 
 # For custom params (for choices mainly)
 _configParams = {}
 
-
 class Config:
-    """
-    Keeps persistence configuration data
-    """
-
     # Fields types, so inputs get more "beautiful"
     TEXT_FIELD: int = 0
     LONGTEXT_FIELD: int = 1
@@ -317,19 +312,19 @@ class GlobalConfig:
     # Clusters related vars
 
     # Maximum desired CPU Load. If cpu is over this value, a migration of a service is "desirable"
-    CLUSTER_MIGRATE_CPULOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration CPU Load', '80', type=Config.NUMERIC_FIELD)
+    # CLUSTER_MIGRATE_CPULOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration CPU Load', '80', type=Config.NUMERIC_FIELD)
     # Maximum CPU Load for a node to be elegible for destination of a migration
-    CLUSTER_ELEGIBLE_CPULOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Destination CPU Load', '60', type=Config.NUMERIC_FIELD)
+    # CLUSTER_ELEGIBLE_CPULOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Destination CPU Load', '60', type=Config.NUMERIC_FIELD)
     # Minimum desired Memory free for a cluster node. If free memory (in %) is under this percentage,
     # a migration of a service inside this node is "desirable"
-    CLUSTER_MIGRATE_MEMORYLOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '20', type=Config.NUMERIC_FIELD)
+    # CLUSTER_MIGRATE_MEMORYLOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '20', type=Config.NUMERIC_FIELD)
     # Minimum Free memory for a node to be elegible for a destination of a migration
-    CLUSTER_ELEGIBLE_MEMORYLOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '40', type=Config.NUMERIC_FIELD)
+    # CLUSTER_ELEGIBLE_MEMORYLOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '40', type=Config.NUMERIC_FIELD)
 
     RELOAD_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('Page reload Time', '300', type=Config.NUMERIC_FIELD)
 
-    # Custom message for error when limiting by calendar
     LIMITED_BY_CALENDAR_TEXT: Config.Value = Config.section(GLOBAL_SECTION).value('Calendar access denied text', '', type=Config.TEXT_FIELD)  # Defaults to Nothing
+    # Custom message for error when limiting by calendar
 
     # This is used so templates can change "styles" from admin interface
     LOWERCASE_USERNAME: Config.Value = Config.section(SECURITY_SECTION).value('Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD)
@@ -341,6 +336,8 @@ class GlobalConfig:
     SITE_NAME: Config.Value = Config.section(GLOBAL_SECTION).value('Site name', 'UDS Enterprise', type=Config.TEXT_FIELD)
     SITE_COPYRIGHT: Config.Value = Config.section(GLOBAL_SECTION).value('Site copyright info', '© Virtual Cable S.L.U.', type=Config.TEXT_FIELD)
     SITE_COPYRIGHT_LINK: Config.Value = Config.section(GLOBAL_SECTION).value('Site copyright link', 'https://www.udsenterprise.com', type=Config.TEXT_FIELD)
+
+    EXPERIMENTAL_FEATURES: Config.Value = Config.section(GLOBAL_SECTION).value('Experimental Features', '0', type=Config.BOOLEAN_FIELD)
 
     _initDone = False
 

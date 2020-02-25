@@ -45,7 +45,7 @@ def _requestActor(
 
     proxy = userService.deployed_service.proxy
     try:
-        if proxy is not None:
+        if proxy:
             r = proxy.doProxyRequest(url=url, data=data, timeout=TIMEOUT)
         else:
             if data is None:

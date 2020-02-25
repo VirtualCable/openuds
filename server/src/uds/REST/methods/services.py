@@ -42,6 +42,7 @@ from uds.core import services
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
+from uds.core.util.config import GlobalConfig
 from uds.core.environment import Environment
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
@@ -220,11 +221,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
             {'comments': {'title': _('Comments')}},
             {'type_name': {'title': _('Type')}},
-            {'proxy': {'title': _('Proxy')}},
             {'deployed_services_count': {'title': _('Services Pools'), 'type': 'numeric'}},
             {'user_services_count': {'title': _('User services'), 'type': 'numeric'}},
             {'tags': {'title': _('tags'), 'visible': False}},
-        ]
+        ] + ([{'proxy': {'title': _('Proxy')}}] if GlobalConfig.EXPERIMENTAL_FEATURES.getBool() else [])
 
     def getTypes(self, parent: 'Provider', forType: typing.Optional[str]) -> typing.Iterable[typing.Dict[str, typing.Any]]:
         logger.debug('getTypes parameters: %s, %s', parent, forType)
@@ -260,16 +260,23 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
             service = serviceType(Environment.getTempEnv(), parentInstance)  # Instantiate it so it has the opportunity to alter gui description based on parent
             localGui = self.addDefaultFields(service.guiDescription(service), ['name', 'comments', 'tags'])
-            for field in [{
-                    'name': 'proxy_id',
-                    'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in models.Proxy.objects.all()]),
-                    'label': _('Proxy'),
-                    'tooltip': _('Proxy for services behind a firewall'),
-                    'type': gui.InputField.CHOICE_TYPE,
-                    'tab': _('Advanced'),
-                    'order': 132,
-                },]:
-                self.addField(localGui, field)
+            if GlobalConfig.EXPERIMENTAL_FEATURES.getBool():
+                self.addField(localGui, {
+                        'name': 'proxy_id',
+                        'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in models.Proxy.objects.all()]),
+                        'label': _('Proxy'),
+                        'tooltip': _('Proxy for services behind a firewall'),
+                        'type': gui.InputField.CHOICE_TYPE,
+                        'tab': _('Advanced'),
+                        'order': 132,
+                    })
+            else:
+                self.addField(localGui, {
+                        'name': 'proxy_id',
+                        'value': '-1',
+                        'type': gui.InputField.HIDDEN_TYPE,
+                    })
+                
 
             return localGui
 
