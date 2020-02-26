@@ -126,7 +126,6 @@ class Provider(services.ServiceProvider):
         order=4,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
-        required=True,  # : Also means nothing. Check boxes has always a value
         defvalue=gui.TRUE  # : By default, at new item, check this
     )
 

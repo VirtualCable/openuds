@@ -101,7 +101,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF', order=90, rdonly=True,
                               tooltip=_('Range of valid macs for created machines'), required=True, tab=gui.ADVANCED_TAB)
     verifySSL = gui.CheckBoxField(label=_('Verify Certificate'), order=91,
-                                  tooltip=_('If selected, certificate will be checked against system valid certificate providers'), required=True, 
+                                  tooltip=_('If selected, certificate will be checked against system valid certificate providers'), 
                                   tab=gui.ADVANCED_TAB, defvalue=gui.FALSE)
 
     _api: typing.Optional[XenServer]
