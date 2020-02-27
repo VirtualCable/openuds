@@ -114,7 +114,7 @@ def getComputerName() -> str:
     '''
     return socket.gethostname().split('.')[0]
 
-def getNetworkInfo() -> typing.Iterable[types.InterfaceInfoType]:
+def getNetworkInfo() -> typing.Iterator[types.InterfaceInfoType]:
     for ifname in _getInterfaces():
         ip, mac = _getIpAndMac(ifname)
         if mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs

@@ -110,7 +110,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         except requests.ConnectionError as e:
             raise RESTConnectionError(str(e))
         except Exception as e:
-            pass
+            raise RESTError(str(e))
 
         try:
             data = result.json()

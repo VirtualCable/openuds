@@ -237,21 +237,23 @@ class WinDomainOsManager(WindowsOsManager):
             return
 
         if '.' not in self._domain:
-            logger.info('Releasing from a not FQDN domain is not supported')
+            # logger.info('Releasing from a not FQDN domain is not supported')
+            log.doLog(userService, log.INFO, "Removing a domain machine form a non FQDN domain is not supported.", log.OSMANAGER)
             return
 
         try:
             ldapConnection = self.__connectLdap()
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
             logger.warning('Could not find _ldap._tcp.%s', self._domain)
-            log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
+            log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{} not found)".format(self._domain), log.OSMANAGER)
             return
-        except ldaputil.LDAPError:
-            logger.exception('Ldap Exception caught')
-            log.doLog(userService, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
+        except ldaputil.LDAPError as e:
+            # logger.exception('Ldap Exception caught')
+            log.doLog(userService, log.WARN, "Could not remove machine from domain ({})".format(e), log.OSMANAGER)
             return
-        except Exception:
-            logger.exception('Exception caught')
+        except Exception as e:
+            # logger.exception('Exception caught')
+            log.doLog(userService, log.WARN, "Could not remove machine from domain ({})".format(e), log.OSMANAGER)
             return
 
         try:
