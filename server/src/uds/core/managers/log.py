@@ -125,18 +125,16 @@ class LogManager:
 
         Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
-    def doLog(self, wichObject: 'Model', level: typing.Union[int, str], message: str, source: str, avoidDuplicates: bool = True):
+    def doLog(self, wichObject: 'Model', level: int, message: str, source: str, avoidDuplicates: bool = True):
         """
         Do the logging for the requested object.
 
         If the object provided do not accepts associated loggin, it simply ignores the request
         """
-        lvl = log.logLevelFromStr(level) if not isinstance(level, int) else typing.cast(int, level)
-
         owner_type = transDict.get(type(wichObject), None)
 
         if owner_type is not None:
-            self.__log(owner_type, wichObject.id, lvl, message, source, avoidDuplicates)
+            self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)
         else:
             logger.debug('Requested doLog for a type of object not covered: %s', wichObject)
 

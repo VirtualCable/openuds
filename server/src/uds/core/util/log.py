@@ -104,7 +104,7 @@ def useLog(
 
 def doLog(
         wichObject: 'Model',
-        level: typing.Union[int, str],
+        level: int,
         message: str,
         source: str = UNKNOWN,
         avoidDuplicates: bool = True

@@ -35,6 +35,7 @@ import typing
 from uds.core import Environmentable
 from uds.core import Serializable
 from uds.core.util.state import State
+from uds.core.util import log
 
 if typing.TYPE_CHECKING:
     from uds import models
@@ -224,11 +225,10 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         return self._dbService
 
-    def doLog(self, level: typing.Union[str, int], message: str) -> None:
+    def doLog(self, level: int, message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
-        from uds.core.util import log
         log.doLog(self._dbService, level, message, log.SERVICE)
 
     def macGenerator(self) -> 'UniqueMacGenerator':
