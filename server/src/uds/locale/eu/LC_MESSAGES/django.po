@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"POT-Creation-Date: 2020-02-28 09:34+0100\n"
 "PO-Revision-Date: 2020-02-25 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -190,7 +190,7 @@ msgstr "Etiketa"
 
 #: REST/methods/authenticators.py:71 reports/stats/pools_performance.py:203
 #: reports/stats/pools_performance.py:258 reports/stats/user_access.py:236
-#: reports/stats/user_access.py:275 services/RDS_enterprise/provider.py:67
+#: reports/stats/user_access.py:275 services/RDS_enterprise/provider.py:66
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
@@ -553,10 +553,10 @@ msgstr "Zerbitzaria (IP edo FQDN) proxy gisa balioko du."
 #: REST/methods/proxies.py:95 auths/EDirectory_enterprise/authenticator.py:45
 #: auths/RegexLdap/authenticator.py:65 auths/SimpleLDAP/authenticator.py:58
 #: services/HyperV_enterprise/legacy/provider.py:84
-#: services/HyperV_enterprise/provider.py:116
+#: services/HyperV_enterprise/provider.py:114
 #: services/Nutanix_enterprise/provider.py:37 services/OpenGnsys/provider.py:96
 #: services/OpenNebula/provider.py:78 services/OpenStack/provider_legacy.py:103
-#: services/Proxmox/provider.py:61 services/RDS_enterprise/provider.py:101
+#: services/Proxmox/provider.py:61 services/RDS_enterprise/provider.py:99
 #: services/VCloud_enterprise/provider.py:33
 #: services/Vmware_enterprise/provider.py:42
 msgid "Port"
@@ -957,11 +957,11 @@ msgstr "Momentuko erabiltzaileak"
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
 #: services/HyperV_enterprise/legacy/provider.py:85
-#: services/HyperV_enterprise/provider.py:76
+#: services/HyperV_enterprise/provider.py:74
 #: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
 #: services/OpenGnsys/provider.py:98 services/OpenNebula/provider.py:80
 #: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
-#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:118
+#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:116
 #: services/VCloud_enterprise/provider.py:35
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
@@ -1103,11 +1103,11 @@ msgstr ""
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 #: osmanagers/WindowsOsManager/windows_random.py:66
 #: services/HyperV_enterprise/legacy/provider.py:86
-#: services/HyperV_enterprise/provider.py:77
+#: services/HyperV_enterprise/provider.py:75
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
 #: services/OpenGnsys/provider.py:99 services/OpenNebula/provider.py:81
 #: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
-#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:126
+#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:124
 #: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
@@ -1130,7 +1130,7 @@ msgstr "LDAP erabiltzailearen pasahitza"
 #: auths/RegexLdap/authenticator.py:69 auths/SimpleLDAP/authenticator.py:62
 #: services/Azure_enterprise/provider.py:48
 #: services/HyperV_enterprise/legacy/provider.py:93
-#: services/HyperV_enterprise/provider.py:134
+#: services/HyperV_enterprise/provider.py:131
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
@@ -2453,49 +2453,49 @@ msgstr "DOM \\ USER inprimakia ez da onartzen!"
 msgid "Must provide a password for the account!"
 msgstr "Konturako pasahitza eman behar duzu!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:271
-#: osmanagers/WindowsOsManager/windows_domain.py:281
+#: osmanagers/WindowsOsManager/windows_domain.py:273
+#: osmanagers/WindowsOsManager/windows_domain.py:283
 msgid "Check error: {}"
 msgstr "Egiaztatu errorea: {}"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:273
+#: osmanagers/WindowsOsManager/windows_domain.py:275
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr ""
 "Ezin izan da zerbitzariaren parametroak aurkitu (_ldap._tcp. {0} ezin da "
 "konpondu)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:286
+#: osmanagers/WindowsOsManager/windows_domain.py:288
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
 msgstr ""
 "Egiaztatu errorea: \"{}\" taldea ez da aurkitu (\"cn\" erabiliz kokatu)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:288
+#: osmanagers/WindowsOsManager/windows_domain.py:290
 msgid "Server check was successful"
 msgstr "Zerbitzariaren egiaztapena arrakasta izan du"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:300
+#: osmanagers/WindowsOsManager/windows_domain.py:302
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
 msgstr "Ezin izan da AD erabili LDAP ({0}) erabiliz"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:312
+#: osmanagers/WindowsOsManager/windows_domain.py:314
 #, python-brace-format
 msgid "The default path {0} for computers was not found!!!"
 msgstr "Ordenagailuentzako {0} bide lehenetsia ez da aurkitu!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:313
+#: osmanagers/WindowsOsManager/windows_domain.py:315
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
 msgstr "{0} bideoa ez da aurkitu!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:315
+#: osmanagers/WindowsOsManager/windows_domain.py:317
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr ""
 "Ezin izan dira parametroak egiaztatu (_ldap._tcp. {0} ezin dira konpondu)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:320
+#: osmanagers/WindowsOsManager/windows_domain.py:322
 msgid "All parameters seem to work fine."
 msgstr "Parametro guztiak ondo funtzionatzen dute."
 
@@ -2770,19 +2770,19 @@ msgstr "Harpidetzak lortu dira"
 
 #: services/Azure_enterprise/provider.py:46
 #: services/HyperV_enterprise/legacy/provider.py:88
-#: services/HyperV_enterprise/provider.py:81
+#: services/HyperV_enterprise/provider.py:79
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
 #: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47
-#: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:98
+#: services/Vmware_enterprise/provider.py:107 services/Xen/provider.py:98
 msgid "Creation concurrency"
 msgstr "Sorkuntza konkurrentzia"
 
 #: services/Azure_enterprise/provider.py:46
 #: services/HyperV_enterprise/legacy/provider.py:89
-#: services/HyperV_enterprise/provider.py:86
+#: services/HyperV_enterprise/provider.py:84
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
@@ -2793,19 +2793,19 @@ msgstr "VMak aldi berean sortzeko gehienezko kopurua"
 
 #: services/Azure_enterprise/provider.py:47
 #: services/HyperV_enterprise/legacy/provider.py:90
-#: services/HyperV_enterprise/provider.py:93
+#: services/HyperV_enterprise/provider.py:91
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
 #: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48
-#: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:99
+#: services/Vmware_enterprise/provider.py:108 services/Xen/provider.py:99
 msgid "Removal concurrency"
 msgstr "Kentzea"
 
 #: services/Azure_enterprise/provider.py:47
 #: services/HyperV_enterprise/legacy/provider.py:91
-#: services/HyperV_enterprise/provider.py:98
+#: services/HyperV_enterprise/provider.py:96
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
@@ -2883,7 +2883,7 @@ msgstr "Zerbitzu honetatik sortutako makinen tamaina."
 #: services/Nutanix_enterprise/service.py:82 services/OVirt/service.py:198
 #: services/OpenNebula/service.py:118 services/OpenStack/service.py:140
 #: services/Proxmox/service.py:160 services/VCloud_enterprise/service.py:87
-#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:164
+#: services/Vmware_enterprise/service_linked.py:122 services/Xen/service.py:164
 msgid "Machine Names"
 msgstr "Makina izenak"
 
@@ -2893,7 +2893,7 @@ msgstr "Makina izenak"
 #: services/Nutanix_enterprise/service.py:85 services/OVirt/service.py:201
 #: services/OpenNebula/service.py:121 services/OpenStack/service.py:143
 #: services/Proxmox/service.py:163 services/VCloud_enterprise/service.py:87
-#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:167
+#: services/Vmware_enterprise/service_linked.py:122 services/Xen/service.py:167
 msgid "Base name for clones from this machine"
 msgstr "Makinaren klonak oinarrizko izena"
 
@@ -2903,7 +2903,7 @@ msgstr "Makinaren klonak oinarrizko izena"
 #: services/Nutanix_enterprise/service.py:91 services/OVirt/service.py:208
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:150
 #: services/Proxmox/service.py:170 services/VCloud_enterprise/service.py:88
-#: services/Vmware_enterprise/service_linked.py:125 services/Xen/service.py:174
+#: services/Vmware_enterprise/service_linked.py:123 services/Xen/service.py:174
 msgid "Name Length"
 msgstr "Izen luzeera"
 
@@ -2913,7 +2913,7 @@ msgstr "Izen luzeera"
 #: services/Nutanix_enterprise/service.py:94 services/OVirt/service.py:211
 #: services/OpenNebula/service.py:131 services/OpenStack/service.py:153
 #: services/Proxmox/service.py:173 services/VCloud_enterprise/service.py:89
-#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:177
+#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:177
 msgid "Size of numeric part for the names of these machines"
 msgstr "Makina horien izenetarako zati numerikoaren tamaina"
 
@@ -2973,7 +2973,7 @@ msgstr ""
 "Aktibatu aukera hau azeleratutako sareak erabiltzeko vm-en. Egiaztatu zure "
 "makina eta makina tamaina aukera hori aktibatu aurretik."
 
-#: services/Azure_enterprise/service.py:160
+#: services/Azure_enterprise/service.py:159
 msgid "You must select a network for the service"
 msgstr "Zerbitzurako sarea hautatu behar duzu"
 
@@ -2998,12 +2998,12 @@ msgid "WSMan Port (normally 5985)"
 msgstr "WSMan portua (normalean 5985)"
 
 #: services/HyperV_enterprise/legacy/provider.py:85
-#: services/HyperV_enterprise/provider.py:76
+#: services/HyperV_enterprise/provider.py:74
 msgid "User with valid privileges on HyperV Server"
 msgstr "Erabiltzaileak HyperV zerbitzariaren baliozko pribilegioak ditu"
 
 #: services/HyperV_enterprise/legacy/provider.py:86
-#: services/HyperV_enterprise/provider.py:77
+#: services/HyperV_enterprise/provider.py:75
 msgid "Password of the user of HyperV"
 msgstr "HyperV erabiltzailearen pasahitza"
 
@@ -3012,14 +3012,14 @@ msgid "Timeout in seconds of connection to HyperV"
 msgstr "Denbora-muga, HyperV konexiorako segundoetan"
 
 #: services/HyperV_enterprise/legacy/provider.py:95
-#: services/HyperV_enterprise/provider.py:105
+#: services/HyperV_enterprise/provider.py:103
 #: services/Nutanix_enterprise/provider.py:45 services/OVirt/provider.py:117
 #: services/Vmware_enterprise/provider.py:51 services/Xen/provider.py:101
 msgid "Macs range"
 msgstr "MAC eremua"
 
 #: services/HyperV_enterprise/legacy/provider.py:96
-#: services/HyperV_enterprise/provider.py:109 services/Xen/provider.py:102
+#: services/HyperV_enterprise/provider.py:107 services/Xen/provider.py:102
 msgid "Range of valid macs for created machines"
 msgstr "Sortutako makinen makina baliotsuen gama"
 
@@ -3030,7 +3030,7 @@ msgstr "Konexioaren proba arrakastatsua"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:167
+#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
 
@@ -3081,13 +3081,13 @@ msgstr "Datastoreak non igoerak eta argitalpenak jarri"
 
 #: services/HyperV_enterprise/legacy/service.py:91
 #: services/HyperV_enterprise/service.py:92 services/OVirt/service.py:131
-#: services/Vmware_enterprise/service_linked.py:130 services/Xen/service.py:118
+#: services/Vmware_enterprise/service_linked.py:128 services/Xen/service.py:118
 msgid "Reserved Space"
 msgstr "Erreserbatutako espazioa"
 
 #: services/HyperV_enterprise/legacy/service.py:94
 #: services/HyperV_enterprise/service.py:95 services/OVirt/service.py:135
-#: services/Vmware_enterprise/service_linked.py:133 services/Xen/service.py:121
+#: services/Vmware_enterprise/service_linked.py:131 services/Xen/service.py:121
 msgid "Minimal free space in GB"
 msgstr "Gutxieneko doako espazioa GB-an"
 
@@ -3095,7 +3095,7 @@ msgstr "Gutxieneko doako espazioa GB-an"
 #: services/HyperV_enterprise/service.py:100
 #: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:140
 #: services/Proxmox/service.py:126
-#: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:126
+#: services/Vmware_enterprise/service_linked.py:112 services/Xen/service.py:126
 msgid "Base Machine"
 msgstr "Oinarri makina"
 
@@ -3130,15 +3130,15 @@ msgstr "Oinarrizko makina zerbitzua"
 #: services/Proxmox/service.py:143 services/Proxmox/service.py:155
 #: services/Proxmox/service.py:164 services/Proxmox/service.py:174
 #: services/Vmware_enterprise/service_full.py:68
-#: services/Vmware_enterprise/service_linked.py:110
+#: services/Vmware_enterprise/service_linked.py:108
+#: services/Vmware_enterprise/service_linked.py:112
 #: services/Vmware_enterprise/service_linked.py:114
 #: services/Vmware_enterprise/service_linked.py:116
 #: services/Vmware_enterprise/service_linked.py:118
-#: services/Vmware_enterprise/service_linked.py:120
+#: services/Vmware_enterprise/service_linked.py:119
 #: services/Vmware_enterprise/service_linked.py:121
-#: services/Vmware_enterprise/service_linked.py:123
-#: services/Vmware_enterprise/service_linked.py:124
-#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:129
+#: services/Vmware_enterprise/service_linked.py:122
+#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:129
 #: services/Xen/service.py:138 services/Xen/service.py:148
 #: services/Xen/service.py:159 services/Xen/service.py:168
 #: services/Xen/service.py:178
@@ -3157,13 +3157,13 @@ msgstr ""
 #: services/HyperV_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:148
 #: services/Proxmox/service.py:148
-#: services/Vmware_enterprise/service_linked.py:115 services/Xen/service.py:143
+#: services/Vmware_enterprise/service_linked.py:113 services/Xen/service.py:143
 msgid "Memory (Mb)"
 msgstr "Memoria (Mb)"
 
 #: services/HyperV_enterprise/legacy/service.py:121
 #: services/HyperV_enterprise/service.py:122
-#: services/Vmware_enterprise/service_linked.py:116
+#: services/Vmware_enterprise/service_linked.py:114
 msgid "Memory for machines deployed from this service"
 msgstr "Zerbitzu honetatik zabaldutako makina memoria"
 
@@ -3190,38 +3190,38 @@ msgstr ""
 "HyperV zerbitzari multzoa erabiltzen ari bazara, gaitu aukera hau. Era "
 "berean, erabili"
 
-#: services/HyperV_enterprise/provider.py:70
+#: services/HyperV_enterprise/provider.py:69
 msgid "Enable SSL"
 msgstr "Gaitu SSL"
 
-#: services/HyperV_enterprise/provider.py:72
+#: services/HyperV_enterprise/provider.py:71
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr ""
 "Aktiboa bada, HyperV-ekin konexioak SSL (Gomendatuak) bidez egingo dira."
 
-#: services/HyperV_enterprise/provider.py:118
+#: services/HyperV_enterprise/provider.py:116
 msgid "Remote WSman port.Leave to zero for default."
 msgstr "Urruneko WSman port.Leve zero zero lehenetsita."
 
-#: services/HyperV_enterprise/provider.py:125
+#: services/HyperV_enterprise/provider.py:123
 msgid "Force SSL certificate verification"
 msgstr "SSL ziurtagiria egiaztatzea"
 
-#: services/HyperV_enterprise/provider.py:127
+#: services/HyperV_enterprise/provider.py:125
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
 msgstr "Aktiboa bada, kluster konexioari buruzko ziurtagiria egiaztatuko da."
 
-#: services/HyperV_enterprise/provider.py:138
+#: services/HyperV_enterprise/provider.py:135
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr ""
 "Denbora-muga segundo batzuetan HyperV-rekin konektatzeko. (Mantendu balio "
 "hori nahikoa altua)"
 
-#: services/HyperV_enterprise/provider.py:159
+#: services/HyperV_enterprise/provider.py:156
 msgid ""
 "For clusters, username must be a domain user name (user@domain or DOMAIN"
 "\\user"
@@ -3696,6 +3696,15 @@ msgstr "Zerbitzu segurtasuneko taldeak"
 msgid "IP "
 msgstr "IP"
 
+#: services/PhysicalMachines/provider.py:42
+msgid "Static IP Machines Provider"
+msgstr "IP Makinen hornitzaile estatikoa"
+
+#: services/PhysicalMachines/provider.py:44
+#| msgid "Provides connection to Azure Platform"
+msgid "Provides connection to machines by IP"
+msgstr "Makinen konexioa eskaintzen du IP bidez"
+
 #: services/PhysicalMachines/service_multi.py:59
 #: services/Vmware_enterprise/service_fixed.py:54
 msgid "Service Token"
@@ -3826,9 +3835,9 @@ msgstr ""
 "aurretik."
 
 #: services/RDS_enterprise/provider.py:58
-#: services/RDS_enterprise/provider.py:63
-#: services/RDS_enterprise/provider.py:69
-#: services/RDS_enterprise/provider.py:77
+#: services/RDS_enterprise/provider.py:62
+#: services/RDS_enterprise/provider.py:68
+#: services/RDS_enterprise/provider.py:76
 msgid "User mapping"
 msgstr "Erabiltzaileen mapaketa"
 
@@ -3840,17 +3849,17 @@ msgstr ""
 "Aktibatuta badago, erabiltzaileak mapan egingo dira. Hala ez bada, "
 "erabiltzailearen kredentzialak RDS zerbitzarira birbideratuko dira."
 
-#: services/RDS_enterprise/provider.py:68
+#: services/RDS_enterprise/provider.py:67
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
 "Mapako erabiltzailearen zerrenda. (Erabiltzaileek mapan ezgaituta badago "
 "erabiltzen da)"
 
-#: services/RDS_enterprise/provider.py:74
+#: services/RDS_enterprise/provider.py:73
 msgid "User's password"
 msgstr "Erabiltzailearen pasahitza"
 
-#: services/RDS_enterprise/provider.py:75
+#: services/RDS_enterprise/provider.py:74
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3858,11 +3867,11 @@ msgstr ""
 "Erabiltzaileentzako pasahitz lehenetsia zerrenda mapetan. (Erabiltzaileek "
 "mapan ezgaituta badago erabiltzen da)"
 
-#: services/RDS_enterprise/provider.py:83
+#: services/RDS_enterprise/provider.py:82
 msgid "User auto creation on AD"
 msgstr "Erabiltzailearen auto-sorkuntza AD-n"
 
-#: services/RDS_enterprise/provider.py:86
+#: services/RDS_enterprise/provider.py:85
 msgid ""
 "If active, uds will mirror the user on your active director. WARNING!! "
 "Existing coincident users may be deleted!."
@@ -3870,54 +3879,54 @@ msgstr ""
 "Aktiboa bada, uds erabiltzaileak zure zuzendari aktiboari islatuko dio. "
 "KONTUZ !! Lehendik dauden kasualitateko erabiltzaileak ezaba daitezke !."
 
-#: services/RDS_enterprise/provider.py:88
-#: services/RDS_enterprise/provider.py:96
-#: services/RDS_enterprise/provider.py:105
-#: services/RDS_enterprise/provider.py:113
-#: services/RDS_enterprise/provider.py:121
-#: services/RDS_enterprise/provider.py:129
-#: services/RDS_enterprise/provider.py:138
-#: services/RDS_enterprise/provider.py:146
-#: services/RDS_enterprise/provider.py:154
+#: services/RDS_enterprise/provider.py:86
+#: services/RDS_enterprise/provider.py:94
+#: services/RDS_enterprise/provider.py:103
+#: services/RDS_enterprise/provider.py:111
+#: services/RDS_enterprise/provider.py:119
+#: services/RDS_enterprise/provider.py:127
+#: services/RDS_enterprise/provider.py:136
+#: services/RDS_enterprise/provider.py:144
+#: services/RDS_enterprise/provider.py:152
 msgid "AD User management"
 msgstr "AD erabiltzailearen kudeaketa"
 
-#: services/RDS_enterprise/provider.py:93
+#: services/RDS_enterprise/provider.py:91
 msgid "AD Server"
 msgstr "AD zerbitzaria"
 
-#: services/RDS_enterprise/provider.py:94
+#: services/RDS_enterprise/provider.py:92
 msgid "IP or HOST of AD Server. Must have LDAPS support enabled"
 msgstr "AD zerbitzariaren IP edo HOST. LDAPS laguntza gaituta egon behar du"
 
-#: services/RDS_enterprise/provider.py:103
+#: services/RDS_enterprise/provider.py:101
 msgid "AD LDAPS port (default is 636)"
 msgstr "AD LDAPS ataka (lehenetsia 636 da)"
 
-#: services/RDS_enterprise/provider.py:110
+#: services/RDS_enterprise/provider.py:108
 msgid "AD server OU for created users"
 msgstr "Sortutako erabiltzaileentzako AD zerbitzaria OU"
 
-#: services/RDS_enterprise/provider.py:111
+#: services/RDS_enterprise/provider.py:109
 msgid "AD Server branch where users will be created by UDS"
 msgstr "AD zerbitzariaren adarra non erabiltzaileak UDS-k sortuko dituen"
 
-#: services/RDS_enterprise/provider.py:119
+#: services/RDS_enterprise/provider.py:117
 msgid ""
 "Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
 msgstr ""
 "Erabiltzaile izena kontuak sortzeko / ezabatzeko pribilegioak. Erabili "
 "USER@DOMAIN.XXX inprimakia."
 
-#: services/RDS_enterprise/provider.py:127
+#: services/RDS_enterprise/provider.py:125
 msgid "Password of the user with privileges"
 msgstr "Erabiltzailearen pasahitza pribilegioak"
 
-#: services/RDS_enterprise/provider.py:134
+#: services/RDS_enterprise/provider.py:132
 msgid "Prefix for created users"
 msgstr "Sortutako erabiltzaileentzako aurrizkia"
 
-#: services/RDS_enterprise/provider.py:135
+#: services/RDS_enterprise/provider.py:133
 msgid ""
 "User will be created on AD with the format \"PREFIX...\", where ... will be "
 "the original UDS own username. Max 4 characters"
@@ -3925,11 +3934,11 @@ msgstr ""
 "Erabiltzailea AD-n sortuko da \"PREFIX ...\" formatuarekin, non ... "
 "jatorrizko UDS erabiltzaile izena izango duen. Gehienez 4 karaktere"
 
-#: services/RDS_enterprise/provider.py:143
+#: services/RDS_enterprise/provider.py:141
 msgid "AD Domain"
 msgstr "AD domeinua"
 
-#: services/RDS_enterprise/provider.py:144
+#: services/RDS_enterprise/provider.py:142
 msgid ""
 "Domain for newly created users (i.e. example.com, example.local). If empty, "
 "will be deduced from username"
@@ -3937,80 +3946,80 @@ msgstr ""
 "Sortu berri diren erabiltzaileentzako domeinua (hau da, adibidez.com, adib."
 "local). Hutsik badago, erabiltzaile-izenetik aterako da"
 
-#: services/RDS_enterprise/provider.py:151
+#: services/RDS_enterprise/provider.py:149
 msgid "AD Group"
 msgstr "AD taldea"
 
-#: services/RDS_enterprise/provider.py:152
+#: services/RDS_enterprise/provider.py:150
 msgid "If not empty, UDS will try to add managed users to this group"
 msgstr ""
 "Hutsik ez badago, UDS talde horretako erabiltzaile kudeatuak gehitzen "
 "saiatuko da"
 
-#: services/RDS_enterprise/provider.py:162
+#: services/RDS_enterprise/provider.py:160
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
 msgstr ""
 "Hautatu \"Erabiltzaileen mapa\" edo \"Erabiltzailea sortzeko\" metodo "
 "bakarra."
 
-#: services/RDS_enterprise/provider.py:166
+#: services/RDS_enterprise/provider.py:164
 msgid "AD User Management: you must provide the AD server host."
 msgstr ""
 "AD erabiltzailearen kudeaketa: AD zerbitzariaren ostalaria eman behar duzu."
 
-#: services/RDS_enterprise/provider.py:169
+#: services/RDS_enterprise/provider.py:167
 msgid "AD User Management: you must provide the user prefix."
 msgstr ""
 "AD Erabiltzaileen Kudeaketa: erabiltzailearen aurrizkia eman behar duzu."
 
-#: services/RDS_enterprise/provider.py:172
+#: services/RDS_enterprise/provider.py:170
 msgid "AD User Management: the username should be in USER@DOMAIN form."
 msgstr ""
 "AD Erabiltzaile Kudeaketa: Erabiltzailea USER @ DOMAIN inprimakian egon "
 "behar du."
 
-#: services/RDS_enterprise/provider.py:175
+#: services/RDS_enterprise/provider.py:173
 msgid "AD User Management: you must provide the password."
 msgstr "AD erabiltzailearen kudeaketa: pasahitza eman behar duzu."
 
-#: services/RDS_enterprise/provider.py:179
+#: services/RDS_enterprise/provider.py:177
 msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr ""
 "AD Erabiltzaileen Kudeaketa: erabiltzailearen aurrizkia eman behar duzu. "
 "(1-4 karaktere)"
 
-#: services/RDS_enterprise/provider.py:182
+#: services/RDS_enterprise/provider.py:180
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr ""
 "AD Erabiltzaileen Kudeaketa: erabiltzaileak sortzeko FQDN domeinua eman "
 "behar duzu."
 
-#: services/RDS_enterprise/provider.py:215
+#: services/RDS_enterprise/provider.py:213
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Errorea: Erabiltzailea {} ostalarian {} erabiltzen ari da eta ezin da kendu "
 "oraingoan"
 
-#: services/RDS_enterprise/provider.py:249
+#: services/RDS_enterprise/provider.py:247
 msgid "Connection to {}, port {} failed."
 msgstr "{} Portuarekin konexioak huts egin du."
 
-#: services/RDS_enterprise/provider.py:265
+#: services/RDS_enterprise/provider.py:263
 msgid "The group {} could not be found. Please, check it."
 msgstr "Ezin da {} taldea aurkitu. Mesedez, egiaztatu."
 
-#: services/RDS_enterprise/provider.py:267
+#: services/RDS_enterprise/provider.py:265
 msgid "User creation test failed. Please, check parameters."
 msgstr ""
 "Erabiltzaileen sorrerako probak huts egin du. Mesedez, egiaztatu parametroak."
 
-#: services/RDS_enterprise/provider.py:272
+#: services/RDS_enterprise/provider.py:270
 msgid "Server {} is not accesible and Server checking is enabled"
 msgstr ""
 "Ezin da {} zerbitzaria eskuragarri egon eta zerbitzariaren egiaztapena "
 "gaituta dago"
 
-#: services/RDS_enterprise/provider.py:274
+#: services/RDS_enterprise/provider.py:272
 msgid "Connectivity test passed"
 msgstr "Konektagarritasun proba gainditu da"
 
@@ -4066,7 +4075,7 @@ msgstr ""
 "Aktibo badago, RDS Aktorea aplikazioa eta abiarazitako prozesuak amaitu arte "
 "itxaron egingo da saioa amaitu aurretik"
 
-#: services/RDS_enterprise/service.py:105
+#: services/RDS_enterprise/service.py:104
 msgid "A valid application path is required"
 msgstr "Baliozko aplikazio bide bat behar da"
 
@@ -4110,19 +4119,19 @@ msgstr "Methuselah oraindik bizirik dago?"
 msgid "If you fail, this will not get saved :-)"
 msgstr "Ez baduzu, hau ez da gordeko :-)"
 
-#: services/Sample/provider.py:137
+#: services/Sample/provider.py:136
 msgid "Text area"
 msgstr "Testuaren eremua"
 
-#: services/Sample/provider.py:138
+#: services/Sample/provider.py:137
 msgid "This is a text area"
 msgstr "Hau testu-eremua da"
 
-#: services/Sample/provider.py:158
+#: services/Sample/provider.py:157
 msgid "Methuselah is not alive!!! :-)"
 msgstr "Methuselah ez da bizirik! :-)"
 
-#: services/Sample/provider.py:197
+#: services/Sample/provider.py:196
 #: services/TestService_enterprise/provider.py:54
 msgid "Nothing tested, but all went fine.."
 msgstr "Ezer ez da probatu, baina dena ondo joan da ..."
@@ -4273,12 +4282,12 @@ msgid "vApp template for the service"
 msgstr "Zerbitzuaren txantiloia vApp"
 
 #: services/VCloud_enterprise/service.py:82
-#: services/Vmware_enterprise/service_linked.py:117
+#: services/Vmware_enterprise/service_linked.py:115
 msgid "Main Network"
 msgstr "Sare nagusia"
 
 #: services/VCloud_enterprise/service.py:83
-#: services/Vmware_enterprise/service_linked.py:118
+#: services/Vmware_enterprise/service_linked.py:116
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -4326,15 +4335,28 @@ msgstr ""
 "Sortutako makinen makina baliotsuen gama. Barruan egon behar du 00: 50: 56: "
 "00: 00: 00-00: 50: 56: 3F: FF: FF"
 
-#: services/Vmware_enterprise/provider.py:56
+#: services/Vmware_enterprise/provider.py:55
+#| msgid "Services to keep in L2 cache"
+msgid "Power off VM on L2 cache"
+msgstr "Desaktibatu VM L2 cache-an"
+
+#: services/Vmware_enterprise/provider.py:58
+msgid ""
+"If enabled, UDS will stop machines for L2 cache instead of suspending them. "
+"This REQUIRES \"VMWare tools\" on machines."
+msgstr ""
+"Gaituta badago, UDSk L2 cacherako makinak geldituko ditu eten beharrean. "
+"Honek \"VMWare tresnak\" eskatzen du makinetan."
+
+#: services/Vmware_enterprise/provider.py:64
 msgid "VMWare VCenter Platform Provider"
 msgstr "VMWare VCenter Plataforma hornitzailea"
 
-#: services/Vmware_enterprise/provider.py:58
+#: services/Vmware_enterprise/provider.py:66
 msgid "Provides connection to Virtual Center Services"
 msgstr "Zentro birtualeko zerbitzuetarako konexioa eskaintzen du"
 
-#: services/Vmware_enterprise/provider.py:165
+#: services/Vmware_enterprise/provider.py:176
 msgid "Connection params ok"
 msgstr "Konexio parametroak ondo daude"
 
@@ -4358,6 +4380,8 @@ msgstr "datacenter"
 #: services/Vmware_enterprise/service_fixed.py:69
 #: services/Vmware_enterprise/service_fixed.py:84
 #: services/Vmware_enterprise/service_fixed.py:89
+#: services/Vmware_enterprise/service_fixed.py:92
+#: services/Vmware_enterprise/service_fixed.py:100
 msgid "Machines"
 msgstr "Makinak"
 
@@ -4367,7 +4391,7 @@ msgid "Datacenter containing base machine"
 msgstr "Base makina duten datacenter"
 
 #: services/Vmware_enterprise/service_fixed.py:74
-#: services/Vmware_enterprise/service_linked.py:100
+#: services/Vmware_enterprise/service_linked.py:98
 msgid "Resource Pool"
 msgstr "Baliabideen Poola"
 
@@ -4375,11 +4399,23 @@ msgstr "Baliabideen Poola"
 msgid "Resource Pool containing base machines"
 msgstr "Base-makinak dituen baliabide-igerilekua"
 
-#: services/Vmware_enterprise/service_fixed.py:89
+#: services/Vmware_enterprise/service_fixed.py:91
 msgid "Machines for this service"
 msgstr "Zerbitzu honetarako makinak"
 
-#: services/Vmware_enterprise/service_fixed.py:109
+#: services/Vmware_enterprise/service_fixed.py:96
+msgid "Use snapshots"
+msgstr "Erabili argazkiak"
+
+#: services/Vmware_enterprise/service_fixed.py:99
+msgid ""
+"If active, UDS will try to create an snapshot on VM use and recover if on "
+"exit."
+msgstr ""
+"Aktiboa bada, UDS saiatuko da VMren erabilerari buruzko argazkia sortzen eta "
+"irteerakoan berreskuratzen."
+
+#: services/Vmware_enterprise/service_fixed.py:122
 msgid "We need at least a machine"
 msgstr "Gutxienez makina bat behar dugu"
 
@@ -4433,45 +4469,45 @@ msgstr "Argitalpenak jarri non datastore"
 msgid "If active, found duplicates clones for this service will be removed"
 msgstr "Aktibo badago, aurkitu dira bikoiztuak klonak zerbitzu honetarako"
 
-#: services/Vmware_enterprise/service_linked.py:93
+#: services/Vmware_enterprise/service_linked.py:92
 msgid "Keep on error"
 msgstr "Akatsa mantendu"
 
-#: services/Vmware_enterprise/service_linked.py:96
+#: services/Vmware_enterprise/service_linked.py:95
 msgid "If active, access errors found on machine will not mark is as error."
 msgstr ""
 "Aktibatuta badago, makinan aurkitutako errore-akatsak ez dira markatuko "
 "errore gisa."
 
-#: services/Vmware_enterprise/service_linked.py:108
+#: services/Vmware_enterprise/service_linked.py:106
 msgid "Resource Pool containing base machine"
 msgstr "Baliabideen Poola oinarrizko makina duena"
 
-#: services/Vmware_enterprise/service_linked.py:114
+#: services/Vmware_enterprise/service_linked.py:112
 msgid "Base machine for this service"
 msgstr "Zerbitzu honen oinarrizko makina"
 
-#: services/Vmware_enterprise/service_linked.py:119
+#: services/Vmware_enterprise/service_linked.py:117
 msgid "Pub. Network"
 msgstr "Pub. Sarea"
 
-#: services/Vmware_enterprise/service_linked.py:120
+#: services/Vmware_enterprise/service_linked.py:118
 msgid "Network on which the machine will be deployed"
 msgstr "Makina zabalduko duen sarea"
 
-#: services/Vmware_enterprise/service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:119
 msgid "Clones Folder"
 msgstr "Clones karpeta"
 
-#: services/Vmware_enterprise/service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:119
 msgid "Folder where deploy clones"
 msgstr "Klonak zabaltzeko karpeta"
 
-#: services/Vmware_enterprise/service_linked.py:122
+#: services/Vmware_enterprise/service_linked.py:120
 msgid "Inc.Datastores"
 msgstr "Inc.Datastores"
 
-#: services/Vmware_enterprise/service_linked.py:123
+#: services/Vmware_enterprise/service_linked.py:121
 msgid "Datastores where to put incrementals"
 msgstr "Datastoreak non igoerak jarri"
 

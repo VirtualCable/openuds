@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"POT-Creation-Date: 2020-02-28 09:34+0100\n"
 "PO-Revision-Date: 2020-02-25 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -179,8 +179,8 @@ msgid "#RESTRAINED_NUMBER# restrained services!"
 msgstr "#RESTRAINED_NUMBER# murriztutako zerbitzuak!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:52
-#: static/admin/translations-fakejs.js:294
-#: static/admin/translations-fakejs.js:302
+#: static/admin/translations-fakejs.js:297
+#: static/admin/translations-fakejs.js:305
 msgid "Filter"
 msgstr "iragazkia"
 
@@ -197,25 +197,25 @@ msgid "Full Access"
 msgstr "Sarbide osoa"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:43
-#: static/admin/translations-fakejs.js:355
-#: static/admin/translations-fakejs.js:402
-#: static/admin/translations-fakejs.js:421
+#: static/admin/translations-fakejs.js:360
+#: static/admin/translations-fakejs.js:407
+#: static/admin/translations-fakejs.js:426
 msgid "User"
 msgstr "Erabiltzailea"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:44
 #: static/admin/translations-fakejs.js:115
 #: static/admin/translations-fakejs.js:140
-#: static/admin/translations-fakejs.js:397
-#: static/admin/translations-fakejs.js:411
+#: static/admin/translations-fakejs.js:402
+#: static/admin/translations-fakejs.js:416
 msgid "Group"
 msgstr "Taldea"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:45
-#: static/admin/translations-fakejs.js:396
 #: static/admin/translations-fakejs.js:401
-#: static/admin/translations-fakejs.js:410
-#: static/admin/translations-fakejs.js:420
+#: static/admin/translations-fakejs.js:406
+#: static/admin/translations-fakejs.js:415
+#: static/admin/translations-fakejs.js:425
 #: static/modern/translations-fakejs.js:40
 msgid "Authenticator"
 msgstr "autentifikatzailea"
@@ -374,8 +374,8 @@ msgstr "igerileku"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:118
 #: static/admin/translations-fakejs.js:134
 #: static/admin/translations-fakejs.js:160
-#: static/admin/translations-fakejs.js:348
-#: static/admin/translations-fakejs.js:363
+#: static/admin/translations-fakejs.js:353
+#: static/admin/translations-fakejs.js:368
 msgid "State"
 msgstr "Estatu"
 
@@ -387,8 +387,8 @@ msgstr "Erabiltzaileen zerbitzuak"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:145
 #: static/admin/translations-fakejs.js:162
-#: static/admin/translations-fakejs.js:312
-#: static/admin/translations-fakejs.js:459
+#: static/admin/translations-fakejs.js:315
+#: static/admin/translations-fakejs.js:469
 msgid "Service pools"
 msgstr "Zerbitzu-igerilekuak"
 
@@ -457,9 +457,9 @@ msgstr "guztiak"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:116
 #: static/admin/translations-fakejs.js:141
-#: static/admin/translations-fakejs.js:347
-#: static/admin/translations-fakejs.js:362
-#: static/admin/translations-fakejs.js:445
+#: static/admin/translations-fakejs.js:352
+#: static/admin/translations-fakejs.js:367
+#: static/admin/translations-fakejs.js:455
 msgid "Comments"
 msgstr "Oharrak"
 
@@ -485,30 +485,31 @@ msgstr "Zerbitzuak Igerilekua"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:125
 #: static/admin/translations-fakejs.js:147
-#: static/admin/translations-fakejs.js:314
-#: static/admin/translations-fakejs.js:342
-#: static/admin/translations-fakejs.js:356
-#: static/admin/translations-fakejs.js:372
-#: static/admin/translations-fakejs.js:379
-#: static/admin/translations-fakejs.js:436
-#: static/admin/translations-fakejs.js:461
+#: static/admin/translations-fakejs.js:281
+#: static/admin/translations-fakejs.js:317
+#: static/admin/translations-fakejs.js:347
+#: static/admin/translations-fakejs.js:361
+#: static/admin/translations-fakejs.js:377
+#: static/admin/translations-fakejs.js:384
+#: static/admin/translations-fakejs.js:444
+#: static/admin/translations-fakejs.js:471
 msgid "Groups"
 msgstr "Taldeak"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:126
-#: static/admin/translations-fakejs.js:373
-#: static/admin/translations-fakejs.js:377
+#: static/admin/translations-fakejs.js:378
+#: static/admin/translations-fakejs.js:382
 msgid "Services Pools"
 msgstr "Zerbitzuak Igerilekuak"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:127
-#: static/admin/translations-fakejs.js:434
-#: static/admin/translations-fakejs.js:460
+#: static/admin/translations-fakejs.js:442
+#: static/admin/translations-fakejs.js:470
 msgid "Assigned services"
 msgstr "Zerbitzu esleituak"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:136
-#: static/admin/translations-fakejs.js:444
+#: static/admin/translations-fakejs.js:454
 msgid "Name"
 msgstr "izena"
 
@@ -525,25 +526,26 @@ msgid "Last access"
 msgstr "Azken sarbidea"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:146
-#: static/admin/translations-fakejs.js:341
-#: static/admin/translations-fakejs.js:378
+#: static/admin/translations-fakejs.js:280
+#: static/admin/translations-fakejs.js:346
+#: static/admin/translations-fakejs.js:383
 msgid "Users"
 msgstr "erabiltzaileak"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:142
-#: static/admin/translations-fakejs.js:349
-#: static/admin/translations-fakejs.js:364
+#: static/admin/translations-fakejs.js:354
+#: static/admin/translations-fakejs.js:369
 msgid "Enabled"
 msgstr "Gaituta"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:143
-#: static/admin/translations-fakejs.js:350
-#: static/admin/translations-fakejs.js:365
+#: static/admin/translations-fakejs.js:355
+#: static/admin/translations-fakejs.js:370
 msgid "Disabled"
 msgstr "Desgaituta"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:144
-#: static/admin/translations-fakejs.js:351
+#: static/admin/translations-fakejs.js:356
 msgid "Blocked"
 msgstr "Blokeatutako"
 
@@ -642,12 +644,12 @@ msgid "Please, select a valid transport"
 msgstr "Mesedez, aukeratu baliozko garraioa"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:174
-#: static/admin/translations-fakejs.js:300
-#: static/admin/translations-fakejs.js:343
-#: static/admin/translations-fakejs.js:384
-#: static/admin/translations-fakejs.js:387
-#: static/admin/translations-fakejs.js:441
-#: static/admin/translations-fakejs.js:463
+#: static/admin/translations-fakejs.js:303
+#: static/admin/translations-fakejs.js:348
+#: static/admin/translations-fakejs.js:389
+#: static/admin/translations-fakejs.js:392
+#: static/admin/translations-fakejs.js:449
+#: static/admin/translations-fakejs.js:473
 msgid "Logs"
 msgstr "Agerraldiak"
 
@@ -665,19 +667,19 @@ msgstr "Esleitzeko zerbitzua"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:178
 #: static/admin/translations-fakejs.js:277
-#: static/admin/translations-fakejs.js:283
-#: static/admin/translations-fakejs.js:327
-#: static/admin/translations-fakejs.js:357
-#: static/admin/translations-fakejs.js:369
-#: static/admin/translations-fakejs.js:398
+#: static/admin/translations-fakejs.js:286
+#: static/admin/translations-fakejs.js:332
+#: static/admin/translations-fakejs.js:362
+#: static/admin/translations-fakejs.js:374
 #: static/admin/translations-fakejs.js:403
-#: static/admin/translations-fakejs.js:407
+#: static/admin/translations-fakejs.js:408
 #: static/admin/translations-fakejs.js:412
-#: static/admin/translations-fakejs.js:422
+#: static/admin/translations-fakejs.js:417
 #: static/admin/translations-fakejs.js:427
-#: static/admin/translations-fakejs.js:431
-#: static/admin/translations-fakejs.js:456
-#: static/admin/translations-fakejs.js:467
+#: static/admin/translations-fakejs.js:435
+#: static/admin/translations-fakejs.js:439
+#: static/admin/translations-fakejs.js:466
+#: static/admin/translations-fakejs.js:479
 msgid "Cancel"
 msgstr "Ezeztatu"
 
@@ -821,7 +823,7 @@ msgid "Yearly"
 msgstr "Urtero"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:228
-#: static/admin/translations-fakejs.js:453
+#: static/admin/translations-fakejs.js:463
 msgid "Weekdays"
 msgstr "Astegunak"
 
@@ -1013,25 +1015,25 @@ msgid "Add"
 msgstr "Gehitu"
 
 #: static/admin/translations-fakejs.js:278
-#: static/admin/translations-fakejs.js:281
-#: static/admin/translations-fakejs.js:284
-#: static/admin/translations-fakejs.js:328
-#: static/admin/translations-fakejs.js:358
-#: static/admin/translations-fakejs.js:370
+#: static/admin/translations-fakejs.js:283
+#: static/admin/translations-fakejs.js:287
+#: static/admin/translations-fakejs.js:333
+#: static/admin/translations-fakejs.js:363
 #: static/admin/translations-fakejs.js:375
 #: static/admin/translations-fakejs.js:380
-#: static/admin/translations-fakejs.js:388
-#: static/admin/translations-fakejs.js:399
+#: static/admin/translations-fakejs.js:385
+#: static/admin/translations-fakejs.js:393
 #: static/admin/translations-fakejs.js:404
-#: static/admin/translations-fakejs.js:408
+#: static/admin/translations-fakejs.js:409
 #: static/admin/translations-fakejs.js:413
-#: static/admin/translations-fakejs.js:415
-#: static/admin/translations-fakejs.js:417
-#: static/admin/translations-fakejs.js:423
+#: static/admin/translations-fakejs.js:418
+#: static/admin/translations-fakejs.js:420
+#: static/admin/translations-fakejs.js:422
 #: static/admin/translations-fakejs.js:428
-#: static/admin/translations-fakejs.js:432
-#: static/admin/translations-fakejs.js:457
-#: static/admin/translations-fakejs.js:468
+#: static/admin/translations-fakejs.js:436
+#: static/admin/translations-fakejs.js:440
+#: static/admin/translations-fakejs.js:467
+#: static/admin/translations-fakejs.js:480
 msgid "Ok"
 msgstr "Ados"
 
@@ -1039,180 +1041,195 @@ msgstr "Ados"
 msgid "Permissions for"
 msgstr "Baimenak"
 
-#: static/admin/translations-fakejs.js:280
+#: static/admin/translations-fakejs.js:282
 msgid "New permission..."
 msgstr "Baimen berria ..."
 
-#: static/admin/translations-fakejs.js:282
+#: static/admin/translations-fakejs.js:284
+#| msgid "New group permission for"
+msgid "New user permission for"
+msgstr "Erabiltzaile berriaren baimena"
+
+#: static/admin/translations-fakejs.js:285
 msgid "New group permission for"
 msgstr "Taldeentzako baimen berria"
 
-#: static/admin/translations-fakejs.js:285
+#: static/admin/translations-fakejs.js:288
 msgid "Discard & close"
 msgstr "Baztertu eta itxi"
 
-#: static/admin/translations-fakejs.js:286
-#: static/admin/translations-fakejs.js:330
+#: static/admin/translations-fakejs.js:289
+#: static/admin/translations-fakejs.js:335
 msgid "Save"
 msgstr "Gorde"
 
-#: static/admin/translations-fakejs.js:287
-#: static/admin/translations-fakejs.js:288
-#: static/admin/translations-fakejs.js:289
+#: static/admin/translations-fakejs.js:290
+#: static/admin/translations-fakejs.js:291
+#: static/admin/translations-fakejs.js:292
 msgid "New"
 msgstr "Berria"
 
-#: static/admin/translations-fakejs.js:290
-#: static/admin/translations-fakejs.js:297
+#: static/admin/translations-fakejs.js:293
+#: static/admin/translations-fakejs.js:300
 msgid "Edit"
 msgstr "Editatu"
 
-#: static/admin/translations-fakejs.js:291
-#: static/admin/translations-fakejs.js:298
+#: static/admin/translations-fakejs.js:294
+#: static/admin/translations-fakejs.js:301
 msgid "Permissions"
 msgstr "Baimenak"
 
-#: static/admin/translations-fakejs.js:292
-#: static/admin/translations-fakejs.js:301
+#: static/admin/translations-fakejs.js:295
+#: static/admin/translations-fakejs.js:304
 msgid "Export"
 msgstr "Export"
 
-#: static/admin/translations-fakejs.js:293
-#: static/admin/translations-fakejs.js:299
+#: static/admin/translations-fakejs.js:296
+#: static/admin/translations-fakejs.js:302
 msgid "Delete"
 msgstr "Ezabatu"
 
-#: static/admin/translations-fakejs.js:295
+#: static/admin/translations-fakejs.js:298
 msgid "Selected items"
 msgstr "Hautatutako elementuak"
 
-#: static/admin/translations-fakejs.js:296
+#: static/admin/translations-fakejs.js:299
 msgid "Detail"
 msgstr "Xehetasun"
 
-#: static/admin/translations-fakejs.js:303
-#: static/admin/translations-fakejs.js:340
-#: static/admin/translations-fakejs.js:381
-#: static/admin/translations-fakejs.js:433
-#: static/admin/translations-fakejs.js:455
-#: static/admin/translations-fakejs.js:458
+#: static/admin/translations-fakejs.js:306
+#: static/admin/translations-fakejs.js:345
+#: static/admin/translations-fakejs.js:386
+#: static/admin/translations-fakejs.js:441
+#: static/admin/translations-fakejs.js:465
+#: static/admin/translations-fakejs.js:468
 msgid "Summary"
 msgstr "Laburpen"
 
-#: static/admin/translations-fakejs.js:304
-#: static/admin/translations-fakejs.js:382
+#: static/admin/translations-fakejs.js:307
+#: static/admin/translations-fakejs.js:387
 msgid "Services"
 msgstr "Zerbitzuak"
 
-#: static/admin/translations-fakejs.js:305
+#: static/admin/translations-fakejs.js:308
 msgid "Authenticators"
 msgstr "Authenticators"
 
-#: static/admin/translations-fakejs.js:306
+#: static/admin/translations-fakejs.js:309
 msgid "Os Managers"
 msgstr "Os Kudeatzaileak"
 
-#: static/admin/translations-fakejs.js:307
+#: static/admin/translations-fakejs.js:310
 msgid "Connectivity"
 msgstr "Konektagarritasuna"
 
-#: static/admin/translations-fakejs.js:308
-#: static/admin/translations-fakejs.js:437
+#: static/admin/translations-fakejs.js:311
+#: static/admin/translations-fakejs.js:445
 msgid "Transports"
 msgstr "Garraioak"
 
-#: static/admin/translations-fakejs.js:309
+#: static/admin/translations-fakejs.js:312
 msgid "Networks"
 msgstr "Sareak"
 
-#: static/admin/translations-fakejs.js:310
+#: static/admin/translations-fakejs.js:313
 msgid "Proxies"
 msgstr "proxy"
 
-#: static/admin/translations-fakejs.js:311
+#: static/admin/translations-fakejs.js:314
 msgid "Pools"
 msgstr "Igerilekuak"
 
-#: static/admin/translations-fakejs.js:313
+#: static/admin/translations-fakejs.js:316
 msgid "Meta pools"
 msgstr "Meta igerilekuak"
 
-#: static/admin/translations-fakejs.js:315
+#: static/admin/translations-fakejs.js:318
 msgid "Calendars"
 msgstr "Egutegiak"
 
-#: static/admin/translations-fakejs.js:316
+#: static/admin/translations-fakejs.js:319
 msgid "Accounts"
 msgstr "kontuak"
 
-#: static/admin/translations-fakejs.js:317
+#: static/admin/translations-fakejs.js:320
 msgid "Tools"
 msgstr "tresnak"
 
-#: static/admin/translations-fakejs.js:318
+#: static/admin/translations-fakejs.js:321
 msgid "Gallery"
 msgstr "Gallery"
 
-#: static/admin/translations-fakejs.js:319
+#: static/admin/translations-fakejs.js:322
 msgid "Reports"
 msgstr "Txostenak"
 
-#: static/admin/translations-fakejs.js:320
+#: static/admin/translations-fakejs.js:323
 msgid "Configuration"
 msgstr "konfigurazioa"
 
-#: static/admin/translations-fakejs.js:321
+#: static/admin/translations-fakejs.js:324
 msgid "Actor tokens"
 msgstr "Aktoreen tokenak"
 
-#: static/admin/translations-fakejs.js:322
+#: static/admin/translations-fakejs.js:325
 msgid "Flush Cache"
 msgstr "Flush Cachea"
 
-#: static/admin/translations-fakejs.js:323
+#: static/admin/translations-fakejs.js:326
+#| msgid "New group for"
+msgid "New image for"
+msgstr "Irudi berriarentzako"
+
+#: static/admin/translations-fakejs.js:327
+#| msgid "Edit user"
+msgid "Edit for"
+msgstr "Editatu for"
+
+#: static/admin/translations-fakejs.js:328
 msgid "Image name"
 msgstr "Irudiaren izena"
 
-#: static/admin/translations-fakejs.js:324
+#: static/admin/translations-fakejs.js:329
 msgid "Image (click to change)"
 msgstr "Irudia (egin klik Aldatu)"
 
-#: static/admin/translations-fakejs.js:325
+#: static/admin/translations-fakejs.js:330
 msgid "For optimal results, use "
 msgstr "Emaitza hobeak lortzeko, erabili"
 
-#: static/admin/translations-fakejs.js:326
+#: static/admin/translations-fakejs.js:331
 msgid "The image will be resized on upload to"
 msgstr "Irudia kargatzean igo egingo da"
 
-#: static/admin/translations-fakejs.js:329
+#: static/admin/translations-fakejs.js:334
 msgid "UDS Configuration"
 msgstr "UDS konfigurazioa"
 
-#: static/admin/translations-fakejs.js:331
+#: static/admin/translations-fakejs.js:336
 #: static/modern/translations-fakejs.js:29
 msgid "Dashboard"
 msgstr "arbela"
 
-#: static/admin/translations-fakejs.js:332
+#: static/admin/translations-fakejs.js:337
 msgid "View authenticators"
 msgstr "Ikusi autentifikazioak"
 
-#: static/admin/translations-fakejs.js:333
-#: static/admin/translations-fakejs.js:334
-#: static/admin/translations-fakejs.js:335
+#: static/admin/translations-fakejs.js:338
+#: static/admin/translations-fakejs.js:339
+#: static/admin/translations-fakejs.js:340
 msgid "View service pools"
 msgstr "Ikusi zerbitzu igerilekuak"
 
-#: static/admin/translations-fakejs.js:336
+#: static/admin/translations-fakejs.js:341
 msgid "You are accessing UDS Administration as staff member."
 msgstr "UDS Administrazioa sartzen ari zara langile gisa."
 
-#: static/admin/translations-fakejs.js:337
+#: static/admin/translations-fakejs.js:342
 msgid "This means that you have restricted access to elements."
 msgstr "Horrek esan nahi du elementuetarako sarbide mugatua duzula."
 
-#: static/admin/translations-fakejs.js:338
+#: static/admin/translations-fakejs.js:343
 msgid ""
 "In order to increase your access privileges, please contact your local UDS "
 "administrator."
@@ -1220,210 +1237,245 @@ msgstr ""
 "Sarbide pribilegioak handitzeko, jarri harremanetan zure tokiko UDS "
 "administratzailearekin."
 
-#: static/admin/translations-fakejs.js:339
+#: static/admin/translations-fakejs.js:344
 msgid "Thank you."
 msgstr "Eskerrik asko."
 
-#: static/admin/translations-fakejs.js:344
+#: static/admin/translations-fakejs.js:349
 msgid "Edit user"
 msgstr "Editatu erabiltzailea"
 
-#: static/admin/translations-fakejs.js:345
+#: static/admin/translations-fakejs.js:350
 msgid "New user"
 msgstr "Erabiltzaile berria"
 
-#: static/admin/translations-fakejs.js:346
+#: static/admin/translations-fakejs.js:351
 msgid "Real name"
 msgstr "Izen erreala"
 
-#: static/admin/translations-fakejs.js:352
+#: static/admin/translations-fakejs.js:357
 msgid "Role"
 msgstr "Role"
 
-#: static/admin/translations-fakejs.js:353
+#: static/admin/translations-fakejs.js:358
 msgid "Admin"
 msgstr "admin"
 
-#: static/admin/translations-fakejs.js:354
+#: static/admin/translations-fakejs.js:359
 msgid "Staff member"
 msgstr "Langile kidea"
 
-#: static/admin/translations-fakejs.js:359
+#: static/admin/translations-fakejs.js:364
 msgid "Edit group"
 msgstr "Taldea edidatu"
 
-#: static/admin/translations-fakejs.js:360
+#: static/admin/translations-fakejs.js:365
 msgid "New group"
 msgstr "Talde Berria"
 
-#: static/admin/translations-fakejs.js:361
+#: static/admin/translations-fakejs.js:366
 msgid "Meta group name"
 msgstr "Meta taldearen izena"
 
-#: static/admin/translations-fakejs.js:366
+#: static/admin/translations-fakejs.js:371
 msgid "Service Pools"
 msgstr "Zerbitzu Igerilekuak"
 
-#: static/admin/translations-fakejs.js:367
+#: static/admin/translations-fakejs.js:372
 msgid "Match mode"
 msgstr "Partiduen modua"
 
-#: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:373
 msgid "Selected Groups"
 msgstr "Hautatutako taldeak"
 
-#: static/admin/translations-fakejs.js:371
 #: static/admin/translations-fakejs.js:376
-#: static/admin/translations-fakejs.js:385
+#: static/admin/translations-fakejs.js:381
+#: static/admin/translations-fakejs.js:390
 msgid "Information for"
 msgstr "Informazioa egiteko"
 
-#: static/admin/translations-fakejs.js:374
+#: static/admin/translations-fakejs.js:379
 msgid "Assigned Services"
 msgstr "Zerbitzu esleituak"
 
-#: static/admin/translations-fakejs.js:383
+#: static/admin/translations-fakejs.js:388
 msgid "Usage"
 msgstr "Usage"
 
-#: static/admin/translations-fakejs.js:386
+#: static/admin/translations-fakejs.js:391
 msgid "Services pools"
 msgstr "Zerbitzuen igerilekuak"
 
-#: static/admin/translations-fakejs.js:389
+#: static/admin/translations-fakejs.js:394
 msgid "Edit action for"
 msgstr "Editatu ekintza egiteko"
 
-#: static/admin/translations-fakejs.js:390
+#: static/admin/translations-fakejs.js:395
 msgid "New action for"
 msgstr "Ekintza berri bat egiteko"
 
-#: static/admin/translations-fakejs.js:391
-#: static/admin/translations-fakejs.js:425
+#: static/admin/translations-fakejs.js:396
+#: static/admin/translations-fakejs.js:433
 msgid "Calendar"
 msgstr "Egutegia"
 
-#: static/admin/translations-fakejs.js:392
+#: static/admin/translations-fakejs.js:397
 msgid "Events offset (minutes)"
 msgstr "Ekitaldiaren desplazamendua (minutu)"
 
-#: static/admin/translations-fakejs.js:393
+#: static/admin/translations-fakejs.js:398
 msgid "At the beginning of the interval?"
 msgstr "Tarte hasieran?"
 
-#: static/admin/translations-fakejs.js:394
-#: static/admin/translations-fakejs.js:426
+#: static/admin/translations-fakejs.js:399
+#: static/admin/translations-fakejs.js:434
 msgid "Action"
 msgstr "Ekintza"
 
-#: static/admin/translations-fakejs.js:395
-#: static/admin/translations-fakejs.js:406
+#: static/admin/translations-fakejs.js:400
+#: static/admin/translations-fakejs.js:411
 msgid "Transport"
 msgstr "Garraioa"
 
-#: static/admin/translations-fakejs.js:400
+#: static/admin/translations-fakejs.js:405
 msgid "Change owner of assigned service"
 msgstr "Aldatu esleitutako zerbitzuaren jabea"
 
-#: static/admin/translations-fakejs.js:405
+#: static/admin/translations-fakejs.js:410
 msgid "New transport for"
 msgstr "Garraio berria egiteko"
 
-#: static/admin/translations-fakejs.js:409
+#: static/admin/translations-fakejs.js:414
 msgid "New group for"
 msgstr "Talde berria for"
 
-#: static/admin/translations-fakejs.js:414
+#: static/admin/translations-fakejs.js:419
 msgid "Logs of"
 msgstr "Erregistroak"
 
-#: static/admin/translations-fakejs.js:416
+#: static/admin/translations-fakejs.js:421
 msgid "Changelog of"
 msgstr "Changelog of"
 
-#: static/admin/translations-fakejs.js:418
+#: static/admin/translations-fakejs.js:423
 msgid "Assign service to user manually"
 msgstr "Esleitu zerbitzua erabiltzaileari eskuz"
 
-#: static/admin/translations-fakejs.js:419
+#: static/admin/translations-fakejs.js:424
 msgid "Service"
 msgstr "zerbitzua"
 
-#: static/admin/translations-fakejs.js:424
-#: static/admin/translations-fakejs.js:464
+#: static/admin/translations-fakejs.js:429
+#| msgid "New group for"
+msgid "New access rule for"
+msgstr "Sarbide arau berria% srentzat"
+
+#: static/admin/translations-fakejs.js:430
+#| msgid "Edit action for"
+msgid "Edit access rule for"
+msgstr "Editatu sarbide - araua"
+
+#: static/admin/translations-fakejs.js:431
+#| msgid "Delete calendar access rule"
+msgid "Default fallback access for"
+msgstr "Atzerapen sarbidea lehenetsita dago"
+
+#: static/admin/translations-fakejs.js:432
+#: static/admin/translations-fakejs.js:476
 msgid "Priority"
 msgstr "Lehentasuna"
 
-#: static/admin/translations-fakejs.js:429
+#: static/admin/translations-fakejs.js:437
 msgid "New publication for"
 msgstr "Argitaratze berria egiteko"
 
-#: static/admin/translations-fakejs.js:430
+#: static/admin/translations-fakejs.js:438
 msgid "Reason"
 msgstr "Arrazoia"
 
-#: static/admin/translations-fakejs.js:435
+#: static/admin/translations-fakejs.js:443
 msgid "Cache"
 msgstr "Cache"
 
-#: static/admin/translations-fakejs.js:438
+#: static/admin/translations-fakejs.js:446
 msgid "Publications"
 msgstr "Argitalpenak"
 
-#: static/admin/translations-fakejs.js:439
+#: static/admin/translations-fakejs.js:447
 msgid "Scheduled actions"
 msgstr "Aurreikusitako ekintzak"
 
-#: static/admin/translations-fakejs.js:440
-#: static/admin/translations-fakejs.js:462
+#: static/admin/translations-fakejs.js:448
+#: static/admin/translations-fakejs.js:472
 msgid "Access calendars"
 msgstr "Sartu egutegiak"
 
-#: static/admin/translations-fakejs.js:442
+#: static/admin/translations-fakejs.js:450
 msgid "Account usage"
 msgstr "Kontuaren erabilera"
 
-#: static/admin/translations-fakejs.js:443
+#: static/admin/translations-fakejs.js:451
 msgid "Rules"
 msgstr "arauak"
 
-#: static/admin/translations-fakejs.js:446
+#: static/admin/translations-fakejs.js:452
+#| msgid "Edit user"
+msgid "Edit rule"
+msgstr "Editatu araua"
+
+#: static/admin/translations-fakejs.js:453
+#| msgid "New user"
+msgid "New rule"
+msgstr "Arau berria"
+
+#: static/admin/translations-fakejs.js:456
 msgid "Event"
 msgstr "Gertaera"
 
-#: static/admin/translations-fakejs.js:447
+#: static/admin/translations-fakejs.js:457
 msgid "Start time"
 msgstr "Hasiera ordua"
 
-#: static/admin/translations-fakejs.js:448
+#: static/admin/translations-fakejs.js:458
 msgid "Duration"
 msgstr "Iraupena"
 
-#: static/admin/translations-fakejs.js:449
+#: static/admin/translations-fakejs.js:459
 msgid "Duration units"
 msgstr "Iraupen unitateak"
 
-#: static/admin/translations-fakejs.js:450
+#: static/admin/translations-fakejs.js:460
 msgid "Start date"
 msgstr "Hasiera data"
 
-#: static/admin/translations-fakejs.js:451
+#: static/admin/translations-fakejs.js:461
 msgid "Repeat until date"
 msgstr "Errepikatu data arte"
 
-#: static/admin/translations-fakejs.js:452
+#: static/admin/translations-fakejs.js:462
 msgid "Frequency"
 msgstr "Frequency"
 
-#: static/admin/translations-fakejs.js:454
+#: static/admin/translations-fakejs.js:464
 msgid "Repeat every"
 msgstr "Errepikatu behin"
 
-#: static/admin/translations-fakejs.js:465
+#: static/admin/translations-fakejs.js:474
+#| msgid "Remove member pool"
+msgid "New member pool"
+msgstr "Kideen igerilekua berria"
+
+#: static/admin/translations-fakejs.js:475
+#| msgid "Edit meta pool"
+msgid "Edit member pool"
+msgstr "Editatu kideen multzoa"
+
+#: static/admin/translations-fakejs.js:477
 msgid "Service pool"
 msgstr "Zerbitzu igerilekua"
 
-#: static/admin/translations-fakejs.js:466
+#: static/admin/translations-fakejs.js:478
 msgid "Enabled?"
 msgstr "Gaituta?"
 

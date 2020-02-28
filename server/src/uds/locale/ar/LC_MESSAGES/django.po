@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-25 15:42+0100\n"
+"POT-Creation-Date: 2020-02-28 09:34+0100\n"
 "PO-Revision-Date: 2020-02-25 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -190,7 +190,7 @@ msgstr "التسمية"
 
 #: REST/methods/authenticators.py:71 reports/stats/pools_performance.py:203
 #: reports/stats/pools_performance.py:258 reports/stats/user_access.py:236
-#: reports/stats/user_access.py:275 services/RDS_enterprise/provider.py:67
+#: reports/stats/user_access.py:275 services/RDS_enterprise/provider.py:66
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
@@ -548,10 +548,10 @@ msgstr "الخادم (IP أو FQDN) الذي سيعمل بمثابة وكيل."
 #: REST/methods/proxies.py:95 auths/EDirectory_enterprise/authenticator.py:45
 #: auths/RegexLdap/authenticator.py:65 auths/SimpleLDAP/authenticator.py:58
 #: services/HyperV_enterprise/legacy/provider.py:84
-#: services/HyperV_enterprise/provider.py:116
+#: services/HyperV_enterprise/provider.py:114
 #: services/Nutanix_enterprise/provider.py:37 services/OpenGnsys/provider.py:96
 #: services/OpenNebula/provider.py:78 services/OpenStack/provider_legacy.py:103
-#: services/Proxmox/provider.py:61 services/RDS_enterprise/provider.py:101
+#: services/Proxmox/provider.py:61 services/RDS_enterprise/provider.py:99
 #: services/VCloud_enterprise/provider.py:33
 #: services/Vmware_enterprise/provider.py:42
 msgid "Port"
@@ -949,11 +949,11 @@ msgstr "المستخدمون الحاليون"
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
 #: services/HyperV_enterprise/legacy/provider.py:85
-#: services/HyperV_enterprise/provider.py:76
+#: services/HyperV_enterprise/provider.py:74
 #: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
 #: services/OpenGnsys/provider.py:98 services/OpenNebula/provider.py:80
 #: services/OpenStack/provider.py:102 services/OpenStack/provider_legacy.py:109
-#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:118
+#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:116
 #: services/VCloud_enterprise/provider.py:35
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
@@ -1094,11 +1094,11 @@ msgstr ""
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 #: osmanagers/WindowsOsManager/windows_random.py:66
 #: services/HyperV_enterprise/legacy/provider.py:86
-#: services/HyperV_enterprise/provider.py:77
+#: services/HyperV_enterprise/provider.py:75
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
 #: services/OpenGnsys/provider.py:99 services/OpenNebula/provider.py:81
 #: services/OpenStack/provider.py:103 services/OpenStack/provider_legacy.py:110
-#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:126
+#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:124
 #: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
@@ -1121,7 +1121,7 @@ msgstr "كلمة مرور المستخدم ldap"
 #: auths/RegexLdap/authenticator.py:69 auths/SimpleLDAP/authenticator.py:62
 #: services/Azure_enterprise/provider.py:48
 #: services/HyperV_enterprise/legacy/provider.py:93
-#: services/HyperV_enterprise/provider.py:134
+#: services/HyperV_enterprise/provider.py:131
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
@@ -2422,46 +2422,46 @@ msgstr "لا يسمح شكل DOM/USER"
 msgid "Must provide a password for the account!"
 msgstr "يجب توفير كلمة مرور لحساب!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:271
-#: osmanagers/WindowsOsManager/windows_domain.py:281
+#: osmanagers/WindowsOsManager/windows_domain.py:273
+#: osmanagers/WindowsOsManager/windows_domain.py:283
 msgid "Check error: {}"
 msgstr "التحقق من الخطأ: {}"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:273
+#: osmanagers/WindowsOsManager/windows_domain.py:275
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr "لا يمكن إيجاد معلمات الخادم (}ldap._tcp.{0} لا يمكن حلها"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:286
+#: osmanagers/WindowsOsManager/windows_domain.py:288
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
 msgstr ""
 "الاختيار الخطأ: مجموعة \"{}\" لم يتم العثور على (باستخدام \"cn\" للعثور عليه)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:288
+#: osmanagers/WindowsOsManager/windows_domain.py:290
 msgid "Server check was successful"
 msgstr " اختيار الخادم كان ناجحا"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:300
+#: osmanagers/WindowsOsManager/windows_domain.py:302
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
 msgstr "لا يمكن الوصول إلى AD باستخدام LDAP ({0})"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:312
+#: osmanagers/WindowsOsManager/windows_domain.py:314
 #, python-brace-format
 msgid "The default path {0} for computers was not found!!!"
 msgstr "لم يتم العثور على المسار الافتراضي {0} لأجهزة الكمبيوتر !!!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:313
+#: osmanagers/WindowsOsManager/windows_domain.py:315
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
 msgstr "لم يتم العثور على مسار OU {0} !!!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:315
+#: osmanagers/WindowsOsManager/windows_domain.py:317
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr "لا يمكن أن تحقق المعلمات (_ldap._tcp.{0} can'r be resolved)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:320
+#: osmanagers/WindowsOsManager/windows_domain.py:322
 msgid "All parameters seem to work fine."
 msgstr "يبدو أن جميع المعلمات تعمل بشكل جيد"
 
@@ -2736,19 +2736,19 @@ msgstr "التي تم الحصول عليها من اشتراكات"
 
 #: services/Azure_enterprise/provider.py:46
 #: services/HyperV_enterprise/legacy/provider.py:88
-#: services/HyperV_enterprise/provider.py:81
+#: services/HyperV_enterprise/provider.py:79
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
 #: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
 #: services/Vmware_enterprise/provider.py:47
-#: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:98
+#: services/Vmware_enterprise/provider.py:107 services/Xen/provider.py:98
 msgid "Creation concurrency"
 msgstr "تزامن الخلق"
 
 #: services/Azure_enterprise/provider.py:46
 #: services/HyperV_enterprise/legacy/provider.py:89
-#: services/HyperV_enterprise/provider.py:86
+#: services/HyperV_enterprise/provider.py:84
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
@@ -2759,19 +2759,19 @@ msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة ا
 
 #: services/Azure_enterprise/provider.py:47
 #: services/HyperV_enterprise/legacy/provider.py:90
-#: services/HyperV_enterprise/provider.py:93
+#: services/HyperV_enterprise/provider.py:91
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
 #: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
 #: services/Vmware_enterprise/provider.py:48
-#: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:99
+#: services/Vmware_enterprise/provider.py:108 services/Xen/provider.py:99
 msgid "Removal concurrency"
 msgstr "تزامن الإزالة."
 
 #: services/Azure_enterprise/provider.py:47
 #: services/HyperV_enterprise/legacy/provider.py:91
-#: services/HyperV_enterprise/provider.py:98
+#: services/HyperV_enterprise/provider.py:96
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
@@ -2848,7 +2848,7 @@ msgstr "الحجم للأجهزة التي تم إنشاؤها من هذه ال�
 #: services/Nutanix_enterprise/service.py:82 services/OVirt/service.py:198
 #: services/OpenNebula/service.py:118 services/OpenStack/service.py:140
 #: services/Proxmox/service.py:160 services/VCloud_enterprise/service.py:87
-#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:164
+#: services/Vmware_enterprise/service_linked.py:122 services/Xen/service.py:164
 msgid "Machine Names"
 msgstr "أسماء الأجهزة"
 
@@ -2858,7 +2858,7 @@ msgstr "أسماء الأجهزة"
 #: services/Nutanix_enterprise/service.py:85 services/OVirt/service.py:201
 #: services/OpenNebula/service.py:121 services/OpenStack/service.py:143
 #: services/Proxmox/service.py:163 services/VCloud_enterprise/service.py:87
-#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:167
+#: services/Vmware_enterprise/service_linked.py:122 services/Xen/service.py:167
 msgid "Base name for clones from this machine"
 msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 
@@ -2868,7 +2868,7 @@ msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 #: services/Nutanix_enterprise/service.py:91 services/OVirt/service.py:208
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:150
 #: services/Proxmox/service.py:170 services/VCloud_enterprise/service.py:88
-#: services/Vmware_enterprise/service_linked.py:125 services/Xen/service.py:174
+#: services/Vmware_enterprise/service_linked.py:123 services/Xen/service.py:174
 msgid "Name Length"
 msgstr "طول الاسم "
 
@@ -2878,7 +2878,7 @@ msgstr "طول الاسم "
 #: services/Nutanix_enterprise/service.py:94 services/OVirt/service.py:211
 #: services/OpenNebula/service.py:131 services/OpenStack/service.py:153
 #: services/Proxmox/service.py:173 services/VCloud_enterprise/service.py:89
-#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:177
+#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:177
 msgid "Size of numeric part for the names of these machines"
 msgstr "حجم الجزء الرقمي لأسماء هذه الآلات"
 
@@ -2938,7 +2938,7 @@ msgstr ""
 "تفعيل هذا الخيار لاستخدام الشبكات المتسارعة على vm. التأكد من أن لديك حجم "
 "الجهاز والجهاز يدعم هذا الخيار قبل تنشيط."
 
-#: services/Azure_enterprise/service.py:160
+#: services/Azure_enterprise/service.py:159
 msgid "You must select a network for the service"
 msgstr "يجب عليك تحديد شبكة للخدمة"
 
@@ -2963,12 +2963,12 @@ msgid "WSMan Port (normally 5985)"
 msgstr "ميناء WSMan (عادة 5985)"
 
 #: services/HyperV_enterprise/legacy/provider.py:85
-#: services/HyperV_enterprise/provider.py:76
+#: services/HyperV_enterprise/provider.py:74
 msgid "User with valid privileges on HyperV Server"
 msgstr "المستخدم مع امتيازات صالح على خادم HyperV "
 
 #: services/HyperV_enterprise/legacy/provider.py:86
-#: services/HyperV_enterprise/provider.py:77
+#: services/HyperV_enterprise/provider.py:75
 msgid "Password of the user of HyperV"
 msgstr "كلمة السر للمستخدم من HyperV"
 
@@ -2977,14 +2977,14 @@ msgid "Timeout in seconds of connection to HyperV"
 msgstr "المهلة بالثواني لاتصال HyperV"
 
 #: services/HyperV_enterprise/legacy/provider.py:95
-#: services/HyperV_enterprise/provider.py:105
+#: services/HyperV_enterprise/provider.py:103
 #: services/Nutanix_enterprise/provider.py:45 services/OVirt/provider.py:117
 #: services/Vmware_enterprise/provider.py:51 services/Xen/provider.py:101
 msgid "Macs range"
 msgstr "نطاق MAC"
 
 #: services/HyperV_enterprise/legacy/provider.py:96
-#: services/HyperV_enterprise/provider.py:109 services/Xen/provider.py:102
+#: services/HyperV_enterprise/provider.py:107 services/Xen/provider.py:102
 msgid "Range of valid macs for created machines"
 msgstr "مجموعة صالحة من MAC للآلات التي تم إنشاؤها."
 
@@ -2995,7 +2995,7 @@ msgstr "اختبار اتصال ناجح"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:167
+#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "فشل الاتصال. تحقق اتصال params"
 
@@ -3043,13 +3043,13 @@ msgstr "مخازن البيانات لوضع تدريجيات والمطبوعا
 
 #: services/HyperV_enterprise/legacy/service.py:91
 #: services/HyperV_enterprise/service.py:92 services/OVirt/service.py:131
-#: services/Vmware_enterprise/service_linked.py:130 services/Xen/service.py:118
+#: services/Vmware_enterprise/service_linked.py:128 services/Xen/service.py:118
 msgid "Reserved Space"
 msgstr "المساحة المحجوزة."
 
 #: services/HyperV_enterprise/legacy/service.py:94
 #: services/HyperV_enterprise/service.py:95 services/OVirt/service.py:135
-#: services/Vmware_enterprise/service_linked.py:133 services/Xen/service.py:121
+#: services/Vmware_enterprise/service_linked.py:131 services/Xen/service.py:121
 msgid "Minimal free space in GB"
 msgstr "مساحة حرة الحد الأدنى GB"
 
@@ -3057,7 +3057,7 @@ msgstr "مساحة حرة الحد الأدنى GB"
 #: services/HyperV_enterprise/service.py:100
 #: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:140
 #: services/Proxmox/service.py:126
-#: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:126
+#: services/Vmware_enterprise/service_linked.py:112 services/Xen/service.py:126
 msgid "Base Machine"
 msgstr "آلة الأساس"
 
@@ -3092,15 +3092,15 @@ msgstr "آلة قاعدة الخدمة"
 #: services/Proxmox/service.py:143 services/Proxmox/service.py:155
 #: services/Proxmox/service.py:164 services/Proxmox/service.py:174
 #: services/Vmware_enterprise/service_full.py:68
-#: services/Vmware_enterprise/service_linked.py:110
+#: services/Vmware_enterprise/service_linked.py:108
+#: services/Vmware_enterprise/service_linked.py:112
 #: services/Vmware_enterprise/service_linked.py:114
 #: services/Vmware_enterprise/service_linked.py:116
 #: services/Vmware_enterprise/service_linked.py:118
-#: services/Vmware_enterprise/service_linked.py:120
+#: services/Vmware_enterprise/service_linked.py:119
 #: services/Vmware_enterprise/service_linked.py:121
-#: services/Vmware_enterprise/service_linked.py:123
-#: services/Vmware_enterprise/service_linked.py:124
-#: services/Vmware_enterprise/service_linked.py:126 services/Xen/service.py:129
+#: services/Vmware_enterprise/service_linked.py:122
+#: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:129
 #: services/Xen/service.py:138 services/Xen/service.py:148
 #: services/Xen/service.py:159 services/Xen/service.py:168
 #: services/Xen/service.py:178
@@ -3119,13 +3119,13 @@ msgstr ""
 #: services/HyperV_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:148
 #: services/Proxmox/service.py:148
-#: services/Vmware_enterprise/service_linked.py:115 services/Xen/service.py:143
+#: services/Vmware_enterprise/service_linked.py:113 services/Xen/service.py:143
 msgid "Memory (Mb)"
 msgstr "ذاكرة (ميجا بايت)"
 
 #: services/HyperV_enterprise/legacy/service.py:121
 #: services/HyperV_enterprise/service.py:122
-#: services/Vmware_enterprise/service_linked.py:116
+#: services/Vmware_enterprise/service_linked.py:114
 msgid "Memory for machines deployed from this service"
 msgstr "الذاكرة لآلات تم نشرها من هذه الخدمة"
 
@@ -3152,36 +3152,36 @@ msgstr ""
 "إذا كنت تستخدم خادم HyperV متفاوت المسافات ، فقم بتمكين هذا الخيار. أيضا ، "
 "استخدم"
 
-#: services/HyperV_enterprise/provider.py:70
+#: services/HyperV_enterprise/provider.py:69
 msgid "Enable SSL"
 msgstr "تمكين SSL"
 
-#: services/HyperV_enterprise/provider.py:72
+#: services/HyperV_enterprise/provider.py:71
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr "إذا كانت نشطة ، سيتم إجراء اتصالات HyperV باستخدام SSL (مستحسن)."
 
-#: services/HyperV_enterprise/provider.py:118
+#: services/HyperV_enterprise/provider.py:116
 msgid "Remote WSman port.Leave to zero for default."
 msgstr "منفذ WSman عن بعد. ترك إلى الصفر افتراضيًا."
 
-#: services/HyperV_enterprise/provider.py:125
+#: services/HyperV_enterprise/provider.py:123
 msgid "Force SSL certificate verification"
 msgstr "فرض التحقق من شهادة SSL"
 
-#: services/HyperV_enterprise/provider.py:127
+#: services/HyperV_enterprise/provider.py:125
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
 msgstr "إذا كانت نشطة ، سيتم فرض الشهادة على اتصال الكتلة للتحقق منها."
 
-#: services/HyperV_enterprise/provider.py:138
+#: services/HyperV_enterprise/provider.py:135
 msgid ""
 "Timeout in seconds for connection to HyperV. (Keep this value high enough)"
 msgstr ""
 "مهلة بالثواني للاتصال HyperV. (حافظ على هذه القيمة عالية بما فيه الكفاية)"
 
-#: services/HyperV_enterprise/provider.py:159
+#: services/HyperV_enterprise/provider.py:156
 msgid ""
 "For clusters, username must be a domain user name (user@domain or DOMAIN"
 "\\user"
@@ -3651,6 +3651,15 @@ msgstr "مجموعات أمان الخدمة"
 msgid "IP "
 msgstr "IP"
 
+#: services/PhysicalMachines/provider.py:42
+msgid "Static IP Machines Provider"
+msgstr "ثابت IP آلات مزود"
+
+#: services/PhysicalMachines/provider.py:44
+#| msgid "Provides connection to Azure Platform"
+msgid "Provides connection to machines by IP"
+msgstr "يوفر اتصال إلى الأجهزة عن طريق IP"
+
 #: services/PhysicalMachines/service_multi.py:59
 #: services/Vmware_enterprise/service_fixed.py:54
 msgid "Service Token"
@@ -3778,9 +3787,9 @@ msgid "If checked, the server will be checked before assigning or using it."
 msgstr "إذا كانت محددة، سيتم التحقق من الملقم قبل تعيين أو استخدامه."
 
 #: services/RDS_enterprise/provider.py:58
-#: services/RDS_enterprise/provider.py:63
-#: services/RDS_enterprise/provider.py:69
-#: services/RDS_enterprise/provider.py:77
+#: services/RDS_enterprise/provider.py:62
+#: services/RDS_enterprise/provider.py:68
+#: services/RDS_enterprise/provider.py:76
 msgid "User mapping"
 msgstr "وصل المستخدمين"
 
@@ -3792,15 +3801,15 @@ msgstr ""
 "إذا كان نشيطا، سيتم  وصل المستخدمين. إن لم يكن، سيتم إعادة توجيه الاعتماد من "
 "المستخدم إلى خادم RDS."
 
-#: services/RDS_enterprise/provider.py:68
+#: services/RDS_enterprise/provider.py:67
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr "قائمة المستخدم لرسم الخرائط. (لا يستخدم إذا تم تعطيل تعيين المستخدم)"
 
-#: services/RDS_enterprise/provider.py:74
+#: services/RDS_enterprise/provider.py:73
 msgid "User's password"
 msgstr "كلمة مرور المستخدم"
 
-#: services/RDS_enterprise/provider.py:75
+#: services/RDS_enterprise/provider.py:74
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3808,11 +3817,11 @@ msgstr ""
 "كلمة المرور الافتراضية للمستخدمين في قائمة وصل المستخدمين. (لا تستخدم إذا تم "
 "تعطيل وصل المستخدمين)"
 
-#: services/RDS_enterprise/provider.py:83
+#: services/RDS_enterprise/provider.py:82
 msgid "User auto creation on AD"
 msgstr "إنشاء المستخدم التلقائي على م"
 
-#: services/RDS_enterprise/provider.py:86
+#: services/RDS_enterprise/provider.py:85
 msgid ""
 "If active, uds will mirror the user on your active director. WARNING!! "
 "Existing coincident users may be deleted!."
@@ -3820,53 +3829,53 @@ msgstr ""
 "إذا كان نشطًا ، فسوف تعكس uds المستخدم على مديرك النشط. تحذير!! قد يتم حذف "
 "المستخدمين الحاليين بالصدفة!"
 
-#: services/RDS_enterprise/provider.py:88
-#: services/RDS_enterprise/provider.py:96
-#: services/RDS_enterprise/provider.py:105
-#: services/RDS_enterprise/provider.py:113
-#: services/RDS_enterprise/provider.py:121
-#: services/RDS_enterprise/provider.py:129
-#: services/RDS_enterprise/provider.py:138
-#: services/RDS_enterprise/provider.py:146
-#: services/RDS_enterprise/provider.py:154
+#: services/RDS_enterprise/provider.py:86
+#: services/RDS_enterprise/provider.py:94
+#: services/RDS_enterprise/provider.py:103
+#: services/RDS_enterprise/provider.py:111
+#: services/RDS_enterprise/provider.py:119
+#: services/RDS_enterprise/provider.py:127
+#: services/RDS_enterprise/provider.py:136
+#: services/RDS_enterprise/provider.py:144
+#: services/RDS_enterprise/provider.py:152
 msgid "AD User management"
 msgstr "م إدارة المستخدم"
 
-#: services/RDS_enterprise/provider.py:93
+#: services/RDS_enterprise/provider.py:91
 msgid "AD Server"
 msgstr "خادم م"
 
-#: services/RDS_enterprise/provider.py:94
+#: services/RDS_enterprise/provider.py:92
 msgid "IP or HOST of AD Server. Must have LDAPS support enabled"
 msgstr "IP أو مضيف خادم الإعلانات. يجب تمكين دعم LDAPS"
 
-#: services/RDS_enterprise/provider.py:103
+#: services/RDS_enterprise/provider.py:101
 msgid "AD LDAPS port (default is 636)"
 msgstr "منفذ AD LDAPS (الافتراضي هو 636)"
 
-#: services/RDS_enterprise/provider.py:110
+#: services/RDS_enterprise/provider.py:108
 msgid "AD server OU for created users"
 msgstr "خادم م OU للمستخدمين خلق"
 
-#: services/RDS_enterprise/provider.py:111
+#: services/RDS_enterprise/provider.py:109
 msgid "AD Server branch where users will be created by UDS"
 msgstr "فرع خادم AD حيث سيتم إنشاء المستخدمين بواسطة UDS"
 
-#: services/RDS_enterprise/provider.py:119
+#: services/RDS_enterprise/provider.py:117
 msgid ""
 "Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
 msgstr ""
 "اسم المستخدم مع امتيازات لإنشاء / حذف الحسابات. استخدم نموذج USER@DOMAIN.XXX."
 
-#: services/RDS_enterprise/provider.py:127
+#: services/RDS_enterprise/provider.py:125
 msgid "Password of the user with privileges"
 msgstr "كلمة مرور المستخدم بامتيازات"
 
-#: services/RDS_enterprise/provider.py:134
+#: services/RDS_enterprise/provider.py:132
 msgid "Prefix for created users"
 msgstr "بادئة للمستخدمين الذين تم إنشاؤها"
 
-#: services/RDS_enterprise/provider.py:135
+#: services/RDS_enterprise/provider.py:133
 msgid ""
 "User will be created on AD with the format \"PREFIX...\", where ... will be "
 "the original UDS own username. Max 4 characters"
@@ -3874,11 +3883,11 @@ msgstr ""
 "سيتم إنشاء المستخدم على م بتنسيق \"PREFIX ...\" ، حيث ... سيكون اسم المستخدم "
 "الأصلي الخاص بـ UDS. 4 حروف كحد اقصى"
 
-#: services/RDS_enterprise/provider.py:143
+#: services/RDS_enterprise/provider.py:141
 msgid "AD Domain"
 msgstr "المجال ميلادي"
 
-#: services/RDS_enterprise/provider.py:144
+#: services/RDS_enterprise/provider.py:142
 msgid ""
 "Domain for newly created users (i.e. example.com, example.local). If empty, "
 "will be deduced from username"
@@ -3886,63 +3895,63 @@ msgstr ""
 "المجال للمستخدمين المنشأين حديثًا (على سبيل المثال ، example.com ، example."
 "local). إذا كانت فارغة ، سيتم استنتاجها من اسم المستخدم"
 
-#: services/RDS_enterprise/provider.py:151
+#: services/RDS_enterprise/provider.py:149
 msgid "AD Group"
 msgstr "مجموعة م"
 
-#: services/RDS_enterprise/provider.py:152
+#: services/RDS_enterprise/provider.py:150
 msgid "If not empty, UDS will try to add managed users to this group"
 msgstr "إذا لم تكن فارغة ، ستحاول UDS إضافة مستخدمين مُدارين إلى هذه المجموعة"
 
-#: services/RDS_enterprise/provider.py:162
+#: services/RDS_enterprise/provider.py:160
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
 msgstr "حدد واحدة فقط من طرق \"تعيين المستخدم\" أو \"إنشاء المستخدم\"."
 
-#: services/RDS_enterprise/provider.py:166
+#: services/RDS_enterprise/provider.py:164
 msgid "AD User Management: you must provide the AD server host."
 msgstr "م إدارة المستخدم: يجب أن توفر مضيف خادم م."
 
-#: services/RDS_enterprise/provider.py:169
+#: services/RDS_enterprise/provider.py:167
 msgid "AD User Management: you must provide the user prefix."
 msgstr "م إدارة المستخدم: يجب عليك توفير بادئة المستخدم."
 
-#: services/RDS_enterprise/provider.py:172
+#: services/RDS_enterprise/provider.py:170
 msgid "AD User Management: the username should be in USER@DOMAIN form."
 msgstr "م إدارة المستخدم: يجب أن يكون اسم المستخدم في نموذج USER @ DOMAIN."
 
-#: services/RDS_enterprise/provider.py:175
+#: services/RDS_enterprise/provider.py:173
 msgid "AD User Management: you must provide the password."
 msgstr "م إدارة المستخدم: يجب عليك تقديم كلمة المرور."
 
-#: services/RDS_enterprise/provider.py:179
+#: services/RDS_enterprise/provider.py:177
 msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr "م إدارة المستخدم: يجب عليك توفير بادئة المستخدم. (1-4 أحرف)"
 
-#: services/RDS_enterprise/provider.py:182
+#: services/RDS_enterprise/provider.py:180
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr "م إدارة المستخدم: يجب عليك توفير مجال إنشاء المستخدم FQDN."
 
-#: services/RDS_enterprise/provider.py:215
+#: services/RDS_enterprise/provider.py:213
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "الخطأ: العضو {} على المضيف {} يستخدم ولا يمكن إزالتها في الوقت الحالي"
 
-#: services/RDS_enterprise/provider.py:249
+#: services/RDS_enterprise/provider.py:247
 msgid "Connection to {}, port {} failed."
 msgstr "فشل الاتصال بـ {} ، المنفذ {}."
 
-#: services/RDS_enterprise/provider.py:265
+#: services/RDS_enterprise/provider.py:263
 msgid "The group {} could not be found. Please, check it."
 msgstr "تعذر العثور على المجموعة {}. رجاءا تأكد."
 
-#: services/RDS_enterprise/provider.py:267
+#: services/RDS_enterprise/provider.py:265
 msgid "User creation test failed. Please, check parameters."
 msgstr "فشل اختبار إنشاء المستخدم. من فضلك ، تحقق المعلمات."
 
-#: services/RDS_enterprise/provider.py:272
+#: services/RDS_enterprise/provider.py:270
 msgid "Server {} is not accesible and Server checking is enabled"
 msgstr "الخادم {} غير قابل للوصول وتم تمكين التحقق من الخادم"
 
-#: services/RDS_enterprise/provider.py:274
+#: services/RDS_enterprise/provider.py:272
 msgid "Connectivity test passed"
 msgstr "اختبار الاتصال مرت"
 
@@ -3998,7 +4007,7 @@ msgstr ""
 "إذا تم تحديده، RDS Actor سينتظر إنهاء التطبيق وجميع العمليات قبل النظر في "
 "تطبيق الخروج"
 
-#: services/RDS_enterprise/service.py:105
+#: services/RDS_enterprise/service.py:104
 msgid "A valid application path is required"
 msgstr "مطلوب مسار تطبيق صحيح"
 
@@ -4042,19 +4051,19 @@ msgstr "لا يزال متوشالح على قيد الحياة؟"
 msgid "If you fail, this will not get saved :-)"
 msgstr "إذا أخطأت، لن يتم حفظ هذا :-)"
 
-#: services/Sample/provider.py:137
+#: services/Sample/provider.py:136
 msgid "Text area"
 msgstr "منطقة النص"
 
-#: services/Sample/provider.py:138
+#: services/Sample/provider.py:137
 msgid "This is a text area"
 msgstr "هذه منطقة نصية"
 
-#: services/Sample/provider.py:158
+#: services/Sample/provider.py:157
 msgid "Methuselah is not alive!!! :-)"
 msgstr "متوشالح ليس على قيد الحياة !!! :-)"
 
-#: services/Sample/provider.py:197
+#: services/Sample/provider.py:196
 #: services/TestService_enterprise/provider.py:54
 msgid "Nothing tested, but all went fine.."
 msgstr "لا اختبار، ولكن كل شيء سار على ما يرام .."
@@ -4204,12 +4213,12 @@ msgid "vApp template for the service"
 msgstr "قالب vApp للخدمة"
 
 #: services/VCloud_enterprise/service.py:82
-#: services/Vmware_enterprise/service_linked.py:117
+#: services/Vmware_enterprise/service_linked.py:115
 msgid "Main Network"
 msgstr "الشبكة الرئيسية"
 
 #: services/VCloud_enterprise/service.py:83
-#: services/Vmware_enterprise/service_linked.py:118
+#: services/Vmware_enterprise/service_linked.py:116
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -4257,15 +4266,28 @@ msgstr ""
 "مجموعة MAC الصالحة للآلات التي تم إنشاؤها. يجب أن يكون داخل 00: 50: 56: 00: "
 "00: 00-00: 50: 56: 3F: FF: FF"
 
-#: services/Vmware_enterprise/provider.py:56
+#: services/Vmware_enterprise/provider.py:55
+#| msgid "Services to keep in L2 cache"
+msgid "Power off VM on L2 cache"
+msgstr "قم بإيقاف تشغيل VM على ذاكرة التخزين المؤقت L2"
+
+#: services/Vmware_enterprise/provider.py:58
+msgid ""
+"If enabled, UDS will stop machines for L2 cache instead of suspending them. "
+"This REQUIRES \"VMWare tools\" on machines."
+msgstr ""
+"إذا تم تمكينها ، فستوقف UDS آلات ذاكرة التخزين المؤقت L2 بدلاً من تعليقها. "
+"يتطلب هذا \"أدوات VMWare\" على الأجهزة."
+
+#: services/Vmware_enterprise/provider.py:64
 msgid "VMWare VCenter Platform Provider"
 msgstr "مزود برنامج VMWare VCenter منصة"
 
-#: services/Vmware_enterprise/provider.py:58
+#: services/Vmware_enterprise/provider.py:66
 msgid "Provides connection to Virtual Center Services"
 msgstr "توفر وصولا إلى مركز الظاهرية"
 
-#: services/Vmware_enterprise/provider.py:165
+#: services/Vmware_enterprise/provider.py:176
 msgid "Connection params ok"
 msgstr "اتصال params ok"
 
@@ -4289,6 +4311,8 @@ msgstr "مركز البيانات"
 #: services/Vmware_enterprise/service_fixed.py:69
 #: services/Vmware_enterprise/service_fixed.py:84
 #: services/Vmware_enterprise/service_fixed.py:89
+#: services/Vmware_enterprise/service_fixed.py:92
+#: services/Vmware_enterprise/service_fixed.py:100
 msgid "Machines"
 msgstr "آلات"
 
@@ -4298,7 +4322,7 @@ msgid "Datacenter containing base machine"
 msgstr "مراكز البيانات التي تحتوي على آلة قاعدة"
 
 #: services/Vmware_enterprise/service_fixed.py:74
-#: services/Vmware_enterprise/service_linked.py:100
+#: services/Vmware_enterprise/service_linked.py:98
 msgid "Resource Pool"
 msgstr "تجمع الموارد"
 
@@ -4306,11 +4330,22 @@ msgstr "تجمع الموارد"
 msgid "Resource Pool containing base machines"
 msgstr "تجمع الخدمات يحتوي على الات مرجعية "
 
-#: services/Vmware_enterprise/service_fixed.py:89
+#: services/Vmware_enterprise/service_fixed.py:91
 msgid "Machines for this service"
 msgstr "آلات لهذه الخدمة"
 
-#: services/Vmware_enterprise/service_fixed.py:109
+#: services/Vmware_enterprise/service_fixed.py:96
+msgid "Use snapshots"
+msgstr "استخدام لقطات"
+
+#: services/Vmware_enterprise/service_fixed.py:99
+msgid ""
+"If active, UDS will try to create an snapshot on VM use and recover if on "
+"exit."
+msgstr ""
+"إذا كانت نشطة ، ستحاول UDS إنشاء لقطة لاستخدام VM واستردادها عند الخروج."
+
+#: services/Vmware_enterprise/service_fixed.py:122
 msgid "We need at least a machine"
 msgstr "نحن بحاجة لآلة على الأقل "
 
@@ -4361,43 +4396,43 @@ msgstr "مخازن البيانات حيث وضع المنشورات"
 msgid "If active, found duplicates clones for this service will be removed"
 msgstr "إذا كنت نشيطا، وجدت سيتم إزالة التكرارات استنساخ لهذه الخدمة"
 
-#: services/Vmware_enterprise/service_linked.py:93
+#: services/Vmware_enterprise/service_linked.py:92
 msgid "Keep on error"
 msgstr "تبقى على خطأ"
 
-#: services/Vmware_enterprise/service_linked.py:96
+#: services/Vmware_enterprise/service_linked.py:95
 msgid "If active, access errors found on machine will not mark is as error."
 msgstr "إذا كانت نشطة، لن يتم اعتبار أخطاء الوصول الموجودة على الجهاز خطأ."
 
-#: services/Vmware_enterprise/service_linked.py:108
+#: services/Vmware_enterprise/service_linked.py:106
 msgid "Resource Pool containing base machine"
 msgstr "تجمع موارد تحتوي على آلة قاعدة"
 
-#: services/Vmware_enterprise/service_linked.py:114
+#: services/Vmware_enterprise/service_linked.py:112
 msgid "Base machine for this service"
 msgstr "آلة قاعدة لهذه الخدمة"
 
-#: services/Vmware_enterprise/service_linked.py:119
+#: services/Vmware_enterprise/service_linked.py:117
 msgid "Pub. Network"
 msgstr "شبكة النشر"
 
-#: services/Vmware_enterprise/service_linked.py:120
+#: services/Vmware_enterprise/service_linked.py:118
 msgid "Network on which the machine will be deployed"
 msgstr "الشبكة التي سيتم نشرها بالجهاز"
 
-#: services/Vmware_enterprise/service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:119
 msgid "Clones Folder"
 msgstr "مجلد النسخ"
 
-#: services/Vmware_enterprise/service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:119
 msgid "Folder where deploy clones"
 msgstr "المجلد حيث نشر النسخ"
 
-#: services/Vmware_enterprise/service_linked.py:122
+#: services/Vmware_enterprise/service_linked.py:120
 msgid "Inc.Datastores"
 msgstr "مخازن البيانات الموارد."
 
-#: services/Vmware_enterprise/service_linked.py:123
+#: services/Vmware_enterprise/service_linked.py:121
 msgid "Datastores where to put incrementals"
 msgstr "مخازن البيانات حيث الوضع تدريجي."
 
