@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from django.utils.translation import ugettext_noop as _
 
 from uds.core import services
 
@@ -38,9 +39,9 @@ class PhysicalMachinesProvider(services.ServiceProvider):
     # No extra data needed
 
     # What services do we offer?
-    typeName = 'Static IP Machines Provider'
+    typeName = _('Static IP Machines Provider')
     typeType = 'PhysicalMachinesServiceProvider'
-    typeDescription = 'Provides connection to machines by IP'
+    typeDescription = _('Provides connection to machines by IP')
     iconFile = 'provider.png'
 
     from .service_multi import IPMachinesService
