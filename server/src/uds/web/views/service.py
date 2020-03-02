@@ -127,7 +127,8 @@ def userServiceEnabler(request: 'HttpRequest', idService: str, idTransport: str)
     except ServiceNotReadyError as e:
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while
-        error += ' (code {0:04X})'.format(e.code)
+        # error += ' (code {0:04X})'.format(e.code)
+        error = _('Your service is being created, please, wait for a few seconds while we complete it.)') +  '({}%)'.format(int(e.code * 25))
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)
         error = errors.errorString(errors.MAX_SERVICES_REACHED)

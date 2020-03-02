@@ -79,12 +79,14 @@ class Client(Handler):
         """
         result = result if result is not None else ''
         res = {'result': result}
-        if error is not None:
+        if error:
             if isinstance(error, int):
                 error = errors.errorString(error)
             error = str(error)  # Ensure error is an string
             if errorCode != 0:
-                error += ' (code {0:04X})'.format(errorCode)
+                # Reformat error so it is better understood by users
+                # error += ' (code {0:04X})'.format(errorCode)
+                error = _('Your service is being created. Please, wait while we complete it.)') +  '({}%)'.format(int(errorCode * 25))
 
             res['error'] = error
             res['retryable'] = '1' if retryable else '0'
