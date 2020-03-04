@@ -219,7 +219,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
                 logger.info('PRECONNECT file not found & not executed')
         except Exception as e:
             # Ignore output of execution command
-            logger.error('Executing preconnect command give')
+            logger.error('Executing preconnect command give {}'.format(e))
 
         return 'ok'
 

@@ -162,6 +162,7 @@ class UDSClient(QtGui.QMainWindow):
             QtCore.QTimer.singleShot(1000, self.getVersion)
 
         except Exception as e:
+            logger.exception('Version')
             self.showError(e)
 
 
@@ -219,7 +220,7 @@ class UDSClient(QtGui.QMainWindow):
             QtCore.QTimer.singleShot(10000, self.getTransportData)
 
         except Exception as e:
-            #logger.exception('Got exception executing script:')
+            logger.exception('Got exception executing script:')
             self.showError(e)
 
     def endScript(self):

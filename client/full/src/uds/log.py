@@ -46,7 +46,7 @@ logging.basicConfig(
     filename=logFile,
     filemode='a',
     format='%(levelname)s %(asctime)s %(message)s',
-    level=logging.INFO
+    level=logging.DEBUG
 )
 
 logger = logging.getLogger('udsclient')
