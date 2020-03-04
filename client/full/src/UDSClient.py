@@ -211,7 +211,7 @@ class UDSClient(QtGui.QMainWindow):
 
             #    if QtGui.QMessageBox.warning(None, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
             #        raise Exception('Server not approved. Access denied.')
-
+            logger.debug('Script: {}'.format(script))
             six.exec_(script, globals(), {'parent': self, 'sp':  params})
 
         except RetryException as e:
