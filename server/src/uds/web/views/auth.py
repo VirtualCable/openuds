@@ -196,9 +196,10 @@ def ticketAuth(request: 'HttpRequest', ticketId: str) -> HttpResponse:  # pylint
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
+        # Override and recalc transport based on current os
+        transport = None
+
         logger.debug("Service & transport: %s, %s", servicePool, transport)
-        for v in ServicePool.objects.all():
-            logger.debug("%s %s", v.uuid, v.name)
 
         # Check if servicePool is part of the ticket
         if servicePool:

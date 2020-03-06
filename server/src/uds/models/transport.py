@@ -80,7 +80,10 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
         :note: We only need to get info from this, not access specific data (class specific info)
         """
-        return transports.factory().lookup(self.data_type)
+        v = transports.factory().lookup(self.data_type)
+        if not v:
+            raise Exception('transport not found')
+        return v
 
     def validForIp(self, ipStr: str) -> bool:
         """

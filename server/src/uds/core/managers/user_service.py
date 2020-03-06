@@ -567,7 +567,8 @@ class UserServiceManager:
         if not idTransport:  # Find a suitable transport
             t: Transport
             for t in userService.deployed_service.transports.order_by('priority'):
-                if t.validForIp(srcIp):
+                typeTrans = t.getType()
+                if t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
                     idTransport = t.uuid
                     break
 
