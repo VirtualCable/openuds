@@ -86,7 +86,7 @@ class Client(Handler):
             if errorCode != 0:
                 # Reformat error so it is better understood by users
                 # error += ' (code {0:04X})'.format(errorCode)
-                error = _('Your service is being created. Please, wait while we complete it.)') +  '({}%)'.format(int(errorCode * 25))
+                error = _('Your service is being created. Please, wait while we complete it') +  ' ({}%)'.format(int(errorCode * 25))
 
             res['error'] = error
             res['retryable'] = '1' if retryable else '0'
