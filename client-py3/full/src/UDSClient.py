@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2014-2017 Virtual Cable S.L.
@@ -36,8 +36,9 @@ from __future__ import unicode_literals
 import sys
 import webbrowser
 import json
+import base64, bz2
 
-from PyQt4 import QtCore, QtGui  # @UnresolvedImport
+from PyQt5 import QtCore, QtGui, QtWidgets  # @UnresolvedImport
 import six
 
 from uds.rest import RestRequest
@@ -54,7 +55,7 @@ OLD_METHOD_VERSION = '2.4.0'
 class RetryException(Exception):
     pass
 
-class UDSClient(QtGui.QMainWindow):
+class UDSClient(QtWidgets.QMainWindow):
 
     ticket = None
     scrambler = None
@@ -66,7 +67,7 @@ class UDSClient(QtGui.QMainWindow):
     req = None
 
     def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
 
         self.ui = Ui_MainWindow()
@@ -77,14 +78,15 @@ class UDSClient(QtGui.QMainWindow):
 
         self.ui.info.setText('Initializing...')
 
-        screen = QtGui.QDesktopWidget().screenGeometry()
+        screen = QtWidgets.QDesktopWidget().screenGeometry()
         mysize = self.geometry()
         hpos = (screen.width() - mysize.width()) / 2
         vpos = (screen.height() - mysize.height() - mysize.height()) / 2
         self.move(hpos, vpos)
 
         self.animTimer = QtCore.QTimer()
-        QtCore.QObject.connect(self.animTimer, QtCore.SIGNAL('timeout()'), self.updateAnim)
+        self.animTimer.timeout.connect(self.updateAnim)
+        # QtCore.QObject.connect(self.animTimer, QtCore.SIGNAL('timeout()'), self.updateAnim)
 
         self.activateWindow()
 
@@ -96,12 +98,12 @@ class UDSClient(QtGui.QMainWindow):
 
     def processError(self, data):
         if 'error' in data:
-            # QtGui.QMessageBox.critical(self, 'Request error {}'.format(data.get('retryable', '0')), data['error'], QtGui.QMessageBox.Ok)
+            # QtWidgets.QMessageBox.critical(self, 'Request error {}'.format(data.get('retryable', '0')), data['error'], QtWidgets.QMessageBox.Ok)
             if data.get('retryable', '0') == '1':
                 raise RetryException(data['error'])
 
             raise Exception(data['error'])
-            # QtGui.QMessageBox.critical(self, 'Request error', rest.data['error'], QtGui.QMessageBox.Ok)
+            # QtWidgets.QMessageBox.critical(self, 'Request error', rest.data['error'], QtWidgets.QMessageBox.Ok)
             # self.closeWindow()
             # return
 
@@ -110,7 +112,7 @@ class UDSClient(QtGui.QMainWindow):
         self.stopAnim()
         self.ui.info.setText('UDS Plugin Error')  # In fact, main window is hidden, so this is not visible... :)
         self.closeWindow()
-        QtGui.QMessageBox.critical(None, 'UDS Plugin Error', '{}'.format(e), QtGui.QMessageBox.Ok)
+        QtWidgets.QMessageBox.critical(None, 'UDS Plugin Error', '{}'.format(error), QtWidgets.QMessageBox.Ok)
         self.withError = True
 
     def cancelPushed(self):
@@ -149,7 +151,7 @@ class UDSClient(QtGui.QMainWindow):
             self.ui.info.setText('Processing...')
 
             if data['result']['requiredVersion'] > VERSION:
-                QtGui.QMessageBox.critical(self, 'Upgrade required', 'A newer connector version is required.\nA browser will be opened to download it.', QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.critical(self, 'Upgrade required', 'A newer connector version is required.\nA browser will be opened to download it.', QtWidgets.QMessageBox.Ok)
                 webbrowser.open(data['result']['downloadUrl'])
                 self.closeWindow()
                 return
@@ -184,7 +186,10 @@ class UDSClient(QtGui.QMainWindow):
             params = None
 
             if self.serverVersion <= OLD_METHOD_VERSION:
-                script = data['result'].decode('base64').decode('bz2')
+                script = bz2.decompress(base64.b64decode(data['result']))
+                # This fixes uds 2.2 "write" string on binary streams on some transport 
+                script = script.replace(b'stdin.write("', b'stdin.write(b"')
+                script = script.replace(b'version)', b'version.decode("utf-8"))')
             else:
                 res = data['result']
                 # We have three elements on result:
@@ -192,7 +197,8 @@ class UDSClient(QtGui.QMainWindow):
                 # * Signature
                 # * Script data
                 # We test that the Script has correct signature, and them execute it with the parameters
-                script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
+                #script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
+                script, signature, params = bz2.decompress(base64.b64decode(res['script'])), res['signature'], json.loads(bz2.decompress(base64.b64decode(res['params'])))
                 if tools.verifySignature(script, signature) is False:
                     logger.error('Signature is invalid')
 
@@ -206,14 +212,7 @@ class UDSClient(QtGui.QMainWindow):
             QtCore.QTimer.singleShot(3000, self.endScript)
             self.hide()
 
-            # if self.serverVersion <= OLD_METHOD_VERSION:
-            #     errorString = '<p>The server <b>{}</b> runs an old version of UDS:</p>'.format(host)
-            #     errorString += '<p>To avoid security issues, you must approve old UDS Version access.</p>'
-            #
-            #     if QtGui.QMessageBox.warning(None, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
-            #         raise Exception('Server not approved. Access denied.')
-
-            six.exec_(script, globals(), {'parent': self, 'sp':  params})
+            six.exec_(script.decode("utf-8"), globals(), {'parent': self, 'sp':  params})
 
         except RetryException as e:
             self.ui.info.setText(six.text_type(e) + ', retrying access...')
@@ -252,7 +251,7 @@ class UDSClient(QtGui.QMainWindow):
 
 
 def done(data):
-    QtGui.QMessageBox.critical(None, 'Notice', six.text_type(data.data), QtGui.QMessageBox.Ok)
+    QtWidgets.QMessageBox.critical(None, 'Notice', six.text_type(data.data), QtWidgets.QMessageBox.Ok)
     sys.exit(0)
 
 # Ask user to approve endpoint
@@ -260,12 +259,13 @@ def approveHost(hostName, parentWindow=None):
     settings = QtCore.QSettings()
     settings.beginGroup('endpoints')
 
-    approved = settings.value(hostName, False).toBool()
+    #approved = settings.value(hostName, False).toBool()
+    approved = bool(settings.value(hostName, False))
 
     errorString = '<p>The server <b>{}</b> must be approved:</p>'.format(hostName)
     errorString += '<p>Only approve UDS servers that you trust to avoid security issues.</p>'
 
-    if approved or QtGui.QMessageBox.warning(parentWindow, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+    if approved or QtWidgets.QMessageBox.warning(parentWindow, 'ACCESS Warning', errorString, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
         settings.setValue(hostName, True)
         approved = True
 
@@ -275,7 +275,7 @@ def approveHost(hostName, parentWindow=None):
 if __name__ == "__main__":
     logger.debug('Initializing connector')
     # Initialize app
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     # Set several info for settings
     QtCore.QCoreApplication.setOrganizationName('Virtual Cable S.L.U.')
@@ -306,7 +306,7 @@ if __name__ == "__main__":
         logger.debug('ssl:%s, host:%s, ticket:%s, scrambler:%s', ssl, host, UDSClient.ticket, UDSClient.scrambler)
     except Exception:
         logger.debug('Detected execution without valid URI, exiting')
-        QtGui.QMessageBox.critical(None, 'Notice', 'UDS Client Version {}'.format(VERSION), QtGui.QMessageBox.Ok)
+        QtWidgets.QMessageBox.critical(None, 'Notice', 'UDS Client Version {}'.format(VERSION), QtWidgets.QMessageBox.Ok)
         sys.exit(1)
 
     # Setup REST api endpoint
@@ -332,7 +332,7 @@ if __name__ == "__main__":
     except Exception as e:
         logger.exception('Got an exception executing client:')
         exitVal = 128
-        QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
+        QtWidgets.QMessageBox.critical(None, 'Error', six.text_type(e), QtWidgets.QMessageBox.Ok)
 
     logger.debug('Exiting')
     sys.exit(exitVal)

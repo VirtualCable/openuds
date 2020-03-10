@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import subprocess
 import re
 
-from uds import tools  # @UnresolvedImport
+from uds import tools
 
 # Inject local passed sp into globals for inner functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
@@ -28,7 +28,7 @@ def execRdesktop(rdesktop):
     params = [rdesktop] + sp['as_rdesktop_params'] + [sp['address']]  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
     if sp['password'] != '':  # @UndefinedVariable
-        p.stdin.write(sp['password'])  # @UndefinedVariable
+        p.stdin.write(sp['password'].encode())  # @UndefinedVariable
     p.stdin.close()
     tools.addTaskToWait(p)
 
@@ -51,7 +51,7 @@ if xfreerdp is not None:
             version = e.output
 
         version = float(re.search(r'version ([0-9]*\.[0-9]*)', version).groups()[0])  # type: ignore
-        if version < 1.1:
+        if version < 1.1:   # type: ignore
             raise Exception()
         else:
             fnc, app = execNewXFreeRdp, xfreerdp

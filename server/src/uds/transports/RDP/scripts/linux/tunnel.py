@@ -25,8 +25,8 @@ def execNewXFreeRdp(xfreerdp, port):
 def execRdesktop(rdesktop, port):
     params = [rdesktop] + sp['as_rdesktop_params'] + ['127.0.0.1:{}'.format(port)]  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
-    if sp['password'] != '':  # @UndefinedVariable
-        p.stdin.write(sp['password'])  # @UndefinedVariable
+    if sp['password'] != '':
+        p.stdin.write(sp['password'].encode())
     p.stdin.close()
     tools.addTaskToWait(p)
 

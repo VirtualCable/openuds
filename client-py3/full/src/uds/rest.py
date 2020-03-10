@@ -38,11 +38,11 @@ import urllib
 
 import six
 
-from PyQt4.QtCore import pyqtSignal, pyqtSlot
-from PyQt4.QtCore import QObject, QUrl, QSettings
-from PyQt4.QtCore import Qt
-from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject, QUrl, QSettings
+from PyQt5.QtCore import Qt
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
+from PyQt5.QtWidgets import QMessageBox
 
 from . import osDetector
 
@@ -61,7 +61,7 @@ class RestRequest(QObject):
         # private
         self._manager = QNetworkAccessManager()
         if params is not None:
-            url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())
+            url += '?' + '&'.join('{}={}'.format(k, urllib.parse.quote(six.text_type(v).encode('utf8'))) for k, v in params.items())
 
         self.url = QUrl(RestRequest.restApiUrl + url)
 
@@ -81,7 +81,9 @@ class RestRequest(QObject):
         try:
             if reply.error() != QNetworkReply.NoError:
                 raise Exception(reply.errorString())
-            data = six.text_type(reply.readAll())
+            #data = six.text_type(reply.readAll())
+            data = bytes(reply.readAll())
+            #data = data.encode("utf-8")
             data = json.loads(data)
         except Exception as e:
             data = {
@@ -93,7 +95,8 @@ class RestRequest(QObject):
 
         reply.deleteLater()  # schedule for delete from main event loop
 
-    @pyqtSlot(QNetworkReply, list)
+    #@pyqtSlot(QNetworkReply, list)
+    @pyqtSlot(QNetworkReply)
     def _sslError(self, reply, errors):
         settings = QSettings()
         settings.beginGroup('ssl')
@@ -117,5 +120,5 @@ class RestRequest(QObject):
 
     def get(self):
         request = QNetworkRequest(self.url)
-        request.setRawHeader('User-Agent', osDetector.getOs() + " - UDS Connector " + VERSION)
+        request.setRawHeader(b'User-Agent', osDetector.getOs().encode('utf-8') + b" - UDS Connector " + VERSION.encode('utf-8'))
         self._manager.get(request)
