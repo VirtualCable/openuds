@@ -1,0 +1,4 @@
+/udsclient-opensuse-[0-9]*.spec
+/udsclient-[0-9]*.spec
+/debian/udsclient
+/targz

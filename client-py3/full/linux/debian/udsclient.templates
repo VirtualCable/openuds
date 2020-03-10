@@ -1,0 +1,20 @@
+Template: udsactor/host
+Type: string
+Default:
+Description: UDS Server address:
+ The actor needs the address of the server in order to communicate with it.
+ Provide here full address (or i) of the UDS server
+
+Template: udsactor/secure
+Type: boolean
+Default: true
+Description: Use secure (https) connection to communicate with UDS server?
+ If selected, the communication will be done using https. 
+ If not selected, the communication will be done using http
+
+Template: udsactor/masterKey
+Type: string
+Default:
+Description: Master Key:
+ This key is available on UDS Administration interface.
+ Look for it under configuration, on Security tab.

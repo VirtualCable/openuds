@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="images">
+    <file alias="logo-uds-small">images/logo-uds-small.png</file>
+    <file alias="logo-uds-big">images/logo-uds.png</file>
+  </qresource>
+</RCC>
