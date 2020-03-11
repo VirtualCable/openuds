@@ -443,12 +443,13 @@ class gui:
         def processValue(self, valueName: str, options: typing.Dict[str, typing.Any]) -> None:
             val = options.get(valueName, '')
 
-            if val == '' and valueName == 'defvalue':
+            if not val and valueName == 'defvalue':
                 val = datetime.date.today()
             elif val == datetime.date.min:
                 val = datetime.date(2000, 1, 1)
             elif val == datetime.date.max:
-                val = datetime.date(2099, 12, 31)
+                # val = datetime.date(2099, 12, 31)
+                val = datetime.date.today()
 
             options[valueName] = val
 
