@@ -191,12 +191,20 @@ def ticketAuth(request, ticketId):
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
         logger.debug("Service & transport: {}, {}".format(servicePool, transport))
-        for v in DeployedService.objects.all():
-            logger.debug("{} {}".format(v.uuid, v.name))
+        # for v in DeployedService.objects.all():
+        #    logger.debug("{} {}".format(v.uuid, v.name))
 
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             # If service pool is in there, also is transport
+            # Deferred update transport
+            servicePoolDb = DeployedService.objects.get(uuid=servicePool)
+            for t in servicePoolDb.transports.order_by('priority'):
+                typeTrans = t.getType()
+                if t.validForIp(request.ip) and typeTrans.supportsOs(request.os['OS']) and t.validForOs(request.os['OS']):
+                    transport = t.uuid
+                    break
+
             res = userServiceManager().getService(request.user, request.ip, 'F' + servicePool, transport, False)
             _x, userService, _x, transport, _x = res
 

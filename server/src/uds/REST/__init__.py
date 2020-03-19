@@ -78,7 +78,7 @@ class Dispatcher(View):
         content_type = None
 
         cls = None
-        while len(path) > 0:
+        while path:
             # .json, .xml, ... will break path recursion
             if path[0].find('.') != -1:
                 content_type = path[0].split('.')[1]
@@ -92,7 +92,7 @@ class Dispatcher(View):
                 break
 
         full_path = '/'.join(full_path)
-        logger.debug("REST request: {} ({})".format(full_path, content_type))
+        logger.debug('REST request: %s (%s)', full_path, content_type)
 
         # Here, service points to the path
         cls = service['']
