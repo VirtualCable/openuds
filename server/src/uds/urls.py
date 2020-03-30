@@ -75,7 +75,7 @@ urlpatterns = [
 
     # Federated authentication
     re_path(r'^uds/page/auth/(?P<authName>[^/]+)$', uds.web.views.authCallback, name='page.auth.callback'),
-    re_path(r'^uds/page/auth/info/(?P<authName>[a-zA-Z0-9-])$', uds.web.views.authInfo, name='page.auth.info'),
+    re_path(r'^uds/page/auth/info/(?P<authName>[a-zA-Z0-9-]+)$', uds.web.views.authInfo, name='page.auth.info'),
 
     # Ticket authentication related
     re_path(r'^uds/page/ticket/auth/(?P<ticketId>[a-zA-Z0-9-])$', uds.web.views.ticketAuth, name='page.ticket.auth'),

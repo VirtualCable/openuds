@@ -41,6 +41,7 @@ import copy
 from django.utils.translation import get_language, ugettext as _, ugettext_noop
 
 from uds.core.util import encoders
+from uds.core.managers import cryptoManager
 
 logger = logging.getLogger(__name__)
 
@@ -940,6 +941,8 @@ class UserInterface(metaclass=UserInterfaceType):
             if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 # logger.debug('Serializing value {0}'.format(v.value))
                 val = b'\001' + pickle.dumps(v.value, protocol=0)
+            if v.isType(gui.InfoField.PASSWORD_TYPE):
+                val = b'\004' + cryptoManager().encrypt(v.value.encode('utf8')).encode()
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = str(int(v.num())).encode('utf8')
             elif v.isType(gui.InputField.CHECKBOX_TYPE):
@@ -984,13 +987,15 @@ class UserInterface(metaclass=UserInterfaceType):
                     try:
                         if v[0] == 1:
                             val = pickle.loads(v[1:])
+                        elif v[0] == 4:
+                            val = cryptoManager().decrypt(v[1:])
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode
                             if isinstance(val, bytes):
                                 val = val.decode('utf_8')
                     except Exception:
-                        # logger.exception('Pickling')
+                        logger.exception('Pickling')
                         val = ''
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))

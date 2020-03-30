@@ -84,7 +84,8 @@ def connection(username: str, passwd: typing.Union[str, bytes], host: str, port:
 
         l = ldap.initialize(uri=uri)
         l.set_option(ldap.OPT_REFERRALS, 0)
-        l.network_timeout = l.timeout = int(timeout)
+        l.set_option(ldap.OPT_TIMEOUT, int(timeout))
+        l.network_timeout = int(timeout)
         l.protocol_version = ldap.VERSION3
 
         l.simple_bind_s(who=username, cred=password)
