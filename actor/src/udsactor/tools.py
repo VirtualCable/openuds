@@ -44,3 +44,4 @@ class ScriptExecutorThread(threading.Thread):
             exec(self.script, globals(), None)  # pylint: disable=exec-used
         except Exception as e:
             logger.error('Error executing script: {}'.format(e))
+            logger.exception()

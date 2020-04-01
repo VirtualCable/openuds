@@ -58,7 +58,7 @@ class PublicProvider(handler.Handler):
         logger.debug('Received script: {}'.format(self._params))
         if 'script' not in self._params:
             raise Exception('Invalid script parameters')
-        if 'user' in self._params:
+        if self._params.get('user', False):
             logger.debug('Sending SCRIPT to client')
             self._service._clientsPool.executeScript(self._params['script'])  # pylint: disable=protected-access
         else:
