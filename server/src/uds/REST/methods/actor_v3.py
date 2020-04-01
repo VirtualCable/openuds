@@ -398,7 +398,9 @@ class Logout(ActorV3Action):
             if osManager:
                 if osManager.isRemovableOnLogout(userService):
                     logger.debug('Removable on logout: %s', osManager)
-            userService.remove()
+                    userService.remove()
+            else:
+                userService.remove()
 
         return ActorV3Action.actorResult('ok')
 
