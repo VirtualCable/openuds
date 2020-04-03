@@ -45,6 +45,7 @@ from uds.core.managers import cryptoManager
 
 logger = logging.getLogger(__name__)
 
+UDSB = b'udsprotect'
 
 class gui:
     """
@@ -942,7 +943,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 # logger.debug('Serializing value {0}'.format(v.value))
                 val = b'\001' + pickle.dumps(v.value, protocol=0)
             if v.isType(gui.InfoField.PASSWORD_TYPE):
-                val = b'\004' + cryptoManager().encrypt(v.value.encode('utf8')).encode()
+                val = b'\004' + cryptoManager().AESCrypt(v.value.encode('utf8'), UDSB, True)
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = str(int(v.num())).encode('utf8')
             elif v.isType(gui.InputField.CHECKBOX_TYPE):
@@ -985,17 +986,18 @@ class UserInterface(metaclass=UserInterfaceType):
                 k = kb.decode('utf8')  # Convert name to unicode
                 if k in self._gui:
                     try:
-                        if v[0] == 1:
+                        if v and v[0] == 1:
                             val = pickle.loads(v[1:])
-                        elif v[0] == 4:
-                            val = cryptoManager().decrypt(v[1:])
+                        elif v and v[0] == 4:
+                            logger.debug('Unpickling crypted')
+                            val = cryptoManager().AESDecrypt(v[1:], UDSB, True)
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode
                             if isinstance(val, bytes):
                                 val = val.decode('utf_8')
                     except Exception:
-                        logger.exception('Pickling')
+                        logger.exception('Pickling {} from {}'.format(k, self))
                         val = ''
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))
