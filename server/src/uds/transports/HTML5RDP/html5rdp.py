@@ -131,6 +131,13 @@ class HTML5RDPTransport(transports.Transport):
         minValue=60,
         tab=gui.ADVANCED_TAB
     )
+    forceNewWindow = gui.CheckBoxField(
+        label=_('Force new HTML Window'),
+        order=91,
+        tooltip=_('If checked, every connection will try to open its own window instead of reusing the "global" one.'),
+        defvalue=gui.FALSE,
+        tab=gui.ADVANCED_TAB
+    )
 
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
@@ -252,8 +259,9 @@ class HTML5RDPTransport(transports.Transport):
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         return HttpResponseRedirect(
-            "{}/transport/?{}.{}&{}".format(
+            "{}/transport/{}?{}.{}&{}".format(
                 self.guacamoleServer.value,
+                'o_n_w' if self.forceNewWindow.isTrue() else '',
                 ticket,
                 scrambler,
                 'javascript:window.close();'
