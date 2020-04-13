@@ -61,19 +61,19 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     port = gui.NumericField(lengh=5, label=_('Port'), order=2, tooltip=_('Proxmox API port (default is 8006)'), required=True, defvalue='8006')
 
     username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on Proxmox, (use "user@authenticator" form)'), required=True, defvalue='root@pam')
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of oVirt'), required=True)
+    password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of Proxmox'), required=True)
 
     maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
     maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='20', order=90, tooltip=_('Timeout in seconds of connection to oVirt'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='20', order=90, tooltip=_('Timeout in seconds of connection to Proxmox'), required=True, tab=gui.ADVANCED_TAB)
 
     # Own variables
     _api: typing.Optional[client.ProxmoxClient] = None
 
     def __getApi(self) -> client.ProxmoxClient:
         """
-        Returns the connection API object for oVirt (using ovirtsdk)
+        Returns the connection API object
         """
         if self._api is None:
             self._api = client.ProxmoxClient(self.host.value, self.port.num(), self.username.value, self.password.value, self.timeout.num(), False, self.cache)
@@ -95,7 +95,7 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
 
     def testConnection(self) -> bool:
         """
-        Test that conection to oVirt server is fine
+        Test that conection to Proxmox server is fine
 
         Returns
 

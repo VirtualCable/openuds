@@ -216,7 +216,7 @@ def ticketAuth(request: 'HttpRequest', ticketId: str) -> HttpResponse:  # pylint
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))
         else:
-            response = HttpResponsePermanentRedirect(reverse('page.index'))
+            response = HttpResponseRedirect(reverse('page.index'))
 
         # Now ensure uds cookie is at response
         getUDSCookie(request, response, True)

@@ -111,7 +111,7 @@ def errorView(request: 'HttpRequest', errorCode: int) -> HttpResponseRedirect:
     errStr = encoders.encodeAsStr(str(errStr), 'base64').replace('\n', '')
 
     logger.debug('Redirection to error view with %s', errStr)
-    return HttpResponseRedirect(reverse('page.error', kwargs={'error': errStr}))
+    return HttpResponseRedirect(reverse('page.error', kwargs={'err': errStr}))
 
 
 def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseRedirect:
