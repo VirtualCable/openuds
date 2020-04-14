@@ -25,11 +25,50 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Alexey Shabalin, shaba at altlinux dot org
 '''
-from .common import rename
+import os
 
-# Import packages
-from . import debian, opensuse, redhat, alt
+from .common import renamers
+from ...log import logger
+
+
+def rename(newName: str) -> bool:
+    '''
+    ALT, ALTLinux, BaseALT Renamer
+    Expects new host name on newName
+    Host does not needs to be rebooted after renaming
+    '''
+    logger.debug('using ALT renamer')
+
+    with open('/etc/hostname', 'w') as hostname:
+        hostname.write(newName)
+
+    # Force system new name
+    os.system('/bin/hostname {}'.format(newName))
+    os.system('/usr/bin/hostnamectl set-hostname {}'.format(newName))
+
+    # add name to "hosts"
+    with open('/etc/hosts', 'r') as hosts:
+        lines = hosts.readlines()
+    with open('/etc/hosts', 'w') as hosts:
+        hosts.write("127.0.1.1\t{}\n".format(newName))
+        for l in lines:
+            if l[:9] != '127.0.1.1':  # Skips existing 127.0.1.1. if it already exists
+                hosts.write(l)
+
+    with open('/etc/sysconfig/network', 'r') as net:
+        lines = net.readlines()
+    with open('/etc/sysconfig/network', 'w') as net:
+        net.write('HOSTNAME={}\n'.format(newName))
+        for l in lines:
+            if l[:8] != 'HOSTNAME':
+                net.write(l)
+
+    return True
+
+# All names in lower case
+renamers['altlinux'] = rename
+renamers['alt'] = rename
+renamers['basealt'] = rename
