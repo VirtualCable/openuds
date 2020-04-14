@@ -110,7 +110,7 @@ class UDSClient(QtGui.QMainWindow):
         self.stopAnim()
         self.ui.info.setText('UDS Plugin Error')  # In fact, main window is hidden, so this is not visible... :)
         self.closeWindow()
-        QtGui.QMessageBox.critical(None, 'UDS Plugin Error', '{}'.format(e), QtGui.QMessageBox.Ok)
+        QtGui.QMessageBox.critical(None, 'UDS Plugin Error', '{}'.format(error), QtGui.QMessageBox.Ok)
         self.withError = True
 
     def cancelPushed(self):

@@ -12,19 +12,19 @@ from uds import tools
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def execUdsRdp(udsrdp):
-    # import subprocess  # @Reimport
+    import subprocess  # @Reimport
     params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execNewXFreeRdp(xfreerdp):
-    # import subprocess  # @Reimport
+    import subprocess  # @Reimport
     params = [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execRdesktop(rdesktop):
-    # import subprocess  # @Reimport
+    import subprocess  # @Reimport
     params = [rdesktop] + sp['as_rdesktop_params'] + [sp['address']]  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
     if sp['password'] != '':  # @UndefinedVariable

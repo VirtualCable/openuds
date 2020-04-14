@@ -990,7 +990,7 @@ class UserInterface(metaclass=UserInterfaceType):
                             val = pickle.loads(v[1:])
                         elif v and v[0] == 4:
                             logger.debug('Unpickling crypted')
-                            val = cryptoManager().AESDecrypt(v[1:], UDSB, True)
+                            val = cryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode
