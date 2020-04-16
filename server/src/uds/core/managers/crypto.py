@@ -63,7 +63,7 @@ class CryptoManager:
     instance = None
 
     def __init__(self):
-        self._rsa = serialization.load_pem_private_key( settings.RSA_KEY.encode(), password=None, backend=default_backend())
+        self._rsa = serialization.load_pem_private_key(settings.RSA_KEY.encode(), password=None, backend=default_backend())
         self._oldRsa = RSA.importKey(settings.RSA_KEY)
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
         self._counter = 0
