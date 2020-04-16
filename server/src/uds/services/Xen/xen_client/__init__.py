@@ -255,11 +255,12 @@ class XenServer:  # pylint: disable=too-many-public-methods
         for srId in self.SR.get_all():
             # Only valid SR shared, non iso
             name_label = self.SR.get_name_label(srId)
-            if self.SR.get_content_type(srId) == 'iso' or \
-               self.SR.get_shared(srId) is False or \
-               name_label == '':
+            if self.SR.get_content_type(srId) == 'iso' or name_label == '':
+                # self.SR.get_shared(srId) is False or \
                 continue
 
+            if not self.SR.get_shared(srId):
+                name_label += ' (local)'
             valid = True
             allowed_ops = self.SR.get_allowed_operations(srId)
             for v in ['vdi_create', 'vdi_clone', 'vdi_snapshot', 'vdi_destroy']:
