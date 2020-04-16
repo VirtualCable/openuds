@@ -182,10 +182,18 @@ class LiveService(Service):
         Loads required values inside
         """
         api = self.parent().api()
-        regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
+
+        if not self.parent().legacy and self.parent().region.value:
+            regions = [gui.choiceItem(self.parent().region.value, self.parent().region.value)]
+        else:
+            regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
+
         self.region.setValues(regions)
 
-        tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
+        if not self.parent().legacy and self.parent().tenant.value:
+            tenants = [gui.choiceItem(self.parent().tenant.value, self.parent().tenant.value)]
+        else:
+            tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
         self.project.setValues(tenants)
 
         # So we can instantiate parent to get API

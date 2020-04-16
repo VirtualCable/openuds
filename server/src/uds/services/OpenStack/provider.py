@@ -107,8 +107,8 @@ class OpenStackProvider(ServiceProvider):
 
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', minValue=1, maxValue=128, order=99, tooltip=_('Timeout in seconds of connection to OpenStack'), required=True, tab=gui.ADVANCED_TAB)
 
-    # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
-    # region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='RegionOne')
+    tenant = gui.TextField(length=64, label=_('Project Id'), order=6, tooltip=_('Project (tenant) for this provider. Set only if required by server.'), required=False, defvalue='', tab=gui.ADVANCED_TAB)
+    region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider. Set only if required by server.'), required=False, defvalue='', tab=gui.ADVANCED_TAB)
 
     legacy = False
 
@@ -125,6 +125,8 @@ class OpenStackProvider(ServiceProvider):
             self.timeout.value = validators.validateTimeout(self.timeout.value)
 
     def api(self, projectId=None, region=None) -> openStack.Client:
+        projectId = projectId or self.tenant.value or None
+        region = region or self.region.value or None
         if self._api is None:
             self._api = openStack.Client(
                 self.endpoint.value,
@@ -151,7 +153,7 @@ class OpenStackProvider(ServiceProvider):
 
             True if all went fine, false if id didn't
         """
-
+        logger.debug('Testing connection to OpenStack')
         try:
             if self.api().testConnection() is False:
                 raise Exception('Check connection credentials, server, etc.')

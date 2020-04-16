@@ -558,15 +558,21 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def deleteServer(self, serverId: str) -> None:
-        r = requests.post(
-            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-            data='{"forceDelete": null}',
+        # r = requests.post(
+        #     self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+        #     data='{"forceDelete": null}',
+        #     headers=self._requestHeaders(),
+        #     verify=VERIFY_SSL,
+        #     timeout=self._timeout
+        # )
+        r = requests.delete(
+            self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
             timeout=self._timeout
         )
 
-        ensureResponseIsValid(r, 'Cannot start server (probably server does not exists).')
+        ensureResponseIsValid(r, 'Cannot delete server (probably server does not exists).')
 
         # This does not returns anything
 

@@ -136,7 +136,7 @@ class CryptoManager:
                 logger.exception('Decripting: %s', value)
                 # logger.error(inspect.stack())
                 return 'decript error'
-        logger.debug('Decripted: %s %s', data, decrypted)
+        # logger.debug('Decripted: %s %s', data, decrypted)
         return decrypted.decode()
 
     def AESCrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
