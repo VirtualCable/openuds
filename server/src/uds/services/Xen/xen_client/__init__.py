@@ -252,15 +252,13 @@ class XenServer(object):
                 if v not in allowed_ops:
                     valid = False
 
-            if not valid:
-                return
-
-            yield {
-                'id': srId,
-                'name': name_label,
-                'size': XenServer.toMb(self.SR.get_physical_size(srId)),
-                'used': XenServer.toMb(self.SR.get_physical_utilisation(srId))
-            }
+            if valid:
+               yield {
+                   'id': srId,
+                   'name': name_label,
+                   'size': XenServer.toMb(self.SR.get_physical_size(srId)),
+                   'used': XenServer.toMb(self.SR.get_physical_utilisation(srId))
+               }
 
     def getSRInfo(self, srId):
         return {
