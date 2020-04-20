@@ -73,6 +73,7 @@ def getRecurringUrlJson(url, headers, key, params=None, errMsg=None, timeout=10)
         counter += 1
         logger.debug('Requesting url #{}: {} / {}'.format(counter, url, params))
         r = requests.get(url, params=params, headers=headers, verify=VERIFY_SSL, timeout=timeout)
+        logger.debug('Response: %s', r.content)
 
         ensureResponseIsValid(r, errMsg)
 
@@ -211,6 +212,8 @@ class Client(object):
         # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectId is not None:
             self._catalog = token['catalog']
+
+        # logger.debug(self._catalog)
 
     def ensureAuthenticated(self):
         if self._authenticated is False or self._projectId != self._authenticatedProjectId:
@@ -474,13 +477,20 @@ class Client(object):
 
     @authProjectRequired
     def deleteServer(self, serverId):
-        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
-                          data='{"forceDelete": null}',
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = requests.delete(
+            self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout
+        )
 
-        ensureResponseIsValid(r, 'Cannot start server (probably server does not exists).')
+#        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+#                          data='{"forceDelete": null}',
+#                          headers=self._requestHeaders(),
+#                          verify=VERIFY_SSL,
+#                          timeout=self._timeout)
+
+        ensureResponseIsValid(r, 'Cannot delete server (probably server does not exists).')
 
         # This does not returns anything
 
@@ -570,7 +580,7 @@ class Client(object):
                         logger.exception('Authenticating')
                         raise Exception(_('Authentication error'))
         except Exception:  # Not json
-            # logger.exception('xx')
+            logger.exception('xx')
             raise Exception('Invalid endpoint (maybe invalid version selected?)')
 
         raise Exception(_('Openstack does not support identity API 3.2 or newer. This OpenStack server is not compatible with UDS.'))

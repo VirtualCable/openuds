@@ -142,7 +142,7 @@ class PublicationFinishChecker(DelayedTask):
                             pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600, 'pclean-' + str(old.id), True)
 
                     servicePoolPub.setState(State.USABLE)
-                    servicePoolPub.deployed_service.markOldUserServicesAsRemovables(servicePoolPub)
+                    # servicePoolPub.deployed_service.markOldUserServicesAsRemovables(servicePoolPub)
                 elif State.isRemoving(prevState):
                     servicePoolPub.setState(State.REMOVED)
                 else:  # State is canceling

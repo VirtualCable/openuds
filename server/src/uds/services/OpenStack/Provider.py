@@ -109,8 +109,8 @@ class Provider(ServiceProvider):
 
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', minValue=1, maxValue=128, order=99, tooltip=_('Timeout in seconds of connection to OpenStack'), required=True, tab=gui.ADVANCED_TAB)
 
-    # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
-    # region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='RegionOne')
+    tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
+    region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='eu-de')
 
     legacy = False
 
@@ -127,6 +127,8 @@ class Provider(ServiceProvider):
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
 
     def api(self, projectId=None, region=None):
+        projectId = projectId or self.tenant.value
+        region = region or self.region.value
         return openStack.Client(self.endpoint.value, -1,
                                      self.domain.value, self.username.value, self.password.value,
                                      legacyVersion=False,

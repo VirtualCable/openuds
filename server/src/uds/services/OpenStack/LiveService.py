@@ -97,20 +97,20 @@ class LiveService(Service):
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
-    region = gui.ChoiceField(label=_('Region'), order=1, tooltip=_('Service region'), required=True, rdonly=True)
-    project = gui.ChoiceField(label=_('Project'), order=2,
-        fills={
-            'callbackName' : 'osFillResources',
-            'function' : helpers.getResources,
-            'parameters' : ['ov', 'ev', 'project', 'region', 'legacy']
-            },
-        tooltip=_('Project for this service'), required=True, rdonly=True
-    )
+    #region = gui.ChoiceField(label=_('Region'), order=1, tooltip=_('Service region'), required=True, rdonly=True)
+    #project = gui.ChoiceField(label=_('Project'), order=2,
+    #    fills={
+    #        'callbackName' : 'osFillResources',
+    #        'function' : helpers.getResources,
+    #        'parameters' : ['ov', 'ev', 'project', 'region', 'legacy']
+    #        },
+    #    tooltip=_('Project for this service'), required=True, rdonly=True
+    #)
     availabilityZone = gui.ChoiceField(label=_('Availability Zones'), order=3,
         fills={
             'callbackName' : 'osFillVolumees',
             'function' : helpers.getVolumes,
-            'parameters' : ['ov', 'ev', 'project', 'region', 'availabilityZone', 'legacy']
+            'parameters' : ['ov', 'ev', 'availabilityZone', 'legacy']
             },
         tooltip=_('Service availability zones'), required=True, rdonly=True
     )
@@ -168,11 +168,17 @@ class LiveService(Service):
         Loads required values inside
         '''
         api = self.parent().api()
-        regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
-        self.region.setValues(regions)
+        #regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
+        #self.region.setValues(regions)
 
-        tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
-        self.project.setValues(tenants)
+        #tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
+        #self.project.setValues(tenants)
+
+        self.availabilityZone.setValues([gui.choiceItem(z, z) for z in api.listAvailabilityZones()])
+        self.network.setValues([gui.choiceItem(z['id'], z['name']) for z in api.listNetworks()])
+        self.flavor.setValues([gui.choiceItem(z['id'], z['name']) for z in api.listFlavors()])
+        self.securityGroups.setValues([gui.choiceItem(z['id'], z['name']) for z in api.listSecurityGroups()])
+        # volumeTypes = [gui.choiceItem('-', _('None'))] + [gui.choiceItem(t['id'], t['name']) for t in api.listVolumeTypes()]
 
         # So we can instantiate parent to get API
         logger.debug(self.parent().serialize())
@@ -184,7 +190,7 @@ class LiveService(Service):
     @property
     def api(self):
         if self._api is None:
-            self._api = self.parent().api(projectId=self.project.value, region=self.region.value)
+            self._api = self.parent().api()
 
         return self._api
 

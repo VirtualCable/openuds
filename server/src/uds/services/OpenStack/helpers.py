@@ -30,7 +30,7 @@ def getResources(parameters):
     provider = Provider(env)
     provider.unserialize(parameters['ov'])
 
-    api = provider.api(parameters['project'], parameters['region'])
+    api = provider.api()
 
     zones = [gui.choiceItem(z, z) for z in api.listAvailabilityZones()]
     networks = [gui.choiceItem(z['id'], z['name']) for z in api.listNetworks()]
@@ -63,7 +63,7 @@ def getVolumes(parameters):
     provider = Provider(env)
     provider.unserialize(parameters['ov'])
 
-    api = provider.api(parameters['project'], parameters['region'])
+    api = provider.api()
 
     volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
 

@@ -72,9 +72,9 @@ class StateUpdater(object):
 
     def run(self, state):
         executor = {
-         State.RUNNING: self.running,
-         State.ERROR: self.error,
-         State.FINISHED: self.finish
+            State.RUNNING: self.running,
+            State.ERROR: self.error,
+            State.FINISHED: self.finish
         }.get(state, self.error)
 
         logger.debug('Running updater with state {} and executor {}'.format(State.toString(state), executor))
