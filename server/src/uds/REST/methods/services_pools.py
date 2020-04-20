@@ -371,6 +371,9 @@ class ServicesPools(ModelHandler):
                 if serviceType.usesCache is False:
                     for k in ('initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'):
                         fields[k] = 0
+                
+                if serviceType.usesCache_L2 is False:
+                    fields['cache_l2_srvs'] = 0
 
             except Exception:
                 raise RequestError(ugettext('This service requires an OS Manager'))

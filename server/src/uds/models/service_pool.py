@@ -229,6 +229,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if activePub is None:
             return None
 
+        # If has os manager, check if it is persistent
+        if self.osmanager and self.osmanager.getInstance().isPersistent():
+            return None
+
         # Return the date
         try:
             if activePub and activePub.id != self.assignedUserServices().filter(user=forUser, state__in=states.servicePool.VALID_STATES)[0].publication.id:
