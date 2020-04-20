@@ -150,12 +150,14 @@ class PublicationFinishChecker(DelayedTask):
                         if doPublicationCleanup:
                             pc = PublicationOldMachinesCleaner(old.id)
                             pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600, 'pclean-' + str(old.id), True)
+                            publication.deployed_service.markOldUserServicesAsRemovables(publication)
 
                     publication.setState(State.USABLE)
                 elif State.isRemoving(prevState):
                     publication.setState(State.REMOVED)
                 else:  # State is canceling
                     publication.setState(State.CANCELED)
+                # Mark all previous publications deployed services as removables
                 # and make this usable
                 publicationInstance.finish()
                 publication.updateData(publicationInstance)
