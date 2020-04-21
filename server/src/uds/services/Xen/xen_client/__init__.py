@@ -260,7 +260,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 continue
 
             if not self.SR.get_shared(srId):
-                name_label += ' (local)'
+                # name_label += ' (local)'
+                continue
+
             valid = True
             allowed_ops = self.SR.get_allowed_operations(srId)
             for v in ['vdi_create', 'vdi_clone', 'vdi_snapshot', 'vdi_destroy']:
@@ -398,11 +400,11 @@ class XenServer:  # pylint: disable=too-many-public-methods
         try:
             if targetSR:
                 if 'copy' not in operations:
-                    raise XenException('Copy is not supported for this machine')
+                    raise XenException('Copy is not supported for this machine (maybe it\'s powered on?)')
                 task = self.Async.VM.copy(vmId, targetName, targetSR)
             else:
                 if 'clone' not in operations:
-                    raise XenException('Clone is not supported for this machine')
+                    raise XenException('Clone is not supported for this machine (maybe it\'s powered on?)')
                 task = self.Async.VM.clone(vmId, targetName)
             return task
         except XenAPI.Failure as e:
