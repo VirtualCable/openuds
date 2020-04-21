@@ -1,9 +1,9 @@
 {% load l10n i18n %}
 <html lang="en">
     <head>
-        <title>Users usage list for {{ pool }}</title>
+        <title>{% trans 'Users usage list' %}</title>
         <meta name="author" content="UDS">
-        <meta name="description" content="Users usage list for {{ pool }}">
+        <meta name="description" content="{% trans 'Users usage list for' %} {{ pool }}">
         <meta name="keywords" content="uds,report,usage,users,list">
         <meta name="generator" content="UDS Reporting">
     </head>
@@ -11,9 +11,10 @@
         <table style="width: 100%; font-size: 0.8em;">
             <thead>
                 <tr>
-                    <th style="width: 25%">{% trans 'Access date/time' %}</th>
-                    <th style="width: 50%">{% trans 'User' %}</th>
-                    <th style="width: 25%">{% trans 'Duration' %}</th>
+                    <th style="width: 20%">{% trans 'Access date/time' %}</th>
+                    <th style="width: 30%">{% trans 'User' %}</th>
+                    <th style="width: 20%">{% trans 'Duration (seconds)' %}</th>
+                    <th style="width: 30%">{% trans 'Pool' %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,6 +23,7 @@
                     <td>{{ user.date }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.time }}</td>
+                    <td>{{ user.pool_name }}</td>
                 </tr>
             {% endfor %}
             </tbody>

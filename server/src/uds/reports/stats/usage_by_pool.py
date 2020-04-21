@@ -55,7 +55,7 @@ class UsageByPool(StatsReport):
     uuid = '38ec12dc-beaf-11e5-bd0a-10feed05884b'
 
     # Input fields
-    pool = gui.ChoiceField(
+    pool = gui.MultiChoiceField(
         order=1,
         label=_('Pool'),
         tooltip=_('Pool for report'),
@@ -83,8 +83,8 @@ class UsageByPool(StatsReport):
 
     def initGui(self):
         logger.debug('Initializing gui')
-        vals = [
-            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all()
+        vals = [gui.choiceItem('0-0-0-0', ugettext('ALL POOLS'))] + [
+            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')
         ]
         self.pool.setValues(vals)
 
@@ -93,32 +93,37 @@ class UsageByPool(StatsReport):
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         logger.debug(self.pool.value)
-        pool = ServicePool.objects.get(uuid=self.pool.value)
-
-        items = events.statsManager().getEvents(events.OT_DEPLOYED, (events.ET_LOGIN, events.ET_LOGOUT), owner_id=pool.id, since=start, to=end).order_by('stamp')
-
-        logins = {}
+        if '0-0-0-0' in self.pool.value:
+            pools = ServicePool.objects.all()
+        else:
+            pools = ServicePool.objects.filter(uuid__in=self.pool.value)
         data = []
-        for i in items:
-            # if '\\' in i.fld1:
-            #    continue
+        for pool in pools:
+            items = events.statsManager().getEvents(events.OT_DEPLOYED, (events.ET_LOGIN, events.ET_LOGOUT), owner_id=pool.id, since=start, to=end).order_by('stamp')
 
-            if i.event_type == events.ET_LOGIN:
-                logins[i.fld4] = i.stamp
-            else:
-                if i.fld4 in logins:
-                    stamp = logins[i.fld4]
-                    del logins[i.fld4]
-                    total = i.stamp - stamp
-                    data.append({
-                        'name': i.fld4,
-                        'date': datetime.datetime.fromtimestamp(stamp),
-                        'time': total
-                    })
+            logins = {}
+            for i in items:
+                # if '\\' in i.fld1:
+                #    continue
+
+                if i.event_type == events.ET_LOGIN:
+                    logins[i.fld4] = i.stamp
+                else:
+                    if i.fld4 in logins:
+                        stamp = logins[i.fld4]
+                        del logins[i.fld4]
+                        total = i.stamp - stamp
+                        data.append({
+                            'name': i.fld4,
+                            'date': datetime.datetime.fromtimestamp(stamp),
+                            'time': total,
+                            'pool': pool.uuid,
+                            'pool_name': pool.name
+                        })
 
         logger.debug('data: %s', data)
 
-        return data, pool.name
+        return data, ','.join([p.name for p in pools])
 
     def generate(self):
         items, poolName = self.getData()
@@ -129,8 +134,8 @@ class UsageByPool(StatsReport):
                 'data': items,
                 'pool': poolName,
             },
-            header=ugettext('Users usage list for {}').format(poolName),
-            water=ugettext('UDS Report of users in {}').format(poolName)
+            header=ugettext('Users usage list'),
+            water=ugettext('UDS Report of users usage')
         )
 
 
