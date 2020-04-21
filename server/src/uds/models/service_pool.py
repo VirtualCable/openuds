@@ -63,6 +63,7 @@ from .util import getSqlDatetime
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import UserService, ServicePoolPublication, User, Group, Proxy
+    from django.db.models import QuerySet
 
 
 logger = logging.getLogger(__name__)
@@ -471,7 +472,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if pub:
             pub.unpublish()
 
-    def cachedUserServices(self):
+    def cachedUserServices(self) -> 'QuerySet':
         """
         ':rtype uds.models.user_service.UserService'
         Utility method to access the cached user services (level 1 and 2)
@@ -481,7 +482,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.exclude(cache_level=0)
 
-    def assignedUserServices(self):
+    def assignedUserServices(self) -> 'QuerySet':
         """
         Utility method to access the assigned user services
 
@@ -490,7 +491,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0)
 
-    def erroneousUserServices(self):
+    def erroneousUserServices(self) -> 'QuerySet':
         """
         Utility method to locate invalid assigned user services.
 

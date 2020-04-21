@@ -46,6 +46,7 @@ from uds.models.calendar_action import (
     CALENDAR_ACTION_ADD_GROUP,
     CALENDAR_ACTION_DEL_GROUP,
     CALENDAR_ACTION_IGNORE_UNUSED,
+    CALENDAR_ACTION_REMOVE_USERSERVICES,
 )
 
 from uds.core.managers import userServiceManager
@@ -472,7 +473,7 @@ class ServicesPools(ModelHandler):
         validActions += (CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT, CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP)
 
         # Advanced actions
-        validActions += (CALENDAR_ACTION_IGNORE_UNUSED,)
+        validActions += (CALENDAR_ACTION_IGNORE_UNUSED, CALENDAR_ACTION_REMOVE_USERSERVICES)
         return validActions
 
     def listAssignables(self, item: ServicePool) -> typing.Any:

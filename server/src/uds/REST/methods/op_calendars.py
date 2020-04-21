@@ -52,7 +52,6 @@ logger = logging.getLogger(__name__)
 ALLOW = 'ALLOW'
 DENY = 'DENY'
 
-
 class AccessCalendars(DetailHandler):
     @staticmethod
     def as_dict(item: 'CalendarAccess'):

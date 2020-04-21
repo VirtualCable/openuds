@@ -66,6 +66,7 @@ CALENDAR_ACTION_DEL_TRANSPORT = {'id': 'REMOVE_TRANSPORT', 'description': _('Rem
 CALENDAR_ACTION_ADD_GROUP = {'id': 'ADD_GROUP', 'description': _('Add a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
 CALENDAR_ACTION_DEL_GROUP = {'id': 'REMOVE_GROUP', 'description': _('Remove a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
 CALENDAR_ACTION_IGNORE_UNUSED = {'id': 'IGNORE_UNUSED', 'description': _('Sets the ignore unused'), 'params': ({'type': 'bool', 'name': 'state', 'description': _('Ignore assigned and unused'), 'default': False},)}
+CALENDAR_ACTION_REMOVE_USERSERVICES = {'id': 'REMOVE_USERSERVICES', 'description': _('Remove ALL assigned user service. USE WITH CAUTION!'), 'params': ()}
 
 
 CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {c['id']: c for c in (
@@ -74,7 +75,8 @@ CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {c['id']: c for c in (
     CALENDAR_ACTION_MAX,
     CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT,
     CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP,
-    CALENDAR_ACTION_IGNORE_UNUSED
+    CALENDAR_ACTION_IGNORE_UNUSED,
+    CALENDAR_ACTION_REMOVE_USERSERVICES
 )}
 
 
@@ -171,6 +173,8 @@ class CalendarAction(UUIDModel):
             executed = True
         elif CALENDAR_ACTION_IGNORE_UNUSED['id'] == self.action:
             self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
+        elif CALENDAR_ACTION_REMOVE_USERSERVICES:
+            self.service_pool.assignedUserServices().delete()
         else:
             caTransports = (CALENDAR_ACTION_ADD_TRANSPORT['id'], CALENDAR_ACTION_DEL_TRANSPORT['id'])
             caGroups = (CALENDAR_ACTION_ADD_GROUP['id'], CALENDAR_ACTION_DEL_GROUP['id'])
