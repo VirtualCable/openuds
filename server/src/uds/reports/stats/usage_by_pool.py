@@ -115,6 +115,7 @@ class UsageByPool(StatsReport):
                         total = i.stamp - stamp
                         data.append({
                             'name': i.fld4,
+                            'origin': i.fld2.split(':')[0],
                             'date': datetime.datetime.fromtimestamp(stamp),
                             'time': total,
                             'pool': pool.uuid,
@@ -156,9 +157,9 @@ class UsageByPoolCSV(UsageByPool):
 
         reportData = self.getData()[0]
 
-        writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds')])
+        writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds'), ugettext('Pool'), ugettext('Duration')])
 
         for v in reportData:
-            writer.writerow([v['date'], v['name'], v['time']])
+            writer.writerow([v['date'], v['name'], v['time'], v['pool_name'], v['origin']])
 
         return output.getvalue()
