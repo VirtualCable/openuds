@@ -259,10 +259,6 @@ class XenServer:  # pylint: disable=too-many-public-methods
             if self.SR.get_content_type(srId) == 'iso' or self.SR.get_shared(srId) is False or name_label == '':
                 continue
 
-            if not self.SR.get_shared(srId):
-                # name_label += ' (local)'
-                continue
-
             valid = True
             allowed_ops = self.SR.get_allowed_operations(srId)
             for v in ['vdi_create', 'vdi_clone', 'vdi_snapshot', 'vdi_destroy']:
