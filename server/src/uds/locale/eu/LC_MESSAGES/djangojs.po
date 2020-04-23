@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 09:34+0100\n"
-"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"POT-Creation-Date: 2020-04-23 10:57+0200\n"
+"PO-Revision-Date: 2020-02-28 08:36+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -25,7 +25,7 @@ msgstr ""
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:37
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:7
+#: static/modern/translations-fakejs.js:7
 msgid "seconds"
 msgstr "segundutan"
 
@@ -1046,7 +1046,6 @@ msgid "New permission..."
 msgstr "Baimen berria ..."
 
 #: static/admin/translations-fakejs.js:284
-#| msgid "New group permission for"
 msgid "New user permission for"
 msgstr "Erabiltzaile berriaren baimena"
 
@@ -1177,12 +1176,10 @@ msgid "Flush Cache"
 msgstr "Flush Cachea"
 
 #: static/admin/translations-fakejs.js:326
-#| msgid "New group for"
 msgid "New image for"
 msgstr "Irudi berriarentzako"
 
 #: static/admin/translations-fakejs.js:327
-#| msgid "Edit user"
 msgid "Edit for"
 msgstr "Editatu for"
 
@@ -1367,17 +1364,14 @@ msgid "Service"
 msgstr "zerbitzua"
 
 #: static/admin/translations-fakejs.js:429
-#| msgid "New group for"
 msgid "New access rule for"
 msgstr "Sarbide arau berria% srentzat"
 
 #: static/admin/translations-fakejs.js:430
-#| msgid "Edit action for"
 msgid "Edit access rule for"
 msgstr "Editatu sarbide - araua"
 
 #: static/admin/translations-fakejs.js:431
-#| msgid "Delete calendar access rule"
 msgid "Default fallback access for"
 msgstr "Atzerapen sarbidea lehenetsita dago"
 
@@ -1420,12 +1414,10 @@ msgid "Rules"
 msgstr "arauak"
 
 #: static/admin/translations-fakejs.js:452
-#| msgid "Edit user"
 msgid "Edit rule"
 msgstr "Editatu araua"
 
 #: static/admin/translations-fakejs.js:453
-#| msgid "New user"
 msgid "New rule"
 msgstr "Arau berria"
 
@@ -1462,12 +1454,10 @@ msgid "Repeat every"
 msgstr "Errepikatu behin"
 
 #: static/admin/translations-fakejs.js:474
-#| msgid "Remove member pool"
 msgid "New member pool"
 msgstr "Kideen igerilekua berria"
 
 #: static/admin/translations-fakejs.js:475
-#| msgid "Edit meta pool"
 msgid "Edit member pool"
 msgstr "Editatu kideen multzoa"
 
@@ -1484,117 +1474,86 @@ msgstr "Gaituta?"
 msgid "Errors found"
 msgstr "Aurkitutako akatsak"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:3
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:3
 msgid "Launching service"
 msgstr "Zerbitzua abiaraztea"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:4
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:4
 msgid "Please wait"
 msgstr "Itxaron mesedez"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:5
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:5
 msgid ""
 "Remember that UDS Plugin is required in order for this service to be launched"
 msgstr "Gogoratu UDS plugina beharrezkoa dela zerbitzu hau martxan jartzeko"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:6
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:6
 msgid "Error launching service"
 msgstr "Errorea zerbitzua abiaraztea"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:10
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:10
 msgid "Launcher"
 msgstr "Launcher"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:11
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:11
 msgid "Service is in maintenance and cannot be launched"
 msgstr "Zerbitzua mantentze-lanetan dago eta ezin da abian jarri"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:12
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
 msgid "This service is currently not accesible due to schedule restrictions."
 msgstr "Une honetan zerbitzua ez da eskuragarria ordutegia murrizteko."
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:13
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
 msgid "Release service: "
 msgstr "Askapen zerbitzua:"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:14
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:14
 msgid "Reset service: "
 msgstr "Berrezarri zerbitzua:"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:15
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
 msgid "Service released"
 msgstr "Zerbitzua kaleratu da"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:16
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
 msgid "Service reseted"
 msgstr "Zerbitzua berrezarri da"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:17
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
 msgid "Are you sure?"
 msgstr "Ziur zaude?"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:8
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:8
 msgid "Service is in maintenance"
 msgstr "Zerbitzua mantentze-lanetan dago"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:19
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "Abisua"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:20
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:20
 msgid "Service is in maintenance and cannot be executed"
 msgstr "Zerbitzua mantentze-lanetan dago eta ezin da exekutatu"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:21
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:21
 msgid "Invalid error string"
 msgstr "Errore-kate baliogabea"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:22
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
 msgid "We use cookies to track usage and preferences"
 msgstr "Cookien erabilpena eta lehentasunak jarraitzeko erabiltzen dugu"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:23
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
 msgid "I Understand"
 msgstr "Ulertzen dut"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:24
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:24
 msgid "Learn more"
 msgstr "Gehiago ikasi"
 
-#: static/modern/main.js:1
-msgid "root"
-msgstr "erro"
-
-#: static/modern/main.js:1
-msgid "any"
-msgstr "edozein"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+#: static/modern/translations-fakejs.js:9
 msgid "This service is currently not accessible due to schedule restrictions."
 msgstr "Une honetan zerbitzua ez dago eskuragarri ordutegia murrizteko."
-
-#: static/modern/main.js:1
-msgid "Please, retry access in a while."
-msgstr "Errepikatu sarbidea pixka batean."
 
 #: static/modern/translations-fakejs.js:30
 #: static/modern/translations-fakejs.js:54

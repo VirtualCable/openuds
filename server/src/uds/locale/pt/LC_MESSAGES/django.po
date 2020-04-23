@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 09:34+0100\n"
-"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"POT-Creation-Date: 2020-04-23 10:57+0200\n"
+"PO-Revision-Date: 2020-02-28 08:35+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -28,7 +28,7 @@ msgstr "Contas"
 #: REST/methods/meta_pools.py:70 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
-#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:95
+#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:96
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
 #: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
 #: REST/model.py:139
@@ -54,7 +54,7 @@ msgstr "Marca de tempo"
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:226 REST/methods/services_pools.py:104
+#: REST/methods/services.py:226 REST/methods/services_pools.py:105
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr "Tag"
@@ -97,8 +97,8 @@ msgstr "Uso de {0}"
 msgid "Current usages"
 msgstr "Usos atuais"
 
-#: REST/methods/actor.py:94 REST/methods/client.py:100
-#: REST/methods/client.py:116
+#: REST/methods/actor.py:94 REST/methods/client.py:102
+#: REST/methods/client.py:118
 msgid "Correct"
 msgstr "Corrigir"
 
@@ -120,7 +120,7 @@ msgstr "Tokens de ator"
 
 #: REST/methods/actor_token.py:54 reports/stats/pools_performance.py:198
 #: reports/stats/pools_performance.py:213 reports/stats/pools_usage_day.py:65
-#: reports/stats/usage_by_pool.py:154 reports/stats/user_access.py:174
+#: reports/stats/usage_by_pool.py:160 reports/stats/user_access.py:174
 msgid "Date"
 msgstr "Encontro"
 
@@ -129,6 +129,7 @@ msgid "Issued by"
 msgstr "Publicado por"
 
 #: REST/methods/actor_token.py:56
+#: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
 msgstr "Origem"
 
@@ -171,7 +172,7 @@ msgid "Type"
 msgstr "Tipo"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
-#: REST/methods/op_calendars.py:81 REST/methods/services_pool_groups.py:61
+#: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
 #: REST/methods/transports.py:56 REST/methods/user_services.py:294
 #: REST/model.py:166 models/meta_pool.py:72
 msgid "Priority"
@@ -179,7 +180,7 @@ msgstr "Prioridade"
 
 #: REST/methods/authenticators.py:69 REST/methods/authenticators.py:101
 #: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:150
-#: REST/methods/services_pools.py:100 REST/methods/services_pools.py:252
+#: REST/methods/services_pools.py:101 REST/methods/services_pools.py:253
 msgid "Visible"
 msgstr "Visível"
 
@@ -195,15 +196,15 @@ msgstr "Rótulo"
 msgid "Users"
 msgstr "Comercial"
 
-#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:253
+#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:254
 msgid "If active, transport will be visible for users"
 msgstr "Se estiver ativo, o transporte ficará visível para os usuários"
 
 #: REST/methods/authenticators.py:105 REST/methods/meta_pools.py:138
 #: REST/methods/meta_pools.py:146 REST/methods/meta_pools.py:154
-#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:256
-#: REST/methods/services_pools.py:264 REST/methods/services_pools.py:272
-#: REST/methods/services_pools.py:280 core/ui/user_interface.py:97
+#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:257
+#: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
+#: REST/methods/services_pools.py:281 core/ui/user_interface.py:99
 #: services/OVirt/service.py:186
 msgid "Display"
 msgstr "Exibição"
@@ -228,8 +229,7 @@ msgstr "Repete"
 msgid "Every"
 msgstr "Cada"
 
-#: REST/methods/calendarrules.py:103
-#: templates/uds/reports/stats/usage-by-pool.html:16
+#: REST/methods/calendarrules.py:103 reports/stats/usage_by_pool.py:160
 msgid "Duration"
 msgstr "Duração"
 
@@ -253,6 +253,13 @@ msgstr "Calendários"
 #: REST/methods/calendars.py:62
 msgid "Modified"
 msgstr "Modificado"
+
+#: REST/methods/client.py:89
+#| msgid ""
+#| "The service is not ready.\n"
+#| "Please, try again in a few moments."
+msgid "Your service is being created. Please, wait while we complete it"
+msgstr "Seu serviço está sendo criado. Aguarde enquanto a completamos"
 
 #: REST/methods/images.py:56
 msgid "Image Gallery"
@@ -280,11 +287,11 @@ msgid "Policy"
 msgstr "Política"
 
 #: REST/methods/meta_pools.py:73 REST/methods/services.py:225
-#: REST/methods/services_pools.py:97
+#: REST/methods/services_pools.py:98
 msgid "User services"
 msgstr "Serviços do usuário"
 
-#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:98
+#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:99
 msgid "In Preparation"
 msgstr "Em preparação"
 
@@ -293,8 +300,8 @@ msgid "Pool Group"
 msgstr "Grupo de Pool"
 
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:141
-#: REST/methods/services_pools.py:122 REST/methods/services_pools.py:174
-#: REST/methods/services_pools.py:267
+#: REST/methods/services_pools.py:123 REST/methods/services_pools.py:175
+#: REST/methods/services_pools.py:268
 msgid "Default"
 msgstr "Padrão"
 
@@ -303,21 +310,21 @@ msgid "Service pool policy"
 msgstr "Política de pool de serviços"
 
 #: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:85
-#: REST/methods/services_pools.py:260
+#: REST/methods/services_pools.py:261
 msgid "Associated Image"
 msgstr "Imagem associada"
 
 #: REST/methods/meta_pools.py:135 REST/methods/services_pool_groups.py:86
-#: REST/methods/services_pools.py:261
+#: REST/methods/services_pools.py:262
 msgid "Image assocciated with this service"
 msgstr "Imagem associada a este serviço"
 
-#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:102
-#: REST/methods/services_pools.py:268
+#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:103
+#: REST/methods/services_pools.py:269
 msgid "Pool group"
 msgstr "Grupo de pool"
 
-#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:269
+#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:270
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "Grupo de pool para este pool (para pool classificar em exibição)"
 
@@ -325,11 +332,11 @@ msgstr "Grupo de pool para este pool (para pool classificar em exibição)"
 msgid "If active, metapool will be visible for users"
 msgstr "Se ativo, metapool será visível para os usuários"
 
-#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:276
+#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:277
 msgid "Calendar access denied text"
 msgstr "Texto de acesso negado ao calendário"
 
-#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:277
+#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:278
 msgid ""
 "Custom message to be shown to users if access is limited by calendar rules."
 msgstr ""
@@ -360,9 +367,11 @@ msgstr "Data de criação"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_usage_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/usage_by_pool.py:60 services/Proxmox/service.py:110
+#: reports/stats/usage_by_pool.py:60 reports/stats/usage_by_pool.py:160
+#: services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
+#: templates/uds/reports/stats/usage-by-pool.html:17
 msgid "Pool"
 msgstr "Piscina"
 
@@ -443,47 +452,47 @@ msgstr ""
 "Intervalo de rede. Aceita a maioria dos formatos de definições de rede "
 "(intervalo, sub-rede, host, etc ..."
 
-#: REST/methods/op_calendars.py:77
+#: REST/methods/op_calendars.py:76
 msgid "Access restrictions by calendar"
 msgstr "Restrições de acesso por calendário"
 
-#: REST/methods/op_calendars.py:82 REST/methods/op_calendars.py:158
+#: REST/methods/op_calendars.py:81 REST/methods/op_calendars.py:157
 msgid "Calendar"
 msgstr "Calendário"
 
-#: REST/methods/op_calendars.py:83 REST/methods/services_usage.py:116
+#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:116
 msgid "Access"
 msgstr "Acesso"
 
-#: REST/methods/op_calendars.py:96
+#: REST/methods/op_calendars.py:95
 msgid "Invalid parameters on request"
 msgstr "Parâmetros inválidos sob solicitação"
 
-#: REST/methods/op_calendars.py:154
+#: REST/methods/op_calendars.py:153
 msgid "Scheduled actions"
 msgstr "Ações agendadas"
 
-#: REST/methods/op_calendars.py:159
+#: REST/methods/op_calendars.py:158
 msgid "Action"
 msgstr "Açao"
 
-#: REST/methods/op_calendars.py:160 core/ui/user_interface.py:94
+#: REST/methods/op_calendars.py:159 core/ui/user_interface.py:96
 msgid "Parameters"
 msgstr "Parâmetros"
 
-#: REST/methods/op_calendars.py:161
+#: REST/methods/op_calendars.py:160
 msgid "Relative to"
 msgstr "Relativo a"
 
-#: REST/methods/op_calendars.py:162
+#: REST/methods/op_calendars.py:161
 msgid "Time offset"
 msgstr "Deslocamento de tempo"
 
-#: REST/methods/op_calendars.py:163
+#: REST/methods/op_calendars.py:162
 msgid "Next execution"
 msgstr "Próxima execução"
 
-#: REST/methods/op_calendars.py:164
+#: REST/methods/op_calendars.py:163
 msgid "Last execution"
 msgstr "Última execução"
 
@@ -500,7 +509,7 @@ msgstr ""
 msgid "Service providers"
 msgstr "Provedores de serviço"
 
-#: REST/methods/providers.py:73 REST/methods/services_pools.py:96
+#: REST/methods/providers.py:73 REST/methods/services_pools.py:97
 msgid "Status"
 msgstr "Status"
 
@@ -647,10 +656,10 @@ msgstr "Procuração"
 msgid "Proxy for services behind a firewall"
 msgstr "Proxy para serviços atrás de um firewall"
 
-#: REST/methods/services.py:270 REST/methods/services_pools.py:232
-#: REST/methods/services_pools.py:240 REST/methods/services_pools.py:248
-#: REST/methods/services_pools.py:323 REST/methods/services_pools.py:331
-#: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:93
+#: REST/methods/services.py:270 REST/methods/services_pools.py:233
+#: REST/methods/services_pools.py:241 REST/methods/services_pools.py:249
+#: REST/methods/services_pools.py:324 REST/methods/services_pools.py:332
+#: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:95
 #: osmanagers/WindowsOsManager/windows_domain.py:71
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:73
@@ -673,47 +682,47 @@ msgstr "Está bem"
 msgid "Services Pool Groups"
 msgstr "Grupos de Piscina"
 
-#: REST/methods/services_pools.py:93 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:94 REST/methods/transports.py:104
 msgid "Service Pools"
 msgstr "Piscinas de Serviço"
 
-#: REST/methods/services_pools.py:99
+#: REST/methods/services_pools.py:100
 msgid "Usage"
 msgstr "Uso"
 
-#: REST/methods/services_pools.py:101
+#: REST/methods/services_pools.py:102
 msgid "Shows transports"
 msgstr "Mostra transportes"
 
-#: REST/methods/services_pools.py:103
+#: REST/methods/services_pools.py:104
 msgid "Parent service"
 msgstr "Serviço pai"
 
-#: REST/methods/services_pools.py:205
+#: REST/methods/services_pools.py:206
 msgid "Create at least a service before creating a new service pool"
 msgstr "Crie pelo menos um serviço antes de criar um novo pool de serviços"
 
-#: REST/methods/services_pools.py:212
+#: REST/methods/services_pools.py:213
 msgid "Base service"
 msgstr "Serviço base"
 
-#: REST/methods/services_pools.py:213
+#: REST/methods/services_pools.py:214
 msgid "Service used as base of this service pool"
 msgstr "Serviço usado como base desse pool de serviços"
 
-#: REST/methods/services_pools.py:220
+#: REST/methods/services_pools.py:221
 msgid "OS Manager"
 msgstr "Gerenciador de SO"
 
-#: REST/methods/services_pools.py:221
+#: REST/methods/services_pools.py:222
 msgid "OS Manager used as base of this service pool"
 msgstr "OS Manager usado como base desse pool de serviços"
 
-#: REST/methods/services_pools.py:228
+#: REST/methods/services_pools.py:229
 msgid "Allow removal by users"
 msgstr "Permitir remoção por usuários"
 
-#: REST/methods/services_pools.py:229
+#: REST/methods/services_pools.py:230
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -722,19 +731,19 @@ msgstr ""
 "Se ativo, o usuário poderá remover o serviço \"manualmente\". Tenha cuidado "
 "com isso, porque o usuário terá o \"poder\" para excluir seu próprio serviço"
 
-#: REST/methods/services_pools.py:236
+#: REST/methods/services_pools.py:237
 msgid "Allow reset by users"
 msgstr "Permitir redefinir pelos usuários"
 
-#: REST/methods/services_pools.py:237
+#: REST/methods/services_pools.py:238
 msgid "If active, the user will be allowed to reset the service"
 msgstr "Se ativo, o usuário poderá redefinir o serviço"
 
-#: REST/methods/services_pools.py:244
+#: REST/methods/services_pools.py:245
 msgid "Ignores unused"
 msgstr "Ignora não utilizado"
 
-#: REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:246
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -742,41 +751,41 @@ msgstr ""
 "Se a opção estiver ativada, o UDS não tentará detectar e remover os serviços "
 "do usuário atribuídos, mas não em uso."
 
-#: REST/methods/services_pools.py:285
+#: REST/methods/services_pools.py:286
 msgid "Initial available services"
 msgstr "Serviços iniciais disponíveis"
 
-#: REST/methods/services_pools.py:286
+#: REST/methods/services_pools.py:287
 msgid "Services created initially for this service pool"
 msgstr "Serviços criados inicialmente para este conjunto de serviços"
 
-#: REST/methods/services_pools.py:289 REST/methods/services_pools.py:298
-#: REST/methods/services_pools.py:307 REST/methods/services_pools.py:316
+#: REST/methods/services_pools.py:290 REST/methods/services_pools.py:299
+#: REST/methods/services_pools.py:308 REST/methods/services_pools.py:317
 msgid "Availability"
 msgstr "Disponibilidade"
 
-#: REST/methods/services_pools.py:294
+#: REST/methods/services_pools.py:295
 msgid "Services to keep in cache"
 msgstr "Serviços para manter em cache"
 
-#: REST/methods/services_pools.py:295
+#: REST/methods/services_pools.py:296
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
 "Serviços mantidos em cache para melhor designação de serviço do usuário"
 
-#: REST/methods/services_pools.py:303
+#: REST/methods/services_pools.py:304
 msgid "Services to keep in L2 cache"
 msgstr "Serviços para manter no cache L2"
 
-#: REST/methods/services_pools.py:304
+#: REST/methods/services_pools.py:305
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "Serviços mantidos no cache de level2 para melhor geração de serviços"
 
-#: REST/methods/services_pools.py:312
+#: REST/methods/services_pools.py:313
 msgid "Maximum number of services to provide"
 msgstr "Número máximo de serviços a fornecer"
 
-#: REST/methods/services_pools.py:313
+#: REST/methods/services_pools.py:314
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -784,27 +793,27 @@ msgstr ""
 "Número máximo de serviço (atribuído e cache L1) que pode ser criado para "
 "este serviço"
 
-#: REST/methods/services_pools.py:320
+#: REST/methods/services_pools.py:321
 msgid "Show transports"
 msgstr "Mostrar transportes"
 
-#: REST/methods/services_pools.py:321
+#: REST/methods/services_pools.py:322
 msgid "If active, alternative transports for user will be shown"
 msgstr "Se ativo, os transportes alternativos para o usuário serão mostrados"
 
-#: REST/methods/services_pools.py:328
+#: REST/methods/services_pools.py:329
 msgid "Accounting"
 msgstr "Contabilidade"
 
-#: REST/methods/services_pools.py:329
+#: REST/methods/services_pools.py:330
 msgid "Account associated to this service pool"
 msgstr "Conta associada a este conjunto de serviços"
 
-#: REST/methods/services_pools.py:345
+#: REST/methods/services_pools.py:346
 msgid "Base service does not exist anymore"
 msgstr "O serviço base não existe mais"
 
-#: REST/methods/services_pools.py:376
+#: REST/methods/services_pools.py:380
 msgid "This service requires an OS Manager"
 msgstr "Este serviço requer um gerenciador de sistema operacional"
 
@@ -933,7 +942,7 @@ msgstr "Membro da equipe"
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/RegexLdap/authenticator.py:67 auths/SAML_enterprise/saml.py:117
-#: reports/stats/pool_usage_summary.py:166 reports/stats/usage_by_pool.py:154
+#: reports/stats/pool_usage_summary.py:166 reports/stats/usage_by_pool.py:160
 #: templates/uds/reports/stats/pool-usage-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
 msgid "User"
@@ -1132,7 +1141,7 @@ msgstr "Senha do usuário ldap"
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
-#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:54
+#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:62
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "Tempo esgotado"
@@ -1610,20 +1619,20 @@ msgstr ""
 msgid "Invalid private key. "
 msgstr "Chave privada inválida."
 
-#: auths/SAML_enterprise/saml.py:221
+#: auths/SAML_enterprise/saml.py:217
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Não é possível buscar o URL {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:225
 msgid " (obtained from URL)"
 msgstr "(obtido da URL)"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:226
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML não parece válido para metadados IDP"
 
-#: auths/SAML_enterprise/saml.py:249
+#: auths/SAML_enterprise/saml.py:242
 msgid "Can't access idp metadata"
 msgstr "Não é possível acessar os metadados do idp"
 
@@ -1781,11 +1790,11 @@ msgstr "O serviço solicitado é restrito"
 msgid "The requested service is not available"
 msgstr "O serviço solicitado não está disponível"
 
-#: core/managers/user_service.py:585
+#: core/managers/user_service.py:586
 msgid "The requested transport {} is not valid for {}"
 msgstr "O transporte solicitado {} não é válido para {}"
 
-#: core/managers/user_service.py:709
+#: core/managers/user_service.py:710
 msgid "The service is not accessible from this device"
 msgstr "O serviço não está acessível a partir deste dispositivo"
 
@@ -1849,15 +1858,15 @@ msgstr "Direto"
 msgid "Tunneled"
 msgstr "Túnel"
 
-#: core/ui/user_interface.py:95
+#: core/ui/user_interface.py:97
 msgid "Credentials"
 msgstr "Credenciais"
 
-#: core/ui/user_interface.py:96
+#: core/ui/user_interface.py:98
 msgid "Tunnel"
 msgstr "Túnel"
 
-#: core/util/ldaputil.py:92
+#: core/util/ldaputil.py:93
 msgid "Can't contact LDAP server"
 msgstr "Não é possível entrar em contato com o servidor LDAP"
 
@@ -2138,6 +2147,10 @@ msgstr "Define a ignorar não utilizada"
 #: models/calendar_action.py:68
 msgid "Ignore assigned and unused"
 msgstr "Ignorar atribuídos e não utilizados"
+
+#: models/calendar_action.py:69
+msgid "Remove ALL assigned user service. USE WITH CAUTION!"
+msgstr "Remova todo o serviço de usuário atribuído. USE COM CUIDADO!"
 
 #: models/calendar_rule.py:53
 msgid "Yearly"
@@ -2547,7 +2560,6 @@ msgid "Users List for {}"
 msgstr "Lista de usuários para {}"
 
 #: reports/lists/users.py:86 reports/stats/pool_usage_summary.py:145
-#: reports/stats/usage_by_pool.py:133
 msgid "UDS Report of users in {}"
 msgstr "Relatório de usuários do UDS em {}"
 
@@ -2595,7 +2607,7 @@ msgstr "Data de término"
 msgid "finish date for report"
 msgstr "data de conclusão do relatório"
 
-#: reports/stats/pool_usage_summary.py:144 reports/stats/usage_by_pool.py:132
+#: reports/stats/pool_usage_summary.py:144
 msgid "Users usage list for {}"
 msgstr "Lista de uso de usuários para {}"
 
@@ -2700,7 +2712,23 @@ msgstr "Uso de pools por usuários"
 msgid "Pools usage by user report"
 msgstr "Uso de pools pelo relatório do usuário"
 
-#: reports/stats/usage_by_pool.py:154
+#: reports/stats/usage_by_pool.py:86
+msgid "ALL POOLS"
+msgstr "TODAS AS PISCINAS"
+
+#: reports/stats/usage_by_pool.py:138
+#: templates/uds/reports/stats/usage-by-pool.html:4
+#| msgid "Users usage list for {}"
+msgid "Users usage list"
+msgstr "Lista de usuários"
+
+#: reports/stats/usage_by_pool.py:139
+#| msgid "UDS Report for users access"
+msgid "UDS Report of users usage"
+msgstr "Relatório UDS de uso dos usuários"
+
+#: reports/stats/usage_by_pool.py:160
+#: templates/uds/reports/stats/usage-by-pool.html:16
 msgid "Seconds"
 msgstr "Segundos"
 
@@ -2778,7 +2806,7 @@ msgstr "Obtido de assinaturas"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:107 services/Xen/provider.py:98
 msgid "Creation concurrency"
@@ -2790,7 +2818,7 @@ msgstr "Concorrência de criação"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Número máximo de criações simultâneas de VMs"
@@ -2801,7 +2829,7 @@ msgstr "Número máximo de criações simultâneas de VMs"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:108 services/Xen/provider.py:99
 msgid "Removal concurrency"
@@ -2813,13 +2841,13 @@ msgstr "Concorrência de remoção"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Número máximo de remoção simultânea de VMs"
 
 #: services/Azure_enterprise/provider.py:48
-#: services/VCloud_enterprise/provider.py:54
+#: services/VCloud_enterprise/provider.py:62
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "Tempo limite em segundos de conexão ao vCloud"
 
@@ -2832,7 +2860,7 @@ msgid "Provides connection to Azure Platform"
 msgstr "Fornece conexão com a plataforma do Azure"
 
 #: services/Azure_enterprise/provider.py:99
-#: services/VCloud_enterprise/provider.py:98
+#: services/VCloud_enterprise/provider.py:106
 msgid "Connection parameters seems correct"
 msgstr "Parâmetros de conexão parece correto"
 
@@ -3034,7 +3062,7 @@ msgid "Connection test successful"
 msgstr "Teste de conexão bem sucedido"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
-#: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
+#: services/Nutanix_enterprise/provider.py:214 services/OVirt/provider.py:457
 #: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "Conexão falhou. Verifique os parâmetros de conexão"
@@ -3209,10 +3237,12 @@ msgid "Remote WSman port.Leave to zero for default."
 msgstr "Porta remota do WSman. Deixe para zero como padrão."
 
 #: services/HyperV_enterprise/provider.py:123
+#: services/VCloud_enterprise/provider.py:50
 msgid "Force SSL certificate verification"
 msgstr "Forçar verificação de certificado SSL"
 
 #: services/HyperV_enterprise/provider.py:125
+#: services/VCloud_enterprise/provider.py:52
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -3267,7 +3297,7 @@ msgstr "Tempo limite em segundos de conexão com a Nutanix"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Intervalo de macs válidos para máquinas gerenciadas por UDS"
 
-#: services/Nutanix_enterprise/provider.py:200
+#: services/Nutanix_enterprise/provider.py:212
 msgid "Connection works fine"
 msgstr "Conexão funciona bem"
 
@@ -3331,11 +3361,11 @@ msgstr ""
 "Usuário com privilégios válidos no oVirt, (use o formulário \"user @ domain"
 "\")"
 
-#: services/OVirt/provider.py:111 services/Proxmox/provider.py:64
+#: services/OVirt/provider.py:111
 msgid "Password of the user of oVirt"
 msgstr "Senha do usuário do oVirt"
 
-#: services/OVirt/provider.py:116 services/Proxmox/provider.py:69
+#: services/OVirt/provider.py:116
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "Tempo limite em segundos de conexão ao oVirt"
 
@@ -3556,11 +3586,11 @@ msgstr "Modelo base"
 msgid "Service base template"
 msgstr "Modelo base de serviço"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:671
+#: services/OpenStack/openStack/UDSOpenStackClient.py:677
 msgid "Authentication error"
 msgstr "Erro de autenticação"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:676
+#: services/OpenStack/openStack/UDSOpenStackClient.py:682
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3612,7 +3642,26 @@ msgstr "Senha do usuário do OpenStack"
 msgid "Timeout in seconds of connection to OpenStack"
 msgstr "Tempo limite em segundos de conexão ao OpenStack"
 
-#: services/OpenStack/provider.py:162 services/OpenStack/provider_legacy.py:166
+#: services/OpenStack/provider.py:110
+#| msgid "Project"
+msgid "Project Id"
+msgstr "ID do projeto"
+
+#: services/OpenStack/provider.py:110
+msgid "Project (tenant) for this provider. Set only if required by server."
+msgstr ""
+"Projeto (inquilino) para este provedor. Defina apenas se necessário pelo "
+"servidor."
+
+#: services/OpenStack/provider.py:111 services/OpenStack/service.py:107
+msgid "Region"
+msgstr "Região"
+
+#: services/OpenStack/provider.py:111
+msgid "Region for this provider. Set only if required by server."
+msgstr "Região para este provedor. Defina apenas se necessário pelo servidor."
+
+#: services/OpenStack/provider.py:164 services/OpenStack/provider_legacy.py:166
 msgid "OpenStack test connection passed"
 msgstr "Conexão de teste do OpenStack passada"
 
@@ -3645,10 +3694,6 @@ msgstr "OpenStack Live Volume"
 #: services/OpenStack/service.py:68
 msgid "OpenStack live images based service"
 msgstr "Serviço baseado em imagens ao vivo do OpenStack"
-
-#: services/OpenStack/service.py:107
-msgid "Region"
-msgstr "Região"
 
 #: services/OpenStack/service.py:107
 msgid "Service region"
@@ -3707,7 +3752,6 @@ msgid "Static IP Machines Provider"
 msgstr "Fornecedor de máquinas IP estáticas"
 
 #: services/PhysicalMachines/provider.py:44
-#| msgid "Provides connection to Azure Platform"
 msgid "Provides connection to machines by IP"
 msgstr "Fornece conexão com máquinas por IP"
 
@@ -3785,6 +3829,16 @@ msgstr ""
 "Usuário com privilégios válidos no Proxmox, (use o formulário \"user @ "
 "authenticator\")"
 
+#: services/Proxmox/provider.py:64
+#| msgid "Password of the user of oVirt"
+msgid "Password of the user of Proxmox"
+msgstr "Senha do usuário do Proxmox"
+
+#: services/Proxmox/provider.py:69
+#| msgid "Timeout in seconds of connection to LDAP"
+msgid "Timeout in seconds of connection to Proxmox"
+msgstr "Tempo limite em segundos de conexão com o Proxmox"
+
 #: services/Proxmox/publication.py:93
 #: services/Vmware_enterprise/publication.py:67
 msgid "Publication"
@@ -3819,7 +3873,6 @@ msgid "The minimum allowed memory is 128 Mb"
 msgstr "A memória mínima permitida é 128 Mb"
 
 #: services/Proxmox/service.py:200
-#| msgid "Enabled"
 msgid "Disabled"
 msgstr "Desativado"
 
@@ -4237,11 +4290,11 @@ msgstr "Senha do usuário do vCloud"
 msgid "Select your vCloud version"
 msgstr "Selecione sua versão do vCloud"
 
-#: services/VCloud_enterprise/provider.py:58
+#: services/VCloud_enterprise/provider.py:66
 msgid "VCloud Director Platform Provider"
 msgstr "Provedor de plataforma do VCloud Director"
 
-#: services/VCloud_enterprise/provider.py:60
+#: services/VCloud_enterprise/provider.py:68
 msgid "Provides connection to vCloud Director platform"
 msgstr "Fornece conexão com a plataforma vCloud Director"
 
@@ -4304,6 +4357,14 @@ msgstr ""
 msgid "Only vApp Templates with 1 VM are allowed"
 msgstr "Apenas modelos de vApp com 1 VM são permitidos"
 
+#: services/Vmware_enterprise/helpers.py:76
+msgid ""
+"VMWare services needs that vCenter contains at least one folder, one network "
+"and one datastore."
+msgstr ""
+"Os serviços VMWare precisam que o vCenter contenha pelo menos uma pasta, uma "
+"rede e um armazenamento de dados."
+
 #: services/Vmware_enterprise/helpers.py:84
 msgid "Local"
 msgstr "Local"
@@ -4341,7 +4402,6 @@ msgstr ""
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
 #: services/Vmware_enterprise/provider.py:55
-#| msgid "Services to keep in L2 cache"
 msgid "Power off VM on L2 cache"
 msgstr "Desligue a VM no cache L2"
 
@@ -4674,6 +4734,11 @@ msgstr "Encontro:"
 msgid "Services assignation"
 msgstr "Atribuição de serviços"
 
+#: templates/uds/reports/stats/usage-by-pool.html:6
+#| msgid "Users usage list for {}"
+msgid "Users usage list for"
+msgstr "Lista de uso de usuários para"
+
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"
 msgstr "Data / hora de acesso"
@@ -4983,13 +5048,27 @@ msgstr ""
 "Tempo permitido, em segundos, para o cliente HTML5 recarregar dados do UDS "
 "Broker. O valor padrão de 60 é recomendado."
 
-#: transports/HTML5RDP/html5rdp.py:141
-#: transports/HTML5RDS_enterprise/html5rds.py:142
+#: transports/HTML5RDP/html5rdp.py:135
+#: transports/HTML5RDS_enterprise/html5rds.py:137
+msgid "Force new HTML Window"
+msgstr "Forçar nova janela HTML"
+
+#: transports/HTML5RDP/html5rdp.py:137
+#: transports/HTML5RDS_enterprise/html5rds.py:139
+msgid ""
+"If checked, every connection will try to open its own window instead of "
+"reusing the \"global\" one."
+msgstr ""
+"Se marcada, todas as conexões tentarão abrir sua própria janela em vez de "
+"reutilizar a \"global\"."
+
+#: transports/HTML5RDP/html5rdp.py:148
+#: transports/HTML5RDS_enterprise/html5rds.py:149
 msgid "The server must be http or https"
 msgstr "O servidor deve ser http ou https"
 
-#: transports/HTML5RDP/html5rdp.py:143
-#: transports/HTML5RDS_enterprise/html5rds.py:144
+#: transports/HTML5RDP/html5rdp.py:150
+#: transports/HTML5RDS_enterprise/html5rds.py:151
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5723,3 +5802,11 @@ msgstr "O autenticador não fornece informações"
 #: web/views/service.py:106
 msgid "Service not ready. Please, try again in a while."
 msgstr "Serviço não está pronto. Por favor, tente novamente daqui a pouco."
+
+#: web/views/service.py:131
+msgid ""
+"Your service is being created, please, wait for a few seconds while we "
+"complete it.)"
+msgstr ""
+"Seu serviço está sendo criado. Aguarde alguns segundos enquanto o "
+"concluímos.)"

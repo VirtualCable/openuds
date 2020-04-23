@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 09:34+0100\n"
-"PO-Revision-Date: 2020-02-27 12:43+0000\n"
+"POT-Creation-Date: 2020-04-23 10:57+0200\n"
+"PO-Revision-Date: 2020-03-05 16:38+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -31,7 +31,7 @@ msgstr ""
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:37
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:7
+#: static/modern/translations-fakejs.js:7
 msgid "seconds"
 msgstr "segundos"
 
@@ -1054,7 +1054,6 @@ msgid "New permission..."
 msgstr "Nuevo permiso..."
 
 #: static/admin/translations-fakejs.js:284
-#| msgid "New group permission for"
 msgid "New user permission for"
 msgstr "Nuevo permiso de usuario para"
 
@@ -1185,12 +1184,10 @@ msgid "Flush Cache"
 msgstr "Vaciar caché"
 
 #: static/admin/translations-fakejs.js:326
-#| msgid "New group for"
 msgid "New image for"
 msgstr "Nueva imagen para"
 
 #: static/admin/translations-fakejs.js:327
-#| msgid "Edit user"
 msgid "Edit for"
 msgstr "Editar para"
 
@@ -1376,17 +1373,14 @@ msgid "Service"
 msgstr "Servicio"
 
 #: static/admin/translations-fakejs.js:429
-#| msgid "New group for"
 msgid "New access rule for"
 msgstr "Nueva regla de acceso para"
 
 #: static/admin/translations-fakejs.js:430
-#| msgid "Edit action for"
 msgid "Edit access rule for"
 msgstr "Editar regla de acceso para"
 
 #: static/admin/translations-fakejs.js:431
-#| msgid "Delete calendar access rule"
 msgid "Default fallback access for"
 msgstr "Acceso de reserva predeterminado para"
 
@@ -1429,12 +1423,10 @@ msgid "Rules"
 msgstr "Reglas"
 
 #: static/admin/translations-fakejs.js:452
-#| msgid "Edit user"
 msgid "Edit rule"
 msgstr "Editar regla"
 
 #: static/admin/translations-fakejs.js:453
-#| msgid "New user"
 msgid "New rule"
 msgstr "Nueva regla"
 
@@ -1471,12 +1463,10 @@ msgid "Repeat every"
 msgstr "Repite cada"
 
 #: static/admin/translations-fakejs.js:474
-#| msgid "Remove member pool"
 msgid "New member pool"
 msgstr "Nuevo grupo de miembros"
 
 #: static/admin/translations-fakejs.js:475
-#| msgid "Edit meta pool"
 msgid "Edit member pool"
 msgstr "Editar grupo de miembros"
 
@@ -1486,127 +1476,96 @@ msgstr "Service pool"
 
 #: static/admin/translations-fakejs.js:478
 msgid "Enabled?"
-msgstr "Habilitado?"
+msgstr "¿Habilitado?"
 
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
 msgid "Errors found"
 msgstr "Errores encontrados"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:3
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:3
 msgid "Launching service"
 msgstr "Servicio de lanzamiento"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:4
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:4
 msgid "Please wait"
 msgstr "Por favor espere"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:5
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:5
 msgid ""
 "Remember that UDS Plugin is required in order for this service to be launched"
 msgstr ""
 "Recuerde que el UDS Plugin es necesario para que se inicie este servicio"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:6
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:6
 msgid "Error launching service"
 msgstr "Error al iniciar el servicio"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:10
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:10
 msgid "Launcher"
-msgstr "Lanzacohetes"
+msgstr "Lanzador"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:11
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:11
 msgid "Service is in maintenance and cannot be launched"
 msgstr "El servicio está en mantenimiento y no se puede iniciar."
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:12
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
 msgid "This service is currently not accesible due to schedule restrictions."
 msgstr ""
 "Este servicio actualmente no es accesible debido a restricciones de horario."
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:13
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
 msgid "Release service: "
 msgstr "Liberación del servicio:"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:14
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:14
 msgid "Reset service: "
 msgstr "Servicio de reinicio:"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:15
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
 msgid "Service released"
 msgstr "Servicio liberado"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:16
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
 msgid "Service reseted"
 msgstr "Servicio restablecido"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:17
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
 msgid "Are you sure?"
 msgstr "¿Está seguro?"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:8
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:8
 msgid "Service is in maintenance"
 msgstr "El servicio está en mantenimiento."
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:19
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "Advertencia"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:20
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:20
 msgid "Service is in maintenance and cannot be executed"
 msgstr "El servicio está en mantenimiento y no puede ser ejecutado."
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:21
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:21
 msgid "Invalid error string"
 msgstr "Cadena de error no válida"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:22
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
 msgid "We use cookies to track usage and preferences"
 msgstr "Usamos cookies para rastrear el uso y las preferencias."
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:23
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
 msgid "I Understand"
 msgstr "Entiendo"
 
-#: static/modern/main-es5.js:1 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:24
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:24
 msgid "Learn more"
 msgstr "Aprende más"
 
-#: static/modern/main.js:1
-msgid "root"
-msgstr "root"
-
-#: static/modern/main.js:1
-msgid "any"
-msgstr "alguna"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:9
+#: static/modern/translations-fakejs.js:9
 msgid "This service is currently not accessible due to schedule restrictions."
 msgstr ""
 "Este servicio actualmente no es accesible debido a restricciones de horario."
-
-#: static/modern/main.js:1
-msgid "Please, retry access in a while."
-msgstr "Por favor, vuelva a intentar el acceso mas tarde."
 
 #: static/modern/translations-fakejs.js:30
 #: static/modern/translations-fakejs.js:54

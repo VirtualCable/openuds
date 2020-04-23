@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 09:34+0100\n"
-"PO-Revision-Date: 2020-02-25 14:41+0000\n"
+"POT-Creation-Date: 2020-04-23 10:57+0200\n"
+"PO-Revision-Date: 2020-02-28 08:35+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -27,7 +27,7 @@ msgstr "帐号"
 #: REST/methods/meta_pools.py:70 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
-#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:95
+#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:96
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
 #: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
 #: REST/model.py:139
@@ -53,7 +53,7 @@ msgstr "时间标记"
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:226 REST/methods/services_pools.py:104
+#: REST/methods/services.py:226 REST/methods/services_pools.py:105
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr "标签"
@@ -96,8 +96,8 @@ msgstr "{0}的用法"
 msgid "Current usages"
 msgstr "目前的用法"
 
-#: REST/methods/actor.py:94 REST/methods/client.py:100
-#: REST/methods/client.py:116
+#: REST/methods/actor.py:94 REST/methods/client.py:102
+#: REST/methods/client.py:118
 msgid "Correct"
 msgstr "正确"
 
@@ -119,7 +119,7 @@ msgstr "演员代币"
 
 #: REST/methods/actor_token.py:54 reports/stats/pools_performance.py:198
 #: reports/stats/pools_performance.py:213 reports/stats/pools_usage_day.py:65
-#: reports/stats/usage_by_pool.py:154 reports/stats/user_access.py:174
+#: reports/stats/usage_by_pool.py:160 reports/stats/user_access.py:174
 msgid "Date"
 msgstr "日期"
 
@@ -128,6 +128,7 @@ msgid "Issued by"
 msgstr "由...发出"
 
 #: REST/methods/actor_token.py:56
+#: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
 msgstr "起源"
 
@@ -170,7 +171,7 @@ msgid "Type"
 msgstr "类型"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
-#: REST/methods/op_calendars.py:81 REST/methods/services_pool_groups.py:61
+#: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
 #: REST/methods/transports.py:56 REST/methods/user_services.py:294
 #: REST/model.py:166 models/meta_pool.py:72
 msgid "Priority"
@@ -178,7 +179,7 @@ msgstr "优先"
 
 #: REST/methods/authenticators.py:69 REST/methods/authenticators.py:101
 #: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:150
-#: REST/methods/services_pools.py:100 REST/methods/services_pools.py:252
+#: REST/methods/services_pools.py:101 REST/methods/services_pools.py:253
 msgid "Visible"
 msgstr "可见"
 
@@ -194,15 +195,15 @@ msgstr "标签"
 msgid "Users"
 msgstr "用户"
 
-#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:253
+#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:254
 msgid "If active, transport will be visible for users"
 msgstr "如果处于活动状态，则用户可以看到传输"
 
 #: REST/methods/authenticators.py:105 REST/methods/meta_pools.py:138
 #: REST/methods/meta_pools.py:146 REST/methods/meta_pools.py:154
-#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:256
-#: REST/methods/services_pools.py:264 REST/methods/services_pools.py:272
-#: REST/methods/services_pools.py:280 core/ui/user_interface.py:97
+#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:257
+#: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
+#: REST/methods/services_pools.py:281 core/ui/user_interface.py:99
 #: services/OVirt/service.py:186
 msgid "Display"
 msgstr "显示"
@@ -227,8 +228,7 @@ msgstr "重复"
 msgid "Every"
 msgstr "一切"
 
-#: REST/methods/calendarrules.py:103
-#: templates/uds/reports/stats/usage-by-pool.html:16
+#: REST/methods/calendarrules.py:103 reports/stats/usage_by_pool.py:160
 msgid "Duration"
 msgstr "持续时间"
 
@@ -252,6 +252,13 @@ msgstr "日历"
 #: REST/methods/calendars.py:62
 msgid "Modified"
 msgstr "改性"
+
+#: REST/methods/client.py:89
+#| msgid ""
+#| "The service is not ready.\n"
+#| "Please, try again in a few moments."
+msgid "Your service is being created. Please, wait while we complete it"
+msgstr "您的服务正在创建中。请等我们完成"
 
 #: REST/methods/images.py:56
 msgid "Image Gallery"
@@ -279,11 +286,11 @@ msgid "Policy"
 msgstr "政策"
 
 #: REST/methods/meta_pools.py:73 REST/methods/services.py:225
-#: REST/methods/services_pools.py:97
+#: REST/methods/services_pools.py:98
 msgid "User services"
 msgstr "用户服务"
 
-#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:98
+#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:99
 msgid "In Preparation"
 msgstr "在筹备"
 
@@ -292,8 +299,8 @@ msgid "Pool Group"
 msgstr "池组"
 
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:141
-#: REST/methods/services_pools.py:122 REST/methods/services_pools.py:174
-#: REST/methods/services_pools.py:267
+#: REST/methods/services_pools.py:123 REST/methods/services_pools.py:175
+#: REST/methods/services_pools.py:268
 msgid "Default"
 msgstr "默认"
 
@@ -302,21 +309,21 @@ msgid "Service pool policy"
 msgstr "服务池策略"
 
 #: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:85
-#: REST/methods/services_pools.py:260
+#: REST/methods/services_pools.py:261
 msgid "Associated Image"
 msgstr "相关图像"
 
 #: REST/methods/meta_pools.py:135 REST/methods/services_pool_groups.py:86
-#: REST/methods/services_pools.py:261
+#: REST/methods/services_pools.py:262
 msgid "Image assocciated with this service"
 msgstr "图像与此服务相关联"
 
-#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:102
-#: REST/methods/services_pools.py:268
+#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:103
+#: REST/methods/services_pools.py:269
 msgid "Pool group"
 msgstr "池组"
 
-#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:269
+#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:270
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "此池的池组（用于显示池分类）"
 
@@ -324,11 +331,11 @@ msgstr "此池的池组（用于显示池分类）"
 msgid "If active, metapool will be visible for users"
 msgstr "如果处于活动状态，则元数将对用户可见"
 
-#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:276
+#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:277
 msgid "Calendar access denied text"
 msgstr "日历访问被拒绝的文本"
 
-#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:277
+#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:278
 msgid ""
 "Custom message to be shown to users if access is limited by calendar rules."
 msgstr "如果访问受日历规则限制，则向用户显示的自定义消息。"
@@ -357,9 +364,11 @@ msgstr "创立日期"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_usage_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/usage_by_pool.py:60 services/Proxmox/service.py:110
+#: reports/stats/usage_by_pool.py:60 reports/stats/usage_by_pool.py:160
+#: services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
+#: templates/uds/reports/stats/usage-by-pool.html:17
 msgid "Pool"
 msgstr "池"
 
@@ -438,47 +447,47 @@ msgid ""
 "host, etc..."
 msgstr "网络范围。接受大多数网络定义格式（范围，子网，主机等）..."
 
-#: REST/methods/op_calendars.py:77
+#: REST/methods/op_calendars.py:76
 msgid "Access restrictions by calendar"
 msgstr "按日历访问限制"
 
-#: REST/methods/op_calendars.py:82 REST/methods/op_calendars.py:158
+#: REST/methods/op_calendars.py:81 REST/methods/op_calendars.py:157
 msgid "Calendar"
 msgstr "日历"
 
-#: REST/methods/op_calendars.py:83 REST/methods/services_usage.py:116
+#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:116
 msgid "Access"
 msgstr "访问"
 
-#: REST/methods/op_calendars.py:96
+#: REST/methods/op_calendars.py:95
 msgid "Invalid parameters on request"
 msgstr "请求中的参数无效"
 
-#: REST/methods/op_calendars.py:154
+#: REST/methods/op_calendars.py:153
 msgid "Scheduled actions"
 msgstr "预定的行动"
 
-#: REST/methods/op_calendars.py:159
+#: REST/methods/op_calendars.py:158
 msgid "Action"
 msgstr "行动"
 
-#: REST/methods/op_calendars.py:160 core/ui/user_interface.py:94
+#: REST/methods/op_calendars.py:159 core/ui/user_interface.py:96
 msgid "Parameters"
 msgstr "参数"
 
-#: REST/methods/op_calendars.py:161
+#: REST/methods/op_calendars.py:160
 msgid "Relative to"
 msgstr "关系到"
 
-#: REST/methods/op_calendars.py:162
+#: REST/methods/op_calendars.py:161
 msgid "Time offset"
 msgstr "时间偏移"
 
-#: REST/methods/op_calendars.py:163
+#: REST/methods/op_calendars.py:162
 msgid "Next execution"
 msgstr "下次执行"
 
-#: REST/methods/op_calendars.py:164
+#: REST/methods/op_calendars.py:163
 msgid "Last execution"
 msgstr "上次执行"
 
@@ -494,7 +503,7 @@ msgstr "无法删除与关联的服务池的OS Manager"
 msgid "Service providers"
 msgstr "服务供应商"
 
-#: REST/methods/providers.py:73 REST/methods/services_pools.py:96
+#: REST/methods/providers.py:73 REST/methods/services_pools.py:97
 msgid "Status"
 msgstr "状态"
 
@@ -637,10 +646,10 @@ msgstr "代理"
 msgid "Proxy for services behind a firewall"
 msgstr "防火墙后面的服务代理"
 
-#: REST/methods/services.py:270 REST/methods/services_pools.py:232
-#: REST/methods/services_pools.py:240 REST/methods/services_pools.py:248
-#: REST/methods/services_pools.py:323 REST/methods/services_pools.py:331
-#: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:93
+#: REST/methods/services.py:270 REST/methods/services_pools.py:233
+#: REST/methods/services_pools.py:241 REST/methods/services_pools.py:249
+#: REST/methods/services_pools.py:324 REST/methods/services_pools.py:332
+#: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:95
 #: osmanagers/WindowsOsManager/windows_domain.py:71
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:73
@@ -663,47 +672,47 @@ msgstr "好"
 msgid "Services Pool Groups"
 msgstr "服务池组"
 
-#: REST/methods/services_pools.py:93 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:94 REST/methods/transports.py:104
 msgid "Service Pools"
 msgstr "服务池"
 
-#: REST/methods/services_pools.py:99
+#: REST/methods/services_pools.py:100
 msgid "Usage"
 msgstr "用法"
 
-#: REST/methods/services_pools.py:101
+#: REST/methods/services_pools.py:102
 msgid "Shows transports"
 msgstr "显示运输"
 
-#: REST/methods/services_pools.py:103
+#: REST/methods/services_pools.py:104
 msgid "Parent service"
 msgstr "家长服务"
 
-#: REST/methods/services_pools.py:205
+#: REST/methods/services_pools.py:206
 msgid "Create at least a service before creating a new service pool"
 msgstr "在创建新服务池之前至少创建一个服务"
 
-#: REST/methods/services_pools.py:212
+#: REST/methods/services_pools.py:213
 msgid "Base service"
 msgstr "基本服务"
 
-#: REST/methods/services_pools.py:213
+#: REST/methods/services_pools.py:214
 msgid "Service used as base of this service pool"
 msgstr "用作此服务池基础的服务"
 
-#: REST/methods/services_pools.py:220
+#: REST/methods/services_pools.py:221
 msgid "OS Manager"
 msgstr "OS经理"
 
-#: REST/methods/services_pools.py:221
+#: REST/methods/services_pools.py:222
 msgid "OS Manager used as base of this service pool"
 msgstr "OS Manager用作此服务池的基础"
 
-#: REST/methods/services_pools.py:228
+#: REST/methods/services_pools.py:229
 msgid "Allow removal by users"
 msgstr "允许用户删除"
 
-#: REST/methods/services_pools.py:229
+#: REST/methods/services_pools.py:230
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -712,84 +721,84 @@ msgstr ""
 "如果激活，则允许用户“手动”删除服务。请注意这一点，因为用户将拥有“权力”来删除"
 "它自己的服务"
 
-#: REST/methods/services_pools.py:236
+#: REST/methods/services_pools.py:237
 msgid "Allow reset by users"
 msgstr "允许用户重置"
 
-#: REST/methods/services_pools.py:237
+#: REST/methods/services_pools.py:238
 msgid "If active, the user will be allowed to reset the service"
 msgstr "如果处于活动状态，则允许用户重置服务"
 
-#: REST/methods/services_pools.py:244
+#: REST/methods/services_pools.py:245
 msgid "Ignores unused"
 msgstr "忽略未使用的"
 
-#: REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:246
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
 msgstr "如果启用该选项，UDS将不会尝试检测并删除已分配但未使用的用户服务。"
 
-#: REST/methods/services_pools.py:285
+#: REST/methods/services_pools.py:286
 msgid "Initial available services"
 msgstr "初始可用服务"
 
-#: REST/methods/services_pools.py:286
+#: REST/methods/services_pools.py:287
 msgid "Services created initially for this service pool"
 msgstr "最初为此服务池创建的服务"
 
-#: REST/methods/services_pools.py:289 REST/methods/services_pools.py:298
-#: REST/methods/services_pools.py:307 REST/methods/services_pools.py:316
+#: REST/methods/services_pools.py:290 REST/methods/services_pools.py:299
+#: REST/methods/services_pools.py:308 REST/methods/services_pools.py:317
 msgid "Availability"
 msgstr "可用性"
 
-#: REST/methods/services_pools.py:294
+#: REST/methods/services_pools.py:295
 msgid "Services to keep in cache"
 msgstr "保留在缓存中的服务"
 
-#: REST/methods/services_pools.py:295
+#: REST/methods/services_pools.py:296
 msgid "Services kept in cache for improved user service assignation"
 msgstr "保留在缓存中的服务用于改进用户服务分配"
 
-#: REST/methods/services_pools.py:303
+#: REST/methods/services_pools.py:304
 msgid "Services to keep in L2 cache"
 msgstr "要保留在L2缓存中的服务"
 
-#: REST/methods/services_pools.py:304
+#: REST/methods/services_pools.py:305
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "服务保留在level2的缓存中以改进服务生成"
 
-#: REST/methods/services_pools.py:312
+#: REST/methods/services_pools.py:313
 msgid "Maximum number of services to provide"
 msgstr "要提供的最大服务数"
 
-#: REST/methods/services_pools.py:313
+#: REST/methods/services_pools.py:314
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
 msgstr "可以为此服务创建的最大服务数（已分配和L1缓存）"
 
-#: REST/methods/services_pools.py:320
+#: REST/methods/services_pools.py:321
 msgid "Show transports"
 msgstr "显示运输"
 
-#: REST/methods/services_pools.py:321
+#: REST/methods/services_pools.py:322
 msgid "If active, alternative transports for user will be shown"
 msgstr "如果激活，将显示用户的替代传输"
 
-#: REST/methods/services_pools.py:328
+#: REST/methods/services_pools.py:329
 msgid "Accounting"
 msgstr "会计"
 
-#: REST/methods/services_pools.py:329
+#: REST/methods/services_pools.py:330
 msgid "Account associated to this service pool"
 msgstr "与此服务池关联的帐户"
 
-#: REST/methods/services_pools.py:345
+#: REST/methods/services_pools.py:346
 msgid "Base service does not exist anymore"
 msgstr "基本服务不再存在"
 
-#: REST/methods/services_pools.py:376
+#: REST/methods/services_pools.py:380
 msgid "This service requires an OS Manager"
 msgstr "此服务需要OS Manager"
 
@@ -911,7 +920,7 @@ msgstr "工作人员"
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/RegexLdap/authenticator.py:67 auths/SAML_enterprise/saml.py:117
-#: reports/stats/pool_usage_summary.py:166 reports/stats/usage_by_pool.py:154
+#: reports/stats/pool_usage_summary.py:166 reports/stats/usage_by_pool.py:160
 #: templates/uds/reports/stats/pool-usage-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
 msgid "User"
@@ -1105,7 +1114,7 @@ msgstr "ldap用户的密码"
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
-#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:54
+#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:62
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "超时"
@@ -1551,20 +1560,20 @@ msgstr "私钥应该是有效的PEM（PEM私钥以----- BEGIN RSA私钥开头---
 msgid "Invalid private key. "
 msgstr "私钥无效。"
 
-#: auths/SAML_enterprise/saml.py:221
+#: auths/SAML_enterprise/saml.py:217
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "无法获取网址{0}：{1}"
 
-#: auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:225
 msgid " (obtained from URL)"
 msgstr "（从URL获得）"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:226
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML似乎对IDP元数据无效"
 
-#: auths/SAML_enterprise/saml.py:249
+#: auths/SAML_enterprise/saml.py:242
 msgid "Can't access idp metadata"
 msgstr "无法访问idp元数据"
 
@@ -1709,11 +1718,11 @@ msgstr "请求的服务被限制"
 msgid "The requested service is not available"
 msgstr "请求的服务不可用"
 
-#: core/managers/user_service.py:585
+#: core/managers/user_service.py:586
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/user_service.py:709
+#: core/managers/user_service.py:710
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
@@ -1777,15 +1786,15 @@ msgstr "直接"
 msgid "Tunneled"
 msgstr "隧道式"
 
-#: core/ui/user_interface.py:95
+#: core/ui/user_interface.py:97
 msgid "Credentials"
 msgstr "证书"
 
-#: core/ui/user_interface.py:96
+#: core/ui/user_interface.py:98
 msgid "Tunnel"
 msgstr "隧道"
 
-#: core/util/ldaputil.py:92
+#: core/util/ldaputil.py:93
 msgid "Can't contact LDAP server"
 msgstr "无法联系LDAP服务器"
 
@@ -2063,6 +2072,10 @@ msgstr "设置忽略未使用"
 #: models/calendar_action.py:68
 msgid "Ignore assigned and unused"
 msgstr "忽略分配和未使用"
+
+#: models/calendar_action.py:69
+msgid "Remove ALL assigned user service. USE WITH CAUTION!"
+msgstr "删除所有分配的用户服务。小心使用！"
 
 #: models/calendar_rule.py:53
 msgid "Yearly"
@@ -2448,7 +2461,6 @@ msgid "Users List for {}"
 msgstr "{}的用户列表"
 
 #: reports/lists/users.py:86 reports/stats/pool_usage_summary.py:145
-#: reports/stats/usage_by_pool.py:133
 msgid "UDS Report of users in {}"
 msgstr "用户的UDS报告{}"
 
@@ -2496,7 +2508,7 @@ msgstr "完成日期"
 msgid "finish date for report"
 msgstr "完成报告日期"
 
-#: reports/stats/pool_usage_summary.py:144 reports/stats/usage_by_pool.py:132
+#: reports/stats/pool_usage_summary.py:144
 msgid "Users usage list for {}"
 msgstr "{}的用户使用列表"
 
@@ -2601,7 +2613,23 @@ msgstr "用户使用的池"
 msgid "Pools usage by user report"
 msgstr "按用户报告使用池"
 
-#: reports/stats/usage_by_pool.py:154
+#: reports/stats/usage_by_pool.py:86
+msgid "ALL POOLS"
+msgstr "所有池"
+
+#: reports/stats/usage_by_pool.py:138
+#: templates/uds/reports/stats/usage-by-pool.html:4
+#| msgid "Users usage list for {}"
+msgid "Users usage list"
+msgstr "用户使用情况列表"
+
+#: reports/stats/usage_by_pool.py:139
+#| msgid "UDS Report for users access"
+msgid "UDS Report of users usage"
+msgstr "UDS用户使用情况报告"
+
+#: reports/stats/usage_by_pool.py:160
+#: templates/uds/reports/stats/usage-by-pool.html:16
 msgid "Seconds"
 msgstr "秒"
 
@@ -2679,7 +2707,7 @@ msgstr "从订阅中获得"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:107 services/Xen/provider.py:98
 msgid "Creation concurrency"
@@ -2691,7 +2719,7 @@ msgstr "创建并发"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:51
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr "最大并发创建VM的数量"
@@ -2702,7 +2730,7 @@ msgstr "最大并发创建VM的数量"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:108 services/Xen/provider.py:99
 msgid "Removal concurrency"
@@ -2714,13 +2742,13 @@ msgstr "删除并发"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:52
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr "最大并发删除VM数"
 
 #: services/Azure_enterprise/provider.py:48
-#: services/VCloud_enterprise/provider.py:54
+#: services/VCloud_enterprise/provider.py:62
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "连接到vCloud的超时时间"
 
@@ -2733,7 +2761,7 @@ msgid "Provides connection to Azure Platform"
 msgstr "提供与Azure平台的连接"
 
 #: services/Azure_enterprise/provider.py:99
-#: services/VCloud_enterprise/provider.py:98
+#: services/VCloud_enterprise/provider.py:106
 msgid "Connection parameters seems correct"
 msgstr "连接参数似乎正确"
 
@@ -2931,7 +2959,7 @@ msgid "Connection test successful"
 msgstr "连接测试成功"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
-#: services/Nutanix_enterprise/provider.py:202 services/OVirt/provider.py:457
+#: services/Nutanix_enterprise/provider.py:214 services/OVirt/provider.py:457
 #: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
@@ -3099,10 +3127,12 @@ msgid "Remote WSman port.Leave to zero for default."
 msgstr "远程WSman端口。默认保留为零。"
 
 #: services/HyperV_enterprise/provider.py:123
+#: services/VCloud_enterprise/provider.py:50
 msgid "Force SSL certificate verification"
 msgstr "强制SSL证书验证"
 
 #: services/HyperV_enterprise/provider.py:125
+#: services/VCloud_enterprise/provider.py:52
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -3151,7 +3181,7 @@ msgstr "连接到Nutanix的超时时间"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "UDS托管计算机的有效mac范围"
 
-#: services/Nutanix_enterprise/provider.py:200
+#: services/Nutanix_enterprise/provider.py:212
 msgid "Connection works fine"
 msgstr "连接工作正常"
 
@@ -3210,11 +3240,11 @@ msgstr "oVirt服务器IP或主机名"
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
 msgstr "在oVirt上拥有有效权限的用户（使用“user @ domain”表单）"
 
-#: services/OVirt/provider.py:111 services/Proxmox/provider.py:64
+#: services/OVirt/provider.py:111
 msgid "Password of the user of oVirt"
 msgstr "oVirt用户的密码"
 
-#: services/OVirt/provider.py:116 services/Proxmox/provider.py:69
+#: services/OVirt/provider.py:116
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "连接到oVirt的超时时间"
 
@@ -3427,11 +3457,11 @@ msgstr "基本模板"
 msgid "Service base template"
 msgstr "服务基础模板"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:671
+#: services/OpenStack/openStack/UDSOpenStackClient.py:677
 msgid "Authentication error"
 msgstr "授权错误"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:676
+#: services/OpenStack/openStack/UDSOpenStackClient.py:682
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3480,7 +3510,24 @@ msgstr "OpenStack用户的密码"
 msgid "Timeout in seconds of connection to OpenStack"
 msgstr "连接到OpenStack的超时时间"
 
-#: services/OpenStack/provider.py:162 services/OpenStack/provider_legacy.py:166
+#: services/OpenStack/provider.py:110
+#| msgid "Project"
+msgid "Project Id"
+msgstr "专案编号"
+
+#: services/OpenStack/provider.py:110
+msgid "Project (tenant) for this provider. Set only if required by server."
+msgstr "此提供程序的项目（租户）。仅在服务器要求时设置。"
+
+#: services/OpenStack/provider.py:111 services/OpenStack/service.py:107
+msgid "Region"
+msgstr "区域"
+
+#: services/OpenStack/provider.py:111
+msgid "Region for this provider. Set only if required by server."
+msgstr "此提供程序的区域。仅在服务器要求时设置。"
+
+#: services/OpenStack/provider.py:164 services/OpenStack/provider_legacy.py:166
 msgid "OpenStack test connection passed"
 msgstr "OpenStack测试连接已通过"
 
@@ -3510,10 +3557,6 @@ msgstr "OpenStack Live Volume"
 #: services/OpenStack/service.py:68
 msgid "OpenStack live images based service"
 msgstr "OpenStack基于实时图像的服务"
-
-#: services/OpenStack/service.py:107
-msgid "Region"
-msgstr "区域"
 
 #: services/OpenStack/service.py:107
 msgid "Service region"
@@ -3572,7 +3615,6 @@ msgid "Static IP Machines Provider"
 msgstr "静态IP机器提供商"
 
 #: services/PhysicalMachines/provider.py:44
-#| msgid "Provides connection to Azure Platform"
 msgid "Provides connection to machines by IP"
 msgstr "通过IP提供与机器的连接"
 
@@ -3646,6 +3688,16 @@ msgid ""
 "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgstr "在Proxmox上具有有效特权的用户（使用“ user @ authenticator”表格）"
 
+#: services/Proxmox/provider.py:64
+#| msgid "Password of the user of oVirt"
+msgid "Password of the user of Proxmox"
+msgstr "Proxmox用户的密码"
+
+#: services/Proxmox/provider.py:69
+#| msgid "Timeout in seconds of connection to LDAP"
+msgid "Timeout in seconds of connection to Proxmox"
+msgstr "与Proxmox连接的超时时间（以秒为单位）"
+
 #: services/Proxmox/publication.py:93
 #: services/Vmware_enterprise/publication.py:67
 msgid "Publication"
@@ -3678,7 +3730,6 @@ msgid "The minimum allowed memory is 128 Mb"
 msgstr "最小允许内存为128 Mb"
 
 #: services/Proxmox/service.py:200
-#| msgid "Enabled"
 msgid "Disabled"
 msgstr "残障人士"
 
@@ -4072,11 +4123,11 @@ msgstr "vCloud用户的密码"
 msgid "Select your vCloud version"
 msgstr "选择您的vCloud版本"
 
-#: services/VCloud_enterprise/provider.py:58
+#: services/VCloud_enterprise/provider.py:66
 msgid "VCloud Director Platform Provider"
 msgstr "VCloud Director平台提供商"
 
-#: services/VCloud_enterprise/provider.py:60
+#: services/VCloud_enterprise/provider.py:68
 msgid "Provides connection to vCloud Director platform"
 msgstr "提供与vCloud Director平台的连接"
 
@@ -4136,6 +4187,12 @@ msgstr "如果在计算机中找到多个接口，请使用此网络上的第一
 msgid "Only vApp Templates with 1 VM are allowed"
 msgstr "仅允许具有1个VM的vApp模板"
 
+#: services/Vmware_enterprise/helpers.py:76
+msgid ""
+"VMWare services needs that vCenter contains at least one folder, one network "
+"and one datastore."
+msgstr "VMWare服务需要vCenter至少包含一个文件夹，一个网络和一个数据存储。"
+
 #: services/Vmware_enterprise/helpers.py:84
 msgid "Local"
 msgstr "本地"
@@ -4173,7 +4230,6 @@ msgstr ""
 "FF内"
 
 #: services/Vmware_enterprise/provider.py:55
-#| msgid "Services to keep in L2 cache"
 msgid "Power off VM on L2 cache"
 msgstr "关闭L2缓存上的VM"
 
@@ -4181,7 +4237,9 @@ msgstr "关闭L2缓存上的VM"
 msgid ""
 "If enabled, UDS will stop machines for L2 cache instead of suspending them. "
 "This REQUIRES \"VMWare tools\" on machines."
-msgstr "如果启用，UDS将停止用于L2缓存的计算机，而不是挂起它们。这需要计算机上的“ VMWare工具”。"
+msgstr ""
+"如果启用，UDS将停止用于L2缓存的计算机，而不是挂起它们。这需要计算机上的“ "
+"VMWare工具”。"
 
 #: services/Vmware_enterprise/provider.py:64
 msgid "VMWare VCenter Platform Provider"
@@ -4490,6 +4548,11 @@ msgstr "日期："
 msgid "Services assignation"
 msgstr "服务分配"
 
+#: templates/uds/reports/stats/usage-by-pool.html:6
+#| msgid "Users usage list for {}"
+msgid "Users usage list for"
+msgstr "的用户使用情况列表"
+
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"
 msgstr "访问日期/时间"
@@ -4779,13 +4842,25 @@ msgstr ""
 "HTML5客户端从UDS Broker重新加载数据的允许时间（以秒为单位）。建议使用默认值"
 "60。"
 
-#: transports/HTML5RDP/html5rdp.py:141
-#: transports/HTML5RDS_enterprise/html5rds.py:142
+#: transports/HTML5RDP/html5rdp.py:135
+#: transports/HTML5RDS_enterprise/html5rds.py:137
+msgid "Force new HTML Window"
+msgstr "强制新的HTML窗口"
+
+#: transports/HTML5RDP/html5rdp.py:137
+#: transports/HTML5RDS_enterprise/html5rds.py:139
+msgid ""
+"If checked, every connection will try to open its own window instead of "
+"reusing the \"global\" one."
+msgstr "如果选中，则每个连接都将尝试打开自己的窗口，而不是重用“全局”窗口。"
+
+#: transports/HTML5RDP/html5rdp.py:148
+#: transports/HTML5RDS_enterprise/html5rds.py:149
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
-#: transports/HTML5RDP/html5rdp.py:143
-#: transports/HTML5RDS_enterprise/html5rds.py:144
+#: transports/HTML5RDP/html5rdp.py:150
+#: transports/HTML5RDS_enterprise/html5rds.py:151
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5478,3 +5553,9 @@ msgstr "Authenticator不提供信息"
 #: web/views/service.py:106
 msgid "Service not ready. Please, try again in a while."
 msgstr "服务没准备好。请稍后再试一次。"
+
+#: web/views/service.py:131
+msgid ""
+"Your service is being created, please, wait for a few seconds while we "
+"complete it.)"
+msgstr "我们正在创建您的服务，请等待几秒钟。）"
