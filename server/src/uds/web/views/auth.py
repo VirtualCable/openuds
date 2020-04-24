@@ -81,7 +81,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
             authLogLogin(request, authenticator, '{0}'.format(params), 'Invalid at auth callback')
             raise auths.exceptions.InvalidUserException()
 
-        response = HttpResponseRedirect(reverse('Index'))
+        response = HttpResponseRedirect(reverse('page.index'))
 
         webLogin(request, response, user, '')  # Password is unavailable in this case
         request.session['OS'] = os
