@@ -47,6 +47,6 @@ def rename(newName: str) -> bool:
         return renamers[distribution](newName)
 
     # Try Debian renamer, simplest one
-    logger.info('Renamer for platform "{0}" not found, tryin debian renamer'.format(distribution))
+    logger.info('Renamer for platform "{0}" not found, trying debian renamer'.format(distribution))
     return renamers['debian'](newName)
 

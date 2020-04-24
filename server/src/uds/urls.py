@@ -89,6 +89,7 @@ urlpatterns = [
 
     # Javascript
     path(r'uds/utility/uds.js', uds.web.views.modern.js, name="utility.js"),
+    path(r'uds/adm/utility/uds.js', uds.web.views.modern.js, name="utility-adm.js"),
 
     # i18n
     re_path(r'^uds/utility/i18n/(?P<lang>[a-z_-]*).js$', JavaScriptCatalog.as_view(), name='utility.jsCatalog'),
