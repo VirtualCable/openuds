@@ -130,8 +130,9 @@ class OGService(Service):
         length=3,
         label=_("Max. reservation time"),
         order=110,
-        tooltip=_('Security parameter for OpenGnsys to keep reservations at most this hours'),
-        defvalue='24',
+        tooltip=_('Security parameter for OpenGnsys to keep reservations at most this hours. Handle with care!'),
+        defvalue='2400',  # 1 hundred days
+        minValue='24',
         tab=_('Advanced'),
         required=False
     )
