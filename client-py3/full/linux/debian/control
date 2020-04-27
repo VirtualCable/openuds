@@ -1,4 +1,4 @@
-Source: udsclient
+Source: udsclient3
 Section: admin
 Priority: optional
 Maintainer: Adolfo Gómez García <agomez@virtualcable.es>
@@ -6,10 +6,10 @@ Build-Depends: debhelper (>= 7), po-debconf
 Standards-Version: 3.9.2
 Homepage: http://www.virtualcable.es
 
-Package: udsclient
+Package: udsclient3
 Section: admin
 Priority: optional
 Architecture: all
-Depends: python-paramiko (>=0.8.2), python3-crypto, python-qt4 (>=4.9), python-six(>=1.1), python (>=2.7), freerdp2-x11 | freerdp-x11, desktop-file-utils, ${misc:Depends}
+Depends: python3-paramiko (>=2.0.0), python3-crypto, python3-pyqt5 (>=5.0), python-six(>=1.1), python3 (>=3.6), freerdp2-x11 | freerdp-x11, desktop-file-utils, ${misc:Depends}
 Description: Client connector for Universal Desktop Services (UDS) Broker
  This package provides the required components to allow this machine to connect to services provided by UDS Broker.

@@ -21,7 +21,7 @@ install: build
 	dh_testroot
 	dh_prep
 	dh_installdirs
-	$(MAKE) DESTDIR=$(CURDIR)/debian/udsclient install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/udsclient3 install
 binary-arch: build install
 	# emptyness
 binary-indep: build install
