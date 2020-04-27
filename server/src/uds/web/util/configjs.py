@@ -144,7 +144,8 @@ def udsJs(request: 'HttpRequest') -> str:
         } for url, description, name in (
             ('UDSClientSetup-{version}.exe', gettext('Windows client'), 'Windows'),
             ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS'),
-            ('udsclient_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+            ('udsclient3_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux'),
+            ('udsclient_{version}_all.deb', gettext('Debian based Python 2.7 Linux client (legacy)') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
             ('udsclient-{version}-1.noarch.rpm', gettext('Red Hat based Linux client (RH, Fedora, Centos, ...)') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
             ('udsclient-opensuse-{version}-1.noarch.rpm', gettext('Suse based Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
             ('udsclient-{version}.tar.gz', gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-2.7)'), 'Linux')
