@@ -192,9 +192,11 @@ def post(path: str, data: typing.Any, errMsg: typing.Optional[str] = None) -> ty
         res = copy.deepcopy(RESERVE)
         res['name'] += str(random.randint(5000, 100000))
         res['mac'] = ''.join(random.choice('0123456789ABCDEF') for _ in range(12))
+        res['ip'] = '1.2.3.4'
         return res
 
-    raise Exception('Unknown FAKE URL on POST: {}'.format(path))
+    # raise Exception('Unknown FAKE URL on POST: {}'.format(path))
+    return ''
 
 
 # FAKE get

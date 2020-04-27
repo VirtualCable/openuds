@@ -370,5 +370,5 @@ class OGDeployment(UserDeployment):
             opRetry: 'retry',
         }.get(op, '????')
 
-    def __debug(self, txt):
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmId, [OGDeployment.__op2str(op) for op in self._queue])
+    def __debug(self, txt) -> None:
+        logger.debug('State at %s: name: %s, ip: %s, mac: %s, machine:%s, queue: %s', txt, self._name, self._ip, self._mac, self._machineId, [OGDeployment.__op2str(op) for op in self._queue])

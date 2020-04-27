@@ -76,7 +76,7 @@ def ensureResponseIsValid(response: requests.Response, errMsg: typing.Optional[s
     try:
         return json.loads(response.content)
     except Exception:
-        raise Exception('Error communicating with OpenGnsys: {}'.format(response.content[:128]))
+        raise Exception('Error communicating with OpenGnsys: {}'.format(response.content[:128].decode()))
 
 
 class OpenGnsysClient:
