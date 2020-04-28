@@ -94,7 +94,7 @@ class IPMachinesService(IPServiceBase):
         if values.get('ipList', None) is None:
             self._ips = []
         else:
-            self._ips = list('{}~{}'.format(ip, i) for i, ip in enumerate(values['ipList']))  # Allow duplicates right now
+            self._ips = list('{}~{}'.format(str(ip).strip(), i) for i, ip in enumerate(values['ipList']))  # Allow duplicates right now
             # self._ips.sort()
 
         self._token = self.token.value.strip()
