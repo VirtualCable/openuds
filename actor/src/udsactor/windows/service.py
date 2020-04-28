@@ -228,6 +228,10 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
             # Initialization is done, set machine to ready for UDS, communicate urls, etc...
             self.setReady()
+        else:
+            if not self.initializeUnmanaged():
+                self.finish()
+                return
 
         # Start listening for petitions
         self.startHttpServer()

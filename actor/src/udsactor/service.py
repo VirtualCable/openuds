@@ -228,6 +228,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         return True
 
+    def initializeUnmanaged(self) -> bool:
+        return True
+
     def initialize(self) -> bool:
         if not self._cfg.host or not self._isAlive:  # Not configured or not running
             return False
