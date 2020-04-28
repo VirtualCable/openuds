@@ -94,6 +94,10 @@ class Dispatcher(View):
                 content_type = path[0].split('.')[1]
 
             clean_path = path[0].split('.')[0]
+            if not clean_path:  # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
+                path = path[1:]
+                continue
+
             if clean_path in service:
                 service = service[clean_path]
                 full_path_lst.append(path[0])

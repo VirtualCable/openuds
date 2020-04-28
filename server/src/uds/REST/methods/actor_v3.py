@@ -310,6 +310,10 @@ class ChangeIp(ActorV3Action):
 
         # Generates a certificate and send it to client. Currently, we do not store it locally
         privateKey, cert, password = certs.selfSignedCert(self._params['ip'])
+        # Store certificate with userService
+        userService.setProperty('cert', cert)
+        userService.setProperty('priv', privateKey)
+        userService.setProperty('priv_passwd', password)
 
         return ActorV3Action.actorResult({'private_key': privateKey, 'server_certificate': cert, 'password': password})
 

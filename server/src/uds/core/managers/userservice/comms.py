@@ -1,5 +1,7 @@
+import os
 import json
 import base64
+import tempfile
 import logging
 import typing
 
@@ -48,16 +50,31 @@ def _requestActor(
         if proxy:
             r = proxy.doProxyRequest(url=url, data=data, timeout=TIMEOUT)
         else:
+            verify: typing.Union[bool, str]
+            # cert = userService.getProperty('cert')
+            cert = ''  # Untils more tests, keep as previous....  TODO: Fix this when fully tested
+            if cert:
+                # Generate temp file, and delete it after
+                verify = tempfile.mktemp('udscrt')
+                with open(verify, 'wb') as f:
+                    f.write(cert.encode())  # Save cert
+            else:
+                verify = False
             if data is None:
-                r = requests.get(url, verify=False, timeout=TIMEOUT)
+                r = requests.get(url, verify=verify, timeout=TIMEOUT)
             else:
                 r = requests.post(
                     url,
                     data=json.dumps(data),
                     headers={'content-type': 'application/json'},
-                    verify=False,
+                    verify=verify,
                     timeout=TIMEOUT
                 )
+            if verify:
+                try:
+                    os.remove(typing.cast(str, verify))
+                except Exception:
+                    logger.exception('removing verify')
         js = r.json()
 
         if version >= '3.0.0':
