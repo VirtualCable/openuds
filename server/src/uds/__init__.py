@@ -48,9 +48,11 @@ logger = logging.getLogger(__name__)
 
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
 try:
-    # noinspection PyProtectedMember
     _create_unverified_https_context = ssl._create_unverified_context
     ssl._create_default_https_context = _create_unverified_https_context
+
+    # Capture warnnins to logg
+    logging.captureWarnings(True)
 except AttributeError:
     # Legacy Python that doesn't verify HTTPS certificates by default
     pass

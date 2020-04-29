@@ -20,25 +20,23 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     # Create a random password for private key
     password = secrets.token_urlsafe(32)
 
-    name = x509.Name([
-        x509.NameAttribute(NameOID.COMMON_NAME, ip)
-    ])
-    alt_names: typing.List[x509.GeneralName] = [x509.IPAddress(ipaddress.ip_address(ip))]
-    san = x509.SubjectAlternativeName(alt_names)
+    issuer = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, 'UDS Server')])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, ip)])
+    san = x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))])
 
     basic_contraints = x509.BasicConstraints(ca=True, path_length=0)
     now = datetime.utcnow()
     cert = (
         x509.CertificateBuilder()
-        .subject_name(name)
-        .issuer_name(name)
-        .public_key(key.public_key())
-        .serial_number(1000)
-        .not_valid_before(now)
-        .not_valid_after(now + timedelta(days=10*365))
-        .add_extension(basic_contraints, False)
-        .add_extension(san, False)
-        .sign(key, hashes.SHA256(), default_backend())
+            .subject_name(name)
+            .issuer_name(issuer)
+            .public_key(key.public_key())
+            .serial_number(random.SystemRandom().randint(0, 1<<64))
+            .not_valid_before(now)
+            .not_valid_after(now + timedelta(days=10*365))
+            .add_extension(basic_contraints, False)
+            .add_extension(san, False)
+            .sign(key, hashes.SHA256(), default_backend())
     )
     
     return (
