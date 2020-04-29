@@ -46,7 +46,7 @@ OSManagersFactory.factory().insert(LinuxRandomPassManager)
 
 downloadsManager().registerDownloadable(
     'udsactor_{version}_all.deb'.format(version=VERSION),
-    _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.5)</b>'),
+    _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.6)</b>'),
     os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_{version}_all.deb'.format(version=VERSION),
     'application/x-debian-package'
 )
@@ -74,7 +74,7 @@ downloadsManager().registerDownloadable(
 
 downloadsManager().registerDownloadable(
     'udsactor-unmanaged_{version}_all.deb'.format(version=VERSION),
-    _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.5)</b>'),
+    _('UDS Actor for Debian based Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'),
     os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-unmanaged_{version}_all.deb'.format(version=VERSION),
     'application/x-debian-package'
 )
