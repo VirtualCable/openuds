@@ -1,35 +1,52 @@
 import secrets
 import random
+from datetime import datetime, timedelta
+import ipaddress
 import typing
 
-from OpenSSL import crypto
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
-    # create a key pair
-    keyPair = crypto.PKey()
-    keyPair.generate_key(crypto.TYPE_RSA, 2048)
-
-    # create a self-signed cert
-    cert = crypto.X509()
-    cert.get_subject().C = "ES"
-    cert.get_subject().ST = "Madrid"
-    cert.get_subject().L = "Madrid"
-    cert.get_subject().O = "UDS Cert"
-    cert.get_subject().OU = "UDS Cert"
-    cert.get_subject().CN = ip
-    cert.get_subject().subjectAltName = ip
-    cert.set_serial_number(random.SystemRandom().randint(0, 2<<32))  # Random serial, don't matter
-    cert.gmtime_adj_notBefore(0)
-    cert.gmtime_adj_notAfter(10*365*24*60*60)
-    cert.set_issuer(cert.get_subject())
-    cert.set_pubkey(keyPair)
-    cert.sign(keyPair, 'sha256')
-
+    key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+            backend=default_backend(),
+        )
     # Create a random password for private key
     password = secrets.token_urlsafe(32)
 
+    name = x509.Name([
+        x509.NameAttribute(NameOID.COMMON_NAME, ip)
+    ])
+    alt_names: typing.List[x509.GeneralName] = [x509.IPAddress(ipaddress.ip_address(ip))]
+    san = x509.SubjectAlternativeName(alt_names)
+
+    basic_contraints = x509.BasicConstraints(ca=True, path_length=0)
+    now = datetime.utcnow()
+    cert = (
+        x509.CertificateBuilder()
+        .subject_name(name)
+        .issuer_name(name)
+        .public_key(key.public_key())
+        .serial_number(1000)
+        .not_valid_before(now)
+        .not_valid_after(now + timedelta(days=10*365))
+        .add_extension(basic_contraints, False)
+        .add_extension(san, False)
+        .sign(key, hashes.SHA256(), default_backend())
+    )
+    
     return (
-        crypto.dump_privatekey(crypto.FILETYPE_PEM, keyPair, cipher='blowfish',  passphrase=password.encode()).decode(),
-        crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode(),
+        key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.BestAvailableEncryption(password.encode())
+        ).decode(),
+        cert.public_bytes(encoding=serialization.Encoding.PEM).decode(),
         password
     )
