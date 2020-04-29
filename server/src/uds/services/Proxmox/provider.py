@@ -169,7 +169,7 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     @staticmethod
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
         """
-        Test ovirt Connectivity
+        Test Proxmox Connectivity
 
         Args:
             env: environment passed for testing (temporal environment passed)

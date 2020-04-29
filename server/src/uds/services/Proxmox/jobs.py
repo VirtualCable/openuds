@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 class ProxmoxDeferredRemoval(jobs.Job):
     frecuency = 60 * 5  # Once every NN minutes
-    friendly_name = 'Ovirt removal'
+    friendly_name = 'Proxmox removal'
     counter = 0
 
     @staticmethod
