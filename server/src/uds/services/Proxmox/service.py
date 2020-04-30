@@ -55,16 +55,16 @@ logger = logging.getLogger(__name__)
 
 class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     """
-    oVirt Linked clones service. This is based on creating a template from selected vm, and then use it to
+    Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('oVirt/RHEV Linked Clone')
+    typeName = _('Proxmox Linked Clone')
     # : Type used internally to identify this provider
-    typeType = 'oVirtLinkedService'
+    typeType = 'ProxmoxLinkedService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('oVirt Services based on templates and COW (experimental)')
+    typeDescription = _('Proxmox Services based on templates and COW (experimental)')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -209,7 +209,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     def sanitizeVmName(self, name: str) -> str:
         """
-        Ovirt only allows machine names with [a-zA-Z0-9_-]
+        Proxmox only allows machine names with [a-zA-Z0-9_-]
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 

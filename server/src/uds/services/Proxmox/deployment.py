@@ -64,7 +64,7 @@ class ProxmoxDeployment(services.UserDeployment):
     create consumable services for users using UserDeployment class as
     provider of this elements.
 
-    The logic for managing ovirt deployments (user machines in this case) is here.
+    The logic for managing Proxmox deployments (user machines in this case) is here.
 
     """
     # : Recheck every this seconds by default (for task methods)
@@ -164,7 +164,7 @@ class ProxmoxDeployment(services.UserDeployment):
 
     def reset(self) -> None:
         """
-        o oVirt, reset operation just shutdowns it until v3 support is removed
+        o Proxmox, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
             self.service().stopMachine(int(self._vmid))
