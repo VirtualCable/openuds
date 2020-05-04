@@ -102,7 +102,7 @@ def checkUuid(userService: 'UserService') ->  bool:
     '''
     try:
         uuid = _requestActor(userService, 'uuid')
-        if uuid != userService.uuid:
+        if uuid and uuid != userService.uuid:  # Empty UUID means "no check this, fixed pool machine"
             logger.info('Machine %s do not have expected uuid %s, instead has %s', userService.friendly_name, userService.uuid, uuid)
             return False
     except NoActorComms:

@@ -607,8 +607,8 @@ class UserServiceManager:
 
             if self.checkUuid(userService) is False:  # The service is not the expected one
                 serviceNotReadyCode = 0x0004
-                log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                logger.debug('Transport is not ready for user service %s', userService)
+                log.doLog(userService, log.WARN, "User service is not accessible due to invalid UUID (ip {0})".format(ip), log.TRANSPORT)
+                logger.debug('UUID check failed for user service %s', userService)
             else:
                 events.addEvent(userService.deployed_service, events.ET_ACCESS, username=userName, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
                 if ip:

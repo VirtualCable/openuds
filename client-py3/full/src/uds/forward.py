@@ -42,6 +42,7 @@ class Handler(socketserver.BaseRequestHandler):
             return
 
         logger.debug('Connected!  Tunnel open %r -> %r -> %r', self.request.getpeername(), chan.getpeername(), (self.chain_host, self.chain_port))
+        # self.ssh_transport.set_keepalive(10)  # Keep alive every 10 seconds...
         try:
             while self.event.is_set() is False:
                 r, _w, _x = select.select([self.request, chan], [], [], 1)  # pylint: disable=unused-variable
