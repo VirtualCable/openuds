@@ -91,7 +91,7 @@ class Transports(ModelHandler):
         field = self.addField(field, {
             'name': 'allowed_oss',
             'value': [],
-            'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),
+            'values': sorted([{'id': x, 'text': x.replace('CrOS', 'Chrome OS')} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),
             'label': ugettext('Allowed Devices'),
             'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
             'type': 'multichoice',
