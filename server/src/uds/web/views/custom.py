@@ -31,7 +31,7 @@
 
 from django.http import HttpResponse
 # from django.views.decorators.cache import cache_page
-from uds.core.util.config import Config
+from uds.core.util.config import GlobalConfig
 
 
 # @cache_page(3600, key_prefix='custom', cache='memory')
@@ -41,6 +41,6 @@ def custom(request, component):
 
     if component == 'styles.css':
         content_type = 'text/css'
-        value = Config.section('__custom').value('style').get(force=True)
+        value = GlobalConfig.SITE_CSS.get(True)
 
     return HttpResponse(content_type=content_type, content=value)

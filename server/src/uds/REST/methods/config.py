@@ -45,6 +45,7 @@ REMOVED = {
     'Cluster': ('Destination CPU Load', 'Migration CPU Load', 'Migration Free Memory'),
     'IPAUTH': ('autoLogin',),
     'VMWare': ('minUsableDatastoreGB', 'maxRetriesOnError'),
+    'HyperV': ('minUsableDatastoreGB',)
 }
 
 

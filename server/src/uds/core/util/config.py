@@ -43,12 +43,14 @@ GLOBAL_SECTION: str = 'UDS'
 # For save when initialized
 SECURITY_SECTION: str = 'Security'
 # CLUSTER_SECTION: str = 'Cluster'
+CUSTOM_SECTION: str = 'Custom'
 
 _saveLater = []
 _getLater = []
 
 # For custom params (for choices mainly)
 _configParams = {}
+
 
 class Config:
     # Fields types, so inputs get more "beautiful"
@@ -280,8 +282,6 @@ class GlobalConfig:
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
     MAX_INITIALIZING_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('maxInitTime', '3601', type=Config.NUMERIC_FIELD)
-    # Custom HTML for login page
-    CUSTOM_HTML_LOGIN: Config.Value = Config.section(GLOBAL_SECTION).value('customHtmlLogin', '', type=Config.LONGTEXT_FIELD)
     # Maximum logs per user service
     MAX_LOGS_PER_ELEMENT: Config.Value = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100', type=Config.NUMERIC_FIELD)
     # Time to restrain a deployed service in case it gives some errors at some point
@@ -333,9 +333,14 @@ class GlobalConfig:
     UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value('UDS ID', cryptoManager().uuid(), type=Config.READ_FIELD)
 
     # Site display name & copyright info
-    SITE_NAME: Config.Value = Config.section(GLOBAL_SECTION).value('Site name', 'UDS Enterprise', type=Config.TEXT_FIELD)
-    SITE_COPYRIGHT: Config.Value = Config.section(GLOBAL_SECTION).value('Site copyright info', '© Virtual Cable S.L.U.', type=Config.TEXT_FIELD)
-    SITE_COPYRIGHT_LINK: Config.Value = Config.section(GLOBAL_SECTION).value('Site copyright link', 'https://www.udsenterprise.com', type=Config.TEXT_FIELD)
+    SITE_NAME: Config.Value = Config.section(CUSTOM_SECTION).value('Site name', 'UDS Enterprise', type=Config.TEXT_FIELD)
+    SITE_COPYRIGHT: Config.Value = Config.section(CUSTOM_SECTION).value('Site copyright info', '© Virtual Cable S.L.U.', type=Config.TEXT_FIELD)
+    SITE_COPYRIGHT_LINK: Config.Value = Config.section(CUSTOM_SECTION).value('Site copyright link', 'https://www.udsenterprise.com', type=Config.TEXT_FIELD)
+    SITE_LOGO_NAME: Config.Value = Config.section(CUSTOM_SECTION).value('Logo name', 'UDS', type=Config.TEXT_FIELD)
+    SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value('CSS', '', type=Config.LONGTEXT_FIELD)
+
+    # Custom HTML for login page
+    # CUSTOM_HTML_LOGIN: Config.Value = Config.section(CUSTOM_SECTION).value('customHtmlLogin', '', type=Config.LONGTEXT_FIELD)
 
     EXPERIMENTAL_FEATURES: Config.Value = Config.section(GLOBAL_SECTION).value('Experimental Features', '0', type=Config.BOOLEAN_FIELD)
 
