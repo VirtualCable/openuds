@@ -152,10 +152,10 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
     shadow = gui.NumericField(
         label=_("Shadow"),
         length=1,
-        defvalue=4,
+        defvalue=1,
         rdonly=False,
         order=113,
-        tooltip=_('Shadow memory multiplier (memory overcommit)'),
+        tooltip=_('Shadow memory multiplier (use with care)'),
         tab=_('Machine'),
         required=True
     )
