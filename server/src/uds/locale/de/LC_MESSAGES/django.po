@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 10:57+0200\n"
-"PO-Revision-Date: 2020-02-28 08:35+0000\n"
+"POT-Creation-Date: 2020-05-06 13:51+0200\n"
+"PO-Revision-Date: 2020-04-23 09:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -255,9 +255,6 @@ msgid "Modified"
 msgstr "Geändert"
 
 #: REST/methods/client.py:89
-#| msgid ""
-#| "The service is not ready.\n"
-#| "Please, try again in a few moments."
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "Ihr Service wird erstellt. Bitte warten Sie, bis wir fertig sind"
 
@@ -664,7 +661,7 @@ msgstr "Proxy für Dienste hinter einer Firewall"
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:73
 #: osmanagers/WindowsOsManager/windows_domain.py:74
-#: services/OpenGnsys/service.py:135
+#: services/OpenGnsys/service.py:136
 msgid "Advanced"
 msgstr "Erweitert"
 
@@ -1626,7 +1623,7 @@ msgstr ""
 msgid "Invalid server certificate. "
 msgstr "Ungültiges Serverzertifikat"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:189
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1634,24 +1631,24 @@ msgstr ""
 "Der private Schlüssel sollte ein gültiges PEM sein (der private PEM-"
 "Schlüssel beginnt mit ----- BEGIN RSA PRIVATE KEY -----"
 
-#: auths/SAML_enterprise/saml.py:200
+#: auths/SAML_enterprise/saml.py:201
 msgid "Invalid private key. "
 msgstr "Ungültiger privater Schlüssel"
 
-#: auths/SAML_enterprise/saml.py:217
+#: auths/SAML_enterprise/saml.py:218
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "URL {0} kann nicht abgerufen werden: {1}"
 
-#: auths/SAML_enterprise/saml.py:225
+#: auths/SAML_enterprise/saml.py:226
 msgid " (obtained from URL)"
 msgstr "(von URL erhalten)"
 
-#: auths/SAML_enterprise/saml.py:226
+#: auths/SAML_enterprise/saml.py:227
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML scheint für IDP-Metadaten nicht gültig zu sein"
 
-#: auths/SAML_enterprise/saml.py:242
+#: auths/SAML_enterprise/saml.py:243
 msgid "Can't access idp metadata"
 msgstr "Ich kann nicht auf IDP-Metadaten zugreifen"
 
@@ -2067,22 +2064,22 @@ msgid "No services available"
 msgstr "Keine Dienstleistungen verfügbar"
 
 #: dispatchers/wyse_enterprise/views.py:225
-#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Invalid session"
 msgstr "Ungültige Sitzung"
 
 #: dispatchers/wyse_enterprise/views.py:229
-#: dispatchers/wyse_enterprise/views.py:312
+#: dispatchers/wyse_enterprise/views.py:319
 msgid "Invalid authorization"
 msgstr "Ungültige Autorisierung"
 
 #: dispatchers/wyse_enterprise/views.py:240
-#: dispatchers/wyse_enterprise/views.py:318
+#: dispatchers/wyse_enterprise/views.py:325
 msgid "Invalid request"
 msgstr "Ungültige Anfrage"
 
 #: dispatchers/wyse_enterprise/views.py:243
-#: dispatchers/wyse_enterprise/views.py:321
+#: dispatchers/wyse_enterprise/views.py:328
 msgid "Invalid credentials used"
 msgstr "Ungültige Anmeldeinformationen verwendet"
 
@@ -2090,13 +2087,17 @@ msgstr "Ungültige Anmeldeinformationen verwendet"
 msgid "Service not found"
 msgstr "Service nicht gefunden"
 
-#: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
+#: dispatchers/wyse_enterprise/views.py:260
+msgid "Invalid machine uuid."
+msgstr "Ungültige Maschinen-UUID."
+
+#: dispatchers/wyse_enterprise/views.py:274 web/util/errors.py:74
 msgid "Transport not found"
 msgstr "Transport nicht gefunden"
 
-#: dispatchers/wyse_enterprise/views.py:274
-#: dispatchers/wyse_enterprise/views.py:280
-#: dispatchers/wyse_enterprise/views.py:285
+#: dispatchers/wyse_enterprise/views.py:278
+#: dispatchers/wyse_enterprise/views.py:284
+#: dispatchers/wyse_enterprise/views.py:289
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 "Der Service ist momentan nicht fertig. Bitte versuchen Sie es in einer Weile "
@@ -2237,13 +2238,15 @@ msgid "General"
 msgstr "Allgemeines"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
-#: osmanagers/LinuxOsManager/__init__.py:77
+#| msgid ""
+#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-"3.5)</b>"
+"3.6)</b>"
 msgstr ""
-"UDS-Darsteller für Debian, Ubuntu, ... Linux-Maschinen <b>(Erfordert "
-"Python&gt; = 3.5)</b>"
+"UDS Actor für Debian, Ubuntu, ... Linux-Maschinen <b>(Benötigt Python&gt; = "
+"3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:56
 msgid ""
@@ -2265,6 +2268,17 @@ msgid ""
 msgstr ""
 "<b>Legacy</b> UDS Actor für Debian, Ubuntu, ... Linux-Maschinen "
 "<b>(Erfordert Python 2.7)</b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:77
+#| msgid ""
+#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+#| "3.5)</b>"
+msgid ""
+"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+"<b>(Requires python >= 3.6)</b>"
+msgstr ""
+"UDS Actor für Debian-basierte Linux-Maschinen. Wird NUR für statische "
+"Maschinen verwendet. <b>(Benötigt Python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
@@ -2743,12 +2757,10 @@ msgstr "ALLE POOLS"
 
 #: reports/stats/usage_by_pool.py:138
 #: templates/uds/reports/stats/usage-by-pool.html:4
-#| msgid "Users usage list for {}"
 msgid "Users usage list"
 msgstr "Nutzungsliste der Benutzer"
 
 #: reports/stats/usage_by_pool.py:139
-#| msgid "UDS Report for users access"
 msgid "UDS Report of users usage"
 msgstr "UDS-Nutzungsbericht"
 
@@ -3401,11 +3413,11 @@ msgstr "Passwort des Nutzers von oVirt"
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "Timeout in Sekunden der Verbindung zu oVirt"
 
-#: services/OVirt/service.py:63 services/Proxmox/service.py:63
+#: services/OVirt/service.py:63
 msgid "oVirt/RHEV Linked Clone"
 msgstr "oVirt / RHEV Linked Clone"
 
-#: services/OVirt/service.py:67 services/Proxmox/service.py:67
+#: services/OVirt/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "oVirt Services basierend auf Vorlagen und COW (experimentell)"
 
@@ -3551,11 +3563,14 @@ msgid "Max. reservation time"
 msgstr "Max. Reservierungszeit"
 
 #: services/OpenGnsys/service.py:133
+#| msgid ""
+#| "Security parameter for OpenGnsys to keep reservations at most this hours"
 msgid ""
-"Security parameter for OpenGnsys to keep reservations at most this hours"
+"Security parameter for OpenGnsys to keep reservations at most this hours. "
+"Handle with care!"
 msgstr ""
-"Sicherheitsparameter für OpenGnsys, um Reservierungen höchstens bis zu "
-"diesen Stunden zu halten"
+"Sicherheitsparameter für OpenGnsys, um Reservierungen höchstens diese "
+"Stunden zu behalten. Mit Vorsicht behandeln!"
 
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
@@ -3677,7 +3692,6 @@ msgid "Timeout in seconds of connection to OpenStack"
 msgstr "Timeout in Sekunden der Verbindung zu OpenStack"
 
 #: services/OpenStack/provider.py:110
-#| msgid "Project"
 msgid "Project Id"
 msgstr "Projekt-ID"
 
@@ -3866,12 +3880,10 @@ msgstr ""
 "\"user @ authentulator\")."
 
 #: services/Proxmox/provider.py:64
-#| msgid "Password of the user of oVirt"
 msgid "Password of the user of Proxmox"
 msgstr "Passwort des Benutzers von Proxmox"
 
 #: services/Proxmox/provider.py:69
-#| msgid "Timeout in seconds of connection to LDAP"
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "Zeitüberschreitung in Sekunden nach Verbindung mit Proxmox"
 
@@ -3885,6 +3897,16 @@ msgstr "Veröffentlichung"
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
 msgstr "UDS-Veröffentlichung für {0} erstellt am {1}"
+
+#: services/Proxmox/service.py:63
+#| msgid "Xen Linked Clone"
+msgid "Proxmox Linked Clone"
+msgstr "Proxmox Linked Clone"
+
+#: services/Proxmox/service.py:67
+#| msgid "oVirt Services based on templates and COW (experimental)"
+msgid "Proxmox Services based on templates and COW (experimental)"
+msgstr "Proxmox Services basierend auf Vorlagen und COW (experimentell)"
 
 #: services/Proxmox/service.py:112
 msgid "Pool that will contain UDS created vms"
@@ -4676,8 +4698,9 @@ msgid "Shadow"
 msgstr "Schatten"
 
 #: services/Xen/service.py:158
-msgid "Shadow memory multiplier (memory overcommit)"
-msgstr "Schattenspeicher-Multiplikator (Speicherüberlastung)"
+#| msgid "Shadow memory multiplier (memory overcommit)"
+msgid "Shadow memory multiplier (use with care)"
+msgstr "Schattenspeicher-Multiplikator (vorsichtig verwenden)"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -4770,7 +4793,6 @@ msgid "Services assignation"
 msgstr "Dienstezuweisung"
 
 #: templates/uds/reports/stats/usage-by-pool.html:6
-#| msgid "Users usage list for {}"
 msgid "Users usage list for"
 msgstr "Benutzerverwendungsliste für"
 
@@ -5734,36 +5756,46 @@ msgstr "Zu viele Authentifizierungsfehler. Benutzer vorübergehend gesperrt"
 msgid "Invalid data"
 msgstr "Ungültige Daten"
 
-#: web/util/configjs.py:119
+#: web/util/configjs.py:120
 msgid "Access limited by calendar"
 msgstr "Zugriff durch Kalender begrenzt"
 
-#: web/util/configjs.py:145
+#: web/util/configjs.py:146
 msgid "Windows client"
 msgstr "Windows-Client"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:147
 msgid "Mac OS X client"
 msgstr "Mac OS X-Client"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:148
 msgid "Debian based Linux client"
 msgstr "Debian-basierter Linux-Client"
 
-#: web/util/configjs.py:147 web/util/configjs.py:148 web/util/configjs.py:149
-#: web/util/configjs.py:150
+#: web/util/configjs.py:148
+#| msgid "(requires Python-2.7)"
+msgid "(requires Python-3.6 or newer)"
+msgstr "(erfordert Python-3.6 oder neuer)"
+
+#: web/util/configjs.py:149
+#| msgid "Debian based Linux client"
+msgid "Debian based Python 2.7 Linux client (legacy)"
+msgstr "Debian-basierter Python 2.7 Linux-Client (Legacy)"
+
+#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
+#: web/util/configjs.py:152
 msgid "(requires Python-2.7)"
 msgstr "(erfordert Python-2.7)"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:150
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Red Hat-basierter Linux-Client (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:151
 msgid "Suse based Linux client"
 msgstr "Suse-basierter Linux-Client"
 
-#: web/util/configjs.py:150
+#: web/util/configjs.py:152
 msgid "Generic .tar.gz Linux client"
 msgstr "Generischer .tar.gz Linux-Client"
 

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 10:57+0200\n"
-"PO-Revision-Date: 2020-02-28 08:35+0000\n"
+"POT-Creation-Date: 2020-05-06 13:51+0200\n"
+"PO-Revision-Date: 2020-04-23 09:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -256,9 +256,6 @@ msgid "Modified"
 msgstr "تعديل"
 
 #: REST/methods/client.py:89
-#| msgid ""
-#| "The service is not ready.\n"
-#| "Please, try again in a few moments."
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "يتم إنشاء الخدمة الخاصة بك. من فضلك انتظر بينما نكملها"
 
@@ -662,7 +659,7 @@ msgstr "وكيل للخدمات وراء جدار الحماية"
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:73
 #: osmanagers/WindowsOsManager/windows_domain.py:74
-#: services/OpenGnsys/service.py:135
+#: services/OpenGnsys/service.py:136
 msgid "Advanced"
 msgstr "متقدم"
 
@@ -1587,7 +1584,7 @@ msgstr ""
 msgid "Invalid server certificate. "
 msgstr "شهادة الملقم غير صالحة. "
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:189
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1595,24 +1592,24 @@ msgstr ""
 "يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN "
 "RSA PRIVATE KEY-----"
 
-#: auths/SAML_enterprise/saml.py:200
+#: auths/SAML_enterprise/saml.py:201
 msgid "Invalid private key. "
 msgstr "المفتاح الخاص غير صالح. "
 
-#: auths/SAML_enterprise/saml.py:217
+#: auths/SAML_enterprise/saml.py:218
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "لا يمكن إحضار url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:225
+#: auths/SAML_enterprise/saml.py:226
 msgid " (obtained from URL)"
 msgstr " (تم الحصول عليها من URL)"
 
-#: auths/SAML_enterprise/saml.py:226
+#: auths/SAML_enterprise/saml.py:227
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML لا تبدو صالحة لبيانات التعريف IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:242
+#: auths/SAML_enterprise/saml.py:243
 msgid "Can't access idp metadata"
 msgstr "لا يمكن الوصول إلى بيانات التعريف IDP Metadata"
 
@@ -2016,22 +2013,22 @@ msgid "No services available"
 msgstr "لا توجد خدمة متاحة"
 
 #: dispatchers/wyse_enterprise/views.py:225
-#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Invalid session"
 msgstr "جلسة غير صالحة"
 
 #: dispatchers/wyse_enterprise/views.py:229
-#: dispatchers/wyse_enterprise/views.py:312
+#: dispatchers/wyse_enterprise/views.py:319
 msgid "Invalid authorization"
 msgstr "إذن غير صالح"
 
 #: dispatchers/wyse_enterprise/views.py:240
-#: dispatchers/wyse_enterprise/views.py:318
+#: dispatchers/wyse_enterprise/views.py:325
 msgid "Invalid request"
 msgstr "طلب غير صالح"
 
 #: dispatchers/wyse_enterprise/views.py:243
-#: dispatchers/wyse_enterprise/views.py:321
+#: dispatchers/wyse_enterprise/views.py:328
 msgid "Invalid credentials used"
 msgstr "بيانات الاعتماد غير صحيحة"
 
@@ -2039,13 +2036,17 @@ msgstr "بيانات الاعتماد غير صحيحة"
 msgid "Service not found"
 msgstr "لم يتم العثور على الخدمة"
 
-#: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
+#: dispatchers/wyse_enterprise/views.py:260
+msgid "Invalid machine uuid."
+msgstr "uuid الجهاز غير صالح."
+
+#: dispatchers/wyse_enterprise/views.py:274 web/util/errors.py:74
 msgid "Transport not found"
 msgstr "نقل غير موجود"
 
-#: dispatchers/wyse_enterprise/views.py:274
-#: dispatchers/wyse_enterprise/views.py:280
-#: dispatchers/wyse_enterprise/views.py:285
+#: dispatchers/wyse_enterprise/views.py:278
+#: dispatchers/wyse_enterprise/views.py:284
+#: dispatchers/wyse_enterprise/views.py:289
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "الخدمة ليست على استعداد في هذه اللحظة. من فضلك، حاول مرة أخرى في حين."
 
@@ -2183,12 +2184,14 @@ msgid "General"
 msgstr "العام"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
-#: osmanagers/LinuxOsManager/__init__.py:77
+#| msgid ""
+#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-"3.5)</b>"
+"3.6)</b>"
 msgstr ""
-"الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون > = 3.5)</b>"
+"ممثل UDS لأجهزة Debian و Ubuntu ... Linux <b>(يتطلب python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:56
 msgid ""
@@ -2210,6 +2213,17 @@ msgid ""
 msgstr ""
 "<b>إرث</b> الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون 2.7)</"
 "b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:77
+#| msgid ""
+#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+#| "3.5)</b>"
+msgid ""
+"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+"<b>(Requires python >= 3.6)</b>"
+msgstr ""
+"ممثل UDS لأجهزة Linux التي تعمل بنظام Debian. تستخدم فقط للآلات الثابتة. <b>("
+"يتطلب بيثون&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
@@ -2680,12 +2694,10 @@ msgstr "جميع المسابح"
 
 #: reports/stats/usage_by_pool.py:138
 #: templates/uds/reports/stats/usage-by-pool.html:4
-#| msgid "Users usage list for {}"
 msgid "Users usage list"
 msgstr "قائمة استخدام المستخدمين"
 
 #: reports/stats/usage_by_pool.py:139
-#| msgid "UDS Report for users access"
 msgid "UDS Report of users usage"
 msgstr "تقرير UDS لاستخدام المستخدمين"
 
@@ -3321,11 +3333,11 @@ msgstr "كلمة السر للمستخدم من oVirt"
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "المهلة بالثواني لاتصال oVirt"
 
-#: services/OVirt/service.py:63 services/Proxmox/service.py:63
+#: services/OVirt/service.py:63
 msgid "oVirt/RHEV Linked Clone"
 msgstr "oVirt/RHEV الطفرات استنساخ مرتبط"
 
-#: services/OVirt/service.py:67 services/Proxmox/service.py:67
+#: services/OVirt/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "الخدمات oVirt استنادا إلى قوالب و COW (التجريبية)."
 
@@ -3468,10 +3480,14 @@ msgid "Max. reservation time"
 msgstr "الحد الأقصى لوقت الحجز"
 
 #: services/OpenGnsys/service.py:133
+#| msgid ""
+#| "Security parameter for OpenGnsys to keep reservations at most this hours"
 msgid ""
-"Security parameter for OpenGnsys to keep reservations at most this hours"
+"Security parameter for OpenGnsys to keep reservations at most this hours. "
+"Handle with care!"
 msgstr ""
-"المعلمة الأمن الحد الأقصى لوقت الحجز لإبقاء التحفظات في معظم هذه الساعات"
+"معلمة أمان لـ OpenGnsys للاحتفاظ بالحجوزات على الأكثر هذه الساعات. التعامل "
+"مع الرعاية!"
 
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
@@ -3594,7 +3610,6 @@ msgid "Timeout in seconds of connection to OpenStack"
 msgstr "المهلة بالثواني لاتصال Openstack"
 
 #: services/OpenStack/provider.py:110
-#| msgid "Project"
 msgid "Project Id"
 msgstr "معرف المشروع"
 
@@ -3777,12 +3792,10 @@ msgstr ""
 "\")"
 
 #: services/Proxmox/provider.py:64
-#| msgid "Password of the user of oVirt"
 msgid "Password of the user of Proxmox"
 msgstr "كلمة مرور مستخدم Proxmox"
 
 #: services/Proxmox/provider.py:69
-#| msgid "Timeout in seconds of connection to LDAP"
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "المهلة بالثواني من الاتصال بـ Proxmox"
 
@@ -3796,6 +3809,16 @@ msgstr "منشور"
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
 msgstr "UDS النشر ل{0} تم إنشاؤها في {1}"
+
+#: services/Proxmox/service.py:63
+#| msgid "Xen Linked Clone"
+msgid "Proxmox Linked Clone"
+msgstr "Proxmox مرتبط استنساخ"
+
+#: services/Proxmox/service.py:67
+#| msgid "oVirt Services based on templates and COW (experimental)"
+msgid "Proxmox Services based on templates and COW (experimental)"
+msgstr "خدمات Proxmox القائمة على القوالب و COW (التجريبية)"
 
 #: services/Proxmox/service.py:112
 msgid "Pool that will contain UDS created vms"
@@ -4555,8 +4578,9 @@ msgid "Shadow"
 msgstr "ظل"
 
 #: services/Xen/service.py:158
-msgid "Shadow memory multiplier (memory overcommit)"
-msgstr "الظل مضاعف الذاكرة (over-commit الذاكرة)."
+#| msgid "Shadow memory multiplier (memory overcommit)"
+msgid "Shadow memory multiplier (use with care)"
+msgstr "مضاعف ذاكرة الظل (استخدم بعناية)"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -4649,7 +4673,6 @@ msgid "Services assignation"
 msgstr "تعيين الخدمات"
 
 #: templates/uds/reports/stats/usage-by-pool.html:6
-#| msgid "Users usage list for {}"
 msgid "Users usage list for"
 msgstr "قائمة استخدام المستخدمين لـ"
 
@@ -5567,36 +5590,46 @@ msgstr "الكثير من أخطاء التوثيق. المستخدم محظور
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
-#: web/util/configjs.py:119
+#: web/util/configjs.py:120
 msgid "Access limited by calendar"
 msgstr "وصول محدود بسبب الجدول الزمني."
 
-#: web/util/configjs.py:145
+#: web/util/configjs.py:146
 msgid "Windows client"
 msgstr "عميل ويندوز"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:147
 msgid "Mac OS X client"
 msgstr "عميل Mac OS X"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:148
 msgid "Debian based Linux client"
 msgstr "ديبين لينكس على أساس العميل"
 
-#: web/util/configjs.py:147 web/util/configjs.py:148 web/util/configjs.py:149
-#: web/util/configjs.py:150
+#: web/util/configjs.py:148
+#| msgid "(requires Python-2.7)"
+msgid "(requires Python-3.6 or newer)"
+msgstr "(يتطلب Python-3.6 أو أحدث)"
+
+#: web/util/configjs.py:149
+#| msgid "Debian based Linux client"
+msgid "Debian based Python 2.7 Linux client (legacy)"
+msgstr "عميل Linux Python 2.7 (قديم)"
+
+#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
+#: web/util/configjs.py:152
 msgid "(requires Python-2.7)"
 msgstr "(يتطلب Python-2.7)"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:150
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Red Linux عميل Linux (RH، Fedora، Centos، ...)"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:151
 msgid "Suse based Linux client"
 msgstr "العميل لينز القائمة على سوس"
 
-#: web/util/configjs.py:150
+#: web/util/configjs.py:152
 msgid "Generic .tar.gz Linux client"
 msgstr "عام .tar.gz عميل لينكس"
 

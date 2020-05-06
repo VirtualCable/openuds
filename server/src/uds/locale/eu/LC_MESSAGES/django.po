@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 10:57+0200\n"
-"PO-Revision-Date: 2020-02-28 08:35+0000\n"
+"POT-Creation-Date: 2020-05-06 13:51+0200\n"
+"PO-Revision-Date: 2020-04-23 09:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -256,9 +256,6 @@ msgid "Modified"
 msgstr "Aldaturik"
 
 #: REST/methods/client.py:89
-#| msgid ""
-#| "The service is not ready.\n"
-#| "Please, try again in a few moments."
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr ""
 "Zure zerbitzua sortzen ari da. Mesedez, itxaron betetzen dugun bitartean"
@@ -668,7 +665,7 @@ msgstr "Suebaki baten atzean zerbitzuen proxya"
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:73
 #: osmanagers/WindowsOsManager/windows_domain.py:74
-#: services/OpenGnsys/service.py:135
+#: services/OpenGnsys/service.py:136
 msgid "Advanced"
 msgstr "Aurreratua"
 
@@ -1613,7 +1610,7 @@ msgstr ""
 msgid "Invalid server certificate. "
 msgstr "Baliogabeko zerbitzari ziiurtagiria"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:189
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1621,24 +1618,24 @@ msgstr ""
 "Gako pribatua PEM baliagarria izan behar da (PEM gako pribatuak hasten dira "
 "----- BEGIN RSA PRIBATUA KEY -----"
 
-#: auths/SAML_enterprise/saml.py:200
+#: auths/SAML_enterprise/saml.py:201
 msgid "Invalid private key. "
 msgstr "Gako pribatua baliogabea da."
 
-#: auths/SAML_enterprise/saml.py:217
+#: auths/SAML_enterprise/saml.py:218
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Ezin da URL {0} eskuratu: {1}"
 
-#: auths/SAML_enterprise/saml.py:225
+#: auths/SAML_enterprise/saml.py:226
 msgid " (obtained from URL)"
 msgstr "(URLetik lortzen da)"
 
-#: auths/SAML_enterprise/saml.py:226
+#: auths/SAML_enterprise/saml.py:227
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML IDP Metadata ez da baliozkoa"
 
-#: auths/SAML_enterprise/saml.py:242
+#: auths/SAML_enterprise/saml.py:243
 msgid "Can't access idp metadata"
 msgstr "Ezin dira idp metadatuak atzitu"
 
@@ -2045,22 +2042,22 @@ msgid "No services available"
 msgstr "Ez dago zerbitzurik eskuragarri"
 
 #: dispatchers/wyse_enterprise/views.py:225
-#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Invalid session"
 msgstr "Saioa baliogabea"
 
 #: dispatchers/wyse_enterprise/views.py:229
-#: dispatchers/wyse_enterprise/views.py:312
+#: dispatchers/wyse_enterprise/views.py:319
 msgid "Invalid authorization"
 msgstr "Baimen baliogabea"
 
 #: dispatchers/wyse_enterprise/views.py:240
-#: dispatchers/wyse_enterprise/views.py:318
+#: dispatchers/wyse_enterprise/views.py:325
 msgid "Invalid request"
 msgstr "Eskaera baliogabea"
 
 #: dispatchers/wyse_enterprise/views.py:243
-#: dispatchers/wyse_enterprise/views.py:321
+#: dispatchers/wyse_enterprise/views.py:328
 msgid "Invalid credentials used"
 msgstr "Erabilitako kredentzial baliogabeak"
 
@@ -2068,13 +2065,17 @@ msgstr "Erabilitako kredentzial baliogabeak"
 msgid "Service not found"
 msgstr "Ez da aurkitu Zerbitzurik"
 
-#: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
+#: dispatchers/wyse_enterprise/views.py:260
+msgid "Invalid machine uuid."
+msgstr "Makina uuid baliogabea."
+
+#: dispatchers/wyse_enterprise/views.py:274 web/util/errors.py:74
 msgid "Transport not found"
 msgstr "Ez da aurkitu garraiorik"
 
-#: dispatchers/wyse_enterprise/views.py:274
-#: dispatchers/wyse_enterprise/views.py:280
-#: dispatchers/wyse_enterprise/views.py:285
+#: dispatchers/wyse_enterprise/views.py:278
+#: dispatchers/wyse_enterprise/views.py:284
+#: dispatchers/wyse_enterprise/views.py:289
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "Zerbitzua ez dago prest une honetan. Saiatu berriz pixka bat."
 
@@ -2212,13 +2213,15 @@ msgid "General"
 msgstr "Orokorra"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
-#: osmanagers/LinuxOsManager/__init__.py:77
+#| msgid ""
+#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-"3.5)</b>"
+"3.6)</b>"
 msgstr ""
-"Debianeko UDS Aktorea, Ubuntu, ... Linux makinak <b>(Python&gt;&gt; 3.5 "
-"beharrezkoa)</b>"
+"Linuxeko makinak Debian, Ubuntu, ... Linux makinak <b>(python behar du = = "
+"3,6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:56
 msgid ""
@@ -2239,6 +2242,17 @@ msgid ""
 msgstr ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:77
+#| msgid ""
+#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
+#| "3.5)</b>"
+msgid ""
+"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+"<b>(Requires python >= 3.6)</b>"
+msgstr ""
+"Debian oinarritutako Linux makinentzako UDS aktorea. Makina estatikoetarako "
+"BAKARRA erabiltzen da. <b>(Python behar du = = 3,6)</b>"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
@@ -2715,12 +2729,10 @@ msgstr "PISTA GUZTIAK"
 
 #: reports/stats/usage_by_pool.py:138
 #: templates/uds/reports/stats/usage-by-pool.html:4
-#| msgid "Users usage list for {}"
 msgid "Users usage list"
 msgstr "Erabiltzaileen erabilera zerrenda"
 
 #: reports/stats/usage_by_pool.py:139
-#| msgid "UDS Report for users access"
 msgid "UDS Report of users usage"
 msgstr "Erabiltzaileen erabileraren txostena"
 
@@ -3364,11 +3376,11 @@ msgstr "OVirt-eko erabiltzailearen pasahitza"
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "Denbora-muga oVirt-ekin konexioaren segundotan"
 
-#: services/OVirt/service.py:63 services/Proxmox/service.py:63
+#: services/OVirt/service.py:63
 msgid "oVirt/RHEV Linked Clone"
 msgstr "oVirt/RHEV Linked Clone"
 
-#: services/OVirt/service.py:67 services/Proxmox/service.py:67
+#: services/OVirt/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "OVirt Zerbitzuak txantiloietan eta COW (esperimentaletan) oinarrituta"
 
@@ -3512,10 +3524,14 @@ msgid "Max. reservation time"
 msgstr "Max. erreserba denbora"
 
 #: services/OpenGnsys/service.py:133
+#| msgid ""
+#| "Security parameter for OpenGnsys to keep reservations at most this hours"
 msgid ""
-"Security parameter for OpenGnsys to keep reservations at most this hours"
+"Security parameter for OpenGnsys to keep reservations at most this hours. "
+"Handle with care!"
 msgstr ""
-"Segurtasun parametroa OpenGnsys-ri ordainketak gehienetan gorde ahal izateko"
+"Segurtasun parametroa OpenGnsys-ek ordutegi gehienetan erreserbak "
+"mantentzeko. Kudeatu kontu handiz!"
 
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
@@ -3638,7 +3654,6 @@ msgid "Timeout in seconds of connection to OpenStack"
 msgstr "Denbora-muga, segundotan, OpenStack-era konektatzeko"
 
 #: services/OpenStack/provider.py:110
-#| msgid "Project"
 msgid "Project Id"
 msgstr "Proiektuaren IDa"
 
@@ -3826,12 +3841,10 @@ msgstr ""
 "\"erabiltzailea @ autentifikatzailea\" inprimakia)"
 
 #: services/Proxmox/provider.py:64
-#| msgid "Password of the user of oVirt"
 msgid "Password of the user of Proxmox"
 msgstr "Proxmox erabiltzailearen pasahitza"
 
 #: services/Proxmox/provider.py:69
-#| msgid "Timeout in seconds of connection to LDAP"
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "Denbora-muga Proxmox-ekin konexioaren segundotan"
 
@@ -3845,6 +3858,16 @@ msgstr "Argitalpena"
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
 msgstr "UDS {0} (e) k {1} (e) n sortutako argitalpena"
+
+#: services/Proxmox/service.py:63
+#| msgid "Xen Linked Clone"
+msgid "Proxmox Linked Clone"
+msgstr "Proxmox lotuta klona"
+
+#: services/Proxmox/service.py:67
+#| msgid "oVirt Services based on templates and COW (experimental)"
+msgid "Proxmox Services based on templates and COW (experimental)"
+msgstr "Proxmox Zerbitzuak txantiloietan eta COWetan (esperimentalean)"
 
 #: services/Proxmox/service.py:112
 msgid "Pool that will contain UDS created vms"
@@ -4637,8 +4660,9 @@ msgid "Shadow"
 msgstr "Itzala"
 
 #: services/Xen/service.py:158
-msgid "Shadow memory multiplier (memory overcommit)"
-msgstr "Itzalaren memoria biderkatzailea (memoria gainkargatzea)"
+#| msgid "Shadow memory multiplier (memory overcommit)"
+msgid "Shadow memory multiplier (use with care)"
+msgstr "Itzal memoria biderkatzailea (erabili arretaz)"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -4731,7 +4755,6 @@ msgid "Services assignation"
 msgstr "Zerbitzuen esleipena"
 
 #: templates/uds/reports/stats/usage-by-pool.html:6
-#| msgid "Users usage list for {}"
 msgid "Users usage list for"
 msgstr "Erabiltzaileen erabilera zerrenda"
 
@@ -5054,8 +5077,8 @@ msgid ""
 "If checked, every connection will try to open its own window instead of "
 "reusing the \"global\" one."
 msgstr ""
-"Hautatuta badago, konexio bakoitza bere leihoa irekitzen saiatuko da \""
-"globala\" berrerabiltzen ordez."
+"Hautatuta badago, konexio bakoitza bere leihoa irekitzen saiatuko da "
+"\"globala\" berrerabiltzen ordez."
 
 #: transports/HTML5RDP/html5rdp.py:148
 #: transports/HTML5RDS_enterprise/html5rds.py:149
@@ -5676,36 +5699,46 @@ msgstr "Autentifikazio errore gehiegi. Erabiltzailea aldi baterako blokeatu da"
 msgid "Invalid data"
 msgstr "Datu baliogabeak"
 
-#: web/util/configjs.py:119
+#: web/util/configjs.py:120
 msgid "Access limited by calendar"
 msgstr "Sarbidea egutegian mugatua"
 
-#: web/util/configjs.py:145
+#: web/util/configjs.py:146
 msgid "Windows client"
 msgstr "Windows bezeroa"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:147
 msgid "Mac OS X client"
 msgstr "Mac OS X bezeroa"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:148
 msgid "Debian based Linux client"
 msgstr "Debian oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:147 web/util/configjs.py:148 web/util/configjs.py:149
-#: web/util/configjs.py:150
+#: web/util/configjs.py:148
+#| msgid "(requires Python-2.7)"
+msgid "(requires Python-3.6 or newer)"
+msgstr "(Python-3.6 edo berriagoa behar du)"
+
+#: web/util/configjs.py:149
+#| msgid "Debian based Linux client"
+msgid "Debian based Python 2.7 Linux client (legacy)"
+msgstr "Debian oinarritutako Python 2.7 Linux bezeroa (ondarea)"
+
+#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
+#: web/util/configjs.py:152
 msgid "(requires Python-2.7)"
 msgstr "(Python-2.7 behar da)"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:150
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Red Hat Linux bezeroaren (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:151
 msgid "Suse based Linux client"
 msgstr "Suse oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:150
+#: web/util/configjs.py:152
 msgid "Generic .tar.gz Linux client"
 msgstr "Generic .tar.gz Linux bezeroa"
 

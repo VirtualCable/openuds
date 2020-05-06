@@ -4,14 +4,14 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020
-# albert clar <albert.clar@uib.cat>, 2017-2018
+# albert clar <albert.clar@uib.cat>, 2017-2018,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 10:57+0200\n"
-"PO-Revision-Date: 2020-02-28 08:36+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-05-06 13:51+0200\n"
+"PO-Revision-Date: 2020-05-04 09:03+0000\n"
+"Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -46,7 +46,7 @@ msgstr "Error"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:50
 #: static/admin/translations-fakejs.js:61
 msgid "Please, fill in require fields: "
-msgstr "Ompliu els camps obligatoris:"
+msgstr "Si us plau, empleneu els camps obligatoris:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:58
 #: static/admin/translations-fakejs.js:70
@@ -68,11 +68,11 @@ msgstr "Carregant dades ..."
 #: static/admin/translations-fakejs.js:192
 #: static/admin/translations-fakejs.js:209
 msgid "dismiss"
-msgstr "acomiadar"
+msgstr "descartar"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:62
 msgid "Testing..."
-msgstr "S&#39;està provant ..."
+msgstr "S'està provant ..."
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:64
 msgid "Test failed:"
@@ -80,20 +80,20 @@ msgstr "La prova ha fallat:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:66
 msgid "Test passed successfully"
-msgstr "Prova superada amb èxit"
+msgstr "Prova superada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:68
 #: static/admin/translations-fakejs.js:89
 msgid "Successfully saved"
-msgstr "S&#39;ha desat correctament"
+msgstr "S'ha desat correctament"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:72
 msgid "Are you sure do you want to delete the following items?"
-msgstr "Esteu segur que voleu eliminar els elements següents?"
+msgstr "Esteu segur que voleu suprimir els elements següents?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:73
 msgid "Deletion finished"
-msgstr "S&#39;ha acabat la supressió"
+msgstr "El procés de suprimir ha finalitzat"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:25
 msgid "provider"
@@ -105,7 +105,7 @@ msgstr "servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:27
 msgid "service pool"
-msgstr "pool de serveis"
+msgstr "pool de servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:28
 msgid "authenticator"
@@ -125,7 +125,7 @@ msgstr "transport"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:32
 msgid "OS manager"
-msgstr "Administrador del SO"
+msgstr "Gestor de Sistema Operatiu"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:33
 msgid "calendar"
@@ -133,7 +133,7 @@ msgstr "calendari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:34
 msgid "pool group"
-msgstr "grup de grup"
+msgstr "grup de pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:35
 msgid "Go to"
@@ -149,15 +149,15 @@ msgstr "no"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:266
 msgid "Error saving: "
-msgstr "S&#39;ha desat l&#39;error:"
+msgstr "S'ha produït un error desant:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
 msgid "Error saving element"
-msgstr "S&#39;ha produït un error en desar l&#39;element"
+msgstr "S'ha produït un error desant l'element"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
 msgid "Error handling your request"
-msgstr "S&#39;ha produït un error en gestionar la sol·licitud"
+msgstr "S'ha produït un error gestionant la vostra sol·licitud"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:97
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
@@ -165,11 +165,11 @@ msgstr "#USR_NUMBER# usuaris, #GRP_NUMBER# grups"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:98
 msgid "#POOLS_NUMBER# service pools"
-msgstr "#POOLS_NUMBER# piscines de serveis"
+msgstr "#POOLS_NUMBER# pools de servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "#SERVICES_NUMBER# user services"
-msgstr "#SERVICES_NUMBER# serveis per a l&#39;usuari"
+msgstr "#SERVICES_NUMBER# serveis d'usuari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:100
 msgid "#RESTRAINED_NUMBER# restrained services!"
@@ -183,15 +183,15 @@ msgstr "Filtre"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:53
 msgid "No entries found"
-msgstr "No s&#39;ha trobat cap entrada"
+msgstr "No s'ha trobat cap entrada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:41
 msgid "Read only"
-msgstr "Llegeix només"
+msgstr "Només de lectura"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:42
 msgid "Full Access"
-msgstr "Accés total"
+msgstr "Accés complet"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:43
 #: static/admin/translations-fakejs.js:360
@@ -223,11 +223,11 @@ msgstr "Permís"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:47
 msgid "Remove"
-msgstr "Suprimeix"
+msgstr "Eliminar"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:48
 msgid "Confirm revokation of permission"
-msgstr "Confirma la revocació del permís"
+msgstr "Confirmar la revocació del permís"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:5
 #: static/admin/translations-fakejs.js:233
@@ -322,11 +322,11 @@ msgstr "Manteniment"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:149
 msgid "Exit maintenance mode"
-msgstr "Sortiu del mode de manteniment"
+msgstr "Sortir del mode de manteniment"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:150
 msgid "Enter maintenance mode"
-msgstr "Introduïu el mode de manteniment"
+msgstr "Entrar en mode de manteniment"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:151
 msgid "New provider"
@@ -334,11 +334,11 @@ msgstr "Nou proveïdor"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:152
 msgid "Edit provider"
-msgstr "Edita el proveïdor"
+msgstr "Editar proveïdor"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:153
 msgid "Delete provider"
-msgstr "Suprimeix el proveïdor"
+msgstr "Suprimir proveïdor"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:154
 msgid "Exit maintenance mode?"
@@ -346,7 +346,7 @@ msgstr "Voleu sortir del mode de manteniment?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:155
 msgid "Enter maintenance mode?"
-msgstr "Vols entrar al mode de manteniment?"
+msgstr "Voeu entrar en mode de manteniment?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:156
 msgid "Maintenance mode for"
@@ -366,7 +366,7 @@ msgstr "Actiu"
 #: static/admin/translations-fakejs.js:133
 #: static/admin/translations-fakejs.js:159
 msgid "Pool"
-msgstr "Piscina"
+msgstr "Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:118
 #: static/admin/translations-fakejs.js:134
@@ -380,14 +380,14 @@ msgstr "Estat"
 #: static/admin/translations-fakejs.js:135
 #: static/admin/translations-fakejs.js:161
 msgid "User Services"
-msgstr "Serveis d&#39;usuari"
+msgstr "Serveis d'usuari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:145
 #: static/admin/translations-fakejs.js:162
 #: static/admin/translations-fakejs.js:315
 #: static/admin/translations-fakejs.js:469
 msgid "Service pools"
-msgstr "Piscines de serveis"
+msgstr "Pools de servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:39
 #: static/admin/translations-fakejs.js:54
@@ -405,7 +405,7 @@ msgstr "No"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:56
 msgid "(hidden)"
-msgstr "(amagat)"
+msgstr "(ocult)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:57
 msgid "Selected items :"
@@ -422,15 +422,15 @@ msgstr "Nou servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:165
 msgid "Edit service"
-msgstr "Edita servei"
+msgstr "Editar servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:166
 msgid "Delete service"
-msgstr "Esborra servei"
+msgstr "Suprimir servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:167
 msgid "Delete user service"
-msgstr "Esborra servei d'usuari"
+msgstr "Suprimir servei d'usuari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:110
 msgid "New Authenticator"
@@ -438,15 +438,15 @@ msgstr "Autenticador nou"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:111
 msgid "Edit Authenticator"
-msgstr "Edita l&#39;autenticador"
+msgstr "Editar Autenticador"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:112
 msgid "Delete Authenticator"
-msgstr "Suprimeix l&#39;autenticador"
+msgstr "Suprimir Autenticador"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:113
 msgid "Any"
-msgstr "Cap"
+msgstr "Algun"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:114
 msgid "All"
@@ -478,7 +478,7 @@ msgstr "IP"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:124
 msgid "Services Pool"
-msgstr "Serveis Piscina"
+msgstr "Pool de serveis"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:125
 #: static/admin/translations-fakejs.js:147
@@ -497,7 +497,7 @@ msgstr "Grups"
 #: static/admin/translations-fakejs.js:378
 #: static/admin/translations-fakejs.js:382
 msgid "Services Pools"
-msgstr "Piscines de serveis"
+msgstr "Pools de serveis"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:127
 #: static/admin/translations-fakejs.js:442
@@ -539,7 +539,7 @@ msgstr "Habilitat"
 #: static/admin/translations-fakejs.js:355
 #: static/admin/translations-fakejs.js:370
 msgid "Disabled"
-msgstr "Desactivat"
+msgstr "Deshabilitat"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:144
 #: static/admin/translations-fakejs.js:356
@@ -548,23 +548,23 @@ msgstr "Bloquejat"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:131
 msgid "Delete user"
-msgstr "Esborra usuari"
+msgstr "Suprimir usuari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:132
 msgid "Delete group"
-msgstr "Esborra grup"
+msgstr "Suprimir grup"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:94
 msgid "New OS Manager"
-msgstr "Nou gestor de sistemes operatius"
+msgstr "Nou Gestor de Sistema Operatiu"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
 msgid "Edit OS Manager"
-msgstr "Edita el gestor de sistemes operatius"
+msgstr "Editar Gestor de Sistema Operatiu"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
 msgid "Delete OS Manager"
-msgstr "Suprimeix el gestor del sistema operatiu"
+msgstr "Suprimir Gestor de Sistema Operatiu"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:101
 msgid "New Transport"
@@ -572,48 +572,48 @@ msgstr "Nou transport"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:102
 msgid "Edit Transport"
-msgstr "Edita el transport"
+msgstr "Editar Transport"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:103
 msgid "Delete Transport"
-msgstr "Suprimeix el transport"
+msgstr "Suprimir Transport"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:107
 msgid "New Network"
-msgstr "Nova xarxa"
+msgstr "Nova Xarxa"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:108
 msgid "Edit Network"
-msgstr "Edita la xarxa"
+msgstr "Editar Xarxa"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:109
 msgid "Delete Network"
-msgstr "Suprimeix la xarxa"
+msgstr "Suprimir Xarxa"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:104
 msgid "New Proxy"
-msgstr "Nou proxy"
+msgstr "Nou Proxy"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:105
 msgid "Edit Proxy"
-msgstr "Edita el proxy"
+msgstr "Editar Proxy"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:106
 msgid "Delete Proxy"
-msgstr "Suprimeix el servidor intermediari"
+msgstr "Suprimir Proxy"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:196
 msgid "(This service does not requires an OS Manager)"
-msgstr "(Aquest servei no requereix un gestor de SO)"
+msgstr "(Aquest servei no requereix un Gestor de SO)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:197
 #: static/admin/translations-fakejs.js:255
 msgid "New service Pool"
-msgstr "Nou servei de billar"
+msgstr "Nou Pool de servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:198
 msgid "Publish on creation"
-msgstr "Publica al moment de la creació"
+msgstr "Publicar al moment de la creació"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:199
 msgid "If selected, will initiate the publication inmediatly after creation"
@@ -622,24 +622,24 @@ msgstr ""
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:200
 msgid "Edit Service Pool"
-msgstr "Edita el Pool de serveis"
+msgstr "Editar Pool de servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:201
 msgid "Delete service pool"
-msgstr "Suprimeix el grup de serveis"
+msgstr "Suprimir Pool de servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:169
 #: static/admin/translations-fakejs.js:195
 msgid "Please, select a valid user"
-msgstr "Seleccioneu un usuari vàlid"
+msgstr "Si us plau, seleccioneu un usuari vàlid"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:173
 msgid "Please, select a valid group"
-msgstr "Seleccioneu un grup vàlid"
+msgstr "Si us plau, seleccioneu un grup vàlid"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:171
 msgid "Please, select a valid transport"
-msgstr "Seleccioneu un transport vàlid"
+msgstr "Si us plau, seleccioneu un transport vàlid"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:174
 #: static/admin/translations-fakejs.js:303
@@ -653,15 +653,15 @@ msgstr "Registres"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:175
 msgid "Launch now"
-msgstr "Llançament ara"
+msgstr "Iniciar ara"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:176
 msgid "Change owner"
-msgstr "Canvia el propietari"
+msgstr "Canviar el propietari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:177
 msgid "Assign service"
-msgstr "Assignació de servei"
+msgstr "Assignar servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:178
 #: static/admin/translations-fakejs.js:277
@@ -679,29 +679,29 @@ msgstr "Assignació de servei"
 #: static/admin/translations-fakejs.js:466
 #: static/admin/translations-fakejs.js:479
 msgid "Cancel"
-msgstr "Cancel·la"
+msgstr "Cancel·lar"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:179
 msgid "Changelog"
-msgstr "Changelog"
+msgstr "Registre de canvis"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:180
 #: static/admin/translations-fakejs.js:260
 msgid "Delete assigned service"
-msgstr "Suprimeix el servei assignat"
+msgstr "Suprimir servei assignat"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:181
 msgid "Delete cached service"
-msgstr "Suprimeix el servei a la memòria cau"
+msgstr "Suprimir servei en memòria cau"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:182
 #: static/admin/translations-fakejs.js:261
 msgid "Delete assigned group"
-msgstr "Suprimeix el grup assignat"
+msgstr "Suprimir grup assignat"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:183
 msgid "Delete assigned transport"
-msgstr "Suprimeix el transport assignat"
+msgstr "Suprimir transport assignat"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:184
 msgid "Publication"
@@ -717,15 +717,15 @@ msgstr "Publicació cancel·lada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:188
 msgid "Delete scheduled action"
-msgstr "Elimina l&#39;acció programada"
+msgstr "Suprimir acció programada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:189
 msgid "Execute scheduled action"
-msgstr "Executeu l&#39;acció programada"
+msgstr "Executar l'acció programada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:190
 msgid "Execute scheduled action right now?"
-msgstr "Executa l&#39;acció programada ara mateix?"
+msgstr "Executar l'acció programada ara mateix?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:191
 msgid "Scheduled action executed"
@@ -734,7 +734,7 @@ msgstr "Acció programada executada"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:193
 #: static/admin/translations-fakejs.js:262
 msgid "Delete calendar access rule"
-msgstr "Suprimeix la regla d&#39;accés al calendari"
+msgstr "Suprimir regla d'accés al calendari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:263
 msgid "New meta pool"
@@ -742,23 +742,23 @@ msgstr "Nou meta pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:264
 msgid "Edit meta pool"
-msgstr "Edita meta pool"
+msgstr "Editar meta pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:265
 msgid "Delete meta pool"
-msgstr "Elimina meta pool"
+msgstr "Suprimir meta pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:258
 msgid "Please, select a valid service pool"
-msgstr "Seleccioneu un grup de serveis vàlid"
+msgstr "Si us plau, seleccioneu un Pool de servei vàlid"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:259
 msgid "Remove member pool"
-msgstr "Elimina el grup membre"
+msgstr "Eliminar member pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:256
 msgid "New Service Pool"
-msgstr "Nova piscina de serveis"
+msgstr "Nou Pool de servei"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:212
 msgid "New calendar"
@@ -766,11 +766,11 @@ msgstr "Nou calendari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:213
 msgid "Edit calendar"
-msgstr "Edita calendari"
+msgstr "Editar calendari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:214
 msgid "Delete calendar"
-msgstr "Esborra calendari"
+msgstr "Suprimir calendari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:216
 msgid "day"
@@ -782,7 +782,7 @@ msgstr "dies"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:218
 msgid "Daily"
-msgstr "Diàriament"
+msgstr "Diari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:219
 msgid "week"
@@ -794,7 +794,7 @@ msgstr "setmanes"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:221
 msgid "Weekly"
-msgstr "Setmanalment"
+msgstr "Setmanal"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:222
 msgid "month"
@@ -806,7 +806,7 @@ msgstr "mesos"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:224
 msgid "Monthly"
-msgstr "Mensualment"
+msgstr "Mensual"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:225
 msgid "year"
@@ -818,7 +818,7 @@ msgstr "anys"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:227
 msgid "Yearly"
-msgstr "Anualment"
+msgstr "Anual"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:228
 #: static/admin/translations-fakejs.js:463
@@ -851,7 +851,7 @@ msgstr "Per sempre"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:242
 msgid "Start date/time"
-msgstr "Data d&#39;inici / hora"
+msgstr "Data/hora d'inici "
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:243
 msgid "End date"
@@ -867,11 +867,11 @@ msgstr "Dies de la setmana"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:246
 msgid "Invalid or incomplete rule. Please, fix field $FIELD"
-msgstr "Regla no vàlida o incompleta. Si us plau, corregiu el camp $ CAMP"
+msgstr "Regla no vàlida o incompleta. Si us plau, corregiu el camp $FIELD"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:247
 msgid "This rule will be valid every"
-msgstr "Aquesta regla serà vàlida tots"
+msgstr "Aquesta regla serà vàlida cada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:248
 msgid "of any week"
@@ -879,7 +879,7 @@ msgstr "de qualsevol setmana"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:249
 msgid "from"
-msgstr "de"
+msgstr "des de"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:250
 msgid "until"
@@ -887,15 +887,15 @@ msgstr "fins a"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:251
 msgid "onwards"
-msgstr "endavant"
+msgstr "cap endavant"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:252
 msgid "starting at"
-msgstr "començant a"
+msgstr "començant a les"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:253
 msgid "and every event will be active for"
-msgstr "i tots els esdeveniments estaran actius"
+msgstr "i cada esdeveniment estarà actiu durant"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:254
 msgid "with no duration"
@@ -903,11 +903,11 @@ msgstr "sense durada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:215
 msgid "Delete calendar rule"
-msgstr "Suprimeix la regla del calendari"
+msgstr "Suprimir regla del calendari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:202
 msgid "Set time mark"
-msgstr "Estableix la marca del temps"
+msgstr "Establir marca de temps"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:203
 msgid "New account"
@@ -915,11 +915,11 @@ msgstr "Nou compte"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:204
 msgid "Edit account"
-msgstr "Edita el compte"
+msgstr "Editar compte"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:205
 msgid "Delete account"
-msgstr "Esborrar compte"
+msgstr "Suprimir compte"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:206
 msgid "Time mark"
@@ -927,11 +927,11 @@ msgstr "Marca de temps"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:207
 msgid "Set time mark for $NAME to current date/time?"
-msgstr "Establiu la marca de temps de $ NAME a la data / hora actual?"
+msgstr "Establiu la marca de temps de $NAME a la data/hora actual?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:208
 msgid "Time mark stabliched"
-msgstr "Marca de temps estabilitzada"
+msgstr "Marca de temps establida"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:210
 msgid "No time mark"
@@ -939,36 +939,36 @@ msgstr "No hi ha marca de temps"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:211
 msgid "Delete account usage"
-msgstr "Suprimeix l&#39;ús del compte"
+msgstr "Suprimir ús del compte"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:84
 msgid "Image is too big (max. upload size is 256Kb)"
-msgstr "La imatge és massa grossa (la mida màxima de pujada és de 256Kb)"
+msgstr "Imatge massa gran (la mida màxima és de 256Kb)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Tipus d&#39;imatge no vàlid (només suporta JPEG, PNG i GIF"
+msgstr "Tipus d'imatge no suportat (només es suporta JPEG, PNG i GIF"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:88
 msgid "Please, provide a name and a image"
-msgstr "Proporcioneu un nom i una imatge"
+msgstr "Si us plau, proporcioneu un nom i una imatge"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:82
 msgid "Delete image"
-msgstr "Suprimeix la imatge"
+msgstr "Suprimir imatge"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:77
 #: static/admin/translations-fakejs.js:81
 msgid "Generate report"
-msgstr "Genera informe"
+msgstr "Generar informe"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:78
 msgid "Generating report..."
-msgstr "S&#39;està generant l&#39;informe ..."
+msgstr "S'està generant l'informe ..."
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:79
 msgid "Report finished"
-msgstr "S&#39;ha acabat l&#39;informe"
+msgstr "Informe finalitzat"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:92
 msgid "Configuration saved"
@@ -976,19 +976,19 @@ msgstr "Configuració desada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:91
 msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
-msgstr "Suprimeix el testimoni de l&#39;actor - ÚS AMB ATENCIÓ EXTREMA !!!"
+msgstr "Suprimir el token de l'actor - UTILITZEU-HO AMB PRECAUCIÓ MÀXIMA !!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:75
 msgid "Cache flushed"
-msgstr "La memòria cau embolicada"
+msgstr "S'ha buidat la memòria cau"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:36
 msgid "Items per page"
-msgstr "Articles per pàgina"
+msgstr "Elements per pàgina"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:38
 msgid ", (%i more items)"
-msgstr ", (% i més articles)"
+msgstr ", (%i elements més)"
 
 #: static/admin/translations-fakejs.js:270
 #: static/modern/translations-fakejs.js:26
@@ -997,7 +997,7 @@ msgstr "Tanca"
 
 #: static/admin/translations-fakejs.js:273
 msgid "User mode"
-msgstr "Mode d&#39;usuari"
+msgstr "Mode d'usuari"
 
 #: static/admin/translations-fakejs.js:274
 #: static/modern/translations-fakejs.js:31
@@ -1006,11 +1006,11 @@ msgstr "Tancar sessió"
 
 #: static/admin/translations-fakejs.js:275
 msgid "Remove all"
-msgstr "Esborra-ho tot"
+msgstr "Eliminar-ho tot"
 
 #: static/admin/translations-fakejs.js:276
 msgid "Add"
-msgstr "Afegeix"
+msgstr "Afegir"
 
 #: static/admin/translations-fakejs.js:278
 #: static/admin/translations-fakejs.js:283
@@ -1033,7 +1033,7 @@ msgstr "Afegeix"
 #: static/admin/translations-fakejs.js:467
 #: static/admin/translations-fakejs.js:480
 msgid "Ok"
-msgstr "D&#39;acord"
+msgstr "D'acord"
 
 #: static/admin/translations-fakejs.js:279
 msgid "Permissions for"
@@ -1045,7 +1045,7 @@ msgstr "Nou permís ..."
 
 #: static/admin/translations-fakejs.js:284
 msgid "New user permission for"
-msgstr "Nou permís d&#39;usuari per a"
+msgstr "Nou permís d'usuari per a"
 
 #: static/admin/translations-fakejs.js:285
 msgid "New group permission for"
@@ -1053,12 +1053,12 @@ msgstr "Nou permís de grup per a"
 
 #: static/admin/translations-fakejs.js:288
 msgid "Discard & close"
-msgstr "Eliminar i tancar"
+msgstr "Descartar i tancar"
 
 #: static/admin/translations-fakejs.js:289
 #: static/admin/translations-fakejs.js:335
 msgid "Save"
-msgstr "Desa"
+msgstr "Desar"
 
 #: static/admin/translations-fakejs.js:290
 #: static/admin/translations-fakejs.js:291
@@ -1069,7 +1069,7 @@ msgstr "Nou"
 #: static/admin/translations-fakejs.js:293
 #: static/admin/translations-fakejs.js:300
 msgid "Edit"
-msgstr "Edita"
+msgstr "Editar"
 
 #: static/admin/translations-fakejs.js:294
 #: static/admin/translations-fakejs.js:301
@@ -1079,12 +1079,12 @@ msgstr "Permisos"
 #: static/admin/translations-fakejs.js:295
 #: static/admin/translations-fakejs.js:304
 msgid "Export"
-msgstr "Exportació"
+msgstr "Exportar"
 
 #: static/admin/translations-fakejs.js:296
 #: static/admin/translations-fakejs.js:302
 msgid "Delete"
-msgstr "Esborra"
+msgstr "Suprimir"
 
 #: static/admin/translations-fakejs.js:298
 msgid "Selected items"
@@ -1114,7 +1114,7 @@ msgstr "Autenticadors"
 
 #: static/admin/translations-fakejs.js:309
 msgid "Os Managers"
-msgstr "Os directius"
+msgstr "Gestors de Sistema Operatiu"
 
 #: static/admin/translations-fakejs.js:310
 msgid "Connectivity"
@@ -1135,7 +1135,7 @@ msgstr "Proxies"
 
 #: static/admin/translations-fakejs.js:314
 msgid "Pools"
-msgstr "Piscines"
+msgstr "Pools"
 
 #: static/admin/translations-fakejs.js:316
 msgid "Meta pools"
@@ -1167,11 +1167,11 @@ msgstr "Configuració"
 
 #: static/admin/translations-fakejs.js:324
 msgid "Actor tokens"
-msgstr "Fitxes de l&#39;actor"
+msgstr "Tokens de l'actor"
 
 #: static/admin/translations-fakejs.js:325
 msgid "Flush Cache"
-msgstr "Cache de flush"
+msgstr "Buidar memòria cau"
 
 #: static/admin/translations-fakejs.js:326
 msgid "New image for"
@@ -1179,7 +1179,7 @@ msgstr "Nova imatge per a"
 
 #: static/admin/translations-fakejs.js:327
 msgid "Edit for"
-msgstr "Edita per"
+msgstr "Editar per a"
 
 #: static/admin/translations-fakejs.js:328
 msgid "Image name"
@@ -1195,7 +1195,7 @@ msgstr "Per obtenir resultats òptims, utilitzeu"
 
 #: static/admin/translations-fakejs.js:331
 msgid "The image will be resized on upload to"
-msgstr "La imatge es canviarà de mida quan es carregui a"
+msgstr "La imatge quan es carregui es redimensionarà a"
 
 #: static/admin/translations-fakejs.js:334
 msgid "UDS Configuration"
@@ -1204,7 +1204,7 @@ msgstr "Configuració UDS"
 #: static/admin/translations-fakejs.js:336
 #: static/modern/translations-fakejs.js:29
 msgid "Dashboard"
-msgstr "panell"
+msgstr "Panell"
 
 #: static/admin/translations-fakejs.js:337
 msgid "View authenticators"
@@ -1214,7 +1214,7 @@ msgstr "Veure autenticadors"
 #: static/admin/translations-fakejs.js:339
 #: static/admin/translations-fakejs.js:340
 msgid "View service pools"
-msgstr "Veure piscines de serveis"
+msgstr "Veure Pools de servei"
 
 #: static/admin/translations-fakejs.js:341
 msgid "You are accessing UDS Administration as staff member."
@@ -1229,8 +1229,8 @@ msgid ""
 "In order to increase your access privileges, please contact your local UDS "
 "administrator."
 msgstr ""
-"Per augmentar els privilegis d’accés, poseu-vos en contacte amb "
-"l’administrador UDS local."
+"Per incrementar els vostres privilegis d’accés, contacteu amb "
+"l’administrador d'UDS."
 
 #: static/admin/translations-fakejs.js:344
 msgid "Thank you."
@@ -1238,7 +1238,7 @@ msgstr "Gràcies."
 
 #: static/admin/translations-fakejs.js:349
 msgid "Edit user"
-msgstr "Edita usuari"
+msgstr "Editar usuari"
 
 #: static/admin/translations-fakejs.js:350
 msgid "New user"
@@ -1270,15 +1270,15 @@ msgstr "Nou grup"
 
 #: static/admin/translations-fakejs.js:366
 msgid "Meta group name"
-msgstr "Nom del grup de meta"
+msgstr "Nom del meta grup"
 
 #: static/admin/translations-fakejs.js:371
 msgid "Service Pools"
-msgstr "Piscines de servei"
+msgstr "Pools de servei"
 
 #: static/admin/translations-fakejs.js:372
 msgid "Match mode"
-msgstr "Mode de coincidència"
+msgstr "Mode coincidència"
 
 #: static/admin/translations-fakejs.js:373
 msgid "Selected Groups"
@@ -1300,11 +1300,11 @@ msgstr "Ús"
 
 #: static/admin/translations-fakejs.js:391
 msgid "Services pools"
-msgstr "Piscines de serveis"
+msgstr "Pools de serveis"
 
 #: static/admin/translations-fakejs.js:394
 msgid "Edit action for"
-msgstr "Editar acció per a"
+msgstr "Editar l'acció per a"
 
 #: static/admin/translations-fakejs.js:395
 msgid "New action for"
@@ -1317,11 +1317,11 @@ msgstr "Calendari"
 
 #: static/admin/translations-fakejs.js:397
 msgid "Events offset (minutes)"
-msgstr "S&#39;ha compensat l&#39;esdeveniment (minuts)"
+msgstr "Compensació dels esdeveniments (minuts)"
 
 #: static/admin/translations-fakejs.js:398
 msgid "At the beginning of the interval?"
-msgstr "Al començament de l&#39;interval?"
+msgstr "A l'inici de l'interval?"
 
 #: static/admin/translations-fakejs.js:399
 #: static/admin/translations-fakejs.js:434
@@ -1335,7 +1335,7 @@ msgstr "Transport"
 
 #: static/admin/translations-fakejs.js:405
 msgid "Change owner of assigned service"
-msgstr "Canvia el propietari del servei assignat"
+msgstr "Canviar el propietari del servei assignat"
 
 #: static/admin/translations-fakejs.js:410
 msgid "New transport for"
@@ -1351,11 +1351,11 @@ msgstr "Registres de"
 
 #: static/admin/translations-fakejs.js:421
 msgid "Changelog of"
-msgstr "Canvi de canvis de"
+msgstr "Registre de canvis de"
 
 #: static/admin/translations-fakejs.js:423
 msgid "Assign service to user manually"
-msgstr "Assigna el servei a l&#39;usuari manualment"
+msgstr "Assignar servei a l'usuari manualment"
 
 #: static/admin/translations-fakejs.js:424
 msgid "Service"
@@ -1363,15 +1363,15 @@ msgstr "Servei"
 
 #: static/admin/translations-fakejs.js:429
 msgid "New access rule for"
-msgstr "Nova regla d&#39;accés per a"
+msgstr "Nova regla d'accés per a"
 
 #: static/admin/translations-fakejs.js:430
 msgid "Edit access rule for"
-msgstr "Edita la regla d&#39;accés de"
+msgstr "Editar la regla d'accés de"
 
 #: static/admin/translations-fakejs.js:431
 msgid "Default fallback access for"
-msgstr "Accés faller per defecte"
+msgstr "Accés alternatiu predeterminat"
 
 #: static/admin/translations-fakejs.js:432
 #: static/admin/translations-fakejs.js:476
@@ -1384,7 +1384,7 @@ msgstr "Nova publicació per a"
 
 #: static/admin/translations-fakejs.js:438
 msgid "Reason"
-msgstr "Raó"
+msgstr "Motiu"
 
 #: static/admin/translations-fakejs.js:443
 msgid "Cache"
@@ -1401,7 +1401,7 @@ msgstr "Accions programades"
 #: static/admin/translations-fakejs.js:448
 #: static/admin/translations-fakejs.js:472
 msgid "Access calendars"
-msgstr "Accés als calendaris"
+msgstr "Calendaris d'accés"
 
 #: static/admin/translations-fakejs.js:450
 msgid "Account usage"
@@ -1413,7 +1413,7 @@ msgstr "Regles"
 
 #: static/admin/translations-fakejs.js:452
 msgid "Edit rule"
-msgstr "Edita la regla"
+msgstr "Editar regla"
 
 #: static/admin/translations-fakejs.js:453
 msgid "New rule"
@@ -1425,7 +1425,7 @@ msgstr "Esdeveniment"
 
 #: static/admin/translations-fakejs.js:457
 msgid "Start time"
-msgstr "L&#39;hora d&#39;inici"
+msgstr "Hora d'inici"
 
 #: static/admin/translations-fakejs.js:458
 msgid "Duration"
@@ -1437,11 +1437,11 @@ msgstr "Unitats de durada"
 
 #: static/admin/translations-fakejs.js:460
 msgid "Start date"
-msgstr "Data d&#39;inici"
+msgstr "Data d'inici"
 
 #: static/admin/translations-fakejs.js:461
 msgid "Repeat until date"
-msgstr "Repetiu fins a la data"
+msgstr "Repetir fins a la data"
 
 #: static/admin/translations-fakejs.js:462
 msgid "Frequency"
@@ -1449,19 +1449,19 @@ msgstr "Freqüència"
 
 #: static/admin/translations-fakejs.js:464
 msgid "Repeat every"
-msgstr "Repeteix-ne tots"
+msgstr "Repetir cada"
 
 #: static/admin/translations-fakejs.js:474
 msgid "New member pool"
-msgstr "Nou grup de membres"
+msgstr "Nou member pool"
 
 #: static/admin/translations-fakejs.js:475
 msgid "Edit member pool"
-msgstr "Edita el grup de membres"
+msgstr "Editar member pool"
 
 #: static/admin/translations-fakejs.js:477
 msgid "Service pool"
-msgstr "Piscina de serveis"
+msgstr "Pool de servei"
 
 #: static/admin/translations-fakejs.js:478
 msgid "Enabled?"
@@ -1470,26 +1470,24 @@ msgstr "Habilitat?"
 #: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:18
 msgid "Errors found"
-msgstr "S&#39;han trobat errors"
+msgstr "S'han trobat errors"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:3
 msgid "Launching service"
-msgstr "Llançament del servei"
+msgstr "Iniciant el servei"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:4
 msgid "Please wait"
-msgstr "Espereu"
+msgstr "Si us plau, espereu"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:5
 msgid ""
 "Remember that UDS Plugin is required in order for this service to be launched"
-msgstr ""
-"Recordeu que el complement UDS és necessari perquè es posi en marxa aquest "
-"servei"
+msgstr "Recordeu que per iniciar aquest servei és necessari el connector UDS"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:6
 msgid "Error launching service"
-msgstr "S&#39;ha produït un error en iniciar el servei"
+msgstr "S'ha produït un error en iniciar el servei"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:10
 msgid "Launcher"
@@ -1502,24 +1500,23 @@ msgstr "El servei està en manteniment i no es pot iniciar"
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
 msgid "This service is currently not accesible due to schedule restrictions."
 msgstr ""
-"Actualment, aquest servei no és accessible a causa de restriccions de "
-"programació."
+"Actualment, aquest servei no és accessible a causa de restriccions d'horari."
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
 msgid "Release service: "
-msgstr "Servei de llançament:"
+msgstr "Alliberar servei:"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:14
 msgid "Reset service: "
-msgstr "Servei de restabliment:"
+msgstr "Restablir servei:"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
 msgid "Service released"
-msgstr "Servei publicat"
+msgstr "Servei alliberat"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
 msgid "Service reseted"
-msgstr "S&#39;ha restablit el servei"
+msgstr "Servei restablert"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
 msgid "Are you sure?"
@@ -1539,11 +1536,11 @@ msgstr "El servei està en manteniment i no es pot executar"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:21
 msgid "Invalid error string"
-msgstr "Cadena d&#39;error no vàlida"
+msgstr "Cadena d'error no vàlida"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
 msgid "We use cookies to track usage and preferences"
-msgstr "Utilitzem cookies per fer un seguiment de l&#39;ús i les preferències"
+msgstr "Utilitzem cookies per fer un seguiment d'ús i preferències"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
 msgid "I Understand"
@@ -1551,13 +1548,12 @@ msgstr "Entenc"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:24
 msgid "Learn more"
-msgstr "Aprèn més"
+msgstr "Aprèn-ne més"
 
 #: static/modern/translations-fakejs.js:9
 msgid "This service is currently not accessible due to schedule restrictions."
 msgstr ""
-"Actualment, aquest servei no és accessible a causa de restriccions d&#39;"
-"horari."
+"Actualment, aquest servei no és accessible a causa de restriccions d'horari."
 
 #: static/modern/translations-fakejs.js:30
 #: static/modern/translations-fakejs.js:54
@@ -1571,7 +1567,7 @@ msgstr "Quant a"
 
 #: static/modern/translations-fakejs.js:34
 msgid "Release service"
-msgstr "Servei de llançament"
+msgstr "Alliberar servei"
 
 #: static/modern/translations-fakejs.js:35
 msgid "Reset service"
@@ -1587,7 +1583,7 @@ msgstr "Accions"
 
 #: static/modern/translations-fakejs.js:38
 msgid "Username"
-msgstr "Nom d&#39;usuari"
+msgstr "Nom d'usuari"
 
 #: static/modern/translations-fakejs.js:39
 msgid "Password"
@@ -1595,7 +1591,7 @@ msgstr "Contrasenya"
 
 #: static/modern/translations-fakejs.js:41
 msgid "Login"
-msgstr "iniciar Sessió"
+msgstr "Iniciar sessió"
 
 #: static/modern/translations-fakejs.js:42
 msgid "UDS Client"
@@ -1607,15 +1603,15 @@ msgstr "Descarregueu el client UDS per a la vostra plataforma"
 
 #: static/modern/translations-fakejs.js:44
 msgid "You can access UDS Open Source code at"
-msgstr "Podeu accedir al codi UDS Open Source a"
+msgstr "Podeu accedir al codi obert d'UDS a"
 
 #: static/modern/translations-fakejs.js:45
 msgid "UDS has been developed using these components:"
-msgstr "UDS s&#39;ha desenvolupat utilitzant aquests components:"
+msgstr "UDS s'ha desenvolupat utilitzant aquests components:"
 
 #: static/modern/translations-fakejs.js:46
 msgid "If you find that we missed any component, please let us know"
-msgstr "Si creieu que hem perdut algun component, feu-nos-ho saber"
+msgstr "Si creieu que hem oblidat algun component, si us plau feu-nos-ho saber"
 
 #: static/modern/translations-fakejs.js:47
 msgid "UDS Service launcher"
@@ -1623,35 +1619,35 @@ msgstr "Llançador del servei UDS"
 
 #: static/modern/translations-fakejs.js:48
 msgid "The service you have requested is being launched."
-msgstr "El servei que heu sol·licitat s&#39;està llançant."
+msgstr "El servei que heu sol·licitat s'està iniciant."
 
 #: static/modern/translations-fakejs.js:49
 msgid "Please, note that reloading this page will not work."
-msgstr "Tingueu en compte que la recàrrega no funcionarà."
+msgstr "Tingueu en compte que la recàrrega d'aquesta pàgina no funcionarà."
 
 #: static/modern/translations-fakejs.js:50
 msgid "To relaunch service, you will have to do it from origin."
-msgstr "Per tornar a iniciar el servei, haureu de fer-ho des de l’origen."
+msgstr "Per reiniciar el servei, haureu de fer-ho des de l’origen."
 
 #: static/modern/translations-fakejs.js:51
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS plugin installed"
 msgstr ""
-"Si el servei no es llança automàticament, probablement no tingueu instal·lat "
-"el complement UDS"
+"Si el servei no s'inicia automàticament, probablement no teniu instal·lat el "
+"connector UDS"
 
 #: static/modern/translations-fakejs.js:52
 msgid "You can obtain it from the"
-msgstr "Podeu obtenir-lo a la web"
+msgstr "Podeu obtenir-lo de"
 
 #: static/modern/translations-fakejs.js:53
 msgid "UDS Plugin download page"
-msgstr "Pàgina de descàrrega de plugins UDS"
+msgstr "Pàgina de descàrrega de connectors UDS"
 
 #: static/modern/translations-fakejs.js:55
 msgid "An error has occurred"
-msgstr "S&#39;ha produït un error"
+msgstr "S'ha produït un error"
 
 #: static/modern/translations-fakejs.js:56
 msgid "Return"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 10:57+0200\n"
+"POT-Creation-Date: 2020-05-06 13:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -650,7 +650,7 @@ msgstr ""
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:73
 #: osmanagers/WindowsOsManager/windows_domain.py:74
-#: services/OpenGnsys/service.py:135
+#: services/OpenGnsys/service.py:136
 msgid "Advanced"
 msgstr ""
 
@@ -1541,30 +1541,30 @@ msgstr ""
 msgid "Invalid server certificate. "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:189
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:200
+#: auths/SAML_enterprise/saml.py:201
 msgid "Invalid private key. "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:217
+#: auths/SAML_enterprise/saml.py:218
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:225
+#: auths/SAML_enterprise/saml.py:226
 msgid " (obtained from URL)"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:226
+#: auths/SAML_enterprise/saml.py:227
 msgid "XML does not seem valid for IDP Metadata "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:242
+#: auths/SAML_enterprise/saml.py:243
 msgid "Can't access idp metadata"
 msgstr ""
 
@@ -1961,22 +1961,22 @@ msgid "No services available"
 msgstr ""
 
 #: dispatchers/wyse_enterprise/views.py:225
-#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Invalid session"
 msgstr ""
 
 #: dispatchers/wyse_enterprise/views.py:229
-#: dispatchers/wyse_enterprise/views.py:312
+#: dispatchers/wyse_enterprise/views.py:319
 msgid "Invalid authorization"
 msgstr ""
 
 #: dispatchers/wyse_enterprise/views.py:240
-#: dispatchers/wyse_enterprise/views.py:318
+#: dispatchers/wyse_enterprise/views.py:325
 msgid "Invalid request"
 msgstr ""
 
 #: dispatchers/wyse_enterprise/views.py:243
-#: dispatchers/wyse_enterprise/views.py:321
+#: dispatchers/wyse_enterprise/views.py:328
 msgid "Invalid credentials used"
 msgstr ""
 
@@ -1984,13 +1984,17 @@ msgstr ""
 msgid "Service not found"
 msgstr ""
 
-#: dispatchers/wyse_enterprise/views.py:270 web/util/errors.py:74
+#: dispatchers/wyse_enterprise/views.py:260
+msgid "Invalid machine uuid."
+msgstr ""
+
+#: dispatchers/wyse_enterprise/views.py:274 web/util/errors.py:74
 msgid "Transport not found"
 msgstr ""
 
-#: dispatchers/wyse_enterprise/views.py:274
-#: dispatchers/wyse_enterprise/views.py:280
-#: dispatchers/wyse_enterprise/views.py:285
+#: dispatchers/wyse_enterprise/views.py:278
+#: dispatchers/wyse_enterprise/views.py:284
+#: dispatchers/wyse_enterprise/views.py:289
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 
@@ -2128,10 +2132,9 @@ msgid "General"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:49
-#: osmanagers/LinuxOsManager/__init__.py:77
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-"3.5)</b>"
+"3.6)</b>"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:56
@@ -2148,6 +2151,12 @@ msgstr ""
 msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
+msgstr ""
+
+#: osmanagers/LinuxOsManager/__init__.py:77
+msgid ""
+"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+"<b>(Requires python >= 3.6)</b>"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
@@ -3225,11 +3234,11 @@ msgstr ""
 msgid "Timeout in seconds of connection to oVirt"
 msgstr ""
 
-#: services/OVirt/service.py:63 services/Proxmox/service.py:63
+#: services/OVirt/service.py:63
 msgid "oVirt/RHEV Linked Clone"
 msgstr ""
 
-#: services/OVirt/service.py:67 services/Proxmox/service.py:67
+#: services/OVirt/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr ""
 
@@ -3369,7 +3378,8 @@ msgstr ""
 
 #: services/OpenGnsys/service.py:133
 msgid ""
-"Security parameter for OpenGnsys to keep reservations at most this hours"
+"Security parameter for OpenGnsys to keep reservations at most this hours. "
+"Handle with care!"
 msgstr ""
 
 #: services/OpenNebula/provider.py:58
@@ -3679,6 +3689,14 @@ msgstr ""
 #: services/Vmware_enterprise/publication.py:68
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
+msgstr ""
+
+#: services/Proxmox/service.py:63
+msgid "Proxmox Linked Clone"
+msgstr ""
+
+#: services/Proxmox/service.py:67
+msgid "Proxmox Services based on templates and COW (experimental)"
 msgstr ""
 
 #: services/Proxmox/service.py:112
@@ -4414,7 +4432,7 @@ msgid "Shadow"
 msgstr ""
 
 #: services/Xen/service.py:158
-msgid "Shadow memory multiplier (memory overcommit)"
+msgid "Shadow memory multiplier (use with care)"
 msgstr ""
 
 #: temp_for_locales.py:92
@@ -5383,36 +5401,44 @@ msgstr ""
 msgid "Invalid data"
 msgstr ""
 
-#: web/util/configjs.py:119
+#: web/util/configjs.py:120
 msgid "Access limited by calendar"
 msgstr ""
 
-#: web/util/configjs.py:145
+#: web/util/configjs.py:146
 msgid "Windows client"
 msgstr ""
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:147
 msgid "Mac OS X client"
 msgstr ""
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:148
 msgid "Debian based Linux client"
 msgstr ""
 
-#: web/util/configjs.py:147 web/util/configjs.py:148 web/util/configjs.py:149
-#: web/util/configjs.py:150
-msgid "(requires Python-2.7)"
-msgstr ""
-
 #: web/util/configjs.py:148
-msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
+msgid "(requires Python-3.6 or newer)"
 msgstr ""
 
 #: web/util/configjs.py:149
-msgid "Suse based Linux client"
+msgid "Debian based Python 2.7 Linux client (legacy)"
+msgstr ""
+
+#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
+#: web/util/configjs.py:152
+msgid "(requires Python-2.7)"
 msgstr ""
 
 #: web/util/configjs.py:150
+msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
+msgstr ""
+
+#: web/util/configjs.py:151
+msgid "Suse based Linux client"
+msgstr ""
+
+#: web/util/configjs.py:152
 msgid "Generic .tar.gz Linux client"
 msgstr ""
 
