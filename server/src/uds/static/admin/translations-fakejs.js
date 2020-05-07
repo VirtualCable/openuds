@@ -205,7 +205,7 @@ gettext("Edit account");
 gettext("Delete account");
 gettext("Time mark");
 gettext("Set time mark for $NAME to current date/time?");
-gettext("Time mark stabliched");
+gettext("Time mark stablished");
 gettext("dismiss");
 gettext("No time mark");
 gettext("Delete account usage");
