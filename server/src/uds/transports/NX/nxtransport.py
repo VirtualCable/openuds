@@ -124,7 +124,7 @@ class NXTransport(BaseNXTransport):
         tab=gui.PARAMETERS_TAB
     )
     screenSize = gui.ChoiceField(
-        label=_('Scren size'),
+        label=_('Screen size'),
         order=10,
         tooltip=_('Screen size'),
         defvalue=CommonPrefs.SZ_FULLSCREEN,
