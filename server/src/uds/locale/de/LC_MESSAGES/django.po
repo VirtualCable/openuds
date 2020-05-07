@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-06 13:51+0200\n"
-"PO-Revision-Date: 2020-04-23 09:05+0000\n"
+"POT-Creation-Date: 2020-05-07 11:51+0200\n"
+"PO-Revision-Date: 2020-05-06 11:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -2238,9 +2238,6 @@ msgid "General"
 msgstr "Allgemeines"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
-#| msgid ""
-#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.6)</b>"
@@ -2270,9 +2267,6 @@ msgstr ""
 "<b>(Erfordert Python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:77
-#| msgid ""
-#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
 "<b>(Requires python >= 3.6)</b>"
@@ -3256,11 +3250,13 @@ msgid "Cluster"
 msgstr "Cluster"
 
 #: services/HyperV_enterprise/provider.py:65
-msgid ""
-"If you are using a clustered HyperV server, enable this option. Also, use the"
+#| msgid ""
+#| "If you are using a clustered HyperV server, enable this option. Also, use "
+#| "the"
+msgid "If you are using a clustered HyperV server, enable this option."
 msgstr ""
-"Wenn Sie einen Cluster-HyperV-Server verwenden, aktivieren Sie diese Option. "
-"Verwenden Sie auch die"
+"Wenn Sie einen Clustered-HyperV-Server verwenden, aktivieren Sie diese "
+"Option."
 
 #: services/HyperV_enterprise/provider.py:69
 msgid "Enable SSL"
@@ -3563,8 +3559,6 @@ msgid "Max. reservation time"
 msgstr "Max. Reservierungszeit"
 
 #: services/OpenGnsys/service.py:133
-#| msgid ""
-#| "Security parameter for OpenGnsys to keep reservations at most this hours"
 msgid ""
 "Security parameter for OpenGnsys to keep reservations at most this hours. "
 "Handle with care!"
@@ -3899,12 +3893,10 @@ msgid "UDS Publication for {0} created at {1}"
 msgstr "UDS-Veröffentlichung für {0} erstellt am {1}"
 
 #: services/Proxmox/service.py:63
-#| msgid "Xen Linked Clone"
 msgid "Proxmox Linked Clone"
 msgstr "Proxmox Linked Clone"
 
 #: services/Proxmox/service.py:67
-#| msgid "oVirt Services based on templates and COW (experimental)"
 msgid "Proxmox Services based on templates and COW (experimental)"
 msgstr "Proxmox Services basierend auf Vorlagen und COW (experimentell)"
 
@@ -4698,7 +4690,6 @@ msgid "Shadow"
 msgstr "Schatten"
 
 #: services/Xen/service.py:158
-#| msgid "Shadow memory multiplier (memory overcommit)"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Schattenspeicher-Multiplikator (vorsichtig verwenden)"
 
@@ -4852,6 +4843,7 @@ msgstr "Leere Creds"
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
 #: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
@@ -5195,12 +5187,9 @@ msgstr "Speicher-Cache"
 msgid "Cache size en Mb kept at memory"
 msgstr "Cache-Größe und MB im Arbeitsspeicher"
 
-#: transports/NX/nxtransport.py:127 transports/NX/nxtunneltransport.py:129
-#: transports/X2GO/x2go_base.py:75
-msgid "Scren size"
-msgstr "Scren Größe"
-
-#: transports/NX/nxtransport.py:129 transports/NX/nxtunneltransport.py:131
+#: transports/NX/nxtransport.py:127 transports/NX/nxtransport.py:129
+#: transports/NX/nxtunneltransport.py:129
+#: transports/NX/nxtunneltransport.py:131 transports/X2GO/x2go_base.py:75
 #: transports/X2GO/x2go_base.py:77
 msgid "Screen size"
 msgstr "Bildschirmgröße"
@@ -5505,12 +5494,6 @@ msgstr "RGS"
 msgid "RGS Protocol. Direct connection."
 msgstr "RGS-Protokoll. Direkte Verbindung."
 
-#: transports/RGS_enterprise/rgs.py:44
-msgid "If checked, the credentials used to cscriptNameTemplatel be emtpy"
-msgstr ""
-"Wenn diese Option aktiviert ist, sind die für cscriptNameTemplatel "
-"verwendeten Anmeldeinformationen leer"
-
 #: transports/RGS_enterprise/rgs.py:49
 #: transports/RGS_enterprise/rgstunnel.py:61
 msgid "Image quality"
@@ -5773,12 +5756,10 @@ msgid "Debian based Linux client"
 msgstr "Debian-basierter Linux-Client"
 
 #: web/util/configjs.py:148
-#| msgid "(requires Python-2.7)"
 msgid "(requires Python-3.6 or newer)"
 msgstr "(erfordert Python-3.6 oder neuer)"
 
 #: web/util/configjs.py:149
-#| msgid "Debian based Linux client"
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "Debian-basierter Python 2.7 Linux-Client (Legacy)"
 

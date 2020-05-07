@@ -5,13 +5,14 @@
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020
+# Javier <jgonzalez@virtualcable.es>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-06 13:51+0200\n"
-"PO-Revision-Date: 2020-05-06 09:01+0000\n"
-"Last-Translator: albert clar <albert.clar@uib.cat>\n"
+"POT-Creation-Date: 2020-05-07 11:51+0200\n"
+"PO-Revision-Date: 2020-05-07 08:33+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -1840,7 +1841,7 @@ msgstr "de"
 
 #: core/reports/report.py:119
 msgid "Printed in {now:%Y, %b %d} at {now:%H:%M}"
-msgstr "S'ha imprès el {%Y,% b%, %d} a les {%H:%M}"
+msgstr "S'ha imprès el {now:%Y,% b%, %d} a les {now:%H:%M}"
 
 #: core/services/service.py:101 core/services/service.py:113
 msgid "Base Service"
@@ -2221,15 +2222,12 @@ msgid "General"
 msgstr "General"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
-#| msgid ""
-#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.6)</b>"
 msgstr ""
-"Actor UDS per a màquines Debian, Ubuntu, ... Linux <b>(Requereix python&gt; ="
-" 3.6)</b>"
+"Actor UDS per a màquines Debian, Ubuntu, ... Linux <b>(Requereix python&gt; "
+"= 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:56
 msgid ""
@@ -2253,9 +2251,6 @@ msgstr ""
 "<b>(Requereix python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:77
-#| msgid ""
-#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
 "<b>(Requires python >= 3.6)</b>"
@@ -3245,11 +3240,11 @@ msgid "Cluster"
 msgstr "Clúster"
 
 #: services/HyperV_enterprise/provider.py:65
-msgid ""
-"If you are using a clustered HyperV server, enable this option. Also, use the"
-msgstr ""
-"Si utilitzeu un servidor HyperV en clúster, habiliteu aquesta opció. A més, "
-"utilitzeu "
+#| msgid ""
+#| "If you are using a clustered HyperV server, enable this option. Also, use "
+#| "the"
+msgid "If you are using a clustered HyperV server, enable this option."
+msgstr "Si utilitzeu un servidor HyperV en clúster, activeu aquesta opció."
 
 #: services/HyperV_enterprise/provider.py:69
 msgid "Enable SSL"
@@ -3550,8 +3545,6 @@ msgid "Max. reservation time"
 msgstr "Temps màxim de reserva"
 
 #: services/OpenGnsys/service.py:133
-#| msgid ""
-#| "Security parameter for OpenGnsys to keep reservations at most this hours"
 msgid ""
 "Security parameter for OpenGnsys to keep reservations at most this hours. "
 "Handle with care!"
@@ -3886,12 +3879,10 @@ msgid "UDS Publication for {0} created at {1}"
 msgstr "Publicació d'UDS per a {0} creat a {1}"
 
 #: services/Proxmox/service.py:63
-#| msgid "Xen Linked Clone"
 msgid "Proxmox Linked Clone"
 msgstr "Clon enllaçat Proxmox"
 
 #: services/Proxmox/service.py:67
-#| msgid "oVirt Services based on templates and COW (experimental)"
 msgid "Proxmox Services based on templates and COW (experimental)"
 msgstr "Proxmox Services basats en plantilles i COW (experimentals)"
 
@@ -4687,7 +4678,6 @@ msgid "Shadow"
 msgstr "Shadow"
 
 #: services/Xen/service.py:158
-#| msgid "Shadow memory multiplier (memory overcommit)"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Multiplicador de memòria d’ombra (utilitzeu amb compte)"
 
@@ -4841,6 +4831,7 @@ msgstr "Credencials buides"
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
 #: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
@@ -5181,12 +5172,9 @@ msgstr "Memòria cau"
 msgid "Cache size en Mb kept at memory"
 msgstr "Mida de memòria cau que es conserva en memòria en Mb "
 
-#: transports/NX/nxtransport.py:127 transports/NX/nxtunneltransport.py:129
-#: transports/X2GO/x2go_base.py:75
-msgid "Scren size"
-msgstr "Mida de la pantalla"
-
-#: transports/NX/nxtransport.py:129 transports/NX/nxtunneltransport.py:131
+#: transports/NX/nxtransport.py:127 transports/NX/nxtransport.py:129
+#: transports/NX/nxtunneltransport.py:129
+#: transports/NX/nxtunneltransport.py:131 transports/X2GO/x2go_base.py:75
 #: transports/X2GO/x2go_base.py:77
 msgid "Screen size"
 msgstr "Mida de la pantalla"
@@ -5487,12 +5475,6 @@ msgstr "RGS"
 msgid "RGS Protocol. Direct connection."
 msgstr "Protocol RGS. Connexió directa."
 
-#: transports/RGS_enterprise/rgs.py:44
-msgid "If checked, the credentials used to cscriptNameTemplatel be emtpy"
-msgstr ""
-"Si està seleccionat, les credencials utilitzades per cscriptNameTemplatel "
-"estan buides"
-
 #: transports/RGS_enterprise/rgs.py:49
 #: transports/RGS_enterprise/rgstunnel.py:61
 msgid "Image quality"
@@ -5754,12 +5736,10 @@ msgid "Debian based Linux client"
 msgstr "Client Linux basat en Debian"
 
 #: web/util/configjs.py:148
-#| msgid "(requires Python-2.7)"
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requereix Python-3.6 o més recent)"
 
 #: web/util/configjs.py:149
-#| msgid "Debian based Linux client"
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "Client basat en Debian Python 2.7 Linux (heretat)"
 

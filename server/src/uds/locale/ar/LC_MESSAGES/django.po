@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-06 13:51+0200\n"
-"PO-Revision-Date: 2020-04-23 09:05+0000\n"
+"POT-Creation-Date: 2020-05-07 11:51+0200\n"
+"PO-Revision-Date: 2020-05-06 11:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -2184,9 +2184,6 @@ msgid "General"
 msgstr "العام"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
-#| msgid ""
-#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.6)</b>"
@@ -2215,15 +2212,12 @@ msgstr ""
 "b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:77
-#| msgid ""
-#| "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
-#| "3.5)</b>"
 msgid ""
 "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
 "<b>(Requires python >= 3.6)</b>"
 msgstr ""
-"ممثل UDS لأجهزة Linux التي تعمل بنظام Debian. تستخدم فقط للآلات الثابتة. <b>("
-"يتطلب بيثون&gt; = 3.6)</b>"
+"ممثل UDS لأجهزة Linux التي تعمل بنظام Debian. تستخدم فقط للآلات الثابتة. "
+"<b>(يتطلب بيثون&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
@@ -3186,11 +3180,11 @@ msgid "Cluster"
 msgstr "العنقود"
 
 #: services/HyperV_enterprise/provider.py:65
-msgid ""
-"If you are using a clustered HyperV server, enable this option. Also, use the"
-msgstr ""
-"إذا كنت تستخدم خادم HyperV متفاوت المسافات ، فقم بتمكين هذا الخيار. أيضا ، "
-"استخدم"
+#| msgid ""
+#| "If you are using a clustered HyperV server, enable this option. Also, use "
+#| "the"
+msgid "If you are using a clustered HyperV server, enable this option."
+msgstr "إذا كنت تستخدم خادم HyperV مجمع ، فقم بتمكين هذا الخيار."
 
 #: services/HyperV_enterprise/provider.py:69
 msgid "Enable SSL"
@@ -3480,8 +3474,6 @@ msgid "Max. reservation time"
 msgstr "الحد الأقصى لوقت الحجز"
 
 #: services/OpenGnsys/service.py:133
-#| msgid ""
-#| "Security parameter for OpenGnsys to keep reservations at most this hours"
 msgid ""
 "Security parameter for OpenGnsys to keep reservations at most this hours. "
 "Handle with care!"
@@ -3811,12 +3803,10 @@ msgid "UDS Publication for {0} created at {1}"
 msgstr "UDS النشر ل{0} تم إنشاؤها في {1}"
 
 #: services/Proxmox/service.py:63
-#| msgid "Xen Linked Clone"
 msgid "Proxmox Linked Clone"
 msgstr "Proxmox مرتبط استنساخ"
 
 #: services/Proxmox/service.py:67
-#| msgid "oVirt Services based on templates and COW (experimental)"
 msgid "Proxmox Services based on templates and COW (experimental)"
 msgstr "خدمات Proxmox القائمة على القوالب و COW (التجريبية)"
 
@@ -4578,7 +4568,6 @@ msgid "Shadow"
 msgstr "ظل"
 
 #: services/Xen/service.py:158
-#| msgid "Shadow memory multiplier (memory overcommit)"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "مضاعف ذاكرة الظل (استخدم بعناية)"
 
@@ -4732,6 +4721,7 @@ msgstr "أوراق الاعتماد فارغة."
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
 #: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدمة للاتصال أن تكون فارغة."
@@ -5064,12 +5054,9 @@ msgstr "ذاكرة التخزين المؤقت"
 msgid "Cache size en Mb kept at memory"
 msgstr "حجم ذاكرة التخزين المؤقت ميغابايت الاحتفاظ بها في الذاكرة"
 
-#: transports/NX/nxtransport.py:127 transports/NX/nxtunneltransport.py:129
-#: transports/X2GO/x2go_base.py:75
-msgid "Scren size"
-msgstr "حجم scren"
-
-#: transports/NX/nxtransport.py:129 transports/NX/nxtunneltransport.py:131
+#: transports/NX/nxtransport.py:127 transports/NX/nxtransport.py:129
+#: transports/NX/nxtunneltransport.py:129
+#: transports/NX/nxtunneltransport.py:131 transports/X2GO/x2go_base.py:75
 #: transports/X2GO/x2go_base.py:77
 msgid "Screen size"
 msgstr "حجم الشاشة"
@@ -5352,11 +5339,6 @@ msgstr "RGS"
 msgid "RGS Protocol. Direct connection."
 msgstr "بروتوكول RGS. الاتصال المباشر."
 
-#: transports/RGS_enterprise/rgs.py:44
-msgid "If checked, the credentials used to cscriptNameTemplatel be emtpy"
-msgstr ""
-"إذا تم تحديده ، تكون بيانات الاعتماد المستخدمة في cscriptNameTemplatel emtpy"
-
 #: transports/RGS_enterprise/rgs.py:49
 #: transports/RGS_enterprise/rgstunnel.py:61
 msgid "Image quality"
@@ -5607,12 +5589,10 @@ msgid "Debian based Linux client"
 msgstr "ديبين لينكس على أساس العميل"
 
 #: web/util/configjs.py:148
-#| msgid "(requires Python-2.7)"
 msgid "(requires Python-3.6 or newer)"
 msgstr "(يتطلب Python-3.6 أو أحدث)"
 
 #: web/util/configjs.py:149
-#| msgid "Debian based Linux client"
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "عميل Linux Python 2.7 (قديم)"
 

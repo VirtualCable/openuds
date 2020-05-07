@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-06 13:51+0200\n"
+"POT-Creation-Date: 2020-05-07 11:51+0200\n"
 "PO-Revision-Date: 2020-04-23 09:06+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -933,8 +933,9 @@ msgid "Set time mark for $NAME to current date/time?"
 msgstr "Zeitmarke für $ NAME auf aktuelles Datum / Uhrzeit setzen?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:208
-msgid "Time mark stabliched"
-msgstr "Zeitmarke stabilisiert"
+#| msgid "Time mark stabliched"
+msgid "Time mark stablished"
+msgstr "Zeitmarke gesetzt"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:210
 msgid "No time mark"
