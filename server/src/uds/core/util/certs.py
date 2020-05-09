@@ -28,7 +28,7 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     cert = (
         x509.CertificateBuilder()
             .subject_name(name)
-            .issuer_name(name)  # self signed
+            .issuer_name(name)  # self signed, its Issuer DN must match its Subject DN.
             .public_key(key.public_key())
             .serial_number(random.SystemRandom().randint(0, 1<<64))
             .not_valid_before(now)
