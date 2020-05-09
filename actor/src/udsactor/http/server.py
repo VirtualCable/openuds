@@ -160,7 +160,7 @@ class HTTPServerThread(threading.Thread):
 
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.options = ssl.CERT_NONE
-        context.load_cert_chain(self._certFile, password=password)
+        context.load_cert_chain(certfile=self._certFile, password=password)
         self._server.socket = context.wrap_socket(self._server.socket, server_side=True)
 
         self._server.serve_forever()

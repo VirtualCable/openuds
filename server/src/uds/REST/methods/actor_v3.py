@@ -110,7 +110,7 @@ class ActorV3Action(Handler):
             result = self.action()
             logger.debug('Action result: %s', result)
             return result
-        except BlockAccess:
+        except (BlockAccess, KeyError):
             # For blocking attacks
             incFailedIp(self._request.ip)  # pylint: disable=protected-access
         except Exception as e:
@@ -266,11 +266,11 @@ class Initiialize(ActorV3Action):
         except (ActorToken.DoesNotExist, Service.DoesNotExist):
             raise BlockAccess()
 
-class ChangeIp(ActorV3Action):
+class BaseReadyChange(ActorV3Action):
     """
     Records the IP change of actor
     """
-    name = 'changeip'
+    name = 'notused'
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         """
@@ -317,7 +317,14 @@ class ChangeIp(ActorV3Action):
 
         return ActorV3Action.actorResult({'private_key': privateKey, 'server_certificate': cert, 'password': password})
 
-class Ready(ChangeIp):
+class ChangeIp(BaseReadyChange):
+    """
+    Processses IP Change. Needs to be "last" on a lead to be auto added to list of available methods
+    """
+
+    name = 'changeip'
+
+class Ready(BaseReadyChange):
     """
     Notifies the user service is ready
     """

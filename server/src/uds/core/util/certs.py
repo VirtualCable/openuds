@@ -20,7 +20,6 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     # Create a random password for private key
     password = secrets.token_urlsafe(32)
 
-    issuer = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, 'UDS Server')])
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, ip)])
     san = x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))])
 
@@ -29,7 +28,7 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     cert = (
         x509.CertificateBuilder()
             .subject_name(name)
-            .issuer_name(issuer)
+            .issuer_name(name)  # self signed
             .public_key(key.public_key())
             .serial_number(random.SystemRandom().randint(0, 1<<64))
             .not_valid_before(now)
