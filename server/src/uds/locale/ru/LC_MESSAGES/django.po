@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 11:51+0200\n"
-"PO-Revision-Date: 2020-05-06 11:52+0000\n"
+"POT-Creation-Date: 2020-05-11 14:01+0200\n"
+"PO-Revision-Date: 2020-05-07 09:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -3221,9 +3221,6 @@ msgid "Cluster"
 msgstr "Кластер"
 
 #: services/HyperV_enterprise/provider.py:65
-#| msgid ""
-#| "If you are using a clustered HyperV server, enable this option. Also, use "
-#| "the"
 msgid "If you are using a clustered HyperV server, enable this option."
 msgstr "Если вы используете кластерный сервер HyperV, включите эту опцию."
 
@@ -5693,40 +5690,40 @@ msgstr "Неверные данные"
 msgid "Access limited by calendar"
 msgstr "Доступ ограничен календарем"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:156
 msgid "Windows client"
 msgstr "Клиент Windows"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:157
 msgid "Mac OS X client"
 msgstr "Клиент Mac OS X"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "Debian based Linux client"
 msgstr "Linux-клиент на основе Debian"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "(requires Python-3.6 or newer)"
 msgstr "(требуется Python-3.6 или новее)"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:159
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "Клиент Python 2.7 для Linux на основе Debian (устаревший)"
 
-#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
-#: web/util/configjs.py:152
+#: web/util/configjs.py:159 web/util/configjs.py:160 web/util/configjs.py:161
+#: web/util/configjs.py:162
 msgid "(requires Python-2.7)"
 msgstr "(требует Python-2.7)"
 
-#: web/util/configjs.py:150
+#: web/util/configjs.py:160
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Linux-клиент на базе Red Hat (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:151
+#: web/util/configjs.py:161
 msgid "Suse based Linux client"
 msgstr "Linux-клиент на базе Suse"
 
-#: web/util/configjs.py:152
+#: web/util/configjs.py:162
 msgid "Generic .tar.gz Linux client"
 msgstr "Общий .tar.gz Linux-клиент"
 

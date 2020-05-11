@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 11:51+0200\n"
-"PO-Revision-Date: 2020-05-06 11:52+0000\n"
+"POT-Creation-Date: 2020-05-11 14:01+0200\n"
+"PO-Revision-Date: 2020-05-07 09:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -3219,9 +3219,6 @@ msgid "Cluster"
 msgstr "Klusterrak"
 
 #: services/HyperV_enterprise/provider.py:65
-#| msgid ""
-#| "If you are using a clustered HyperV server, enable this option. Also, use "
-#| "the"
 msgid "If you are using a clustered HyperV server, enable this option."
 msgstr "HyperV zerbitzari multzoa erabiltzen ari bazara, gaitu aukera hau."
 
@@ -5684,40 +5681,40 @@ msgstr "Datu baliogabeak"
 msgid "Access limited by calendar"
 msgstr "Sarbidea egutegian mugatua"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:156
 msgid "Windows client"
 msgstr "Windows bezeroa"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:157
 msgid "Mac OS X client"
 msgstr "Mac OS X bezeroa"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "Debian based Linux client"
 msgstr "Debian oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "(requires Python-3.6 or newer)"
 msgstr "(Python-3.6 edo berriagoa behar du)"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:159
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "Debian oinarritutako Python 2.7 Linux bezeroa (ondarea)"
 
-#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
-#: web/util/configjs.py:152
+#: web/util/configjs.py:159 web/util/configjs.py:160 web/util/configjs.py:161
+#: web/util/configjs.py:162
 msgid "(requires Python-2.7)"
 msgstr "(Python-2.7 behar da)"
 
-#: web/util/configjs.py:150
+#: web/util/configjs.py:160
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Red Hat Linux bezeroaren (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:151
+#: web/util/configjs.py:161
 msgid "Suse based Linux client"
 msgstr "Suse oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:152
+#: web/util/configjs.py:162
 msgid "Generic .tar.gz Linux client"
 msgstr "Generic .tar.gz Linux bezeroa"
 

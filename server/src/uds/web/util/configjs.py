@@ -136,6 +136,7 @@ def udsJs(request: 'HttpRequest') -> str:
         }
     }
 
+    info: typing.Optional[typing.MutableMapping] = None
     if request.user and request.user.isStaff():
         info = {
             'networks': [n.name for n in Network.networksFor(request.ip)],
@@ -143,8 +144,6 @@ def udsJs(request: 'HttpRequest') -> str:
             'ip': request.ip,
             'ip_proxy': request.ip_proxy
         }
-    else:
-        info = None
 
 
     # all plugins are under url clients...

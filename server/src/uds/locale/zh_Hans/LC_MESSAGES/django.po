@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 11:51+0200\n"
-"PO-Revision-Date: 2020-05-06 11:52+0000\n"
+"POT-Creation-Date: 2020-05-11 14:01+0200\n"
+"PO-Revision-Date: 2020-05-07 09:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -3117,9 +3117,6 @@ msgid "Cluster"
 msgstr "簇"
 
 #: services/HyperV_enterprise/provider.py:65
-#| msgid ""
-#| "If you are using a clustered HyperV server, enable this option. Also, use "
-#| "the"
 msgid "If you are using a clustered HyperV server, enable this option."
 msgstr "如果使用群集HyperV服务器，请启用此选项。"
 
@@ -5453,40 +5450,40 @@ msgstr "无效数据"
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:156
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:157
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "(requires Python-3.6 or newer)"
 msgstr "（需要Python-3.6或更高版本）"
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:159
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "基于Debian的Python 2.7 Linux客户端（旧版）"
 
-#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
-#: web/util/configjs.py:152
+#: web/util/configjs.py:159 web/util/configjs.py:160 web/util/configjs.py:161
+#: web/util/configjs.py:162
 msgid "(requires Python-2.7)"
 msgstr "（需要Python-2.7）"
 
-#: web/util/configjs.py:150
+#: web/util/configjs.py:160
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "基于Red Hat的Linux客户端（RH，Fedora，Centos，...）"
 
-#: web/util/configjs.py:151
+#: web/util/configjs.py:161
 msgid "Suse based Linux client"
 msgstr "基于Suse的Linux客户端"
 
-#: web/util/configjs.py:152
+#: web/util/configjs.py:162
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 

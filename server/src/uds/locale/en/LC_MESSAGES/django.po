@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 11:51+0200\n"
+"POT-Creation-Date: 2020-05-11 14:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5398,40 +5398,40 @@ msgstr ""
 msgid "Access limited by calendar"
 msgstr ""
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:156
 msgid "Windows client"
 msgstr ""
 
-#: web/util/configjs.py:147
+#: web/util/configjs.py:157
 msgid "Mac OS X client"
 msgstr ""
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "Debian based Linux client"
 msgstr ""
 
-#: web/util/configjs.py:148
+#: web/util/configjs.py:158
 msgid "(requires Python-3.6 or newer)"
 msgstr ""
 
-#: web/util/configjs.py:149
+#: web/util/configjs.py:159
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr ""
 
-#: web/util/configjs.py:149 web/util/configjs.py:150 web/util/configjs.py:151
-#: web/util/configjs.py:152
+#: web/util/configjs.py:159 web/util/configjs.py:160 web/util/configjs.py:161
+#: web/util/configjs.py:162
 msgid "(requires Python-2.7)"
 msgstr ""
 
-#: web/util/configjs.py:150
+#: web/util/configjs.py:160
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr ""
 
-#: web/util/configjs.py:151
+#: web/util/configjs.py:161
 msgid "Suse based Linux client"
 msgstr ""
 
-#: web/util/configjs.py:152
+#: web/util/configjs.py:162
 msgid "Generic .tar.gz Linux client"
 msgstr ""
 
