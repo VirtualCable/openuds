@@ -144,7 +144,7 @@ class GlobalRequestMiddleware:
             if not request.ip or behind_proxy is True:  # Request.IP will be None in case of nginx & gunicorn
                 request.ip = request.ip_proxy  # Stores the ip
                 # will raise "list out of range", leaving ip_proxy = proxy in case of no other proxy apart of nginx
-                request.ip_proxy = proxies[1]
+                request.ip_proxy = proxies[1].strip()
         except Exception:
             request.ip_proxy = request.ip
 
