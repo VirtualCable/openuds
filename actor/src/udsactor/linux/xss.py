@@ -100,7 +100,7 @@ def getIdleDuration() -> float:
 
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), xssInfo)
 
-    # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
+    # States: 0 = off, 1 = On, 2 = Cycle, 3 = Disabled, ...?
     if xssInfo.contents.state == 1:  # state = 1 means "active", so idle is not a valid state
         return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
 

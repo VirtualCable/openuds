@@ -45,7 +45,7 @@ from uds.REST.methods.client import CLIENT_VERSION
 from uds.core.managers import downloadsManager
 from uds.core.util.config import GlobalConfig
 from uds.core import VERSION, VERSION_STAMP
-from uds.models import Authenticator, Image
+from uds.models import Authenticator, Image, Network, Transport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -136,6 +136,17 @@ def udsJs(request: 'HttpRequest') -> str:
         }
     }
 
+    if request.user and request.user.isStaff():
+        info = {
+            'networks': [n.name for n in Network.networksFor(request.ip)],
+            'transports': [t.name for t in Transport.objects.all() if t.validForIp(request.ip)],
+            'ip': request.ip,
+            'ip_proxy': request.ip_proxy
+        }
+    else:
+        info = None
+
+
     # all plugins are under url clients...
     plugins = [
         {
@@ -176,6 +187,7 @@ def udsJs(request: 'HttpRequest') -> str:
     uds = {
         'profile': profile,
         'config': config,
+        'info': info,
         'plugins': plugins,
         'actors': actors,
         'errors': errors,
