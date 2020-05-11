@@ -51,8 +51,8 @@ def _requestActor(
             r = proxy.doProxyRequest(url=url, data=data, timeout=TIMEOUT)
         else:
             verify: typing.Union[bool, str]
-            # cert = userService.getProperty('cert')
-            cert = ''  # Untils more tests, keep as previous....  TODO: Fix this when fully tested
+            cert = userService.getProperty('cert')
+            # cert = ''  # Untils more tests, keep as previous....  TODO: Fix this when fully tested
             if cert:
                 # Generate temp file, and delete it after
                 verify = tempfile.mktemp('udscrt')
