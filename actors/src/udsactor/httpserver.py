@@ -181,7 +181,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         logger.error('HTTP ' + fmt % args)
 
     def log_message(self, fmt, *args):
-        logger.info('HTTP ' + fmt % args)
+        logger.debug('HTTP ' + fmt % args)
 
 
 class HTTPServerThread(threading.Thread):
