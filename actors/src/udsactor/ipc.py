@@ -132,7 +132,7 @@ class ClientProcessor(threading.Thread):
                     if b == b'':
                         # Client disconnected
                         self.running = False
-                        self.processRequest(REQ_LOGOUT, 'CLIENT_CONNECTION_LOST')
+                        # self.processRequest(REQ_LOGOUT, 'CLIENT_CONNECTION_LOST')
                         break
                     buf = six.byte2int(b)  # Empty buffer, this is set as non-blocking
                     if state is None:
