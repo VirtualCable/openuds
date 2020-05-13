@@ -117,14 +117,14 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             currDomain = operations.getDomainName()
             if currDomain:
                 # logger.debug('Name: "{}" vs "{}", Domain: "{}" vs "{}"'.format(currName.lower(), name.lower(), currDomain.lower(), domain.lower()))
-                logger.info('Machine {} is part of domain {}'.format(name, domain))
+                logger.debug('Machine {} is part of domain {}'.format(name, domain))
                 self.setReady()
             else:
                 operations.joinDomain(domain, ou, account, password, executeInOneStep=False)
                 self.reboot()
         else:
             operations.renameComputer(name)
-            logger.info('Rebooting computer got activate new name {}'.format(name))
+            logger.info('Rebooting computer for activating new name {}'.format(name))
             self.reboot()
 
     def joinDomain(  # pylint: disable=unused-argument, too-many-arguments

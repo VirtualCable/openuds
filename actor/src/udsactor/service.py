@@ -71,12 +71,12 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def execute(cmdLine: str, section: str) -> bool:
         try:
-            logger.info('Executing command on {}: {}'.format(section, cmdLine))
+            logger.debug('Executing command on {}: {}'.format(section, cmdLine))
             res = subprocess.check_call(cmdLine, shell=True)
         except Exception as e:
             logger.error('Got exception executing: {} - {} - {}'.format(section, cmdLine, e))
             return False
-        logger.info('Result of executing cmd for {} was {}'.format(section, res))
+        logger.debug('Result of executing cmd for {} was {}'.format(section, res))
         return True
 
     def __init__(self) -> None:
@@ -341,7 +341,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         # Check for password change request for an user
         if userName and newPassword:
-            logger.info('Setting password for user {}'.format(userName))
+            logger.info('Setting password for configured user')
             try:
                 platform.operations.changeUserPassword(userName, oldPassword or '', newPassword)
             except Exception as e:
@@ -377,7 +377,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         Invoked when broker requests a "domain" action
         default does nothing
         '''
-        logger.info('Base join invoked: {} on {}, {}'.format(name, domain, ou))
+        logger.debug('Base join invoked: {} on {}, {}'.format(name, domain, ou))
 
     # Client notifications
     def login(self, username: str) -> types.LoginResultInfoType:

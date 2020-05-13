@@ -103,7 +103,7 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
 
 
 def logevent(msg):
-    logger.info(msg)
+    logger.debug(msg)
 
 # def register():
     # call the CoInitialize to allow the registration to run in an other

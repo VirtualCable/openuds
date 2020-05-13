@@ -137,7 +137,7 @@ class Daemon:
             pf.close()
         except IOError:
             message = "pidfile {} does not exist. Daemon not running?\n".format(self.pidfile)
-            logger.info(message)
+            logger.error(message)
             # sys.stderr.write(message)
             return  # not an error in a restart
 

@@ -69,7 +69,7 @@ class LocalLogger:  # pylint: disable=too-few-public-methods
         if self.logger:
             self.logger.log(int(level / 1000) - 10, message)
 
-        if level < INFO or self.serviceLogger is False:  # Only information and above will be on event log
+        if level <= INFO or self.serviceLogger is False:  # Only information and above will be on event log
             return
 
         if level < WARN:  # Info
