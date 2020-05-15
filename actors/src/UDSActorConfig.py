@@ -55,14 +55,14 @@ class UDSConfigDialog(QtGui.QDialog):
             self.ui.host.setText(data.get('host', ''))
             self.ui.masterKey.setText(data.get('masterKey', ''))
             self.ui.useSSl.setCurrentIndex(1 if data.get('ssl', False) is True else 0)
-            self.ui.logLevelComboBox.setCurrentIndex(int(data.get('logLevel', '10000')) / 10000 - 1)
+            self.ui.logLevelComboBox.setCurrentIndex(int(data.get('logLevel', '10000')) / 10000 - 2)
 
     def _getCfg(self):
         return {
             'host': six.text_type(self.ui.host.text()),
             'masterKey': six.text_type(self.ui.masterKey.text()),
             'ssl': self.ui.useSSl.currentIndex() == 1,
-            'logLevel': (self.ui.logLevelComboBox.currentIndex() + 1) * 10000
+            'logLevel': (self.ui.logLevelComboBox.currentIndex() + 2) * 10000
         }
 
     def textChanged(self):
