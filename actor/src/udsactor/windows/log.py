@@ -63,15 +63,17 @@ class LocalLogger:  # pylint: disable=too-few-public-methods
 
     def log(self, level: int, message: str) -> None:
         # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
+        # our loglevels are 0 (other), 10000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
         if self.logger:
             self.logger.log(int(level / 1000), message)
 
-        if level <= INFO or self.serviceLogger is False:  # Only information and above will be on event log
+        if level < ERROR or self.serviceLogger is False:  # Only information and above will be on event log
             return
 
+        # In fact, we have restricted level in windows event log to ERROR or FATAL
+        # but left the code for just a case in the future...
         if level < WARN:  # Info
             servicemanager.LogInfoMsg(message)
         elif level < ERROR:  # WARN

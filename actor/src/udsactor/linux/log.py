@@ -66,7 +66,7 @@ class LocalLogger:  # pylint: disable=too-few-public-methods
 
     def log(self, level: int, message: str) -> None:
         # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
+        # our loglevels are 0 (other), 10000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
         if self.logger:
