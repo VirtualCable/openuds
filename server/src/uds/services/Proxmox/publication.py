@@ -132,6 +132,8 @@ class ProxmoxPublication(services.Publication):
                 self.service().makeTemplate(int(self._vm))
                 # And add it to HA if
                 self.service().enableHA(int(self._vm))
+                # Disable Protection (removal)
+                self.service().setProtection(int(self._vm), protection=False)
                 
         return self._state
 

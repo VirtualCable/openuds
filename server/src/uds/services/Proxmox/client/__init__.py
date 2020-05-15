@@ -317,6 +317,17 @@ class ProxmoxClient:
             logger.exception('removeFromHA')
 
     @ensureConected
+    def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool=False) -> None:
+        params: typing.List[typing.Tuple[str, str]] = [
+            ('protection', str(int(protection))),
+        ]
+        node = node or self.getVmInfo(vmId).node
+        self._post(
+            'nodes/{}/qemu/{}/config'.format(node, vmId),
+            data=params
+        )
+
+    @ensureConected
     def deleteVm(self, vmId: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
         return types.UPID.fromDict(

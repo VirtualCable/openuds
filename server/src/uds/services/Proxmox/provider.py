@@ -159,6 +159,9 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     def disableHA(self, vmId: int) -> None:
         self.__getApi().disableVmHA(vmId)
 
+    def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
+        self.__getApi().setProtection(vmId, node, protection) 
+
     def listHaGroups(self) -> typing.List[str]:
         return self.__getApi().listHAGroups()
 

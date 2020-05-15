@@ -43,7 +43,7 @@ if typing.TYPE_CHECKING:
     from . import rest
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))
+from .loglevel import OTHER, DEBUG, INFO, WARN, ERROR, FATAL
 
 class Logger:
     remoteLogger: typing.Optional['rest.UDSServerApi']

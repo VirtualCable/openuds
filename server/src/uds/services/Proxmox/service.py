@@ -274,6 +274,9 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
             return
         self.parent().disableHA(vmId)
 
+    def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool=False) -> None:
+        self.parent().setProtection(vmId, node, protection)
+
     def getBaseName(self) -> str:
         return self.baseName.value
 

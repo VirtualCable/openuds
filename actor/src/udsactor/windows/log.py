@@ -37,7 +37,7 @@ import typing
 import servicemanager  # @UnresolvedImport, pylint: disable=import-error
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log).
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))
+from ..loglevel import OTHER, DEBUG, INFO, WARN, ERROR, FATAL
 
 class LocalLogger:  # pylint: disable=too-few-public-methods
     linux = False
@@ -67,7 +67,7 @@ class LocalLogger:  # pylint: disable=too-few-public-methods
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
         if self.logger:
-            self.logger.log(int(level / 1000) - 10, message)
+            self.logger.log(int(level / 1000), message)
 
         if level <= INFO or self.serviceLogger is False:  # Only information and above will be on event log
             return

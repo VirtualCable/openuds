@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,46 +28,5 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=invalid-name
-import os
-import tempfile
-import logging
-import typing
 
-class LocalLogger:  # pylint: disable=too-few-public-methods
-    linux = False
-    windows = True
-
-    logger: typing.Optional[logging.Logger]
-
-    def __init__(self) -> None:
-        # tempdir is different for "user application" and "service"
-        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        # Try to open logger at /var/log path
-        # If it fails (access denied normally), will try to open one at user's home folder, and if
-        # agaim it fails, open it at the tmpPath
-        for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
-            try:
-                fname = os.path.join(logDir, 'udsactor.log')
-                logging.basicConfig(
-                    filename=fname,
-                    filemode='a',
-                    format='%(levelname)s %(asctime)s %(message)s',
-                    level=logging.DEBUG
-                )
-                self.logger = logging.getLogger('udsactor')
-                os.chmod(fname, 0o0600)
-                return
-            except Exception:
-                pass
-
-        # Logger can't be set
-        self.logger = None
-
-    def log(self, level: int, message: str) -> None:
-        # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
-        # logging levels are 10 (debug), 20 (info)
-        # OTHER = logging.NOTSET
-        if self.logger:
-            self.logger.log(int(level / 1000), message)
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * x for x in range(6))
