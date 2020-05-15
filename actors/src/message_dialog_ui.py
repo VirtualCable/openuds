@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'message-dialog.ui'
 #
-# Created: Mon Apr 27 22:05:02 2015
-#      by: PyQt4 UI code generator 4.11.2
+# Created by: PyQt4 UI code generator 4.12.1
 #
 # WARNING! All changes made in this file will be lost!
 

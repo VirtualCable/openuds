@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created: Mon Apr 27 22:05:03 2015
-#      by: PyQt4 UI code generator 4.11.2
+# Created by: PyQt4 UI code generator 4.12.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -63,7 +62,7 @@ class Ui_UdsActorSetupDialog(object):
         self.cancelButton.setSizePolicy(sizePolicy)
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.layoutWidget = QtGui.QWidget(UdsActorSetupDialog)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 131))
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 166))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.formLayout = QtGui.QFormLayout(self.layoutWidget)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
@@ -102,13 +101,14 @@ class Ui_UdsActorSetupDialog(object):
         self.logLevelComboBox.addItem(_fromUtf8(""))
         self.logLevelComboBox.setItemText(1, _fromUtf8("INFO"))
         self.logLevelComboBox.addItem(_fromUtf8(""))
-        self.logLevelComboBox.setItemText(2, _fromUtf8("ERROR"))
         self.logLevelComboBox.addItem(_fromUtf8(""))
-        self.logLevelComboBox.setItemText(3, _fromUtf8("FATAL"))
+        self.logLevelComboBox.setItemText(3, _fromUtf8("ERROR"))
+        self.logLevelComboBox.addItem(_fromUtf8(""))
+        self.logLevelComboBox.setItemText(4, _fromUtf8("FATAL"))
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.logLevelComboBox)
 
         self.retranslateUi(UdsActorSetupDialog)
-        self.logLevelComboBox.setCurrentIndex(1)
+        self.logLevelComboBox.setCurrentIndex(3)
         QtCore.QObject.connect(self.host, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), UdsActorSetupDialog.textChanged)
         QtCore.QObject.connect(self.masterKey, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), UdsActorSetupDialog.textChanged)
         QtCore.QObject.connect(self.cancelButton, QtCore.SIGNAL(_fromUtf8("pressed()")), UdsActorSetupDialog.cancelAndDiscard)
@@ -139,6 +139,7 @@ class Ui_UdsActorSetupDialog(object):
         self.useSSl.setItemText(0, _translate("UdsActorSetupDialog", "Do not use SSL", None))
         self.useSSl.setItemText(1, _translate("UdsActorSetupDialog", "Use SSL", None))
         self.logLevelLabel.setText(_translate("UdsActorSetupDialog", "Log Level", None))
+        self.logLevelComboBox.setItemText(2, _translate("UdsActorSetupDialog", "WARN", None))
 
 
 if __name__ == "__main__":

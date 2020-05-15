@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'about-dialog.ui'
 #
-# Created: Mon Apr 27 22:05:02 2015
-#      by: PyQt4 UI code generator 4.11.2
+# Created by: PyQt4 UI code generator 4.12.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -34,8 +33,8 @@ class Ui_UDSAboutDialog(object):
         UDSAboutDialog.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
         UDSAboutDialog.setModal(True)
         self.vboxlayout = QtGui.QVBoxLayout(UDSAboutDialog)
-        self.vboxlayout.setSpacing(9)
         self.vboxlayout.setMargin(9)
+        self.vboxlayout.setSpacing(9)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.LogoLabel = QtGui.QLabel(UDSAboutDialog)
         self.LogoLabel.setObjectName(_fromUtf8("LogoLabel"))
@@ -55,8 +54,8 @@ class Ui_UDSAboutDialog(object):
         self.aboutTab = QtGui.QWidget()
         self.aboutTab.setObjectName(_fromUtf8("aboutTab"))
         self.vboxlayout1 = QtGui.QVBoxLayout(self.aboutTab)
-        self.vboxlayout1.setSpacing(6)
         self.vboxlayout1.setMargin(9)
+        self.vboxlayout1.setSpacing(6)
         self.vboxlayout1.setObjectName(_fromUtf8("vboxlayout1"))
         self.aboutBrowser = QtGui.QTextBrowser(self.aboutTab)
         self.aboutBrowser.setOpenExternalLinks(True)
@@ -66,8 +65,8 @@ class Ui_UDSAboutDialog(object):
         self.authorsTab = QtGui.QWidget()
         self.authorsTab.setObjectName(_fromUtf8("authorsTab"))
         self.vboxlayout2 = QtGui.QVBoxLayout(self.authorsTab)
-        self.vboxlayout2.setSpacing(6)
         self.vboxlayout2.setMargin(9)
+        self.vboxlayout2.setSpacing(6)
         self.vboxlayout2.setObjectName(_fromUtf8("vboxlayout2"))
         self.authorsBrowser = QtGui.QTextBrowser(self.authorsTab)
         self.authorsBrowser.setOpenExternalLinks(True)
@@ -77,8 +76,8 @@ class Ui_UDSAboutDialog(object):
         self.licenseTab = QtGui.QWidget()
         self.licenseTab.setObjectName(_fromUtf8("licenseTab"))
         self.vboxlayout3 = QtGui.QVBoxLayout(self.licenseTab)
-        self.vboxlayout3.setSpacing(6)
         self.vboxlayout3.setMargin(9)
+        self.vboxlayout3.setSpacing(6)
         self.vboxlayout3.setObjectName(_fromUtf8("vboxlayout3"))
         self.licenseBrowser = QtGui.QTextBrowser(self.licenseTab)
         self.licenseBrowser.setObjectName(_fromUtf8("licenseBrowser"))
@@ -92,7 +91,7 @@ class Ui_UDSAboutDialog(object):
         self.vboxlayout.addWidget(self.buttonBox)
 
         self.retranslateUi(UDSAboutDialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("clicked(QAbstractButton*)")), UDSAboutDialog.closeDialog)
         QtCore.QMetaObject.connectSlotsByName(UDSAboutDialog)
 
@@ -106,7 +105,7 @@ class Ui_UDSAboutDialog(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Verdana\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Sans Serif\';\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans Serif\'; font-weight:600;\">(c) 2014, Virtual Cable S.L.U.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans Serif\'; font-weight:600;\">(c) 2012-2016, Virtual Cable S.L.U.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Sans Serif\'; font-style:italic;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"http://www.udsenterprise.com\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; text-decoration: underline; color:#0000ff;\">http://www.udsenterprise.com</span></a></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"http://www.openuds.org\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; text-decoration: underline; color:#0000ff;\">http://www.openuds.org</span></a></p>\n"
@@ -122,7 +121,7 @@ class Ui_UDSAboutDialog(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Verdana\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Copyright (c) 2014 Virtual Cable S.L.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Copyright (c) 2012-2016 Virtual Cable S.L.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">All rights reserved.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"><br /></p>\n"
