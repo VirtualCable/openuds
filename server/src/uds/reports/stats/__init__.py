@@ -37,4 +37,6 @@ from . import user_access
 from . import pools_performance
 from . import pools_usage_day
 from . import usage_by_pool
-from . import pool_usage_summary
+from . import pool_users_summary
+from . import pools_usage_summary
+

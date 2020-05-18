@@ -122,8 +122,6 @@ class UsageByPool(StatsReport):
                             'pool_name': pool.name
                         })
 
-        logger.debug('data: %s', data)
-
         return data, ','.join([p.name for p in pools])
 
     def generate(self):

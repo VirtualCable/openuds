@@ -47,10 +47,10 @@ from .base import StatsReport
 logger = logging.getLogger(__name__)
 
 
-class UsageSummaryByPool(StatsReport):
-    filename = 'pools_usage.pdf'
-    name = _('Summary of pools usage')  # Report name
-    description = _('Generates a report with the summary of a pool usage')  # Report description
+class UsageSummaryByUsersPool(StatsReport):
+    filename = 'pool_user_usage.pdf'
+    name = _('Pool Usage by users')  # Report name
+    description = _('Generates a report with the summary of users usage for a pool')  # Report description
     uuid = '202c6438-30a8-11e7-80e4-77c1e4cb9e09'
 
     # Input fields
@@ -134,7 +134,7 @@ class UsageSummaryByPool(StatsReport):
         items, poolName = self.getData()
 
         return self.templateAsPDF(
-            'uds/reports/stats/pool-usage-summary.html',
+            'uds/reports/stats/pool-users-summary.html',
             dct={
                 'data': items,
                 'pool': poolName,
@@ -146,16 +146,16 @@ class UsageSummaryByPool(StatsReport):
         )
 
 
-class UsageSummaryByPoolCSV(UsageSummaryByPool):
+class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
     filename = 'usage.csv'
     mime_type = 'text/csv'  # Report returns pdfs by default, but could be anything else
     uuid = '302e1e76-30a8-11e7-9d1e-6762bbf028ca'
     encoded = False
 
     # Input fields
-    pool = UsageSummaryByPool.pool
-    startDate = UsageSummaryByPool.startDate
-    endDate = UsageSummaryByPool.endDate
+    pool = UsageSummaryByUsersPool.pool
+    startDate = UsageSummaryByUsersPool.startDate
+    endDate = UsageSummaryByUsersPool.endDate
 
     def generate(self):
         output = io.StringIO()
