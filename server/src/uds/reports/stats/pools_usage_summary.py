@@ -60,31 +60,38 @@ class PoolsUsageSummary(UsageByPool):
         totalTime: int = 0
         totalCount: int = 0
 
+        uniqueUsers = set()
+
         for v in orig:
             uuid = v['pool']
             if uuid not in pools:
                 pools[uuid] = {
                     'name': v['pool_name'],
                     'time': 0,
-                    'count': 0
+                    'count': 0,
+                    'users': set()
                 }
-            logger.debug('V: %s', v)
             pools[uuid]['time'] += v['time']
             pools[uuid]['count'] += 1
+            # Now add user id to pool
+            pools[uuid]['users'].add(v['name'])
+            uniqueUsers.add(v['name'])
 
             totalTime += v['time']
             totalCount += 1
 
-        logger.debug('Pools: \n%s\n', pools)
+        logger.debug('Pools %s', pools)
+        # Remove unique users, and keep only counts...
+        for pn in pools:
+            pools[pn]['users'] = len(pools[pn]['users'])
 
-        return pools.values(), totalTime, totalCount
+        return pools.values(), totalTime, totalCount, len(uniqueUsers)
 
     def generate(self):
-        pools, totalTime, totalCount = self.getData()
+        pools, totalTime, totalCount, uniqueUsers = self.getData()
 
         start = self.startDate.value
         end = self.endDate.value
-
 
         logger.debug('Pools: %s --- %s  --- %s', pools, totalTime, totalCount)
 
@@ -95,12 +102,14 @@ class PoolsUsageSummary(UsageByPool):
                     {
                         'name': p['name'],
                         'time': str(datetime.timedelta(seconds=p['time'])),
-                        'count': p['count']
+                        'count': p['count'],
+                        'users': p['users']
                     }
                     for p in pools
                 ),
                 'time': str(datetime.timedelta(seconds=totalTime)),
                 'count': totalCount,
+                'users': uniqueUsers,
                 'start': start,
                 'end': end,
             },
@@ -123,13 +132,13 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData, totalTime, totalCount = self.getData()
+        reportData, totalTime, totalCount, totalUsers = self.getData()
 
         writer.writerow([ugettext('Pool'), ugettext('Total Time (seconds)'), ugettext('Total Accesses')])
 
         for v in reportData:
-            writer.writerow([v['name'], v['time'], v['count']])
+            writer.writerow([v['name'], v['time'], v['count'], v['users']])
 
-        writer.writerow([ugettext('Total'), totalTime, totalCount])
+        writer.writerow([ugettext('Total'), totalTime, totalCount, totalUsers])
 
         return output.getvalue()

@@ -11,9 +11,10 @@
         <table style="width: 100%; font-size: 0.8em;">
             <thead>
                 <tr>
-                    <th style="width: 20%">{% trans 'Pool' %}</th>
-                    <th style="width: 15%">{% trans 'Total time' %}</th>
-                    <th style="width: 25%">{% trans 'Total accesses' %}</th>
+                    <th style="width: 40%">{% trans 'Pool' %}</th>
+                    <th style="width: 20%">{% trans 'Total time' %}</th>
+                    <th style="width: 20%">{% trans 'Total accesses' %}</th>
+                    <th style="width: 20%">{% trans 'Unique users' %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,12 +23,14 @@
                     <td>{{ pool.name }}</td>
                     <td>{{ pool.time }}</td>
                     <td>{{ pool.count }}</td>
+                    <td>{{ pool.users }}</td>
                 </tr>
             {% endfor %}
             <tr>
                 <td>{% trans 'Total' %}</td>
                 <td>{{ time }}</td>
                 <td>{{ count }}</td>
+                <td>{{ users }}</td>
         </tr>
         </tbody>
         </table>
