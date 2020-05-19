@@ -121,11 +121,12 @@ class ServicesPools(ModelHandler):
     def getItems(self, *args, **kwargs):
         # Optimized query, due that there is a lot of info needed for theee
         d = getSqlDatetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
-        return super().getItems(overview=kwargs.get('overview', True), 
-            query=(ServicePool.objects.prefetch_related('service', 'service__provider', 'servicesPoolGroup', 'image', 'tags', 'meta')
+        return super().getItems(overview=kwargs.get('overview', True),
+            query=(ServicePool.objects.prefetch_related('service', 'service__provider', 'servicesPoolGroup', 'image', 'tags', 'meta', 'account')
                     .annotate(valid_count=Count('userServices', filter=~Q(userServices__state__in=State.INFO_STATES)))
                     .annotate(preparing_count=Count('userServices', filter=Q(userServices__state=State.PREPARING)))
                     .annotate(error_count=Count('userServices', filter=Q(userServices__state=State.ERROR, state_date__gt=d)))
+                    .annotate(usage_count=Count('userServices', filter=Q(userServices__state__in=State.VALID_STATES, userServices__cache_level=0)))
             )
         )
         # return super().getItems(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
@@ -151,7 +152,6 @@ class ServicesPools(ModelHandler):
         # This needs a lot of queries, and really does not shows anything important i think...
         # elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
-
         val = {
             'id': item.uuid,
             'name': item.name,
@@ -187,16 +187,12 @@ class ServicesPools(ModelHandler):
                 valid_count = item.valid_count
                 preparing_count = item.preparing_count
                 restrained = item.error_count > GlobalConfig.RESTRAINT_COUNT.getInt()
+                usage_count = item.usage_count
             else:
                 valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
                 preparing_count = item.userServices.filter(state=State.PREPARING).count()
                 restrained = item.isRestrained()
-
-            state = item.state
-            if item.isInMaintenance():
-                state = State.MAINTENANCE
-            elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
-                state = State.SLOWED_DOWN
+                usage_count = -1
 
             poolGroupId = None
             poolGroupName = _('Default')
@@ -206,6 +202,7 @@ class ServicesPools(ModelHandler):
                 poolGroupName = item.servicesPoolGroup.name
                 if item.servicesPoolGroup.image is not None:
                     poolGroupThumb = item.servicesPoolGroup.image.thumb64
+
 
             val['state'] = state
             val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
@@ -218,7 +215,7 @@ class ServicesPools(ModelHandler):
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb
-            val['usage'] = str(item.usage()) + '%'
+            val['usage'] = str(item.usage(usage_count)) + '%'
 
         if item.osmanager:
             val['osmanager_id'] = item.osmanager.uuid

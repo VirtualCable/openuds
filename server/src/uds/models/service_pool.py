@@ -501,7 +501,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0, user=None)
 
-    def usage(self) -> int:
+    def usage(self, cachedValue=-1) -> int:
         """
         Returns the % used services, related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
@@ -513,7 +513,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if maxs <= 0:
             return 0
 
-        return 100 * self.assignedUserServices().filter(state__in=states.servicePool.VALID_STATES).count() // maxs
+        if cachedValue == -1:
+            cachedValue = self.assignedUserServices().filter(state__in=states.servicePool.VALID_STATES).count()
+
+        return 100 * cachedValue // maxs
 
     def testServer(self, host, port, timeout=4) -> bool:
         return self.service.testServer(host, port, timeout)

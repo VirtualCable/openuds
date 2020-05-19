@@ -106,7 +106,7 @@ class AssignedService(DetailHandler):
         try:
             if not item:
                 return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()
-                        .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
+                        .prefetch_related('properties', 'deployed_service', 'publication', 'user')]
             return AssignedService.itemToDict(parent.assignedUserServices().get(processUuid(uuid=processUuid(item))))
         except Exception:
             logger.exception('getItems')
@@ -197,7 +197,7 @@ class CachedService(AssignedService):
         try:
             if not item:
                 return [AssignedService.itemToDict(k, True) for k in parent.cachedUserServices().all()
-                        .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
+                        .prefetch_related('properties', 'deployed_service', 'publication')]
             cachedService: models.UserService = parent.cachedUserServices().get(uuid=processUuid(item))
             return AssignedService.itemToDict(cachedService, True)
         except Exception:
