@@ -175,7 +175,6 @@ class Module(UserInterface, Environmentable, Serializable):
             Base 64 encoded or raw image, obtained from the specified file at
             'iconFile' class attribute
         """
-        logger.debug('Loading icon for class %s (%s)', cls, cls.iconFile)
         file_ = open(os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile, 'rb')
         data = file_.read()
         file_.close()

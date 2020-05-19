@@ -30,11 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 
+from django.db.models import Q, Count
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import ServicePool, OSManager, Service, Image, ServicePoolGroup, Account, User
+from uds.models import ServicePool, OSManager, Service, Image, ServicePoolGroup, Account, User, getSqlDatetime
 from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
@@ -54,6 +56,7 @@ from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
+from uds.core.util.config import GlobalConfig
 from uds.core.ui import gui
 from uds.core.util import permissions
 
@@ -115,10 +118,24 @@ class ServicesPools(ModelHandler):
         ('createFromAssignable', True),
     ]
 
+    def getItems(self, *args, **kwargs):
+        # Optimized query, due that there is a lot of info needed for theee
+        d = getSqlDatetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        return super().getItems(overview=kwargs.get('overview', True), 
+            query=(ServicePool.objects.prefetch_related('service', 'service__provider', 'servicesPoolGroup', 'image', 'tags', 'meta')
+                    .annotate(valid_count=Count('userServices', filter=~Q(userServices__state__in=State.INFO_STATES)))
+                    .annotate(preparing_count=Count('userServices', filter=Q(userServices__state=State.PREPARING)))
+                    .annotate(error_count=Count('userServices', filter=Q(userServices__state=State.ERROR, state_date__gt=d)))
+            )
+        )
+        # return super().getItems(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
+        # return super(ServicesPools, self).getItems(*args, **kwargs)
+
     def item_as_dict(self, item: ServicePool) -> typing.Dict[str, typing.Any]:
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
+
         poolGroupId: typing.Optional[str] = None
         poolGroupName: str = _('Default')
         poolGroupThumb: str = DEFAULT_THUMB_BASE64
@@ -131,8 +148,9 @@ class ServicesPools(ModelHandler):
         state = item.state
         if item.isInMaintenance():
             state = State.MAINTENANCE
-        elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
-            state = State.SLOWED_DOWN
+        # This needs a lot of queries, and really does not shows anything important i think...
+        # elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
+        #     state = State.SLOWED_DOWN
 
         val = {
             'id': item.uuid,
@@ -165,6 +183,15 @@ class ServicesPools(ModelHandler):
 
         # Extended info
         if not summary:
+            if hasattr(item, 'valid_count'):
+                valid_count = item.valid_count
+                preparing_count = item.preparing_count
+                restrained = item.error_count > GlobalConfig.RESTRAINT_COUNT.getInt()
+            else:
+                valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
+                preparing_count = item.userServices.filter(state=State.PREPARING).count()
+                restrained = item.isRestrained()
+
             state = item.state
             if item.isInMaintenance():
                 state = State.MAINTENANCE
@@ -182,10 +209,10 @@ class ServicesPools(ModelHandler):
 
             val['state'] = state
             val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
-            val['user_services_count'] = item.userServices.exclude(state__in=State.INFO_STATES).count()
-            val['user_services_in_preparation'] = item.userServices.filter(state=State.PREPARING).count()
+            val['user_services_count'] = valid_count
+            val['user_services_in_preparation'] = preparing_count
             val['tags'] = [tag.tag for tag in item.tags.all()]
-            val['restrained'] = item.isRestrained()
+            val['restrained'] = restrained
             val['permission'] = permissions.getEffectivePermission(self._user, item)
             val['info'] = Services.serviceInfo(item.service)
             val['pool_group_id'] = poolGroupId

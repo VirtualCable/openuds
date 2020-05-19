@@ -776,7 +776,28 @@ class ModelHandler(BaseModelHandler):
         raise Exception('Invalid code executed on processDetail')
 
     def getItems(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
-        for item in self.model.objects.filter(*args, **kwargs):
+        if 'overview' in kwargs:
+            overview = kwargs['overview']
+            del kwargs['overview']
+        else:
+            overview = True
+
+        if 'prefetch' in kwargs:
+            prefetch = kwargs['prefetch']
+            logger.debug('Prefetching %s', prefetch)
+            del kwargs['prefetch']
+        else:
+            prefetch = []
+
+        if 'query' in kwargs:
+            query = kwargs['query']
+            logger.debug('Got query: %s', query)
+            del kwargs['query']
+        else:
+            logger.debug('Args: %s, kwargs: %s', args, kwargs)
+            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
+
+        for item in query:
             try:
                 if permissions.checkPermissions(typing.cast('User', self._user), item, permissions.PERMISSION_READ) is False:
                     continue
