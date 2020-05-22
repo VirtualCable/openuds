@@ -236,7 +236,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         # Return the date
         try:
-            if activePub and activePub.id != self.assignedUserServices().filter(user=forUser, state__in=states.servicePool.VALID_STATES)[0].publication.id:
+            if activePub and activePub.id != self.assignedUserServices().filter(user=forUser, state__in=states.userService.VALID_STATES)[0].publication.id:
                 ret = self.recoverValue('toBeReplacedIn')
                 if ret:
                     return pickle.loads(ret)
@@ -571,7 +571,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return 0
 
         if cachedValue == -1:
-            cachedValue = self.assignedUserServices().filter(state__in=states.servicePool.VALID_STATES).count()
+            cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
 
         return 100 * cachedValue // maxs
 
