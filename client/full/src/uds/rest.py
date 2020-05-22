@@ -95,6 +95,8 @@ class RestRequest(QObject):
 
     @pyqtSlot(QNetworkReply, list)
     def _sslError(self, reply, errors):
+        # reply.ignoreSslErrors()
+
         settings = QSettings()
         settings.beginGroup('ssl')
         cert = errors[0].certificate()
@@ -102,12 +104,12 @@ class RestRequest(QObject):
 
         approved = settings.value(digest, False).toBool()
 
-        errorString = '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(cert.subjectInfo(QSslCertificate.CommonName))
+        errorString = '<p>Please, accept the certificate for <b>{}</b></p>'.format(cert.subjectInfo(QSslCertificate.CommonName))
 
-        for err in errors:
-            errorString += '<li>' + err.errorString() + '</li>'
+        # for err in errors:
+        #     errorString += '<li>' + err.errorString() + '</li>'
 
-        errorString += '</ul>'
+        # errorString += '</ul>'
 
         if approved or QMessageBox.warning(self._parentWindow, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
             settings.setValue(digest, True)
