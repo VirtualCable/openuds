@@ -304,7 +304,6 @@ class UserServiceManager:
         return None
 
     def getAssignationForUser(self, servicePool: ServicePool, user: User) -> typing.Optional[UserService]:  # pylint: disable=too-many-branches
-
         if servicePool.service.getInstance().spawnsNew is False:
             assignedUserService = self.getExistingAssignationForUser(servicePool, user)
         else:

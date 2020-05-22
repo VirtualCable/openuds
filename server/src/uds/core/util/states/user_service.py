@@ -32,4 +32,4 @@
 """
 
 # pylint: disable=unused-import
-from .common import ERROR, USABLE, PREPARING, REMOVABLE, REMOVING, REMOVED  # @UnusedImport
+from .common import ERROR, USABLE, PREPARING, REMOVABLE, REMOVING, REMOVED, INFO_STATES, VALID_STATES  # @UnusedImport

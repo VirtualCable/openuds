@@ -490,16 +490,20 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         )
         if user:  # Optimize loading if there is some assgned service..
             list1 = list1.annotate(
-                number_assignations=models.Count(
+                number_in_use=models.Count(
                     'userServices', filter=models.Q(
-                        userServices__user=user, userServices__in_use=True
+                        userServices__user=user,
+                        userServices__in_use=True,
+                        userServices__state__in=states.userService.USABLE
                     )
                 )
             )
             list2 = list2.annotate(
-                number_assignations=models.Count(
+                number_in_use=models.Count(
                     'userServices', filter=models.Q(
-                        userServices__user=user, userServices__in_use=True
+                        userServices__user=user,
+                        userServices__in_use=True,
+                        userServices__state__in=states.userService.USABLE
                     )
                 )
             )

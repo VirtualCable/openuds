@@ -169,11 +169,12 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         )
         if user:
             meta = meta.annotate(
-                number_assignations=models.Count(
+                number_in_use=models.Count(
                     'pools__userServices',
                     filter=models.Q(
                         pools__userServices__user=user,
-                        pools__userServices__in_use=True
+                        pools__userServices__in_use=True,
+                        pools__userServices__state__in=states.userService.USABLE
                     )
                 )
             )

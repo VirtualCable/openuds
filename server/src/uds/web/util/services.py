@@ -97,7 +97,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
     for meta in availMetaPools:
         # Check that we have access to at least one transport on some of its children
         hasUsablePools = False
-        in_use = False
+        in_use =  meta.number_in_use > 0  # False
         for pool in meta.pools.all():
             # if pool.isInMaintenance():
             #    continue
@@ -107,10 +107,10 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
                     hasUsablePools = True
                     break
 
-            if not in_use and meta.number_assignations:  # Only look for assignation on possible used
-                assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
-                if assignedUserService:
-                    in_use = assignedUserService.in_use
+            # if not in_use and meta.number_in_use:  # Only look for assignation on possible used
+            #     assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
+            #     if assignedUserService:
+            #         in_use = assignedUserService.in_use
 
             # Stop when 1 usable pool is found
             if hasUsablePools:
@@ -180,20 +180,21 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             imageId = 'x'
 
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
-        in_use = False
-        if svr.number_assignations:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
-            ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
-            if ads:
-                in_use = ads.in_use
+        in_use = svr.number_in_use > 0
+        # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
+        #     ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
+        #     if ads:
+        #         in_use = ads.in_use
 
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
 
-        tbr = svr.toBeReplaced(request.user)
-        if tbr:
-            tbr = formats.date_format(tbr, "SHORT_DATETIME_FORMAT")
-            tbrt = ugettext('This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.').format(tbr)
+        toBeReplaced = svr.toBeReplaced(request.user)
+        # tbr = False
+        if toBeReplaced:
+            toBeReplaced = formats.date_format(toBeReplaced, "SHORT_DATETIME_FORMAT")
+            toBeReplacedTxt = ugettext('This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.').format(toBeReplaced)
         else:
-            tbrt = ''
+            toBeReplacedTxt = ''
 
         services.append({
             'id': 'F' + svr.uuid,
@@ -209,8 +210,8 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             'maintenance': svr.isInMaintenance(),
             'not_accesible': not svr.isAccessAllowed(now),
             'in_use': in_use,
-            'to_be_replaced': tbr,
-            'to_be_replaced_text': tbrt,
+            'to_be_replaced': toBeReplaced,
+            'to_be_replaced_text': toBeReplacedTxt,
             'custom_calendar_text': svr.calendar_message,
         })
 

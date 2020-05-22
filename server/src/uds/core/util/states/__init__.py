@@ -30,13 +30,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from . import action
 from . import common
 from . import group
 from . import process
 from . import publication
-from . import userService
-from . import servicePool
+from . import user_service as userService
+from . import service_pool as servicePool
 from . import task
