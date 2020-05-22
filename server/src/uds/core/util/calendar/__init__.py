@@ -131,7 +131,6 @@ class CalendarChecker:
         """
         Checks if the given time is a valid event on calendar
         @param dtime: Datetime object to check
-        TODO: We can improve performance of this by getting from a cache first if we can
         """
         if dtime is None:
             dtime = getSqlDatetime()

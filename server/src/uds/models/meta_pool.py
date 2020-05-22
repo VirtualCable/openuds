@@ -53,6 +53,7 @@ from .calendar import Calendar
 
 if typing.TYPE_CHECKING:
     import datetime
+    from .user import User
 
 
 logger = logging.getLogger(__name__)
@@ -106,6 +107,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             bool -- [description]
         """
         total, maintenance = 0, 0
+        p: ServicePool
         for p in self.pools.all():
             total += 1
             if p.isInMaintenance():
@@ -121,7 +123,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in self.calendarAccess.order_by('priority'):
+        for ac in sorted(self.calendarAccess.all(), key=lambda x: x.priority):
             if CalendarChecker(ac.calendar).check(chkDateTime) is True:
                 access = ac.access
                 break  # Stops on first rule match found
@@ -136,7 +138,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         return self.name
 
     @staticmethod
-    def getForGroups(groups) -> QuerySet:
+    def getForGroups(groups: typing.Iterable['Group'], user: typing.Optional['User'] = None) -> QuerySet:
         """
         Return deployed services with publications for the groups requested.
 
@@ -151,7 +153,30 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             assignedGroups__in=groups,
             assignedGroups__state=states.group.ACTIVE,
             visible=True
+        ).prefetch_related(
+            'servicesPoolGroup',
+            'servicesPoolGroup__image',
+            'assignedGroups',
+            'assignedGroups',
+            'accessCalendars',
+            'accessCalendars__rules',
+            'pools',
+            'pools__service',
+            'pools__service__provider',
+            'pools__image',
+            'pools__transports',
+            'pools__transports__networks'
         )
+        if user:
+            meta = meta.annotate(
+                number_assignations=models.Count(
+                    'pools__userServices',
+                    filter=models.Q(
+                        pools__userServices__user=user,
+                        pools__userServices__in_use=True
+                    )
+                )
+            )
         # TODO: Maybe we can exclude non "usable" metapools (all his pools are in maintenance mode?)
 
         return meta

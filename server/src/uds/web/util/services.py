@@ -35,7 +35,7 @@ from django.utils.translation import ugettext
 from django.utils import formats
 from django.urls.base import reverse
 
-from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool
+from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool, getSqlDatetime
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
 
@@ -69,8 +69,9 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
 
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
-    availServicePools = ServicePool.getDeployedServicesForGroups(groups)
-    availMetaPools = MetaPool.getForGroups(groups)
+    availServicePools = list(ServicePool.getDeployedServicesForGroups(groups, request.user))  # Pass in user to get "number_assigned" to optimize
+    availMetaPools = list(MetaPool.getForGroups(groups, request.user))  # Pass in user to get "number_assigned" to optimize
+    now = getSqlDatetime()
 
     # Information for administrators
     nets = ''
@@ -81,7 +82,8 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
     if request.user.isStaff():
         nets = ','.join([n.name for n in Network.networksFor(request.ip)])
         tt = []
-        for t in Transport.objects.all():
+        t: Transport
+        for t in Transport.objects.all().prefetch_related('networks'):
             if t.validForIp(request.ip):
                 tt.append(t.name)
         validTrans = ','.join(tt)
@@ -89,9 +91,10 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
     logger.debug('Checking meta pools: %s', availMetaPools)
     services = []
     meta: MetaPool
+    # Preload all assigned user services for this user
+
     # Add meta pools data first
     for meta in availMetaPools:
-
         # Check that we have access to at least one transport on some of its children
         hasUsablePools = False
         in_use = False
@@ -104,7 +107,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
                     hasUsablePools = True
                     break
 
-            if not in_use:
+            if not in_use and meta.number_assignations:  # Only look for assignation on possible used
                 assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
                 if assignedUserService:
                     in_use = assignedUserService.in_use
@@ -134,7 +137,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
                 'allow_users_remove': False,
                 'allow_users_reset': False,
                 'maintenance': meta.isInMaintenance(),
-                'not_accesible': not meta.isAccessAllowed(),
+                'not_accesible': not meta.isAccessAllowed(now),
                 'in_use': in_use,
                 'to_be_replaced': None,
                 'to_be_replaced_text': '',
@@ -142,13 +145,14 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             })
 
     # Now generic user service
+    svr: ServicePool
     for svr in availServicePools:
         # Skip pools that are part of meta pools
         if svr.is_meta:
             continue
 
         trans = []
-        for t in svr.transports.all().order_by('priority'):
+        for t in sorted(svr.transports.all(), key=lambda x: x.priority):   # In memory sort, allows reuse prefetched and not too big array
             typeTrans = t.getType()
             if typeTrans is None:  # This may happen if we "remove" a transport type but we have a transport of that kind on DB
                 continue
@@ -170,17 +174,17 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         if not trans:
             continue
 
-        if svr.image is not None:
+        if svr.image:
             imageId = svr.image.uuid
         else:
             imageId = 'x'
 
-        # Locate if user service has any already assigned user service for this
-        ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
-        if ads is None:
-            in_use = False
-        else:
-            in_use = ads.in_use
+        # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
+        in_use = False
+        if svr.number_assignations:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
+            ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
+            if ads:
+                in_use = ads.in_use
 
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
 
@@ -203,20 +207,20 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             'allow_users_remove': svr.allow_users_remove,
             'allow_users_reset': svr.allow_users_reset,
             'maintenance': svr.isInMaintenance(),
-            'not_accesible': not svr.isAccessAllowed(),
+            'not_accesible': not svr.isAccessAllowed(now),
             'in_use': in_use,
             'to_be_replaced': tbr,
             'to_be_replaced_text': tbrt,
             'custom_calendar_text': svr.calendar_message,
         })
 
-    logger.debug('Services: %s', services)
+    # logger.debug('Services: %s', services)
 
     # Sort services and remove services with no transports...
     services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']]
 
     autorun = False
-    if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(True) and services[0]['transports']:
+    if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(False) and services[0]['transports']:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
             autorun = True

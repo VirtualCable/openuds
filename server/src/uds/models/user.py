@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.db import models
-from django.db.models import signals
+from django.db.models import signals, Q, Count
 
 from uds.core.util import log
 
@@ -145,9 +145,9 @@ class User(UUIDModel):
         """
         returns the groups (and metagroups) this user belongs to
         """
-        if self.parent is not None and self.parent != '':
+        if self.parent:
             try:
-                usr = User.objects.get(uuid=self.parent)
+                usr = User.objects.prefetch_related('groups').get(uuid=self.parent)
             except Exception:  # If parent do not exists
                 usr = self
         else:
@@ -160,18 +160,21 @@ class User(UUIDModel):
             yield g
 
         # Locate metagroups
-        for g in self.manager.groups.filter(is_meta=True):
-            numberGroupsBelongingInMeta: int = g.groups.filter(id__in=grps).count()
+        for g in (self.manager.groups.filter(is_meta=True)
+                    .annotate(number_groups=Count('groups'))  # g.groups.count() 
+                    .annotate(number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))) # g.groups.filter(id__in=grps).count()
+            ):
+            numberGroupsBelongingInMeta: int = g.number_belongs_meta
 
             logger.debug('gn = %s', numberGroupsBelongingInMeta)
-            logger.debug('groups count: %s', g.groups.count())
+            logger.debug('groups count: %s', g.number_groups)
 
             if g.meta_if_any is True and numberGroupsBelongingInMeta > 0:
-                numberGroupsBelongingInMeta = g.groups.count()
+                numberGroupsBelongingInMeta = g.number_groups
 
             logger.debug('gn after = %s', numberGroupsBelongingInMeta)
 
-            if numberGroupsBelongingInMeta == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
+            if numberGroupsBelongingInMeta == g.number_groups:  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g
 

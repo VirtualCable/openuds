@@ -216,7 +216,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return False
 
     def isInMaintenance(self) -> bool:
-        return self.service is not None and self.service.isInMaintenance()
+        return self.service.isInMaintenance() if self.service else True
 
     def isVisible(self) -> bool:
         return self.visible
@@ -255,7 +255,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in self.calendarAccess.order_by('priority'):
+        for ac in sorted(self.calendarAccess.all(), key=lambda x:x.priority):
             if CalendarChecker(ac.calendar).check(chkDateTime) is True:
                 access = ac.access
                 break  # Stops on first rule match found
@@ -429,8 +429,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         self.validatePublication()
 
     @staticmethod
-    def getDeployedServicesForGroups(groups) -> typing.List['ServicePool']:
-        """
+    def getDeployedServicesForGroups(groups: typing.Iterable['Group'], user: typing.Optional['User'] = None) -> typing.List['ServicePool']:
+        """ 
         Return deployed services with publications for the groups requested.
 
         Args:
@@ -441,15 +441,68 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import services
         # Get services that HAS publications
-        list1 = ServicePool.objects.filter(
+        list1 = (
+            ServicePool.objects.filter(
             assignedGroups__in=groups,
             assignedGroups__state=states.group.ACTIVE,
             state=states.servicePool.ACTIVE,
             visible=True
-        ).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
+            ).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
+            .prefetch_related(
+                'transports',
+                'transports__networks',
+                'memberOfMeta',
+                'osmanager',
+                'publications',
+                'servicesPoolGroup',
+                'servicesPoolGroup__image',
+                'service',
+                'service__provider',
+                'calendarAccess',
+                'calendarAccess__calendar',
+                'calendarAccess__calendar__rules',
+                'image'
+            )
+        )
         # Now get deployed services that DO NOT NEED publication
         doNotNeedPublishing = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
-        list2 = ServicePool.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE, service__data_type__in=doNotNeedPublishing, state=states.servicePool.ACTIVE, visible=True)
+        list2 = (
+                ServicePool.objects.filter(
+                assignedGroups__in=groups,
+                assignedGroups__state=states.group.ACTIVE,
+                service__data_type__in=doNotNeedPublishing,
+                state=states.servicePool.ACTIVE,
+                visible=True
+            )
+            .prefetch_related(
+                'transports',
+                'transports__networks',
+                'memberOfMeta',
+                'servicesPoolGroup',
+                'servicesPoolGroup__image',
+                'service',
+                'service__provider',
+                'calendarAccess',
+                'calendarAccess__calendar',
+                'calendarAccess__calendar__rules',
+                'image'
+            )
+        )
+        if user:  # Optimize loading if there is some assgned service..
+            list1 = list1.annotate(
+                number_assignations=models.Count(
+                    'userServices', filter=models.Q(
+                        userServices__user=user, userServices__in_use=True
+                    )
+                )
+            )
+            list2 = list2.annotate(
+                number_assignations=models.Count(
+                    'userServices', filter=models.Q(
+                        userServices__user=user, userServices__in_use=True
+                    )
+                )
+            )
         # And generate a single list without duplicates
         return list(set([r for r in list1] + [r for r in list2]))
 
