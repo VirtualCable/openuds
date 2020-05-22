@@ -36,6 +36,8 @@ import logging
 
 import bitarray
 
+from django.core.cache import caches
+
 from uds.models.util import NEVER
 from uds.models.util import getSqlDatetime
 
@@ -135,11 +137,15 @@ class CalendarChecker:
         if dtime is None:
             dtime = getSqlDatetime()
 
+        # memcached access
+        memCache = caches['memory']
+
         # First, try to get data from cache if it is valid
         cacheKey = str(hash(self.calendar.modified)) + str(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
-        cached = CalendarChecker.cache.get(cacheKey, None)
+        # First, check "local memory cache", and if not found, from DB cache
+        cached = memCache.get(cacheKey) or CalendarChecker.cache.get(cacheKey, None)
 
-        if cached is not None:
+        if cached:
             data = bitarray.bitarray()  # Empty bitarray
             data.frombytes(cached)
             CalendarChecker.cache_hit += 1
@@ -149,6 +155,7 @@ class CalendarChecker:
             # Now data can be accessed as an array of booleans.
             # Store data on persistent cache
             CalendarChecker.cache.put(cacheKey, data.tobytes(), 3600 * 24)
+            memCache.set(cacheKey, data.tobytes(), 3600*24)
 
         return data[dtime.hour * 60 + dtime.minute]
 

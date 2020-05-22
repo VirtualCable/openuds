@@ -295,7 +295,7 @@ class GlobalConfig:
     DISALLOW_GLOBAL_LOGIN: Config.Value = Config.section(GLOBAL_SECTION).value('disallowGlobalLogin', '0', type=Config.BOOLEAN_FIELD)
 
     # Allos preferences access to users
-    PREFERENCES_ALLOWED: Config.Value = Config.section(GLOBAL_SECTION).value('allowPreferencesAccess', '1', type=Config.BOOLEAN_FIELD)
+    NOTIFY_REMOVAL_BY_PUB: Config.Value = Config.section(GLOBAL_SECTION).value('Notify on new publication', '0', type=Config.BOOLEAN_FIELD)
 
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES: Config.Value = Config.section(SECURITY_SECTION).value('Trusted Hosts', '*', type=Config.TEXT_FIELD)

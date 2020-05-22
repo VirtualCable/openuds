@@ -188,7 +188,8 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
 
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
 
-        toBeReplaced = svr.toBeReplaced(request.user)
+        # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
+        toBeReplaced = svr.toBeReplaced(request.user) if svr.pubs_active > 0 and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False) else None
         # tbr = False
         if toBeReplaced:
             toBeReplaced = formats.date_format(toBeReplaced, "SHORT_DATETIME_FORMAT")
