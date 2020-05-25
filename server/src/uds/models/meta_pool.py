@@ -158,14 +158,16 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             'servicesPoolGroup__image',
             'assignedGroups',
             'assignedGroups',
-            'accessCalendars',
-            'accessCalendars__rules',
             'pools',
             'pools__service',
             'pools__service__provider',
             'pools__image',
             'pools__transports',
-            'pools__transports__networks'
+            'pools__transports__networks',
+            'calendarAccess',
+            'calendarAccess__calendar',
+            'calendarAccess__calendar__rules',
+            'image'
         )
         if user:
             meta = meta.annotate(

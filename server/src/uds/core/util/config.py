@@ -97,9 +97,9 @@ class Config:
                     self._data = readed.value
                     self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
                     self._longText = readed.long
-                    if self._type != -1:  # readed.field_type == -1 and
+                    if self._type != -1 and self._type != readed.field_type:
                         readed.field_type = self._type
-                        readed.save()
+                        readed.save(update_fields=['field_type'])
                     self._type = readed.field_type
             except Exception:
                 # Not found
@@ -353,9 +353,9 @@ class GlobalConfig:
     @staticmethod
     def initialize() -> None:
         if GlobalConfig._initDone is False:
+            GlobalConfig._initDone = True
             try:
                 # Tries to initialize database data for global config so it is stored asap and get cached for use
-                GlobalConfig._initDone = True
                 for v in GlobalConfig.__dict__.values():
                     if isinstance(v, Config.Value):
                         v.get()
