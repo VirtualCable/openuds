@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 
+from binascii import hexlify
 import threading
 import random
 import time
@@ -14,10 +15,24 @@ import six
 
 from .log import logger
 
-if six.PY2:
+if six.PY2: 
     import SocketServer as socketserver  # pylint: disable=import-error
 else:
     import socketserver
+
+class CheckfingerPrints(paramiko.MissingHostKeyPolicy):
+    def __init__(self, fingerPrints):
+        super().__init__()
+        self.fingerPrints = fingerPrints
+
+    def missing_host_key(self, client, hostname, key):
+        if self.fingerPrints:
+            remotefingerPrints = hexlify(key.get_fingerprint()).decode().lower()
+            if remotefingerPrints not in self.fingerPrints:
+                logger.error("Server {!r} has invalid fingerPrints. ({} vs {})".format(hostname, remotefingerPrints, self.fingerPrints))
+                raise paramiko.SSHException(
+                    "Server {!r} has invalid fingerPrints".format(hostname)
+                )
 
 
 class ForwardServer(socketserver.ThreadingTCPServer):
@@ -76,7 +91,7 @@ class Handler(socketserver.BaseRequestHandler):
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
 
-    def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime):
+    def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime, fingerPrints):
         threading.Thread.__init__(self)
         self.client = None
         self.fs = None
@@ -92,6 +107,8 @@ class ForwardThread(threading.Thread):
 
         self.waitTime = waitTime
 
+        self.fingerPrints = fingerPrints
+
         self.stopEvent = threading.Event()
 
         self.timer = None
@@ -101,9 +118,9 @@ class ForwardThread(threading.Thread):
 
     def clone(self, redirectHost, redirectPort, localPort=None):
         if localPort is None:
-            localPort = random.randrange(40000, 50000)
+            localPort = random.randrange(33000, 52000)
 
-        ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort, self.waitTime)
+        ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort, self.waitTime, self.fingerPrints)
         ft.client = self.client
         self.client.useCount += 1  # One more using this client
         ft.start()
@@ -126,7 +143,7 @@ class ForwardThread(threading.Thread):
             self.client = paramiko.SSHClient()
             self.client.useCount = 1  # Custom added variable, to keep track on when to close tunnel
             self.client.load_system_host_keys()
-            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.client.set_missing_host_key_policy(CheckfingerPrints(self.fingerPrints))
 
             logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
 
@@ -170,7 +187,7 @@ class ForwardThread(threading.Thread):
             logger.exception('Exception stopping')
 
 
-def forward(server, port, username, password, redirectHost, redirectPort, localPort=None, waitTime=10):
+def forward(server, port, username, password, redirectHost, redirectPort, localPort=None, waitTime=10, fingerPrints=None):
     '''
     Instantiates an ssh connection to server:port
     Returns the Thread created and the local redirected port as a list: (thread, port)
@@ -178,12 +195,12 @@ def forward(server, port, username, password, redirectHost, redirectPort, localP
     port, redirectPort = int(port), int(redirectPort)
 
     if localPort is None:
-        localPort = random.randrange(40000, 50000)
+        localPort = random.randrange(33000, 52000)
 
     logger.debug('Connecting to %s:%s using %s/%s redirecting to %s:%s, listening on 127.0.0.1:%s',
                  server, port, username, password, redirectHost, redirectPort, localPort)
 
-    ft = ForwardThread(server, port, username, password, localPort, redirectHost, redirectPort, waitTime)
+    ft = ForwardThread(server, port, username, password, localPort, redirectHost, redirectPort, waitTime, fingerPrints)
 
     ft.start()
 
