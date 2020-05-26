@@ -23,7 +23,7 @@ class CheckfingerPrints(paramiko.MissingHostKeyPolicy):
     def missing_host_key(self, client, hostname, key):
         if self.fingerPrints:
             remotefingerPrints = hexlify(key.get_fingerprint()).decode().lower()
-            if remotefingerPrints not in self.fingerPrints:
+            if remotefingerPrints not in self.fingerPrints.split(','):
                 logger.error("Server {!r} has invalid fingerPrints. ({} vs {})".format(hostname, remotefingerPrints, self.fingerPrints))
                 raise paramiko.SSHException(
                     "Server {!r} has invalid fingerPrints".format(hostname)
@@ -136,14 +136,14 @@ class ForwardThread(threading.Thread):
 
     def run(self):
         if self.client is None:
-            self.client = paramiko.SSHClient()
-            self.client.useCount = 1  # Custom added variable, to keep track on when to close tunnel
-            self.client.load_system_host_keys()
-            self.client.set_missing_host_key_policy(CheckfingerPrints(self.fingerPrints))
-
-            logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
-
             try:
+                self.client = paramiko.SSHClient()
+                self.client.useCount = 1  # Custom added variable, to keep track on when to close tunnel
+                self.client.load_system_host_keys()
+                self.client.set_missing_host_key_policy(CheckfingerPrints(self.fingerPrints))
+
+                logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
+
                 self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
             except Exception:
                 logger.exception('Exception connecting: ')

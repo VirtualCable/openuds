@@ -28,7 +28,8 @@ class CheckfingerPrints(paramiko.MissingHostKeyPolicy):
     def missing_host_key(self, client, hostname, key):
         if self.fingerPrints:
             remotefingerPrints = hexlify(key.get_fingerprint()).decode().lower()
-            if remotefingerPrints not in self.fingerPrints:
+            logger.debug('Checking keys {} against {}'.format(remotefingerPrints, self.fingerPrints))
+            if remotefingerPrints not in self.fingerPrints.split(','):
                 logger.error("Server {!r} has invalid fingerPrints. ({} vs {})".format(hostname, remotefingerPrints, self.fingerPrints))
                 raise paramiko.SSHException(
                     "Server {!r} has invalid fingerPrints".format(hostname)
