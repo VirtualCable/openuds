@@ -37,6 +37,7 @@ import typing
 from django.utils.translation import ugettext_lazy as _
 
 from uds.core.ui import gui
+from uds.core.util.connection import testServer
 from uds.core.services import types as serviceTypes
 
 from .deployment import IPMachineDeployed
@@ -66,6 +67,7 @@ class IPMachinesService(IPServiceBase):
 
     ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
 
+    port = gui.NumericField(length=5, label=_('Check Port'), defvalue='0', order=2, tooltip=_('If non zero, only Machines responding to connection on that port will be used'), required=True, tab=gui.ADVANCED_TAB)
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -86,6 +88,7 @@ class IPMachinesService(IPServiceBase):
 
     _ips: typing.List[str] = []
     _token: str = ''
+    _port: int = 0
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
@@ -98,23 +101,24 @@ class IPMachinesService(IPServiceBase):
             # self._ips.sort()
 
         self._token = self.token.value.strip()
+        self._port = self.port.value
 
     def getToken(self):
-        return self._token
+        return self._token or None
 
     def valuesDict(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
 
-        return {'ipList': gui.convertToList(ips), 'token': self._token}
+        return {'ipList': gui.convertToList(ips), 'token': self._token, 'port': str(self._port)}
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
-        return b'\0'.join([b'v2', self.token.value.encode()])
+        return b'\0'.join([b'v3', self._token.encode(), str(self._port).encode()])
 
     def unmarshal(self, data: bytes) -> None:
         values: typing.List[bytes] = data.split(b'\0')
-        if values[0] in (b'v1', b'v2'):
-            d = self.storage.readData('ips')
+        d = self.storage.readData('ips')
+        if values[0] == b'v1':
             if isinstance(d, bytes):
                 self._ips = pickle.loads(d)
             elif isinstance(d, str):  # "legacy" saved elements
@@ -122,9 +126,10 @@ class IPMachinesService(IPServiceBase):
                 self.marshal()  # Ensure now is bytes..
             else:
                 self._ips = []
-
-        if values[0] == b'v2':
+        else:
             self._token = values[1].decode()
+            if values[0] == b'v3':
+                self._port = int(values[2].decode())
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
@@ -133,6 +138,11 @@ class IPMachinesService(IPServiceBase):
                 theIP = ip.split('~')[0]
                 if self.storage.readData(theIP) is None:
                     self.storage.saveData(theIP, theIP)
+                    # Now, check if it is available on port, if required...
+                    if self._port > 0:
+                        if testServer(theIP, self._port) is False:
+                            self.storage.remove(theIP)  # Return Machine to pool
+                            continue
                     return theIP
             return None
         except Exception:
