@@ -22,7 +22,7 @@ else:
 
 class CheckfingerPrints(paramiko.MissingHostKeyPolicy):
     def __init__(self, fingerPrints):
-        super().__init__()
+        super(CheckfingerPrints, self).__init__()
         self.fingerPrints = fingerPrints
 
     def missing_host_key(self, client, hostname, key):
