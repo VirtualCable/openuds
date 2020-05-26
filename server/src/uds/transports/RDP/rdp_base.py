@@ -153,7 +153,7 @@ class BaseRDPTransport(transports.Transport):
     def processUserPassword(self, userService: 'models.UserService', user: 'models.User', password: 'str') -> typing.Dict[str, typing.Any]:
         username = user.getUsernameForAuth()
 
-        if self.fixedName.value != '':
+        if self.fixedName.value:
             username = self.fixedName.value
 
         proc = username.split('@')
@@ -163,9 +163,9 @@ class BaseRDPTransport(transports.Transport):
             domain = ''
         username = proc[0]
 
-        if self.fixedPassword.value != '':
+        if self.fixedPassword.value:
             password = self.fixedPassword.value
-        if self.fixedDomain.value != '':
+        if self.fixedDomain.value:
             domain = self.fixedDomain.value
         if self.useEmptyCreds.isTrue():
             username, password, domain = '', '', ''
@@ -173,7 +173,7 @@ class BaseRDPTransport(transports.Transport):
         if self.withoutDomain.isTrue():
             domain = ''
 
-        if domain != '':  # If has domain
+        if domain:  # If has domain
             if '.' in domain:  # Dotter domain form
                 username = username + '@' + domain
                 domain = ''
@@ -188,7 +188,7 @@ class BaseRDPTransport(transports.Transport):
 
         # Recover domain name if needed
         if '\\' in username:
-            username, domain = username.split('\\')
+            domain, username = username.split('\\')
 
         return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
 
