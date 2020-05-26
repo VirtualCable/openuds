@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-11 14:01+0200\n"
+"POT-Creation-Date: 2020-05-26 16:18+0200\n"
 "PO-Revision-Date: 2020-05-07 09:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -27,7 +27,7 @@ msgstr "帐号"
 #: REST/methods/meta_pools.py:70 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
-#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:96
+#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
 #: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
 #: REST/model.py:139
@@ -53,7 +53,7 @@ msgstr "时间标记"
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:226 REST/methods/services_pools.py:105
+#: REST/methods/services.py:226 REST/methods/services_pools.py:108
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr "标签"
@@ -119,7 +119,7 @@ msgstr "演员代币"
 
 #: REST/methods/actor_token.py:54 reports/stats/pools_performance.py:198
 #: reports/stats/pools_performance.py:213 reports/stats/pools_usage_day.py:65
-#: reports/stats/usage_by_pool.py:160 reports/stats/user_access.py:174
+#: reports/stats/usage_by_pool.py:158 reports/stats/user_access.py:174
 msgid "Date"
 msgstr "日期"
 
@@ -173,13 +173,13 @@ msgstr "类型"
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
 #: REST/methods/transports.py:56 REST/methods/user_services.py:294
-#: REST/model.py:166 models/meta_pool.py:72
+#: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "优先"
 
 #: REST/methods/authenticators.py:69 REST/methods/authenticators.py:101
 #: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:150
-#: REST/methods/services_pools.py:101 REST/methods/services_pools.py:253
+#: REST/methods/services_pools.py:104 REST/methods/services_pools.py:277
 msgid "Visible"
 msgstr "可见"
 
@@ -195,15 +195,15 @@ msgstr "标签"
 msgid "Users"
 msgstr "用户"
 
-#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:254
+#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:278
 msgid "If active, transport will be visible for users"
 msgstr "如果处于活动状态，则用户可以看到传输"
 
 #: REST/methods/authenticators.py:105 REST/methods/meta_pools.py:138
 #: REST/methods/meta_pools.py:146 REST/methods/meta_pools.py:154
-#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:257
-#: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
-#: REST/methods/services_pools.py:281 core/ui/user_interface.py:99
+#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:281
+#: REST/methods/services_pools.py:289 REST/methods/services_pools.py:297
+#: REST/methods/services_pools.py:305 core/ui/user_interface.py:99
 #: services/OVirt/service.py:186
 msgid "Display"
 msgstr "显示"
@@ -228,7 +228,7 @@ msgstr "重复"
 msgid "Every"
 msgstr "一切"
 
-#: REST/methods/calendarrules.py:103 reports/stats/usage_by_pool.py:160
+#: REST/methods/calendarrules.py:103 reports/stats/usage_by_pool.py:158
 msgid "Duration"
 msgstr "持续时间"
 
@@ -283,11 +283,11 @@ msgid "Policy"
 msgstr "政策"
 
 #: REST/methods/meta_pools.py:73 REST/methods/services.py:225
-#: REST/methods/services_pools.py:98
+#: REST/methods/services_pools.py:101
 msgid "User services"
 msgstr "用户服务"
 
-#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:99
+#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:102
 msgid "In Preparation"
 msgstr "在筹备"
 
@@ -296,8 +296,8 @@ msgid "Pool Group"
 msgstr "池组"
 
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:141
-#: REST/methods/services_pools.py:123 REST/methods/services_pools.py:175
-#: REST/methods/services_pools.py:268
+#: REST/methods/services_pools.py:141 REST/methods/services_pools.py:198
+#: REST/methods/services_pools.py:292
 msgid "Default"
 msgstr "默认"
 
@@ -306,21 +306,21 @@ msgid "Service pool policy"
 msgstr "服务池策略"
 
 #: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:85
-#: REST/methods/services_pools.py:261
+#: REST/methods/services_pools.py:285
 msgid "Associated Image"
 msgstr "相关图像"
 
 #: REST/methods/meta_pools.py:135 REST/methods/services_pool_groups.py:86
-#: REST/methods/services_pools.py:262
+#: REST/methods/services_pools.py:286
 msgid "Image assocciated with this service"
 msgstr "图像与此服务相关联"
 
-#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:103
-#: REST/methods/services_pools.py:269
+#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:106
+#: REST/methods/services_pools.py:293
 msgid "Pool group"
 msgstr "池组"
 
-#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:270
+#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:294
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "此池的池组（用于显示池分类）"
 
@@ -328,11 +328,11 @@ msgstr "此池的池组（用于显示池分类）"
 msgid "If active, metapool will be visible for users"
 msgstr "如果处于活动状态，则元数将对用户可见"
 
-#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:277
+#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:301
 msgid "Calendar access denied text"
 msgstr "日历访问被拒绝的文本"
 
-#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:278
+#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:302
 msgid ""
 "Custom message to be shown to users if access is limited by calendar rules."
 msgstr "如果访问受日历规则限制，则向用户显示的自定义消息。"
@@ -359,12 +359,13 @@ msgid "Creation date"
 msgstr "创立日期"
 
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
-#: reports/stats/pool_usage_summary.py:59
+#: reports/stats/pool_users_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/usage_by_pool.py:60 reports/stats/usage_by_pool.py:160
-#: services/Proxmox/service.py:110
+#: reports/stats/pools_usage_summary.py:137 reports/stats/usage_by_pool.py:60
+#: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
+#: templates/uds/reports/stats/pools-usage-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:17
 msgid "Pool"
 msgstr "池"
@@ -500,7 +501,7 @@ msgstr "无法删除与关联的服务池的OS Manager"
 msgid "Service providers"
 msgstr "服务供应商"
 
-#: REST/methods/providers.py:73 REST/methods/services_pools.py:97
+#: REST/methods/providers.py:73 REST/methods/services_pools.py:100
 msgid "Status"
 msgstr "状态"
 
@@ -643,9 +644,9 @@ msgstr "代理"
 msgid "Proxy for services behind a firewall"
 msgstr "防火墙后面的服务代理"
 
-#: REST/methods/services.py:270 REST/methods/services_pools.py:233
-#: REST/methods/services_pools.py:241 REST/methods/services_pools.py:249
-#: REST/methods/services_pools.py:324 REST/methods/services_pools.py:332
+#: REST/methods/services.py:270 REST/methods/services_pools.py:257
+#: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
+#: REST/methods/services_pools.py:348 REST/methods/services_pools.py:356
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:95
 #: osmanagers/WindowsOsManager/windows_domain.py:71
 #: osmanagers/WindowsOsManager/windows_domain.py:72
@@ -669,47 +670,47 @@ msgstr "好"
 msgid "Services Pool Groups"
 msgstr "服务池组"
 
-#: REST/methods/services_pools.py:94 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:97 REST/methods/transports.py:104
 msgid "Service Pools"
 msgstr "服务池"
 
-#: REST/methods/services_pools.py:100
+#: REST/methods/services_pools.py:103
 msgid "Usage"
 msgstr "用法"
 
-#: REST/methods/services_pools.py:102
+#: REST/methods/services_pools.py:105
 msgid "Shows transports"
 msgstr "显示运输"
 
-#: REST/methods/services_pools.py:104
+#: REST/methods/services_pools.py:107
 msgid "Parent service"
 msgstr "家长服务"
 
-#: REST/methods/services_pools.py:206
+#: REST/methods/services_pools.py:230
 msgid "Create at least a service before creating a new service pool"
 msgstr "在创建新服务池之前至少创建一个服务"
 
-#: REST/methods/services_pools.py:213
+#: REST/methods/services_pools.py:237
 msgid "Base service"
 msgstr "基本服务"
 
-#: REST/methods/services_pools.py:214
+#: REST/methods/services_pools.py:238
 msgid "Service used as base of this service pool"
 msgstr "用作此服务池基础的服务"
 
-#: REST/methods/services_pools.py:221
+#: REST/methods/services_pools.py:245
 msgid "OS Manager"
 msgstr "OS经理"
 
-#: REST/methods/services_pools.py:222
+#: REST/methods/services_pools.py:246
 msgid "OS Manager used as base of this service pool"
 msgstr "OS Manager用作此服务池的基础"
 
-#: REST/methods/services_pools.py:229
+#: REST/methods/services_pools.py:253
 msgid "Allow removal by users"
 msgstr "允许用户删除"
 
-#: REST/methods/services_pools.py:230
+#: REST/methods/services_pools.py:254
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -718,84 +719,84 @@ msgstr ""
 "如果激活，则允许用户“手动”删除服务。请注意这一点，因为用户将拥有“权力”来删除"
 "它自己的服务"
 
-#: REST/methods/services_pools.py:237
+#: REST/methods/services_pools.py:261
 msgid "Allow reset by users"
 msgstr "允许用户重置"
 
-#: REST/methods/services_pools.py:238
+#: REST/methods/services_pools.py:262
 msgid "If active, the user will be allowed to reset the service"
 msgstr "如果处于活动状态，则允许用户重置服务"
 
-#: REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:269
 msgid "Ignores unused"
 msgstr "忽略未使用的"
 
-#: REST/methods/services_pools.py:246
+#: REST/methods/services_pools.py:270
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
 msgstr "如果启用该选项，UDS将不会尝试检测并删除已分配但未使用的用户服务。"
 
-#: REST/methods/services_pools.py:286
+#: REST/methods/services_pools.py:310
 msgid "Initial available services"
 msgstr "初始可用服务"
 
-#: REST/methods/services_pools.py:287
+#: REST/methods/services_pools.py:311
 msgid "Services created initially for this service pool"
 msgstr "最初为此服务池创建的服务"
 
-#: REST/methods/services_pools.py:290 REST/methods/services_pools.py:299
-#: REST/methods/services_pools.py:308 REST/methods/services_pools.py:317
+#: REST/methods/services_pools.py:314 REST/methods/services_pools.py:323
+#: REST/methods/services_pools.py:332 REST/methods/services_pools.py:341
 msgid "Availability"
 msgstr "可用性"
 
-#: REST/methods/services_pools.py:295
+#: REST/methods/services_pools.py:319
 msgid "Services to keep in cache"
 msgstr "保留在缓存中的服务"
 
-#: REST/methods/services_pools.py:296
+#: REST/methods/services_pools.py:320
 msgid "Services kept in cache for improved user service assignation"
 msgstr "保留在缓存中的服务用于改进用户服务分配"
 
-#: REST/methods/services_pools.py:304
+#: REST/methods/services_pools.py:328
 msgid "Services to keep in L2 cache"
 msgstr "要保留在L2缓存中的服务"
 
-#: REST/methods/services_pools.py:305
+#: REST/methods/services_pools.py:329
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "服务保留在level2的缓存中以改进服务生成"
 
-#: REST/methods/services_pools.py:313
+#: REST/methods/services_pools.py:337
 msgid "Maximum number of services to provide"
 msgstr "要提供的最大服务数"
 
-#: REST/methods/services_pools.py:314
+#: REST/methods/services_pools.py:338
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
 msgstr "可以为此服务创建的最大服务数（已分配和L1缓存）"
 
-#: REST/methods/services_pools.py:321
+#: REST/methods/services_pools.py:345
 msgid "Show transports"
 msgstr "显示运输"
 
-#: REST/methods/services_pools.py:322
+#: REST/methods/services_pools.py:346
 msgid "If active, alternative transports for user will be shown"
 msgstr "如果激活，将显示用户的替代传输"
 
-#: REST/methods/services_pools.py:329
+#: REST/methods/services_pools.py:353
 msgid "Accounting"
 msgstr "会计"
 
-#: REST/methods/services_pools.py:330
+#: REST/methods/services_pools.py:354
 msgid "Account associated to this service pool"
 msgstr "与此服务池关联的帐户"
 
-#: REST/methods/services_pools.py:346
+#: REST/methods/services_pools.py:370
 msgid "Base service does not exist anymore"
 msgstr "基本服务不再存在"
 
-#: REST/methods/services_pools.py:380
+#: REST/methods/services_pools.py:404
 msgid "This service requires an OS Manager"
 msgstr "此服务需要OS Manager"
 
@@ -917,8 +918,8 @@ msgstr "工作人员"
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/RegexLdap/authenticator.py:67 auths/SAML_enterprise/saml.py:117
-#: reports/stats/pool_usage_summary.py:166 reports/stats/usage_by_pool.py:160
-#: templates/uds/reports/stats/pool-usage-summary.html:14
+#: reports/stats/pool_users_summary.py:166 reports/stats/usage_by_pool.py:158
+#: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
 msgid "User"
 msgstr "用户"
@@ -1707,27 +1708,27 @@ msgstr "无法删除非活动元素"
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "无法删除或取消{}，导致其状态不允许"
 
-#: core/managers/user_service.py:318
+#: core/managers/user_service.py:317
 msgid "The requested service is restrained"
 msgstr "请求的服务被限制"
 
-#: core/managers/user_service.py:556
+#: core/managers/user_service.py:555
 msgid "The requested service is not available"
 msgstr "请求的服务不可用"
 
-#: core/managers/user_service.py:586
+#: core/managers/user_service.py:585
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/user_service.py:710
+#: core/managers/user_service.py:709
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
-#: core/module.py:208
+#: core/module.py:207
 msgid "No connection checking method is implemented."
 msgstr "没有实现连接检查方法。"
 
-#: core/module.py:277
+#: core/module.py:276
 msgid "No check method provided."
 msgstr "没有提供检查方法。"
 
@@ -2102,8 +2103,8 @@ msgstr "平日"
 msgid "Minutes"
 msgstr "分钟"
 
-#: models/calendar_rule.py:76 reports/stats/pool_usage_summary.py:166
-#: templates/uds/reports/stats/pool-usage-summary.html:16
+#: models/calendar_rule.py:76 reports/stats/pool_users_summary.py:166
+#: templates/uds/reports/stats/pool-users-summary.html:16
 msgid "Hours"
 msgstr "小时"
 
@@ -2115,11 +2116,11 @@ msgstr "天"
 msgid "Weeks"
 msgstr "周"
 
-#: models/meta_pool.py:71
+#: models/meta_pool.py:72
 msgid "Evenly distributed"
 msgstr "平均分配"
 
-#: models/meta_pool.py:73
+#: models/meta_pool.py:74
 msgid "Greater % available"
 msgstr "更高％可用"
 
@@ -2470,7 +2471,7 @@ msgstr "列出平台的用户"
 msgid "Users List for {}"
 msgstr "{}的用户列表"
 
-#: reports/lists/users.py:86 reports/stats/pool_usage_summary.py:145
+#: reports/lists/users.py:86 reports/stats/pool_users_summary.py:145
 msgid "UDS Report of users in {}"
 msgstr "用户的UDS报告{}"
 
@@ -2486,49 +2487,51 @@ msgstr "真正的名字"
 msgid "Statistics"
 msgstr "统计"
 
-#: reports/stats/pool_usage_summary.py:52
-msgid "Summary of pools usage"
-msgstr "池使用情况摘要"
+#: reports/stats/pool_users_summary.py:52
+#| msgid "Pools usage by users"
+msgid "Pool Usage by users"
+msgstr "用户的池使用情况"
 
-#: reports/stats/pool_usage_summary.py:53
-msgid "Generates a report with the summary of a pool usage"
-msgstr "生成包含池使用情况摘要的报告"
+#: reports/stats/pool_users_summary.py:53
+#| msgid "Generates a report with the summary of a pool usage"
+msgid "Generates a report with the summary of users usage for a pool"
+msgstr "生成包含池用户使用情况摘要的报告"
 
-#: reports/stats/pool_usage_summary.py:60 reports/stats/usage_by_pool.py:61
+#: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:61
 msgid "Pool for report"
 msgstr "报告池"
 
-#: reports/stats/pool_usage_summary.py:66 reports/stats/pools_performance.py:74
+#: reports/stats/pool_users_summary.py:66 reports/stats/pools_performance.py:74
 #: reports/stats/usage_by_pool.py:67 reports/stats/user_access.py:66
 msgid "Starting date"
 msgstr "开始日期"
 
-#: reports/stats/pool_usage_summary.py:67 reports/stats/pools_performance.py:75
+#: reports/stats/pool_users_summary.py:67 reports/stats/pools_performance.py:75
 #: reports/stats/usage_by_pool.py:68 reports/stats/user_access.py:67
 msgid "starting date for report"
 msgstr "报告的开始日期"
 
-#: reports/stats/pool_usage_summary.py:74 reports/stats/pools_performance.py:82
+#: reports/stats/pool_users_summary.py:74 reports/stats/pools_performance.py:82
 #: reports/stats/usage_by_pool.py:75 reports/stats/user_access.py:74
 msgid "Finish date"
 msgstr "完成日期"
 
-#: reports/stats/pool_usage_summary.py:75 reports/stats/pools_performance.py:83
+#: reports/stats/pool_users_summary.py:75 reports/stats/pools_performance.py:83
 #: reports/stats/usage_by_pool.py:76 reports/stats/user_access.py:75
 msgid "finish date for report"
 msgstr "完成报告日期"
 
-#: reports/stats/pool_usage_summary.py:144
+#: reports/stats/pool_users_summary.py:144
 msgid "Users usage list for {}"
 msgstr "{}的用户使用列表"
 
-#: reports/stats/pool_usage_summary.py:166
-#: templates/uds/reports/stats/pool-usage-summary.html:15
+#: reports/stats/pool_users_summary.py:166
+#: templates/uds/reports/stats/pool-users-summary.html:15
 msgid "Sessions"
 msgstr "会议"
 
-#: reports/stats/pool_usage_summary.py:166
-#: templates/uds/reports/stats/pool-usage-summary.html:17
+#: reports/stats/pool_users_summary.py:166
+#: templates/uds/reports/stats/pool-users-summary.html:17
 msgid "Average"
 msgstr "平均"
 
@@ -2615,6 +2618,45 @@ msgstr "一天的服务使用情况报告"
 msgid "Service usage report"
 msgstr "服务使用报告"
 
+#: reports/stats/pools_usage_summary.py:47
+msgid "Summary of pools usage"
+msgstr "池使用情况摘要"
+
+#: reports/stats/pools_usage_summary.py:48
+msgid ""
+"Summary of Pools usage with time totals, accesses totals, time total by pool"
+msgstr "汇总池使用情况，包括时间总计，访问总数，每个池的时间总计"
+
+#: reports/stats/pools_usage_summary.py:116
+#| msgid "Summary of pools usage"
+msgid "Summary of Pools usage"
+msgstr "池使用摘要"
+
+#: reports/stats/pools_usage_summary.py:116
+#: templates/uds/reports/stats/pools-usage-summary.html:4
+#: templates/uds/reports/stats/pools-usage-summary.html:6
+msgid "to"
+msgstr "至"
+
+#: reports/stats/pools_usage_summary.py:117
+#| msgid "Summary of pools usage"
+msgid "UDS Report Summary of pools usage"
+msgstr "UDS报告池使用摘要"
+
+#: reports/stats/pools_usage_summary.py:137
+msgid "Total Time (seconds)"
+msgstr "总时间（秒）"
+
+#: reports/stats/pools_usage_summary.py:137
+#| msgid "Accesses"
+msgid "Total Accesses"
+msgstr "总访问量"
+
+#: reports/stats/pools_usage_summary.py:142
+#: templates/uds/reports/stats/pools-usage-summary.html:30
+msgid "Total"
+msgstr "总"
+
 #: reports/stats/usage_by_pool.py:53
 msgid "Pools usage by users"
 msgstr "用户使用的池"
@@ -2627,16 +2669,17 @@ msgstr "按用户报告使用池"
 msgid "ALL POOLS"
 msgstr "所有池"
 
-#: reports/stats/usage_by_pool.py:138
+#: reports/stats/usage_by_pool.py:136
 #: templates/uds/reports/stats/usage-by-pool.html:4
+#: templates/uds/reports/stats/usage-by-pool.html:6
 msgid "Users usage list"
 msgstr "用户使用情况列表"
 
-#: reports/stats/usage_by_pool.py:139
+#: reports/stats/usage_by_pool.py:137
 msgid "UDS Report of users usage"
 msgstr "UDS用户使用情况报告"
 
-#: reports/stats/usage_by_pool.py:160
+#: reports/stats/usage_by_pool.py:158
 #: templates/uds/reports/stats/usage-by-pool.html:16
 msgid "Seconds"
 msgstr "秒"
@@ -2968,7 +3011,7 @@ msgstr "连接测试成功"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:214 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:178
+#: services/Proxmox/provider.py:205 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
 
@@ -2980,12 +3023,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "{1}的{0}的UDS发布"
 
 #: services/HyperV_enterprise/legacy/service.py:57
-#: services/HyperV_enterprise/service.py:57
 msgid "HyperV Linked Clone (Experimental)"
 msgstr "HyperV链接克隆（实验性）"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#: services/HyperV_enterprise/service.py:59
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr "基于模板和差异磁盘的超级服务（实验性）"
 
@@ -3155,6 +3196,17 @@ msgid ""
 "For clusters, username must be a domain user name (user@domain or DOMAIN"
 "\\user"
 msgstr "对于群集，用户名必须是域用户名（user @ domain或DOMAIN \\ user"
+
+#: services/HyperV_enterprise/service.py:57
+#| msgid "Xen Linked Clone"
+msgid "HyperV Linked Clone"
+msgstr "HyperV链接克隆"
+
+#: services/HyperV_enterprise/service.py:59
+#| msgid ""
+#| "Hyper Services based on templates and differential disks (experimental)"
+msgid "Hyper Services based on templates and differential disks"
+msgstr "基于模板和差异磁盘的超级服务"
 
 #: services/Nutanix_enterprise/provider.py:30
 msgid "Nutanix Acropolis Platform Provider"
@@ -3625,32 +3677,42 @@ msgstr "静态IP机器提供商"
 msgid "Provides connection to machines by IP"
 msgstr "通过IP提供与机器的连接"
 
-#: services/PhysicalMachines/service_multi.py:59
+#: services/PhysicalMachines/service_multi.py:60
 #: services/Vmware_enterprise/service_fixed.py:54
 msgid "Service Token"
 msgstr "服务令牌"
 
-#: services/PhysicalMachines/service_multi.py:61
+#: services/PhysicalMachines/service_multi.py:62
 #: services/Vmware_enterprise/service_fixed.py:56
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
 msgstr "参与者将用于与服务进行通信的服务令牌。留空以进行永久分配。"
 
-#: services/PhysicalMachines/service_multi.py:67
+#: services/PhysicalMachines/service_multi.py:68
 #: services/RDS_enterprise/provider.py:47
 msgid "List of servers"
 msgstr "服务器列表"
 
-#: services/PhysicalMachines/service_multi.py:67
+#: services/PhysicalMachines/service_multi.py:68
 msgid "List of servers available for this service"
 msgstr "可用于此服务的服务器列表"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:70
+#| msgid "Check Cert."
+msgid "Check Port"
+msgstr "检查端口"
+
+#: services/PhysicalMachines/service_multi.py:70
+msgid ""
+"If non zero, only Machines responding to connection on that port will be used"
+msgstr "如果非零，则仅使用响应该端口连接的计算机"
+
+#: services/PhysicalMachines/service_multi.py:73
 msgid "Static Multiple IP"
 msgstr "静态多IP"
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:75
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
 
@@ -4561,9 +4623,31 @@ msgstr "日期："
 msgid "Services assignation"
 msgstr "服务分配"
 
-#: templates/uds/reports/stats/usage-by-pool.html:6
-msgid "Users usage list for"
-msgstr "的用户使用情况列表"
+#: templates/uds/reports/stats/pools-usage-summary.html:4
+#: templates/uds/reports/stats/pools-usage-summary.html:6
+#| msgid "Pools usage on a day"
+msgid "Pools usage summary"
+msgstr "池使用摘要"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:4
+#: templates/uds/reports/stats/pools-usage-summary.html:6
+msgid "from"
+msgstr "从"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:15
+#| msgid "Max.Idle time"
+msgid "Total time"
+msgstr "总时间"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:16
+#| msgid "Last access"
+msgid "Total accesses"
+msgstr "总访问量"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:17
+#| msgid "Current users"
+msgid "Unique users"
+msgstr "不重复使用者"
 
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"
@@ -5554,7 +5638,7 @@ msgid ""
 "Reloading this page is not supported. Please, reopen service from origin."
 msgstr "不支持重新加载此页面。请从原点重新开始服务。"
 
-#: web/util/services.py:190
+#: web/util/services.py:196
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."

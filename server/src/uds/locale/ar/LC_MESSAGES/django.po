@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-11 14:01+0200\n"
+"POT-Creation-Date: 2020-05-26 16:18+0200\n"
 "PO-Revision-Date: 2020-05-07 09:52+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -29,7 +29,7 @@ msgstr "حسابات"
 #: REST/methods/meta_pools.py:70 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
-#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:96
+#: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
 #: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
 #: REST/model.py:139
@@ -55,7 +55,7 @@ msgstr "علامة الوقت"
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:226 REST/methods/services_pools.py:105
+#: REST/methods/services.py:226 REST/methods/services_pools.py:108
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr "العلامات"
@@ -121,7 +121,7 @@ msgstr "الرموز الفاعلة"
 
 #: REST/methods/actor_token.py:54 reports/stats/pools_performance.py:198
 #: reports/stats/pools_performance.py:213 reports/stats/pools_usage_day.py:65
-#: reports/stats/usage_by_pool.py:160 reports/stats/user_access.py:174
+#: reports/stats/usage_by_pool.py:158 reports/stats/user_access.py:174
 msgid "Date"
 msgstr "تاريخ"
 
@@ -175,13 +175,13 @@ msgstr "نوع"
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
 #: REST/methods/transports.py:56 REST/methods/user_services.py:294
-#: REST/model.py:166 models/meta_pool.py:72
+#: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "الأولوية"
 
 #: REST/methods/authenticators.py:69 REST/methods/authenticators.py:101
 #: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:150
-#: REST/methods/services_pools.py:101 REST/methods/services_pools.py:253
+#: REST/methods/services_pools.py:104 REST/methods/services_pools.py:277
 msgid "Visible"
 msgstr "مرئي"
 
@@ -197,15 +197,15 @@ msgstr "التسمية"
 msgid "Users"
 msgstr "المستخدمين"
 
-#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:254
+#: REST/methods/authenticators.py:102 REST/methods/services_pools.py:278
 msgid "If active, transport will be visible for users"
 msgstr "إذا كان نشطًا ، فسيكون النقل مرئيًا للمستخدمين"
 
 #: REST/methods/authenticators.py:105 REST/methods/meta_pools.py:138
 #: REST/methods/meta_pools.py:146 REST/methods/meta_pools.py:154
-#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:257
-#: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
-#: REST/methods/services_pools.py:281 core/ui/user_interface.py:99
+#: REST/methods/meta_pools.py:162 REST/methods/services_pools.py:281
+#: REST/methods/services_pools.py:289 REST/methods/services_pools.py:297
+#: REST/methods/services_pools.py:305 core/ui/user_interface.py:99
 #: services/OVirt/service.py:186
 msgid "Display"
 msgstr "عرض"
@@ -230,7 +230,7 @@ msgstr "ويكرر"
 msgid "Every"
 msgstr "كل"
 
-#: REST/methods/calendarrules.py:103 reports/stats/usage_by_pool.py:160
+#: REST/methods/calendarrules.py:103 reports/stats/usage_by_pool.py:158
 msgid "Duration"
 msgstr "المدة"
 
@@ -285,11 +285,11 @@ msgid "Policy"
 msgstr "سياسات"
 
 #: REST/methods/meta_pools.py:73 REST/methods/services.py:225
-#: REST/methods/services_pools.py:98
+#: REST/methods/services_pools.py:101
 msgid "User services"
 msgstr "خدمات المستخدم"
 
-#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:99
+#: REST/methods/meta_pools.py:74 REST/methods/services_pools.py:102
 msgid "In Preparation"
 msgstr "قيد التهيئ "
 
@@ -298,8 +298,8 @@ msgid "Pool Group"
 msgstr "تجمع مجموعات"
 
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:141
-#: REST/methods/services_pools.py:123 REST/methods/services_pools.py:175
-#: REST/methods/services_pools.py:268
+#: REST/methods/services_pools.py:141 REST/methods/services_pools.py:198
+#: REST/methods/services_pools.py:292
 msgid "Default"
 msgstr "افتراضي"
 
@@ -308,21 +308,21 @@ msgid "Service pool policy"
 msgstr "سياسة تجمع الخدمة"
 
 #: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:85
-#: REST/methods/services_pools.py:261
+#: REST/methods/services_pools.py:285
 msgid "Associated Image"
 msgstr "الصورة المرتبطة بها"
 
 #: REST/methods/meta_pools.py:135 REST/methods/services_pool_groups.py:86
-#: REST/methods/services_pools.py:262
+#: REST/methods/services_pools.py:286
 msgid "Image assocciated with this service"
 msgstr "الصورة المرتبطة مع هذه الخدمة"
 
-#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:103
-#: REST/methods/services_pools.py:269
+#: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:106
+#: REST/methods/services_pools.py:293
 msgid "Pool group"
 msgstr "تجمع مجموعات"
 
-#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:270
+#: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:294
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "تجمع الفريق لهذا التجمع (لتصنيف تجمع في العرض)"
 
@@ -330,11 +330,11 @@ msgstr "تجمع الفريق لهذا التجمع (لتصنيف تجمع في 
 msgid "If active, metapool will be visible for users"
 msgstr "إذا كانت نشطة ، فسيكون metapool مرئيًا للمستخدمين"
 
-#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:277
+#: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:301
 msgid "Calendar access denied text"
 msgstr "تم رفض الوصول إلى التقويم"
 
-#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:278
+#: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:302
 msgid ""
 "Custom message to be shown to users if access is limited by calendar rules."
 msgstr "يتم عرض رسالة مخصصة للمستخدمين إذا كان الوصول مقيدًا بقواعد التقويم."
@@ -361,12 +361,13 @@ msgid "Creation date"
 msgstr "تاريخ الإنشاء"
 
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
-#: reports/stats/pool_usage_summary.py:59
+#: reports/stats/pool_users_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/usage_by_pool.py:60 reports/stats/usage_by_pool.py:160
-#: services/Proxmox/service.py:110
+#: reports/stats/pools_usage_summary.py:137 reports/stats/usage_by_pool.py:60
+#: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
+#: templates/uds/reports/stats/pools-usage-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:17
 msgid "Pool"
 msgstr "تجمع"
@@ -504,7 +505,7 @@ msgstr "لا يمكن حذف إدارة نظام التشغيل المرتبطة
 msgid "Service providers"
 msgstr "مقدمي الخدمات"
 
-#: REST/methods/providers.py:73 REST/methods/services_pools.py:97
+#: REST/methods/providers.py:73 REST/methods/services_pools.py:100
 msgid "Status"
 msgstr "مركز"
 
@@ -651,9 +652,9 @@ msgstr "الوكيل"
 msgid "Proxy for services behind a firewall"
 msgstr "وكيل للخدمات وراء جدار الحماية"
 
-#: REST/methods/services.py:270 REST/methods/services_pools.py:233
-#: REST/methods/services_pools.py:241 REST/methods/services_pools.py:249
-#: REST/methods/services_pools.py:324 REST/methods/services_pools.py:332
+#: REST/methods/services.py:270 REST/methods/services_pools.py:257
+#: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
+#: REST/methods/services_pools.py:348 REST/methods/services_pools.py:356
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:95
 #: osmanagers/WindowsOsManager/windows_domain.py:71
 #: osmanagers/WindowsOsManager/windows_domain.py:72
@@ -677,47 +678,47 @@ msgstr "موافق"
 msgid "Services Pool Groups"
 msgstr "خدمات تجمع مجموعات"
 
-#: REST/methods/services_pools.py:94 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:97 REST/methods/transports.py:104
 msgid "Service Pools"
 msgstr "تجمعات الخدمة "
 
-#: REST/methods/services_pools.py:100
+#: REST/methods/services_pools.py:103
 msgid "Usage"
 msgstr "استعمال"
 
-#: REST/methods/services_pools.py:102
+#: REST/methods/services_pools.py:105
 msgid "Shows transports"
 msgstr "تبين عمليات النقل"
 
-#: REST/methods/services_pools.py:104
+#: REST/methods/services_pools.py:107
 msgid "Parent service"
 msgstr "خدمة الوالدين"
 
-#: REST/methods/services_pools.py:206
+#: REST/methods/services_pools.py:230
 msgid "Create at least a service before creating a new service pool"
 msgstr "قم بإنشاء على الأقل خدمة قبل إنشاء تجمع جديد للخدمة"
 
-#: REST/methods/services_pools.py:213
+#: REST/methods/services_pools.py:237
 msgid "Base service"
 msgstr "خدمة قاعدة"
 
-#: REST/methods/services_pools.py:214
+#: REST/methods/services_pools.py:238
 msgid "Service used as base of this service pool"
 msgstr "الخدمة التي تستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:221
+#: REST/methods/services_pools.py:245
 msgid "OS Manager"
 msgstr "إدارة نظام التشغيل"
 
-#: REST/methods/services_pools.py:222
+#: REST/methods/services_pools.py:246
 msgid "OS Manager used as base of this service pool"
 msgstr "إدارة نظام التشغيل يستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:229
+#: REST/methods/services_pools.py:253
 msgid "Allow removal by users"
 msgstr "السماح بمسح المستخدم"
 
-#: REST/methods/services_pools.py:230
+#: REST/methods/services_pools.py:254
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -726,19 +727,19 @@ msgstr ""
 "إذا نشط، فسيسمح للمستخدم بإزالة الخدمة \"يدويا\". كن حذرا مع هذا، لأن "
 "المستخدم سوف يكون \"السلطة\" لحذف انها الخدمة الخاصة"
 
-#: REST/methods/services_pools.py:237
+#: REST/methods/services_pools.py:261
 msgid "Allow reset by users"
 msgstr "السماح بإعادة برمجة المصنع قبل المستخدمين"
 
-#: REST/methods/services_pools.py:238
+#: REST/methods/services_pools.py:262
 msgid "If active, the user will be allowed to reset the service"
 msgstr "في حالة التفعيل، سيسمح للمستخدم بإعادة برمجة الخدمة"
 
-#: REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:269
 msgid "Ignores unused"
 msgstr "تجاهل غير المستخدمة"
 
-#: REST/methods/services_pools.py:246
+#: REST/methods/services_pools.py:270
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -746,40 +747,40 @@ msgstr ""
 "إذا تم تمكين الخيار، فإن UDS لا تحاول الكشف عن خدمات المستخدم التي تم "
 "تعيينها ولكن التي ليست قيد الاستخدام."
 
-#: REST/methods/services_pools.py:286
+#: REST/methods/services_pools.py:310
 msgid "Initial available services"
 msgstr "أولى الخدمات المتاحة"
 
-#: REST/methods/services_pools.py:287
+#: REST/methods/services_pools.py:311
 msgid "Services created initially for this service pool"
 msgstr "الخدمات التي تم إنشاؤها في البداية لتجمع هذه الخدمة"
 
-#: REST/methods/services_pools.py:290 REST/methods/services_pools.py:299
-#: REST/methods/services_pools.py:308 REST/methods/services_pools.py:317
+#: REST/methods/services_pools.py:314 REST/methods/services_pools.py:323
+#: REST/methods/services_pools.py:332 REST/methods/services_pools.py:341
 msgid "Availability"
 msgstr "توافر"
 
-#: REST/methods/services_pools.py:295
+#: REST/methods/services_pools.py:319
 msgid "Services to keep in cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت"
 
-#: REST/methods/services_pools.py:296
+#: REST/methods/services_pools.py:320
 msgid "Services kept in cache for improved user service assignation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت لإسناد خدمة مستخدم محسنة"
 
-#: REST/methods/services_pools.py:304
+#: REST/methods/services_pools.py:328
 msgid "Services to keep in L2 cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت L2"
 
-#: REST/methods/services_pools.py:305
+#: REST/methods/services_pools.py:329
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت من L2 لتحسين خدمة الجيل"
 
-#: REST/methods/services_pools.py:313
+#: REST/methods/services_pools.py:337
 msgid "Maximum number of services to provide"
 msgstr "الحد الأقصى لعدد الخدمات المتوفرة"
 
-#: REST/methods/services_pools.py:314
+#: REST/methods/services_pools.py:338
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -787,27 +788,27 @@ msgstr ""
 "الحد الأقصى لعدد من الخدمات (المعينة ومخبأة في L1) التي يمكن أن تنشأ عن هذه "
 "الخدمة"
 
-#: REST/methods/services_pools.py:321
+#: REST/methods/services_pools.py:345
 msgid "Show transports"
 msgstr "إظهار النقل"
 
-#: REST/methods/services_pools.py:322
+#: REST/methods/services_pools.py:346
 msgid "If active, alternative transports for user will be shown"
 msgstr "في حالة نشطة، سيظهر النقل البديل للمستخدم"
 
-#: REST/methods/services_pools.py:329
+#: REST/methods/services_pools.py:353
 msgid "Accounting"
 msgstr "محاسبة"
 
-#: REST/methods/services_pools.py:330
+#: REST/methods/services_pools.py:354
 msgid "Account associated to this service pool"
 msgstr "الحساب المرتبط ببركة الخدمة هذه"
 
-#: REST/methods/services_pools.py:346
+#: REST/methods/services_pools.py:370
 msgid "Base service does not exist anymore"
 msgstr "خدمة قاعدة غير موجود بعد الآن"
 
-#: REST/methods/services_pools.py:380
+#: REST/methods/services_pools.py:404
 msgid "This service requires an OS Manager"
 msgstr "تتطلب هذه الخدمة إدارة نظام التشغيل"
 
@@ -935,8 +936,8 @@ msgstr "موظف"
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/RegexLdap/authenticator.py:67 auths/SAML_enterprise/saml.py:117
-#: reports/stats/pool_usage_summary.py:166 reports/stats/usage_by_pool.py:160
-#: templates/uds/reports/stats/pool-usage-summary.html:14
+#: reports/stats/pool_users_summary.py:166 reports/stats/usage_by_pool.py:158
+#: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
 msgid "User"
 msgstr "المستخدم"
@@ -1751,27 +1752,27 @@ msgstr "لا يمكن إزالة عنصر غير نشط"
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "لا يمكن إزالة أو إلغاء {} لأن حالته لا تسمح بذلك"
 
-#: core/managers/user_service.py:318
+#: core/managers/user_service.py:317
 msgid "The requested service is restrained"
 msgstr "الخدمة المطلوبة مقيدة"
 
-#: core/managers/user_service.py:556
+#: core/managers/user_service.py:555
 msgid "The requested service is not available"
 msgstr "الخدمة المطلوبة غير متاحة"
 
-#: core/managers/user_service.py:586
+#: core/managers/user_service.py:585
 msgid "The requested transport {} is not valid for {}"
 msgstr "النقل المطلوب {} غير صالح لـ {}"
 
-#: core/managers/user_service.py:710
+#: core/managers/user_service.py:709
 msgid "The service is not accessible from this device"
 msgstr "لا يمكن الوصول إلى الخدمة من هذا الجهاز"
 
-#: core/module.py:208
+#: core/module.py:207
 msgid "No connection checking method is implemented."
 msgstr "لم ينفذ أي اتصال بالتحقق من الأسلوب."
 
-#: core/module.py:277
+#: core/module.py:276
 msgid "No check method provided."
 msgstr "لم يقدم  أسلوب الاختيار ."
 
@@ -2146,8 +2147,8 @@ msgstr "أيام الأسبوع"
 msgid "Minutes"
 msgstr "دقائق"
 
-#: models/calendar_rule.py:76 reports/stats/pool_usage_summary.py:166
-#: templates/uds/reports/stats/pool-usage-summary.html:16
+#: models/calendar_rule.py:76 reports/stats/pool_users_summary.py:166
+#: templates/uds/reports/stats/pool-users-summary.html:16
 msgid "Hours"
 msgstr "ساعات"
 
@@ -2159,11 +2160,11 @@ msgstr "أيام"
 msgid "Weeks"
 msgstr "أسابيع"
 
-#: models/meta_pool.py:71
+#: models/meta_pool.py:72
 msgid "Evenly distributed"
 msgstr "وزعت بالتساوي"
 
-#: models/meta_pool.py:73
+#: models/meta_pool.py:74
 msgid "Greater % available"
 msgstr "أكبر ٪ المتاحة"
 
@@ -2529,7 +2530,7 @@ msgstr "قائمة المستخدمين من المنصة"
 msgid "Users List for {}"
 msgstr "قائمة المستخدمين ل {}"
 
-#: reports/lists/users.py:86 reports/stats/pool_usage_summary.py:145
+#: reports/lists/users.py:86 reports/stats/pool_users_summary.py:145
 msgid "UDS Report of users in {}"
 msgstr "تقرير UDS للمستخدمين في {}"
 
@@ -2545,49 +2546,51 @@ msgstr "الاسم الحقيقي"
 msgid "Statistics"
 msgstr "الإحصاء"
 
-#: reports/stats/pool_usage_summary.py:52
-msgid "Summary of pools usage"
-msgstr "ملخص استخدام تجمعات"
+#: reports/stats/pool_users_summary.py:52
+#| msgid "Pools usage by users"
+msgid "Pool Usage by users"
+msgstr "استخدام تجمع من قبل المستخدمين"
 
-#: reports/stats/pool_usage_summary.py:53
-msgid "Generates a report with the summary of a pool usage"
-msgstr "يقوم بإنشاء تقرير مع ملخص استخدام تجمع"
+#: reports/stats/pool_users_summary.py:53
+#| msgid "Generates a report with the summary of a pool usage"
+msgid "Generates a report with the summary of users usage for a pool"
+msgstr "يقوم بإنشاء تقرير بملخص استخدام المستخدمين للتجمع"
 
-#: reports/stats/pool_usage_summary.py:60 reports/stats/usage_by_pool.py:61
+#: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:61
 msgid "Pool for report"
 msgstr "تجمع للتقارير"
 
-#: reports/stats/pool_usage_summary.py:66 reports/stats/pools_performance.py:74
+#: reports/stats/pool_users_summary.py:66 reports/stats/pools_performance.py:74
 #: reports/stats/usage_by_pool.py:67 reports/stats/user_access.py:66
 msgid "Starting date"
 msgstr "تاريخ البدء"
 
-#: reports/stats/pool_usage_summary.py:67 reports/stats/pools_performance.py:75
+#: reports/stats/pool_users_summary.py:67 reports/stats/pools_performance.py:75
 #: reports/stats/usage_by_pool.py:68 reports/stats/user_access.py:67
 msgid "starting date for report"
 msgstr "تاريخ البدء للتقرير"
 
-#: reports/stats/pool_usage_summary.py:74 reports/stats/pools_performance.py:82
+#: reports/stats/pool_users_summary.py:74 reports/stats/pools_performance.py:82
 #: reports/stats/usage_by_pool.py:75 reports/stats/user_access.py:74
 msgid "Finish date"
 msgstr "تاريخ الانتهاء"
 
-#: reports/stats/pool_usage_summary.py:75 reports/stats/pools_performance.py:83
+#: reports/stats/pool_users_summary.py:75 reports/stats/pools_performance.py:83
 #: reports/stats/usage_by_pool.py:76 reports/stats/user_access.py:75
 msgid "finish date for report"
 msgstr "تاريخ الانتهاء للتقرير"
 
-#: reports/stats/pool_usage_summary.py:144
+#: reports/stats/pool_users_summary.py:144
 msgid "Users usage list for {}"
 msgstr "قائمة استخدام المستخدمين ل{}"
 
-#: reports/stats/pool_usage_summary.py:166
-#: templates/uds/reports/stats/pool-usage-summary.html:15
+#: reports/stats/pool_users_summary.py:166
+#: templates/uds/reports/stats/pool-users-summary.html:15
 msgid "Sessions"
 msgstr "دورات"
 
-#: reports/stats/pool_usage_summary.py:166
-#: templates/uds/reports/stats/pool-usage-summary.html:17
+#: reports/stats/pool_users_summary.py:166
+#: templates/uds/reports/stats/pool-users-summary.html:17
 msgid "Average"
 msgstr "في المتوسط"
 
@@ -2674,6 +2677,47 @@ msgstr "تقرير استخدام الخدمات لمدة يوم"
 msgid "Service usage report"
 msgstr "تقرير استخدام الخدمة"
 
+#: reports/stats/pools_usage_summary.py:47
+msgid "Summary of pools usage"
+msgstr "ملخص استخدام تجمعات"
+
+#: reports/stats/pools_usage_summary.py:48
+msgid ""
+"Summary of Pools usage with time totals, accesses totals, time total by pool"
+msgstr ""
+"ملخص استخدام التجمعات مع إجماليات الوقت ، والوصول إلى الإجماليات ، والوقت "
+"الإجمالي حسب التجمع"
+
+#: reports/stats/pools_usage_summary.py:116
+#| msgid "Summary of pools usage"
+msgid "Summary of Pools usage"
+msgstr "ملخص استخدام تجمعات"
+
+#: reports/stats/pools_usage_summary.py:116
+#: templates/uds/reports/stats/pools-usage-summary.html:4
+#: templates/uds/reports/stats/pools-usage-summary.html:6
+msgid "to"
+msgstr "إلى"
+
+#: reports/stats/pools_usage_summary.py:117
+#| msgid "Summary of pools usage"
+msgid "UDS Report Summary of pools usage"
+msgstr "ملخص تقرير UDS لاستخدام المسابح"
+
+#: reports/stats/pools_usage_summary.py:137
+msgid "Total Time (seconds)"
+msgstr "الوقت الإجمالي (بالثواني)"
+
+#: reports/stats/pools_usage_summary.py:137
+#| msgid "Accesses"
+msgid "Total Accesses"
+msgstr "إجمالي المداخل"
+
+#: reports/stats/pools_usage_summary.py:142
+#: templates/uds/reports/stats/pools-usage-summary.html:30
+msgid "Total"
+msgstr "مجموع"
+
 #: reports/stats/usage_by_pool.py:53
 msgid "Pools usage by users"
 msgstr "استخدام التجمعات من قبل المستخدمين"
@@ -2686,16 +2730,17 @@ msgstr "تقرير استخدام التجمعات من قبل المستخدم�
 msgid "ALL POOLS"
 msgstr "جميع المسابح"
 
-#: reports/stats/usage_by_pool.py:138
+#: reports/stats/usage_by_pool.py:136
 #: templates/uds/reports/stats/usage-by-pool.html:4
+#: templates/uds/reports/stats/usage-by-pool.html:6
 msgid "Users usage list"
 msgstr "قائمة استخدام المستخدمين"
 
-#: reports/stats/usage_by_pool.py:139
+#: reports/stats/usage_by_pool.py:137
 msgid "UDS Report of users usage"
 msgstr "تقرير UDS لاستخدام المستخدمين"
 
-#: reports/stats/usage_by_pool.py:160
+#: reports/stats/usage_by_pool.py:158
 #: templates/uds/reports/stats/usage-by-pool.html:16
 msgid "Seconds"
 msgstr "ثواني"
@@ -3029,7 +3074,7 @@ msgstr "اختبار اتصال ناجح"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:214 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:202 services/Vmware_enterprise/provider.py:178
+#: services/Proxmox/provider.py:205 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "فشل الاتصال. تحقق اتصال params"
 
@@ -3041,12 +3086,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "UDS pub for {0} at {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:57
-#: services/HyperV_enterprise/service.py:57
 msgid "HyperV Linked Clone (Experimental)"
 msgstr "HyperV استنساخ مرتبط (تجريبي)"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#: services/HyperV_enterprise/service.py:59
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr "الخدمات فرط استنادا إلى قوالب والأقراص التفاضلية (تجريبي)"
 
@@ -3221,6 +3264,17 @@ msgid ""
 msgstr ""
 "بالنسبة للمجموعات ، يجب أن يكون اسم المستخدم اسم مستخدم مجال (user @ domain "
 "أو DOMAIN \\ user"
+
+#: services/HyperV_enterprise/service.py:57
+#| msgid "Xen Linked Clone"
+msgid "HyperV Linked Clone"
+msgstr "استنساخ HyperV مرتبط"
+
+#: services/HyperV_enterprise/service.py:59
+#| msgid ""
+#| "Hyper Services based on templates and differential disks (experimental)"
+msgid "Hyper Services based on templates and differential disks"
+msgstr "خدمات عالية تعتمد على القوالب والأقراص التفاضلية"
 
 #: services/Nutanix_enterprise/provider.py:30
 msgid "Nutanix Acropolis Platform Provider"
@@ -3706,12 +3760,12 @@ msgstr "ثابت IP آلات مزود"
 msgid "Provides connection to machines by IP"
 msgstr "يوفر اتصال إلى الأجهزة عن طريق IP"
 
-#: services/PhysicalMachines/service_multi.py:59
+#: services/PhysicalMachines/service_multi.py:60
 #: services/Vmware_enterprise/service_fixed.py:54
 msgid "Service Token"
 msgstr "رمز الخدمة"
 
-#: services/PhysicalMachines/service_multi.py:61
+#: services/PhysicalMachines/service_multi.py:62
 #: services/Vmware_enterprise/service_fixed.py:56
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -3720,20 +3774,32 @@ msgstr ""
 "رمز الخدمة الذي سيتم استخدامه بواسطة الجهات الفاعلة للتواصل مع الخدمة. اتركه "
 "فارغًا للتخصيص المستمر."
 
-#: services/PhysicalMachines/service_multi.py:67
+#: services/PhysicalMachines/service_multi.py:68
 #: services/RDS_enterprise/provider.py:47
 msgid "List of servers"
 msgstr "قائمة ملقمات"
 
-#: services/PhysicalMachines/service_multi.py:67
+#: services/PhysicalMachines/service_multi.py:68
 msgid "List of servers available for this service"
 msgstr "قائمة الخوادم المتاحة لهذه الخدمة"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:70
+#| msgid "Check Cert."
+msgid "Check Port"
+msgstr "تحقق من المنفذ"
+
+#: services/PhysicalMachines/service_multi.py:70
+msgid ""
+"If non zero, only Machines responding to connection on that port will be used"
+msgstr ""
+"في حالة عدم الصفر ، سيتم استخدام الأجهزة التي تستجيب للاتصال على هذا المنفذ "
+"فقط"
+
+#: services/PhysicalMachines/service_multi.py:73
 msgid "Static Multiple IP"
 msgstr "IP ثابت متعدد."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:75
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات مشتغلة ب IP"
 
@@ -4658,9 +4724,31 @@ msgstr "تاريخ:"
 msgid "Services assignation"
 msgstr "تعيين الخدمات"
 
-#: templates/uds/reports/stats/usage-by-pool.html:6
-msgid "Users usage list for"
-msgstr "قائمة استخدام المستخدمين لـ"
+#: templates/uds/reports/stats/pools-usage-summary.html:4
+#: templates/uds/reports/stats/pools-usage-summary.html:6
+#| msgid "Pools usage on a day"
+msgid "Pools usage summary"
+msgstr "ملخص استخدام حمامات السباحة"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:4
+#: templates/uds/reports/stats/pools-usage-summary.html:6
+msgid "from"
+msgstr "من عند"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:15
+#| msgid "Max.Idle time"
+msgid "Total time"
+msgstr "الوقت الكلي"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:16
+#| msgid "Last access"
+msgid "Total accesses"
+msgstr "إجمالي المداخل"
+
+#: templates/uds/reports/stats/pools-usage-summary.html:17
+#| msgid "Current users"
+msgid "Unique users"
+msgstr "المستخدمون الفريدون"
 
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"
@@ -5681,7 +5769,7 @@ msgid ""
 msgstr ""
 "إعادة تحميل هذه الصفحة غير مدعومة. من فضلك ، إعادة فتح الخدمة من الأصل."
 
-#: web/util/services.py:190
+#: web/util/services.py:196
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."

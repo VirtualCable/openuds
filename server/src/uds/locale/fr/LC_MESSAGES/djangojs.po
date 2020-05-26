@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-11 14:02+0200\n"
-"PO-Revision-Date: 2020-05-07 09:52+0000\n"
+"POT-Creation-Date: 2020-05-26 16:18+0200\n"
+"PO-Revision-Date: 2020-05-11 12:06+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -1579,12 +1579,10 @@ msgstr "Sur"
 
 #: static/modern/translations-fakejs.js:35
 #: static/modern/translations-fakejs.js:36
-#| msgid "UDS Client"
 msgid "Client IP"
 msgstr "IP client"
 
 #: static/modern/translations-fakejs.js:37
-#| msgid "Delete Proxy"
 msgid "Detected proxy ip"
 msgstr "IP proxy détectée"
 

@@ -118,15 +118,14 @@ class IPMachinesService(IPServiceBase):
     def unmarshal(self, data: bytes) -> None:
         values: typing.List[bytes] = data.split(b'\0')
         d = self.storage.readData('ips')
-        if values[0] == b'v1':
-            if isinstance(d, bytes):
-                self._ips = pickle.loads(d)
-            elif isinstance(d, str):  # "legacy" saved elements
-                self._ips = pickle.loads(d.encode('utf8'))
-                self.marshal()  # Ensure now is bytes..
-            else:
-                self._ips = []
+        if isinstance(d, bytes):
+            self._ips = pickle.loads(d)
+        elif isinstance(d, str):  # "legacy" saved elements
+            self._ips = pickle.loads(d.encode('utf8'))
+            self.marshal()  # Ensure now is bytes..
         else:
+            self._ips = []
+        if values[0] != b'v1':
             self._token = values[1].decode()
             if values[0] == b'v3':
                 self._port = int(values[2].decode())
@@ -140,7 +139,7 @@ class IPMachinesService(IPServiceBase):
                     self.storage.saveData(theIP, theIP)
                     # Now, check if it is available on port, if required...
                     if self._port > 0:
-                        if testServer(theIP, self._port) is False:
+                        if testServer(theIP, self._port, timeOut=0.5) is False:
                             self.storage.remove(theIP)  # Return Machine to pool
                             continue
                     return theIP
