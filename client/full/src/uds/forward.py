@@ -140,14 +140,14 @@ class ForwardThread(threading.Thread):
 
     def run(self):
         if self.client is None:
-            self.client = paramiko.SSHClient()
-            self.client.useCount = 1  # Custom added variable, to keep track on when to close tunnel
-            self.client.load_system_host_keys()
-            self.client.set_missing_host_key_policy(CheckfingerPrints(self.fingerPrints))
-
-            logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
-
             try:
+                self.client = paramiko.SSHClient()
+                self.client.useCount = 1  # Custom added variable, to keep track on when to close tunnel
+                # self.client.load_system_host_keys()
+                self.client.set_missing_host_key_policy(CheckfingerPrints(self.fingerPrints))
+
+                logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
+
                 self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
             except Exception:
                 logger.exception('Exception connecting: ')
