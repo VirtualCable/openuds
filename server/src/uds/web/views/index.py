@@ -191,10 +191,17 @@ def index(request):
         else:
             tbrt = ''
 
+        left = ''
+        # try:
+        #     if svr.max_srvs > 0:
+        #         left = ' (max {})'.format(svr.max_srvs - svr.assignedUserServices().filter(UserServiceManager.getStateFilter()).count())
+        # except Exception:
+        #     logger.exception('Error')
+
         services.append({
             'id': 'F' + svr.uuid,
-            'name': svr.name,
-            'visual_name': svr.visual_name,
+            'name': svr.name + left,
+            'visual_name': svr.visual_name + left,
             'description': svr.comments,
             'group': group,
             'transports': trans,

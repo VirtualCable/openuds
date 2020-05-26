@@ -732,8 +732,28 @@ class ModelHandler(BaseModelHandler):
 
         return method()
 
-    def getItems(self, overview=True, *args, **kwargs):
-        for item in self.model.objects.filter(*args, **kwargs):
+    def getItems(self, *args, **kwargs):
+        if 'overview' in kwargs:
+            overview = kwargs['overview']
+            del kwargs['overview']
+        else:
+            overview = False
+
+        if 'prefetch' in kwargs:
+            prefetch = kwargs['prefetch']
+            logger.debug('Prefetching %s', prefetch)
+            del kwargs['prefetch']
+        else:
+            prefetch = []
+
+        if 'query' in kwargs:
+            query = kwargs['query']
+            del kwargs['query']
+        else:
+            logger.debug('Args: %s, kwargs: %s', args, kwargs)
+            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
+
+        for item in query:
             try:
                 if permissions.checkPermissions(self._user, item, permissions.PERMISSION_READ) is False:
                     continue
