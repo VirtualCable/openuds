@@ -222,7 +222,8 @@ class CalendarAction(UUIDModel):
             self.service_pool.save()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.next_execution = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=self.last_execution, startEvent=self.at_start, offset=self.offset)
+        lastExecution = self.last_execution or getSqlDatetime()
+        self.next_execution = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=lastExecution-self.offset, startEvent=self.at_start) + self.offset
 
         super().save(force_insert, force_update, using, update_fields)
 
