@@ -53,7 +53,8 @@ from uds.core.util.config import GlobalConfig
 from ..handlers import Handler, AccessDenied, RequestError
 
 # Not imported at runtime, just for type checking
-# if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING:
+    from uds.core import services
 
 logger = logging.getLogger(__name__)
 
@@ -308,7 +309,7 @@ class BaseReadyChange(ActorV3Action):
                 osManager.toReady(userService)
                 userServiceManager().notifyReadyFromOsManager(userService, '')
 
-        # Generates a certificate and send it to client. Currently, we do not store it locally
+        # Generates a certificate and send it to client. 
         privateKey, cert, password = certs.selfSignedCert(self._params['ip'])
         # Store certificate with userService
         userService.setProperty('cert', cert)
@@ -321,7 +322,6 @@ class ChangeIp(BaseReadyChange):
     """
     Processses IP Change. Needs to be "last" on a lead to be auto added to list of available methods
     """
-
     name = 'changeip'
 
 class Ready(BaseReadyChange):
@@ -449,6 +449,55 @@ class Ticket(ActorV3Action):
         except TicketStore.DoesNotExists:
             return ActorV3Action.actorResult(error='Invalid ticket')
 
+class Unmanaged(ActorV3Action):
+    name = 'unmanaged'
+
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
+        """
+        Changeip method expect a json POST with this fields:
+            * id: List[dict] -> List of dictionary containing ip and mac:
+            * token: str -> Valid Actor "master_token" (if invalid, will return an error).
+            * secret: Secret for commsUrl for actor
+            * port: port of the listener (normally 43910)
+
+        This method will also regenerater the public-private key pair for client, that will be needed for the new ip
+
+        Returns: {
+            private_key: str -> Generated private key, PEM
+            server_certificate: str -> Generated public key, PEM
+        }
+        """
+        logger.debug('Args: %s,  Params: %s', self._args, self._params)
+
+        try:
+            dbService: Service = Service.objects.get(token=self._params['token'])
+            service: 'services.Service' = dbService.getInstance()
+        except Exception:
+            return ActorV3Action.actorResult(error='Invalid token')
+
+        # Build the possible ids and ask service if it recognizes any of it
+        # If not recognized, will generate anyway the certificate, but will not be saved
+        idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
+        validId: typing.Optional[str] = service.getValidId(idsList)
+        ip: str
+        try:
+            ip = next(x['ip'] for x in self._params['id'] if x['ip'] == validId or x['mac'] == validId)
+        except StopIteration:
+            ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
+
+        # Generates a certificate and send it to client.
+        privateKey, cert, password = certs.selfSignedCert(ip)
+        cert = {'private_key': privateKey, 'server_certificate': cert, 'password': password}
+        # Store certificate, secret & port with service if validId
+        if validId:
+            service.storeIdInfo(validId, {
+                'cert': cert,
+                'secret': self._params['secret'],
+                'port': int(self._params['port'])
+            })
+
+        return ActorV3Action.actorResult(cert)
+
 class Notify(ActorV3Action):
     name = 'notify'
 
@@ -476,3 +525,4 @@ class Notify(ActorV3Action):
             incFailedIp(self._request.ip)  # pylint: disable=protected-access
 
         raise AccessDenied('Access denied')
+

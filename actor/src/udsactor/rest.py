@@ -246,6 +246,22 @@ class UDSServerApi(UDSApi):
             password=result['password']
         )
 
+    def notifyUnmanagedCallback(self, master_token: str, secret: str, interfaces: typing.Iterable[types.InterfaceInfoType], port: int) -> types.CertificateInfoType:
+        payload = {
+            'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
+            'token': master_token,
+            'secret': secret,
+            'port': port
+        }
+        result = self._doPost('unmanaged', payload)
+
+        return types.CertificateInfoType(
+            private_key=result['private_key'],
+            server_certificate=result['server_certificate'],
+            password=result['password']
+        )
+
+
     def login(self, own_token: str, username: str) -> types.LoginResultInfoType:
         if not own_token:
             return types.LoginResultInfoType(

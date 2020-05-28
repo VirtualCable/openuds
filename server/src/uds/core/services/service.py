@@ -289,7 +289,21 @@ class Service(Module):
         By default, services does not have a token
         """
         return None
-        
+
+    def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
+        return None
+
+    def storeIdInfo(self, id: str, data: typing.Any) -> None:
+        self.storage.putPickle('__nfo_' + id, data)
+
+    def recoverIdInfo(self, id: str, delete: bool = False) -> typing.Any:
+        # recovers the information
+        value = self.storage.getPickle('__nfo_' + id)
+        if value and delete:
+            self.storage.delete('__nfo_' + id)
+        return value
+
+
     def doLog(self, level: int, message: str) -> None:
         """
         Logs a message with requested level associated with this service

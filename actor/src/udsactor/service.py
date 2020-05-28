@@ -58,7 +58,8 @@ from .http import clients_pool, server, cert
 class CommonService:  # pylint: disable=too-many-instance-attributes
     _isAlive: bool = True
     _rebootRequested: bool = False
-    _loggedIn = False
+    _loggedIn: bool = False
+    _initialized: bool = False
 
     _cfg: types.ActorConfigurationType
     _api: rest.UDSServerApi
@@ -229,24 +230,41 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         return True
 
     def initializeUnmanaged(self) -> bool:
+        # Notify UDS about my callback
+        self.getInterfaces()  # Ensure we have interfaces
+        if self._cfg.master_token:
+            try:
+                self._certificate = self._api.notifyUnmanagedCallback(self._cfg.master_token, self._secret, self._interfaces, rest.LISTEN_PORT)
+            except Exception as e:
+                logger.error('Couuld not notify unmanaged callback: %s', e)
+
         return True
 
+    def getInterfaces(self) -> None:
+        if self._interfaces:
+            return
+
+        while self._isAlive:
+            self._interfaces = list(platform.operations.getNetworkInfo())
+            if self._interfaces:
+                break
+            self.doWait(5000)
+
     def initialize(self) -> bool:
-        if not self._cfg.host or not self._isAlive:  # Not configured or not running
+        if self._initialized or not self._cfg.host or not self._isAlive:  # Not configured or not running
             return False
+
+        self._initialized = True
 
         # Force time sync, just in case...
         if self.isManaged():
             platform.operations.forceTimeSync()
 
         # Wait for Broker to be ready
-        while self._isAlive:
-            if not self._interfaces:
-                self._interfaces = list(platform.operations.getNetworkInfo())
-                if not self._interfaces:  # Wait a bit for interfaces to get initialized... (has valid IPs)
-                    self.doWait(5000)
-                    continue
+        # Ensure we have intefaces...
+        self.getInterfaces()
 
+        while self._isAlive:
             try:
                 # If master token is present, initialize and get configuration data
                 if self._cfg.master_token:
@@ -283,6 +301,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 return False
 
         return self.configureMachine()
+
+    def uninitialize(self):
+        self._initialized = False
 
     def finish(self) -> None:
         if self._http:
@@ -397,6 +418,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             self._api.logout(self._cfg.own_token, username)
 
         self.onLogout(username)
+
+        if not self.isManaged():
+            self.uninitialize()
 
         self._cfg = self._cfg._replace(own_token=None)  # Ensures assigned token is cleared
 
