@@ -32,11 +32,13 @@
 """
 
 import typing
+import logging
 
 from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 from uds.core.transports import protocols
 from uds.core.util.state import State
+from uds.core.util import log
 
 from . import types
 from .publication import Publication
@@ -51,6 +53,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
     from uds import models
 
+logger = logging.getLogger(__name__)
 
 class Service(Module):
     """
@@ -70,7 +73,7 @@ class Service(Module):
     As you derive from this class, if you provide __init__ in your own class,
     remember to call ALWAYS at base class __init__  as this:
 
-       super(self.__class__, self).__init__(dbAuth, environment, values)
+       super().__init__(parent, environment, values)
 
     This is a MUST (if you override __init__), so internal structured gets
     filled correctly, so don't forget it!.
@@ -286,6 +289,14 @@ class Service(Module):
         By default, services does not have a token
         """
         return None
+        
+    def doLog(self, level: int, message: str) -> None:
+        """
+        Logs a message with requested level associated with this service
+        """
+        from uds.models import Service as DBService
+        if self.getUuid():
+            log.doLog(DBService.objects.get(uuid=self.getUuid()), level, message, log.SERVICE)
 
     @classmethod
     def canAssign(cls) -> bool:

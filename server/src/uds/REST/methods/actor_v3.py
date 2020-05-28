@@ -424,7 +424,8 @@ class Log(ActorV3Action):
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
-        log.doLog(userService, int(self._params['level']), self._params['message'], log.ACTOR)
+        # Adjust loglevel to own, we start on 10000 for OTHER, and received is 0 for OTHER
+        log.doLog(userService, int(self._params['level']) + 10000, self._params['message'], log.ACTOR)
 
         return ActorV3Action.actorResult('ok')
 

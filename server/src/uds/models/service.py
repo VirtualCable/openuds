@@ -116,7 +116,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         sType = prov.getServiceByType(self.data_type)
 
         if sType:
-            obj = sType(self.getEnvironment(), prov, values)
+            obj = sType(self.getEnvironment(), prov, values, uuid=self.uuid)
             self.deserialize(obj, values)
         else:
             raise Exception('Service type of {} is not recogniced by provider {}'.format(self.data_type, prov))

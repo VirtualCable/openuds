@@ -37,7 +37,8 @@ import typing
 from django.utils.translation import ugettext_lazy as _
 
 from uds.core.ui import gui
-from uds.core.util.connection import testServer
+from uds.core.util import log
+from uds.core.util import connection
 from uds.core.services import types as serviceTypes
 
 from .deployment import IPMachineDeployed
@@ -139,7 +140,9 @@ class IPMachinesService(IPServiceBase):
                     self.storage.saveData(theIP, theIP)
                     # Now, check if it is available on port, if required...
                     if self._port > 0:
-                        if testServer(theIP, self._port, timeOut=0.5) is False:
+                        if connection.testServer(theIP, self._port, timeOut=0.5) is False:
+                            # Log into logs of provider, so it can be "shown" on services logs
+                            self.parent().doLog(log.WARN, 'Host {} not accesible on port {}'.format(theIP, self._port))
                             self.storage.remove(theIP)  # Return Machine to pool
                             continue
                     return theIP

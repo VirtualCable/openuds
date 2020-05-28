@@ -78,7 +78,10 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         return services.ServiceProvider  # Basic Service implementation. Will fail if we try to use it, but will be ok to reference it
 
     def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'services.ServiceProvider':
-        return typing.cast('services.ServiceProvider', super().getInstance(values=values))
+        prov: services.ServiceProvider = typing.cast('services.ServiceProvider', super().getInstance(values=values))
+        # Set uuid
+        prov.setUuid(self.uuid)
+        return prov
 
     def isInMaintenance(self) -> bool:
         return self.maintenance_mode

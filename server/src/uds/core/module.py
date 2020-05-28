@@ -278,6 +278,9 @@ class Module(UserInterface, Environmentable, Serializable):
     def getUuid(self) -> str:
         return self._uuid
 
+    def setUuid(self, uuid: typing.Optional[str]) -> None:
+        self._uuid = uuid or ''
+
     def destroy(self) -> None:
         """
         Invoked before deleting an module from database.

@@ -227,7 +227,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
 
     def doLog(self, level: int, message: str) -> None:
         """
-        Logs a message with requested level associated with this service
+        Logs a message with requested level associated with this user deployment
         """
         log.doLog(self._dbService, level, message, log.SERVICE)
 

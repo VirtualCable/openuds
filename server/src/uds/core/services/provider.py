@@ -36,6 +36,7 @@ import typing
 from uds.core import Module
 from uds.core.environment import Environment
 
+from uds.core.util import log
 from uds.core.util.config import GlobalConfig
 from uds.core.ui import gui
 
@@ -196,6 +197,14 @@ class ServiceProvider(Module):
 
         val = getattr(val, 'value', val)
         return val is True or val == gui.TRUE
+
+    def doLog(self, level: int, message: str) -> None:
+        """
+        Logs a message with requested level associated with this service
+        """
+        from uds.models import Provider as DBProvider
+        if self.getUuid():
+            log.doLog(DBProvider.objects.get(uuid=self.getUuid()), level, message, log.SERVICE)
 
     def __str__(self):
         """

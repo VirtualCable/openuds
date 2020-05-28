@@ -80,13 +80,10 @@ class LogManager:
         """
         Logs a message associated to owner
         """
-        from uds.models import getSqlDatetime
-        from uds.models import Log
-
         # Ensure message fits on space
         message = str(message)[:255]
 
-        qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
+        qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
         if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
             for i in qs.order_by('-created',)[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1:]:
@@ -94,7 +91,7 @@ class LogManager:
 
         if avoidDuplicates is True:
             try:
-                lg = Log.objects.filter(owner_id=owner_id, owner_type=owner_type, level=level, source=source).order_by('-created', '-id')[0]
+                lg = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type, level=level, source=source).order_by('-created', '-id')[0]
                 if lg.message == message:
                     # Do not log again, already logged
                     return
@@ -103,7 +100,7 @@ class LogManager:
 
         # now, we add new log
         try:
-            Log.objects.create(owner_type=owner_type, owner_id=owner_id, created=getSqlDatetime(), source=source, level=level, data=message)
+            models.Log.objects.create(owner_type=owner_type, owner_id=owner_id, created=models.getSqlDatetime(), source=source, level=level, data=message)
         except Exception:
             # Some objects will not get logged, such as System administrator objects, but this is fine
             pass
@@ -112,18 +109,14 @@ class LogManager:
         """
         Get all logs associated with an user service, ordered by date
         """
-        from uds.models import Log
-
-        qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
+        qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in reversed(qs.order_by('-created', '-id')[:limit])]
 
     def __clearLogs(self, owner_type: int, owner_id: int):
         """
         Clears all logs related to user service
         """
-        from uds.models import Log
-
-        Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
+        models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
     def doLog(self, wichObject: 'Model', level: int, message: str, source: str, avoidDuplicates: bool = True):
         """
