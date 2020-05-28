@@ -233,7 +233,7 @@ class gui:
         DATE_TYPE: typing.ClassVar[str] = 'date'
         INFO_TYPE: typing.ClassVar[str] = 'dummy'
 
-        DEFAULT_LENTGH: typing.ClassVar[int] = 32  # : If length of some fields are not especified, this value is used as default
+        DEFAULT_LENTGH: typing.ClassVar[int] = 64  # : If length of some fields are not especified, this value is used as default
 
         _data: typing.Dict[str, typing.Any]
 

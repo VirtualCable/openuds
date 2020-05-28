@@ -486,12 +486,16 @@ class Unmanaged(ActorV3Action):
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
         # Generates a certificate and send it to client.
-        privateKey, cert, password = certs.selfSignedCert(ip)
-        cert = {'private_key': privateKey, 'server_certificate': cert, 'password': password}
+        privateKey, certificate, password = certs.selfSignedCert(ip)
+        cert: typing.Dict[str, str] = {
+            'private_key': privateKey,
+            'server_certificate': certificate,
+            'password': password
+        }
         # Store certificate, secret & port with service if validId
         if validId:
             service.storeIdInfo(validId, {
-                'cert': cert,
+                'cert': certificate,
                 'secret': self._params['secret'],
                 'port': int(self._params['port'])
             })
