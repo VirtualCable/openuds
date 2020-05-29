@@ -28,10 +28,10 @@ xfreerdp = tools.findApp('xfreerdp')
 udsrdp = tools.findApp('udsrdp')
 fnc, app = None, None
 
-if xfreerdp is not None:
+if xfreerdp:
     fnc, app = execNewXFreeRdp, xfreerdp
 
-if udsrdp is not None:
+if udsrdp:
     fnc, app = execUdsRdp, udsrdp
 
 if app is None or fnc is None:
