@@ -149,17 +149,11 @@ class Users(DetailHandler):
             auth = parent.getInstance()
             if item is None:  # Create new
                 auth.createUser(fields)  # this throws an exception if there is an error (for example, this auth can't create users)
-                toSave = {}
-                for k in valid_fields:
-                    toSave[k] = fields[k]
-                user = parent.users.create(**toSave)
+                user = parent.users.create(**fields)
             else:
                 auth.modifyUser(fields)  # Notifies authenticator
-                toSave = {}
-                for k in valid_fields:
-                    toSave[k] = fields[k]
                 user = parent.users.get(uuid=processUuid(item))
-                user.__dict__.update(toSave)
+                user.__dict__.update(fields)
 
             logger.debug('User parent: %s', user.parent)
             if auth.isExternalSource is False and (user.parent is None or user.parent == ''):
