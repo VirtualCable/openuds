@@ -108,7 +108,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         Raises:
         """
-        if self._cachedInstance is not None and values is None:
+        if self._cachedInstance and values is None:
             # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
 

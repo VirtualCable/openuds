@@ -55,7 +55,6 @@ logger = logging.getLogger(__name__)
 
 class IPMachinesService(IPServiceBase):
     # Gui
-    # Gui
     token = gui.TextField(
         order=1,
         label=_('Service Token'),
@@ -68,7 +67,8 @@ class IPMachinesService(IPServiceBase):
 
     ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
 
-    port = gui.NumericField(length=5, label=_('Check Port'), defvalue='0', order=2, tooltip=_('If non zero, only Machines responding to connection on that port will be used'), required=True, tab=gui.ADVANCED_TAB)
+    port = gui.NumericField(length=5, label=_('Check Port'), defvalue='0', order=2, tooltip=_('If non zero, only hosts responding to connection on that port will be served.'), required=True, tab=gui.ADVANCED_TAB)
+    skipTimeOnFailure = gui.NumericField(length=6, label=_('Skip time'), defvalue='60', order=2, tooltip=_('If a host fails to check, skip it for this time (in minutes).'), minValue=0, required=True, tab=gui.ADVANCED_TAB)
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -137,6 +137,8 @@ class IPMachinesService(IPServiceBase):
             for ip in self._ips:
                 theIP = ip.split('~')[0]
                 if self.storage.readData(theIP) is None:
+                    if self._port > 0 and self.cache.get('port{}'.format(theIP)):
+                        continue  # The check failed not so long ago, skip it...
                     self.storage.saveData(theIP, theIP)
                     # Now, check if it is available on port, if required...
                     if self._port > 0:
@@ -144,6 +146,7 @@ class IPMachinesService(IPServiceBase):
                             # Log into logs of provider, so it can be "shown" on services logs
                             self.parent().doLog(log.WARN, 'Host {} not accesible on port {}'.format(theIP, self._port))
                             self.storage.remove(theIP)  # Return Machine to pool
+                            self.cache.put('port{}'.format(theIP), '1', validity=self.skipTimeOnFailure.num()*60)
                             continue
                     return theIP
             return None
