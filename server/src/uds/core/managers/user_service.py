@@ -419,7 +419,12 @@ class UserServiceManager:
 
         logger.debug('Service %s is usable, checking it via setReady', userService)
         userServiceInstance = userService.getInstance()
-        state = userServiceInstance.setReady()
+        try:
+            state = userServiceInstance.setReady()
+        except Exception as e:
+            logger.warn('Could not check readyness of %s: %s', userService, e)
+            return False
+
         logger.debug('State: %s', state)
 
         if state == State.FINISHED:
