@@ -140,6 +140,10 @@ class Users(DetailHandler):
             self._params['password'] = cryptoManager().hash(self._params['password'])
 
         fields = self.readFieldsFromParams(valid_fields)
+        if not self._user.is_admin:
+            del fields['staff_member']
+            del fields['is_admin']
+
         user = None
         try:
             auth = parent.getInstance()
@@ -183,6 +187,9 @@ class Users(DetailHandler):
     def deleteItem(self, parent, item):
         try:
             user = parent.users.get(uuid=processUuid(item))
+            if not self._user.is_admin and (user.is_admin or user.staff_member):
+                logger.warn('Removal of user {} denied due to insufficients rights')
+                raise self.invalidItemException('Removal of user {} denied due to insufficients rights')
 
             for us in user.userServices.all():
                 try:
