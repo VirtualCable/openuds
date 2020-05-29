@@ -23,43 +23,13 @@ def execNewXFreeRdp(xfreerdp, port):
     params = [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
-
-def execRdesktop(rdesktop, port):
-    import subprocess  # @Reimport
-    params = [rdesktop] + sp['as_rdesktop_params'] + ['127.0.0.1:{}'.format(port)]  # @UndefinedVariable
-    p = subprocess.Popen(params, stdin=subprocess.PIPE)
-    if sp['password'] != '':
-        p.stdin.write(sp['password'].encode())
-    p.stdin.close()
-    tools.addTaskToWait(p)
-
-
 # Try to locate a "valid" version of xfreerdp as first option (<1.1 does not allows drive redirections, so it will not be used if found)
 xfreerdp = tools.findApp('xfreerdp')
-rdesktop = tools.findApp('rdesktop')
 udsrdp = tools.findApp('udsrdp')
 fnc, app = None, None
 
-if rdesktop is not None:
-    fnc, app = execRdesktop, rdesktop
-
 if xfreerdp is not None:
-    # Check for nice version
-    try:
-        try:
-            version = subprocess.check_output([xfreerdp, '--version'])
-        except subprocess.CalledProcessError as e:
-            version = e.output
-
-        version = float(re.search(r'version ([0-9]*\.[0-9]*)', version).groups()[0])
-        if version < 1.1:
-            raise Exception()
-        else:
-            fnc, app = execNewXFreeRdp, xfreerdp
-
-    except Exception as e:  # Valid version not found, pass to check rdesktop
-        # QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)
-        pass
+    fnc, app = execNewXFreeRdp, xfreerdp
 
 if udsrdp is not None:
     fnc, app = execUdsRdp, udsrdp
