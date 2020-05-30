@@ -103,13 +103,16 @@ class PoolsUsageSummary(UsageByPool):
                         'name': p['name'],
                         'time': str(datetime.timedelta(seconds=p['time'])),
                         'count': p['count'],
-                        'users': p['users']
+                        'users': p['users'],
+                        'mean': str(datetime.timedelta(seconds=p['time'] // int(p['count']))),
                     }
                     for p in pools
                 ),
                 'time': str(datetime.timedelta(seconds=totalTime)),
                 'count': totalCount,
                 'users': uniqueUsers,
+                'mean': str(datetime.timedelta(seconds=totalTime // totalCount)),
+
                 'start': start,
                 'end': end,
             },
@@ -134,11 +137,11 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
 
         reportData, totalTime, totalCount, totalUsers = self.getData()
 
-        writer.writerow([ugettext('Pool'), ugettext('Total Time (seconds)'), ugettext('Total Accesses')])
+        writer.writerow([ugettext('Pool'), ugettext('Total Time (seconds)'), ugettext('Total Accesses'), ugettext('Unique users'), ugettext('Mean time (seconds)')])
 
         for v in reportData:
-            writer.writerow([v['name'], v['time'], v['count'], v['users']])
+            writer.writerow([v['name'], v['time'], v['count'], v['users'], v['time'] // v['count']])
 
-        writer.writerow([ugettext('Total'), totalTime, totalCount, totalUsers])
+        writer.writerow([ugettext('Total'), totalTime, totalCount, totalUsers, totalTime // totalCount])
 
         return output.getvalue()
