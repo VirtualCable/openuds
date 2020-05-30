@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 16:18+0200\n"
-"PO-Revision-Date: 2020-05-07 09:52+0000\n"
+"POT-Creation-Date: 2020-05-30 20:55+0200\n"
+"PO-Revision-Date: 2020-05-26 14:20+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -42,7 +42,7 @@ msgstr "الاسم"
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
 msgstr "تعليقات"
@@ -363,7 +363,7 @@ msgstr "تاريخ الإنشاء"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_users_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/pools_usage_summary.py:137 reports/stats/usage_by_pool.py:60
+#: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
@@ -597,8 +597,8 @@ msgstr ""
 msgid "Available reports"
 msgstr "التقارير المتوفرة"
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:282
-#: REST/methods/users_groups.py:289
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:290
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -664,13 +664,13 @@ msgstr "وكيل للخدمات وراء جدار الحماية"
 msgid "Advanced"
 msgstr "متقدم"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr "مع الأخطاء"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr "موافق"
 
@@ -976,7 +976,7 @@ msgstr "اسم المستخدم"
 msgid "Role"
 msgstr "وظيفة"
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
 msgid "state"
 msgstr "الحالة"
 
@@ -984,28 +984,28 @@ msgstr "الحالة"
 msgid "Last access"
 msgstr "آخر وصول"
 
-#: REST/methods/users_groups.py:172 REST/methods/users_groups.py:354
+#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
 msgid "User already exists (duplicate key error)"
 msgstr "المستخدم موجود مسبقا (خطأ مفتاح مكرر)"
 
-#: REST/methods/users_groups.py:276
+#: REST/methods/users_groups.py:277
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "مجموعات من {0}"
 
-#: REST/methods/users_groups.py:278
+#: REST/methods/users_groups.py:279
 msgid "Current groups"
 msgstr "المجموعات الحالية"
 
-#: REST/methods/users_groups.py:289
+#: REST/methods/users_groups.py:290
 msgid "UDS Group"
 msgstr "المجموعة المصغرة"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "Meta group"
 msgstr "Meta المجموعة"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "UDS Meta Group"
 msgstr "مجموعة Meta المصغرة"
 
@@ -1756,15 +1756,15 @@ msgstr "لا يمكن إزالة أو إلغاء {} لأن حالته لا تس�
 msgid "The requested service is restrained"
 msgstr "الخدمة المطلوبة مقيدة"
 
-#: core/managers/user_service.py:555
+#: core/managers/user_service.py:560
 msgid "The requested service is not available"
 msgstr "الخدمة المطلوبة غير متاحة"
 
-#: core/managers/user_service.py:585
+#: core/managers/user_service.py:590
 msgid "The requested transport {} is not valid for {}"
 msgstr "النقل المطلوب {} غير صالح لـ {}"
 
-#: core/managers/user_service.py:709
+#: core/managers/user_service.py:714
 msgid "The service is not accessible from this device"
 msgstr "لا يمكن الوصول إلى الخدمة من هذا الجهاز"
 
@@ -1808,11 +1808,11 @@ msgstr "من"
 msgid "Printed in {now:%Y, %b %d} at {now:%H:%M}"
 msgstr "طبع في {now:٪ Y،٪ b٪ d} في {now:٪ H:٪ M}"
 
-#: core/services/service.py:101 core/services/service.py:113
+#: core/services/service.py:104 core/services/service.py:116
 msgid "Base Service"
 msgstr "خدمة قاعدة"
 
-#: core/services/service.py:137 core/services/service.py:146
+#: core/services/service.py:140 core/services/service.py:149
 #: models/permissions.py:72 models/permissions.py:76
 #: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
 #: services/Proxmox/service.py:197 services/Sample/service.py:98
@@ -2547,12 +2547,10 @@ msgid "Statistics"
 msgstr "الإحصاء"
 
 #: reports/stats/pool_users_summary.py:52
-#| msgid "Pools usage by users"
 msgid "Pool Usage by users"
 msgstr "استخدام تجمع من قبل المستخدمين"
 
 #: reports/stats/pool_users_summary.py:53
-#| msgid "Generates a report with the summary of a pool usage"
 msgid "Generates a report with the summary of users usage for a pool"
 msgstr "يقوم بإنشاء تقرير بملخص استخدام المستخدمين للتجمع"
 
@@ -2688,33 +2686,40 @@ msgstr ""
 "ملخص استخدام التجمعات مع إجماليات الوقت ، والوصول إلى الإجماليات ، والوقت "
 "الإجمالي حسب التجمع"
 
-#: reports/stats/pools_usage_summary.py:116
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:119
 msgid "Summary of Pools usage"
 msgstr "ملخص استخدام تجمعات"
 
-#: reports/stats/pools_usage_summary.py:116
+#: reports/stats/pools_usage_summary.py:119
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "to"
 msgstr "إلى"
 
-#: reports/stats/pools_usage_summary.py:117
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:120
 msgid "UDS Report Summary of pools usage"
 msgstr "ملخص تقرير UDS لاستخدام المسابح"
 
-#: reports/stats/pools_usage_summary.py:137
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Time (seconds)"
 msgstr "الوقت الإجمالي (بالثواني)"
 
-#: reports/stats/pools_usage_summary.py:137
-#| msgid "Accesses"
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Accesses"
 msgstr "إجمالي المداخل"
 
-#: reports/stats/pools_usage_summary.py:142
-#: templates/uds/reports/stats/pools-usage-summary.html:30
+#: reports/stats/pools_usage_summary.py:140
+#: templates/uds/reports/stats/pools-usage-summary.html:17
+msgid "Unique users"
+msgstr "المستخدمون الفريدون"
+
+#: reports/stats/pools_usage_summary.py:140
+#| msgid "Total Time (seconds)"
+msgid "Mean time (seconds)"
+msgstr "متوسط الوقت (بالثواني)"
+
+#: reports/stats/pools_usage_summary.py:145
+#: templates/uds/reports/stats/pools-usage-summary.html:32
 msgid "Total"
 msgstr "مجموع"
 
@@ -3266,13 +3271,10 @@ msgstr ""
 "أو DOMAIN \\ user"
 
 #: services/HyperV_enterprise/service.py:57
-#| msgid "Xen Linked Clone"
 msgid "HyperV Linked Clone"
 msgstr "استنساخ HyperV مرتبط"
 
 #: services/HyperV_enterprise/service.py:59
-#| msgid ""
-#| "Hyper Services based on templates and differential disks (experimental)"
 msgid "Hyper Services based on templates and differential disks"
 msgstr "خدمات عالية تعتمد على القوالب والأقراص التفاضلية"
 
@@ -3761,12 +3763,12 @@ msgid "Provides connection to machines by IP"
 msgstr "يوفر اتصال إلى الأجهزة عن طريق IP"
 
 #: services/PhysicalMachines/service_multi.py:60
-#: services/Vmware_enterprise/service_fixed.py:54
+#: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "رمز الخدمة"
 
 #: services/PhysicalMachines/service_multi.py:62
-#: services/Vmware_enterprise/service_fixed.py:56
+#: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
@@ -3784,22 +3786,32 @@ msgid "List of servers available for this service"
 msgstr "قائمة الخوادم المتاحة لهذه الخدمة"
 
 #: services/PhysicalMachines/service_multi.py:70
-#| msgid "Check Cert."
 msgid "Check Port"
 msgstr "تحقق من المنفذ"
 
 #: services/PhysicalMachines/service_multi.py:70
+#| msgid ""
+#| "If non zero, only Machines responding to connection on that port will be "
+#| "used"
 msgid ""
-"If non zero, only Machines responding to connection on that port will be used"
+"If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
-"في حالة عدم الصفر ، سيتم استخدام الأجهزة التي تستجيب للاتصال على هذا المنفذ "
-"فقط"
+"إذا لم تكن صفرية ، فسيتم تقديم المضيفين الذين يستجيبون للاتصال على هذا "
+"المنفذ فقط."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:71
+msgid "Skip time"
+msgstr "تخطي الوقت"
+
+#: services/PhysicalMachines/service_multi.py:71
+msgid "If a host fails to check, skip it for this time (in minutes)."
+msgstr "إذا فشل مضيف في التحقق ، فتخطه لهذا الوقت (بالدقائق)."
+
+#: services/PhysicalMachines/service_multi.py:74
 msgid "Static Multiple IP"
 msgstr "IP ثابت متعدد."
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:76
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات مشتغلة ب IP"
 
@@ -4098,35 +4110,35 @@ msgstr "مسار التطبيق"
 msgid "Full path of the application this service will represent"
 msgstr "المسار الكامل للتطبيق ستمثل هذه الخدمة."
 
-#: services/RDS_enterprise/service.py:63
+#: services/RDS_enterprise/service.py:64
 msgid "Application parameters"
 msgstr "معلمات التطبيق"
 
-#: services/RDS_enterprise/service.py:64
+#: services/RDS_enterprise/service.py:65
 msgid "Applications parameters, as will be passed in command line"
 msgstr "معلمات التطبيقات، كما سيتم تمريرها في سطر الأوامر"
 
-#: services/RDS_enterprise/service.py:72
+#: services/RDS_enterprise/service.py:74
 msgid "Start path"
 msgstr "بداية المسار"
 
-#: services/RDS_enterprise/service.py:73
+#: services/RDS_enterprise/service.py:75
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "المسار حيث سيتم تشغيل التطبيق على. (مثال: f: \\ example \\ folder)"
 
-#: services/RDS_enterprise/service.py:81
+#: services/RDS_enterprise/service.py:84
 msgid "Max. Allowd services"
 msgstr "الخدمات المسموح بها كحد أقصى."
 
-#: services/RDS_enterprise/service.py:86
+#: services/RDS_enterprise/service.py:89
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr "الحد الأقصى لعدد الخدمات  المسموح بها (0 يعني عدم وجود حد)"
 
-#: services/RDS_enterprise/service.py:91
+#: services/RDS_enterprise/service.py:94
 msgid "Wait spawned processes"
 msgstr "انتظر العمليات الناتجة"
 
-#: services/RDS_enterprise/service.py:94
+#: services/RDS_enterprise/service.py:97
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -4134,7 +4146,7 @@ msgstr ""
 "إذا تم تحديده، RDS Actor سينتظر إنهاء التطبيق وجميع العمليات قبل النظر في "
 "تطبيق الخروج"
 
-#: services/RDS_enterprise/service.py:104
+#: services/RDS_enterprise/service.py:107
 msgid "A valid application path is required"
 msgstr "مطلوب مسار تطبيق صحيح"
 
@@ -4425,11 +4437,11 @@ msgstr "توفر وصولا إلى مركز الظاهرية"
 msgid "Connection params ok"
 msgstr "اتصال params ok"
 
-#: services/Vmware_enterprise/service_fixed.py:32
+#: services/Vmware_enterprise/service_fixed.py:33
 msgid "Fixed Machines Pool"
 msgstr "تجمع الأجهزة الثابتة"
 
-#: services/Vmware_enterprise/service_fixed.py:34
+#: services/Vmware_enterprise/service_fixed.py:35
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
@@ -4437,49 +4449,49 @@ msgstr ""
 "توفر هذه الخدمة إمكانية الوصول إلى مجموعة ثابتة من الأجهزة المحددة في البنية "
 "التحتية"
 
-#: services/Vmware_enterprise/service_fixed.py:62
+#: services/Vmware_enterprise/service_fixed.py:63
 #: services/Vmware_enterprise/service_linked.py:60
 msgid "Datacenter"
 msgstr "مركز البيانات"
 
-#: services/Vmware_enterprise/service_fixed.py:69
-#: services/Vmware_enterprise/service_fixed.py:84
-#: services/Vmware_enterprise/service_fixed.py:89
-#: services/Vmware_enterprise/service_fixed.py:92
-#: services/Vmware_enterprise/service_fixed.py:100
+#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:85
+#: services/Vmware_enterprise/service_fixed.py:90
+#: services/Vmware_enterprise/service_fixed.py:93
+#: services/Vmware_enterprise/service_fixed.py:101
 msgid "Machines"
 msgstr "آلات"
 
-#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:71
 #: services/Vmware_enterprise/service_linked.py:67
 msgid "Datacenter containing base machine"
 msgstr "مراكز البيانات التي تحتوي على آلة قاعدة"
 
-#: services/Vmware_enterprise/service_fixed.py:74
+#: services/Vmware_enterprise/service_fixed.py:75
 #: services/Vmware_enterprise/service_linked.py:98
 msgid "Resource Pool"
 msgstr "تجمع الموارد"
 
-#: services/Vmware_enterprise/service_fixed.py:82
+#: services/Vmware_enterprise/service_fixed.py:83
 msgid "Resource Pool containing base machines"
 msgstr "تجمع الخدمات يحتوي على الات مرجعية "
 
-#: services/Vmware_enterprise/service_fixed.py:91
+#: services/Vmware_enterprise/service_fixed.py:92
 msgid "Machines for this service"
 msgstr "آلات لهذه الخدمة"
 
-#: services/Vmware_enterprise/service_fixed.py:96
+#: services/Vmware_enterprise/service_fixed.py:97
 msgid "Use snapshots"
 msgstr "استخدام لقطات"
 
-#: services/Vmware_enterprise/service_fixed.py:99
+#: services/Vmware_enterprise/service_fixed.py:100
 msgid ""
 "If active, UDS will try to create an snapshot on VM use and recover if on "
 "exit."
 msgstr ""
 "إذا كانت نشطة ، ستحاول UDS إنشاء لقطة لاستخدام VM واستردادها عند الخروج."
 
-#: services/Vmware_enterprise/service_fixed.py:122
+#: services/Vmware_enterprise/service_fixed.py:123
 msgid "We need at least a machine"
 msgstr "نحن بحاجة لآلة على الأقل "
 
@@ -4726,7 +4738,6 @@ msgstr "تعيين الخدمات"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
-#| msgid "Pools usage on a day"
 msgid "Pools usage summary"
 msgstr "ملخص استخدام حمامات السباحة"
 
@@ -4736,19 +4747,17 @@ msgid "from"
 msgstr "من عند"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:15
-#| msgid "Max.Idle time"
 msgid "Total time"
 msgstr "الوقت الكلي"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:16
-#| msgid "Last access"
 msgid "Total accesses"
 msgstr "إجمالي المداخل"
 
-#: templates/uds/reports/stats/pools-usage-summary.html:17
-#| msgid "Current users"
-msgid "Unique users"
-msgstr "المستخدمون الفريدون"
+#: templates/uds/reports/stats/pools-usage-summary.html:18
+#| msgid "Max.Idle time"
+msgid "Mean time"
+msgstr "غضون ذلك"
 
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"

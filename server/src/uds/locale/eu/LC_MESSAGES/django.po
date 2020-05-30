@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 16:18+0200\n"
-"PO-Revision-Date: 2020-05-07 09:52+0000\n"
+"POT-Creation-Date: 2020-05-30 20:55+0200\n"
+"PO-Revision-Date: 2020-05-26 14:20+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -42,7 +42,7 @@ msgstr "Izena"
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
 msgstr "Iruzkinak"
@@ -367,7 +367,7 @@ msgstr "Sortze data"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_users_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/pools_usage_summary.py:137 reports/stats/usage_by_pool.py:60
+#: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
@@ -603,8 +603,8 @@ msgstr ""
 msgid "Available reports"
 msgstr "Txosten erabilgarriak"
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:282
-#: REST/methods/users_groups.py:289
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:290
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -670,13 +670,13 @@ msgstr "Suebaki baten atzean zerbitzuen proxya"
 msgid "Advanced"
 msgstr "Aurreratua"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr "Erroreekin"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr "Ondo"
 
@@ -985,7 +985,7 @@ msgstr "Erabiltzaile izena"
 msgid "Role"
 msgstr "Role"
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
 msgid "state"
 msgstr "Egoera"
 
@@ -993,28 +993,28 @@ msgstr "Egoera"
 msgid "Last access"
 msgstr "Azken sarrera"
 
-#: REST/methods/users_groups.py:172 REST/methods/users_groups.py:354
+#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
 msgid "User already exists (duplicate key error)"
 msgstr "Dagoeneko erabiltzailea existitzen da (Hutsa,gako bikoiztua)"
 
-#: REST/methods/users_groups.py:276
+#: REST/methods/users_groups.py:277
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "{0} talde"
 
-#: REST/methods/users_groups.py:278
+#: REST/methods/users_groups.py:279
 msgid "Current groups"
 msgstr "Momentuko taldeak"
 
-#: REST/methods/users_groups.py:289
+#: REST/methods/users_groups.py:290
 msgid "UDS Group"
 msgstr "UDS Taldea"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "Meta group"
 msgstr "Meta-taldea"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "UDS Meta Group"
 msgstr "UDS Meta-taldea"
 
@@ -1785,15 +1785,15 @@ msgstr "Ezin da {} kendu edo ezeztatu {} egoera ez baimendu horrek"
 msgid "The requested service is restrained"
 msgstr "Eskatutako zerbitzua geldiarazi egiten da"
 
-#: core/managers/user_service.py:555
+#: core/managers/user_service.py:560
 msgid "The requested service is not available"
 msgstr "Eskatutako zerbitzua ez dago erabilgarri"
 
-#: core/managers/user_service.py:585
+#: core/managers/user_service.py:590
 msgid "The requested transport {} is not valid for {}"
 msgstr "Eskatutako garraioa {} ez da {} baliozkoa"
 
-#: core/managers/user_service.py:709
+#: core/managers/user_service.py:714
 msgid "The service is not accessible from this device"
 msgstr "Zerbitzua ez dago gailutik eskura"
 
@@ -1837,11 +1837,11 @@ msgstr "of"
 msgid "Printed in {now:%Y, %b %d} at {now:%H:%M}"
 msgstr "Inprimatu da {orain:% Y,% b% d} at {orain:% H:% M}"
 
-#: core/services/service.py:101 core/services/service.py:113
+#: core/services/service.py:104 core/services/service.py:116
 msgid "Base Service"
 msgstr "Oinarrizko Zerbitzua"
 
-#: core/services/service.py:137 core/services/service.py:146
+#: core/services/service.py:140 core/services/service.py:149
 #: models/permissions.py:72 models/permissions.py:76
 #: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
 #: services/Proxmox/service.py:197 services/Sample/service.py:98
@@ -2582,12 +2582,10 @@ msgid "Statistics"
 msgstr "Estadistikak"
 
 #: reports/stats/pool_users_summary.py:52
-#| msgid "Pools usage by users"
 msgid "Pool Usage by users"
 msgstr "Igerilekuen erabilera erabiltzaileek"
 
 #: reports/stats/pool_users_summary.py:53
-#| msgid "Generates a report with the summary of a pool usage"
 msgid "Generates a report with the summary of users usage for a pool"
 msgstr ""
 "Txosten bat sortzen du igerileku bateko erabiltzaileen erabileraren "
@@ -2725,33 +2723,40 @@ msgstr ""
 "Igerilekuen erabileraren laburpena denbora guztiekin, sarbideen "
 "guztizkoarekin, denbora guztia igerilekuaren arabera"
 
-#: reports/stats/pools_usage_summary.py:116
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:119
 msgid "Summary of Pools usage"
 msgstr "Igerilekuen erabileraren laburpena"
 
-#: reports/stats/pools_usage_summary.py:116
+#: reports/stats/pools_usage_summary.py:119
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "to"
 msgstr "to"
 
-#: reports/stats/pools_usage_summary.py:117
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:120
 msgid "UDS Report Summary of pools usage"
 msgstr "UDS Txostena Igerilekuen erabileraren laburpena"
 
-#: reports/stats/pools_usage_summary.py:137
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Time (seconds)"
 msgstr "Denbora osoa (segundotan)"
 
-#: reports/stats/pools_usage_summary.py:137
-#| msgid "Accesses"
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Accesses"
 msgstr "Sarbide osoak"
 
-#: reports/stats/pools_usage_summary.py:142
-#: templates/uds/reports/stats/pools-usage-summary.html:30
+#: reports/stats/pools_usage_summary.py:140
+#: templates/uds/reports/stats/pools-usage-summary.html:17
+msgid "Unique users"
+msgstr "Erabiltzaile bakarrak"
+
+#: reports/stats/pools_usage_summary.py:140
+#| msgid "Total Time (seconds)"
+msgid "Mean time (seconds)"
+msgstr "Batez besteko denbora (segundotan)"
+
+#: reports/stats/pools_usage_summary.py:145
+#: templates/uds/reports/stats/pools-usage-summary.html:32
 msgid "Total"
 msgstr "Guztira"
 
@@ -3309,13 +3314,10 @@ msgstr ""
 "behar da (user @ domain edo DOMAIN \\ user)"
 
 #: services/HyperV_enterprise/service.py:57
-#| msgid "Xen Linked Clone"
 msgid "HyperV Linked Clone"
 msgstr "HyperV lotutako klonea"
 
 #: services/HyperV_enterprise/service.py:59
-#| msgid ""
-#| "Hyper Services based on templates and differential disks (experimental)"
 msgid "Hyper Services based on templates and differential disks"
 msgstr "Hyper Zerbitzuak txantiloietan eta disko diferentzialetan oinarrituta"
 
@@ -3811,12 +3813,12 @@ msgid "Provides connection to machines by IP"
 msgstr "Makinen konexioa eskaintzen du IP bidez"
 
 #: services/PhysicalMachines/service_multi.py:60
-#: services/Vmware_enterprise/service_fixed.py:54
+#: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Zerbitzuaren toka"
 
 #: services/PhysicalMachines/service_multi.py:62
-#: services/Vmware_enterprise/service_fixed.py:56
+#: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
@@ -3834,22 +3836,34 @@ msgid "List of servers available for this service"
 msgstr "Zerbitzu honetarako erabilgarri dauden zerbitzuen zerrenda"
 
 #: services/PhysicalMachines/service_multi.py:70
-#| msgid "Check Cert."
 msgid "Check Port"
 msgstr "Begiratu Portua"
 
 #: services/PhysicalMachines/service_multi.py:70
+#| msgid ""
+#| "If non zero, only Machines responding to connection on that port will be "
+#| "used"
 msgid ""
-"If non zero, only Machines responding to connection on that port will be used"
+"If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
-"Zero ez bada, portu horretako konexioei erantzuten dieten makinak soilik "
-"erabiliko dira"
+"Zero ez bada, portu horretako konexioei erantzuten dieten ostalariak soilik "
+"zerbitzatuko dira."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:71
+msgid "Skip time"
+msgstr "Saltatu denbora"
+
+#: services/PhysicalMachines/service_multi.py:71
+msgid "If a host fails to check, skip it for this time (in minutes)."
+msgstr ""
+"Ostalari batek huts egiten badu egiaztatzen bada, salta ezazu oraingoan ("
+"minutu batzuetan)."
+
+#: services/PhysicalMachines/service_multi.py:74
 msgid "Static Multiple IP"
 msgstr "IP estatiko anitz"
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:76
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Zerbitzu honek POWERED-ON makinak IP bidez sarbidea eskaintzen du"
 
@@ -4171,35 +4185,35 @@ msgstr "Aplikazio bidea"
 msgid "Full path of the application this service will represent"
 msgstr "Zerbitzu honen aplikazioaren bide osoa erakutsiko da"
 
-#: services/RDS_enterprise/service.py:63
+#: services/RDS_enterprise/service.py:64
 msgid "Application parameters"
 msgstr "Aplikazioen parametroak"
 
-#: services/RDS_enterprise/service.py:64
+#: services/RDS_enterprise/service.py:65
 msgid "Applications parameters, as will be passed in command line"
 msgstr "Aplikazioak parametroak, komando lerroan pasatuko diren bezala"
 
-#: services/RDS_enterprise/service.py:72
+#: services/RDS_enterprise/service.py:74
 msgid "Start path"
 msgstr "Hasi bidea"
 
-#: services/RDS_enterprise/service.py:73
+#: services/RDS_enterprise/service.py:75
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "Aplikazioa abiaraziko den bidea. (hau da, f: \\ adibidea \\ karpeta)"
 
-#: services/RDS_enterprise/service.py:81
+#: services/RDS_enterprise/service.py:84
 msgid "Max. Allowd services"
 msgstr "Gehienez baimenduritako zerbitzuak"
 
-#: services/RDS_enterprise/service.py:86
+#: services/RDS_enterprise/service.py:89
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr "Zerbitzu baimenduen gehienezko kopurua (0 ez da mugarik)"
 
-#: services/RDS_enterprise/service.py:91
+#: services/RDS_enterprise/service.py:94
 msgid "Wait spawned processes"
 msgstr "Itxaron prozesu abiarazleak"
 
-#: services/RDS_enterprise/service.py:94
+#: services/RDS_enterprise/service.py:97
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -4207,7 +4221,7 @@ msgstr ""
 "Aktibo badago, RDS Aktorea aplikazioa eta abiarazitako prozesuak amaitu arte "
 "itxaron egingo da saioa amaitu aurretik"
 
-#: services/RDS_enterprise/service.py:104
+#: services/RDS_enterprise/service.py:107
 msgid "A valid application path is required"
 msgstr "Baliozko aplikazio bide bat behar da"
 
@@ -4499,11 +4513,11 @@ msgstr "Zentro birtualeko zerbitzuetarako konexioa eskaintzen du"
 msgid "Connection params ok"
 msgstr "Konexio parametroak ondo daude"
 
-#: services/Vmware_enterprise/service_fixed.py:32
+#: services/Vmware_enterprise/service_fixed.py:33
 msgid "Fixed Machines Pool"
 msgstr "Makina finkoak igerilekua"
 
-#: services/Vmware_enterprise/service_fixed.py:34
+#: services/Vmware_enterprise/service_fixed.py:35
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
@@ -4511,42 +4525,42 @@ msgstr ""
 "Zerbitzu honek azpiegiturako hautatutako makina talde finko batera sarbidea "
 "eskaintzen du"
 
-#: services/Vmware_enterprise/service_fixed.py:62
+#: services/Vmware_enterprise/service_fixed.py:63
 #: services/Vmware_enterprise/service_linked.py:60
 msgid "Datacenter"
 msgstr "datacenter"
 
-#: services/Vmware_enterprise/service_fixed.py:69
-#: services/Vmware_enterprise/service_fixed.py:84
-#: services/Vmware_enterprise/service_fixed.py:89
-#: services/Vmware_enterprise/service_fixed.py:92
-#: services/Vmware_enterprise/service_fixed.py:100
+#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:85
+#: services/Vmware_enterprise/service_fixed.py:90
+#: services/Vmware_enterprise/service_fixed.py:93
+#: services/Vmware_enterprise/service_fixed.py:101
 msgid "Machines"
 msgstr "Makinak"
 
-#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:71
 #: services/Vmware_enterprise/service_linked.py:67
 msgid "Datacenter containing base machine"
 msgstr "Base makina duten datacenter"
 
-#: services/Vmware_enterprise/service_fixed.py:74
+#: services/Vmware_enterprise/service_fixed.py:75
 #: services/Vmware_enterprise/service_linked.py:98
 msgid "Resource Pool"
 msgstr "Baliabideen Poola"
 
-#: services/Vmware_enterprise/service_fixed.py:82
+#: services/Vmware_enterprise/service_fixed.py:83
 msgid "Resource Pool containing base machines"
 msgstr "Base-makinak dituen baliabide-igerilekua"
 
-#: services/Vmware_enterprise/service_fixed.py:91
+#: services/Vmware_enterprise/service_fixed.py:92
 msgid "Machines for this service"
 msgstr "Zerbitzu honetarako makinak"
 
-#: services/Vmware_enterprise/service_fixed.py:96
+#: services/Vmware_enterprise/service_fixed.py:97
 msgid "Use snapshots"
 msgstr "Erabili argazkiak"
 
-#: services/Vmware_enterprise/service_fixed.py:99
+#: services/Vmware_enterprise/service_fixed.py:100
 msgid ""
 "If active, UDS will try to create an snapshot on VM use and recover if on "
 "exit."
@@ -4554,7 +4568,7 @@ msgstr ""
 "Aktiboa bada, UDS saiatuko da VMren erabilerari buruzko argazkia sortzen eta "
 "irteerakoan berreskuratzen."
 
-#: services/Vmware_enterprise/service_fixed.py:122
+#: services/Vmware_enterprise/service_fixed.py:123
 msgid "We need at least a machine"
 msgstr "Gutxienez makina bat behar dugu"
 
@@ -4810,7 +4824,6 @@ msgstr "Zerbitzuen esleipena"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
-#| msgid "Pools usage on a day"
 msgid "Pools usage summary"
 msgstr "Igerilekuen erabileraren laburpena"
 
@@ -4820,19 +4833,17 @@ msgid "from"
 msgstr "batetik"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:15
-#| msgid "Max.Idle time"
 msgid "Total time"
 msgstr "Denbora osoa"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:16
-#| msgid "Last access"
 msgid "Total accesses"
 msgstr "Sarbide guztira"
 
-#: templates/uds/reports/stats/pools-usage-summary.html:17
-#| msgid "Current users"
-msgid "Unique users"
-msgstr "Erabiltzaile bakarrak"
+#: templates/uds/reports/stats/pools-usage-summary.html:18
+#| msgid "Max.Idle time"
+msgid "Mean time"
+msgstr "Batez besteko denbora"
 
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"

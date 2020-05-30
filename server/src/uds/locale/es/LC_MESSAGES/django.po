@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 16:18+0200\n"
-"PO-Revision-Date: 2020-05-07 09:52+0000\n"
+"POT-Creation-Date: 2020-05-30 20:55+0200\n"
+"PO-Revision-Date: 2020-05-26 14:20+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -52,7 +52,7 @@ msgstr "Nombre"
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
 msgstr "Comentarios"
@@ -377,7 +377,7 @@ msgstr "Fecha de creación"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_users_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/pools_usage_summary.py:137 reports/stats/usage_by_pool.py:60
+#: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
@@ -611,8 +611,8 @@ msgstr ""
 msgid "Available reports"
 msgstr "Informes disponibles"
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:282
-#: REST/methods/users_groups.py:289
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:290
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -678,13 +678,13 @@ msgstr "Proxy para servicios detrás de un firewall"
 msgid "Advanced"
 msgstr "Avanzado"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr "Con errores"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr "Ok"
 
@@ -996,7 +996,7 @@ msgstr "Nombre de usuario"
 msgid "Role"
 msgstr "Rol"
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
 msgid "state"
 msgstr "estado"
 
@@ -1004,28 +1004,28 @@ msgstr "estado"
 msgid "Last access"
 msgstr "Último acceso"
 
-#: REST/methods/users_groups.py:172 REST/methods/users_groups.py:354
+#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
 msgid "User already exists (duplicate key error)"
 msgstr "Este usuario ya existe (error de clave duplicada)"
 
-#: REST/methods/users_groups.py:276
+#: REST/methods/users_groups.py:277
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Grupos de {0}"
 
-#: REST/methods/users_groups.py:278
+#: REST/methods/users_groups.py:279
 msgid "Current groups"
 msgstr "Grupos actuales"
 
-#: REST/methods/users_groups.py:289
+#: REST/methods/users_groups.py:290
 msgid "UDS Group"
 msgstr "Grupo UDS"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "Meta group"
 msgstr "Metagrupo"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "UDS Meta Group"
 msgstr "Metagrupo UDS "
 
@@ -1805,15 +1805,15 @@ msgstr "No se puede eliminar ni cancelar {} porque su estado no lo permite"
 msgid "The requested service is restrained"
 msgstr "El servicio solicitado está restringido."
 
-#: core/managers/user_service.py:555
+#: core/managers/user_service.py:560
 msgid "The requested service is not available"
 msgstr "El servicio solicitado no está disponible."
 
-#: core/managers/user_service.py:585
+#: core/managers/user_service.py:590
 msgid "The requested transport {} is not valid for {}"
 msgstr "El transporte solicitado {} no es válido para {}"
 
-#: core/managers/user_service.py:709
+#: core/managers/user_service.py:714
 msgid "The service is not accessible from this device"
 msgstr "El servicio no es accesible desde este dispositivo."
 
@@ -1857,11 +1857,11 @@ msgstr "de"
 msgid "Printed in {now:%Y, %b %d} at {now:%H:%M}"
 msgstr "Impreso en {ahora:% Y,% b% d} en {ahora:% H:% M}"
 
-#: core/services/service.py:101 core/services/service.py:113
+#: core/services/service.py:104 core/services/service.py:116
 msgid "Base Service"
 msgstr "Servicio Base"
 
-#: core/services/service.py:137 core/services/service.py:146
+#: core/services/service.py:140 core/services/service.py:149
 #: models/permissions.py:72 models/permissions.py:76
 #: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
 #: services/Proxmox/service.py:197 services/Sample/service.py:98
@@ -2610,12 +2610,10 @@ msgid "Statistics"
 msgstr "Estadísticas"
 
 #: reports/stats/pool_users_summary.py:52
-#| msgid "Pools usage by users"
 msgid "Pool Usage by users"
 msgstr "Uso de la agrupación por parte de los usuarios"
 
 #: reports/stats/pool_users_summary.py:53
-#| msgid "Generates a report with the summary of a pool usage"
 msgid "Generates a report with the summary of users usage for a pool"
 msgstr "Genera un informe con el resumen del uso de los usuarios para un grupo"
 
@@ -2751,33 +2749,40 @@ msgstr ""
 "Resumen del uso de agrupaciones con totales de tiempo, totales de accesos, "
 "total de tiempo por agrupación"
 
-#: reports/stats/pools_usage_summary.py:116
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:119
 msgid "Summary of Pools usage"
 msgstr "Resumen del uso de piscinas"
 
-#: reports/stats/pools_usage_summary.py:116
+#: reports/stats/pools_usage_summary.py:119
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "to"
 msgstr "a"
 
-#: reports/stats/pools_usage_summary.py:117
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:120
 msgid "UDS Report Summary of pools usage"
 msgstr "Resumen del informe UDS del uso de grupos"
 
-#: reports/stats/pools_usage_summary.py:137
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Time (seconds)"
 msgstr "Tiempo total (segundos)"
 
-#: reports/stats/pools_usage_summary.py:137
-#| msgid "Accesses"
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Accesses"
 msgstr "Accesos totales"
 
-#: reports/stats/pools_usage_summary.py:142
-#: templates/uds/reports/stats/pools-usage-summary.html:30
+#: reports/stats/pools_usage_summary.py:140
+#: templates/uds/reports/stats/pools-usage-summary.html:17
+msgid "Unique users"
+msgstr "Usuarios únicos"
+
+#: reports/stats/pools_usage_summary.py:140
+#| msgid "Total Time (seconds)"
+msgid "Mean time (seconds)"
+msgstr "Tiempo medio (segundos)"
+
+#: reports/stats/pools_usage_summary.py:145
+#: templates/uds/reports/stats/pools-usage-summary.html:32
 msgid "Total"
 msgstr "Total"
 
@@ -3340,13 +3345,10 @@ msgstr ""
 "(usuario @ dominio o DOMINIO\\usuario)"
 
 #: services/HyperV_enterprise/service.py:57
-#| msgid "Xen Linked Clone"
 msgid "HyperV Linked Clone"
 msgstr "HyperV Linked Clone"
 
 #: services/HyperV_enterprise/service.py:59
-#| msgid ""
-#| "Hyper Services based on templates and differential disks (experimental)"
 msgid "Hyper Services based on templates and differential disks"
 msgstr "Hyper Services basado en plantillas y discos diferenciales"
 
@@ -3846,12 +3848,12 @@ msgid "Provides connection to machines by IP"
 msgstr "Proporciona conexión a máquinas por IP"
 
 #: services/PhysicalMachines/service_multi.py:60
-#: services/Vmware_enterprise/service_fixed.py:54
+#: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Token de servicio"
 
 #: services/PhysicalMachines/service_multi.py:62
-#: services/Vmware_enterprise/service_fixed.py:56
+#: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
@@ -3869,22 +3871,32 @@ msgid "List of servers available for this service"
 msgstr "Lista de servidores disponibles para este servicio."
 
 #: services/PhysicalMachines/service_multi.py:70
-#| msgid "Check Cert."
 msgid "Check Port"
 msgstr "Comprobar puerto"
 
 #: services/PhysicalMachines/service_multi.py:70
+#| msgid ""
+#| "If non zero, only Machines responding to connection on that port will be "
+#| "used"
 msgid ""
-"If non zero, only Machines responding to connection on that port will be used"
+"If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
-"Si no es cero, solo se utilizarán máquinas que respondan a la conexión en "
-"ese puerto"
+"Si no es cero, solo se atenderán los hosts que respondan a la conexión en "
+"ese puerto."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:71
+msgid "Skip time"
+msgstr "Saltar tiempo"
+
+#: services/PhysicalMachines/service_multi.py:71
+msgid "If a host fails to check, skip it for this time (in minutes)."
+msgstr "Si un host no puede verificar, omítalo por este tiempo (en minutos)."
+
+#: services/PhysicalMachines/service_multi.py:74
 msgid "Static Multiple IP"
 msgstr "Estatica, Multiples IPs"
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:76
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Este servicio proporciona acceso a las máquinas POWERED-ON por IP"
 
@@ -4201,35 +4213,35 @@ msgid "Full path of the application this service will represent"
 msgstr ""
 "Ruta de acceso completa de la aplicación que representará este servicio"
 
-#: services/RDS_enterprise/service.py:63
+#: services/RDS_enterprise/service.py:64
 msgid "Application parameters"
 msgstr "Parámetros de aplicación"
 
-#: services/RDS_enterprise/service.py:64
+#: services/RDS_enterprise/service.py:65
 msgid "Applications parameters, as will be passed in command line"
 msgstr "Parámetros de aplicaciones, como se pasará en línea de comandos"
 
-#: services/RDS_enterprise/service.py:72
+#: services/RDS_enterprise/service.py:74
 msgid "Start path"
 msgstr "Ruta de inicio"
 
-#: services/RDS_enterprise/service.py:73
+#: services/RDS_enterprise/service.py:75
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "Ruta donde se iniciará la aplicación. (es decir, f:\\ejemplo\\carpeta)"
 
-#: services/RDS_enterprise/service.py:81
+#: services/RDS_enterprise/service.py:84
 msgid "Max. Allowd services"
 msgstr "Máx. servicios permitidos"
 
-#: services/RDS_enterprise/service.py:86
+#: services/RDS_enterprise/service.py:89
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr "Número máximo de servicios permitidos (0 significa sin límite)"
 
-#: services/RDS_enterprise/service.py:91
+#: services/RDS_enterprise/service.py:94
 msgid "Wait spawned processes"
 msgstr "Esperar procesos generados"
 
-#: services/RDS_enterprise/service.py:94
+#: services/RDS_enterprise/service.py:97
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -4237,7 +4249,7 @@ msgstr ""
 "Si activa RDS Actor esperará hasta la aplicación y todos los procesos "
 "generados acaben antes de considerar la aplicación ha finalizado."
 
-#: services/RDS_enterprise/service.py:104
+#: services/RDS_enterprise/service.py:107
 msgid "A valid application path is required"
 msgstr "Se requiere una ruta de aplicación válida"
 
@@ -4528,11 +4540,11 @@ msgstr "Proporciona conexión a los Servicios del Centro Virtual"
 msgid "Connection params ok"
 msgstr "Parámetros de conexión ok"
 
-#: services/Vmware_enterprise/service_fixed.py:32
+#: services/Vmware_enterprise/service_fixed.py:33
 msgid "Fixed Machines Pool"
 msgstr "Pool de máquinas fijas"
 
-#: services/Vmware_enterprise/service_fixed.py:34
+#: services/Vmware_enterprise/service_fixed.py:35
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
@@ -4540,42 +4552,42 @@ msgstr ""
 "Este servicio proporciona acceso a un grupo fijo de las máquinas en la "
 "infraestructura"
 
-#: services/Vmware_enterprise/service_fixed.py:62
+#: services/Vmware_enterprise/service_fixed.py:63
 #: services/Vmware_enterprise/service_linked.py:60
 msgid "Datacenter"
 msgstr "Datacenter"
 
-#: services/Vmware_enterprise/service_fixed.py:69
-#: services/Vmware_enterprise/service_fixed.py:84
-#: services/Vmware_enterprise/service_fixed.py:89
-#: services/Vmware_enterprise/service_fixed.py:92
-#: services/Vmware_enterprise/service_fixed.py:100
+#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:85
+#: services/Vmware_enterprise/service_fixed.py:90
+#: services/Vmware_enterprise/service_fixed.py:93
+#: services/Vmware_enterprise/service_fixed.py:101
 msgid "Machines"
 msgstr "Máquinas"
 
-#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:71
 #: services/Vmware_enterprise/service_linked.py:67
 msgid "Datacenter containing base machine"
 msgstr " Datacenter que contiene la máquina base"
 
-#: services/Vmware_enterprise/service_fixed.py:74
+#: services/Vmware_enterprise/service_fixed.py:75
 #: services/Vmware_enterprise/service_linked.py:98
 msgid "Resource Pool"
 msgstr "Pool de recursos"
 
-#: services/Vmware_enterprise/service_fixed.py:82
+#: services/Vmware_enterprise/service_fixed.py:83
 msgid "Resource Pool containing base machines"
 msgstr "Pool de recursos que contiene las máquinas base."
 
-#: services/Vmware_enterprise/service_fixed.py:91
+#: services/Vmware_enterprise/service_fixed.py:92
 msgid "Machines for this service"
 msgstr "Máquinas para este servicio"
 
-#: services/Vmware_enterprise/service_fixed.py:96
+#: services/Vmware_enterprise/service_fixed.py:97
 msgid "Use snapshots"
 msgstr "Usar instantáneas"
 
-#: services/Vmware_enterprise/service_fixed.py:99
+#: services/Vmware_enterprise/service_fixed.py:100
 msgid ""
 "If active, UDS will try to create an snapshot on VM use and recover if on "
 "exit."
@@ -4583,7 +4595,7 @@ msgstr ""
 "Si está activo, UDS intentará crear una instantánea sobre el uso de VM y "
 "recuperarlo si sale."
 
-#: services/Vmware_enterprise/service_fixed.py:122
+#: services/Vmware_enterprise/service_fixed.py:123
 msgid "We need at least a machine"
 msgstr "Necesitamos al menos una máquina"
 
@@ -4841,7 +4853,6 @@ msgstr "Servicios asignados"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
-#| msgid "Pools usage on a day"
 msgid "Pools usage summary"
 msgstr "Resumen de uso de piscinas"
 
@@ -4851,19 +4862,17 @@ msgid "from"
 msgstr "desde"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:15
-#| msgid "Max.Idle time"
 msgid "Total time"
 msgstr "Tiempo Total"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:16
-#| msgid "Last access"
 msgid "Total accesses"
 msgstr "Accesos totales"
 
-#: templates/uds/reports/stats/pools-usage-summary.html:17
-#| msgid "Current users"
-msgid "Unique users"
-msgstr "Usuarios únicos"
+#: templates/uds/reports/stats/pools-usage-summary.html:18
+#| msgid "Max.Idle time"
+msgid "Mean time"
+msgstr "Tiempo medio"
 
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"

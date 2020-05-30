@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 16:18+0200\n"
-"PO-Revision-Date: 2020-05-07 09:52+0000\n"
+"POT-Creation-Date: 2020-05-30 20:55+0200\n"
+"PO-Revision-Date: 2020-05-26 14:20+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -43,7 +43,7 @@ msgstr "Имя"
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
 msgstr "Комментарий"
@@ -366,7 +366,7 @@ msgstr "Создать дату"
 #: REST/methods/meta_service_pools.py:172 REST/methods/services_usage.py:119
 #: reports/stats/pool_users_summary.py:59
 #: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
-#: reports/stats/pools_usage_summary.py:137 reports/stats/usage_by_pool.py:60
+#: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
@@ -601,8 +601,8 @@ msgstr ""
 msgid "Available reports"
 msgstr "Доступные репорты"
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:282
-#: REST/methods/users_groups.py:289
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
+#: REST/methods/users_groups.py:290
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -668,13 +668,13 @@ msgstr "Прокси для служб за брандмауэром"
 msgid "Advanced"
 msgstr "Расширенный"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr "С ошибками"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:216
-#: REST/methods/users_groups.py:383
+#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr "ОК"
 
@@ -983,7 +983,7 @@ msgstr "Имя пользователя"
 msgid "Role"
 msgstr "Роль"
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
 msgid "state"
 msgstr "состояние"
 
@@ -991,28 +991,28 @@ msgstr "состояние"
 msgid "Last access"
 msgstr "Последний вход"
 
-#: REST/methods/users_groups.py:172 REST/methods/users_groups.py:354
+#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
 msgid "User already exists (duplicate key error)"
 msgstr "Пользователь уже существует (ошибка дублирования ключа)"
 
-#: REST/methods/users_groups.py:276
+#: REST/methods/users_groups.py:277
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Групп из {0}"
 
-#: REST/methods/users_groups.py:278
+#: REST/methods/users_groups.py:279
 msgid "Current groups"
 msgstr "Текущие группы"
 
-#: REST/methods/users_groups.py:289
+#: REST/methods/users_groups.py:290
 msgid "UDS Group"
 msgstr "UDS Группа"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "Meta group"
 msgstr "Метагруппа"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:291
 msgid "UDS Meta Group"
 msgstr "UDS Метагруппа"
 
@@ -1789,15 +1789,15 @@ msgstr ""
 msgid "The requested service is restrained"
 msgstr "Запрашиваемая услуга ограничена"
 
-#: core/managers/user_service.py:555
+#: core/managers/user_service.py:560
 msgid "The requested service is not available"
 msgstr "Запрашиваемая услуга недоступна"
 
-#: core/managers/user_service.py:585
+#: core/managers/user_service.py:590
 msgid "The requested transport {} is not valid for {}"
 msgstr "Запрошенный транспорт {} недействителен для {}"
 
-#: core/managers/user_service.py:709
+#: core/managers/user_service.py:714
 msgid "The service is not accessible from this device"
 msgstr "Сервис недоступен с этого устройства"
 
@@ -1841,11 +1841,11 @@ msgstr "из"
 msgid "Printed in {now:%Y, %b %d} at {now:%H:%M}"
 msgstr "Напечатано в {сейчас:% Y,% b% d} в {сейчас:% H:% M}"
 
-#: core/services/service.py:101 core/services/service.py:113
+#: core/services/service.py:104 core/services/service.py:116
 msgid "Base Service"
 msgstr "Базовый сервис"
 
-#: core/services/service.py:137 core/services/service.py:146
+#: core/services/service.py:140 core/services/service.py:149
 #: models/permissions.py:72 models/permissions.py:76
 #: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
 #: services/Proxmox/service.py:197 services/Sample/service.py:98
@@ -2584,12 +2584,10 @@ msgid "Statistics"
 msgstr "Статистика"
 
 #: reports/stats/pool_users_summary.py:52
-#| msgid "Pools usage by users"
 msgid "Pool Usage by users"
 msgstr "Использование пула пользователями"
 
 #: reports/stats/pool_users_summary.py:53
-#| msgid "Generates a report with the summary of a pool usage"
 msgid "Generates a report with the summary of users usage for a pool"
 msgstr ""
 "Создает отчет с краткой информацией об использовании пользователей для пула."
@@ -2726,33 +2724,40 @@ msgstr ""
 "Сводка использования пулов с итогами времени, итогами доступа, итогами "
 "времени по пулу"
 
-#: reports/stats/pools_usage_summary.py:116
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:119
 msgid "Summary of Pools usage"
 msgstr "Сводка использования пулов"
 
-#: reports/stats/pools_usage_summary.py:116
+#: reports/stats/pools_usage_summary.py:119
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "to"
 msgstr "в"
 
-#: reports/stats/pools_usage_summary.py:117
-#| msgid "Summary of pools usage"
+#: reports/stats/pools_usage_summary.py:120
 msgid "UDS Report Summary of pools usage"
 msgstr "Отчет UDS Сводка использования пулов"
 
-#: reports/stats/pools_usage_summary.py:137
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Time (seconds)"
 msgstr "Общее время (в секундах)"
 
-#: reports/stats/pools_usage_summary.py:137
-#| msgid "Accesses"
+#: reports/stats/pools_usage_summary.py:140
 msgid "Total Accesses"
 msgstr "Всего доступов"
 
-#: reports/stats/pools_usage_summary.py:142
-#: templates/uds/reports/stats/pools-usage-summary.html:30
+#: reports/stats/pools_usage_summary.py:140
+#: templates/uds/reports/stats/pools-usage-summary.html:17
+msgid "Unique users"
+msgstr "Уникальные пользователи"
+
+#: reports/stats/pools_usage_summary.py:140
+#| msgid "Total Time (seconds)"
+msgid "Mean time (seconds)"
+msgstr "Среднее время (секунды)"
+
+#: reports/stats/pools_usage_summary.py:145
+#: templates/uds/reports/stats/pools-usage-summary.html:32
 msgid "Total"
 msgstr "Всего"
 
@@ -3313,13 +3318,10 @@ msgstr ""
 "@ domain или DOMAIN \\ user"
 
 #: services/HyperV_enterprise/service.py:57
-#| msgid "Xen Linked Clone"
 msgid "HyperV Linked Clone"
 msgstr "HyperV Связанный клон"
 
 #: services/HyperV_enterprise/service.py:59
-#| msgid ""
-#| "Hyper Services based on templates and differential disks (experimental)"
 msgid "Hyper Services based on templates and differential disks"
 msgstr "Hyper Services на основе шаблонов и дифференциальных дисков"
 
@@ -3813,12 +3815,12 @@ msgid "Provides connection to machines by IP"
 msgstr "Обеспечивает подключение к машинам по IP"
 
 #: services/PhysicalMachines/service_multi.py:60
-#: services/Vmware_enterprise/service_fixed.py:54
+#: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Сервисный токен"
 
 #: services/PhysicalMachines/service_multi.py:62
-#: services/Vmware_enterprise/service_fixed.py:56
+#: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
@@ -3836,22 +3838,32 @@ msgid "List of servers available for this service"
 msgstr "Список серверов, доступных для этой услуги"
 
 #: services/PhysicalMachines/service_multi.py:70
-#| msgid "Check Cert."
 msgid "Check Port"
 msgstr "Проверьте порт"
 
 #: services/PhysicalMachines/service_multi.py:70
+#| msgid ""
+#| "If non zero, only Machines responding to connection on that port will be "
+#| "used"
 msgid ""
-"If non zero, only Machines responding to connection on that port will be used"
+"If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
-"Если не ноль, будут использоваться только машины, отвечающие на соединение "
+"Если не ноль, будут обслуживаться только хосты, отвечающие на соединение "
 "через этот порт"
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:71
+msgid "Skip time"
+msgstr "Пропустить время"
+
+#: services/PhysicalMachines/service_multi.py:71
+msgid "If a host fails to check, skip it for this time (in minutes)."
+msgstr "Если хост не может проверить, пропустите его на это время (в минутах)."
+
+#: services/PhysicalMachines/service_multi.py:74
 msgid "Static Multiple IP"
 msgstr "Статический множественный IP-адрес"
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:76
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Эта услуга обеспечивает доступ к включенным машинам по IP"
 
@@ -4168,36 +4180,36 @@ msgstr "Путь приложения"
 msgid "Full path of the application this service will represent"
 msgstr "Полный путь к приложению, который эта служба будет представлять"
 
-#: services/RDS_enterprise/service.py:63
+#: services/RDS_enterprise/service.py:64
 msgid "Application parameters"
 msgstr "Параметры приложения"
 
-#: services/RDS_enterprise/service.py:64
+#: services/RDS_enterprise/service.py:65
 msgid "Applications parameters, as will be passed in command line"
 msgstr "Параметры приложений, которые будут переданы в командной строке"
 
-#: services/RDS_enterprise/service.py:72
+#: services/RDS_enterprise/service.py:74
 msgid "Start path"
 msgstr "Начальный путь"
 
-#: services/RDS_enterprise/service.py:73
+#: services/RDS_enterprise/service.py:75
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "Путь, где будет запущено приложение. (т.е. папка f: \\ example \\)"
 
-#: services/RDS_enterprise/service.py:81
+#: services/RDS_enterprise/service.py:84
 msgid "Max. Allowd services"
 msgstr "Максимум. Разрешенные услуги"
 
-#: services/RDS_enterprise/service.py:86
+#: services/RDS_enterprise/service.py:89
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr ""
 "Максимальное количество разрешенных сервисов (0 означает отсутствие лимита)"
 
-#: services/RDS_enterprise/service.py:91
+#: services/RDS_enterprise/service.py:94
 msgid "Wait spawned processes"
 msgstr "Ожидание порожденных процессов"
 
-#: services/RDS_enterprise/service.py:94
+#: services/RDS_enterprise/service.py:97
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -4205,7 +4217,7 @@ msgstr ""
 "Если активен, RDS Actor будет ждать, пока приложение и все порожденные "
 "процессы завершены до того, как приложение выйдет из системы"
 
-#: services/RDS_enterprise/service.py:104
+#: services/RDS_enterprise/service.py:107
 msgid "A valid application path is required"
 msgstr "Требуется допустимый путь к приложению"
 
@@ -4497,11 +4509,11 @@ msgstr "Обеспечивает подключение к Virtual Center Servic
 msgid "Connection params ok"
 msgstr "Параметры подключения ОК"
 
-#: services/Vmware_enterprise/service_fixed.py:32
+#: services/Vmware_enterprise/service_fixed.py:33
 msgid "Fixed Machines Pool"
 msgstr "Фиксированный пул машин"
 
-#: services/Vmware_enterprise/service_fixed.py:34
+#: services/Vmware_enterprise/service_fixed.py:35
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
@@ -4509,42 +4521,42 @@ msgstr ""
 "Эта служба обеспечивает доступ к фиксированной группе выбранных машин в "
 "инфраструктуре"
 
-#: services/Vmware_enterprise/service_fixed.py:62
+#: services/Vmware_enterprise/service_fixed.py:63
 #: services/Vmware_enterprise/service_linked.py:60
 msgid "Datacenter"
 msgstr "Центр обработки данных"
 
-#: services/Vmware_enterprise/service_fixed.py:69
-#: services/Vmware_enterprise/service_fixed.py:84
-#: services/Vmware_enterprise/service_fixed.py:89
-#: services/Vmware_enterprise/service_fixed.py:92
-#: services/Vmware_enterprise/service_fixed.py:100
+#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:85
+#: services/Vmware_enterprise/service_fixed.py:90
+#: services/Vmware_enterprise/service_fixed.py:93
+#: services/Vmware_enterprise/service_fixed.py:101
 msgid "Machines"
 msgstr "Машины"
 
-#: services/Vmware_enterprise/service_fixed.py:70
+#: services/Vmware_enterprise/service_fixed.py:71
 #: services/Vmware_enterprise/service_linked.py:67
 msgid "Datacenter containing base machine"
 msgstr "Центр обработки данных, содержащий базовую машину"
 
-#: services/Vmware_enterprise/service_fixed.py:74
+#: services/Vmware_enterprise/service_fixed.py:75
 #: services/Vmware_enterprise/service_linked.py:98
 msgid "Resource Pool"
 msgstr "Пул ресурсов"
 
-#: services/Vmware_enterprise/service_fixed.py:82
+#: services/Vmware_enterprise/service_fixed.py:83
 msgid "Resource Pool containing base machines"
 msgstr "Пул ресурсов, содержащий базовые машины"
 
-#: services/Vmware_enterprise/service_fixed.py:91
+#: services/Vmware_enterprise/service_fixed.py:92
 msgid "Machines for this service"
 msgstr "Машины для этой услуги"
 
-#: services/Vmware_enterprise/service_fixed.py:96
+#: services/Vmware_enterprise/service_fixed.py:97
 msgid "Use snapshots"
 msgstr "Используйте снимки"
 
-#: services/Vmware_enterprise/service_fixed.py:99
+#: services/Vmware_enterprise/service_fixed.py:100
 msgid ""
 "If active, UDS will try to create an snapshot on VM use and recover if on "
 "exit."
@@ -4552,7 +4564,7 @@ msgstr ""
 "Если он активен, UDS попытается создать моментальный снимок при "
 "использовании виртуальной машины и восстановить его при выходе."
 
-#: services/Vmware_enterprise/service_fixed.py:122
+#: services/Vmware_enterprise/service_fixed.py:123
 msgid "We need at least a machine"
 msgstr "Нам нужна хотя бы машина"
 
@@ -4807,7 +4819,6 @@ msgstr "Предоставление услуг"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
-#| msgid "Pools usage on a day"
 msgid "Pools usage summary"
 msgstr "Сводка использования пулов"
 
@@ -4817,19 +4828,17 @@ msgid "from"
 msgstr "от"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:15
-#| msgid "Max.Idle time"
 msgid "Total time"
 msgstr "Общее время"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:16
-#| msgid "Last access"
 msgid "Total accesses"
 msgstr "Всего доступов"
 
-#: templates/uds/reports/stats/pools-usage-summary.html:17
-#| msgid "Current users"
-msgid "Unique users"
-msgstr "Уникальные пользователи"
+#: templates/uds/reports/stats/pools-usage-summary.html:18
+#| msgid "Max.Idle time"
+msgid "Mean time"
+msgstr "Среднее время"
 
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"
