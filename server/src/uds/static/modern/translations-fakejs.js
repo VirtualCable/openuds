@@ -2,7 +2,7 @@
 // Typescript
 gettext("Launching service");
 gettext("Please wait");
-gettext("Remember that UDS Plugin is required in order for this service to be launched");
+gettext("Remember that you will need the USD client on your platform to access the service");
 gettext("Error launching service");
 gettext("seconds");
 gettext("Service is in maintenance");
@@ -29,7 +29,9 @@ gettext("No");
 gettext("Dashboard");
 gettext("Downloads");
 gettext("Logout");
+gettext("UDS Client");
 gettext("About");
+gettext("UDS Client");
 gettext("About");
 gettext("Information");
 gettext("Client IP");

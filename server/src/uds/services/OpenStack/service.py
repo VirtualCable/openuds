@@ -84,7 +84,7 @@ class LiveService(Service):
     # : because we don't use it
     cacheTooltip = _('Number of desired machines to keep running waiting for an user')
 
-    usesCache_L2 = True  # L2 Cache are running machines in suspended state
+    usesCache_L2 = False  # L2 Cache are running machines in suspended state
     cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use')
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
