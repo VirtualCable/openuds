@@ -39,7 +39,6 @@ logger = logging.getLogger(__name__)
 
 # noinspection PyMethodOverriding
 class UniqueNameGenerator(UniqueIDGenerator):
-
     def __init__(self, owner):
         super().__init__('name', owner)
 

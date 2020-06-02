@@ -338,6 +338,7 @@ gettext("View authenticators");
 gettext("View service pools");
 gettext("View service pools");
 gettext("View service pools");
+gettext("UDS Administration");
 gettext("You are accessing UDS Administration as staff member.");
 gettext("This means that you have restricted access to elements.");
 gettext("In order to increase your access privileges, please contact your local UDS administrator.");

@@ -50,6 +50,7 @@ from uds.models import Authenticator, Image, Network, Transport
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -62,9 +63,15 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 def udsJs(request: 'HttpRequest') -> str:
     auth_host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
-    profile = {
-        'user': None if not request.user else request.user.name,
-        'role': 'staff' if request.user and request.user.staff_member else 'user',
+    role: str = 'user'
+    user: typing.Optional['User'] = request.user
+
+    if user:
+        role = 'staff' if user.isStaff() and not user.is_admin else 'admin' if user.is_admin else 'user'
+
+    profile: typing.Dict[str, typing.Any] = {
+        'user': user.name if user else None,
+        'role': role,
     }
 
     # Gets csrf token
@@ -137,7 +144,7 @@ def udsJs(request: 'HttpRequest') -> str:
     }
 
     info: typing.Optional[typing.MutableMapping] = None
-    if request.user and request.user.isStaff():
+    if user and user.isStaff():
         info = {
             'networks': [n.name for n in Network.networksFor(request.ip)],
             'transports': [t.name for t in Transport.objects.all() if t.validForIp(request.ip)],
@@ -165,7 +172,7 @@ def udsJs(request: 'HttpRequest') -> str:
 
     actors: typing.List[typing.Dict[str, str]] = []
 
-    if profile['role'] == 'staff':  # Add staff things
+    if user and user.isStaff():  # Add staff things
         # If is admin (informational, REST api checks users privileges anyway...)
         profile['admin'] = True
         # REST auth

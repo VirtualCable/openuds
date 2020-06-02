@@ -59,6 +59,7 @@ def getServicesPoolsCounters(servicePool: typing.Optional[models.ServicePool], c
         cacheKey = (servicePool and servicePool.id or 'all') + str(counter_type) + str(POINTS) + str(SINCE)
         to = models.getSqlDatetime()
         since: datetime.datetime = to - datetime.timedelta(days=SINCE)
+
         val: typing.Any = cache.get(cacheKey)
         if not val:
             if not servicePool:
@@ -84,7 +85,7 @@ def getServicesPoolsCounters(servicePool: typing.Optional[models.ServicePool], c
 
 
 class System(Handler):
-    needs_staff = True
+    needs_admin = True
 
     def get(self):
         logger.debug('args: %s', self._args)
