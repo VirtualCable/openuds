@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-30 20:55+0200\n"
+"POT-Creation-Date: 2020-06-02 15:39+0200\n"
 "PO-Revision-Date: 2020-05-11 12:06+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -196,26 +196,26 @@ msgid "Full Access"
 msgstr "الوصول الكامل"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:43
-#: static/admin/translations-fakejs.js:360
-#: static/admin/translations-fakejs.js:407
-#: static/admin/translations-fakejs.js:426
+#: static/admin/translations-fakejs.js:361
+#: static/admin/translations-fakejs.js:408
+#: static/admin/translations-fakejs.js:427
 msgid "User"
 msgstr "المستخدم"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:44
 #: static/admin/translations-fakejs.js:115
 #: static/admin/translations-fakejs.js:140
-#: static/admin/translations-fakejs.js:402
-#: static/admin/translations-fakejs.js:416
+#: static/admin/translations-fakejs.js:403
+#: static/admin/translations-fakejs.js:417
 msgid "Group"
 msgstr "المجموعة"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:45
-#: static/admin/translations-fakejs.js:401
-#: static/admin/translations-fakejs.js:406
-#: static/admin/translations-fakejs.js:415
-#: static/admin/translations-fakejs.js:425
-#: static/modern/translations-fakejs.js:48
+#: static/admin/translations-fakejs.js:402
+#: static/admin/translations-fakejs.js:407
+#: static/admin/translations-fakejs.js:416
+#: static/admin/translations-fakejs.js:426
+#: static/modern/translations-fakejs.js:50
 msgid "Authenticator"
 msgstr "الموثق"
 
@@ -373,8 +373,8 @@ msgstr "حوض السباحة"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:118
 #: static/admin/translations-fakejs.js:134
 #: static/admin/translations-fakejs.js:160
-#: static/admin/translations-fakejs.js:353
-#: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:354
+#: static/admin/translations-fakejs.js:369
 msgid "State"
 msgstr "حالة"
 
@@ -387,7 +387,7 @@ msgstr "خدمات المستخدم"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:145
 #: static/admin/translations-fakejs.js:162
 #: static/admin/translations-fakejs.js:315
-#: static/admin/translations-fakejs.js:469
+#: static/admin/translations-fakejs.js:470
 msgid "Service pools"
 msgstr "مجمعات الخدمة"
 
@@ -415,7 +415,7 @@ msgstr "العناصر المختارة:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:128
 #: static/admin/translations-fakejs.js:163
-#: static/modern/translations-fakejs.js:34
+#: static/modern/translations-fakejs.js:36
 msgid "Information"
 msgstr "معلومات"
 
@@ -457,9 +457,9 @@ msgstr "الكل"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:116
 #: static/admin/translations-fakejs.js:141
-#: static/admin/translations-fakejs.js:352
-#: static/admin/translations-fakejs.js:367
-#: static/admin/translations-fakejs.js:455
+#: static/admin/translations-fakejs.js:353
+#: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:456
 msgid "Comments"
 msgstr "تعليقات"
 
@@ -487,29 +487,29 @@ msgstr "خدمات بركة"
 #: static/admin/translations-fakejs.js:147
 #: static/admin/translations-fakejs.js:281
 #: static/admin/translations-fakejs.js:317
-#: static/admin/translations-fakejs.js:347
-#: static/admin/translations-fakejs.js:361
-#: static/admin/translations-fakejs.js:377
-#: static/admin/translations-fakejs.js:384
-#: static/admin/translations-fakejs.js:444
-#: static/admin/translations-fakejs.js:471
+#: static/admin/translations-fakejs.js:348
+#: static/admin/translations-fakejs.js:362
+#: static/admin/translations-fakejs.js:378
+#: static/admin/translations-fakejs.js:385
+#: static/admin/translations-fakejs.js:445
+#: static/admin/translations-fakejs.js:472
 msgid "Groups"
 msgstr "المجموعات"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:126
-#: static/admin/translations-fakejs.js:378
-#: static/admin/translations-fakejs.js:382
+#: static/admin/translations-fakejs.js:379
+#: static/admin/translations-fakejs.js:383
 msgid "Services Pools"
 msgstr "خدمات حمامات"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:127
-#: static/admin/translations-fakejs.js:442
-#: static/admin/translations-fakejs.js:470
+#: static/admin/translations-fakejs.js:443
+#: static/admin/translations-fakejs.js:471
 msgid "Assigned services"
 msgstr "الخدمات المعينة"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:136
-#: static/admin/translations-fakejs.js:454
+#: static/admin/translations-fakejs.js:455
 msgid "Name"
 msgstr "اسم"
 
@@ -527,25 +527,25 @@ msgstr "آخر ولوج"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:146
 #: static/admin/translations-fakejs.js:280
-#: static/admin/translations-fakejs.js:346
-#: static/admin/translations-fakejs.js:383
+#: static/admin/translations-fakejs.js:347
+#: static/admin/translations-fakejs.js:384
 msgid "Users"
 msgstr "المستخدمين"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:142
-#: static/admin/translations-fakejs.js:354
-#: static/admin/translations-fakejs.js:369
+#: static/admin/translations-fakejs.js:355
+#: static/admin/translations-fakejs.js:370
 msgid "Enabled"
 msgstr "تمكين"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:143
-#: static/admin/translations-fakejs.js:355
-#: static/admin/translations-fakejs.js:370
+#: static/admin/translations-fakejs.js:356
+#: static/admin/translations-fakejs.js:371
 msgid "Disabled"
 msgstr "معاق"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:144
-#: static/admin/translations-fakejs.js:356
+#: static/admin/translations-fakejs.js:357
 msgid "Blocked"
 msgstr "مسدود"
 
@@ -645,11 +645,11 @@ msgstr "من فضلك ، اختر وسيلة نقل صالحة"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:174
 #: static/admin/translations-fakejs.js:303
-#: static/admin/translations-fakejs.js:348
-#: static/admin/translations-fakejs.js:389
-#: static/admin/translations-fakejs.js:392
-#: static/admin/translations-fakejs.js:449
-#: static/admin/translations-fakejs.js:473
+#: static/admin/translations-fakejs.js:349
+#: static/admin/translations-fakejs.js:390
+#: static/admin/translations-fakejs.js:393
+#: static/admin/translations-fakejs.js:450
+#: static/admin/translations-fakejs.js:474
 msgid "Logs"
 msgstr "سجلات"
 
@@ -669,17 +669,17 @@ msgstr "تخصيص الخدمة"
 #: static/admin/translations-fakejs.js:277
 #: static/admin/translations-fakejs.js:286
 #: static/admin/translations-fakejs.js:332
-#: static/admin/translations-fakejs.js:362
-#: static/admin/translations-fakejs.js:374
-#: static/admin/translations-fakejs.js:403
-#: static/admin/translations-fakejs.js:408
-#: static/admin/translations-fakejs.js:412
-#: static/admin/translations-fakejs.js:417
-#: static/admin/translations-fakejs.js:427
-#: static/admin/translations-fakejs.js:435
-#: static/admin/translations-fakejs.js:439
-#: static/admin/translations-fakejs.js:466
-#: static/admin/translations-fakejs.js:479
+#: static/admin/translations-fakejs.js:363
+#: static/admin/translations-fakejs.js:375
+#: static/admin/translations-fakejs.js:404
+#: static/admin/translations-fakejs.js:409
+#: static/admin/translations-fakejs.js:413
+#: static/admin/translations-fakejs.js:418
+#: static/admin/translations-fakejs.js:428
+#: static/admin/translations-fakejs.js:436
+#: static/admin/translations-fakejs.js:440
+#: static/admin/translations-fakejs.js:467
+#: static/admin/translations-fakejs.js:480
 msgid "Cancel"
 msgstr "إلغاء الأمر"
 
@@ -823,7 +823,7 @@ msgid "Yearly"
 msgstr "سنوياً"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:228
-#: static/admin/translations-fakejs.js:463
+#: static/admin/translations-fakejs.js:464
 msgid "Weekdays"
 msgstr "أيام الأسبوع"
 
@@ -1018,22 +1018,22 @@ msgstr "إضافة"
 #: static/admin/translations-fakejs.js:283
 #: static/admin/translations-fakejs.js:287
 #: static/admin/translations-fakejs.js:333
-#: static/admin/translations-fakejs.js:363
-#: static/admin/translations-fakejs.js:375
-#: static/admin/translations-fakejs.js:380
-#: static/admin/translations-fakejs.js:385
-#: static/admin/translations-fakejs.js:393
-#: static/admin/translations-fakejs.js:404
-#: static/admin/translations-fakejs.js:409
-#: static/admin/translations-fakejs.js:413
-#: static/admin/translations-fakejs.js:418
-#: static/admin/translations-fakejs.js:420
-#: static/admin/translations-fakejs.js:422
-#: static/admin/translations-fakejs.js:428
-#: static/admin/translations-fakejs.js:436
-#: static/admin/translations-fakejs.js:440
-#: static/admin/translations-fakejs.js:467
-#: static/admin/translations-fakejs.js:480
+#: static/admin/translations-fakejs.js:364
+#: static/admin/translations-fakejs.js:376
+#: static/admin/translations-fakejs.js:381
+#: static/admin/translations-fakejs.js:386
+#: static/admin/translations-fakejs.js:394
+#: static/admin/translations-fakejs.js:405
+#: static/admin/translations-fakejs.js:410
+#: static/admin/translations-fakejs.js:414
+#: static/admin/translations-fakejs.js:419
+#: static/admin/translations-fakejs.js:421
+#: static/admin/translations-fakejs.js:423
+#: static/admin/translations-fakejs.js:429
+#: static/admin/translations-fakejs.js:437
+#: static/admin/translations-fakejs.js:441
+#: static/admin/translations-fakejs.js:468
+#: static/admin/translations-fakejs.js:481
 msgid "Ok"
 msgstr "حسنا"
 
@@ -1097,16 +1097,16 @@ msgid "Detail"
 msgstr "التفاصيل"
 
 #: static/admin/translations-fakejs.js:306
-#: static/admin/translations-fakejs.js:345
-#: static/admin/translations-fakejs.js:386
-#: static/admin/translations-fakejs.js:441
-#: static/admin/translations-fakejs.js:465
-#: static/admin/translations-fakejs.js:468
+#: static/admin/translations-fakejs.js:346
+#: static/admin/translations-fakejs.js:387
+#: static/admin/translations-fakejs.js:442
+#: static/admin/translations-fakejs.js:466
+#: static/admin/translations-fakejs.js:469
 msgid "Summary"
 msgstr "ملخص"
 
 #: static/admin/translations-fakejs.js:307
-#: static/admin/translations-fakejs.js:387
+#: static/admin/translations-fakejs.js:388
 msgid "Services"
 msgstr "خدمات"
 
@@ -1123,13 +1123,13 @@ msgid "Connectivity"
 msgstr "الاتصال"
 
 #: static/admin/translations-fakejs.js:311
-#: static/admin/translations-fakejs.js:445
-#: static/modern/translations-fakejs.js:38
+#: static/admin/translations-fakejs.js:446
+#: static/modern/translations-fakejs.js:40
 msgid "Transports"
 msgstr "وسائل النقل"
 
 #: static/admin/translations-fakejs.js:312
-#: static/modern/translations-fakejs.js:40
+#: static/modern/translations-fakejs.js:42
 msgid "Networks"
 msgstr "الشبكات"
 
@@ -1221,252 +1221,257 @@ msgid "View service pools"
 msgstr "عرض حمامات الخدمة"
 
 #: static/admin/translations-fakejs.js:341
+#| msgid "UDS Configuration"
+msgid "UDS Administration"
+msgstr "إدارة UDS"
+
+#: static/admin/translations-fakejs.js:342
 msgid "You are accessing UDS Administration as staff member."
 msgstr "أنت تصل إلى إدارة UDS كموظف."
 
-#: static/admin/translations-fakejs.js:342
+#: static/admin/translations-fakejs.js:343
 msgid "This means that you have restricted access to elements."
 msgstr "هذا يعني أن لديك تقييد الوصول إلى العناصر."
 
-#: static/admin/translations-fakejs.js:343
+#: static/admin/translations-fakejs.js:344
 msgid ""
 "In order to increase your access privileges, please contact your local UDS "
 "administrator."
 msgstr ""
 "من أجل زيادة امتيازات الوصول الخاصة بك ، يرجى الاتصال بمسؤول UDS المحلي."
 
-#: static/admin/translations-fakejs.js:344
+#: static/admin/translations-fakejs.js:345
 msgid "Thank you."
 msgstr "شكرا لكم."
 
-#: static/admin/translations-fakejs.js:349
+#: static/admin/translations-fakejs.js:350
 msgid "Edit user"
 msgstr "تحرير المستخدم"
 
-#: static/admin/translations-fakejs.js:350
+#: static/admin/translations-fakejs.js:351
 msgid "New user"
 msgstr "مستخدم جديد"
 
-#: static/admin/translations-fakejs.js:351
+#: static/admin/translations-fakejs.js:352
 msgid "Real name"
 msgstr "الاسم الحقيقي"
 
-#: static/admin/translations-fakejs.js:357
+#: static/admin/translations-fakejs.js:358
 msgid "Role"
 msgstr "وظيفة"
 
-#: static/admin/translations-fakejs.js:358
+#: static/admin/translations-fakejs.js:359
 msgid "Admin"
 msgstr "مشرف"
 
-#: static/admin/translations-fakejs.js:359
+#: static/admin/translations-fakejs.js:360
 msgid "Staff member"
 msgstr "موظف"
 
-#: static/admin/translations-fakejs.js:364
+#: static/admin/translations-fakejs.js:365
 msgid "Edit group"
 msgstr "تحرير مجموعة"
 
-#: static/admin/translations-fakejs.js:365
+#: static/admin/translations-fakejs.js:366
 msgid "New group"
 msgstr "مجموعة جديدة"
 
-#: static/admin/translations-fakejs.js:366
+#: static/admin/translations-fakejs.js:367
 msgid "Meta group name"
 msgstr "اسم مجموعة التعريف"
 
-#: static/admin/translations-fakejs.js:371
+#: static/admin/translations-fakejs.js:372
 msgid "Service Pools"
 msgstr "مجمعات الخدمة"
 
-#: static/admin/translations-fakejs.js:372
+#: static/admin/translations-fakejs.js:373
 msgid "Match mode"
 msgstr "وضع التطابق"
 
-#: static/admin/translations-fakejs.js:373
+#: static/admin/translations-fakejs.js:374
 msgid "Selected Groups"
 msgstr "المجموعات المختارة"
 
-#: static/admin/translations-fakejs.js:376
-#: static/admin/translations-fakejs.js:381
-#: static/admin/translations-fakejs.js:390
+#: static/admin/translations-fakejs.js:377
+#: static/admin/translations-fakejs.js:382
+#: static/admin/translations-fakejs.js:391
 msgid "Information for"
 msgstr "معلومات عن"
 
-#: static/admin/translations-fakejs.js:379
+#: static/admin/translations-fakejs.js:380
 msgid "Assigned Services"
 msgstr "الخدمات المعينة"
 
-#: static/admin/translations-fakejs.js:388
+#: static/admin/translations-fakejs.js:389
 msgid "Usage"
 msgstr "استعمال"
 
-#: static/admin/translations-fakejs.js:391
+#: static/admin/translations-fakejs.js:392
 msgid "Services pools"
 msgstr "تجمع الخدمات"
 
-#: static/admin/translations-fakejs.js:394
+#: static/admin/translations-fakejs.js:395
 msgid "Edit action for"
 msgstr "تحرير العمل ل"
 
-#: static/admin/translations-fakejs.js:395
+#: static/admin/translations-fakejs.js:396
 msgid "New action for"
 msgstr "عمل جديد ل"
 
-#: static/admin/translations-fakejs.js:396
-#: static/admin/translations-fakejs.js:433
+#: static/admin/translations-fakejs.js:397
+#: static/admin/translations-fakejs.js:434
 msgid "Calendar"
 msgstr "التقويم"
 
-#: static/admin/translations-fakejs.js:397
+#: static/admin/translations-fakejs.js:398
 msgid "Events offset (minutes)"
 msgstr "إزاحة الأحداث (بالدقائق)"
 
-#: static/admin/translations-fakejs.js:398
+#: static/admin/translations-fakejs.js:399
 msgid "At the beginning of the interval?"
 msgstr "في بداية الفاصل؟"
 
-#: static/admin/translations-fakejs.js:399
-#: static/admin/translations-fakejs.js:434
+#: static/admin/translations-fakejs.js:400
+#: static/admin/translations-fakejs.js:435
 msgid "Action"
 msgstr "عمل"
 
-#: static/admin/translations-fakejs.js:400
-#: static/admin/translations-fakejs.js:411
+#: static/admin/translations-fakejs.js:401
+#: static/admin/translations-fakejs.js:412
 msgid "Transport"
 msgstr "المواصلات"
 
-#: static/admin/translations-fakejs.js:405
+#: static/admin/translations-fakejs.js:406
 msgid "Change owner of assigned service"
 msgstr "تغيير مالك الخدمة المعينة"
 
-#: static/admin/translations-fakejs.js:410
+#: static/admin/translations-fakejs.js:411
 msgid "New transport for"
 msgstr "النقل الجديد ل"
 
-#: static/admin/translations-fakejs.js:414
+#: static/admin/translations-fakejs.js:415
 msgid "New group for"
 msgstr "مجموعة جديدة لـ"
 
-#: static/admin/translations-fakejs.js:419
+#: static/admin/translations-fakejs.js:420
 msgid "Logs of"
 msgstr "سجلات من"
 
-#: static/admin/translations-fakejs.js:421
+#: static/admin/translations-fakejs.js:422
 msgid "Changelog of"
 msgstr "التغيير من"
 
-#: static/admin/translations-fakejs.js:423
+#: static/admin/translations-fakejs.js:424
 msgid "Assign service to user manually"
 msgstr "تخصيص الخدمة للمستخدم يدويا"
 
-#: static/admin/translations-fakejs.js:424
+#: static/admin/translations-fakejs.js:425
 msgid "Service"
 msgstr "الخدمات"
 
-#: static/admin/translations-fakejs.js:429
+#: static/admin/translations-fakejs.js:430
 msgid "New access rule for"
 msgstr "قاعدة وصول جديدة لـ"
 
-#: static/admin/translations-fakejs.js:430
+#: static/admin/translations-fakejs.js:431
 msgid "Edit access rule for"
 msgstr "تحرير قاعدة الوصول لـ"
 
-#: static/admin/translations-fakejs.js:431
+#: static/admin/translations-fakejs.js:432
 msgid "Default fallback access for"
 msgstr "العودة الاحتياطية الافتراضية ل"
 
-#: static/admin/translations-fakejs.js:432
-#: static/admin/translations-fakejs.js:476
+#: static/admin/translations-fakejs.js:433
+#: static/admin/translations-fakejs.js:477
 msgid "Priority"
 msgstr "أفضلية"
 
-#: static/admin/translations-fakejs.js:437
+#: static/admin/translations-fakejs.js:438
 msgid "New publication for"
 msgstr "منشور جديد لـ"
 
-#: static/admin/translations-fakejs.js:438
+#: static/admin/translations-fakejs.js:439
 msgid "Reason"
 msgstr "السبب"
 
-#: static/admin/translations-fakejs.js:443
+#: static/admin/translations-fakejs.js:444
 msgid "Cache"
 msgstr "ذاكرة التخزين المؤقت"
 
-#: static/admin/translations-fakejs.js:446
+#: static/admin/translations-fakejs.js:447
 msgid "Publications"
 msgstr "المنشورات"
 
-#: static/admin/translations-fakejs.js:447
+#: static/admin/translations-fakejs.js:448
 msgid "Scheduled actions"
 msgstr "الإجراءات المجدولة"
 
-#: static/admin/translations-fakejs.js:448
-#: static/admin/translations-fakejs.js:472
+#: static/admin/translations-fakejs.js:449
+#: static/admin/translations-fakejs.js:473
 msgid "Access calendars"
 msgstr "تقاويم الوصول"
 
-#: static/admin/translations-fakejs.js:450
+#: static/admin/translations-fakejs.js:451
 msgid "Account usage"
 msgstr "استخدام الحساب"
 
-#: static/admin/translations-fakejs.js:451
+#: static/admin/translations-fakejs.js:452
 msgid "Rules"
 msgstr "قواعد"
 
-#: static/admin/translations-fakejs.js:452
+#: static/admin/translations-fakejs.js:453
 msgid "Edit rule"
 msgstr "تحرير القاعدة"
 
-#: static/admin/translations-fakejs.js:453
+#: static/admin/translations-fakejs.js:454
 msgid "New rule"
 msgstr "قانون جديد"
 
-#: static/admin/translations-fakejs.js:456
+#: static/admin/translations-fakejs.js:457
 msgid "Event"
 msgstr "هدف"
 
-#: static/admin/translations-fakejs.js:457
+#: static/admin/translations-fakejs.js:458
 msgid "Start time"
 msgstr "وقت البدء"
 
-#: static/admin/translations-fakejs.js:458
+#: static/admin/translations-fakejs.js:459
 msgid "Duration"
 msgstr "المدة الزمنية"
 
-#: static/admin/translations-fakejs.js:459
+#: static/admin/translations-fakejs.js:460
 msgid "Duration units"
 msgstr "وحدات المدة"
 
-#: static/admin/translations-fakejs.js:460
+#: static/admin/translations-fakejs.js:461
 msgid "Start date"
 msgstr "تاريخ البدء"
 
-#: static/admin/translations-fakejs.js:461
+#: static/admin/translations-fakejs.js:462
 msgid "Repeat until date"
 msgstr "كرر حتى التاريخ"
 
-#: static/admin/translations-fakejs.js:462
+#: static/admin/translations-fakejs.js:463
 msgid "Frequency"
 msgstr "تكرر"
 
-#: static/admin/translations-fakejs.js:464
+#: static/admin/translations-fakejs.js:465
 msgid "Repeat every"
 msgstr "تكرار كل"
 
-#: static/admin/translations-fakejs.js:474
+#: static/admin/translations-fakejs.js:475
 msgid "New member pool"
 msgstr "تجمع عضو جديد"
 
-#: static/admin/translations-fakejs.js:475
+#: static/admin/translations-fakejs.js:476
 msgid "Edit member pool"
 msgstr "تحرير تجمع الأعضاء"
 
-#: static/admin/translations-fakejs.js:477
+#: static/admin/translations-fakejs.js:478
 msgid "Service pool"
 msgstr "تجمع خدمة"
 
-#: static/admin/translations-fakejs.js:478
+#: static/admin/translations-fakejs.js:479
 msgid "Enabled?"
 msgstr "تمكين؟"
 
@@ -1485,8 +1490,9 @@ msgstr "ارجوك انتظر"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:5
 msgid ""
-"Remember that UDS Plugin is required in order for this service to be launched"
-msgstr "تذكر أن UDS Plugin مطلوب حتى يتم إطلاق هذه الخدمة"
+"Remember that you will need the USD client on your platform to access the "
+"service"
+msgstr "تذكر أنك ستحتاج إلى عميل الدولار الأمريكي على منصتك للوصول إلى الخدمة"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:6
 msgid "Error launching service"
@@ -1557,97 +1563,99 @@ msgid "This service is currently not accessible due to schedule restrictions."
 msgstr "هذه الخدمة غير متاحة حاليًا بسبب قيود الجدول الزمني."
 
 #: static/modern/translations-fakejs.js:30
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:64
 msgid "Downloads"
 msgstr "التنزيلات"
 
 #: static/modern/translations-fakejs.js:32
-#: static/modern/translations-fakejs.js:33
-msgid "About"
-msgstr "حول"
-
-#: static/modern/translations-fakejs.js:35
-#: static/modern/translations-fakejs.js:36
-msgid "Client IP"
-msgstr "العميل IP"
-
-#: static/modern/translations-fakejs.js:37
-msgid "Detected proxy ip"
-msgstr "تم اكتشاف عنوان IP للخادم الوكيل"
-
-#: static/modern/translations-fakejs.js:39
-msgid "UDS transports for this client"
-msgstr "ينقل UDS لهذا العميل"
-
-#: static/modern/translations-fakejs.js:41
-msgid "UDS networks for this IP"
-msgstr "شبكات UDS لهذا IP"
-
-#: static/modern/translations-fakejs.js:42
-msgid "Release service"
-msgstr "الافراج عن الخدمة"
-
-#: static/modern/translations-fakejs.js:43
-msgid "Reset service"
-msgstr "إعادة ضبط الخدمة"
-
-#: static/modern/translations-fakejs.js:44
-msgid "Connections"
-msgstr "روابط"
-
-#: static/modern/translations-fakejs.js:45
-msgid "Actions"
-msgstr "أفعال"
-
-#: static/modern/translations-fakejs.js:46
-msgid "Username"
-msgstr "اسم المستخدم"
-
-#: static/modern/translations-fakejs.js:47
-msgid "Password"
-msgstr "كلمه السر"
-
-#: static/modern/translations-fakejs.js:49
-msgid "Login"
-msgstr "تسجيل الدخول"
-
-#: static/modern/translations-fakejs.js:50
+#: static/modern/translations-fakejs.js:34
+#: static/modern/translations-fakejs.js:52
 msgid "UDS Client"
 msgstr "عميل UDS"
 
+#: static/modern/translations-fakejs.js:33
+#: static/modern/translations-fakejs.js:35
+msgid "About"
+msgstr "حول"
+
+#: static/modern/translations-fakejs.js:37
+#: static/modern/translations-fakejs.js:38
+msgid "Client IP"
+msgstr "العميل IP"
+
+#: static/modern/translations-fakejs.js:39
+msgid "Detected proxy ip"
+msgstr "تم اكتشاف عنوان IP للخادم الوكيل"
+
+#: static/modern/translations-fakejs.js:41
+msgid "UDS transports for this client"
+msgstr "ينقل UDS لهذا العميل"
+
+#: static/modern/translations-fakejs.js:43
+msgid "UDS networks for this IP"
+msgstr "شبكات UDS لهذا IP"
+
+#: static/modern/translations-fakejs.js:44
+msgid "Release service"
+msgstr "الافراج عن الخدمة"
+
+#: static/modern/translations-fakejs.js:45
+msgid "Reset service"
+msgstr "إعادة ضبط الخدمة"
+
+#: static/modern/translations-fakejs.js:46
+msgid "Connections"
+msgstr "روابط"
+
+#: static/modern/translations-fakejs.js:47
+msgid "Actions"
+msgstr "أفعال"
+
+#: static/modern/translations-fakejs.js:48
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: static/modern/translations-fakejs.js:49
+msgid "Password"
+msgstr "كلمه السر"
+
 #: static/modern/translations-fakejs.js:51
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+#: static/modern/translations-fakejs.js:53
 msgid "Download UDS client for your platform"
 msgstr "قم بتنزيل عميل UDS الخاص بمنصتك"
 
-#: static/modern/translations-fakejs.js:52
+#: static/modern/translations-fakejs.js:54
 msgid "You can access UDS Open Source code at"
 msgstr "يمكنك الوصول إلى كود UDS Open Source في"
 
-#: static/modern/translations-fakejs.js:53
+#: static/modern/translations-fakejs.js:55
 msgid "UDS has been developed using these components:"
 msgstr "تم تطوير UDS باستخدام هذه المكونات:"
 
-#: static/modern/translations-fakejs.js:54
+#: static/modern/translations-fakejs.js:56
 msgid "If you find that we missed any component, please let us know"
 msgstr "إذا اكتشفت أننا فقدنا أي مكون ، فالرجاء إخبارنا بذلك"
 
-#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:57
 msgid "UDS Service launcher"
 msgstr "قاذفة خدمة UDS"
 
-#: static/modern/translations-fakejs.js:56
+#: static/modern/translations-fakejs.js:58
 msgid "The service you have requested is being launched."
 msgstr "يتم تشغيل الخدمة التي طلبتها."
 
-#: static/modern/translations-fakejs.js:57
+#: static/modern/translations-fakejs.js:59
 msgid "Please, note that reloading this page will not work."
 msgstr "يرجى ملاحظة أن إعادة تحميل هذه الصفحة لن تعمل."
 
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:60
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "لإعادة تشغيل الخدمة ، سيكون عليك القيام بذلك من الأصل."
 
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:61
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS plugin installed"
@@ -1655,18 +1663,18 @@ msgstr ""
 "إذا لم يتم تشغيل الخدمة تلقائيًا ، فمن المحتمل أنك لم تقم بتثبيت المكون "
 "الإضافي لـ UDS"
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:62
 msgid "You can obtain it from the"
 msgstr "يمكنك الحصول عليها من"
 
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:63
 msgid "UDS Plugin download page"
 msgstr "UDS المساعد تحميل الصفحة"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:65
 msgid "An error has occurred"
 msgstr "حدث خطأ"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:66
 msgid "Return"
 msgstr "إرجاع"

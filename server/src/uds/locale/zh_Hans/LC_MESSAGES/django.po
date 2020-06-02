@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-30 20:55+0200\n"
-"PO-Revision-Date: 2020-05-26 14:20+0000\n"
+"POT-Creation-Date: 2020-06-02 15:38+0200\n"
+"PO-Revision-Date: 2020-05-30 18:56+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -2653,7 +2653,6 @@ msgid "Unique users"
 msgstr "不重复使用者"
 
 #: reports/stats/pools_usage_summary.py:140
-#| msgid "Total Time (seconds)"
 msgid "Mean time (seconds)"
 msgstr "平均时间（秒）"
 
@@ -3705,9 +3704,6 @@ msgid "Check Port"
 msgstr "检查端口"
 
 #: services/PhysicalMachines/service_multi.py:70
-#| msgid ""
-#| "If non zero, only Machines responding to connection on that port will be "
-#| "used"
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr "如果非零，则仅响应该端口上的连接的主机。"
@@ -4654,7 +4650,6 @@ msgid "Total accesses"
 msgstr "总访问量"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:18
-#| msgid "Max.Idle time"
 msgid "Mean time"
 msgstr "与此同时"
 
@@ -5539,44 +5534,44 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:120
+#: web/util/configjs.py:127
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:156
+#: web/util/configjs.py:163
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:157
+#: web/util/configjs.py:164
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:158
+#: web/util/configjs.py:165
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:158
+#: web/util/configjs.py:165
 msgid "(requires Python-3.6 or newer)"
 msgstr "（需要Python-3.6或更高版本）"
 
-#: web/util/configjs.py:159
+#: web/util/configjs.py:166
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "基于Debian的Python 2.7 Linux客户端（旧版）"
 
-#: web/util/configjs.py:159 web/util/configjs.py:160 web/util/configjs.py:161
-#: web/util/configjs.py:162
+#: web/util/configjs.py:166 web/util/configjs.py:167 web/util/configjs.py:168
+#: web/util/configjs.py:169
 msgid "(requires Python-2.7)"
 msgstr "（需要Python-2.7）"
 
-#: web/util/configjs.py:160
+#: web/util/configjs.py:167
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "基于Red Hat的Linux客户端（RH，Fedora，Centos，...）"
 
-#: web/util/configjs.py:161
+#: web/util/configjs.py:168
 msgid "Suse based Linux client"
 msgstr "基于Suse的Linux客户端"
 
-#: web/util/configjs.py:162
+#: web/util/configjs.py:169
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 

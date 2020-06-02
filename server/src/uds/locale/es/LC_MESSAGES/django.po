@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-30 20:55+0200\n"
-"PO-Revision-Date: 2020-05-26 14:20+0000\n"
+"POT-Creation-Date: 2020-06-02 15:38+0200\n"
+"PO-Revision-Date: 2020-05-30 18:56+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -2777,7 +2777,6 @@ msgid "Unique users"
 msgstr "Usuarios únicos"
 
 #: reports/stats/pools_usage_summary.py:140
-#| msgid "Total Time (seconds)"
 msgid "Mean time (seconds)"
 msgstr "Tiempo medio (segundos)"
 
@@ -3875,9 +3874,6 @@ msgid "Check Port"
 msgstr "Comprobar puerto"
 
 #: services/PhysicalMachines/service_multi.py:70
-#| msgid ""
-#| "If non zero, only Machines responding to connection on that port will be "
-#| "used"
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
@@ -4870,7 +4866,6 @@ msgid "Total accesses"
 msgstr "Accesos totales"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:18
-#| msgid "Max.Idle time"
 msgid "Mean time"
 msgstr "Tiempo medio"
 
@@ -5814,44 +5809,44 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Datos incorrectos"
 
-#: web/util/configjs.py:120
+#: web/util/configjs.py:127
 msgid "Access limited by calendar"
 msgstr "Acceso limitado por calendario"
 
-#: web/util/configjs.py:156
+#: web/util/configjs.py:163
 msgid "Windows client"
 msgstr "Cliente de Windows"
 
-#: web/util/configjs.py:157
+#: web/util/configjs.py:164
 msgid "Mac OS X client"
 msgstr "Cliente de Mac OS X"
 
-#: web/util/configjs.py:158
+#: web/util/configjs.py:165
 msgid "Debian based Linux client"
 msgstr "Cliente Linux basado en Debian"
 
-#: web/util/configjs.py:158
+#: web/util/configjs.py:165
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requiere Python-3.6 o más reciente)"
 
-#: web/util/configjs.py:159
+#: web/util/configjs.py:166
 msgid "Debian based Python 2.7 Linux client (legacy)"
 msgstr "Cliente Linux Python 2.7 basado en Debian (heredado)"
 
-#: web/util/configjs.py:159 web/util/configjs.py:160 web/util/configjs.py:161
-#: web/util/configjs.py:162
+#: web/util/configjs.py:166 web/util/configjs.py:167 web/util/configjs.py:168
+#: web/util/configjs.py:169
 msgid "(requires Python-2.7)"
 msgstr "(requiere Python 2.7)"
 
-#: web/util/configjs.py:160
+#: web/util/configjs.py:167
 msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgstr "Cliente de Linux basado en Red Hat (RH, Fedora, Centos, ...)"
 
-#: web/util/configjs.py:161
+#: web/util/configjs.py:168
 msgid "Suse based Linux client"
 msgstr "Cliente Linux basado en Suse"
 
-#: web/util/configjs.py:162
+#: web/util/configjs.py:169
 msgid "Generic .tar.gz Linux client"
 msgstr "Genérico .tar.gz cliente de Linux"
 
