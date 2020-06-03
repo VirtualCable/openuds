@@ -132,6 +132,7 @@ class CryptoManager:
             try:
                 atfork()
                 decrypted = self._oldRsa.decrypt(encoders.decode(value, 'base64'))
+                return decrypted.decode()
             except Exception:
                 logger.exception('Decripting: %s', value)
                 # logger.error(inspect.stack())

@@ -86,7 +86,7 @@ def udsJs(request: 'HttpRequest') -> str:
             authenticators = [Authenticator.objects.get(small_name=auth_host)]
         except Exception:
             try:
-                authenticators = [Authenticator.objects.order_by('priority')[0].small_name]
+                authenticators = [Authenticator.objects.order_by('priority')[0]]
             except Exception:  # There is no authenticators yet...
                 authenticators = []
     else:
