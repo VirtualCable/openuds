@@ -68,7 +68,7 @@ class IPMachinesService(IPServiceBase):
     ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
 
     port = gui.NumericField(length=5, label=_('Check Port'), defvalue='0', order=2, tooltip=_('If non zero, only hosts responding to connection on that port will be served.'), required=True, tab=gui.ADVANCED_TAB)
-    skipTimeOnFailure = gui.NumericField(length=6, label=_('Skip time'), defvalue='60', order=2, tooltip=_('If a host fails to check, skip it for this time (in minutes).'), minValue=0, required=True, tab=gui.ADVANCED_TAB)
+    skipTimeOnFailure = gui.NumericField(length=6, label=_('Skip time'), defvalue='15', order=2, tooltip=_('If a host fails to check, skip it for this time (in minutes).'), minValue=0, required=True, tab=gui.ADVANCED_TAB)
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -90,6 +90,7 @@ class IPMachinesService(IPServiceBase):
     _ips: typing.List[str] = []
     _token: str = ''
     _port: int = 0
+    _skipTimeOnFailure: int = 0
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
@@ -110,11 +111,11 @@ class IPMachinesService(IPServiceBase):
     def valuesDict(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
 
-        return {'ipList': gui.convertToList(ips), 'token': self._token, 'port': str(self._port)}
+        return {'ipList': gui.convertToList(ips), 'token': self._token, 'port': str(self._port), 'skipTimeOnFailure': self._skipTimeOnFailure }
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
-        return b'\0'.join([b'v3', self._token.encode(), str(self._port).encode()])
+        return b'\0'.join([b'v4', self._token.encode(), str(self._port).encode(), str(self._skipTimeOnFailure).encode()])
 
     def unmarshal(self, data: bytes) -> None:
         values: typing.List[bytes] = data.split(b'\0')
@@ -128,8 +129,10 @@ class IPMachinesService(IPServiceBase):
             self._ips = []
         if values[0] != b'v1':
             self._token = values[1].decode()
-            if values[0] == b'v3':
+            if values[0] in (b'v3', b'v4'):
                 self._port = int(values[2].decode())
+            if values[0] == b'v4':
+                self._skipTimeOnFailure = int(values[3].decode())
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine

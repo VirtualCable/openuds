@@ -109,6 +109,8 @@ class OpenStackProvider(ServiceProvider):
 
     tenant = gui.TextField(length=64, label=_('Project Id'), order=6, tooltip=_('Project (tenant) for this provider. Set only if required by server.'), required=False, defvalue='', tab=gui.ADVANCED_TAB)
     region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider. Set only if required by server.'), required=False, defvalue='', tab=gui.ADVANCED_TAB)
+    
+    useSubnetsName = gui.CheckBoxField(label=_('Subnets names'), order=8, tooltip=_('If checked, the name of the subnets will be used instead of the names of networks'), defvalue=gui.FALSE, tab=gui.ADVANCED_TAB)
 
     legacy = False
 

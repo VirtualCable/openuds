@@ -214,7 +214,7 @@ class Config:
         try:
             cfg = DBConfig.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
             if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
-                return  False# Skip non writable elements
+                return  False # Skip non writable elements
 
             if cfg.crypt is True:
                 value = cryptoManager().encrypt(value)

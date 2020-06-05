@@ -39,7 +39,7 @@ from . import openStack
 
 logger = logging.getLogger(__name__)
 
-def getApi(parameters: typing.Dict[str, str]) -> openStack.Client:
+def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openStack.Client, bool]:
     from .provider_legacy import ProviderLegacy
     from .provider import OpenStackProvider
     from uds.core.environment import Environment
@@ -53,17 +53,22 @@ def getApi(parameters: typing.Dict[str, str]) -> openStack.Client:
 
     provider.unserialize(parameters['ov'])
 
-    return provider.api(parameters['project'], parameters['region'])
+    if isinstance(provider, OpenStackProvider):
+        useSubnetsName = provider.useSubnetsName.isTrue()
+    else:
+        useSubnetsName = False
+
+    return (provider.api(parameters['project'], parameters['region']), useSubnetsName)
 
 
 def getResources(parameters: typing.Dict[str, str]) -> typing.List[typing.Dict[str, typing.Any]]:
     '''
     This helper is designed as a callback for Project Selector
     '''
-    api = getApi(parameters)
+    api, nameFromSubnets = getApi(parameters)
 
     zones = [gui.choiceItem(z, z) for z in api.listAvailabilityZones()]
-    networks = [gui.choiceItem(z['id'], z['name']) for z in api.listNetworks()]
+    networks = [gui.choiceItem(z['id'], z['name']) for z in api.listNetworks(nameFromSubnets=nameFromSubnets)]
     flavors = [gui.choiceItem(z['id'], z['name']) for z in api.listFlavors()]
     securityGroups = [gui.choiceItem(z['id'], z['name']) for z in api.listSecurityGroups()]
     volumeTypes = [gui.choiceItem('-', _('None'))] + [gui.choiceItem(t['id'], t['name']) for t in api.listVolumeTypes()]
@@ -82,7 +87,7 @@ def getVolumes(parameters: typing.Dict[str, str]) -> typing.List[typing.Dict[str
     '''
     This helper is designed as a callback for Zone Selector
     '''
-    api = getApi(parameters)
+    api, _ = getApi(parameters)
     # Source volumes are all available for us
     # volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
     volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '']

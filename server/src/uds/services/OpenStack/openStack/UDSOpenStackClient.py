@@ -358,12 +358,35 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def listNetworks(self) -> typing.Iterable[typing.Any]:
-        return getRecurringUrlJson(
+    def listNetworks(self, nameFromSubnets=False) -> typing.Iterable[typing.Any]:
+        nets = getRecurringUrlJson(
             self._getEndpointFor('network') + '/v2.0/networks',
             headers=self._requestHeaders(),
             key='networks',
             errMsg='List Networks',
+            timeout=self._timeout
+        )
+        if not nameFromSubnets:
+            yield from nets
+        else:
+            # Get and cache subnets names
+            subnetNames = { s['id']: s['name'] for s in self.listSubnets() }
+            for net in nets:
+                name = ','.join(subnetNames[i] for i in net['subnets'] if i in subnetNames)
+                net['old_name'] = net['name']
+                if name:
+                    net['name'] = name
+
+                yield net
+
+
+    @authProjectRequired
+    def listSubnets(self) -> typing.Iterable[typing.Any]:
+        return getRecurringUrlJson(
+            self._getEndpointFor('network') + '/v2.0/subnets',
+            headers=self._requestHeaders(),
+            key='subnets',
+            errMsg='List Subnets',
             timeout=self._timeout
         )
 
