@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-02 15:38+0200\n"
+"POT-Creation-Date: 2020-06-08 17:59+0200\n"
 "PO-Revision-Date: 2020-05-30 18:56+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -1867,7 +1867,7 @@ msgstr "Service de base"
 
 #: core/services/service.py:140 core/services/service.py:149
 #: models/permissions.py:72 models/permissions.py:76
-#: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:69
+#: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:74
 #: services/Proxmox/service.py:197 services/Sample/service.py:98
 #: services/Sample/service.py:104 services/TestService_enterprise/service.py:28
 msgid "None"
@@ -2349,10 +2349,11 @@ msgid "Must provide an user account!!!"
 msgstr "Doit fournir un compte d'utilisateur!!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-msgid "RDS UDS Actor (for remote apps on Windows Server 2012 and 2016)"
+#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012 and 2016)"
+msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgstr ""
-"Acteur de l’UDS RDS (pour les applications distantes sur Windows Server 2012 "
-"et 2016)"
+"Acteur RDS UDS (pour les applications distantes sur Windows Server 2012, "
+"2016, 2019)"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:31
 msgid "RDS OS Manager"
@@ -3694,11 +3695,11 @@ msgstr "Modèle de base"
 msgid "Service base template"
 msgstr "Modèle de base de service"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:677
+#: services/OpenStack/openStack/UDSOpenStackClient.py:700
 msgid "Authentication error"
 msgstr "Erreur d'authentification"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:682
+#: services/OpenStack/openStack/UDSOpenStackClient.py:705
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3769,7 +3770,20 @@ msgid "Region for this provider. Set only if required by server."
 msgstr ""
 "Région pour ce fournisseur. Défini uniquement si requis par le serveur."
 
-#: services/OpenStack/provider.py:164 services/OpenStack/provider_legacy.py:166
+#: services/OpenStack/provider.py:113
+#| msgid "Services names"
+msgid "Subnets names"
+msgstr "Noms des sous-réseaux"
+
+#: services/OpenStack/provider.py:113
+msgid ""
+"If checked, the name of the subnets will be used instead of the names of "
+"networks"
+msgstr ""
+"Si coché, le nom des sous-réseaux sera utilisé à la place des noms des "
+"réseaux"
+
+#: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:166
 msgid "OpenStack test connection passed"
 msgstr "Test de connexion á OpenStack passée"
 
