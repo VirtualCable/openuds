@@ -80,8 +80,8 @@ class UDSClient(QtWidgets.QMainWindow):
 
         screen = QtWidgets.QDesktopWidget().screenGeometry()
         mysize = self.geometry()
-        hpos = (screen.width() - mysize.width()) / 2
-        vpos = (screen.height() - mysize.height() - mysize.height()) / 2
+        hpos = (screen.width() - mysize.width()) // 2
+        vpos = (screen.height() - mysize.height() - mysize.height()) // 2
         self.move(hpos, vpos)
 
         self.animTimer = QtCore.QTimer()

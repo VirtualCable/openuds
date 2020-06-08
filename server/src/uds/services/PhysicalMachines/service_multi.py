@@ -104,6 +104,7 @@ class IPMachinesService(IPServiceBase):
 
         self._token = self.token.value.strip()
         self._port = self.port.value
+        self._skipTimeOnFailure = self.skipTimeOnFailure.num()
 
     def getToken(self):
         return self._token or None
