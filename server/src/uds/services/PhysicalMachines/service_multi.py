@@ -112,7 +112,7 @@ class IPMachinesService(IPServiceBase):
     def valuesDict(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
 
-        return {'ipList': gui.convertToList(ips), 'token': self._token, 'port': str(self._port), 'skipTimeOnFailure': self._skipTimeOnFailure }
+        return {'ipList': gui.convertToList(ips), 'token': self._token, 'port': str(self._port), 'skipTimeOnFailure': str(self._skipTimeOnFailure) }
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
