@@ -125,7 +125,7 @@ class ServicesPools(ModelHandler):
             query=(ServicePool.objects.prefetch_related('service', 'service__provider', 'servicesPoolGroup', 'image', 'tags', 'meta', 'account')
                     .annotate(valid_count=Count('userServices', filter=~Q(userServices__state__in=State.INFO_STATES)))
                     .annotate(preparing_count=Count('userServices', filter=Q(userServices__state=State.PREPARING)))
-                    .annotate(error_count=Count('userServices', filter=Q(userServices__state=State.ERROR, state_date__gt=d)))
+                    .annotate(error_count=Count('userServices', filter=Q(userServices__state=State.ERROR, userServices__state_date__gt=d)))
                     .annotate(usage_count=Count('userServices', filter=Q(userServices__state__in=State.VALID_STATES, userServices__cache_level=0)))
             )
         )
