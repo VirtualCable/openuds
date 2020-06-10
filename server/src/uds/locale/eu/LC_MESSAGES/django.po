@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-08 17:59+0200\n"
-"PO-Revision-Date: 2020-05-30 18:56+0000\n"
+"POT-Creation-Date: 2020-06-10 16:32+0200\n"
+"PO-Revision-Date: 2020-06-08 16:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -2322,7 +2322,6 @@ msgid "Must provide an user account!!!"
 msgstr "Erabiltzaile-kontua eman behar du !!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012 and 2016)"
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgstr ""
 "RDS UDS aktorea (Windows Server 2012, 2016, 2019 urruneko aplikazioetarako)"
@@ -3719,7 +3718,6 @@ msgid "Region for this provider. Set only if required by server."
 msgstr "Hornitzaile horren eskualdea. Ezarri zerbitzariak hala eskatzen badu."
 
 #: services/OpenStack/provider.py:113
-#| msgid "Services names"
 msgid "Subnets names"
 msgstr "Azpi-sareen izenak"
 
@@ -4122,9 +4120,9 @@ msgstr ""
 "AD erabiltzailearen kudeaketa: AD zerbitzariaren ostalaria eman behar duzu."
 
 #: services/RDS_enterprise/provider.py:167
-msgid "AD User Management: you must provide the user prefix."
-msgstr ""
-"AD Erabiltzaileen Kudeaketa: erabiltzailearen aurrizkia eman behar duzu."
+#| msgid "AD User Management: you must provide the user prefix."
+msgid "AD User Management: you must provide the users base DN."
+msgstr "AD Erabiltzaileen Kudeaketa: erabiltzaileen DN DNa eman behar duzu."
 
 #: services/RDS_enterprise/provider.py:170
 msgid "AD User Management: the username should be in USER@DOMAIN form."
@@ -4142,38 +4140,38 @@ msgstr ""
 "AD Erabiltzaileen Kudeaketa: erabiltzailearen aurrizkia eman behar duzu. "
 "(1-4 karaktere)"
 
-#: services/RDS_enterprise/provider.py:180
+#: services/RDS_enterprise/provider.py:184
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr ""
 "AD Erabiltzaileen Kudeaketa: erabiltzaileak sortzeko FQDN domeinua eman "
 "behar duzu."
 
-#: services/RDS_enterprise/provider.py:213
+#: services/RDS_enterprise/provider.py:217
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Errorea: Erabiltzailea {} ostalarian {} erabiltzen ari da eta ezin da kendu "
 "oraingoan"
 
-#: services/RDS_enterprise/provider.py:247
+#: services/RDS_enterprise/provider.py:251
 msgid "Connection to {}, port {} failed."
 msgstr "{} Portuarekin konexioak huts egin du."
 
-#: services/RDS_enterprise/provider.py:263
+#: services/RDS_enterprise/provider.py:267
 msgid "The group {} could not be found. Please, check it."
 msgstr "Ezin da {} taldea aurkitu. Mesedez, egiaztatu."
 
-#: services/RDS_enterprise/provider.py:265
+#: services/RDS_enterprise/provider.py:269
 msgid "User creation test failed. Please, check parameters."
 msgstr ""
 "Erabiltzaileen sorrerako probak huts egin du. Mesedez, egiaztatu parametroak."
 
-#: services/RDS_enterprise/provider.py:270
+#: services/RDS_enterprise/provider.py:274
 msgid "Server {} is not accesible and Server checking is enabled"
 msgstr ""
 "Ezin da {} zerbitzaria eskuragarri egon eta zerbitzariaren egiaztapena "
 "gaituta dago"
 
-#: services/RDS_enterprise/provider.py:272
+#: services/RDS_enterprise/provider.py:276
 msgid "Connectivity test passed"
 msgstr "Konektagarritasun proba gainditu da"
 

@@ -4,15 +4,16 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
+# Thorsten Latka <thorsten.latka@aktobis.de>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-08 17:59+0200\n"
-"PO-Revision-Date: 2020-06-02 13:39+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-06-10 16:32+0200\n"
+"PO-Revision-Date: 2020-06-10 14:11+0000\n"
+"Last-Translator: Thorsten Latka <thorsten.latka@aktobis.de>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
 "Language: de\n"
@@ -42,12 +43,12 @@ msgstr "Main"
 #: static/admin/translations-fakejs.js:194
 #: static/admin/translations-fakejs.js:257
 msgid "Error"
-msgstr "Error"
+msgstr "Fehler"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:50
 #: static/admin/translations-fakejs.js:61
 msgid "Please, fill in require fields: "
-msgstr "Bitte füllen Sie Pflichtfelder aus:"
+msgstr "Bitte füllen Sie die Pflichtfelder aus:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:58
 #: static/admin/translations-fakejs.js:70
@@ -283,7 +284,7 @@ msgstr "April"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:16
 msgid "May"
-msgstr "Kann"
+msgstr "Mai"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:17
 msgid "June"
@@ -367,7 +368,7 @@ msgstr "Aktiv"
 #: static/admin/translations-fakejs.js:133
 #: static/admin/translations-fakejs.js:159
 msgid "Pool"
-msgstr "Schwimmbad"
+msgstr "Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:118
 #: static/admin/translations-fakejs.js:134
@@ -546,7 +547,7 @@ msgstr "Deaktiviert"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:144
 #: static/admin/translations-fakejs.js:357
 msgid "Blocked"
-msgstr "verstopft"
+msgstr "Blockiert"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:131
 msgid "Delete user"
@@ -959,7 +960,7 @@ msgstr "Bitte geben Sie einen Namen und ein Bild an"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:82
 msgid "Delete image"
-msgstr "Lösche Bild"
+msgstr "Bild löschen"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:77
 #: static/admin/translations-fakejs.js:81
@@ -1006,7 +1007,7 @@ msgstr "Benutzermodus"
 #: static/admin/translations-fakejs.js:274
 #: static/modern/translations-fakejs.js:31
 msgid "Logout"
-msgstr "Ausloggen"
+msgstr "Abmelden"
 
 #: static/admin/translations-fakejs.js:275
 msgid "Remove all"
@@ -1169,7 +1170,7 @@ msgstr "Berichte"
 
 #: static/admin/translations-fakejs.js:323
 msgid "Configuration"
-msgstr "Aufbau"
+msgstr "Konfiguration"
 
 #: static/admin/translations-fakejs.js:324
 msgid "Actor tokens"
@@ -1201,7 +1202,7 @@ msgstr "Verwenden Sie für optimale Ergebnisse"
 
 #: static/admin/translations-fakejs.js:331
 msgid "The image will be resized on upload to"
-msgstr "Das Bild wird beim Hochladen in die Größe geändert"
+msgstr "Die Größe des Bildes wird beim Hochladen angepasst"
 
 #: static/admin/translations-fakejs.js:334
 msgid "UDS Configuration"
@@ -1210,7 +1211,7 @@ msgstr "UDS-Konfiguration"
 #: static/admin/translations-fakejs.js:336
 #: static/modern/translations-fakejs.js:29
 msgid "Dashboard"
-msgstr "Instrumententafel"
+msgstr "Übersicht"
 
 #: static/admin/translations-fakejs.js:337
 msgid "View authenticators"
@@ -1488,7 +1489,7 @@ msgstr "Dienst starten"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:4
 msgid "Please wait"
-msgstr "Warten Sie mal"
+msgstr "Bitte warten"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:5
 msgid ""
@@ -1687,4 +1688,4 @@ msgstr "Ein Fehler ist aufgetreten"
 
 #: static/modern/translations-fakejs.js:66
 msgid "Return"
-msgstr "Rückkehr"
+msgstr "Zurück"

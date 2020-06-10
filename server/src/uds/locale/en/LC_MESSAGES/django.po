@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-08 17:59+0200\n"
+"POT-Creation-Date: 2020-06-10 16:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3933,7 +3933,7 @@ msgid "AD User Management: you must provide the AD server host."
 msgstr ""
 
 #: services/RDS_enterprise/provider.py:167
-msgid "AD User Management: you must provide the user prefix."
+msgid "AD User Management: you must provide the users base DN."
 msgstr ""
 
 #: services/RDS_enterprise/provider.py:170
@@ -3948,31 +3948,31 @@ msgstr ""
 msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr ""
 
-#: services/RDS_enterprise/provider.py:180
+#: services/RDS_enterprise/provider.py:184
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr ""
 
-#: services/RDS_enterprise/provider.py:213
+#: services/RDS_enterprise/provider.py:217
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 
-#: services/RDS_enterprise/provider.py:247
+#: services/RDS_enterprise/provider.py:251
 msgid "Connection to {}, port {} failed."
 msgstr ""
 
-#: services/RDS_enterprise/provider.py:263
+#: services/RDS_enterprise/provider.py:267
 msgid "The group {} could not be found. Please, check it."
 msgstr ""
 
-#: services/RDS_enterprise/provider.py:265
+#: services/RDS_enterprise/provider.py:269
 msgid "User creation test failed. Please, check parameters."
 msgstr ""
 
-#: services/RDS_enterprise/provider.py:270
+#: services/RDS_enterprise/provider.py:274
 msgid "Server {} is not accesible and Server checking is enabled"
 msgstr ""
 
-#: services/RDS_enterprise/provider.py:272
+#: services/RDS_enterprise/provider.py:276
 msgid "Connectivity test passed"
 msgstr ""
 

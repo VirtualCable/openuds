@@ -4,15 +4,17 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
+# mvignone, 2020
+# mvignone, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2019
 # Víctor Alonso <valonso@virtualcable.net>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-08 17:59+0200\n"
-"PO-Revision-Date: 2020-05-30 18:56+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-06-10 16:32+0200\n"
+"PO-Revision-Date: 2020-06-10 14:32+0000\n"
+"Last-Translator: mvignone\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
 "Language: it\n"
@@ -23,7 +25,7 @@ msgstr ""
 
 #: REST/methods/accounts.py:60
 msgid "Accounts"
-msgstr "conti"
+msgstr "Resoconti"
 
 #: REST/methods/accounts.py:62 REST/methods/authenticators.py:65
 #: REST/methods/calendars.py:60 REST/methods/images.py:59
@@ -50,7 +52,7 @@ msgstr "Commenti"
 
 #: REST/methods/accounts.py:64
 msgid "Time mark"
-msgstr "Segno di tempo"
+msgstr "Marca temporale"
 
 #: REST/methods/accounts.py:65 REST/methods/authenticators.py:72
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
@@ -76,11 +78,11 @@ msgstr "In esecuzione"
 
 #: REST/methods/accountsusage.py:95 REST/methods/calendarrules.py:99
 msgid "Starts"
-msgstr "inizia"
+msgstr "Inizio"
 
 #: REST/methods/accountsusage.py:96 REST/methods/calendarrules.py:100
 msgid "Ends"
-msgstr "Ends"
+msgstr "FIne"
 
 #: REST/methods/accountsusage.py:97
 msgid "Elapsed"
@@ -88,7 +90,7 @@ msgstr "trascorso"
 
 #: REST/methods/accountsusage.py:98
 msgid "Elapsed timemark"
-msgstr "Timemark trascorso"
+msgstr "Tempo trascorso"
 
 #: REST/methods/accountsusage.py:118
 #, python-brace-format
@@ -102,7 +104,7 @@ msgstr "Usi correnti"
 #: REST/methods/actor.py:94 REST/methods/client.py:102
 #: REST/methods/client.py:118
 msgid "Correct"
-msgstr "Corretta"
+msgstr "Corretto"
 
 #: REST/methods/actor.py:104
 msgid "Invalid key"
@@ -141,11 +143,11 @@ msgstr "Nome host"
 
 #: REST/methods/actor_token.py:58
 msgid "Pre-connect"
-msgstr "Pre-connect"
+msgstr "Pre-connessione"
 
 #: REST/methods/actor_token.py:59
 msgid "Post-Configure"
-msgstr "Post-Configura"
+msgstr "Post-Configurazione"
 
 #: REST/methods/actor_token.py:60
 msgid "Run Once"
@@ -153,15 +155,15 @@ msgstr "Esegui una volta"
 
 #: REST/methods/actor_token.py:61
 msgid "Log level"
-msgstr "Livello di registro"
+msgstr "Livello dei log"
 
 #: REST/methods/actor_token.py:67
 msgid "Token isued by {} from {}"
-msgstr "Il token è contrassegnato da {} da {}"
+msgstr "Token emesso per {} da {}"
 
 #: REST/methods/authenticators.py:62
 msgid "Authenticators"
-msgstr "autenticatori"
+msgstr "Autenticatori"
 
 #: REST/methods/authenticators.py:64
 msgid "Id"
@@ -171,7 +173,7 @@ msgstr "Id"
 #: REST/methods/providers.py:71 REST/methods/services.py:223
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
-msgstr "genere"
+msgstr "Tipo"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
@@ -196,7 +198,7 @@ msgstr "Etichetta"
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
-msgstr "utenti"
+msgstr "Utenti"
 
 #: REST/methods/authenticators.py:102 REST/methods/services_pools.py:278
 msgid "If active, transport will be visible for users"
@@ -225,7 +227,7 @@ msgstr "Nome della regola"
 
 #: REST/methods/calendarrules.py:101
 msgid "Repeats"
-msgstr "ripetizioni"
+msgstr "Ripetizioni"
 
 #: REST/methods/calendarrules.py:102
 msgid "Every"
@@ -237,7 +239,7 @@ msgstr "Durata"
 
 #: REST/methods/calendarrules.py:132 REST/methods/services.py:188
 msgid "Element already exists (duplicate key error)"
-msgstr "L&#39;elemento esiste già (errore chiave duplicato)"
+msgstr "L'elemento esiste già (errore chiave duplicata)"
 
 #: REST/methods/calendarrules.py:152
 #, python-brace-format
@@ -250,7 +252,7 @@ msgstr "Regole attuali"
 
 #: REST/methods/calendars.py:58
 msgid "Calendars"
-msgstr "calendari"
+msgstr "Calendari"
 
 #: REST/methods/calendars.py:62
 msgid "Modified"
@@ -264,7 +266,7 @@ msgstr ""
 
 #: REST/methods/images.py:56
 msgid "Image Gallery"
-msgstr "galleria di immagini"
+msgstr "Galleria di immagini"
 
 #: REST/methods/images.py:58 REST/methods/images.py:78
 #: REST/methods/services_pool_groups.py:62
@@ -273,11 +275,11 @@ msgstr "Immagine"
 
 #: REST/methods/images.py:60
 msgid "Size"
-msgstr "Taglia"
+msgstr "Dimensione"
 
 #: REST/methods/images.py:79
 msgid "Image object"
-msgstr "Oggetto dell&#39;immagine"
+msgstr "Oggetto immagine"
 
 #: REST/methods/meta_pools.py:68
 msgid "Meta Pools"
@@ -308,7 +310,7 @@ msgstr "Predefinito"
 
 #: REST/methods/meta_pools.py:128
 msgid "Service pool policy"
-msgstr "Politica del pool di servizi"
+msgstr "Politica del Pool di servizi"
 
 #: REST/methods/meta_pools.py:134 REST/methods/services_pool_groups.py:85
 #: REST/methods/services_pools.py:285
@@ -327,7 +329,7 @@ msgstr "Gruppo di pool"
 
 #: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:294
 msgid "Pool group for this pool (for pool classify on display)"
-msgstr "Gruppo di poll per questa piscina (per classificare sul display)"
+msgstr "Gruppo di pool per questo pool (per classificare i pool sul display)"
 
 #: REST/methods/meta_pools.py:151
 msgid "If active, metapool will be visible for users"
@@ -335,7 +337,7 @@ msgstr "Se attivo, metapool sarà visibile agli utenti"
 
 #: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:301
 msgid "Calendar access denied text"
-msgstr "Accesso negato al testo"
+msgstr "Testo di accesso negato al calendario"
 
 #: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:302
 msgid ""
@@ -346,11 +348,11 @@ msgstr ""
 
 #: REST/methods/meta_service_pools.py:81
 msgid "Service pools"
-msgstr "Piscine di servizio"
+msgstr "Service Pools"
 
 #: REST/methods/meta_service_pools.py:86
 msgid "Service Pool name"
-msgstr "Nome del pool di servizi"
+msgstr "Nome del Service Pool"
 
 #: REST/methods/meta_service_pools.py:87 services/Proxmox/service.py:200
 msgid "Enabled"
@@ -504,9 +506,7 @@ msgstr "Manager OS"
 
 #: REST/methods/osmanagers.py:82
 msgid "Can't delete an OS Manager with services pools associated"
-msgstr ""
-"Impossibile eliminare un gestore del sistema operativo con pool di servizi "
-"associati"
+msgstr "Impossibile eliminare un OS Manager con Service Pool associati"
 
 #: REST/methods/providers.py:66
 msgid "Service providers"
@@ -553,7 +553,7 @@ msgstr "Controllare il certificato"
 #: services/VCloud_enterprise/provider.py:32
 #: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:94
 msgid "Host"
-msgstr "Ospite"
+msgstr "Host"
 
 #: REST/methods/proxies.py:88
 msgid "Server (IP or FQDN) that will serve as proxy."
@@ -649,7 +649,7 @@ msgstr "Nome di Servizio"
 
 #: REST/methods/services.py:224
 msgid "Services Pools"
-msgstr "Pool di servizi "
+msgstr "Service Pools"
 
 #: REST/methods/services.py:227 REST/methods/services.py:267
 msgid "Proxy"
@@ -683,11 +683,11 @@ msgstr "Ok"
 
 #: REST/methods/services_pool_groups.py:59
 msgid "Services Pool Groups"
-msgstr "Servizi Pool Groups"
+msgstr "Gruppi di Service Pools"
 
 #: REST/methods/services_pools.py:97 REST/methods/transports.py:104
 msgid "Service Pools"
-msgstr "Pool di servizi"
+msgstr "Service Pools"
 
 #: REST/methods/services_pools.py:103
 msgid "Usage"
@@ -1153,7 +1153,7 @@ msgstr "Password dell&#39;utente di ldap"
 #: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:62
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
-msgstr "Tempo scaduto"
+msgstr "TImeout"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:48
 msgid "Timeout in seconds of connection to Active Directory"
@@ -2341,7 +2341,6 @@ msgid "Must provide an user account!!!"
 msgstr "Devi fornire un account utente !!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012 and 2016)"
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgstr "Attore UDS RDS (per app remote su Windows Server 2012, 2016, 2019)"
 
@@ -2695,7 +2694,7 @@ msgstr "Rapporto prestazioni per UDS Pool"
 
 #: reports/stats/pools_performance.py:235
 msgid "Pools Performance"
-msgstr "Prestazioni piscine"
+msgstr "Prestazioni dei pool"
 
 #: reports/stats/pools_performance.py:258 reports/stats/user_access.py:275
 #: templates/uds/reports/stats/pools-performance.html:34
@@ -2705,7 +2704,7 @@ msgstr "Intervallo di date"
 
 #: reports/stats/pools_usage_day.py:59
 msgid "Pools usage on a day"
-msgstr "Utilizzo delle piscine in un giorno"
+msgstr "Utilizzo dei pool in un giorno"
 
 #: reports/stats/pools_usage_day.py:60
 msgid "Pools usage counters for an specific day"
@@ -2735,18 +2734,18 @@ msgstr "Rapporto sull&#39;utilizzo del servizio"
 
 #: reports/stats/pools_usage_summary.py:47
 msgid "Summary of pools usage"
-msgstr "Riepilogo dell&#39;utilizzo dei pool"
+msgstr "Riepilogo dell'utilizzo dei pool"
 
 #: reports/stats/pools_usage_summary.py:48
 msgid ""
 "Summary of Pools usage with time totals, accesses totals, time total by pool"
 msgstr ""
-"Riepilogo dell&#39;utilizzo dei pool con totali dei tempi, totali degli "
-"accessi, totale dei tempi per pool"
+"Riepilogo dell'utilizzo dei pool con totali dei tempi, totali degli accessi, "
+"totale dei tempi per pool"
 
 #: reports/stats/pools_usage_summary.py:119
 msgid "Summary of Pools usage"
-msgstr "Riepilogo dell&#39;utilizzo dei pool"
+msgstr "Riepilogo dell'utilizzo dei pool"
 
 #: reports/stats/pools_usage_summary.py:119
 #: templates/uds/reports/stats/pools-usage-summary.html:4
@@ -2756,7 +2755,7 @@ msgstr "per"
 
 #: reports/stats/pools_usage_summary.py:120
 msgid "UDS Report Summary of pools usage"
-msgstr "Rapporto UDS Riepilogo dell&#39;utilizzo dei pool"
+msgstr "Report di riepilogo di UDS sull'utilizzo dei pool"
 
 #: reports/stats/pools_usage_summary.py:140
 msgid "Total Time (seconds)"
@@ -2790,7 +2789,7 @@ msgstr "Utilizzo dei pool per rapporto utente"
 
 #: reports/stats/usage_by_pool.py:86
 msgid "ALL POOLS"
-msgstr "TUTTE LE PISCINE"
+msgstr "TUTTI I POOL"
 
 #: reports/stats/usage_by_pool.py:136
 #: templates/uds/reports/stats/usage-by-pool.html:4
@@ -3745,7 +3744,6 @@ msgid "Region for this provider. Set only if required by server."
 msgstr "Regione per questo fornitore. Impostato solo se richiesto dal server."
 
 #: services/OpenStack/provider.py:113
-#| msgid "Services names"
 msgid "Subnets names"
 msgstr "Nomi delle sottoreti"
 
@@ -3975,7 +3973,7 @@ msgstr "Servizi Proxmox basati su modelli e COW (sperimentali)"
 
 #: services/Proxmox/service.py:112
 msgid "Pool that will contain UDS created vms"
-msgstr "Pool che conterrà VMS creato da UDS"
+msgstr "Pool che conterrà le VM create da UDS"
 
 #: services/Proxmox/service.py:119
 msgid "HA"
@@ -4147,8 +4145,9 @@ msgid "AD User Management: you must provide the AD server host."
 msgstr "Gestione utenti AD: è necessario fornire l&#39;host del server AD."
 
 #: services/RDS_enterprise/provider.py:167
-msgid "AD User Management: you must provide the user prefix."
-msgstr "Gestione utenti AD: è necessario fornire il prefisso utente."
+#| msgid "AD User Management: you must provide the user prefix."
+msgid "AD User Management: you must provide the users base DN."
+msgstr "Gestione utenti AD: è necessario fornire il DN di base degli utenti."
 
 #: services/RDS_enterprise/provider.py:170
 msgid "AD User Management: the username should be in USER@DOMAIN form."
@@ -4164,37 +4163,37 @@ msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr ""
 "Gestione utenti AD: è necessario fornire il prefisso utente. (1-4 caratteri)"
 
-#: services/RDS_enterprise/provider.py:180
+#: services/RDS_enterprise/provider.py:184
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr ""
 "Gestione utenti AD: è necessario fornire il nome FQDN del dominio di "
 "creazione utente."
 
-#: services/RDS_enterprise/provider.py:213
+#: services/RDS_enterprise/provider.py:217
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Errore: l&#39;utente {} su host {} è in uso e non può essere rimosso in "
 "questo momento"
 
-#: services/RDS_enterprise/provider.py:247
+#: services/RDS_enterprise/provider.py:251
 msgid "Connection to {}, port {} failed."
 msgstr "Connessione a {}, porta {} non riuscita."
 
-#: services/RDS_enterprise/provider.py:263
+#: services/RDS_enterprise/provider.py:267
 msgid "The group {} could not be found. Please, check it."
 msgstr "Impossibile trovare il gruppo {}. Per favore controllalo."
 
-#: services/RDS_enterprise/provider.py:265
+#: services/RDS_enterprise/provider.py:269
 msgid "User creation test failed. Please, check parameters."
 msgstr ""
-"Test di creazione dell&#39;utente non riuscito. Per favore, controlla i "
+"Test di creazione dell'utente non riuscito. Per favore, controlla i "
 "parametri."
 
-#: services/RDS_enterprise/provider.py:270
+#: services/RDS_enterprise/provider.py:274
 msgid "Server {} is not accesible and Server checking is enabled"
 msgstr "Il server {} non è accessibile e il controllo del server è abilitato"
 
-#: services/RDS_enterprise/provider.py:272
+#: services/RDS_enterprise/provider.py:276
 msgid "Connectivity test passed"
 msgstr "Test di connettività superato"
 
@@ -4818,7 +4817,7 @@ msgstr "Ultimo accesso"
 #: templates/uds/reports/stats/pools-performance.html:13
 #: templates/uds/reports/stats/pools-usage-day.html:13
 msgid "Pools:"
-msgstr "piscine:"
+msgstr "Pools:"
 
 #: templates/uds/reports/stats/pools-performance.html:14
 msgid "Start date:"
@@ -4835,15 +4834,15 @@ msgstr "intervalli:"
 #: templates/uds/reports/stats/pools-performance.html:19
 #: templates/uds/reports/stats/pools-usage-day.html:17
 msgid "Distinct users by pool"
-msgstr "Utenti distinti per piscina"
+msgstr "Utenti distinti per Pool"
 
 #: templates/uds/reports/stats/pools-performance.html:23
 msgid "Accesses by pool"
-msgstr "Accessi per pool"
+msgstr "Accessi per Pool"
 
 #: templates/uds/reports/stats/pools-performance.html:28
 msgid "Users Accesses by pool/date"
-msgstr "Gli utenti accedono per pool / data"
+msgstr "Accessi utente per Pool / data"
 
 #: templates/uds/reports/stats/pools-usage-day.html:14
 msgid "Date:"
@@ -4856,7 +4855,7 @@ msgstr "Assegnazione dei servizi"
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "Pools usage summary"
-msgstr "Riepilogo dell&#39;utilizzo dei pool"
+msgstr "Riepilogo di utilizzo dei Pool"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
