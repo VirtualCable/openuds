@@ -128,7 +128,7 @@ class Test(ActorV3Action):
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         # First, try to locate an user service providing this token.
         try:
-            if self._params['type'] == UNMANAGED:
+            if self._params.get('type') == UNMANAGED:
                 Service.objects.get(token=self._params['token'])
             else:
                 ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
