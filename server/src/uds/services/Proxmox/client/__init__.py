@@ -277,7 +277,6 @@ class ProxmoxClient:
         if linkedClone is False:
             params.append(('format', 'qcow2'))  # Ensure clone for templates is on qcow2 format
 
-
         logger.debug('PARAMS: %s', params)
 
         return types.VmCreationResult(

@@ -55,6 +55,8 @@ def getStorage(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.An
     res = []
     # Get storages for that datacenter
     for storage in sorted(provider.listStorages(vmInfo.node), key=lambda x: int(not x.shared)):
+        if storage.type in ('lvm', 'iscsi', 'iscsidirect'):
+            continue
         space, free = storage.avail / 1024 / 1024 / 1024, (storage.avail - storage.used) / 1024 / 1024 / 1024
         extra = _(' shared') if storage.shared else _(' (bound to {})').format(vmInfo.node)
         res.append({'id': storage.storage, 'text': "%s (%4.2f GB/%4.2f GB)%s" % (storage.storage, space, free, extra)})

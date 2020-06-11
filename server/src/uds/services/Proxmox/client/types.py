@@ -2,7 +2,7 @@ import datetime
 import re
 import typing
 
-networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)(,bridge=([^,]*),firewall=(.*))?')
+networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)(,bridge=([^,]*),firewall=([^,]*))?') # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
 conversors: typing.MutableMapping[typing.Type, typing.Callable] = {

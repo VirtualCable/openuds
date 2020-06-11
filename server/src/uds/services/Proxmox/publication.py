@@ -29,6 +29,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from datetime import datetime
+import time
 import logging
 import typing
 
@@ -126,13 +127,18 @@ class ProxmoxPublication(services.Publication):
                 return self.destroy()
             self._state = State.FINISHED
             if self._operation == 'p':  # not Destroying
-                logger.debug('Marking as template')
-                # Mark vm as template
-                self.service().makeTemplate(int(self._vm))
-                # And add it to HA if
-                self.service().enableHA(int(self._vm))
                 # Disable Protection (removal)
                 self.service().setProtection(int(self._vm), protection=False)
+                time.sleep(0.5)  # Give some tome to proxmox. We have observed some concurrency issues
+                # And add it to HA if
+                self.service().enableHA(int(self._vm))
+                time.sleep(0.5)
+                # Mark vm as template
+                self.service().makeTemplate(int(self._vm))
+
+                # This seems to cause problems on Proxmox
+                # makeTemplate --> setProtection (that calls "config"). Seems that the HD dissapears...
+                # Seems a concurrency problem?
                 
         return self._state
 
