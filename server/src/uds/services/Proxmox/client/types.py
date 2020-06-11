@@ -2,7 +2,7 @@ import datetime
 import re
 import typing
 
-networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)(,bridge=([^,]*),firewall=([^,]*))?') # May have vla id at end
+networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)') # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
 conversors: typing.MutableMapping[typing.Type, typing.Callable] = {
@@ -136,19 +136,15 @@ class TaskStatus(typing.NamedTuple):
 class NetworkConfiguration(typing.NamedTuple):
     type: str
     mac: str
-    bridge: str
-    firewall: bool
 
     @staticmethod
     def fromString(value: str) -> 'NetworkConfiguration':
         v = networkRe.match(value)
-        type = mac = bridge = firewall = ''
+        type = mac = ''
         if v:
             type, mac = v.group(1), v.group(2)
-            bridge = v.group(4) or ''
-            firewall = v.group(5)
 
-        return NetworkConfiguration(type=type, mac=mac, bridge=bridge, firewall=bool(int(firewall)))
+        return NetworkConfiguration(type=type, mac=mac)
 
 
 class VMInfo(typing.NamedTuple):
