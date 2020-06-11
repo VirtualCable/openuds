@@ -436,7 +436,7 @@ gettext("Action");
 gettext("Cancel");
 gettext("Ok");
 gettext("New publication for");
-gettext("Reason");
+gettext("Comments");
 gettext("Cancel");
 gettext("Ok");
 gettext("Summary");
