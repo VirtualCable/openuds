@@ -238,7 +238,7 @@ class BaseModelHandler(Handler):
         try:
             for key in fldList:
                 args[key] = self._params[key]
-                del self._params[key]
+                # del self._params[key]
         except KeyError as e:
             raise RequestError('needed parameter not found in data {0}'.format(e))
 
