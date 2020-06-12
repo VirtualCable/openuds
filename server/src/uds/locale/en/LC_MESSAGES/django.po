@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 16:32+0200\n"
+"POT-Creation-Date: 2020-06-12 17:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
-#: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
+#: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
@@ -52,7 +52,7 @@ msgstr ""
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:226 REST/methods/services_pools.py:108
+#: REST/methods/services.py:227 REST/methods/services_pools.py:108
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr ""
@@ -164,7 +164,7 @@ msgid "Id"
 msgstr ""
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:71 REST/methods/services.py:223
+#: REST/methods/providers.py:71 REST/methods/services.py:224
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr ""
@@ -231,7 +231,7 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:188
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:189
 msgid "Element already exists (duplicate key error)"
 msgstr ""
 
@@ -281,7 +281,7 @@ msgstr ""
 msgid "Policy"
 msgstr ""
 
-#: REST/methods/meta_pools.py:73 REST/methods/services.py:225
+#: REST/methods/meta_pools.py:73 REST/methods/services.py:226
 #: REST/methods/services_pools.py:101
 msgid "User services"
 msgstr ""
@@ -609,41 +609,41 @@ msgstr ""
 msgid "Generates"
 msgstr ""
 
-#: REST/methods/services.py:187
+#: REST/methods/services.py:188
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr ""
 
-#: REST/methods/services.py:192
+#: REST/methods/services.py:193
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr ""
 
-#: REST/methods/services.py:215
+#: REST/methods/services.py:216
 msgid "Services of {}"
 msgstr ""
 
-#: REST/methods/services.py:217
+#: REST/methods/services.py:218
 msgid "Current services"
 msgstr ""
 
-#: REST/methods/services.py:221
+#: REST/methods/services.py:222
 msgid "Service name"
 msgstr ""
 
-#: REST/methods/services.py:224
+#: REST/methods/services.py:225
 msgid "Services Pools"
 msgstr ""
 
-#: REST/methods/services.py:227 REST/methods/services.py:267
+#: REST/methods/services.py:228 REST/methods/services.py:268
 msgid "Proxy"
 msgstr ""
 
-#: REST/methods/services.py:268
+#: REST/methods/services.py:269
 msgid "Proxy for services behind a firewall"
 msgstr ""
 
-#: REST/methods/services.py:270 REST/methods/services_pools.py:257
+#: REST/methods/services.py:271 REST/methods/services_pools.py:257
 #: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
 #: REST/methods/services_pools.py:348 REST/methods/services_pools.py:356
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:95
@@ -655,12 +655,12 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/services.py:308 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr ""
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/services.py:308 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr ""
@@ -1532,40 +1532,44 @@ msgstr ""
 msgid "Fields from where to extract the real name"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:180
+#: auths/SAML_enterprise/saml.py:176
+msgid "SAML Authenticator does not support white spaces on field NAME"
+msgstr ""
+
+#: auths/SAML_enterprise/saml.py:183
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:188
 msgid "Invalid server certificate. "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:189
+#: auths/SAML_enterprise/saml.py:192
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:201
+#: auths/SAML_enterprise/saml.py:204
 msgid "Invalid private key. "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:218
+#: auths/SAML_enterprise/saml.py:221
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:226
+#: auths/SAML_enterprise/saml.py:229
 msgid " (obtained from URL)"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:227
+#: auths/SAML_enterprise/saml.py:230
 msgid "XML does not seem valid for IDP Metadata "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:243
+#: auths/SAML_enterprise/saml.py:246
 msgid "Can't access idp metadata"
 msgstr ""
 
@@ -3722,11 +3726,11 @@ msgstr ""
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr ""
 
-#: services/Proxmox/helpers.py:59
+#: services/Proxmox/helpers.py:61
 msgid " shared"
 msgstr ""
 
-#: services/Proxmox/helpers.py:59
+#: services/Proxmox/helpers.py:61
 msgid " (bound to {})"
 msgstr ""
 
@@ -3759,12 +3763,12 @@ msgstr ""
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr ""
 
-#: services/Proxmox/publication.py:93
+#: services/Proxmox/publication.py:94
 #: services/Vmware_enterprise/publication.py:67
 msgid "Publication"
 msgstr ""
 
-#: services/Proxmox/publication.py:94
+#: services/Proxmox/publication.py:95
 #: services/Vmware_enterprise/publication.py:68
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"

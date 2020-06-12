@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 16:32+0200\n"
-"PO-Revision-Date: 2020-06-08 16:05+0000\n"
+"POT-Creation-Date: 2020-06-12 17:13+0200\n"
+"PO-Revision-Date: 2020-06-10 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -40,7 +40,7 @@ msgstr "Nom"
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
-#: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
+#: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
@@ -55,7 +55,7 @@ msgstr "Marque de temps"
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:226 REST/methods/services_pools.py:108
+#: REST/methods/services.py:227 REST/methods/services_pools.py:108
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr "Tags"
@@ -167,7 +167,7 @@ msgid "Id"
 msgstr "ID"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:71 REST/methods/services.py:223
+#: REST/methods/providers.py:71 REST/methods/services.py:224
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr "Type"
@@ -234,7 +234,7 @@ msgstr "Chaque"
 msgid "Duration"
 msgstr "Durée"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:188
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:189
 msgid "Element already exists (duplicate key error)"
 msgstr "Élément existe déjà (erreur de clé en double)"
 
@@ -286,7 +286,7 @@ msgstr "Meta Pools"
 msgid "Policy"
 msgstr "Politique"
 
-#: REST/methods/meta_pools.py:73 REST/methods/services.py:225
+#: REST/methods/meta_pools.py:73 REST/methods/services.py:226
 #: REST/methods/services_pools.py:101
 msgid "User services"
 msgstr "Services aux utilisateurs"
@@ -622,43 +622,43 @@ msgstr "Description"
 msgid "Generates"
 msgstr "Génère"
 
-#: REST/methods/services.py:187
+#: REST/methods/services.py:188
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr ""
 "Le jeton de service semble être utilisé par un autre service. Veuillez en "
 "sélectionner un nouveau."
 
-#: REST/methods/services.py:192
+#: REST/methods/services.py:193
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Erreur d'entrée : {0}"
 
-#: REST/methods/services.py:215
+#: REST/methods/services.py:216
 msgid "Services of {}"
 msgstr "Services de {}"
 
-#: REST/methods/services.py:217
+#: REST/methods/services.py:218
 msgid "Current services"
 msgstr "Services actuels"
 
-#: REST/methods/services.py:221
+#: REST/methods/services.py:222
 msgid "Service name"
 msgstr "Nom du service"
 
-#: REST/methods/services.py:224
+#: REST/methods/services.py:225
 msgid "Services Pools"
 msgstr "Pools de services"
 
-#: REST/methods/services.py:227 REST/methods/services.py:267
+#: REST/methods/services.py:228 REST/methods/services.py:268
 msgid "Proxy"
 msgstr "Procuration"
 
-#: REST/methods/services.py:268
+#: REST/methods/services.py:269
 msgid "Proxy for services behind a firewall"
 msgstr "Proxy pour les services derrière un pare-feu"
 
-#: REST/methods/services.py:270 REST/methods/services_pools.py:257
+#: REST/methods/services.py:271 REST/methods/services_pools.py:257
 #: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
 #: REST/methods/services_pools.py:348 REST/methods/services_pools.py:356
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:95
@@ -670,12 +670,12 @@ msgstr "Proxy pour les services derrière un pare-feu"
 msgid "Advanced"
 msgstr "Avancé"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/services.py:308 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr "Avec Erreurs"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/services.py:308 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr "Bien"
@@ -1616,7 +1616,13 @@ msgstr "Vrai nom attrs"
 msgid "Fields from where to extract the real name"
 msgstr "Champs d'où extraire le nom réel"
 
-#: auths/SAML_enterprise/saml.py:180
+#: auths/SAML_enterprise/saml.py:176
+msgid "SAML Authenticator does not support white spaces on field NAME"
+msgstr ""
+"SAML Authenticator ne prend pas en charge les espaces blancs sur le champ "
+"NAME"
+
+#: auths/SAML_enterprise/saml.py:183
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1624,11 +1630,11 @@ msgstr ""
 "Certificat de serveur doit être un PEM valide (certificats PEM commencent "
 "par---BEGIN CERTIFICATE---)"
 
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:188
 msgid "Invalid server certificate. "
 msgstr "Certificat de serveur non valide. "
 
-#: auths/SAML_enterprise/saml.py:189
+#: auths/SAML_enterprise/saml.py:192
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1636,24 +1642,24 @@ msgstr ""
 "Clé privée doit être un PEM valide (clés privées PEM commencent par---BEGIN "
 "RSA PRIVATE KEY---"
 
-#: auths/SAML_enterprise/saml.py:201
+#: auths/SAML_enterprise/saml.py:204
 msgid "Invalid private key. "
 msgstr "Clé privée non valide. "
 
-#: auths/SAML_enterprise/saml.py:218
+#: auths/SAML_enterprise/saml.py:221
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Impossible d'extraire url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:226
+#: auths/SAML_enterprise/saml.py:229
 msgid " (obtained from URL)"
 msgstr " (obtenu à partir d'URL)"
 
-#: auths/SAML_enterprise/saml.py:227
+#: auths/SAML_enterprise/saml.py:230
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML ne semble pas etre valide pour les métadonnées de l'IDP "
 
-#: auths/SAML_enterprise/saml.py:243
+#: auths/SAML_enterprise/saml.py:246
 msgid "Can't access idp metadata"
 msgstr "Ne peut pas accéder aux métadonnées de l'idp"
 
@@ -3939,11 +3945,11 @@ msgstr "Statique IP unique"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "Ce service fournit un accès aux machines sous tension par IP"
 
-#: services/Proxmox/helpers.py:59
+#: services/Proxmox/helpers.py:61
 msgid " shared"
 msgstr "partagé"
 
-#: services/Proxmox/helpers.py:59
+#: services/Proxmox/helpers.py:61
 msgid " (bound to {})"
 msgstr "(lié à {})"
 
@@ -3978,12 +3984,12 @@ msgstr "Mot de passe de l&#39;utilisateur de Proxmox"
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "Délai d&#39;expiration en secondes de connexion à Proxmox"
 
-#: services/Proxmox/publication.py:93
+#: services/Proxmox/publication.py:94
 #: services/Vmware_enterprise/publication.py:67
 msgid "Publication"
 msgstr "Publication"
 
-#: services/Proxmox/publication.py:94
+#: services/Proxmox/publication.py:95
 #: services/Vmware_enterprise/publication.py:68
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
@@ -4174,7 +4180,6 @@ msgstr ""
 "Gestion des utilisateurs AD: vous devez fournir l&#39;hôte du serveur AD."
 
 #: services/RDS_enterprise/provider.py:167
-#| msgid "AD User Management: you must provide the user prefix."
 msgid "AD User Management: you must provide the users base DN."
 msgstr ""
 "Gestion des utilisateurs AD: vous devez fournir le DN de base des "

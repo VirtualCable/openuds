@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 16:32+0200\n"
+"POT-Creation-Date: 2020-06-12 17:13+0200\n"
 "PO-Revision-Date: 2020-06-02 13:39+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -458,6 +458,7 @@ msgstr "Tutti"
 #: static/admin/translations-fakejs.js:141
 #: static/admin/translations-fakejs.js:353
 #: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:439
 #: static/admin/translations-fakejs.js:456
 msgid "Comments"
 msgstr "Commenti"
@@ -1391,10 +1392,6 @@ msgstr "Priorità"
 #: static/admin/translations-fakejs.js:438
 msgid "New publication for"
 msgstr "Nuova pubblicazione per"
-
-#: static/admin/translations-fakejs.js:439
-msgid "Reason"
-msgstr "Ragionare"
 
 #: static/admin/translations-fakejs.js:444
 msgid "Cache"

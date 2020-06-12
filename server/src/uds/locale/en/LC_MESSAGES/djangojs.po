@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 16:32+0200\n"
+"POT-Creation-Date: 2020-06-12 17:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -454,6 +454,7 @@ msgstr ""
 #: static/admin/translations-fakejs.js:141
 #: static/admin/translations-fakejs.js:353
 #: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:439
 #: static/admin/translations-fakejs.js:456
 msgid "Comments"
 msgstr ""
@@ -1381,10 +1382,6 @@ msgstr ""
 
 #: static/admin/translations-fakejs.js:438
 msgid "New publication for"
-msgstr ""
-
-#: static/admin/translations-fakejs.js:439
-msgid "Reason"
 msgstr ""
 
 #: static/admin/translations-fakejs.js:444

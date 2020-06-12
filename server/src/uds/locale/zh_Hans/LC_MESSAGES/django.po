@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 16:32+0200\n"
-"PO-Revision-Date: 2020-06-08 16:05+0000\n"
+"POT-Creation-Date: 2020-06-12 17:13+0200\n"
+"PO-Revision-Date: 2020-06-10 14:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -38,7 +38,7 @@ msgstr "名称"
 #: REST/methods/calendarrules.py:104 REST/methods/calendars.py:61
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
-#: REST/methods/services.py:222 REST/methods/services_pool_groups.py:64
+#: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:297
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
@@ -53,7 +53,7 @@ msgstr "时间标记"
 #: REST/methods/calendars.py:63 REST/methods/meta_pools.py:77
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
-#: REST/methods/services.py:226 REST/methods/services_pools.py:108
+#: REST/methods/services.py:227 REST/methods/services_pools.py:108
 #: REST/methods/transports.py:61
 msgid "tags"
 msgstr "标签"
@@ -165,7 +165,7 @@ msgid "Id"
 msgstr "ID"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:71 REST/methods/services.py:223
+#: REST/methods/providers.py:71 REST/methods/services.py:224
 #: REST/methods/transports.py:58 REST/methods/user_services.py:296
 msgid "Type"
 msgstr "类型"
@@ -232,7 +232,7 @@ msgstr "一切"
 msgid "Duration"
 msgstr "持续时间"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:188
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:189
 msgid "Element already exists (duplicate key error)"
 msgstr "元素已存在（重复键错误）"
 
@@ -282,7 +282,7 @@ msgstr "元池"
 msgid "Policy"
 msgstr "政策"
 
-#: REST/methods/meta_pools.py:73 REST/methods/services.py:225
+#: REST/methods/meta_pools.py:73 REST/methods/services.py:226
 #: REST/methods/services_pools.py:101
 msgid "User services"
 msgstr "用户服务"
@@ -610,41 +610,41 @@ msgstr "描述"
 msgid "Generates"
 msgstr "生成"
 
-#: REST/methods/services.py:187
+#: REST/methods/services.py:188
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr "服务令牌似乎正在被其他服务使用。请选择一个新的。"
 
-#: REST/methods/services.py:192
+#: REST/methods/services.py:193
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "输入错误：{0}"
 
-#: REST/methods/services.py:215
+#: REST/methods/services.py:216
 msgid "Services of {}"
 msgstr "{}的服务"
 
-#: REST/methods/services.py:217
+#: REST/methods/services.py:218
 msgid "Current services"
 msgstr "目前的服务"
 
-#: REST/methods/services.py:221
+#: REST/methods/services.py:222
 msgid "Service name"
 msgstr "服务名称"
 
-#: REST/methods/services.py:224
+#: REST/methods/services.py:225
 msgid "Services Pools"
 msgstr "服务池"
 
-#: REST/methods/services.py:227 REST/methods/services.py:267
+#: REST/methods/services.py:228 REST/methods/services.py:268
 msgid "Proxy"
 msgstr "代理"
 
-#: REST/methods/services.py:268
+#: REST/methods/services.py:269
 msgid "Proxy for services behind a firewall"
 msgstr "防火墙后面的服务代理"
 
-#: REST/methods/services.py:270 REST/methods/services_pools.py:257
+#: REST/methods/services.py:271 REST/methods/services_pools.py:257
 #: REST/methods/services_pools.py:265 REST/methods/services_pools.py:273
 #: REST/methods/services_pools.py:348 REST/methods/services_pools.py:356
 #: auths/RegexLdap/authenticator.py:78 core/ui/user_interface.py:95
@@ -656,12 +656,12 @@ msgstr "防火墙后面的服务代理"
 msgid "Advanced"
 msgstr "高级"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/services.py:308 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr "有错误"
 
-#: REST/methods/services.py:307 REST/methods/users_groups.py:217
+#: REST/methods/services.py:308 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr "好"
@@ -1537,41 +1537,45 @@ msgstr "真名牌"
 msgid "Fields from where to extract the real name"
 msgstr "字段从哪里提取真实姓名"
 
-#: auths/SAML_enterprise/saml.py:180
+#: auths/SAML_enterprise/saml.py:176
+msgid "SAML Authenticator does not support white spaces on field NAME"
+msgstr "SAML身份验证器不支持字段NAME上的空格"
+
+#: auths/SAML_enterprise/saml.py:183
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
 "服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
 
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:188
 msgid "Invalid server certificate. "
 msgstr "服务器证书无效。"
 
-#: auths/SAML_enterprise/saml.py:189
+#: auths/SAML_enterprise/saml.py:192
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr "私钥应该是有效的PEM（PEM私钥以----- BEGIN RSA私钥开头-----"
 
-#: auths/SAML_enterprise/saml.py:201
+#: auths/SAML_enterprise/saml.py:204
 msgid "Invalid private key. "
 msgstr "私钥无效。"
 
-#: auths/SAML_enterprise/saml.py:218
+#: auths/SAML_enterprise/saml.py:221
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "无法获取网址{0}：{1}"
 
-#: auths/SAML_enterprise/saml.py:226
+#: auths/SAML_enterprise/saml.py:229
 msgid " (obtained from URL)"
 msgstr "（从URL获得）"
 
-#: auths/SAML_enterprise/saml.py:227
+#: auths/SAML_enterprise/saml.py:230
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML似乎对IDP元数据无效"
 
-#: auths/SAML_enterprise/saml.py:243
+#: auths/SAML_enterprise/saml.py:246
 msgid "Can't access idp metadata"
 msgstr "无法访问idp元数据"
 
@@ -3746,11 +3750,11 @@ msgstr "静态单IP"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
 
-#: services/Proxmox/helpers.py:59
+#: services/Proxmox/helpers.py:61
 msgid " shared"
 msgstr "共享"
 
-#: services/Proxmox/helpers.py:59
+#: services/Proxmox/helpers.py:61
 msgid " (bound to {})"
 msgstr "（势必 {}）"
 
@@ -3783,12 +3787,12 @@ msgstr "Proxmox用户的密码"
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "与Proxmox连接的超时时间（以秒为单位）"
 
-#: services/Proxmox/publication.py:93
+#: services/Proxmox/publication.py:94
 #: services/Vmware_enterprise/publication.py:67
 msgid "Publication"
 msgstr "出版物"
 
-#: services/Proxmox/publication.py:94
+#: services/Proxmox/publication.py:95
 #: services/Vmware_enterprise/publication.py:68
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
@@ -3964,7 +3968,6 @@ msgid "AD User Management: you must provide the AD server host."
 msgstr "AD用户管理：您必须提供AD服务器主机。"
 
 #: services/RDS_enterprise/provider.py:167
-#| msgid "AD User Management: you must provide the user prefix."
 msgid "AD User Management: you must provide the users base DN."
 msgstr "AD用户管理：您必须提供用户基本DN。"
 

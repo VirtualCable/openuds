@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 16:32+0200\n"
+"POT-Creation-Date: 2020-06-12 17:13+0200\n"
 "PO-Revision-Date: 2020-06-10 14:11+0000\n"
 "Last-Translator: Thorsten Latka <thorsten.latka@aktobis.de>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -459,6 +459,7 @@ msgstr "Alles"
 #: static/admin/translations-fakejs.js:141
 #: static/admin/translations-fakejs.js:353
 #: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:439
 #: static/admin/translations-fakejs.js:456
 msgid "Comments"
 msgstr "Bemerkungen"
@@ -1392,10 +1393,6 @@ msgstr "Priorität"
 #: static/admin/translations-fakejs.js:438
 msgid "New publication for"
 msgstr "Neue Veröffentlichung für"
-
-#: static/admin/translations-fakejs.js:439
-msgid "Reason"
-msgstr "Grund"
 
 #: static/admin/translations-fakejs.js:444
 msgid "Cache"
