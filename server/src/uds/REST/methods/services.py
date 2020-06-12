@@ -184,6 +184,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
             if service and service.token:
+                service.delete()
                 raise RequestError(_('Service token seems to be in use by other service. Please, select a new one.'))
             raise RequestError(_('Element already exists (duplicate key error)'))
         except services.Service.ValidationException as e:

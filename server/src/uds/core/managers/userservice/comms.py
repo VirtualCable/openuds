@@ -126,16 +126,25 @@ def sendScript(userService: 'UserService', script: str, forUser: bool = False) -
     """
     If allowed, send script to user service
     """
-    _requestActor(userService, 'script', data={'script': script, 'user': forUser}, minVersion='3.0.0')
+    try:
+        _requestActor(userService, 'script', data={'script': script, 'user': forUser}, minVersion='3.0.0')
+    except NoActorComms:
+        pass
 
 def requestLogoff(userService: 'UserService') -> None:
     """
     Ask client to logoff user
     """
-    _requestActor(userService, 'logout', data={})
+    try:
+        _requestActor(userService, 'logout', data={})
+    except NoActorComms:
+        pass
 
 def sendMessage(userService: 'UserService', message: str) -> None:
     """
     Sends an screen message to client
     """
-    _requestActor(userService, 'message', data={'message':message})
+    try:
+        _requestActor(userService, 'message', data={'message':message})
+    except NoActorComms:
+        pass
