@@ -69,7 +69,7 @@ def getUDSCookie(request: HttpRequest, response: typing.Optional[HttpResponse] =
     if 'uds' not in request.COOKIES:
         cookie = cryptoManager().randomString(48)
         if response is not None:
-            response.set_cookie('uds', cookie)
+            response.set_cookie('uds', cookie, samesite='Lax')
         request.COOKIES['uds'] = cookie
     else:
         cookie = request.COOKIES['uds']

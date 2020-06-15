@@ -51,6 +51,13 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
+# The callback is now a two stage, so we can use cookies samesite policy to "Lax"
+# 1.- First stage:  SESSION COOKIE IS NOT PRESSENT HERE
+#       * gets all parameters of callback and stores it in a ticket.
+#       * Redirectos to stage2, with ticket id parameter
+# 2.- Second Stage:  SESSION COOKIE IS PRESENT!!
+#       * Recovers parameters from first stage
+#       * Process real callback
 
 @csrf_exempt
 def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
@@ -65,13 +72,26 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         authenticator = Authenticator.objects.get(name=authName)
         params = request.GET.copy()
         params.update(request.POST)
-        logger.debug('Request session:%s -> %s, %s', request.ip, request.session.keys(), request.session.session_key)
 
+        logger.debug('Auth callback for %s with params %s', authenticator, params.keys())
+
+        ticket = TicketStore.create({'params': params, 'auth': authenticator.uuid})
+        return HttpResponseRedirect(reverse('page.auth.callback_stage2', args=[ticket]))
+    except Exception as e:
+        # No authenticator found...
+        return errors.exceptionView(request, e)
+
+
+def authCallback_stage2(request: HttpRequest, ticketId: str) -> HttpResponse:
+    try:
+        ticket = TicketStore.get(ticketId)
+        params: typing.Dict[str, typing.Any] = ticket['params']
+        auth_uuid: str = ticket['auth']
+        authenticator = Authenticator.objects.get(uuid=auth_uuid)
         params['_request'] = request
         # params['_session'] = request.session
         # params['_user'] = request.user
-
-        logger.debug('Auth callback for %s with params %s', authenticator, params.keys())
+        logger.debug('Request session:%s -> %s, %s', request.ip, request.session.keys(), request.session.session_key)
 
         user = authenticateViaCallback(authenticator, params)
 
