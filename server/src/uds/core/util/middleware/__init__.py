@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import logging
 
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from uds.core.util.config import GlobalConfig
 
@@ -69,7 +70,8 @@ class RedirectMiddleware:
 
         if redirect and request.is_secure() is False and GlobalConfig.REDIRECT_TO_HTTPS.getBool():
             if request.method == 'POST':
-                url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
+                # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
+                url = reverse('page.login')
             else:
                 url = request.build_absolute_uri(full_path)
             url = url.replace('http://', 'https://')

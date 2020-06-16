@@ -112,11 +112,11 @@ def webLoginRequired(admin: typing.Union[bool, str] = False) -> typing.Callable[
             Wrapped function for decorator
             """
             if request.user is None:
-                url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
-                if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
-                    url = url.replace('http://', 'https://')
-                logger.debug('No user found, redirecting to %s', url)
-                return HttpResponseRedirect(url)
+                # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
+                # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
+                #     url = url.replace('http://', 'https://')
+                # logger.debug('No user found, redirecting to %s', url)
+                return HttpResponseRedirect(reverse('page.login'))
 
             if admin is True or admin == 'admin':
                 if request.user.isStaff() is False or (admin == 'admin' and request.user.is_admin is False):
@@ -330,9 +330,10 @@ def webLogout(request: HttpRequest, exit_url: typing.Optional[str] = None) -> Ht
 
     request.session.clear()
     if exit_url is None:
-        exit_url = GlobalConfig.LOGIN_URL.get()
-        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
-            exit_url = exit_url.replace('http://', 'https://')
+        exit_url = reverse('page.logout')
+        # exit_url = GlobalConfig.LOGIN_URL.get()
+        # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
+        #     exit_url = exit_url.replace('http://', 'https://')
 
     # Try to delete session
     response = HttpResponseRedirect(request.build_absolute_uri(exit_url))

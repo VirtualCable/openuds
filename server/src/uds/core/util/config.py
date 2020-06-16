@@ -251,8 +251,8 @@ class GlobalConfig:
     USER_SERVICE_CLEAN_NUMBER: Config.Value = Config.section(GLOBAL_SECTION).value('userServiceCleanNumber', '3', type=Config.NUMERIC_FIELD)  # Defaults to 3 per wun
     # Removal Check time for cache, publications and deployed services
     REMOVAL_CHECK: Config.Value = Config.section(GLOBAL_SECTION).value('removalCheck', '31', type=Config.NUMERIC_FIELD)  # Defaults to 30 seconds
-    # Login URL
-    LOGIN_URL: Config.Value = Config.section(GLOBAL_SECTION).value('loginUrl', '/login', type=Config.TEXT_FIELD)  # Defaults to /login
+    # Login URL: deprecated & not used anymore
+    # LOGIN_URL: Config.Value = Config.section(GLOBAL_SECTION).value('loginUrl', '/uds/page/login', type=Config.TEXT_FIELD)  # Defaults to /login
     # Session duration
     USER_SESSION_LENGTH: Config.Value = Config.section(SECURITY_SECTION).value('userSessionLength', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hours
     # Superuser (do not need to be at database!!!)

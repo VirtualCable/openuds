@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 # Pair of section/value removed from current UDS version
 REMOVED = {
-    'UDS': ('allowPreferencesAccess', 'customHtmlLogin', 'UDS Theme', 'UDS Theme Enhaced', 'css', 'allowPreferencesAccess'),
+    'UDS': ('allowPreferencesAccess', 'customHtmlLogin', 'UDS Theme', 'UDS Theme Enhaced', 'css', 'allowPreferencesAccess', 'loginUrl'),
     'Cluster': ('Destination CPU Load', 'Migration CPU Load', 'Migration Free Memory'),
     'IPAUTH': ('autoLogin',),
     'VMWare': ('minUsableDatastoreGB', 'maxRetriesOnError'),
