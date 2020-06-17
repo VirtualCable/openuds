@@ -116,13 +116,12 @@ class RDPFile:
             if self.alsa:
                 params.append('/sound:sys:alsa,format:1,quality:high')
                 params.append('/microphone:sys:alsa')
-                if self.multimedia:
-                    params.append('/multimedia:sys:alsa')
             else:
                 params.append('/sound')
                 params.append('/microphone')
-                if self.multimedia:
-                    params.append('/multimedia')
+
+            if self.multimedia:
+                params.append('/video')
 
         if self.redirectDrives != 'false':
             params.append('/drive:media,/media')
