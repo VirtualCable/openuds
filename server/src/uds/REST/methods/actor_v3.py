@@ -271,11 +271,11 @@ class BaseReadyChange(ActorV3Action):
     """
     Records the IP change of actor
     """
-    name = 'notused'
+    name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         """
-        Changeip method expect a json POST with this fields:
+        BaseReady method expect a json POST with this fields:
             * token: str -> Valid Actor "own_token" (if invalid, will return an error).
               Currently it is the same as user service uuid, but this could change
             * secret: Secret for commsUrl for actor
@@ -320,7 +320,7 @@ class BaseReadyChange(ActorV3Action):
 
 class ChangeIp(BaseReadyChange):
     """
-    Processses IP Change. Needs to be "last" on a lead to be auto added to list of available methods
+    Processses IP Change.
     """
     name = 'changeip'
 
@@ -454,7 +454,7 @@ class Unmanaged(ActorV3Action):
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         """
-        Changeip method expect a json POST with this fields:
+        unmanaged method expect a json POST with this fields:
             * id: List[dict] -> List of dictionary containing ip and mac:
             * token: str -> Valid Actor "master_token" (if invalid, will return an error).
             * secret: Secret for commsUrl for actor
