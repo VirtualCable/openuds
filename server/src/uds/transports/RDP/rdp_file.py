@@ -120,8 +120,8 @@ class RDPFile:
                 params.append('/sound')
                 params.append('/microphone')
 
-            if self.multimedia:
-                params.append('/video')
+        if self.multimedia:
+            params.append('/video')
 
         if self.redirectDrives != 'false':
             params.append('/drive:media,/media')
