@@ -143,9 +143,3 @@ def checkBrowser(request: 'HttpRequest', browser: str) -> bool:
         return True
     except Exception:
         return False
-
-
-# debug setting in context
-def context(request: 'HttpRequest'):
-    from django.conf import settings
-    return {'DEBUG': settings.DEBUG}

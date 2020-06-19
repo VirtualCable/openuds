@@ -38,6 +38,14 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports
 
+# TODO: do this
+def createADUser():
+    try:
+        from . import AD
+        
+    except ImportError:
+        return
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models

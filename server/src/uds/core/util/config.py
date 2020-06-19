@@ -268,7 +268,7 @@ class GlobalConfig:
     # (only if os manager asks for this characteristic)
     CHECK_UNUSED_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631', type=Config.NUMERIC_FIELD)  # Defaults to 10 minutes
     # Default CSS Used
-    CSS: Config.Value = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.TEXT_FIELD)
+    # CSS: Config.Value = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.TEXT_FIELD)
     # Max logins before blocking an account
     MAX_LOGIN_TRIES: Config.Value = Config.section(GLOBAL_SECTION).value('maxLoginTries', '3', type=Config.NUMERIC_FIELD)
     # Block time in second for an user that makes too many mistakes, 5 minutes default
@@ -338,6 +338,7 @@ class GlobalConfig:
     SITE_COPYRIGHT_LINK: Config.Value = Config.section(CUSTOM_SECTION).value('Site copyright link', 'https://www.udsenterprise.com', type=Config.TEXT_FIELD)
     SITE_LOGO_NAME: Config.Value = Config.section(CUSTOM_SECTION).value('Logo name', 'UDS', type=Config.TEXT_FIELD)
     SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value('CSS', '', type=Config.LONGTEXT_FIELD)
+    SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value('Site information', '', type=Config.LONGTEXT_FIELD)
 
     # Custom HTML for login page
     # CUSTOM_HTML_LOGIN: Config.Value = Config.section(CUSTOM_SECTION).value('customHtmlLogin', '', type=Config.LONGTEXT_FIELD)
@@ -376,9 +377,3 @@ class GlobalConfig:
 
             except Exception:
                 logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
-
-
-# Context processor
-# noinspection PyUnusedLocal
-def context_processor(request):
-    return {'css_path': GlobalConfig.CSS.get()}
