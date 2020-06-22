@@ -254,7 +254,7 @@ class GlobalConfig:
     # Login URL: deprecated & not used anymore
     # LOGIN_URL: Config.Value = Config.section(GLOBAL_SECTION).value('loginUrl', '/uds/page/login', type=Config.TEXT_FIELD)  # Defaults to /login
     # Session duration
-    USER_SESSION_LENGTH: Config.Value = Config.section(SECURITY_SECTION).value('userSessionLength', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hours
+    # USER_SESSION_LENGTH: Config.Value = Config.section(SECURITY_SECTION).value('userSessionLength', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hours
     # Superuser (do not need to be at database!!!)
     SUPER_USER_LOGIN: Config.Value = Config.section(SECURITY_SECTION).value('superUser', 'root', type=Config.TEXT_FIELD)
     # Superuser password (do not need to be at database!!!)
@@ -262,7 +262,7 @@ class GlobalConfig:
     # Idle time before closing session on admin
     SUPER_USER_ALLOW_WEBACCESS: Config.Value = Config.section(SECURITY_SECTION).value('allowRootWebAccess', '1', type=Config.BOOLEAN_FIELD)
     # Time an admi session can be idle before being "logged out"
-    ADMIN_IDLE_TIME: Config.Value = Config.section(SECURITY_SECTION).value('adminIdleTime', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hous
+    # ADMIN_IDLE_TIME: Config.Value = Config.section(SECURITY_SECTION).value('adminIdleTime', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hous
     # Time betwen checks of unused services by os managers
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time
     # (only if os manager asks for this characteristic)
@@ -270,9 +270,10 @@ class GlobalConfig:
     # Default CSS Used
     # CSS: Config.Value = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.TEXT_FIELD)
     # Max logins before blocking an account
-    MAX_LOGIN_TRIES: Config.Value = Config.section(GLOBAL_SECTION).value('maxLoginTries', '3', type=Config.NUMERIC_FIELD)
+    MAX_LOGIN_TRIES: Config.Value = Config.section(SECURITY_SECTION).value('maxLoginTries', '5', type=Config.NUMERIC_FIELD)
     # Block time in second for an user that makes too many mistakes, 5 minutes default
-    LOGIN_BLOCK: Config.Value = Config.section(GLOBAL_SECTION).value('loginBlockTime', '300', type=Config.NUMERIC_FIELD)
+    LOGIN_BLOCK: Config.Value = Config.section(SECURITY_SECTION).value('loginBlockTime', '300', type=Config.NUMERIC_FIELD)
+    LOGIN_BLOCK_IP: Config.Value = Config.section(SECURITY_SECTION).value('Block ip on login failure', '0', type=Config.BOOLEAN_FIELD)
     # Do autorun of service if just one service.
     # 0 = No autorun, 1 = Autorun at login
     # In a future, maybe necessary another value "2" that means that autorun always
@@ -326,7 +327,7 @@ class GlobalConfig:
     LIMITED_BY_CALENDAR_TEXT: Config.Value = Config.section(GLOBAL_SECTION).value('Calendar access denied text', '', type=Config.TEXT_FIELD)  # Defaults to Nothing
     # Custom message for error when limiting by calendar
 
-    # This is used so templates can change "styles" from admin interface
+    # If convert username to lowercase
     LOWERCASE_USERNAME: Config.Value = Config.section(SECURITY_SECTION).value('Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD)
 
     # Global UDS ID (common for all servers on the same cluster)

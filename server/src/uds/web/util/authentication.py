@@ -91,7 +91,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         cache = Cache('auth')
         cacheKey = str(authenticator.id) + userName
         tries = cache.get(cacheKey) or 0
-        triesByIp = cache.get(request.ip) or 0
+        triesByIp = (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.getBool() else 0
         maxTries = GlobalConfig.MAX_LOGIN_TRIES.getInt()
         if (authenticator.getInstance().blockUserOnLoginFailures is True and (tries >= maxTries) or triesByIp >= maxTries):
             authLogLogin(request, authenticator, userName, 'Temporarily blocked')

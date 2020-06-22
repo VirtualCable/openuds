@@ -239,7 +239,6 @@ class Handler:
         :param staf_member: If user is considered staff member or not
         """
         session = SessionStore()
-        session.set_expiry(GlobalConfig.ADMIN_IDLE_TIME.getInt())
         Handler.storeSessionAuthdata(session, id_auth, username, password, locale, platform, is_admin, staf_member, scrambler)
         session.save()
         self._authToken = session.session_key
