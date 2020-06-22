@@ -10,7 +10,7 @@ BINDIR := $(DESTDIR)/usr/bin
 SBINDIR = $(DESTDIR)/usr/sbin
 APPSDIR := $(DESTDIR)/usr/share/applications
 CFGDIR := $(DESTDIR)/etc/udsactor
-INITDIR := $(DESTDIR)/etc/init.d
+SYSTEMDIR := $(DESTDIR)/etc/system.d/system
 POLKITDIR := $(DESTDIR)/usr/share/polkit-1/actions/
 XDGAUTOSTARTDIR := $(DESTDIR)/etc/xdg/autostart
 KDEAUTOSTARTDIR := $(DESTDIR)/usr/share/autostart
@@ -77,11 +77,11 @@ udsactor:
 	chmod 755 $(SBINDIR)/UDSActor*
 	chmod 755 $(LIBDIR)/actor_*.py
 	chmod 644 $(POLKITDIR)/org.openuds.pkexec.UDSActorConfig.policy
-	
+
 	# If for red hat based, copy init.d
 ifeq ($(DISTRO),rh)
-	mkdir -p $(INITDIR)
-	cp debian/udsactor.init $(INITDIR)/udsactor
+	mkdir -p $(SYSTEMDIR)
+	cp debian/udsactor.service $(SYSTEMDIR)/
 endif
 
 	# chmod 0755 $(BINDIR)/udsactor

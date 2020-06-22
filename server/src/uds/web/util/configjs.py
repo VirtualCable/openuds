@@ -153,7 +153,6 @@ def udsJs(request: 'HttpRequest') -> str:
             'ip_proxy': request.ip_proxy
         }
 
-
     # all plugins are under url clients...
     plugins = [
         {

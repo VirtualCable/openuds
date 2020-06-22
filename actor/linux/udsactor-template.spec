@@ -11,7 +11,7 @@ Release: %{release}
 Summary: Actor for Universal Desktop Services (UDS) Broker
 License: BSD3
 Group: Admin
-Requires: python-six python-requests PyQt4 libXScrnSaver
+Requires: python3-six python3-requests python3-qt5 libXScrnSaver
 Vendor: Virtual Cable S.L.U.
 URL: http://www.udsenterprise.com
 Provides: udsactor
@@ -34,8 +34,8 @@ make DESTDIR=$RPM_BUILD_ROOT DISTRO=rh clean
 cd $curdir
 
 
-%post
-systemctl enable udsactor.service > /dev/null 2>&1
+# %post
+# systemctl enable udsactor.service > /dev/null 2>&1
 
 %preun
 systemctl disable udsactor.service > /dev/null 2>&1
@@ -57,7 +57,7 @@ This package provides the required components to allow this machine to work on a
 %defattr(-,root,root)
 /etc/udsactor
 /etc/xdg/autostart/UDSActorTool.desktop
-/etc/init.d/udsactor
+/etc/system.d/system/udsactor.service
 /usr/bin/UDSActorTool-startup
 /usr/bin/udsactor
 /usr/bin/udsvapp
