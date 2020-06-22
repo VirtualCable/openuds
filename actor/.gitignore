@@ -1,6 +1,8 @@
 # Debian source builds
 udsactor_*.dsc
 udsactor_*.tar.xz
-udsactor*.deb
 udsactor_*.buildinfo
 udsactor_*.changes
+# And binaries
+udsactor*.deb
+udsactor*.rpm
