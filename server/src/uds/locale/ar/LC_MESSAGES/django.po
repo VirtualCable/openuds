@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"POT-Creation-Date: 2020-06-24 00:52+0200\n"
 "PO-Revision-Date: 2020-06-12 15:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -5074,11 +5074,13 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:135
 #: transports/HTML5RDS_enterprise/html5rds.py:137
+#: transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr "فرض نافذة HTML جديدة"
 
 #: transports/HTML5RDP/html5rdp.py:137
 #: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/URL/url_custom.py:76
 msgid ""
 "If checked, every connection will try to open its own window instead of "
 "reusing the \"global\" one."
@@ -5586,6 +5588,27 @@ msgstr "إعادة التوجيه التلقائي أجهزة USB عند توص�
 #: transports/SPICE/spice_tunnel.py:64
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "بروتوكول SPICE. اتصال النفق."
+
+#: transports/URL/url_custom.py:61
+msgid "URL Launcher"
+msgstr "قاذفة URL"
+
+#: transports/URL/url_custom.py:63
+msgid "Launchs an external UDS customized URL"
+msgstr "تشغيل عنوان URL مخصص لـ UDS خارجي"
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern"
+msgstr "نمط عنوان URL"
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
+msgstr "نمط عنوان URL المراد فتحه (أي https: // _ IP_ / test؟ user = _USER_"
+
+#: transports/URL/url_custom.py:86
+#| msgid "The server must be http or https"
+msgid "The url must be http or https"
+msgstr "يجب أن يكون عنوان URL http أو https"
 
 #: transports/X2GO/x2go.py:54 transports/X2GO/x2go_tunnel.py:63
 msgid "X2Go"

@@ -4,8 +4,8 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
-# mvignone, 2020
-# mvignone, 2020
+# Massimo Vignone, 2020
+# Massimo Vignone, 2020
 # mvignone, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2019
 # Víctor Alonso <valonso@virtualcable.net>, 2019
@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 14:07+0200\n"
-"PO-Revision-Date: 2020-06-18 08:59+0000\n"
-"Last-Translator: mvignone\n"
+"POT-Creation-Date: 2020-06-24 00:52+0200\n"
+"PO-Revision-Date: 2020-06-23 13:56+0000\n"
+"Last-Translator: Massimo Vignone\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
 "Language: it\n"
@@ -83,7 +83,7 @@ msgstr "Inizio"
 
 #: REST/methods/accountsusage.py:96 REST/methods/calendarrules.py:100
 msgid "Ends"
-msgstr "FIne"
+msgstr "Fine"
 
 #: REST/methods/accountsusage.py:97
 msgid "Elapsed"
@@ -5190,11 +5190,13 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:135
 #: transports/HTML5RDS_enterprise/html5rds.py:137
+#: transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr "Forza nuova finestra HTML"
 
 #: transports/HTML5RDP/html5rdp.py:137
 #: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/URL/url_custom.py:76
 msgid ""
 "If checked, every connection will try to open its own window instead of "
 "reusing the \"global\" one."
@@ -5729,6 +5731,27 @@ msgstr "Reindirizzamento automatico dei dispositivi USB quando collegati."
 #: transports/SPICE/spice_tunnel.py:64
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "Protocollo SPICE. Connessione con tunnel."
+
+#: transports/URL/url_custom.py:61
+msgid "URL Launcher"
+msgstr "Avvio URL"
+
+#: transports/URL/url_custom.py:63
+msgid "Launchs an external UDS customized URL"
+msgstr "Avvia un URL personalizzato UDS esterno"
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern"
+msgstr "Pattern URL"
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
+msgstr "Pattern URL da aprire (es. Https: // _ IP_ / test? User = _USER_"
+
+#: transports/URL/url_custom.py:86
+#| msgid "The server must be http or https"
+msgid "The url must be http or https"
+msgstr "L&#39;URL deve essere http o https"
 
 #: transports/X2GO/x2go.py:54 transports/X2GO/x2go_tunnel.py:63
 msgid "X2Go"

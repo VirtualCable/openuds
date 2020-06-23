@@ -18,9 +18,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 14:07+0200\n"
-"PO-Revision-Date: 2020-06-12 15:14+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-06-24 00:52+0200\n"
+"PO-Revision-Date: 2020-06-23 12:50+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -1489,7 +1489,7 @@ msgstr "Errores encontrados"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:3
 msgid "Launching service"
-msgstr "Servicio de lanzamiento"
+msgstr "Lanzador de servicio"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:4
 msgid "Please wait"
@@ -1667,9 +1667,6 @@ msgid "To relaunch service, you will have to do it from origin."
 msgstr "Para relanzar el servicio, deberá hacerlo desde el origen."
 
 #: static/modern/translations-fakejs.js:61
-#| msgid ""
-#| "If the service does not launchs automatically, probably you dont have the "
-#| "UDS plugin installed"
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
@@ -1682,7 +1679,6 @@ msgid "You can obtain it from the"
 msgstr "Puede obtenerlo de"
 
 #: static/modern/translations-fakejs.js:63
-#| msgid "UDS Plugin download page"
 msgid "UDS Client download page"
 msgstr "Página de descarga del cliente UDS"
 

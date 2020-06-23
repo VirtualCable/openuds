@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"POT-Creation-Date: 2020-06-24 00:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4920,11 +4920,13 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:135
 #: transports/HTML5RDS_enterprise/html5rds.py:137
+#: transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:137
 #: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/URL/url_custom.py:76
 msgid ""
 "If checked, every connection will try to open its own window instead of "
 "reusing the \"global\" one."
@@ -5410,6 +5412,26 @@ msgstr ""
 
 #: transports/SPICE/spice_tunnel.py:64
 msgid "SPICE Protocol. Tunneled connection."
+msgstr ""
+
+#: transports/URL/url_custom.py:61
+msgid "URL Launcher"
+msgstr ""
+
+#: transports/URL/url_custom.py:63
+msgid "Launchs an external UDS customized URL"
+msgstr ""
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern"
+msgstr ""
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
+msgstr ""
+
+#: transports/URL/url_custom.py:86
+msgid "The url must be http or https"
 msgstr ""
 
 #: transports/X2GO/x2go.py:54 transports/X2GO/x2go_tunnel.py:63

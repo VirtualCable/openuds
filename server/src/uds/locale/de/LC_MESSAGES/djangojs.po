@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 14:07+0200\n"
-"PO-Revision-Date: 2020-06-12 15:14+0000\n"
+"POT-Creation-Date: 2020-06-24 00:52+0200\n"
+"PO-Revision-Date: 2020-06-23 12:08+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -1664,9 +1664,6 @@ msgid "To relaunch service, you will have to do it from origin."
 msgstr "Um den Dienst neu zu starten, müssen Sie dies von Anfang an tun."
 
 #: static/modern/translations-fakejs.js:61
-#| msgid ""
-#| "If the service does not launchs automatically, probably you dont have the "
-#| "UDS plugin installed"
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
@@ -1679,7 +1676,6 @@ msgid "You can obtain it from the"
 msgstr "Sie erhalten es bei der"
 
 #: static/modern/translations-fakejs.js:63
-#| msgid "UDS Plugin download page"
 msgid "UDS Client download page"
 msgstr "UDS Client Download-Seite"
 

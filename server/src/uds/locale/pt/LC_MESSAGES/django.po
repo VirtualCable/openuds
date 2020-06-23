@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"POT-Creation-Date: 2020-06-24 00:52+0200\n"
 "PO-Revision-Date: 2020-06-12 15:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
@@ -5167,11 +5167,13 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:135
 #: transports/HTML5RDS_enterprise/html5rds.py:137
+#: transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr "Forçar nova janela HTML"
 
 #: transports/HTML5RDP/html5rdp.py:137
 #: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/URL/url_custom.py:76
 msgid ""
 "If checked, every connection will try to open its own window instead of "
 "reusing the \"global\" one."
@@ -5695,6 +5697,28 @@ msgstr "Auto-redirecionar dispositivos USB quando conectado."
 #: transports/SPICE/spice_tunnel.py:64
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "Protocolo SPICE. Conexão em túnel."
+
+#: transports/URL/url_custom.py:61
+msgid "URL Launcher"
+msgstr "Iniciador de URL"
+
+#: transports/URL/url_custom.py:63
+msgid "Launchs an external UDS customized URL"
+msgstr "Inicia um URL personalizado UDS externo"
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern"
+msgstr "Padrão de URL"
+
+#: transports/URL/url_custom.py:71
+msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
+msgstr ""
+"Padrão de URL a abrir (por exemplo, https: // _ IP_ / test? User = _USER_"
+
+#: transports/URL/url_custom.py:86
+#| msgid "The server must be http or https"
+msgid "The url must be http or https"
+msgstr "O URL deve ser http ou https"
 
 #: transports/X2GO/x2go.py:54 transports/X2GO/x2go_tunnel.py:63
 msgid "X2Go"
