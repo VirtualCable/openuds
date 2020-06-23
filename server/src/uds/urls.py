@@ -55,7 +55,7 @@ urlpatterns = [
     re_path(r'^authinfo/(?P<authName>.+)', uds.web.views.authInfo, name='page.auth.info.compat'),
 
     # Ticket authentication
-    re_path(r'^tkauth/(?P<ticketId>[a-zA-Z0-9-])$', uds.web.views.ticketAuth, name='page,auth.ticket.compat'),
+    re_path(r'^tkauth/(?P<ticketId>[a-zA-Z0-9-]+)$', uds.web.views.ticketAuth, name='page.auth.ticket.compat'),
 
     # END COMPAT
 
@@ -77,10 +77,9 @@ urlpatterns = [
     re_path(r'^uds/page/auth/(?P<authName>[^/]+)$', uds.web.views.authCallback, name='page.auth.callback'),
     re_path(r'^uds/page/auth/stage2/(?P<ticketId>[^/]+)$', uds.web.views.authCallback_stage2, name='page.auth.callback_stage2'),
     re_path(r'^uds/page/auth/info/(?P<authName>[a-zA-Z0-9.-]+)$', uds.web.views.authInfo, name='page.auth.info'),
-    
 
     # Ticket authentication related
-    re_path(r'^uds/page/ticket/auth/(?P<ticketId>[a-zA-Z0-9.-])$', uds.web.views.ticketAuth, name='page.ticket.auth'),
+    re_path(r'^uds/page/ticket/auth/(?P<ticketId>[a-zA-Z0-9.-]+)$', uds.web.views.ticketAuth, name='page.ticket.auth'),
     path(r'uds/page/ticket/launcher', uds.web.views.modern.index, name='page.ticket.launcher'),
 
     # This must be the last, so any patition will be managed by client in fact
