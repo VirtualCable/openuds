@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-12 17:13+0200\n"
-"PO-Revision-Date: 2020-06-02 13:40+0000\n"
+"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"PO-Revision-Date: 2020-06-12 15:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -1655,11 +1655,14 @@ msgid "To relaunch service, you will have to do it from origin."
 msgstr "Zerbitzua berriro martxan jartzeko, jatorritik egin beharko duzu."
 
 #: static/modern/translations-fakejs.js:61
+#| msgid ""
+#| "If the service does not launchs automatically, probably you dont have the "
+#| "UDS plugin installed"
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
-"UDS plugin installed"
+"UDS Client installed"
 msgstr ""
-"Zerbitzua automatikoki abiarazten ez bada, seguruenik ez duzu UDS plugin "
+"Zerbitzua automatikoki abiarazten ez bada, seguruenik ez duzu UDS Bezeroa "
 "instalatuta"
 
 #: static/modern/translations-fakejs.js:62
@@ -1667,8 +1670,9 @@ msgid "You can obtain it from the"
 msgstr "Bilatu dezakezu:"
 
 #: static/modern/translations-fakejs.js:63
-msgid "UDS Plugin download page"
-msgstr "UDS Pluginen deskarga orria"
+#| msgid "UDS Plugin download page"
+msgid "UDS Client download page"
+msgstr "UDS Bezeroa deskargatzeko orria"
 
 #: static/modern/translations-fakejs.js:65
 msgid "An error has occurred"

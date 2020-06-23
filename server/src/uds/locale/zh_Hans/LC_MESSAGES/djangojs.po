@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-12 17:13+0200\n"
-"PO-Revision-Date: 2020-06-02 13:39+0000\n"
+"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"PO-Revision-Date: 2020-06-12 15:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -1647,18 +1647,22 @@ msgid "To relaunch service, you will have to do it from origin."
 msgstr "要重新启动服务，您必须从源头开始进行。"
 
 #: static/modern/translations-fakejs.js:61
+#| msgid ""
+#| "If the service does not launchs automatically, probably you dont have the "
+#| "UDS plugin installed"
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
-"UDS plugin installed"
-msgstr "如果该服务未自动启动，则可能您未安装UDS插件"
+"UDS Client installed"
+msgstr "如果该服务没有自动启动，则可能您没有安装UDS客户端"
 
 #: static/modern/translations-fakejs.js:62
 msgid "You can obtain it from the"
 msgstr "您可以从"
 
 #: static/modern/translations-fakejs.js:63
-msgid "UDS Plugin download page"
-msgstr "UDS插件下载页面"
+#| msgid "UDS Plugin download page"
+msgid "UDS Client download page"
+msgstr "UDS客户端下载页面"
 
 #: static/modern/translations-fakejs.js:65
 msgid "An error has occurred"

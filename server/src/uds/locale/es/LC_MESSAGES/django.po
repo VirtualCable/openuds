@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-12 17:13+0200\n"
-"PO-Revision-Date: 2020-06-10 14:41+0000\n"
+"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"PO-Revision-Date: 2020-06-12 15:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -985,7 +985,7 @@ msgstr "Usuarios actuales"
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
 #: transports/NX/nxtunneltransport.py:77
-#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
+#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:67
 #: transports/RGS_enterprise/rgs.py:45
 #: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:68
 #: transports/X2GO/x2go_base.py:69 web/forms/LoginForm.py:42
@@ -1133,7 +1133,7 @@ msgstr ""
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
-#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
+#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:68
 #: transports/RGS_enterprise/rgs.py:46
 #: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:74
 #: web/forms/LoginForm.py:43
@@ -1193,7 +1193,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:338
 #: auths/ActiveDirectory_enterprise/authenticator.py:387
-#: auths/AzureAD_enterprise/azure_ad.py:224
+#: auths/AzureAD_enterprise/azure_ad.py:225
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
 #: auths/RegexLdap/authenticator.py:313 auths/RegexLdap/authenticator.py:344
@@ -1282,17 +1282,17 @@ msgstr "URL de respuesta"
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr "Url de respuesta (rellenado por UDS, modificar sólo si es necesario!!)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:236
-#: auths/AzureAD_enterprise/azure_ad.py:260
-#: auths/AzureAD_enterprise/azure_ad.py:272
+#: auths/AzureAD_enterprise/azure_ad.py:237
+#: auths/AzureAD_enterprise/azure_ad.py:261
+#: auths/AzureAD_enterprise/azure_ad.py:273
 msgid "Authenticator exception:"
 msgstr "Excepción de autenticador:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:307 core/util/ldaputil.py:48
+#: auths/AzureAD_enterprise/azure_ad.py:308 core/util/ldaputil.py:48
 msgid "Connection error: "
 msgstr "Error de conexión: "
 
-#: auths/AzureAD_enterprise/azure_ad.py:308
+#: auths/AzureAD_enterprise/azure_ad.py:309
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr ""
 "Los parámetros de conexión parecen validos, el test fue ejecutado "
@@ -2422,7 +2422,7 @@ msgstr "Os Manager para controlar las máquinas windows con dominio."
 #: services/OpenStack/provider.py:101 services/OpenStack/provider_legacy.py:108
 #: transports/HTML5RDP/html5rdp.py:78
 #: transports/HTML5RDS_enterprise/html5rds.py:80
-#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:62
+#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:70
 #: transports/RDS_enterprise/rds_base.py:45 transports/RGS_enterprise/rgs.py:47
 #: transports/RGS_enterprise/rgstunnel.py:59
 msgid "Domain"
@@ -4930,7 +4930,7 @@ msgstr ""
 #: transports/HTML5RDP/html5rdp.py:74
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
-#: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RDP/rdp_base.py:66 transports/RDS_enterprise/rds_base.py:43
 #: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56
 msgid "Empty creds"
@@ -4939,7 +4939,7 @@ msgstr "Credenciales vacías"
 #: transports/HTML5RDP/html5rdp.py:74
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
-#: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RDP/rdp_base.py:66 transports/RDS_enterprise/rds_base.py:43
 #: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
@@ -4949,7 +4949,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
 #: transports/NX/nxtunneltransport.py:77
-#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
+#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:67
 #: transports/RGS_enterprise/rgs.py:45
 #: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:69
 #: transports/X2GO/x2go_base.py:70
@@ -4959,14 +4959,14 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
-#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
+#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:68
 #: transports/RGS_enterprise/rgs.py:46
 #: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:75
 msgid "If not empty, this password will be always used as credential"
 msgstr "Si no está vacío, este password se utiizará siempre como credencial "
 
 #: transports/HTML5RDP/html5rdp.py:77
-#: transports/HTML5RDS_enterprise/html5rds.py:79 transports/RDP/rdp_base.py:61
+#: transports/HTML5RDS_enterprise/html5rds.py:79 transports/RDP/rdp_base.py:69
 #: transports/RDS_enterprise/rds_base.py:44
 msgid "Without Domain"
 msgstr "Sin dominio"
@@ -4982,7 +4982,7 @@ msgstr ""
 "ejemplo, para conectar a xrdp)"
 
 #: transports/HTML5RDP/html5rdp.py:78
-#: transports/HTML5RDS_enterprise/html5rds.py:80 transports/RDP/rdp_base.py:62
+#: transports/HTML5RDS_enterprise/html5rds.py:80 transports/RDP/rdp_base.py:70
 #: transports/RDS_enterprise/rds_base.py:45 transports/RGS_enterprise/rgs.py:47
 #: transports/RGS_enterprise/rgstunnel.py:59
 msgid ""
@@ -4998,7 +4998,7 @@ msgid "Show wallpaper"
 msgstr "Mostrar fondo de pantalla "
 
 #: transports/HTML5RDP/html5rdp.py:79
-#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:120
+#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:128
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -5007,17 +5007,17 @@ msgstr ""
 "(mayor ancho de banda, mejor experiencia de usuario)"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:122
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
 msgid "Allow Desk.Comp."
 msgstr "Permitir Comp.Escr."
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:122
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
 msgid "If checked, desktop composition will be allowed"
 msgstr "Si está marcada, se permitirá la composición de escritorio"
 
 #: transports/HTML5RDP/html5rdp.py:81
-#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:123
+#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:131
 #: transports/RDS_enterprise/rds_base.py:85
 msgid "Font Smoothing"
 msgstr "Suavizado de fuentes"
@@ -5358,7 +5358,7 @@ msgstr "RDP"
 msgid "RDP Protocol. Direct connection."
 msgstr "Protocolo RDP. Conexión directa."
 
-#: transports/RDP/rdp_base.py:61
+#: transports/RDP/rdp_base.py:69
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
@@ -5366,37 +5366,37 @@ msgstr ""
 "Si está marcada, la parte del dominio se vaciará siempre (por ejemplo, para "
 "conectar con xrdp es necesario)"
 
-#: transports/RDP/rdp_base.py:64 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:72 transports/RDS_enterprise/rds_base.py:46
 msgid "Allow Smartcards"
 msgstr "Permite Smartcards"
 
-#: transports/RDP/rdp_base.py:64 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:72 transports/RDS_enterprise/rds_base.py:46
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "Si está seleccionado, este transporte permitirá el uso de Smartcards"
 
-#: transports/RDP/rdp_base.py:65 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 msgid "Allow Printers"
 msgstr "Permitir impresoras"
 
-#: transports/RDP/rdp_base.py:65 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
 "Si está seleccionado, este transporte permitirá el uso de impresoras de "
 "usuario"
 
-#: transports/RDP/rdp_base.py:67 transports/RDS_enterprise/rds_base.py:49
+#: transports/RDP/rdp_base.py:75 transports/RDS_enterprise/rds_base.py:49
 msgid "Local drives policy"
 msgstr "Política de unidades locales"
 
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:51
+#: transports/RDP/rdp_base.py:77 transports/RDS_enterprise/rds_base.py:51
 msgid "Local drives redirection policy"
 msgstr "Política de redireccionamiento de unidades locales"
 
-#: transports/RDP/rdp_base.py:79 transports/RDS_enterprise/rds_base.py:61
+#: transports/RDP/rdp_base.py:87 transports/RDS_enterprise/rds_base.py:61
 msgid "Force drives"
 msgstr "Unidades de fuerza"
 
-#: transports/RDP/rdp_base.py:81 transports/RDS_enterprise/rds_base.py:63
+#: transports/RDP/rdp_base.py:89 transports/RDS_enterprise/rds_base.py:63
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
@@ -5404,65 +5404,65 @@ msgstr ""
 "Utilice valores separados por comas, por ejemplo \"C:, D:\". Si no se "
 "permite la política de unidades, esto se ignorará"
 
-#: transports/RDP/rdp_base.py:85 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:93 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Serials"
 msgstr "Permitir Series"
 
-#: transports/RDP/rdp_base.py:85 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:93 transports/RDS_enterprise/rds_base.py:67
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Si está seleccionado, este transporte permitirá el uso de series de puertos "
 "de usuario"
 
-#: transports/RDP/rdp_base.py:86 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:94 transports/RDS_enterprise/rds_base.py:68
 msgid "Enable clipboard"
 msgstr "Activar el portapapeles"
 
-#: transports/RDP/rdp_base.py:86 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:94 transports/RDS_enterprise/rds_base.py:68
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "Si está marcada, se permitirá funciones de copiar-pegar"
 
-#: transports/RDP/rdp_base.py:87 transports/X2GO/x2go_base.py:117
+#: transports/RDP/rdp_base.py:95 transports/X2GO/x2go_base.py:117
 msgid "Enable sound"
 msgstr "Habilitar sonido"
 
-#: transports/RDP/rdp_base.py:87
+#: transports/RDP/rdp_base.py:95
 msgid "If checked, sound will be redirected."
 msgstr "Si está marcada, el sonido será redirigido."
 
-#: transports/RDP/rdp_base.py:88 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
 msgid "Credssp Support"
 msgstr "Soporte CredSSP"
 
-#: transports/RDP/rdp_base.py:88 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Si está marcada, permitirá el soporte de proveedor de credenciales)"
 
-#: transports/RDP/rdp_base.py:91
+#: transports/RDP/rdp_base.py:99
 msgid "Screen Size"
 msgstr "Tamaño de pantalla"
 
-#: transports/RDP/rdp_base.py:93
+#: transports/RDP/rdp_base.py:101
 msgid "Screen size for this transport"
 msgstr "Tamaño de la pantalla para este transporte"
 
-#: transports/RDP/rdp_base.py:107 transports/RDS_enterprise/rds_base.py:72
+#: transports/RDP/rdp_base.py:115 transports/RDS_enterprise/rds_base.py:72
 msgid "Color depth"
 msgstr "Profundidad de color"
 
-#: transports/RDP/rdp_base.py:109 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:117 transports/RDS_enterprise/rds_base.py:74
 msgid "Color depth for this connection"
 msgstr "Profundidad de color para esta conexión"
 
-#: transports/RDP/rdp_base.py:120
+#: transports/RDP/rdp_base.py:128
 msgid "Wallpaper/theme"
 msgstr "Tema de fondo de pantalla"
 
-#: transports/RDP/rdp_base.py:121
+#: transports/RDP/rdp_base.py:129
 msgid "Multiple monitors"
 msgstr "Varios monitores"
 
-#: transports/RDP/rdp_base.py:121
+#: transports/RDP/rdp_base.py:129
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -5470,75 +5470,75 @@ msgstr ""
 "Si está marcada, todos los monitores cliente se utilizarán para visualizar "
 "(sólo funciona en clientes Windows)"
 
-#: transports/RDP/rdp_base.py:123
+#: transports/RDP/rdp_base.py:131
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Si está marcada, se permitirá el suavizado de fuentes"
 
-#: transports/RDP/rdp_base.py:124
+#: transports/RDP/rdp_base.py:132
 msgid "Connection Bar"
 msgstr "Barra de conexión"
 
-#: transports/RDP/rdp_base.py:124
+#: transports/RDP/rdp_base.py:132
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Si está marcada, aparecerá barra de conexión (sólo en clientes de Windows)"
 
-#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
 msgid "Multimedia sync"
 msgstr "Sincronización multimedia"
 
-#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Si está marcada, el cliente Linux usará el parámetro multimedia para xfreerdp"
 
-#: transports/RDP/rdp_base.py:127 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
 msgid "Use Alsa"
 msgstr "Use ALSA"
 
-#: transports/RDP/rdp_base.py:127 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Si está marcado, el cliente Linux intentará usar ALSA, en caso contrario "
 "usará Pulse"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
 #: transports/X2GO/x2go_base.py:125
 msgid "Redirect home folder"
 msgstr "Redirigir la carpeta home"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
 "Si está marcado, el cliente Linux intentará redireccionar la carpeta home "
 "local."
 
-#: transports/RDP/rdp_base.py:129 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
 msgid "Printer string"
 msgstr "Cadena de impresora"
 
-#: transports/RDP/rdp_base.py:129 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si la impresora está activada, la cadena de impresora utilizadada con el "
 "cliente xfreerdp"
 
-#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
 msgid "Smartcard string"
 msgstr "Cadena de tarjeta inteligente"
 
-#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si la smartcard está activada, la cadena de smartcard utilizada con el "
 "cliente xfreerdp"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
 msgid "Custom parameters"
 msgstr "Parámetros personalizados"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5824,7 +5824,7 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Datos incorrectos"
 
-#: web/util/configjs.py:127
+#: web/util/configjs.py:128
 msgid "Access limited by calendar"
 msgstr "Acceso limitado por calendario"
 
@@ -5951,7 +5951,7 @@ msgstr ""
 "favor, cierre la sesión antes de {} y guarde todo su trabajo para evitar "
 "perderlo."
 
-#: web/views/auth.py:130
+#: web/views/auth.py:150
 msgid "Authenticator does not provide information"
 msgstr "El Autenticador no proporciona información"
 

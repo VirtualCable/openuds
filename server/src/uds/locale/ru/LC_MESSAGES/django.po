@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-12 17:13+0200\n"
-"PO-Revision-Date: 2020-06-10 14:41+0000\n"
+"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"PO-Revision-Date: 2020-06-12 15:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -972,7 +972,7 @@ msgstr "Текущие пользователи"
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
 #: transports/NX/nxtunneltransport.py:77
-#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
+#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:67
 #: transports/RGS_enterprise/rgs.py:45
 #: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:68
 #: transports/X2GO/x2go_base.py:69 web/forms/LoginForm.py:42
@@ -1119,7 +1119,7 @@ msgstr ""
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
-#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
+#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:68
 #: transports/RGS_enterprise/rgs.py:46
 #: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:74
 #: web/forms/LoginForm.py:43
@@ -1177,7 +1177,7 @@ msgstr "Нужно указать имя пользователя в форма�
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:338
 #: auths/ActiveDirectory_enterprise/authenticator.py:387
-#: auths/AzureAD_enterprise/azure_ad.py:224
+#: auths/AzureAD_enterprise/azure_ad.py:225
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
 #: auths/RegexLdap/authenticator.py:313 auths/RegexLdap/authenticator.py:344
@@ -1273,17 +1273,17 @@ msgstr ""
 "Url обратного вызова (заполнены UDS, исправить это только в случае "
 "необходимости!)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:236
-#: auths/AzureAD_enterprise/azure_ad.py:260
-#: auths/AzureAD_enterprise/azure_ad.py:272
+#: auths/AzureAD_enterprise/azure_ad.py:237
+#: auths/AzureAD_enterprise/azure_ad.py:261
+#: auths/AzureAD_enterprise/azure_ad.py:273
 msgid "Authenticator exception:"
 msgstr "Исключение проверки подлинности:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:307 core/util/ldaputil.py:48
+#: auths/AzureAD_enterprise/azure_ad.py:308 core/util/ldaputil.py:48
 msgid "Connection error: "
 msgstr "Ошибка подключения: "
 
-#: auths/AzureAD_enterprise/azure_ad.py:308
+#: auths/AzureAD_enterprise/azure_ad.py:309
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "Подключение params кажется правильным, тест был выполнен успешно"
 
@@ -2399,7 +2399,7 @@ msgstr "ОС менеджер для контроля Windows машин в до
 #: services/OpenStack/provider.py:101 services/OpenStack/provider_legacy.py:108
 #: transports/HTML5RDP/html5rdp.py:78
 #: transports/HTML5RDS_enterprise/html5rds.py:80
-#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:62
+#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:70
 #: transports/RDS_enterprise/rds_base.py:45 transports/RGS_enterprise/rgs.py:47
 #: transports/RGS_enterprise/rgstunnel.py:59
 msgid "Domain"
@@ -4899,7 +4899,7 @@ msgstr ""
 #: transports/HTML5RDP/html5rdp.py:74
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
-#: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RDP/rdp_base.py:66 transports/RDS_enterprise/rds_base.py:43
 #: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56
 msgid "Empty creds"
@@ -4908,7 +4908,7 @@ msgstr "Пропустить данные аккаунта"
 #: transports/HTML5RDP/html5rdp.py:74
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
-#: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RDP/rdp_base.py:66 transports/RDS_enterprise/rds_base.py:43
 #: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
@@ -4918,7 +4918,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
 #: transports/NX/nxtunneltransport.py:77
-#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
+#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:67
 #: transports/RGS_enterprise/rgs.py:45
 #: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:69
 #: transports/X2GO/x2go_base.py:70
@@ -4929,7 +4929,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
-#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
+#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:68
 #: transports/RGS_enterprise/rgs.py:46
 #: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:75
 msgid "If not empty, this password will be always used as credential"
@@ -4938,7 +4938,7 @@ msgstr ""
 "данных"
 
 #: transports/HTML5RDP/html5rdp.py:77
-#: transports/HTML5RDS_enterprise/html5rds.py:79 transports/RDP/rdp_base.py:61
+#: transports/HTML5RDS_enterprise/html5rds.py:79 transports/RDP/rdp_base.py:69
 #: transports/RDS_enterprise/rds_base.py:44
 msgid "Without Domain"
 msgstr "Без домена"
@@ -4954,7 +4954,7 @@ msgstr ""
 "требуется подключение к xrdp)"
 
 #: transports/HTML5RDP/html5rdp.py:78
-#: transports/HTML5RDS_enterprise/html5rds.py:80 transports/RDP/rdp_base.py:62
+#: transports/HTML5RDS_enterprise/html5rds.py:80 transports/RDP/rdp_base.py:70
 #: transports/RDS_enterprise/rds_base.py:45 transports/RGS_enterprise/rgs.py:47
 #: transports/RGS_enterprise/rgstunnel.py:59
 msgid ""
@@ -4970,7 +4970,7 @@ msgid "Show wallpaper"
 msgstr "Показать обои"
 
 #: transports/HTML5RDP/html5rdp.py:79
-#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:120
+#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:128
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -4979,17 +4979,17 @@ msgstr ""
 "пользовательский интерфейс, больше полосы пропускания)"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:122
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
 msgid "Allow Desk.Comp."
 msgstr "Разрешить композицию рабочего стола"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:122
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
 msgid "If checked, desktop composition will be allowed"
 msgstr "Если флажок установлен, будет разрешена композиция рабочего стола"
 
 #: transports/HTML5RDP/html5rdp.py:81
-#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:123
+#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:131
 #: transports/RDS_enterprise/rds_base.py:85
 msgid "Font Smoothing"
 msgstr "Сглаживание шрифтов"
@@ -5331,7 +5331,7 @@ msgstr "RDP"
 msgid "RDP Protocol. Direct connection."
 msgstr "RDP протокол. Прямое подключение."
 
-#: transports/RDP/rdp_base.py:61
+#: transports/RDP/rdp_base.py:69
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
@@ -5339,38 +5339,38 @@ msgstr ""
 "Если флажок установлен, часть домена всегда будет пустая (например для "
 "подключения к XRDP)"
 
-#: transports/RDP/rdp_base.py:64 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:72 transports/RDS_enterprise/rds_base.py:46
 msgid "Allow Smartcards"
 msgstr "Разрешить смарткарты"
 
-#: transports/RDP/rdp_base.py:64 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:72 transports/RDS_enterprise/rds_base.py:46
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr ""
 "Если этот флажок установлен, этот транспорт позволит использовать смарт-карты"
 
-#: transports/RDP/rdp_base.py:65 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 msgid "Allow Printers"
 msgstr "Разрешить принтеры"
 
-#: transports/RDP/rdp_base.py:65 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
 "Если этот флажок установлен, этот перенос позволит использовать "
 "пользовательские принтеры"
 
-#: transports/RDP/rdp_base.py:67 transports/RDS_enterprise/rds_base.py:49
+#: transports/RDP/rdp_base.py:75 transports/RDS_enterprise/rds_base.py:49
 msgid "Local drives policy"
 msgstr "Политика локальных дисков"
 
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:51
+#: transports/RDP/rdp_base.py:77 transports/RDS_enterprise/rds_base.py:51
 msgid "Local drives redirection policy"
 msgstr "Политика перенаправления локальных дисков"
 
-#: transports/RDP/rdp_base.py:79 transports/RDS_enterprise/rds_base.py:61
+#: transports/RDP/rdp_base.py:87 transports/RDS_enterprise/rds_base.py:61
 msgid "Force drives"
 msgstr "Силовые диски"
 
-#: transports/RDP/rdp_base.py:81 transports/RDS_enterprise/rds_base.py:63
+#: transports/RDP/rdp_base.py:89 transports/RDS_enterprise/rds_base.py:63
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
@@ -5378,65 +5378,65 @@ msgstr ""
 "Используйте значения, разделенные запятыми, например «C:, D:». Если политика "
 "дисков запрещена, это будет игнорироваться"
 
-#: transports/RDP/rdp_base.py:85 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:93 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Serials"
 msgstr "Разрешить серийные порты"
 
-#: transports/RDP/rdp_base.py:85 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:93 transports/RDS_enterprise/rds_base.py:67
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Если этот флажок установлен, этот транспорт позволит использовать "
 "последовательные порты пользователя"
 
-#: transports/RDP/rdp_base.py:86 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:94 transports/RDS_enterprise/rds_base.py:68
 msgid "Enable clipboard"
 msgstr "Включить буфер обмена"
 
-#: transports/RDP/rdp_base.py:86 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:94 transports/RDS_enterprise/rds_base.py:68
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "Если флажок установлен, функции копирования и вставки будут разрешены"
 
-#: transports/RDP/rdp_base.py:87 transports/X2GO/x2go_base.py:117
+#: transports/RDP/rdp_base.py:95 transports/X2GO/x2go_base.py:117
 msgid "Enable sound"
 msgstr "Включить звук"
 
-#: transports/RDP/rdp_base.py:87
+#: transports/RDP/rdp_base.py:95
 msgid "If checked, sound will be redirected."
 msgstr "Если флажок установлен, звук будет перенаправлен."
 
-#: transports/RDP/rdp_base.py:88 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
 msgid "Credssp Support"
 msgstr "Поддержка Credssp"
 
-#: transports/RDP/rdp_base.py:88 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Если флажок установлен, включит поддержку поставщика учетных данных"
 
-#: transports/RDP/rdp_base.py:91
+#: transports/RDP/rdp_base.py:99
 msgid "Screen Size"
 msgstr "Размер экрана"
 
-#: transports/RDP/rdp_base.py:93
+#: transports/RDP/rdp_base.py:101
 msgid "Screen size for this transport"
 msgstr "Размер экрана для этого транспорта"
 
-#: transports/RDP/rdp_base.py:107 transports/RDS_enterprise/rds_base.py:72
+#: transports/RDP/rdp_base.py:115 transports/RDS_enterprise/rds_base.py:72
 msgid "Color depth"
 msgstr "Глубина цвета"
 
-#: transports/RDP/rdp_base.py:109 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:117 transports/RDS_enterprise/rds_base.py:74
 msgid "Color depth for this connection"
 msgstr "Глубина цвета для этого подключения"
 
-#: transports/RDP/rdp_base.py:120
+#: transports/RDP/rdp_base.py:128
 msgid "Wallpaper/theme"
 msgstr "Обои/темы"
 
-#: transports/RDP/rdp_base.py:121
+#: transports/RDP/rdp_base.py:129
 msgid "Multiple monitors"
 msgstr "Несколько мониторов"
 
-#: transports/RDP/rdp_base.py:121
+#: transports/RDP/rdp_base.py:129
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -5444,76 +5444,76 @@ msgstr ""
 "Если этот флажок установлен, все клиентские мониторы будут использоваться "
 "для отображения (работает только на клиентах Windows)"
 
-#: transports/RDP/rdp_base.py:123
+#: transports/RDP/rdp_base.py:131
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Если флажок установлен, разрешается сглаживание шрифтов"
 
-#: transports/RDP/rdp_base.py:124
+#: transports/RDP/rdp_base.py:132
 msgid "Connection Bar"
 msgstr "Панель подключений"
 
-#: transports/RDP/rdp_base.py:124
+#: transports/RDP/rdp_base.py:132
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Если флажок установлен, панель подключений будет показан (только на Windows "
 "клиентов)"
 
-#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
 msgid "Multimedia sync"
 msgstr "Мультимедийная синхронизация"
 
-#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Если отмечено. Клиент Linux будет использовать мультимедийный параметр для "
 "xfreerdp"
 
-#: transports/RDP/rdp_base.py:127 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
 msgid "Use Alsa"
 msgstr "Использовать Alsa"
 
-#: transports/RDP/rdp_base.py:127 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Если флажок установлен, клиент Linux попытается использовать ALSA, иначе "
 "будет использоваться Pulse"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
 #: transports/X2GO/x2go_base.py:125
 msgid "Redirect home folder"
 msgstr "Перенаправить домашнюю папку"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
 "Если флажок установлен, клиент Linux попытается перенаправить домашний "
 "каталог"
 
-#: transports/RDP/rdp_base.py:129 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
 msgid "Printer string"
 msgstr "Строка принтера"
 
-#: transports/RDP/rdp_base.py:129 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Если принтер установлен, строка принтера, используемая с клиентом xfreerdp"
 
-#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
 msgid "Smartcard string"
 msgstr "Строка Smartcard"
 
-#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Если проверена смарт-карта, строка смарт-карты, используемая с клиентом "
 "freerdp"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
 msgid "Custom parameters"
 msgstr "Пользовательские параметры"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5797,7 +5797,7 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Неверные данные"
 
-#: web/util/configjs.py:127
+#: web/util/configjs.py:128
 msgid "Access limited by calendar"
 msgstr "Доступ ограничен календарем"
 
@@ -5921,7 +5921,7 @@ msgstr ""
 "Эта услуга будет заменена новой версией. Закройте сеанс до {} и сохраните "
 "всю свою работу, чтобы не потерять ее."
 
-#: web/views/auth.py:130
+#: web/views/auth.py:150
 msgid "Authenticator does not provide information"
 msgstr "Аутентификатор не предоставляет информацию"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-12 17:13+0200\n"
+"POT-Creation-Date: 2020-06-23 14:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1648,7 +1648,7 @@ msgstr ""
 #: static/modern/translations-fakejs.js:61
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
-"UDS plugin installed"
+"UDS Client installed"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:62
@@ -1656,7 +1656,7 @@ msgid "You can obtain it from the"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:63
-msgid "UDS Plugin download page"
+msgid "UDS Client download page"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:65

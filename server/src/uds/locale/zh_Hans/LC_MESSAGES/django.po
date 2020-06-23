@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-12 17:13+0200\n"
-"PO-Revision-Date: 2020-06-10 14:41+0000\n"
+"POT-Creation-Date: 2020-06-23 14:07+0200\n"
+"PO-Revision-Date: 2020-06-12 15:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -947,7 +947,7 @@ msgstr "目前的用户"
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:95
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
 #: transports/NX/nxtunneltransport.py:77
-#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
+#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:67
 #: transports/RGS_enterprise/rgs.py:45
 #: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:68
 #: transports/X2GO/x2go_base.py:69 web/forms/LoginForm.py:42
@@ -1090,7 +1090,7 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:96
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
-#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
+#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:68
 #: transports/RGS_enterprise/rgs.py:46
 #: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:74
 #: web/forms/LoginForm.py:43
@@ -1146,7 +1146,7 @@ msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:338
 #: auths/ActiveDirectory_enterprise/authenticator.py:387
-#: auths/AzureAD_enterprise/azure_ad.py:224
+#: auths/AzureAD_enterprise/azure_ad.py:225
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
 #: auths/RegexLdap/authenticator.py:313 auths/RegexLdap/authenticator.py:344
@@ -1233,17 +1233,17 @@ msgstr "打回来"
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr "回调网址（由UDS填写，仅在必要时修复此问题！）"
 
-#: auths/AzureAD_enterprise/azure_ad.py:236
-#: auths/AzureAD_enterprise/azure_ad.py:260
-#: auths/AzureAD_enterprise/azure_ad.py:272
+#: auths/AzureAD_enterprise/azure_ad.py:237
+#: auths/AzureAD_enterprise/azure_ad.py:261
+#: auths/AzureAD_enterprise/azure_ad.py:273
 msgid "Authenticator exception:"
 msgstr "验证者例外："
 
-#: auths/AzureAD_enterprise/azure_ad.py:307 core/util/ldaputil.py:48
+#: auths/AzureAD_enterprise/azure_ad.py:308 core/util/ldaputil.py:48
 msgid "Connection error: "
 msgstr "连接错误："
 
-#: auths/AzureAD_enterprise/azure_ad.py:308
+#: auths/AzureAD_enterprise/azure_ad.py:309
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "连接参数似乎是正确的，测试成功执行"
 
@@ -2315,7 +2315,7 @@ msgstr "Os Manager用于控制带域的Windows机器。"
 #: services/OpenStack/provider.py:101 services/OpenStack/provider_legacy.py:108
 #: transports/HTML5RDP/html5rdp.py:78
 #: transports/HTML5RDS_enterprise/html5rds.py:80
-#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:62
+#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:70
 #: transports/RDS_enterprise/rds_base.py:45 transports/RGS_enterprise/rgs.py:47
 #: transports/RGS_enterprise/rgstunnel.py:59
 msgid "Domain"
@@ -4711,7 +4711,7 @@ msgstr "隧道服务器的主机（如果需要，使用http / https＆port）�
 #: transports/HTML5RDP/html5rdp.py:74
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
-#: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RDP/rdp_base.py:66 transports/RDS_enterprise/rds_base.py:43
 #: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56
 msgid "Empty creds"
@@ -4720,7 +4720,7 @@ msgstr "空的信誉"
 #: transports/HTML5RDP/html5rdp.py:74
 #: transports/HTML5RDS_enterprise/html5rds.py:78
 #: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:76
-#: transports/RDP/rdp_base.py:58 transports/RDS_enterprise/rds_base.py:43
+#: transports/RDP/rdp_base.py:66 transports/RDS_enterprise/rds_base.py:43
 #: transports/RGS_enterprise/rgs.py:44
 #: transports/RGS_enterprise/rgstunnel.py:56 transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
@@ -4728,7 +4728,7 @@ msgstr "如果选中，则用于连接的凭据将为emtpy"
 
 #: transports/HTML5RDP/html5rdp.py:75 transports/NX/nxtransport.py:71
 #: transports/NX/nxtunneltransport.py:77
-#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:59
+#: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:67
 #: transports/RGS_enterprise/rgs.py:45
 #: transports/RGS_enterprise/rgstunnel.py:57 transports/SPICE/spice_base.py:69
 #: transports/X2GO/x2go_base.py:70
@@ -4737,14 +4737,14 @@ msgstr "如果不为空，则此用户名将始终用作凭据"
 
 #: transports/HTML5RDP/html5rdp.py:76 transports/NX/nxtransport.py:72
 #: transports/NX/nxtunneltransport.py:78
-#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:60
+#: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:68
 #: transports/RGS_enterprise/rgs.py:46
 #: transports/RGS_enterprise/rgstunnel.py:58 transports/SPICE/spice_base.py:75
 msgid "If not empty, this password will be always used as credential"
 msgstr "如果不为空，则此密码将始终用作凭证"
 
 #: transports/HTML5RDP/html5rdp.py:77
-#: transports/HTML5RDS_enterprise/html5rds.py:79 transports/RDP/rdp_base.py:61
+#: transports/HTML5RDS_enterprise/html5rds.py:79 transports/RDP/rdp_base.py:69
 #: transports/RDS_enterprise/rds_base.py:44
 msgid "Without Domain"
 msgstr "没有域名"
@@ -4758,7 +4758,7 @@ msgid ""
 msgstr "如果选中，则域部分将始终清空（例如，需要连接到xrdp）"
 
 #: transports/HTML5RDP/html5rdp.py:78
-#: transports/HTML5RDS_enterprise/html5rds.py:80 transports/RDP/rdp_base.py:62
+#: transports/HTML5RDS_enterprise/html5rds.py:80 transports/RDP/rdp_base.py:70
 #: transports/RDS_enterprise/rds_base.py:45 transports/RGS_enterprise/rgs.py:47
 #: transports/RGS_enterprise/rgstunnel.py:59
 msgid ""
@@ -4772,24 +4772,24 @@ msgid "Show wallpaper"
 msgstr "显示壁纸"
 
 #: transports/HTML5RDP/html5rdp.py:79
-#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:120
+#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:128
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
 msgstr "如果选中，壁纸和主题将显示在机器上（更好的用户体验，更多带宽）"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:122
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
 msgid "Allow Desk.Comp."
 msgstr "允许Desk.Comp。"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:122
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
 msgid "If checked, desktop composition will be allowed"
 msgstr "如果选中，则允许桌面合成"
 
 #: transports/HTML5RDP/html5rdp.py:81
-#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:123
+#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:131
 #: transports/RDS_enterprise/rds_base.py:85
 msgid "Font Smoothing"
 msgstr "字体平滑"
@@ -5115,168 +5115,168 @@ msgstr "RDP"
 msgid "RDP Protocol. Direct connection."
 msgstr "RDP协议。直接连接。"
 
-#: transports/RDP/rdp_base.py:61
+#: transports/RDP/rdp_base.py:69
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
 msgstr "如果选中，域部分将始终清空（例如，需要连接到xrdp）"
 
-#: transports/RDP/rdp_base.py:64 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:72 transports/RDS_enterprise/rds_base.py:46
 msgid "Allow Smartcards"
 msgstr "允许智能卡"
 
-#: transports/RDP/rdp_base.py:64 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:72 transports/RDS_enterprise/rds_base.py:46
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "如果选中，此传输将允许使用智能卡"
 
-#: transports/RDP/rdp_base.py:65 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 msgid "Allow Printers"
 msgstr "允许打印机"
 
-#: transports/RDP/rdp_base.py:65 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 msgid "If checked, this transport will allow the use of user printers"
 msgstr "如果选中，则此传输将允许使用用户打印机"
 
-#: transports/RDP/rdp_base.py:67 transports/RDS_enterprise/rds_base.py:49
+#: transports/RDP/rdp_base.py:75 transports/RDS_enterprise/rds_base.py:49
 msgid "Local drives policy"
 msgstr "本地驱动器策略"
 
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:51
+#: transports/RDP/rdp_base.py:77 transports/RDS_enterprise/rds_base.py:51
 msgid "Local drives redirection policy"
 msgstr "本地驱动器重定向策略"
 
-#: transports/RDP/rdp_base.py:79 transports/RDS_enterprise/rds_base.py:61
+#: transports/RDP/rdp_base.py:87 transports/RDS_enterprise/rds_base.py:61
 msgid "Force drives"
 msgstr "强制驱动"
 
-#: transports/RDP/rdp_base.py:81 transports/RDS_enterprise/rds_base.py:63
+#: transports/RDP/rdp_base.py:89 transports/RDS_enterprise/rds_base.py:63
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
 msgstr ""
 "使用逗号分隔的值，例如“ C：，D：”。如果不允许使用驱动器策略，则将忽略该策略"
 
-#: transports/RDP/rdp_base.py:85 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:93 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Serials"
 msgstr "允许序列号"
 
-#: transports/RDP/rdp_base.py:85 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:93 transports/RDS_enterprise/rds_base.py:67
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "如果选中，则此传输将允许使用用户串行端口"
 
-#: transports/RDP/rdp_base.py:86 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:94 transports/RDS_enterprise/rds_base.py:68
 msgid "Enable clipboard"
 msgstr "启用剪贴板"
 
-#: transports/RDP/rdp_base.py:86 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:94 transports/RDS_enterprise/rds_base.py:68
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "如果选中，则允许复制粘贴功能"
 
-#: transports/RDP/rdp_base.py:87 transports/X2GO/x2go_base.py:117
+#: transports/RDP/rdp_base.py:95 transports/X2GO/x2go_base.py:117
 msgid "Enable sound"
 msgstr "启用声音"
 
-#: transports/RDP/rdp_base.py:87
+#: transports/RDP/rdp_base.py:95
 msgid "If checked, sound will be redirected."
 msgstr "如果选中，则会重定向声音。"
 
-#: transports/RDP/rdp_base.py:88 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
 msgid "Credssp Support"
 msgstr "Credssp支持"
 
-#: transports/RDP/rdp_base.py:88 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "如果选中，将启用凭据提供程序支持）"
 
-#: transports/RDP/rdp_base.py:91
+#: transports/RDP/rdp_base.py:99
 msgid "Screen Size"
 msgstr "屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:93
+#: transports/RDP/rdp_base.py:101
 msgid "Screen size for this transport"
 msgstr "此运输的屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:107 transports/RDS_enterprise/rds_base.py:72
+#: transports/RDP/rdp_base.py:115 transports/RDS_enterprise/rds_base.py:72
 msgid "Color depth"
 msgstr "颜色深度"
 
-#: transports/RDP/rdp_base.py:109 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:117 transports/RDS_enterprise/rds_base.py:74
 msgid "Color depth for this connection"
 msgstr "此连接的颜色深度"
 
-#: transports/RDP/rdp_base.py:120
+#: transports/RDP/rdp_base.py:128
 msgid "Wallpaper/theme"
 msgstr "壁纸/主题"
 
-#: transports/RDP/rdp_base.py:121
+#: transports/RDP/rdp_base.py:129
 msgid "Multiple monitors"
 msgstr "多个显示器"
 
-#: transports/RDP/rdp_base.py:121
+#: transports/RDP/rdp_base.py:129
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr "如果选中，则将使用所有客户端监视器进行显示（仅适用于Windows客户端）"
 
-#: transports/RDP/rdp_base.py:123
+#: transports/RDP/rdp_base.py:131
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "如果选中，则允许字体平滑"
 
-#: transports/RDP/rdp_base.py:124
+#: transports/RDP/rdp_base.py:132
 msgid "Connection Bar"
 msgstr "连接栏"
 
-#: transports/RDP/rdp_base.py:124
+#: transports/RDP/rdp_base.py:132
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "如果选中，将显示连接栏（仅在Windows客户端上）"
 
-#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
 msgid "Multimedia sync"
 msgstr "多媒体同步"
 
-#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr "如果选中。 Linux客户端将使用xfreerdp的多媒体参数"
 
-#: transports/RDP/rdp_base.py:127 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
 msgid "Use Alsa"
 msgstr "使用Alsa"
 
-#: transports/RDP/rdp_base.py:127 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr "如果选中，Linux客户端将尝试使用ALSA，否则将使用Pulse"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
 #: transports/X2GO/x2go_base.py:125
 msgid "Redirect home folder"
 msgstr "重定向主文件夹"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr "如果选中，Linux客户端将尝试重定向/ home本地文件夹"
 
-#: transports/RDP/rdp_base.py:129 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
 msgid "Printer string"
 msgstr "打印机字符串"
 
-#: transports/RDP/rdp_base.py:129 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "如果选中打印机，则打印机字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
 msgid "Smartcard string"
 msgstr "智能卡字符串"
 
-#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr "如果选中智能卡，则智能卡字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
 msgid "Custom parameters"
 msgstr "自定义参数"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5548,7 +5548,7 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:127
+#: web/util/configjs.py:128
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
@@ -5662,7 +5662,7 @@ msgid ""
 "session before {} and save all your work to avoid loosing it."
 msgstr "该服务即将被新版本取代。请在{}之前关闭会话并保存所有工作以避免丢失。"
 
-#: web/views/auth.py:130
+#: web/views/auth.py:150
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
 
