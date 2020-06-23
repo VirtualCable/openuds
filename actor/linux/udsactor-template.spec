@@ -34,8 +34,8 @@ make DESTDIR=$RPM_BUILD_ROOT DISTRO=rh clean
 cd $curdir
 
 
-# %post
-# systemctl enable udsactor.service > /dev/null 2>&1
+%post
+systemctl enable udsactor.service > /dev/null 2>&1
 
 %preun
 systemctl disable udsactor.service > /dev/null 2>&1
@@ -57,7 +57,7 @@ This package provides the required components to allow this machine to work on a
 %defattr(-,root,root)
 /etc/udsactor
 /etc/xdg/autostart/UDSActorTool.desktop
-/etc/system.d/system/udsactor.service
+/etc/systemd/system/udsactor.service
 /usr/bin/UDSActorTool-startup
 /usr/bin/udsactor
 /usr/bin/udsvapp
