@@ -51,6 +51,7 @@ gettext("Authenticator");
 gettext("Login");
 gettext("UDS Client");
 gettext("Download UDS client for your platform");
+gettext("Legacy clients are only provided for old operating system support. Try to avoid them.");
 gettext("You can access UDS Open Source code at");
 gettext("UDS has been developed using these components:");
 gettext("If you find that we missed any component, please let us know");
@@ -62,5 +63,7 @@ gettext("If the service does not launchs automatically, probably you dont have t
 gettext("You can obtain it from the");
 gettext("UDS Client download page");
 gettext("Downloads");
+gettext("Always download the UDS actor matching your platform");
+gettext("Legacy actors are only provided for old operating system support. Try to avoid them.");
 gettext("An error has occurred");
 gettext("Return");
