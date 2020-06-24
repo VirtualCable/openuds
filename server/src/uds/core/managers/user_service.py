@@ -531,6 +531,9 @@ class UserServiceManager:
 
         logger.debug('Found service: %s', userService)
 
+        if userService and userService.state == State.ERROR:
+            return None
+
         return userService
 
     def getService( # pylint: disable=too-many-locals, too-many-branches, too-many-statements
@@ -557,7 +560,7 @@ class UserServiceManager:
         userService = self.locateUserService(user, idService, create=True)
 
         if not userService:
-            raise InvalidServiceException(_('The requested service is not available'))
+            raise InvalidServiceException(_('Invalid service. The service is not available at this moment. Please, try later'))
 
         # Early log of "access try" so we can imagine what is going on
         userService.setConnectionSource(srcIp, clientHostname or srcIp)
