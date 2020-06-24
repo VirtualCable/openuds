@@ -155,7 +155,7 @@ class UsageByPoolCSV(UsageByPool):
 
         reportData = self.getData()[0]
 
-        writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds'), ugettext('Pool'), ugettext('Duration')])
+        writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds'), ugettext('Pool'), ugettext('Origin')])
 
         for v in reportData:
             writer.writerow([v['date'], v['name'], v['time'], v['pool_name'], v['origin']])
