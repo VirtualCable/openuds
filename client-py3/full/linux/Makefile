@@ -43,7 +43,9 @@ ifeq ($(DISTRO),targz)
 	tar czvf ../udsclient-$(VERSION).tar.gz -C $(DESTDIR) .
 endif
 
-	
+ifeq ($(DISTRO),rh)
+endif
+
 	# chmod 0755 $(BINDIR)/udsclient
 uninstall:
 	rm -rf $(LIBDIR)

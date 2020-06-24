@@ -1,5 +1,5 @@
 %define _topdir %(echo $PWD)/rpm
-%define name udsclient
+%define name udsclient3
 %define version 0.0.0
 %define release 1
 %define buildroot %{_topdir}/%{name}-%{version}-%{release}-root
@@ -28,6 +28,7 @@ cd $curdir
 
 %post
 /usr/bin/update-desktop-database
+if [ ! -d /media ]; then mkdir /media; echo "/media created for compatibility"; fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
