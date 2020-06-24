@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-24 00:52+0200\n"
+"POT-Creation-Date: 2020-06-24 05:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2144,12 +2144,14 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:56
 msgid ""
-"UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
-"2.7)</b>"
+"UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires "
+"python >= 3.6)</b>"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:63
-msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
+msgid ""
+"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+"<b>(Requires python >= 3.6)</b>"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:70
@@ -2160,8 +2162,14 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:77
 msgid ""
-"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
-"<b>(Requires python >= 3.6)</b>"
+"<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines "
+"<b>(Requires python 2.7)</b>"
+msgstr ""
+
+#: osmanagers/LinuxOsManager/__init__.py:84
+msgid ""
+"<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python "
+"2.7)</b>"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
@@ -5522,41 +5530,44 @@ msgstr ""
 msgid "Access limited by calendar"
 msgstr ""
 
-#: web/util/configjs.py:163
+#: web/util/configjs.py:164
 msgid "Windows client"
 msgstr ""
 
-#: web/util/configjs.py:164
+#: web/util/configjs.py:165
 msgid "Mac OS X client"
 msgstr ""
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:166
 msgid "Debian based Linux client"
 msgstr ""
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:166 web/util/configjs.py:167 web/util/configjs.py:168
 msgid "(requires Python-3.6 or newer)"
 msgstr ""
 
-#: web/util/configjs.py:166
-msgid "Debian based Python 2.7 Linux client (legacy)"
-msgstr ""
-
-#: web/util/configjs.py:166 web/util/configjs.py:167 web/util/configjs.py:168
-#: web/util/configjs.py:169
-msgid "(requires Python-2.7)"
-msgstr ""
-
 #: web/util/configjs.py:167
-msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
+msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr ""
 
 #: web/util/configjs.py:168
-msgid "Suse based Linux client"
+msgid "Generic .tar.gz Linux client"
 msgstr ""
 
 #: web/util/configjs.py:169
-msgid "Generic .tar.gz Linux client"
+msgid "Legacy Debian based Python 2.7 Linux client"
+msgstr ""
+
+#: web/util/configjs.py:169 web/util/configjs.py:170 web/util/configjs.py:171
+msgid "(requires outdated Python-2.7)"
+msgstr ""
+
+#: web/util/configjs.py:170
+msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
+msgstr ""
+
+#: web/util/configjs.py:171
+msgid "Legacy OpenSuse based Linux client)"
 msgstr ""
 
 #: web/util/errors.py:73

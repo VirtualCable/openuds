@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-24 00:52+0200\n"
-"PO-Revision-Date: 2020-06-12 15:14+0000\n"
+"POT-Creation-Date: 2020-06-24 05:08+0200\n"
+"PO-Revision-Date: 2020-06-23 22:54+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -2251,17 +2251,23 @@ msgstr ""
 "3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:56
+#| msgid ""
+#| "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
+#| "2.7)</b>"
 msgid ""
-"UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
-"2.7)</b>"
+"UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires "
+"python >= 3.6)</b>"
 msgstr ""
-"UDS Actor für Centos, Fedora, RH, ... Linux-Maschinen <b>(Erfordert Python "
-"2.7)</b>"
+"UDS Actor für Centos, Fedora, RH, Suse, ... Linux-Maschinen <b>(Benötigt "
+"Python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:63
-msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
+msgid ""
+"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+"<b>(Requires python >= 3.6)</b>"
 msgstr ""
-"UDS Actor für openSUSE, ... Linux-Maschinen <b>(Erfordert Python 2.7)</b>"
+"UDS Actor für Debian-basierte Linux-Maschinen. Wird NUR für statische "
+"Maschinen verwendet. <b>(Benötigt Python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:70
 msgid ""
@@ -2272,12 +2278,26 @@ msgstr ""
 "<b>(Erfordert Python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:77
+#| msgid ""
+#| "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
+#| "2.7)</b>"
 msgid ""
-"UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
-"<b>(Requires python >= 3.6)</b>"
+"<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines "
+"<b>(Requires python 2.7)</b>"
 msgstr ""
-"UDS Actor für Debian-basierte Linux-Maschinen. Wird NUR für statische "
-"Maschinen verwendet. <b>(Benötigt Python&gt; = 3.6)</b>"
+"<b>Legacy</b> UDS Actor für Centos, Fedora, RH, ... Linux-Maschinen <b>("
+"Benötigt Python 2.7)</b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:84
+#| msgid ""
+#| "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines "
+#| "<b>(Requires python 2.7)</b>"
+msgid ""
+"<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python "
+"2.7)</b>"
+msgstr ""
+"<b>Legacy</b> UDS Actor für OpenSUSE, ... Linux-Computer <b>(Benötigt Python "
+"2.7)</b>"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
@@ -5776,7 +5796,6 @@ msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr "Zu öffnendes URL-Muster (dh https: // _ IP_ / test? User = _USER_"
 
 #: transports/URL/url_custom.py:86
-#| msgid "The server must be http or https"
 msgid "The url must be http or https"
 msgstr "Die URL muss http oder https sein"
 
@@ -5875,42 +5894,50 @@ msgstr "Ungültige Daten"
 msgid "Access limited by calendar"
 msgstr "Zugriff durch Kalender begrenzt"
 
-#: web/util/configjs.py:163
+#: web/util/configjs.py:164
 msgid "Windows client"
 msgstr "Windows-Client"
 
-#: web/util/configjs.py:164
+#: web/util/configjs.py:165
 msgid "Mac OS X client"
 msgstr "Mac OS X-Client"
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:166
 msgid "Debian based Linux client"
 msgstr "Debian-basierter Linux-Client"
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:166 web/util/configjs.py:167 web/util/configjs.py:168
 msgid "(requires Python-3.6 or newer)"
 msgstr "(erfordert Python-3.6 oder neuer)"
 
-#: web/util/configjs.py:166
-msgid "Debian based Python 2.7 Linux client (legacy)"
-msgstr "Debian-basierter Python 2.7 Linux-Client (Legacy)"
-
-#: web/util/configjs.py:166 web/util/configjs.py:167 web/util/configjs.py:168
-#: web/util/configjs.py:169
-msgid "(requires Python-2.7)"
-msgstr "(erfordert Python-2.7)"
-
 #: web/util/configjs.py:167
-msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
-msgstr "Red Hat-basierter Linux-Client (RH, Fedora, Centos, ...)"
+#| msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
+msgid "RPM based Linux client (Fedora, Suse, ...)"
+msgstr "RPM-basierter Linux-Client (Fedora, Suse, ...)"
 
 #: web/util/configjs.py:168
-msgid "Suse based Linux client"
-msgstr "Suse-basierter Linux-Client"
-
-#: web/util/configjs.py:169
 msgid "Generic .tar.gz Linux client"
 msgstr "Generischer .tar.gz Linux-Client"
+
+#: web/util/configjs.py:169
+#| msgid "Debian based Python 2.7 Linux client (legacy)"
+msgid "Legacy Debian based Python 2.7 Linux client"
+msgstr "Legacy Debian-basierter Python 2.7 Linux-Client"
+
+#: web/util/configjs.py:169 web/util/configjs.py:170 web/util/configjs.py:171
+#| msgid "(requires Python-2.7)"
+msgid "(requires outdated Python-2.7)"
+msgstr "(erfordert veraltetes Python-2.7)"
+
+#: web/util/configjs.py:170
+#| msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
+msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
+msgstr "Legacy RH-basierter Linux-Client (Fedora, Centos, Suse, ...)"
+
+#: web/util/configjs.py:171
+#| msgid "Suse based Linux client"
+msgid "Legacy OpenSuse based Linux client)"
+msgstr "Legacy OpenSuse-basierter Linux-Client)"
 
 #: web/util/errors.py:73
 msgid "Unknown error"
