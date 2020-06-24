@@ -158,14 +158,17 @@ def udsJs(request: 'HttpRequest') -> str:
         {
             'url': static('clients/' + url.format(version=CLIENT_VERSION)),
             'description': description,
-            'name': name
-        } for url, description, name in (
-            ('UDSClientSetup-{version}.exe', gettext('Windows client'), 'Windows'),
-            ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS'),
-            ('udsclient3_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux'),
-            ('udsclient_{version}_all.deb', gettext('Debian based Python 2.7 Linux client (legacy)') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
-            ('udsclient3-{version}-1.noarch.rpm', gettext('RPM based Linux client (Fedora, Centos, Suse, ...)') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux'),
-            ('udsclient-{version}.tar.gz', gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.6 or newer'), 'Linux')
+            'name': name,
+            'legacy': legacy,
+        } for url, description, name, legacy in (
+            ('UDSClientSetup-{version}.exe', gettext('Windows client'), 'Windows', False),
+            ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS', False),
+            ('udsclient3_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
+            ('udsclient3-{version}-1.noarch.rpm', gettext('RPM based Linux client (Fedora, Suse, ...)') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
+            ('udsclient3-{version}.tar.gz', gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
+            ('udsclient_{version}_all.deb', gettext('Legacy Debian based Python 2.7 Linux client') + ' ' + gettext('(requires outdated Python-2.7)'), 'Linux', True),
+            ('udsclient-{version}-1.noarch.rpm', gettext('Legacy RH based Linux client (Fedora, Centos, Suse, ...)') + ' ' + gettext('(requires outdated Python-2.7)'), 'Linux', True),
+            ('udsclient-opensuse-{version}-1.noarch.rpm', gettext('Legacy OpenSuse based Linux client)') + ' ' + gettext('(requires outdated Python-2.7)'), 'Linux', True),
         )
     ]
 

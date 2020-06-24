@@ -28,6 +28,7 @@ cd $curdir
 
 %post
 /usr/bin/update-desktop-database
+if [ ! -d /media ]; then mkdir /media; echo "/media created for compatibility"; fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
