@@ -13,15 +13,16 @@ cat udsactor-template.spec |
   sed -e s/"release 1"/"release ${RELEASE}"/g > udsactor-$VERSION.spec
   
 # Now fix dependencies for opensuse
-cat udsactor-template.spec | 
-  sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
-  sed -e s/"name udsactor"/"name udsactor-opensuse"/g |
-  sed -e s/"PyQt4"/"python-qt4"/g |
-  sed -e s/"libXScrnSaver"/"libXss1"/g > udsactor-opensuse-$VERSION.spec
+# Note that, although on opensuse the library is "libXss1" on newer,
+# the LibXscrnSaver is a "capability" and gets libXss1 installed
+# So right now, we only need 1 uds actor for both platforms.
+# cat udsactor-template.spec | 
+#   sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
+#   sed -e s/"name udsactor"/"name udsactor-opensuse"/g |
+#   sed -e s/"libXScrnSaver"/"libXss1"/g > udsactor-opensuse-$VERSION.spec
 
-
-# Right now, udsactor-xrdp-1.7.0.spec is not needed
-for pkg in udsactor-$VERSION.spec udsactor-opensuse-$VERSION.spec; do
+#for pkg in udsactor-$VERSION.spec udsactor-opensuse-$VERSION.spec; do
+for pkg in udsactor-$VERSION.spec; do
     
     rm -rf rpm
     for folder in SOURCES BUILD RPMS SPECS SRPMS; do
