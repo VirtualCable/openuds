@@ -40,7 +40,7 @@ install:
 
 ifeq ($(DISTRO),targz)
 	cp installer.sh $(DESTDIR)/install.sh
-	tar czvf ../udsclient-$(VERSION).tar.gz -C $(DESTDIR) .
+	tar czvf ../udsclient3-$(VERSION).tar.gz -C $(DESTDIR) .
 endif
 
 ifeq ($(DISTRO),rh)
