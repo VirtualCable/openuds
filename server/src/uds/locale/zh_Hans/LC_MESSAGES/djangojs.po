@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-24 05:08+0200\n"
+"POT-Creation-Date: 2020-06-25 13:55+0200\n"
 "PO-Revision-Date: 2020-06-23 12:08+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -19,7 +19,6 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:37
-#: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:7
 msgid "seconds"
 msgstr "秒"
@@ -1466,95 +1465,94 @@ msgstr "服务池"
 msgid "Enabled?"
 msgstr "启用？"
 
-#: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
-#: static/modern/translations-fakejs.js:18
-msgid "Errors found"
-msgstr "发现错误"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:3
+#: static/modern/translations-fakejs.js:3
 msgid "Launching service"
 msgstr "启动服务"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:4
+#: static/modern/translations-fakejs.js:4
 msgid "Please wait"
 msgstr "请耐心等待"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:5
+#: static/modern/translations-fakejs.js:5
 msgid ""
 "Remember that you will need the USD client on your platform to access the "
 "service"
 msgstr "请记住，您将需要平台上的USD客户才能访问该服务"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:6
+#: static/modern/translations-fakejs.js:6
 msgid "Error launching service"
 msgstr "启动服务时出错"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:10
-msgid "Launcher"
-msgstr "发射台"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:11
-msgid "Service is in maintenance and cannot be launched"
-msgstr "服务正在维护中，无法启动"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
-msgid "This service is currently not accesible due to schedule restrictions."
-msgstr "由于时间表限制，目前无法访问此服务。"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
-msgid "Release service: "
-msgstr "发布服务："
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:14
-msgid "Reset service: "
-msgstr "重置服务："
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
-msgid "Service released"
-msgstr "服务发布"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
-msgid "Service reseted"
-msgstr "服务重置"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
-msgid "Are you sure?"
-msgstr "你确定吗？"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:8
+#: static/modern/translations-fakejs.js:8
 msgid "Service is in maintenance"
 msgstr "服务正在维护中"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:19
-msgid "Warning"
-msgstr "警告"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:20
-msgid "Service is in maintenance and cannot be executed"
-msgstr "服务处于维护状态，无法执行"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:21
-msgid "Invalid error string"
-msgstr "错误字符串无效"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
-msgid "We use cookies to track usage and preferences"
-msgstr "我们使用cookie来跟踪使用情况和偏好"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
-msgid "I Understand"
-msgstr "我明白"
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:24
-msgid "Learn more"
-msgstr "学到更多"
 
 #: static/modern/translations-fakejs.js:9
 msgid "This service is currently not accessible due to schedule restrictions."
 msgstr "由于时间表限制，目前无法访问此服务。"
 
+#: static/modern/translations-fakejs.js:10
+msgid "Launcher"
+msgstr "发射台"
+
+#: static/modern/translations-fakejs.js:11
+msgid "Service is in maintenance and cannot be launched"
+msgstr "服务正在维护中，无法启动"
+
+#: static/modern/translations-fakejs.js:12
+msgid "This service is currently not accesible due to schedule restrictions."
+msgstr "由于时间表限制，目前无法访问此服务。"
+
+#: static/modern/translations-fakejs.js:13
+msgid "Release service: "
+msgstr "发布服务："
+
+#: static/modern/translations-fakejs.js:14
+msgid "Reset service: "
+msgstr "重置服务："
+
+#: static/modern/translations-fakejs.js:15
+msgid "Service released"
+msgstr "服务发布"
+
+#: static/modern/translations-fakejs.js:16
+msgid "Service reseted"
+msgstr "服务重置"
+
+#: static/modern/translations-fakejs.js:17
+msgid "Are you sure?"
+msgstr "你确定吗？"
+
+#: static/modern/translations-fakejs.js:18
+msgid "Errors found"
+msgstr "发现错误"
+
+#: static/modern/translations-fakejs.js:19
+msgid "Warning"
+msgstr "警告"
+
+#: static/modern/translations-fakejs.js:20
+msgid "Service is in maintenance and cannot be executed"
+msgstr "服务处于维护状态，无法执行"
+
+#: static/modern/translations-fakejs.js:21
+msgid "Invalid error string"
+msgstr "错误字符串无效"
+
+#: static/modern/translations-fakejs.js:22
+msgid "We use cookies to track usage and preferences"
+msgstr "我们使用cookie来跟踪使用情况和偏好"
+
+#: static/modern/translations-fakejs.js:23
+msgid "I Understand"
+msgstr "我明白"
+
+#: static/modern/translations-fakejs.js:24
+msgid "Learn more"
+msgstr "学到更多"
+
 #: static/modern/translations-fakejs.js:30
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:65
 msgid "Downloads"
 msgstr "下载"
 
@@ -1619,51 +1617,68 @@ msgid "Download UDS client for your platform"
 msgstr "下载适用于您平台的UDS客户端"
 
 #: static/modern/translations-fakejs.js:54
+msgid ""
+"Legacy clients are only provided for old operating system support. Try to "
+"avoid them."
+msgstr "仅向旧客户端提供旧操作系统支持。尽量避免它们。"
+
+#: static/modern/translations-fakejs.js:55
 msgid "You can access UDS Open Source code at"
 msgstr "您可以访问UDS开源代码"
 
-#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:56
 msgid "UDS has been developed using these components:"
 msgstr "UDS是使用以下组件开发的："
 
-#: static/modern/translations-fakejs.js:56
+#: static/modern/translations-fakejs.js:57
 msgid "If you find that we missed any component, please let us know"
 msgstr "如果您发现我们错过了任何组件，请告诉我们"
 
-#: static/modern/translations-fakejs.js:57
+#: static/modern/translations-fakejs.js:58
 msgid "UDS Service launcher"
 msgstr "UDS服务启动器"
 
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:59
 msgid "The service you have requested is being launched."
 msgstr "您请求的服务正在启动。"
 
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:60
 msgid "Please, note that reloading this page will not work."
 msgstr "请注意，重新加载此页面将不起作用。"
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:61
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "要重新启动服务，您必须从源头开始进行。"
 
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:62
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
 msgstr "如果该服务没有自动启动，则可能您没有安装UDS客户端"
 
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:63
 msgid "You can obtain it from the"
 msgstr "您可以从"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:64
 msgid "UDS Client download page"
 msgstr "UDS客户端下载页面"
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:66
+#| msgid "Download UDS client for your platform"
+msgid "Always download the UDS actor matching your platform"
+msgstr "始终下载与您的平台匹配的UDS actor"
+
+#: static/modern/translations-fakejs.js:67
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+msgstr "传统参与者仅提供旧操作系统支持。尽量避免它们。"
+
+#: static/modern/translations-fakejs.js:68
 msgid "An error has occurred"
 msgstr "发生了错误"
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:69
 msgid "Return"
 msgstr "返回"

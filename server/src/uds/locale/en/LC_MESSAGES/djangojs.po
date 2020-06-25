@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-24 05:08+0200\n"
+"POT-Creation-Date: 2020-06-25 13:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:37
-#: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:7
 msgid "seconds"
 msgstr ""
@@ -1465,95 +1464,94 @@ msgstr ""
 msgid "Enabled?"
 msgstr ""
 
-#: static/modern/main-es2015.js:1 static/modern/main-es5.js:1
-#: static/modern/translations-fakejs.js:18
-msgid "Errors found"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:3
+#: static/modern/translations-fakejs.js:3
 msgid "Launching service"
 msgstr ""
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:4
+#: static/modern/translations-fakejs.js:4
 msgid "Please wait"
 msgstr ""
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:5
+#: static/modern/translations-fakejs.js:5
 msgid ""
 "Remember that you will need the USD client on your platform to access the "
 "service"
 msgstr ""
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:6
+#: static/modern/translations-fakejs.js:6
 msgid "Error launching service"
 msgstr ""
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:10
-msgid "Launcher"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:11
-msgid "Service is in maintenance and cannot be launched"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
-msgid "This service is currently not accesible due to schedule restrictions."
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
-msgid "Release service: "
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:14
-msgid "Reset service: "
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
-msgid "Service released"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
-msgid "Service reseted"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
-msgid "Are you sure?"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:8
+#: static/modern/translations-fakejs.js:8
 msgid "Service is in maintenance"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:19
-msgid "Warning"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:20
-msgid "Service is in maintenance and cannot be executed"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:21
-msgid "Invalid error string"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
-msgid "We use cookies to track usage and preferences"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
-msgid "I Understand"
-msgstr ""
-
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:24
-msgid "Learn more"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:9
 msgid "This service is currently not accessible due to schedule restrictions."
 msgstr ""
 
+#: static/modern/translations-fakejs.js:10
+msgid "Launcher"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:11
+msgid "Service is in maintenance and cannot be launched"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:12
+msgid "This service is currently not accesible due to schedule restrictions."
+msgstr ""
+
+#: static/modern/translations-fakejs.js:13
+msgid "Release service: "
+msgstr ""
+
+#: static/modern/translations-fakejs.js:14
+msgid "Reset service: "
+msgstr ""
+
+#: static/modern/translations-fakejs.js:15
+msgid "Service released"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:16
+msgid "Service reseted"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:17
+msgid "Are you sure?"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:18
+msgid "Errors found"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:19
+msgid "Warning"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:20
+msgid "Service is in maintenance and cannot be executed"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:21
+msgid "Invalid error string"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:22
+msgid "We use cookies to track usage and preferences"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:23
+msgid "I Understand"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:24
+msgid "Learn more"
+msgstr ""
+
 #: static/modern/translations-fakejs.js:30
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:65
 msgid "Downloads"
 msgstr ""
 
@@ -1618,51 +1616,67 @@ msgid "Download UDS client for your platform"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:54
-msgid "You can access UDS Open Source code at"
+msgid ""
+"Legacy clients are only provided for old operating system support. Try to "
+"avoid them."
 msgstr ""
 
 #: static/modern/translations-fakejs.js:55
-msgid "UDS has been developed using these components:"
+msgid "You can access UDS Open Source code at"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:56
-msgid "If you find that we missed any component, please let us know"
+msgid "UDS has been developed using these components:"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:57
-msgid "UDS Service launcher"
+msgid "If you find that we missed any component, please let us know"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:58
-msgid "The service you have requested is being launched."
+msgid "UDS Service launcher"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:59
-msgid "Please, note that reloading this page will not work."
+msgid "The service you have requested is being launched."
 msgstr ""
 
 #: static/modern/translations-fakejs.js:60
-msgid "To relaunch service, you will have to do it from origin."
+msgid "Please, note that reloading this page will not work."
 msgstr ""
 
 #: static/modern/translations-fakejs.js:61
+msgid "To relaunch service, you will have to do it from origin."
+msgstr ""
+
+#: static/modern/translations-fakejs.js:62
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
 msgstr ""
 
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:63
 msgid "You can obtain it from the"
 msgstr ""
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:64
 msgid "UDS Client download page"
 msgstr ""
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:66
+msgid "Always download the UDS actor matching your platform"
+msgstr ""
+
+#: static/modern/translations-fakejs.js:67
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+msgstr ""
+
+#: static/modern/translations-fakejs.js:68
 msgid "An error has occurred"
 msgstr ""
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:69
 msgid "Return"
 msgstr ""

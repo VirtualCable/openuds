@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-24 05:08+0200\n"
-"PO-Revision-Date: 2020-06-23 22:54+0000\n"
+"POT-Creation-Date: 2020-06-25 13:55+0200\n"
+"PO-Revision-Date: 2020-06-24 03:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -128,7 +128,7 @@ msgstr "Datum"
 msgid "Issued by"
 msgstr "Herausgegeben von"
 
-#: REST/methods/actor_token.py:56
+#: REST/methods/actor_token.py:56 reports/stats/usage_by_pool.py:158
 #: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
 msgstr "Ursprung"
@@ -229,7 +229,7 @@ msgstr "Wiederholt"
 msgid "Every"
 msgstr "Jeden"
 
-#: REST/methods/calendarrules.py:103 reports/stats/usage_by_pool.py:158
+#: REST/methods/calendarrules.py:103
 msgid "Duration"
 msgstr "Dauer"
 
@@ -666,12 +666,12 @@ msgstr "Proxy für Dienste hinter einer Firewall"
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: REST/methods/services.py:308 REST/methods/users_groups.py:217
+#: REST/methods/services.py:309 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "With errors"
 msgstr "Mit Fehlern"
 
-#: REST/methods/services.py:308 REST/methods/users_groups.py:217
+#: REST/methods/services.py:309 REST/methods/users_groups.py:217
 #: REST/methods/users_groups.py:384
 msgid "Ok"
 msgstr "OK"
@@ -1811,15 +1811,19 @@ msgstr ""
 msgid "The requested service is restrained"
 msgstr "Der angeforderte Service ist eingeschränkt"
 
-#: core/managers/user_service.py:560
-msgid "The requested service is not available"
-msgstr "Der angeforderte Dienst ist nicht verfügbar"
+#: core/managers/user_service.py:563 web/util/errors.py:77
+msgid ""
+"Invalid service. The service is not available at this moment. Please, try "
+"later"
+msgstr ""
+"Ungültiger Dienst Der Service ist momentan nicht verfügbar. Bitte versuch es "
+"später"
 
-#: core/managers/user_service.py:590
+#: core/managers/user_service.py:593
 msgid "The requested transport {} is not valid for {}"
 msgstr "Der angeforderte Transport {} ist für {} nicht gültig"
 
-#: core/managers/user_service.py:714
+#: core/managers/user_service.py:717
 msgid "The service is not accessible from this device"
 msgstr "Der Dienst ist von diesem Gerät nicht erreichbar"
 
@@ -2251,9 +2255,6 @@ msgstr ""
 "3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:56
-#| msgid ""
-#| "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
-#| "2.7)</b>"
 msgid ""
 "UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires "
 "python >= 3.6)</b>"
@@ -2278,20 +2279,14 @@ msgstr ""
 "<b>(Erfordert Python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:77
-#| msgid ""
-#| "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
-#| "2.7)</b>"
 msgid ""
 "<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines "
 "<b>(Requires python 2.7)</b>"
 msgstr ""
-"<b>Legacy</b> UDS Actor für Centos, Fedora, RH, ... Linux-Maschinen <b>("
-"Benötigt Python 2.7)</b>"
+"<b>Legacy</b> UDS Actor für Centos, Fedora, RH, ... Linux-Maschinen "
+"<b>(Benötigt Python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:84
-#| msgid ""
-#| "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines "
-#| "<b>(Requires python 2.7)</b>"
 msgid ""
 "<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python "
 "2.7)</b>"
@@ -5031,7 +5026,7 @@ msgid "Show wallpaper"
 msgstr "Hintergrundbild anzeigen"
 
 #: transports/HTML5RDP/html5rdp.py:79
-#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:128
+#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:129
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -5040,17 +5035,17 @@ msgstr ""
 "auf dem Computer angezeigt (bessere Benutzererfahrung, mehr Bandbreite)."
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:131
 msgid "Allow Desk.Comp."
 msgstr "Erlauben Sie Desk.Comp."
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:130
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:131
 msgid "If checked, desktop composition will be allowed"
 msgstr "Wenn diese Option aktiviert ist, ist die Desktop-Erstellung zulässig"
 
 #: transports/HTML5RDP/html5rdp.py:81
-#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:131
+#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:132
 #: transports/RDS_enterprise/rds_base.py:85
 msgid "Font Smoothing"
 msgstr "Schriftglättung"
@@ -5367,7 +5362,7 @@ msgstr ""
 "Dienst ausgeführt wird, bevor er dem Benutzer zugewiesen wird. (benutze "
 "HOST: PORT-Format)"
 
-#: transports/NX/nxtunneltransport.py:160 transports/RDP/rdptunnel.py:109
+#: transports/NX/nxtunneltransport.py:160 transports/RDP/rdptunnel.py:110
 #: transports/RDS_enterprise/rdstunnel.py:96
 #: transports/RGS_enterprise/rgstunnel.py:96
 #: transports/SPICE/spice_tunnel.py:79 transports/X2GO/x2go_tunnel.py:86
@@ -5472,41 +5467,52 @@ msgstr "Sound einschalten"
 msgid "If checked, sound will be redirected."
 msgstr "Wenn aktiviert, wird der Ton umgeleitet."
 
-#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:96
+#| msgid "Enable clipboard"
+msgid "Enable webcam"
+msgstr "Webcam aktivieren"
+
+#: transports/RDP/rdp_base.py:96
+#| msgid "If checked, the Mic will be redirected."
+msgid "If checked, webcam will be redirected (ONLY Windows)."
+msgstr ""
+"Wenn diese Option aktiviert ist, wird die Webcam umgeleitet (NUR Windows)."
+
+#: transports/RDP/rdp_base.py:97 transports/RDS_enterprise/rds_base.py:69
 msgid "Credssp Support"
 msgstr "Credssp-Unterstützung"
 
-#: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:97 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr ""
 "Wenn diese Option aktiviert ist, wird der Provider-Support für "
 "Anmeldeinformationen aktiviert."
 
-#: transports/RDP/rdp_base.py:99
+#: transports/RDP/rdp_base.py:100
 msgid "Screen Size"
 msgstr "Bildschirmgröße"
 
-#: transports/RDP/rdp_base.py:101
+#: transports/RDP/rdp_base.py:102
 msgid "Screen size for this transport"
 msgstr "Bildschirmgröße für diesen Transport"
 
-#: transports/RDP/rdp_base.py:115 transports/RDS_enterprise/rds_base.py:72
+#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:72
 msgid "Color depth"
 msgstr "Farbtiefe"
 
-#: transports/RDP/rdp_base.py:117 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:74
 msgid "Color depth for this connection"
 msgstr "Farbtiefe für diese Verbindung"
 
-#: transports/RDP/rdp_base.py:128
+#: transports/RDP/rdp_base.py:129
 msgid "Wallpaper/theme"
 msgstr "Wallpaper / Thema"
 
-#: transports/RDP/rdp_base.py:129
+#: transports/RDP/rdp_base.py:130
 msgid "Multiple monitors"
 msgstr "Mehrere Monitore"
 
-#: transports/RDP/rdp_base.py:129
+#: transports/RDP/rdp_base.py:130
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -5514,76 +5520,76 @@ msgstr ""
 "Wenn diese Option aktiviert ist, werden alle Client-Monitore für die Anzeige "
 "verwendet (funktioniert nur auf Windows-Clients)."
 
-#: transports/RDP/rdp_base.py:131
+#: transports/RDP/rdp_base.py:132
 msgid "If checked, fonts smoothing will be allowed"
 msgstr ""
 "Wenn diese Option aktiviert ist, wird das Glätten von Schriftarten zugelassen"
 
-#: transports/RDP/rdp_base.py:132
+#: transports/RDP/rdp_base.py:133
 msgid "Connection Bar"
 msgstr "Verbindungsleiste"
 
-#: transports/RDP/rdp_base.py:132
+#: transports/RDP/rdp_base.py:133
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Wenn aktiviert, wird die Verbindungsleiste angezeigt (nur bei Windows-"
 "Clients)"
 
-#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:87
 msgid "Multimedia sync"
 msgstr "Multimedia-Synchronisierung"
 
-#: transports/RDP/rdp_base.py:134 transports/RDS_enterprise/rds_base.py:87
+#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:87
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr "Wenn geprüft Linux-Client verwendet Multimedia-Parameter für xfreerdp"
 
-#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:88
 msgid "Use Alsa"
 msgstr "Verwenden Sie Alsa"
 
-#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:88
+#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:88
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Wenn diese Option aktiviert ist, versucht der Linux-Client, ALSA zu "
 "verwenden. Andernfalls wird Pulse verwendet"
 
-#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:89
 #: transports/X2GO/x2go_base.py:125
 msgid "Redirect home folder"
 msgstr "Heimatordner umleiten"
 
-#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:89
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
 "Wenn diese Option aktiviert ist, versucht der Linux-Client, den lokalen "
 "Ordner / home umzuleiten"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:90
 msgid "Printer string"
 msgstr "Druckerzeichenfolge"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:90
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Wenn der Drucker markiert ist, wird die mit dem xfreerdp-Client verwendete "
 "Druckerzeichenfolge verwendet"
 
-#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:91
 msgid "Smartcard string"
 msgstr "Smartcard-Zeichenfolge"
 
-#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:91
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Wenn die Smartcard markiert ist, die mit dem xfreerdp-Client verwendete "
 "Smartcard-Zeichenfolge"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:140 transports/RDS_enterprise/rds_base.py:92
 msgid "Custom parameters"
 msgstr "Benutzerdefinierte Parameter"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:140 transports/RDS_enterprise/rds_base.py:92
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5911,7 +5917,6 @@ msgid "(requires Python-3.6 or newer)"
 msgstr "(erfordert Python-3.6 oder neuer)"
 
 #: web/util/configjs.py:167
-#| msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "RPM-basierter Linux-Client (Fedora, Suse, ...)"
 
@@ -5920,36 +5925,24 @@ msgid "Generic .tar.gz Linux client"
 msgstr "Generischer .tar.gz Linux-Client"
 
 #: web/util/configjs.py:169
-#| msgid "Debian based Python 2.7 Linux client (legacy)"
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Legacy Debian-basierter Python 2.7 Linux-Client"
 
 #: web/util/configjs.py:169 web/util/configjs.py:170 web/util/configjs.py:171
-#| msgid "(requires Python-2.7)"
 msgid "(requires outdated Python-2.7)"
 msgstr "(erfordert veraltetes Python-2.7)"
 
 #: web/util/configjs.py:170
-#| msgid "Red Hat based Linux client (RH, Fedora, Centos, ...)"
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Legacy RH-basierter Linux-Client (Fedora, Centos, Suse, ...)"
 
 #: web/util/configjs.py:171
-#| msgid "Suse based Linux client"
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Legacy OpenSuse-basierter Linux-Client)"
 
 #: web/util/errors.py:73
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
-
-#: web/util/errors.py:77
-msgid ""
-"Invalid service. The service is not available at this moment. Please, try "
-"later"
-msgstr ""
-"Ungültiger Dienst Der Service ist momentan nicht verfügbar. Bitte versuch es "
-"später"
 
 #: web/util/errors.py:78
 msgid "Maximum services limit reached. Please, contact administrator"
