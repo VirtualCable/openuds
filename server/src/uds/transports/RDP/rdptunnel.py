@@ -85,6 +85,7 @@ class TRDPTransport(BaseRDPTransport):
     allowSerials = BaseRDPTransport.allowSerials
     allowClipboard = BaseRDPTransport.allowClipboard
     allowAudio = BaseRDPTransport.allowAudio
+    allowWebcam = BaseRDPTransport.allowWebcam
 
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
@@ -149,6 +150,7 @@ class TRDPTransport(BaseRDPTransport):
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()
         r.redirectAudio = self.allowAudio.isTrue()
+        r.redirectWebcam = self.allowWebcam.isTrue()
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()

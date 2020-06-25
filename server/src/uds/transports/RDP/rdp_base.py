@@ -93,7 +93,8 @@ class BaseRDPTransport(transports.Transport):
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=24, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
     allowClipboard = gui.CheckBoxField(label=_('Enable clipboard'), order=25, tooltip=_('If checked, copy-paste functions will be allowed'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
     allowAudio = gui.CheckBoxField(label=_('Enable sound'), order=26, tooltip=_('If checked, sound will be redirected.'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
-    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=27, tooltip=_('If checked, will enable Credentials Provider Support)'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
+    allowWebcam = gui.CheckBoxField(label=_('Enable webcam'), order=27, tooltip=_('If checked, webcam will be redirected (ONLY Windows).'), tab=gui.PARAMETERS_TAB, defvalue=gui.FALSE)
+    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=28, tooltip=_('If checked, will enable Credentials Provider Support)'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),

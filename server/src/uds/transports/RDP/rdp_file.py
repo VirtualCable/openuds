@@ -54,6 +54,7 @@ class RDPFile:
     redirectHome = False
     redirectSmartcards = False
     redirectAudio = True
+    redirectWebcam = False
     compression = True
     multimedia = True
     alsa = True
@@ -328,6 +329,9 @@ class RDPFile:
 
         if self.redirectAudio is True:
             res += 'audiocapturemode:i:1\n'
+
+        if self.redirectWebcam:
+            res += 'camerastoredirect:s:*'
 
         enforcedSharesStr = ';'.join(self.enforcedShares.replace(' ', '').upper().split(',')) + ';' if self.enforcedShares else ''
 

@@ -49,7 +49,7 @@ from uds.core.ui import gui
 from uds.core.util.state import State
 
 from uds.REST.model import DetailHandler
-from uds.REST import NotFound, ResponseError, RequestError
+from uds.REST import NotFound, ResponseError, RequestError, AccessDenied
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -294,18 +294,21 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             raise self.invalidItemException()
 
     def servicesPools(self, parent: 'Provider', item: str):
-        self.ensureAccess(item, permissions.PERMISSION_READ)
-        logger.debug('Got parameters for servicepools: %s, %s', parent, item)
         uuid = processUuid(item)
         service = parent.services.get(uuid=uuid)
+        logger.debug('Got parameters for servicepools: %s, %s', parent, item)
         res = []
         for i in service.deployedServices.all():
-            res.append({
-                'id': i.uuid,
-                'name': i.name,
-                'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                'user_services_count': i.userServices.exclude(state__in=(State.REMOVED, State.ERROR)).count(),
-                'state': _('With errors') if i.isRestrained() else _('Ok'),
-            })
+            try:
+                self.ensureAccess(i, permissions.PERMISSION_READ)  # Ensures access before listing...
+                res.append({
+                    'id': i.uuid,
+                    'name': i.name,
+                    'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
+                    'user_services_count': i.userServices.exclude(state__in=(State.REMOVED, State.ERROR)).count(),
+                    'state': _('With errors') if i.isRestrained() else _('Ok'),
+                })
+            except AccessDenied:
+                pass
 
         return res
