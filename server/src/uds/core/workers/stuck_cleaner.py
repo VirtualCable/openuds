@@ -48,7 +48,7 @@ MAX_STUCK_TIME = 3600 * 24 * 2  # At most 2 days "Stuck", not configurable (ther
 
 class StuckCleaner(Job):
     """
-    Kaputen Cleaner is very similar to Hanged Cleaner, at start, almost a copy
+    Kaputen Cleaner is very similar to Hanged Cleaner
     We keep it in a new place to "control" more specific thins
     """
     frecuency = 3600 * 24  # Executes Once a day
@@ -69,8 +69,9 @@ class StuckCleaner(Job):
                     userServices__state__in=State.INFO_STATES + State.VALID_STATES
                 ))
             )
-        ).filter(service__provider__maintenance_mode=False).exclude(stuckCount=0)
+        ).filter(service__provider__maintenance_mode=False, state=State.ACTIVE).exclude(stuckCount=0)
         
+        # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
         def stuckUserServices(servicePool: ServicePool ) -> typing.Iterable[UserService]:
             q = servicePool.userServices.filter(
                 state_date__lt=since_state
@@ -81,10 +82,9 @@ class StuckCleaner(Job):
             yield from q.filter(state=State.PREPARING, properties__name='destroy_after')
 
         for servicePool in servicePoolswithStucks:
-            logger.debug('Searching for stuck states for %s', servicePool.name)
-            # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
+            # logger.debug('Searching for stuck states for %s', servicePool.name)
             for stuck in stuckUserServices(servicePool):
                 logger.debug('Found stuck user service %s', stuck)
-                log.doLog(servicePool, log.ERROR, 'User service %s has been hard removed because it\'s stuck', stuck.name)
-                print('Found stuck ', stuck)
-                # stuck.delete()
+                log.doLog(servicePool, log.ERROR, 'User service {} has been hard removed because it\'s stuck'.format(stuck.name))
+                # stuck.setState(State.ERROR)
+                stuck.delete()

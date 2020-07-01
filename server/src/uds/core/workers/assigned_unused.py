@@ -61,7 +61,7 @@ class AssignedAndUnused(Job):
                     userServices__cache_level=0
                 )
             )
-        ).filter(outdated__gt=0)
+        ).filter(outdated__gt=0, state=State.ACTIVE)
         for ds in outdatedServicePools:
             # Skips checking deployed services in maintenance mode or ignores assigned and unused
             if ds.isInMaintenance() is True or ds.ignores_unused:

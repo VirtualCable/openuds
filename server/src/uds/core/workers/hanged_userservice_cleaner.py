@@ -33,9 +33,9 @@
 from datetime import timedelta
 import logging
 
-from django.db.models import Q
+from django.db.models import Q, Count
 from uds.core.util.config import GlobalConfig
-from uds.models import ServicePool, getSqlDatetime
+from uds.models import ServicePool, UserService, getSqlDatetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
 from uds.core.util import log
@@ -51,18 +51,29 @@ class HangedCleaner(Job):
     def run(self):
         since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt())
         # Filter for locating machine not ready
-        flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING) | Q(state_date__lt=since_state, state=State.REMOVING)
+        flt = (
+            Q(state_date__lt=since_state, state=State.PREPARING) |
+            Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING)
+        )
+
+        withHangedServices = ServicePool.objects.annotate(
+            hanged = Count(
+                'userServices',
+                filter=Q(userServices__state_date__lt=since_state, userServices__state=State.PREPARING) |
+                    Q(userServices__state_date__lt=since_state, state=State.USABLE, userServices__os_state=State.PREPARING)
+            )
+        ).exclude(hanged=0).exclude(osmanager=None).exclude(service__provider__maintenance_mode=True).filter(state=State.ACTIVE)
 
         # Type
         servicePool: ServicePool
 
-        for servicePool in ServicePool.objects.exclude(osmanager=None, state__in=State.VALID_STATES, service__provider__maintenance_mode=True):
+        for servicePool in withHangedServices:
             logger.debug('Searching for hanged services for %s', servicePool)
+            us: UserService
             for us in servicePool.userServices.filter(flt):
+                if us.getProperty('destroy_after'):  # It's waiting for removal, skip this very specific case
+                    continue
                 logger.debug('Found hanged service %s', us)
                 log.doLog(us, log.ERROR, 'User Service seems to be hanged. Removing it.', log.INTERNAL)
-                log.doLog(servicePool, log.ERROR, 'Removing user service {0} because it seems to be hanged'.format(us.friendly_name))
-                if us.state in (State.REMOVING,):
-                    us.setState(State.ERROR)
-                else:
-                    us.removeOrCancel()
+                log.doLog(servicePool, log.ERROR, 'Removing user service {} because it seems to be hanged'.format(us.friendly_name))
+                us.removeOrCancel()
