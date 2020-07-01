@@ -318,11 +318,11 @@ class BaseReadyChange(ActorV3Action):
 
         return ActorV3Action.actorResult({'private_key': privateKey, 'server_certificate': cert, 'password': password})
 
-class ChangeIp(BaseReadyChange):
+class IpChange(BaseReadyChange):
     """
     Processses IP Change.
     """
-    name = 'changeip'
+    name = 'ipchange'
 
 class Ready(BaseReadyChange):
     """

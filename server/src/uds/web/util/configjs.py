@@ -81,10 +81,10 @@ def udsJs(request: 'HttpRequest') -> str:
 
     tag = request.session.get('tag', None)
 
-    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
+    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool() is True:
         try:
-            authenticators = [Authenticator.objects.get(small_name=auth_host)]
-        except Exception:
+            authenticators = Authenticator.objects.filter(small_name=auth_host)[:]
+        except Exception as e:
             try:
                 authenticators = [Authenticator.objects.order_by('priority')[0]]
             except Exception:  # There is no authenticators yet...
