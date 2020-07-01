@@ -34,6 +34,8 @@ from datetime import datetime, timedelta
 import logging
 import typing
 
+from django.db.models import Q, Count
+
 from uds.models import ServicePool, UserService, getSqlDatetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
@@ -54,17 +56,35 @@ class StuckCleaner(Job):
 
     def run(self):
         since_state: datetime = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
-        # Filter for locating machine not ready
-        servicePoolsActive: typing.Iterable[ServicePool] = ServicePool.objects.filter(service__provider__maintenance_mode=False).iterator()
-        for servicePool in servicePoolsActive:
-            logger.debug('Searching for stuck states for %s', servicePool.name)
-            stuckUserServices: typing.Iterable[UserService] = servicePool.userServices.filter(
+        # Filter for locating machine stuck on removing, cancelling, etc..
+        # Locate service pools with pending assigned service in use
+        servicePoolswithStucks = ServicePool.objects.annotate(
+            stuckCount=Count(
+                'userServices', 
+                filter=Q(
+                    userServices__state_date__lt=since_state
+                ) & (Q(
+                    userServices__state=State.PREPARING, userServices__properties__name='destroy_after'
+                ) | ~Q(
+                    userServices__state__in=State.INFO_STATES + State.VALID_STATES
+                ))
+            )
+        ).filter(service__provider__maintenance_mode=False).exclude(stuckCount=0)
+        
+        def stuckUserServices(servicePool: ServicePool ) -> typing.Iterable[UserService]:
+            q = servicePool.userServices.filter(
                 state_date__lt=since_state
-            ).exclude(
+            )
+            yield from q.exclude(
                 state__in=State.INFO_STATES + State.VALID_STATES
-            ).iterator()
+            )
+            yield from q.filter(state=State.PREPARING, properties__name='destroy_after')
+
+        for servicePool in servicePoolswithStucks:
+            logger.debug('Searching for stuck states for %s', servicePool.name)
             # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
-            for stuck in stuckUserServices:
+            for stuck in stuckUserServices(servicePool):
                 logger.debug('Found stuck user service %s', stuck)
                 log.doLog(servicePool, log.ERROR, 'User service %s has been hard removed because it\'s stuck', stuck.name)
-                stuck.delete()
+                print('Found stuck ', stuck)
+                # stuck.delete()
