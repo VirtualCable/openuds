@@ -60,7 +60,7 @@ class HangedCleaner(Job):
             hanged = Count(
                 'userServices',
                 filter=Q(userServices__state_date__lt=since_state, userServices__state=State.PREPARING) |
-                    Q(userServices__state_date__lt=since_state, state=State.USABLE, userServices__os_state=State.PREPARING)
+                    Q(userServices__state_date__lt=since_state, userServices__state=State.USABLE, userServices__os_state=State.PREPARING)
             )
         ).exclude(hanged=0).exclude(osmanager=None).exclude(service__provider__maintenance_mode=True).filter(state=State.ACTIVE)
 

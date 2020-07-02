@@ -66,7 +66,7 @@ class AssignedService(DetailHandler):
             'id_deployed_service': item.deployed_service.uuid,
             'unique_id': item.unique_id,
             'friendly_name': item.friendly_name,
-            'state': item.state if not props.get('destroy_after') else State.CANCELING,
+            'state': item.state if not (props.get('destroy_after') and item.state == State.PREPARING) else State.CANCELING,
             'os_state': item.os_state,
             'state_date': item.state_date,
             'creation_date': item.creation_date,

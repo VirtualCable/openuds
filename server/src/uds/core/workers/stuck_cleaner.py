@@ -43,15 +43,14 @@ from uds.core.util import log
 
 logger = logging.getLogger(__name__)
 
-MAX_STUCK_TIME = 3600 * 24 * 2  # At most 2 days "Stuck", not configurable (there is no need to)
-
+MAX_STUCK_TIME = 3600 * 24  # At most 1 days "Stuck", not configurable (there is no need to)
 
 class StuckCleaner(Job):
     """
     Kaputen Cleaner is very similar to Hanged Cleaner
     We keep it in a new place to "control" more specific thins
     """
-    frecuency = 3600 * 24  # Executes Once a day
+    frecuency = 3601 * 8  # Executes Once a day
     friendly_name = 'Stuck States cleaner'
 
     def run(self):

@@ -231,6 +231,7 @@ class LinuxOsManager(osmanagers.OSManager):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
         if self.isRemovableOnLogout(userService):
+            log.doLog(userService, log.INFO, 'Unused user service for too long. Removing due to OS Manager parameters.', log.OSMANAGER)
             userService.remove()
 
     def isPersistent(self):
