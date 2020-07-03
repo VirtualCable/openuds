@@ -89,7 +89,10 @@ class UDSApi:  # pylint: disable=too-few-public-methods
 
     @property
     def _headers(self) -> typing.MutableMapping[str, str]:
-        return {'content-type': 'application/json'}
+        return {
+            'Content-Type': 'application/json',
+            'User-Agent': 'UDS Actor v{}'.format(VERSION)
+        }
 
     def _apiURL(self, method: str) -> str:
         raise NotImplementedError
