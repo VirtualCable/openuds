@@ -59,7 +59,6 @@ class OGDeployment(UserDeployment):
     provider of this elements.
 
     The logic for managing ovirt deployments (user machines in this case) is here.
-
     """
 
     # : Recheck every N seconds by default (for task methods)
@@ -254,10 +253,19 @@ class OGDeployment(UserDeployment):
         Deploys a machine from template for user/cache
         """
         try:
+            r: typing.Any = None
             r = self.service().reserve()
             self.service().notifyEvents(r['id'], self._uuid)
         except Exception as e:
             # logger.exception('Creating machine')
+            if r:  # Reservation was done, unreserve it!!!
+                logger.error('Error on notifyEvent (machine was reserved): %s', e)
+                try:
+                    self.service().unreserve(self._machineId)
+                except Exception as ei:
+                    # Error unreserving reserved machine on creation
+                    logger.error('Error unreserving errored machine: %s', ei)
+            
             raise Exception('Error creating reservation: {}'.format(e))
 
         self._machineId = r['id']
