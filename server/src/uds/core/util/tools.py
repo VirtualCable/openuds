@@ -156,7 +156,7 @@ def checkValidBasename(baseName: str, length: int = -1) -> None:
     Returns:
         None -- [description]
     """
-    if re.match(r'^[a-zA-Z0-9-]+$', baseName) is None:
+    if re.match(r'^[a-zA-Z0-9][a-zA-Z0-9-]*$', baseName) is None:
         raise services.Service.ValidationException(ugettext('The basename is not a valid for a hostname'))
 
     if length == 0:
