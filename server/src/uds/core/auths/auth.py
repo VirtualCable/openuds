@@ -42,15 +42,18 @@ from django.utils.translation import get_language
 from django.urls import reverse
 
 from django.utils.translation import ugettext as _
-from uds.core.util.config import GlobalConfig
-from uds.core.util import log
-from uds.core.util.decorators import deprecated
+
 from uds.core import auths
+from uds.core.util import log
+from uds.core.util import net
+from uds.core.util.config import GlobalConfig
+from uds.core.util.decorators import deprecated
 from uds.core.util.stats import events
-from uds.core.managers import cryptoManager
 from uds.core.util.state import State
-from uds.models import User, Authenticator
+from uds.core.managers import cryptoManager
 from uds.core.auths import Authenticator as AuthenticatorInstance
+
+from uds.models import User, Authenticator
 
 
 logger = logging.getLogger(__name__)
@@ -140,7 +143,6 @@ def trustedSourceRequired(view_func: typing.Callable[..., RT]) -> typing.Callabl
         """
         Wrapped function for decorator
         """
-        from uds.core.util import net
         if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
             return HttpResponseForbidden()
         return view_func(request, *args, **kwargs)

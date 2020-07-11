@@ -34,5 +34,8 @@ from django.conf.urls import url
 from .views import pam
 
 urlpatterns = [
+    # Old, compat
     url(r'^pam$', pam, name='dispatcher.pam'),
+    # New
+    url(r'^uds/pam$', pam, name='dispatcher.pam'),
 ]

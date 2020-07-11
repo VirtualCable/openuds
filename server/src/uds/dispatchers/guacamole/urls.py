@@ -34,5 +34,8 @@ from django.conf.urls import url
 from .views import guacamole
 
 urlpatterns = [
+    # Old, compat
     url(r'^guacamole/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole'),
+    # New path
+    url(r'^uds/guacamole/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole'),
 ]
