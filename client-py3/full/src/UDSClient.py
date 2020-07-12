@@ -288,7 +288,7 @@ if __name__ == "__main__":
     if six.PY3 is False:
         logger.debug('Fixing threaded execution of commands')
         import threading
-        threading._DummyThread._Thread__stop = lambda x: 42  # type: ignore, pylint: disable=protected-access
+        threading._DummyThread._Thread__stop = lambda x: 42  # type: ignore # pylint: disable=protected-access
 
     # First parameter must be url
     try:
