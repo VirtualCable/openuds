@@ -215,7 +215,7 @@ class HTML5RDPTransport(transports.Transport):
         username, password, domain = credsInfo['username'], credsInfo['password'], credsInfo['domain']
 
         if domain != '':
-            username = domain + '\\' + username
+            username = username + '\\' + domain
 
         scrambler = cryptoManager().randomString(32)
         passwordCrypted = cryptoManager().symCrypt(password, scrambler)
