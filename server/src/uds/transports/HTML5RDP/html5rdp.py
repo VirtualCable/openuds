@@ -214,9 +214,6 @@ class HTML5RDPTransport(transports.Transport):
         credsInfo = self.processUserAndPassword(userService, user, password)
         username, password, domain = credsInfo['username'], credsInfo['password'], credsInfo['domain']
 
-        if domain != '':
-            username = username + '\\' + domain
-
         scrambler = cryptoManager().randomString(32)
         passwordCrypted = cryptoManager().symCrypt(password, scrambler)
 
@@ -231,6 +228,9 @@ class HTML5RDPTransport(transports.Transport):
             'drive-path': '/share/{}'.format(user.uuid),
             'create-drive-path': 'true'
         }
+
+        if domain:
+            params['domain'] = domain
 
         if self.enableFileSharing.isTrue():
             params['enable-drive'] = 'true'

@@ -354,7 +354,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         # self.setState(State.REMOVED)
         self.delete()
 
-    def markOldUserServicesAsRemovables(self, activePub: typing.Optional['ServicePoolPublication']):
+    def markOldUserServicesAsRemovables(self, activePub: typing.Optional['ServicePoolPublication'], skipAssigned: bool = False):
         """
         Used when a new publication is finished.
 
@@ -380,7 +380,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 userService.cancel()
             with transaction.atomic():
                 nonActivePub.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(state=states.userService.REMOVABLE, state_date=now)
-                nonActivePub.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
+                if not skipAssigned:
+                    nonActivePub.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
 
     def validateGroups(self, groups: typing.Iterable['Group']) -> None:
         """

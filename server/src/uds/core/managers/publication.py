@@ -151,6 +151,9 @@ class PublicationFinishChecker(DelayedTask):
                             pc = PublicationOldMachinesCleaner(old.id)
                             pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600, 'pclean-' + str(old.id), True)
                             publication.deployed_service.markOldUserServicesAsRemovables(publication)
+                        else:  # Remove only cache services, not assigned
+                            publication.deployed_service.markOldUserServicesAsRemovables(publication, True)
+
 
                     publication.setState(State.USABLE)
                 elif State.isRemoving(prevState):
