@@ -102,7 +102,7 @@ class RemoteViewerFile:
         usb_auto_share = '01'[self.usb_auto_share]
         new_usb_auto_share = '01'[self.new_usb_auto_share]
 
-        ca = self.ca.strip().replace('\n', '\\\\n')  # So we get '\\n' and script works fine after replacement
+        ca = self.ca.strip().replace('\n', '\\n')  # So we get '\\n' and script works fine after replacement
 
         return TEMPLATE.format(
             type=self.connectionType,

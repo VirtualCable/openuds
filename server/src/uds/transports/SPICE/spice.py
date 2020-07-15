@@ -106,4 +106,4 @@ class SPICETransport(BaseSpiceTransport):
             'as_file': r.as_file,
         }
 
-        return self.getScript('scripts/{}/tunnel.py', osName, sp)
+        return self.getScript('scripts/{}/direct.py', osName, sp)
