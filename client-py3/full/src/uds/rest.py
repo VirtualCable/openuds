@@ -72,8 +72,6 @@ class RestRequest(QObject):
 
         self.done.connect(done, Qt.QueuedConnection)
 
-    # private slot, no need to declare as slot
-    @pyqtSlot(QNetworkReply)
     def _finished(self, reply):
         '''
         Handle signal 'finished'.  A network request has finished.
@@ -95,15 +93,13 @@ class RestRequest(QObject):
 
         reply.deleteLater()  # schedule for delete from main event loop
 
-    #@pyqtSlot(QNetworkReply, list)
-    @pyqtSlot(QNetworkReply)
     def _sslError(self, reply, errors):
         settings = QSettings()
         settings.beginGroup('ssl')
         cert = errors[0].certificate()
         digest = six.text_type(cert.digest().toHex())
 
-        approved = settings.value(digest, False).toBool()
+        approved = settings.value(digest, False)
 
         errorString = '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(cert.subjectInfo(QSslCertificate.CommonName))
 
