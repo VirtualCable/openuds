@@ -30,9 +30,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=c-extension-no-member
-from __future__ import unicode_literals
-
 import sys
 import webbrowser
 import json
@@ -118,7 +115,6 @@ class UDSClient(QtWidgets.QMainWindow):
     def cancelPushed(self):
         self.close()
 
-    @QtCore.pyqtSlot()
     def updateAnim(self):
         self.anim += 2
         if self.anim > 99:
@@ -139,12 +135,10 @@ class UDSClient(QtWidgets.QMainWindow):
         self.ui.progressBar.invertedAppearance = False
         self.animTimer.stop()
 
-    @QtCore.pyqtSlot()
     def getVersion(self):
         self.req = RestRequest('', self, self.version)
         self.req.get()
 
-    @QtCore.pyqtSlot(dict)
     def version(self, data):
         try:
             self.processError(data)
@@ -160,14 +154,12 @@ class UDSClient(QtWidgets.QMainWindow):
             self.getTransportData()
 
         except RetryException as e:
-            self.ui.info.setText(six.text_type(e))
+            self.ui.info.setText(str(e))
             QtCore.QTimer.singleShot(1000, self.getVersion)
 
         except Exception as e:
             self.showError(e)
 
-
-    @QtCore.pyqtSlot()
     def getTransportData(self):
         try:
             self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName(), 'version': VERSION})
@@ -176,8 +168,6 @@ class UDSClient(QtWidgets.QMainWindow):
             logger.exception('Got exception on getTransportData')
             raise e
 
-
-    @QtCore.pyqtSlot(dict)
     def transportDataReceived(self, data):
         logger.debug('Transport data received')
         try:
@@ -274,6 +264,7 @@ def approveHost(hostName, parentWindow=None):
 
 if __name__ == "__main__":
     logger.debug('Initializing connector')
+    
     # Initialize app
     app = QtWidgets.QApplication(sys.argv)
 

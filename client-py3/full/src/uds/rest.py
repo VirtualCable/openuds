@@ -31,12 +31,9 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 # pylint: disable=c-extension-no-member,no-name-in-module
-from __future__ import unicode_literals
 
 import json
 import urllib
-
-import six
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtCore import QObject, QUrl, QSettings
@@ -60,8 +57,16 @@ class RestRequest(QObject):
         super(RestRequest, self).__init__()
         # private
         self._manager = QNetworkAccessManager()
+        try:
+            if os.path.exists('/etc/ssl/certs/ca-certificates.crt'):
+                pass
+                # os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
+        except Exception:
+            pass
+
+
         if params is not None:
-            url += '?' + '&'.join('{}={}'.format(k, urllib.parse.quote(six.text_type(v).encode('utf8'))) for k, v in params.items())
+            url += '?' + '&'.join('{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8'))) for k, v in params.items())
 
         self.url = QUrl(RestRequest.restApiUrl + url)
 
@@ -79,14 +84,12 @@ class RestRequest(QObject):
         try:
             if reply.error() != QNetworkReply.NoError:
                 raise Exception(reply.errorString())
-            #data = six.text_type(reply.readAll())
             data = bytes(reply.readAll())
-            #data = data.encode("utf-8")
             data = json.loads(data)
         except Exception as e:
             data = {
                 'result': None,
-                'error': six.text_type(e)
+                'error': str(e)
             }
 
         self.done.emit(data)
@@ -97,7 +100,7 @@ class RestRequest(QObject):
         settings = QSettings()
         settings.beginGroup('ssl')
         cert = errors[0].certificate()
-        digest = six.text_type(cert.digest().toHex())
+        digest = str(cert.digest().toHex())
 
         approved = settings.value(digest, False)
 
