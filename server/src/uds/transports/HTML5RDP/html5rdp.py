@@ -92,7 +92,7 @@ class HTML5RDPTransport(transports.Transport):
             gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
             gui.choiceItem('en-gb-qwerty', _('English (GB) keyboard')),
             gui.choiceItem('es-es-qwerty', _('Spanish keyboard')),
-            gui.choiceItem('latam-qwerty', _('Latin American keyboard')),
+            gui.choiceItem('es-latam-qwerty', _('Latin American keyboard')),
             gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
             gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
             gui.choiceItem('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
