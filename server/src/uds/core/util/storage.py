@@ -30,10 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import hashlib
 import logging
 import pickle
 import typing
+import base64
+import hashlib
+from collections.abc import MutableMapping
 
 from django.db import transaction
 from uds.models.storage import Storage as DBStorage
@@ -41,6 +43,105 @@ from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
+def _calcKey(owner: bytes, key: bytes, extra: typing.Optional[bytes] = None) -> str:
+    h = hashlib.md5()
+    h.update(owner)
+    h.update(key)
+    if extra:
+        h.update(extra)
+    return h.hexdigest()
+
+def _encodeValue(key: str, value: typing.Any) -> str:
+    return base64.b64encode(pickle.dumps((key, value))).decode()
+
+def _decodeValue(dbk: str, value: typing.Optional[str]) -> typing.Tuple[str, typing.Any]:
+    if value:
+        try:
+            v = pickle.loads(base64.b64decode(value.encode()))
+            if isinstance(v, tuple):
+                return typing.cast(typing.Tuple[str, typing.Any], v)
+            # Fix value so it contains also the "key" (in this case, no valid key...)
+            return ('#' + dbk, v)
+        except Exception as e:
+            logger.warn('Unknown pickable value: %s (%s)', value, e)
+    return ('', None)
+
+
+class StorageAsDict(MutableMapping):
+    '''
+    Accesses storage as dictionary. Much more convenient that old method
+    '''
+    def __init__(self, owner: str, group: typing.Optional[str], atomic: bool = False) -> None:
+        self._group = group or ''
+        self._owner = owner
+        self._atomic = atomic  # Not used right now, maybe removed
+
+    def _key(self, key: str) -> str:
+        if key[0] == '#':
+            # Compat with old dbk
+            return key[1:]
+        return _calcKey(self._owner.encode(), key.encode(), self._group.encode())
+
+    def __getitem__(self, key: str) -> typing.Any:
+        if not isinstance(key, str):
+            raise ValueError('Key must be str, {} found'.format(type(key)))
+
+        dbk = self._key(key)
+        logger.debug('Getitem: %s', dbk)
+        try:
+            c: DBStorage = DBStorage.objects.get(pk=dbk)
+            return _decodeValue(dbk, c.data)[1]  # Ignores original key
+        except DBStorage.DoesNotExist:
+            return None
+
+    def __setitem__(self, key: str, value: typing.Any) -> None:
+        if not isinstance(key, str):
+            raise ValueError('Key must be str type, {} found'.format(type(key)))
+
+        dbk = self._key(key)
+        logger.debug('Setitem: %s = %s', dbk, value)
+        data = _encodeValue(key, value)
+        c, created = DBStorage.objects.update_or_create(key=dbk, defaults={'data': data, 'attr1': self._group, 'owner': self._owner})
+
+    def __delitem__(self, key: str):
+        dbk = self._key(key)
+        logger.debug('Delitem: %s', key)
+        DBStorage.objects.filter(key=dbk).delete()
+
+    def __iter__(self):
+        '''
+        Iterates through keys
+        '''
+        return iter((_decodeValue(i.key, i.data)[0] for i in DBStorage.objects.filter(owner=self._owner, attr1=self._group)))
+
+    def __contains__(self, key: object) -> bool:
+        logger.debug('Contains: %s', key)
+        if isinstance(key, str):
+            dbk = self._key(key)
+            return DBStorage.objects.filter(owner=self._owner, attr1=self._group, key=dbk).count() > 0
+        return False
+
+    def __len__(self):
+        return DBStorage.objects.filter(owner=self._owner, attr1=self._group).count()
+
+
+class StorageAccess:
+    '''
+    Allows the access to the storage as a dict, with atomic transaction if requested
+    '''
+    def __init__(self, owner: str, group: typing.Optional[str] = None, atomic: typing.Optional[bool] = False):
+        self._owner = owner
+        self._group = group
+        self._atomic = transaction.atomic() if atomic else None
+
+    def __enter__(self):
+        if self._atomic:
+            self._atomic.__enter__()
+        return StorageAsDict(self._owner, self._group, bool(self._atomic))
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._atomic:
+            self._atomic.__exit__(exc_type, exc_value, traceback)
 
 class Storage:
     _owner: str
@@ -51,10 +152,7 @@ class Storage:
         self._bowner = self._owner.encode('utf8')
 
     def __getKey(self, key: typing.Union[str, bytes]) -> str:
-        h = hashlib.md5()
-        h.update(self._bowner)
-        h.update(key.encode('utf8') if isinstance(key, str) else key)
-        return h.hexdigest()
+        return _calcKey(self._bowner, key.encode('utf8') if isinstance(key, str) else key)
 
     def saveData(self, skey: typing.Union[str, bytes], data: typing.Any, attr1: typing.Optional[str] = None) -> None:
         # If None is to be saved, remove
@@ -68,7 +166,7 @@ class Storage:
         data = encoders.encodeAsStr(data, 'base64')
         attr1 = attr1 or ''
         try:
-            DBStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
+            DBStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)
         except Exception:
             with transaction.atomic():
                 DBStorage.objects.filter(key=key).select_for_update().update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
@@ -138,6 +236,9 @@ class Storage:
         Must be used to unlock table
         """
         # dbStorage.objects.unlock()  # @UndefinedVariable
+
+    def map(self, group: typing.Optional[str] = None, atomic: typing.Optional[bool] = False):
+        return StorageAccess(self._owner, group, atomic)
 
     def locateByAttr1(self, attr1: typing.Union[typing.Iterable[str], str]) -> typing.Iterable[bytes]:
         if isinstance(attr1, str):
