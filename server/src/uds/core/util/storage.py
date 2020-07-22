@@ -151,7 +151,7 @@ class Storage:
         self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
         self._bowner = self._owner.encode('utf8')
 
-    def __getKey(self, key: typing.Union[str, bytes]) -> str:
+    def getKey(self, key: typing.Union[str, bytes]) -> str:
         return _calcKey(self._bowner, key.encode('utf8') if isinstance(key, str) else key)
 
     def saveData(self, skey: typing.Union[str, bytes], data: typing.Any, attr1: typing.Optional[str] = None) -> None:
@@ -160,7 +160,7 @@ class Storage:
             self.remove(skey)
             return
 
-        key = self.__getKey(skey)
+        key = self.getKey(skey)
         if isinstance(data, str):
             data = data.encode('utf-8')
         data = encoders.encodeAsStr(data, 'base64')
@@ -183,7 +183,7 @@ class Storage:
 
     def readData(self, skey: typing.Union[str, bytes], fromPickle: bool = False) -> typing.Optional[typing.Union[str, bytes]]:
         try:
-            key = self.__getKey(skey)
+            key = self.getKey(skey)
             logger.debug('Accesing to %s %s', skey, key)
             c: DBStorage = DBStorage.objects.get(pk=key)  # @UndefinedVariable
             val: bytes = typing.cast(bytes, encoders.decode(c.data, 'base64'))
@@ -221,7 +221,7 @@ class Storage:
         keys: typing.Iterable[typing.Union[str, bytes]] = [skey] if isinstance(skey, (str, bytes)) else skey
         try:
             # Process several keys at once
-            DBStorage.objects.filter(key__in=[self.__getKey(k) for k in keys]).delete()
+            DBStorage.objects.filter(key__in=[self.getKey(k) for k in keys]).delete()
         except Exception:
             pass
 
@@ -249,7 +249,7 @@ class Storage:
         for v in query:
             yield typing.cast(bytes, encoders.decode(v.data, 'base64'))
 
-    def filter(self, attr1: typing.Optional[str], forUpdate: bool = False) -> typing.Iterable[typing.Tuple[str, bytes, str]]:
+    def filter(self, attr1: typing.Optional[str] = None, forUpdate: bool = False) -> typing.Iterable[typing.Tuple[str, bytes, str]]:
         if attr1 is None:
             query = DBStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:

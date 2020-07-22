@@ -35,6 +35,7 @@ import logging
 import typing
 
 from django.utils.translation import ugettext_lazy as _
+from django.db import transaction
 
 from uds.core.ui import gui
 from uds.core.util import log
@@ -100,7 +101,18 @@ class IPMachinesService(IPServiceBase):
             self._ips = []
         else:
             self._ips = ['{}~{}'.format(str(ip).strip(), i) for i, ip in enumerate(values['ipList']) if str(ip).strip()]  # Allow duplicates right now
+            active = {v for v in values['ipList']}
             # self._ips.sort()
+            # Remove non existing "locked" ips from storage now
+            skipKey = self.storage.getKey('ips')
+            with transaction.atomic():
+                for key, data, _ in self.storage.filter(forUpdate=True):
+                    if key == skipKey: # Avoid "ips" key
+                        continue
+                    # If not in current active list of ips, remove it
+                    if data.decode() not in active:
+                        logger.info('IP %s locked but not in active list. Removed', data.decode())
+                        self.storage.remove(data.decode())
 
         self._token = self.token.value.strip()
         self._port = self.port.value
