@@ -84,7 +84,7 @@ class StorageAsDict(MutableMapping):
 
     def __getitem__(self, key: str) -> typing.Any:
         if not isinstance(key, str):
-            raise ValueError('Key must be str, {} found'.format(type(key)))
+            raise TypeError('Key must be str, {} found'.format(type(key)))
 
         dbk = self._key(key)
         logger.debug('Getitem: %s', dbk)
@@ -96,7 +96,7 @@ class StorageAsDict(MutableMapping):
 
     def __setitem__(self, key: str, value: typing.Any) -> None:
         if not isinstance(key, str):
-            raise ValueError('Key must be str type, {} found'.format(type(key)))
+            raise TypeError('Key must be str type, {} found'.format(type(key)))
 
         dbk = self._key(key)
         logger.debug('Setitem: %s = %s', dbk, value)
