@@ -304,6 +304,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
     def uninitialize(self):
         self._initialized = False
+        self._cfg = self._cfg._replace(own_token=None)  # Ensures assigned token is cleared
 
     def finish(self) -> None:
         if self._http:
@@ -421,8 +422,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         if not self.isManaged():
             self.uninitialize()
-
-        self._cfg = self._cfg._replace(own_token=None)  # Ensures assigned token is cleared
 
     # ****************************************
     # Methods that CAN BE overriden by actors
