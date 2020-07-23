@@ -34,7 +34,7 @@ import datetime
 import signal
 import typing
 
-from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMessageBox, QMainWindow
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, pyqtSignal
 
 from . import rest
@@ -53,14 +53,19 @@ if typing.TYPE_CHECKING:
 class UDSClientQApp(QApplication):
     _app: 'UDSActorClient'
     _initialized: bool
+    _mainWindow: typing.Optional['QMainWindow']
 
     message = pyqtSignal(str, name='message')
 
     def __init__(self, args) -> None:
         super().__init__(args)
 
+        self._mainWindow = None
+        self._initialized = False
+
         # This will be invoked on session close
         self.commitDataRequest.connect(self.end)  # Will be invoked on session close, to gracely close app
+        # self.aboutToQuit.connect(self.end)
         self.message.connect(self.showMessage)
 
         # Execute backgroup thread for actions
@@ -69,6 +74,10 @@ class UDSClientQApp(QApplication):
     def init(self) -> None:
         # Notify loging and mark it
         logger.debug('Starting APP')
+
+        if self._mainWindow:
+            self._mainWindow.hide()
+
         self._app.start()
         self._initialized = True
 
@@ -85,6 +94,9 @@ class UDSClientQApp(QApplication):
 
     def showMessage(self, message: str) -> None:
         QMessageBox.information(None, 'Message', message)
+
+    def setMainWindow(self, mw: 'QMainWindow'):
+        self._mainWindow = mw
 
 
 class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-attributes
@@ -176,11 +188,11 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
                 platform.operations.initIdleDuration(self._loginInfo.max_idle)
 
             while self._running:
-                time.sleep(1.3)  # Sleeps between loop iterations
-
                 # Check Idle & dead line
                 self.checkIdle()
                 self.checkDeadLine()
+
+                time.sleep(1.3)  # Sleeps between loop iterations
 
             self._loginInfo = None
             self.api.logout(platform.operations.getCurrentUser() + self._extraLogoff)

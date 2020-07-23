@@ -35,6 +35,7 @@ import os
 
 import PyQt5  # pylint: disable=unused-import
 from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QMainWindow
 
 from udsactor.log import logger, INFO
 from udsactor.client import UDSClientQApp
@@ -53,9 +54,16 @@ if __name__ == "__main__":
 
     qApp = UDSClientQApp(sys.argv)
 
+    if 'linux' not in sys.platform:
+        # The "hidden window" is only needed to process events on Windows
+        # Not needed on Linux
+        mw = QMainWindow()
+        mw.showMinimized()  # Start minimized, will be hidden (not destroyed) as soon as qApp.init is invoked
+        qApp.setMainWindow(mw)
+
     qApp.init()
 
-    # Crate a timer, so we can check signals from time to time by executing python interpreter
+    # Crate a timer to a "dummy" function, so python can check signals from time to time by executing the python interpreter
     # Note: Signals are only checked on python code execution, so we create a timer to force call back to python
     timer = QTimer(qApp)
     timer.start(1000)
@@ -63,7 +71,7 @@ if __name__ == "__main__":
 
     qApp.exec_()
 
-    # On windows, this point will never be reached :)
+    # On windows, if no window is created, this point will never be reached.
     qApp.end()
 
     logger.debug('Exiting...')

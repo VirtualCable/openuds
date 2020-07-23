@@ -37,7 +37,6 @@ import win32service
 import win32security
 import win32net
 import win32event
-import win32com.client
 import pythoncom
 import servicemanager
 
@@ -46,13 +45,6 @@ from . import store
 from ..service import CommonService
 
 from ..log import logger
-
-from .SENS import SensLogon
-# from .SENS import logevent
-from .SENS import SENSGUID_EVENTCLASS_LOGON
-from .SENS import SENSGUID_PUBLISHER
-from .SENS import PROGID_EventSubscription
-from .SENS import PROGID_EventSystem
 
 REMOTE_USERS_SID = 'S-1-5-32-555'  # Well nown sid for remote desktop users
 
@@ -65,8 +57,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
     _svc_name_ = "UDSActorNG"
     _svc_display_name_ = "UDS Actor Service"
     _svc_description_ = "UDS Actor Management Service"
-    # 'System Event Notification' is the SENS service
-    _svc_deps_ = ['EventLog', 'SENS']
+    _svc_deps_ = ['EventLog']
 
     _user: typing.Optional[str]
     _hWaitStop: typing.Any
@@ -236,28 +227,6 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # Start listening for petitions
         self.startHttpServer()
 
-        # # ********************************
-        # # * Registers SENS subscriptions *
-        # # ********************************
-        logger.debug('Registering isens logon')
-        subscription_guid = '{41099152-498E-11E4-8FD3-10FEED05884B}'
-        sl = SensLogon(self)
-        subscription_interface = pythoncom.WrapObject(sl)  # pylint: disable=no-member
-
-        event_system = win32com.client.Dispatch(PROGID_EventSystem)
-
-        event_subscription = win32com.client.Dispatch(PROGID_EventSubscription)
-        event_subscription.EventClassID = SENSGUID_EVENTCLASS_LOGON
-        event_subscription.PublisherID = SENSGUID_PUBLISHER
-        event_subscription.SubscriptionName = 'UDS Actor subscription'
-        event_subscription.SubscriptionID = subscription_guid
-        event_subscription.SubscriberInterface = subscription_interface
-
-        event_system.Store(PROGID_EventSubscription, event_subscription)
-
-        # logger.debug('Registered SENS')
-        # logger.debug('Initialized, setting ready')
-
         # *********************
         # * Main Service loop *
         # *********************
@@ -266,7 +235,6 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         while self._isAlive:
             counter += 1
             try:
-                # Process SENS messages, This will be a bit asyncronous (1 second delay)
                 pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
 
                 if counter % 5 == 0:  # Once every 5 seconds
@@ -279,11 +247,6 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             # In milliseconds, will break if event hWaitStop is set
             win32event.WaitForSingleObject(self._hWaitStop, 1000)
 
-        logger.debug('Exited main loop, deregistering SENS')
-
-        # *******************************************
-        # * Remove SENS subscription before exiting *
-        # *******************************************
-        event_system.Remove(PROGID_EventSubscription, "SubscriptionID == " + subscription_guid)
+        logger.debug('Exited main loop')
 
         self.finish()
