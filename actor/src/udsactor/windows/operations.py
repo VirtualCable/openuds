@@ -230,7 +230,7 @@ def getSessionType() -> str:
         * Console -> Local session
         *  RDP-Tcp#[0-9]+ -> RDP Session
     '''
-    return os.environ.get('SESSIONNAME', 'Unknown')
+    return os.environ.get('SESSIONNAME', 'unknown')
 
 def writeToPipe(pipeName: str, bytesPayload: bytes, waitForResponse: bool) -> typing.Optional[bytes]:
     # (str, bytes, bool) -> Optional[bytes]
