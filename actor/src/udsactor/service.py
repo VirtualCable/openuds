@@ -402,14 +402,14 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         logger.debug('Base join invoked: {} on {}, {}'.format(name, domain, ou))
 
     # Client notifications
-    def login(self, username: str) -> types.LoginResultInfoType:
+    def login(self, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
         result = types.LoginResultInfoType(ip='', hostname='', dead_line=None, max_idle=None)
         self._loggedIn = True
         if not self.isManaged():
             self.initialize()
 
         if self._cfg.own_token:
-            result = self._api.login(self._cfg.own_token, username)
+            result = self._api.login(self._cfg.own_token, username, sessionType)
 
         return result
 

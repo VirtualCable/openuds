@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,6 +31,7 @@
 import sys
 
 from .. import rest
+from .. import platform
 from ..log import logger
 from .service import UDSActorSvc
 
@@ -46,12 +47,10 @@ def run() -> None:
         try:
             client: rest.UDSClientApi = rest.UDSClientApi()
             if sys.argv[1] == 'login':
-                r = client.login(sys.argv[2])
+                r = client.login(sys.argv[2], platform.operations.getSessionType())
                 print('{},{},{},{}\n'.format(r.ip, r.hostname, r.max_idle, r.dead_line or ''))
             elif sys.argv[1] == 'logout':
                 client.logout(sys.argv[2])
-            else:
-                usage()
         except Exception as e:
             logger.exception()
             logger.error('Got exception while processing command: %s', e)
@@ -69,7 +68,7 @@ def run() -> None:
         elif sys.argv[1] == 'restart':
             daemonSvr.restart()
         elif sys.argv[1] == 'start-foreground':
-            daemonSvr.run()  # Esecute in foreground
+            daemonSvr.run()  # Execute in foreground
         else:
             usage()
         sys.exit(0)

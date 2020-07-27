@@ -38,7 +38,7 @@ if typing.TYPE_CHECKING:
 class LocalProvider(handler.Handler):
 
     def post_login(self) -> typing.Any:
-        result = self._service.login(self._params['username'])
+        result = self._service.login(self._params['username'], self._params['session_type'])
         return result._asdict()
 
     def post_logout(self) -> typing.Any:
