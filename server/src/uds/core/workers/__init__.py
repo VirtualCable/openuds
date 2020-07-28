@@ -30,6 +30,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import sys
+import os.path
+import pkgutil
+import importlib
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,17 +44,17 @@ def initialize():
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    import os.path
-    import pkgutil
-    import sys
     from uds.core import jobs
     from uds.core.managers import taskManager
 
     # Dinamycally import children of this package.
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        logger.debug('Importing %s', name)
-        __import__(name, globals(), locals(), [], 1)
+        logger.debug('Importing worker %s', name)
+        # __import__(name, globals(), locals(), [], 1)
+        importlib.import_module('.' + name, __name__)  # import module
+
+    importlib.invalidate_caches()
 
     p = jobs.Job
     # This is marked as error in IDE, but it's not (__subclasses__)

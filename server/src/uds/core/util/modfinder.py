@@ -34,6 +34,7 @@
 import os.path
 import pkgutil
 import sys
+import importlib
 import logging
 import typing
 
@@ -48,21 +49,24 @@ patterns: typing.List = []
 def loadModulesUrls():
     logger.debug('Looking for dispatching modules')
     if not patterns:
+        logger.debug('Looking for patterns')
         try:
             modName = 'uds.dispatchers'
             pkgpath = os.path.dirname(sys.modules[modName].__file__)
             for _, name, _ in pkgutil.iter_modules([pkgpath]):
-                fullModName = '%s.%s.urls' % (modName, name)
+                fullModName = '{}.{}.urls'.format(modName, name)
                 try:
-                    mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], 0)
-                    logger.debug('Lodaded mod %s, url %s', mod, mod.urlpatterns)
+                    # mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], 0)
+                    mod = importlib.import_module(fullModName)
+                    logger.debug('Loaded mod %s, url %s', mod, mod.urlpatterns)
                     # Append patters from mod
                     for up in mod.urlpatterns:
                         patterns.append(up)
-
                 except Exception:
                     logger.exception('Loading patterns')
         except Exception:
             logger.exception('Processing dispatchers loading')
+
+    importlib.invalidate_caches()
 
     return patterns

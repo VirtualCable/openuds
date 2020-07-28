@@ -54,9 +54,9 @@ def dict2resp(dct):
 def guacamole(request: HttpRequest, tunnelId: str) -> HttpResponse:
     logger.debug('Received credentials request for tunnel id %s', tunnelId)
 
-    tunnelId, scrambler = tunnelId.split('.')
-
     try:
+        tunnelId, scrambler = tunnelId.split('.')
+
         val = TicketStore.get(tunnelId, invalidate=False)
         val['password'] = cryptoManager().symDecrpyt(val['password'], scrambler)
 

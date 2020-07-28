@@ -40,26 +40,31 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os.path
+import pkgutil
+import importlib
+import logging
+import sys
 
+logger = logging.getLogger(__name__)
 
 def __init__():
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    import os.path
-    import pkgutil
-    import sys
     from uds.core import transports
 
-    # Dinamycally import children of this package. The __init__.py files must import classes
+    # Dinamycally import children of this package. The __init__.py files of each module must import classes so they can get registered
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(name, globals(), locals(), [], 1)
+        # __import__(name, globals(), locals(), [], 1)
+        importlib.import_module('.' + name, __name__)  # import module
+        
+    importlib.invalidate_caches()
 
-    p = transports.Transport
     # This is marked as error in IDE, but it's not (__subclasses__)
-    for cls in p.__subclasses__():
+    for cls in transports.Transport.__subclasses__():
         clsSubCls = cls.__subclasses__()
         if len(clsSubCls) == 0:
             transports.factory().insert(cls)

@@ -40,7 +40,10 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import os.path
+import pkgutil
+import sys
+import importlib
 
 
 def __init__():
@@ -48,15 +51,16 @@ def __init__():
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    import os.path
-    import pkgutil
-    import sys
     from uds.core import osmanagers
 
     # Dinamycally import children of this package. The __init__.py files must register, if needed, inside ServiceProviderFactory
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(name, globals(), locals(), [], 1)
+        # __import__(name, globals(), locals(), [], 1)
+        importlib.import_module('.' + name, __name__)  # Local import
+
+    importlib.invalidate_caches()
 
     p = osmanagers.OSManager
     # This is marked as error in IDE, but it's not (__subclasses__)

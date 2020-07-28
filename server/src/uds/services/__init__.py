@@ -42,6 +42,10 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 """
 
 # pylint: disable=maybe-no-member
+import os.path
+import pkgutil
+import sys
+import importlib
 import logging
 
 logger = logging.getLogger(__name__)
@@ -52,15 +56,15 @@ def __init__():
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    import os.path
-    import pkgutil
-    import sys
     from uds.core import services
 
     # Dinamycally import children of this package. The __init__.py files must register, if needed, inside ServiceProviderFactory
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__('uds.services.' + name, globals(), locals(), [])
+        # __import__('uds.services.' + name, globals(), locals(), [])
+        importlib.import_module('.' + name, __name__)  # import module
+        
+    importlib.invalidate_caches()
 
     for p in [services.ServiceProvider]:
         # This is marked as error in IDE, but it's not (__subclasses__)
