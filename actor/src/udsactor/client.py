@@ -34,7 +34,7 @@ import datetime
 import signal
 import typing
 
-from PyQt5.QtWidgets import QApplication, QMessageBox, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, pyqtSignal
 
 from . import rest
@@ -49,6 +49,7 @@ from .http import client
 if typing.TYPE_CHECKING:
     from . import types
     from PyQt5.QtGui import QPixmap
+    from PyQt5.QtWidgets import QMainWindow
 
 class UDSClientQApp(QApplication):
     _app: 'UDSActorClient'
@@ -182,7 +183,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
 
         try:
             # Notify loging and mark it
-            self._loginInfo = self.api.login(platform.operations.getCurrentUser())
+            self._loginInfo = self.api.login(platform.operations.getCurrentUser(), platform.operations.getSessionType())
 
             if self._loginInfo.max_idle:
                 platform.operations.initIdleDuration(self._loginInfo.max_idle)

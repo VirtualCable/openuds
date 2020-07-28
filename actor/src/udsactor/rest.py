@@ -45,6 +45,9 @@ LISTEN_PORT = 43910
 # Default timeout
 TIMEOUT = 5   # 5 seconds is more than enought
 
+# Constants
+UNKNOWN = 'unknown'
+
 class RESTError(Exception):
     ERRCODE = 0
 
@@ -265,17 +268,18 @@ class UDSServerApi(UDSApi):
         )
 
 
-    def login(self, own_token: str, username: str) -> types.LoginResultInfoType:
+    def login(self, own_token: str, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
         if not own_token:
             return types.LoginResultInfoType(
                 ip='0.0.0.0',
-                hostname='unknown',
+                hostname=UNKNOWN,
                 dead_line=None,
                 max_idle=None
             )
         payload = {
             'token': own_token,
-            'username': username
+            'username': username,
+            'session_type': sessionType or UNKNOWN
         }
         result = self._doPost('login', payload)
         return types.LoginResultInfoType(
@@ -334,9 +338,10 @@ class UDSClientApi(UDSApi):
         }
         self._doPost('unregister', payLoad)
 
-    def login(self, username: str) -> types.LoginResultInfoType:
+    def login(self, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
         payLoad = {
-            'username': username
+            'username': username,
+            'session_type': sessionType or UNKNOWN,
         }
         result = self._doPost('login', payLoad)
         return types.LoginResultInfoType(

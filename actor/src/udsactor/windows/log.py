@@ -34,10 +34,10 @@ import os
 import tempfile
 import typing
 
-import servicemanager  # @UnresolvedImport, pylint: disable=import-error
+import servicemanager  # pylint: disable=import-error
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log).
-from ..loglevel import OTHER, DEBUG, INFO, WARN, ERROR, FATAL
+from .. import loglevel
 
 class LocalLogger:  # pylint: disable=too-few-public-methods
     linux = False
@@ -69,14 +69,14 @@ class LocalLogger:  # pylint: disable=too-few-public-methods
         if self.logger:
             self.logger.log(int(level / 1000), message)
 
-        if level < ERROR or self.serviceLogger is False:  # Only information and above will be on event log
+        if level < loglevel.ERROR or self.serviceLogger is False:  # Only information and above will be on event log
             return
 
         # In fact, we have restricted level in windows event log to ERROR or FATAL
         # but left the code for just a case in the future...
-        if level < WARN:  # Info
+        if level < loglevel.WARN:  # Info
             servicemanager.LogInfoMsg(message)
-        elif level < ERROR:  # WARN
+        elif level < loglevel.ERROR:  # WARN
             servicemanager.LogWarningMsg(message)
         else:  # Error & Fatal
             servicemanager.LogErrorMsg(message)

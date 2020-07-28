@@ -32,7 +32,7 @@
 import configparser
 import platform
 import socket
-import fcntl
+import fcntl  # Only available on Linux. Expect complains if edited from windows
 import os
 import subprocess
 import struct
@@ -50,7 +50,7 @@ def _getMacAddr(ifname: str) -> typing.Optional[str]:
     Returns the mac address of an interface
     Mac is returned as unicode utf-8 encoded
     '''
-    ifnameBytes = ifname.encode('utf-8')  # If unicode, convert to bytes
+    ifnameBytes = ifname.encode('utf-8')
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifnameBytes[:15])))
@@ -64,7 +64,7 @@ def _getIpAddr(ifname: str) -> typing.Optional[str]:
     Returns the ip address of an interface
     Ip is returned as unicode utf-8 encoded
     '''
-    ifnameBytes = ifname.encode('utf-8')  # If unicode, convert to bytes (or str in python 2.7)
+    ifnameBytes = ifname.encode('utf-8')
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         return str(socket.inet_ntoa(fcntl.ioctl(
@@ -106,7 +106,7 @@ def _getIpAndMac(ifname: str) -> typing.Tuple[typing.Optional[str], typing.Optio
     return (ip, mac)
 
 def checkPermissions() -> bool:
-    return os.getuid() == 0
+    return os.getuid() == 0  # getuid only available on linux. Expect "complaioins" if edited from Windows
 
 def getComputerName() -> str:
     '''
@@ -183,6 +183,14 @@ def getCurrentUser() -> str:
     '''
     return os.environ['USER']
 
+def getSessionType() -> str:
+    '''
+      Known values:
+        * Unknown -> No SESSIONNAME environment variable
+        * Console -> Local session
+        *  RDP-Tcp#[0-9]+ -> RDP Session
+    '''
+    return 'xrdp' if 'XRDP_SESSION' in os.environ else os.environ.get('XDG_SESSION_TYPE', 'unknown')
 
 def forceTimeSync() -> None:
     return

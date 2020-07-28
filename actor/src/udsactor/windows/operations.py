@@ -223,6 +223,15 @@ def getCurrentUser() -> str:
     '''
     return os.environ['USERNAME']
 
+def getSessionType() -> str:
+    '''
+      Known values:
+        * Unknown -> No SESSIONNAME environment variable
+        * Console -> Local session
+        *  RDP-Tcp#[0-9]+ -> RDP Session
+    '''
+    return os.environ.get('SESSIONNAME', 'unknown')
+
 def writeToPipe(pipeName: str, bytesPayload: bytes, waitForResponse: bool) -> typing.Optional[bytes]:
     # (str, bytes, bool) -> Optional[bytes]
     try:
