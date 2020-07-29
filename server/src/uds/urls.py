@@ -42,6 +42,7 @@ from uds.core.util.modfinder import loadModulesUrls
 urlpatterns = [
     # Root url placeholder
     path(r'', RedirectView.as_view(pattern_name='page.index', permanent=False), name='page.index.placeholder'),
+    # path(r'', RedirectView.as_view(url='https://www.udsenterprise.com', permanent=False), name='page.index.placeholder')
 
     # START COMPAT redirections & urls
     path(r'login/', RedirectView.as_view(pattern_name='page.login', permanent=False), name='page.login.compat'),
