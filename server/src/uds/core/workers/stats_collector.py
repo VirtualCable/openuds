@@ -68,7 +68,9 @@ class DeployedServiceStatsCollector(Job):
             users = auth.users.all().count()
             users_with_service = fltr.distinct().count()
             number_assigned_services = fltr.count()
-            print(auth.id, users, users_with_service, number_assigned_services)
+            counters.addCounter(auth, counters.CT_AUTH_USERS, users)
+            counters.addCounter(auth, counters.CT_AUTH_SERVICES, number_assigned_services)
+            counters.addCounter(auth, counters.CT_AUTH_USERS_WITH_SERVICES, users_with_service)
 
         logger.debug('Done Deployed service stats collector')
 
