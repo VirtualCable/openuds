@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2013-202 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -43,8 +43,8 @@ logger = logging.getLogger(__name__)
 # Posible counters, note that not all are used by every posible type
 # FIRST_COUNTER_TYPE, LAST_COUNTER_TYPE are just a placeholder for sanity checks
 (
-    CT_LOAD, CT_STORAGE, CT_ASSIGNED, CT_INUSE,
-) = range(4)
+    CT_LOAD, CT_STORAGE, CT_ASSIGNED, CT_INUSE, CT_AUTH_USERS, CT_AUTH_USERS_WITH_SERVICES, CT_AUTH_SERVICES
+) = range(7)
 
 __caRead: typing.Dict = {}
 __caWrite: typing.Dict = {}
@@ -70,7 +70,7 @@ def addCounter(obj: typing.Any, counterType: int, counterValue: int, stamp: typi
     return statsManager().addCounter(__transDict[type(obj)], obj.id, counterType, counterValue, stamp)
 
 
-def getCounters(obj: typing.Any, counterType: int, **kwargs):
+def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator[typing.Tuple[datetime.datetime, int], None, None]:
     """
     Get counters
 
@@ -116,24 +116,27 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs):
         yield val
 
 
-def getCounterTitle(counterType):
+def getCounterTitle(counterType) -> str:
     return __typeTitles.get(counterType, '').title()
 
 
 # Data initialization
-def _initializeData():
+def _initializeData() -> None:
     """
     Initializes dictionaries.
 
     Hides data from global var space
     """
-    from uds.models import Provider, Service, ServicePool
+    from uds.models import Provider, Service, ServicePool, Authenticator
 
     __caWrite.update({
         CT_LOAD: (Provider,),
         CT_STORAGE: (Service,),
         CT_ASSIGNED: (ServicePool,),
         CT_INUSE: (ServicePool,),
+        CT_AUTH_USERS: (Authenticator,),
+        CT_AUTH_SERVICES: (Authenticator,),
+        CT_AUTH_USERS_WITH_SERVICES: (Authenticator,),
     })
 
     # OBtain  ids from variups type of object to retrieve stats
@@ -167,6 +170,11 @@ def _initializeData():
         ServicePool: {
             CT_ASSIGNED: get_Id,
             CT_INUSE: get_Id
+        },
+        Authenticator: {
+            CT_AUTH_USERS: get_Id,
+            CT_AUTH_SERVICES: get_Id,
+            CT_AUTH_USERS_WITH_SERVICES: get_Id,
         }
     })
 
@@ -186,14 +194,15 @@ def _initializeData():
             return res
         return ()
 
-    OT_PROVIDER, OT_SERVICE, OT_DEPLOYED = range(3)
+    OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR = range(4)
 
     # Dict to convert objects to owner types
     # Dict for translations
     __transDict.update({
         ServicePool: OT_DEPLOYED,
         Service: OT_SERVICE,
-        Provider: OT_PROVIDER
+        Provider: OT_PROVIDER,
+        Authenticator: OT_AUTHENTICATOR,
     })
 
     # Titles of types
@@ -201,8 +210,10 @@ def _initializeData():
         CT_ASSIGNED: _('Assigned'),
         CT_INUSE: _('In use'),
         CT_LOAD: _('Load'),
-        CT_STORAGE: _('Storage')
+        CT_STORAGE: _('Storage'),
+        CT_AUTH_USERS: _('Users'),
+        CT_AUTH_USERS_WITH_SERVICES: _('Users with services'),
+        CT_AUTH_SERVICES: _('User Services'),
     })
-
 
 _initializeData()

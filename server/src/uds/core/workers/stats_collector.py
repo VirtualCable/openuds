@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from uds.models import ServicePool
+from uds.models import ServicePool, Authenticator
 from uds.core.util.state import State
 from uds.core.util.stats import counters
 from uds.core.managers import statsManager
@@ -62,6 +62,13 @@ class DeployedServiceStatsCollector(Job):
                 counters.addCounter(servicePool, counters.CT_INUSE, inUse)
             except Exception:
                 logger.exception('Getting counters for service pool %s', servicePool.name)
+
+        for auth in Authenticator.objects.all():
+            fltr = auth.users.filter(userServices__isnull=False).exclude(userServices__state__in=State.INFO_STATES)
+            users = auth.users.all().count()
+            users_with_service = fltr.distinct().count()
+            number_assigned_services = fltr.count()
+            print(auth.id, users, users_with_service, number_assigned_services)
 
         logger.debug('Done Deployed service stats collector')
 
