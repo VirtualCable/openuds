@@ -52,7 +52,7 @@ class OpenGnsysMaintainer(jobs.Job):
     frecuency = 60 * 60 * 4 # Once every 4 hours
     friendly_name = 'OpenGnsys cache renewal job'
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Looking for OpenGnsys renewable cache elements')
 
         # Look for Providers of type VMWareVCServiceProvider
@@ -63,7 +63,7 @@ class OpenGnsysMaintainer(jobs.Job):
             # Locate all services inside the provider
             service: models.Service
             for service in provider.services.all():
-                instance: OGService = service.getInstance()
+                instance: OGService = typing.cast(OGService, service.getInstance())
                 since = models.getSqlDatetime() - datetime.timedelta(hours=instance.maxReservationTime.num()-8)  # If less than 8 hours of reservation...
                 # Now mark for removal every CACHED service that is about to expire its reservation on OpenGnsys
                 userService: models.UserService

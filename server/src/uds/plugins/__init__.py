@@ -36,12 +36,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def __init__():
+def loadPlugins():
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    logger.debug('Initializing plugins')
+    logger.debug('Initializing plugins...')
 
     # Dinamycally import children of this package. The __init__.py files must import classes
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
@@ -51,4 +51,4 @@ def __init__():
 
     importlib.invalidate_caches()
 
-__init__()
+loadPlugins()
