@@ -72,6 +72,7 @@ class Config(Handler):
 
             if cfg.isCrypted() is True and addCrypt is False:
                 continue
+
             # add section if it do not exists
             if cfg.section() not in res:
                 res[cfg.section()] = {}

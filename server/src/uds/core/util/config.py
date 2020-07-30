@@ -32,7 +32,6 @@
 import typing
 import logging
 
-from django.conf import settings
 from django.apps import apps
 from uds.models.config import Config as DBConfig
 from uds.core.managers import cryptoManager
@@ -201,6 +200,9 @@ class Config:
             # Skip sections with name starting with "__" (not to be editted on configuration)
             if cfg.section.startswith('__'):  # Hidden section:
                 continue
+            # Hidden field, not to be edited by admin interface
+            if cfg.field_type == Config.HIDDEN_FIELD:
+                continue
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
             if cfg.crypt is True:
                 val = Config.section(cfg.section).valueCrypt(cfg.key)
@@ -267,7 +269,7 @@ class GlobalConfig:
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time
     # (only if os manager asks for this characteristic)
     CHECK_UNUSED_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631', type=Config.NUMERIC_FIELD)  # Defaults to 10 minutes
-    # Default CSS Used
+    # Default CSS Used: REMOVED! (keep the for for naw, for reference, but will be cleaned on future...)
     # CSS: Config.Value = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.TEXT_FIELD)
     # Max logins before blocking an account
     MAX_LOGIN_TRIES: Config.Value = Config.section(SECURITY_SECTION).value('maxLoginTries', '5', type=Config.NUMERIC_FIELD)
