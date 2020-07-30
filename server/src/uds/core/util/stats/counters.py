@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-202 Virtual Cable S.L.U.
+# Copyright (c) 2013-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -88,9 +88,9 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator
     """
     from uds.models import NEVER
 
-    since = kwargs.get('since', NEVER)
-    to = kwargs.get('to', datetime.datetime.now())
-    limit = kwargs.get('limit', 1000)
+    since = kwargs.get('since') or NEVER
+    to = kwargs.get('to') or datetime.datetime.now()
+    limit = kwargs.get('limit') or 1000
     use_max = kwargs.get('use_max', False)
     type_ = type(obj)
 
