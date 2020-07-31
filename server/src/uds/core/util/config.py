@@ -77,7 +77,6 @@ class Config:
                 self._default = cryptoManager().encrypt(default)
             self._data: typing.Optional[str] = None
 
-
         def get(self, force: bool = False) -> str:
             # Ensures DB contains configuration values
             # From Django 1.7, DB can only be accessed AFTER all apps are initialized, curious at least.. :)

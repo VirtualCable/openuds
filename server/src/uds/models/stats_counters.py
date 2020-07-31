@@ -92,15 +92,15 @@ class StatsCounters(models.Model):
         since = int(since) if since else NEVER_UNIX
         to = int(to) if to else getSqlDatetimeAsUnix()
 
-        interval = 600  # By default, group items in ten minutes interval (600 seconds)
+        interval = int(kwargs.get('interval') or '600')  # By default, group items in ten minutes interval (600 seconds)
 
-        elements = kwargs.get('elements', 0)
+        max_intervals = kwargs.get('max_intervals')
 
         limit = kwargs.get('limit')
 
-        if elements:
+        if max_intervals:
             # Protect against division by "elements-1" a few lines below
-            elements = int(elements) if int(elements) > 1 else 2
+            max_intervals = int(max_intervals) if int(max_intervals) > 1 else 2
 
             if owner_id is None:
                 q = StatsCounters.objects.filter(stamp__gte=since, stamp__lte=to)
@@ -115,10 +115,10 @@ class StatsCounters(models.Model):
             else:
                 q = q.filter(owner_type=owner_type)
 
-            if q.count() > elements:
+            if q.count() > max_intervals:
                 first = q.order_by('stamp')[0].stamp
                 last = q.order_by('stamp').reverse()[0].stamp
-                interval = int((last - first) / (elements - 1))
+                interval = int((last - first) / (max_intervals - 1))
 
         stampValue = '{ceil}(stamp/{interval})'.format(ceil=getSqlFnc('CEIL'), interval=interval)
         filt += ' AND stamp>={since} AND stamp<={to} GROUP BY {stampValue} ORDER BY stamp'.format(

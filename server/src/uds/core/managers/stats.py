@@ -103,7 +103,8 @@ class StatsManager:
         ownerIds: typing.Union[typing.Iterable[int], int],
         since: datetime.datetime,
         to: datetime.datetime,
-        max_intervals: int,
+        interval: typing.Optional[int],
+        max_intervals: typing.Optional[int],
         limit: typing.Optional[int],
         use_max: bool = False
     ) -> typing.Iterable:
@@ -132,6 +133,7 @@ class StatsManager:
             owner_id=ownerIds,
             since=sinceInt,
             to=toInt,
+            interval=interval,
             max_intervals=max_intervals,
             limit=limit,
             use_max=use_max

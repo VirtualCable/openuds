@@ -90,7 +90,6 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator
     """
     since = kwargs.get('since') or NEVER
     to = kwargs.get('to') or datetime.datetime.now()
-    max_intervals = kwargs.get('max_intervals') or 1000
     limit = kwargs.get('limit')
     use_max = kwargs.get('use_max', False)
     type_ = type(obj)
@@ -112,7 +111,7 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator
     else:
         owner_ids = None
 
-    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, max_intervals, limit, use_max):
+    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, kwargs.get('interval'), kwargs.get('max_intervals'), limit, use_max):
         val = (datetime.datetime.fromtimestamp(i.stamp), i.value)
         yield val
 
@@ -128,7 +127,7 @@ def _initializeData() -> None:
 
     Hides data from global var space
     """
-    from uds.models import Provider, Service, ServicePool, Authenticator
+    from uds.models import Provider, Service, ServicePool, Authenticator  # pylint: disable=import-outside-toplevel
 
     __caWrite.update({
         CT_LOAD: (Provider,),
