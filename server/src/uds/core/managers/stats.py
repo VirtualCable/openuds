@@ -96,8 +96,17 @@ class StatsManager:
             logger.error('Exception handling counter stats saving (maybe database is full?)')
         return False
 
-    def getCounters(self, ownerType: int, counterType: int, ownerIds: typing.Union[typing.Iterable[int], int],
-                    since: datetime.datetime, to: datetime.datetime, limit: int, use_max: bool = False) -> typing.Iterable:
+    def getCounters(
+        self,
+        ownerType: int,
+        counterType: int,
+        ownerIds: typing.Union[typing.Iterable[int], int],
+        since: datetime.datetime,
+        to: datetime.datetime,
+        max_intervals: int,
+        limit: typing.Optional[int],
+        use_max: bool = False
+    ) -> typing.Iterable:
         """
         Retrieves counters from item
 
@@ -117,7 +126,16 @@ class StatsManager:
         sinceInt = int(time.mktime(since.timetuple()))
         toInt = int(time.mktime(to.timetuple()))
 
-        return StatsCounters.get_grouped(ownerType, counterType, owner_id=ownerIds, since=sinceInt, to=toInt, limit=limit, use_max=use_max)
+        return StatsCounters.get_grouped(
+            ownerType,
+            counterType,
+            owner_id=ownerIds,
+            since=sinceInt,
+            to=toInt,
+            max_intervals=max_intervals,
+            limit=limit,
+            use_max=use_max
+        )
 
     def cleanupCounters(self):
         """

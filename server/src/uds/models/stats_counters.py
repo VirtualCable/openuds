@@ -94,7 +94,9 @@ class StatsCounters(models.Model):
 
         interval = 600  # By default, group items in ten minutes interval (600 seconds)
 
-        elements = kwargs.get('limit', None)
+        elements = kwargs.get('elements', 0)
+
+        limit = kwargs.get('limit')
 
         if elements:
             # Protect against division by "elements-1" a few lines below
@@ -119,7 +121,14 @@ class StatsCounters(models.Model):
                 interval = int((last - first) / (elements - 1))
 
         stampValue = '{ceil}(stamp/{interval})'.format(ceil=getSqlFnc('CEIL'), interval=interval)
-        filt += ' AND stamp>={0} AND stamp<={1} GROUP BY {2} ORDER BY stamp'.format(since, to, stampValue)
+        filt += ' AND stamp>={since} AND stamp<={to} GROUP BY {stampValue} ORDER BY stamp'.format(
+            since=since,
+            to=to,
+            stampValue=stampValue
+        )
+
+        if limit:
+            filt += ' LIMIT {}'.format(limit)
 
         fnc = getSqlFnc('MAX' if kwargs.get('use_max', False) else 'AVG')
 

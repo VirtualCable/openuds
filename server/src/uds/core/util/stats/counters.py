@@ -35,7 +35,10 @@ import logging
 import typing
 
 from django.utils.translation import ugettext_lazy as _
+
 from uds.core.managers import statsManager
+from uds.models import NEVER
+
 
 logger = logging.getLogger(__name__)
 
@@ -81,16 +84,14 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator
         to: (optional, defaults to 'Until end') En date for counter to recover
         limit: (optional, defaults to 1000) Number of counter to recover. This is an 'At most' advice. The returned number of value
                can be lower, or even 1 more than requested due to a division for retrieving object at database
-        all: (optinal), indicates that get all counters for the type of obj passed in, not only for that obj.
 
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    from uds.models import NEVER
-
     since = kwargs.get('since') or NEVER
     to = kwargs.get('to') or datetime.datetime.now()
-    limit = kwargs.get('limit') or 1000
+    max_intervals = kwargs.get('max_intervals') or 1000
+    limit = kwargs.get('limit')
     use_max = kwargs.get('use_max', False)
     type_ = type(obj)
 
@@ -111,7 +112,7 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator
     else:
         owner_ids = None
 
-    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, limit, use_max):
+    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, max_intervals, limit, use_max):
         val = (datetime.datetime.fromtimestamp(i.stamp), i.value)
         yield val
 

@@ -69,7 +69,7 @@ def getServicesPoolsCounters(servicePool: typing.Optional[models.ServicePool], c
                 us = servicePool
                 complete = False
             val = []
-            for x in counters.getCounters(us, counter_type, since=since, to=to, limit=POINTS, use_max=USE_MAX, all=complete):
+            for x in counters.getCounters(us, counter_type, since=since, to=to, max_intervals=POINTS, use_max=USE_MAX, all=complete):
                 val.append({'stamp': x[0], 'value': int(x[1])})
             if len(val) > 2:
                 cache.put(cacheKey, encoders.encode(pickle.dumps(val), 'zip'), 600)

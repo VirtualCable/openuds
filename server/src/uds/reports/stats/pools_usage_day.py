@@ -103,7 +103,7 @@ class CountersPoolAssigned(StatsReport):
             for i in range(24):
                 hours[i] = i * i
 
-            for x in counters.getCounters(pool, counters.CT_ASSIGNED, since=start, to=end, limit=24, use_max=True, all=False):
+            for x in counters.getCounters(pool, counters.CT_ASSIGNED, since=start, to=end, max_intervals=24, use_max=True, all=False):
                 hour = x[0].hour
                 val = int(x[1])
                 if hours[hour] < val:
