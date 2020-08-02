@@ -37,11 +37,12 @@ import typing
 from django.utils.translation import ugettext_lazy as _
 
 from uds.core.managers import statsManager
-from uds.models import NEVER
+from uds.models import NEVER, Provider, Service, ServicePool, Authenticator 
 
 
 logger = logging.getLogger(__name__)
 
+CounterClass = typing.TypeVar('CounterClass', Provider, Service, ServicePool, Authenticator)
 
 # Posible counters, note that not all are used by every posible type
 # FIRST_COUNTER_TYPE, LAST_COUNTER_TYPE are just a placeholder for sanity checks
@@ -55,7 +56,7 @@ __transDict: typing.Dict = {}
 __typeTitles: typing.Dict = {}
 
 
-def addCounter(obj: typing.Any, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None) -> bool:
+def addCounter(obj: CounterClass, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None) -> bool:
     """
     Adds a counter stat to specified object
 
@@ -73,7 +74,7 @@ def addCounter(obj: typing.Any, counterType: int, counterValue: int, stamp: typi
     return statsManager().addCounter(__transDict[type(obj)], obj.id, counterType, counterValue, stamp)
 
 
-def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator[typing.Tuple[datetime.datetime, int], None, None]:
+def getCounters(obj: CounterClass, counterType: int, **kwargs) -> typing.Generator[typing.Tuple[datetime.datetime, int], None, None]:
     """
     Get counters
 
@@ -116,7 +117,7 @@ def getCounters(obj: typing.Any, counterType: int, **kwargs) -> typing.Generator
         yield val
 
 
-def getCounterTitle(counterType) -> str:
+def getCounterTitle(counterType: int) -> str:
     return __typeTitles.get(counterType, '').title()
 
 
@@ -127,7 +128,6 @@ def _initializeData() -> None:
 
     Hides data from global var space
     """
-    from uds.models import Provider, Service, ServicePool, Authenticator  # pylint: disable=import-outside-toplevel
 
     __caWrite.update({
         CT_LOAD: (Provider,),
@@ -181,7 +181,7 @@ def _initializeData() -> None:
     def _getIds(obj):
         to = type(obj)
 
-        if to is ServicePool:
+        if to is ServicePool or to is Authenticator:
             return to.id
 
         if to is Service:
@@ -192,6 +192,7 @@ def _initializeData() -> None:
             for i in obj.services.all():
                 res += _getIds(i)
             return res
+
         return ()
 
     OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR = range(4)
