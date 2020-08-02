@@ -35,10 +35,12 @@ import logging
 import typing
 
 from uds.core.managers import statsManager
+from uds.models import Provider, Service, ServicePool, Authenticator
 
 logger = logging.getLogger(__name__)
 
 EventTupleType = typing.Tuple[datetime.datetime, str, str, str, str, int]
+EventClass = typing.TypeVar('EventClass', Provider, Service, ServicePool, Authenticator)
 
 # Posible events, note that not all are used by every possible owner type
 (
@@ -58,11 +60,14 @@ EventTupleType = typing.Tuple[datetime.datetime, str, str, str, str, int]
     OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR,
 ) = range(4)
 
+__transDict = {
+    ServicePool: OT_DEPLOYED,
+    Service: OT_SERVICE,
+    Provider: OT_PROVIDER,
+    Authenticator: OT_AUTHENTICATOR,
+}
 
-__transDict: typing.Dict = {}
-
-
-def addEvent(obj: typing.Any, eventType: int, **kwargs) -> bool:
+def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
     """
     Adds a event stat to specified object
 
@@ -76,7 +81,7 @@ def addEvent(obj: typing.Any, eventType: int, **kwargs) -> bool:
     return statsManager().addEvent(__transDict[type(obj)], obj.id, eventType, **kwargs)
 
 
-def getEvents(obj: typing.Any, eventType: int, **kwargs) -> typing.Generator[EventTupleType, None, None]:
+def getEvents(obj: EventClass, eventType: int, **kwargs) -> typing.Generator[EventTupleType, None, None]:
     """
     Get events
 
@@ -106,23 +111,3 @@ def getEvents(obj: typing.Any, eventType: int, **kwargs) -> typing.Generator[Eve
     for i in statsManager().getEvents(__transDict[type_], eventType, owner_id=owner_id, since=since, to=to):
         val = (datetime.datetime.fromtimestamp(i.stamp), i.fld1, i.fld2, i.fld3, i.fld4, i.event_type)
         yield val
-
-
-# Data initialization
-def _initializeData():
-    """
-    Initializes dictionaries.
-    """
-    from uds.models import Provider, Service, ServicePool, Authenticator
-
-    # Dict to convert objects to owner types
-    # Dict for translations
-    __transDict.update({
-        ServicePool: OT_DEPLOYED,
-        Service: OT_SERVICE,
-        Provider: OT_PROVIDER,
-        Authenticator: OT_AUTHENTICATOR,
-    })
-
-
-_initializeData()
