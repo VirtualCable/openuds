@@ -130,12 +130,17 @@ class StatsCounters(models.Model):
         if limit:
             filt += ' LIMIT {}'.format(limit)
 
-        fnc = getSqlFnc('MAX' if kwargs.get('use_max', False) else 'AVG')
+        if kwargs.get('use_max', False):
+            fnc = getSqlFnc('MAX') + ('(value)')
+        else:
+            fnc = getSqlFnc('CEIL') + '({}(value))'.format(getSqlFnc('AVG'))
+
+        # fnc = getSqlFnc('MAX' if kwargs.get('use_max', False) else 'AVG')
 
         query = (
-            'SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, ' + stampValue + '*{}'.format(interval) + ' AS stamp,' +
-            getSqlFnc('CEIL') + '({0}(value)) AS value '
-            'FROM {1} WHERE {2}'
+            'SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, ' + stampValue + '*{}'.format(interval) + ' AS stamp, ' +
+            '{} AS value '
+            'FROM {} WHERE {}'
         ).format(fnc, StatsCounters._meta.db_table, filt)
 
         logger.debug('Stats query: %s', query)

@@ -34,6 +34,7 @@ import typing
 
 from django.utils.translation import ugettext_noop as _
 from uds.core import reports
+from ..auto import ReportAuto
 
 class StatsReport(reports.Report):
     group = _('Statistics')  # So we can make submenus with reports
@@ -41,3 +42,6 @@ class StatsReport(reports.Report):
     def generate(self) -> typing.Union[str, bytes]:
         raise NotImplementedError('StatsReport generate invoked and not implemented')
 
+
+class StatsReportAuto(ReportAuto, StatsReport):
+    pass

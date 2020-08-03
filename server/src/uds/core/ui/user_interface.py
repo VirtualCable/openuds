@@ -103,16 +103,17 @@ class gui:
 
     # Helpers
     @staticmethod
-    def convertToChoices(vals: typing.Iterable[str]) -> typing.List[typing.Dict[str, str]]:
+    def convertToChoices(vals: typing.Union[typing.List[str], typing.MutableMapping[str, str]]) -> typing.List[typing.Dict[str, str]]:
         """
         Helper to convert from array of strings to the same dict used in choice,
         multichoice, ..
         The id is set to values in the array (strings), while text is left empty.
         """
-        res = []
-        for v in vals:
-            res.append({'id': v, 'text': ''})
-        return res
+        if isinstance(vals, (list, tuple)):
+            return [{'id': v, 'text': ''} for v in vals]
+        
+        # Dictionary
+        return [{'id': k, 'text': v} for k, v in vals.items()]
 
     @staticmethod
     def convertToList(vals: typing.Iterable[str]) -> typing.List[str]:
@@ -672,6 +673,8 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
+            if options.get('values') and isinstance(options.get('values'), dict):
+                options['values'] = gui.convertToChoices(options['values'])
             self._data['values'] = options.get('values', [])
             if 'fills' in options:
                 # Save fnc to register as callback
@@ -738,6 +741,8 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
+            if options.get('values') and isinstance(options.get('values'), dict):
+                options['values'] = gui.convertToChoices(options['values'])
             self._data['values'] = options.get('values', [])
             self._data['rows'] = options.get('rows', -1)
             self._type(gui.InputField.MULTI_CHOICE_TYPE)
@@ -826,7 +831,7 @@ class UserInterfaceType(type):
         return type.__new__(cls, classname, bases, newClassDict)
 
 
-class UserInterface(metaclass=UserInterfaceType):
+class   UserInterface(metaclass=UserInterfaceType):
     """
     This class provides the management for gui descriptions (user forms)
 

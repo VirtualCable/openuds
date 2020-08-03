@@ -40,3 +40,4 @@ from . import usage_by_pool
 from . import pool_users_summary
 from . import pools_usage_summary
 
+from . import auth_stats

@@ -1,0 +1,40 @@
+{% load l10n i18n %}
+<html lang="en">
+    <head>
+        <title>{% trans 'Users usage list' %}</title>
+        <meta name="author" content="UDS">
+        <meta name="description" content="{% trans 'Statistics by Authenticator' %}">
+        <meta name="keywords" content="uds,report,usage,users,list">
+        <meta name="generator" content="UDS Reporting">
+    </head>
+    <body>
+        <table style="width: 100%; font-size: 0.8em;">
+            <thead>
+                <tr>
+                    <th style="width: 20%">{% trans 'Date' %}</th>
+                    <th style="width: 15%">{% trans 'Users' %}</th>
+                    <th style="width: 25%">{% trans 'Services' %}</th>
+                    <th style="width: 20%">{% trans 'User working' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in data %}
+                
+                <tr>
+                    {% if d.users == None %}
+                    <td colspan="4" style="text-align: center; font-weight: bold; font-size: large;">{{ d.date }}</td>
+                    {% else %}
+                    <td>{{ d.date }}</td>
+                    <td>{{ d.users }}</td>
+                    <td>{{ d.services }}</td>
+                    <td>{{ d.user_services }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <!-- <p style="page-break-before: always">
+            This is a new page
+        </p> -->
+    </body>
+</html>

@@ -57,12 +57,15 @@ def __init__():
     """
     This imports all packages that are descendant of this package, and, after that,
     """
+    alreadyAdded: typing.Set[str] = set()
+
     def addReportCls(cls: typing.Type[reports.Report]):
         logger.debug('Adding report %s', cls)
         availableReports.append(cls)
 
     def recursiveAdd(reportClass: typing.Type[reports.Report]):
-        if reportClass.uuid:
+        if reportClass.uuid and reportClass.uuid not in alreadyAdded:
+            alreadyAdded.add(reportClass.uuid)
             addReportCls(reportClass)
         else:
             logger.debug('Report class %s not added because it lacks of uuid (it is probably a base class)', reportClass)
@@ -77,8 +80,9 @@ def __init__():
         # __import__(name, globals(), locals(), [], 1)
         importlib.import_module('.' + name, __name__)  # Local import
 
+    recursiveAdd(reports.Report)
+
     importlib.invalidate_caches()
 
-    recursiveAdd(reports.Report)
 
 __init__()
