@@ -173,7 +173,7 @@ class CalendarAction(UUIDModel):
             executed = True
         elif CALENDAR_ACTION_IGNORE_UNUSED['id'] == self.action:
             self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
-        elif CALENDAR_ACTION_REMOVE_USERSERVICES:
+        elif CALENDAR_ACTION_REMOVE_USERSERVICES['id'] == self.action:
             self.service_pool.assignedUserServices().delete()
         else:
             caTransports = (CALENDAR_ACTION_ADD_TRANSPORT['id'], CALENDAR_ACTION_DEL_TRANSPORT['id'])
