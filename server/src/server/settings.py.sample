@@ -179,7 +179,6 @@ MIDDLEWARE = [
     'uds.core.util.request.GlobalRequestMiddleware',
     'uds.core.util.middleware.XUACompatibleMiddleware',
     'uds.core.util.middleware.RedirectMiddleware',
-    'uds.plugins.enterprise.middleware.Middleware',
 ]
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
