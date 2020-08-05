@@ -148,7 +148,7 @@ class BaseModelHandler(Handler):
                 'label': _('Short name'),
                 'tooltip': _('Short name for user service visualization'),
                 'required': False,
-                'length': 16,
+                'length': 18,
                 'order': 0 - 95,
             })
         if 'comments' in flds:
