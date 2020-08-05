@@ -62,7 +62,8 @@ class UDSActorSvc(daemon.Daemon, CommonService):
             account: str,
             password: str
         ) -> None:
-        logger.fatal('Join domain is not supported on linux platforms right now')
+        logger.info('Join domain is not supported on linux platforms right now. Just renaming.')
+        self.rename(name)
 
     def run(self) -> None:
         logger.debug('Running Daemon: {}'.format(self._isAlive))
