@@ -238,7 +238,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': ugettext('Service used as base of this service pool'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'rdonly': True,
-                'order': 100,  # Ensueres is At end
+                'order': 100,  # Ensures is At end
             }, {
                 'name': 'osmanager_id',
                 'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]),
