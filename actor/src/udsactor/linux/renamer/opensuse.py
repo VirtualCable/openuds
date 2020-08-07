@@ -63,3 +63,4 @@ def rename(newName: str) -> bool:
 # All names in lower case
 renamers['opensuse'] = rename
 renamers['suse'] = rename
+renamers['opensuse-leap'] = rename

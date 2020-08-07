@@ -129,7 +129,7 @@ def getLinuxOs() -> str:
             data = f.read()
         cfg = configparser.ConfigParser()
         cfg.read_string('[os]\n' + data)
-        return cfg['os'].get('id', 'unknown')
+        return cfg['os'].get('id', 'unknown').replace('"', '')
     except Exception:
         return 'unknown'
 
