@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2013-2019 Virtual Cable S.L.
+# Copyright (c) 2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,41 +30,5 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 
-from django.http import HttpResponse, HttpRequest
-from uds.models import TicketStore
-from uds.core.auths import auth
-from uds.core.managers import cryptoManager
-
-
-logger = logging.getLogger(__name__)
-
-ERROR = "ERROR"
-CONTENT_TYPE = 'text/plain'
-
-# We will use the cache to "hold" the tickets valid for users
-
-
-def dict2resp(dct):
-    return '\r'.join((k + '\t' + v for k, v in dct.items()))
-
-
-@auth.trustedSourceRequired
-def guacamole(request: HttpRequest, tunnelId: str) -> HttpResponse:
-    logger.debug('Received credentials request for tunnel id %s', tunnelId)
-
-    try:
-        tunnelId, scrambler = tunnelId.split('.')
-
-        val = TicketStore.get(tunnelId, invalidate=False)
-
-        if 'password' in val:
-            val['password'] = cryptoManager().symDecrpyt(val['password'], scrambler)
-
-        response = dict2resp(val)
-    except Exception:
-        # logger.error('Invalid guacamole ticket (F5 on client?): %s', tunnelId)
-        return HttpResponse(ERROR, content_type=CONTENT_TYPE)
-
-    return HttpResponse(response, content_type=CONTENT_TYPE)
+# from .html5vnc import HTML5VNCTransport
