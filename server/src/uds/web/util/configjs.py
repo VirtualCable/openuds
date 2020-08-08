@@ -123,6 +123,7 @@ def udsJs(request: 'HttpRequest') -> str:
         'site_copyright_link': GlobalConfig.SITE_COPYRIGHT_LINK.get(),
         'site_logo_name': GlobalConfig.SITE_LOGO_NAME.get(),
         'site_information': GlobalConfig.SITE_INFO.get(),
+        'site_filter_on_top': GlobalConfig.SITE_FILTER_ONTOP.getBool(True),
         'messages': {
             # Calendar denied message
             'calendarDenied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip() or gettext('Access limited by calendar')

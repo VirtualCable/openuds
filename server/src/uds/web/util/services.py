@@ -155,8 +155,9 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
 
         trans = []
         for t in sorted(svr.transports.all(), key=lambda x: x.priority):   # In memory sort, allows reuse prefetched and not too big array
-            typeTrans = t.getType()
-            if typeTrans is None:  # This may happen if we "remove" a transport type but we have a transport of that kind on DB
+            try:
+                typeTrans = t.getType()
+            except Exception:
                 continue
             if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
                 if typeTrans.ownLink is True:

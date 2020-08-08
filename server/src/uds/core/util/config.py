@@ -341,6 +341,7 @@ class GlobalConfig:
     SITE_LOGO_NAME: Config.Value = Config.section(CUSTOM_SECTION).value('Logo name', 'UDS', type=Config.TEXT_FIELD)
     SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value('CSS', '', type=Config.LONGTEXT_FIELD)
     SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value('Site information', '', type=Config.LONGTEXT_FIELD)
+    SITE_FILTER_ONTOP: Config.Value = Config.section(CUSTOM_SECTION).value('Show Filter on Top', '0', type=Config.BOOLEAN_FIELD)
 
     # Custom HTML for login page
     # CUSTOM_HTML_LOGIN: Config.Value = Config.section(CUSTOM_SECTION).value('customHtmlLogin', '', type=Config.LONGTEXT_FIELD)
