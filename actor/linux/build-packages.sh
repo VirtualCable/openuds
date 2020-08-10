@@ -32,4 +32,5 @@ for pkg in udsactor-$VERSION.spec; do
     rpmbuild -v -bb --clean --buildroot=$top/rpm/BUILD/$pkg-root --target noarch $pkg 2>&1
 done
 
+rpm --addsign ../*rpm
 #rm udsactor-$VERSION
