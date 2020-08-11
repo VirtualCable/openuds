@@ -47,30 +47,59 @@ class XScreenSaverInfo(ctypes.Structure):  # pylint: disable=too-few-public-meth
                 ('idle', ctypes.c_ulong),
                 ('eventMask', ctypes.c_ulong)]
 
+class c_ptr(ctypes.c_void_p):
+    pass
+
 def _ensureInitialized():
     global xlib, xss, xssInfo, display, initialized  # pylint: disable=global-statement
+
     if initialized:
         return
 
     initialized = True
 
-    # Initialize xlib & xss
     try:
         xlibPath = ctypes.util.find_library('X11')
         xssPath = ctypes.util.find_library('Xss')
         xlib = xss = None
         if not xlibPath or not xssPath:
-            raise Exception()
+            raise Exception('Library Not found!!')
+
         xlib = ctypes.cdll.LoadLibrary(xlibPath)
         xss = ctypes.cdll.LoadLibrary(xssPath)
 
         # Fix result type to XScreenSaverInfo Structure
         xss.XScreenSaverQueryExtension.restype = ctypes.c_int
+        xss.XScreenSaverQueryExtension.argtypes = [
+            ctypes.c_void_p,
+            ctypes.POINTER(ctypes.c_int),
+            ctypes.POINTER(ctypes.c_int)
+        ]
         xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
+        xss.XScreenSaverQueryInfo.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_void_p,
+            ctypes.POINTER(XScreenSaverInfo)
+        ]
+        xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
+        xlib.XOpenDisplay.restype = c_ptr
+
         display = xlib.XOpenDisplay(None)
+
+        if not display.value:
+            raise Exception('Display not found!')  # Invalid display, not accesible
+
         xssInfo = xss.XScreenSaverAllocInfo()
-        if display <= 0:
-            raise Exception()  # Invalid display, not accesible
+
+        # Ensures screen saver extension is available
+        event_base = ctypes.c_int()
+        error_base = ctypes.c_int()
+
+        available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
+
+        if available != 1:
+            raise Exception('ScreenSaver not available')
+
     except Exception:  # Libraries not accesible, not found or whatever..
         xlib = xss = display = xssInfo = None
 
@@ -89,14 +118,6 @@ def getIdleDuration() -> float:
     '''
     if not initialized or not xlib or not xss or not xssInfo:
         return 0  # Libraries not available
-
-    event_base = ctypes.c_int()
-    error_base = ctypes.c_int()
-
-    available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
-
-    if available != 1:
-        return 0  # No screen saver is available, no way of getting idle
 
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), xssInfo)
 
