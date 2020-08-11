@@ -50,7 +50,7 @@ class UDSActorClientPool:
                 result.append(requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False, timeout=timeout))
             except Exception as e:
                 # If cannot request to a clientUrl, remove it from list
-                logger.info('Could not coneect with client %s: %s. Removed from registry.', e, clientUrl)
+                logger.info('Could not connect with client %s: %s. Removed from registry.', e, clientUrl)
                 removables.append(clientUrl)
 
         # Remove failed connections

@@ -133,10 +133,9 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         linkedClone: bool,
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
-        toPool: typing.Optional[str] = None,
-        memory: int = 0
+        toPool: typing.Optional[str] = None
     ) -> client.types.VmCreationResult:
-        return self.__getApi().cloneVm(vmId, name, description, linkedClone, toNode, toStorage, toPool, memory)
+        return self.__getApi().cloneVm(vmId, name, description, linkedClone, toNode, toStorage, toPool)
 
     def startMachine(self,vmId: int) -> client.types.UPID:
         return self.__getApi().startVm(vmId)

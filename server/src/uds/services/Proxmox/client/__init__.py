@@ -235,8 +235,7 @@ class ProxmoxClient:
         linkedClone: bool,
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
-        toPool: typing.Optional[str] = None,
-        memory: int = 0
+        toPool: typing.Optional[str] = None
     ) -> types.VmCreationResult:
         newVmId = self.getNextVMId()
         vmInfo = self.getVmInfo(vmId)

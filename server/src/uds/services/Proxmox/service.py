@@ -144,18 +144,6 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         required=True
     )
 
-    memory = gui.NumericField(
-        label=_("Memory (Mb)"),
-        length=4,
-        defvalue=512,
-        minValue=0,
-        rdonly=False,
-        order=112,
-        tooltip=_('Memory assigned to machines'),
-        tab=_('Machine'),
-        required=True
-    )
-
     baseName = gui.TextField(
         label=_('Machine Names'),
         rdonly=False,
@@ -181,8 +169,8 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values:
             self.baseName.value = validators.validateHostname(self.baseName.value, 15, asPattern=True)
-            if int(self.memory.value) < 128:
-                raise Service.ValidationException(_('The minimum allowed memory is 128 Mb'))
+            # if int(self.memory.value) < 128:
+            #     raise Service.ValidationException(_('The minimum allowed memory is 128 Mb'))
 
     def initGui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
@@ -235,8 +223,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
             description,
             linkedClone=True,
             toStorage=self.datastore.value,
-            toPool=pool,
-            memory=self.memory.num()*1024*1024
+            toPool=pool
         )
 
     def getMachineInfo(self, vmId: int) -> 'client.types.VMInfo':
