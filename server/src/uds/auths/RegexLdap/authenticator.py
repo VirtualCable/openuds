@@ -153,7 +153,7 @@ class RegexLdap(auths.Authenticator):
             res.append(attr)
         return res
 
-    def __processField(self, field: str, attributes: typing.Dict[str, typing.Any]) -> typing.List[str]:
+    def __processField(self, field: str, attributes: typing.MutableMapping[str, typing.Any]) -> typing.List[str]:
         res: typing.List[str] = []
         logger.debug('Attributes: %s', attributes)
         for line in field.splitlines():
@@ -253,7 +253,7 @@ class RegexLdap(auths.Authenticator):
         @return: None if username is not found, an dictionary of LDAP entry attributes if found.
         @note: Active directory users contains the groups it belongs to in "memberOf" attribute
         """
-        return ldaputil.getFirst(
+        user = ldaputil.getFirst(
             con=self.__connection(),
             base=self._ldapBase,
             objectClass=self._userClass,
@@ -262,6 +262,26 @@ class RegexLdap(auths.Authenticator):
             attributes=[self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr),
             sizeLimit=LDAP_RESULT_LIMIT
         )
+
+        # If user attributes is split, that is, it has more than one "ldap entry", get a second entry filtering by a new attribute
+        # and add result attributes to "main" search.
+        # For example, you can have authentication in an "user" object class and attributes in an "user_attributes" object class.
+        # Note: This is very rare situation, but it ocurrs :)
+        if user and self._altClass:
+            altUser = ldaputil.getFirst(
+                con=self.__connection(),
+                base=self._ldapBase,
+                objectClass=self._altClass,
+                field=self._userIdAttr,
+                value=username,
+                attributes=[self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr),
+                sizeLimit=LDAP_RESULT_LIMIT
+            )
+            if altUser:
+                user.update(altUser)
+
+        return user
+
 
     def __getGroups(self, user: ldaputil.LDAPResultType):
         grps = self.__processField(self._groupNameAttr, user)

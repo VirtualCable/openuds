@@ -40,7 +40,7 @@ from uds.core.util import tools
 
 logger = logging.getLogger(__name__)
 
-LDAPResultType = typing.Dict[str, typing.Any]
+LDAPResultType = typing.MutableMapping[str, typing.Any]
 
 class LDAPError(Exception):
     @staticmethod
