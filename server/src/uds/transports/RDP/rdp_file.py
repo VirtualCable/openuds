@@ -331,7 +331,7 @@ class RDPFile:
             res += 'audiocapturemode:i:1\n'
 
         if self.redirectWebcam:
-            res += 'camerastoredirect:s:*'
+            res += 'camerastoredirect:s:*\n'
 
         enforcedSharesStr = ';'.join(self.enforcedShares.replace(' ', '').upper().split(',')) + ';' if self.enforcedShares else ''
 

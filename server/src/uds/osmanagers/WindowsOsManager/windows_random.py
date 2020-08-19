@@ -94,7 +94,7 @@ class WinRandomPassManager(WindowsOsManager):
             # Generates a password that conforms to complexity
             rnd = random.SystemRandom()
             base = ''.join(rnd.choice(v) for v in (string.ascii_lowercase, string.ascii_uppercase, string.digits)) + rnd.choice('.+-')
-            randomPass = ''.join(rnd.choice(string.ascii_letters + string.digits) for _ in range(13))
+            randomPass = ''.join(rnd.choice(string.ascii_letters + string.digits) for _ in range(12))
             pos = rnd.randrange(0, len(randomPass))
             randomPass = randomPass[:pos] + base + randomPass[pos:]
             userService.storeValue('winOsRandomPass', randomPass)

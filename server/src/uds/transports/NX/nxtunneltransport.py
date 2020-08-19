@@ -71,7 +71,6 @@ class TSNXTransport(BaseNXTransport):
     group = transports.TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
-    tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=3, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
     fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'), tab=gui.CREDENTIALS_TAB)
@@ -159,7 +158,7 @@ class TSNXTransport(BaseNXTransport):
             if values['tunnelServer'].find(':') == -1:
                 raise transports.Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
             self._tunnelServer = values['tunnelServer']
-            self._tunnelCheckServer = values['tunnelCheckServer']
+            self._tunnelCheckServer = ''
             self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
             self._fixedName = values['fixedName']
             self._fixedPassword = values['fixedPassword']
@@ -199,8 +198,7 @@ class TSNXTransport(BaseNXTransport):
             'session': self._session,
             'cacheDisk': self._cacheDisk,
             'cacheMem': self._cacheMem,
-            'tunnelServer': self._tunnelServer,
-            'tunnelCheckServer': self._tunnelCheckServer
+            'tunnelServer': self._tunnelServer
         }
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals

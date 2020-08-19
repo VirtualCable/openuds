@@ -64,8 +64,6 @@ class TRDPTransport(BaseRDPTransport):
     typeName = _('RDP')
     typeType = 'TSRDPTransport'
     typeDescription = _('RDP Protocol. Tunneled connection.')
-    needsJava = True  # If this transport needs java for rendering
-    protocol = transports.protocols.RDP
     group = transports.TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
