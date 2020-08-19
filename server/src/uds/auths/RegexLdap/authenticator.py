@@ -244,7 +244,7 @@ class RegexLdap(auths.Authenticator):
         return self._connection
 
     def __connectAs(self, username: str, password: str) -> typing.Any:
-        return ldaputil.connection(username, password, self._host, ssl=self._ssl, timeout=int(self._timeout), debug=False)
+        return ldaputil.connection(username, password, self._host, port=int(self._port), ssl=self._ssl, timeout=int(self._timeout), debug=False)
 
     def __getUser(self, username: str) -> typing.Optional[ldaputil.LDAPResultType]:
         """
@@ -253,13 +253,14 @@ class RegexLdap(auths.Authenticator):
         @return: None if username is not found, an dictionary of LDAP entry attributes if found.
         @note: Active directory users contains the groups it belongs to in "memberOf" attribute
         """
+        attributes = [self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
         user = ldaputil.getFirst(
             con=self.__connection(),
             base=self._ldapBase,
             objectClass=self._userClass,
             field=self._userIdAttr,
             value=username,
-            attributes=[self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr),
+            attributes=attributes,
             sizeLimit=LDAP_RESULT_LIMIT
         )
 
@@ -274,11 +275,14 @@ class RegexLdap(auths.Authenticator):
                 objectClass=self._altClass,
                 field=self._userIdAttr,
                 value=username,
-                attributes=[self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr),
+                attributes=attributes,
                 sizeLimit=LDAP_RESULT_LIMIT
             )
+
             if altUser:
-                user.update(altUser)
+                for i in attributes:
+                    if i in altUser:
+                        user[i] = altUser[i]
 
         return user
 
