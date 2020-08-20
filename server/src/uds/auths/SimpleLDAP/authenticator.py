@@ -166,7 +166,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         return self._connection
 
     def __connectAs(self, username: str, password: str) -> typing.Any:
-        return ldaputil.connection(username, password, self._host, ssl=self._ssl, timeout=int(self._timeout), debug=False)
+        return ldaputil.connection(username, password, self._host, port=int(self._port), ssl=self._ssl, timeout=int(self._timeout), debug=False)
 
 
     def __getUser(self, username: str) -> typing.Optional[ldaputil.LDAPResultType]:
