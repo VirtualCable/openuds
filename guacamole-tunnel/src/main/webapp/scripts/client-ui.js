@@ -1067,7 +1067,17 @@ GuacUI.Client.setClipboard = function(data) {
 
     if (data !== GuacUI.Client.remote_clipboard && GuacUI.Client.attachedClient) {
         GuacUI.Client.remote_clipboard = data;
-        GuacUI.Client.attachedClient.setClipboard(data);
+        //GuacUI.Client.attachedClient.setClipboard(data);
+        // Old setClipboard funtion      
+        var stream = GuacUI.Client.attachedClient.createClipboardStream('text/plain')
+        var writer = new Guacamole.StringWriter(stream);
+
+        // Send text chunks
+        for (var i=0; i<data.length; i += 4096)
+            writer.sendText(data.substring(i, i+4096));
+
+        // Close stream
+        writer.sendEnd();
     }
 
 };
