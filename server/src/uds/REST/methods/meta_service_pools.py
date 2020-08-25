@@ -94,6 +94,7 @@ class MetaServicesPool(DetailHandler):
         pool = ServicePool.objects.get(uuid=processUuid(self._params['pool_id']))
         enabled = self._params['enabled'] not in ('false', False, '0', 0)
         priority = int(self._params['priority'])
+        priority = priority if priority >= 0 else 0
 
         if uuid is not None:
             member = parent.members.get(uuid=uuid)
