@@ -62,6 +62,7 @@ def index(request: HttpRequest) -> HttpResponse:
 # Basically, the original /login method, but fixed for modern interface
 def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
+    logger.debug('Tag: %s', tag)
     if request.method == 'POST':
         form = LoginForm(request.POST, tag=tag)
         user, data = checkLogin(request, form, tag)

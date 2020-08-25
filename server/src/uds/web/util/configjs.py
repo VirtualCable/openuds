@@ -80,23 +80,28 @@ def udsJs(request: 'HttpRequest') -> str:
         csrf_token = str(csrf_token)
 
     tag = request.session.get('tag', None)
-
+    logger.debug('Tag config: %s', tag)
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
         try:
             authenticators = Authenticator.objects.filter(small_name=auth_host)[:]
-            if not authenticators:
-                raise Exception() #  Needs one auth at least if possible...
         except Exception as e:
-            try:
-                authenticators = [Authenticator.objects.order_by('priority')[0]]
-            except Exception:  # There is no authenticators yet...
-                authenticators = []
-    else:  # No disallow global login
-        if tag:  # with tag, get all with this tag
-            authenticators = [x for x in authenticators if x.small_name == tag]
-        else:  # Get all visibles...
-            authenticators = Authenticator.objects.all().exclude(visible=False)[:]
+            authenticators = []
+    else:
+        authenticators = Authenticator.objects.all().exclude(visible=False)
 
+    logger.debug('Authenticators PRE: %s', authenticators)
+
+    if tag and authenticators:  # Refilter authenticators, visible and with this tag if required
+        authenticators = [x for x in authenticators if x.small_name == tag]
+
+    if not authenticators:
+        try:
+            authenticators = [Authenticator.objects.order_by('priority')[0]]
+        except Exception:  # There is no authenticators yet...
+            authenticators = []
+
+
+    logger.debug('Authenticators: %s', authenticators)
 
     # the auths for client
     def getAuthInfo(auth: Authenticator):
