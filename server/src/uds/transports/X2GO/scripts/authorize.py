@@ -42,17 +42,17 @@ def updateAuthorizedKeys(user, pubKey):
 
     authorizedKeys = '{}/authorized_keys'.format(sshFolder)
     try:
-        with open(authorizedKeys, 'rb') as f:
+        with open(authorizedKeys, 'r') as f:
             lines = f.readlines()
     except Exception:
         lines = []
 
-    with open(authorizedKeys, 'wb') as f:
+    with open(authorizedKeys, 'w') as f:
         for line in lines:
             if 'UDS@X2GOCLIENT' not in line and line.strip():
                 f.write(line)
         # Append pubkey
-        f.write('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey).encode())
+        f.write('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey))
 
     # Ensure access is correct
     os.chown(authorizedKeys, uid, -1)
