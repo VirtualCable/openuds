@@ -61,9 +61,8 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
     host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
     # Get Authenticators limitation
-    logger.debug('Host: %s', host)
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
-        if tag is None:
+        if not tag:
             try:
                 Authenticator.objects.get(small_name=host)
                 tag = host
