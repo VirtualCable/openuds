@@ -127,7 +127,10 @@ def sendScript(userService: 'UserService', script: str, forUser: bool = False) -
     If allowed, send script to user service
     """
     try:
-        _requestActor(userService, 'script', data={'script': script, 'user': forUser}, minVersion='3.0.0')
+        data: typing.MutableMapping[str, typing.Any] = {'script': script }
+        if forUser:
+            data['user'] = forUser
+        _requestActor(userService, 'script', data=data)
     except NoActorComms:
         pass
 
