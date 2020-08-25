@@ -91,11 +91,12 @@ def udsJs(request: 'HttpRequest') -> str:
                 authenticators = [Authenticator.objects.order_by('priority')[0]]
             except Exception:  # There is no authenticators yet...
                 authenticators = []
-    else:
-        authenticators = Authenticator.objects.all().exclude(visible=False)
+    else:  # No disallow global login
+        if tag:  # with tag, get all with this tag
+            authenticators = [x for x in authenticators if x.small_name == tag]
+        else:  # Get all visibles...
+            authenticators = Authenticator.objects.all().exclude(visible=False)[:]
 
-    if tag:
-        authenticators = [x for x in authenticators if x.small_name == tag]
 
     # the auths for client
     def getAuthInfo(auth: Authenticator):
