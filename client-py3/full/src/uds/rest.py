@@ -34,6 +34,7 @@
 
 import json
 import urllib
+import urllib.parse
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtCore import QObject, QUrl, QSettings
