@@ -354,15 +354,15 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             raise auths.exceptions.AuthenticatorException(_('Too many results, be more specific'))
 
     @staticmethod
-    def test(env, data):
+    def test(env, data) -> typing.List[typing.Any]:
         try:
-            auth = SimpleLDAPAuthenticator(None, env, data)
+            auth = SimpleLDAPAuthenticator(None, env, data)  # type: ignore
             return auth.testConnection()
         except Exception as e:
             logger.error("Exception found testing Simple LDAP auth: %s", e)
             return [False, "Error testing connection"]
 
-    def testConnection(self):  # pylint: disable=too-many-return-statements,too-many-branches
+    def testConnection(self) -> typing.List[typing.Any]:  # pylint: disable=too-many-return-statements,too-many-branches
         try:
             con = self.__connection()
         except Exception as e:
@@ -416,7 +416,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
         # And group part, with membership
         try:
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._groupClass, self._groupIdAttr), attrlist=[self._memberAttr.encode('utf-8')])
+            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._groupClass, self._groupIdAttr), attrlist=[self._memberAttr])
             if not res:
                 raise Exception(_('Ldap group class or group id attr is probably wrong (can\'t find any group with both conditions)'))
             ok = False
