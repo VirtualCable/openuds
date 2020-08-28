@@ -258,11 +258,12 @@ class HTML5RDPTransport(transports.Transport):
 
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
-        return HttpResponseRedirect(
+        onw = 'o_n_w={};'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
+        return str(
             "{}/transport/?{}.{}&{}".format(
                 self.guacamoleServer.value,
                 ticket,
                 scrambler,
-                'javascript:window.close();' + ('o_n_w=0;' if self.forceNewWindow.isTrue() else '')
+                'javascript:window.close();' + onw
             )
         )

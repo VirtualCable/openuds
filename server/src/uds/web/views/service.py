@@ -57,17 +57,29 @@ logger = logging.getLogger(__name__)
 
 @webLoginRequired(admin=False)
 def transportOwnLink(request: 'HttpRequest', idService: str, idTransport: str):
+    response: typing.MutableMapping[str, typing.Any] = {}
     try:
         res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport)
         ip, userService, iads, trans, itrans = res  # pylint: disable=unused-variable
         # This returns a response object in fact
         if itrans and ip:
-            return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
+            response = {
+                'url': itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
+            }
     except ServiceNotReadyError as e:
-        return errors.exceptionView(request, e)
+        response = {
+            'running': e.code * 25
+        }
     except Exception as e:
         logger.exception("Exception")
-        return errors.exceptionView(request, e)
+        response = {
+            'error': str(e)
+        }
+
+    return HttpResponse(
+        content=json.dumps(response),
+        content_type='application/json'
+    )
 
     # Will never reach this
     return errors.errorView(request, errors.UNKNOWN_ERROR)

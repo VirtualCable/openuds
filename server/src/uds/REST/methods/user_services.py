@@ -277,14 +277,20 @@ class Transports(DetailHandler):
     """
 
     def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
+        def getType(trans):
+            try:
+                return self.typeAsDict(trans.getType())
+            except Exception: # No type found
+                return None
+            
         return [{
             'id': i.uuid,
             'name': i.name,
-            'type': self.typeAsDict(i.getType()),
+            'type': getType(i),
             'comments': i.comments,
             'priority': i.priority,
             'trans_type': _(i.getType().name()),
-        } for i in parent.transports.all()]
+        } for i in parent.transports.all() if getType(i)]
 
     def getTitle(self, parent: models.ServicePool) -> str:
         return _('Assigned transports')
@@ -379,7 +385,6 @@ class Publications(DetailHandler):
             'field': 'state',
             'prefix': 'row-state-'
         }
-
 
 class Changelog(DetailHandler):
     """

@@ -110,9 +110,10 @@ class URLCustomTransport(transports.Transport):
                                  .replace('_USERNAME_', username)
         )
 
-        return HttpResponseRedirect(
+        onw = '&o_n_w={};'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
+        return str(
             "{}{}".format(
                 url,
-                '&o_n_w=0;' if self.forceNewWindow.isTrue() else ''
+                onw
             )
         )
