@@ -160,7 +160,7 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
             except Exception:
                 continue
             if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
-                if typeTrans.ownLink is True:
+                if typeTrans.ownLink:
                     link = reverse('TransportOwnLink', args=('F' + svr.uuid, t.uuid))
                 else:
                     link = html.udsAccessLink(request, 'F' + svr.uuid, t.uuid)

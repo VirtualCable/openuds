@@ -186,7 +186,7 @@ class ServicesPools(ModelHandler):
             if hasattr(item, 'valid_count'):
                 valid_count = item.valid_count
                 preparing_count = item.preparing_count
-                restrained = item.error_count > GlobalConfig.RESTRAINT_COUNT.getInt()
+                restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.getInt()
                 usage_count = item.usage_count
             else:
                 valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
