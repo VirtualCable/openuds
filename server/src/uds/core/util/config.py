@@ -29,6 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import sys
 import typing
 import logging
 
@@ -79,7 +80,7 @@ class Config:
 
         def get(self, force: bool = False) -> str:
             # Ensures DB contains configuration values
-            # From Django 1.7, DB can only be accessed AFTER all apps are initialized, curious at least.. :)
+            # From Django 1.7, DB can only be accessed AFTER all apps are initialized (and ofc, not migrating...)
             if apps.ready is True:
                 if not GlobalConfig.isInitialized():
                     logger.debug('Initializing configuration & updating db values')
@@ -148,7 +149,7 @@ class Config:
         def getParams(self) -> typing.Any:
             return _configParams.get(self._section.name() + self._key, None)
 
-        def set(self, value: str):
+        def set(self, value: str) -> None:
             if GlobalConfig.isInitialized() is False:
                 _saveLater.append((self, value))
                 return
@@ -164,6 +165,8 @@ class Config:
                 obj.value, obj.crypt, obj.long, obj.field_type = value, self._crypt, self._longText, self._type
                 obj.save()
             except Exception:
+                if 'migrate' in sys.argv:
+                    return
                 logger.exception('Exception')
                 # Probably a migration issue, just ignore it
                 logger.info("Could not save configuration key %s.%s", self._section.name(), self._key)
