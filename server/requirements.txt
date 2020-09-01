@@ -18,3 +18,4 @@ WeasyPrint
 webencodings
 xml-marshaller
 pycrypto>=2.6.1
+cryptography==2.9.2
