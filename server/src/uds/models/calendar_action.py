@@ -178,7 +178,7 @@ class CalendarAction(UUIDModel):
         elif CALENDAR_ACTION_REMOVE_USERSERVICES['id'] == self.action:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
             for userService in self.service_pool.assignedUserServices().filter(state=state.State.USABLE):
-                userService.remove()                
+                userService.remove()
         else:
             caTransports = (CALENDAR_ACTION_ADD_TRANSPORT['id'], CALENDAR_ACTION_DEL_TRANSPORT['id'])
             caGroups = (CALENDAR_ACTION_ADD_GROUP['id'], CALENDAR_ACTION_DEL_GROUP['id'])

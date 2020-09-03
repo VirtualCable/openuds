@@ -20,7 +20,7 @@ gettext("Are you sure?");
 gettext("seconds");
 gettext("Launching service");
 gettext("Please wait");
-gettext("Remember that you will need the USD client on your platform to access the service");
+gettext("Remember that you will need the UDS client on your platform to access the service");
 gettext("Error launching service");
 gettext("Please wait");
 gettext("Your connection is being prepared. It will open on a new window when ready.");
