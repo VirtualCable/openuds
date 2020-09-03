@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-25 10:50+0200\n"
+"POT-Creation-Date: 2020-09-03 15:46+0200\n"
 "PO-Revision-Date: 2020-06-23 12:08+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -24,7 +24,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:25
-#: static/modern/translations-fakejs.js:7
+#: static/modern/translations-fakejs.js:20
 msgid "seconds"
 msgstr "segundutan"
 
@@ -215,7 +215,7 @@ msgstr "Taldea"
 #: static/admin/translations-fakejs.js:374
 #: static/admin/translations-fakejs.js:379
 #: static/admin/translations-fakejs.js:394
-#: static/modern/translations-fakejs.js:50
+#: static/modern/translations-fakejs.js:39
 msgid "Authenticator"
 msgstr "autentifikatzailea"
 
@@ -394,14 +394,14 @@ msgstr "Zerbitzu-igerilekuak"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:4
 #: static/admin/translations-fakejs.js:6
 #: static/admin/translations-fakejs.js:323
-#: static/modern/translations-fakejs.js:27
+#: static/modern/translations-fakejs.js:66
 msgid "Yes"
 msgstr "Bai"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:5
 #: static/admin/translations-fakejs.js:7
 #: static/admin/translations-fakejs.js:324
-#: static/modern/translations-fakejs.js:28
+#: static/modern/translations-fakejs.js:67
 msgid "No"
 msgstr "Ez"
 
@@ -415,7 +415,7 @@ msgstr "Hautatutako elementuak:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:205
 #: static/admin/translations-fakejs.js:240
-#: static/modern/translations-fakejs.js:36
+#: static/modern/translations-fakejs.js:57
 msgid "Information"
 msgstr "Informazioa"
 
@@ -1121,12 +1121,12 @@ msgstr "Konektagarritasuna"
 
 #: static/admin/translations-fakejs.js:307
 #: static/admin/translations-fakejs.js:368
-#: static/modern/translations-fakejs.js:40
+#: static/modern/translations-fakejs.js:61
 msgid "Transports"
 msgstr "Garraioak"
 
 #: static/admin/translations-fakejs.js:308
-#: static/modern/translations-fakejs.js:42
+#: static/modern/translations-fakejs.js:63
 msgid "Networks"
 msgstr "Sareak"
 
@@ -1175,7 +1175,7 @@ msgid "Flush Cache"
 msgstr "Flush Cachea"
 
 #: static/admin/translations-fakejs.js:322
-#: static/modern/translations-fakejs.js:26
+#: static/modern/translations-fakejs.js:65
 msgid "Close"
 msgstr "Itzi"
 
@@ -1184,7 +1184,7 @@ msgid "User mode"
 msgstr "Erabiltzailearen modua"
 
 #: static/admin/translations-fakejs.js:326
-#: static/modern/translations-fakejs.js:31
+#: static/modern/translations-fakejs.js:70
 msgid "Logout"
 msgstr "Saioa amaitu"
 
@@ -1444,7 +1444,7 @@ msgid "Staff member"
 msgstr "Langile kidea"
 
 #: static/admin/translations-fakejs.js:473
-#: static/modern/translations-fakejs.js:29
+#: static/modern/translations-fakejs.js:68
 msgid "Dashboard"
 msgstr "arbela"
 
@@ -1483,194 +1483,202 @@ msgid "Thank you."
 msgstr "Eskerrik asko."
 
 #: static/modern/translations-fakejs.js:3
-msgid "Launching service"
-msgstr "Zerbitzua abiaraztea"
-
-#: static/modern/translations-fakejs.js:4
-msgid "Please wait"
-msgstr "Itxaron mesedez"
-
-#: static/modern/translations-fakejs.js:5
-msgid ""
-"Remember that you will need the USD client on your platform to access the "
-"service"
-msgstr "Gogoratu zerbitzuan sartzeko USD plataforma behar duzula bezeroan"
-
-#: static/modern/translations-fakejs.js:6
-msgid "Error launching service"
-msgstr "Errorea zerbitzua abiaraztea"
-
-#: static/modern/translations-fakejs.js:8
-msgid "Service is in maintenance"
-msgstr "Zerbitzua mantentze-lanetan dago"
-
-#: static/modern/translations-fakejs.js:9
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr "Une honetan zerbitzua ez dago eskuragarri ordutegia murrizteko."
-
-#: static/modern/translations-fakejs.js:10
-msgid "Launcher"
-msgstr "Launcher"
-
-#: static/modern/translations-fakejs.js:11
-msgid "Service is in maintenance and cannot be launched"
-msgstr "Zerbitzua mantentze-lanetan dago eta ezin da abian jarri"
-
-#: static/modern/translations-fakejs.js:12
-msgid "This service is currently not accesible due to schedule restrictions."
-msgstr "Une honetan zerbitzua ez da eskuragarria ordutegia murrizteko."
-
-#: static/modern/translations-fakejs.js:13
-msgid "Release service: "
-msgstr "Askapen zerbitzua:"
-
-#: static/modern/translations-fakejs.js:14
-msgid "Reset service: "
-msgstr "Berrezarri zerbitzua:"
-
-#: static/modern/translations-fakejs.js:15
-msgid "Service released"
-msgstr "Zerbitzua kaleratu da"
-
-#: static/modern/translations-fakejs.js:16
-msgid "Service reseted"
-msgstr "Zerbitzua berrezarri da"
-
-#: static/modern/translations-fakejs.js:17
-msgid "Are you sure?"
-msgstr "Ziur zaude?"
-
-#: static/modern/translations-fakejs.js:18
-msgid "Errors found"
-msgstr "Aurkitutako akatsak"
-
-#: static/modern/translations-fakejs.js:19
 msgid "Warning"
 msgstr "Abisua"
 
-#: static/modern/translations-fakejs.js:20
+#: static/modern/translations-fakejs.js:4
 msgid "Service is in maintenance and cannot be executed"
 msgstr "Zerbitzua mantentze-lanetan dago eta ezin da exekutatu"
 
-#: static/modern/translations-fakejs.js:21
+#: static/modern/translations-fakejs.js:5
+msgid "Errors found"
+msgstr "Aurkitutako akatsak"
+
+#: static/modern/translations-fakejs.js:6
 msgid "Invalid error string"
 msgstr "Errore-kate baliogabea"
 
-#: static/modern/translations-fakejs.js:22
+#: static/modern/translations-fakejs.js:7
 msgid "We use cookies to track usage and preferences"
 msgstr "Cookien erabilpena eta lehentasunak jarraitzeko erabiltzen dugu"
 
-#: static/modern/translations-fakejs.js:23
+#: static/modern/translations-fakejs.js:8
 msgid "I Understand"
 msgstr "Ulertzen dut"
 
-#: static/modern/translations-fakejs.js:24
+#: static/modern/translations-fakejs.js:9
 msgid "Learn more"
 msgstr "Gehiago ikasi"
 
-#: static/modern/translations-fakejs.js:30
-#: static/modern/translations-fakejs.js:65
-msgid "Downloads"
-msgstr "Downloads"
+#: static/modern/translations-fakejs.js:10
+msgid "Service is in maintenance"
+msgstr "Zerbitzua mantentze-lanetan dago"
 
-#: static/modern/translations-fakejs.js:32
-#: static/modern/translations-fakejs.js:34
-#: static/modern/translations-fakejs.js:52
-msgid "UDS Client"
-msgstr "UDS bezeroa"
+#: static/modern/translations-fakejs.js:11
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr "Une honetan zerbitzua ez dago eskuragarri ordutegia murrizteko."
 
-#: static/modern/translations-fakejs.js:33
-#: static/modern/translations-fakejs.js:35
-msgid "About"
-msgstr "About"
+#: static/modern/translations-fakejs.js:12
+msgid "Launcher"
+msgstr "Launcher"
 
-#: static/modern/translations-fakejs.js:37
-#: static/modern/translations-fakejs.js:38
-msgid "Client IP"
-msgstr "Bezeroaren IPa"
+#: static/modern/translations-fakejs.js:13
+msgid "Service is in maintenance and cannot be launched"
+msgstr "Zerbitzua mantentze-lanetan dago eta ezin da abian jarri"
 
-#: static/modern/translations-fakejs.js:39
-msgid "Detected proxy ip"
-msgstr "Detektatutako proxy ip"
+#: static/modern/translations-fakejs.js:14
+msgid "This service is currently not accesible due to schedule restrictions."
+msgstr "Une honetan zerbitzua ez da eskuragarria ordutegia murrizteko."
 
-#: static/modern/translations-fakejs.js:41
-msgid "UDS transports for this client"
-msgstr "Bezero honetarako UDS garraioak"
+#: static/modern/translations-fakejs.js:15
+msgid "Release service: "
+msgstr "Askapen zerbitzua:"
 
-#: static/modern/translations-fakejs.js:43
-msgid "UDS networks for this IP"
-msgstr "IP honetarako UDS sareak"
+#: static/modern/translations-fakejs.js:16
+msgid "Reset service: "
+msgstr "Berrezarri zerbitzua:"
 
-#: static/modern/translations-fakejs.js:44
-msgid "Release service"
-msgstr "Askatu zerbitzua"
+#: static/modern/translations-fakejs.js:17
+msgid "Service released"
+msgstr "Zerbitzua kaleratu da"
 
-#: static/modern/translations-fakejs.js:45
-msgid "Reset service"
-msgstr "Berrezarri zerbitzua"
+#: static/modern/translations-fakejs.js:18
+msgid "Service reseted"
+msgstr "Zerbitzua berrezarri da"
 
-#: static/modern/translations-fakejs.js:46
-msgid "Connections"
-msgstr "konexioak"
+#: static/modern/translations-fakejs.js:19
+msgid "Are you sure?"
+msgstr "Ziur zaude?"
 
-#: static/modern/translations-fakejs.js:47
-msgid "Actions"
-msgstr "Ekintzak"
+#: static/modern/translations-fakejs.js:21
+msgid "Launching service"
+msgstr "Zerbitzua abiaraztea"
 
-#: static/modern/translations-fakejs.js:48
-msgid "Username"
-msgstr "Erabiltzaile izena"
+#: static/modern/translations-fakejs.js:22
+#: static/modern/translations-fakejs.js:25
+msgid "Please wait"
+msgstr "Itxaron mesedez"
 
-#: static/modern/translations-fakejs.js:49
-msgid "Password"
-msgstr "Pasahitza"
-
-#: static/modern/translations-fakejs.js:51
-msgid "Login"
-msgstr "Saioa hasi"
-
-#: static/modern/translations-fakejs.js:53
-msgid "Download UDS client for your platform"
-msgstr "Deskargatu UDS bezeroa zure plataformarako"
-
-#: static/modern/translations-fakejs.js:54
+#: static/modern/translations-fakejs.js:23
+#| msgid ""
+#| "Remember that you will need the USD client on your platform to access the "
+#| "service"
 msgid ""
-"Legacy clients are only provided for old operating system support. Try to "
-"avoid them."
+"Remember that you will need the UDS client on your platform to access the "
+"service"
 msgstr ""
-"Bezero ondarea sistema eragile zaharraren laguntzarako soilik eskaintzen da. "
-"Saiatu saihesten."
+"Gogoratu zure plataforman UDS bezeroa beharko duzula zerbitzura sartzeko"
 
-#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:24
+#: static/modern/translations-fakejs.js:29
+msgid "Error launching service"
+msgstr "Errorea zerbitzua abiaraztea"
+
+#: static/modern/translations-fakejs.js:26
+msgid ""
+"Your connection is being prepared. It will open on a new window when ready."
+msgstr ""
+"Zure konexioa prestatzen ari dira. Prest dagoenean leiho berri batean "
+"irekiko da."
+
+#: static/modern/translations-fakejs.js:27
+msgid ""
+"The service is now being prepared. (It is at #).'.replace('#', '' + data."
+"running + '%"
+msgstr ""
+"Zerbitzua prestatzen ari dira. (# Zenbakian dago.). Replace (&#39;#&#39;, "
+"&#39;&#39; + data.running + &#39;%"
+
+#: static/modern/translations-fakejs.js:28
+msgid "Please, tray again in a few moments."
+msgstr "Mesedez, erretilua une batzuetan."
+
+#: static/modern/translations-fakejs.js:31
 msgid "You can access UDS Open Source code at"
 msgstr "UDS kode irekiko kodea sar zaitezke at"
 
-#: static/modern/translations-fakejs.js:56
+#: static/modern/translations-fakejs.js:32
 msgid "UDS has been developed using these components:"
 msgstr "UDS osagai hauek erabiliz garatu da:"
 
-#: static/modern/translations-fakejs.js:57
+#: static/modern/translations-fakejs.js:33
 msgid "If you find that we missed any component, please let us know"
 msgstr ""
 "Osagai bat galdu dugula aurkitzen baduzu, jar zaitez gurekin harremanetan"
 
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:34
+#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:73
+msgid "UDS Client"
+msgstr "UDS bezeroa"
+
+#: static/modern/translations-fakejs.js:35
+msgid "Download UDS client for your platform"
+msgstr "Deskargatu UDS bezeroa zure plataformarako"
+
+#: static/modern/translations-fakejs.js:36
+msgid ""
+"Legacy clients are only provided for old operating system support. Try to "
+"avoid them."
+msgstr ""
+"Bezero zaharrak sistema eragilearen laguntza zaharrerako soilik eskaintzen "
+"dira. Saiatu saihesten."
+
+#: static/modern/translations-fakejs.js:37
+msgid "Username"
+msgstr "Erabiltzaile izena"
+
+#: static/modern/translations-fakejs.js:38
+msgid "Password"
+msgstr "Pasahitza"
+
+#: static/modern/translations-fakejs.js:40
+msgid "Login"
+msgstr "Saioa hasi"
+
+#: static/modern/translations-fakejs.js:41
+#: static/modern/translations-fakejs.js:69
+msgid "Downloads"
+msgstr "Downloads"
+
+#: static/modern/translations-fakejs.js:42
+#| msgid "Download UDS client for your platform"
+msgid "Always download the UDS actor matching your platform"
+msgstr "Deskargatu beti zure plataformarekin bat datorren UDS aktorea"
+
+#: static/modern/translations-fakejs.js:43
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+msgstr ""
+"Antzinako eragileak sistema eragilearen laguntza zaharrerako soilik "
+"eskaintzen dira. Saiatu saihesten."
+
+#: static/modern/translations-fakejs.js:44
+msgid "An error has occurred"
+msgstr "akats bat gertatu da"
+
+#: static/modern/translations-fakejs.js:45
+msgid "Return"
+msgstr "Return"
+
+#: static/modern/translations-fakejs.js:46
 msgid "UDS Service launcher"
 msgstr "UDS Zerbitzuaren abiarazlea"
 
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:47
 msgid "The service you have requested is being launched."
 msgstr "Eskatu duzun zerbitzua abian da."
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:48
 msgid "Please, note that reloading this page will not work."
 msgstr "Kontuan izan orri hau berriro kargatzeak ez duela funtzionatuko."
 
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:49
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "Zerbitzua berriro martxan jartzeko, jatorritik egin beharko duzu."
 
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:50
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
@@ -1678,31 +1686,48 @@ msgstr ""
 "Zerbitzua automatikoki abiarazten ez bada, seguruenik ez duzu UDS Bezeroa "
 "instalatuta"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:51
 msgid "You can obtain it from the"
 msgstr "Bilatu dezakezu:"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:52
 msgid "UDS Client download page"
 msgstr "UDS Bezeroa deskargatzeko orria"
 
-#: static/modern/translations-fakejs.js:66
-#| msgid "Download UDS client for your platform"
-msgid "Always download the UDS actor matching your platform"
-msgstr "Deskargatu beti zure plataformarekin bat datorren UDS aktorea"
+#: static/modern/translations-fakejs.js:53
+msgid "Release service"
+msgstr "Askatu zerbitzua"
 
-#: static/modern/translations-fakejs.js:67
-msgid ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"Legatuaren aktoreak sistema eragile zaharraren laguntzarako soilik ematen "
-"dira. Saiatu saihesten."
+#: static/modern/translations-fakejs.js:54
+msgid "Reset service"
+msgstr "Berrezarri zerbitzua"
 
-#: static/modern/translations-fakejs.js:68
-msgid "An error has occurred"
-msgstr "akats bat gertatu da"
+#: static/modern/translations-fakejs.js:55
+msgid "Connections"
+msgstr "konexioak"
 
-#: static/modern/translations-fakejs.js:69
-msgid "Return"
-msgstr "Return"
+#: static/modern/translations-fakejs.js:56
+msgid "Actions"
+msgstr "Ekintzak"
+
+#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:59
+msgid "Client IP"
+msgstr "Bezeroaren IPa"
+
+#: static/modern/translations-fakejs.js:60
+msgid "Detected proxy ip"
+msgstr "Detektatutako proxy ip"
+
+#: static/modern/translations-fakejs.js:62
+msgid "UDS transports for this client"
+msgstr "Bezero honetarako UDS garraioak"
+
+#: static/modern/translations-fakejs.js:64
+msgid "UDS networks for this IP"
+msgstr "IP honetarako UDS sareak"
+
+#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:74
+msgid "About"
+msgstr "About"

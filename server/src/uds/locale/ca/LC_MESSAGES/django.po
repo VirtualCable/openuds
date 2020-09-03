@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-25 10:50+0200\n"
+"POT-Creation-Date: 2020-09-03 15:46+0200\n"
 "PO-Revision-Date: 2020-06-24 03:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -32,7 +32,7 @@ msgstr "Comptes"
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
 #: REST/model.py:139
 msgid "Name"
 msgstr "Nom"
@@ -42,7 +42,7 @@ msgstr "Nom"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:59 REST/methods/user_services.py:297
+#: REST/methods/transports.py:59 REST/methods/user_services.py:303
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
@@ -171,13 +171,13 @@ msgstr "ID"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:71 REST/methods/services.py:224
-#: REST/methods/transports.py:58 REST/methods/user_services.py:296
+#: REST/methods/transports.py:58 REST/methods/user_services.py:302
 msgid "Type"
 msgstr "Tipus"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:56 REST/methods/user_services.py:294
+#: REST/methods/transports.py:56 REST/methods/user_services.py:300
 #: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "Prioritat"
@@ -612,8 +612,8 @@ msgstr "Informes disponibles"
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
 #: auths/RegexLdap/authenticator.py:92 auths/SAML_enterprise/saml.py:120
-#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:66
-#: models/calendar_action.py:67
+#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:68
+#: models/calendar_action.py:69
 msgid "Group"
 msgstr "Grup"
 
@@ -885,7 +885,7 @@ msgid "Currently assigned services pools"
 msgstr "Pools de serveis actualment assignats"
 
 #: REST/methods/user_services.py:121 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:371 REST/methods/user_services.py:401
+#: REST/methods/user_services.py:377 REST/methods/user_services.py:406
 msgid "Revision"
 msgstr "Revisió"
 
@@ -898,7 +898,7 @@ msgid "Cached services"
 msgstr "Serveis en memòria cau"
 
 #: REST/methods/user_services.py:217 REST/methods/user_services.py:257
-#: REST/methods/user_services.py:373
+#: REST/methods/user_services.py:379
 msgid "State"
 msgstr "Estat"
 
@@ -914,27 +914,27 @@ msgstr "Grups assignats"
 msgid "comments"
 msgstr "comentaris"
 
-#: REST/methods/user_services.py:290
+#: REST/methods/user_services.py:296
 msgid "Assigned transports"
 msgstr "Transports assignats"
 
-#: REST/methods/user_services.py:367
+#: REST/methods/user_services.py:373
 msgid "Publications"
 msgstr "Publicacions"
 
-#: REST/methods/user_services.py:372 REST/methods/user_services.py:402
+#: REST/methods/user_services.py:378 REST/methods/user_services.py:407
 msgid "Publish date"
 msgstr "Data de publicació"
 
-#: REST/methods/user_services.py:374
+#: REST/methods/user_services.py:380
 msgid "Reason"
 msgstr "Motiu"
 
-#: REST/methods/user_services.py:397
+#: REST/methods/user_services.py:402
 msgid "Changelog"
 msgstr "Registre de canvis"
 
-#: REST/methods/user_services.py:403
+#: REST/methods/user_services.py:408
 msgid "Comment"
 msgstr "Comentari"
 
@@ -1071,7 +1071,7 @@ msgstr "Mètode no trobat a {}: {}"
 msgid "Item not found"
 msgstr "Element no trobat"
 
-#: REST/model.py:293 web/util/authentication.py:112 web/util/errors.py:76
+#: REST/model.py:293 web/util/authentication.py:111 web/util/errors.py:76
 msgid "Access denied"
 msgstr "Accés denegat"
 
@@ -2106,75 +2106,75 @@ msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 "Servei no disponible en aquest moment. Si us plau, intenteu-ho més tard."
 
-#: models/calendar_action.py:59
+#: models/calendar_action.py:61
 msgid "Publish"
 msgstr "Publicar"
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Set cache size"
 msgstr "Ajustar mida de la memòria cau"
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Cache size"
 msgstr "Mida de la memòria cau"
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Set L2 cache size"
 msgstr "Ajustar mida de la memòria cau nivell 2"
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Cache L2 size"
 msgstr "Mida de la memòria cau nivell 2"
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Set initial services"
 msgstr "Ajustar serveis inicials"
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Initial services"
 msgstr "Serveis inicials"
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Set maximum number of services"
 msgstr "Ajustar el nombre màxim de serveis"
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Maximum services"
 msgstr "Serveis màxims"
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Add a transport"
 msgstr "Afegir un transport"
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Transport"
 msgstr "Transport"
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Remove a transport"
 msgstr "Eliminar un transport"
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Trasport"
 msgstr "Transport"
 
-#: models/calendar_action.py:66
+#: models/calendar_action.py:68
 msgid "Add a group"
 msgstr "Afegir un grup"
 
-#: models/calendar_action.py:67
+#: models/calendar_action.py:69
 msgid "Remove a group"
 msgstr "Eliminar un grup"
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Sets the ignore unused"
 msgstr "Estableix l'ignorar sense utilitzar"
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Ignore assigned and unused"
 msgstr "Ignorar assignats i no utilitzats"
 
-#: models/calendar_action.py:69
+#: models/calendar_action.py:71
 msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr ""
 "Eliminar TOTS el serveis d'usuari assignats. UTILITZEU-HO AMB PRECAUCIÓ!"
@@ -2591,7 +2591,7 @@ msgstr "Data d'inici"
 #: reports/auto/fields.py:48
 #| msgid "starting date for report"
 msgid "Starting date for report"
-msgstr "Data d&#39;inici del informe"
+msgstr "Data d&#39;inici de l&#39;informe"
 
 #: reports/auto/fields.py:57 reports/stats/pools_usage_day.py:66
 msgid "Date for report"
@@ -2610,27 +2610,27 @@ msgstr "data de finalització de l&#39;informe"
 #: reports/auto/fields.py:74
 #| msgid "Number of intervals"
 msgid "Report data interval"
-msgstr "Informe de l’interval de dades"
+msgstr "Interval de dades de l&#39;informe"
 
 #: reports/auto/fields.py:77
 #| msgid "Hour"
 msgid "Hourly"
-msgstr "Per hora"
+msgstr "Cada hora"
 
 #: reports/auto/fields.py:82
 #| msgid "Date for report"
 msgid "Interval for report data"
-msgstr "Interval de dades de l’informe"
+msgstr "Interval per a les dades de l&#39;informe"
 
 #: reports/auto/fields.py:97
 #| msgid "Service pools"
 msgid "Service pool"
-msgstr "Piscina de serveis"
+msgstr "Servei de piscina"
 
 #: reports/auto/fields.py:97
 #| msgid "Pool for report"
 msgid "Service pool for report"
-msgstr "Piscina de serveis per obtenir un informe"
+msgstr "Grup de serveis per a l&#39;informe"
 
 #: reports/auto/fields.py:98 reports/lists/users.py:57
 #: web/forms/LoginForm.py:44
@@ -2640,7 +2640,7 @@ msgstr "Autenticador"
 #: reports/auto/fields.py:98
 #| msgid "Authentication error"
 msgid "Authenticator for report"
-msgstr "Autenticador per a l&#39;informe"
+msgstr "Autenticador de l&#39;informe"
 
 #: reports/auto/fields.py:99
 #| msgid "Service usage report"
@@ -2655,7 +2655,7 @@ msgstr "Proveïdor de servei"
 #: reports/auto/fields.py:100
 #| msgid "Service providers"
 msgid "Service provider for report"
-msgstr "Proveïdor de serveis per obtenir un informe"
+msgstr "Proveïdor de serveis per a l&#39;informe"
 
 #: reports/lists/base.py:39
 msgid "Lists"
@@ -2700,7 +2700,7 @@ msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
 msgstr ""
-"Genera un informe amb les estadístiques d’un autenticador durant un període "
+"Genera un informe amb les estadístiques d’un autenticador durant el període "
 "desitjat"
 
 #: reports/stats/auth_stats.py:108 reports/stats/usage_by_pool.py:136
@@ -3509,17 +3509,17 @@ msgstr "VCPUS"
 #| "memory\")"
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgstr ""
-"Nombre de vcpus (\"-1 significa\" mantenir la màquina original vcpus \")"
+"Nombre de vcpus (\"-1 significa\" conservar vcpus original de la màquina \")"
 
 #: services/Nutanix_enterprise/service.py:86
 msgid "Cores per VCPU"
-msgstr "Cores per VCPU"
+msgstr "Nuclis per VCPU"
 
 #: services/Nutanix_enterprise/service.py:92
 msgid "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgstr ""
-"Nombre de vcpus (\"-1 significa\" mantenir els nuclis de màquina originals "
-"per vcpu \")"
+"Nombre de vcpus (\"-1 significa\" mantenir nuclis de màquina originals per "
+"vcpu \")"
 
 #: services/Nutanix_enterprise/service.py:101
 msgid ""
@@ -3543,7 +3543,7 @@ msgstr ""
 
 #: services/Nutanix_enterprise/service.py:145
 msgid "Both Cores per VCPU and Number of VCPUS are required"
-msgstr "Es necessiten tant Cores per VCPU com Nombre de VCPUS"
+msgstr "Es requereixen tant nuclis per VCPU com nombre de VCPUS"
 
 #: services/OVirt/provider.py:77
 msgid "oVirt/RHEV Platform Provider"
@@ -4940,12 +4940,12 @@ msgstr "Darrer accés"
 #: templates/uds/reports/stats/authenticator_stats.html:6
 #| msgid "Base Authenticator"
 msgid "Statistics by Authenticator"
-msgstr "Estadístiques d&#39;Autenticador"
+msgstr "Estadístiques per Authenticator"
 
 #: templates/uds/reports/stats/authenticator_stats.html:17
 #| msgid "User mapping"
 msgid "User working"
-msgstr "Usuari que treballa"
+msgstr "Usuari treballant"
 
 #: templates/uds/reports/stats/pools-performance.html:13
 #: templates/uds/reports/stats/pools-usage-day.html:13
@@ -5365,7 +5365,7 @@ msgstr "Protocol RDP utilitzant client HTML5 per a vApps"
 #: transports/HTML5VNC/html5vnc.py:63
 #| msgid "HyperV Linked Clone (Experimental)"
 msgid "HTML5 VNC Experimental"
-msgstr "HTML5 VNC Experimental"
+msgstr "HTML5 VNC experimental"
 
 #: transports/HTML5VNC/html5vnc.py:65
 #| msgid "RDP protocol using HTML5 client"
@@ -5374,11 +5374,11 @@ msgstr "Protocol VNC mitjançant client HTML5 (EXPERIMENTAL)"
 
 #: transports/HTML5VNC/html5vnc.py:75
 msgid "Username for VNC connection authentication."
-msgstr "Nom d&#39;usuari per a l&#39;autenticació de connexió VNC."
+msgstr "Nom d&#39;usuari per a l&#39;autenticació de la connexió VNC."
 
 #: transports/HTML5VNC/html5vnc.py:76
 msgid "Password for VNC connection authentication"
-msgstr "Contrasenya per a l&#39;autenticació de connexió VNC"
+msgstr "Contrasenya per a l&#39;autenticació de la connexió VNC"
 
 #: transports/HTML5VNC/html5vnc.py:80
 #| msgid "Ldap Server Host"
@@ -5398,19 +5398,19 @@ msgstr "Profunditat de color"
 #: transports/HTML5VNC/html5vnc.py:91
 msgid "Color depth for VNC connection. Use this to control bandwidth."
 msgstr ""
-"Profunditat de color per a connexió VNC. Utilitzeu-ho per controlar l&#39;"
-"ample de banda."
+"Profunditat de color per a la connexió VNC. Utilitzeu això per controlar l’"
+"amplada de banda."
 
 #: transports/HTML5VNC/html5vnc.py:103
 msgid "Swap red/blue"
-msgstr "Intercanvia vermell / blau"
+msgstr "Canvia vermell / blau"
 
 #: transports/HTML5VNC/html5vnc.py:103
 msgid ""
 "Use this if your colours seems incorrect (blue appears red, ..) to swap them."
 msgstr ""
-"Feu-ho servir si els vostres colors semblen incorrectes (el blau apareix "
-"vermell, ..) per canviar-los."
+"Utilitzeu aquesta opció si els vostres colors semblen incorrectes (el blau "
+"apareix vermell, ..) per canviar-los."
 
 #: transports/HTML5VNC/html5vnc.py:104
 #| msgid "Remote host"
@@ -5419,7 +5419,7 @@ msgstr "Cursor remot"
 
 #: transports/HTML5VNC/html5vnc.py:104
 msgid "If set, force to show remote cursor"
-msgstr "Si es defineix, obligueu a mostrar el cursor remot"
+msgstr "Si es defineix, força per mostrar el cursor remot"
 
 #: transports/HTML5VNC/html5vnc.py:105
 #| msgid "Read"
@@ -5429,7 +5429,7 @@ msgstr "Llegeix només"
 #: transports/HTML5VNC/html5vnc.py:105
 #| msgid "If active, the proxied connections will be done using HTTPS"
 msgid "If set, the connection will be read only"
-msgstr "Si es defineix, la connexió només es llegirà"
+msgstr "Si es defineix, la connexió només es podrà llegir"
 
 #: transports/NX/nxtransport.py:64 transports/NX/nxtunneltransport.py:66
 msgid "NX v3.5 (DEPRECATED)"
@@ -5624,7 +5624,7 @@ msgstr "Activa la càmera web"
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
 #| msgid "If checked, the Mic will be redirected."
 msgid "If checked, webcam will be redirected (ONLY Windows)."
-msgstr "Si es marca, es redirigirà la càmera web (NOMÉS Windows)."
+msgstr "Si està marcat, la càmera web es redirigirà (NOMÉS al Windows)."
 
 #: transports/RDP/rdp_base.py:97 transports/RDS_enterprise/rds_base.py:71
 msgid "Credssp Support"
@@ -6044,55 +6044,55 @@ msgstr "Valor de qualitat utilitzat en alguns formats de paquet"
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "Accés X2Go (experimental). Connexió via túnel"
 
-#: web/util/authentication.py:98
+#: web/util/authentication.py:97
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "Excés d'errors d'autenticació. Usuari bloquejat temporalment"
 
-#: web/util/authentication.py:128
+#: web/util/authentication.py:127
 msgid "Invalid data"
 msgstr "Dades no vàlides"
 
-#: web/util/configjs.py:129
+#: web/util/configjs.py:137
 msgid "Access limited by calendar"
 msgstr "Accés limitat per calendari"
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:173
 msgid "Windows client"
 msgstr "Client Windows"
 
-#: web/util/configjs.py:166
+#: web/util/configjs.py:174
 msgid "Mac OS X client"
 msgstr "Client MacOS X"
 
-#: web/util/configjs.py:167
+#: web/util/configjs.py:175
 msgid "Debian based Linux client"
 msgstr "Client Linux basat en Debian"
 
-#: web/util/configjs.py:167 web/util/configjs.py:168 web/util/configjs.py:169
+#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requereix Python-3.6 o més recent)"
 
-#: web/util/configjs.py:168
+#: web/util/configjs.py:176
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Client de Linux basat en RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:169
+#: web/util/configjs.py:177
 msgid "Generic .tar.gz Linux client"
 msgstr " Client Linux genèric .tar.gz"
 
-#: web/util/configjs.py:170
+#: web/util/configjs.py:178
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Client de Linux basat en Debian heretat de Python 2.7"
 
-#: web/util/configjs.py:170 web/util/configjs.py:171 web/util/configjs.py:172
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires outdated Python-2.7)"
 msgstr "(requereix Python-2.7 desactualitzat)"
 
-#: web/util/configjs.py:171
+#: web/util/configjs.py:179
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Client de Linux basat en Legacy RH (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:172
+#: web/util/configjs.py:180
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Client de Linux basat en Legacy OpenSuse)"
 
@@ -6179,11 +6179,11 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 
-#: web/views/service.py:106
+#: web/views/service.py:118
 msgid "Service not ready. Please, try again in a while."
 msgstr "Servei no disponible ara mateix. Si us plau, intenteu-ho més tard"
 
-#: web/views/service.py:131
+#: web/views/service.py:143
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

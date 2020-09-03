@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-25 10:50+0200\n"
+"POT-Creation-Date: 2020-09-03 15:46+0200\n"
 "PO-Revision-Date: 2020-06-24 03:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -31,7 +31,7 @@ msgstr "حسابات"
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
 #: REST/model.py:139
 msgid "Name"
 msgstr "الاسم"
@@ -41,7 +41,7 @@ msgstr "الاسم"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:59 REST/methods/user_services.py:297
+#: REST/methods/transports.py:59 REST/methods/user_services.py:303
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
@@ -170,13 +170,13 @@ msgstr "Id"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:71 REST/methods/services.py:224
-#: REST/methods/transports.py:58 REST/methods/user_services.py:296
+#: REST/methods/transports.py:58 REST/methods/user_services.py:302
 msgid "Type"
 msgstr "نوع"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:56 REST/methods/user_services.py:294
+#: REST/methods/transports.py:56 REST/methods/user_services.py:300
 #: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "الأولوية"
@@ -608,8 +608,8 @@ msgstr "التقارير المتوفرة"
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
 #: auths/RegexLdap/authenticator.py:92 auths/SAML_enterprise/saml.py:120
-#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:66
-#: models/calendar_action.py:67
+#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:68
+#: models/calendar_action.py:69
 msgid "Group"
 msgstr "المجموعة"
 
@@ -875,7 +875,7 @@ msgid "Currently assigned services pools"
 msgstr "مجمعات الخدمات المعينة حاليا"
 
 #: REST/methods/user_services.py:121 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:371 REST/methods/user_services.py:401
+#: REST/methods/user_services.py:377 REST/methods/user_services.py:406
 msgid "Revision"
 msgstr "مراجعة"
 
@@ -888,7 +888,7 @@ msgid "Cached services"
 msgstr "خدمات التخزين المؤقت"
 
 #: REST/methods/user_services.py:217 REST/methods/user_services.py:257
-#: REST/methods/user_services.py:373
+#: REST/methods/user_services.py:379
 msgid "State"
 msgstr "الحالة"
 
@@ -904,27 +904,27 @@ msgstr "المجموعات المخصصة"
 msgid "comments"
 msgstr "تعليقات"
 
-#: REST/methods/user_services.py:290
+#: REST/methods/user_services.py:296
 msgid "Assigned transports"
 msgstr "النقل المعين"
 
-#: REST/methods/user_services.py:367
+#: REST/methods/user_services.py:373
 msgid "Publications"
 msgstr "المنشورات"
 
-#: REST/methods/user_services.py:372 REST/methods/user_services.py:402
+#: REST/methods/user_services.py:378 REST/methods/user_services.py:407
 msgid "Publish date"
 msgstr "تاريخ النشر"
 
-#: REST/methods/user_services.py:374
+#: REST/methods/user_services.py:380
 msgid "Reason"
 msgstr "السبب"
 
-#: REST/methods/user_services.py:397
+#: REST/methods/user_services.py:402
 msgid "Changelog"
 msgstr "سجل التغيير"
 
-#: REST/methods/user_services.py:403
+#: REST/methods/user_services.py:408
 msgid "Comment"
 msgstr "التعليق"
 
@@ -1059,7 +1059,7 @@ msgstr "تعذر العثور على الأسلوب في {}: {}"
 msgid "Item not found"
 msgstr "تعذر العثور على عنصر"
 
-#: REST/model.py:293 web/util/authentication.py:112 web/util/errors.py:76
+#: REST/model.py:293 web/util/authentication.py:111 web/util/errors.py:76
 msgid "Access denied"
 msgstr "تم رفض الوصول"
 
@@ -2068,75 +2068,75 @@ msgstr "نقل غير موجود"
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "الخدمة ليست على استعداد في هذه اللحظة. من فضلك، حاول مرة أخرى في حين."
 
-#: models/calendar_action.py:59
+#: models/calendar_action.py:61
 msgid "Publish"
 msgstr "نشر"
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Set cache size"
 msgstr "حجم ذاكرة التخزين المؤقت لتعيين"
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Cache size"
 msgstr "حجم ذاكرة التخزين المؤقت"
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Set L2 cache size"
 msgstr "تعيين حجم ذاكرة التخزين المؤقت L2"
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Cache L2 size"
 msgstr "حجم ذاكرة التخزين المؤقت L2"
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Set initial services"
 msgstr "مجموعة الخدمات الأولية"
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Initial services"
 msgstr "الخدمات الأولية"
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Set maximum number of services"
 msgstr "تعيين الحد الأقصى لعدد من الخدمات"
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Maximum services"
 msgstr "الحد الأقصى من الخدمات"
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Add a transport"
 msgstr "أضف النقل"
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Transport"
 msgstr "النقل"
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Remove a transport"
 msgstr "إزالة النقل"
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Trasport"
 msgstr "بمواصلات"
 
-#: models/calendar_action.py:66
+#: models/calendar_action.py:68
 msgid "Add a group"
 msgstr "أضف مجموعة"
 
-#: models/calendar_action.py:67
+#: models/calendar_action.py:69
 msgid "Remove a group"
 msgstr "إزالة مجموعة"
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Sets the ignore unused"
 msgstr "يجهل تجاهل غير المستخدمة"
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Ignore assigned and unused"
 msgstr "تجاهل المعينة وغير المستخدمة"
 
-#: models/calendar_action.py:69
+#: models/calendar_action.py:71
 msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr "قم بإزالة ALL خدمة المستخدم المعينة. استخدم بحذر!"
 
@@ -5890,55 +5890,55 @@ msgstr "قيمة الجودة المستخدمة في بعض الأشكال حز
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go إتصال (تجريبية). اتصال النفق."
 
-#: web/util/authentication.py:98
+#: web/util/authentication.py:97
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "الكثير من أخطاء التوثيق. المستخدم محظور مؤقتا"
 
-#: web/util/authentication.py:128
+#: web/util/authentication.py:127
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
-#: web/util/configjs.py:129
+#: web/util/configjs.py:137
 msgid "Access limited by calendar"
 msgstr "وصول محدود بسبب الجدول الزمني."
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:173
 msgid "Windows client"
 msgstr "عميل ويندوز"
 
-#: web/util/configjs.py:166
+#: web/util/configjs.py:174
 msgid "Mac OS X client"
 msgstr "عميل Mac OS X"
 
-#: web/util/configjs.py:167
+#: web/util/configjs.py:175
 msgid "Debian based Linux client"
 msgstr "ديبين لينكس على أساس العميل"
 
-#: web/util/configjs.py:167 web/util/configjs.py:168 web/util/configjs.py:169
+#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
 msgid "(requires Python-3.6 or newer)"
 msgstr "(يتطلب Python-3.6 أو أحدث)"
 
-#: web/util/configjs.py:168
+#: web/util/configjs.py:176
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "عميل Linux القائم على RPM (Fedora ، Suse ، ...)"
 
-#: web/util/configjs.py:169
+#: web/util/configjs.py:177
 msgid "Generic .tar.gz Linux client"
 msgstr "عام .tar.gz عميل لينكس"
 
-#: web/util/configjs.py:170
+#: web/util/configjs.py:178
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "عميل Linux تراث دبيان القديم القائم على Python 2.7"
 
-#: web/util/configjs.py:170 web/util/configjs.py:171 web/util/configjs.py:172
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires outdated Python-2.7)"
 msgstr "(يتطلب قديم Python-2.7)"
 
-#: web/util/configjs.py:171
+#: web/util/configjs.py:179
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "عميل Linux القائم على Legacy RH (Fedora ، Centos ، Suse ، ...)"
 
-#: web/util/configjs.py:172
+#: web/util/configjs.py:180
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "عميل Linux القائم على OpenSuse القديم)"
 
@@ -6018,11 +6018,11 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "الموثق لا يوفر المعلومات"
 
-#: web/views/service.py:106
+#: web/views/service.py:118
 msgid "Service not ready. Please, try again in a while."
 msgstr "الخدمة ليست جاهزة. من فضلك، حاول مرة أخرى في حين."
 
-#: web/views/service.py:131
+#: web/views/service.py:143
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

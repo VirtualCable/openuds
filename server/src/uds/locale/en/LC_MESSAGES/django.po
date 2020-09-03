@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-25 10:50+0200\n"
+"POT-Creation-Date: 2020-09-03 15:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
 #: REST/model.py:139
 msgid "Name"
 msgstr ""
@@ -38,7 +38,7 @@ msgstr ""
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:59 REST/methods/user_services.py:297
+#: REST/methods/transports.py:59 REST/methods/user_services.py:303
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
@@ -167,13 +167,13 @@ msgstr ""
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:71 REST/methods/services.py:224
-#: REST/methods/transports.py:58 REST/methods/user_services.py:296
+#: REST/methods/transports.py:58 REST/methods/user_services.py:302
 msgid "Type"
 msgstr ""
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:56 REST/methods/user_services.py:294
+#: REST/methods/transports.py:56 REST/methods/user_services.py:300
 #: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr ""
@@ -601,8 +601,8 @@ msgstr ""
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
 #: auths/RegexLdap/authenticator.py:92 auths/SAML_enterprise/saml.py:120
-#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:66
-#: models/calendar_action.py:67
+#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:68
+#: models/calendar_action.py:69
 msgid "Group"
 msgstr ""
 
@@ -854,7 +854,7 @@ msgid "Currently assigned services pools"
 msgstr ""
 
 #: REST/methods/user_services.py:121 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:371 REST/methods/user_services.py:401
+#: REST/methods/user_services.py:377 REST/methods/user_services.py:406
 msgid "Revision"
 msgstr ""
 
@@ -867,7 +867,7 @@ msgid "Cached services"
 msgstr ""
 
 #: REST/methods/user_services.py:217 REST/methods/user_services.py:257
-#: REST/methods/user_services.py:373
+#: REST/methods/user_services.py:379
 msgid "State"
 msgstr ""
 
@@ -883,27 +883,27 @@ msgstr ""
 msgid "comments"
 msgstr ""
 
-#: REST/methods/user_services.py:290
+#: REST/methods/user_services.py:296
 msgid "Assigned transports"
 msgstr ""
 
-#: REST/methods/user_services.py:367
+#: REST/methods/user_services.py:373
 msgid "Publications"
 msgstr ""
 
-#: REST/methods/user_services.py:372 REST/methods/user_services.py:402
+#: REST/methods/user_services.py:378 REST/methods/user_services.py:407
 msgid "Publish date"
 msgstr ""
 
-#: REST/methods/user_services.py:374
+#: REST/methods/user_services.py:380
 msgid "Reason"
 msgstr ""
 
-#: REST/methods/user_services.py:397
+#: REST/methods/user_services.py:402
 msgid "Changelog"
 msgstr ""
 
-#: REST/methods/user_services.py:403
+#: REST/methods/user_services.py:408
 msgid "Comment"
 msgstr ""
 
@@ -1038,7 +1038,7 @@ msgstr ""
 msgid "Item not found"
 msgstr ""
 
-#: REST/model.py:293 web/util/authentication.py:112 web/util/errors.py:76
+#: REST/model.py:293 web/util/authentication.py:111 web/util/errors.py:76
 msgid "Access denied"
 msgstr ""
 
@@ -2014,75 +2014,75 @@ msgstr ""
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 
-#: models/calendar_action.py:59
+#: models/calendar_action.py:61
 msgid "Publish"
 msgstr ""
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Set cache size"
 msgstr ""
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Cache size"
 msgstr ""
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Set L2 cache size"
 msgstr ""
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Cache L2 size"
 msgstr ""
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Set initial services"
 msgstr ""
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Initial services"
 msgstr ""
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Set maximum number of services"
 msgstr ""
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Maximum services"
 msgstr ""
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Add a transport"
 msgstr ""
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Transport"
 msgstr ""
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Remove a transport"
 msgstr ""
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Trasport"
 msgstr ""
 
-#: models/calendar_action.py:66
+#: models/calendar_action.py:68
 msgid "Add a group"
 msgstr ""
 
-#: models/calendar_action.py:67
+#: models/calendar_action.py:69
 msgid "Remove a group"
 msgstr ""
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Sets the ignore unused"
 msgstr ""
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Ignore assigned and unused"
 msgstr ""
 
-#: models/calendar_action.py:69
+#: models/calendar_action.py:71
 msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr ""
 
@@ -5676,55 +5676,55 @@ msgstr ""
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr ""
 
-#: web/util/authentication.py:98
+#: web/util/authentication.py:97
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr ""
 
-#: web/util/authentication.py:128
+#: web/util/authentication.py:127
 msgid "Invalid data"
 msgstr ""
 
-#: web/util/configjs.py:129
+#: web/util/configjs.py:137
 msgid "Access limited by calendar"
 msgstr ""
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:173
 msgid "Windows client"
 msgstr ""
 
-#: web/util/configjs.py:166
+#: web/util/configjs.py:174
 msgid "Mac OS X client"
 msgstr ""
 
-#: web/util/configjs.py:167
+#: web/util/configjs.py:175
 msgid "Debian based Linux client"
 msgstr ""
 
-#: web/util/configjs.py:167 web/util/configjs.py:168 web/util/configjs.py:169
+#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
 msgid "(requires Python-3.6 or newer)"
 msgstr ""
 
-#: web/util/configjs.py:168
+#: web/util/configjs.py:176
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr ""
 
-#: web/util/configjs.py:169
+#: web/util/configjs.py:177
 msgid "Generic .tar.gz Linux client"
 msgstr ""
 
-#: web/util/configjs.py:170
+#: web/util/configjs.py:178
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr ""
 
-#: web/util/configjs.py:170 web/util/configjs.py:171 web/util/configjs.py:172
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires outdated Python-2.7)"
 msgstr ""
 
-#: web/util/configjs.py:171
+#: web/util/configjs.py:179
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr ""
 
-#: web/util/configjs.py:172
+#: web/util/configjs.py:180
 msgid "Legacy OpenSuse based Linux client)"
 msgstr ""
 
@@ -5799,11 +5799,11 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr ""
 
-#: web/views/service.py:106
+#: web/views/service.py:118
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
 
-#: web/views/service.py:131
+#: web/views/service.py:143
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

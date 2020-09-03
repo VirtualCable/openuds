@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-25 10:50+0200\n"
+"POT-Creation-Date: 2020-09-03 15:46+0200\n"
 "PO-Revision-Date: 2020-06-24 03:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -31,7 +31,7 @@ msgstr "kontuak"
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:295 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
 #: REST/model.py:139
 msgid "Name"
 msgstr "Izena"
@@ -41,7 +41,7 @@ msgstr "Izena"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:59 REST/methods/user_services.py:297
+#: REST/methods/transports.py:59 REST/methods/user_services.py:303
 #: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
 #: REST/model.py:157
 msgid "Comments"
@@ -170,13 +170,13 @@ msgstr "Id"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:71 REST/methods/services.py:224
-#: REST/methods/transports.py:58 REST/methods/user_services.py:296
+#: REST/methods/transports.py:58 REST/methods/user_services.py:302
 msgid "Type"
 msgstr "Mota"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:56 REST/methods/user_services.py:294
+#: REST/methods/transports.py:56 REST/methods/user_services.py:300
 #: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "Lehentasuna"
@@ -614,8 +614,8 @@ msgstr "Txosten erabilgarriak"
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
 #: auths/RegexLdap/authenticator.py:92 auths/SAML_enterprise/saml.py:120
-#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:66
-#: models/calendar_action.py:67
+#: auths/SimpleLDAP/authenticator.py:83 models/calendar_action.py:68
+#: models/calendar_action.py:69
 msgid "Group"
 msgstr "Taldea"
 
@@ -884,7 +884,7 @@ msgid "Currently assigned services pools"
 msgstr "Une honetan zerbitzu-igerilekuak esleitzen dira"
 
 #: REST/methods/user_services.py:121 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:371 REST/methods/user_services.py:401
+#: REST/methods/user_services.py:377 REST/methods/user_services.py:406
 msgid "Revision"
 msgstr "Berrikustea"
 
@@ -897,7 +897,7 @@ msgid "Cached services"
 msgstr "Cache-aturiko zerbitzuak"
 
 #: REST/methods/user_services.py:217 REST/methods/user_services.py:257
-#: REST/methods/user_services.py:373
+#: REST/methods/user_services.py:379
 msgid "State"
 msgstr "Egoera"
 
@@ -913,27 +913,27 @@ msgstr "Esleitutako taldeak"
 msgid "comments"
 msgstr "Iruzkinak"
 
-#: REST/methods/user_services.py:290
+#: REST/methods/user_services.py:296
 msgid "Assigned transports"
 msgstr "Esleitutako garraioak"
 
-#: REST/methods/user_services.py:367
+#: REST/methods/user_services.py:373
 msgid "Publications"
 msgstr "Argitalpenak"
 
-#: REST/methods/user_services.py:372 REST/methods/user_services.py:402
+#: REST/methods/user_services.py:378 REST/methods/user_services.py:407
 msgid "Publish date"
 msgstr "Argitalpen data"
 
-#: REST/methods/user_services.py:374
+#: REST/methods/user_services.py:380
 msgid "Reason"
 msgstr "Arrazoia"
 
-#: REST/methods/user_services.py:397
+#: REST/methods/user_services.py:402
 msgid "Changelog"
 msgstr "Aldaketa Log-a"
 
-#: REST/methods/user_services.py:403
+#: REST/methods/user_services.py:408
 msgid "Comment"
 msgstr "Iruzkina"
 
@@ -1068,7 +1068,7 @@ msgstr "Ez da metodorik aurkitu {}:{}-an"
 msgid "Item not found"
 msgstr "Elementua ez da aurkitu"
 
-#: REST/model.py:293 web/util/authentication.py:112 web/util/errors.py:76
+#: REST/model.py:293 web/util/authentication.py:111 web/util/errors.py:76
 msgid "Access denied"
 msgstr "Sarrera debekaturik"
 
@@ -2098,75 +2098,75 @@ msgstr "Ez da aurkitu garraiorik"
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "Zerbitzua ez dago prest une honetan. Saiatu berriz pixka bat."
 
-#: models/calendar_action.py:59
+#: models/calendar_action.py:61
 msgid "Publish"
 msgstr "Argitaratu"
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Set cache size"
 msgstr "Ezarri cache-tamaina"
 
-#: models/calendar_action.py:60
+#: models/calendar_action.py:62
 msgid "Cache size"
 msgstr "Cache-tamaina"
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Set L2 cache size"
 msgstr "Ezarri L2 cache-tamaina"
 
-#: models/calendar_action.py:61
+#: models/calendar_action.py:63
 msgid "Cache L2 size"
 msgstr "L2 cache-tamaina"
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Set initial services"
 msgstr "Azierako zerbitzuak ezarri"
 
-#: models/calendar_action.py:62
+#: models/calendar_action.py:64
 msgid "Initial services"
 msgstr "Hasierako zerbitzuak"
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Set maximum number of services"
 msgstr "Gehienezko zerbitzu kopurua ezarri"
 
-#: models/calendar_action.py:63
+#: models/calendar_action.py:65
 msgid "Maximum services"
 msgstr "Gehinezko zerbitzuak"
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Add a transport"
 msgstr "Gehitu garraioa"
 
-#: models/calendar_action.py:64
+#: models/calendar_action.py:66
 msgid "Transport"
 msgstr "Garraioa"
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Remove a transport"
 msgstr "Kendu garraio bat"
 
-#: models/calendar_action.py:65
+#: models/calendar_action.py:67
 msgid "Trasport"
 msgstr "Lehorreko garraioa"
 
-#: models/calendar_action.py:66
+#: models/calendar_action.py:68
 msgid "Add a group"
 msgstr "Gehitu talde bat"
 
-#: models/calendar_action.py:67
+#: models/calendar_action.py:69
 msgid "Remove a group"
 msgstr "Kendu talde bat"
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Sets the ignore unused"
 msgstr "Erabili gabeko jaramonik ezartzen du"
 
-#: models/calendar_action.py:68
+#: models/calendar_action.py:70
 msgid "Ignore assigned and unused"
 msgstr "Ezikusi esleituta eta erabili gabe"
 
-#: models/calendar_action.py:69
+#: models/calendar_action.py:71
 msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr "Kendu esleitutako erabiltzaile zerbitzu guztia. ERABILERA KONTUZ!"
 
@@ -2580,7 +2580,7 @@ msgstr "Hasiera data"
 #: reports/auto/fields.py:48
 #| msgid "starting date for report"
 msgid "Starting date for report"
-msgstr "Txostena egiteko egunaren hasiera"
+msgstr "Txostenaren hasiera data"
 
 #: reports/auto/fields.py:57 reports/stats/pools_usage_day.py:66
 msgid "Date for report"
@@ -2594,32 +2594,32 @@ msgstr "Amaiera data"
 #: reports/auto/fields.py:67
 #| msgid "starting date for report"
 msgid "ending date for report"
-msgstr "txostena egiteko azken eguna"
+msgstr "txostenaren amaiera data"
 
 #: reports/auto/fields.py:74
 #| msgid "Number of intervals"
 msgid "Report data interval"
-msgstr "Txostena datuen tartea"
+msgstr "Eman datuen tartea"
 
 #: reports/auto/fields.py:77
 #| msgid "Hour"
 msgid "Hourly"
-msgstr "Orduka"
+msgstr "Orduko"
 
 #: reports/auto/fields.py:82
 #| msgid "Date for report"
 msgid "Interval for report data"
-msgstr "Txostenaren datuen tartea"
+msgstr "Txostenaren datuetarako tartea"
 
 #: reports/auto/fields.py:97
 #| msgid "Service pools"
 msgid "Service pool"
-msgstr "Zerbitzua igerilekua"
+msgstr "Zerbitzu igerilekua"
 
 #: reports/auto/fields.py:97
 #| msgid "Pool for report"
 msgid "Service pool for report"
-msgstr "Txostena egiteko zerbitzu-igerilekua"
+msgstr "Txostena emateko zerbitzu-multzoa"
 
 #: reports/auto/fields.py:98 reports/lists/users.py:57
 #: web/forms/LoginForm.py:44
@@ -2629,12 +2629,12 @@ msgstr "Autentifikatzaile"
 #: reports/auto/fields.py:98
 #| msgid "Authentication error"
 msgid "Authenticator for report"
-msgstr "Jatorria txostena"
+msgstr "Txostenerako autentifikatzailea"
 
 #: reports/auto/fields.py:99
 #| msgid "Service usage report"
 msgid "Service for report"
-msgstr "Txostena emateko zerbitzua"
+msgstr "Txostena egiteko zerbitzua"
 
 #: reports/auto/fields.py:100
 #| msgid "Service providers"
@@ -2689,7 +2689,8 @@ msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
 msgstr ""
-"Nahi duen aldian autentikatzaile baten estatistikekin txosten bat sortzen du"
+"Nahi duzun aldirako autentifikatzaile baten estatistikekin txostena sortzen "
+"du"
 
 #: reports/stats/auth_stats.py:108 reports/stats/usage_by_pool.py:136
 #: templates/uds/reports/stats/authenticator_stats.html:4
@@ -3488,17 +3489,17 @@ msgstr "VCPUS"
 #| "Memory assigned to machines. (Zero value means \"keep original machine "
 #| "memory\")"
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
-msgstr "Vcpus kopurua (\"-1 esan nahi du\" mantendu jatorrizko vcpus makina \")"
+msgstr "Vcpus kopurua (\"-1-k\" jatorrizko makina vcpus \"esan nahi du)"
 
 #: services/Nutanix_enterprise/service.py:86
 msgid "Cores per VCPU"
-msgstr "VCPU bakoitzeko zifrak"
+msgstr "VCPU bakoitzeko muinak"
 
 #: services/Nutanix_enterprise/service.py:92
 msgid "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgstr ""
-"Vcpus kopurua (\"-1 esan nahi du\" mantendu jatorrizko makinak vcpu "
-"bakoitzeko \")"
+"Vcpus kopurua (\"-1 esan nahi du\" mantendu jatorrizko makinaren nukleoak "
+"vcpu bakoitzeko \")"
 
 #: services/Nutanix_enterprise/service.py:101
 msgid ""
@@ -3520,7 +3521,7 @@ msgstr ""
 
 #: services/Nutanix_enterprise/service.py:145
 msgid "Both Cores per VCPU and Number of VCPUS are required"
-msgstr "Biak VCPU bakoitzeko Cores eta VCPUS kopurua behar dira"
+msgstr "VCPU bakoitzeko Nukleoak eta VCPUS kopurua behar dira"
 
 #: services/OVirt/provider.py:77
 msgid "oVirt/RHEV Platform Provider"
@@ -4913,7 +4914,7 @@ msgstr "Azken sarbidea"
 #: templates/uds/reports/stats/authenticator_stats.html:6
 #| msgid "Base Authenticator"
 msgid "Statistics by Authenticator"
-msgstr "Autentifikatzaileen estatistikak"
+msgstr "Estatistikak autentifikatzailearen arabera"
 
 #: templates/uds/reports/stats/authenticator_stats.html:17
 #| msgid "User mapping"
@@ -5335,30 +5336,30 @@ msgstr "RDS protokoloa HTML5 bezeroa erabiliz vApps-ekin"
 #: transports/HTML5VNC/html5vnc.py:63
 #| msgid "HyperV Linked Clone (Experimental)"
 msgid "HTML5 VNC Experimental"
-msgstr "HTML5 VNC Esperimentala"
+msgstr "HTML5 VNC esperimentala"
 
 #: transports/HTML5VNC/html5vnc.py:65
 #| msgid "RDP protocol using HTML5 client"
 msgid "VNC protocol using HTML5 client (EXPERIMENTAL)"
-msgstr "VNC protokoloa HTML5 bezeroarekin (EXPERIMENTAL)"
+msgstr "VNC protokoloa HTML5 bezeroa erabiliz (EXPERIMENTAL)"
 
 #: transports/HTML5VNC/html5vnc.py:75
 msgid "Username for VNC connection authentication."
-msgstr "Erabiltzaile izena VNC konexio autentifikaziorako."
+msgstr "VNC konexioaren autentifikaziorako erabiltzaile izena."
 
 #: transports/HTML5VNC/html5vnc.py:76
 msgid "Password for VNC connection authentication"
-msgstr "Pasahitza VNC konexioaren autentifikaziorako"
+msgstr "VNC konexioaren autentifikaziorako pasahitza"
 
 #: transports/HTML5VNC/html5vnc.py:80
 #| msgid "Ldap Server Host"
 msgid "VNC Server port"
-msgstr "VNC zerbitzariaren portua"
+msgstr "VNC zerbitzariaren ataka"
 
 #: transports/HTML5VNC/html5vnc.py:83
 #| msgid "Port of proxy server"
 msgid "Port of the VNC server."
-msgstr "VNC zerbitzariaren portua."
+msgstr "VNC zerbitzariaren ataka."
 
 #: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:116
 #: transports/RDS_enterprise/rds_base.py:74
@@ -5368,8 +5369,7 @@ msgstr "Koloreen sakonera"
 #: transports/HTML5VNC/html5vnc.py:91
 msgid "Color depth for VNC connection. Use this to control bandwidth."
 msgstr ""
-"Kolorearen sakonera VNC konexiorako. Erabili hau banda zabalera "
-"kontrolatzeko."
+"VNC konexioaren kolore sakonera. Erabili hau banda zabalera kontrolatzeko."
 
 #: transports/HTML5VNC/html5vnc.py:103
 msgid "Swap red/blue"
@@ -5379,8 +5379,8 @@ msgstr "Trukatu gorria / urdina"
 msgid ""
 "Use this if your colours seems incorrect (blue appears red, ..) to swap them."
 msgstr ""
-"Erabili hau zure koloreak okerrak diruditenean (urdina gorria agertzen bada, "
-"...) horiek trukatzeko."
+"Erabili hau zure koloreak okerrak iruditzen badira (urdina gorria agertzen "
+"da ..) trukatzeko."
 
 #: transports/HTML5VNC/html5vnc.py:104
 #| msgid "Remote host"
@@ -5389,7 +5389,7 @@ msgstr "Urruneko kurtsorea"
 
 #: transports/HTML5VNC/html5vnc.py:104
 msgid "If set, force to show remote cursor"
-msgstr "Ezarrita badago, beha ezazu urruneko kurtsorea erakusteko"
+msgstr "Ezarrita badago, behartu urruneko kurtsorea erakusteko"
 
 #: transports/HTML5VNC/html5vnc.py:105
 #| msgid "Read"
@@ -5399,7 +5399,7 @@ msgstr "Irakurtzeko soilik"
 #: transports/HTML5VNC/html5vnc.py:105
 #| msgid "If active, the proxied connections will be done using HTTPS"
 msgid "If set, the connection will be read only"
-msgstr "Ezarrita badago, konexioa bakarrik irakurriko da"
+msgstr "Ezarrita badago, konexioa soilik irakurriko da"
 
 #: transports/NX/nxtransport.py:64 transports/NX/nxtunneltransport.py:66
 msgid "NX v3.5 (DEPRECATED)"
@@ -5589,12 +5589,12 @@ msgstr "Egiaztatuta badago, soinua birbideratuko da."
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
 #| msgid "Enable clipboard"
 msgid "Enable webcam"
-msgstr "Gaitu web-kamera"
+msgstr "Gaitu webcam"
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
 #| msgid "If checked, the Mic will be redirected."
 msgid "If checked, webcam will be redirected (ONLY Windows)."
-msgstr "Hautatuta badago, webgunea birbideratuko da (Windows BAKARRI)."
+msgstr "Markatuta badago, webcam-a birbideratuko da (Windows BAKARRIK)."
 
 #: transports/RDP/rdp_base.py:97 transports/RDS_enterprise/rds_base.py:71
 msgid "Credssp Support"
@@ -6006,55 +6006,55 @@ msgstr "Pakete formatu batzuetan erabilitako kalitate-balioa."
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go sarbidea (esperimentala). Tunelatutako konexioa."
 
-#: web/util/authentication.py:98
+#: web/util/authentication.py:97
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "Autentifikazio errore gehiegi. Erabiltzailea aldi baterako blokeatu da"
 
-#: web/util/authentication.py:128
+#: web/util/authentication.py:127
 msgid "Invalid data"
 msgstr "Datu baliogabeak"
 
-#: web/util/configjs.py:129
+#: web/util/configjs.py:137
 msgid "Access limited by calendar"
 msgstr "Sarbidea egutegian mugatua"
 
-#: web/util/configjs.py:165
+#: web/util/configjs.py:173
 msgid "Windows client"
 msgstr "Windows bezeroa"
 
-#: web/util/configjs.py:166
+#: web/util/configjs.py:174
 msgid "Mac OS X client"
 msgstr "Mac OS X bezeroa"
 
-#: web/util/configjs.py:167
+#: web/util/configjs.py:175
 msgid "Debian based Linux client"
 msgstr "Debian oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:167 web/util/configjs.py:168 web/util/configjs.py:169
+#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
 msgid "(requires Python-3.6 or newer)"
 msgstr "(Python-3.6 edo berriagoa behar du)"
 
-#: web/util/configjs.py:168
+#: web/util/configjs.py:176
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "RPM oinarritutako Linux bezeroa (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:169
+#: web/util/configjs.py:177
 msgid "Generic .tar.gz Linux client"
 msgstr "Generic .tar.gz Linux bezeroa"
 
-#: web/util/configjs.py:170
+#: web/util/configjs.py:178
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Debian oinarritutako Python 2.7 Linux bezeroa"
 
-#: web/util/configjs.py:170 web/util/configjs.py:171 web/util/configjs.py:172
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires outdated Python-2.7)"
 msgstr "(zaharkituta dago Python-2.7)"
 
-#: web/util/configjs.py:171
+#: web/util/configjs.py:179
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Legacy RH oinarritutako Linux bezeroa (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:172
+#: web/util/configjs.py:180
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Legacy OpenSuse oinarritutako Linux bezeroa)"
 
@@ -6135,12 +6135,12 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Autentifikatzaileak ez du informazioa ematen"
 
-#: web/views/service.py:106
+#: web/views/service.py:118
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
 "Mesedez, aldi batean proba ezazu, zerbitzua ez dago prest oraindik eta."
 
-#: web/views/service.py:131
+#: web/views/service.py:143
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
