@@ -165,7 +165,7 @@ class Config:
                 obj.value, obj.crypt, obj.long, obj.field_type = value, self._crypt, self._longText, self._type
                 obj.save()
             except Exception:
-                if 'migrate' in sys.argv:
+                if 'migrate' in sys.argv:  # During migration, set could be saved as part of initialization...
                     return
                 logger.exception('Exception')
                 # Probably a migration issue, just ignore it

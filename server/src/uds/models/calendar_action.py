@@ -40,7 +40,9 @@ import typing
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
-from uds.core.util import (calendar, log)
+from uds.core.util import calendar
+from uds.core.util import log
+from uds.core.util import state
 
 from .calendar import Calendar
 from .uuid_model import UUIDModel
@@ -174,7 +176,9 @@ class CalendarAction(UUIDModel):
         elif CALENDAR_ACTION_IGNORE_UNUSED['id'] == self.action:
             self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
         elif CALENDAR_ACTION_REMOVE_USERSERVICES['id'] == self.action:
-            self.service_pool.assignedUserServices().delete()
+            # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
+            for userService in self.service_pool.assignedUserServices().filter(state=state.State.USABLE):
+                userService.remove()                
         else:
             caTransports = (CALENDAR_ACTION_ADD_TRANSPORT['id'], CALENDAR_ACTION_DEL_TRANSPORT['id'])
             caGroups = (CALENDAR_ACTION_ADD_GROUP['id'], CALENDAR_ACTION_DEL_GROUP['id'])
