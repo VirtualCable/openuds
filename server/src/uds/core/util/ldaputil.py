@@ -169,7 +169,7 @@ def getFirst(
     @return: None if username is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
     """
     value = ldap.filter.escape_filter_chars(value)
-    # Convert atttribute list to bynary ONLY on python2
+
     attrList = [field] + [i for i in attributes] if attributes else []
 
     ldapFilter = '(&(objectClass={})({}={}))'.format(objectClass, field, value)

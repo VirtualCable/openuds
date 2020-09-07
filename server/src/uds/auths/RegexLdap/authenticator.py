@@ -269,20 +269,32 @@ class RegexLdap(auths.Authenticator):
         # For example, you can have authentication in an "user" object class and attributes in an "user_attributes" object class.
         # Note: This is very rare situation, but it ocurrs :)
         if user and self._altClass:
-            altUser = ldaputil.getFirst(
+            for usr in  ldaputil.getAsDict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                objectClass=self._altClass,
-                field=self._userIdAttr,
-                value=username,
-                attributes=attributes,
+                ldapFilter='(&(objectClass={})({}={}))'.format(self._altClass, self._userIdAttr, ldaputil.escape(username)),
+                attrList=attributes,
                 sizeLimit=LDAP_RESULT_LIMIT
-            )
+            ):
 
-            if altUser:
-                for i in attributes:
-                    if i in altUser:
-                        user[i] = altUser[i]
+                for k, v in usr.items():
+                    kl = k.lower()
+                    # If already exists the field, check if it is a list to add new elements...
+                    if kl in usr:
+                        # Convert existing to list, so we can add a new value
+                        if not isinstance(user[kl], (list, tuple)):
+                            user[kl] = [user[kl]]
+
+                        # Convert values to list, if not list
+                        if not isinstance(v, (list, tuple)):
+                            v = [v]
+
+                        # Now append to existing values
+                        for x in v:
+                            user[kl].append(x)
+                    else:
+                        user[kl] = v
+
 
         return user
 
