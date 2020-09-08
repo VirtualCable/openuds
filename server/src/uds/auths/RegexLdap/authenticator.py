@@ -276,9 +276,11 @@ class RegexLdap(auths.Authenticator):
                 attrList=attributes,
                 sizeLimit=LDAP_RESULT_LIMIT
             ):
-
-                for k, v in usr.items():
-                    kl = k.lower()
+                for attr in self.__getAttrsFromField(self._groupNameAttr):
+                    v = usr.get(attr)
+                    if not v:
+                        continue
+                    kl = attr.lower()
                     # If already exists the field, check if it is a list to add new elements...
                     if kl in usr:
                         # Convert existing to list, so we can add a new value

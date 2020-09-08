@@ -152,7 +152,6 @@ def getAsDict(
 
             yield dct
 
-
 def getFirst(
         con: typing.Any,
         base: str,
