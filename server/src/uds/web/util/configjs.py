@@ -83,13 +83,15 @@ def udsJs(request: 'HttpRequest') -> str:
     logger.debug('Tag config: %s', tag)
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
         try:
-            authenticators = Authenticator.objects.filter(small_name=auth_host)[:]
+            # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
+            # tag, later will remove "auth_host" if exists
+            authenticators = Authenticator.objects.filter(small_name__in=[auth_host, tag])[:]
         except Exception as e:
             authenticators = []
     else:
         authenticators = Authenticator.objects.all().exclude(visible=False)
 
-    logger.debug('Authenticators PRE: %s', authenticators)
+    # logger.debug('Authenticators PRE: %s', authenticators)
 
     if tag and authenticators:  # Refilter authenticators, visible and with this tag if required
         authenticators = [x for x in authenticators if x.small_name == tag]
@@ -100,8 +102,7 @@ def udsJs(request: 'HttpRequest') -> str:
         except Exception:  # There is no authenticators yet...
             authenticators = []
 
-
-    logger.debug('Authenticators: %s', authenticators)
+    # logger.debug('Authenticators: %s', authenticators)
 
     # the auths for client
     def getAuthInfo(auth: Authenticator):
