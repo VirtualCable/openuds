@@ -144,7 +144,8 @@ class ForwardThread(threading.Thread):
 
                 logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
 
-                self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
+                # To disable ssh-ageng asking for passwords: allow_agent=False
+                self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5, allow_agent=False)
             except Exception:
                 logger.exception('Exception connecting: ')
                 self.status = 2  # Error

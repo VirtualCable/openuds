@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -51,7 +51,6 @@ class UnsavedForeignKey(models.ForeignKey):
     """
     # Allows pointing to an unsaved object
     allow_unsaved_instance_assignment = True
-
 
 def getSqlDatetime() -> datetime:
     """
