@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import ugettext as _
 from django.forms.models import model_to_dict
@@ -55,6 +56,10 @@ from .user_services import AssignedService
 logger = logging.getLogger(__name__)
 
 # Details of /auth
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import UserService
 
 
 def getGroupsFromMeta(groups):
@@ -185,14 +190,16 @@ class Users(DetailHandler):
                 logger.warn('Removal of user {} denied due to insufficients rights')
                 raise self.invalidItemException('Removal of user {} denied due to insufficients rights')
 
-            for us in user.userServices.all():
+            assignedUserService: 'UserService'
+            for assignedUserService in user.userServices.all():
                 try:
-                    us.user = None
-                    us.removeOrCancel()
+                    assignedUserService.user = None  # Remove assigned user (avoid cascade deletion)
+                    assignedUserService.save(update_fields=['user'])
+                    assignedUserService.removeOrCancel()
                 except Exception:
                     logger.exception('Removing user service')
                     try:
-                        us.save()
+                        assignedUserService.save()
                     except Exception:
                         logger.exception('Saving user on removing error')
 
