@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
-"PO-Revision-Date: 2020-06-24 03:16+0000\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"PO-Revision-Date: 2020-09-03 13:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -30,7 +30,7 @@ msgstr "Contas"
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:122
 #: REST/model.py:139
 msgid "Name"
 msgstr "Nome"
@@ -41,7 +41,7 @@ msgstr "Nome"
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:303
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
 msgstr "Comentários"
@@ -604,8 +604,8 @@ msgstr ""
 msgid "Available reports"
 msgstr "Relatórios disponíveis"
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
-#: REST/methods/users_groups.py:290
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -671,13 +671,13 @@ msgstr "Proxy para serviços atrás de um firewall"
 msgid "Advanced"
 msgstr "Avançado"
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "With errors"
 msgstr "Com erros"
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "Ok"
 msgstr "Está bem"
 
@@ -932,15 +932,15 @@ msgstr "Changelog"
 msgid "Comment"
 msgstr "Comente"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Admin"
 msgstr "Admin"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Staff member"
 msgstr "Membro da equipe"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 #: auths/ActiveDirectory_enterprise/authenticator.py:46
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
@@ -951,16 +951,16 @@ msgstr "Membro da equipe"
 msgid "User"
 msgstr "Do utilizador"
 
-#: REST/methods/users_groups.py:109
+#: REST/methods/users_groups.py:114
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "Usuários de {0}"
 
-#: REST/methods/users_groups.py:111
+#: REST/methods/users_groups.py:116
 msgid "Current users"
 msgstr "Usuários atuais"
 
-#: REST/methods/users_groups.py:115
+#: REST/methods/users_groups.py:120
 #: auths/ActiveDirectory_enterprise/authenticator.py:63
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
@@ -981,40 +981,40 @@ msgstr "Usuários atuais"
 msgid "Username"
 msgstr "Nome de usuário"
 
-#: REST/methods/users_groups.py:116
+#: REST/methods/users_groups.py:121
 msgid "Role"
 msgstr "Função"
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
+#: REST/methods/users_groups.py:124 REST/methods/users_groups.py:292
 msgid "state"
 msgstr "Estado"
 
-#: REST/methods/users_groups.py:120 reports/lists/users.py:110
+#: REST/methods/users_groups.py:125 reports/lists/users.py:110
 msgid "Last access"
 msgstr "Último acesso"
 
-#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
+#: REST/methods/users_groups.py:175 REST/methods/users_groups.py:362
 msgid "User already exists (duplicate key error)"
 msgstr "Usuário já existe (erro de chave duplicado)"
 
-#: REST/methods/users_groups.py:277
+#: REST/methods/users_groups.py:284
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Grupos de {0}"
 
-#: REST/methods/users_groups.py:279
+#: REST/methods/users_groups.py:286
 msgid "Current groups"
 msgstr "Grupos atuais"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 msgid "UDS Group"
 msgstr "Grupo UDS"
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "Meta group"
 msgstr "Grupo meta"
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "UDS Meta Group"
 msgstr "Grupo Meta UDS"
 
@@ -1183,7 +1183,7 @@ msgstr "Deve especificar o nome de usuário no formulário USERNAME@DOMAIN.DOM"
 #: auths/AzureAD_enterprise/azure_ad.py:225
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
-#: auths/RegexLdap/authenticator.py:337 auths/RegexLdap/authenticator.py:368
+#: auths/RegexLdap/authenticator.py:351 auths/RegexLdap/authenticator.py:382
 #: auths/SimpleLDAP/authenticator.py:270 auths/SimpleLDAP/authenticator.py:313
 msgid "Username not found"
 msgstr "Nome de usuário não encontrado"
@@ -1196,7 +1196,7 @@ msgstr "Grupo não encontrado"
 #: auths/ActiveDirectory_enterprise/authenticator.py:409
 #: auths/ActiveDirectory_enterprise/authenticator.py:430
 #: auths/EDirectory_enterprise/authenticator.py:247
-#: auths/RegexLdap/authenticator.py:391 auths/SimpleLDAP/authenticator.py:334
+#: auths/RegexLdap/authenticator.py:405 auths/SimpleLDAP/authenticator.py:334
 #: auths/SimpleLDAP/authenticator.py:354
 msgid "Too many results, be more specific"
 msgstr "Muitos resultados, sejam mais específicos"
@@ -1218,7 +1218,7 @@ msgstr "Servidor não parece um Active Directory (ele não tem objetos de grupo)
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:475
 #: auths/EDirectory_enterprise/authenticator.py:302
-#: auths/RegexLdap/authenticator.py:450 auths/SimpleLDAP/authenticator.py:432
+#: auths/RegexLdap/authenticator.py:464 auths/SimpleLDAP/authenticator.py:432
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "Params de conexão parecem corretos, teste foi executado com sucesso"
 
@@ -1320,12 +1320,12 @@ msgid "Edirectory connection error: {}"
 msgstr "Erro de conexão do Edirectory: {}"
 
 #: auths/EDirectory_enterprise/authenticator.py:267
-#: auths/RegexLdap/authenticator.py:411 auths/SimpleLDAP/authenticator.py:374
+#: auths/RegexLdap/authenticator.py:425 auths/SimpleLDAP/authenticator.py:374
 msgid "Ldap search base is incorrect"
 msgstr "A base de pesquisa do Ldap está incorreta"
 
 #: auths/EDirectory_enterprise/authenticator.py:272
-#: auths/RegexLdap/authenticator.py:416 auths/SimpleLDAP/authenticator.py:379
+#: auths/RegexLdap/authenticator.py:430 auths/SimpleLDAP/authenticator.py:379
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "A classe de usuário Ldap parece estar incorreta (nenhum usuário encontrado "
@@ -1492,7 +1492,7 @@ msgstr "Autenticador Regex LDAP"
 msgid "Regular Expressions LDAP authenticator"
 msgstr "Autenticador LDAP de Expressões Regulares"
 
-#: auths/RegexLdap/authenticator.py:425
+#: auths/RegexLdap/authenticator.py:439
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
@@ -1500,7 +1500,7 @@ msgstr ""
 "O ID do usuário do Ldap provavelmente está errado (não é possível encontrar "
 "nenhum usuário com ambas as condições)"
 
-#: auths/RegexLdap/authenticator.py:439 auths/SimpleLDAP/authenticator.py:403
+#: auths/RegexLdap/authenticator.py:453 auths/SimpleLDAP/authenticator.py:403
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1978,7 +1978,6 @@ msgid "Storage"
 msgstr "Armazenamento"
 
 #: core/util/stats/counters.py:216
-#| msgid "User services"
 msgid "Users with services"
 msgstr "Usuários com serviços"
 
@@ -2581,7 +2580,6 @@ msgid "Starting date"
 msgstr "Data de início"
 
 #: reports/auto/fields.py:48
-#| msgid "starting date for report"
 msgid "Starting date for report"
 msgstr "Data de início para relatório"
 
@@ -2590,37 +2588,30 @@ msgid "Date for report"
 msgstr "Data do relatório"
 
 #: reports/auto/fields.py:66
-#| msgid "End date:"
 msgid "Ending date"
 msgstr "Data final"
 
 #: reports/auto/fields.py:67
-#| msgid "starting date for report"
 msgid "ending date for report"
 msgstr "data final para relatório"
 
 #: reports/auto/fields.py:74
-#| msgid "Number of intervals"
 msgid "Report data interval"
 msgstr "Intervalo de dados do relatório"
 
 #: reports/auto/fields.py:77
-#| msgid "Hour"
 msgid "Hourly"
 msgstr "Por hora"
 
 #: reports/auto/fields.py:82
-#| msgid "Date for report"
 msgid "Interval for report data"
 msgstr "Intervalo para dados do relatório"
 
 #: reports/auto/fields.py:97
-#| msgid "Service pools"
 msgid "Service pool"
 msgstr "Pool de serviço"
 
 #: reports/auto/fields.py:97
-#| msgid "Pool for report"
 msgid "Service pool for report"
 msgstr "Pool de serviço para relatório"
 
@@ -2630,22 +2621,18 @@ msgid "Authenticator"
 msgstr "Autenticador"
 
 #: reports/auto/fields.py:98
-#| msgid "Authentication error"
 msgid "Authenticator for report"
 msgstr "Autenticador para relatório"
 
 #: reports/auto/fields.py:99
-#| msgid "Service usage report"
 msgid "Service for report"
 msgstr "Serviço para relatório"
 
 #: reports/auto/fields.py:100
-#| msgid "Service providers"
 msgid "Service provider"
 msgstr "Provedor de serviço"
 
 #: reports/auto/fields.py:100
-#| msgid "Service providers"
 msgid "Service provider for report"
 msgstr "Prestador de serviços para relatório"
 
@@ -2682,12 +2669,10 @@ msgid "Real Name"
 msgstr "Nome real"
 
 #: reports/stats/auth_stats.py:57
-#| msgid "Sample dummy authenticator"
 msgid "Statistics by authenticator"
 msgstr "Estatísticas por autenticador"
 
 #: reports/stats/auth_stats.py:58
-#| msgid "Generates a report with the summary of users usage for a pool"
 msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
@@ -3489,9 +3474,6 @@ msgid "VCPUS"
 msgstr "VCPUS"
 
 #: services/Nutanix_enterprise/service.py:80
-#| msgid ""
-#| "Memory assigned to machines. (Zero value means \"keep original machine "
-#| "memory\")"
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgstr "Número de vcpus (\"-1 significa\" manter vcpus da máquina original \")"
 
@@ -4914,12 +4896,10 @@ msgid "Last Access"
 msgstr "Último acesso"
 
 #: templates/uds/reports/stats/authenticator_stats.html:6
-#| msgid "Base Authenticator"
 msgid "Statistics by Authenticator"
 msgstr "Estatísticas por autenticador"
 
 #: templates/uds/reports/stats/authenticator_stats.html:17
-#| msgid "User mapping"
 msgid "User working"
 msgstr "Usuário trabalhando"
 
@@ -5337,12 +5317,10 @@ msgid "RDS protocol using HTML5 client for vApps"
 msgstr "Protocolo RDS usando cliente HTML5 para vApps"
 
 #: transports/HTML5VNC/html5vnc.py:63
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "HTML5 VNC Experimental"
 msgstr "HTML5 VNC Experimental"
 
 #: transports/HTML5VNC/html5vnc.py:65
-#| msgid "RDP protocol using HTML5 client"
 msgid "VNC protocol using HTML5 client (EXPERIMENTAL)"
 msgstr "Protocolo VNC usando cliente HTML5 (EXPERIMENTAL)"
 
@@ -5355,12 +5333,10 @@ msgid "Password for VNC connection authentication"
 msgstr "Senha para autenticação de conexão VNC"
 
 #: transports/HTML5VNC/html5vnc.py:80
-#| msgid "Ldap Server Host"
 msgid "VNC Server port"
 msgstr "Porta do servidor VNC"
 
 #: transports/HTML5VNC/html5vnc.py:83
-#| msgid "Port of proxy server"
 msgid "Port of the VNC server."
 msgstr "Porta do servidor VNC."
 
@@ -5387,7 +5363,6 @@ msgstr ""
 "trocá-las."
 
 #: transports/HTML5VNC/html5vnc.py:104
-#| msgid "Remote host"
 msgid "Remote cursor"
 msgstr "Cursor remoto"
 
@@ -5396,12 +5371,10 @@ msgid "If set, force to show remote cursor"
 msgstr "Se definido, força para mostrar o cursor remoto"
 
 #: transports/HTML5VNC/html5vnc.py:105
-#| msgid "Read"
 msgid "Read only"
 msgstr "Somente leitura"
 
 #: transports/HTML5VNC/html5vnc.py:105
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid "If set, the connection will be read only"
 msgstr "Se definido, a conexão será somente leitura"
 
@@ -5588,12 +5561,10 @@ msgid "If checked, sound will be redirected."
 msgstr "Se marcado, o som será redirecionado."
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
-#| msgid "Enable clipboard"
 msgid "Enable webcam"
 msgstr "Habilitar webcam"
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
-#| msgid "If checked, the Mic will be redirected."
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "Se marcada, a webcam será redirecionada (SOMENTE Windows)."
 
@@ -6016,47 +5987,47 @@ msgstr "Muitos erros de autenticação. Usuário temporariamente bloqueado"
 msgid "Invalid data"
 msgstr "Dados inválidos"
 
-#: web/util/configjs.py:137
+#: web/util/configjs.py:139
 msgid "Access limited by calendar"
 msgstr "Acesso limitado por calendário"
 
-#: web/util/configjs.py:173
+#: web/util/configjs.py:175
 msgid "Windows client"
 msgstr "Cliente do Windows"
 
-#: web/util/configjs.py:174
+#: web/util/configjs.py:176
 msgid "Mac OS X client"
 msgstr "Cliente Mac OS X"
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:177
 msgid "Debian based Linux client"
 msgstr "Cliente Linux baseado em Debian"
 
-#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
+#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requer Python-3.6 ou mais recente)"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:178
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Cliente Linux baseado em RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:179
 msgid "Generic .tar.gz Linux client"
 msgstr "Cliente Linux genérico .tar.gz"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:180
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Cliente Python 2.7 baseado em Debian herdado"
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
 msgid "(requires outdated Python-2.7)"
 msgstr "(requer Python-2.7 desatualizado)"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:181
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Cliente Linux herdado baseado em RH (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:182
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Cliente Linux legado baseado em OpenSuse)"
 

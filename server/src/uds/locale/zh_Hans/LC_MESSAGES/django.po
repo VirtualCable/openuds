@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
-"PO-Revision-Date: 2020-06-24 03:16+0000\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"PO-Revision-Date: 2020-09-03 13:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -29,7 +29,7 @@ msgstr "帐号"
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:122
 #: REST/model.py:139
 msgid "Name"
 msgstr "名称"
@@ -40,7 +40,7 @@ msgstr "名称"
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:303
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
 msgstr "评论"
@@ -596,8 +596,8 @@ msgstr "如果处于活动状态，将检查任何SSL证书（不允许代理上
 msgid "Available reports"
 msgstr "可用报告"
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
-#: REST/methods/users_groups.py:290
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -661,13 +661,13 @@ msgstr "防火墙后面的服务代理"
 msgid "Advanced"
 msgstr "高级"
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "With errors"
 msgstr "有错误"
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "Ok"
 msgstr "好"
 
@@ -910,15 +910,15 @@ msgstr "更新日志"
 msgid "Comment"
 msgstr "评论"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Admin"
 msgstr "管理员"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Staff member"
 msgstr "工作人员"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 #: auths/ActiveDirectory_enterprise/authenticator.py:46
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
@@ -929,16 +929,16 @@ msgstr "工作人员"
 msgid "User"
 msgstr "用户"
 
-#: REST/methods/users_groups.py:109
+#: REST/methods/users_groups.py:114
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "{0}的用户"
 
-#: REST/methods/users_groups.py:111
+#: REST/methods/users_groups.py:116
 msgid "Current users"
 msgstr "目前的用户"
 
-#: REST/methods/users_groups.py:115
+#: REST/methods/users_groups.py:120
 #: auths/ActiveDirectory_enterprise/authenticator.py:63
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
@@ -959,40 +959,40 @@ msgstr "目前的用户"
 msgid "Username"
 msgstr "用户名"
 
-#: REST/methods/users_groups.py:116
+#: REST/methods/users_groups.py:121
 msgid "Role"
 msgstr "角色"
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
+#: REST/methods/users_groups.py:124 REST/methods/users_groups.py:292
 msgid "state"
 msgstr "州"
 
-#: REST/methods/users_groups.py:120 reports/lists/users.py:110
+#: REST/methods/users_groups.py:125 reports/lists/users.py:110
 msgid "Last access"
 msgstr "上次访问"
 
-#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
+#: REST/methods/users_groups.py:175 REST/methods/users_groups.py:362
 msgid "User already exists (duplicate key error)"
 msgstr "用户已存在（重复键错误）"
 
-#: REST/methods/users_groups.py:277
+#: REST/methods/users_groups.py:284
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "{0}组"
 
-#: REST/methods/users_groups.py:279
+#: REST/methods/users_groups.py:286
 msgid "Current groups"
 msgstr "目前的团体"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 msgid "UDS Group"
 msgstr "UDS集团"
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "Meta group"
 msgstr "元组"
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
@@ -1154,7 +1154,7 @@ msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 #: auths/AzureAD_enterprise/azure_ad.py:225
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
-#: auths/RegexLdap/authenticator.py:337 auths/RegexLdap/authenticator.py:368
+#: auths/RegexLdap/authenticator.py:351 auths/RegexLdap/authenticator.py:382
 #: auths/SimpleLDAP/authenticator.py:270 auths/SimpleLDAP/authenticator.py:313
 msgid "Username not found"
 msgstr "找不到用户名"
@@ -1167,7 +1167,7 @@ msgstr "未找到组"
 #: auths/ActiveDirectory_enterprise/authenticator.py:409
 #: auths/ActiveDirectory_enterprise/authenticator.py:430
 #: auths/EDirectory_enterprise/authenticator.py:247
-#: auths/RegexLdap/authenticator.py:391 auths/SimpleLDAP/authenticator.py:334
+#: auths/RegexLdap/authenticator.py:405 auths/SimpleLDAP/authenticator.py:334
 #: auths/SimpleLDAP/authenticator.py:354
 msgid "Too many results, be more specific"
 msgstr "结果太多，更具体"
@@ -1188,7 +1188,7 @@ msgstr "服务器似乎不是Active Directory（它没有组对象）"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:475
 #: auths/EDirectory_enterprise/authenticator.py:302
-#: auths/RegexLdap/authenticator.py:450 auths/SimpleLDAP/authenticator.py:432
+#: auths/RegexLdap/authenticator.py:464 auths/SimpleLDAP/authenticator.py:432
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "连接参数似乎正确，测试成功执行"
 
@@ -1288,12 +1288,12 @@ msgid "Edirectory connection error: {}"
 msgstr "电子目录连接错误：{}"
 
 #: auths/EDirectory_enterprise/authenticator.py:267
-#: auths/RegexLdap/authenticator.py:411 auths/SimpleLDAP/authenticator.py:374
+#: auths/RegexLdap/authenticator.py:425 auths/SimpleLDAP/authenticator.py:374
 msgid "Ldap search base is incorrect"
 msgstr "Ldap搜索库不正确"
 
 #: auths/EDirectory_enterprise/authenticator.py:272
-#: auths/RegexLdap/authenticator.py:416 auths/SimpleLDAP/authenticator.py:379
+#: auths/RegexLdap/authenticator.py:430 auths/SimpleLDAP/authenticator.py:379
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr "Ldap用户类似乎不正确（该类没有找到用户）"
 
@@ -1448,13 +1448,13 @@ msgstr "正则表达式LDAP身份验证器"
 msgid "Regular Expressions LDAP authenticator"
 msgstr "正则表达式LDAP身份验证器"
 
-#: auths/RegexLdap/authenticator.py:425
+#: auths/RegexLdap/authenticator.py:439
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr "Ldap用户ID attr可能是错误的（找不到具有这两个条件的任何用户）"
 
-#: auths/RegexLdap/authenticator.py:439 auths/SimpleLDAP/authenticator.py:403
+#: auths/RegexLdap/authenticator.py:453 auths/SimpleLDAP/authenticator.py:403
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1904,7 +1904,6 @@ msgid "Storage"
 msgstr "存储"
 
 #: core/util/stats/counters.py:216
-#| msgid "User services"
 msgid "Users with services"
 msgstr "为用户提供服务"
 
@@ -2482,7 +2481,6 @@ msgid "Starting date"
 msgstr "开始日期"
 
 #: reports/auto/fields.py:48
-#| msgid "starting date for report"
 msgid "Starting date for report"
 msgstr "报告开始日期"
 
@@ -2491,37 +2489,30 @@ msgid "Date for report"
 msgstr "报告日期"
 
 #: reports/auto/fields.py:66
-#| msgid "End date:"
 msgid "Ending date"
 msgstr "结束日期"
 
 #: reports/auto/fields.py:67
-#| msgid "starting date for report"
 msgid "ending date for report"
 msgstr "报告的结束日期"
 
 #: reports/auto/fields.py:74
-#| msgid "Number of intervals"
 msgid "Report data interval"
 msgstr "报告数据间隔"
 
 #: reports/auto/fields.py:77
-#| msgid "Hour"
 msgid "Hourly"
 msgstr "每小时一次"
 
 #: reports/auto/fields.py:82
-#| msgid "Date for report"
 msgid "Interval for report data"
 msgstr "报告数据间隔"
 
 #: reports/auto/fields.py:97
-#| msgid "Service pools"
 msgid "Service pool"
 msgstr "服务池"
 
 #: reports/auto/fields.py:97
-#| msgid "Pool for report"
 msgid "Service pool for report"
 msgstr "报告服务池"
 
@@ -2531,22 +2522,18 @@ msgid "Authenticator"
 msgstr "认证"
 
 #: reports/auto/fields.py:98
-#| msgid "Authentication error"
 msgid "Authenticator for report"
 msgstr "报告认证者"
 
 #: reports/auto/fields.py:99
-#| msgid "Service usage report"
 msgid "Service for report"
 msgstr "报告服务"
 
 #: reports/auto/fields.py:100
-#| msgid "Service providers"
 msgid "Service provider"
 msgstr "服务提供者"
 
 #: reports/auto/fields.py:100
-#| msgid "Service providers"
 msgid "Service provider for report"
 msgstr "报告服务商"
 
@@ -2583,12 +2570,10 @@ msgid "Real Name"
 msgstr "真正的名字"
 
 #: reports/stats/auth_stats.py:57
-#| msgid "Sample dummy authenticator"
 msgid "Statistics by authenticator"
 msgstr "认证者统计"
 
 #: reports/stats/auth_stats.py:58
-#| msgid "Generates a report with the summary of users usage for a pool"
 msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
@@ -3368,9 +3353,6 @@ msgid "VCPUS"
 msgstr "虚拟CPU"
 
 #: services/Nutanix_enterprise/service.py:80
-#| msgid ""
-#| "Memory assigned to machines. (Zero value means \"keep original machine "
-#| "memory\")"
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgstr "vcpus的数量（“ -1表示保持原始计算机vcpus”）"
 
@@ -4722,12 +4704,10 @@ msgid "Last Access"
 msgstr "最后访问"
 
 #: templates/uds/reports/stats/authenticator_stats.html:6
-#| msgid "Base Authenticator"
 msgid "Statistics by Authenticator"
 msgstr "认证方统计"
 
 #: templates/uds/reports/stats/authenticator_stats.html:17
-#| msgid "User mapping"
 msgid "User working"
 msgstr "用户工作"
 
@@ -5123,12 +5103,10 @@ msgid "RDS protocol using HTML5 client for vApps"
 msgstr "使用HTML5客户端进行vApp的RDS协议"
 
 #: transports/HTML5VNC/html5vnc.py:63
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "HTML5 VNC Experimental"
 msgstr "HTML5 VNC实验"
 
 #: transports/HTML5VNC/html5vnc.py:65
-#| msgid "RDP protocol using HTML5 client"
 msgid "VNC protocol using HTML5 client (EXPERIMENTAL)"
 msgstr "使用HTML5客户端的VNC协议（EXPERIMENTAL）"
 
@@ -5141,12 +5119,10 @@ msgid "Password for VNC connection authentication"
 msgstr "VNC连接认证密码"
 
 #: transports/HTML5VNC/html5vnc.py:80
-#| msgid "Ldap Server Host"
 msgid "VNC Server port"
 msgstr "VNC服务器端口"
 
 #: transports/HTML5VNC/html5vnc.py:83
-#| msgid "Port of proxy server"
 msgid "Port of the VNC server."
 msgstr "VNC服务器的端口。"
 
@@ -5169,7 +5145,6 @@ msgid ""
 msgstr "如果您的颜色看起来不正确（蓝色显示为红色，..），请使用此选项进行交换。"
 
 #: transports/HTML5VNC/html5vnc.py:104
-#| msgid "Remote host"
 msgid "Remote cursor"
 msgstr "远程光标"
 
@@ -5178,12 +5153,10 @@ msgid "If set, force to show remote cursor"
 msgstr "如果设置，则强制显示远程光标"
 
 #: transports/HTML5VNC/html5vnc.py:105
-#| msgid "Read"
 msgid "Read only"
 msgstr "只读"
 
 #: transports/HTML5VNC/html5vnc.py:105
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid "If set, the connection will be read only"
 msgstr "如果设置，则连接将是只读的"
 
@@ -5364,12 +5337,10 @@ msgid "If checked, sound will be redirected."
 msgstr "如果选中，则会重定向声音。"
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
-#| msgid "Enable clipboard"
 msgid "Enable webcam"
 msgstr "启用网络摄像头"
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
-#| msgid "If checked, the Mic will be redirected."
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "如果选中，网络摄像头将被重定向（仅Windows）。"
 
@@ -5769,47 +5740,47 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:137
+#: web/util/configjs.py:139
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:173
+#: web/util/configjs.py:175
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:174
+#: web/util/configjs.py:176
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:177
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
+#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
 msgid "(requires Python-3.6 or newer)"
 msgstr "（需要Python-3.6或更高版本）"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:178
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "基于RPM的Linux客户端（Fedora，Suse等）"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:179
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:180
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "基于旧版Debian的Python 2.7 Linux客户端"
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
 msgid "(requires outdated Python-2.7)"
 msgstr "（要求使用过时的Python-2.7）"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:181
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "基于旧式RH的Linux客户端（Fedora，Centos，Suse等）"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:182
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "基于旧版OpenSuse的Linux客户端）"
 

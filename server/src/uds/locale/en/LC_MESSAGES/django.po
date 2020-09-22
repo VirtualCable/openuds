@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:122
 #: REST/model.py:139
 msgid "Name"
 msgstr ""
@@ -39,7 +39,7 @@ msgstr ""
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:303
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
 msgstr ""
@@ -595,8 +595,8 @@ msgstr ""
 msgid "Available reports"
 msgstr ""
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
-#: REST/methods/users_groups.py:290
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -660,13 +660,13 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "With errors"
 msgstr ""
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "Ok"
 msgstr ""
 
@@ -907,15 +907,15 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Admin"
 msgstr ""
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Staff member"
 msgstr ""
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 #: auths/ActiveDirectory_enterprise/authenticator.py:46
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
@@ -926,16 +926,16 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: REST/methods/users_groups.py:109
+#: REST/methods/users_groups.py:114
 #, python-brace-format
 msgid "Users of {0}"
 msgstr ""
 
-#: REST/methods/users_groups.py:111
+#: REST/methods/users_groups.py:116
 msgid "Current users"
 msgstr ""
 
-#: REST/methods/users_groups.py:115
+#: REST/methods/users_groups.py:120
 #: auths/ActiveDirectory_enterprise/authenticator.py:63
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
@@ -956,40 +956,40 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: REST/methods/users_groups.py:116
+#: REST/methods/users_groups.py:121
 msgid "Role"
 msgstr ""
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
+#: REST/methods/users_groups.py:124 REST/methods/users_groups.py:292
 msgid "state"
 msgstr ""
 
-#: REST/methods/users_groups.py:120 reports/lists/users.py:110
+#: REST/methods/users_groups.py:125 reports/lists/users.py:110
 msgid "Last access"
 msgstr ""
 
-#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
+#: REST/methods/users_groups.py:175 REST/methods/users_groups.py:362
 msgid "User already exists (duplicate key error)"
 msgstr ""
 
-#: REST/methods/users_groups.py:277
+#: REST/methods/users_groups.py:284
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr ""
 
-#: REST/methods/users_groups.py:279
+#: REST/methods/users_groups.py:286
 msgid "Current groups"
 msgstr ""
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 msgid "UDS Group"
 msgstr ""
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "Meta group"
 msgstr ""
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "UDS Meta Group"
 msgstr ""
 
@@ -1151,7 +1151,7 @@ msgstr ""
 #: auths/AzureAD_enterprise/azure_ad.py:225
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
-#: auths/RegexLdap/authenticator.py:337 auths/RegexLdap/authenticator.py:368
+#: auths/RegexLdap/authenticator.py:351 auths/RegexLdap/authenticator.py:382
 #: auths/SimpleLDAP/authenticator.py:270 auths/SimpleLDAP/authenticator.py:313
 msgid "Username not found"
 msgstr ""
@@ -1164,7 +1164,7 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/authenticator.py:409
 #: auths/ActiveDirectory_enterprise/authenticator.py:430
 #: auths/EDirectory_enterprise/authenticator.py:247
-#: auths/RegexLdap/authenticator.py:391 auths/SimpleLDAP/authenticator.py:334
+#: auths/RegexLdap/authenticator.py:405 auths/SimpleLDAP/authenticator.py:334
 #: auths/SimpleLDAP/authenticator.py:354
 msgid "Too many results, be more specific"
 msgstr ""
@@ -1185,7 +1185,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:475
 #: auths/EDirectory_enterprise/authenticator.py:302
-#: auths/RegexLdap/authenticator.py:450 auths/SimpleLDAP/authenticator.py:432
+#: auths/RegexLdap/authenticator.py:464 auths/SimpleLDAP/authenticator.py:432
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr ""
 
@@ -1285,12 +1285,12 @@ msgid "Edirectory connection error: {}"
 msgstr ""
 
 #: auths/EDirectory_enterprise/authenticator.py:267
-#: auths/RegexLdap/authenticator.py:411 auths/SimpleLDAP/authenticator.py:374
+#: auths/RegexLdap/authenticator.py:425 auths/SimpleLDAP/authenticator.py:374
 msgid "Ldap search base is incorrect"
 msgstr ""
 
 #: auths/EDirectory_enterprise/authenticator.py:272
-#: auths/RegexLdap/authenticator.py:416 auths/SimpleLDAP/authenticator.py:379
+#: auths/RegexLdap/authenticator.py:430 auths/SimpleLDAP/authenticator.py:379
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 
@@ -1443,13 +1443,13 @@ msgstr ""
 msgid "Regular Expressions LDAP authenticator"
 msgstr ""
 
-#: auths/RegexLdap/authenticator.py:425
+#: auths/RegexLdap/authenticator.py:439
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
 
-#: auths/RegexLdap/authenticator.py:439 auths/SimpleLDAP/authenticator.py:403
+#: auths/RegexLdap/authenticator.py:453 auths/SimpleLDAP/authenticator.py:403
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -5684,47 +5684,47 @@ msgstr ""
 msgid "Invalid data"
 msgstr ""
 
-#: web/util/configjs.py:137
+#: web/util/configjs.py:139
 msgid "Access limited by calendar"
 msgstr ""
 
-#: web/util/configjs.py:173
+#: web/util/configjs.py:175
 msgid "Windows client"
 msgstr ""
 
-#: web/util/configjs.py:174
+#: web/util/configjs.py:176
 msgid "Mac OS X client"
 msgstr ""
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:177
 msgid "Debian based Linux client"
 msgstr ""
 
-#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
+#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
 msgid "(requires Python-3.6 or newer)"
 msgstr ""
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:178
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr ""
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:179
 msgid "Generic .tar.gz Linux client"
 msgstr ""
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:180
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr ""
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
 msgid "(requires outdated Python-2.7)"
 msgstr ""
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:181
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr ""
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:182
 msgid "Legacy OpenSuse based Linux client)"
 msgstr ""
 

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
-"PO-Revision-Date: 2020-06-23 12:08+0000\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"PO-Revision-Date: 2020-09-03 13:48+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -758,17 +758,14 @@ msgid "Remove member pool"
 msgstr "إزالة تجمع الأعضاء"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:185
-#| msgid "pool group"
 msgid "New pool group"
 msgstr "مجموعة البلياردو الجديدة"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:186
-#| msgid "pool group"
 msgid "Edit pool group"
 msgstr "تحرير مجموعة التجمع"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:187
-#| msgid "Delete group"
 msgid "Delete pool group"
 msgstr "حذف مجموعة التجمع"
 
@@ -1554,18 +1551,18 @@ msgstr "إطلاق الخدمة"
 
 #: static/modern/translations-fakejs.js:22
 #: static/modern/translations-fakejs.js:25
-msgid "Please wait"
-msgstr "ارجوك انتظر"
+msgid "Please wait until the service is launched."
+msgstr "يرجى الانتظار حتى يتم إطلاق الخدمة."
 
 #: static/modern/translations-fakejs.js:23
 #| msgid ""
-#| "Remember that you will need the USD client on your platform to access the "
+#| "Remember that you will need the UDS client on your platform to access the "
 #| "service"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
-"service"
+"service."
 msgstr ""
-"تذكر أنك ستحتاج إلى عميل UDS على النظام الأساسي الخاص بك للوصول إلى الخدمة"
+"تذكر أنك ستحتاج إلى عميل UDS على النظام الأساسي الخاص بك للوصول إلى الخدمة."
 
 #: static/modern/translations-fakejs.js:24
 #: static/modern/translations-fakejs.js:29
@@ -1635,7 +1632,6 @@ msgid "Downloads"
 msgstr "التنزيلات"
 
 #: static/modern/translations-fakejs.js:42
-#| msgid "Download UDS client for your platform"
 msgid "Always download the UDS actor matching your platform"
 msgstr "قم دائمًا بتنزيل ممثل UDS المطابق للنظام الأساسي الخاص بك"
 

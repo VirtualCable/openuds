@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
-"PO-Revision-Date: 2020-06-23 12:08+0000\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"PO-Revision-Date: 2020-09-03 13:48+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -756,17 +756,14 @@ msgid "Remove member pool"
 msgstr "Remover pool de membros"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:185
-#| msgid "pool group"
 msgid "New pool group"
 msgstr "Novo grupo de piscina"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:186
-#| msgid "pool group"
 msgid "Edit pool group"
 msgstr "Editar grupo de piscina"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:187
-#| msgid "Delete group"
 msgid "Delete pool group"
 msgstr "Excluir grupo de piscina"
 
@@ -1555,19 +1552,19 @@ msgstr "Serviço de lançamento"
 
 #: static/modern/translations-fakejs.js:22
 #: static/modern/translations-fakejs.js:25
-msgid "Please wait"
-msgstr "Por favor, espere"
+msgid "Please wait until the service is launched."
+msgstr "Aguarde até que o serviço seja lançado."
 
 #: static/modern/translations-fakejs.js:23
 #| msgid ""
-#| "Remember that you will need the USD client on your platform to access the "
+#| "Remember that you will need the UDS client on your platform to access the "
 #| "service"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
-"service"
+"service."
 msgstr ""
 "Lembre-se de que você precisará do cliente UDS em sua plataforma para "
-"acessar o serviço"
+"acessar o serviço."
 
 #: static/modern/translations-fakejs.js:24
 #: static/modern/translations-fakejs.js:29
@@ -1641,7 +1638,6 @@ msgid "Downloads"
 msgstr "Transferências"
 
 #: static/modern/translations-fakejs.js:42
-#| msgid "Download UDS client for your platform"
 msgid "Always download the UDS actor matching your platform"
 msgstr "Sempre baixe o ator UDS correspondente à sua plataforma"
 

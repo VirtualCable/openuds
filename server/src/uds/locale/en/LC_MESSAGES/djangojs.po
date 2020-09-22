@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1545,13 +1545,13 @@ msgstr ""
 
 #: static/modern/translations-fakejs.js:22
 #: static/modern/translations-fakejs.js:25
-msgid "Please wait"
+msgid "Please wait until the service is launched."
 msgstr ""
 
 #: static/modern/translations-fakejs.js:23
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
-"service"
+"service."
 msgstr ""
 
 #: static/modern/translations-fakejs.js:24

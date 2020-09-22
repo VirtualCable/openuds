@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
-"PO-Revision-Date: 2020-06-23 12:08+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"PO-Revision-Date: 2020-09-17 08:21+0000\n"
+"Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -132,7 +132,7 @@ msgstr "calendari"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:73
 msgid "pool group"
-msgstr "grup de pool"
+msgstr "grup de pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:74
 msgid "Go to"
@@ -757,19 +757,16 @@ msgid "Remove member pool"
 msgstr "Eliminar member pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:185
-#| msgid "pool group"
 msgid "New pool group"
-msgstr "Nou grup de piscina"
+msgstr "Nou grup de pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:186
-#| msgid "pool group"
 msgid "Edit pool group"
-msgstr "Edita el grup de grups"
+msgstr "Editar el grup de pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:187
-#| msgid "Delete group"
 msgid "Delete pool group"
-msgstr "Suprimeix el grup de grups"
+msgstr "Suprimir el grup de pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "New calendar"
@@ -1458,7 +1455,7 @@ msgstr "Veure Pools de servei"
 
 #: static/admin/translations-fakejs.js:478
 msgid "UDS Administration"
-msgstr "Administració UDS"
+msgstr "Administració d'UDS"
 
 #: static/admin/translations-fakejs.js:479
 msgid "You are accessing UDS Administration as staff member."
@@ -1556,19 +1553,19 @@ msgstr "Iniciant el servei"
 
 #: static/modern/translations-fakejs.js:22
 #: static/modern/translations-fakejs.js:25
-msgid "Please wait"
-msgstr "Si us plau, espereu"
+msgid "Please wait until the service is launched."
+msgstr "Espereu fins que s&#39;iniciï el servei."
 
 #: static/modern/translations-fakejs.js:23
 #| msgid ""
-#| "Remember that you will need the USD client on your platform to access the "
+#| "Remember that you will need the UDS client on your platform to access the "
 #| "service"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
-"service"
+"service."
 msgstr ""
 "Recordeu que necessitareu el client UDS a la vostra plataforma per accedir "
-"al servei"
+"al servei."
 
 #: static/modern/translations-fakejs.js:24
 #: static/modern/translations-fakejs.js:29
@@ -1579,20 +1576,20 @@ msgstr "S'ha produït un error en iniciar el servei"
 msgid ""
 "Your connection is being prepared. It will open on a new window when ready."
 msgstr ""
-"La vostra connexió s&#39;està preparant. S&#39;obrirà en una finestra nova "
-"quan estigui llest."
+"La vostra connexió s'està preparant. S'obrirà en una finestra nova quan "
+"estigui preparada."
 
 #: static/modern/translations-fakejs.js:27
 msgid ""
 "The service is now being prepared. (It is at #).'.replace('#', '' + data."
 "running + '%"
 msgstr ""
-"Ara s’està preparant el servei. (És a #). &#39;. Replace (&#39; # &#39;,&#39;"
-" &#39;+ data.running +&#39;%"
+"Ara s’està preparant el servei. (És a #).'.replace('#', '' + data.running + "
+"'%"
 
 #: static/modern/translations-fakejs.js:28
 msgid "Please, tray again in a few moments."
-msgstr "Si us plau, torneu a safata d&#39;aquí a uns instants."
+msgstr "Si us plau, torneu a intentar-ho d'aquí a uns instants."
 
 #: static/modern/translations-fakejs.js:31
 msgid "You can access UDS Open Source code at"
@@ -1621,8 +1618,8 @@ msgid ""
 "Legacy clients are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
-"Els clients heretats només es proporcionen per al suport del sistema "
-"operatiu antic. Intenta evitar-los."
+"Els clients \"legacy\" només es proporcionen per a suport de sistemes "
+"operatius antics. Intenteu evitar-los."
 
 #: static/modern/translations-fakejs.js:37
 msgid "Username"
@@ -1642,17 +1639,16 @@ msgid "Downloads"
 msgstr "Descàrregues"
 
 #: static/modern/translations-fakejs.js:42
-#| msgid "Download UDS client for your platform"
 msgid "Always download the UDS actor matching your platform"
-msgstr "Baixeu sempre l&#39;actor UDS que coincideixi amb la vostra plataforma"
+msgstr "Baixeu sempre l';actor UDS que coincideixi amb la vostra plataforma"
 
 #: static/modern/translations-fakejs.js:43
 msgid ""
 "Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
-"Els actors heretats només es proporcionen per al suport del sistema operatiu "
-"antic. Intenta evitar-los."
+"Els clients \"legacy\" només es proporcionen per a suport de sistemes "
+"operatius antics. Intenteu evitar-los."
 
 #: static/modern/translations-fakejs.js:44
 msgid "An error has occurred"

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-03 15:46+0200\n"
-"PO-Revision-Date: 2020-06-24 03:16+0000\n"
+"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"PO-Revision-Date: 2020-09-03 13:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -31,7 +31,7 @@ msgstr "حسابات"
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
 #: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:301 REST/methods/users_groups.py:117
+#: REST/methods/user_services.py:301 REST/methods/users_groups.py:122
 #: REST/model.py:139
 msgid "Name"
 msgstr "الاسم"
@@ -42,7 +42,7 @@ msgstr "الاسم"
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
 #: REST/methods/transports.py:59 REST/methods/user_services.py:303
-#: REST/methods/users_groups.py:118 REST/methods/users_groups.py:284
+#: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
 msgstr "تعليقات"
@@ -602,8 +602,8 @@ msgstr ""
 msgid "Available reports"
 msgstr "التقارير المتوفرة"
 
-#: REST/methods/reports.py:56 REST/methods/users_groups.py:283
-#: REST/methods/users_groups.py:290
+#: REST/methods/reports.py:56 REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 #: auths/ActiveDirectory_enterprise/authenticator.py:65
 #: auths/AzureAD_enterprise/azure_ad.py:93
 #: auths/EDirectory_enterprise/authenticator.py:63
@@ -669,13 +669,13 @@ msgstr "وكيل للخدمات وراء جدار الحماية"
 msgid "Advanced"
 msgstr "متقدم"
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "With errors"
 msgstr "مع الأخطاء"
 
-#: REST/methods/services.py:309 REST/methods/users_groups.py:217
-#: REST/methods/users_groups.py:384
+#: REST/methods/services.py:309 REST/methods/users_groups.py:224
+#: REST/methods/users_groups.py:391
 msgid "Ok"
 msgstr "موافق"
 
@@ -928,15 +928,15 @@ msgstr "سجل التغيير"
 msgid "Comment"
 msgstr "التعليق"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Admin"
 msgstr "مشرف"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 msgid "Staff member"
 msgstr "موظف"
 
-#: REST/methods/users_groups.py:92 REST/methods/users_groups.py:98
+#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 #: auths/ActiveDirectory_enterprise/authenticator.py:46
 #: auths/AzureAD_enterprise/azure_ad.py:92
 #: auths/EDirectory_enterprise/authenticator.py:47
@@ -947,16 +947,16 @@ msgstr "موظف"
 msgid "User"
 msgstr "المستخدم"
 
-#: REST/methods/users_groups.py:109
+#: REST/methods/users_groups.py:114
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "مستخدمين {0}"
 
-#: REST/methods/users_groups.py:111
+#: REST/methods/users_groups.py:116
 msgid "Current users"
 msgstr "المستخدمون الحاليون"
 
-#: REST/methods/users_groups.py:115
+#: REST/methods/users_groups.py:120
 #: auths/ActiveDirectory_enterprise/authenticator.py:63
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
@@ -977,40 +977,40 @@ msgstr "المستخدمون الحاليون"
 msgid "Username"
 msgstr "اسم المستخدم"
 
-#: REST/methods/users_groups.py:116
+#: REST/methods/users_groups.py:121
 msgid "Role"
 msgstr "وظيفة"
 
-#: REST/methods/users_groups.py:119 REST/methods/users_groups.py:285
+#: REST/methods/users_groups.py:124 REST/methods/users_groups.py:292
 msgid "state"
 msgstr "الحالة"
 
-#: REST/methods/users_groups.py:120 reports/lists/users.py:110
+#: REST/methods/users_groups.py:125 reports/lists/users.py:110
 msgid "Last access"
 msgstr "آخر وصول"
 
-#: REST/methods/users_groups.py:170 REST/methods/users_groups.py:355
+#: REST/methods/users_groups.py:175 REST/methods/users_groups.py:362
 msgid "User already exists (duplicate key error)"
 msgstr "المستخدم موجود مسبقا (خطأ مفتاح مكرر)"
 
-#: REST/methods/users_groups.py:277
+#: REST/methods/users_groups.py:284
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "مجموعات من {0}"
 
-#: REST/methods/users_groups.py:279
+#: REST/methods/users_groups.py:286
 msgid "Current groups"
 msgstr "المجموعات الحالية"
 
-#: REST/methods/users_groups.py:290
+#: REST/methods/users_groups.py:297
 msgid "UDS Group"
 msgstr "المجموعة المصغرة"
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "Meta group"
 msgstr "Meta المجموعة"
 
-#: REST/methods/users_groups.py:291
+#: REST/methods/users_groups.py:298
 msgid "UDS Meta Group"
 msgstr "مجموعة Meta المصغرة"
 
@@ -1176,7 +1176,7 @@ msgstr "يجب تحديد اسم المستخدم في النموذج USERNAME@D
 #: auths/AzureAD_enterprise/azure_ad.py:225
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
-#: auths/RegexLdap/authenticator.py:337 auths/RegexLdap/authenticator.py:368
+#: auths/RegexLdap/authenticator.py:351 auths/RegexLdap/authenticator.py:382
 #: auths/SimpleLDAP/authenticator.py:270 auths/SimpleLDAP/authenticator.py:313
 msgid "Username not found"
 msgstr "لم يتم العثور على اسم المستخدم"
@@ -1189,7 +1189,7 @@ msgstr "لم يتم العثور على المجموعة"
 #: auths/ActiveDirectory_enterprise/authenticator.py:409
 #: auths/ActiveDirectory_enterprise/authenticator.py:430
 #: auths/EDirectory_enterprise/authenticator.py:247
-#: auths/RegexLdap/authenticator.py:391 auths/SimpleLDAP/authenticator.py:334
+#: auths/RegexLdap/authenticator.py:405 auths/SimpleLDAP/authenticator.py:334
 #: auths/SimpleLDAP/authenticator.py:354
 msgid "Too many results, be more specific"
 msgstr "الكثير من النتائج، كن أكثر تحديداً"
@@ -1210,7 +1210,7 @@ msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنا�
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:475
 #: auths/EDirectory_enterprise/authenticator.py:302
-#: auths/RegexLdap/authenticator.py:450 auths/SimpleLDAP/authenticator.py:432
+#: auths/RegexLdap/authenticator.py:464 auths/SimpleLDAP/authenticator.py:432
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "يبدو الاتصال params  صحيحا، تم تنفيذ الأختبار بنجاح"
 
@@ -1313,12 +1313,12 @@ msgid "Edirectory connection error: {}"
 msgstr "خطأ في اتصال Edirectory: {}"
 
 #: auths/EDirectory_enterprise/authenticator.py:267
-#: auths/RegexLdap/authenticator.py:411 auths/SimpleLDAP/authenticator.py:374
+#: auths/RegexLdap/authenticator.py:425 auths/SimpleLDAP/authenticator.py:374
 msgid "Ldap search base is incorrect"
 msgstr "قاعدة البحث Ldap غير صحيح"
 
 #: auths/EDirectory_enterprise/authenticator.py:272
-#: auths/RegexLdap/authenticator.py:416 auths/SimpleLDAP/authenticator.py:379
+#: auths/RegexLdap/authenticator.py:430 auths/SimpleLDAP/authenticator.py:379
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
@@ -1478,14 +1478,14 @@ msgstr "المصادق Regex LDAP"
 msgid "Regular Expressions LDAP authenticator"
 msgstr " التعبيرات العادية لمصادق LDAP"
 
-#: auths/RegexLdap/authenticator.py:425
+#: auths/RegexLdap/authenticator.py:439
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
 "ربما Ldap user id attr خاطئ (لا يمكن العثور على أي مستخدم مع كل الشروط)"
 
-#: auths/RegexLdap/authenticator.py:439 auths/SimpleLDAP/authenticator.py:403
+#: auths/RegexLdap/authenticator.py:453 auths/SimpleLDAP/authenticator.py:403
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1949,7 +1949,6 @@ msgid "Storage"
 msgstr "تخزين"
 
 #: core/util/stats/counters.py:216
-#| msgid "User services"
 msgid "Users with services"
 msgstr "المستخدمون مع الخدمات"
 
@@ -2540,7 +2539,6 @@ msgid "Starting date"
 msgstr "تاريخ البدء"
 
 #: reports/auto/fields.py:48
-#| msgid "starting date for report"
 msgid "Starting date for report"
 msgstr "تاريخ البدء للتقرير"
 
@@ -2549,37 +2547,30 @@ msgid "Date for report"
 msgstr "تاريخ التقرير"
 
 #: reports/auto/fields.py:66
-#| msgid "End date:"
 msgid "Ending date"
 msgstr "تاريخ الانتهاء"
 
 #: reports/auto/fields.py:67
-#| msgid "starting date for report"
 msgid "ending date for report"
 msgstr "تاريخ انتهاء التقرير"
 
 #: reports/auto/fields.py:74
-#| msgid "Number of intervals"
 msgid "Report data interval"
 msgstr "تقرير البيانات الفاصل"
 
 #: reports/auto/fields.py:77
-#| msgid "Hour"
 msgid "Hourly"
 msgstr "ساعيا"
 
 #: reports/auto/fields.py:82
-#| msgid "Date for report"
 msgid "Interval for report data"
 msgstr "الفاصل الزمني لبيانات التقرير"
 
 #: reports/auto/fields.py:97
-#| msgid "Service pools"
 msgid "Service pool"
 msgstr "تجمع الخدمات"
 
 #: reports/auto/fields.py:97
-#| msgid "Pool for report"
 msgid "Service pool for report"
 msgstr "تجمع الخدمة للتقرير"
 
@@ -2589,22 +2580,18 @@ msgid "Authenticator"
 msgstr "المصادق"
 
 #: reports/auto/fields.py:98
-#| msgid "Authentication error"
 msgid "Authenticator for report"
 msgstr "المصدق للتقرير"
 
 #: reports/auto/fields.py:99
-#| msgid "Service usage report"
 msgid "Service for report"
 msgstr "خدمة للتقرير"
 
 #: reports/auto/fields.py:100
-#| msgid "Service providers"
 msgid "Service provider"
 msgstr "مقدم الخدمة"
 
 #: reports/auto/fields.py:100
-#| msgid "Service providers"
 msgid "Service provider for report"
 msgstr "مزود الخدمة للتقرير"
 
@@ -2641,12 +2628,10 @@ msgid "Real Name"
 msgstr "الاسم الحقيقي"
 
 #: reports/stats/auth_stats.py:57
-#| msgid "Sample dummy authenticator"
 msgid "Statistics by authenticator"
 msgstr "إحصائيات المصدق"
 
 #: reports/stats/auth_stats.py:58
-#| msgid "Generates a report with the summary of users usage for a pool"
 msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
@@ -3437,9 +3422,6 @@ msgid "VCPUS"
 msgstr "VCPUS"
 
 #: services/Nutanix_enterprise/service.py:80
-#| msgid ""
-#| "Memory assigned to machines. (Zero value means \"keep original machine "
-#| "memory\")"
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgstr "عدد vcpus (\"-1 يعني\" الاحتفاظ بآلة vcpus الأصلية \")"
 
@@ -4823,12 +4805,10 @@ msgid "Last Access"
 msgstr "آخر وصول"
 
 #: templates/uds/reports/stats/authenticator_stats.html:6
-#| msgid "Base Authenticator"
 msgid "Statistics by Authenticator"
 msgstr "إحصائيات المصادقة"
 
 #: templates/uds/reports/stats/authenticator_stats.html:17
-#| msgid "User mapping"
 msgid "User working"
 msgstr "مستخدم يعمل"
 
@@ -5240,12 +5220,10 @@ msgid "RDS protocol using HTML5 client for vApps"
 msgstr "بروتوكول RDS باستخدام عميل HTML5 vApps"
 
 #: transports/HTML5VNC/html5vnc.py:63
-#| msgid "HyperV Linked Clone (Experimental)"
 msgid "HTML5 VNC Experimental"
 msgstr "HTML5 VNC تجريبي"
 
 #: transports/HTML5VNC/html5vnc.py:65
-#| msgid "RDP protocol using HTML5 client"
 msgid "VNC protocol using HTML5 client (EXPERIMENTAL)"
 msgstr "بروتوكول VNC باستخدام عميل HTML5 (تجريبي)"
 
@@ -5258,12 +5236,10 @@ msgid "Password for VNC connection authentication"
 msgstr "كلمة مرور لمصادقة اتصال VNC"
 
 #: transports/HTML5VNC/html5vnc.py:80
-#| msgid "Ldap Server Host"
 msgid "VNC Server port"
 msgstr "منفذ خادم VNC"
 
 #: transports/HTML5VNC/html5vnc.py:83
-#| msgid "Port of proxy server"
 msgid "Port of the VNC server."
 msgstr "منفذ خادم VNC."
 
@@ -5288,7 +5264,6 @@ msgstr ""
 "لتبديلها."
 
 #: transports/HTML5VNC/html5vnc.py:104
-#| msgid "Remote host"
 msgid "Remote cursor"
 msgstr "مؤشر بعيد"
 
@@ -5297,12 +5272,10 @@ msgid "If set, force to show remote cursor"
 msgstr "في حالة الضبط ، قم بإظهار المؤشر البعيد"
 
 #: transports/HTML5VNC/html5vnc.py:105
-#| msgid "Read"
 msgid "Read only"
 msgstr "يقرأ فقط"
 
 #: transports/HTML5VNC/html5vnc.py:105
-#| msgid "If active, the proxied connections will be done using HTTPS"
 msgid "If set, the connection will be read only"
 msgstr "في حالة الضبط ، سيتم قراءة الاتصال فقط"
 
@@ -5485,12 +5458,10 @@ msgid "If checked, sound will be redirected."
 msgstr "إذا تم تحديدها، ستتم إعادة توجيه الصوت."
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
-#| msgid "Enable clipboard"
 msgid "Enable webcam"
 msgstr "تمكين كاميرا الويب"
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
-#| msgid "If checked, the Mic will be redirected."
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "إذا تم تحديده ، فسيتم إعادة توجيه كاميرا الويب (Windows فقط)."
 
@@ -5898,47 +5869,47 @@ msgstr "الكثير من أخطاء التوثيق. المستخدم محظور
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
-#: web/util/configjs.py:137
+#: web/util/configjs.py:139
 msgid "Access limited by calendar"
 msgstr "وصول محدود بسبب الجدول الزمني."
 
-#: web/util/configjs.py:173
+#: web/util/configjs.py:175
 msgid "Windows client"
 msgstr "عميل ويندوز"
 
-#: web/util/configjs.py:174
+#: web/util/configjs.py:176
 msgid "Mac OS X client"
 msgstr "عميل Mac OS X"
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:177
 msgid "Debian based Linux client"
 msgstr "ديبين لينكس على أساس العميل"
 
-#: web/util/configjs.py:175 web/util/configjs.py:176 web/util/configjs.py:177
+#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
 msgid "(requires Python-3.6 or newer)"
 msgstr "(يتطلب Python-3.6 أو أحدث)"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:178
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "عميل Linux القائم على RPM (Fedora ، Suse ، ...)"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:179
 msgid "Generic .tar.gz Linux client"
 msgstr "عام .tar.gz عميل لينكس"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:180
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "عميل Linux تراث دبيان القديم القائم على Python 2.7"
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
 msgid "(requires outdated Python-2.7)"
 msgstr "(يتطلب قديم Python-2.7)"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:181
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "عميل Linux القائم على Legacy RH (Fedora ، Centos ، Suse ، ...)"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:182
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "عميل Linux القائم على OpenSuse القديم)"
 
