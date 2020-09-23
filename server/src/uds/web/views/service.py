@@ -33,6 +33,7 @@ import logging
 import typing
 
 from django.utils.translation import ugettext as _
+from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
@@ -126,16 +127,22 @@ def userServiceEnabler(request: 'HttpRequest', idService: str, idTransport: str)
 
         userService, trans = res[1], res[3]
 
-        data = {
-            'service': 'A' + userService.uuid,
-            'transport': trans.uuid,
-            'user': request.user.uuid,
-            'password': password
-        }
+        typeTrans = trans.getType()
 
-        ticket = TicketStore.create(data)
-        error = ''
-        url = html.udsLink(request, ticket, scrambler)
+        error = ''  # No error
+
+        if typeTrans.ownLink:
+            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))
+        else:
+            data = {
+                'service': 'A' + userService.uuid,
+                'transport': trans.uuid,
+                'user': request.user.uuid,
+                'password': password
+            }
+
+            ticket = TicketStore.create(data)
+            url = html.udsLink(request, ticket, scrambler)
     except ServiceNotReadyError as e:
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while

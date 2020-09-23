@@ -33,7 +33,7 @@ import typing
 
 from django.utils.translation import ugettext
 from django.utils import formats
-from django.urls.base import reverse
+from django.urls import reverse
 
 from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool, getSqlDatetime
 from uds.core.util.config import GlobalConfig
