@@ -33,3 +33,5 @@ done
 #rm udsclient-$VERSION
 
 make DESTDIR=targz DISTRO=targz VERSION=${VERSION} install
+
+rpm --addsign ../*rpm
