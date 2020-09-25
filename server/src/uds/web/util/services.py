@@ -200,10 +200,12 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         else:
             toBeReplacedTxt = ''
 
+        datator = lambda x: x.replace('{use}', use).replace('{total}', str(svr.max_srvs))
+
         services.append({
             'id': 'F' + svr.uuid,
-            'name': svr.name,
-            'visual_name': svr.visual_name.replace('{use}', use),
+            'name': datator(svr.name),
+            'visual_name': datator(svr.visual_name.replace('{use}', use).replace('{total}', str(svr.max_srvs))),
             'description': svr.comments,
             'group': group,
             'transports': trans,
