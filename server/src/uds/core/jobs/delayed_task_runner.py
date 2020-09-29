@@ -37,7 +37,7 @@ from socket import gethostname
 from datetime import timedelta
 
 from django.db import connections
-from django.db import transaction, connection
+from django.db import transaction
 from django.db.models import Q
 
 from uds.models import DelayedTask as DBDelayedTask
@@ -152,7 +152,7 @@ class DelayedTaskRunner:
             except Exception as e:
                 logger.info('Exception inserting a delayed task %s: %s', e.__class__, e)
                 try:
-                    connection.close()
+                    connections['default'].close()
                 except Exception:
                     logger.exception('Closing db connection at insert')
                 time.sleep(1)  # Wait a bit before next try...
@@ -190,7 +190,7 @@ class DelayedTaskRunner:
             except Exception as e:
                 logger.error('Unexpected exception at run loop %s: %s', e.__class__, e)
                 try:
-                    connection.close()
+                    connections['default'].close()
                 except Exception:
                     logger.exception('Exception clossing connection at delayed task')
         logger.info('Exiting DelayedTask Runner because stop has been requested')
