@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@
 """
 import logging
 
+from django.db import connection
 from uds.core.environment import Environmentable
 
 
@@ -57,6 +58,7 @@ class DelayedTask(Environmentable):
         """
         try:
             self.run()
+            connection.close()
         except Exception as e:
             logger.error('Job %s raised an exception: %s', self.__class__, e)
 
