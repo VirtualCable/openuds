@@ -36,8 +36,10 @@ import typing
 from socket import gethostname
 from datetime import timedelta
 
+from django.db import connections
 from django.db import transaction, connection
 from django.db.models import Q
+
 from uds.models import DelayedTask as DBDelayedTask
 from uds.models import getSqlDatetime
 from uds.core.environment import Environment
@@ -63,6 +65,8 @@ class DelayedTaskThread(threading.Thread):
             self._taskInstance.execute()
         except Exception as e:
             logger.exception("Exception in thread %s: %s", e.__class__, e)
+        finally:
+            connections['default'].close()
 
 
 class DelayedTaskRunner:

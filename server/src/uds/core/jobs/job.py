@@ -31,8 +31,6 @@
 import logging
 import typing
 
-from django.db import connection
-
 from uds.core import Environmentable
 from uds.core.util.config import Config
 
@@ -62,8 +60,6 @@ class Job(Environmentable):
     def execute(self) -> None:
         try:
             self.run()
-            # Closes used connection by this job (if any)
-            connection.close()
         except Exception:
             logger.exception('Job %s raised an exception:', self.__class__)
 

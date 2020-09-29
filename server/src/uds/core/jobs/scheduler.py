@@ -30,20 +30,25 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import platform
 import threading
 import time
 import logging
 from datetime import timedelta
 
+from django.db import transaction, DatabaseError, connections
 from django.db.models import Q
-from django.db import transaction, DatabaseError, connection
+
 from uds.models import Scheduler as DBScheduler, getSqlDatetime
 from uds.core.util.state import State
 from .jobs_factory import JobsFactory
 
 logger = logging.getLogger(__name__)
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from .job import Job
 
 class JobThread(threading.Thread):
     """
@@ -52,6 +57,7 @@ class JobThread(threading.Thread):
       Ensures that the job is executed in a controlled way (any exception will be catch & processed)
       Ensures that the scheduler db entry is released after run
     """
+    _jobInstance: 'Job'
     def __init__(self, jobInstance, dbJob):
         super(JobThread, self).__init__()
         self._jobInstance = jobInstance
@@ -77,14 +83,14 @@ class JobThread(threading.Thread):
             except Exception:
                 # Databases locked, maybe because we are on a multitask environment, let's try again in a while
                 try:
-                    connection.close()
+                    connections['default'].close()
                 except Exception as e:
                     logger.error('On job executor, closing db connection: %s', e)
                 # logger.info('Database access failed... Retrying')
                 time.sleep(1)
 
         # Ensures DB connection is released after job is done
-        connection.close()
+        connections['default'].close()
 
     def __updateDb(self):
         """

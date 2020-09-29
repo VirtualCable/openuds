@@ -32,9 +32,7 @@
 """
 import logging
 
-from django.db import connection
 from uds.core.environment import Environmentable
-
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +56,6 @@ class DelayedTask(Environmentable):
         """
         try:
             self.run()
-            connection.close()
         except Exception as e:
             logger.error('Job %s raised an exception: %s', self.__class__, e)
 
