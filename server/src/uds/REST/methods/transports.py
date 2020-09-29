@@ -57,6 +57,7 @@ class Transports(ModelHandler):
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
+        {'pools_count': {'title':  _('Service Pools'), 'type': 'numeric', 'width': '6em'}},
         {'allowed_oss': {'title': _('Devices'), 'width': '8em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
@@ -111,6 +112,7 @@ class Transports(ModelHandler):
 
     def item_as_dict(self, item: Transport) -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
+        pools = [{'id': x.uuid} for x in item.deployedServices.all()]
         return {
             'id': item.uuid,
             'name': item.name,
@@ -120,7 +122,8 @@ class Transports(ModelHandler):
             'nets_positive': item.nets_positive,
             'networks': [{'id': n.uuid} for n in item.networks.all()],
             'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
-            'pools': [{'id': x.uuid} for x in item.deployedServices.all()],
+            'pools': pools,
+            'pools_count': len(pools),
             'deployed_count': item.deployedServices.count(),
             'type': type_.type(),
             'type_name': type_.name(),
