@@ -114,10 +114,13 @@ class AutoAttributes(Serializable):
         for pair in data.split(b'\2'):
             k, v = pair.split(b'\1')
             # logger.debug('k: %s  ---   v: %s', k, v)
-            self.attrs[k.decode('utf8')] = pickle.loads(v)
+            try:
+                self.attrs[k.decode()] = pickle.loads(v)
+            except Exception: # Old encoding on python2, set encoding for loading
+                self.attrs[k.decode()] = pickle.loads(v, encoding='utf8')
 
-        for k, v in self.attrs.items():
-            logger.debug('Marshall Autoattributes: %s=%s', k, v.getValue())
+        for k2, v2 in self.attrs.items():
+            logger.debug('Marshall Autoattributes: %s=%s', k2, v2.getValue())
 
     def __str__(self):
         str_ = '<AutoAttribute '
