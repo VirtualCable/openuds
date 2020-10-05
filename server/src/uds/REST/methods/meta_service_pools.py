@@ -161,7 +161,7 @@ class MetaAssignedService(DetailHandler):
                 result = {}
                 for k in assignedUserServicesForPools():
                     result[k.uuid] = MetaAssignedService.itemToDict(parent, k)
-                return result.values()
+                return list(result.values())
 
             return MetaAssignedService.itemToDict(parent, self._getAssignedService(parent, item))
         except Exception:
