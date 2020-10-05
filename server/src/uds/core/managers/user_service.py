@@ -707,15 +707,10 @@ class UserServiceManager:
                 if usable:
                     try:
                         usable[0].validateUser(user)
-                        self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False, clientHostname=clientHostName)
+                        return self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False, clientHostname=clientHostName)
                     except Exception as e:
                         logger.info('Meta service %s:%s could not be assigned, trying a new one', usable[0].name, e)
                         usable = None
 
-        if not usable:
-            log.doLog(meta, log.WARN, "No user service accessible from device (ip {}, os: {})".format(srcIp, os['OS']), log.SERVICE)
-            raise InvalidServiceException(_('The service is not accessible from this device'))
-
-        logger.debug('Found usable pair: %s', usable)
-        # We have found an usable deployed already assigned & can be accessed from this, so return it
-        return None, usable[0], None, usable[1], None
+        log.doLog(meta, log.WARN, "No user service accessible from device (ip {}, os: {})".format(srcIp, os['OS']), log.SERVICE)
+        raise InvalidServiceException(_('The service is not accessible from this device'))

@@ -158,7 +158,11 @@ class MetaAssignedService(DetailHandler):
 
         try:
             if not item:  # All items
-                return [MetaAssignedService.itemToDict(parent, k) for k in assignedUserServicesForPools()]
+                result = {}
+                for k in assignedUserServicesForPools():
+                    result[k.uuid] = MetaAssignedService.itemToDict(parent, k)
+                return result.values()
+
             return MetaAssignedService.itemToDict(parent, self._getAssignedService(parent, item))
         except Exception:
             logger.exception('getItems')
