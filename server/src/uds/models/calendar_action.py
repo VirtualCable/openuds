@@ -147,6 +147,11 @@ class CalendarAction(UUIDModel):
             save {bool} -- [If save this action after execution (will regen next execution time)] (default: {True})
         """
         logger.debug('Executing action')
+        # If restrained pool, skip this execution (will rery later, not updated)
+        if not self.service_pool.isUsable():
+            logger.info('Execution of task for %s due to contained state (restrained, in maintenance or removing)', self.service_pool.name)
+            return
+
         self.last_execution = getSqlDatetime()
         params = json.loads(self.params)
 
