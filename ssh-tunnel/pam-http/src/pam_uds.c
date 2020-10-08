@@ -1,4 +1,4 @@
-/* (c) 2007 Adolfo Gómez */
+/* (c) 2020 Adolfo Gómez */
 
 #include <features.h>
 #include <syslog.h>
