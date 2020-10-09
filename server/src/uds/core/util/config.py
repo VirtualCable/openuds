@@ -252,7 +252,7 @@ class GlobalConfig:
     # If we ignore limits (max....)
     IGNORE_LIMITS: Config.Value = Config.section(GLOBAL_SECTION).value('ignoreLimits', '0', type=Config.BOOLEAN_FIELD)
     # Number of services to initiate removal per run of CacheCleaner
-    USER_SERVICE_CLEAN_NUMBER: Config.Value = Config.section(GLOBAL_SECTION).value('userServiceCleanNumber', '3', type=Config.NUMERIC_FIELD)  # Defaults to 3 per wun
+    USER_SERVICE_CLEAN_NUMBER: Config.Value = Config.section(GLOBAL_SECTION).value('userServiceCleanNumber', '8', type=Config.NUMERIC_FIELD)  # Defaults to 3 per wun
     # Removal Check time for cache, publications and deployed services
     REMOVAL_CHECK: Config.Value = Config.section(GLOBAL_SECTION).value('removalCheck', '31', type=Config.NUMERIC_FIELD)  # Defaults to 30 seconds
     # Login URL: deprecated & not used anymore
