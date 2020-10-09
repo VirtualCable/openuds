@@ -100,7 +100,7 @@ class OGProvider(ServiceProvider):
     udsServerAccessUrl = gui.TextField(length=32, label=_('UDS Server URL'), order=6, tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'), required=False, tab=gui.PARAMETERS_TAB)
 
     maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='8', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
 
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to OpenGnsys'), required=True, tab=gui.ADVANCED_TAB)
 
