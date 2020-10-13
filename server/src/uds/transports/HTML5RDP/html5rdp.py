@@ -264,6 +264,6 @@ class HTML5RDPTransport(transports.Transport):
                 self.guacamoleServer.value,
                 ticket,
                 scrambler,
-                'javascript:window.close();' + onw
+                onw
             )
         )

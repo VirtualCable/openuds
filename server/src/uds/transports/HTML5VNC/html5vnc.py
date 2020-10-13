@@ -191,6 +191,6 @@ class HTML5VNCTransport(transports.Transport):
                 self.guacamoleServer.value,
                 ticket,
                 scrambler,
-                'javascript:window.close();' + onw
+                onw
             )
         )
