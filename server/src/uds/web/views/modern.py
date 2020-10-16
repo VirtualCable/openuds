@@ -68,7 +68,11 @@ def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpRespons
         user, data = checkLogin(request, form, tag)
         if user:
             response = HttpResponseRedirect(reverse('page.index'))
+            # save tag, weblogin will clear session
+            tag = request.session.get('tag')
             auth.webLogin(request, response, user, data)  # data is user password here
+            # And restore tag
+            request.session['tag'] = tag
         else:
             # If error is numeric, redirect...
             # Error, set error on session for process for js

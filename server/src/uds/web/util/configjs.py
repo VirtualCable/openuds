@@ -84,7 +84,7 @@ def udsJs(request: 'HttpRequest') -> str:
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
         try:
             # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
-            # tag, later will remove "auth_host" if exists
+            # tag, later will remove "auth_host"
             authenticators = Authenticator.objects.filter(small_name__in=[auth_host, tag])[:]
         except Exception as e:
             authenticators = []
@@ -121,6 +121,7 @@ def udsJs(request: 'HttpRequest') -> str:
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
         'authenticators': [getAuthInfo(auth) for auth in authenticators if auth.getType()],
+        'tag': tag,
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
