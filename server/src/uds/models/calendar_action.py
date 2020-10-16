@@ -232,7 +232,11 @@ class CalendarAction(UUIDModel):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         lastExecution = self.last_execution or getSqlDatetime()
-        self.next_execution = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=lastExecution-self.offset, startEvent=self.at_start) + self.offset
+        possibleNext = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=lastExecution-self.offset, startEvent=self.at_start)
+        if possibleNext:
+            self.next_execution = possibleNext + self.offset
+        else:
+            self.next_execution = None
 
         super().save(force_insert, force_update, using, update_fields)
 
