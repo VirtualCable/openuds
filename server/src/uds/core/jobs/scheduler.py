@@ -202,7 +202,7 @@ class Scheduler:
                 if not isinstance(e, DatabaseError):
                     logger.error('Unexpected exception at run loop %s: %s', e.__class__, e)
                 try:
-                    connection.close()
+                    connections['default'].close()
                 except Exception:
                     logger.exception('Exception clossing connection at delayed task')
         logger.info('Exiting Scheduler because stop has been requested')
