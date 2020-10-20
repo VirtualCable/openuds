@@ -101,7 +101,8 @@ class ServicesUsage(DetailHandler):
                 userServicesQuery = UserService.objects.filter(deployed_service__service_uuid=processUuid(item))
 
             return [ServicesUsage.itemToDict(k) for k in userServicesQuery.filter(state=State.USABLE).order_by('creation_date').
-                    prefetch_related('deployed_service').prefetch_related('deployed_service__service').prefetch_related('properties')]
+                    prefetch_related('deployed_service').prefetch_related('deployed_service__service').prefetch_related('properties').
+                    prefetch_related('user').prefetch_related('user__manager')]
 
         except Exception:
             logger.exception('getItems')
