@@ -42,8 +42,8 @@ logger = logging.getLogger(__name__)
 GLOBAL_SECTION: str = 'UDS'
 # For save when initialized
 SECURITY_SECTION: str = 'Security'
-# CLUSTER_SECTION: str = 'Cluster'
 CUSTOM_SECTION: str = 'Custom'
+ADMIN_SECTION: str = 'Admin'
 
 _saveLater = []
 _getLater = []
@@ -314,18 +314,6 @@ class GlobalConfig:
     # If we use new logout mechanics
     EXCLUSIVE_LOGOUT: Config.Value = Config.section(SECURITY_SECTION).value('Exclusive Logout', '0', type=Config.BOOLEAN_FIELD)
 
-    # Clusters related vars
-
-    # Maximum desired CPU Load. If cpu is over this value, a migration of a service is "desirable"
-    # CLUSTER_MIGRATE_CPULOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration CPU Load', '80', type=Config.NUMERIC_FIELD)
-    # Maximum CPU Load for a node to be elegible for destination of a migration
-    # CLUSTER_ELEGIBLE_CPULOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Destination CPU Load', '60', type=Config.NUMERIC_FIELD)
-    # Minimum desired Memory free for a cluster node. If free memory (in %) is under this percentage,
-    # a migration of a service inside this node is "desirable"
-    # CLUSTER_MIGRATE_MEMORYLOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '20', type=Config.NUMERIC_FIELD)
-    # Minimum Free memory for a node to be elegible for a destination of a migration
-    # CLUSTER_ELEGIBLE_MEMORYLOAD: Config.Value = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '40', type=Config.NUMERIC_FIELD)
-
     RELOAD_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('Page reload Time', '300', type=Config.NUMERIC_FIELD)
 
     LIMITED_BY_CALENDAR_TEXT: Config.Value = Config.section(GLOBAL_SECTION).value('Calendar access denied text', '', type=Config.TEXT_FIELD)  # Defaults to Nothing
@@ -346,10 +334,10 @@ class GlobalConfig:
     SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value('Site information', '', type=Config.LONGTEXT_FIELD)
     SITE_FILTER_ONTOP: Config.Value = Config.section(CUSTOM_SECTION).value('Show Filter on Top', '0', type=Config.BOOLEAN_FIELD)
 
-    # Custom HTML for login page
-    # CUSTOM_HTML_LOGIN: Config.Value = Config.section(CUSTOM_SECTION).value('customHtmlLogin', '', type=Config.LONGTEXT_FIELD)
-
     EXPERIMENTAL_FEATURES: Config.Value = Config.section(GLOBAL_SECTION).value('Experimental Features', '0', type=Config.BOOLEAN_FIELD)
+
+    # Admin config variables
+    ADMIN_PAGESIZE: Config.Value = Config.section(ADMIN_SECTION).value('List page size', '10', type=Config.NUMERIC_FIELD)
 
     _initDone = False
 
