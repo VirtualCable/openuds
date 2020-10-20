@@ -198,8 +198,11 @@ def udsJs(request: 'HttpRequest') -> str:
         config['urls']['admin'] = reverse('uds.admin.views.index')
         config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
         # Admin config
+        page_size = GlobalConfig.ADMIN_PAGESIZE.getInt(True)
+        # Fix page size to razonable usable values
+        page_size = 10 if page_size < 10 else 50 if page_size > 50 else page_size
         config['admin'] = {
-            'page_size': GlobalConfig.ADMIN_PAGESIZE.getInt(True),
+            'page_size': page_size,
         }
 
     errors: typing.List = []
