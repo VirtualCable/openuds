@@ -67,8 +67,11 @@ def _decodeValue(dbk: str, value: typing.Optional[str]) -> typing.Tuple[str, typ
                 return typing.cast(typing.Tuple[str, typing.Any], v[1:])
             # Fix value so it contains also the "key" (in this case, the original key is lost, we have only the hash value...)
             return ('#' + dbk, v)
-        except Exception as e:
-            logger.warn('Unknown pickable value: %s (%s)', value, e)
+        except Exception:
+            try:
+                return ('#' + dbk, base64.b64decode(value.encode()).decode())
+            except Exception as e:
+                logger.warn('Unknown decodeable value: %s (%s)', value, e)
     return ('', None)
 
 
