@@ -85,7 +85,7 @@ class PoolsUsageSummary(UsageByPool):
         for pn in pools:
             pools[pn]['users'] = len(pools[pn]['users'])
 
-        return pools.values(), totalTime, totalCount, len(uniqueUsers)
+        return pools.values(), totalTime, totalCount or 1, len(uniqueUsers)
 
     def generate(self):
         pools, totalTime, totalCount, uniqueUsers = self.getData()
