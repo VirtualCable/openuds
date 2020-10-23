@@ -50,7 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opGetMac = range(10)
+opCreate, opStart, opStop, opShutdown, opRemove, opWait, opError, opFinish, opRetry, opGetMac = range(10)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
@@ -214,7 +214,7 @@ if sys.platform == 'win32':
         if forLevel2 is False:
             self._queue = [opCreate, opGetMac, opStart, opFinish]
         else:
-            self._queue = [opCreate, opGetMac, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opGetMac, opStart, opWait, opShutdown, opFinish]
 
     def __setTask(self, upid: 'client.types.UPID'):
         self._task = ','.join([upid.node, upid.upid])
@@ -275,7 +275,7 @@ if sys.platform == 'win32':
             opRetry: self.__retry,
             opStart: self.__startMachine,
             opStop: self.__stopMachine,
-            opSuspend: self.__suspendMachine,
+            opShutdown: self.__shutdownMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
             opGetMac: self.__getMac
@@ -370,14 +370,14 @@ if sys.platform == 'win32':
 
         return State.RUNNING
 
-    def __suspendMachine(self) -> str:
+    def __shutdownMachine(self) -> str:
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except Exception:
             raise Exception('Machine not found on suspend machine')
 
         if vmInfo.status != 'stopped':
-            self.__setTask(self.service().suspendMachine(int(self._vmid)))
+            self.__setTask(self.service().shutdownMachine(int(self._vmid)))
 
         return State.RUNNING
 
@@ -425,7 +425,7 @@ if sys.platform == 'win32':
         """
         return self.__checkTaskFinished()
 
-    def __checkSuspend(self) -> str:
+    def __checkShutdown(self) -> str:
         """
         Check if the machine has suspended
         """
@@ -464,7 +464,7 @@ if sys.platform == 'win32':
             opWait: self.__wait,
             opStart: self.__checkStart,
             opStop: self.__checkStop,
-            opSuspend: self.__checkSuspend,
+            opShutdown: self.__checkShutdown,
             opRemove: self.__checkRemoved,
             opGetMac: self.__checkMac
         }
@@ -494,7 +494,7 @@ if sys.platform == 'win32':
         if newLevel == self.L1_CACHE:
             self._queue = [opStart, opFinish]
         else:
-            self._queue = [opStart, opSuspend, opFinish]
+            self._queue = [opStart, opShutdown, opFinish]
 
         return self.__executeQueue()
 
@@ -551,7 +551,7 @@ if sys.platform == 'win32':
             opCreate: 'create',
             opStart: 'start',
             opStop: 'stop',
-            opSuspend: 'suspend',
+            opShutdown: 'suspend',
             opRemove: 'remove',
             opWait: 'wait',
             opError: 'error',

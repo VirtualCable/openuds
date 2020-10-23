@@ -84,10 +84,10 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     cacheTooltip = _('Number of desired machines to keep running waiting for a user')
     # : If we need to generate a "Level 2" cache for this service (i.e., L1
     # : could be running machines and L2 suspended machines)
-    usesCache_L2 = False
+    usesCache_L2 = True
     # : Tooltip shown to user when this item is pointed at admin interface, None
     # : also because we don't use it
-    cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use')
+    cacheTooltip_L2 = _('Number of desired VMs to keep stopped waiting for use')
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
@@ -244,6 +244,9 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     def suspendMachine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().suspendMachine(vmId)
+
+    def shutdownMachine(self, vmId: int) -> 'client.types.UPID':
+        return self.parent().shutdownMachine(vmId)
 
     def removeMachine(self, vmId: int) -> 'client.types.UPID':
         # First, remove from HA if needed

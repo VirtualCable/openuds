@@ -405,6 +405,12 @@ class ProxmoxClient:
         return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/suspend'.format(node, vmId)))
 
     @ensureConected
+    def shutdownVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+        # if exitstatus is "OK" or contains "already running", all is fine
+        node = node or self.getVmInfo(vmId).node
+        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/shutdown'.format(node, vmId)))
+
+    @ensureConected
     def convertToTemplate(self, vmId: int, node: typing.Optional[str] = None) -> None:
         node = node or self.getVmInfo(vmId).node
         self._post('nodes/{}/qemu/{}/template'.format(node, vmId))
