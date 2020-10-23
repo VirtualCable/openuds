@@ -80,6 +80,12 @@ class LiveService(Service):
     # : Tooltip shown to user when this item is pointed at admin interface, none
     # : because we don't use it
     cacheTooltip = _('Number of desired machines to keep running waiting for an user')
+    # : If we need to generate a "Level 2" cache for this service (i.e., L1
+    # : could be running machines and L2 suspended machines)
+    usesCache_L2 = True
+    # : Tooltip shown to user when this item is pointed at admin interface, None
+    # : also because we don't use it
+    cacheTooltip_L2 = _('Number of desired VMs to keep stopped waiting for use')
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
@@ -256,6 +262,17 @@ class LiveService(Service):
         Returns:
         """
         self.parent().suspendMachine(machineId)
+
+    def shutdownMachine(self, machineId: str) -> None:
+        """
+        Tries to "gracefully" shutdown machine. No check is done, it is simply requested to OpenNebula
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        """
+        self.parent().shutdownMachine(machineId)
 
     def resetMachine(self, machineId: str) -> None:
         self.parent().resetMachine(machineId)

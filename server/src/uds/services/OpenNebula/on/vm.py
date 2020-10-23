@@ -122,6 +122,20 @@ def suspendMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     except Exception as e:
         logger.error('Error suspending %s on OpenNebula: %s', machineId, e)
 
+def shutdownMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+    '''
+    Tries to "gracefully" shutdown a machine. No check is done, it is simply requested to OpenNebula
+
+    Args:
+        machineId: Id of the machine
+
+    Returns:
+    '''
+    try:
+        api.VMAction(machineId, 'poweroff')
+    except Exception as e:
+        logger.error('Error shutting down %s on OpenNebula: %s', machineId, e)
+
 
 def resetMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''

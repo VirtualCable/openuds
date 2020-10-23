@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(8)
+opCreate, opStart, opShutdown, opRemove, opWait, opError, opFinish, opRetry = range(8)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
@@ -176,7 +176,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if forLevel2 is False:
             self._queue = [opCreate, opStart, opFinish]
         else:
-            self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opStart, opWait, opShutdown, opFinish]
 
     def __checkMachineState(self, chkState: on.types.VmState) -> str:
         logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
@@ -251,7 +251,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
-            opSuspend: self.__suspendMachine,
+            opShutdown: self.__shutdownMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
         }
@@ -337,11 +337,11 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         return State.RUNNING
 
-    def __suspendMachine(self) -> str:
+    def __shutdownMachine(self) -> str:
         """
         Suspends the machine
         """
-        self.service().suspendMachine(self._vmid)
+        self.service().shutdownMachine(self._vmid)
         return State.RUNNING
 
     # Check methods
@@ -357,11 +357,11 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         """
         return self.__checkMachineState(on.types.VmState.ACTIVE)  # @UndefinedVariable
 
-    def __checkSuspend(self) -> str:
+    def __checkShutdown(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState(on.types.VmState.SUSPENDED)  # @UndefinedVariable
+        return self.__checkMachineState(on.types.VmState.POWEROFF)  # @UndefinedVariable
 
     def __checkRemoved(self) -> str:
         """
@@ -387,7 +387,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             opRetry: self.__retry,
             opWait: self.__wait,
             opStart: self.__checkStart,
-            opSuspend: self.__checkSuspend,
+            opShutdown: self.__checkShutdown,
             opRemove: self.__checkRemoved,
         }
 
@@ -416,7 +416,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if newLevel == self.L1_CACHE:
             self._queue = [opStart, opFinish]
         else:
-            self._queue = [opStart, opSuspend, opFinish]
+            self._queue = [opStart, opShutdown, opFinish]
 
         return self.__executeQueue()
 
@@ -467,7 +467,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         return {
             opCreate: 'create',
             opStart: 'start',
-            opSuspend: 'suspend',
+            opShutdown: 'shutdown',
             opRemove: 'remove',
             opWait: 'wait',
             opError: 'error',

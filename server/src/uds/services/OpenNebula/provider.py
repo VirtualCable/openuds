@@ -186,7 +186,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
     def stopMachine(self, machineId: str) -> None:
         '''
-        Tries to start a machine. No check is done, it is simply requested to OpenNebula
+        Tries to stop a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
@@ -197,7 +197,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
     def suspendMachine(self, machineId: str) -> None:
         '''
-        Tries to start a machine. No check is done, it is simply requested to OpenNebula
+        Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
@@ -205,6 +205,17 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         Returns:
         '''
         on.vm.suspendMachine(self.api, machineId)
+
+    def shutdownMachine(self, machineId: str) -> None:
+        '''
+        Tries to shutdown "gracefully" a machine. No check is done, it is simply requested to OpenNebula
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        '''
+        on.vm.shutdownMachine(self.api, machineId)
 
     def resetMachine(self, machineId: str) -> None:
         '''

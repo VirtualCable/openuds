@@ -53,7 +53,7 @@ def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
 
 # Result checker
-def checkResultRaw(lst: typing.List) -> str:
+def checkResultRaw(lst: typing.Any) -> str:
     # Openebula response is always this way:
     # [Boolean, String, ErrorCode]
     # First is True if ok, False if not
@@ -65,7 +65,7 @@ def checkResultRaw(lst: typing.List) -> str:
     return str(lst[1])
 
 
-def checkResult(lst: typing.List) -> typing.Tuple[typing.Dict, str]:
+def checkResult(lst: typing.Any) -> typing.Tuple[typing.Dict, str]:
     return xml2dict.parse(checkResultRaw(lst)), lst[1]
 
 
@@ -86,7 +86,8 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         self.username = username
         self.password = password
         self.endpoint = endpoint
-        self.connection = None
+        # Connection "None" will be treated on ensureConnected, ignore its assignement here
+        self.connection = None  # type: ignore
         self.cachedVersion = None
 
     @property
