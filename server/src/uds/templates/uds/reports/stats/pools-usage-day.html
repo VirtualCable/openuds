@@ -31,10 +31,10 @@
             </thead>
             <tbody>
             {% for d in data|dictsort:"name.lower" %}
-            {% for h, v in d.hours.items %}
+            {% for v in d.hours %}
             <tr>
                 <td>{{ d.name }}</td>
-                <td>{{ h }}</td>
+                <td>{{ forloop.counter0 }}</td>
                 <td>{{ v }}</td>
             </tr>
             {% endfor %}
