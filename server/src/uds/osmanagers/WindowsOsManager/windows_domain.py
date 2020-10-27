@@ -67,7 +67,7 @@ class WinDomainOsManager(WindowsOsManager):
     domain = gui.TextField(length=64, label=_('Domain'), order=1, tooltip=_('Domain to join machines to (use FQDN form, Netbios name not supported for most operations)'), required=True)
     account = gui.TextField(length=64, label=_('Account'), order=2, tooltip=_('Account with rights to add machines to domain'), required=True)
     password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Password of the account'), required=True)
-    ou = gui.TextField(length=128, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'))
+    ou = gui.TextField(length=256, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'))
     grp = gui.TextField(length=64, label=_('Machine Group'), order=7, tooltip=_('Group to which add machines on creation. If empty, no group will be used. (experimental)'), tab=_('Advanced'))
     removeOnExit = gui.CheckBoxField(label=_('Machine clean'), order=8, tooltip=_('If checked, UDS will try to remove the machine from the domain USING the provided credentials'), tab=_('Advanced'), defvalue=gui.TRUE)
     serverHint = gui.TextField(length=64, label=_('Server Hint'), order=9, tooltip=_('In case of several AD servers, which one is preferred'), tab=_('Advanced'))
