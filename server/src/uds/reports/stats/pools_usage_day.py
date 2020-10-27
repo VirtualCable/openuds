@@ -99,9 +99,7 @@ class CountersPoolAssigned(StatsReport):
             except Exception:
                 continue
 
-            hours = {}
-            for i in range(24):
-                hours[i] = i * i
+            hours = [0] * 24
 
             for x in counters.getCounters(pool, counters.CT_ASSIGNED, since=start, to=end, max_intervals=24, use_max=True, all=False):
                 hour = x[0].hour
