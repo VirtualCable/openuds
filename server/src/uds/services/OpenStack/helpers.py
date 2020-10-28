@@ -35,11 +35,11 @@ import typing
 from django.utils.translation import ugettext as _
 from uds.core.ui import gui
 
-from . import openStack
+from . import openstack
 
 logger = logging.getLogger(__name__)
 
-def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openStack.Client, bool]:
+def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openstack.Client, bool]:
     from .provider_legacy import ProviderLegacy
     from .provider import OpenStackProvider
     from uds.core.environment import Environment

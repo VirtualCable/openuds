@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from . import openStack
+    from . import openstack
     from .provider import OpenStackProvider
     from .provider_legacy import ProviderLegacy
     Provider = typing.Union[OpenStackProvider, ProviderLegacy]
@@ -159,7 +159,7 @@ class LiveService(Service):
     ev = gui.HiddenField(value=None)
     legacy = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
-    _api: typing.Optional['openStack.Client'] = None
+    _api: typing.Optional['openstack.Client'] = None
 
     def initialize(self, values):
         """
@@ -204,7 +204,7 @@ class LiveService(Service):
         self.legacy.setDefValue(self.parent().legacy and 'true' or 'false')
 
     @property
-    def api(self) -> 'openStack.Client':
+    def api(self) -> 'openstack.Client':
         if not self._api:
             self._api = self.parent().api(projectId=self.project.value, region=self.region.value)
 
@@ -282,6 +282,7 @@ class LiveService(Service):
                 STOPPED. The server is powered off and the disk image still persists.
                 SUSPENDED. The server is suspended, either by request or necessity. This status appears for only the XenServer/XCP, KVM, and ESXi hypervisors. Administrative users can suspend an instance if it is infrequently used or to perform system maintenance. When you suspend an instance, its VM state is stored on disk, all memory is written to disk, and the virtual machine is stopped. Suspending an instance is similar to placing a device in hibernation; memory and vCPUs become available to create other instances.
                 VERIFY_RESIZE. System is awaiting confirmation that the server is operational after a move or resize.
+                SHUTOFF. The server was powered down by the user, either through the OpenStack Compute API or from within the server. For example, the user issued a shutdown -h command from within the server. If the OpenStack Compute manager detects that the VM was powered down, it transitions the server to the SHUTOFF status.
         """
         server = self.api.getServer(machineId)
         if server['status'] in ('ERROR', 'DELETED'):

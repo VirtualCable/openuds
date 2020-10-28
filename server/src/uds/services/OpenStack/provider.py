@@ -39,7 +39,7 @@ from uds.core.ui import gui
 from uds.core.util import validators
 
 from .service import LiveService
-from . import openStack
+from . import openstack
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -115,7 +115,7 @@ class OpenStackProvider(ServiceProvider):
     legacy = False
 
     # Own variables
-    _api: typing.Optional[openStack.Client] = None
+    _api: typing.Optional[openstack.Client] = None
 
     def initialize(self, values: 'Module.ValuesType' = None):
         """
@@ -126,11 +126,11 @@ class OpenStackProvider(ServiceProvider):
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value)
 
-    def api(self, projectId=None, region=None) -> openStack.Client:
+    def api(self, projectId=None, region=None) -> openstack.Client:
         projectId = projectId or self.tenant.value or None
         region = region or self.region.value or None
         if self._api is None:
-            self._api = openStack.Client(
+            self._api = openstack.Client(
                 self.endpoint.value,
                 -1,
                 self.domain.value,
@@ -145,7 +145,7 @@ class OpenStackProvider(ServiceProvider):
         return self._api
 
     def sanitizeVmName(self, name: str) -> str:
-        return openStack.sanitizeName(name)
+        return openstack.sanitizeName(name)
 
     def testConnection(self):
         """

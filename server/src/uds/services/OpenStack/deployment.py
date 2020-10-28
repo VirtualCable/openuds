@@ -38,7 +38,7 @@ from uds.core.services import UserDeployment
 from uds.core.util.state import State
 from uds.core.util import log
 
-from . import openStack
+from . import openstack
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -139,12 +139,12 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         status = self.service().getMachineState(self._vmid)
 
-        if openStack.statusIsLost(status):
+        if openstack.statusIsLost(status):
             return self.__error('Machine is not available anymore')
 
-        if status == openStack.PAUSED:
+        if status == openstack.PAUSED:
             self.service().resumeMachine(self._vmid)
-        elif status in (openStack.STOPPED, openStack.SHUTOFF):
+        elif status in (openstack.STOPPED, openstack.SHUTOFF):
             self.service().startMachine(self._vmid)
 
         # Right now, we suppose the machine is ready
@@ -192,7 +192,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         status = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if openStack.statusIsLost(status):
+        if openstack.statusIsLost(status):
             return self.__error('Machine not available. ({})'.format(status))
 
         ret = State.RUNNING
@@ -311,7 +311,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         """
         status = self.service().getMachineState(self._vmid)
 
-        if openStack.statusIsLost(status):
+        if openstack.statusIsLost(status):
             raise Exception('Machine not found. (Status {})'.format(status))
 
         self.service().removeMachine(self._vmid)
@@ -339,7 +339,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         """
         Checks the state of a deploy for an user or cache
         """
-        ret = self.__checkMachineState(openStack.ACTIVE)
+        ret = self.__checkMachineState(openstack.ACTIVE)
         if ret == State.FINISHED:
             # Get IP & MAC (early stage)
             self._mac, self._ip = self.service().getNetInfo(self._vmid)
@@ -350,13 +350,13 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         """
         Checks if machine has started
         """
-        return self.__checkMachineState(openStack.ACTIVE)
+        return self.__checkMachineState(openstack.ACTIVE)
 
     def __checkSuspend(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState(openStack.SUSPENDED)
+        return self.__checkMachineState(openstack.SUSPENDED)
 
     def __checkRemoved(self) -> str:
         """

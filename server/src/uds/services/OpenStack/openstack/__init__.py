@@ -31,9 +31,10 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from .UDSOpenStackClient import Client
+from .openstack_client import Client
 
 # Import submodules
 from .common import *
 
+# Logger imported from .common, if you ask
 logger = logging.getLogger(__name__)
