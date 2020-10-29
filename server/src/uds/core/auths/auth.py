@@ -333,7 +333,7 @@ def webLogout(request: HttpRequest, exit_url: typing.Optional[str] = None) -> Ht
     else:  # No user, redirect to /
         return HttpResponseRedirect(reverse('page.login'))
 
-    request.session.clear()
+    request.session.flush()
     if exit_url is None:
         exit_url = reverse('page.logout')
         # exit_url = GlobalConfig.LOGIN_URL.get()
