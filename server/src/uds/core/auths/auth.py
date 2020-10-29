@@ -143,8 +143,11 @@ def trustedSourceRequired(view_func: typing.Callable[..., RT]) -> typing.Callabl
         """
         Wrapped function for decorator
         """
-        if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
-            return HttpResponseForbidden()
+        try:
+            if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
+                return HttpResponseForbidden()
+        except Exception as e:
+            logger.warning('Error checking trusted source: "%s" does not seems to be a valid network string. Using Unrestricted access.', GlobalConfig.TRUSTED_SOURCES.get())
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
