@@ -37,6 +37,7 @@ from django.contrib.sessions.backends.db import SessionStore
 
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import getRootUser
+from uds.core.util import net
 from uds.models import Authenticator, User
 from uds.core.managers import cryptoManager
 
@@ -135,10 +136,10 @@ class Handler:
             if self._authToken is None:
                 raise AccessDenied()
 
-            if self.needs_admin and not self.getValue('is_admin'):
+            if self.needs_admin and not self.is_admin():
                 raise AccessDenied()
 
-            if self.needs_staff and not self.getValue('staff_member'):
+            if self.needs_staff and not self.is_staff_member():
                 raise AccessDenied()
 
             self._user = self.getUser()
@@ -275,17 +276,25 @@ class Handler:
         except Exception:
             logger.exception('Got an exception setting session value %s to %s', key, value)
 
+    def validSource(self) -> bool:
+        try:
+            return net.ipInNetwork(self._request.ip, GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True))
+        except Exception as e:
+            logger.warning('Error checking truted ADMIN source: "%s" does not seems to be a valid network string. Using Unrestricted access.', GlobalConfig.ADMIN_TRUSTED_SOURCES.get())
+
+        return True
+
     def is_admin(self) -> bool:
         """
-        True if user of this REST request is administrator
+        True if user of this REST request is administrator and SOURCE is valid admint trusted sources
         """
-        return bool(self.getValue('is_admin'))
+        return bool(self.getValue('is_admin')) and self.validSource()
 
     def is_staff_member(self) -> bool:
         """
         True if user of this REST request is member of staff
         """
-        return bool(self.getValue('staff_member'))
+        return bool(self.getValue('staff_member')) and self.validSource()
 
     def getUser(self) -> 'User':
         """

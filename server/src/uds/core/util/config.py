@@ -338,6 +338,7 @@ class GlobalConfig:
 
     # Admin config variables
     ADMIN_PAGESIZE: Config.Value = Config.section(ADMIN_SECTION).value('List page size', '10', type=Config.NUMERIC_FIELD)
+    ADMIN_TRUSTED_SOURCES: Config.Value = Config.section(ADMIN_SECTION).value('Trusted Hosts', '*', type=Config.TEXT_FIELD)
 
     _initDone = False
 
