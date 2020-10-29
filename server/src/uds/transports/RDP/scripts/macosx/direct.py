@@ -40,7 +40,7 @@ if executable is None:
 <ul>
     <li>
         <p><b>CoRD</b> (A bit unstable from 10.7 onwards)</p>
-        <p>You can get it from <a href="{}static/other/CoRD.pkg">this link</a></p>
+        <p>You can get it from <a href="{}uds/res/other/CoRD.pkg">this link</a></p>
     </li>
 </ul>
 <p>If both apps are installed, Remote Desktop Connection will be used as first option</p>'''.format(
