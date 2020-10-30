@@ -238,37 +238,6 @@ class RDPFile:
 
         return params
 
-    @property
-    def as_cord_url(self):
-        url = 'rdp://'
-
-        if self.username != '':
-            url += urllib.parse.quote(self.username)
-            if self.password != '':
-                url += ':' + urllib.parse.quote(self.password)
-            url += '@'
-        url += self.address + '/'
-
-        if self.domain != '':
-            url += self.domain
-
-        url += '?screenDepth###{}'.format(self.bpp)
-
-        if self.fullScreen:  # @UndefinedVariable
-            url += '&fullscreen###true'
-        else:
-            url += '&screenWidth###{}&screenHeight###{}'.format(self.width, self.height)
-
-        # url += '&forwardAudio###' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
-
-        if self.redirectDrives:  # @UndefinedVariable
-            url += '&forwardDisks###true'
-
-        if self.redirectPrinters:  # @UndefinedVariable
-            url += '&forwardPrinters###true'
-
-        return url
-
     def getGeneric(self):  # pylint: disable=too-many-statements
         password = '{password}'
         screenMode = '2' if self.fullScreen else '1'
@@ -352,207 +321,47 @@ class RDPFile:
 
         return res
 
-    def getMacOsX(self):
-        if self.fullScreen:
-            desktopSize = '    <string>DesktopFullScreen</string>'
-        else:
-            desktopSize = '''    <dict>
-        <key>DesktopHeight</key>
-        <integer>{}</integer>
-        <key>DesktopWidth</key>
-        <integer>{}</integer>
-    </dict>'''.format(self.width, self.height)
+    @property
+    def as_rdp_url(self) -> str:
+        # Some parameters
+        screenMode = '2' if self.fullScreen else '1'
+        audioMode = self.redirectAudio and '0' or '2'
+        useMultimon = self.multimon and '1' or '0'
+        disableWallpaper = self.showWallpaper and '0' or '1'
+        printers = self.redirectPrinters and '1' or '0'
+        credsspsupport = '0' if self.enablecredsspsupport is False else '1'
+        
 
-        drives = self.redirectDrives != 'false' and "1" or "0"
-        audioMode = self.redirectAudio and "0" or "2"
-        wallpaper = self.showWallpaper and 'true' or 'false'
+        parameters = [
+            ('full address', f's:{self.address}'),
+            ('audiomode', f'i:{audioMode}'),
+            ('screen mode id', f'i:{screenMode}'),
+            ('use multimon', f'i:{useMultimon}'),
+            ('desktopwidth', f'i:{self.width}'),
+            ('desktopheight', f':{self.height}'),
+            ('session bpp', f'i:{self.bpp}'),
+            ('disable menu anims', f'i:{disableWallpaper}'),
+            ('disable themes', f'i:{disableWallpaper}'),
+            ('disable wallpaper', f'i:{disableWallpaper}'),
+            ('redirectprinters', f'i:{printers}'),
+            ('disable full window drag', 'i:1'),
+            ('authentication level', f'i:0'),
+            # Not listed, but maybe usable?
+            ('enablecredsspsupport', f'i:{credsspsupport}')
+        ]
+        if self.username:
+            parameters.append(('username', f's:{urllib.parse.quote(self.username)}'))
+            if self.domain:
+                parameters.append(('domain', f's:{urllib.parse.quote(self.domain)}'))
 
-        return '''
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>AddToKeychain</key>
-    <true/>
-    <key>ApplicationPath</key>
-    <string></string>
-    <key>AudioRedirectionMode</key>
-    <integer>{audioMode}</integer>
-    <key>AuthenticateLevel</key>
-    <integer>0</integer>
-    <key>AutoReconnect</key>
-    <true/>
-    <key>BitmapCaching</key>
-    <true/>
-    <key>ColorDepth</key>
-    <integer>1</integer>
-    <key>ConnectionString</key>
-    <string>{host}</string>
-    <key>DesktopSize</key>
-    {desktopSize}
-    <key>Display</key>
-    <integer>0</integer>
-    <key>Domain</key>
-    <string>{domain}</string>
-    <key>DontWarnOnChange</key>
-    <true/>
-    <key>DontWarnOnDriveMount</key>
-    <true/>
-    <key>DontWarnOnQuit</key>
-    <true/>
-    <key>DriveRedirectionMode</key>
-    <integer>{drives}</integer>
-    <key>FontSmoothing</key>
-    <true/>
-    <key>FullWindowDrag</key>
-    <false/>
-    <key>HideMacDock</key>
-    <true/>
-    <key>KeyMappingTable</key>
-    <dict>
-        <key>UI_ALPHANUMERIC_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>102</integer>
-            <key>MacModifier</key>
-            <integer>0</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_ALT_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>4294967295</integer>
-            <key>MacModifier</key>
-            <integer>2048</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_CONTEXT_MENU_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>120</integer>
-            <key>MacModifier</key>
-            <integer>2048</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_CONVERSION_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>4294967295</integer>
-            <key>MacModifier</key>
-            <integer>0</integer>
-            <key>On</key>
-            <false/>
-        </dict>
-        <key>UI_HALF_FULL_WIDTH_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>49</integer>
-            <key>MacModifier</key>
-            <integer>256</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_HIRAGANA_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>104</integer>
-            <key>MacModifier</key>
-            <integer>0</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_NON_CONVERSION_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>4294967295</integer>
-            <key>MacModifier</key>
-            <integer>0</integer>
-            <key>On</key>
-            <false/>
-        </dict>
-        <key>UI_NUM_LOCK_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>71</integer>
-            <key>MacModifier</key>
-            <integer>0</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_PAUSE_BREAK_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>99</integer>
-            <key>MacModifier</key>
-            <integer>2048</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_PRINT_SCREEN_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>118</integer>
-            <key>MacModifier</key>
-            <integer>2048</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_SCROLL_LOCK_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>107</integer>
-            <key>MacModifier</key>
-            <integer>0</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_SECONDARY_MOUSE_BUTTON</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>256</integer>
-            <key>MacModifier</key>
-            <integer>4608</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-        <key>UI_WINDOWS_START_KEY</key>
-        <dict>
-            <key>MacKeyCode</key>
-            <integer>122</integer>
-            <key>MacModifier</key>
-            <integer>2048</integer>
-            <key>On</key>
-            <true/>
-        </dict>
-    </dict>
-    <key>MenuAnimations</key>
-    <false/>
-    <key>PrinterRedirection</key>
-    <true/>
-    <key>RedirectFolder</key>
-    <string>/Users/admin</string>
-    <key>RedirectPrinter</key>
-    <string></string>
-    <key>RemoteApplication</key>
-    <false/>
-    <key>Themes</key>
-    <true/>
-    <key>UserName</key>
-    <string>{username}</string>
-    <key>Wallpaper</key>
-    <{wallpaper}/>
-    <key>WorkingDirectory</key>
-    <string></string>
-</dict>
-</plist>'''.format(
-    desktopSize=desktopSize,
-    drives=drives,
-    audioMode=audioMode,
-    host=self.address,
-    domain=self.domain,
-    username=self.username,
-    wallpaper=wallpaper
-)
+        if self.desktopComposition:
+            parameters.append(('allow desktop composition', 'i:1'))
+
+        if self.smoothFonts:
+            parameters.append(('allow font smoothing', 'i:1'))
+
+        if self.redirectDrives != 'false':  # Only "all drives" is supported
+            parameters.append(('drivestoredirect', f's:*'))
+
+        return 'rdp://' + '&'.join((urllib.parse.quote(i[0]) + '=' + i[1] for i in parameters))
+

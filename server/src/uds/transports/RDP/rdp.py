@@ -170,13 +170,7 @@ class RDPTransport(BaseRDPTransport):
         else:  # Mac
             sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'as_file': r.as_file,
-                'as_cord_url': r.as_cord_url,
+                'as_rdp_url': r.as_rdp_url,
             })
-            if domain != '':
-                sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)
-            else:
-                sp['usernameWithDomain'] = username
-
 
         return self.getScript('scripts/{}/direct.py', osName, sp)

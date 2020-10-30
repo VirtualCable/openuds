@@ -12,39 +12,42 @@ from uds import tools  # @UnresolvedImport
 # Inject local passed sp into globals for functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
-msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
-cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
+# Inject local passed sp into globals for functions
+globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
-if os.path.isfile(cord):
-    executable = cord
-elif os.path.isfile(msrdc):
+msrdc = '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
+xfreerdp = 'xfreerdp' # TODO
+executable = None
+
+# Check first xfreerdp, allow password redir
+if os.path.isfile(xfreerdp):
+    executable = xfreerdp
+elif os.path.isfile(msrdc) and sp['as_rdp_url']:
     executable = msrdc
-else:
-    executable = None
-
-def onExit():
-    import subprocess  # @Reimport
-    subprocess.call(
-        [
-            'security',
-             'delete-generic-password',
-             '-a', sp['usernameWithDomain'],  # @UndefinedVariable
-             '-s', 'Remote Desktop Connection 2 Password for 127.0.0.1',
-        ]
-    )
-
 
 if executable is None:
-    raise Exception('''<p><b>Microsoft Remote Desktop Connection not found</b></p>
-<p>In order to connect to UDS RDP Sessions, you need to have at least one of the following:<p>
-<ul>
-    <li>
-        <p><b>CoRD</b> (A bit unstable from 10.7 onwards)</p>
-        <p>You can get it from <a href="{}uds/res/other/CoRD.pkg">this link</a></p>
-    </li>
-</ul>
-<p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
-'''.format(sp['this_server']))  # @UndefinedVariable
+    if sp['as_rdp_url']:
+        raise Exception('''<p><b>Microsoft Remote Desktop or xfreerdp not found</b></p>
+            <p>In order to connect to UDS RDP Sessions, you need to have a<p>
+            <ul>
+                <li>
+                    <p><b>Microsoft Remote Desktop</b> from Apple Store</p>
+                </li>
+                <li>
+                    <p><b>Xfreerdp</b> from homebrew</p>
+                </li>
+            </ul>
+            ''')
+    else:
+        raise Exception('''<p><b>xfreerdp not found</b></p>
+            <p>In order to connect to UDS RDP Sessions, you need to have a<p>
+            <ul>
+                <li>
+                    <p><b>Xfreerdp</b> from homebrew</p>
+                </li>
+            </ul>
+            ''')
+elif executable == msrdc:
 
 forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])  # @UndefinedVariable
 address = '127.0.0.1:{}'.format(port)
@@ -54,31 +57,6 @@ if forwardThread.status == 2:
 
 else:
     if executable == msrdc:
-        theFile = sp['as_file'].format(address=address)  # @UndefinedVariable
-        filename = tools.saveTempFile(theFile)
-        tools.addFileToUnlink(filename)
-        
-        try:
-            if sp['password'] != '':  # @UndefinedVariable
-                subprocess.call(
-                    [
-                        'security',
-                        'add-generic-password',
-                        '-w', sp['password'],  # @UndefinedVariable
-                        '-U',
-                        '-a', sp['usernameWithDomain'],  # @UndefinedVariable
-                        '-s', 'Remote Desktop Connection 2 Password for 127.0.0.1'.format(port),
-                        '-T', '/Applications/Remote Desktop Connection.app',
-                    ]
-                )
-                tools.addExecBeforeExit(onExit)
-            # Call but do not wait for exit
-            tools.addTaskToWait(subprocess.Popen([executable, filename]))
-
-            tools.addFileToUnlink(filename)
-        except Exception as e:
-            raise
-    else:  # CoRD
-        url = sp['as_cord_url'].format(address=address)  # @UndefinedVariable
+        url = sp['as_rdp_url']  # @UndefinedVariable
 
         tools.addTaskToWait(subprocess.Popen(['open', url]))
