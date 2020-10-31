@@ -101,6 +101,7 @@ class TRDPTransport(BaseRDPTransport):
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
+    allowMacMSRDC = BaseRDPTransport.allowMacMSRDC
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -190,12 +191,12 @@ class TRDPTransport(BaseRDPTransport):
         elif osName == 'linux':
             sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'as_rdesktop_params': r.as_rdesktop_params,
             })
         else:  # Mac
             sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'as_rdp_url': r.as_rdp_url,
+                'as_file': r.as_file if self.allowMacMSRDC.isTrue() else '',
+                'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.isTrue() else '',
             })
 
 

@@ -85,10 +85,8 @@ class RDPFile:
         self.target = target
 
     def get(self):
-        if self.target in (OsDetector.Windows, OsDetector.Linux):
+        if self.target in (OsDetector.Windows, OsDetector.Linux, OsDetector.Macintosh):
             return self.getGeneric()
-        if self.target == OsDetector.Macintosh:
-            return self.getMacOsX()
         # Unknown target
         return ''
 
@@ -114,7 +112,7 @@ class RDPFile:
                 params.append('/smartcard')
 
         if self.redirectAudio:
-            if self.alsa:
+            if self.alsa and self.target != OsDetector.Macintosh:
                 params.append('/sound:sys:alsa,format:1,quality:high')
                 params.append('/microphone:sys:alsa')
             else:
@@ -125,7 +123,10 @@ class RDPFile:
             params.append('/video')
 
         if self.redirectDrives != 'false':
-            params.append('/drive:media,/media')
+            if self.target == OsDetector.Linux:
+                params.append('/drive:media,/media')
+            else:
+                params.append('/drive:Users,/Users')
             # params.append('/home-drive')
 
         if self.redirectHome is True:
@@ -151,7 +152,11 @@ class RDPFile:
             params.append('/multimon')
 
         if self.fullScreen:
-            params.append('/f')
+            if self.target != OsDetector.Macintosh:
+                params.append('/f')
+            else:  # On mac, will fix this later...
+                params.append('/w:#WIDTH#')
+                params.append('/h:#HEIGHT#')
         else:
             params.append('/w:{}'.format(self.width))
             params.append('/h:{}'.format(self.height))
@@ -183,61 +188,6 @@ class RDPFile:
 
         return params
 
-    @property
-    def as_rdesktop_params(self):  # pylint: disable=too-many-branches
-        """
-        Parameters for rdestop with self rdp description
-        Note that server is not added
-        """
-
-        params = ['-TUDS Connection', '-P']
-
-        if self.enableClipboard:
-            params.append('-rclipboard:PRIMARYCLIPBOARD')
-
-        if self.redirectSmartcards:
-            params.append('-rsdcard')
-
-        if self.redirectAudio:
-            params.append('-rsound:local')
-        else:
-            params.append('-rsound:off')
-
-        if self.redirectDrives != 'false':
-            params.append('-rdisk:media=/media')
-
-        if self.redirectSerials is True:
-            params.append('-rcomport:COM1=/dev/ttyS0')
-
-        if self.redirectPrinters:
-            pass
-
-        if self.compression:
-            params.append('-z')
-
-        if self.showWallpaper:
-            params.append('-xl')
-        else:
-            params.append('-xb')
-
-        if self.multimon:
-            pass
-
-        if self.fullScreen:
-            params.append('-f')
-        else:
-            params.append('-g{}x{}'.format(self.width, self.height))
-
-        params.append('-a{}'.format(self.bpp))
-        if self.username != '':
-            params.append('-u{}'.format(self.username))
-        if self.password != '':
-            params.append('-p-')
-        if self.domain != '':
-            params.append('-d{}'.format(self.domain))
-
-        return params
-
     def getGeneric(self):  # pylint: disable=too-many-statements
         password = '{password}'
         screenMode = '2' if self.fullScreen else '1'
@@ -253,8 +203,9 @@ class RDPFile:
 
         res = ''
         res += 'screen mode id:i:' + screenMode + '\n'
-        res += 'desktopwidth:i:' + self.width + '\n'
-        res += 'desktopheight:i:' + self.height + '\n'
+        if self.width[0] != '-' and self.height[0] != '-':
+            res += 'desktopwidth:i:' + self.width + '\n'
+            res += 'desktopheight:i:' + self.height + '\n'
         res += 'session bpp:i:' + self.bpp + '\n'
         res += 'use multimon:i:' + useMultimon + '\n'
         res += 'auto connect:i:1' + '\n'

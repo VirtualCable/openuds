@@ -87,6 +87,7 @@ class RDPTransport(BaseRDPTransport):
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
+    allowMacMSRDC = BaseRDPTransport.allowMacMSRDC
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
             self,
@@ -164,13 +165,14 @@ class RDPTransport(BaseRDPTransport):
         elif osName == 'linux':
             sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'as_rdesktop_params': r.as_rdesktop_params,
                 'address': r.address,
             })
         else:  # Mac
             sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'as_rdp_url': r.as_rdp_url,
+                'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.isTrue() else '',
+                'as_file': r.as_file if self.allowMacMSRDC.isTrue() else '',
+                'address': r.address,
             })
 
         return self.getScript('scripts/{}/direct.py', osName, sp)

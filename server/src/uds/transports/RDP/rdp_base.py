@@ -139,6 +139,8 @@ class BaseRDPTransport(transports.Transport):
     smartcardString = gui.TextField(label=_('Smartcard string'), order=44, tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'), tab='Linux Client', length=256)
     customParameters = gui.TextField(label=_('Custom parameters'), order=45, tooltip=_('If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'), tab='Linux Client', length=256)
 
+    allowMacMSRDC = gui.CheckBoxField(label=_('Allow Microsoft Rdp Client'), order=40, tooltip=_('If checked, allows use of Microsoft Remote Desktop Clien. PASSWORD WILL BE PRONPTED!'), tab='Mac OS X', defvalue=gui.FALSE)
+
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip

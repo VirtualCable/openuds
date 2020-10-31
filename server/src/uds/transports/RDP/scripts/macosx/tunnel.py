@@ -4,7 +4,9 @@ from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
+import shutil
 import os
+
 from uds.forward import forward  # @UnresolvedImport
 
 from uds import tools  # @UnresolvedImport
@@ -12,8 +14,14 @@ from uds import tools  # @UnresolvedImport
 # Inject local passed sp into globals for functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
-# Inject local passed sp into globals for functions
-globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
+def fixResolution():
+    import re
+    import subprocess
+    results = str(subprocess.Popen(['system_profiler SPDisplaysDataType'],stdout=subprocess.PIPE, shell=True).communicate()[0])
+    res = re.search(': \d* x \d*', results).group(0).split(' ')
+    width, height = str(int(res[1])-4), str(int(int(res[3])-128))  # Width and Height
+    return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))
+
 
 msrdc = '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
 xfreerdp = 'xfreerdp' # TODO
@@ -22,7 +30,7 @@ executable = None
 # Check first xfreerdp, allow password redir
 if os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isfile(msrdc) and sp['as_rdp_url']:
+elif os.path.isfile(msrdc) and sp['as_file']:
     executable = msrdc
 
 if executable is None:
@@ -47,7 +55,6 @@ if executable is None:
                 </li>
             </ul>
             ''')
-elif executable == msrdc:
 
 forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])  # @UndefinedVariable
 address = '127.0.0.1:{}'.format(port)
@@ -57,6 +64,23 @@ if forwardThread.status == 2:
 
 else:
     if executable == msrdc:
-        url = sp['as_rdp_url']  # @UndefinedVariable
+        theFile = theFile = sp['as_file'].format(
+            address='127.0.0.1:{}'.format(port)
+        )
 
-        tools.addTaskToWait(subprocess.Popen(['open', url]))
+        filename = tools.saveTempFile(theFile)
+        # Rename as .rdp, so open recognizes it
+        shutil.move(filename, filename + '.rdp')
+
+        tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
+        tools.addFileToUnlink(filename + '.rdp')
+    elif executable == xfreerdp:
+        # Fix resolution...
+        try:
+            xfparms = fixResolution()
+        except Exception as e:
+            xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))
+
+        params = [executable] + xfparms + ['/v:{}'.format(address)]
+        subprocess.Popen(params)
+
