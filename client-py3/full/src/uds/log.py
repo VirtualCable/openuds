@@ -40,7 +40,7 @@ if sys.platform.startswith('linux'):
     from os.path import expanduser  # pylint: disable=ungrouped-imports
     logFile = expanduser('~/udsclient.log')
 else:
-    logFile = os.path.join(tempfile.gettempdir(), b'udsclient.log')
+    logFile = os.path.join(tempfile.gettempdir(), 'udsclient.log')
 
 try:
     logging.basicConfig(
