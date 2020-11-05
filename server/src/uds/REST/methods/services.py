@@ -183,7 +183,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except models.Service.DoesNotExist:
             raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
-            if service and service.token:
+            if service and service.token and not item:
                 service.delete()
                 raise RequestError(_('Service token seems to be in use by other service. Please, select a new one.'))
             raise RequestError(_('Element already exists (duplicate key error)'))
