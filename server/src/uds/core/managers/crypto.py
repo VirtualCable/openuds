@@ -176,10 +176,27 @@ class CryptoManager:
         return array.array('B', (s1a[i] ^ s2a[i] for i in range(len(s1a)))).tobytes()
 
     def symCrypt(self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
-        return self.xor(text, key)
+        if isinstance(text, str):
+            text = text.encode()
+        if isinstance(key, str):
+            key = key.encode()
+
+        return self.AESCrypt(text, key)
 
     def symDecrpyt(self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
-        return self.xor(cryptText, key).decode('utf-8')
+        if isinstance(cryptText, str):
+            cryptText = cryptText.encode()
+
+        if isinstance(key, str):
+            key = key.encode()
+
+        if not cryptText:
+            return ''
+
+        try:
+            return self.AESDecrypt(cryptText, key).decode('utf-8')
+        except Exception:  # Error decoding stored crypted password, return empty one
+            return ''
 
     def loadPrivateKey(self, rsaKey: str):
         try:
