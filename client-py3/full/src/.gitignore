@@ -1,4 +1,6 @@
 /build
 /dist
 /UDSClient*.pkg
+/UDSClient*.dist
+/UDSClient*.build
 /.eggs
