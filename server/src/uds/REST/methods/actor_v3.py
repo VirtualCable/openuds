@@ -32,6 +32,7 @@
 import secrets
 import logging
 import typing
+from uds.models import user
 
 from uds.models import (
     getSqlDatetimeAsUnix,
@@ -61,21 +62,26 @@ logger = logging.getLogger(__name__)
 ALLOWED_FAILS = 5
 UNMANAGED = 'unmanaged'  # matches the definition of UDS Actors OFC
 
+
 class BlockAccess(Exception):
     pass
 
 # Helpers
-def checkBlockedIp(ip: str)-> None:
+
+
+def checkBlockedIp(ip: str) -> None:
     cache = Cache('actorv3')
     fails = cache.get(ip) or 0
     if fails > ALLOWED_FAILS:
         logger.info('Access to actor from %s is blocked for %s seconds since last fail', ip, GlobalConfig.LOGIN_BLOCK.getInt())
         raise BlockAccess()
 
+
 def incFailedIp(ip: str) -> None:
     cache = Cache('actorv3')
     fails = (cache.get(ip) or 0) + 1
     cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
+
 
 class ActorV3Action(Handler):
     authenticated = False  # Actor requests are not authenticated normally
@@ -119,6 +125,7 @@ class ActorV3Action(Handler):
 
         raise AccessDenied('Access denied')
 
+
 class Test(ActorV3Action):
     """
     Tests UDS Broker actor connectivity & key
@@ -136,6 +143,7 @@ class Test(ActorV3Action):
             return ActorV3Action.actorResult('invalid token')
 
         return ActorV3Action.actorResult('ok')
+
 
 class Register(ActorV3Action):
     """
@@ -176,6 +184,7 @@ class Register(ActorV3Action):
                 stamp=getSqlDatetime()
             )
         return ActorV3Action.actorResult(actorToken.token)
+
 
 class Initiialize(ActorV3Action):
     """
@@ -267,6 +276,7 @@ class Initiialize(ActorV3Action):
         except (ActorToken.DoesNotExist, Service.DoesNotExist):
             raise BlockAccess()
 
+
 class BaseReadyChange(ActorV3Action):
     """
     Records the IP change of actor
@@ -309,7 +319,7 @@ class BaseReadyChange(ActorV3Action):
                 osManager.toReady(userService)
                 userServiceManager().notifyReadyFromOsManager(userService, '')
 
-        # Generates a certificate and send it to client. 
+        # Generates a certificate and send it to client.
         privateKey, cert, password = certs.selfSignedCert(self._params['ip'])
         # Store certificate with userService
         userService.setProperty('cert', cert)
@@ -318,11 +328,13 @@ class BaseReadyChange(ActorV3Action):
 
         return ActorV3Action.actorResult({'private_key': privateKey, 'server_certificate': cert, 'password': password})
 
+
 class IpChange(BaseReadyChange):
     """
     Processses IP Change.
     """
     name = 'ipchange'
+
 
 class Ready(BaseReadyChange):
     """
@@ -352,6 +364,7 @@ class Ready(BaseReadyChange):
 
         return result
 
+
 class Version(ActorV3Action):
     """
     Notifies the version.
@@ -367,26 +380,75 @@ class Version(ActorV3Action):
 
         return ActorV3Action.actorResult()
 
+class LoginLogout(ActorV3Action):
+    name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
-class Login(ActorV3Action):
+    def notifyService(self, login: bool):
+        try:
+            # If unmanaged, use Service locator
+            service : 'services.Service' = Service.objects.get(token=self._params['token']).getInstance()
+            # Locate an userService that belongs to this service and which
+            # Build the possible ids and make initial filter to match service
+            idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
+
+            validId: typing.Optional[str] = service.getValidId(idsList)
+
+            # Must be valid
+            if not validId:
+                raise Exception()
+
+            # Check secret if is stored
+            storedInfo : typing.Optional[typing.MutableMapping[str, typing.Any]] = service.recoverIdInfo(validId)
+            # If no secret valid
+            if not storedInfo or self._params['secret'] != storedInfo['secret']:
+                raise Exception()
+
+            # Notify Service that someone logged in/out
+            if login:
+                # Try to guess if this is a remote session
+                is_remote = self._params.get('session_type', '')[:3] in ('xrdp', 'RDP-')
+                service.processLogin(validId, remote_login=is_remote)
+            else:
+                service.processLogout(validId)
+
+            # All right, service notified...
+        except Exception:
+            raise BlockAccess()
+
+
+class Login(LoginLogout):
     """
     Notifies user logged id
     """
     name = 'login'
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
+        isManaged = self._params.get('type') != UNMANAGED
+        ip = hostname = ''
+        deadLine = maxIdle = None
+
         logger.debug('Login Args: %s,  Params: %s', self._args, self._params)
-        userService = self.getUserService()
-        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
-        if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
-            osmanagers.OSManager.loggedIn(userService, self._params.get('username') or '')
 
-        maxIdle = osManager.maxIdle() if osManager else None
+        try:
+            userService: typing.Optional[UserService] = self.getUserService()
+        except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
+            if isManaged:
+                raise
+            userService = None  # Skip later processing userService
+            self.notifyService(login=True)
 
-        logger.debug('Max idle: %s', maxIdle)
+        if userService:
+            osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+            if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
+                osmanagers.OSManager.loggedIn(userService, self._params.get('username') or '')
 
-        ip, hostname = userService.getConnectionSource()
-        deadLine = userService.deployed_service.getDeadline()
+            maxIdle = osManager.maxIdle() if osManager else None
+
+            logger.debug('Max idle: %s', maxIdle)
+
+            ip, hostname = userService.getConnectionSource()
+            deadLine = userService.deployed_service.getDeadline()
+
         return ActorV3Action.actorResult({
             'ip': ip,
             'hostname': hostname,
@@ -394,26 +456,38 @@ class Login(ActorV3Action):
             'max_idle': maxIdle
         })
 
-class Logout(ActorV3Action):
+
+class Logout(LoginLogout):
     """
     Notifies user logged out
     """
     name = 'logout'
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
+        isManaged = self._params.get('type') != UNMANAGED
+
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        userService = self.getUserService()
-        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
-        if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
-            osmanagers.OSManager.loggedOut(userService, self._params.get('username') or '')
-            if osManager:
-                if osManager.isRemovableOnLogout(userService):
-                    logger.debug('Removable on logout: %s', osManager)
+        try:
+            userService: typing.Optional[UserService] = self.getUserService()
+        except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
+            if isManaged:
+                raise
+            userService = None  # Skip later processing userService
+            self.notifyService(login=False)  # Logout notification
+
+        if userService:
+            osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+            if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
+                osmanagers.OSManager.loggedOut(userService, self._params.get('username') or '')
+                if osManager:
+                    if osManager.isRemovableOnLogout(userService):
+                        logger.debug('Removable on logout: %s', osManager)
+                        userService.remove()
+                else:
                     userService.remove()
-            else:
-                userService.remove()
 
         return ActorV3Action.actorResult('ok')
+
 
 class Log(ActorV3Action):
     """
@@ -428,6 +502,7 @@ class Log(ActorV3Action):
         log.doLog(userService, int(self._params['level']) + 10000, self._params['message'], log.ACTOR)
 
         return ActorV3Action.actorResult('ok')
+
 
 class Ticket(ActorV3Action):
     """
@@ -448,6 +523,7 @@ class Ticket(ActorV3Action):
             return ActorV3Action.actorResult(TicketStore.get(self._params['ticket'], invalidate=True))
         except TicketStore.DoesNotExists:
             return ActorV3Action.actorResult(error='Invalid ticket')
+
 
 class Unmanaged(ActorV3Action):
     name = 'unmanaged'
@@ -502,6 +578,7 @@ class Unmanaged(ActorV3Action):
 
         return ActorV3Action.actorResult(cert)
 
+
 class Notify(ActorV3Action):
     name = 'notify'
 
@@ -529,4 +606,3 @@ class Notify(ActorV3Action):
             incFailedIp(self._request.ip)  # pylint: disable=protected-access
 
         raise AccessDenied('Access denied')
-

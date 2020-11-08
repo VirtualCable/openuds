@@ -48,21 +48,28 @@ TIMEOUT = 5   # 5 seconds is more than enought
 # Constants
 UNKNOWN = 'unknown'
 
+
 class RESTError(Exception):
     ERRCODE = 0
+
 
 class RESTConnectionError(RESTError):
     ERRCODE = -1
 
 # Errors ""raised"" from broker
+
+
 class RESTInvalidKeyError(RESTError):
     ERRCODE = 1
+
 
 class RESTUnmanagedHostError(RESTError):
     ERRCODE = 2
 
+
 class RESTUserServiceNotFoundError(RESTError):
     ERRCODE = 3
+
 
 class RESTOsManagerError(RESTError):
     ERRCODE = 4
@@ -70,6 +77,8 @@ class RESTOsManagerError(RESTError):
 #
 # Basic UDS Api
 #
+
+
 class UDSApi:  # pylint: disable=too-few-public-methods
     """
     Base for remote api accesses
@@ -101,11 +110,11 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         raise NotImplementedError
 
     def _doPost(
-            self,
-            method: str,  # i.e. 'initialize', 'ready', ....
-            payLoad: typing.MutableMapping[str, typing.Any],
-            headers: typing.Optional[typing.MutableMapping[str, str]] = None
-        ) -> typing.Any:
+        self,
+        method: str,  # i.e. 'initialize', 'ready', ....
+        payLoad: typing.MutableMapping[str, typing.Any],
+        headers: typing.Optional[typing.MutableMapping[str, str]] = None
+    ) -> typing.Any:
         headers = headers or self._headers
         try:
             result = requests.post(self._apiURL(method), data=json.dumps(payLoad), headers=headers, verify=self._validateCert, timeout=TIMEOUT)
@@ -128,6 +137,8 @@ class UDSApi:  # pylint: disable=too-few-public-methods
 #
 # UDS Broker API access
 #
+
+
 class UDSServerApi(UDSApi):
     def _apiURL(self, method: str) -> str:
         return self._url + 'actor/v3/' + method
@@ -148,19 +159,19 @@ class UDSServerApi(UDSApi):
         except Exception:
             pass
 
-    def register(  #pylint: disable=too-many-arguments, too-many-locals
-            self,
-            auth: str,
-            username: str,
-            password: str,
-            hostname: str,
-            ip: str,
-            mac: str,
-            preCommand: str,
-            runOnceCommand: str,
-            postCommand: str,
-            logLevel: int
-        ) -> str:
+    def register(  # pylint: disable=too-many-arguments, too-many-locals
+        self,
+        auth: str,
+        username: str,
+        password: str,
+        hostname: str,
+        ip: str,
+        mac: str,
+        preCommand: str,
+        runOnceCommand: str,
+        postCommand: str,
+        logLevel: int
+    ) -> str:
         """
         Raises an exception if could not register, or registers and returns the "authorization token"
         """
@@ -198,10 +209,10 @@ class UDSServerApi(UDSApi):
 
         raise RESTError(result.content.decode())
 
-    def initialize(self, token: str, interfaces: typing.Iterable[types.InterfaceInfoType], actorType: typing.Optional[str]) -> types.InitializationResultType:
+    def initialize(self, token: str, interfaces: typing.Iterable[types.InterfaceInfoType], actor_type: typing.Optional[str]) -> types.InitializationResultType:
         # Generate id list from netork cards
         payload = {
-            'type': actorType or types.MANAGED,
+            'type': actor_type or types.MANAGED,
             'token': token,
             'version': VERSION,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces]
@@ -267,9 +278,16 @@ class UDSServerApi(UDSApi):
             password=result['password']
         )
 
-
-    def login(self, own_token: str, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
-        if not own_token:
+    def login(
+        self,
+        actor_type: typing.Optional[str],
+        token: str,
+        username: str,
+        sessionType: str,
+        interfaces: typing.Iterable[types.InterfaceInfoType],
+        secret: typing.Optional[str]
+    ) -> types.LoginResultInfoType:
+        if not token:
             return types.LoginResultInfoType(
                 ip='0.0.0.0',
                 hostname=UNKNOWN,
@@ -277,9 +295,12 @@ class UDSServerApi(UDSApi):
                 max_idle=None
             )
         payload = {
-            'token': own_token,
+            'type': actor_type or types.MANAGED,
+            'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
+            'token': token,
             'username': username,
-            'session_type': sessionType or UNKNOWN
+            'session_type': sessionType,
+            'secret': secret or '',
         }
         result = self._doPost('login', payload)
         return types.LoginResultInfoType(
@@ -289,15 +310,24 @@ class UDSServerApi(UDSApi):
             max_idle=result['max_idle']
         )
 
-    def logout(self, own_token: str, username: str) -> None:
-        if not own_token:
+    def logout(
+        self,
+        actor_type: typing.Optional[str],
+        token: str,
+        username: str,
+        interfaces: typing.Iterable[types.InterfaceInfoType],
+        secret: typing.Optional[str]
+    ) -> None:
+        if not token:
             return
         payload = {
-            'token': own_token,
-            'username': username
+            'type': actor_type or types.MANAGED,
+            'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
+            'token': token,
+            'username': username,
+            'secret': secret or ''
         }
         self._doPost('logout', payload)
-
 
     def log(self, own_token: str, level: int, message: str) -> None:
         if not own_token:

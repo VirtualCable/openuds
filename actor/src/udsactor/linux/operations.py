@@ -186,9 +186,9 @@ def getCurrentUser() -> str:
 def getSessionType() -> str:
     '''
       Known values:
-        * Unknown -> No SESSIONNAME environment variable
-        * Console -> Local session
-        *  RDP-Tcp#[0-9]+ -> RDP Session
+        * Unknown -> No XDG_SESSION_TYPE environment variable
+        * xrdp --> xrdp session
+        * other types
     '''
     return 'xrdp' if 'XRDP_SESSION' in os.environ else os.environ.get('XDG_SESSION_TYPE', 'unknown')
 

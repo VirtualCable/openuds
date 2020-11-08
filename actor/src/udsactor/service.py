@@ -273,7 +273,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         logger.debug('This host is not managed by UDS Broker (ids: {})'.format(self._interfaces))
                         return False
 
-                    # Only removes token for managed machines
+                    # Only removes master token for managed machines (will need it on next client execution)
                     master_token = None if self.isManaged() else self._cfg.master_token
                     self._cfg = self._cfg._replace(
                         master_token=master_token,
@@ -314,7 +314,12 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if self._loggedIn and self._cfg.own_token:
             self._loggedIn = False
             try:
-                self._api.logout(self._cfg.own_token, '')
+                self._api.logout(
+                    self._cfg.actorType,
+                    self._cfg.own_token,
+                    '',
+                    self._interfaces
+                )
             except Exception as e:
                 logger.error('Error notifying final logout to UDS: %s', e)
 
@@ -405,18 +410,46 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     def login(self, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
         result = types.LoginResultInfoType(ip='', hostname='', dead_line=None, max_idle=None)
         self._loggedIn = True
+
+        master_token = None
+        secret = None
+        # If unmanaged, do initialization now, because we don't know before this
+        # Also, even if not initialized, get a "login" notification token
         if not self.isManaged():
             self.initialize()
-
-        if self._cfg.own_token:
-            result = self._api.login(self._cfg.own_token, username, sessionType)
+            master_token = self._cfg.master_token
+            secret = self._secret
+            
+        # Own token will not be set if UDS did not assigned the initialized VM to an user
+        # In that case, take master token (if machine is Unamanaged version)
+        token = self._cfg.own_token or master_token
+        if token:
+            result = self._api.login(
+                self._cfg.actorType,
+                token,
+                username,
+                sessionType or '',
+                self._interfaces,
+                secret
+            )
 
         return result
 
     def logout(self, username: str) -> None:
         self._loggedIn = False
-        if self._cfg.own_token:
-            self._api.logout(self._cfg.own_token, username)
+
+        master_token = self._cfg.master_token if self.isManaged() else None
+
+        # Own token will not be set if UDS did not assigned the initialized VM to an user
+        # In that case, take master token (if machine is Unamanaged version)
+        token = self._cfg.own_token or master_token
+        if token:
+            self._api.logout(
+                self._cfg.actorType,
+                token,
+                username,
+                self._interfaces
+            )
 
         self.onLogout(username)
 

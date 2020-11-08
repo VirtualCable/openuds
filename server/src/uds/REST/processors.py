@@ -70,11 +70,11 @@ class ContentProcessor:
 
         return self._request.GET.copy()
 
-    def processParameters(self) -> typing.Any:
+    def processParameters(self) -> typing.MutableMapping[str, typing.Any]:
         """
         Returns the parameter from the request
         """
-        return ''
+        return {}
 
     def getResponse(self, obj):
         """
@@ -119,7 +119,7 @@ class MarshallerProcessor(ContentProcessor):
     """
     marshaller: typing.ClassVar[typing.Any] = None
 
-    def processParameters(self):
+    def processParameters(self) -> typing.MutableMapping[str, typing.Any]:
         try:
             if self._request.META.get('CONTENT_LENGTH', '0') == '0' or not self._request.body:
                 return self.processGetParameters()

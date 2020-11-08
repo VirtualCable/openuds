@@ -293,6 +293,28 @@ class Service(Module):
     def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
         return None
 
+    def processLogin(self, id: str, remote_login: bool) -> None:
+        """
+        In the case that a login is invoked directly on an actor controlled machine with
+        an service token, this method will be called with provided info by uds actor (parameters)
+
+        Args:
+            id (str): Id validated through "getValidId"
+            remote_login (bool): if the login seems to be a remote login
+        """
+        return
+
+    def processLogout(self, id: str) -> None:
+        """
+        In the case that a login is invoked directly on an actor controlled machine with
+        an service token, this method will be called with provided info by uds actor (parameters)
+
+        Args:
+            id (str): Id validated through "getValidId"
+            remote_login (bool): if the login seems to be a remote login
+        """
+        return
+
     def storeIdInfo(self, id: str, data: typing.Any) -> None:
         self.storage.putPickle('__nfo_' + id, data)
 
