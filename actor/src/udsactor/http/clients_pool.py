@@ -36,6 +36,12 @@ import requests
 
 from ..log import logger
 
+# For avoid proxy on localhost connections
+NO_PROXY = {
+    'http': None,
+    'https': None,
+}
+
 class UDSActorClientPool:
     _clientUrl: typing.List[str]
 
@@ -47,7 +53,7 @@ class UDSActorClientPool:
         result: typing.List[typing.Any] = []
         for clientUrl in self._clientUrl:
             try:
-                result.append(requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False, timeout=timeout))
+                result.append(requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False, timeout=timeout, proxy=NO_PROXY))
             except Exception as e:
                 # If cannot request to a clientUrl, remove it from list
                 logger.info('Could not connect with client %s: %s. Removed from registry.', e, clientUrl)
