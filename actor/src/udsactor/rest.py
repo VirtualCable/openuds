@@ -48,37 +48,33 @@ TIMEOUT = 5   # 5 seconds is more than enought
 # Constants
 UNKNOWN = 'unknown'
 
-
 class RESTError(Exception):
     ERRCODE = 0
-
 
 class RESTConnectionError(RESTError):
     ERRCODE = -1
 
 # Errors ""raised"" from broker
-
-
 class RESTInvalidKeyError(RESTError):
     ERRCODE = 1
-
 
 class RESTUnmanagedHostError(RESTError):
     ERRCODE = 2
 
-
 class RESTUserServiceNotFoundError(RESTError):
     ERRCODE = 3
-
 
 class RESTOsManagerError(RESTError):
     ERRCODE = 4
 
+# For avoid proxy on localhost connections
+NO_PROXY = {
+    'http': None,
+    'https': None,
+}
 #
 # Basic UDS Api
 #
-
-
 class UDSApi:  # pylint: disable=too-few-public-methods
     """
     Base for remote api accesses
@@ -110,14 +106,23 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         raise NotImplementedError
 
     def _doPost(
-        self,
-        method: str,  # i.e. 'initialize', 'ready', ....
-        payLoad: typing.MutableMapping[str, typing.Any],
-        headers: typing.Optional[typing.MutableMapping[str, str]] = None
-    ) -> typing.Any:
+            self,
+            method: str,  # i.e. 'initialize', 'ready', ....
+            payLoad: typing.MutableMapping[str, typing.Any],
+            headers: typing.Optional[typing.MutableMapping[str, str]] = None,
+            disableProxy: bool = False
+        ) -> typing.Any:
         headers = headers or self._headers
         try:
-            result = requests.post(self._apiURL(method), data=json.dumps(payLoad), headers=headers, verify=self._validateCert, timeout=TIMEOUT)
+            result = requests.post(
+                self._apiURL(method),
+                data=json.dumps(payLoad),
+                headers=headers,
+                verify=self._validateCert,
+                timeout=TIMEOUT,
+                proxies=NO_PROXY if disableProxy else None  # If disable proxy, force skip it
+            )
+
             if result.ok:
                 j = result.json()
                 if not j.get('error', None):
@@ -137,8 +142,6 @@ class UDSApi:  # pylint: disable=too-few-public-methods
 #
 # UDS Broker API access
 #
-
-
 class UDSServerApi(UDSApi):
     def _apiURL(self, method: str) -> str:
         return self._url + 'actor/v3/' + method
@@ -329,6 +332,7 @@ class UDSServerApi(UDSApi):
         }
         self._doPost('logout', payload)
 
+
     def log(self, own_token: str, level: int, message: str) -> None:
         if not own_token:
             return
@@ -355,25 +359,31 @@ class UDSClientApi(UDSApi):
 
     def _apiURL(self, method: str) -> str:
         return self._url + method
+    def post(
+            self,
+            method: str,  # i.e. 'initialize', 'ready', ....
+            payLoad: typing.MutableMapping[str, typing.Any]
+        ) -> typing.Any:
+        return self._doPost(method=method, payLoad=payLoad, disableProxy=True)
 
     def register(self, callbackUrl: str) -> None:
         payLoad = {
             'callback_url': callbackUrl
         }
-        self._doPost('register', payLoad)
+        self.post('register', payLoad)
 
     def unregister(self, callbackUrl: str) -> None:
         payLoad = {
             'callback_url': callbackUrl
         }
-        self._doPost('unregister', payLoad)
+        self.post('unregister', payLoad)
 
     def login(self, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
         payLoad = {
             'username': username,
             'session_type': sessionType or UNKNOWN,
         }
-        result = self._doPost('login', payLoad)
+        result = self.post('login', payLoad)
         return types.LoginResultInfoType(
             ip=result['ip'],
             hostname=result['hostname'],
@@ -385,7 +395,7 @@ class UDSClientApi(UDSApi):
         payLoad = {
             'username': username
         }
-        self._doPost('logout', payLoad)
+        self.post('logout', payLoad)
 
     def ping(self) -> bool:
-        return self._doPost('ping', {}) == 'pong'
+        return self.post('ping', {}) == 'pong'
