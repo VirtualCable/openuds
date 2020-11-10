@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-10 09:18+0100\n"
-"PO-Revision-Date: 2020-11-09 11:58+0000\n"
+"POT-Creation-Date: 2020-11-10 16:28+0100\n"
+"PO-Revision-Date: 2020-11-10 11:56+0000\n"
 "Last-Translator: Alexander <ag@kub.tel>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -1584,7 +1584,7 @@ msgstr "Служба сейчас готовится. (Она #).'.replace('#', 
 
 #: static/modern/translations-fakejs.js:28
 msgid "Please, tray again in a few moments."
-msgstr "Пожалуйста, попробуйте снова через несколько минут."
+msgstr "Пожалуйста, попробуйте снова через некоторое время."
 
 #: static/modern/translations-fakejs.js:31
 msgid "You can access UDS Open Source code at"
