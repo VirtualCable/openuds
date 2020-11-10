@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
-"PO-Revision-Date: 2020-09-08 11:50+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
+"PO-Revision-Date: 2020-11-09 22:52+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -66,7 +66,7 @@ msgstr "Marca de tiempo"
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
 #: REST/methods/services.py:227 REST/methods/services_pools.py:108
-#: REST/methods/transports.py:61
+#: REST/methods/transports.py:62
 msgid "tags"
 msgstr "Etiquetas"
 
@@ -97,16 +97,16 @@ msgstr "Transcurrido"
 
 #: REST/methods/accountsusage.py:98
 msgid "Elapsed timemark"
-msgstr "Marca de tiempo transcurrido"
+msgstr "Tiempo transcurrido desde la marca"
 
 #: REST/methods/accountsusage.py:118
 #, python-brace-format
 msgid "Usages of {0}"
-msgstr "Usos de {0}"
+msgstr "Usados de {0}"
 
 #: REST/methods/accountsusage.py:120
 msgid "Current usages"
-msgstr "Usos actuales"
+msgstr "Uso actual"
 
 #: REST/methods/actor.py:94 REST/methods/client.py:102
 #: REST/methods/client.py:118
@@ -238,7 +238,7 @@ msgstr "Nombre de la regla"
 
 #: REST/methods/calendarrules.py:101
 msgid "Repeats"
-msgstr "Se repite"
+msgstr "Repetir"
 
 #: REST/methods/calendarrules.py:102
 msgid "Every"
@@ -271,8 +271,7 @@ msgstr "Modificado"
 
 #: REST/methods/client.py:89
 msgid "Your service is being created. Please, wait while we complete it"
-msgstr ""
-"Su servicio está siendo creado. Por favor, espera mientras lo completamos"
+msgstr "Su servicio está siendo creado. Por favor, espera mientras se completa"
 
 #: REST/methods/images.py:56
 msgid "Image Gallery"
@@ -369,18 +368,18 @@ msgstr "Nombre del Service pool"
 msgid "Enabled"
 msgstr "Habilitado"
 
-#: REST/methods/meta_service_pools.py:168 REST/methods/user_services.py:116
+#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:116
 msgid "Assigned services"
 msgstr "Servicios asignados"
 
-#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:120
+#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:120
 #: REST/methods/user_services.py:212
 msgid "Creation date"
 msgstr "Fecha de creación"
 
-#: REST/methods/meta_service_pools.py:173 REST/methods/services_usage.py:119
+#: REST/methods/meta_service_pools.py:177 REST/methods/services_usage.py:120
 #: reports/stats/pool_users_summary.py:59
-#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:164
 #: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
@@ -390,56 +389,56 @@ msgstr "Fecha de creación"
 msgid "Pool"
 msgstr "Pool"
 
-#: REST/methods/meta_service_pools.py:175 REST/methods/services_usage.py:121
+#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:122
 #: REST/methods/user_services.py:123 REST/methods/user_services.py:215
 #: auths/IP/authenticator.py:67
 msgid "IP"
 msgstr "IP "
 
-#: REST/methods/meta_service_pools.py:176 REST/methods/services_usage.py:122
+#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
 #: REST/methods/user_services.py:124 REST/methods/user_services.py:216
 msgid "Friendly name"
 msgstr "Nombre descriptivo"
 
-#: REST/methods/meta_service_pools.py:177 REST/methods/user_services.py:125
+#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:125
 msgid "status"
 msgstr "estado"
 
-#: REST/methods/meta_service_pools.py:178 REST/methods/user_services.py:127
+#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:127
 msgid "In Use"
 msgstr "En uso"
 
-#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:124
+#: REST/methods/meta_service_pools.py:183 REST/methods/services_usage.py:125
 #: REST/methods/user_services.py:128
 msgid "Src Host"
 msgstr "Host Orig."
 
-#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
+#: REST/methods/meta_service_pools.py:184 REST/methods/services_usage.py:124
 #: REST/methods/user_services.py:129
 msgid "Src Ip"
 msgstr "Ip Orig."
 
-#: REST/methods/meta_service_pools.py:181 REST/methods/services_usage.py:117
+#: REST/methods/meta_service_pools.py:185 REST/methods/services_usage.py:118
 #: REST/methods/user_services.py:130
 msgid "Owner"
 msgstr "Propietario"
 
-#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:131
+#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:131
 #: REST/methods/user_services.py:219
 msgid "Actor version"
 msgstr "Versión de actor"
 
-#: REST/methods/meta_service_pools.py:209 REST/methods/services_usage.py:143
+#: REST/methods/meta_service_pools.py:213 REST/methods/services_usage.py:144
 #: REST/methods/user_services.py:163
 msgid "Item already being removed"
 msgstr "Elemento ya eliminado"
 
-#: REST/methods/meta_service_pools.py:211 REST/methods/services_usage.py:145
+#: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:146
 #: REST/methods/user_services.py:165
 msgid "Item is not removable"
 msgstr "El elemento no se puede eliminar"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:86
+#: REST/methods/networks.py:58 REST/methods/transports.py:87
 msgid "Networks"
 msgstr "Redes"
 
@@ -475,7 +474,7 @@ msgstr "Restricciones de acceso por calendario"
 msgid "Calendar"
 msgstr "Calendario"
 
-#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:116
+#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:117
 msgid "Access"
 msgstr "Acceso"
 
@@ -527,7 +526,7 @@ msgstr "Proveedores de servicios"
 msgid "Status"
 msgstr "Estado"
 
-#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:166
+#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:164
 #: templates/uds/reports/stats/authenticator_stats.html:16
 #: templates/uds/reports/stats/pools-usage-day.html:29
 msgid "Services"
@@ -639,7 +638,7 @@ msgstr "Genera"
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr ""
-"El token de servicio parece estar en uso por otro servicio. Por favor, "
+"El token del servicio parece estar en uso por otro servicio. Por favor, "
 "seleccione uno nuevo."
 
 #: REST/methods/services.py:193
@@ -695,9 +694,10 @@ msgstr "Ok"
 
 #: REST/methods/services_pool_groups.py:59
 msgid "Services Pool Groups"
-msgstr "Grupos de  Service Pools"
+msgstr "Grupos de Pools de servicios"
 
-#: REST/methods/services_pools.py:97 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:97 REST/methods/transports.py:60
+#: REST/methods/transports.py:105
 msgid "Service Pools"
 msgstr "Pools de servicios"
 
@@ -711,7 +711,7 @@ msgstr "Muestra transportes"
 
 #: REST/methods/services_pools.py:107
 msgid "Parent service"
-msgstr "Servicio de padres"
+msgstr "Servicio padre"
 
 #: REST/methods/services_pools.py:230
 msgid "Create at least a service before creating a new service pool"
@@ -822,11 +822,11 @@ msgstr "Si está activo, se mostrarán transportes alternativos para el usuario 
 
 #: REST/methods/services_pools.py:353
 msgid "Accounting"
-msgstr "Contabilidad"
+msgstr "Contadores"
 
 #: REST/methods/services_pools.py:354
 msgid "Account associated to this service pool"
-msgstr "Cuenta asociada a este grupo de servicios"
+msgstr "Contador asociado a este Pool de servicios"
 
 #: REST/methods/services_pools.py:370
 msgid "Base service does not exist anymore"
@@ -841,11 +841,11 @@ msgstr "Este servicio requiere un OS Manager"
 msgid "unknown"
 msgstr "desconocido"
 
-#: REST/methods/services_usage.py:111
+#: REST/methods/services_usage.py:112
 msgid "Services Usage"
 msgstr "Uso de servicios"
 
-#: REST/methods/services_usage.py:118 reports/auto/fields.py:99
+#: REST/methods/services_usage.py:119 reports/auto/fields.py:99
 msgid "Service"
 msgstr "Servicio"
 
@@ -853,15 +853,15 @@ msgstr "Servicio"
 msgid "Transports"
 msgstr "Transportes"
 
-#: REST/methods/transports.py:60
+#: REST/methods/transports.py:61
 msgid "Devices"
 msgstr "Dispositivos"
 
-#: REST/methods/transports.py:77
+#: REST/methods/transports.py:78
 msgid "Network access"
 msgstr "Acceso de red"
 
-#: REST/methods/transports.py:78
+#: REST/methods/transports.py:79
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -869,7 +869,7 @@ msgstr ""
 "Si está marcada, se habilitará el transporte para las redes seleccionadas. "
 "Si no, el transporte se desactivará para redes seleccionadas"
 
-#: REST/methods/transports.py:87
+#: REST/methods/transports.py:88
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
@@ -877,11 +877,11 @@ msgstr ""
 "Redes asociadas a este transporte. Si no hay red seleccionada, significará "
 "\"todas las redes\""
 
-#: REST/methods/transports.py:95
+#: REST/methods/transports.py:96
 msgid "Allowed Devices"
 msgstr "Dispositivos permitidos"
 
-#: REST/methods/transports.py:96
+#: REST/methods/transports.py:97
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
@@ -890,7 +890,7 @@ msgstr ""
 "este transporte. Otra cosa, se permitirá sólo dispositivos compatibles con "
 "los valores seleccionados"
 
-#: REST/methods/transports.py:105
+#: REST/methods/transports.py:106
 msgid "Currently assigned services pools"
 msgstr "Services pools asignados actualmente"
 
@@ -1479,8 +1479,8 @@ msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
 msgstr ""
-"Atributos que contienen los atributos de nombre de usuario o patrones de "
-"atributos (uno para cada línea)"
+"Atributos que contienen el nombre de usuario o patrones de atributos (uno en "
+"cada línea)"
 
 #: auths/RegexLdap/authenticator.py:75
 msgid "Group Name Attr"
@@ -1491,8 +1491,8 @@ msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
 msgstr ""
-"Atributo que contiene los atributos de nombre de grupo o patrones de "
-"atributos (uno para cada línea)"
+"Atributo que contiene el nombre de grupo o patrones de atributos (uno en "
+"cada línea)"
 
 #: auths/RegexLdap/authenticator.py:78
 msgid "Alt. class"
@@ -1713,19 +1713,19 @@ msgstr "Clase para grupos LDAP (normalmente poxisGroup)"
 
 #: auths/SimpleLDAP/authenticator.py:68
 msgid "Group Id Attr"
-msgstr "Identificación de grupo Attr"
+msgstr "Atributo del ID de Grupo"
 
 #: auths/SimpleLDAP/authenticator.py:68
 msgid "Attribute that contains the group id"
-msgstr "Atributo que contiene la identificación del grupo"
+msgstr "Atributo que contiene el ID del grupo"
 
 #: auths/SimpleLDAP/authenticator.py:69
 msgid "Group membership attr"
-msgstr "Grupo de miembros attr"
+msgstr "Atributo de miembros de grupo"
 
 #: auths/SimpleLDAP/authenticator.py:69
 msgid "Attribute of the group that contains the users belonging to it"
-msgstr "Atributo del grupo que contiene los usuarios que le pertenecen."
+msgstr "Atributo del grupo que contiene los usuarios"
 
 #: auths/SimpleLDAP/authenticator.py:71
 msgid "SimpleLDAP (DEPRECATED)"
@@ -1733,12 +1733,12 @@ msgstr "SimpleLDAP (DEPRECATED)"
 
 #: auths/SimpleLDAP/authenticator.py:73
 msgid "Simple LDAP authenticator (DEPRECATED)"
-msgstr "Autenticador LDAP simple (DEPRECADO)"
+msgstr "Autenticador Simple LDAP (DEPRECATED)"
 
 #: auths/SimpleLDAP/authenticator.py:387
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
 msgstr ""
-"La clase de grupo Ldap parece ser incorrecta (no se ha encontrado ningún "
+"La clase de grupo LDAP parece ser incorrecta (no se ha encontrado ningún "
 "grupo en esa clase)"
 
 #: auths/SimpleLDAP/authenticator.py:412
@@ -1746,16 +1746,16 @@ msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
 msgstr ""
-"La clase de usuario de LDAP o el ID de usuario attr probablemente estén "
-"equivocados (no se puede encontrar ningún usuario con ambas condiciones)"
+"La clase de usuario LDAP o el ID de usuario probablemente estén equivocados "
+"(no se puede encontrar ningún usuario con ambas condiciones)"
 
 #: auths/SimpleLDAP/authenticator.py:421
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
 msgstr ""
-"La clase de grupo de Ldap o el identificador de grupo attr es probablemente "
-"incorrecto (no se puede encontrar ningún grupo con ambas condiciones)"
+"La clase de grupo de Ldap o el ID de grupo es probablemente incorrecto (no "
+"se puede encontrar ningún grupo con ambas condiciones)"
 
 #: auths/SimpleLDAP/authenticator.py:428
 msgid "Can't locate any group with the membership attribute specified"
@@ -1826,7 +1826,7 @@ msgstr ""
 msgid "The requested transport {} is not valid for {}"
 msgstr "El transporte solicitado {} no es válido para {}"
 
-#: core/managers/user_service.py:717
+#: core/managers/user_service.py:716
 msgid "The service is not accessible from this device"
 msgstr "El servicio no es accesible desde este dispositivo."
 
@@ -1976,7 +1976,7 @@ msgstr "Demasiados servicios en preparación"
 
 #: core/util/state.py:85
 msgid "Meta member"
-msgstr "Miembro meta"
+msgstr "Miembro MetaPool"
 
 #: core/util/states/common.py:65
 msgid "Waiting for removal"
@@ -2008,15 +2008,15 @@ msgstr "{} días {: d}: {: 02d}: {: 02d}"
 
 #: core/util/tools.py:160
 msgid "The basename is not a valid for a hostname"
-msgstr "El nombre base no es válido para un nombre de host"
+msgstr "El nombre no es válido para un nombre de host"
 
 #: core/util/tools.py:163
 msgid "The length of basename plus length must be greater than 0"
-msgstr "La longitud del nombre base más la longitud debe ser mayor que 0"
+msgstr "El nombre base más el contador debe ser mayor que 0"
 
 #: core/util/tools.py:166
 msgid "The length of basename plus length must not be greater than 15"
-msgstr "La longitud de \"basename\" más la longitud no debe ser superior a 15"
+msgstr "El nombre base más el contador no debe ser superior a 15"
 
 #: core/util/tools.py:169
 msgid "The machine name can't be only numbers"
@@ -2044,7 +2044,7 @@ msgstr "{0} contiene caracteres no válidos"
 
 #: core/util/validators.py:81
 msgid "{} exceeds maximum host name length."
-msgstr "{} excede la longitud máxima del nombre de host."
+msgstr "{} excede la longitud máxima de un nombre de host."
 
 #: core/util/validators.py:92
 msgid "{} is not a valid hostname"
@@ -2105,7 +2105,7 @@ msgstr "Servicio no encontrado"
 
 #: dispatchers/wyse_enterprise/views.py:260
 msgid "Invalid machine uuid."
-msgstr "Máquina inválida uuid."
+msgstr "UUID de máquina, inválido"
 
 #: dispatchers/wyse_enterprise/views.py:274 web/util/errors.py:74
 msgid "Transport not found"
@@ -2181,7 +2181,7 @@ msgstr "Quitar un grupo"
 
 #: models/calendar_action.py:70
 msgid "Sets the ignore unused"
-msgstr "Establece el ignorar sin usar"
+msgstr "Ignorar máquinas sin usar"
 
 #: models/calendar_action.py:70
 msgid "Ignore assigned and unused"
@@ -2190,7 +2190,7 @@ msgstr "Ignorar asignado y no utilizado"
 #: models/calendar_action.py:71
 msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr ""
-"Eliminar TODOS los servicios de usuario asignados. UTILIZAR CON PRECAUCIÓN!"
+"Eliminar TODOS los servicios asignados a usuarios. UTILIZAR CON PRECAUCIÓN!"
 
 #: models/calendar_rule.py:53
 msgid "Yearly"
@@ -2231,11 +2231,11 @@ msgstr "Semanas"
 
 #: models/meta_pool.py:72
 msgid "Evenly distributed"
-msgstr "Distribuidos equitativamente"
+msgstr "Distribuidos aleatoriamente"
 
 #: models/meta_pool.py:74
 msgid "Greater % available"
-msgstr "Mayor% disponible"
+msgstr "Mayor % de uso disponible"
 
 #: models/permissions.py:73
 msgid "Read"
@@ -2258,15 +2258,15 @@ msgid ""
 "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= "
 "3.6)</b>"
 msgstr ""
-"UDS Actor para máquinas Debian, Ubuntu, ... Linux <b>(Requiere python&gt; = "
-"3.6)</b>"
+"Actor UDS para máquinas Linux: Debian, Ubuntu, ...  <b>(Requiere python&gt; "
+"= 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:56
 msgid ""
 "UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires "
 "python >= 3.6)</b>"
 msgstr ""
-"UDS Actor para máquinas Centos, Fedora, RH, Suse, ... Linux <b>(Requiere "
+"Actor UDS para máquinas Linux: Centos, Fedora, RH, Suse, ... <b>(Requiere "
 "python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:63
@@ -2274,23 +2274,23 @@ msgid ""
 "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
 "<b>(Requires python >= 3.6)</b>"
 msgstr ""
-"Actor UDS para máquinas Linux basadas en Debian. Utilizado SOLO para "
-"máquinas estáticas. <b>(Requiere python&gt; = 3.6)</b>"
+"Actor UDS para máquinas Linux basadas en Debian. Utilizar SOLO para máquinas "
+"estáticas. <b>(Requiere python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:70
 msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
 msgstr ""
-"<b>Legacy</b> Actor UDS para Debian, Ubuntu... Máquinas con Linux "
-"<b>(requiere Python 2.7)</b>"
+"Actor UDS<b>Legacy</b> para máquinas Linux: Debian, Ubuntu... <b>(requiere "
+"Python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:77
 msgid ""
 "<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines "
 "<b>(Requires python 2.7)</b>"
 msgstr ""
-"Actor UDS <b>heredado</b> para máquinas Centos, Fedora, RH, ... Linux "
+"Actor UDS <b>Legacy</b> para máquinas Linux: Centos, Fedora, RH, ... "
 "<b>(Requiere python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:84
@@ -2298,8 +2298,8 @@ msgid ""
 "<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python "
 "2.7)</b>"
 msgstr ""
-"Actor UDS <b>heredado</b> para OpenSUSE, ... máquinas Linux <b>(Requiere "
-"python 2.7)</b>"
+"Actor UDS <b>Legacy</b> para máquinas Linux: Suse, OpenSuse, ... "
+"<b>(Requiere python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
@@ -2307,17 +2307,17 @@ msgstr "Linux OS Manager"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:55
 msgid "Os Manager to control Linux virtual machines"
-msgstr "Os Manager para controlar las máquinas virtuales de Linux"
+msgstr "Os Manager para controlar máquinas Linux"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:61
 #: osmanagers/WindowsOsManager/windows.py:52
 msgid "Logout Action"
-msgstr "Acción de cierre de sesión"
+msgstr "Acción en el cierre de sesión del usuario"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:64
 #: osmanagers/WindowsOsManager/windows.py:55
 msgid "What to do when user logs out from service"
-msgstr "Qué hacer cuando el usuario cierra la sesión del servicio"
+msgstr "Qué hacer cuando el usuario cierra sesión en el servicio"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:66
 #: osmanagers/WindowsOsManager/windows.py:57
@@ -2332,21 +2332,20 @@ msgstr "Eliminar servicio"
 #: osmanagers/LinuxOsManager/linux_osmanager.py:68
 #: osmanagers/WindowsOsManager/windows.py:59
 msgid "Keep service assigned even on new publication"
-msgstr "Mantener servicio asignado en Nueva publicación"
+msgstr "Mantener servicio asignado en nueva publicación"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:73
 #: osmanagers/WindowsOsManager/windows.py:65
 msgid "Max.Idle time"
-msgstr "Tiempo máx de inactividad"
+msgstr "Tiempo máximo de inactividad"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:77
 msgid ""
 "Maximum idle time (in seconds) before session is automatically closed to the "
 "user (<= 0 means no max idle time)."
 msgstr ""
-"Máximo tiempo de inactividad (en segundos) antes de la sesión se cierra "
-"automáticamente a la usuario (< = 0 significa ningún tiempo de inactividad "
-"máximo)."
+"Tiempo máximo de inactividad (en segundos) antes de cerrar la sesión de un "
+"usuario automáticamente (< = 0 significa ningún tiempo de inactividad)."
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:52
 msgid "Linux Random Password OS Manager"
@@ -2354,9 +2353,7 @@ msgstr "Contraseña aleatoria para Linux OS Manager "
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:54
 msgid "Os Manager to control linux machines, with user password set randomly."
-msgstr ""
-"Os Manager para controlar máquinas Linux, con contraseña de usuario "
-"establecida aleatoriamente."
+msgstr "Os Manager para controlar máquinas Linux con contraseña aleatoria."
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:58
 #: osmanagers/WindowsOsManager/windows_domain.py:68
@@ -2377,7 +2374,7 @@ msgstr "¡Debe indicar una cuenta de usuario!"
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgstr ""
-"RDS UDS Actor (para aplicaciones remotas en Windows Server 2012, 2016, 2019)"
+"Actor UDS para servidores RDS (vAPPs en Windows Server 2012, 2016 y 2019)"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:31
 msgid "RDS OS Manager"
@@ -2407,25 +2404,24 @@ msgstr "Actor UDS para máquinas Windows"
 msgid ""
 "UDS Actor for Unmanaged windows machines. Used ONLY for static machines."
 msgstr ""
-"UDS Actor para máquinas de Windows no administradas. Utilizado SOLO para "
+"Actor UDS para máquinas Windows no administradas. Utilizado SOLO para "
 "máquinas estáticas."
 
 #: osmanagers/WindowsOsManager/windows.py:45
 msgid "Windows Basic OS Manager"
-msgstr "OS Manager para Windows Básico"
+msgstr "Windows Basic OS Manager"
 
 #: osmanagers/WindowsOsManager/windows.py:47
 msgid "Os Manager to control windows machines without domain."
-msgstr "Os Manager para controlar las máquinas windows sin dominio."
+msgstr "Os Manager para controlar máquinas Windows sin dominio AD."
 
 #: osmanagers/WindowsOsManager/windows.py:70
 msgid ""
 "Maximum idle time (in seconds) before session is automatically closed to the "
 "user (<= 0 means no max. idle time)"
 msgstr ""
-"Máximo tiempo de inactividad (en segundos) antes de la sesión se cierra "
-"automáticamente a la usuario (< = 0 significa ningún tiempo de inactividad "
-"máximo)"
+"Tiempo máximo de inactividad (en segundos) antes de cerrar la sesión de un "
+"usuario automáticamente (< = 0 significa ningún tiempo de inactividad)."
 
 #: osmanagers/WindowsOsManager/windows.py:79
 msgid "Length must be numeric!!"
@@ -2437,11 +2433,11 @@ msgstr "La longitud debe estar entre 1 y 6"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:61
 msgid "Windows Domain OS Manager"
-msgstr "OS Manager para Dominio Windows "
+msgstr "Windows Domain OS Manager"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:63
 msgid "Os Manager to control windows machines with domain."
-msgstr "Os Manager para controlar las máquinas windows con dominio."
+msgstr "Os Manager para controlar máquinas Windows en dominio AD."
 
 #: osmanagers/WindowsOsManager/windows_domain.py:67
 #: services/OpenStack/provider.py:101 services/OpenStack/provider_legacy.py:108
@@ -2496,7 +2492,7 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 msgid "Machine clean"
-msgstr "Maquina limpia"
+msgstr "Limpiar máquina"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 msgid ""
@@ -2533,7 +2529,7 @@ msgstr "¡Debe indicar una contraseña para la cuenta!"
 #: osmanagers/WindowsOsManager/windows_domain.py:273
 #: osmanagers/WindowsOsManager/windows_domain.py:283
 msgid "Check error: {}"
-msgstr "Error de verificación: {}"
+msgstr "Error en la verificación: {}"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:275
 #, python-brace-format
@@ -2580,14 +2576,12 @@ msgstr "Todos los parámetros parecen funcionar bien."
 
 #: osmanagers/WindowsOsManager/windows_random.py:59
 msgid "Windows Random Password OS Manager"
-msgstr "Contraseña Aleatoria para Windows OS Manager"
+msgstr "Contraseña aleatoria para Windows OS Manager"
 
 #: osmanagers/WindowsOsManager/windows_random.py:61
 msgid ""
 "Os Manager to control windows machines, with user password set randomly."
-msgstr ""
-"OS Manager para controlar máquinas Windows con contraseñas de usuario "
-"aleatorias"
+msgstr "OS Manager para controlar máquinas Windows con contraseña aleatoria"
 
 #: osmanagers/WindowsOsManager/windows_random.py:66
 msgid "Current (template) password of the user account"
@@ -2617,7 +2611,7 @@ msgstr "Fecha de finalización"
 
 #: reports/auto/fields.py:67
 msgid "ending date for report"
-msgstr "fecha de finalización del informe"
+msgstr "Fecha de finalización del informe"
 
 #: reports/auto/fields.py:74
 msgid "Report data interval"
@@ -2633,11 +2627,11 @@ msgstr "Intervalo para los datos del informe"
 
 #: reports/auto/fields.py:97
 msgid "Service pool"
-msgstr "Grupo de servicios"
+msgstr "Pools de servicios"
 
 #: reports/auto/fields.py:97
 msgid "Service pool for report"
-msgstr "Grupo de servicios para el informe"
+msgstr "Pool de servicios para el informe"
 
 #: reports/auto/fields.py:98 reports/lists/users.py:57
 #: web/forms/LoginForm.py:44
@@ -2646,19 +2640,19 @@ msgstr "Autenticador"
 
 #: reports/auto/fields.py:98
 msgid "Authenticator for report"
-msgstr "Autenticador para informe"
+msgstr "Autenticador para el informe"
 
 #: reports/auto/fields.py:99
 msgid "Service for report"
-msgstr "Servicio para informe"
+msgstr "Servicios para el informe"
 
 #: reports/auto/fields.py:100
 msgid "Service provider"
-msgstr "Proveedor de servicio"
+msgstr "Proveedor de servicios"
 
 #: reports/auto/fields.py:100
 msgid "Service provider for report"
-msgstr "Proveedor de servicios para informe"
+msgstr "Proveedor de servicios para el informe"
 
 #: reports/lists/base.py:39
 msgid "Lists"
@@ -2682,7 +2676,7 @@ msgstr "Lista de usuarios para {}"
 
 #: reports/lists/users.py:86 reports/stats/pool_users_summary.py:145
 msgid "UDS Report of users in {}"
-msgstr "Informe UDS de usuarios en {}"
+msgstr "Informe de usuarios en {}"
 
 #: reports/lists/users.py:110 templates/uds/reports/lists/users.html:14
 msgid "User ID"
@@ -2701,19 +2695,19 @@ msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
 msgstr ""
-"Genera un informe con las estadísticas de un autenticador durante un período "
-"deseado"
+"Genera un informe con estadísticas de un autenticador durante un periodo "
+"específico"
 
 #: reports/stats/auth_stats.py:108 reports/stats/usage_by_pool.py:136
 #: templates/uds/reports/stats/authenticator_stats.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:6
 msgid "Users usage list"
-msgstr "Lista de uso de usuarios"
+msgstr "Lista del uso de los usuarios"
 
 #: reports/stats/auth_stats.py:109 reports/stats/usage_by_pool.py:137
 msgid "UDS Report of users usage"
-msgstr "Informe UDS del uso de los usuarios"
+msgstr "Informe del uso de los usuarios"
 
 #: reports/stats/base.py:40
 msgid "Statistics"
@@ -2721,11 +2715,13 @@ msgstr "Estadísticas"
 
 #: reports/stats/pool_users_summary.py:52
 msgid "Pool Usage by users"
-msgstr "Uso de la agrupación por parte de los usuarios"
+msgstr "Uso de un pool de servicios por usuarios"
 
 #: reports/stats/pool_users_summary.py:53
 msgid "Generates a report with the summary of users usage for a pool"
-msgstr "Genera un informe con el resumen del uso de los usuarios para un grupo"
+msgstr ""
+"Genera un informe con el resumen de uso de los usuarios para un pool de "
+"servicios"
 
 #: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:61
 msgid "Pool for report"
@@ -2821,23 +2817,23 @@ msgstr "Uso de pools en un día"
 msgid "Pools usage counters for an specific day"
 msgstr "Contadores de uso de pools para un día específico"
 
-#: reports/stats/pools_usage_day.py:125
+#: reports/stats/pools_usage_day.py:123
 msgid "Services by hour"
 msgstr "Servicios por hora"
 
-#: reports/stats/pools_usage_day.py:128 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_usage_day.py:126 reports/stats/pools_usage_day.py:164
 #: reports/stats/user_access.py:213 reports/stats/user_access.py:230
 #: templates/uds/reports/stats/pools-usage-day.html:28
 msgid "Hour"
 msgstr "Hora"
 
-#: reports/stats/pools_usage_day.py:147
+#: reports/stats/pools_usage_day.py:145
 msgid "Services usage report for a day"
-msgstr "Informe de uso de servicios por un día."
+msgstr "Informe del uso de servicios por día."
 
-#: reports/stats/pools_usage_day.py:148
+#: reports/stats/pools_usage_day.py:146
 msgid "Service usage report"
-msgstr "Informe de uso del servicio"
+msgstr "Informe del uso de servicios"
 
 #: reports/stats/pools_usage_summary.py:47
 msgid "Summary of pools usage"
@@ -2846,13 +2842,11 @@ msgstr "Resumen de uso de pools"
 #: reports/stats/pools_usage_summary.py:48
 msgid ""
 "Summary of Pools usage with time totals, accesses totals, time total by pool"
-msgstr ""
-"Resumen del uso de agrupaciones con totales de tiempo, totales de accesos, "
-"total de tiempo por agrupación"
+msgstr "Resumen de uso de Pools de servicio con tiempos y accesos totales"
 
 #: reports/stats/pools_usage_summary.py:119
 msgid "Summary of Pools usage"
-msgstr "Resumen del uso de piscinas"
+msgstr "Resumen de uso de Pools"
 
 #: reports/stats/pools_usage_summary.py:119
 #: templates/uds/reports/stats/pools-usage-summary.html:4
@@ -2862,7 +2856,7 @@ msgstr "a"
 
 #: reports/stats/pools_usage_summary.py:120
 msgid "UDS Report Summary of pools usage"
-msgstr "Resumen del informe UDS del uso de grupos"
+msgstr "Informe de uso de Pools de servicios"
 
 #: reports/stats/pools_usage_summary.py:140
 msgid "Total Time (seconds)"
@@ -2896,7 +2890,7 @@ msgstr "Uso de Pools por informe de usuario"
 
 #: reports/stats/usage_by_pool.py:86
 msgid "ALL POOLS"
-msgstr "TODAS LAS PISCINAS"
+msgstr "TODOS LOS POOLS"
 
 #: reports/stats/usage_by_pool.py:158
 #: templates/uds/reports/stats/usage-by-pool.html:16
@@ -2961,7 +2955,7 @@ msgstr "Acceso de usuarios a UDS"
 
 #: reports/stats/user_access.py:251
 msgid "UDS Report for users access"
-msgstr "Informe UDS para el acceso de los usuarios"
+msgstr "Informe de acceso de usuarios"
 
 #: services/Azure_enterprise/provider.py:43
 msgid "Subscription ID"
@@ -3118,7 +3112,7 @@ msgstr "Longitud del nombre"
 #: services/Proxmox/service.py:161 services/VCloud_enterprise/service.py:89
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:177
 msgid "Size of numeric part for the names of these machines"
-msgstr "Tamaño de la parte numérica para los nombres de estas máquinas."
+msgstr "Tamaño del contador para los nombres de las máquinas."
 
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:107
@@ -3383,7 +3377,7 @@ msgstr "Proveedor de servicios HyperV con soporte de clúster"
 
 #: services/HyperV_enterprise/provider.py:60
 msgid "HyperV Server or HyperV Cluster IP or FQDN"
-msgstr "Servidor HyperV o IP de clúster HyperV o FQDN"
+msgstr "Servidor HyperV o clúster HyperV. IP o FQDN"
 
 #: services/HyperV_enterprise/provider.py:62 services/OVirt/service.py:111
 msgid "Cluster"
@@ -3391,7 +3385,8 @@ msgstr "Cluster"
 
 #: services/HyperV_enterprise/provider.py:65
 msgid "If you are using a clustered HyperV server, enable this option."
-msgstr "Si está utilizando un servidor HyperV agrupado, habilite esta opción."
+msgstr ""
+"Si está utilizando un cluster de servidores HyperV, habilite esta opción."
 
 #: services/HyperV_enterprise/provider.py:69
 msgid "Enable SSL"
@@ -3417,8 +3412,7 @@ msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
 msgstr ""
-"Si está activo, el certificado en la conexión del clúster se aplicará para "
-"ser verificado."
+"Si está activo, se comprobará el certificado en la conexión con el clúster."
 
 #: services/HyperV_enterprise/provider.py:135
 msgid ""
@@ -3441,7 +3435,7 @@ msgstr "HyperV Linked Clone"
 
 #: services/HyperV_enterprise/service.py:59
 msgid "Hyper Services based on templates and differential disks"
-msgstr "Hyper Services basado en plantillas y discos diferenciales"
+msgstr "Servicio HyperV basado en plantillas y discos diferenciales"
 
 #: services/Nutanix_enterprise/provider.py:30
 msgid "Nutanix Acropolis Platform Provider"
@@ -3497,22 +3491,23 @@ msgstr ""
 
 #: services/Nutanix_enterprise/service.py:74
 msgid "VCPUS"
-msgstr "VCPUS"
+msgstr "vCPUs"
 
 #: services/Nutanix_enterprise/service.py:80
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgstr ""
-"Número de vcpus (\"-1 significa\" mantener vcpus original de la máquina \")"
+"Número de vCPUs (\"-1 significa\" mantener las mismas vCPUs que de la "
+"máquina base \")"
 
 #: services/Nutanix_enterprise/service.py:86
 msgid "Cores per VCPU"
-msgstr "Núcleos por vCPU"
+msgstr "Cores por vCPU"
 
 #: services/Nutanix_enterprise/service.py:92
 msgid "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgstr ""
-"Número de vcpus (\"-1 significa\" mantener los núcleos originales de la "
-"máquina por vcpu \")"
+"Número de vCPUs (\"-1 significa\" mantener las mismas vCPUs que la máquina "
+"base \")"
 
 #: services/Nutanix_enterprise/service.py:101
 msgid ""
@@ -3534,7 +3529,7 @@ msgstr ""
 
 #: services/Nutanix_enterprise/service.py:145
 msgid "Both Cores per VCPU and Number of VCPUS are required"
-msgstr "Se requieren ambos núcleos por VCPU y Número de VCPUS"
+msgstr "Se requieren cores por vCPU y Número de vCPUs"
 
 #: services/OVirt/provider.py:77
 msgid "oVirt/RHEV Platform Provider"
@@ -3724,7 +3719,7 @@ msgid ""
 "Security parameter for OpenGnsys to keep reservations at most this hours. "
 "Handle with care!"
 msgstr ""
-"Parámetro de seguridad para OpenGnsys para mantener las reservas como máximo "
+"Parámetro de seguridad de OpenGnsys para mantener las reservas como máximo "
 "estas horas. ¡Tratar con cuidado!"
 
 #: services/OpenNebula/provider.py:58
@@ -3849,13 +3844,13 @@ msgstr "Tiempo de espera en segundos de conexión a OpenStack"
 
 #: services/OpenStack/provider.py:110
 msgid "Project Id"
-msgstr "Projecto ID"
+msgstr "ID del proyecto"
 
 #: services/OpenStack/provider.py:110
 msgid "Project (tenant) for this provider. Set only if required by server."
 msgstr ""
-"Proyecto (inquilino) para este proveedor. Establecer solo si es requerido "
-"por el servidor."
+"Proyecto (tenant) para este proveedor. Establecer solo si es requerido por "
+"el servidor."
 
 #: services/OpenStack/provider.py:111 services/OpenStack/service.py:107
 msgid "Region"
@@ -3868,7 +3863,7 @@ msgstr ""
 
 #: services/OpenStack/provider.py:113
 msgid "Subnets names"
-msgstr "Nombres de subredes"
+msgstr "Nombres de las subredes"
 
 #: services/OpenStack/provider.py:113
 msgid ""
@@ -3946,11 +3941,11 @@ msgstr "Red para conectar a este servicio"
 
 #: services/OpenStack/service.py:135
 msgid "Flavor"
-msgstr "Sabor"
+msgstr "Flavor"
 
 #: services/OpenStack/service.py:135
 msgid "Flavor for service"
-msgstr "Sabor para el servicio"
+msgstr "Flavor para este servicio"
 
 #: services/OpenStack/service.py:137
 msgid "Security Groups"
@@ -3966,16 +3961,16 @@ msgstr "IP "
 
 #: services/PhysicalMachines/provider.py:42
 msgid "Static IP Machines Provider"
-msgstr "Proveedor de máquinas de IP estática"
+msgstr "Proveedor de máquinas con IP estática"
 
 #: services/PhysicalMachines/provider.py:44
 msgid "Provides connection to machines by IP"
-msgstr "Proporciona conexión a máquinas por IP"
+msgstr "Proporciona conexión a máquinas vía IP"
 
 #: services/PhysicalMachines/service_multi.py:61
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
-msgstr "Token de servicio"
+msgstr "Token del servicio"
 
 #: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:57
@@ -3983,8 +3978,9 @@ msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
 msgstr ""
-"Token de servicio que serán utilizados por los actores para comunicarse con "
-"el servicio. Deje en blanco para la asignación persistente."
+"Token del servicio que será utilizado por el actor para su comunicación. "
+"Deje en blanco para no gestionar el servicio y disponer de asignación "
+"persistente."
 
 #: services/PhysicalMachines/service_multi.py:69
 #: services/RDS_enterprise/provider.py:48
@@ -3993,7 +3989,7 @@ msgstr "Lista de servidores"
 
 #: services/PhysicalMachines/service_multi.py:69
 msgid "List of servers available for this service"
-msgstr "Lista de servidores disponibles para este servicio."
+msgstr "Lista de IPs de máquinas disponibles para este servicio."
 
 #: services/PhysicalMachines/service_multi.py:71
 msgid "Check Port"
@@ -4003,16 +3999,18 @@ msgstr "Comprobar puerto"
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
-"Si no es cero, solo se atenderán los hosts que respondan a la conexión en "
-"ese puerto."
+"Si no es cero, solo se asignarán las IPs de las máquinas que respondan a la "
+"conexión con el puerto indicado."
 
 #: services/PhysicalMachines/service_multi.py:72
 msgid "Skip time"
-msgstr "Saltar tiempo"
+msgstr "Tiempo de comprobación"
 
 #: services/PhysicalMachines/service_multi.py:72
 msgid "If a host fails to check, skip it for this time (in minutes)."
-msgstr "Si un host no puede verificar, omítalo por este tiempo (en minutos)."
+msgstr ""
+"Si en una maquina no se puede verificar su conexión, omítala para una nueva "
+"comprobación por este tiempo (en minutos)."
 
 #: services/PhysicalMachines/service_multi.py:75
 msgid "Static Multiple IP"
@@ -4052,7 +4050,7 @@ msgstr "Proveedor de servicios de plataforma Proxmox"
 
 #: services/Proxmox/provider.py:60
 msgid "Proxmox Server IP or Hostname"
-msgstr "IP del servidor Proxmox o nombre de host"
+msgstr "IP o nombre del servidor Proxmox"
 
 #: services/Proxmox/provider.py:61
 msgid "Proxmox API port (default is 8006)"
@@ -4062,7 +4060,7 @@ msgstr "Puerto Proxmox API (el predeterminado es 8006)"
 msgid ""
 "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgstr ""
-"Usuario con privilegios válidos en Proxmox, (use el formulario \"usuario @ "
+"Usuario con privilegios válidos en Proxmox, (use el formato \"usuario @ "
 "autenticador\")"
 
 #: services/Proxmox/provider.py:64
@@ -4071,7 +4069,7 @@ msgstr "Contraseña del usuario de Proxmox"
 
 #: services/Proxmox/provider.py:69
 msgid "Timeout in seconds of connection to Proxmox"
-msgstr "Tiempo de espera en segundos de conexión a Proxmox"
+msgstr "Tiempo de espera en segundos de conexión al servidor Proxmox"
 
 #: services/Proxmox/publication.py:94
 #: services/Vmware_enterprise/publication.py:67
@@ -4086,7 +4084,7 @@ msgstr "Publicación de UDS para {0} creado en {1}"
 
 #: services/Proxmox/service.py:63
 msgid "Proxmox Linked Clone"
-msgstr "Clon vinculado Proxmox"
+msgstr "Proxmox Linked Clone"
 
 #: services/Proxmox/service.py:67
 msgid "Proxmox Services based on templates and COW (experimental)"
@@ -4094,16 +4092,15 @@ msgstr "Servicios Proxmox basados en plantillas y COW (experimental)"
 
 #: services/Proxmox/service.py:112
 msgid "Pool that will contain UDS created vms"
-msgstr "Grupo que contendrá vms creados por UDS"
+msgstr "Pool que contendrá las VMs creadas por UDS"
 
 #: services/Proxmox/service.py:119
 msgid "HA"
-msgstr "DECIR AH"
+msgstr "HA"
 
 #: services/Proxmox/service.py:121
 msgid "Select if HA is enabled and HA group for machines of this service"
-msgstr ""
-"Seleccione si HA está habilitado y el grupo HA para máquinas de este servicio"
+msgstr "Seleccione si habilita HA"
 
 #: services/Proxmox/service.py:142
 msgid "Storage for publications & machines."
@@ -4111,7 +4108,7 @@ msgstr "Almacenamiento para publicaciones y máquinas."
 
 #: services/Proxmox/service.py:188
 msgid "Disabled"
-msgstr "Discapacitado"
+msgstr "Deshabilitado"
 
 #: services/RDS_enterprise/provider.py:42
 msgid "RDS Platform Provider"
@@ -4172,8 +4169,8 @@ msgid ""
 "If active, uds will mirror the user on your active director. WARNING!! "
 "Existing coincident users may be deleted!."
 msgstr ""
-"Si está activo, uds reflejará al usuario en su director activo. "
-"¡¡ADVERTENCIA!! ¡Los usuarios coincidentes existentes pueden ser eliminados!"
+"Si está activo, UDS creará usuarios en su AD. ¡¡ADVERTENCIA!! ¡Los usuarios "
+"coincidentes existentes pueden ser eliminados!"
 
 #: services/RDS_enterprise/provider.py:87
 #: services/RDS_enterprise/provider.py:95
@@ -4193,7 +4190,7 @@ msgstr "Servidor AD"
 
 #: services/RDS_enterprise/provider.py:93
 msgid "IP or HOST of AD Server. Must have LDAPS support enabled"
-msgstr "IP o host del servidor AD. Debe tener habilitado el soporte LDAPS"
+msgstr "IP o nombre del servidor AD. Debe tener habilitado el soporte LDAPS"
 
 #: services/RDS_enterprise/provider.py:102
 msgid "AD LDAPS port (default is 636)"
@@ -4201,7 +4198,7 @@ msgstr "Puerto AD LDAPS (el valor predeterminado es 636)"
 
 #: services/RDS_enterprise/provider.py:109
 msgid "AD server OU for created users"
-msgstr "UO del servidor de AD para usuarios creados"
+msgstr "OU del servidor AD para los usuarios creados"
 
 #: services/RDS_enterprise/provider.py:110
 msgid "AD Server branch where users will be created by UDS"
@@ -4228,7 +4225,7 @@ msgid ""
 "the original UDS own username. Max 4 characters"
 msgstr ""
 "El usuario se creará en AD con el formato \"PREFIJO ...\", donde ... será el "
-"nombre de usuario original de UDS. Max 4 caracteres"
+"nombre de usuario original de UDS. Max. 4 caracteres"
 
 #: services/RDS_enterprise/provider.py:142
 msgid "AD Domain"
@@ -4249,7 +4246,7 @@ msgstr "Grupo de AD"
 #: services/RDS_enterprise/provider.py:151
 msgid "If not empty, UDS will try to add managed users to this group"
 msgstr ""
-"Si no está vacío, UDS intentará agregar usuarios administrados a este grupo"
+"Si no está vacío, UDS intentará agregar a los usuarios creados a este grupo"
 
 #: services/RDS_enterprise/provider.py:161
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
@@ -4268,7 +4265,7 @@ msgstr "AD User Management: debe proporcionar el DN base de los usuarios."
 #: services/RDS_enterprise/provider.py:171
 msgid "AD User Management: the username should be in USER@DOMAIN form."
 msgstr ""
-"AD User Management: el nombre de usuario debe estar en forma USER @ DOMAIN."
+"AD User Management: el nombre de usuario debe estar en formato USER @ DOMAIN."
 
 #: services/RDS_enterprise/provider.py:174
 msgid "AD User Management: you must provide the password."
@@ -4283,12 +4280,12 @@ msgstr ""
 #: services/RDS_enterprise/provider.py:185
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr ""
-"AD User Management: debe proporcionar el FQDN del dominio de creación de "
-"usuarios."
+"AD User Management: debe proporcionar el nombre FQDN del dominio de creación "
+"de usuarios."
 
 #: services/RDS_enterprise/provider.py:265
 msgid "Connection to {}, port {} failed."
-msgstr "La conexión a {}, puerto {} falló."
+msgstr "La conexión al puerto {},  {} falló."
 
 #: services/RDS_enterprise/provider.py:281
 msgid "The group {} could not be found. Please, check it."
@@ -4306,7 +4303,7 @@ msgstr ""
 
 #: services/RDS_enterprise/provider.py:291
 msgid "Connectivity test passed"
-msgstr "Prueba de conectividad aprobada"
+msgstr "Test de conexión realizado con éxito"
 
 #: services/RDS_enterprise/service.py:30
 msgid "RDS Platform RemoteAPP"
@@ -4589,8 +4586,8 @@ msgid ""
 "VMWare services needs that vCenter contains at least one folder, one network "
 "and one datastore."
 msgstr ""
-"Los servicios VMWare necesitan que vCenter contenga al menos una carpeta, "
-"una red y un almacén de datos."
+"Los servicios para VMware necesitan que el vCenter contenga al menos una "
+"carpeta, una red y un almacenamiento."
 
 #: services/Vmware_enterprise/helpers.py:84
 msgid "Local"
@@ -4630,15 +4627,16 @@ msgstr ""
 
 #: services/Vmware_enterprise/provider.py:55
 msgid "Power off VM on L2 cache"
-msgstr "Apague la máquina virtual en la caché L2"
+msgstr "Apagar las máquinas virtuales en la caché L2"
 
 #: services/Vmware_enterprise/provider.py:58
 msgid ""
 "If enabled, UDS will stop machines for L2 cache instead of suspending them. "
 "This REQUIRES \"VMWare tools\" on machines."
 msgstr ""
-"Si está habilitado, UDS detendrá las máquinas para caché L2 en lugar de "
-"suspenderlas. Esto REQUIERE \"Herramientas VMWare\" en máquinas."
+"Si está habilitado, UDS apagará las máquinas virtuales en la caché L2 en "
+"lugar de suspenderlas. Esto REQUIERE \"VMware tools\" instaladas en las "
+"máquinas."
 
 #: services/Vmware_enterprise/provider.py:64
 msgid "VMWare VCenter Platform Provider"
@@ -4697,15 +4695,15 @@ msgstr "Máquinas para este servicio"
 
 #: services/Vmware_enterprise/service_fixed.py:97
 msgid "Use snapshots"
-msgstr "Usar instantáneas"
+msgstr "Usar Snapshots"
 
 #: services/Vmware_enterprise/service_fixed.py:100
 msgid ""
 "If active, UDS will try to create an snapshot on VM use and recover if on "
 "exit."
 msgstr ""
-"Si está activo, UDS intentará crear una instantánea sobre el uso de VM y "
-"recuperarlo si sale."
+"Si está activo, UDS intentará crear un snapshot en la máquina cuando la use "
+"un usuario y recuperarlo si este sale."
 
 #: services/Vmware_enterprise/service_fixed.py:123
 msgid "We need at least a machine"
@@ -4871,7 +4869,7 @@ msgstr "Shadow"
 
 #: services/Xen/service.py:158
 msgid "Shadow memory multiplier (use with care)"
-msgstr "Multiplicador de memoria de sombra (usar con cuidado)"
+msgstr "Multiplicador de memoria (usar con cuidado)"
 
 #: temp_for_locales.py:92
 msgid "Spanish"
@@ -4899,7 +4897,7 @@ msgstr "Italiano"
 
 #: temp_for_locales.py:98
 msgid "Basque"
-msgstr "Vasco"
+msgstr "Euskera"
 
 #: temp_for_locales.py:99
 msgid "Arabic"
@@ -4919,7 +4917,7 @@ msgstr "Chino"
 
 #: templates/uds/reports/lists/users.html:15
 msgid "Real name"
-msgstr "Nombre real"
+msgstr "Nombre a mostrar"
 
 #: templates/uds/reports/lists/users.html:16
 msgid "Last Access"
@@ -4974,7 +4972,7 @@ msgstr "Servicios asignados"
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "Pools usage summary"
-msgstr "Resumen de uso de piscinas"
+msgstr "Resumen de uso de pools"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
@@ -5321,8 +5319,8 @@ msgid ""
 "If checked, every connection will try to open its own window instead of "
 "reusing the \"global\" one."
 msgstr ""
-"Si se marca, cada conexión intentará abrir su propia ventana en lugar de "
-"reutilizar la \"global\"."
+"Si se marca, cada nueva conexión intentará abrir su propia ventana en lugar "
+"de reutilizar la \"global\"."
 
 #: transports/HTML5RDP/html5rdp.py:148
 #: transports/HTML5RDS_enterprise/html5rds.py:149
@@ -5919,20 +5917,20 @@ msgstr "Lanzador de URL"
 
 #: transports/URL/url_custom.py:63
 msgid "Launchs an external UDS customized URL"
-msgstr "Lanza una URL externa UDS personalizada"
+msgstr "Lanza una URL externa personalizada"
 
 #: transports/URL/url_custom.py:71
 msgid "URL Pattern"
-msgstr "Patrón de URL"
+msgstr "Dirección URL"
 
 #: transports/URL/url_custom.py:71
 msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr ""
-"Patrón de URL para abrir (es decir, https: // _ IP_ / test? User = _USER_"
+"Dirección URL para abrir (es decir, https: // _ IP_ / test? User = _USER_"
 
 #: transports/URL/url_custom.py:86
 msgid "The url must be http or https"
-msgstr "La url debe ser http o https"
+msgstr "La URL debe ser HTTP o HTTPS"
 
 #: transports/X2GO/x2go.py:54 transports/X2GO/x2go_tunnel.py:63
 msgid "X2Go"
@@ -6026,49 +6024,49 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Datos incorrectos"
 
-#: web/util/configjs.py:139
+#: web/util/configjs.py:140
 msgid "Access limited by calendar"
 msgstr "Acceso limitado por calendario"
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:176
 msgid "Windows client"
 msgstr "Cliente de Windows"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:177
 msgid "Mac OS X client"
 msgstr "Cliente de Mac OS X"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:178
 msgid "Debian based Linux client"
 msgstr "Cliente Linux basado en Debian"
 
-#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requiere Python-3.6 o más reciente)"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:179
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Cliente Linux basado en RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:179
-msgid "Generic .tar.gz Linux client"
-msgstr "Genérico .tar.gz cliente de Linux"
-
 #: web/util/configjs.py:180
-msgid "Legacy Debian based Python 2.7 Linux client"
-msgstr "Cliente de Linux Python 2.7 basado en Debian heredado"
-
-#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
-msgid "(requires outdated Python-2.7)"
-msgstr "(requiere Python-2.7 obsoleto)"
+msgid "Generic .tar.gz Linux client"
+msgstr "Cliente Linux genérico .tar.gz"
 
 #: web/util/configjs.py:181
-msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
-msgstr "Cliente Linux basado en RH heredado (Fedora, Centos, Suse, ...)"
+msgid "Legacy Debian based Python 2.7 Linux client"
+msgstr "Cliente Legacy Linux con Python 2.7 basado en Debian"
+
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+msgid "(requires outdated Python-2.7)"
+msgstr "(requiere Python-2.7 )"
 
 #: web/util/configjs.py:182
+msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
+msgstr "Cliente Legacy Linux basado en RH (Fedora, Centos, Suse, ...)"
+
+#: web/util/configjs.py:183
 msgid "Legacy OpenSuse based Linux client)"
-msgstr "Cliente Linux basado en OpenSuse heredado)"
+msgstr "Cliente Legacy Linux basado en OpenSuse"
 
 #: web/util/errors.py:73
 msgid "Unknown error"
@@ -6152,13 +6150,13 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "El Autenticador no proporciona información"
 
-#: web/views/service.py:118
+#: web/views/service.py:119
 msgid "Service not ready. Please, try again in a while."
 msgstr "El servicio no está listo. Por favor, pruebe otra vez en un rato."
 
-#: web/views/service.py:143
+#: web/views/service.py:150
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
 msgstr ""
-"Su servicio se está creando, espere unos segundos mientras lo completamos)."
+"Su servicio se está creando (espere unos segundos mientras se completa)."

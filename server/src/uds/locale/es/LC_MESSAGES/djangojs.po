@@ -18,9 +18,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
-"PO-Revision-Date: 2020-09-03 13:48+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
+"PO-Revision-Date: 2020-11-09 22:53+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -526,7 +526,7 @@ msgstr "Nombre Real"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:250
 msgid "state"
-msgstr "estado"
+msgstr "Estado"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:251
 msgid "Last access"
@@ -614,7 +614,7 @@ msgstr "Eliminar Proxy"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:179
 msgid "(This service does not requires an OS Manager)"
-msgstr "(Este servicio no requiere un OS Manager)"
+msgstr "(Este servicio no requiere de un OS Manager)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:180
 msgid "New service Pool"
@@ -760,23 +760,23 @@ msgstr "Eliminar meta pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:147
 msgid "Please, select a valid service pool"
-msgstr "Por favor, seleccione un service pool válido"
+msgstr "Por favor, seleccione un pool de servicios válido"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:142
 msgid "Remove member pool"
-msgstr "Eliminar pool miembro"
+msgstr "Eliminar miembro del pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:185
 msgid "New pool group"
-msgstr "Nuevo grupo de piscina"
+msgstr "Nuevo grupo de Service Pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:186
 msgid "Edit pool group"
-msgstr "Editar grupo de piscina"
+msgstr "Editar grupo de Service Pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:187
 msgid "Delete pool group"
-msgstr "Eliminar grupo de piscina"
+msgstr "Eliminar grupo de Service Pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "New calendar"
@@ -885,7 +885,7 @@ msgstr "Dias de la semana"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:132
 msgid "Invalid or incomplete rule. Please, fix field $FIELD"
-msgstr "Regla inválida o incompleta. Por favor, arregla el campo $FIELD"
+msgstr "Regla inválida o incompleta. Por favor, revisa el campo $FIELD"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:133
 msgid "This rule will be valid every"
@@ -1243,11 +1243,11 @@ msgstr "Reglas"
 
 #: static/admin/translations-fakejs.js:345
 msgid "New member pool"
-msgstr "Nuevo grupo de miembros"
+msgstr "Nuevo miembro en el pool"
 
 #: static/admin/translations-fakejs.js:346
 msgid "Edit member pool"
-msgstr "Editar grupo de miembros"
+msgstr "Editar miembros en el pool"
 
 #: static/admin/translations-fakejs.js:347
 #: static/admin/translations-fakejs.js:407
@@ -1544,7 +1544,7 @@ msgstr "Liberación del servicio:"
 
 #: static/modern/translations-fakejs.js:16
 msgid "Reset service: "
-msgstr "Servicio de reinicio:"
+msgstr "Servicio reiniciado:"
 
 #: static/modern/translations-fakejs.js:17
 msgid "Service released"
@@ -1568,9 +1568,6 @@ msgid "Please wait until the service is launched."
 msgstr "Espere hasta que se inicie el servicio."
 
 #: static/modern/translations-fakejs.js:23
-#| msgid ""
-#| "Remember that you will need the UDS client on your platform to access the "
-#| "service"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
 "service."
@@ -1595,12 +1592,12 @@ msgid ""
 "The service is now being prepared. (It is at #).'.replace('#', '' + data."
 "running + '%"
 msgstr ""
-"Ahora se está preparando el servicio. (Está en #). &#39;. Replace (&#39; # "
-"&#39;,&#39; &#39;+ data.running +&#39;%"
+"Se está preparando el servicio. (Está en #). &#39;. Replace (&#39; # &#39;,"
+"&#39; &#39;+ data.running +&#39;%"
 
 #: static/modern/translations-fakejs.js:28
 msgid "Please, tray again in a few moments."
-msgstr "Por favor, vuelva a colocar la bandeja en unos momentos."
+msgstr "Por favor, vuelva a intentarlo en unos momentos."
 
 #: static/modern/translations-fakejs.js:31
 msgid "You can access UDS Open Source code at"
@@ -1629,7 +1626,7 @@ msgid ""
 "Legacy clients are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
-"Los clientes heredados solo se proporcionan para la compatibilidad con "
+"Los clientes \"Legacy\" solo se proporcionan para la compatibilidad con "
 "sistemas operativos antiguos. Trate de evitarlos."
 
 #: static/modern/translations-fakejs.js:37
@@ -1651,14 +1648,14 @@ msgstr "Descargas"
 
 #: static/modern/translations-fakejs.js:42
 msgid "Always download the UDS actor matching your platform"
-msgstr "Descarga siempre el actor UDS adecuado a tu plataforma"
+msgstr "Descarga el actor UDS adecuado para su plataforma"
 
 #: static/modern/translations-fakejs.js:43
 msgid ""
 "Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
-"Los actores heredados solo se proporcionan para la compatibilidad con "
+"Los actores \"Legacy\" solo se proporcionan para la compatibilidad con "
 "sistemas operativos antiguos. Trate de evitarlos."
 
 #: static/modern/translations-fakejs.js:44
@@ -1699,7 +1696,7 @@ msgstr "Puede obtenerlo de"
 
 #: static/modern/translations-fakejs.js:52
 msgid "UDS Client download page"
-msgstr "Página de descarga del cliente UDS"
+msgstr "Página de descarga del Cliente UDS"
 
 #: static/modern/translations-fakejs.js:53
 msgid "Release service"
@@ -1707,7 +1704,7 @@ msgstr "Liberación del servicio"
 
 #: static/modern/translations-fakejs.js:54
 msgid "Reset service"
-msgstr "Servicio de reinicio"
+msgstr "Servicio reiniciado"
 
 #: static/modern/translations-fakejs.js:55
 msgid "Connections"
@@ -1724,7 +1721,7 @@ msgstr "IP del cliente"
 
 #: static/modern/translations-fakejs.js:60
 msgid "Detected proxy ip"
-msgstr "IP proxy detectada"
+msgstr "IP Proxy detectada"
 
 #: static/modern/translations-fakejs.js:62
 msgid "UDS transports for this client"

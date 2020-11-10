@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
-"PO-Revision-Date: 2020-09-03 13:48+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
+"PO-Revision-Date: 2020-10-06 15:05+0000\n"
+"Last-Translator: Thorsten Latka <thorsten.latka@aktobis.de>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
 "Language: de\n"
@@ -69,7 +69,7 @@ msgstr "Daten werden geladen..."
 #: static/admin/translations-fakejs.js:194
 #: static/admin/translations-fakejs.js:203
 msgid "dismiss"
-msgstr "entlassen"
+msgstr "verwerfen"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:30
 msgid "Testing..."
@@ -77,7 +77,7 @@ msgstr "Testen..."
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:32
 msgid "Test failed:"
-msgstr "Im Test durchgefallen:"
+msgstr "Test fehlgeschlagen:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:34
 msgid "Test passed successfully"
@@ -94,7 +94,7 @@ msgstr "Möchten Sie die folgenden Elemente wirklich löschen?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:41
 msgid "Deletion finished"
-msgstr "Löschung abgeschlossen"
+msgstr "Löschen beendet"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:64
 msgid "provider"
@@ -102,7 +102,7 @@ msgstr "Anbieter"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:65
 msgid "service"
-msgstr "Bedienung"
+msgstr "Service"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:66
 msgid "service pool"
@@ -323,11 +323,11 @@ msgstr "Instandhaltung"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:215
 msgid "Exit maintenance mode"
-msgstr "Beenden Sie den Wartungsmodus"
+msgstr "Beenden des Wartungsmodus"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:216
 msgid "Enter maintenance mode"
-msgstr "Rufen Sie den Wartungsmodus auf"
+msgstr "Aktivieren des Wartungsmodus"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:217
 msgid "New provider"
@@ -343,7 +343,7 @@ msgstr "Anbieter löschen"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:220
 msgid "Exit maintenance mode?"
-msgstr "Wartungsmodus verlassen?"
+msgstr "Wartungsmodus beenden?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:221
 msgid "Enter maintenance mode?"
@@ -536,7 +536,7 @@ msgstr "Benutzer"
 #: static/admin/translations-fakejs.js:442
 #: static/admin/translations-fakejs.js:458
 msgid "Enabled"
-msgstr "aktiviert"
+msgstr "Aktiviert"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:255
 #: static/admin/translations-fakejs.js:443
@@ -607,7 +607,7 @@ msgstr "Proxy löschen"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:179
 msgid "(This service does not requires an OS Manager)"
-msgstr "(Dieser Dienst erfordert keinen Betriebssystemmanager.)"
+msgstr "(Dieser Dienst erfordert keinen OS Manager.)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:180
 msgid "New service Pool"
@@ -716,7 +716,7 @@ msgstr "Veröffentlichung abbrechen?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:171
 msgid "Publication canceled"
-msgstr "Veröffentlichung abgesagt"
+msgstr "Veröffentlichung abgebrochen"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:173
 msgid "Delete scheduled action"
@@ -838,11 +838,11 @@ msgstr "Wochentage"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:115
 msgid "Minutes"
-msgstr "Protokoll"
+msgstr "Minuten"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:116
 msgid "Hours"
-msgstr "Std"
+msgstr "Stunden"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:117
 msgid "Days"
@@ -858,7 +858,7 @@ msgstr "(keine tage)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:127
 msgid "Forever"
-msgstr "Für immer"
+msgstr "Immer"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:128
 msgid "Start date/time"
@@ -866,7 +866,7 @@ msgstr "Startdatum / Uhrzeit"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:129
 msgid "End date"
-msgstr "Endtermin"
+msgstr "Enddatum"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:130
 msgid "Interval"
@@ -907,7 +907,7 @@ msgstr "beginnt um"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:139
 msgid "and every event will be active for"
-msgstr "und jede Veranstaltung wird für aktiv sein"
+msgstr "und jedes Event wird aktiv sein bis"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:140
 msgid "with no duration"
@@ -988,7 +988,7 @@ msgstr "Konfiguration gespeichert"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:188
 msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
-msgstr "Schauspieler-Token löschen - MIT EXTREMER VORSICHT VERWENDEN !!!"
+msgstr "Actor-Token löschen - MIT EXTREMER VORSICHT VERWENDEN !!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:23
 msgid "Cache flushed"
@@ -1039,7 +1039,7 @@ msgstr "Berechtigungen für"
 
 #: static/admin/translations-fakejs.js:278
 msgid "New permission..."
-msgstr "Neue Erlaubnis ..."
+msgstr "Neue Berechtigung ..."
 
 #: static/admin/translations-fakejs.js:280
 msgid "New user permission for"
@@ -1056,7 +1056,7 @@ msgstr "Verwerfen und schließen"
 #: static/admin/translations-fakejs.js:285
 #: static/admin/translations-fakejs.js:415
 msgid "Save"
-msgstr "sparen"
+msgstr "Speichern"
 
 #: static/admin/translations-fakejs.js:287
 #: static/admin/translations-fakejs.js:294
@@ -1104,7 +1104,7 @@ msgstr "Zusammenfassung"
 #: static/admin/translations-fakejs.js:303
 #: static/admin/translations-fakejs.js:425
 msgid "Services"
-msgstr "Dienstleistungen"
+msgstr "Services"
 
 #: static/admin/translations-fakejs.js:304
 msgid "Authenticators"
@@ -1167,7 +1167,7 @@ msgstr "Konfiguration"
 
 #: static/admin/translations-fakejs.js:320
 msgid "Actor tokens"
-msgstr "Schauspieler-Token"
+msgstr "Actor-Token"
 
 #: static/admin/translations-fakejs.js:321
 msgid "Flush Cache"
@@ -1176,7 +1176,7 @@ msgstr "Cache leeren"
 #: static/admin/translations-fakejs.js:322
 #: static/modern/translations-fakejs.js:65
 msgid "Close"
-msgstr "Schließen"
+msgstr "Beenden"
 
 #: static/admin/translations-fakejs.js:325
 msgid "User mode"
@@ -1221,11 +1221,11 @@ msgstr "Anfangsdatum"
 
 #: static/admin/translations-fakejs.js:337
 msgid "Repeat until date"
-msgstr "Wiederholen Sie bis zum Datum"
+msgstr "Wiederholen bis zum Datum"
 
 #: static/admin/translations-fakejs.js:338
 msgid "Frequency"
-msgstr "Frequenz"
+msgstr "Häufigkeit"
 
 #: static/admin/translations-fakejs.js:340
 msgid "Repeat every"
@@ -1370,7 +1370,7 @@ msgstr "Bild (zum Ändern klicken)"
 
 #: static/admin/translations-fakejs.js:420
 msgid "For optimal results, use "
-msgstr "Verwenden Sie für optimale Ergebnisse"
+msgstr "Für optimale Ergebnisse nutzen Sie"
 
 #: static/admin/translations-fakejs.js:421
 msgid "The image will be resized on upload to"
@@ -1551,7 +1551,7 @@ msgstr "Service zurückgesetzt"
 
 #: static/modern/translations-fakejs.js:19
 msgid "Are you sure?"
-msgstr "Bist du sicher?"
+msgstr "Sind Sie sicher?"
 
 #: static/modern/translations-fakejs.js:21
 msgid "Launching service"
@@ -1563,9 +1563,6 @@ msgid "Please wait until the service is launched."
 msgstr "Bitte warten Sie, bis der Dienst gestartet wird."
 
 #: static/modern/translations-fakejs.js:23
-#| msgid ""
-#| "Remember that you will need the UDS client on your platform to access the "
-#| "service"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
 "service."
@@ -1582,8 +1579,8 @@ msgstr "Fehler beim Starten des Dienstes"
 msgid ""
 "Your connection is being prepared. It will open on a new window when ready."
 msgstr ""
-"Ihre Verbindung wird vorbereitet. Es wird in einem neuen Fenster geöffnet, "
-"wenn es fertig ist."
+"Ihre Verbindung wird vorbereitet. Sie wird in einem neuen Fenster geöffnet, "
+"wenn sie fertig ist."
 
 #: static/modern/translations-fakejs.js:27
 msgid ""
@@ -1595,7 +1592,7 @@ msgstr ""
 
 #: static/modern/translations-fakejs.js:28
 msgid "Please, tray again in a few moments."
-msgstr "Bitte, Tablett in ein paar Augenblicken wieder."
+msgstr "Bitte versuchen Sie es in einem Moment noch einmal."
 
 #: static/modern/translations-fakejs.js:31
 msgid "You can access UDS Open Source code at"
@@ -1608,7 +1605,7 @@ msgstr "UDS wurde mit diesen Komponenten entwickelt:"
 #: static/modern/translations-fakejs.js:33
 msgid "If you find that we missed any component, please let us know"
 msgstr ""
-"Wenn Sie feststellen, dass wir eine Komponente vermisst haben, teilen Sie "
+"Wenn Sie feststellen, dass wir eine Komponente vergessen haben, teilen Sie "
 "uns dies bitte mit"
 
 #: static/modern/translations-fakejs.js:34
@@ -1627,7 +1624,7 @@ msgid ""
 "avoid them."
 msgstr ""
 "Legacy-Clients werden nur für die Unterstützung alter Betriebssysteme "
-"bereitgestellt. Versuche sie zu vermeiden."
+"bereitgestellt. Versuchen Sie diese zu vermeiden."
 
 #: static/modern/translations-fakejs.js:37
 msgid "Username"
@@ -1648,15 +1645,15 @@ msgstr "Downloads"
 
 #: static/modern/translations-fakejs.js:42
 msgid "Always download the UDS actor matching your platform"
-msgstr "Laden Sie immer den UDS-Akteur herunter, der zu Ihrer Plattform passt"
+msgstr "Laden Sie immer den UDS-Actor herunter, der zu Ihrer Plattform passt"
 
 #: static/modern/translations-fakejs.js:43
 msgid ""
 "Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
-"Legacy-Akteure werden nur für die Unterstützung alter Betriebssysteme "
-"bereitgestellt. Versuche sie zu vermeiden."
+"Legacy-Actors werden nur für die Unterstützung alter Betriebssysteme "
+"bereitgestellt. Versuchen Sie diese zu vermeiden."
 
 #: static/modern/translations-fakejs.js:44
 msgid "An error has occurred"

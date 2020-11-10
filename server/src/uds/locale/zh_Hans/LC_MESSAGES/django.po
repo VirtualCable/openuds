@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
 "PO-Revision-Date: 2020-09-03 13:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -54,7 +54,7 @@ msgstr "时间标记"
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
 #: REST/methods/services.py:227 REST/methods/services_pools.py:108
-#: REST/methods/transports.py:61
+#: REST/methods/transports.py:62
 msgid "tags"
 msgstr "标签"
 
@@ -353,18 +353,18 @@ msgstr "服务池名称"
 msgid "Enabled"
 msgstr "启用"
 
-#: REST/methods/meta_service_pools.py:168 REST/methods/user_services.py:116
+#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:116
 msgid "Assigned services"
 msgstr "分配的服务"
 
-#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:120
+#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:120
 #: REST/methods/user_services.py:212
 msgid "Creation date"
 msgstr "创立日期"
 
-#: REST/methods/meta_service_pools.py:173 REST/methods/services_usage.py:119
+#: REST/methods/meta_service_pools.py:177 REST/methods/services_usage.py:120
 #: reports/stats/pool_users_summary.py:59
-#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:164
 #: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
@@ -374,56 +374,56 @@ msgstr "创立日期"
 msgid "Pool"
 msgstr "池"
 
-#: REST/methods/meta_service_pools.py:175 REST/methods/services_usage.py:121
+#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:122
 #: REST/methods/user_services.py:123 REST/methods/user_services.py:215
 #: auths/IP/authenticator.py:67
 msgid "IP"
 msgstr "IP"
 
-#: REST/methods/meta_service_pools.py:176 REST/methods/services_usage.py:122
+#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
 #: REST/methods/user_services.py:124 REST/methods/user_services.py:216
 msgid "Friendly name"
 msgstr "友好名称"
 
-#: REST/methods/meta_service_pools.py:177 REST/methods/user_services.py:125
+#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:125
 msgid "status"
 msgstr "状态"
 
-#: REST/methods/meta_service_pools.py:178 REST/methods/user_services.py:127
+#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:127
 msgid "In Use"
 msgstr "正在使用"
 
-#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:124
+#: REST/methods/meta_service_pools.py:183 REST/methods/services_usage.py:125
 #: REST/methods/user_services.py:128
 msgid "Src Host"
 msgstr "Src主持人"
 
-#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
+#: REST/methods/meta_service_pools.py:184 REST/methods/services_usage.py:124
 #: REST/methods/user_services.py:129
 msgid "Src Ip"
 msgstr "Src Ip"
 
-#: REST/methods/meta_service_pools.py:181 REST/methods/services_usage.py:117
+#: REST/methods/meta_service_pools.py:185 REST/methods/services_usage.py:118
 #: REST/methods/user_services.py:130
 msgid "Owner"
 msgstr "所有者"
 
-#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:131
+#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:131
 #: REST/methods/user_services.py:219
 msgid "Actor version"
 msgstr "演员版"
 
-#: REST/methods/meta_service_pools.py:209 REST/methods/services_usage.py:143
+#: REST/methods/meta_service_pools.py:213 REST/methods/services_usage.py:144
 #: REST/methods/user_services.py:163
 msgid "Item already being removed"
 msgstr "物品已被删除"
 
-#: REST/methods/meta_service_pools.py:211 REST/methods/services_usage.py:145
+#: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:146
 #: REST/methods/user_services.py:165
 msgid "Item is not removable"
 msgstr "物品不可拆卸"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:86
+#: REST/methods/networks.py:58 REST/methods/transports.py:87
 msgid "Networks"
 msgstr "网络"
 
@@ -457,7 +457,7 @@ msgstr "按日历访问限制"
 msgid "Calendar"
 msgstr "日历"
 
-#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:116
+#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:117
 msgid "Access"
 msgstr "访问"
 
@@ -509,7 +509,7 @@ msgstr "服务供应商"
 msgid "Status"
 msgstr "状态"
 
-#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:166
+#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:164
 #: templates/uds/reports/stats/authenticator_stats.html:16
 #: templates/uds/reports/stats/pools-usage-day.html:29
 msgid "Services"
@@ -675,7 +675,8 @@ msgstr "好"
 msgid "Services Pool Groups"
 msgstr "服务池组"
 
-#: REST/methods/services_pools.py:97 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:97 REST/methods/transports.py:60
+#: REST/methods/transports.py:105
 msgid "Service Pools"
 msgstr "服务池"
 
@@ -810,11 +811,11 @@ msgstr "此服务需要OS Manager"
 msgid "unknown"
 msgstr "未知"
 
-#: REST/methods/services_usage.py:111
+#: REST/methods/services_usage.py:112
 msgid "Services Usage"
 msgstr "服务使用"
 
-#: REST/methods/services_usage.py:118 reports/auto/fields.py:99
+#: REST/methods/services_usage.py:119 reports/auto/fields.py:99
 msgid "Service"
 msgstr "服务"
 
@@ -822,37 +823,37 @@ msgstr "服务"
 msgid "Transports"
 msgstr "运输"
 
-#: REST/methods/transports.py:60
+#: REST/methods/transports.py:61
 msgid "Devices"
 msgstr "设备"
 
-#: REST/methods/transports.py:77
+#: REST/methods/transports.py:78
 msgid "Network access"
 msgstr "网络访问"
 
-#: REST/methods/transports.py:78
+#: REST/methods/transports.py:79
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr "如果选中，将为所选网络启用传输。如果未选中，将禁用所选网络的传输"
 
-#: REST/methods/transports.py:87
+#: REST/methods/transports.py:88
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
 msgstr "与此传输相关的网络。如果没有选择网络，则表示“所有网络”"
 
-#: REST/methods/transports.py:95
+#: REST/methods/transports.py:96
 msgid "Allowed Devices"
 msgstr "允许的设备"
 
-#: REST/methods/transports.py:96
+#: REST/methods/transports.py:97
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
 msgstr "如果为空，将允许任何与此传输兼容的设备。否则，只允许与所选值兼容的设备"
 
-#: REST/methods/transports.py:105
+#: REST/methods/transports.py:106
 msgid "Currently assigned services pools"
 msgstr "当前分配的服务池"
 
@@ -1731,7 +1732,7 @@ msgstr "服务无效。目前无法使用该服务。请稍后再试"
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/user_service.py:717
+#: core/managers/user_service.py:716
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
@@ -2696,21 +2697,21 @@ msgstr "游泳池使用一天"
 msgid "Pools usage counters for an specific day"
 msgstr "特定日期的池使用计数器"
 
-#: reports/stats/pools_usage_day.py:125
+#: reports/stats/pools_usage_day.py:123
 msgid "Services by hour"
 msgstr "按小时服务"
 
-#: reports/stats/pools_usage_day.py:128 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_usage_day.py:126 reports/stats/pools_usage_day.py:164
 #: reports/stats/user_access.py:213 reports/stats/user_access.py:230
 #: templates/uds/reports/stats/pools-usage-day.html:28
 msgid "Hour"
 msgstr "小时"
 
-#: reports/stats/pools_usage_day.py:147
+#: reports/stats/pools_usage_day.py:145
 msgid "Services usage report for a day"
 msgstr "一天的服务使用情况报告"
 
-#: reports/stats/pools_usage_day.py:148
+#: reports/stats/pools_usage_day.py:146
 msgid "Service usage report"
 msgstr "服务使用报告"
 
@@ -5740,47 +5741,47 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:139
+#: web/util/configjs.py:140
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:176
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:177
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:178
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires Python-3.6 or newer)"
 msgstr "（需要Python-3.6或更高版本）"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:179
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "基于RPM的Linux客户端（Fedora，Suse等）"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:180
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:181
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "基于旧版Debian的Python 2.7 Linux客户端"
 
-#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
 msgid "(requires outdated Python-2.7)"
 msgstr "（要求使用过时的Python-2.7）"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:182
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "基于旧式RH的Linux客户端（Fedora，Centos，Suse等）"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:183
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "基于旧版OpenSuse的Linux客户端）"
 
@@ -5855,11 +5856,11 @@ msgstr "该服务即将被新版本取代。请在{}之前关闭会话并保存�
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
 
-#: web/views/service.py:118
+#: web/views/service.py:119
 msgid "Service not ready. Please, try again in a while."
 msgstr "服务没准备好。请稍后再试一次。"
 
-#: web/views/service.py:143
+#: web/views/service.py:150
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

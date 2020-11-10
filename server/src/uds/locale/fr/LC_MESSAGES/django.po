@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
 "PO-Revision-Date: 2020-09-03 13:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -56,7 +56,7 @@ msgstr "Marque de temps"
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
 #: REST/methods/services.py:227 REST/methods/services_pools.py:108
-#: REST/methods/transports.py:61
+#: REST/methods/transports.py:62
 msgid "tags"
 msgstr "Tags"
 
@@ -359,18 +359,18 @@ msgstr "Nom du pool de services"
 msgid "Enabled"
 msgstr "Activé"
 
-#: REST/methods/meta_service_pools.py:168 REST/methods/user_services.py:116
+#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:116
 msgid "Assigned services"
 msgstr "Services attribuées"
 
-#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:120
+#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:120
 #: REST/methods/user_services.py:212
 msgid "Creation date"
 msgstr "Date de création"
 
-#: REST/methods/meta_service_pools.py:173 REST/methods/services_usage.py:119
+#: REST/methods/meta_service_pools.py:177 REST/methods/services_usage.py:120
 #: reports/stats/pool_users_summary.py:59
-#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:164
 #: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
@@ -380,56 +380,56 @@ msgstr "Date de création"
 msgid "Pool"
 msgstr "Pool"
 
-#: REST/methods/meta_service_pools.py:175 REST/methods/services_usage.py:121
+#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:122
 #: REST/methods/user_services.py:123 REST/methods/user_services.py:215
 #: auths/IP/authenticator.py:67
 msgid "IP"
 msgstr "IP "
 
-#: REST/methods/meta_service_pools.py:176 REST/methods/services_usage.py:122
+#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
 #: REST/methods/user_services.py:124 REST/methods/user_services.py:216
 msgid "Friendly name"
 msgstr "Nom convivial"
 
-#: REST/methods/meta_service_pools.py:177 REST/methods/user_services.py:125
+#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:125
 msgid "status"
 msgstr "statut"
 
-#: REST/methods/meta_service_pools.py:178 REST/methods/user_services.py:127
+#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:127
 msgid "In Use"
 msgstr "En utilisation"
 
-#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:124
+#: REST/methods/meta_service_pools.py:183 REST/methods/services_usage.py:125
 #: REST/methods/user_services.py:128
 msgid "Src Host"
 msgstr "Hôte de la SRC"
 
-#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
+#: REST/methods/meta_service_pools.py:184 REST/methods/services_usage.py:124
 #: REST/methods/user_services.py:129
 msgid "Src Ip"
 msgstr "SRC Ip"
 
-#: REST/methods/meta_service_pools.py:181 REST/methods/services_usage.py:117
+#: REST/methods/meta_service_pools.py:185 REST/methods/services_usage.py:118
 #: REST/methods/user_services.py:130
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:131
+#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:131
 #: REST/methods/user_services.py:219
 msgid "Actor version"
 msgstr "Version de l'acteur"
 
-#: REST/methods/meta_service_pools.py:209 REST/methods/services_usage.py:143
+#: REST/methods/meta_service_pools.py:213 REST/methods/services_usage.py:144
 #: REST/methods/user_services.py:163
 msgid "Item already being removed"
 msgstr "Élément déjà retiré"
 
-#: REST/methods/meta_service_pools.py:211 REST/methods/services_usage.py:145
+#: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:146
 #: REST/methods/user_services.py:165
 msgid "Item is not removable"
 msgstr "Point non amovible"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:86
+#: REST/methods/networks.py:58 REST/methods/transports.py:87
 msgid "Networks"
 msgstr "Réseaux"
 
@@ -465,7 +465,7 @@ msgstr "Restrictions d'accès par calendrier"
 msgid "Calendar"
 msgstr "Calendrier"
 
-#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:116
+#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:117
 msgid "Access"
 msgstr "Accès"
 
@@ -517,7 +517,7 @@ msgstr "Fournisseurs de services"
 msgid "Status"
 msgstr "Statut"
 
-#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:166
+#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:164
 #: templates/uds/reports/stats/authenticator_stats.html:16
 #: templates/uds/reports/stats/pools-usage-day.html:29
 msgid "Services"
@@ -689,7 +689,8 @@ msgstr "Bien"
 msgid "Services Pool Groups"
 msgstr "Groupes de pool de services"
 
-#: REST/methods/services_pools.py:97 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:97 REST/methods/transports.py:60
+#: REST/methods/transports.py:105
 msgid "Service Pools"
 msgstr "Service pool"
 
@@ -835,11 +836,11 @@ msgstr "Ce service nécessite un gestionnaire de système d'exploitation"
 msgid "unknown"
 msgstr "inconnu"
 
-#: REST/methods/services_usage.py:111
+#: REST/methods/services_usage.py:112
 msgid "Services Usage"
 msgstr "Utilisation des services"
 
-#: REST/methods/services_usage.py:118 reports/auto/fields.py:99
+#: REST/methods/services_usage.py:119 reports/auto/fields.py:99
 msgid "Service"
 msgstr "Service"
 
@@ -847,15 +848,15 @@ msgstr "Service"
 msgid "Transports"
 msgstr "Transports"
 
-#: REST/methods/transports.py:60
+#: REST/methods/transports.py:61
 msgid "Devices"
 msgstr "Dispositifs de"
 
-#: REST/methods/transports.py:77
+#: REST/methods/transports.py:78
 msgid "Network access"
 msgstr "Accès au réseau"
 
-#: REST/methods/transports.py:78
+#: REST/methods/transports.py:79
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -864,7 +865,7 @@ msgstr ""
 "sélectionnés. Si cette case n'est pas cochée, le transport sera désactivé "
 "pour les réseaux sélectionnés"
 
-#: REST/methods/transports.py:87
+#: REST/methods/transports.py:88
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
@@ -872,11 +873,11 @@ msgstr ""
 "Réseaux liés à ce transport. Si aucun réseau n'a été sélectionné, signifiera "
 "« tous les réseaux »"
 
-#: REST/methods/transports.py:95
+#: REST/methods/transports.py:96
 msgid "Allowed Devices"
 msgstr "Périphériques autorisés"
 
-#: REST/methods/transports.py:96
+#: REST/methods/transports.py:97
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
@@ -885,7 +886,7 @@ msgstr ""
 "transport. Sinon, seuls les appareils compatibles avec les valeurs "
 "sélectionnées seront autorisés"
 
-#: REST/methods/transports.py:105
+#: REST/methods/transports.py:106
 msgid "Currently assigned services pools"
 msgstr "Actuellement affecté piscines services"
 
@@ -1832,7 +1833,7 @@ msgstr ""
 msgid "The requested transport {} is not valid for {}"
 msgstr "Le transport demandé {} n&#39;est pas valide pour {}."
 
-#: core/managers/user_service.py:717
+#: core/managers/user_service.py:716
 msgid "The service is not accessible from this device"
 msgstr "Le service n&#39;est pas accessible depuis cet appareil"
 
@@ -2830,21 +2831,21 @@ msgstr "Utilisation des Pools sur une journée"
 msgid "Pools usage counters for an specific day"
 msgstr "Compteurs d’utilisation de Pools pour une journée spécifique"
 
-#: reports/stats/pools_usage_day.py:125
+#: reports/stats/pools_usage_day.py:123
 msgid "Services by hour"
 msgstr "Services par heure"
 
-#: reports/stats/pools_usage_day.py:128 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_usage_day.py:126 reports/stats/pools_usage_day.py:164
 #: reports/stats/user_access.py:213 reports/stats/user_access.py:230
 #: templates/uds/reports/stats/pools-usage-day.html:28
 msgid "Hour"
 msgstr "Heure"
 
-#: reports/stats/pools_usage_day.py:147
+#: reports/stats/pools_usage_day.py:145
 msgid "Services usage report for a day"
 msgstr "Rapport d&#39;utilisation des services pour un jour"
 
-#: reports/stats/pools_usage_day.py:148
+#: reports/stats/pools_usage_day.py:146
 msgid "Service usage report"
 msgstr "Rapport d&#39;utilisation du service"
 
@@ -6061,47 +6062,47 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Données invalides"
 
-#: web/util/configjs.py:139
+#: web/util/configjs.py:140
 msgid "Access limited by calendar"
 msgstr "Accès limité par calendrier"
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:176
 msgid "Windows client"
 msgstr "Client Windows"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:177
 msgid "Mac OS X client"
 msgstr "Client Mac OS X"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:178
 msgid "Debian based Linux client"
 msgstr "Client Linux basé sur Debian"
 
-#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires Python-3.6 or newer)"
 msgstr "(nécessite Python-3.6 ou plus récent)"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:179
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Client Linux basé sur RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:180
 msgid "Generic .tar.gz Linux client"
 msgstr "Client Linux générique .tar.gz"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:181
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Client Linux Python 2.7 basé sur Debian hérité"
 
-#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
 msgid "(requires outdated Python-2.7)"
 msgstr "(nécessite Python-2.7 obsolète)"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:182
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Client Linux hérité RH (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:183
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Client Linux basé sur OpenSuse hérité)"
 
@@ -6186,12 +6187,12 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Authentificateur ne fournit pas d'informations"
 
-#: web/views/service.py:118
+#: web/views/service.py:119
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
 "Service n'est pas prêt. S'il vous plaît, essayez à nouveau dans un instant."
 
-#: web/views/service.py:143
+#: web/views/service.py:150
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
