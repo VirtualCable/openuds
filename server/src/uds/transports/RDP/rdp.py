@@ -105,6 +105,9 @@ class RDPTransport(BaseRDPTransport):
         ci = self.getConnectionInfo(userService, user, password)
         username, password, domain = ci['username'], ci['password'], ci['domain']
 
+        # escape conflicting chars
+        password = password.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
+
         # width, height = CommonPrefs.getWidthHeight(prefs)
         # depth = CommonPrefs.getDepth(prefs)
         width, height = self.screenSize.value.split('x')
