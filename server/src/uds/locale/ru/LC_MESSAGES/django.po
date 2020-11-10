@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
-"PO-Revision-Date: 2020-09-03 13:47+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
+"PO-Revision-Date: 2020-11-09 12:01+0000\n"
+"Last-Translator: Alexander <ag@kub.tel>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -46,7 +47,7 @@ msgstr "Имя"
 #: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
-msgstr "Комментарий"
+msgstr "Комментарии"
 
 #: REST/methods/accounts.py:64
 msgid "Time mark"
@@ -57,13 +58,13 @@ msgstr "Отметка времени"
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:76 REST/methods/proxies.py:63
 #: REST/methods/services.py:227 REST/methods/services_pools.py:108
-#: REST/methods/transports.py:61
+#: REST/methods/transports.py:62
 msgid "tags"
-msgstr "Тэг"
+msgstr "Тэги"
 
 #: REST/methods/accountsusage.py:92
 msgid "Pool name"
-msgstr "Название бассейна"
+msgstr "Название пула"
 
 #: REST/methods/accountsusage.py:93 core/auths/authenticator.py:136
 msgid "User name"
@@ -97,7 +98,7 @@ msgstr "Использование {0}"
 
 #: REST/methods/accountsusage.py:120
 msgid "Current usages"
-msgstr "Текущие использования"
+msgstr "Текущее использование"
 
 #: REST/methods/actor.py:94 REST/methods/client.py:102
 #: REST/methods/client.py:118
@@ -118,7 +119,7 @@ msgstr "Сервис пользователя не найден"
 
 #: REST/methods/actor_token.py:51
 msgid "Actor tokens"
-msgstr "Актерские жетоны"
+msgstr "Ключи клиента"
 
 #: REST/methods/actor_token.py:54 reports/auto/fields.py:56
 #: reports/stats/pools_performance.py:198
@@ -186,7 +187,7 @@ msgstr "Приоритет"
 #: REST/methods/meta_pools.py:75 REST/methods/meta_pools.py:150
 #: REST/methods/services_pools.py:104 REST/methods/services_pools.py:277
 msgid "Visible"
-msgstr "видимый"
+msgstr "Видимый"
 
 #: REST/methods/authenticators.py:70 REST/model.py:177
 msgid "Label"
@@ -262,7 +263,7 @@ msgstr "Изменено"
 
 #: REST/methods/client.py:89
 msgid "Your service is being created. Please, wait while we complete it"
-msgstr "Ваш сервис создается. Пожалуйста, подождите пока мы завершим"
+msgstr "Ваш сервис создаётся. Пожалуйста, подождите пока мы завершим"
 
 #: REST/methods/images.py:56
 msgid "Image Gallery"
@@ -283,11 +284,11 @@ msgstr "Объект изображения"
 
 #: REST/methods/meta_pools.py:68
 msgid "Meta Pools"
-msgstr "Мета Бассейны"
+msgstr "Мета-пулы"
 
 #: REST/methods/meta_pools.py:72 REST/methods/meta_pools.py:127
 msgid "Policy"
-msgstr "политика"
+msgstr "Политика"
 
 #: REST/methods/meta_pools.py:73 REST/methods/services.py:226
 #: REST/methods/services_pools.py:101
@@ -325,7 +326,7 @@ msgstr "Образ приваязанный с сервисом"
 #: REST/methods/meta_pools.py:142 REST/methods/services_pools.py:106
 #: REST/methods/services_pools.py:293
 msgid "Pool group"
-msgstr "Пул группа"
+msgstr "Пул-группа"
 
 #: REST/methods/meta_pools.py:143 REST/methods/services_pools.py:294
 msgid "Pool group for this pool (for pool classify on display)"
@@ -333,11 +334,11 @@ msgstr "Пул-группа для этого пула (для классифи�
 
 #: REST/methods/meta_pools.py:151
 msgid "If active, metapool will be visible for users"
-msgstr "Если активен, metapool будет виден пользователям"
+msgstr "Если активен, мета-пул будет виден пользователям"
 
 #: REST/methods/meta_pools.py:158 REST/methods/services_pools.py:301
 msgid "Calendar access denied text"
-msgstr "Доступ к календарю запрещен"
+msgstr "Доступ к календарю запрещён"
 
 #: REST/methods/meta_pools.py:159 REST/methods/services_pools.py:302
 msgid ""
@@ -348,7 +349,7 @@ msgstr ""
 
 #: REST/methods/meta_service_pools.py:81
 msgid "Service pools"
-msgstr "Сервисные бассейны"
+msgstr "Пулы услуг"
 
 #: REST/methods/meta_service_pools.py:86
 msgid "Service Pool name"
@@ -358,18 +359,18 @@ msgstr "Название пула услуг"
 msgid "Enabled"
 msgstr "Включено"
 
-#: REST/methods/meta_service_pools.py:168 REST/methods/user_services.py:116
+#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:116
 msgid "Assigned services"
 msgstr "Привязанные сервисы"
 
-#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:120
+#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:120
 #: REST/methods/user_services.py:212
 msgid "Creation date"
 msgstr "Создать дату"
 
-#: REST/methods/meta_service_pools.py:173 REST/methods/services_usage.py:119
+#: REST/methods/meta_service_pools.py:177 REST/methods/services_usage.py:120
 #: reports/stats/pool_users_summary.py:59
-#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_performance.py:258 reports/stats/pools_usage_day.py:164
 #: reports/stats/pools_usage_summary.py:140 reports/stats/usage_by_pool.py:60
 #: reports/stats/usage_by_pool.py:158 services/Proxmox/service.py:110
 #: templates/uds/reports/stats/pools-performance.html:33
@@ -379,56 +380,56 @@ msgstr "Создать дату"
 msgid "Pool"
 msgstr "Пул"
 
-#: REST/methods/meta_service_pools.py:175 REST/methods/services_usage.py:121
+#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:122
 #: REST/methods/user_services.py:123 REST/methods/user_services.py:215
 #: auths/IP/authenticator.py:67
 msgid "IP"
 msgstr "IP"
 
-#: REST/methods/meta_service_pools.py:176 REST/methods/services_usage.py:122
+#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
 #: REST/methods/user_services.py:124 REST/methods/user_services.py:216
 msgid "Friendly name"
 msgstr "Дружественное имя"
 
-#: REST/methods/meta_service_pools.py:177 REST/methods/user_services.py:125
+#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:125
 msgid "status"
 msgstr "Статус"
 
-#: REST/methods/meta_service_pools.py:178 REST/methods/user_services.py:127
+#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:127
 msgid "In Use"
 msgstr "В работе"
 
-#: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:124
+#: REST/methods/meta_service_pools.py:183 REST/methods/services_usage.py:125
 #: REST/methods/user_services.py:128
 msgid "Src Host"
 msgstr "Хост отправителя"
 
-#: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
+#: REST/methods/meta_service_pools.py:184 REST/methods/services_usage.py:124
 #: REST/methods/user_services.py:129
 msgid "Src Ip"
 msgstr "IP отправителя"
 
-#: REST/methods/meta_service_pools.py:181 REST/methods/services_usage.py:117
+#: REST/methods/meta_service_pools.py:185 REST/methods/services_usage.py:118
 #: REST/methods/user_services.py:130
 msgid "Owner"
 msgstr "Владелец"
 
-#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:131
+#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:131
 #: REST/methods/user_services.py:219
 msgid "Actor version"
 msgstr "Версия актора"
 
-#: REST/methods/meta_service_pools.py:209 REST/methods/services_usage.py:143
+#: REST/methods/meta_service_pools.py:213 REST/methods/services_usage.py:144
 #: REST/methods/user_services.py:163
 msgid "Item already being removed"
 msgstr "Элемент уже удален"
 
-#: REST/methods/meta_service_pools.py:211 REST/methods/services_usage.py:145
+#: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:146
 #: REST/methods/user_services.py:165
 msgid "Item is not removable"
 msgstr "Элемент не удаляется"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:86
+#: REST/methods/networks.py:58 REST/methods/transports.py:87
 msgid "Networks"
 msgstr "Сети"
 
@@ -464,7 +465,7 @@ msgstr "Ограничение доступа по календарю"
 msgid "Calendar"
 msgstr "Календарь"
 
-#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:116
+#: REST/methods/op_calendars.py:82 REST/methods/services_usage.py:117
 msgid "Access"
 msgstr "Доступ"
 
@@ -516,7 +517,7 @@ msgstr "Поставщики услуг"
 msgid "Status"
 msgstr "Статус"
 
-#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:166
+#: REST/methods/providers.py:74 reports/stats/pools_usage_day.py:164
 #: templates/uds/reports/stats/authenticator_stats.html:16
 #: templates/uds/reports/stats/pools-usage-day.html:29
 msgid "Services"
@@ -528,7 +529,7 @@ msgstr "Пользовательские сервисы"
 
 #: REST/methods/providers.py:108
 msgid "Can't delete providers with services"
-msgstr "Не могу удалить провайдеров с услугами"
+msgstr "Не могу удалить поставщиков с услугами"
 
 #: REST/methods/proxies.py:57
 msgid "Proxies (Experimental)"
@@ -536,7 +537,7 @@ msgstr "Прокси (Экспериментальный)"
 
 #: REST/methods/proxies.py:60
 msgid "Server"
-msgstr "сервер"
+msgstr "Сервер"
 
 #: REST/methods/proxies.py:61
 msgid "Check certificate"
@@ -629,8 +630,7 @@ msgstr "Генерировать"
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr ""
-"Сервисный токен, похоже, используется другим сервисом. Пожалуйста, выберите "
-"новый."
+"Ключ услуги, похоже, используется другой услугой. Пожалуйста, выберите новый."
 
 #: REST/methods/services.py:193
 #, python-brace-format
@@ -655,7 +655,7 @@ msgstr "Сервисные пулы"
 
 #: REST/methods/services.py:228 REST/methods/services.py:268
 msgid "Proxy"
-msgstr "полномочие"
+msgstr "Прокси"
 
 #: REST/methods/services.py:269
 msgid "Proxy for services behind a firewall"
@@ -687,13 +687,14 @@ msgstr "ОК"
 msgid "Services Pool Groups"
 msgstr "Группы сервис-пулов"
 
-#: REST/methods/services_pools.py:97 REST/methods/transports.py:104
+#: REST/methods/services_pools.py:97 REST/methods/transports.py:60
+#: REST/methods/transports.py:105
 msgid "Service Pools"
 msgstr "Сервис-пулы"
 
 #: REST/methods/services_pools.py:103
 msgid "Usage"
-msgstr "использование"
+msgstr "Использование"
 
 #: REST/methods/services_pools.py:105
 msgid "Shows transports"
@@ -701,7 +702,7 @@ msgstr "Показать транспорты"
 
 #: REST/methods/services_pools.py:107
 msgid "Parent service"
-msgstr "Родительский сервис"
+msgstr "Родительская услуга"
 
 #: REST/methods/services_pools.py:230
 msgid "Create at least a service before creating a new service pool"
@@ -762,7 +763,7 @@ msgstr "Первоначально доступные сервисы"
 
 #: REST/methods/services_pools.py:311
 msgid "Services created initially for this service pool"
-msgstr "Сервисы, созданные для этого сервис-пула"
+msgstr "Службы, созданные для этого сервис-пула"
 
 #: REST/methods/services_pools.py:314 REST/methods/services_pools.py:323
 #: REST/methods/services_pools.py:332 REST/methods/services_pools.py:341
@@ -810,7 +811,7 @@ msgstr ""
 
 #: REST/methods/services_pools.py:353
 msgid "Accounting"
-msgstr "бухгалтерский учет"
+msgstr "Учётные записи"
 
 #: REST/methods/services_pools.py:354
 msgid "Account associated to this service pool"
@@ -829,27 +830,27 @@ msgstr "Этот сервис требует наличия ОС менедже�
 msgid "unknown"
 msgstr "неизвестно"
 
-#: REST/methods/services_usage.py:111
+#: REST/methods/services_usage.py:112
 msgid "Services Usage"
 msgstr "Использование сервисов"
 
-#: REST/methods/services_usage.py:118 reports/auto/fields.py:99
+#: REST/methods/services_usage.py:119 reports/auto/fields.py:99
 msgid "Service"
-msgstr "Сервис"
+msgstr "Сужба"
 
 #: REST/methods/transports.py:54
 msgid "Transports"
 msgstr "Транспорты"
 
-#: REST/methods/transports.py:60
+#: REST/methods/transports.py:61
 msgid "Devices"
 msgstr "Устройства"
 
-#: REST/methods/transports.py:77
+#: REST/methods/transports.py:78
 msgid "Network access"
 msgstr "Сетевой доступ"
 
-#: REST/methods/transports.py:78
+#: REST/methods/transports.py:79
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -857,7 +858,7 @@ msgstr ""
 "Если флаг установлен, то транспорт будет включен для выбранных сетей. Если "
 "флаг не установлен, транспорт будет выключен для выбранных сетей"
 
-#: REST/methods/transports.py:87
+#: REST/methods/transports.py:88
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
@@ -865,11 +866,11 @@ msgstr ""
 "Сети, ассоциированные с транспортом. Если сети не выбраны, это означает все "
 "сети"
 
-#: REST/methods/transports.py:95
-msgid "Allowed Devices"
-msgstr "Разрешенные устройства"
-
 #: REST/methods/transports.py:96
+msgid "Allowed Devices"
+msgstr "Разрешённые устройства"
+
+#: REST/methods/transports.py:97
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
@@ -877,9 +878,9 @@ msgstr ""
 "Если пусто, будет разрешено использовать любое устройство, совместимое с "
 "этим транспортом"
 
-#: REST/methods/transports.py:105
+#: REST/methods/transports.py:106
 msgid "Currently assigned services pools"
-msgstr "В настоящее время назначен услуги бассейны"
+msgstr "Текущие привязанные пулы услуг"
 
 #: REST/methods/user_services.py:121 REST/methods/user_services.py:213
 #: REST/methods/user_services.py:377 REST/methods/user_services.py:406
@@ -1088,7 +1089,7 @@ msgstr "Active Directory IP адрес или имя сервера"
 #: osmanagers/WindowsOsManager/windows_domain.py:74
 msgid "If checked,  a ssl connection to Active Directory will be used"
 msgstr ""
-"Если отмечено, то ssl подключение к Active Directory будет использовано"
+"Если отмечено, то будет использовано ssl подключение к Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:43
 #: services/VCloud_enterprise/provider.py:38
@@ -1135,7 +1136,7 @@ msgstr "Пароль"
 #: auths/EDirectory_enterprise/authenticator.py:48
 #: auths/RegexLdap/authenticator.py:68 auths/SimpleLDAP/authenticator.py:61
 msgid "Password of the ldap user"
-msgstr "Пароль LDAP пользователя"
+msgstr "Пароль пользователя LDAP"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:48
 #: auths/EDirectory_enterprise/authenticator.py:49
@@ -1153,27 +1154,27 @@ msgstr "Таймаут"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:48
 msgid "Timeout in seconds of connection to Active Directory"
-msgstr "Таймаут в секундах подключения к Active Directory"
+msgstr "Таймаут подключения к Active Directory в секундах"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:50
 msgid "Override Base"
-msgstr "Переопределение базовых"
+msgstr "Переопределение базы"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:50
 msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr ""
-"Если не пустое, будет переопределить базу с этим значением AD поиска "
-"(формат: dc =..., DC =...)"
+"Указынным значением будет переопределена база поиска AD (формат: dc =..., DC "
+"=...)"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:52
 msgid "Active Directory Authenticator"
-msgstr "Active Directory аутентификатор"
+msgstr "Аутентификатор Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:54
 msgid "Authenticate against Active Directory"
-msgstr "Аутентификауция в Active Directory"
+msgstr "Аутентификация в Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:88
 #: auths/ActiveDirectory_enterprise/authenticator.py:446
@@ -1201,7 +1202,7 @@ msgstr "Группа не найдена"
 #: auths/RegexLdap/authenticator.py:405 auths/SimpleLDAP/authenticator.py:334
 #: auths/SimpleLDAP/authenticator.py:354
 msgid "Too many results, be more specific"
-msgstr "Слишком много результатов, сделайте запрос более уникапльным"
+msgstr "Слишком много результатов, сделайте запрос более уникальным"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:456
 msgid "Domain seems to be incorrect, please check it"
@@ -1229,11 +1230,11 @@ msgstr "Параметры подключения правильные, тест
 
 #: auths/AzureAD_enterprise/azure_ad.py:77
 msgid "Azure AD Authenticator"
-msgstr "Лазурное объявление средство проверки подлинности"
+msgstr "Аутентификатор Azure AD"
 
 #: auths/AzureAD_enterprise/azure_ad.py:79
 msgid "Azure Active Directory Authenticator"
-msgstr "Аутентификатор Azure Служба каталогов Active Directory"
+msgstr "Аутентификатор Azure Active Directory"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: services/Azure_enterprise/provider.py:40
@@ -1243,7 +1244,7 @@ msgstr "Идентификатор клиента"
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: services/Azure_enterprise/provider.py:40
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
-msgstr "Полученные от лазурного Active Directory - Недвижимость - Каталог ID"
+msgstr "Полученные от Azure Active Directory - Свойства - ID каталога"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
 #: services/Azure_enterprise/provider.py:41
@@ -1254,7 +1255,7 @@ msgstr "Идентификатор клиента"
 #: services/Azure_enterprise/provider.py:41
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr ""
-"Полученные от приложения, созданный на платформе Azure для UDS предприятия"
+"Получено от приложения, созданного на платформе Azure для UDS Enterprise"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
 #: services/Azure_enterprise/provider.py:42
@@ -1265,8 +1266,8 @@ msgstr "Секрет клиента"
 #: services/Azure_enterprise/provider.py:42
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr ""
-"Полученные от приложения, созданный на платформе Azure для UDS предприятия - "
-"ключи"
+"Получено от приложения, созданного на платформе Azure для UDS Enteprise - "
+"Ключи"
 
 #: auths/AzureAD_enterprise/azure_ad.py:101
 msgid "Callback"
@@ -1275,7 +1276,7 @@ msgstr "Обратный вызов"
 #: auths/AzureAD_enterprise/azure_ad.py:103
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr ""
-"Url обратного вызова (заполнены UDS, исправить это только в случае "
+"Строка адреса обратного вызова (заполняется UDS, исправлять только в случае "
 "необходимости!)"
 
 #: auths/AzureAD_enterprise/azure_ad.py:237
@@ -1290,16 +1291,16 @@ msgstr "Ошибка подключения: "
 
 #: auths/AzureAD_enterprise/azure_ad.py:309
 msgid "Connection params seems correct, test was succesfully executed"
-msgstr "Подключение params кажется правильным, тест был выполнен успешно"
+msgstr "Параметры подключения кажутся верными, тест выполнен успешно"
 
 #: auths/EDirectory_enterprise/authenticator.py:44
 msgid "EDirectory Server IP or Hostname"
-msgstr "EDirectory IP адрес или имя сервера"
+msgstr "IP адрес или имя сервера EDirectory"
 
 #: auths/EDirectory_enterprise/authenticator.py:45
 #: auths/RegexLdap/authenticator.py:65 auths/SimpleLDAP/authenticator.py:58
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
-msgstr "LDAP порт (обычно 389 без ssl и 636 с ssl)"
+msgstr "Порт LDAP (обычно 389 без ssl и 636 с ssl)"
 
 #: auths/EDirectory_enterprise/authenticator.py:46
 #: auths/RegexLdap/authenticator.py:66 auths/SimpleLDAP/authenticator.py:59
@@ -1315,11 +1316,11 @@ msgstr "Имя пользователя с правами на чтение в e
 #: auths/EDirectory_enterprise/authenticator.py:49
 #: auths/RegexLdap/authenticator.py:69 auths/SimpleLDAP/authenticator.py:62
 msgid "Timeout in seconds of connection to LDAP"
-msgstr "Таймаут в секундах подключения к LDAP"
+msgstr "Таймаут подключения к LDAP в секундах"
 
 #: auths/EDirectory_enterprise/authenticator.py:51
 msgid "eDirectory Authenticator"
-msgstr "eDirectory аутентификатор"
+msgstr "Аутентификатор eDirectory"
 
 #: auths/EDirectory_enterprise/authenticator.py:53
 msgid "Authenticate against eDirectory"
@@ -1327,7 +1328,7 @@ msgstr "Аутентификация в eDirectory"
 
 #: auths/EDirectory_enterprise/authenticator.py:262
 msgid "Edirectory connection error: {}"
-msgstr "Ошибка подключения к директории: {}"
+msgstr "Ошибка подключения к электронному каталогу: {}"
 
 #: auths/EDirectory_enterprise/authenticator.py:267
 #: auths/RegexLdap/authenticator.py:425 auths/SimpleLDAP/authenticator.py:374
@@ -1338,8 +1339,8 @@ msgstr "Поиск в LDAP некорректный"
 #: auths/RegexLdap/authenticator.py:430 auths/SimpleLDAP/authenticator.py:379
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
-"Класс пользователя Ldap возможно указан неправильно (пользователь не найден "
-"этим классом)"
+"Класс пользователя Ldap возможно указан неправильно (пользователь с этим "
+"классом не найден)"
 
 #: auths/EDirectory_enterprise/authenticator.py:280
 #: auths/SimpleLDAP/authenticator.py:395
@@ -1348,7 +1349,7 @@ msgid ""
 "attribute)"
 msgstr ""
 "Атрибут идентификатора пользователя Ldap возможно указан некорректно "
-"(пользователя не обнаружено с таким атрибутом)"
+"(пользователя с таким атрибутом не обнаружено)"
 
 #: auths/EDirectory_enterprise/authenticator.py:288
 msgid "Expected group attribute "
@@ -1427,7 +1428,7 @@ msgstr "Пользователь с правами чтения в базе вы
 
 #: auths/RegexLdap/authenticator.py:71 auths/SimpleLDAP/authenticator.py:63
 msgid "Base"
-msgstr "База/Основа"
+msgstr "База"
 
 #: auths/RegexLdap/authenticator.py:71 auths/SimpleLDAP/authenticator.py:63
 msgid "Common search base (used for \"users\" and \"groups\")"
@@ -1467,8 +1468,8 @@ msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
 msgstr ""
-"Атрибуты, которые содержат атрибуты имени пользователя или шаблоны атрибутов "
-"(по одному для каждой строки)"
+"Атрибуты, содержащие атрибуты имени пользователя или шаблоны атрибутов (по "
+"одному для каждой строки)"
 
 #: auths/RegexLdap/authenticator.py:75
 msgid "Group Name Attr"
@@ -1479,12 +1480,12 @@ msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
 msgstr ""
-"Атрибут, который содержит атрибуты имени группы или шаблоны атрибутов (по "
-"одному для каждой строки)"
+"Атрибут, содержащий атрибуты имени группы или шаблоны атрибутов (по одному "
+"для каждой строки)"
 
 #: auths/RegexLdap/authenticator.py:78
 msgid "Alt. class"
-msgstr "Alt. class"
+msgstr "Альтернативный класс"
 
 #: auths/RegexLdap/authenticator.py:78
 msgid ""
@@ -1496,18 +1497,18 @@ msgstr ""
 
 #: auths/RegexLdap/authenticator.py:80
 msgid "Regex LDAP Authenticator"
-msgstr "Regex LDAP аутентификатор"
+msgstr "Аутентификатор Regex LDAP"
 
 #: auths/RegexLdap/authenticator.py:82
 msgid "Regular Expressions LDAP authenticator"
-msgstr "Регулярное выражение для LDAP аутентификатора"
+msgstr "Регулярное выражение для аутентификатора LDAP"
 
 #: auths/RegexLdap/authenticator.py:439
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
-"Идентификатор аттрибута LDAP пользователя вероятно неверный (невозможно "
+"Идентификатор аттрибута пользователя LDAP вероятно неверный (невозможно "
 "найти пользователя с обоими условиями)"
 
 #: auths/RegexLdap/authenticator.py:453 auths/SimpleLDAP/authenticator.py:403
@@ -1515,16 +1516,16 @@ msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
 msgstr ""
-"Идентификатор аттрибута LDAP группы вероятно неверный (невозможно найти "
+"Идентификатор аттрибута группы LDAP вероятно неверный (невозможно найти "
 "группу с такими аттрибутами)"
 
 #: auths/SAML_enterprise/saml.py:87
 msgid "SAML Authenticator"
-msgstr "SAML аутентификатор"
+msgstr "Аутентификатор SAML"
 
 #: auths/SAML_enterprise/saml.py:99
 msgid "SAML (v2.0) Authenticator"
-msgstr "SAML (v2.0) аутентификатор"
+msgstr "Аутентификатор SAML (v2.0)"
 
 #: auths/SAML_enterprise/saml.py:127
 msgid "Private key"
@@ -1575,8 +1576,8 @@ msgstr "ID объекта"
 #: auths/SAML_enterprise/saml.py:143
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
-"Идентификатор SP. Если оставить пустым, это будет автоматически "
-"генерироваться с URL-адреса сервера"
+"Идентификатор SP. Если оставить пустым, будет автоматически генерироваться с "
+"URL-адреса сервера"
 
 #: auths/SAML_enterprise/saml.py:147
 msgid "User name attrs"
@@ -1609,7 +1610,7 @@ msgstr "Поля, откуда извлекается реальное имя"
 
 #: auths/SAML_enterprise/saml.py:176
 msgid "SAML Authenticator does not support white spaces on field NAME"
-msgstr "SAML Authenticator не поддерживает пробелы в поле NAME"
+msgstr "Аутентификатор SAML не поддерживает пробелы в поле NAME"
 
 #: auths/SAML_enterprise/saml.py:183
 msgid ""
@@ -1691,7 +1692,7 @@ msgstr ""
 
 #: auths/SimpleLDAP/authenticator.py:67
 msgid "Group class"
-msgstr "Групповой класс"
+msgstr "Класс группы"
 
 #: auths/SimpleLDAP/authenticator.py:67
 msgid "Class for LDAP groups (normally poxisGroup)"
@@ -1699,15 +1700,15 @@ msgstr "Класс для групп LDAP (обычно poxisGroup)"
 
 #: auths/SimpleLDAP/authenticator.py:68
 msgid "Group Id Attr"
-msgstr "Идентификатор группы"
+msgstr "Атрибут идентификатора группы"
 
 #: auths/SimpleLDAP/authenticator.py:68
 msgid "Attribute that contains the group id"
-msgstr "Атрибут, который содержит идентификатор группы"
+msgstr "Атрибут, содержащий идентификатор группы"
 
 #: auths/SimpleLDAP/authenticator.py:69
 msgid "Group membership attr"
-msgstr "Членство в группах"
+msgstr "Атрибут членства в группе"
 
 #: auths/SimpleLDAP/authenticator.py:69
 msgid "Attribute of the group that contains the users belonging to it"
@@ -1719,32 +1720,31 @@ msgstr "SimpleLDAP (УСТАРЕЛО)"
 
 #: auths/SimpleLDAP/authenticator.py:73
 msgid "Simple LDAP authenticator (DEPRECATED)"
-msgstr "Простой аутентификатор LDAP (УСТАРЕЛО)"
+msgstr "SimpleLDAP аутентификатор (УСТАРЕЛО)"
 
 #: auths/SimpleLDAP/authenticator.py:387
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
-msgstr ""
-"Класс группы Ldap кажется неправильным (группа не найдена этим классом)"
+msgstr "Класс групп Ldap кажется неправильным (не найдено групп такого класса)"
 
 #: auths/SimpleLDAP/authenticator.py:412
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
 msgstr ""
-"Возможно, неправильный класс пользователя Ldap или идентификатор "
-"пользователя attr (не удается найти пользователя с обоими условиями)"
+"Класс пользователя Ldap или атрибут идентификатора пользователя, возможно, "
+"неправильный (не удаётся найти пользователей с обоими условиями)"
 
 #: auths/SimpleLDAP/authenticator.py:421
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
 msgstr ""
-"Возможно, неправильный класс группы Ldap или идентификатор группы "
-"идентификаторов (не удается найти группу с обоими условиями)"
+"Класс группы Ldap или атрибут идентификатора группы, возможно, неправильный "
+"(не удаётся найти группы с обоими условиями)"
 
 #: auths/SimpleLDAP/authenticator.py:428
 msgid "Can't locate any group with the membership attribute specified"
-msgstr "Не удается найти группу с указанным атрибутом членства"
+msgstr "Не удаётся найти группу с указанным атрибутом членства"
 
 #: core/auths/auth.py:91
 msgid "System Administrator"
@@ -1766,7 +1766,7 @@ msgstr "Имя группы"
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
-"Уже опубликовано. Подождите, пока предыдущая публикация закончится и "
+"Уже публикуется. Подождите, пока предыдущая публикация закончится и "
 "повторите попытку."
 
 #: core/managers/publication.py:235
@@ -1810,7 +1810,7 @@ msgstr ""
 msgid "The requested transport {} is not valid for {}"
 msgstr "Запрошенный транспорт {} недействителен для {}"
 
-#: core/managers/user_service.py:717
+#: core/managers/user_service.py:716
 msgid "The service is not accessible from this device"
 msgstr "Сервис недоступен с этого устройства"
 
@@ -1832,19 +1832,19 @@ msgstr "Базовый менеджер"
 
 #: core/reports/report.py:52
 msgid "Base Report"
-msgstr "Базовый отчет"
+msgstr "Базовый отчёт"
 
 #: core/reports/report.py:53
 msgid "Base report"
-msgstr "Базовый отчет"
+msgstr "Базовый отчёт"
 
 #: core/reports/report.py:115
 msgid "Report"
-msgstr "отчет"
+msgstr "Отчёт"
 
 #: core/reports/report.py:116
 msgid "Page"
-msgstr "страница"
+msgstr "Страница"
 
 #: core/reports/report.py:117
 msgid "of"
@@ -1876,7 +1876,7 @@ msgstr "Туннельный"
 
 #: core/ui/user_interface.py:97
 msgid "Credentials"
-msgstr "Учетные данные (Credentials)"
+msgstr "Учётные данные"
 
 #: core/ui/user_interface.py:98
 msgid "Tunnel"
@@ -1884,7 +1884,7 @@ msgstr "Туннель"
 
 #: core/util/ldaputil.py:93
 msgid "Can't contact LDAP server"
-msgstr "Не удается связаться с сервером LDAP"
+msgstr "Не удаётся связаться с сервером LDAP"
 
 #: core/util/state.py:65 core/util/states/common.py:59
 msgid "Active"
@@ -1916,15 +1916,15 @@ msgstr "Удаляется"
 
 #: core/util/state.py:72
 msgid "Restrained"
-msgstr "сдержанный"
+msgstr "Ограниченный"
 
 #: core/util/state.py:74 core/util/states/common.py:67
 msgid "Removed"
-msgstr "Удален"
+msgstr "Удалён"
 
 #: core/util/state.py:75 core/util/states/common.py:68
 msgid "Canceled"
-msgstr "Отменен"
+msgstr "Отменён"
 
 #: core/util/state.py:76 core/util/states/common.py:69
 msgid "Canceling"
@@ -2052,7 +2052,7 @@ msgstr "Аутентификатор {0} не используется"
 
 #: dispatchers/wyse_enterprise/views.py:138
 msgid "Invalid credentials"
-msgstr "Недопустимые учетные данные"
+msgstr "Недопустимые учётные данные"
 
 #: dispatchers/wyse_enterprise/views.py:145
 #, python-brace-format
@@ -2081,7 +2081,7 @@ msgstr "Недействительный запрос"
 #: dispatchers/wyse_enterprise/views.py:243
 #: dispatchers/wyse_enterprise/views.py:328
 msgid "Invalid credentials used"
-msgstr "Использованы недействительные учетные данные"
+msgstr "Использованы недействительные учётные данные"
 
 #: dispatchers/wyse_enterprise/views.py:256 web/util/errors.py:75
 msgid "Service not found"
@@ -2089,7 +2089,7 @@ msgstr "Сервис не найден"
 
 #: dispatchers/wyse_enterprise/views.py:260
 msgid "Invalid machine uuid."
-msgstr "Неверная машина UUID."
+msgstr "Неверный UUID машины."
 
 #: dispatchers/wyse_enterprise/views.py:274 web/util/errors.py:74
 msgid "Transport not found"
@@ -2151,7 +2151,7 @@ msgstr "Удалить транспорт"
 
 #: models/calendar_action.py:67
 msgid "Trasport"
-msgstr "Trasport"
+msgstr "Транспорт"
 
 #: models/calendar_action.py:68
 msgid "Add a group"
@@ -2163,16 +2163,16 @@ msgstr "Удалить группу"
 
 #: models/calendar_action.py:70
 msgid "Sets the ignore unused"
-msgstr "Устанавливает игнорирование неиспользованным"
+msgstr "Устанавливает игнорирование неиспользуемых"
 
 #: models/calendar_action.py:70
 msgid "Ignore assigned and unused"
-msgstr "Игнорировать назначенный и неиспользованный"
+msgstr "Игнорировать назначенные и неиспользуемые"
 
 #: models/calendar_action.py:71
 msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr ""
-"Удалить ВСЕ назначенный пользовательский сервис. ИСПОЛЬЗУЙТЕ С ОСТОРОЖНОСТЬЮ!"
+"Удалить ВСЕ назначенные пользовательские сервисы. ИСПОЛЬЗОВАТЬ ОСТОРОЖНО!"
 
 #: models/calendar_rule.py:53
 msgid "Yearly"
@@ -2213,11 +2213,11 @@ msgstr "Недели"
 
 #: models/meta_pool.py:72
 msgid "Evenly distributed"
-msgstr "Равномерно распределены"
+msgstr "Равномерно распределённые"
 
 #: models/meta_pool.py:74
 msgid "Greater % available"
-msgstr "Больше% доступно"
+msgstr "Больше % доступно"
 
 #: models/permissions.py:73
 msgid "Read"
@@ -2225,7 +2225,7 @@ msgstr "Чтение"
 
 #: models/permissions.py:74
 msgid "Manage"
-msgstr "управлять"
+msgstr "Управлять"
 
 #: models/permissions.py:75 reports/auto/fields.py:117
 msgid "All"
@@ -2248,7 +2248,7 @@ msgid ""
 "UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires "
 "python >= 3.6)</b>"
 msgstr ""
-"UDS Actor для компьютеров Centos, Fedora, RH, Suse, ... Linux <b>(требуется "
+"UDS Actor для машин Centos, Fedora, RH, Suse, ... Linux <b>(требуется "
 "python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:63
@@ -2264,7 +2264,7 @@ msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
 msgstr ""
-"<b>Наследие</b> UDS актер для Debian, Ubuntu... Linux машины <b>(требует "
+"<b>Совместимый</b> UDS Actor для Debian, Ubuntu... Linux машин <b>(требует "
 "Python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:77
@@ -2272,7 +2272,7 @@ msgid ""
 "<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines "
 "<b>(Requires python 2.7)</b>"
 msgstr ""
-"<b>Legacy</b> UDS Actor для компьютеров Centos, Fedora, RH, ... Linux "
+"<b>Совместимый</b> UDS Actor для машин Centos, Fedora, RH, ... Linux "
 "<b>(требуется python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:84
@@ -2280,7 +2280,7 @@ msgid ""
 "<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python "
 "2.7)</b>"
 msgstr ""
-"<b>Legacy</b> UDS Actor для компьютеров OpenSUSE, ... Linux <b>(требуется "
+"<b>Совместимый</b> UDS Actor для машин OpenSUSE, ... Linux <b>(требуется "
 "python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
@@ -2289,7 +2289,7 @@ msgstr "Linux ОС менеджер"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:55
 msgid "Os Manager to control Linux virtual machines"
-msgstr "Os Manager для управления виртуальными машинами Linux"
+msgstr "Менеджер ОС для управления виртуальными машинами Linux"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:61
 #: osmanagers/WindowsOsManager/windows.py:52
@@ -2357,7 +2357,7 @@ msgstr "Нужно предоставить аккаунт пользовате�
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgstr ""
-"RDS UDS Actor (для удаленных приложений в Windows Server 2012, 2016, 2019)"
+"RDS UDS Actor (для удалённых приложений Windows Server 2012, 2016, 2019)"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:31
 msgid "RDS OS Manager"
@@ -2442,7 +2442,7 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/windows_domain.py:68
 msgid "Account with rights to add machines to domain"
-msgstr "Учетная запись с правами на добавление машин в домен"
+msgstr "Учётная запись с правами на добавление машин в домен"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 msgid "Password of the account"
@@ -2459,7 +2459,7 @@ msgid ""
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
 "Организационная единица, в которой необходимо добавить машины в домене "
-"(проверьте ее перед использованием), то есть: ou = My Machines, dc = "
+"(проверьте её перед использованием), то есть: ou = My Machines, dc = "
 "mydomain, dc = local"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:71
@@ -2476,15 +2476,15 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 msgid "Machine clean"
-msgstr "Машина чистая"
+msgstr "Убрать машину"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:72
 msgid ""
 "If checked, UDS will try to remove the machine from the domain USING the "
 "provided credentials"
 msgstr ""
-"Если флажок установлен, UDS будет пытаться удалить компьютер из домена, "
-"используя предоставленные учетные данные"
+"Если отмечено, UDS будет пытаться удалить компьютер из домена, используя "
+"предоставленные учётные данные"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:73
 msgid "Server Hint"
@@ -2504,7 +2504,7 @@ msgstr "Нужно предоставить аккаунт для введени
 
 #: osmanagers/WindowsOsManager/windows_domain.py:99
 msgid "DOM\\USER form is not allowed!"
-msgstr "DOM\\USER формат не разрешен!"
+msgstr "DOM\\USER формат не разрешён!"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:101
 msgid "Must provide a password for the account!"
@@ -2519,7 +2519,7 @@ msgstr "Проверьте ошибку: {}"
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr ""
-"Не удалось найти параметры сервера (_ldap._tcp.{0} не может быть разрешен)"
+"Не удалось найти параметры сервера (_ldap._tcp.{0} не может быть разрешён)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:288
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
@@ -2583,11 +2583,11 @@ msgstr "Начальная дата"
 
 #: reports/auto/fields.py:48
 msgid "Starting date for report"
-msgstr "Дата начала отчета"
+msgstr "Дата начала отчёта"
 
 #: reports/auto/fields.py:57 reports/stats/pools_usage_day.py:66
 msgid "Date for report"
-msgstr "Дата для отчета"
+msgstr "Дата для отчёта"
 
 #: reports/auto/fields.py:66
 msgid "Ending date"
@@ -2595,11 +2595,11 @@ msgstr "Дата окончания"
 
 #: reports/auto/fields.py:67
 msgid "ending date for report"
-msgstr "дата окончания для отчета"
+msgstr "дата окончания отчёта"
 
 #: reports/auto/fields.py:74
 msgid "Report data interval"
-msgstr "Интервал данных отчета"
+msgstr "Интервал данных отчёта"
 
 #: reports/auto/fields.py:77
 msgid "Hourly"
@@ -2607,15 +2607,15 @@ msgstr "Ежечасно"
 
 #: reports/auto/fields.py:82
 msgid "Interval for report data"
-msgstr "Интервал для данных отчета"
+msgstr "Интервал для данных отчёта"
 
 #: reports/auto/fields.py:97
 msgid "Service pool"
-msgstr "Сервисный пул"
+msgstr "Пул услуг"
 
 #: reports/auto/fields.py:97
 msgid "Service pool for report"
-msgstr "Пул сервисов для отчета"
+msgstr "Пул услуг для отчёта"
 
 #: reports/auto/fields.py:98 reports/lists/users.py:57
 #: web/forms/LoginForm.py:44
@@ -2624,11 +2624,11 @@ msgstr "Аутентификатор"
 
 #: reports/auto/fields.py:98
 msgid "Authenticator for report"
-msgstr "Аутентификатор отчета"
+msgstr "Аутентификатор отчёта"
 
 #: reports/auto/fields.py:99
 msgid "Service for report"
-msgstr "Сервис для отчета"
+msgstr "Услуга для отчёта"
 
 #: reports/auto/fields.py:100
 msgid "Service provider"
@@ -2636,7 +2636,7 @@ msgstr "Поставщик услуг"
 
 #: reports/auto/fields.py:100
 msgid "Service provider for report"
-msgstr "Поставщик услуг для отчета"
+msgstr "Поставщик услуг для отчёта"
 
 #: reports/lists/base.py:39
 msgid "Lists"
@@ -2660,7 +2660,7 @@ msgstr "Список пользователей для {}"
 
 #: reports/lists/users.py:86 reports/stats/pool_users_summary.py:145
 msgid "UDS Report of users in {}"
-msgstr "UDS Отчет пользователей в {}"
+msgstr "Отчёт UDS по пользователям в {}"
 
 #: reports/lists/users.py:110 templates/uds/reports/lists/users.html:14
 msgid "User ID"
@@ -2678,18 +2678,18 @@ msgstr "Статистика по аутентификатору"
 msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
-msgstr "Формирует отчет со статистикой аутентификатора за желаемый период"
+msgstr "Формирует отчёт со статистикой аутентификатора за желаемый период"
 
 #: reports/stats/auth_stats.py:108 reports/stats/usage_by_pool.py:136
 #: templates/uds/reports/stats/authenticator_stats.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:6
 msgid "Users usage list"
-msgstr "Список пользователей"
+msgstr "Отчёт по использованию подписки"
 
 #: reports/stats/auth_stats.py:109 reports/stats/usage_by_pool.py:137
 msgid "UDS Report of users usage"
-msgstr "UDS Отчет об использовании пользователей"
+msgstr "Отчёт UDS об использовании пользователей"
 
 #: reports/stats/base.py:40
 msgid "Statistics"
@@ -2701,17 +2701,16 @@ msgstr "Использование пула пользователями"
 
 #: reports/stats/pool_users_summary.py:53
 msgid "Generates a report with the summary of users usage for a pool"
-msgstr ""
-"Создает отчет с краткой информацией об использовании пользователей для пула."
+msgstr "Создаёт отчёт с информацией об использовании пользователей для пула."
 
 #: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:61
 msgid "Pool for report"
-msgstr "Пул для отчета"
+msgstr "Пул для отчёта"
 
 #: reports/stats/pool_users_summary.py:67 reports/stats/pools_performance.py:75
 #: reports/stats/usage_by_pool.py:68 reports/stats/user_access.py:67
 msgid "starting date for report"
-msgstr "начальная дата для отчета"
+msgstr "начальная дата для отчёта"
 
 #: reports/stats/pool_users_summary.py:74 reports/stats/pools_performance.py:82
 #: reports/stats/usage_by_pool.py:75 reports/stats/user_access.py:74
@@ -2721,7 +2720,7 @@ msgstr "Конечная дата"
 #: reports/stats/pool_users_summary.py:75 reports/stats/pools_performance.py:83
 #: reports/stats/usage_by_pool.py:76 reports/stats/user_access.py:75
 msgid "finish date for report"
-msgstr "конечная дата для отчета"
+msgstr "конечная дата для отчёта"
 
 #: reports/stats/pool_users_summary.py:144
 msgid "Users usage list for {}"
@@ -2743,7 +2742,7 @@ msgstr "Производительность пулов по дате"
 
 #: reports/stats/pools_performance.py:61
 msgid "Pools performance report by date"
-msgstr "Отчет о производительности пулов по дате"
+msgstr "Отчёт о производительности пулов по дате"
 
 #: reports/stats/pools_performance.py:67 reports/stats/pools_usage_day.py:73
 msgid "Pools"
@@ -2751,7 +2750,7 @@ msgstr "Пулы"
 
 #: reports/stats/pools_performance.py:68 reports/stats/pools_usage_day.py:74
 msgid "Pools for report"
-msgstr "Пулы для отчета"
+msgstr "Пулы для отчёта"
 
 #: reports/stats/pools_performance.py:90 reports/stats/user_access.py:82
 msgid "Number of intervals"
@@ -2763,11 +2762,11 @@ msgstr "Количество точек выборки, используемых
 
 #: reports/stats/pools_performance.py:127
 msgid "Select at least a service pool for the report"
-msgstr "Выберите хотя бы пул служб для отчета"
+msgstr "Выберите хотя бы пул служб для отчёта"
 
 #: reports/stats/pools_performance.py:195
 msgid "Distinct Users"
-msgstr "Отдельные пользователи"
+msgstr "Определённые пользователи"
 
 #: reports/stats/pools_performance.py:210
 #: reports/stats/pools_performance.py:218
@@ -2778,11 +2777,11 @@ msgstr "Доступы"
 
 #: reports/stats/pools_performance.py:234
 msgid "UDS Pools Performance Report"
-msgstr "Отчет о производительности пулов UDS"
+msgstr "Отчёт о производительности пулов UDS"
 
 #: reports/stats/pools_performance.py:235
 msgid "Pools Performance"
-msgstr "Производительность бассейнов"
+msgstr "Производительность пулов"
 
 #: reports/stats/pools_performance.py:258 reports/stats/user_access.py:275
 #: templates/uds/reports/stats/pools-performance.html:34
@@ -2796,25 +2795,25 @@ msgstr "Использование пулов в день"
 
 #: reports/stats/pools_usage_day.py:60
 msgid "Pools usage counters for an specific day"
-msgstr "Счетчики использования пулов за определенный день"
+msgstr "Счётчики использования пулов за определённый день"
 
-#: reports/stats/pools_usage_day.py:125
+#: reports/stats/pools_usage_day.py:123
 msgid "Services by hour"
 msgstr "Сервисы за час"
 
-#: reports/stats/pools_usage_day.py:128 reports/stats/pools_usage_day.py:166
+#: reports/stats/pools_usage_day.py:126 reports/stats/pools_usage_day.py:164
 #: reports/stats/user_access.py:213 reports/stats/user_access.py:230
 #: templates/uds/reports/stats/pools-usage-day.html:28
 msgid "Hour"
 msgstr "Часы"
 
-#: reports/stats/pools_usage_day.py:147
+#: reports/stats/pools_usage_day.py:145
 msgid "Services usage report for a day"
-msgstr "Отчет об использовании услуг за день"
+msgstr "Отчёт об использовании услуг за день"
 
-#: reports/stats/pools_usage_day.py:148
+#: reports/stats/pools_usage_day.py:146
 msgid "Service usage report"
-msgstr "Отчет об использовании сервиса"
+msgstr "Отчёт об использовании услуги"
 
 #: reports/stats/pools_usage_summary.py:47
 msgid "Summary of pools usage"
@@ -2835,15 +2834,15 @@ msgstr "Сводка использования пулов"
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "to"
-msgstr "в"
+msgstr "до"
 
 #: reports/stats/pools_usage_summary.py:120
 msgid "UDS Report Summary of pools usage"
-msgstr "Отчет UDS Сводка использования пулов"
+msgstr "Суммарный отчёт UDS об использовании пулов"
 
 #: reports/stats/pools_usage_summary.py:140
 msgid "Total Time (seconds)"
-msgstr "Общее время (в секундах)"
+msgstr "Общее время (секунды)"
 
 #: reports/stats/pools_usage_summary.py:140
 msgid "Total Accesses"
@@ -2869,11 +2868,11 @@ msgstr "Использование пулов пользователями"
 
 #: reports/stats/usage_by_pool.py:54
 msgid "Pools usage by user report"
-msgstr "Отчет использования пулов пользователями"
+msgstr "Отчёт использования пулов пользователями"
 
 #: reports/stats/usage_by_pool.py:86
 msgid "ALL POOLS"
-msgstr "ВСЕ БАССЕЙНЫ"
+msgstr "ВСЕ ПУЛЫ"
 
 #: reports/stats/usage_by_pool.py:158
 #: templates/uds/reports/stats/usage-by-pool.html:16
@@ -2898,15 +2897,15 @@ msgstr "Доступ пользователей (по неделям)"
 
 #: reports/stats/user_access.py:196 reports/stats/user_access.py:234
 msgid "Monday"
-msgstr "понедельник"
+msgstr "Понедельник"
 
 #: reports/stats/user_access.py:196 reports/stats/user_access.py:234
 msgid "Tuesday"
-msgstr "вторник"
+msgstr "Вторник"
 
 #: reports/stats/user_access.py:196 reports/stats/user_access.py:234
 msgid "Wednesday"
-msgstr "среда"
+msgstr "Среда"
 
 #: reports/stats/user_access.py:196 reports/stats/user_access.py:234
 msgid "Thursday"
@@ -2914,11 +2913,11 @@ msgstr "Четверг"
 
 #: reports/stats/user_access.py:196 reports/stats/user_access.py:234
 msgid "Friday"
-msgstr "пятница"
+msgstr "Пятница"
 
 #: reports/stats/user_access.py:196 reports/stats/user_access.py:234
 msgid "Saturday"
-msgstr "суббота"
+msgstr "Суббота"
 
 #: reports/stats/user_access.py:196 reports/stats/user_access.py:234
 msgid "Sunday"
@@ -2938,7 +2937,7 @@ msgstr "Доступ пользователей в UDS"
 
 #: reports/stats/user_access.py:251
 msgid "UDS Report for users access"
-msgstr "Отчет UDS для доступа пользователей"
+msgstr "Отчёт UDS по доступу пользователей"
 
 #: services/Azure_enterprise/provider.py:43
 msgid "Subscription ID"
@@ -2946,7 +2945,7 @@ msgstr "Идентификатор подписки"
 
 #: services/Azure_enterprise/provider.py:43
 msgid "Obtained from subscriptions"
-msgstr "Полученные от подписки"
+msgstr "Полученные от подписок"
 
 #: services/Azure_enterprise/provider.py:46
 #: services/HyperV_enterprise/legacy/provider.py:88
@@ -2958,7 +2957,7 @@ msgstr "Полученные от подписки"
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:107 services/Xen/provider.py:98
 msgid "Creation concurrency"
-msgstr "Параллельность создания"
+msgstr "Одновременное создание"
 
 #: services/Azure_enterprise/provider.py:46
 #: services/HyperV_enterprise/legacy/provider.py:89
@@ -2969,7 +2968,7 @@ msgstr "Параллельность создания"
 #: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
-msgstr "Максимальное количество создаваемых параллельно ВМ"
+msgstr "Максимальное количество одновременно создаваемых ВМ"
 
 #: services/Azure_enterprise/provider.py:47
 #: services/HyperV_enterprise/legacy/provider.py:90
@@ -2981,7 +2980,7 @@ msgstr "Максимальное количество создаваемых п�
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:108 services/Xen/provider.py:99
 msgid "Removal concurrency"
-msgstr "Удаление паралелелизма"
+msgstr "Одновременное удаление"
 
 #: services/Azure_enterprise/provider.py:47
 #: services/HyperV_enterprise/legacy/provider.py:91
@@ -2992,16 +2991,16 @@ msgstr "Удаление паралелелизма"
 #: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
-msgstr "Максимальное количество удаляемых параллельно ВМ"
+msgstr "Максимальное количество одновременно удаляемых ВМ"
 
 #: services/Azure_enterprise/provider.py:48
 #: services/VCloud_enterprise/provider.py:62
 msgid "Timeout in seconds of connection to vCloud"
-msgstr "Таймаут в секундах подключения к vCloud"
+msgstr "Таймаут подключения к vCloud в секундах"
 
 #: services/Azure_enterprise/provider.py:53
 msgid "Azure Platform Provider"
-msgstr "Платформа Azure провайдер"
+msgstr "Поставщик платформы Azure"
 
 #: services/Azure_enterprise/provider.py:55
 msgid "Provides connection to Azure Platform"
@@ -3014,24 +3013,25 @@ msgstr "Параметры подключения вероятно коррек�
 
 #: services/Azure_enterprise/provider.py:275
 msgid "Azure Provider: "
-msgstr "Azure провайдер: "
+msgstr "Поставщик Azure: "
 
 #: services/Azure_enterprise/service.py:34
 msgid "Azure Clone Service"
-msgstr "Служба Azure клон"
+msgstr "Служба клонов Azure"
 
 #: services/Azure_enterprise/service.py:36
 msgid "This service provides access to Azure VMs based VDI"
-msgstr "Эта служба обеспечивает доступ к Azure виртуальных машин на основе VDI"
+msgstr "Эта служба обеспечивает доступ к VDI на основе виртуальных машин Azure"
 
 #: services/Azure_enterprise/service.py:42
 msgid "Number of desired VMs to keep running waiting for an user"
-msgstr "Количество желаемых VMs держать работает ожидания для пользователя"
+msgstr ""
+"Желаемое количество запущенных виртуальных машин, ожидающих пользователя"
 
 #: services/Azure_enterprise/service.py:44
 msgid "Number of desired VMs to keep suspended waiting for use"
 msgstr ""
-"Количество желаемых VMs держать приостановлено ожидания для использования"
+"Желаемое количество остановленных виртуальных машин, ожидающих использования"
 
 #: services/Azure_enterprise/service.py:58
 msgid "Resource Group"
@@ -3039,7 +3039,7 @@ msgstr "Группа ресурсов"
 
 #: services/Azure_enterprise/service.py:59
 msgid "Resource group container of this VDI service"
-msgstr "Контейнера группы ресурсов этой службы VDI"
+msgstr "Контейнер группы ресурсов данной службы VDI"
 
 #: services/Azure_enterprise/service.py:70
 msgid "Virtual Machine"
@@ -3047,7 +3047,9 @@ msgstr "Виртуальная машина"
 
 #: services/Azure_enterprise/service.py:71
 msgid "Base virtual machine. (VMs Starting with UDS will be hidden)"
-msgstr "Базовая виртуальная машина. (VMs, начиная с UDS будет скрыт)"
+msgstr ""
+"Базовая виртуальная машина (виртуальные машины, начинающиеся с \"UDS\" будут "
+"скрыты)"
 
 #: services/Azure_enterprise/service.py:83
 msgid "Machine size"
@@ -3055,7 +3057,7 @@ msgstr "Размер машины"
 
 #: services/Azure_enterprise/service.py:84
 msgid "Size for machines created from this service."
-msgstr "Размер для машин, созданных из этой службы."
+msgstr "Размер машин, созданных этой услугой."
 
 #: services/Azure_enterprise/service.py:89
 #: services/HyperV_enterprise/legacy/service.py:127
@@ -3095,7 +3097,7 @@ msgstr "Длина имени"
 #: services/Proxmox/service.py:161 services/VCloud_enterprise/service.py:89
 #: services/Vmware_enterprise/service_linked.py:124 services/Xen/service.py:177
 msgid "Size of numeric part for the names of these machines"
-msgstr "Размер числовой части для названий этих машин"
+msgstr "Размер числовой части названий этих машин"
 
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:107
@@ -3107,7 +3109,7 @@ msgstr "Сети"
 
 #: services/Azure_enterprise/service.py:96
 msgid "Network where the clones will be attached"
-msgstr "Сети, где будут прилагаться клонов"
+msgstr "Сеть, к которой будут подключаться клоны"
 
 #: services/Azure_enterprise/service.py:109
 msgid "Subnet"
@@ -3115,7 +3117,7 @@ msgstr "Подсеть"
 
 #: services/Azure_enterprise/service.py:110
 msgid "Subnet where the clones will be attached"
-msgstr "Подсети, где будет прилагаться клонов"
+msgstr "Подсеть, к которой будут подключаться клоны"
 
 #: services/Azure_enterprise/service.py:118
 msgid "Security Group"
@@ -3123,7 +3125,7 @@ msgstr "Группа безопасности"
 
 #: services/Azure_enterprise/service.py:119
 msgid "Security group where to attach the virtual machine"
-msgstr "Группа безопасности где для присоединения виртуальной машины"
+msgstr "Группа безопасности, к которой будут подключаться виртуальные машины"
 
 #: services/Azure_enterprise/service.py:127
 msgid "Caching policy"
@@ -3139,20 +3141,20 @@ msgstr "Ценовой уровень"
 
 #: services/Azure_enterprise/service.py:137
 msgid "SKU (pricing tier)"
-msgstr "SKU (ценовой уровень)"
+msgstr "Артикул (ценовой уровень)"
 
 #: services/Azure_enterprise/service.py:145
 msgid "Accelerated network"
-msgstr "Ускоренное сети"
+msgstr "Ускоренная сеть"
 
 #: services/Azure_enterprise/service.py:146
 msgid ""
 "Activate this option to use accelerated networking on vm. Ensure that your "
 "machine and machine size supports this option before activating."
 msgstr ""
-"Активируйте этот параметр, чтобы использовать ускоренного сетей на vm. "
-"Убедитесь, что ваш Размер машины и машина поддерживает этот параметр перед "
-"активацией."
+"Активируйте этот параметр, чтобы использовать ускоренние сетей на "
+"виртуальных машинах. Убедитесь перед активацией, что размер машины и машина "
+"поддерживают этот параметр."
 
 #: services/Azure_enterprise/service.py:159
 msgid "You must select a network for the service"
@@ -3160,28 +3162,28 @@ msgstr "Вы должны выбрать сеть для службы"
 
 #: services/HyperV_enterprise/legacy/provider.py:64
 msgid "HyperV LEGACY Platform Provider"
-msgstr "Поставщик платформы HyperV LEGACY"
+msgstr "Совместимый поставщик платформы HyperV"
 
 #: services/HyperV_enterprise/legacy/provider.py:68
 msgid ""
 "HyperV platform service provider (legacy, recommended upgraded to new hyperv "
 "platform provider)"
 msgstr ""
-"Поставщик услуг платформы HyperV (устаревший, рекомендуется обновить до "
-"нового поставщика платформы HyperV)"
+"Поставщик услуг платформы HyperV (устаревший, рекомендуется обновиться до "
+"актуального поставщика платформы HyperV)"
 
 #: services/HyperV_enterprise/legacy/provider.py:83
 msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
-msgstr "IP адрес или имя сервера HyperV (должен включить первый доступ WSMAN)"
+msgstr "IP-адрес или имя сервера HyperV (должен включить первый доступ WSMAN)"
 
 #: services/HyperV_enterprise/legacy/provider.py:84
 msgid "WSMan Port (normally 5985)"
-msgstr "WSMan порт (обычно 5985)"
+msgstr "Порт WSMan (обычно 5985)"
 
 #: services/HyperV_enterprise/legacy/provider.py:85
 #: services/HyperV_enterprise/provider.py:74
 msgid "User with valid privileges on HyperV Server"
-msgstr "Пользователь с допустимыми правами на сервере HyperV"
+msgstr "Пользователь с необходимыми правами на сервере HyperV"
 
 #: services/HyperV_enterprise/legacy/provider.py:86
 #: services/HyperV_enterprise/provider.py:75
@@ -3190,7 +3192,7 @@ msgstr "Пароль пользователя HyperV"
 
 #: services/HyperV_enterprise/legacy/provider.py:94
 msgid "Timeout in seconds of connection to HyperV"
-msgstr "Таймаут в секундах подключения к HyperV"
+msgstr "Таймаут подключения к HyperV в секундах"
 
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:103
@@ -3220,11 +3222,11 @@ msgstr "Ошибка подключения. Проверьте параметр
 #: services/OVirt/publication.py:99 services/Xen/publication.py:80
 #, python-brace-format
 msgid "UDS pub for {0} at {1}"
-msgstr "UDS pub для {0} в {1}"
+msgstr "Публикация UDS для {0} в {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:57
 msgid "HyperV Linked Clone (Experimental)"
-msgstr "HyperV слинкованный клон (эксперимент)"
+msgstr "Линкованный клон HyperV (эксперимент)"
 
 #: services/HyperV_enterprise/legacy/service.py:59
 msgid "Hyper Services based on templates and differential disks (experimental)"
@@ -3237,7 +3239,7 @@ msgstr ""
 #: services/Proxmox/service.py:84 services/TestService_enterprise/service.py:26
 #: services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
-msgstr "Количество требуемых машин для работы в ожидании пользователя"
+msgstr "Количество работающих в ожидании пользователя машин"
 
 #: services/HyperV_enterprise/legacy/service.py:68
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:90
@@ -3245,7 +3247,7 @@ msgstr "Количество требуемых машин для работы �
 #: services/Vmware_enterprise/service_full.py:40
 #: services/Vmware_enterprise/service_linked.py:47 services/Xen/service.py:89
 msgid "Number of desired machines to keep suspended waiting for use"
-msgstr "Количество желаемых машин для приостановки ожидания использования"
+msgstr "Количество приостановленных в ожидании использования машин"
 
 #: services/HyperV_enterprise/legacy/service.py:81
 #: services/HyperV_enterprise/service.py:82
@@ -3338,17 +3340,17 @@ msgstr ""
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:148
 #: services/Vmware_enterprise/service_linked.py:113 services/Xen/service.py:143
 msgid "Memory (Mb)"
-msgstr "Память (Мбиты)"
+msgstr "Память (Мб)"
 
 #: services/HyperV_enterprise/legacy/service.py:121
 #: services/HyperV_enterprise/service.py:122
 #: services/Vmware_enterprise/service_linked.py:114
 msgid "Memory for machines deployed from this service"
-msgstr "Память для машин, развернутых из этого сервиса"
+msgstr "Память для машин, развёрнутых из этого сервиса"
 
 #: services/HyperV_enterprise/provider.py:41
 msgid "HyperV Platform Provider"
-msgstr "Провайдер платформы HyperV"
+msgstr "Поставщик платформы HyperV"
 
 #: services/HyperV_enterprise/provider.py:45
 msgid "HyperV platform service provider with cluster support"
@@ -3374,12 +3376,12 @@ msgstr "Включить SSL"
 msgid ""
 "If active, the connections to HyperV will be made using SSL (Recommended)."
 msgstr ""
-"Если он активен, соединения с HyperV будут выполняться с использованием SSL "
+"Если активно, подключения к HyperV будут выполняться с использованием SSL "
 "(рекомендуется)."
 
 #: services/HyperV_enterprise/provider.py:116
 msgid "Remote WSman port.Leave to zero for default."
-msgstr "Удаленный порт WSman. Оставьте ноль по умолчанию."
+msgstr "Удалённый порт WSman. Оставьте ноль по умолчанию."
 
 #: services/HyperV_enterprise/provider.py:123
 #: services/VCloud_enterprise/provider.py:50
@@ -3392,7 +3394,7 @@ msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
 msgstr ""
-"Если активен, сертификат на соединение кластера будет принудительно "
+"Если активно, сертификат на подключение кластера будет принудительно "
 "проверяться."
 
 #: services/HyperV_enterprise/provider.py:135
@@ -3407,16 +3409,16 @@ msgid ""
 "For clusters, username must be a domain user name (user@domain or DOMAIN"
 "\\user"
 msgstr ""
-"Для кластеров имя пользователя должно быть именем пользователя домена (user "
-"@ domain или DOMAIN \\ user"
+"Для кластеров имя пользователя должно быть именем пользователя домена "
+"(пользователь@домен или ДОМЕН\\пользователь)"
 
 #: services/HyperV_enterprise/service.py:57
 msgid "HyperV Linked Clone"
-msgstr "HyperV Связанный клон"
+msgstr "Связанный клон HyperV"
 
 #: services/HyperV_enterprise/service.py:59
 msgid "Hyper Services based on templates and differential disks"
-msgstr "Hyper Services на основе шаблонов и дифференциальных дисков"
+msgstr "Службы HyperV на основе шаблонов и разностных дисков"
 
 #: services/Nutanix_enterprise/provider.py:30
 msgid "Nutanix Acropolis Platform Provider"
@@ -3436,7 +3438,7 @@ msgstr "Порт сервера Nutanix Acropolis (по умолчанию 9440)
 
 #: services/Nutanix_enterprise/provider.py:38
 msgid "User with valid privileges on Nutanix Acropolis"
-msgstr "Пользователь с действительными привилегиями на Nutanix Acropolis"
+msgstr "Пользователь с необходимыми правами на Nutanix Acropolis"
 
 #: services/Nutanix_enterprise/provider.py:39
 msgid "Password of the user of Nutanix Acropolis"
@@ -3448,7 +3450,7 @@ msgstr "Таймаут в секундах подключения к Nutanix"
 
 #: services/Nutanix_enterprise/provider.py:46 services/OVirt/provider.py:118
 msgid "Range of valid macs for UDS managed machines"
-msgstr "Диапазон действительных мак-адресов для управляемых машин UDS"
+msgstr "Диапазон действительных мак-адресов для управляемых UDS машин"
 
 #: services/Nutanix_enterprise/provider.py:214
 msgid "Connection works fine"
@@ -3456,45 +3458,45 @@ msgstr "Подключение работает отлично"
 
 #: services/Nutanix_enterprise/service.py:31
 msgid "Nutanix Acropolis Service"
-msgstr "Nutanix Acropolis сервис"
+msgstr "Служба Nutanix Acropolis"
 
 #: services/Nutanix_enterprise/service.py:33
 msgid "Nutanix Acropolis based service"
-msgstr "Nutanix Acropolis основной сервис"
+msgstr "Основная служба Nutanix Acropolis"
 
 #: services/Nutanix_enterprise/service.py:68
 msgid ""
 "Memory assigned to machines. (Zero value means \"keep original machine memory"
 "\")"
 msgstr ""
-"Память, назначенная машинам. (Нулевое значение означает: сохранить "
-"оригинальную память устройства)"
+"Память, назначенная машинам. (Нулевое значение \"означает сохранить "
+"оригинальную память устройства\")"
 
 #: services/Nutanix_enterprise/service.py:74
 msgid "VCPUS"
-msgstr "VCPUS"
+msgstr "Виртуальные процессоры"
 
 #: services/Nutanix_enterprise/service.py:80
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgstr ""
-"Количество виртуальных процессоров («-1 означает« оставить исходный "
-"виртуальный процессор »)"
+"Количество виртуальных процессоров (\"-1\" означает \"оставить исходное "
+"количество\")"
 
 #: services/Nutanix_enterprise/service.py:86
 msgid "Cores per VCPU"
-msgstr "Количество ядер на VCPU"
+msgstr "Количество ядер на виртуальный процессор"
 
 #: services/Nutanix_enterprise/service.py:92
 msgid "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgstr ""
-"Количество виртуальных ЦП («-1 означает« оставить исходные ядра машины на "
-"один виртуальный ЦП »)"
+"Количество виртуальных ядер (\"-1\" означает \"оставить исходное количество "
+"ядрер на один виртуальный процессор\")"
 
 #: services/Nutanix_enterprise/service.py:101
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
-msgstr "Сеть для машин (каждая созданная машина будет прикреплена к этой сети"
+msgstr "Сеть для машин (каждая созданная машина будет прикреплена к этой сети)"
 
 #: services/Nutanix_enterprise/service.py:124
 #: services/VCloud_enterprise/service.py:64
@@ -3509,7 +3511,9 @@ msgstr "Если активен, найденные дубликаты vApps д�
 
 #: services/Nutanix_enterprise/service.py:145
 msgid "Both Cores per VCPU and Number of VCPUS are required"
-msgstr "Требуются оба ядра на VCPU и количество VCPUS"
+msgstr ""
+"Требуется задать количество виртуальных процессоров и количество ядер на "
+"каждый виртуальный процессор"
 
 #: services/OVirt/provider.py:77
 msgid "oVirt/RHEV Platform Provider"
@@ -3521,11 +3525,11 @@ msgstr "Поставщик сервисов платформы oVirt"
 
 #: services/OVirt/provider.py:98
 msgid "oVirt Version"
-msgstr "oVirt версия"
+msgstr "Версия oVirt"
 
 #: services/OVirt/provider.py:99
 msgid "oVirt Server Version"
-msgstr "oVirt версия сервера"
+msgstr "Версия сервера oVirt"
 
 #: services/OVirt/provider.py:109
 msgid "oVirt Server IP or Hostname"
@@ -3534,7 +3538,8 @@ msgstr "IP адрес или имя сервера oVirt"
 #: services/OVirt/provider.py:110
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
 msgstr ""
-"Пользователь с допустимыми правами на oVirt, (используйте шаблон user@domain)"
+"Пользователь с необходимыми правами на oVirt, (используйте шаблон "
+"user@domain)"
 
 #: services/OVirt/provider.py:111
 msgid "Password of the user of oVirt"
@@ -3542,15 +3547,15 @@ msgstr "Пароль пользователя oVirt"
 
 #: services/OVirt/provider.py:116
 msgid "Timeout in seconds of connection to oVirt"
-msgstr "Таймаут в секундах соединения oVirt"
+msgstr "Таймаут соединения oVirt в секундах"
 
 #: services/OVirt/service.py:63
 msgid "oVirt/RHEV Linked Clone"
-msgstr "oVirt/RHEV линкованные клоны"
+msgstr "Линкованные клоны oVirt/RHEV"
 
 #: services/OVirt/service.py:67
 msgid "oVirt Services based on templates and COW (experimental)"
-msgstr "oVirt сервисы, основанные на шаблонах и COW (экспериментально)"
+msgstr "Службы oVirt, основанные на шаблонах и COW (экспериментально)"
 
 #: services/OVirt/service.py:118
 msgid "Cluster to contain services"
@@ -3570,7 +3575,7 @@ msgstr "Память выданная машине"
 
 #: services/OVirt/service.py:160
 msgid "Memory Guaranteed (Mb)"
-msgstr "Гарантированная память (Мбит)"
+msgstr "Гарантированная память (Мб)"
 
 #: services/OVirt/service.py:166
 msgid "Physical memory guaranteed to machines"
@@ -3606,11 +3611,11 @@ msgstr "Поставщик услуг платформы OpenGnsys (экспер
 
 #: services/OpenGnsys/provider.py:95
 msgid "OpenGnsys Host"
-msgstr "OpenGnsys хост"
+msgstr "Хост OpenGnsys"
 
 #: services/OpenGnsys/provider.py:96
 msgid "OpenGnsys Port (default is 443, and only ssl connection is allowed)"
-msgstr "OpenGnsys порт (по умолчанию 443, только ssl подключение разрешено)"
+msgstr "Порт OpenGnsys (по умолчанию 443, только ssl подключение разрешено)"
 
 #: services/OpenGnsys/provider.py:97
 msgid "Check Cert."
@@ -3626,7 +3631,7 @@ msgstr ""
 
 #: services/OpenGnsys/provider.py:98
 msgid "User with valid privileges on OpenGnsys"
-msgstr "Пользователь с действующими правами на OpenGnsys"
+msgstr "Пользователь с необходимыми правами на OpenGnsys"
 
 #: services/OpenGnsys/provider.py:99
 msgid "Password of the user of OpenGnsys"
@@ -3644,7 +3649,7 @@ msgstr ""
 
 #: services/OpenGnsys/provider.py:105
 msgid "Timeout in seconds of connection to OpenGnsys"
-msgstr "Таймаут в секундах при подключении к OpenGnsys"
+msgstr "Таймаут при подключении к OpenGnsys в секундах"
 
 #: services/OpenGnsys/provider.py:163
 msgid "OpenGnsys test connection passed"
@@ -3652,7 +3657,7 @@ msgstr "Тест подключения к OpenGnsys прошел успешно
 
 #: services/OpenGnsys/service.py:61
 msgid "OpenGnsys Machines Service"
-msgstr "Сервис мащин OpenGnsys"
+msgstr "Служба машин OpenGnsys"
 
 #: services/OpenGnsys/service.py:65
 msgid "OpenGnsys physical machines"
@@ -3663,7 +3668,7 @@ msgstr "Физическая машина OpenGnsys"
 #: services/Vmware_enterprise/service_full.py:38
 #: services/Vmware_enterprise/service_linked.py:45
 msgid "Number of desired machines to keep running waiting for an user"
-msgstr "Количество требуемых машин для работы в ожидании пользователя"
+msgstr "Количество запущенных машин, ожидающих пользователя"
 
 #: services/OpenGnsys/service.py:109
 msgid "Organizational Unit"
@@ -3671,11 +3676,11 @@ msgstr "Организационная единица (OU)"
 
 #: services/OpenGnsys/service.py:115
 msgid "lab"
-msgstr "lab"
+msgstr "лаборатория"
 
 #: services/OpenGnsys/service.py:117
 msgid "Laboratory"
-msgstr "Лпаборатория"
+msgstr "Лаборатория"
 
 #: services/OpenGnsys/service.py:123
 msgid "OS Image"
@@ -3694,8 +3699,8 @@ msgid ""
 "Security parameter for OpenGnsys to keep reservations at most this hours. "
 "Handle with care!"
 msgstr ""
-"Параметр безопасности для OpenGnsys, чтобы сохранить резервирование "
-"максимально в эти часы. Обращаться осторожно!"
+"Параметр безопасности для OpenGnsys, для максимального поддержания "
+"резервирований в эти часы. Обращаться осторожно!"
 
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
@@ -3707,12 +3712,12 @@ msgstr "Поставщик услуг платформы OpenNebula"
 
 #: services/OpenNebula/provider.py:77
 msgid "OpenNebula Host"
-msgstr "OpenNebula хост"
+msgstr "Хост OpenNebula"
 
 #: services/OpenNebula/provider.py:78
 msgid "OpenNebula Port (default is 2633 for non ssl connection)"
 msgstr ""
-"OpenNebula порт (по умолчанию 2633 для подключений не использующих ssl)"
+"Порт OpenNebula (по умолчанию 2633 для подключений не использующих ssl)"
 
 #: services/OpenNebula/provider.py:79 services/OpenStack/provider_legacy.py:104
 msgid ""
@@ -3724,7 +3729,7 @@ msgstr ""
 
 #: services/OpenNebula/provider.py:80
 msgid "User with valid privileges on OpenNebula"
-msgstr "Пользователь с действующими правами в OpenNebula"
+msgstr "Пользователь с необходимыми правами в OpenNebula"
 
 #: services/OpenNebula/provider.py:81
 msgid "Password of the user of OpenNebula"
@@ -3732,7 +3737,7 @@ msgstr "Пароль пользователя в OpenNebula"
 
 #: services/OpenNebula/provider.py:86
 msgid "Timeout in seconds of connection to OpenNebula"
-msgstr "Таймаут в секундах подключения к OpenNebula"
+msgstr "Таймаут подключения к OpenNebula в секундах"
 
 #: services/OpenNebula/provider.py:135
 msgid "Opennebula test connection passed"
@@ -3744,7 +3749,7 @@ msgstr "Действующие образы OpenNebula"
 
 #: services/OpenNebula/service.py:65
 msgid "OpenNebula live images based service"
-msgstr "Действующие образы OpenNebula образующие сервис"
+msgstr "Сервис на основе реальных образов OpenNebula"
 
 #: services/OpenNebula/service.py:103
 msgid "Datastore"
@@ -3791,8 +3796,8 @@ msgid ""
 "OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
 "identity)"
 msgstr ""
-"Облаке удостоверение конечной точки доступа к API (например, "
-"https://10.0.0.0/личность)"
+"Удостоверение конечной точки доступа к API OpenStack (например, "
+"https://10.0.0.0/идентификатор)"
 
 #: services/OpenStack/provider.py:99 services/OpenStack/provider_legacy.py:106
 msgid "Access interface"
@@ -3825,7 +3830,7 @@ msgstr "Идентификатор проекта"
 #: services/OpenStack/provider.py:110
 msgid "Project (tenant) for this provider. Set only if required by server."
 msgstr ""
-"Проект (арендатор) для этого провайдера. Устанавливается только если это "
+"Проект (арендатор) для этого поставщика. Устанавливается только если это "
 "требуется сервером."
 
 #: services/OpenStack/provider.py:111 services/OpenStack/service.py:107
@@ -3835,7 +3840,7 @@ msgstr "Регион"
 #: services/OpenStack/provider.py:111
 msgid "Region for this provider. Set only if required by server."
 msgstr ""
-"Регион для этого провайдера. Устанавливается только если это требуется "
+"Регион для этого поставщика. Устанавливается только если это требуется "
 "сервером."
 
 #: services/OpenStack/provider.py:113
@@ -3846,9 +3851,7 @@ msgstr "Имена подсетей"
 msgid ""
 "If checked, the name of the subnets will be used instead of the names of "
 "networks"
-msgstr ""
-"Если флажок установлен, вместо имен сетей будут использоваться имена "
-"подсетей."
+msgstr "Если отмечено, вместо имён сетей будут использоваться имена подсетей."
 
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:166
 msgid "OpenStack test connection passed"
@@ -3856,15 +3859,15 @@ msgstr "Тест подключения к OpenStack прошел успешно
 
 #: services/OpenStack/provider_legacy.py:83
 msgid "OpenStack LEGACY Platform Provider"
-msgstr "Облаке наследие платформу провайдера"
+msgstr "Совместимый поставщик платформы OpenStack"
 
 #: services/OpenStack/provider_legacy.py:87
 msgid ""
 "OpenStack LEGACY platform service provider (for older Openstack Releases, "
 "previous to OCATA)"
 msgstr ""
-"НАСЛЕДИЕ облаке платформы провайдер (для старых релизов в облаке, Предыдущий "
-"в OCATA)"
+"Совместимый поставщик услуг платформы OpenStack (для старых релизов "
+"OpenStack, выпущенных до OCATA)"
 
 #: services/OpenStack/provider_legacy.py:102
 msgid "OpenStack Host"
@@ -3936,7 +3939,7 @@ msgstr "IP "
 
 #: services/PhysicalMachines/provider.py:42
 msgid "Static IP Machines Provider"
-msgstr "Поставщик статических IP-машин"
+msgstr "Поставщик машин статических IP"
 
 #: services/PhysicalMachines/provider.py:44
 msgid "Provides connection to machines by IP"
@@ -3945,7 +3948,7 @@ msgstr "Обеспечивает подключение к машинам по I
 #: services/PhysicalMachines/service_multi.py:61
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
-msgstr "Сервисный токен"
+msgstr "Ключ услуги"
 
 #: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:57
@@ -3953,8 +3956,8 @@ msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
 msgstr ""
-"Сервисный токен, который будет использоваться субъектами для связи с "
-"сервисом. Оставьте пустым для постоянного присваивания."
+"Ключ услуги, который будет использоваться клиентами для связи с сервисом. "
+"Оставьте пустым для постоянного назначения."
 
 #: services/PhysicalMachines/service_multi.py:69
 #: services/RDS_enterprise/provider.py:48
@@ -3973,8 +3976,8 @@ msgstr "Проверьте порт"
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
-"Если не ноль, будут обслуживаться только хосты, отвечающие на соединение "
-"через этот порт"
+"Если не ноль, будут обслуживаться только хосты, отвечающие соединениям на "
+"этом порту"
 
 #: services/PhysicalMachines/service_multi.py:72
 msgid "Skip time"
@@ -4014,7 +4017,7 @@ msgstr "(привязано к {})"
 
 #: services/Proxmox/provider.py:55
 msgid "Proxmox Platform Provider"
-msgstr "Провайдер платформы Proxmox"
+msgstr "Поставщик платформы Proxmox"
 
 #: services/Proxmox/provider.py:57
 msgid "Proxmox platform service provider"
@@ -4032,8 +4035,8 @@ msgstr "Порт API Proxmox (по умолчанию 8006)"
 msgid ""
 "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgstr ""
-"Пользователь с действительными привилегиями в Proxmox (используйте форму "
-"«user @ authenticator»)"
+"Пользователь с достаточными привилегиями в Proxmox "
+"(\"пользователь@аутентификатор\")"
 
 #: services/Proxmox/provider.py:64
 msgid "Password of the user of Proxmox"
@@ -4041,7 +4044,7 @@ msgstr "Пароль пользователя Proxmox"
 
 #: services/Proxmox/provider.py:69
 msgid "Timeout in seconds of connection to Proxmox"
-msgstr "Тайм-аут в секундах подключения к Proxmox"
+msgstr "Тайм-аут подключения к Proxmox в секундах"
 
 #: services/Proxmox/publication.py:94
 #: services/Vmware_enterprise/publication.py:67
@@ -4056,27 +4059,29 @@ msgstr "Публикация UDS для {0}, созданная в {1}"
 
 #: services/Proxmox/service.py:63
 msgid "Proxmox Linked Clone"
-msgstr "Proxmox Связанный клон"
+msgstr "Связанный клон Proxmox"
 
 #: services/Proxmox/service.py:67
 msgid "Proxmox Services based on templates and COW (experimental)"
-msgstr "Сервисы Proxmox на основе шаблонов и COW (экспериментальные)"
+msgstr "Службы Proxmox на основе шаблонов и COW (экспериментальные)"
 
 #: services/Proxmox/service.py:112
 msgid "Pool that will contain UDS created vms"
-msgstr "Пул, который будет содержать VDS, созданные UDS"
+msgstr "Пул, который будет содержать виртуальные машины, созданные UDS"
 
 #: services/Proxmox/service.py:119
 msgid "HA"
-msgstr "HA"
+msgstr "Высокая доступность"
 
 #: services/Proxmox/service.py:121
 msgid "Select if HA is enabled and HA group for machines of this service"
-msgstr "Выберите, если HA включен и группа HA для машин этой службы"
+msgstr ""
+"Выберите, если задействована высокая доступность и группа высокой "
+"доступности для машин этой службы"
 
 #: services/Proxmox/service.py:142
 msgid "Storage for publications & machines."
-msgstr "Хранение публикаций и машин."
+msgstr "Хранилище публикаций и машин."
 
 #: services/Proxmox/service.py:188
 msgid "Disabled"
@@ -4142,7 +4147,7 @@ msgid ""
 "If active, uds will mirror the user on your active director. WARNING!! "
 "Existing coincident users may be deleted!."
 msgstr ""
-"Если активен, uds будет отражать пользователя на вашем активном директоре. "
+"Если активно, UDS будет дублировать создание пользователя в ваш AD. "
 "ПРЕДУПРЕЖДЕНИЕ!! Существующие совпадающие пользователи могут быть удалены!"
 
 #: services/RDS_enterprise/provider.py:87
@@ -4159,15 +4164,15 @@ msgstr "Управление пользователями AD"
 
 #: services/RDS_enterprise/provider.py:92
 msgid "AD Server"
-msgstr "AD сервер"
+msgstr "Сервер AD"
 
 #: services/RDS_enterprise/provider.py:93
 msgid "IP or HOST of AD Server. Must have LDAPS support enabled"
-msgstr "IP или Хост сервера AD. Должна быть включена поддержка LDAPS"
+msgstr "IP или ХОСТ сервера AD. Должна быть включена поддержка LDAPS"
 
 #: services/RDS_enterprise/provider.py:102
 msgid "AD LDAPS port (default is 636)"
-msgstr "AD LDAPS порт (по умолчанию 636)"
+msgstr "Порт AD LDAPS (по умолчанию 636)"
 
 #: services/RDS_enterprise/provider.py:109
 msgid "AD server OU for created users"
@@ -4175,14 +4180,14 @@ msgstr "OU сервера AD для созданных пользователе�
 
 #: services/RDS_enterprise/provider.py:110
 msgid "AD Server branch where users will be created by UDS"
-msgstr "AD Server филиал, где пользователи будут созданы UDS"
+msgstr "Филиал сервера AD, в котором UDS будут созданы пользователи"
 
 #: services/RDS_enterprise/provider.py:118
 msgid ""
 "Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
 msgstr ""
-"Имя пользователя с правами на создание / удаление учетных записей. "
-"Используйте форму USER@DOMAIN.XXX."
+"Имя пользователя с правами на создание/удаление учетных записей. Используйте "
+"форму пользователь@домен.домен."
 
 #: services/RDS_enterprise/provider.py:126
 msgid "Password of the user with privileges"
@@ -4197,8 +4202,8 @@ msgid ""
 "User will be created on AD with the format \"PREFIX...\", where ... will be "
 "the original UDS own username. Max 4 characters"
 msgstr ""
-"Пользователь будет создан в AD с форматом «PREFIX ...», где ... будет "
-"исходное имя пользователя UDS. Макс 4 символа"
+"Пользователь будет создан в AD в формате \"Префикс...\", где \"...\" будет "
+"исходное имя пользователя UDS. Максимум 4 символа."
 
 #: services/RDS_enterprise/provider.py:142
 msgid "AD Domain"
@@ -4214,7 +4219,7 @@ msgstr ""
 
 #: services/RDS_enterprise/provider.py:150
 msgid "AD Group"
-msgstr "AD Group"
+msgstr "Группа AD"
 
 #: services/RDS_enterprise/provider.py:151
 msgid "If not empty, UDS will try to add managed users to this group"
@@ -4225,8 +4230,8 @@ msgstr ""
 #: services/RDS_enterprise/provider.py:161
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
 msgstr ""
-"Выберите только один из методов «Отображение пользователя» или «Создание "
-"пользователя»."
+"Выберите только один из методов «Сопоставление пользователей» или «Создание "
+"пользователей»."
 
 #: services/RDS_enterprise/provider.py:165
 msgid "AD User Management: you must provide the AD server host."
@@ -4235,13 +4240,14 @@ msgstr "Управление пользователями AD: необходим
 #: services/RDS_enterprise/provider.py:168
 msgid "AD User Management: you must provide the users base DN."
 msgstr ""
-"Управление пользователями AD: необходимо указать базовое DN пользователя."
+"Управление пользователями AD: необходимо указать базовое для пользователей "
+"уникальное имя."
 
 #: services/RDS_enterprise/provider.py:171
 msgid "AD User Management: the username should be in USER@DOMAIN form."
 msgstr ""
-"Управление пользователями AD: имя пользователя должно быть в форме USER @ "
-"DOMAIN."
+"Управление пользователями AD: имя пользователя должно быть в формате "
+"пользователь@домен."
 
 #: services/RDS_enterprise/provider.py:174
 msgid "AD User Management: you must provide the password."
@@ -4257,7 +4263,7 @@ msgstr ""
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr ""
 "Управление пользователями AD: необходимо указать полное доменное имя "
-"пользователя."
+"создаваемого пользователя."
 
 #: services/RDS_enterprise/provider.py:265
 msgid "Connection to {}, port {} failed."
@@ -4265,7 +4271,7 @@ msgstr "Соединение с {}, порт {} не удалось."
 
 #: services/RDS_enterprise/provider.py:281
 msgid "The group {} could not be found. Please, check it."
-msgstr "Группа {} не найдена. Пожалуйста, проверь это."
+msgstr "Группа {} не найдена. Пожалуйста, проверьте ввод."
 
 #: services/RDS_enterprise/provider.py:284
 msgid "User creation test failed. Please, check parameters."
@@ -4274,7 +4280,7 @@ msgstr ""
 
 #: services/RDS_enterprise/provider.py:289
 msgid "Server {} is not accesible and Server checking is enabled"
-msgstr "Сервер {} недоступен и проверка сервера включена"
+msgstr "Сервер {} недоступен и включена проверка сервера"
 
 #: services/RDS_enterprise/provider.py:291
 msgid "Connectivity test passed"
@@ -4310,7 +4316,7 @@ msgstr "Начальный путь"
 
 #: services/RDS_enterprise/service.py:75
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
-msgstr "Путь, где будет запущено приложение. (т.е. папка f: \\ example \\)"
+msgstr "Путь, где будет запущено приложение. (т.е. папка f:\\example\\)"
 
 #: services/RDS_enterprise/service.py:84
 msgid "Max. Allowd services"
@@ -4603,7 +4609,7 @@ msgstr ""
 
 #: services/Vmware_enterprise/provider.py:55
 msgid "Power off VM on L2 cache"
-msgstr "Выключите ВМ на кеше L2"
+msgstr "Выключите виртуальные машины на кэше L2"
 
 #: services/Vmware_enterprise/provider.py:58
 msgid ""
@@ -4611,7 +4617,8 @@ msgid ""
 "This REQUIRES \"VMWare tools\" on machines."
 msgstr ""
 "Если этот параметр включен, UDS будет останавливать машины для кэша L2 "
-"вместо их приостановки. Это ТРЕБУЕТ «Инструменты VMWare» на станках."
+"вместо их приостановки. Для этого ТРЕБУЮТСЯ установленные «VMWare tools» на "
+"машинах."
 
 #: services/Vmware_enterprise/provider.py:64
 msgid "VMWare VCenter Platform Provider"
@@ -4670,15 +4677,15 @@ msgstr "Машины для этой услуги"
 
 #: services/Vmware_enterprise/service_fixed.py:97
 msgid "Use snapshots"
-msgstr "Используйте снимки"
+msgstr "Использовать моментальные снимки"
 
 #: services/Vmware_enterprise/service_fixed.py:100
 msgid ""
 "If active, UDS will try to create an snapshot on VM use and recover if on "
 "exit."
 msgstr ""
-"Если он активен, UDS попытается создать моментальный снимок при "
-"использовании виртуальной машины и восстановить его при выходе."
+"Если активно, UDS попытается создать моментальный снимок при использовании "
+"виртуальной машины и восстановить её при выходе."
 
 #: services/Vmware_enterprise/service_fixed.py:123
 msgid "We need at least a machine"
@@ -4777,11 +4784,11 @@ msgstr "Хранилища данных, где добавлены инкрем�
 
 #: services/Xen/provider.py:75
 msgid "Xenserver/XCP-NG Platforms Provider"
-msgstr "XenServer/XCP-NG платформ поставщик"
+msgstr "Поставщик платформ XenServer/XCP-NG"
 
 #: services/Xen/provider.py:79
 msgid "XenServer and XCP-NG platforms service provider"
-msgstr "XenServer XCP-NG платформы и поставщика услуг"
+msgstr "Поставщик платформ услуг XenServer и XCP-NG"
 
 #: services/Xen/provider.py:94
 msgid "XenServer Server IP or Hostname"
@@ -4845,11 +4852,11 @@ msgstr "Множитель теневой памяти (используйте �
 
 #: temp_for_locales.py:92
 msgid "Spanish"
-msgstr "испанский"
+msgstr "Испанский"
 
 #: temp_for_locales.py:93
 msgid "English"
-msgstr "английский"
+msgstr "Английский"
 
 #: temp_for_locales.py:94
 msgid "French"
@@ -4861,31 +4868,31 @@ msgstr "Немецкий"
 
 #: temp_for_locales.py:96
 msgid "Portuguese"
-msgstr "португальский"
+msgstr "Португальский"
 
 #: temp_for_locales.py:97
 msgid "Italian"
-msgstr "итальянский"
+msgstr "Итальянский"
 
 #: temp_for_locales.py:98
 msgid "Basque"
-msgstr "баскский"
+msgstr "Баскский"
 
 #: temp_for_locales.py:99
 msgid "Arabic"
-msgstr "арабский"
+msgstr "Арабский"
 
 #: temp_for_locales.py:100
 msgid "Russian"
-msgstr "русский"
+msgstr "Русский"
 
 #: temp_for_locales.py:101
 msgid "Catalan"
-msgstr "каталонский"
+msgstr "Каталонский"
 
 #: temp_for_locales.py:102
 msgid "Chinese"
-msgstr "китайский язык"
+msgstr "Китайский"
 
 #: templates/uds/reports/lists/users.html:15
 msgid "Real name"
@@ -4897,7 +4904,7 @@ msgstr "Последний вход"
 
 #: templates/uds/reports/stats/authenticator_stats.html:6
 msgid "Statistics by Authenticator"
-msgstr "Статистика по Authenticator"
+msgstr "Статистика аутентификатора"
 
 #: templates/uds/reports/stats/authenticator_stats.html:17
 msgid "User working"
@@ -4906,7 +4913,7 @@ msgstr "Пользователь работает"
 #: templates/uds/reports/stats/pools-performance.html:13
 #: templates/uds/reports/stats/pools-usage-day.html:13
 msgid "Pools:"
-msgstr "бассейны:"
+msgstr "Пулы:"
 
 #: templates/uds/reports/stats/pools-performance.html:14
 msgid "Start date:"
@@ -4931,7 +4938,7 @@ msgstr "Доступ к пулу"
 
 #: templates/uds/reports/stats/pools-performance.html:28
 msgid "Users Accesses by pool/date"
-msgstr "Доступ пользователей по пулу / дате"
+msgstr "Доступы пользователей по пулу/дате"
 
 #: templates/uds/reports/stats/pools-usage-day.html:14
 msgid "Date:"
@@ -4949,7 +4956,7 @@ msgstr "Сводка использования пулов"
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "from"
-msgstr "от"
+msgstr "с"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:15
 msgid "Total time"
@@ -4965,7 +4972,7 @@ msgstr "Среднее время"
 
 #: templates/uds/reports/stats/usage-by-pool.html:14
 msgid "Access date/time"
-msgstr "Дата / время доступа"
+msgstr "Дата/время доступа"
 
 #: templates/uds/reports/stats/user-access.html:12
 #: templates/uds/reports/stats/user-access.html:29
@@ -4982,7 +4989,7 @@ msgstr "Доступ пользователей по часам"
 
 #: templates/uds/reports/stats/user-access.html:24
 msgid "Users Access by day of week/hour"
-msgstr "Доступ пользователей по дням недели / часам"
+msgstr "Доступ пользователей по дням недели/часам"
 
 #: transports/HTML5RDP/html5rdp.py:63
 msgid "HTML5 RDP"
@@ -5174,7 +5181,7 @@ msgstr "Английская (US) клавиатура"
 #: transports/HTML5RDP/html5rdp.py:93
 #: transports/HTML5RDS_enterprise/html5rds.py:95
 msgid "English (GB) keyboard"
-msgstr "Английская (ГБ) клавиатура"
+msgstr "Английская (Великобритания) клавиатура"
 
 #: transports/HTML5RDP/html5rdp.py:94
 #: transports/HTML5RDS_enterprise/html5rds.py:96
@@ -5286,7 +5293,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:137
 #: transports/HTML5VNC/html5vnc.py:118 transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
-msgstr "Принудительно новое окно HTML"
+msgstr "Открывать HTML в новом окне"
 
 #: transports/HTML5RDP/html5rdp.py:137
 #: transports/HTML5RDS_enterprise/html5rds.py:139
@@ -5295,8 +5302,8 @@ msgid ""
 "If checked, every connection will try to open its own window instead of "
 "reusing the \"global\" one."
 msgstr ""
-"Если установлен этот флажок, каждое соединение будет пытаться открыть свое "
-"собственное окно вместо повторного использования «глобального»."
+"Если включено, каждое соединение будет пытаться открыть свое собственное "
+"окно вместо повторного использования текущего."
 
 #: transports/HTML5RDP/html5rdp.py:148
 #: transports/HTML5RDS_enterprise/html5rds.py:149
@@ -5323,7 +5330,7 @@ msgstr "RDS-протокол с использованием клиента HTML
 
 #: transports/HTML5VNC/html5vnc.py:63
 msgid "HTML5 VNC Experimental"
-msgstr "HTML5 VNC Experimental"
+msgstr "Экспериментальный HTML5 VNC"
 
 #: transports/HTML5VNC/html5vnc.py:65
 msgid "VNC protocol using HTML5 client (EXPERIMENTAL)"
@@ -5353,19 +5360,19 @@ msgstr "Глубина цвета"
 #: transports/HTML5VNC/html5vnc.py:91
 msgid "Color depth for VNC connection. Use this to control bandwidth."
 msgstr ""
-"Глубина цвета для подключения VNC. Используйте это для управления пропускной "
+"Глубина цвета для подключения VNC. Используйте для управления пропускной "
 "способностью."
 
 #: transports/HTML5VNC/html5vnc.py:103
 msgid "Swap red/blue"
-msgstr "Поменять местами красный / синий"
+msgstr "Поменять местами красный/синий"
 
 #: transports/HTML5VNC/html5vnc.py:103
 msgid ""
 "Use this if your colours seems incorrect (blue appears red, ..) to swap them."
 msgstr ""
-"Используйте это, если ваши цвета кажутся неправильными (синий кажется "
-"красным, ..), чтобы поменять их местами."
+"Используйте, если ваши цвета кажутся неправильными (синий кажется "
+"красным, ...), чтобы поменять их местами."
 
 #: transports/HTML5VNC/html5vnc.py:104
 msgid "Remote cursor"
@@ -5532,7 +5539,7 @@ msgstr "Политика перенаправления локальных ди�
 
 #: transports/RDP/rdp_base.py:87 transports/RDS_enterprise/rds_base.py:61
 msgid "Force drives"
-msgstr "Силовые диски"
+msgstr "Принудительное подключение дисков"
 
 #: transports/RDP/rdp_base.py:89 transports/RDS_enterprise/rds_base.py:63
 msgid ""
@@ -5575,9 +5582,7 @@ msgstr "Включить веб-камеру"
 
 #: transports/RDP/rdp_base.py:96 transports/RDS_enterprise/rds_base.py:70
 msgid "If checked, webcam will be redirected (ONLY Windows)."
-msgstr ""
-"Если этот флажок установлен, веб-камера будет перенаправлена (ТОЛЬКО "
-"Windows)."
+msgstr "Если включено, веб-камера будет перенаправлена (ТОЛЬКО Windows)."
 
 #: transports/RDP/rdp_base.py:97 transports/RDS_enterprise/rds_base.py:71
 msgid "Credssp Support"
@@ -5621,13 +5626,12 @@ msgstr "Если флажок установлен, разрешается сг�
 
 #: transports/RDP/rdp_base.py:133
 msgid "Connection Bar"
-msgstr "Панель подключений"
+msgstr "Окно подключения"
 
 #: transports/RDP/rdp_base.py:133
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
-"Если флажок установлен, панель подключений будет показан (только на Windows "
-"клиентов)"
+"Если включено, окно подключения будет показано (только на Windows клиентах)"
 
 #: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:89
 msgid "Multimedia sync"
@@ -5894,7 +5898,7 @@ msgstr "SPICE протокол. Туннельное подключение."
 
 #: transports/URL/url_custom.py:61
 msgid "URL Launcher"
-msgstr "URL Launcher"
+msgstr "Запускаемый URL"
 
 #: transports/URL/url_custom.py:63
 msgid "Launchs an external UDS customized URL"
@@ -5907,7 +5911,7 @@ msgstr "Шаблон URL"
 #: transports/URL/url_custom.py:71
 msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr ""
-"Шаблон URL для открытия (например, https: // _ IP_ / test? User = _USER_"
+"Шаблон URL для открытия (например, https: // _ IP_ / test? User = _USER_)"
 
 #: transports/URL/url_custom.py:86
 msgid "The url must be http or https"
@@ -6002,47 +6006,47 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Неверные данные"
 
-#: web/util/configjs.py:139
+#: web/util/configjs.py:140
 msgid "Access limited by calendar"
 msgstr "Доступ ограничен календарем"
 
-#: web/util/configjs.py:175
+#: web/util/configjs.py:176
 msgid "Windows client"
 msgstr "Клиент Windows"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:177
 msgid "Mac OS X client"
 msgstr "Клиент Mac OS X"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:178
 msgid "Debian based Linux client"
 msgstr "Linux-клиент на основе Debian"
 
-#: web/util/configjs.py:177 web/util/configjs.py:178 web/util/configjs.py:179
+#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
 msgid "(requires Python-3.6 or newer)"
 msgstr "(требуется Python-3.6 или новее)"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:179
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Linux-клиент на основе RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:180
 msgid "Generic .tar.gz Linux client"
 msgstr "Общий .tar.gz Linux-клиент"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:181
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Legacy основанный на Debian Python 2.7 Linux клиент"
 
-#: web/util/configjs.py:180 web/util/configjs.py:181 web/util/configjs.py:182
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
 msgid "(requires outdated Python-2.7)"
 msgstr "(требуется устаревший Python-2.7)"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:182
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Устаревший Linux-клиент на основе RH (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:183
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Устаревший клиент на базе OpenSuse для Linux)"
 
@@ -6110,8 +6114,8 @@ msgstr "Неожиданная ошибка"
 msgid ""
 "Reloading this page is not supported. Please, reopen service from origin."
 msgstr ""
-"Перезагрузка этой страницы не поддерживается. Пожалуйста, заново откройте "
-"сервис от источника."
+"Перезагрузка этой страницы не поддерживается. Пожалуйста, откройте службу "
+"заново."
 
 #: web/util/services.py:199
 msgid ""
@@ -6125,14 +6129,14 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Аутентификатор не предоставляет информацию"
 
-#: web/views/service.py:118
+#: web/views/service.py:119
 msgid "Service not ready. Please, try again in a while."
 msgstr "Сервис не готов. Повторите попытку через некоторое время."
 
-#: web/views/service.py:143
+#: web/views/service.py:150
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
 msgstr ""
-"Ваш сервис создается, пожалуйста, подождите несколько секунд, пока мы его "
-"завершим.)"
+"Ваш сервис создается, пожалуйста, подождите несколько секунд, пока мы "
+"завершим."

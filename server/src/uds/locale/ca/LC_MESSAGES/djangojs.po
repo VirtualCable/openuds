@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
-"PO-Revision-Date: 2020-09-17 08:21+0000\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
+"PO-Revision-Date: 2020-10-23 11:12+0000\n"
 "Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
@@ -1554,18 +1554,14 @@ msgstr "Iniciant el servei"
 #: static/modern/translations-fakejs.js:22
 #: static/modern/translations-fakejs.js:25
 msgid "Please wait until the service is launched."
-msgstr "Espereu fins que s&#39;iniciï el servei."
+msgstr "Si us plau, espereu fins que s'iniciï el servei."
 
 #: static/modern/translations-fakejs.js:23
-#| msgid ""
-#| "Remember that you will need the UDS client on your platform to access the "
-#| "service"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
 "service."
 msgstr ""
-"Recordeu que necessitareu el client UDS a la vostra plataforma per accedir "
-"al servei."
+"Recordeu que necessiteu el client UDS instal·lat per accedir al servei."
 
 #: static/modern/translations-fakejs.js:24
 #: static/modern/translations-fakejs.js:29

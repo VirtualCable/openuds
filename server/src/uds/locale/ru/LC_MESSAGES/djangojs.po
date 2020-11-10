@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
@@ -10,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:23+0200\n"
-"PO-Revision-Date: 2020-09-03 13:48+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2020-11-10 09:18+0100\n"
+"PO-Revision-Date: 2020-11-09 11:58+0000\n"
+"Last-Translator: Alexander <ag@kub.tel>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -43,7 +44,7 @@ msgstr "Основной"
 #: static/admin/translations-fakejs.js:198
 #: static/admin/translations-fakejs.js:200
 msgid "Error"
-msgstr "ошибка"
+msgstr "Ошибка"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:19
 #: static/admin/translations-fakejs.js:29
@@ -70,11 +71,11 @@ msgstr "Загрузка данных..."
 #: static/admin/translations-fakejs.js:194
 #: static/admin/translations-fakejs.js:203
 msgid "dismiss"
-msgstr "отклонять"
+msgstr "отклонить"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:30
 msgid "Testing..."
-msgstr "Тестирование ..."
+msgstr "Тестирование..."
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:32
 msgid "Test failed:"
@@ -103,7 +104,7 @@ msgstr "поставщик"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:65
 msgid "service"
-msgstr "оказание услуг"
+msgstr "услуга"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:66
 msgid "service pool"
@@ -135,11 +136,11 @@ msgstr "календарь"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:73
 msgid "pool group"
-msgstr "группа пул"
+msgstr "пул-группа"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:74
 msgid "Go to"
-msgstr "Идти к"
+msgstr "Следовать"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:78
 msgid "yes"
@@ -167,11 +168,11 @@ msgstr "#USR_NUMBER# пользователи, #GRP_NUMBER# группы"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:264
 msgid "#POOLS_NUMBER# service pools"
-msgstr "#POOLS_NUMBER# сервисные пулы"
+msgstr "#POOLS_NUMBER# пулы услуг"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:265
 msgid "#SERVICES_NUMBER# user services"
-msgstr "#SERVICES_NUMBER# пользовательские сервисы"
+msgstr "#SERVICES_NUMBER# пользовательские услуги"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:266
 msgid "#RESTRAINED_NUMBER# restrained services!"
@@ -217,11 +218,11 @@ msgstr "Группа"
 #: static/admin/translations-fakejs.js:394
 #: static/modern/translations-fakejs.js:39
 msgid "Authenticator"
-msgstr "Authenticator"
+msgstr "Аутентификатор"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:17
 msgid "Permission"
-msgstr "разрешение"
+msgstr "Разрешение"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:10
 msgid "Remove"
@@ -328,19 +329,19 @@ msgstr "Выйти из режима обслуживания"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:216
 msgid "Enter maintenance mode"
-msgstr "Войдите в режим обслуживания"
+msgstr "Войти в режим обслуживания"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:217
 msgid "New provider"
-msgstr "Новый провайдер"
+msgstr "Новый поставщик"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:218
 msgid "Edit provider"
-msgstr "Изменить провайдера"
+msgstr "Изменить поставщика"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:219
 msgid "Delete provider"
-msgstr "Удалить провайдера"
+msgstr "Удалить поставщика"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:220
 msgid "Exit maintenance mode?"
@@ -368,7 +369,7 @@ msgstr "Активный"
 #: static/admin/translations-fakejs.js:227
 #: static/admin/translations-fakejs.js:245
 msgid "Pool"
-msgstr "Бассейн"
+msgstr "Пул"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:211
 #: static/admin/translations-fakejs.js:228
@@ -376,20 +377,20 @@ msgstr "Бассейн"
 #: static/admin/translations-fakejs.js:441
 #: static/admin/translations-fakejs.js:457
 msgid "State"
-msgstr "государственный"
+msgstr "Состояние"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:212
 #: static/admin/translations-fakejs.js:229
 #: static/admin/translations-fakejs.js:247
 msgid "User Services"
-msgstr "Сервис пользователя"
+msgstr "Службы пользователя"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:213
 #: static/admin/translations-fakejs.js:257
 #: static/admin/translations-fakejs.js:311
 #: static/admin/translations-fakejs.js:353
 msgid "Service pools"
-msgstr "Сервисные бассейны"
+msgstr "Пулы услуг"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:4
 #: static/admin/translations-fakejs.js:6
@@ -407,11 +408,11 @@ msgstr "Нет"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:8
 msgid "(hidden)"
-msgstr "(Скрытый)"
+msgstr "(скрытый)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:9
 msgid "Selected items :"
-msgstr "Выбранные предметы:"
+msgstr "Выбрано:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:205
 #: static/admin/translations-fakejs.js:240
@@ -421,15 +422,15 @@ msgstr "Информация"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:206
 msgid "New service"
-msgstr "Новый сервис"
+msgstr "Новая услуга"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:207
 msgid "Edit service"
-msgstr "Редактировать сервис"
+msgstr "Редактировать услугу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:208
 msgid "Delete service"
-msgstr "Удалить сервис"
+msgstr "Удалить услугу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:209
 msgid "Delete user service"
@@ -449,7 +450,7 @@ msgstr "Удалить Аутентификатор"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:238
 msgid "Any"
-msgstr "любой"
+msgstr "Любой"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:239
 msgid "All"
@@ -495,13 +496,13 @@ msgstr "Пул услуг"
 #: static/admin/translations-fakejs.js:465
 #: static/admin/translations-fakejs.js:471
 msgid "Groups"
-msgstr "группы"
+msgstr "Группы"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:236
 #: static/admin/translations-fakejs.js:434
 #: static/admin/translations-fakejs.js:469
 msgid "Services Pools"
-msgstr "Услуги Бассейны"
+msgstr "Пулы услуг"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:237
 #: static/admin/translations-fakejs.js:354
@@ -512,7 +513,7 @@ msgstr "Назначенные услуги"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:248
 #: static/admin/translations-fakejs.js:330
 msgid "Name"
-msgstr "название"
+msgstr "Имя"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:249
 msgid "Real Name"
@@ -520,7 +521,7 @@ msgstr "Настоящее имя"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:250
 msgid "state"
-msgstr "государство"
+msgstr "состояние"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:251
 msgid "Last access"
@@ -531,7 +532,7 @@ msgstr "Последний доступ"
 #: static/admin/translations-fakejs.js:450
 #: static/admin/translations-fakejs.js:470
 msgid "Users"
-msgstr "пользователей"
+msgstr "Пользователей"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:254
 #: static/admin/translations-fakejs.js:442
@@ -543,12 +544,12 @@ msgstr "Включено"
 #: static/admin/translations-fakejs.js:443
 #: static/admin/translations-fakejs.js:459
 msgid "Disabled"
-msgstr "инвалид"
+msgstr "Отключено"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:256
 #: static/admin/translations-fakejs.js:460
 msgid "Blocked"
-msgstr "блокированный"
+msgstr "Заблокирован"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:243
 msgid "Delete user"
@@ -560,19 +561,19 @@ msgstr "Удалить группу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
 msgid "New OS Manager"
-msgstr "Новый OS Manager"
+msgstr "Новый менеджер ОС"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
 msgid "Edit OS Manager"
-msgstr "Редактировать OS Manager"
+msgstr "Редактировать Менеджер ОС"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:269
 msgid "Delete OS Manager"
-msgstr "Удалить OS Manager"
+msgstr "Удалить Менеджер ОС"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New Transport"
-msgstr "Новый Транспорт"
+msgstr "Новый транспорт"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:87
 msgid "Edit Transport"
@@ -608,11 +609,11 @@ msgstr "Удалить прокси"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:179
 msgid "(This service does not requires an OS Manager)"
-msgstr "(Этот сервис не требует OS Manager)"
+msgstr "(Этот сервис не требует Менеджер ОС)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:180
 msgid "New service Pool"
-msgstr "Новый сервис Pool"
+msgstr "Новый пул услуг"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:181
 msgid "Publish on creation"
@@ -620,7 +621,7 @@ msgstr "Публиковать при создании"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:182
 msgid "If selected, will initiate the publication inmediatly after creation"
-msgstr "Если выбран, инициирует публикацию сразу после создания"
+msgstr "Если включено, инициирует публикацию сразу после создания"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:183
 msgid "Edit Service Pool"
@@ -641,7 +642,7 @@ msgstr "Пожалуйста, выберите действительную гр
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:158
 msgid "Please, select a valid transport"
-msgstr "Пожалуйста, выберите действующий транспорт"
+msgstr "Пожалуйста, выберите действительный транспорт"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:159
 #: static/admin/translations-fakejs.js:286
@@ -690,11 +691,11 @@ msgstr "Изменения"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:143
 #: static/admin/translations-fakejs.js:165
 msgid "Delete assigned service"
-msgstr "Удалить назначенный сервис"
+msgstr "Удалить назначенную услугу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:166
 msgid "Delete cached service"
-msgstr "Удалить кэшированный сервис"
+msgstr "Удалить кэшированную услугу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:144
 #: static/admin/translations-fakejs.js:167
@@ -707,7 +708,7 @@ msgstr "Удалить назначенный транспорт"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:169
 msgid "Publication"
-msgstr "публикация"
+msgstr "Публикация"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:170
 msgid "Cancel publication?"
@@ -740,15 +741,15 @@ msgstr "Удалить правило доступа к календарю"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:148
 msgid "New meta pool"
-msgstr "Новый мета пул"
+msgstr "Новый мета-пул"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:149
 msgid "Edit meta pool"
-msgstr "Изменить метапул"
+msgstr "Изменить мета-пул"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:150
 msgid "Delete meta pool"
-msgstr "Удалить мета пул"
+msgstr "Удалить мета-пул"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:147
 msgid "Please, select a valid service pool"
@@ -760,15 +761,15 @@ msgstr "Удалить пул участников"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:185
 msgid "New pool group"
-msgstr "Новая группа бассейнов"
+msgstr "Новая пул-группа"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:186
 msgid "Edit pool group"
-msgstr "Изменить группу пула"
+msgstr "Изменить пул-группу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:187
 msgid "Delete pool group"
-msgstr "Удалить группу пула"
+msgstr "Удалить пул-группу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "New calendar"
@@ -824,7 +825,7 @@ msgstr "год"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:112
 msgid "years"
-msgstr "годов"
+msgstr "лет"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:113
 msgid "Yearly"
@@ -857,11 +858,11 @@ msgstr "(без дней)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:127
 msgid "Forever"
-msgstr "навсегда"
+msgstr "Навсегда"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:128
 msgid "Start date/time"
-msgstr "Дата / время начала"
+msgstr "Дата/время начала"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:129
 msgid "End date"
@@ -869,7 +870,7 @@ msgstr "Дата окончания"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:130
 msgid "Interval"
-msgstr "интервал"
+msgstr "Интервал"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:131
 msgid "Week days"
@@ -877,7 +878,7 @@ msgstr "Будние дни"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:132
 msgid "Invalid or incomplete rule. Please, fix field $FIELD"
-msgstr "Неверное или неполное правило. Пожалуйста, исправьте поле $ FIELD"
+msgstr "Неверное или неполное правило. Пожалуйста, исправьте поле $FIELD"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:133
 msgid "This rule will be valid every"
@@ -885,15 +886,15 @@ msgstr "Это правило будет действовать каждый"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:134
 msgid "of any week"
-msgstr "недели"
+msgstr "любой недели"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:135
 msgid "from"
-msgstr "из "
+msgstr "от"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:136
 msgid "until"
-msgstr "до тех пор"
+msgstr "до"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:137
 msgid "onwards"
@@ -905,7 +906,7 @@ msgstr "начиная с"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:139
 msgid "and every event will be active for"
-msgstr "и каждое событие будет активным для"
+msgstr "и каждое событие будет активным в течение"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:140
 msgid "with no duration"
@@ -937,7 +938,7 @@ msgstr "Отметка времени"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:95
 msgid "Set time mark for $NAME to current date/time?"
-msgstr "Установить метку времени для $ NAME на текущую дату / время?"
+msgstr "Установить метку времени для $NAME на текущую дату/время?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:96
 msgid "Time mark stablished"
@@ -957,11 +958,11 @@ msgstr "Изображение велико (макс. размер 256КБ)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:199
 msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Неверный тип изображения (поддерживает только JPEG, PNG и GIF"
+msgstr "Неверный тип изображения (поддерживаются только JPEG, PNG и GIF)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:201
 msgid "Please, provide a name and a image"
-msgstr "Пожалуйста, укажите имя и изображение"
+msgstr "Пожалуйста, укажите название и изображение"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:204
 msgid "Delete image"
@@ -970,15 +971,15 @@ msgstr "Удалить изображение"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:191
 #: static/admin/translations-fakejs.js:195
 msgid "Generate report"
-msgstr "Генерировать отчет"
+msgstr "Генерировать отчёт"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:192
 msgid "Generating report..."
-msgstr "Генерация отчета ..."
+msgstr "Генерация отчёта..."
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:193
 msgid "Report finished"
-msgstr "Отчет закончен"
+msgstr "Отчёт закончен"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:189
 msgid "Configuration saved"
@@ -986,19 +987,19 @@ msgstr "Конфигурация сохранена"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:188
 msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
-msgstr "Удалить маркер актера - ИСПОЛЬЗУЙТЕ С ОЧЕНЬ ВНИМАНИЕМ"
+msgstr "Удалить ключ клиента - ИСПОЛЬЗУЙТЕ С БОЛЬШОЙ ОСТОРОЖНОСТЬЮ!!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:23
 msgid "Cache flushed"
-msgstr "Кеш покраснел"
+msgstr "Кэш очищен"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:43
 msgid "Items per page"
-msgstr "пункты на странице"
+msgstr "Строк на страницу"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:3
 msgid ", (%i more items)"
-msgstr ", (% я больше предметов)"
+msgstr ", (% я больше строк)"
 
 #: static/admin/translations-fakejs.js:271
 msgid "Remove all"
@@ -1037,7 +1038,7 @@ msgstr "Разрешения для"
 
 #: static/admin/translations-fakejs.js:278
 msgid "New permission..."
-msgstr "Новое разрешение ..."
+msgstr "Новое разрешение..."
 
 #: static/admin/translations-fakejs.js:280
 msgid "New user permission for"
@@ -1059,7 +1060,7 @@ msgstr "Сохранить"
 #: static/admin/translations-fakejs.js:287
 #: static/admin/translations-fakejs.js:294
 msgid "Export"
-msgstr "экспорт"
+msgstr "Экспорт"
 
 #: static/admin/translations-fakejs.js:289
 #: static/admin/translations-fakejs.js:290
@@ -1088,7 +1089,7 @@ msgstr "Выбранные предметы"
 
 #: static/admin/translations-fakejs.js:298
 msgid "Detail"
-msgstr "подробность"
+msgstr "Подробность"
 
 #: static/admin/translations-fakejs.js:302
 #: static/admin/translations-fakejs.js:341
@@ -1102,19 +1103,19 @@ msgstr "Резюме"
 #: static/admin/translations-fakejs.js:303
 #: static/admin/translations-fakejs.js:425
 msgid "Services"
-msgstr "Сервисы"
+msgstr "Услуги"
 
 #: static/admin/translations-fakejs.js:304
 msgid "Authenticators"
-msgstr "аутентификаторы"
+msgstr "Аутентификаторы"
 
 #: static/admin/translations-fakejs.js:305
 msgid "Os Managers"
-msgstr "Os Managers"
+msgstr "Менеджеры ОС"
 
 #: static/admin/translations-fakejs.js:306
 msgid "Connectivity"
-msgstr "связь"
+msgstr "Подключение"
 
 #: static/admin/translations-fakejs.js:307
 #: static/admin/translations-fakejs.js:368
@@ -1125,19 +1126,19 @@ msgstr "Транспорты"
 #: static/admin/translations-fakejs.js:308
 #: static/modern/translations-fakejs.js:63
 msgid "Networks"
-msgstr "сети"
+msgstr "Сети"
 
 #: static/admin/translations-fakejs.js:309
 msgid "Proxies"
-msgstr "Доверенные"
+msgstr "Прокси"
 
 #: static/admin/translations-fakejs.js:310
 msgid "Pools"
-msgstr "бассейны"
+msgstr "Пулы"
 
 #: static/admin/translations-fakejs.js:312
 msgid "Meta pools"
-msgstr "Метапулы"
+msgstr "Мета-пулы"
 
 #: static/admin/translations-fakejs.js:314
 msgid "Calendars"
@@ -1145,11 +1146,11 @@ msgstr "Календари"
 
 #: static/admin/translations-fakejs.js:315
 msgid "Accounts"
-msgstr "Счета"
+msgstr "Аккаунты"
 
 #: static/admin/translations-fakejs.js:316
 msgid "Tools"
-msgstr "инструменты"
+msgstr "Инструменты"
 
 #: static/admin/translations-fakejs.js:317
 msgid "Gallery"
@@ -1157,19 +1158,19 @@ msgstr "Галерея"
 
 #: static/admin/translations-fakejs.js:318
 msgid "Reports"
-msgstr "Отчеты"
+msgstr "Отчёты"
 
 #: static/admin/translations-fakejs.js:319
 msgid "Configuration"
-msgstr "конфигурация"
+msgstr "Конфигурация"
 
 #: static/admin/translations-fakejs.js:320
 msgid "Actor tokens"
-msgstr "Актерские жетоны"
+msgstr "Ключи клиента"
 
 #: static/admin/translations-fakejs.js:321
 msgid "Flush Cache"
-msgstr "Flush Cache"
+msgstr "Очистить кэш"
 
 #: static/admin/translations-fakejs.js:322
 #: static/modern/translations-fakejs.js:65
@@ -1203,11 +1204,11 @@ msgstr "Событие"
 
 #: static/admin/translations-fakejs.js:333
 msgid "Start time"
-msgstr "Начальное время"
+msgstr "Время начала"
 
 #: static/admin/translations-fakejs.js:334
 msgid "Duration"
-msgstr "продолжительность"
+msgstr "Продолжительность"
 
 #: static/admin/translations-fakejs.js:335
 msgid "Duration units"
@@ -1219,23 +1220,23 @@ msgstr "Дата начала"
 
 #: static/admin/translations-fakejs.js:337
 msgid "Repeat until date"
-msgstr "Повторите до даты"
+msgstr "Повторять до даты"
 
 #: static/admin/translations-fakejs.js:338
 msgid "Frequency"
-msgstr "частота"
+msgstr "Частота"
 
 #: static/admin/translations-fakejs.js:340
 msgid "Repeat every"
-msgstr "Повторите каждый"
+msgstr "Повторять каждый"
 
 #: static/admin/translations-fakejs.js:344
 msgid "Rules"
-msgstr "правила"
+msgstr "Правила"
 
 #: static/admin/translations-fakejs.js:345
 msgid "New member pool"
-msgstr "Новый членский пул"
+msgstr "Новый пул участников"
 
 #: static/admin/translations-fakejs.js:346
 msgid "Edit member pool"
@@ -1244,11 +1245,11 @@ msgstr "Изменить пул участников"
 #: static/admin/translations-fakejs.js:347
 #: static/admin/translations-fakejs.js:407
 msgid "Priority"
-msgstr "приоритет"
+msgstr "Приоритет"
 
 #: static/admin/translations-fakejs.js:348
 msgid "Service pool"
-msgstr "Сервисный пул"
+msgstr "Пул услуг"
 
 #: static/admin/translations-fakejs.js:349
 msgid "Enabled?"
@@ -1265,7 +1266,7 @@ msgstr "Назначить услугу пользователю вручную"
 
 #: static/admin/translations-fakejs.js:359
 msgid "Service"
-msgstr "обслуживание"
+msgstr "Услуга"
 
 #: static/admin/translations-fakejs.js:366
 msgid "Cache"
@@ -1302,7 +1303,7 @@ msgstr "Изменить действие для"
 
 #: static/admin/translations-fakejs.js:388
 msgid "New action for"
-msgstr "Новая акция для"
+msgstr "Новое действие для"
 
 #: static/admin/translations-fakejs.js:389
 #: static/admin/translations-fakejs.js:408
@@ -1311,7 +1312,7 @@ msgstr "Календарь"
 
 #: static/admin/translations-fakejs.js:390
 msgid "Events offset (minutes)"
-msgstr "Смещение событий (минут)"
+msgstr "Смещение событий (минуты)"
 
 #: static/admin/translations-fakejs.js:391
 msgid "At the beginning of the interval?"
@@ -1320,7 +1321,7 @@ msgstr "В начале интервала?"
 #: static/admin/translations-fakejs.js:392
 #: static/admin/translations-fakejs.js:409
 msgid "Action"
-msgstr "действие"
+msgstr "Действие"
 
 #: static/admin/translations-fakejs.js:398
 msgid "Logs of"
@@ -1376,7 +1377,7 @@ msgstr "Размер изображения будет изменен при з�
 
 #: static/admin/translations-fakejs.js:426
 msgid "Usage"
-msgstr "использование"
+msgstr "Использование"
 
 #: static/admin/translations-fakejs.js:428
 #: static/admin/translations-fakejs.js:432
@@ -1386,7 +1387,7 @@ msgstr "Информация для"
 
 #: static/admin/translations-fakejs.js:429
 msgid "Services pools"
-msgstr "Услуги бассейнов"
+msgstr "Пулы услуг"
 
 #: static/admin/translations-fakejs.js:435
 msgid "Assigned Services"
@@ -1402,15 +1403,15 @@ msgstr "Новая группа"
 
 #: static/admin/translations-fakejs.js:439
 msgid "Meta group name"
-msgstr "Название мета группы"
+msgstr "Название мета-группы"
 
 #: static/admin/translations-fakejs.js:444
 msgid "Service Pools"
-msgstr "Сервисные бассейны"
+msgstr "Пулы услуг"
 
 #: static/admin/translations-fakejs.js:445
 msgid "Match mode"
-msgstr "Режим матча"
+msgstr "Режим совпадений"
 
 #: static/admin/translations-fakejs.js:446
 msgid "Selected Groups"
@@ -1443,7 +1444,7 @@ msgstr "Штатный сотрудник"
 #: static/admin/translations-fakejs.js:473
 #: static/modern/translations-fakejs.js:68
 msgid "Dashboard"
-msgstr "Приборная доска"
+msgstr "Панель управления"
 
 #: static/admin/translations-fakejs.js:474
 msgid "View authenticators"
@@ -1453,26 +1454,25 @@ msgstr "Посмотреть аутентификаторы"
 #: static/admin/translations-fakejs.js:476
 #: static/admin/translations-fakejs.js:477
 msgid "View service pools"
-msgstr "Просмотр сервисных пулов"
+msgstr "Просмотр пулов услуг"
 
 #: static/admin/translations-fakejs.js:478
 msgid "UDS Administration"
-msgstr "Администрация UDS"
+msgstr "Администрирование UDS"
 
 #: static/admin/translations-fakejs.js:479
 msgid "You are accessing UDS Administration as staff member."
-msgstr "Вы входите в Администрацию UDS в качестве сотрудника."
+msgstr "Вы входите в администрирование UDS в качестве сотрудника."
 
 #: static/admin/translations-fakejs.js:480
 msgid "This means that you have restricted access to elements."
-msgstr "Это означает, что у вас есть ограниченный доступ к элементам."
+msgstr "Это означает, что у вас ограничен доступ к элементам."
 
 #: static/admin/translations-fakejs.js:481
 msgid ""
 "In order to increase your access privileges, please contact your local UDS "
 "administrator."
-msgstr ""
-"Чтобы увеличить свои права доступа, обратитесь к местному администратору UDS."
+msgstr "Чтобы увеличить свои права доступа, обратитесь к администратору UDS."
 
 #: static/admin/translations-fakejs.js:482
 msgid "Thank you."
@@ -1488,7 +1488,7 @@ msgstr "Сервис находится в обслуживании и не мо
 
 #: static/modern/translations-fakejs.js:5
 msgid "Errors found"
-msgstr "Ошибки найдены"
+msgstr "Ошибок найдено"
 
 #: static/modern/translations-fakejs.js:6
 msgid "Invalid error string"
@@ -1496,7 +1496,7 @@ msgstr "Неверная строка ошибки"
 
 #: static/modern/translations-fakejs.js:7
 msgid "We use cookies to track usage and preferences"
-msgstr "Мы используем куки для отслеживания использования и предпочтений"
+msgstr "Мы используем cookies для отслеживания использования и предпочтений"
 
 #: static/modern/translations-fakejs.js:8
 msgid "I Understand"
@@ -1504,11 +1504,11 @@ msgstr "Я понимаю"
 
 #: static/modern/translations-fakejs.js:9
 msgid "Learn more"
-msgstr "Учить больше"
+msgstr "Узнать больше"
 
 #: static/modern/translations-fakejs.js:10
 msgid "Service is in maintenance"
-msgstr "Сервис находится в обслуживании"
+msgstr "Сервис находится на техобслуживании"
 
 #: static/modern/translations-fakejs.js:11
 msgid "This service is currently not accessible due to schedule restrictions."
@@ -1517,78 +1517,74 @@ msgstr ""
 
 #: static/modern/translations-fakejs.js:12
 msgid "Launcher"
-msgstr "гранатомет"
+msgstr "Панель запуска"
 
 #: static/modern/translations-fakejs.js:13
 msgid "Service is in maintenance and cannot be launched"
-msgstr "Сервис находится в обслуживании и не может быть запущен"
+msgstr "Сервис находится на техобслуживании и не может быть запущен"
 
 #: static/modern/translations-fakejs.js:14
 msgid "This service is currently not accesible due to schedule restrictions."
-msgstr "Эта услуга в настоящее время недоступна из-за ограничений графика."
+msgstr ""
+"Эта услуга в настоящее время недоступна из-за ограничений по расписанию."
 
 #: static/modern/translations-fakejs.js:15
 msgid "Release service: "
-msgstr "Сервис релизов:"
+msgstr "Выпустить услугу:"
 
 #: static/modern/translations-fakejs.js:16
 msgid "Reset service: "
-msgstr "Сбросить сервис:"
+msgstr "Сбросить услугу:"
 
 #: static/modern/translations-fakejs.js:17
 msgid "Service released"
-msgstr "Служба выпущена"
+msgstr "Услуга выпущена"
 
 #: static/modern/translations-fakejs.js:18
 msgid "Service reseted"
-msgstr "Сервис сброшен"
+msgstr "Услуга сброшена"
 
 #: static/modern/translations-fakejs.js:19
 msgid "Are you sure?"
-msgstr "Уверены ли вы?"
+msgstr "Вы уверены?"
 
 #: static/modern/translations-fakejs.js:21
 msgid "Launching service"
-msgstr "Запуск службы"
+msgstr "Запуск услуги"
 
 #: static/modern/translations-fakejs.js:22
 #: static/modern/translations-fakejs.js:25
 msgid "Please wait until the service is launched."
-msgstr "Подождите, пока сервис не запустится."
+msgstr "Подождите, пока услуга запустится."
 
 #: static/modern/translations-fakejs.js:23
-#| msgid ""
-#| "Remember that you will need the UDS client on your platform to access the "
-#| "service"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
 "service."
 msgstr ""
-"Помните, что для доступа к услуге вам понадобится клиент UDS на вашей "
-"платформе."
+"Помните, что для доступа к услуге понадобится клиент UDS в вашей системе."
 
 #: static/modern/translations-fakejs.js:24
 #: static/modern/translations-fakejs.js:29
 msgid "Error launching service"
-msgstr "Ошибка запуска сервиса"
+msgstr "Ошибка запуска службы"
 
 #: static/modern/translations-fakejs.js:26
 msgid ""
 "Your connection is being prepared. It will open on a new window when ready."
 msgstr ""
-"Ваше соединение готовится. Когда он будет готов, он откроется в новом окне."
+"Ваше соединение подготавливается. Когда оно будет готово, то откроется в "
+"новом окне."
 
 #: static/modern/translations-fakejs.js:27
 msgid ""
 "The service is now being prepared. (It is at #).'.replace('#', '' + data."
 "running + '%"
-msgstr ""
-"Служба сейчас готовится. (Это #). &#39;. Replace (&#39; # &#39;,&#39; &#39;+ "
-"data.running +&#39;%"
+msgstr "Служба сейчас готовится. (Она #).'.replace('#', '' + data.running + '%"
 
 #: static/modern/translations-fakejs.js:28
 msgid "Please, tray again in a few moments."
-msgstr "Пожалуйста, снова подносите лоток через несколько минут."
+msgstr "Пожалуйста, попробуйте снова через несколько минут."
 
 #: static/modern/translations-fakejs.js:31
 msgid "You can access UDS Open Source code at"
@@ -1601,7 +1597,7 @@ msgstr "UDS был разработан с использованием этих
 #: static/modern/translations-fakejs.js:33
 msgid "If you find that we missed any component, please let us know"
 msgstr ""
-"Если вы обнаружите, что мы пропустили какой-либо компонент, пожалуйста, "
+"Если вы обнаружили, что мы пропустили какой-либо компонент, пожалуйста, "
 "сообщите нам"
 
 #: static/modern/translations-fakejs.js:34
@@ -1624,7 +1620,7 @@ msgstr ""
 
 #: static/modern/translations-fakejs.js:37
 msgid "Username"
-msgstr "имя пользователя"
+msgstr "Имя пользователя"
 
 #: static/modern/translations-fakejs.js:38
 msgid "Password"
@@ -1641,31 +1637,31 @@ msgstr "Загрузки"
 
 #: static/modern/translations-fakejs.js:42
 msgid "Always download the UDS actor matching your platform"
-msgstr "Всегда загружайте актера UDS, соответствующего вашей платформе"
+msgstr "Всегда загружайте клиента UDS, соответствующего вашей платформе"
 
 #: static/modern/translations-fakejs.js:43
 msgid ""
 "Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
-"Унаследованные акторы предоставляются только для поддержки старых "
-"операционных систем. Старайтесь их избегать."
+"Совместимые клиенты предоставляются только для поддержки старых операционных "
+"систем. Старайтесь их избегать."
 
 #: static/modern/translations-fakejs.js:44
 msgid "An error has occurred"
-msgstr "произошла ошибка"
+msgstr "Произошла ошибка"
 
 #: static/modern/translations-fakejs.js:45
 msgid "Return"
-msgstr "Вернуть"
+msgstr "Вернуться"
 
 #: static/modern/translations-fakejs.js:46
 msgid "UDS Service launcher"
-msgstr "UDS Сервис запуска"
+msgstr "Запуск услуг UDS"
 
 #: static/modern/translations-fakejs.js:47
 msgid "The service you have requested is being launched."
-msgstr "Запрошенная вами служба запущена."
+msgstr "Запрошенная вами услуга запущена."
 
 #: static/modern/translations-fakejs.js:48
 msgid "Please, note that reloading this page will not work."
@@ -1673,14 +1669,14 @@ msgstr "Обратите внимание, что перезагрузка эт�
 
 #: static/modern/translations-fakejs.js:49
 msgid "To relaunch service, you will have to do it from origin."
-msgstr "Чтобы перезапустить сервис, вам придется сделать это с нуля."
+msgstr "Чтобы перезапустить услугу, вам придется сделать это с нуля."
 
 #: static/modern/translations-fakejs.js:50
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
 msgstr ""
-"Если служба не запускается автоматически, возможно, у вас не установлен "
+"Если услуга не запускается автоматически, возможно, у вас не установлен "
 "клиент UDS"
 
 #: static/modern/translations-fakejs.js:51
@@ -1693,19 +1689,19 @@ msgstr "Страница загрузки клиента UDS"
 
 #: static/modern/translations-fakejs.js:53
 msgid "Release service"
-msgstr "Служба выпуска"
+msgstr "Выпустить услугу"
 
 #: static/modern/translations-fakejs.js:54
 msgid "Reset service"
-msgstr "Сбросить сервис"
+msgstr "Сбросить услугу"
 
 #: static/modern/translations-fakejs.js:55
 msgid "Connections"
-msgstr "связи"
+msgstr "Соединения"
 
 #: static/modern/translations-fakejs.js:56
 msgid "Actions"
-msgstr "действия"
+msgstr "Действия"
 
 #: static/modern/translations-fakejs.js:58
 #: static/modern/translations-fakejs.js:59
@@ -1718,7 +1714,7 @@ msgstr "Обнаружен прокси ip"
 
 #: static/modern/translations-fakejs.js:62
 msgid "UDS transports for this client"
-msgstr "UDS транспортирует для этого клиента"
+msgstr "Транспорты UDS для этого клиента"
 
 #: static/modern/translations-fakejs.js:64
 msgid "UDS networks for this IP"
@@ -1727,4 +1723,4 @@ msgstr "Сети UDS для этого IP"
 #: static/modern/translations-fakejs.js:72
 #: static/modern/translations-fakejs.js:74
 msgid "About"
-msgstr "Около"
+msgstr "О"
