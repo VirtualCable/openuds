@@ -34,7 +34,6 @@ import logging
 import typing
 
 from django.db import models
-from django.db.models import signals
 
 from uds.core.util.state import State
 from uds.core.util import log
@@ -86,7 +85,7 @@ class Group(UUIDModel):
         """
         return self.manager.getInstance()
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.is_meta:
             return "Meta group {}(id:{}) with groups {}".format(self.name, self.id, list(self.groups.all()))
 
@@ -114,4 +113,4 @@ class Group(UUIDModel):
         logger.debug('Deleted group %s', toDelete)
 
 
-signals.pre_delete.connect(Group.beforeDelete, sender=Group)
+models.signals.pre_delete.connect(Group.beforeDelete, sender=Group)

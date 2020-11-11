@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2020 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -99,7 +99,7 @@ class CalendarRule(UUIDModel):
     duration = models.IntegerField(default=0)  # Duration in minutes
     duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
 
-    calendar: Calendar = models.ForeignKey(Calendar, related_name='rules', on_delete=models.CASCADE)
+    calendar: 'models.ForeignKey[CalendarRule, Calendar]' = models.ForeignKey(Calendar, related_name='rules', on_delete=models.CASCADE)
 
     class Meta:
         """

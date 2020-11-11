@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2020 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -52,7 +52,9 @@ class Calendar(UUIDModel, TaggingMixin):
     modified = models.DateTimeField(auto_now=True)
 
     # Sobmodels
-    rules: 'CalendarRule'
+    # "fake" relations declarations for type checking
+    rules: 'models.QuerySet[CalendarRule]'
+    calendaraction_set: 'models.QuerySet[CalendarAction]'
 
     class Meta:
         """

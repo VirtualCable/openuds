@@ -39,8 +39,6 @@ from uds.core.util import encoders
 
 from .uuid_model import UUIDModel
 
-
-
 logger = logging.getLogger(__name__)
 
 class DBFile(UUIDModel):
@@ -65,7 +63,7 @@ class DBFile(UUIDModel):
             return b''
 
     @data.setter
-    def data(self, value: typing.Union[str, bytes]):
+    def data(self, value: bytes):
         self.size = len(value)
         self.content = typing.cast(str, encoders.encode(encoders.encode(value, 'zip'), 'base64', asText=True))
 

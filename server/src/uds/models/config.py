@@ -58,5 +58,5 @@ class Config(models.Model):
         unique_together = (('section', 'key'),)
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Config {} = {}".format(self.key, self.value)

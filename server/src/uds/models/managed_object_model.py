@@ -58,7 +58,7 @@ class ManagedObjectModel(UUIDModel):
 
     class Meta(UUIDModel.Meta):
         """
-        Defines this is an abstract clas
+        Defines this is an abstract class
         """
         abstract = True
 

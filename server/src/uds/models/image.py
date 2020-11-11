@@ -33,10 +33,9 @@ import logging
 import typing
 
 
-from PIL import Image as PILImage
+import PIL.Image
 
 from django.db import models
-from django.db.models import signals
 from django.http import HttpResponse
 
 from uds.core.util import encoders
@@ -44,7 +43,6 @@ from uds.core.util import encoders
 
 from .uuid_model import UUIDModel
 from .util import getSqlDatetime
-
 
 
 logger = logging.getLogger(__name__)
@@ -85,12 +83,12 @@ class Image(UUIDModel):
     def prepareForDb(data: bytes) -> bytes:
         try:
             stream = io.BytesIO(data)
-            image = PILImage.open(stream)
+            image = PIL.Image.open(stream)
         except Exception:  # Image data is incorrect, fix as a simple transparent image
-            image = PILImage.new('RGBA', (128, 128))
+            image = PIL.Image.new('RGBA', (128, 128))
 
         # Max image size, keeping aspect and using antialias
-        image.thumbnail(Image.MAX_IMAGE_SIZE, PILImage.ANTIALIAS)
+        image.thumbnail(Image.MAX_IMAGE_SIZE, PIL.Image.ANTIALIAS)
         output = io.BytesIO()
         image.save(output, 'png')
         return output.getvalue()
@@ -103,7 +101,7 @@ class Image(UUIDModel):
         return Image.encode64(self.data)
 
     @data64.setter
-    def data64(self, value: str):
+    def data64(self, value: str) -> None:
         """
         Sets the value of image (data) from a base 64 encoded string
         """
@@ -117,22 +115,22 @@ class Image(UUIDModel):
         return Image.encode64(self.thumb)
 
     @thumb64.setter
-    def thumb64(self, value: str):
+    def thumb64(self, value: str) -> None:
         """
         Sets the value of image (data) from a base 64 encoded string
         """
         self.thumb = Image.decode64(value)
 
     @property
-    def image(self) -> PILImage:
+    def image(self) -> PIL.Image.Image:
         """
         Returns an image (PIL Image)
         """
         try:
             data = io.BytesIO(self.data)
-            return PILImage.open(data)
+            return PIL.Image.open(data)
         except Exception:  # Image data is incorrect, fix as a simple transparent image
-            return PILImage.new('RGBA', Image.MAX_IMAGE_SIZE)
+            return PIL.Image.new('RGBA', Image.MAX_IMAGE_SIZE)
 
     @property
     def size(self) -> typing.Tuple[int, int]:
@@ -144,7 +142,7 @@ class Image(UUIDModel):
     def updateThumbnail(self) -> None:
         thumb = self.image
         self.width, self.height = thumb.size
-        thumb.thumbnail(Image.THUMBNAIL_SIZE, PILImage.ANTIALIAS)
+        thumb.thumbnail(Image.THUMBNAIL_SIZE, PIL.Image.ANTIALIAS)
         output = io.BytesIO()
         thumb.save(output, 'png')
         self.thumb = output.getvalue()
@@ -191,4 +189,4 @@ class Image(UUIDModel):
         logger.debug('Deleted image %s', toDelete)
 
 
-signals.pre_delete.connect(Image.beforeDelete, sender=Image)
+models.signals.pre_delete.connect(Image.beforeDelete, sender=Image)
