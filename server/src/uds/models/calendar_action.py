@@ -58,20 +58,20 @@ logger = logging.getLogger(__name__)
 # Current posible actions
 # Each line describes:
 #
-CALENDAR_ACTION_PUBLISH = {'id': 'PUBLISH', 'description': _('Publish'), 'params': ()}
-CALENDAR_ACTION_CACHE_L1 = {'id': 'CACHEL1', 'description': _('Set cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size'), 'default': '1'},)}
-CALENDAR_ACTION_CACHE_L2 = {'id': 'CACHEL2', 'description': _('Set L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1'},)}
-CALENDAR_ACTION_INITIAL = {'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services'), 'default': '1'},)}
-CALENDAR_ACTION_MAX = {'id': 'MAX', 'description': _('Set maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10'},)}
-CALENDAR_ACTION_ADD_TRANSPORT = {'id': 'ADD_TRANSPORT', 'description': _('Add a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Transport'), 'default': ''},)}
-CALENDAR_ACTION_DEL_TRANSPORT = {'id': 'REMOVE_TRANSPORT', 'description': _('Remove a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Trasport'), 'default': ''},)}
-CALENDAR_ACTION_ADD_GROUP = {'id': 'ADD_GROUP', 'description': _('Add a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
-CALENDAR_ACTION_DEL_GROUP = {'id': 'REMOVE_GROUP', 'description': _('Remove a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
-CALENDAR_ACTION_IGNORE_UNUSED = {'id': 'IGNORE_UNUSED', 'description': _('Sets the ignore unused'), 'params': ({'type': 'bool', 'name': 'state', 'description': _('Ignore assigned and unused'), 'default': False},)}
-CALENDAR_ACTION_REMOVE_USERSERVICES = {'id': 'REMOVE_USERSERVICES', 'description': _('Remove ALL assigned user service. USE WITH CAUTION!'), 'params': ()}
+CALENDAR_ACTION_PUBLISH: typing.Dict[str, typing.Any] = {'id': 'PUBLISH', 'description': _('Publish'), 'params': ()}
+CALENDAR_ACTION_CACHE_L1: typing.Dict[str, typing.Any] = {'id': 'CACHEL1', 'description': _('Set cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size'), 'default': '1'},)}
+CALENDAR_ACTION_CACHE_L2: typing.Dict[str, typing.Any] = {'id': 'CACHEL2', 'description': _('Set L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1'},)}
+CALENDAR_ACTION_INITIAL: typing.Dict[str, typing.Any] = {'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services'), 'default': '1'},)}
+CALENDAR_ACTION_MAX: typing.Dict[str, typing.Any] = {'id': 'MAX', 'description': _('Set maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10'},)}
+CALENDAR_ACTION_ADD_TRANSPORT: typing.Dict[str, typing.Any] = {'id': 'ADD_TRANSPORT', 'description': _('Add a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Transport'), 'default': ''},)}
+CALENDAR_ACTION_DEL_TRANSPORT: typing.Dict[str, typing.Any] = {'id': 'REMOVE_TRANSPORT', 'description': _('Remove a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Trasport'), 'default': ''},)}
+CALENDAR_ACTION_ADD_GROUP: typing.Dict[str, typing.Any] = {'id': 'ADD_GROUP', 'description': _('Add a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
+CALENDAR_ACTION_DEL_GROUP: typing.Dict[str, typing.Any] = {'id': 'REMOVE_GROUP', 'description': _('Remove a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
+CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {'id': 'IGNORE_UNUSED', 'description': _('Sets the ignore unused'), 'params': ({'type': 'bool', 'name': 'state', 'description': _('Ignore assigned and unused'), 'default': False},)}
+CALENDAR_ACTION_REMOVE_USERSERVICES: typing.Dict[str, typing.Any] = {'id': 'REMOVE_USERSERVICES', 'description': _('Remove ALL assigned user service. USE WITH CAUTION!'), 'params': ()}
 
 
-CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {c['id']: c for c in (
+CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = { c['id']: c for c in (
     CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
     CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
