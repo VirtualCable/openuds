@@ -105,8 +105,8 @@ class RDPTransport(BaseRDPTransport):
         ci = self.getConnectionInfo(userService, user, password)
         username, password, domain = ci['username'], ci['password'], ci['domain']
 
-        # escape conflicting chars
-        password = password.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
+        # escape conflicting chars : Note, on 3.0 this should not be neccesary. Kept until more tests
+        # password = password.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
 
         # width, height = CommonPrefs.getWidthHeight(prefs)
         # depth = CommonPrefs.getDepth(prefs)
