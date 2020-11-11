@@ -93,12 +93,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     servicesPoolGroup: typing.Optional[ServicePoolGroup] = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
 
-    accessCalendars = models.ManyToManyField(Calendar, related_name='accessSP', through='CalendarAccess')
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
     # Default fallback action for access
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
-    actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
 
     # Usage accounting
     account: typing.Optional[Account] = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)

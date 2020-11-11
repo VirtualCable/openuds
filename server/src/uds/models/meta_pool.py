@@ -82,7 +82,6 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     servicesPoolGroup = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='metaPools', on_delete=models.SET_NULL)
     assignedGroups = models.ManyToManyField(Group, related_name='metaPools', db_table='uds__meta_grps')
 
-    accessCalendars = models.ManyToManyField(Calendar, related_name='accessMeta', through='CalendarAccessMeta')
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
     # Default fallback action for access
