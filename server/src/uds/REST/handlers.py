@@ -43,8 +43,8 @@ from uds.core.managers import cryptoManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
-
+    from uds.core.util.request import ExtendedHttpRequest
+    
 logger = logging.getLogger(__name__)
 
 AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'
@@ -97,19 +97,20 @@ class Handler:
     needs_admin: typing.ClassVar[bool] = False  # By default, the methods will be accessible by anyone if nothing else indicated
     needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
-    _request: 'HttpRequest'
+    _request: 'ExtendedHttpRequest'  # It's a modified HttpRequest
     _path: str
     _operation: str
     _params: typing.Any  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
     _args: typing.Tuple[str, ...]  # This are the "path" split by /, that is, the REST invocation arguments
     _kwargs: typing.Dict
     _headers: typing.Dict[str, str]
+    _session: typing.Optional[SessionStore]
     _authToken: typing.Optional[str]
     _user: 'User'
 
 
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
-    def __init__(self, request: 'HttpRequest', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
+    def __init__(self, request: 'ExtendedHttpRequest', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
 
         logger.debug('Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated)
         if (self.needs_admin or self.needs_staff) and not self.authenticated:  # If needs_admin, must also be authenticated
@@ -261,18 +262,21 @@ class Handler:
         Get REST session related value for a key
         """
         try:
-            return self._session['REST'].get(key)
+            if self._session:
+                return self._session['REST'].get(key)
+            return None
         except Exception:
-            return None  # _session['REST'] does not exists?
+            return None
 
     def setValue(self, key: str, value: typing.Any) -> None:
         """
         Set a session key value
         """
         try:
-            self._session['REST'][key] = value
-            self._session.accessed = True
-            self._session.save()
+            if self._session:
+                self._session['REST'][key] = value
+                self._session.accessed = True
+                self._session.save()
         except Exception:
             logger.exception('Got an exception setting session value %s to %s', key, value)
 

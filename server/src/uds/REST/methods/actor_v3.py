@@ -430,14 +430,7 @@ class Login(LoginLogout):
         logger.debug('Login Args: %s,  Params: %s', self._args, self._params)
 
         try:
-            userService: typing.Optional[UserService] = self.getUserService()
-        except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
-            if isManaged:
-                raise
-            userService = None  # Skip later processing userService
-            self.notifyService(login=True)
-
-        if userService:
+            userService: UserService = self.getUserService()
             osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
             if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
                 osmanagers.OSManager.loggedIn(userService, self._params.get('username') or '')
@@ -448,6 +441,11 @@ class Login(LoginLogout):
 
             ip, hostname = userService.getConnectionSource()
             deadLine = userService.deployed_service.getDeadline()
+        except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
+            if isManaged:
+                raise
+            self.notifyService(login=True)
+
 
         return ActorV3Action.actorResult({
             'ip': ip,
@@ -468,14 +466,7 @@ class Logout(LoginLogout):
 
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
-            userService: typing.Optional[UserService] = self.getUserService()
-        except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
-            if isManaged:
-                raise
-            userService = None  # Skip later processing userService
-            self.notifyService(login=False)  # Logout notification
-
-        if userService:
+            userService: UserService = self.getUserService()
             osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
             if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
                 osmanagers.OSManager.loggedOut(userService, self._params.get('username') or '')
@@ -485,6 +476,10 @@ class Logout(LoginLogout):
                         userService.remove()
                 else:
                     userService.remove()
+        except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
+            if isManaged:
+                raise
+            self.notifyService(login=False)  # Logout notification
 
         return ActorV3Action.actorResult('ok')
 
@@ -521,7 +516,7 @@ class Ticket(ActorV3Action):
 
         try:
             return ActorV3Action.actorResult(TicketStore.get(self._params['ticket'], invalidate=True))
-        except TicketStore.DoesNotExists:
+        except TicketStore.DoesNotExist:
             return ActorV3Action.actorResult(error='Invalid ticket')
 
 
@@ -568,8 +563,11 @@ class Unmanaged(ActorV3Action):
             'server_certificate': certificate,
             'password': password
         }
-        # Store certificate, secret & port with service if validId
         if validId:
+            # Notify service of it "just start" action
+            service.notifyInitialization(validId)
+
+            # Store certificate, secret & port with service if validId
             service.storeIdInfo(validId, {
                 'cert': certificate,
                 'secret': self._params['secret'],
