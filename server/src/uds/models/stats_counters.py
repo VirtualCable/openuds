@@ -63,7 +63,7 @@ class StatsCounters(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_grouped(owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs) -> typing.Iterable:  # pylint: disable=too-many-locals
+    def get_grouped(owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs) -> 'models.QuerySet[StatsCounters]':  # pylint: disable=too-many-locals
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 
@@ -146,7 +146,7 @@ class StatsCounters(models.Model):
         logger.debug('Stats query: %s', query)
 
         # We use result as an iterator
-        return StatsCounters.objects.raw(query)
+        return typing.cast('models.QuerySet[StatsCounters]', StatsCounters.objects.raw(query))
 
     def __str__(self):
         return u"Counter of {}({}): {} - {} - {}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)

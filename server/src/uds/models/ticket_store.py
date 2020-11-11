@@ -102,7 +102,7 @@ class TicketStore(UUIDModel):
             data: str,
             validatorFnc: typing.Optional[ValidatorType] = None,
             validity: int = DEFAULT_VALIDITY,
-            owner: typing.Optional[str] = owner,
+            owner: typing.Optional[str] = None,
             secure: bool = False
         ) -> None:
         """
@@ -119,6 +119,7 @@ class TicketStore(UUIDModel):
             t.data = pickle.dumps(data)
             t.stamp = getSqlDatetime()
             t.validity = validity
+            t.owner = owner
             t.save()
         except TicketStore.DoesNotExist:
             TicketStore.objects.create(uuid=uuid, stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity)

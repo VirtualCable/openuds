@@ -34,9 +34,9 @@ import typing
 import logging
 import pickle
 from datetime import datetime, timedelta
+from uds.core.util.states import publication
 
 from django.db import models, transaction
-from django.db.models import signals, QuerySet
 
 from uds.core.environment import Environment
 from uds.core.util import log
@@ -53,7 +53,6 @@ from .transport import Transport
 from .group import Group
 from .image import Image
 from .service_pool_group import ServicePoolGroup
-from .calendar import Calendar
 from .account import Account
 
 from .util import NEVER
@@ -62,9 +61,7 @@ from .util import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import UserService, ServicePoolPublication, User, Group, Proxy
-    from django.db.models import QuerySet
-
+    from uds.models import UserService, ServicePoolPublication, User, Group, Proxy, MetaPoolMember, CalendarAccess
 
 logger = logging.getLogger(__name__)
 
@@ -76,8 +73,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
-    service: Service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
-    osmanager: typing.Optional[OSManager] = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
+    service: 'models.ForeignKey[ServicePool, Service]' = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
+    osmanager: 'models.ForeignKey[ServicePool, OSManager]' = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
     transports = models.ManyToManyField(Transport, related_name='deployedServices', db_table='uds__ds_trans')
     assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
     state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
@@ -89,23 +86,30 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     ignores_unused = models.BooleanField(default=False)
 
-    image: typing.Optional[Image] = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
+    image: 'models.ForeignKey[ServicePool, Image]' = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
-    servicesPoolGroup: typing.Optional[ServicePoolGroup] = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
+    servicesPoolGroup: 'models.ForeignKey[ServicePool, ServicePoolGroup]' = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
 
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
     # Default fallback action for access
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
+    # actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
 
     # Usage accounting
-    account: typing.Optional[Account] = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)
+    account: 'models.ForeignKey[ServicePool, Account]' = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)
 
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
     cache_l2_srvs = models.PositiveIntegerField(default=0)
     max_srvs = models.PositiveIntegerField(default=0)
     current_pub_revision = models.PositiveIntegerField(default=1)
+
+    # "fake" relations declarations for type checking
+    publications: 'models.QuerySet[ServicePoolPublication]'
+    memberOfMeta: 'models.QuerySet[MetaPoolMember]'
+    userServices: 'models.QuerySet[UserService]'
+    calendarAccess: 'models.QuerySet[CalendarAccess]'
 
     # Meta service related
     # meta_pools = models.ManyToManyField('self', symmetrical=False)
@@ -121,6 +125,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         Returns an environment valid for the record this object represents
         """
+        a = self.image
+
+
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
     def activePublication(self) -> typing.Optional['ServicePoolPublication']:
@@ -133,7 +140,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             None if there is no valid publication for this deployed service.
         """
         try:
-            return self.publications.filter(state=states.publication.USABLE)[0]
+            return typing.cast(ServicePoolPublication, self.publications.filter(state=states.publication.USABLE)[0])
         except Exception:
             return None
 
@@ -154,13 +161,13 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return username, password
 
     @staticmethod
-    def getRestrainedsQuerySet() -> QuerySet:
+    def getRestrainedsQuerySet() -> models.QuerySet:
         from uds.models.user_service import UserService  # pylint: disable=redefined-outer-name
         from uds.core.util.config import GlobalConfig
         from django.db.models import Count
 
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
-            return []  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
+            return ServicePool.objects.none()  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
         date = typing.cast(datetime, getSqlDatetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
@@ -174,8 +181,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return ServicePool.objects.filter(pk__in=res)
 
     @staticmethod
-    def getRestraineds() -> typing.Iterable['ServicePool']:
-        return ServicePool.getRestrainedsQuerySet().iterator()
+    def getRestraineds() -> typing.Iterator['ServicePool']:
+        return typing.cast(typing.Iterator['ServicePool'], ServicePool.getRestrainedsQuerySet().iterator())
 
     @property
     def is_meta(self) -> bool:
@@ -234,7 +241,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         # Return the date
         try:
-            if activePub and activePub.id != self.assignedUserServices().filter(user=forUser, state__in=states.userService.VALID_STATES)[0].publication.id:
+            found = typing.cast('UserService', self.assignedUserServices().filter(user=forUser, state__in=states.userService.VALID_STATES)[0])
+            if activePub and found.publication and activePub.id != found.publication.id:
                 ret = self.recoverValue('toBeReplacedIn')
                 if ret:
                     return pickle.loads(ret)
@@ -499,7 +507,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if pub:
             pub.unpublish()
 
-    def cachedUserServices(self) -> 'QuerySet':
+    def cachedUserServices(self) -> 'models.QuerySet':
         """
         ':rtype uds.models.user_service.UserService'
         Utility method to access the cached user services (level 1 and 2)
@@ -509,7 +517,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.exclude(cache_level=0)
 
-    def assignedUserServices(self) -> 'QuerySet':
+    def assignedUserServices(self) -> 'models.QuerySet':
         """
         Utility method to access the assigned user services
 
@@ -518,7 +526,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0)
 
-    def erroneousUserServices(self) -> 'QuerySet':
+    def erroneousUserServices(self) -> 'models.QuerySet':
         """
         Utility method to locate invalid assigned user services.
 
@@ -585,4 +593,4 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
 
 # Connects a pre deletion signal to Authenticator
-signals.pre_delete.connect(ServicePool.beforeDelete, sender=ServicePool)
+models.signals.pre_delete.connect(ServicePool.beforeDelete, sender=ServicePool)

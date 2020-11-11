@@ -34,7 +34,6 @@ import logging
 import typing
 
 from django.db import models
-from django.db.models import signals
 
 from uds.core.util import net
 
@@ -123,11 +122,11 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         self.net_string = netRange
         self.save()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return u'Network {} ({}) from {} to {}'.format(self.name, self.net_string, net.longToIp(self.net_start), net.longToIp(self.net_end))
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 
@@ -137,4 +136,4 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         clean(toDelete)
 
 # Connects a pre deletion signal to Authenticator
-signals.pre_delete.connect(Network.beforeDelete, sender=Network)
+models.signals.pre_delete.connect(Network.beforeDelete, sender=Network)

@@ -57,5 +57,5 @@ class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-meth
         unique_together = (('name', 'user_service'),)
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Property of {}. {}={}".format(self.user_service.pk, self.name, self.value)

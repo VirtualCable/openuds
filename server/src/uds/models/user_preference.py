@@ -52,5 +52,5 @@ class UserPreference(models.Model):
     class Meta:
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{}.{} = "{}" for user {}'.format(self.module, self.name, self.value, self.user)

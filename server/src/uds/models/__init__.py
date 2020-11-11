@@ -62,7 +62,7 @@ from .group import Group
 
 # Provisioned services
 from .service_pool import ServicePool  # New name
-from .meta_pool import MetaPool
+from .meta_pool import MetaPool, MetaPoolMember
 from .service_pool_group import ServicePoolGroup
 from .service_pool_publication import ServicePoolPublication
 from .user_service import UserService

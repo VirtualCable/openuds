@@ -101,11 +101,11 @@ class StorageAsDict(MutableMapping):
             return DBStorage.objects
 
     @property
-    def _filtered(self) -> models.QuerySet:
+    def _filtered(self) -> 'models.QuerySet[DBStorage]':
         fltr = self._db.filter(owner=self._owner)
         if self._group:
             fltr = fltr.filter(attr1=self._group)
-        return fltr
+        return typing.cast('models.QuerySet[DBStorage]', fltr)
 
     def _key(self, key: str) -> str:
         if key[0] == '#':
@@ -120,7 +120,7 @@ class StorageAsDict(MutableMapping):
         dbk = self._key(key)
         logger.debug('Getitem: %s', dbk)
         try:
-            c: DBStorage = self._db.get(pk=dbk)
+            c: DBStorage = typing.cast(DBStorage, self._db.get(pk=dbk))
             return _decodeValue(dbk, c.data)[1]  # Ignores original key
         except DBStorage.DoesNotExist:
             return None

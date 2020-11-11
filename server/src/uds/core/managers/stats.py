@@ -100,7 +100,7 @@ class StatsManager:
         self,
         ownerType: int,
         counterType: int,
-        ownerIds: typing.Union[typing.Iterable[int], int],
+        ownerIds: typing.Union[typing.Iterable[int], int, None],
         since: datetime.datetime,
         to: datetime.datetime,
         interval: typing.Optional[int],

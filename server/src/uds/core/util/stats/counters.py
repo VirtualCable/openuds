@@ -113,8 +113,7 @@ def getCounters(obj: CounterClass, counterType: int, **kwargs) -> typing.Generat
         owner_ids = None
 
     for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, kwargs.get('interval'), kwargs.get('max_intervals'), limit, use_max):
-        val = (datetime.datetime.fromtimestamp(i.stamp), i.value)
-        yield val
+        yield (datetime.datetime.fromtimestamp(i.stamp), i.value)
 
 
 def getCounterTitle(counterType: int) -> str:

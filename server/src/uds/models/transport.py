@@ -34,7 +34,6 @@ import logging
 import typing
 
 from django.db import models
-from django.db.models import signals
 
 from uds.core import transports
 
@@ -42,6 +41,10 @@ from uds.core.util import net
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import Network
 
 
 logger = logging.getLogger(__name__)
@@ -59,6 +62,10 @@ class Transport(ManagedObjectModel, TaggingMixin):
     # We store allowed oss as a comma-separated list
     allowed_oss = models.CharField(max_length=255, default='')
 
+    # "fake" relations declarations for type checking
+    networks: 'models.QuerySet[Network]'
+
+
     class Meta(ManagedObjectModel.Meta):
         """
         Meta class to declare default order
@@ -69,7 +76,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'transports.Transport':
         return typing.cast('transports.Transport', super().getInstance(values=values))
 
-    def getType(self)  -> typing.Type['transports.Transport']:
+    def getType(self)  -> 'typing.Type[transports.Transport]':
         """
         Get the type of the object this record represents.
 
@@ -121,7 +128,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
             return True
         return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
 
     @staticmethod
@@ -148,4 +155,4 @@ class Transport(ManagedObjectModel, TaggingMixin):
         clean(toDelete)
 
 # : Connects a pre deletion signal to OS Manager
-signals.pre_delete.connect(Transport.beforeDelete, sender=Transport)
+models.signals.pre_delete.connect(Transport.beforeDelete, sender=Transport)

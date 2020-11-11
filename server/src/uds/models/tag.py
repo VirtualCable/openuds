@@ -57,10 +57,10 @@ class Tag(UUIDModel):
         app_label = 'uds'
 
     @property
-    def vtag(self):
+    def vtag(self) -> str:
         return self.tag.capitalize()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Tag: {} {}'.format(self.uuid, self.tag)
 
 

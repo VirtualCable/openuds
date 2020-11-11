@@ -65,8 +65,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
-    publication: typing.Optional[ServicePoolPublication] = models.ForeignKey(ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
+    deployed_service: 'models.ForeignKey[UserService, ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
+    publication: 'models.ForeignKey[UserService, ServicePoolPublication]' = models.ForeignKey(
+        ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
 
     unique_id = models.CharField(max_length=128, default='', db_index=True)  # User by agents to locate machine
     friendly_name = models.CharField(max_length=128, default='')
@@ -76,7 +77,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     state_date = models.DateTimeField(db_index=True)
     creation_date = models.DateTimeField(db_index=True)
     data = models.TextField(default='')
-    user: User = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userServices', null=True, blank=True, default=None)
+    user: 'models.ForeignKey[UserService, User]' = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='userServices', null=True, blank=True, default=None)
     in_use = models.BooleanField(default=False)
     in_use_date = models.DateTimeField(default=NEVER)
     cache_level = models.PositiveSmallIntegerField(db_index=True, default=0)  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
@@ -86,6 +88,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True)
 
+    # "fake" relations declarations for type checking
+    properties: 'models.QuerySet[UserServiceProperty]'
 
     class Meta(UUIDModel.Meta):
         """
@@ -163,7 +167,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             logger.exception('Got exception at getInstance of an userService %s (seems that publication does not exists!)', self)
         if serviceInstance.deployedType is None:
             raise Exception('Class {0} needs deployedType but it is not defined!!!'.format(serviceInstance.__class__.__name__))
-        us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance, publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)
+        us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance,
+                                          publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)
         if self.data != '' and self.data is not None:
             try:
                 us.unserialize(self.data)
@@ -376,7 +381,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         # 1.- If do not have any account associated, do nothing
         # 2.- If called but already accounting, do nothing
         # 3.- If called and not accounting, start accounting
-        if self.deployed_service.account is None or hasattr(self, 'accounting'):  # accounting comes from AccountUsage, and is a OneToOneRelation with UserService
+        # accounting comes from AccountUsage, and is a OneToOneRelation with UserService
+        if self.deployed_service.account is None or hasattr(self, 'accounting'):
             return
 
         self.deployed_service.account.startUsageAccounting(self)

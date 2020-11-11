@@ -35,7 +35,6 @@ import logging
 import typing
 
 from django.db import models
-from django.db.models import signals
 
 from uds.core.util.state import State
 from uds.core.environment import Environment
@@ -48,12 +47,13 @@ from .uuid_model import UUIDModel
 
 if typing.TYPE_CHECKING:
     from uds.core import services
+    from uds.models import UserService
 
 logger = logging.getLogger(__name__)
 
 
 class ServicePoolPublicationChangelog(models.Model):
-    publication: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='changelog')
+    publication: 'models.ForeignKey[ServicePoolPublication, ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='changelog')
     stamp = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
     log = models.TextField(default='')
@@ -72,7 +72,7 @@ class ServicePoolPublication(UUIDModel):
     """
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
-    deployed_service: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='publications')
+    deployed_service: 'models.ForeignKey[ServicePoolPublication, ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='publications')
     publish_date = models.DateTimeField(db_index=True)
     # data_type = models.CharField(max_length=128) # The data type is specified by the service itself
     data = models.TextField(default='')
@@ -86,6 +86,10 @@ class ServicePoolPublication(UUIDModel):
     state = models.CharField(max_length=1, default=State.PREPARING, db_index=True)
     state_date = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
+
+    # "fake" relations declarations for type checking
+    userServices: 'models.QuerySet[UserService]'
+
 
     class Meta(UUIDModel.Meta):
         """
@@ -207,4 +211,4 @@ class ServicePoolPublication(UUIDModel):
         return 'Publication {}, rev {}, state {}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
 
 # Connects a pre deletion signal to Authenticator
-signals.pre_delete.connect(ServicePoolPublication.beforeDelete, sender=ServicePoolPublication)
+models.signals.pre_delete.connect(ServicePoolPublication.beforeDelete, sender=ServicePoolPublication)

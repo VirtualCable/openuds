@@ -49,11 +49,11 @@ from .image import Image
 from .service_pool_group import ServicePoolGroup
 from .service_pool import ServicePool
 from .group import Group
-from .calendar import Calendar
 
 if typing.TYPE_CHECKING:
     import datetime
-    from .user import User
+    from uds.models import User, CalendarAccessMeta
+
 
 
 logger = logging.getLogger(__name__)
@@ -87,10 +87,12 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     # Default fallback action for access
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
 
-    pools = models.ManyToManyField(ServicePool, through='MetapoolMember', related_name='meta')
-
     # Pool selection policy
     policy = models.SmallIntegerField(default=0)
+
+    # "fake" relations declarations for type checking
+    calendarAccess: 'models.QuerySet[CalendarAccessMeta]'
+    members: 'models.QuerySet[MetaPoolMember]'
 
     class Meta(UUIDModel.Meta):
         """
@@ -106,10 +108,10 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             bool -- [description]
         """
         total, maintenance = 0, 0
-        p: ServicePool
-        for p in self.pools.all():
+        p: 'MetaPoolMember'
+        for p in self.members.all():
             total += 1
-            if p.isInMaintenance():
+            if p.pool.isInMaintenance():
                 maintenance += 1
         return total == maintenance
 
@@ -137,7 +139,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         return self.name
 
     @staticmethod
-    def getForGroups(groups: typing.Iterable['Group'], user: typing.Optional['User'] = None) -> QuerySet:
+    def getForGroups(groups: typing.Iterable['Group'], user: typing.Optional['User'] = None) -> 'QuerySet[MetaPool]':
         """
         Return deployed services with publications for the groups requested.
 
@@ -157,12 +159,12 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             'servicesPoolGroup__image',
             'assignedGroups',
             'assignedGroups',
-            'pools',
-            'pools__service',
-            'pools__service__provider',
-            'pools__image',
-            'pools__transports',
-            'pools__transports__networks',
+            'members__pool',
+            'members__pool__service',
+            'members__pool__service__provider',
+            'members__pool__image',
+            'members__pool__transports',
+            'members__pool__transports__networks',
             'calendarAccess',
             'calendarAccess__calendar',
             'calendarAccess__calendar__rules',
@@ -171,11 +173,11 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         if user:
             meta = meta.annotate(
                 number_in_use=models.Count(
-                    'pools__userServices',
+                    'members__pool__userServices',
                     filter=models.Q(
-                        pools__userServices__user=user,
-                        pools__userServices__in_use=True,
-                        pools__userServices__state__in=states.userService.USABLE
+                        members__pool__userServices__user=user,
+                        members__pool__userServices__in_use=True,
+                        members__pool__userServices__state__in=states.userService.USABLE
                     )
                 )
             )
@@ -204,7 +206,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
     def __str__(self):
         return 'Meta pool: {}, no. pools: {}, visible: {}, policy: {}'.format(
-            self.name, self.pools.all().count(), self.visible, self.policy
+            self.name, self.members.all().count(), self.visible, self.policy
         )
 
 
@@ -213,8 +215,8 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool: ServicePool = models.ForeignKey(ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE)
-    meta_pool: MetaPool = models.ForeignKey(MetaPool, related_name='members', on_delete=models.CASCADE)
+    pool: 'models.ForeignKey[MetaPoolMember, ServicePool]' = models.ForeignKey(ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE)
+    meta_pool: 'models.ForeignKey[MetaPoolMember, MetaPool]' = models.ForeignKey(MetaPool, related_name='members', on_delete=models.CASCADE)
     priority = models.PositiveIntegerField(default=0)
     enabled = models.BooleanField(default=True)
 
@@ -225,5 +227,5 @@ class MetaPoolMember(UUIDModel):
         db_table = 'uds__meta_pool_member'
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{}/{} {} {}'.format(self.pool.name, self.meta_pool.name, self.priority, self.enabled)

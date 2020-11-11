@@ -56,7 +56,7 @@ class Group(UUIDModel):
     This class represents a group, associated with one authenticator
     """
     # pylint: disable=model-missing-unicode
-    manager: Authenticator = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='groups')
+    manager: 'models.ForeignKey[Group, Authenticator]' = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='groups')
     name = models.CharField(max_length=128, db_index=True)
     state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
     comments = models.CharField(max_length=256, default='')

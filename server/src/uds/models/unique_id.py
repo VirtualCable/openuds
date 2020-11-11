@@ -56,5 +56,5 @@ class UniqueId(models.Model):
         ordering = ('-seq',)
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return u"{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)

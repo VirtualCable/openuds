@@ -53,7 +53,7 @@ class ServicePoolGroup(UUIDModel):
     name = models.CharField(max_length=128, default='', db_index=True, unique=True)
     comments = models.CharField(max_length=256, default='')
     priority = models.IntegerField(default=0, db_index=True)
-    image: Image = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGroup', on_delete=models.SET_NULL)
+    image: 'models.ForeignKey[ServicePoolGroup, Image]' = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGroup', on_delete=models.SET_NULL)
 
     class Meta(UUIDModel.Meta):
         """
@@ -63,7 +63,7 @@ class ServicePoolGroup(UUIDModel):
         app_label = 'uds'
 
     def __str__(self):
-        return 'Service Pool group {}({})'.format(self.name, self.comments)
+        return 'Service Pool group {}({}): {}'.format(self.name, self.comments, self.image.name)
 
     @property
     def as_dict(self) -> typing.Dict[str, typing.Any]:

@@ -86,11 +86,11 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     def isInMaintenance(self) -> bool:
         return self.maintenance_mode
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Provider class "Destroy" before deleting it from database.
 

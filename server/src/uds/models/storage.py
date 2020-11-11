@@ -56,4 +56,4 @@ class Storage(models.Model):
         app_label = 'uds'
 
     def __str__(self):
-        return '{} {} = {}, {}'.format(self.owner, self.key, self.data, '/'.join([self.attr1]))
+        return '{} {}  > str= {}, {}'.format(self.owner, self.key, self.data, '/'.join([self.attr1]))

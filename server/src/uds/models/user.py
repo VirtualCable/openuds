@@ -70,6 +70,9 @@ class User(UUIDModel):
     parent = models.CharField(max_length=50, default=None, null=True)
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
+    # "fake" relations declarations for type checking
+    groups: 'models.QuerySet[Group]'
+
     class Meta(UUIDModel.Meta):
         """
         Meta class to declare default order and unique multiple field index
@@ -154,7 +157,7 @@ class User(UUIDModel):
             usr = self
 
         grps: typing.List[int] = []
-        g: 'Group'
+
         for g in usr.groups.filter(is_meta=False):
             grps.append(g.id)
             yield g
@@ -164,17 +167,18 @@ class User(UUIDModel):
                     .annotate(number_groups=Count('groups'))  # g.groups.count() 
                     .annotate(number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))) # g.groups.filter(id__in=grps).count()
             ):
-            numberGroupsBelongingInMeta: int = g.number_belongs_meta
+            numberGroupsBelongingInMeta: int = g.number_belongs_meta 
 
             logger.debug('gn = %s', numberGroupsBelongingInMeta)
-            logger.debug('groups count: %s', g.number_groups)
+            logger.debug('groups count: %s', g.number_groups) 
 
             if g.meta_if_any is True and numberGroupsBelongingInMeta > 0:
                 numberGroupsBelongingInMeta = g.number_groups
 
             logger.debug('gn after = %s', numberGroupsBelongingInMeta)
 
-            if numberGroupsBelongingInMeta == g.number_groups:  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
+            # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
+            if numberGroupsBelongingInMeta == g.number_groups:  
                 # This group matches
                 yield g
 

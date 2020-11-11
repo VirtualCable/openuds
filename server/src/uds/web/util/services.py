@@ -43,17 +43,18 @@ from uds.core.managers import userServiceManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.util.tools import DictAsObj
 
 
 logger = logging.getLogger(__name__)
 
 
-def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     """Obtains the service data dictionary will all available services for this request
 
     Arguments:
-        request {HttpRequest} -- request from where to xtract credentials
+        request {ExtendedHttpRequest} -- request from where to xtract credentials
 
     Returns:
         typing.Dict[str, typing.Any] --  Keys has this:
@@ -65,7 +66,9 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
 
     """
     # Session data
-    os: typing.Dict[str, str] = request.os
+    os: 'DictAsObj' = request.os
+    if not request.user:
+        return {}
 
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())

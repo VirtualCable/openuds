@@ -105,5 +105,5 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
 
         return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Proxy {} on {}:{} '.format(self.name, self.host, self.port)

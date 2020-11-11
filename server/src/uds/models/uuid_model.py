@@ -45,6 +45,9 @@ class UUIDModel(models.Model):
     """
     uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 
+    # Automatic field from Model without a defined specific primary_key
+    id: int
+
     class Meta:  # pylint: disable=too-few-public-methods
         abstract = True
 

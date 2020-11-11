@@ -33,8 +33,7 @@
 import logging
 import typing
 
-from django.db import IntegrityError
-from django.db.models import signals
+from django.db import IntegrityError, models
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
@@ -42,6 +41,7 @@ from .tag import TaggingMixin
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import osmanagers
+    from uds.models import ServicePool
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,9 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
     An OS Manager represents a manager for responding requests for agents inside services.
     """
-    # pylint: disable=model-missing-unicode
+
+    # "fake" relations declarations for type checking
+    deployedServices: 'models.QuerySet[ServicePool]'
 
     class Meta(ManagedObjectModel.Meta):
         """
@@ -102,7 +104,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -122,5 +124,6 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         logger.debug('Before delete os manager %s', toDelete)
 
+
 # : Connects a pre deletion signal to OS Manager
-signals.pre_delete.connect(OSManager.beforeDelete, sender=OSManager)
+models.signals.pre_delete.connect(OSManager.beforeDelete, sender=OSManager)

@@ -34,7 +34,6 @@ import logging
 import typing
 
 from django.db import models
-from django.db.models import signals
 
 from uds.core.environment import Environment
 from uds.core.util import log
@@ -59,10 +58,10 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
     or a Terminal Server configuration).
     """
-    provider: 'Provider' = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
+    provider: 'models.ForeignKey[Service, Provider]' = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
 
     # Proxy for this service
-    proxy: typing.Optional['Proxy'] = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
+    proxy: 'models.ForeignKey[Service, Proxy]' = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
 
     token = models.CharField(max_length=32, default=None, null=True, blank=True, unique=True)
 
@@ -182,4 +181,4 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         clean(toDelete)
 
 # : Connects a pre deletion signal to Service
-signals.pre_delete.connect(Service.beforeDelete, sender=Service)
+models.signals.pre_delete.connect(Service.beforeDelete, sender=Service)

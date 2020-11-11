@@ -71,6 +71,9 @@ class Scheduler(models.Model):
     owner_server = models.CharField(max_length=64, db_index=True, default='')
     state = models.CharField(max_length=1, default=State.FOR_EXECUTE, db_index=True)
 
+    # primary key id declaration (for type checking)
+    id: int
+
     class Meta:
         """
         Meta class to declare default order and unique multiple field index

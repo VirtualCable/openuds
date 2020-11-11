@@ -67,9 +67,9 @@ class StatsEvents(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_stats(owner_type: typing.Union[int, typing.Iterable[int]], event_type: typing.Union[int, typing.Iterable[int]], **kwargs) -> models.QuerySet:
+    def get_stats(owner_type: typing.Union[int, typing.Iterable[int]], event_type: typing.Union[int, typing.Iterable[int]], **kwargs) -> 'models.QuerySet[StatsEvents]':
         """
-        Returns the average stats grouped by interval for owner_type and owner_id (optional)
+        Returns a queryset with the average stats grouped by interval for owner_type and owner_id (optional)
 
         Note: if someone cant get this more optimized, please, contribute it!
         """

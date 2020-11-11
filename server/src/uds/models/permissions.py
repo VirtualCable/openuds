@@ -76,7 +76,7 @@ class Permissions(UUIDModel):
         }.get(perm, _('None'))
 
     @staticmethod
-    def addPermission(**kwargs):
+    def addPermission(**kwargs) -> 'Permissions':
         """
         Adds a permission to an object and an user or group
         """
@@ -113,7 +113,7 @@ class Permissions(UUIDModel):
                                               object_type=object_type, object_id=object_id, permission=permission)
 
     @staticmethod
-    def getPermissions(**kwargs):
+    def getPermissions(**kwargs) -> int:
         """
         Retrieves the permission for a given object
         It's mandatory to include at least object_type param
@@ -149,29 +149,29 @@ class Permissions(UUIDModel):
             return Permissions.PERMISSION_NONE
 
     @staticmethod
-    def enumeratePermissions(object_type, object_id):
+    def enumeratePermissions(object_type, object_id) -> 'models.QuerySet[Permissions]':
         """
         Get users permissions over object
         """
         return Permissions.objects.filter(object_type=object_type, object_id=object_id)
 
     @staticmethod
-    def cleanPermissions(object_type, object_id):
+    def cleanPermissions(object_type, object_id) -> None:
         Permissions.objects.filter(object_type=object_type, object_id=object_id).delete()
 
     @staticmethod
-    def cleanUserPermissions(user):
+    def cleanUserPermissions(user) -> None:
         Permissions.objects.filter(user=user).delete()
 
     @staticmethod
-    def cleanGroupPermissions(group):
+    def cleanGroupPermissions(group) -> None:
         Permissions.objects.filter(group=group).delete()
 
     @property
-    def permission_as_string(self):
+    def permission_as_string(self) -> str:
         return Permissions.permissionAsString(self.permission)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Permission {}, user {} group {} object_type {} object_id {} permission {}'.format(
             self.uuid, self.user, self.group, self.object_type, self.object_id, Permissions.permissionAsString(self.permission)
         )
