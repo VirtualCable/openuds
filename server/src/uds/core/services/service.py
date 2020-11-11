@@ -291,6 +291,15 @@ class Service(Module):
         return None
 
     def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
+        """
+        Looks for an "owned" id in the provided list. If found, returns it, else return None
+
+        Args:
+            idsList (typing.Iterable[str]): List of IPs and MACs that acts as 
+
+        Returns:
+            typing.Optional[str]: [description]
+        """
         return None
 
     def processLogin(self, id: str, remote_login: bool) -> None:
@@ -314,6 +323,15 @@ class Service(Module):
             remote_login (bool): if the login seems to be a remote login
         """
         return
+
+    def notifyInitialization(self, id: str) -> None:
+        """
+        In the case that the startup of a "tokenized" method is invoked (unmanaged method of actor_v3 rest api),
+        this method is forwarded, so the tokenized method could take proper actions on a "known-to-be-free service"      
+
+        Args:
+            id (str): Id validated through "getValidId"
+        """
 
     def storeIdInfo(self, id: str, data: typing.Any) -> None:
         self.storage.putPickle('__nfo_' + id, data)
@@ -339,7 +357,7 @@ class Service(Module):
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.listAssignables != Service.listAssignables  and cls.assignFromAssignables != Service.assignFromAssignables
+        return cls.listAssignables is not Service.listAssignables  and cls.assignFromAssignables is not Service.assignFromAssignables
 
     def __str__(self):
         """

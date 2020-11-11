@@ -31,6 +31,7 @@
 """
 import threading
 import datetime
+from uds.core.util.tools import DictAsObj
 import weakref
 import logging
 import typing
@@ -42,24 +43,33 @@ from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
 from uds.models import User
 
+# How often to check the requests cache for stuck objects
+CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
+
+class ExtendedHttpRequest(HttpRequest):
+    ip: str
+    ip_proxy: str
+    os: DictAsObj
+    user: typing.Optional[User]  # type: ignore   # HttpRequests users "user" for it own, but we redefine it because base is not used...
+
 logger = logging.getLogger(__name__)
 
 _requests: typing.Dict[int, typing.Tuple[weakref.ref, datetime.datetime]] = {}
 
-# How often to check the requests cache for stuck objects
-CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
 def getIdent() -> int:
     ident = threading.current_thread().ident
     return ident if ident else -1
 
 
-def getRequest() -> HttpRequest:
+def getRequest() -> ExtendedHttpRequest:
     ident = getIdent()
     if ident in _requests:
-        return _requests[ident][0]()  # Return obj from weakref
+        val = typing.cast(typing.Optional[ExtendedHttpRequest], _requests[ident][0]())  # Return obj from weakref
+        if val:
+            return val
 
-    return HttpRequest()
+    return ExtendedHttpRequest()
 
 
 class GlobalRequestMiddleware:
@@ -68,9 +78,9 @@ class GlobalRequestMiddleware:
     def __init__(self, get_response: typing.Callable[[HttpRequest], HttpResponse]):
         self._get_response: typing.Callable[[HttpRequest], HttpResponse] = get_response
 
-    def _process_request(self, request: HttpRequest) -> None:
+    def _process_request(self, request: ExtendedHttpRequest) -> None:
         # Store request on cache
-        _requests[getIdent()] = (weakref.ref(request), datetime.datetime.now())
+        _requests[getIdent()] = (weakref.ref(typing.cast(ExtendedHttpRequest, request)), datetime.datetime.now())
 
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
@@ -79,7 +89,7 @@ class GlobalRequestMiddleware:
         # Ensures that requests contains the valid user
         GlobalRequestMiddleware.getUser(request)
 
-    def _process_response(self, request: HttpRequest, response: HttpResponse):
+    def _process_response(self, request: ExtendedHttpRequest, response: HttpResponse):
         # Remove IP from global cache (processing responses after this will make global request unavailable,
         # but can be got from request again)
         ident = getIdent()
@@ -97,7 +107,7 @@ class GlobalRequestMiddleware:
 
         return response
 
-    def __call__(self, request: HttpRequest):
+    def __call__(self, request: ExtendedHttpRequest):
         self._process_request(request)
 
         response = self._get_response(request)
@@ -124,7 +134,7 @@ class GlobalRequestMiddleware:
 
 
     @staticmethod
-    def fillIps(request: HttpRequest):
+    def fillIps(request: ExtendedHttpRequest):
         """
         Obtains the IP of a Django Request, even behind a proxy
 
@@ -152,11 +162,11 @@ class GlobalRequestMiddleware:
 
 
     @staticmethod
-    def getUser(request: HttpRequest)-> None:
+    def getUser(request: ExtendedHttpRequest)-> None:
         """
         Ensures request user is the correct user
         """
-        user_id: str = request.session.get(USER_KEY)
+        user_id = request.session.get(USER_KEY)
         user: typing.Optional[User] = None
         if user_id:
             try:

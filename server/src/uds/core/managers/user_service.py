@@ -319,7 +319,7 @@ class UserServiceManager:
         cache: typing.Optional[UserService] = None
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():
-            caches = servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1]
+            caches = typing.cast(typing.List[UserService], servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1])
             if caches:
                 cache = caches[0]
                 # Ensure element is reserved correctly on DB
@@ -331,9 +331,9 @@ class UserServiceManager:
         # Out of previous atomic
         if not cache:
             with transaction.atomic():
-                cache = servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
+                caches = typing.cast(typing.List[UserService], servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1])
                 if cache:
-                    cache = cache[0]
+                    cache = caches[0]
                     if servicePool.cachedUserServices().select_for_update().filter(user=None, uuid=typing.cast(UserService, cache).uuid).update(user=user, cache_level=0) != 1:
                         cache = None
                 else:
