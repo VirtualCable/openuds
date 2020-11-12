@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2016-2020 Virtual Cable S.L.
+# Copyright (c) 2016-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -51,8 +51,8 @@ class Calendar(UUIDModel, TaggingMixin):
     comments = models.CharField(max_length=256, default='')
     modified = models.DateTimeField(auto_now=True)
 
-    # Sobmodels
-    # "fake" relations declarations for type checking
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Calendar]'
     rules: 'models.QuerySet[CalendarRule]'
     calendaraction_set: 'models.QuerySet[CalendarAction]'
 
@@ -60,10 +60,17 @@ class Calendar(UUIDModel, TaggingMixin):
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_calendar'
         app_label = 'uds'
 
-    def save(self, force_insert: bool = False, force_update: bool = False, using: bool = None, update_fields: bool = None):
+    def save(
+        self,
+        force_insert: bool = False,
+        force_update: bool = False,
+        using: bool = None,
+        update_fields: bool = None,
+    ):
         logger.debug('Saving calendar')
 
         res = UUIDModel.save(self, force_insert, force_update, using, update_fields)
@@ -78,4 +85,6 @@ class Calendar(UUIDModel, TaggingMixin):
         return res
 
     def __str__(self):
-        return 'Calendar "{}" modified on {} with {} rules'.format(self.name, self.modified, self.rules.count())
+        return 'Calendar "{}" modified on {} with {} rules'.format(
+            self.name, self.modified, self.rules.count()
+        )

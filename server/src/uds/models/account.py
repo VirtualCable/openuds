@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -42,16 +42,21 @@ logger = logging.getLogger(__name__)
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import UserService
+    from uds.models import UserService, AccountUsage
 
 
 class Account(UUIDModel, TaggingMixin):  # type: ignore
     """
     Account storing on DB model
     """
+
     name = models.CharField(max_length=128, unique=False, db_index=True)
     time_mark = models.DateTimeField(default=NEVER)
     comments = models.CharField(max_length=256)
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Account]'
+    usages: 'models.QuerySet[AccountUsage]'
 
     def startUsageAccounting(self, userService: 'UserService') -> None:
         if hasattr(userService, 'accounting'):  # Already has an account
@@ -65,18 +70,20 @@ class Account(UUIDModel, TaggingMixin):  # type: ignore
         else:
             userName = '??????'
             userUuid = '00000000-0000-0000-0000-000000000000'
-        return self.usages.create(
+
+        self.usages.create(
             user_service=userService,
             user_name=userName,
             user_uuid=userUuid,
             pool_name=userService.deployed_service.name,
             pool_uuid=userService.deployed_service.uuid,
             start=start,
-            end=start
+            end=start,
         )
 
     def stopUsageAccounting(self, userService: 'UserService') -> None:
-        if hasattr(userService, 'accounting') is False:
+        # if one to one does not exists, attr is not there
+        if not hasattr(userService, 'accounting'):
             return
 
         tmp = userService.accounting
@@ -88,6 +95,7 @@ class Account(UUIDModel, TaggingMixin):  # type: ignore
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds_accounts'
         app_label = 'uds'
 

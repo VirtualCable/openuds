@@ -45,16 +45,23 @@ class Cache(models.Model):
     """
     General caching model. This model is managed via uds.core.util.cache.Cache class
     """
+
     owner = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, primary_key=True)
     value = models.TextField(default='')
-    created = models.DateTimeField()  # Date creation or validation of this entry. Set at write time
+    created = (
+        models.DateTimeField()
+    )  # Date creation or validation of this entry. Set at write time
     validity = models.IntegerField(default=60)  # Validity of this entry, in seconds
+
+    # "fake" relations declarations for type checking
+    objects: 'models.BaseManager[Cache]'
 
     class Meta:
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds_utility_cache'
         app_label = 'uds'
 

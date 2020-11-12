@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,6 +28,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 
 from django.db import models
@@ -39,6 +40,10 @@ from .account import Account
 from .user_service import UserService
 from .util import NEVER
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.models import UserService, Account
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,33 +51,47 @@ class AccountUsage(UUIDModel):
     """
     AccountUsage storing on DB model
     This is intended for small images (i will limit them to 128x128), so storing at db is fine
-
     """
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[AccountUsage]'
+
     user_name = models.CharField(max_length=128, db_index=True, default='')
     user_uuid = models.CharField(max_length=50, db_index=True, default='')
     pool_name = models.CharField(max_length=128, db_index=True, default='')
     pool_uuid = models.CharField(max_length=50, db_index=True, default='')
     start = models.DateTimeField(default=NEVER)
     end = models.DateTimeField(default=NEVER)
-    user_service: UserService = models.OneToOneField(UserService, null=True, blank=True, related_name='accounting', on_delete=models.SET_NULL)
-    account: Account = models.ForeignKey(Account, related_name='usages', on_delete=models.CASCADE)
+    user_service: 'models.OneToOneField[AccountUsage, UserService]' = (
+        models.OneToOneField(
+            UserService,
+            null=True,
+            blank=True,
+            related_name='accounting',
+            on_delete=models.SET_NULL,
+        )
+    )
+    account: 'models.ForeignKey[AccountUsage, Account]' = models.ForeignKey(
+        Account, related_name='usages', on_delete=models.CASCADE
+    )
 
     class Meta:
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds_acc_usage'
         app_label = 'uds'
 
     @property
     def elapsed_seconds(self) -> int:
-        if  NEVER in (self.end, self.start):
+        if NEVER in (self.end, self.start):
             return 0
         return (self.end - self.start).total_seconds()
 
     @property
     def elapsed_seconds_timemark(self) -> int:
-        if  NEVER in (self.end, self.start):
+        if NEVER in (self.end, self.start):
             return 0
 
         start = self.start
@@ -93,4 +112,6 @@ class AccountUsage(UUIDModel):
         return secondsToTimeString(self.elapsed_seconds_timemark)
 
     def __str__(self):
-        return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(self.id, self.pool_name, self.user_name, self.start, self.end)
+        return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(
+            self.id, self.pool_name, self.user_name, self.start, self.end
+        )

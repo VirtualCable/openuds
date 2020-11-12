@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -54,12 +54,23 @@ class Log(models.Model):
     level = models.PositiveIntegerField(default=0, db_index=True)
     data = models.CharField(max_length=255, default='')
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Log]'
+
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_log'
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return "Log of {}({}): {} - {} - {} - {}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+        return "Log of {}({}): {} - {} - {} - {}".format(
+            self.owner_type,
+            self.owner_id,
+            self.created,
+            self.source,
+            self.level,
+            self.data,
+        )

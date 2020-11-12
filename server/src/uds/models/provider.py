@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -52,33 +52,43 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     A Provider represents the Service provider itself, (i.e. a KVM Server or a Terminal Server)
     """
 
-    # pylint: disable=model-missing-unicode
     maintenance_mode = models.BooleanField(default=False, db_index=True)
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Provider]'
 
     class Meta(ManagedObjectModel.Meta):
         """
         Meta class to declare default order
         """
+
         ordering = ('name',)
         app_label = 'uds'
 
     def getType(self) -> typing.Type['services.ServiceProvider']:
-        '''
+        """
         Get the type of the object this record represents.
 
         The type is Python type, it obtains this type from ServiceProviderFactory and associated record field.
 
         Returns:
             The python type for this record object
-        '''
+        """
         from uds.core import services  # pylint: disable=redefined-outer-name
+
         type_ = services.factory().lookup(self.data_type)
         if type_:
             return type_
-        return services.ServiceProvider  # Basic Service implementation. Will fail if we try to use it, but will be ok to reference it
+        return (
+            services.ServiceProvider
+        )  # Basic Service implementation. Will fail if we try to use it, but will be ok to reference it
 
-    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'services.ServiceProvider':
-        prov: services.ServiceProvider = typing.cast('services.ServiceProvider', super().getInstance(values=values))
+    def getInstance(
+        self, values: typing.Optional[typing.Dict[str, str]] = None
+    ) -> 'services.ServiceProvider':
+        prov: services.ServiceProvider = typing.cast(
+            'services.ServiceProvider', super().getInstance(values=values)
+        )
         # Set uuid
         prov.setUuid(self.uuid)
         return prov

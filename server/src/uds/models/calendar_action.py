@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2020 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -50,53 +50,171 @@ from .util import getSqlDatetime
 from .service_pool import ServicePool
 from .transport import Transport
 from .authenticator import Authenticator
+
 # from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 logger = logging.getLogger(__name__)
 
 # Current posible actions
-# Each line describes:
 #
-CALENDAR_ACTION_PUBLISH: typing.Dict[str, typing.Any] = {'id': 'PUBLISH', 'description': _('Publish'), 'params': ()}
-CALENDAR_ACTION_CACHE_L1: typing.Dict[str, typing.Any] = {'id': 'CACHEL1', 'description': _('Set cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size'), 'default': '1'},)}
-CALENDAR_ACTION_CACHE_L2: typing.Dict[str, typing.Any] = {'id': 'CACHEL2', 'description': _('Set L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1'},)}
-CALENDAR_ACTION_INITIAL: typing.Dict[str, typing.Any] = {'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services'), 'default': '1'},)}
-CALENDAR_ACTION_MAX: typing.Dict[str, typing.Any] = {'id': 'MAX', 'description': _('Set maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10'},)}
-CALENDAR_ACTION_ADD_TRANSPORT: typing.Dict[str, typing.Any] = {'id': 'ADD_TRANSPORT', 'description': _('Add a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Transport'), 'default': ''},)}
-CALENDAR_ACTION_DEL_TRANSPORT: typing.Dict[str, typing.Any] = {'id': 'REMOVE_TRANSPORT', 'description': _('Remove a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Trasport'), 'default': ''},)}
-CALENDAR_ACTION_ADD_GROUP: typing.Dict[str, typing.Any] = {'id': 'ADD_GROUP', 'description': _('Add a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
-CALENDAR_ACTION_DEL_GROUP: typing.Dict[str, typing.Any] = {'id': 'REMOVE_GROUP', 'description': _('Remove a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
-CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {'id': 'IGNORE_UNUSED', 'description': _('Sets the ignore unused'), 'params': ({'type': 'bool', 'name': 'state', 'description': _('Ignore assigned and unused'), 'default': False},)}
-CALENDAR_ACTION_REMOVE_USERSERVICES: typing.Dict[str, typing.Any] = {'id': 'REMOVE_USERSERVICES', 'description': _('Remove ALL assigned user service. USE WITH CAUTION!'), 'params': ()}
+CALENDAR_ACTION_PUBLISH: typing.Dict[str, typing.Any] = {
+    'id': 'PUBLISH',
+    'description': _('Publish'),
+    'params': (),
+}
+CALENDAR_ACTION_CACHE_L1: typing.Dict[str, typing.Any] = {
+    'id': 'CACHEL1',
+    'description': _('Set cache size'),
+    'params': (
+        {
+            'type': 'numeric',
+            'name': 'size',
+            'description': _('Cache size'),
+            'default': '1',
+        },
+    ),
+}
+CALENDAR_ACTION_CACHE_L2: typing.Dict[str, typing.Any] = {
+    'id': 'CACHEL2',
+    'description': _('Set L2 cache size'),
+    'params': (
+        {
+            'type': 'numeric',
+            'name': 'size',
+            'description': _('Cache L2 size'),
+            'default': '1',
+        },
+    ),
+}
+CALENDAR_ACTION_INITIAL: typing.Dict[str, typing.Any] = {
+    'id': 'INITIAL',
+    'description': _('Set initial services'),
+    'params': (
+        {
+            'type': 'numeric',
+            'name': 'size',
+            'description': _('Initial services'),
+            'default': '1',
+        },
+    ),
+}
+CALENDAR_ACTION_MAX: typing.Dict[str, typing.Any] = {
+    'id': 'MAX',
+    'description': _('Set maximum number of services'),
+    'params': (
+        {
+            'type': 'numeric',
+            'name': 'size',
+            'description': _('Maximum services'),
+            'default': '10',
+        },
+    ),
+}
+CALENDAR_ACTION_ADD_TRANSPORT: typing.Dict[str, typing.Any] = {
+    'id': 'ADD_TRANSPORT',
+    'description': _('Add a transport'),
+    'params': (
+        {
+            'type': 'transport',
+            'name': 'transport',
+            'description': _('Transport'),
+            'default': '',
+        },
+    ),
+}
+CALENDAR_ACTION_DEL_TRANSPORT: typing.Dict[str, typing.Any] = {
+    'id': 'REMOVE_TRANSPORT',
+    'description': _('Remove a transport'),
+    'params': (
+        {
+            'type': 'transport',
+            'name': 'transport',
+            'description': _('Trasport'),
+            'default': '',
+        },
+    ),
+}
+CALENDAR_ACTION_ADD_GROUP: typing.Dict[str, typing.Any] = {
+    'id': 'ADD_GROUP',
+    'description': _('Add a group'),
+    'params': (
+        {'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},
+    ),
+}
+CALENDAR_ACTION_DEL_GROUP: typing.Dict[str, typing.Any] = {
+    'id': 'REMOVE_GROUP',
+    'description': _('Remove a group'),
+    'params': (
+        {'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},
+    ),
+}
+CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {
+    'id': 'IGNORE_UNUSED',
+    'description': _('Sets the ignore unused'),
+    'params': (
+        {
+            'type': 'bool',
+            'name': 'state',
+            'description': _('Ignore assigned and unused'),
+            'default': False,
+        },
+    ),
+}
+CALENDAR_ACTION_REMOVE_USERSERVICES: typing.Dict[str, typing.Any] = {
+    'id': 'REMOVE_USERSERVICES',
+    'description': _('Remove ALL assigned user service. USE WITH CAUTION!'),
+    'params': (),
+}
 
 
-CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = { c['id']: c for c in (
-    CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
-    CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL,
-    CALENDAR_ACTION_MAX,
-    CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT,
-    CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP,
-    CALENDAR_ACTION_IGNORE_UNUSED,
-    CALENDAR_ACTION_REMOVE_USERSERVICES
-)}
+CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
+    c['id']: c
+    for c in (
+        CALENDAR_ACTION_PUBLISH,
+        CALENDAR_ACTION_CACHE_L1,
+        CALENDAR_ACTION_CACHE_L2,
+        CALENDAR_ACTION_INITIAL,
+        CALENDAR_ACTION_MAX,
+        CALENDAR_ACTION_ADD_TRANSPORT,
+        CALENDAR_ACTION_DEL_TRANSPORT,
+        CALENDAR_ACTION_ADD_GROUP,
+        CALENDAR_ACTION_DEL_GROUP,
+        CALENDAR_ACTION_IGNORE_UNUSED,
+        CALENDAR_ACTION_REMOVE_USERSERVICES,
+    )
+}
 
 
 class CalendarAction(UUIDModel):
-    calendar: Calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    service_pool: ServicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
+    calendar: 'models.ForeignKey[CalendarAction, Calendar]' = models.ForeignKey(
+        Calendar, on_delete=models.CASCADE
+    )
+    service_pool: 'models.ForeignKey[CalendarAction, ServicePool]' = models.ForeignKey(
+        ServicePool, on_delete=models.CASCADE
+    )
     action = models.CharField(max_length=64, default='')
-    at_start = models.BooleanField(default=False)  # If false, action is done at end of event
+    at_start = models.BooleanField(
+        default=False
+    )  # If false, action is done at end of event
     events_offset = models.IntegerField(default=0)  # In minutes
     params = models.CharField(max_length=1024, default='')
     # Not to be edited, just to be used as indicators for executions
-    last_execution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
-    next_execution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
+    last_execution = models.DateTimeField(
+        default=None, db_index=True, null=True, blank=True
+    )
+    next_execution = models.DateTimeField(
+        default=None, db_index=True, null=True, blank=True
+    )
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[CalendarAction]'
 
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_cal_action'
         app_label = 'uds'
 
@@ -140,7 +258,9 @@ class CalendarAction(UUIDModel):
             logger.exception('error')
             return '(invalid action)'
 
-    def execute(self, save: bool = True) -> None:  # pylint: disable=too-many-branches, too-many-statements
+    def execute(
+        self, save: bool = True
+    ) -> None:  # pylint: disable=too-many-branches, too-many-statements
         """Executes the calendar action
 
         Keyword Arguments:
@@ -149,7 +269,10 @@ class CalendarAction(UUIDModel):
         logger.debug('Executing action')
         # If restrained pool, skip this execution (will rery later, not updated)
         if not self.service_pool.isUsable():
-            logger.info('Execution of task for %s due to contained state (restrained, in maintenance or removing)', self.service_pool.name)
+            logger.info(
+                'Execution of task for %s due to contained state (restrained, in maintenance or removing)',
+                self.service_pool.name,
+            )
             return
 
         self.last_execution = getSqlDatetime()
@@ -182,11 +305,19 @@ class CalendarAction(UUIDModel):
             self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
         elif CALENDAR_ACTION_REMOVE_USERSERVICES['id'] == self.action:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
-            for userService in self.service_pool.assignedUserServices().filter(state=state.State.USABLE):
+            for userService in self.service_pool.assignedUserServices().filter(
+                state=state.State.USABLE
+            ):
                 userService.remove()
         else:
-            caTransports = (CALENDAR_ACTION_ADD_TRANSPORT['id'], CALENDAR_ACTION_DEL_TRANSPORT['id'])
-            caGroups = (CALENDAR_ACTION_ADD_GROUP['id'], CALENDAR_ACTION_DEL_GROUP['id'])
+            caTransports = (
+                CALENDAR_ACTION_ADD_TRANSPORT['id'],
+                CALENDAR_ACTION_DEL_TRANSPORT['id'],
+            )
+            caGroups = (
+                CALENDAR_ACTION_ADD_GROUP['id'],
+                CALENDAR_ACTION_DEL_GROUP['id'],
+            )
             if self.action in caTransports:
                 try:
                     t = Transport.objects.get(uuid=params['transport'])
@@ -196,7 +327,9 @@ class CalendarAction(UUIDModel):
                         self.service_pool.transports.remove(t)
                     executed = True
                 except Exception:
-                    self.service_pool.log('Scheduled action not executed because transport is not available anymore')
+                    self.service_pool.log(
+                        'Scheduled action not executed because transport is not available anymore'
+                    )
                 saveServicePool = False
             elif self.action in caGroups:
                 try:
@@ -208,20 +341,27 @@ class CalendarAction(UUIDModel):
                         self.service_pool.assignedGroups.remove(grp)
                     executed = True
                 except Exception:
-                    self.service_pool.log('Scheduled action not executed because group is not available anymore')
+                    self.service_pool.log(
+                        'Scheduled action not executed because group is not available anymore'
+                    )
                 saveServicePool = False
 
         if executed:
             try:
                 self.service_pool.log(
                     'Executed action {} [{}]'.format(
-                        CALENDAR_ACTION_DICT.get(self.action, {})['description'], self.prettyParams
+                        CALENDAR_ACTION_DICT.get(self.action, {})['description'],
+                        self.prettyParams,
                     ),
-                    level=log.INFO
+                    level=log.INFO,
                 )
             except Exception:
                 # Avoid invalid ACTIONS errors on log
-                self.service_pool.log('Action {} is not a valid scheduled action! please, remove it from your list.'.format(self.action))
+                self.service_pool.log(
+                    'Action {} is not a valid scheduled action! please, remove it from your list.'.format(
+                        self.action
+                    )
+                )
 
         # On save, will regenerate nextExecution
         if save:
@@ -230,9 +370,13 @@ class CalendarAction(UUIDModel):
         if saveServicePool:
             self.service_pool.save()
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         lastExecution = self.last_execution or getSqlDatetime()
-        possibleNext = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=lastExecution-self.offset, startEvent=self.at_start)
+        possibleNext = calendar.CalendarChecker(self.calendar).nextEvent(
+            checkFrom=lastExecution - self.offset, startEvent=self.at_start
+        )
         if possibleNext:
             self.next_execution = possibleNext + self.offset
         else:
@@ -242,5 +386,9 @@ class CalendarAction(UUIDModel):
 
     def __str__(self):
         return 'Calendar of {}, last_execution = {}, next execution = {}, action = {}, params = {}'.format(
-            self.service_pool.name, self.last_execution, self.next_execution, self.action, self.params
+            self.service_pool.name,
+            self.last_execution,
+            self.next_execution,
+            self.action,
+            self.params,
         )

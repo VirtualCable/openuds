@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,6 +49,7 @@ class Permissions(UUIDModel):
     """
     An OS Manager represents a manager for responding requests for agents inside services.
     """
+
     # Allowed permissions
     PERMISSION_NONE = 0
     PERMISSION_READ = 32
@@ -56,15 +57,34 @@ class Permissions(UUIDModel):
     PERMISSION_ALL = 96
 
     created = models.DateTimeField(db_index=True)
-    ends = models.DateTimeField(db_index=True, null=True, blank=True, default=None)  # Future "permisions ends at this moment", not assigned right now
+    ends = models.DateTimeField(
+        db_index=True, null=True, blank=True, default=None
+    )  # Future "permisions ends at this moment", not assigned right now
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='permissions', null=True, blank=True, default=None)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='permissions', null=True, blank=True, default=None)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='permissions',
+        null=True,
+        blank=True,
+        default=None,
+    )
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        related_name='permissions',
+        null=True,
+        blank=True,
+        default=None,
+    )
 
     object_type = models.SmallIntegerField(default=-1, db_index=True)
     object_id = models.IntegerField(default=None, db_index=True, null=True, blank=True)
 
     permission = models.SmallIntegerField(default=PERMISSION_NONE, db_index=True)
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Permissions]'
 
     @staticmethod
     def permissionAsString(perm: int) -> str:
@@ -72,7 +92,7 @@ class Permissions(UUIDModel):
             Permissions.PERMISSION_NONE: _('None'),
             Permissions.PERMISSION_READ: _('Read'),
             Permissions.PERMISSION_MANAGEMENT: _('Manage'),
-            Permissions.PERMISSION_ALL: _('All')
+            Permissions.PERMISSION_ALL: _('All'),
         }.get(perm, _('None'))
 
     @staticmethod
@@ -104,13 +124,22 @@ class Permissions(UUIDModel):
             q = Q(group=group)
 
         try:
-            existing = Permissions.objects.filter(q, object_type=object_type, object_id=object_id)[0]
+            existing = Permissions.objects.filter(
+                q, object_type=object_type, object_id=object_id
+            )[0]
             existing.permission = permission
             existing.save()
             return existing
         except Exception:  # Does not exists
-            return Permissions.objects.create(created=getSqlDatetime(), ends=None, user=user, group=group,
-                                              object_type=object_type, object_id=object_id, permission=permission)
+            return Permissions.objects.create(
+                created=getSqlDatetime(),
+                ends=None,
+                user=user,
+                group=group,
+                object_type=object_type,
+                object_id=object_id,
+                permission=permission,
+            )
 
     @staticmethod
     def getPermissions(**kwargs) -> int:
@@ -141,7 +170,7 @@ class Permissions(UUIDModel):
             perm = Permissions.objects.filter(
                 Q(object_type=object_type),
                 Q(object_id=None) | Q(object_id=object_id),
-                q
+                q,
             ).order_by('-permission')[0]
             logger.debug('Got permission %s', perm)
             return perm.permission
@@ -157,7 +186,9 @@ class Permissions(UUIDModel):
 
     @staticmethod
     def cleanPermissions(object_type, object_id) -> None:
-        Permissions.objects.filter(object_type=object_type, object_id=object_id).delete()
+        Permissions.objects.filter(
+            object_type=object_type, object_id=object_id
+        ).delete()
 
     @staticmethod
     def cleanUserPermissions(user) -> None:
@@ -173,5 +204,10 @@ class Permissions(UUIDModel):
 
     def __str__(self) -> str:
         return 'Permission {}, user {} group {} object_type {} object_id {} permission {}'.format(
-            self.uuid, self.user, self.group, self.object_type, self.object_id, Permissions.permissionAsString(self.permission)
+            self.uuid,
+            self.user,
+            self.group,
+            self.object_type,
+            self.object_id,
+            Permissions.permissionAsString(self.permission),
         )

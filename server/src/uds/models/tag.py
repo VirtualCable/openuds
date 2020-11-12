@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,10 +49,14 @@ class Tag(UUIDModel):
 
     tag = models.CharField(max_length=32, db_index=True, unique=True)
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Tag]'
+
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_tag'
         app_label = 'uds'
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -52,7 +52,13 @@ from .util import getSqlDatetime
 if typing.TYPE_CHECKING:
     from uds.core import osmanagers
     from uds.core import services
-    from uds.models import OSManager, ServicePool, ServicePoolPublication, UserServiceProperty
+    from uds.models import (
+        OSManager,
+        ServicePool,
+        ServicePoolPublication,
+        UserServiceProperty,
+        AccountUsage,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -65,44 +71,68 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service: 'models.ForeignKey[UserService, ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
-    publication: 'models.ForeignKey[UserService, ServicePoolPublication]' = models.ForeignKey(
-        ServicePoolPublication, on_delete=models.CASCADE, null=True, blank=True, related_name='userServices')
+    deployed_service: 'models.ForeignKey[UserService, ServicePool]' = models.ForeignKey(
+        ServicePool, on_delete=models.CASCADE, related_name='userServices'
+    )
+    publication: 'models.ForeignKey[UserService, ServicePoolPublication]' = (
+        models.ForeignKey(
+            ServicePoolPublication,
+            on_delete=models.CASCADE,
+            null=True,
+            blank=True,
+            related_name='userServices',
+        )
+    )
 
-    unique_id = models.CharField(max_length=128, default='', db_index=True)  # User by agents to locate machine
+    unique_id = models.CharField(
+        max_length=128, default='', db_index=True
+    )  # User by agents to locate machine
     friendly_name = models.CharField(max_length=128, default='')
     # We need to keep separated two differents os states so service operations (move beween caches, recover service) do not affects os manager state
-    state = models.CharField(max_length=1, default=State.PREPARING, db_index=True)  # We set index so filters at cache level executes faster
-    os_state = models.CharField(max_length=1, default=State.PREPARING)  # The valid values for this field are PREPARE and USABLE
+    state = models.CharField(
+        max_length=1, default=State.PREPARING, db_index=True
+    )  # We set index so filters at cache level executes faster
+    os_state = models.CharField(
+        max_length=1, default=State.PREPARING
+    )  # The valid values for this field are PREPARE and USABLE
     state_date = models.DateTimeField(db_index=True)
     creation_date = models.DateTimeField(db_index=True)
     data = models.TextField(default='')
     user: 'models.ForeignKey[UserService, User]' = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='userServices', null=True, blank=True, default=None)
+        User,
+        on_delete=models.CASCADE,
+        related_name='userServices',
+        null=True,
+        blank=True,
+        default=None,
+    )
     in_use = models.BooleanField(default=False)
     in_use_date = models.DateTimeField(default=NEVER)
-    cache_level = models.PositiveSmallIntegerField(db_index=True, default=0)  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
+    cache_level = models.PositiveSmallIntegerField(
+        db_index=True, default=0
+    )  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
 
     src_hostname = models.CharField(max_length=64, default='')
     src_ip = models.CharField(max_length=15, default='')
 
-    cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True)
+    cluster_node = models.CharField(
+        max_length=128, default=None, blank=True, null=True, db_index=True
+    )
 
-    # "fake" relations declarations for type checking
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[UserService]'
     properties: 'models.QuerySet[UserServiceProperty]'
+    accounting: 'AccountUsage'
 
     class Meta(UUIDModel.Meta):
         """
         Meta class to declare default order and unique multiple field index
         """
+
         db_table = 'uds__user_service'
         ordering = ('creation_date',)
         app_label = 'uds'
-        index_together = (
-            'deployed_service',
-            'cache_level',
-            'state'
-        )
+        index_together = ('deployed_service', 'cache_level', 'state')
 
     @property
     def name(self) -> str:
@@ -130,7 +160,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
                 'mac': unique.UniqueMacGenerator,
                 'name': unique.UniqueNameGenerator,
                 'id': unique.UniqueGIDGenerator,
-            }
+            },
         )
 
     def getInstance(self) -> 'services.UserDeployment':
@@ -164,16 +194,33 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         except Exception:
             # The publication to witch this item points to, does not exists
             self.publication = None
-            logger.exception('Got exception at getInstance of an userService %s (seems that publication does not exists!)', self)
+            logger.exception(
+                'Got exception at getInstance of an userService %s (seems that publication does not exists!)',
+                self,
+            )
         if serviceInstance.deployedType is None:
-            raise Exception('Class {0} needs deployedType but it is not defined!!!'.format(serviceInstance.__class__.__name__))
-        us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance,
-                                          publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)
+            raise Exception(
+                'Class {0} needs deployedType but it is not defined!!!'.format(
+                    serviceInstance.__class__.__name__
+                )
+            )
+        us = serviceInstance.deployedType(
+            self.getEnvironment(),
+            service=serviceInstance,
+            publication=publicationInstance,
+            osmanager=osmanagerInstance,
+            dbservice=self,
+        )
         if self.data != '' and self.data is not None:
             try:
                 us.unserialize(self.data)
             except Exception:
-                logger.exception('Error unserializing %s//%s : %s', self.deployed_service.name, self.uuid, self.data)
+                logger.exception(
+                    'Error unserializing %s//%s : %s',
+                    self.deployed_service.name,
+                    self.uuid,
+                    self.data,
+                )
         return us
 
     def updateData(self, userServiceInstance: 'services.UserDeployment'):
@@ -285,7 +332,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         return self.deployed_service.transformsUserOrPasswordForService()
 
-    def processUserPassword(self, username: str, password: str) -> typing.Tuple[str, str]:
+    def processUserPassword(
+        self, username: str, password: str
+    ) -> typing.Tuple[str, str]:
         """
         Before accessing a service by a transport, we can request
         the service to "transform" the username & password that the transport
@@ -309,7 +358,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             return (username, password)
 
-        return servicePool.osmanager.getInstance().processUserPassword(self, username, password)
+        return servicePool.osmanager.getInstance().processUserPassword(
+            self, username, password
+        )
 
     def setState(self, state: str) -> None:
         """
@@ -363,6 +414,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
         """
         from uds.core.managers import userServiceManager
+
         self.in_use = inUse
         self.in_use_date = getSqlDatetime()
         self.save(update_fields=['in_use', 'in_use_date'])
@@ -391,7 +443,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         # 1.- If do not have any accounter associated, do nothing
         # 2.- If called but not accounting, do nothing
         # 3.- If called and accounting, stop accounting
-        if self.deployed_service.account is None or hasattr(self, 'accounting') is False:
+        if (
+            self.deployed_service.account is None
+            or hasattr(self, 'accounting') is False
+        ):
             return
 
         self.deployed_service.account.stopUsageAccounting(self)
@@ -414,6 +469,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         # Call to isReady of the instance
         from uds.core.managers import userServiceManager
+
         return userServiceManager().isReady(self)
 
     def isInMaintenance(self) -> bool:
@@ -436,6 +492,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
         """
         from uds.core.managers import userServiceManager
+
         userServiceManager().cancel(self)
 
     def removeOrCancel(self) -> None:
@@ -455,9 +512,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             cacheLevel: New cache level to put object in
         """
         from uds.core.managers import userServiceManager
+
         userServiceManager().moveToLevel(self, cacheLevel)
 
-    def getProperty(self, propName: str, default: typing.Optional[str] = None) -> typing.Optional[str]:
+    def getProperty(
+        self, propName: str, default: typing.Optional[str] = None
+    ) -> typing.Optional[str]:
         try:
             val = self.properties.get(name=propName).value
             return val or default  # Empty string is null
@@ -496,7 +556,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
-        return self.deployed_service.service.getType().publicationType is None or self.publication == self.deployed_service.activePublication()
+        return (
+            self.deployed_service.service.getType().publicationType is None
+            or self.publication == self.deployed_service.activePublication()
+        )
 
     # Utility for logging
     def log(self, message: str, level: int = log.INFO) -> None:
@@ -507,8 +570,13 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     def __str__(self):
         return "User service {}, unique_id {}, cache_level {}, user {}, name {}, state {}:{}".format(
-            self.name, self.unique_id, self.cache_level, self.user, self.friendly_name,
-            State.toString(self.state), State.toString(self.os_state)
+            self.name,
+            self.unique_id,
+            self.cache_level,
+            self.user,
+            self.friendly_name,
+            State.toString(self.state),
+            State.toString(self.os_state),
         )
 
     @staticmethod

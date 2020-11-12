@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -39,10 +39,12 @@ from uds.core.util.model import generateUuid
 
 logger = logging.getLogger(__name__)
 
+
 class UUIDModel(models.Model):
     """
     Base abstract model for models that require an uuid
     """
+
     uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 
     # Automatic field from Model without a defined specific primary_key
@@ -55,13 +57,17 @@ class UUIDModel(models.Model):
         return generateUuid()
 
     # Override default save to add uuid
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         if not self.uuid:
             self.uuid = self.genUuid()
         elif self.uuid != self.uuid.lower():
-            self.uuid = self.uuid.lower()  # If we modify uuid elsewhere, ensure that it's stored in lower case
+            self.uuid = (
+                self.uuid.lower()
+            )  # If we modify uuid elsewhere, ensure that it's stored in lower case
 
         return models.Model.save(self, force_insert, force_update, using, update_fields)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Object of class {} with uuid {}'.format(self.__class__, self.uuid)

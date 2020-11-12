@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -43,6 +43,7 @@ class Config(models.Model):
     General configuration values model. Used to store global and specific modules configuration values.
     This model is managed via uds.core.util.config.Config class
     """
+
     section = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, db_index=True)
     value = models.TextField(default='')
@@ -50,10 +51,14 @@ class Config(models.Model):
     long = models.BooleanField(default=False)
     field_type = models.IntegerField(default=-1)
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Config]'
+
     class Meta:
         """
         Meta class to declare default order and unique multiple field index
         """
+
         db_table = 'uds_configuration'
         unique_together = (('section', 'key'),)
         app_label = 'uds'

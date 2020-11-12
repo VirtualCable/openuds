@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,8 +47,7 @@ from .util import NEVER
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .user import User
-    from django.db.models import QuerySet  # pylint: disable=ungrouped-imports
+    from uds.models import User, Group
 
 
 logger = logging.getLogger(__name__)
@@ -64,14 +63,20 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     small_name = models.CharField(max_length=32, default='', db_index=True)
     visible = models.BooleanField(default=True)
 
+    # "fake" relations declarations for type checking
+    objects: 'models.BaseManager[Authenticator]'
+    users: 'models.QuerySet[User]'
+    groups: 'models.QuerySet[Group]'
+
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order
         """
+
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values=None) ->  auths.Authenticator:
+    def getInstance(self, values=None) -> auths.Authenticator:
         """
         Instantiates the object this record contains.
 
@@ -87,7 +92,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         if self.id is None:
-            return auths.Authenticator(self, environment.Environment.getTempEnv(), values)
+            return auths.Authenticator(
+                self, environment.Environment.getTempEnv(), values
+            )
 
         auType = self.getType()
         env = self.getEnvironment()
@@ -109,7 +116,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         # If type is not registered (should be, but maybe a database inconsistence), consider this a "base empty auth"
         return auths.factory().lookup(self.data_type) or auths.Authenticator
 
-    def getOrCreateUser(self, username: str, realName: typing.Optional[str] = None) -> 'User':
+    def getOrCreateUser(
+        self, username: str, realName: typing.Optional[str] = None
+    ) -> 'User':
         """
         Used to get or create a new user at database associated with this authenticator.
 
@@ -139,8 +148,17 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         user: 'User'
         realName = realName if realName is None else username
-        user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
-        if (user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()) and realName != user.real_name:
+        user, _ = self.users.get_or_create(
+            name=username,
+            defaults={
+                'real_name': realName,
+                'last_access': NEVER,
+                'state': State.ACTIVE,
+            },
+        )
+        if (
+            user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()
+        ) and realName != user.real_name:
             user.real_name = realName
             user.save(update_fields=['real_name'])
 
@@ -169,14 +187,14 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             return falseIfNotExists
 
     @staticmethod
-    def all() -> 'QuerySet':
+    def all() -> 'models.QuerySet[Authenticator]':
         """
         Returns all authenticators ordered by priority
         """
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def getByTag(tag=None) -> typing.List['Authenticator']:
+    def getByTag(tag=None) -> typing.Iterable['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
@@ -184,7 +202,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         from uds.core.util.config import GlobalConfig
 
         if tag is not None:
-            authsList: 'QuerySet' = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
+            authsList = Authenticator.objects.filter(small_name=tag).order_by(
+                'priority', 'name'
+            )
             if not authsList:
                 authsList = Authenticator.objects.all().order_by('priority', 'name')
                 # If disallow global login (use all auths), get just the first by priority/name
@@ -194,10 +214,12 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         else:
             authsList = Authenticator.objects.all().order_by('priority', 'name')
 
-        return [auth for auth in authsList if auth.getType() and (auth.getType().isCustom() is False or tag != 'disabled')]
+        for auth in authsList:
+            if auth.getType() and (not auth.getType().isCustom() or tag != 'disabled'):
+                yield auth
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -207,6 +229,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         :note: If destroy raises an exception, the deletion is not taken.
         """
         from uds.core.util.permissions import clean
+
         toDelete = kwargs['instance']
 
         logger.debug('Before delete auth %s', toDelete)
@@ -228,4 +251,4 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
 
 # Connects a pre deletion signal to Authenticator
-signals.pre_delete.connect(Authenticator.beforeDelete, sender=Authenticator)
+models.signals.pre_delete.connect(Authenticator.beforeDelete, sender=Authenticator)

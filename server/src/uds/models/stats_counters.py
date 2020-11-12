@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 class StatsCounters(models.Model):
     """
-    Counter statistocs mpdes the counter statistics
+    Statistics about counters (number of users at a given time, number of services at a time, whatever...)
     """
 
     owner_id = models.IntegerField(db_index=True, default=0)
@@ -55,15 +55,21 @@ class StatsCounters(models.Model):
     stamp = models.IntegerField(db_index=True, default=0)
     value = models.IntegerField(db_index=True, default=0)
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[StatsCounters]'
+
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_stats_c'
         app_label = 'uds'
 
     @staticmethod
-    def get_grouped(owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs) -> 'models.QuerySet[StatsCounters]':  # pylint: disable=too-many-locals
+    def get_grouped(
+        owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs
+    ) -> 'models.QuerySet[StatsCounters]':  # pylint: disable=too-many-locals
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 
@@ -92,7 +98,9 @@ class StatsCounters(models.Model):
         since = int(since) if since else NEVER_UNIX
         to = int(to) if to else getSqlDatetimeAsUnix()
 
-        interval = int(kwargs.get('interval') or '600')  # By default, group items in ten minutes interval (600 seconds)
+        interval = int(
+            kwargs.get('interval') or '600'
+        )  # By default, group items in ten minutes interval (600 seconds)
 
         max_intervals = kwargs.get('max_intervals')
 
@@ -106,9 +114,13 @@ class StatsCounters(models.Model):
                 q = StatsCounters.objects.filter(stamp__gte=since, stamp__lte=to)
             else:
                 if isinstance(owner_id, (list, tuple, types.GeneratorType)):
-                    q = StatsCounters.objects.filter(owner_id__in=owner_id, stamp__gte=since, stamp__lte=to)
+                    q = StatsCounters.objects.filter(
+                        owner_id__in=owner_id, stamp__gte=since, stamp__lte=to
+                    )
                 else:
-                    q = StatsCounters.objects.filter(owner_id=owner_id, stamp__gte=since, stamp__lte=to)
+                    q = StatsCounters.objects.filter(
+                        owner_id=owner_id, stamp__gte=since, stamp__lte=to
+                    )
 
             if isinstance(owner_type, (list, tuple, types.GeneratorType)):
                 q = q.filter(owner_type__in=owner_type)
@@ -120,11 +132,11 @@ class StatsCounters(models.Model):
                 last = q.order_by('stamp').reverse()[0].stamp
                 interval = int((last - first) / (max_intervals - 1))
 
-        stampValue = '{ceil}(stamp/{interval})'.format(ceil=getSqlFnc('CEIL'), interval=interval)
+        stampValue = '{ceil}(stamp/{interval})'.format(
+            ceil=getSqlFnc('CEIL'), interval=interval
+        )
         filt += ' AND stamp>={since} AND stamp<={to} GROUP BY {stampValue} ORDER BY stamp'.format(
-            since=since,
-            to=to,
-            stampValue=stampValue
+            since=since, to=to, stampValue=stampValue
         )
 
         if limit:
@@ -138,15 +150,22 @@ class StatsCounters(models.Model):
         # fnc = getSqlFnc('MAX' if kwargs.get('use_max', False) else 'AVG')
 
         query = (
-            'SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, ' + stampValue + '*{}'.format(interval) + ' AS stamp, ' +
-            '{} AS value '
+            'SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, '
+            + stampValue
+            + '*{}'.format(interval)
+            + ' AS stamp, '
+            + '{} AS value '
             'FROM {} WHERE {}'
         ).format(fnc, StatsCounters._meta.db_table, filt)
 
         logger.debug('Stats query: %s', query)
 
         # We use result as an iterator
-        return typing.cast('models.QuerySet[StatsCounters]', StatsCounters.objects.raw(query))
+        return typing.cast(
+            'models.QuerySet[StatsCounters]', StatsCounters.objects.raw(query)
+        )
 
     def __str__(self):
-        return u"Counter of {}({}): {} - {} - {}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)
+        return u"Counter of {}({}): {} - {} - {}".format(
+            self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value
+        )

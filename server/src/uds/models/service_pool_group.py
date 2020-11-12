@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -55,6 +55,9 @@ class ServicePoolGroup(UUIDModel):
     priority = models.IntegerField(default=0, db_index=True)
     image: 'models.ForeignKey[ServicePoolGroup, Image]' = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGroup', on_delete=models.SET_NULL)
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[ServicePoolGroup]'
+
     class Meta(UUIDModel.Meta):
         """
         Meta class to declare the name of the table at database
@@ -62,11 +65,11 @@ class ServicePoolGroup(UUIDModel):
         db_table = 'uds__pools_groups'
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Service Pool group {}({}): {}'.format(self.name, self.comments, self.image.name)
 
     @property
-    def as_dict(self) -> typing.Dict[str, typing.Any]:
+    def as_dict(self) -> typing.MutableMapping[str, typing.Any]:
         return {
             'id': self.uuid,
             'name': self.name,
@@ -81,4 +84,9 @@ class ServicePoolGroup(UUIDModel):
 
     @staticmethod
     def default() -> 'ServicePoolGroup':
+        """Returns an "default" service pool group. Used on services agroupation on visualization
+
+        Returns:
+            [ServicePoolGroup]: Default ServicePoolGroup
+        """
         return ServicePoolGroup(name=_('General'), comments='', priority=-10000)

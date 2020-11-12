@@ -75,7 +75,7 @@ def getSqlDatetime() -> datetime:
 def getSqlDatetimeAsUnix() -> int:
     return int(mktime(getSqlDatetime().timetuple()))
 
-def getSqlFnc(fncName):
+def getSqlFnc(fncName: str) -> str:
     """
     Convert different sql functions for different platforms
     """

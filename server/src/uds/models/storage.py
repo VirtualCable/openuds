@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,7 +47,8 @@ class Storage(models.Model):
     data = models.TextField(default='')
     attr1 = models.CharField(max_length=64, db_index=True, null=True, blank=True, default=None)
 
-    # Removed old locking manager, that blocked tables
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Storage]'
 
     class Meta:
         """
@@ -55,5 +56,5 @@ class Storage(models.Model):
         """
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{} {}  > str= {}, {}'.format(self.owner, self.key, self.data, '/'.join([self.attr1]))

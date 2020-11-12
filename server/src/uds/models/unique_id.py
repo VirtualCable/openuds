@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -42,19 +42,26 @@ class UniqueId(models.Model):
     Unique ID Database. Used to store unique names, unique macs, etc...
     Managed via uds.core.util.unique_id_generator.unique_id_generator
     """
+
     owner = models.CharField(max_length=128, db_index=True, default='')
     basename = models.CharField(max_length=32, db_index=True)
     seq = models.BigIntegerField(db_index=True)
     assigned = models.BooleanField(db_index=True, default=True)
     stamp = models.IntegerField(db_index=True, default=0)
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[UniqueId]'
+
     class Meta:
         """
         Meta class to declare default order and unique multiple field index
         """
+
         unique_together = (('basename', 'seq'),)
         ordering = ('-seq',)
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return u"{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)
+        return u"{0} {1}.{2}, assigned is {3}".format(
+            self.owner, self.basename, self.seq, self.assigned
+        )

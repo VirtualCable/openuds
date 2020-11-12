@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -58,30 +58,38 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
     or a Terminal Server configuration).
     """
-    provider: 'models.ForeignKey[Service, Provider]' = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
+
+    provider: 'models.ForeignKey[Service, Provider]' = models.ForeignKey(
+        Provider, related_name='services', on_delete=models.CASCADE
+    )
 
     # Proxy for this service
-    proxy: 'models.ForeignKey[Service, Proxy]' = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
+    proxy: 'models.ForeignKey[Service, Proxy]' = models.ForeignKey(
+        Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE
+    )
 
-    token = models.CharField(max_length=32, default=None, null=True, blank=True, unique=True)
+    token = models.CharField(
+        max_length=32, default=None, null=True, blank=True, unique=True
+    )
 
     _cachedInstance: typing.Optional['services.Service'] = None
 
-    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Service]'
+
+    class Meta(ManagedObjectModel.Meta):
         """
         Meta class to declare default order and unique multiple field index
         """
+
         ordering = ('name',)
         unique_together = (("provider", "name"),)
         app_label = 'uds'
 
-    def getEnvironment(self):
+    def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
-        # from uds.core.util.unique_mac_generator import UniqueMacGenerator
-        # from uds.core.util.unique_name_generator import UniqueNameGenerator
-
         return Environment.getEnvForTableElement(
             self._meta.verbose_name,
             self.id,
@@ -89,10 +97,10 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
                 'mac': unique.UniqueMacGenerator,
                 'name': unique.UniqueNameGenerator,
                 'id': unique.UniqueGIDGenerator,
-            }
+            },
         )
 
-    def getInstance(self, values=None) -> 'services.Service':
+    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'services.Service':
         """
         Instantiates the object this record contains.
 
@@ -118,7 +126,11 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             obj = sType(self.getEnvironment(), prov, values, uuid=self.uuid)
             self.deserialize(obj, values)
         else:
-            raise Exception('Service type of {} is not recogniced by provider {}'.format(self.data_type, prov))
+            raise Exception(
+                'Service type of {} is not recogniced by provider {}'.format(
+                    self.data_type, prov
+                )
+            )
 
         self._cachedInstance = obj
 
@@ -140,22 +152,28 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         if type_:
             return type_
 
-        raise Exception('Service type of {} is not recogniced by provider {}'.format(self.data_type, prov))
+        raise Exception(
+            'Service type of {} is not recogniced by provider {}'.format(
+                self.data_type, prov
+            )
+        )
 
     def isInMaintenance(self) -> bool:
         # orphaned services?
         return self.provider.isInMaintenance() if self.provider else True
 
-    def testServer(self, host: str, port: typing.Union[str, int], timeout: int = 4) -> bool:
-        if self.proxy is not None:
+    def testServer(
+        self, host: str, port: typing.Union[str, int], timeout: int = 4
+    ) -> bool:
+        if self.proxy:
             return self.proxy.doTestServer(host, port, timeout)
         return connection.testServer(host, port, timeout)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -165,6 +183,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         :note: If destroy raises an exception, the deletion is not taken.
         """
         from uds.core.util.permissions import clean
+
         toDelete = kwargs['instance']
 
         logger.debug('Before delete service %s', toDelete)
@@ -179,6 +198,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         # Clears related permissions
         clean(toDelete)
+
 
 # : Connects a pre deletion signal to Service
 models.signals.pre_delete.connect(Service.beforeDelete, sender=Service)

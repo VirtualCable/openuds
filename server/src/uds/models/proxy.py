@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,6 +47,7 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
     """
     Proxy DB model
     """
+
     name = models.CharField(max_length=128, unique=False, db_index=True)
     comments = models.CharField(max_length=256)
 
@@ -55,16 +56,22 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
     ssl = models.BooleanField(default=True)
     check_cert = models.BooleanField(default=False)
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Proxy]'
+
     class Meta:
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds_proxies'
         app_label = 'uds'
 
     @property
     def url(self) -> str:
-        return 'http{}://{}:{}'.format('s' if self.ssl is True else '', self.host, self.port)
+        return 'http{}://{}:{}'.format(
+            's' if self.ssl is True else '', self.host, self.port
+        )
 
     @property
     def proxyRequestUrl(self) -> str:
@@ -74,10 +81,10 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
     def testServerUrl(self) -> str:
         return self.url + "/testServer"
 
-    def doProxyRequest(self, url, data: typing.Optional[typing.Any] = None, timeout: int = 5) -> requests.Response:
-        d = {
-            'url': url
-        }
+    def doProxyRequest(
+        self, url, data: typing.Optional[typing.Any] = None, timeout: int = 5
+    ) -> requests.Response:
+        d = {'url': url}
         if data is not None:
             d['data'] = data
 
@@ -86,17 +93,15 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
             data=json.dumps(d),
             headers={'content-type': 'application/json'},
             verify=self.check_cert,
-            timeout=timeout
+            timeout=timeout,
         )
 
     def doTestServer(self, ip: str, port: typing.Union[str, int], timeout=5) -> bool:
         try:
-            url = self.testServerUrl + '?host={}&port={}&timeout={}'.format(ip, port, timeout)
-            r = requests.get(
-                url,
-                verify=self.check_cert,
-                timeout=timeout
+            url = self.testServerUrl + '?host={}&port={}&timeout={}'.format(
+                ip, port, timeout
             )
+            r = requests.get(url, verify=self.check_cert, timeout=timeout)
             if r.status_code == 302:  # Proxy returns "Found" for a success test
                 return True
             # Else returns 404

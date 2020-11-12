@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -48,6 +48,9 @@ class UserPreference(models.Model):
     name = models.CharField(max_length=32, db_index=True)
     value = models.CharField(max_length=128, db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='preferences')
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[UserPreference]'
 
     class Meta:
         app_label = 'uds'

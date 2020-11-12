@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -50,16 +50,24 @@ class TicketStore(UUIDModel):
     """
     Tickets storing on DB
     """
+
     DEFAULT_VALIDITY = 60
     MAX_VALIDITY = 60 * 60 * 12
     # Cleanup will purge all elements that have been created MAX_VALIDITY ago
 
     owner = models.CharField(null=True, blank=True, default=None, max_length=8)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
-    validity = models.IntegerField(default=60)  # Duration allowed for this ticket to be valid, in seconds
+    validity = models.IntegerField(
+        default=60
+    )  # Duration allowed for this ticket to be valid, in seconds
 
     data = models.BinaryField()  # Associated ticket data
-    validator = models.BinaryField(null=True, blank=True, default=None)  # Associated validator for this ticket
+    validator = models.BinaryField(
+        null=True, blank=True, default=None
+    )  # Associated validator for this ticket
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[TicketStore]'
 
     class InvalidTicket(Exception):
         pass
@@ -68,6 +76,7 @@ class TicketStore(UUIDModel):
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds_tickets'
         app_label = 'uds'
 
@@ -80,12 +89,12 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def create(
-            data: typing.Any,
-            validatorFnc: typing.Optional[ValidatorType] = None,
-            validity: int = DEFAULT_VALIDITY,
-            owner: typing.Optional[str]=None,
-            secure: bool = False
-        ) -> str:
+        data: typing.Any,
+        validatorFnc: typing.Optional[ValidatorType] = None,
+        validity: int = DEFAULT_VALIDITY,
+        owner: typing.Optional[str] = None,
+        secure: bool = False,
+    ) -> str:
         """
         validity is in seconds
         """
@@ -94,17 +103,23 @@ class TicketStore(UUIDModel):
         if secure:
             pass
 
-        return TicketStore.objects.create(stamp=getSqlDatetime(), data=data, validator=validator, validity=validity, owner=owner).uuid
+        return TicketStore.objects.create(
+            stamp=getSqlDatetime(),
+            data=data,
+            validator=validator,
+            validity=validity,
+            owner=owner,
+        ).uuid
 
     @staticmethod
     def store(
-            uuid: str,
-            data: str,
-            validatorFnc: typing.Optional[ValidatorType] = None,
-            validity: int = DEFAULT_VALIDITY,
-            owner: typing.Optional[str] = None,
-            secure: bool = False
-        ) -> None:
+        uuid: str,
+        data: str,
+        validatorFnc: typing.Optional[ValidatorType] = None,
+        validity: int = DEFAULT_VALIDITY,
+        owner: typing.Optional[str] = None,
+        secure: bool = False,
+    ) -> None:
         """
         Stores an ticketstore. If one with this uuid already exists, replaces it. Else, creates a new one
         validity is in seconds
@@ -122,15 +137,21 @@ class TicketStore(UUIDModel):
             t.owner = owner
             t.save()
         except TicketStore.DoesNotExist:
-            TicketStore.objects.create(uuid=uuid, stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity)
+            TicketStore.objects.create(
+                uuid=uuid,
+                stamp=getSqlDatetime(),
+                data=pickle.dumps(data),
+                validator=validator,
+                validity=validity,
+            )
 
     @staticmethod
     def get(
-            uuid: str,
-            invalidate: bool = True,
-            owner: typing.Optional[str] = None,
-            secure: bool = False
-        ) -> typing.Any:
+        uuid: str,
+        invalidate: bool = True,
+        owner: typing.Optional[str] = None,
+        secure: bool = False,
+    ) -> typing.Any:
         try:
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
             validity = datetime.timedelta(seconds=t.validity)
@@ -159,30 +180,43 @@ class TicketStore(UUIDModel):
             raise TicketStore.InvalidTicket('Does not exists')
 
     @staticmethod
-    def revalidate(uuid, validity=None, owner=None):
+    def revalidate(
+        uuid: str,
+        validity: typing.Optional[int] = None,
+        owner: typing.Optional[str] = None,
+    ):
         try:
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
             t.stamp = getSqlDatetime()
-            if validity is not None:
+            if validity:
                 t.validity = validity
-            t.save()
+            t.save(update_fields=['validity', 'stamp'])
         except TicketStore.DoesNotExist:
             raise Exception('Does not exists')
 
     @staticmethod
-    def cleanup():
-        from datetime import timedelta
+    def cleanup() -> None:
         now = getSqlDatetime()
         for v in TicketStore.objects.all():
-            if now > v.stamp + timedelta(seconds=v.validity+600):  # Delete only really old tickets. Avoid "revalidate" issues
+            if now > v.stamp + datetime.timedelta(
+                seconds=v.validity + 600
+            ):  # Delete only really old tickets. Avoid "revalidate" issues
                 v.delete()
         cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
+        # Also remove too long tickets (12 hours is the default)
         TicketStore.objects.filter(stamp__lt=cleanSince).delete()
 
-    def __str__(self):
-        if self.validator is not None:
+    def __str__(self) -> str:
+        if self.validator:
             validator = pickle.loads(self.validator)
         else:
             validator = None
 
-        return 'Ticket id: {}, Secure: {}, Stamp: {}, Validity: {}, Validator: {}, Data: {}'.format(self.uuid, self.owner, self.stamp, self.validity, validator, pickle.loads(self.data))
+        return 'Ticket id: {}, Secure: {}, Stamp: {}, Validity: {}, Validator: {}, Data: {}'.format(
+            self.uuid,
+            self.owner,
+            self.stamp,
+            self.validity,
+            validator,
+            pickle.loads(self.data),
+        )

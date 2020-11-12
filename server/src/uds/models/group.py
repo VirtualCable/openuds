@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -54,8 +54,10 @@ class Group(UUIDModel):
     """
     This class represents a group, associated with one authenticator
     """
-    # pylint: disable=model-missing-unicode
-    manager: 'models.ForeignKey[Group, Authenticator]' = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='groups')
+
+    manager: 'models.ForeignKey[Group, Authenticator]' = UnsavedForeignKey(
+        Authenticator, on_delete=models.CASCADE, related_name='groups'
+    )
     name = models.CharField(max_length=128, db_index=True)
     state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
     comments = models.CharField(max_length=256, default='')
@@ -65,10 +67,14 @@ class Group(UUIDModel):
     groups = models.ManyToManyField('self', symmetrical=False)
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Group]'
+
     class Meta:
         """
         Meta class to declare default order and unique multiple field index
         """
+
         unique_together = (("manager", "name"),)
         ordering = ('name',)
         app_label = 'uds'
@@ -87,12 +93,16 @@ class Group(UUIDModel):
 
     def __str__(self) -> str:
         if self.is_meta:
-            return "Meta group {}(id:{}) with groups {}".format(self.name, self.id, list(self.groups.all()))
+            return "Meta group {}(id:{}) with groups {}".format(
+                self.name, self.id, list(self.groups.all())
+            )
 
-        return "Group {}(id:{}) from auth {}".format(self.name, self.id, self.manager.name)
+        return "Group {}(id:{}) from auth {}".format(
+            self.name, self.id, self.manager.name
+        )
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

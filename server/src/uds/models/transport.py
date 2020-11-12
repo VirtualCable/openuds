@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -65,6 +65,8 @@ class Transport(ManagedObjectModel, TaggingMixin):
     # "fake" relations declarations for type checking
     networks: 'models.QuerySet[Network]'
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Transport]'
 
     class Meta(ManagedObjectModel.Meta):
         """
@@ -132,7 +134,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

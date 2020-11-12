@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,16 +32,13 @@
 """
 import logging
 
+# Utility imports
+from .util import getSqlDatetime, getSqlDatetimeAsUnix, NEVER, NEVER_UNIX
+
+# Imports all models so they are available for migrations
+
 # Permissions
 from .permissions import Permissions
-
-# Utility
-from .util import (
-    getSqlDatetime,
-    getSqlDatetimeAsUnix,
-    NEVER,
-    NEVER_UNIX
-)
 
 # Services
 from .provider import Provider

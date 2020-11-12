@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,17 +45,26 @@ class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-meth
     Properties for User Service.
     The value field is a Text field, so we can put whatever we want in it
     """
+
     name = models.CharField(max_length=128, db_index=True)
     value = models.TextField(default='')
-    user_service = models.ForeignKey(UserService, on_delete=models.CASCADE, related_name='properties')
+    user_service = models.ForeignKey(
+        UserService, on_delete=models.CASCADE, related_name='properties'
+    )
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[UserServiceProperty]'
 
     class Meta:
         """
         Meta class to declare default order and unique multiple field index
         """
+
         db_table = 'uds__user_service_property'
         unique_together = (('name', 'user_service'),)
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return "Property of {}. {}={}".format(self.user_service.pk, self.name, self.value)
+        return "Property of {}. {}={}".format(
+            self.user_service.pk, self.name, self.value
+        )

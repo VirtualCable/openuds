@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -54,6 +54,9 @@ class DelayedTask(models.Model):
     insert_date = models.DateTimeField()
     execution_delay = models.PositiveIntegerField()
     execution_time = models.DateTimeField(db_index=True)
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[DelayedTask]'
 
     class Meta:
         """

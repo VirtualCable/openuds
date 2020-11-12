@@ -51,17 +51,21 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
     An OS Manager represents a manager for responding requests for agents inside services.
     """
 
-    # "fake" relations declarations for type checking
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[OSManager]'
     deployedServices: 'models.QuerySet[ServicePool]'
 
     class Meta(ManagedObjectModel.Meta):
         """
         Meta class to declare default order
         """
+
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'osmanagers.OSManager':
+    def getInstance(
+        self, values: typing.Optional[typing.Dict[str, str]] = None
+    ) -> 'osmanagers.OSManager':
         return typing.cast('osmanagers.OSManager', super().getInstance(values=values))
 
     def getType(self) -> typing.Type['osmanagers.OSManager']:
@@ -76,7 +80,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         :note: We only need to get info from this, not access specific data (class specific info)
         """
         # We only need to get info from this, not access specific data (class specific info)
-        from uds.core import osmanagers  # pylint: disable=redefined-outer-name
+        from uds.core import osmanagers
 
         type_ = osmanagers.factory().lookup(self.data_type)
         if type_:
@@ -100,7 +104,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         self.delete()
         return True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 
     @staticmethod
@@ -115,7 +119,9 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         toDelete = kwargs['instance']
         if toDelete.deployedServices.count() > 0:
-            raise IntegrityError('Can\'t remove os managers with assigned deployed services')
+            raise IntegrityError(
+                'Can\'t remove os managers with assigned deployed services'
+            )
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()

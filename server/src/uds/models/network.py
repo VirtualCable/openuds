@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,17 +49,23 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
     """
     This model is used for keeping information of networks associated with transports (right now, just transports..)
     """
-    # pylint: disable=model-missing-unicode
+
     name = models.CharField(max_length=64, unique=True)
     net_start = models.BigIntegerField(db_index=True)
     net_end = models.BigIntegerField(db_index=True)
     net_string = models.CharField(max_length=128, default='')
-    transports = models.ManyToManyField(Transport, related_name='networks', db_table='uds_net_trans')
+    transports = models.ManyToManyField(
+        Transport, related_name='networks', db_table='uds_net_trans'
+    )
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[Network]'
 
     class Meta(UUIDModel.Meta):
         """
         Meta class to declare default order
         """
+
         ordering = ('name',)
         app_label = 'uds'
 
@@ -82,7 +88,9 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
             netEnd: Network end
         """
         nr = net.networkFromString(netRange)
-        return Network.objects.create(name=name, net_start=nr[0], net_end=nr[1], net_string=netRange)
+        return Network.objects.create(
+            name=name, net_start=nr[0], net_end=nr[1], net_string=netRange
+        )
 
     @property
     def netStart(self) -> str:
@@ -123,17 +131,24 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         self.save()
 
     def __str__(self) -> str:
-        return u'Network {} ({}) from {} to {}'.format(self.name, self.net_string, net.longToIp(self.net_start), net.longToIp(self.net_end))
+        return u'Network {} ({}) from {} to {}'.format(
+            self.name,
+            self.net_string,
+            net.longToIp(self.net_start),
+            net.longToIp(self.net_end),
+        )
 
     @staticmethod
     def beforeDelete(sender, **kwargs) -> None:
         from uds.core.util.permissions import clean
+
         toDelete = kwargs['instance']
 
         logger.debug('Before delete auth %s', toDelete)
 
         # Clears related permissions
         clean(toDelete)
+
 
 # Connects a pre deletion signal to Authenticator
 models.signals.pre_delete.connect(Network.beforeDelete, sender=Network)

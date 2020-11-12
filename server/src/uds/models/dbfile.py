@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,28 +31,33 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import codecs
 import logging
-import typing
 
 from django.db import models
-from uds.core.util import encoders
 
 from .uuid_model import UUIDModel
 
 logger = logging.getLogger(__name__)
 
+
 class DBFile(UUIDModel):
-    owner = models.CharField(max_length=32, default='')  # Not indexed, used for cleanups only
+
+    # Not indexed, used for cleanups only
+    owner = models.CharField(max_length=32, default='')
     name = models.CharField(max_length=255, primary_key=True)
     content = models.TextField(blank=True)
     size = models.IntegerField(default=0)
     created = models.DateTimeField()
     modified = models.DateTimeField()
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[DBFile]'
+
     @property
     def data(self) -> bytes:
         try:
-            return typing.cast(bytes, encoders.decode(encoders.decode(self.content, 'base64'), 'zip'))
+            return codecs.decode(codecs.decode(self.content.encode(), 'base64'), 'zip')
         except Exception:
             logger.error('DBFile %s has errors and cannot be used', self.name)
             try:
@@ -65,7 +70,9 @@ class DBFile(UUIDModel):
     @data.setter
     def data(self, value: bytes):
         self.size = len(value)
-        self.content = typing.cast(str, encoders.encode(encoders.encode(value, 'zip'), 'base64', asText=True))
+        self.content = codecs.encode(codecs.encode(value, 'zip'), 'base64').decode()
 
-    def __str__(self):
-        return 'File: {} {} {} {}'.format(self.name, self.size, self.created, self.modified)
+    def __str__(self) -> str:
+        return 'File: {} {} {} {}'.format(
+            self.name, self.size, self.created, self.modified
+        )

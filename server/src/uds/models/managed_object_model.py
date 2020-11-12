@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,6 +49,7 @@ class ManagedObjectModel(UUIDModel):
     Base abstract model for models that are top level Managed Objects
     (such as Authenticator, Transport, OSManager, Provider, Service ...)
     """
+
     name = models.CharField(max_length=128, unique=False, db_index=True)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
@@ -60,6 +61,7 @@ class ManagedObjectModel(UUIDModel):
         """
         Defines this is an abstract class
         """
+
         abstract = True
 
     def getEnvironment(self) -> Environment:
@@ -79,7 +81,9 @@ class ManagedObjectModel(UUIDModel):
 
         self._cachedInstance = None  # Ensures returns correct value on getInstance
 
-    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> Module:
+    def getInstance(
+        self, values: typing.Optional[typing.Dict[str, str]] = None
+    ) -> Module:
         """
         Instantiates the object this record contains.
 
@@ -95,7 +99,6 @@ class ManagedObjectModel(UUIDModel):
             Can be overriden
         """
         if self._cachedInstance and values is None:
-            # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
 
         klass = self.getType()
@@ -112,7 +115,9 @@ class ManagedObjectModel(UUIDModel):
         Returns the type of self (as python type)
         Must be overriden!!!
         """
-        raise NotImplementedError('getType has not been implemented for {}'.format(self.__class__))
+        raise NotImplementedError(
+            'getType has not been implemented for {}'.format(self.__class__)
+        )
 
     def isOfType(self, type_: str) -> bool:
         """

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2018-2019 Virtual Cable S.L.
+# Copyright (c) 2018-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -55,7 +55,6 @@ if typing.TYPE_CHECKING:
     from uds.models import User, CalendarAccessMeta
 
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -63,6 +62,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     """
     A meta pool is a pool that has pool members
     """
+
     # Type of pool selection for meta pool
     ROUND_ROBIN_POOL = 0
     PRIORITY_POOL = 1
@@ -78,9 +78,23 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
     visible = models.BooleanField(default=True)
-    image = models.ForeignKey(Image, null=True, blank=True, related_name='metaPools', on_delete=models.SET_NULL)
-    servicesPoolGroup = models.ForeignKey(ServicePoolGroup, null=True, blank=True, related_name='metaPools', on_delete=models.SET_NULL)
-    assignedGroups = models.ManyToManyField(Group, related_name='metaPools', db_table='uds__meta_grps')
+    image = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        related_name='metaPools',
+        on_delete=models.SET_NULL,
+    )
+    servicesPoolGroup = models.ForeignKey(
+        ServicePoolGroup,
+        null=True,
+        blank=True,
+        related_name='metaPools',
+        on_delete=models.SET_NULL,
+    )
+    assignedGroups = models.ManyToManyField(
+        Group, related_name='metaPools', db_table='uds__meta_grps'
+    )
 
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
@@ -90,7 +104,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     # Pool selection policy
     policy = models.SmallIntegerField(default=0)
 
-    # "fake" relations declarations for type checking
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[MetaPool]'
     calendarAccess: 'models.QuerySet[CalendarAccessMeta]'
     members: 'models.QuerySet[MetaPoolMember]'
 
@@ -98,6 +113,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds__pool_meta'
         app_label = 'uds'
 
@@ -115,7 +131,9 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 maintenance += 1
         return total == maintenance
 
-    def isAccessAllowed(self, chkDateTime: typing.Optional['datetime.datetime'] = None) -> bool:
+    def isAccessAllowed(
+        self, chkDateTime: typing.Optional['datetime.datetime'] = None
+    ) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
@@ -133,13 +151,17 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
     @property
     def visual_name(self) -> str:
-        logger.debug('SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name)
+        logger.debug(
+            'SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name
+        )
         if self.short_name.strip():
             return self.short_name
         return self.name
 
     @staticmethod
-    def getForGroups(groups: typing.Iterable['Group'], user: typing.Optional['User'] = None) -> 'QuerySet[MetaPool]':
+    def getForGroups(
+        groups: typing.Iterable['Group'], user: typing.Optional['User'] = None
+    ) -> 'QuerySet[MetaPool]':
         """
         Return deployed services with publications for the groups requested.
 
@@ -153,7 +175,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         meta = MetaPool.objects.filter(
             assignedGroups__in=groups,
             assignedGroups__state=states.group.ACTIVE,
-            visible=True
+            visible=True,
         ).prefetch_related(
             'servicesPoolGroup',
             'servicesPoolGroup__image',
@@ -168,7 +190,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             'calendarAccess',
             'calendarAccess__calendar',
             'calendarAccess__calendar__rules',
-            'image'
+            'image',
         )
         if user:
             meta = meta.annotate(
@@ -177,8 +199,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                     filter=models.Q(
                         members__pool__userServices__user=user,
                         members__pool__userServices__in_use=True,
-                        members__pool__userServices__state__in=states.userService.USABLE
-                    )
+                        members__pool__userServices__state__in=states.userService.USABLE,
+                    ),
                 )
             )
         # TODO: Maybe we can exclude non "usable" metapools (all his pools are in maintenance mode?)
@@ -196,6 +218,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         :note: If destroy raises an exception, the deletion is not taken.
         """
         from uds.core.util.permissions import clean
+
         toDelete = kwargs['instance']
 
         # Clears related logs
@@ -215,8 +238,12 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool: 'models.ForeignKey[MetaPoolMember, ServicePool]' = models.ForeignKey(ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE)
-    meta_pool: 'models.ForeignKey[MetaPoolMember, MetaPool]' = models.ForeignKey(MetaPool, related_name='members', on_delete=models.CASCADE)
+    pool: 'models.ForeignKey[MetaPoolMember, ServicePool]' = models.ForeignKey(
+        ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE
+    )
+    meta_pool: 'models.ForeignKey[MetaPoolMember, MetaPool]' = models.ForeignKey(
+        MetaPool, related_name='members', on_delete=models.CASCADE
+    )
     priority = models.PositiveIntegerField(default=0)
     enabled = models.BooleanField(default=True)
 
@@ -224,8 +251,11 @@ class MetaPoolMember(UUIDModel):
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds__meta_pool_member'
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return '{}/{} {} {}'.format(self.pool.name, self.meta_pool.name, self.priority, self.enabled)
+        return '{}/{} {} {}'.format(
+            self.pool.name, self.meta_pool.name, self.priority, self.enabled
+        )

@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016-2020 Virtual Cable S.L.
+# Copyright (c) 2016-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,15 +47,23 @@ logger = logging.getLogger(__name__)
 
 
 class CalendarAccess(UUIDModel):
-    calendar: 'models.ForeignKey[CalendarAccess, Calendar]' = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    service_pool: 'models.ForeignKey[CalendarAccess, ServicePool]' = models.ForeignKey(ServicePool, related_name='calendarAccess', on_delete=models.CASCADE)
+    calendar: 'models.ForeignKey[CalendarAccess, Calendar]' = models.ForeignKey(
+        Calendar, on_delete=models.CASCADE
+    )
+    service_pool: 'models.ForeignKey[CalendarAccess, ServicePool]' = models.ForeignKey(
+        ServicePool, related_name='calendarAccess', on_delete=models.CASCADE
+    )
     access = models.CharField(max_length=8, default=states.action.DENY)
     priority = models.IntegerField(default=0, db_index=True)
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[CalendarAccess]'
 
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_cal_access'
         ordering = ('priority',)
         app_label = 'uds'
@@ -66,14 +74,20 @@ class CalendarAccess(UUIDModel):
 
 class CalendarAccessMeta(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    meta_pool = models.ForeignKey(MetaPool, related_name='calendarAccess', on_delete=models.CASCADE)
+    meta_pool = models.ForeignKey(
+        MetaPool, related_name='calendarAccess', on_delete=models.CASCADE
+    )
     access = models.CharField(max_length=8, default=states.action.DENY)
     priority = models.IntegerField(default=0, db_index=True)
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[CalendarAccessMeta]'
 
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_cal_maccess'
         ordering = ('priority',)
         app_label = 'uds'

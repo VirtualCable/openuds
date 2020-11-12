@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,7 @@ import typing
 
 from django.db import models
 
+from uds.core.managers import publicationManager
 from uds.core.util.state import State
 from uds.core.environment import Environment
 from uds.core.util import log
@@ -53,26 +54,43 @@ logger = logging.getLogger(__name__)
 
 
 class ServicePoolPublicationChangelog(models.Model):
-    publication: 'models.ForeignKey[ServicePoolPublication, ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='changelog')
+    # This should be "servicePool"
+    publication: 'models.ForeignKey[ServicePoolPublicationChangelog, ServicePool]' = (
+        models.ForeignKey(
+            ServicePool, on_delete=models.CASCADE, related_name='changelog'
+        )
+    )
     stamp = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
     log = models.TextField(default='')
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[ServicePoolPublicationChangelog]'
 
     class Meta(UUIDModel.Meta):
         """
         Meta class to declare default order and unique multiple field index
         """
+
         db_table = 'uds__deployed_service_pub_cl'
         app_label = 'uds'
 
-    def __str__(self):
-        return 'Revision log  for publication {}, rev {}:  {}'.format(self.publication.name, self.revision, self.log)
+    def __str__(self) -> str:
+        return 'Revision log  for publication {}, rev {}:  {}'.format(
+            self.publication.name, self.revision, self.log
+        )
+
 
 class ServicePoolPublication(UUIDModel):
     """
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
-    deployed_service: 'models.ForeignKey[ServicePoolPublication, ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='publications')
+
+    deployed_service: 'models.ForeignKey[ServicePoolPublication, ServicePool]' = (
+        models.ForeignKey(
+            ServicePool, on_delete=models.CASCADE, related_name='publications'
+        )
+    )
     publish_date = models.DateTimeField(db_index=True)
     # data_type = models.CharField(max_length=128) # The data type is specified by the service itself
     data = models.TextField(default='')
@@ -87,7 +105,8 @@ class ServicePoolPublication(UUIDModel):
     state_date = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
 
-    # "fake" relations declarations for type checking
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[ServicePoolPublication]'
     userServices: 'models.QuerySet[UserService]'
 
 
@@ -95,6 +114,7 @@ class ServicePoolPublication(UUIDModel):
         """
         Meta class to declare default order and unique multiple field index
         """
+
         db_table = 'uds__deployed_service_pub'
         ordering = ('publish_date',)
         app_label = 'uds'
@@ -128,7 +148,11 @@ class ServicePoolPublication(UUIDModel):
         # a service that needs publication but do not have
 
         if serviceInstance.publicationType is None:
-            raise Exception('Class {} do not have defined publicationType but needs to be published!!!'.format(serviceInstance.__class__))
+            raise Exception(
+                'Class {} do not have defined publicationType but needs to be published!!!'.format(
+                    serviceInstance.__class__
+                )
+            )
 
         publication = serviceInstance.publicationType(
             self.getEnvironment(),
@@ -136,7 +160,8 @@ class ServicePoolPublication(UUIDModel):
             osManager=osManagerInstance,
             revision=self.revision,
             dsName=self.deployed_service.name,
-            uuid=self.uuid, dbPublication=self
+            uuid=self.uuid,
+            dbPublication=self,
         )
         # Only invokes deserialization if data has something. '' is nothing
         if self.data:
@@ -175,14 +200,14 @@ class ServicePoolPublication(UUIDModel):
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         """
-        from uds.core.managers import publicationManager
+
         publicationManager().unpublish(self)
 
     def cancel(self):
         """
         Invoques the cancelation of this publication
         """
-        from uds.core.managers import publicationManager
+
         publicationManager().cancel(self)
 
     @staticmethod
@@ -207,8 +232,13 @@ class ServicePoolPublication(UUIDModel):
 
         logger.debug('Deleted publication %s', toDelete)
 
-    def __str__(self):
-        return 'Publication {}, rev {}, state {}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
+    def __str__(self) -> str:
+        return 'Publication {}, rev {}, state {}'.format(
+            self.deployed_service.name, self.revision, State.toString(self.state)
+        )
+
 
 # Connects a pre deletion signal to Authenticator
-models.signals.pre_delete.connect(ServicePoolPublication.beforeDelete, sender=ServicePoolPublication)
+models.signals.pre_delete.connect(
+    ServicePoolPublication.beforeDelete, sender=ServicePoolPublication
+)

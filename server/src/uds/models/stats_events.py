@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 class StatsEvents(models.Model):
     """
-    Counter statistocs mpdes the counter statistics
+    Statistics about events (login, logout, whatever...)
     """
 
     owner_id = models.IntegerField(db_index=True, default=0)
@@ -59,15 +59,23 @@ class StatsEvents(models.Model):
     fld3 = models.CharField(max_length=128, default='')
     fld4 = models.CharField(max_length=128, default='')
 
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[StatsEvents]'
+
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_stats_e'
         app_label = 'uds'
 
     @staticmethod
-    def get_stats(owner_type: typing.Union[int, typing.Iterable[int]], event_type: typing.Union[int, typing.Iterable[int]], **kwargs) -> 'models.QuerySet[StatsEvents]':
+    def get_stats(
+        owner_type: typing.Union[int, typing.Iterable[int]],
+        event_type: typing.Union[int, typing.Iterable[int]],
+        **kwargs
+    ) -> 'models.QuerySet[StatsEvents]':
         """
         Returns a queryset with the average stats grouped by interval for owner_type and owner_id (optional)
 
@@ -119,4 +127,12 @@ class StatsEvents(models.Model):
         return self.fld4
 
     def __str__(self):
-        return 'Log of {}({}): {} - {} - {}, {}, {}'.format(self.owner_type, self.owner_id, self.event_type, self.stamp, self.fld1, self.fld2, self.fld3)
+        return 'Log of {}({}): {} - {} - {}, {}, {}'.format(
+            self.owner_type,
+            self.owner_id,
+            self.event_type,
+            self.stamp,
+            self.fld1,
+            self.fld2,
+            self.fld3,
+        )

@@ -54,7 +54,7 @@ freqs: typing.Tuple[typing.Tuple[str, str], ...] = (
     ('MONTHLY', _('Monthly')),
     ('WEEKLY', _('Weekly')),
     ('DAILY', _('Daily')),
-    (WEEKDAYS, _('Weekdays'))
+    (WEEKDAYS, _('Weekdays')),
 )
 
 frq_to_rrl: typing.Dict[str, int] = {
@@ -82,10 +82,18 @@ dunit_to_mins: typing.Dict[str, int] = {
     'MINUTES': 1,
     'HOURS': 60,
     'DAYS': 60 * 24,
-    'WEEKS': 60 * 24 * 7
+    'WEEKS': 60 * 24 * 7,
 }
 
-weekdays: typing.Tuple[rules.weekday, ...] = (rules.SU, rules.MO, rules.TU, rules.WE, rules.TH, rules.FR, rules.SA)
+weekdays: typing.Tuple[rules.weekday, ...] = (
+    rules.SU,
+    rules.MO,
+    rules.TU,
+    rules.WE,
+    rules.TH,
+    rules.FR,
+    rules.SA,
+)
 
 
 class CalendarRule(UUIDModel):
@@ -95,16 +103,24 @@ class CalendarRule(UUIDModel):
     start = models.DateTimeField()
     end = models.DateField(null=True, blank=True)
     frequency = models.CharField(choices=freqs, max_length=32)
-    interval = models.IntegerField(default=1)  # If interval is for WEEKDAYS, every bit means a day of week (bit 0 = SUN, 1 = MON, ...)
+    interval = models.IntegerField(
+        default=1
+    )  # If interval is for WEEKDAYS, every bit means a day of week (bit 0 = SUN, 1 = MON, ...)
     duration = models.IntegerField(default=0)  # Duration in minutes
     duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
 
-    calendar: 'models.ForeignKey[CalendarRule, Calendar]' = models.ForeignKey(Calendar, related_name='rules', on_delete=models.CASCADE)
+    calendar: 'models.ForeignKey[CalendarRule, Calendar]' = models.ForeignKey(
+        Calendar, related_name='rules', on_delete=models.CASCADE
+    )
+
+    # "fake" declarations for type checking
+    objects: 'models.BaseManager[CalendarRule]'
 
     class Meta:
         """
         Meta class to declare db table
         """
+
         db_table = 'uds_calendar_rules'
         app_label = 'uds'
 
@@ -112,7 +128,10 @@ class CalendarRule(UUIDModel):
         if self.interval == 0:  # Fix 0 intervals
             self.interval = 1
 
-        end = datetime.datetime.combine(self.end if self.end is not None else datetime.datetime.max.date(), datetime.datetime.max.time())
+        end = datetime.datetime.combine(
+            self.end if self.end is not None else datetime.datetime.max.date(),
+            datetime.datetime.max.time(),
+        )
 
         if self.frequency == WEEKDAYS:
             dw = []
@@ -122,13 +141,21 @@ class CalendarRule(UUIDModel):
                     dw.append(weekdays[i])
                 l >>= 1
             return rules.rrule(rules.DAILY, byweekday=dw, dtstart=self.start, until=end)
-        return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start, until=end)
+        return rules.rrule(
+            frq_to_rrl[self.frequency],
+            interval=self.interval,
+            dtstart=self.start,
+            until=end,
+        )
 
     def as_rrule_end(self) -> rules.rrule:
         if self.interval == 0:  # Fix 0 intervals
             self.interval = 1
 
-        end = datetime.datetime.combine(self.end if self.end is not None else datetime.datetime.max.date(), datetime.datetime.max.time())
+        end = datetime.datetime.combine(
+            self.end if self.end is not None else datetime.datetime.max.date(),
+            datetime.datetime.max.time(),
+        )
 
         if self.frequency == WEEKDAYS:
             dw = []
@@ -137,8 +164,19 @@ class CalendarRule(UUIDModel):
                 if l & 1 == 1:
                     dw.append(weekdays[i])
                 l >>= 1
-            return rules.rrule(rules.DAILY, byweekday=dw, dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes), until=end)
-        return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes), until=end)
+            return rules.rrule(
+                rules.DAILY,
+                byweekday=dw,
+                dtstart=self.start
+                + datetime.timedelta(minutes=self.duration_as_minutes),
+                until=end,
+            )
+        return rules.rrule(
+            frq_to_rrl[self.frequency],
+            interval=self.interval,
+            dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes),
+            until=end,
+        )
 
     @property
     def frequency_as_minutes(self) -> int:
@@ -150,7 +188,9 @@ class CalendarRule(UUIDModel):
     def duration_as_minutes(self) -> int:
         return dunit_to_mins.get(self.duration_unit, 1) * self.duration
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         logger.debug('Saving...')
         self.calendar.modified = getSqlDatetime()
 
@@ -160,4 +200,11 @@ class CalendarRule(UUIDModel):
         return res
 
     def __str__(self):
-        return 'Rule {0}: {1}-{2}, {3}, Interval: {4}, duration: {5}'.format(self.name, self.start, self.end, self.frequency, self.interval, self.duration)
+        return 'Rule {0}: {1}-{2}, {3}, Interval: {4}, duration: {5}'.format(
+            self.name,
+            self.start,
+            self.end,
+            self.frequency,
+            self.interval,
+            self.duration,
+        )
