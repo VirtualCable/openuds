@@ -64,7 +64,7 @@ class ListReportUsers(ListReport):
     description = _('List users of platform')  # Report description
     uuid = '8cd1cfa6-ed48-11e4-83e5-10feed05884b'
 
-    def initGui(self):
+    def initGui(self) -> None:
         logger.debug('Initializing gui')
         vals = [
             gui.choiceItem(v.uuid, v.name) for v in Authenticator.objects.all()
@@ -72,7 +72,7 @@ class ListReportUsers(ListReport):
 
         self.authenticator.setValues(vals)
 
-    def generate(self):
+    def generate(self) -> bytes:
         auth = Authenticator.objects.get(uuid=self.authenticator.value)
         users = auth.users.order_by('name')
 
@@ -101,7 +101,7 @@ class ListReportsUsersCSV(ListReportUsers):
             auth = Authenticator.objects.get(uuid=self.authenticator.value)
             self.filename = auth.name + '.csv'
 
-    def generate(self):
+    def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
         auth = Authenticator.objects.get(uuid=self.authenticator.value)
@@ -114,4 +114,4 @@ class ListReportsUsersCSV(ListReportUsers):
 
         # writer.writerow(['ñoño', 'ádios', 'hola'])
 
-        return output.getvalue()
+        return output.getvalue().encode()

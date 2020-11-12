@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -52,18 +51,17 @@ logger = logging.getLogger(__name__)
 
 availableReports: typing.List[typing.Type['reports.Report']] = []
 
-# noinspection PyTypeChecker
-def __init__():
+def __init__() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     """
     alreadyAdded: typing.Set[str] = set()
 
-    def addReportCls(cls: typing.Type[reports.Report]):
+    def addReportCls(cls: typing.Type[reports.Report]) -> None:
         logger.debug('Adding report %s', cls)
         availableReports.append(cls)
 
-    def recursiveAdd(reportClass: typing.Type[reports.Report]):
+    def recursiveAdd(reportClass: typing.Type[reports.Report]) -> None:
         if reportClass.uuid and reportClass.uuid not in alreadyAdded:
             alreadyAdded.add(reportClass.uuid)
             addReportCls(reportClass)

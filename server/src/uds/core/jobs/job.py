@@ -41,8 +41,12 @@ logger = logging.getLogger(__name__)
 class Job(Environmentable):
     # Default frecuency, once a day. Remenber that precision will be based on "granurality" of Scheduler
     # If a job is used for delayed execution, this attribute is in fact ignored
-    frecuency: int = 24 * 3600 + 3  # Defaults to a big one, and i know frecuency is written as frequency, but this is an "historical mistake" :)
-    frecuency_cfg: typing.Optional[Config.Value] = None  # If we use a configuration variable from DB, we need to update the frecuency asap, but not before app is ready
+    frecuency: int = (
+        24 * 3600 + 3
+    )  # Defaults to a big one, and i know frecuency is written as frequency, but this is an "historical mistake" :)
+    frecuency_cfg: typing.Optional[
+        Config.Value
+    ] = None  # If we use a configuration variable from DB, we need to update the frecuency asap, but not before app is ready
     friendly_name = 'Unknown'
 
     @classmethod
@@ -53,9 +57,16 @@ class Job(Environmentable):
         if cls.frecuency_cfg:
             try:
                 cls.frecuency = cls.frecuency_cfg.getInt(force=True)
-                logger.debug('Setting frequency from DB setting for %s to %s', cls, cls.frecuency)
+                logger.debug(
+                    'Setting frequency from DB setting for %s to %s', cls, cls.frecuency
+                )
             except Exception as e:
-                logger.error('Error setting default frequency for %s ()%s. Got default value of %s', cls, e, cls.frecuency)
+                logger.error(
+                    'Error setting default frequency for %s ()%s. Got default value of %s',
+                    cls,
+                    e,
+                    cls.frecuency,
+                )
 
     def execute(self) -> None:
         try:

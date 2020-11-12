@@ -28,13 +28,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import threading
 import time
-import logging
+import codecs
 import pickle
-import typing
+import threading
 from socket import gethostname
 from datetime import timedelta
+import logging
+import typing
 
 from django.db import connections
 from django.db import transaction
@@ -43,7 +44,6 @@ from django.db.models import Q
 from uds.models import DelayedTask as DBDelayedTask
 from uds.models import getSqlDatetime
 from uds.core.environment import Environment
-from uds.core.util import encoders
 
 from .delayed_task import DelayedTask
 
@@ -56,7 +56,7 @@ class DelayedTaskThread(threading.Thread):
     """
     _taskInstance: DelayedTask
 
-    def __init__(self, taskInstance: DelayedTask):
+    def __init__(self, taskInstance: DelayedTask) -> None:
         super().__init__()
         self._taskInstance = taskInstance
 
@@ -73,11 +73,11 @@ class DelayedTaskRunner:
     """
     Delayed task runner class
     """
-    # How often tasks r checked
+    # How often tasks are checked
     granularity: int = 2
 
     # to keep singleton DelayedTaskRunner
-    _runner: typing.Optional['DelayedTaskRunner'] = None
+    _runner: typing.ClassVar[typing.Optional['DelayedTaskRunner']] = None
     _hostname: str
     _keepRunning: bool
 
@@ -113,16 +113,16 @@ class DelayedTaskRunner:
                 # Throws exception if no delayed task is avilable
                 task = DBDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
-                    logger.warning('EXecuted %s due to insert_date being in the future!', task.type)
-                taskInstanceDump = typing.cast(bytes, encoders.decode(task.instance, 'base64'))
+                    logger.warning('Executed %s due to insert_date being in the future!', task.type)
+                taskInstanceDump = codecs.decode(task.instance.encode(), 'base64')
                 task.delete()
             taskInstance = pickle.loads(taskInstanceDump)
         except IndexError:
             return  # No problem, there is no waiting delayed task
         except Exception:
             # Transaction have been rolled back using the "with atomic", so here just return
-            # Note that is taskInstance can't be loaded, this task will not be retried
-            logger.exception('Executing one task')
+            # Note that is taskInstance can't be loaded, this task will not be run
+            logger.exception('Obtainint one task for execution')
             return
 
         if taskInstance:
@@ -134,7 +134,7 @@ class DelayedTaskRunner:
         now = getSqlDatetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
-        instanceDump = encoders.encodeAsStr(pickle.dumps(instance), 'base64')
+        instanceDump = codecs.encode(pickle.dumps(instance), 'base64').decode()
         typeName = str(cls.__module__ + '.' + cls.__name__)
 
         logger.debug('Inserting delayed task %s with %s bytes (%s)', typeName, len(instanceDump), exec_time)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2019 Virtual Cable S.L.
+# Copyright (c) 2015-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -63,10 +63,7 @@ class PoolPerformanceReport(StatsReport):
 
     # Input fields
     pools = gui.MultiChoiceField(
-        order=1,
-        label=_('Pools'),
-        tooltip=_('Pools for report'),
-        required=True
+        order=1, label=_('Pools'), tooltip=_('Pools for report'), required=True
     )
 
     startDate = gui.DateField(
@@ -74,7 +71,7 @@ class PoolPerformanceReport(StatsReport):
         label=_('Starting date'),
         tooltip=_('starting date for report'),
         defvalue=datetime.date.min,
-        required=True
+        required=True,
     )
 
     endDate = gui.DateField(
@@ -82,7 +79,7 @@ class PoolPerformanceReport(StatsReport):
         label=_('Finish date'),
         tooltip=_('finish date for report'),
         defvalue=datetime.date.max,
-        required=True
+        required=True,
     )
 
     samplingPoints = gui.NumericField(
@@ -92,28 +89,31 @@ class PoolPerformanceReport(StatsReport):
         minValue=0,
         maxValue=32,
         tooltip=_('Number of sampling points used in charts'),
-        defvalue='8'
+        defvalue='8',
     )
 
-    def initialize(self, values):
-        pass
-
-    def initGui(self):
+    def initGui(self) -> None:
         logger.debug('Initializing gui')
         vals = [
-            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')
+            gui.choiceItem(v.uuid, v.name)
+            for v in ServicePool.objects.all().order_by('name')
         ]
         self.pools.setValues(vals)
 
-    def getPools(self) -> typing.List[typing.Tuple[str, str]]:
-        return [(v.id, v.name) for v in ServicePool.objects.filter(uuid__in=self.pools.value)]
+    def getPools(self) -> typing.Iterable[typing.Tuple[str, str]]:
+        for p in ServicePool.objects.filter(uuid__in=self.pools.value):
+            yield (str(p.id), p.name)
 
-    def getRangeData(self) -> typing.Tuple[str, typing.List, typing.List]:  # pylint: disable=too-many-locals
+    def getRangeData(
+        self,
+    ) -> typing.Tuple[str, typing.List, typing.List]:  # pylint: disable=too-many-locals
         start = self.startDate.stamp()
         end = self.endDate.stamp()
 
         if self.samplingPoints.num() < 2:
-            self.samplingPoints.value = (self.endDate.date() - self.startDate.date()).days
+            self.samplingPoints.value = (
+                self.endDate.date() - self.startDate.date()
+            ).days
         if self.samplingPoints.num() < 2:
             self.samplingPoints.value = 2
         if self.samplingPoints.num() > 32:
@@ -155,7 +155,18 @@ class PoolPerformanceReport(StatsReport):
             dataAccesses = []
             for interval in samplingIntervals:
                 key = (interval[0] + interval[1]) / 2
-                q = events.statsManager().getEvents(events.OT_DEPLOYED, events.ET_ACCESS, since=interval[0], to=interval[1], owner_id=p[0]).values(fld).annotate(cnt=Count(fld))
+                q = (
+                    events.statsManager()
+                    .getEvents(
+                        events.OT_DEPLOYED,
+                        events.ET_ACCESS,
+                        since=interval[0],
+                        to=interval[1],
+                        owner_id=p[0],
+                    )
+                    .values(fld)
+                    .annotate(cnt=Count(fld))
+                )
                 accesses = 0
                 for v in q:
                     accesses += v['cnt']
@@ -165,17 +176,21 @@ class PoolPerformanceReport(StatsReport):
                 reportData.append(
                     {
                         'name': p[1],
-                        'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1], xLabelFormat),
+                        'date': tools.timestampAsStr(interval[0], xLabelFormat)
+                        + ' - '
+                        + tools.timestampAsStr(interval[1], xLabelFormat),
                         'users': len(q),
-                        'accesses': accesses
+                        'accesses': accesses,
                     }
                 )
-            poolsData.append({
-                'pool': p[0],
-                'name': p[1],
-                'dataUsers': dataUsers,
-                'dataAccesses': dataAccesses,
-            })
+            poolsData.append(
+                {
+                    'pool': p[0],
+                    'name': p[1],
+                    'dataUsers': dataUsers,
+                    'dataAccesses': dataAccesses,
+                }
+            )
 
         return xLabelFormat, poolsData, reportData
 
@@ -194,13 +209,17 @@ class PoolPerformanceReport(StatsReport):
         data = {
             'title': _('Distinct Users'),
             'x': X,
-            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
+            'xtickFnc': lambda l: filters.date(
+                datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat
+            )
+            if int(l) >= 0
+            else '',
             'xlabel': _('Date'),
-            'y': [{
-                'label': p['name'],
-                'data': [v[1] for v in p['dataUsers']]
-                } for p in poolsData],
-            'ylabel': _('Users')
+            'y': [
+                {'label': p['name'], 'data': [v[1] for v in p['dataUsers']]}
+                for p in poolsData
+            ],
+            'ylabel': _('Users'),
         }
 
         graphs.barChart(SIZE, data, graph1)
@@ -209,13 +228,17 @@ class PoolPerformanceReport(StatsReport):
         data = {
             'title': _('Accesses'),
             'x': X,
-            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
+            'xtickFnc': lambda l: filters.date(
+                datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat
+            )
+            if int(l) >= 0
+            else '',
             'xlabel': _('Date'),
-            'y': [{
-                'label': p['name'],
-                'data': [v[1] for v in p['dataAccesses']]
-                } for p in poolsData],
-            'ylabel': _('Accesses')
+            'y': [
+                {'label': p['name'], 'data': [v[1] for v in p['dataAccesses']]}
+                for p in poolsData
+            ],
+            'ylabel': _('Accesses'),
         }
 
         graphs.barChart(SIZE, data, graph2)
@@ -255,7 +278,14 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
 
         reportData = self.getRangeData()[2]
 
-        writer.writerow([ugettext('Pool'), ugettext('Date range'), ugettext('Users'), ugettext('Accesses')])
+        writer.writerow(
+            [
+                ugettext('Pool'),
+                ugettext('Date range'),
+                ugettext('Users'),
+                ugettext('Accesses'),
+            ]
+        )
 
         for v in reportData:
             writer.writerow([v['name'], v['date'], v['users'], v['accesses']])

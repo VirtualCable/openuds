@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2020 Virtual Cable S.L.
+# Copyright (c) 2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -42,10 +41,13 @@ from .usage_by_pool import UsageByPool
 
 logger = logging.getLogger(__name__)
 
+
 class PoolsUsageSummary(UsageByPool):
     filename = 'summary_pools_usage.pdf'
     name = _('Summary of pools usage')  # Report name
-    description = _('Summary of Pools usage with time totals, accesses totals, time total by pool')  # Report description
+    description = _(
+        'Summary of Pools usage with time totals, accesses totals, time total by pool'
+    )  # Report description
     uuid = 'aba55fe5-c4df-5240-bbe6-36340220cb5d'
 
     # Input fields
@@ -53,7 +55,11 @@ class PoolsUsageSummary(UsageByPool):
     startDate = UsageByPool.startDate
     endDate = UsageByPool.endDate
 
-    def getData(self):
+    def processedData(
+        self,
+    ) -> typing.Tuple[
+        typing.ValuesView[typing.MutableMapping[str, typing.Any]], int, int, int
+    ]:
         orig, poolNames = super().getData()
 
         pools: typing.Dict[str, typing.Dict] = {}
@@ -69,7 +75,7 @@ class PoolsUsageSummary(UsageByPool):
                     'name': v['pool_name'],
                     'time': 0,
                     'count': 0,
-                    'users': set()
+                    'users': set(),
                 }
             pools[uuid]['time'] += v['time']
             pools[uuid]['count'] += 1
@@ -88,7 +94,7 @@ class PoolsUsageSummary(UsageByPool):
         return pools.values(), totalTime, totalCount or 1, len(uniqueUsers)
 
     def generate(self):
-        pools, totalTime, totalCount, uniqueUsers = self.getData()
+        pools, totalTime, totalCount, uniqueUsers = self.processedData()
 
         start = self.startDate.value
         end = self.endDate.value
@@ -104,7 +110,9 @@ class PoolsUsageSummary(UsageByPool):
                         'time': str(datetime.timedelta(seconds=p['time'])),
                         'count': p['count'],
                         'users': p['users'],
-                        'mean': str(datetime.timedelta(seconds=p['time'] // int(p['count']))),
+                        'mean': str(
+                            datetime.timedelta(seconds=p['time'] // int(p['count']))
+                        ),
                     }
                     for p in pools
                 ),
@@ -112,13 +120,19 @@ class PoolsUsageSummary(UsageByPool):
                 'count': totalCount,
                 'users': uniqueUsers,
                 'mean': str(datetime.timedelta(seconds=totalTime // totalCount)),
-
                 'start': start,
                 'end': end,
             },
-            header=ugettext('Summary of Pools usage') + ' ' + start + ' ' + ugettext('to') + ' ' + end,
-            water=ugettext('UDS Report Summary of pools usage')
+            header=ugettext('Summary of Pools usage')
+            + ' '
+            + start
+            + ' '
+            + ugettext('to')
+            + ' '
+            + end,
+            water=ugettext('UDS Report Summary of pools usage'),
         )
+
 
 class PoolsUsageSummaryCSV(PoolsUsageSummary):
     filename = 'summary_pools_usage.csv'
@@ -135,13 +149,31 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData, totalTime, totalCount, totalUsers = self.getData()
+        reportData, totalTime, totalCount, totalUsers = self.processedData()
 
-        writer.writerow([ugettext('Pool'), ugettext('Total Time (seconds)'), ugettext('Total Accesses'), ugettext('Unique users'), ugettext('Mean time (seconds)')])
+        writer.writerow(
+            [
+                ugettext('Pool'),
+                ugettext('Total Time (seconds)'),
+                ugettext('Total Accesses'),
+                ugettext('Unique users'),
+                ugettext('Mean time (seconds)'),
+            ]
+        )
 
         for v in reportData:
-            writer.writerow([v['name'], v['time'], v['count'], v['users'], v['time'] // v['count']])
+            writer.writerow(
+                [v['name'], v['time'], v['count'], v['users'], v['time'] // v['count']]
+            )
 
-        writer.writerow([ugettext('Total'), totalTime, totalCount, totalUsers, totalTime // totalCount])
+        writer.writerow(
+            [
+                ugettext('Total'),
+                totalTime,
+                totalCount,
+                totalUsers,
+                totalTime // totalCount,
+            ]
+        )
 
         return output.getvalue()

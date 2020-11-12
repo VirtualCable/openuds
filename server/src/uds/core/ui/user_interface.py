@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,6 +46,7 @@ logger = logging.getLogger(__name__)
 
 UDSB = b'udsprotect'
 
+
 class gui:
     """
     This class contains the representations of fields needed by UDS modules and
@@ -81,9 +81,13 @@ class gui:
     can access this form to let users
     create new instances of this module.
     """
+
     # Values dict type
     ValuesType = typing.Optional[typing.Dict[str, str]]
-    ValuesDictType = typing.Dict[str, typing.Union[str, bool, typing.List[str], typing.List[typing.Dict[str, str]]]]
+    ValuesDictType = typing.Dict[
+        str,
+        typing.Union[str, bool, typing.List[str], typing.List[typing.Dict[str, str]]],
+    ]
     ChoiceType = typing.Dict[str, str]
 
     # : True string value
@@ -99,11 +103,16 @@ class gui:
     DISPLAY_TAB: typing.ClassVar[str] = ugettext_noop('Display')
 
     # : Static Callbacks simple registry
-    callbacks: typing.Dict[str, typing.Callable[[typing.Dict[str, str]], typing.List[typing.Dict[str, str]]]] = {}
+    callbacks: typing.Dict[
+        str,
+        typing.Callable[[typing.Dict[str, str]], typing.List[typing.Dict[str, str]]],
+    ] = {}
 
     # Helpers
     @staticmethod
-    def convertToChoices(vals: typing.Union[typing.List[str], typing.MutableMapping[str, str]]) -> typing.List[typing.Dict[str, str]]:
+    def convertToChoices(
+        vals: typing.Union[typing.List[str], typing.MutableMapping[str, str]]
+    ) -> typing.List[typing.Dict[str, str]]:
         """
         Helper to convert from array of strings to the same dict used in choice,
         multichoice, ..
@@ -111,7 +120,7 @@ class gui:
         """
         if isinstance(vals, (list, tuple)):
             return [{'id': v, 'text': ''} for v in vals]
-        
+
         # Dictionary
         return [{'id': k, 'text': v} for k, v in vals.items()]
 
@@ -141,7 +150,9 @@ class gui:
         return {'id': str(id_), 'text': str(text)}
 
     @staticmethod
-    def choiceImage(id_: typing.Union[str, int], text: str, img: str) -> typing.Dict[str, str]:
+    def choiceImage(
+        id_: typing.Union[str, int], text: str, img: str
+    ) -> typing.Dict[str, str]:
         return {'id': str(id_), 'text': str(text), 'img': img}
 
     @staticmethod
@@ -221,6 +232,7 @@ class gui:
         so if you use both, the used one will be "value". This is valid for
         all form fields.
         """
+
         TEXT_TYPE: typing.ClassVar[str] = 'text'
         TEXTBOX_TYPE: typing.ClassVar[str] = 'textbox'
         NUMERIC_TYPE: typing.ClassVar[str] = 'numeric'
@@ -233,21 +245,25 @@ class gui:
         IMAGECHOICE_TYPE: typing.ClassVar[str] = 'imgchoice'
         DATE_TYPE: typing.ClassVar[str] = 'date'
         INFO_TYPE: typing.ClassVar[str] = 'dummy'
-
-        DEFAULT_LENTGH: typing.ClassVar[int] = 64  # : If length of some fields are not especified, this value is used as default
+        # : If length of some fields are not especified, this value is used as default
+        DEFAULT_LENTGH: typing.ClassVar[int] = 64
 
         _data: typing.Dict[str, typing.Any]
 
-        def __init__(self, **options):
+        def __init__(self, **options) -> None:
             defvalue = options.get('defvalue', '')
             if callable(defvalue):
                 defvalue = defvalue()
             self._data = {
-                'length': options.get('length', gui.InputField.DEFAULT_LENTGH),  # Length is not used on some kinds of fields, but present in all anyway
+                'length': options.get(
+                    'length', gui.InputField.DEFAULT_LENTGH
+                ),  # Length is not used on some kinds of fields, but present in all anyway
                 'required': options.get('required', False),
                 'label': options.get('label', ''),
                 'defvalue': str(defvalue),
-                'rdonly': options.get('rdonly', False),  # This property only affects in "modify" operations
+                'rdonly': options.get(
+                    'rdonly', False
+                ),  # This property only affects in "modify" operations
                 'order': options.get('order', 0),
                 'tooltip': options.get('tooltip', ''),
                 'type': gui.InputField.TEXT_TYPE,
@@ -256,7 +272,7 @@ class gui:
             if 'tab' in options:
                 self._data['tab'] = options.get('tab')
 
-        def _type(self, type_: str):
+        def _type(self, type_: str) -> None:
             """
             Sets the type of this field.
 
@@ -271,7 +287,7 @@ class gui:
             """
             return self._data['type'] == type_
 
-        def isSerializable(self):
+        def isSerializable(self) -> bool:
             return True
 
         def num(self) -> int:
@@ -288,22 +304,26 @@ class gui:
             returns default value instead.
             This is mainly used for hidden fields, so we have correctly initialized
             """
-            return self._data['value'] if self._data['value'] is not None else self.defValue
+            return (
+                self._data['value']
+                if self._data['value'] is not None
+                else self.defValue
+            )
 
         @value.setter
-        def value(self, value: typing.Any):
+        def value(self, value: typing.Any) -> None:
             """
             Stores new value (not the default one)
             """
             self._setValue(value)
 
-        def _setValue(self, value: typing.Any):
+        def _setValue(self, value: typing.Any) -> None:
             """
             So we can override value setting at descendants
             """
             self._data['value'] = value
 
-        def guiDescription(self):
+        def guiDescription(self) -> typing.Dict[str, typing.Any]:
             """
             Returns the dictionary with the description of this item.
             We copy it, cause we need to translate the label and tooltip fields
@@ -325,10 +345,10 @@ class gui:
             return self._data['defvalue']
 
         @defValue.setter
-        def defValue(self, defValue: typing.Any):
+        def defValue(self, defValue: typing.Any) -> None:
             self.setDefValue(defValue)
 
-        def setDefValue(self, defValue: typing.Any):
+        def setDefValue(self, defValue: typing.Any) -> None:
             """
             Sets the default value of the field·
 
@@ -373,7 +393,7 @@ class gui:
 
         """
 
-        def __init__(self, **options):
+        def __init__(self, **options) -> None:
             super().__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
             multiline = int(options.get('multiline', 0))
@@ -443,7 +463,9 @@ class gui:
 
         """
 
-        def processValue(self, valueName: str, options: typing.Dict[str, typing.Any]) -> None:
+        def processValue(
+            self, valueName: str, options: typing.Dict[str, typing.Any]
+        ) -> None:
             val = options.get(valueName, '')
 
             if not val and valueName == 'defvalue':
@@ -463,14 +485,29 @@ class gui:
             super().__init__(**options)
             self._type(gui.InputField.DATE_TYPE)
 
-        def date(self):
-            try:
-                return datetime.datetime.strptime(self.value, '%Y-%m-%d').date()  # ISO Format
-            except Exception:
-                return None
+        def date(self, min: bool = True) -> datetime.date:
+            """
+            Returns the date tis objecct represents
 
-        def stamp(self):
-            return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
+            Args:
+                min (bool, optional): If true, in case of invalid date will return "min" date, else "max". Defaults to True.
+
+            Returns:
+                datetime.date: the date that this object holds, or "min" | "max" on error
+            """
+            try:
+                return datetime.datetime.strptime(
+                    self.value, '%Y-%m-%d'
+                ).date()  # ISO Format
+            except Exception:
+                return datetime.date.min if min else datetime.date.max
+
+        def stamp(self) -> int:
+            return int(
+                time.mktime(
+                    datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()
+                )
+            )
 
     class PasswordField(InputField):
         """
@@ -692,7 +729,6 @@ class gui:
             self._data['values'] = values
 
     class ImageChoiceField(InputField):
-
         def __init__(self, **options):
             super().__init__(**options)
             self._data['values'] = options.get('values', [])
@@ -783,7 +819,7 @@ class gui:
         # : Constant for separating values at "value" method
         SEPARATOR = '\001'
 
-        def __init__(self, **options):
+        def __init__(self, **options) -> None:
             super().__init__(**options)
             self._data['values'] = gui.convertToList(options.get('values', []))
             self._type(gui.InputField.EDITABLE_LIST)
@@ -800,7 +836,7 @@ class gui:
         Image field
         """
 
-        def __init__(self, **options):
+        def __init__(self, **options) -> None:
             super().__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
 
@@ -809,7 +845,7 @@ class gui:
         Informational field (no input is done)
         """
 
-        def __init__(self, **options):
+        def __init__(self, **options) -> None:
             super().__init__(**options)
             self._type(gui.InputField.INFO_TYPE)
 
@@ -819,7 +855,8 @@ class UserInterfaceType(type):
     Metaclass definition for moving the user interface descriptions to a usable
     better place
     """
-    def __new__(cls, classname, bases, classDict):  # pylint: disable=bad-mcs-classmethod-argument
+
+    def __new__(cls, classname, bases, classDict):
         newClassDict = {}
         _gui: typing.Dict[str, gui.InputField] = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
@@ -831,7 +868,7 @@ class UserInterfaceType(type):
         return type.__new__(cls, classname, bases, newClassDict)
 
 
-class   UserInterface(metaclass=UserInterfaceType):
+class UserInterface(metaclass=UserInterfaceType):
     """
     This class provides the management for gui descriptions (user forms)
 
@@ -845,12 +882,13 @@ class   UserInterface(metaclass=UserInterfaceType):
 
     _gui: typing.Dict[str, gui.InputField]
 
-
-    def __init__(self, values: gui.ValuesType = None):
+    def __init__(self, values: gui.ValuesType = None) -> None:
         # : If there is an array of elements to initialize, simply try to store values on form fields
         # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
         # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
-        self._gui = copy.deepcopy(self._gui)  # Ensure "gui" is our own instance, deep copied from base
+        self._gui = copy.deepcopy(
+            self._gui
+        )  # Ensure "gui" is our own instance, deep copied from base
         for key, val in self._gui.items():  # And refresh references to them
             setattr(self, key, val)
 
@@ -944,11 +982,15 @@ class   UserInterface(metaclass=UserInterfaceType):
             if v.isType(gui.InputField.INFO_TYPE):
                 # logger.debug('Field {} is a dummy field and will not be serialized')
                 continue
-            if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
+            if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(
+                gui.InputField.MULTI_CHOICE_TYPE
+            ):
                 # logger.debug('Serializing value {0}'.format(v.value))
                 val = b'\001' + pickle.dumps(v.value, protocol=0)
             elif v.isType(gui.InfoField.PASSWORD_TYPE):
-                val = b'\004' + cryptoManager().AESCrypt(v.value.encode('utf8'), UDSB, True)
+                val = b'\004' + cryptoManager().AESCrypt(
+                    v.value.encode('utf8'), UDSB, True
+                )
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = str(int(v.num())).encode('utf8')
             elif v.isType(gui.InputField.CHECKBOX_TYPE):
@@ -965,7 +1007,7 @@ class   UserInterface(metaclass=UserInterfaceType):
 
         return typing.cast(bytes, encoders.encode(b'\002'.join(arr), 'zip'))
 
-    def unserializeForm(self, values: bytes):
+    def unserializeForm(self, values: bytes) -> None:
         """
         This method unserializes the values previously obtained using
         :py:meth:`serializeForm`, and stores
@@ -977,7 +1019,10 @@ class   UserInterface(metaclass=UserInterfaceType):
         try:
             # Set all values to defaults ones
             for k in self._gui:
-                if self._gui[k].isType(gui.InputField.HIDDEN_TYPE) and self._gui[k].isSerializable() is False:
+                if (
+                    self._gui[k].isType(gui.InputField.HIDDEN_TYPE)
+                    and self._gui[k].isSerializable() is False
+                ):
                     # logger.debug('Field {0} is not unserializable'.format(k))
                     continue
                 self._gui[k].value = self._gui[k].defValue
@@ -1011,7 +1056,9 @@ class   UserInterface(metaclass=UserInterfaceType):
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
     @classmethod
-    def guiDescription(cls, obj: typing.Optional['UserInterface'] = None) -> typing.List[typing.Dict[str, str]]:
+    def guiDescription(
+        cls, obj: typing.Optional['UserInterface'] = None
+    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
         """
         This simple method generates the theGui description needed by the
         administration client, so it can
@@ -1027,7 +1074,7 @@ class   UserInterface(metaclass=UserInterfaceType):
             obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
             theGui = obj
 
-        res = []
+        res: typing.List[typing.MutableMapping[str, typing.Any]] = []
         # pylint: disable=protected-access,maybe-no-member
         for key, val in theGui._gui.items():
             logger.debug('%s ### %s', key, val)

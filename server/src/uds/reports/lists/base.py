@@ -38,6 +38,6 @@ from uds.core import reports
 class ListReport(reports.Report):
     group = _('Lists')  # So we can make submenus with reports
 
-    def generate(self) -> typing.Union[str, bytes]:
+    def generate(self) -> bytes:
         raise NotImplementedError('ListReport generate invoked and not implemented')
 

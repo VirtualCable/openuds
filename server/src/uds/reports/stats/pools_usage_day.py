@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2015-2019 Virtual Cable S.L.
+# Copyright (c) 2015-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -65,14 +64,11 @@ class CountersPoolAssigned(StatsReport):
         label=_('Date'),
         tooltip=_('Date for report'),
         defvalue='',
-        required=True
+        required=True,
     )
 
     pools = gui.MultiChoiceField(
-        order=1,
-        label=_('Pools'),
-        tooltip=_('Pools for report'),
-        required=True
+        order=1, label=_('Pools'), tooltip=_('Pools for report'), required=True
     )
 
     def initialize(self, values):
@@ -81,7 +77,8 @@ class CountersPoolAssigned(StatsReport):
     def initGui(self):
         logger.debug('Initializing gui')
         vals = [
-            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')
+            gui.choiceItem(v.uuid, v.name)
+            for v in ServicePool.objects.all().order_by('name')
         ]
         self.pools.setValues(vals)
 
@@ -101,13 +98,21 @@ class CountersPoolAssigned(StatsReport):
 
             hours = [0] * 24
 
-            for x in counters.getCounters(pool, counters.CT_ASSIGNED, since=start, to=end, max_intervals=24, use_max=True, all=False):
+            for x in counters.getCounters(
+                pool,
+                counters.CT_ASSIGNED,
+                since=start,
+                to=end,
+                max_intervals=24,
+                use_max=True,
+                all=False,
+            ):
                 hour = x[0].hour
                 val = int(x[1])
                 if hours[hour] < val:
                     hours[hour] = val
 
-            data.append({'uuid':pool.uuid, 'name': pool.name, 'hours': hours})
+            data.append({'uuid': pool.uuid, 'name': pool.name, 'hours': hours})
 
         logger.debug('data: %s', data)
 
@@ -122,15 +127,14 @@ class CountersPoolAssigned(StatsReport):
         d = {
             'title': _('Services by hour'),
             'x': X,
-            'xtickFnc': lambda xx: '{:02d}'.format(xx),  # pylint: disable=unnecessary-lambda
+            'xtickFnc': lambda xx: '{:02d}'.format(
+                xx
+            ),  # pylint: disable=unnecessary-lambda
             'xlabel': _('Hour'),
             'y': [
-                {
-                    'label': i['name'],
-                    'data': [i['hours'][v] for v in X]
-                } for i in items
+                {'label': i['name'], 'data': [i['hours'][v] for v in X]} for i in items
             ],
-            'ylabel': 'Services'
+            'ylabel': 'Services',
         }
 
         graphs.barChart(SIZE, d, graph1)
@@ -139,7 +143,10 @@ class CountersPoolAssigned(StatsReport):
             'uds/reports/stats/pools-usage-day.html',
             dct={
                 'data': items,
-                'pools': [v.name for v in ServicePool.objects.filter(uuid__in=self.pools.value)],
+                'pools': [
+                    v.name
+                    for v in ServicePool.objects.filter(uuid__in=self.pools.value)
+                ],
                 'beginning': self.startDate.date(),
             },
             header=ugettext('Services usage report for a day'),

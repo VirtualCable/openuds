@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2015-2019 Virtual Cable S.L.
+# Copyright (c) 2015-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -66,7 +65,7 @@ class StatsReportLogin(StatsReport):
         label=_('Starting date'),
         tooltip=_('starting date for report'),
         defvalue=datetime.date.min,
-        required=True
+        required=True,
     )
 
     endDate = gui.DateField(
@@ -74,7 +73,7 @@ class StatsReportLogin(StatsReport):
         label=_('Finish date'),
         tooltip=_('finish date for report'),
         defvalue=datetime.date.max,
-        required=True
+        required=True,
     )
 
     samplingPoints = gui.NumericField(
@@ -84,7 +83,7 @@ class StatsReportLogin(StatsReport):
         minValue=0,
         maxValue=128,
         tooltip=_('Number of sampling points used in charts'),
-        defvalue='64'
+        defvalue='64',
     )
 
     def initialize(self, values):
@@ -97,7 +96,9 @@ class StatsReportLogin(StatsReport):
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         if self.samplingPoints.num() < 8:
-            self.samplingPoints.value = (self.endDate.date() - self.startDate.date()).days
+            self.samplingPoints.value = (
+                self.endDate.date() - self.startDate.date()
+            ).days
         if self.samplingPoints.num() < 2:
             self.samplingPoints.value = 2
         if self.samplingPoints.num() > 128:
@@ -124,12 +125,23 @@ class StatsReportLogin(StatsReport):
         reportData = []
         for interval in samplingIntervals:
             key = (interval[0] + interval[1]) / 2
-            val = events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=interval[0], to=interval[1]).count()
+            val = (
+                events.statsManager()
+                .getEvents(
+                    events.OT_AUTHENTICATOR,
+                    events.ET_LOGIN,
+                    since=interval[0],
+                    to=interval[1],
+                )
+                .count()
+            )
             data.append((key, val))  # @UndefinedVariable
             reportData.append(
                 {
-                    'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1], xLabelFormat),
-                    'users': val
+                    'date': tools.timestampAsStr(interval[0], xLabelFormat)
+                    + ' - '
+                    + tools.timestampAsStr(interval[1], xLabelFormat),
+                    'users': val,
                 }
             )
 
@@ -142,7 +154,9 @@ class StatsReportLogin(StatsReport):
         dataWeek = [0] * 7
         dataHour = [0] * 24
         dataWeekHour = [[0] * 24 for _ in range(7)]
-        for val in events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end):
+        for val in events.statsManager().getEvents(
+            events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end
+        ):
             s = datetime.datetime.fromtimestamp(val.stamp)
             dataWeek[s.weekday()] += 1
             dataHour[s.hour] += 1
@@ -170,16 +184,13 @@ class StatsReportLogin(StatsReport):
         d = {
             'title': _('Users Access (global)'),
             'x': X,
-            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat),
+            'xtickFnc': lambda l: filters.date(
+                datetime.datetime.fromtimestamp(l), xLabelFormat
+            ),
             'xlabel': _('Date'),
-            'y': [
-                {
-                    'label': 'Users',
-                    'data': [v[1] for v in data]
-                }
-            ],
+            'y': [{'label': 'Users', 'data': [v[1] for v in data]}],
             'ylabel': 'Users',
-            'allTicks': False
+            'allTicks': False,
         }
 
         graphs.lineChart(SIZE, d, graph1)
@@ -193,15 +204,18 @@ class StatsReportLogin(StatsReport):
         d = {
             'title': _('Users Access (by week)'),
             'x': X,
-            'xtickFnc': lambda l: [_('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'), _('Sunday')][l],
+            'xtickFnc': lambda l: [
+                _('Monday'),
+                _('Tuesday'),
+                _('Wednesday'),
+                _('Thursday'),
+                _('Friday'),
+                _('Saturday'),
+                _('Sunday'),
+            ][l],
             'xlabel': _('Day of week'),
-            'y': [
-                {
-                    'label': 'Users',
-                    'data': [v for v in dataWeek]
-                }
-            ],
-            'ylabel': 'Users'
+            'y': [{'label': 'Users', 'data': [v for v in dataWeek]}],
+            'ylabel': 'Users',
         }
 
         graphs.barChart(SIZE, d, graph2)
@@ -211,13 +225,8 @@ class StatsReportLogin(StatsReport):
             'title': _('Users Access (by hour)'),
             'x': X,
             'xlabel': _('Hour'),
-            'y': [
-                {
-                    'label': 'Users',
-                    'data': [v for v in dataHour]
-                }
-            ],
-            'ylabel': 'Users'
+            'y': [{'label': 'Users', 'data': [v for v in dataHour]}],
+            'ylabel': 'Users',
         }
 
         graphs.barChart(SIZE, d, graph3)
@@ -231,10 +240,17 @@ class StatsReportLogin(StatsReport):
             'xtickFnc': lambda l: l,
             'y': Y,
             'ylabel': _('Day of week'),
-            'ytickFnc': lambda l: [_('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'), _('Sunday')][l],
+            'ytickFnc': lambda l: [
+                _('Monday'),
+                _('Tuesday'),
+                _('Wednesday'),
+                _('Thursday'),
+                _('Friday'),
+                _('Saturday'),
+                _('Sunday'),
+            ][l],
             'z': dataWeekHour,
-            'zlabel': _('Users')
-
+            'zlabel': _('Users'),
         }
 
         graphs.surfaceChart(SIZE, d, graph4)
@@ -249,7 +265,12 @@ class StatsReportLogin(StatsReport):
             },
             header=ugettext('Users access to UDS'),
             water=ugettext('UDS Report for users access'),
-            images={'graph1': graph1.getvalue(), 'graph2': graph2.getvalue(), 'graph3': graph3.getvalue(), 'graph4': graph4.getvalue()},
+            images={
+                'graph1': graph1.getvalue(),
+                'graph2': graph2.getvalue(),
+                'graph3': graph3.getvalue(),
+                'graph4': graph4.getvalue(),
+            },
         )
 
 

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2015-2019 Virtual Cable S.L.
+# Copyright (c) 2015-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -77,10 +76,7 @@ class UsageSummaryByUsersPool(StatsReport):
         required=True
     )
 
-    def initialize(self, values):
-        pass
-
-    def initGui(self):
+    def initGui(self) -> None:
         logger.debug('Initializing gui')
         vals = [
             gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all()
@@ -130,7 +126,7 @@ class UsageSummaryByUsersPool(StatsReport):
     def getData(self) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
         return self.getPoolData(ServicePool.objects.get(uuid=self.pool.value))
 
-    def generate(self):
+    def generate(self) -> bytes:
         items, poolName = self.getData()
 
         return self.templateAsPDF(
@@ -157,7 +153,7 @@ class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
     startDate = UsageSummaryByUsersPool.startDate
     endDate = UsageSummaryByUsersPool.endDate
 
-    def generate(self):
+    def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
 
@@ -168,4 +164,4 @@ class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
         for v in reportData:
             writer.writerow([v['user'], v['sessions'], v['hours'], v['average']])
 
-        return output.getvalue()
+        return output.getvalue().encode()

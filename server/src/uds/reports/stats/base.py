@@ -39,7 +39,7 @@ from ..auto import ReportAuto
 class StatsReport(reports.Report):
     group = _('Statistics')  # So we can make submenus with reports
 
-    def generate(self) -> typing.Union[str, bytes]:
+    def generate(self) -> bytes:
         raise NotImplementedError('StatsReport generate invoked and not implemented')
 
 

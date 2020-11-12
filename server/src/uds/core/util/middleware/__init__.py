@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2019 Virtual Cable S.L.
+# Copyright (c) 2013-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -51,6 +51,11 @@ class XUACompatibleMiddleware:
 
 
 class RedirectMiddleware:
+    """
+    This class is responsible of redirection, if checked, requests to HTTPS.
+
+    Some paths will not be redirected, to avoid problems, but they are advised to use SSL (this is for backwards compat)
+    """
     NO_REDIRECT = [
         'rest',
         'pam',

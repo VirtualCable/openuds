@@ -30,16 +30,16 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import os.path
 import sys
+import os.path
+import codecs
 import logging
+import typing
 
 
 from django.utils.translation import ugettext as _
 
 from uds.core.ui import UserInterface
-from uds.core.util import encoders
 
 from .serializable import Serializable
 from .environment import Environment, Environmentable
@@ -182,8 +182,8 @@ class Module(UserInterface, Environmentable, Serializable):
         return data
 
     @classmethod
-    def icon64(cls: typing.Type['Module']) -> typing.Union[str]:
-        return encoders.encodeAsStr(cls.icon(), 'base64')
+    def icon64(cls: typing.Type['Module']) -> str:
+        return codecs.encode(cls.icon(), 'base64').decode()
 
     @staticmethod
     def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2015-2019 Virtual Cable S.L.
+# Copyright (c) 2015-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -56,10 +55,7 @@ class UsageByPool(StatsReport):
 
     # Input fields
     pool = gui.MultiChoiceField(
-        order=1,
-        label=_('Pool'),
-        tooltip=_('Pool for report'),
-        required=True
+        order=1, label=_('Pool'), tooltip=_('Pool for report'), required=True
     )
 
     startDate = gui.DateField(
@@ -67,7 +63,7 @@ class UsageByPool(StatsReport):
         label=_('Starting date'),
         tooltip=_('starting date for report'),
         defvalue=datetime.date.min,
-        required=True
+        required=True,
     )
 
     endDate = gui.DateField(
@@ -75,7 +71,7 @@ class UsageByPool(StatsReport):
         label=_('Finish date'),
         tooltip=_('finish date for report'),
         defvalue=datetime.date.max,
-        required=True
+        required=True,
     )
 
     def initialize(self, values):
@@ -84,7 +80,8 @@ class UsageByPool(StatsReport):
     def initGui(self):
         logger.debug('Initializing gui')
         vals = [gui.choiceItem('0-0-0-0', ugettext('ALL POOLS'))] + [
-            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')
+            gui.choiceItem(v.uuid, v.name)
+            for v in ServicePool.objects.all().order_by('name')
         ]
         self.pool.setValues(vals)
 
@@ -99,7 +96,17 @@ class UsageByPool(StatsReport):
             pools = ServicePool.objects.filter(uuid__in=self.pool.value)
         data = []
         for pool in pools:
-            items = events.statsManager().getEvents(events.OT_DEPLOYED, (events.ET_LOGIN, events.ET_LOGOUT), owner_id=pool.id, since=start, to=end).order_by('stamp')
+            items = (
+                events.statsManager()
+                .getEvents(
+                    events.OT_DEPLOYED,
+                    (events.ET_LOGIN, events.ET_LOGOUT),
+                    owner_id=pool.id,
+                    since=start,
+                    to=end,
+                )
+                .order_by('stamp')
+            )
 
             logins = {}
             for i in items:
@@ -113,14 +120,16 @@ class UsageByPool(StatsReport):
                         stamp = logins[i.fld4]
                         del logins[i.fld4]
                         total = i.stamp - stamp
-                        data.append({
-                            'name': i.fld4,
-                            'origin': i.fld2.split(':')[0],
-                            'date': datetime.datetime.fromtimestamp(stamp),
-                            'time': total,
-                            'pool': pool.uuid,
-                            'pool_name': pool.name
-                        })
+                        data.append(
+                            {
+                                'name': i.fld4,
+                                'origin': i.fld2.split(':')[0],
+                                'date': datetime.datetime.fromtimestamp(stamp),
+                                'time': total,
+                                'pool': pool.uuid,
+                                'pool_name': pool.name,
+                            }
+                        )
 
         return data, ','.join([p.name for p in pools])
 
@@ -134,7 +143,7 @@ class UsageByPool(StatsReport):
                 'pool': poolName,
             },
             header=ugettext('Users usage list'),
-            water=ugettext('UDS Report of users usage')
+            water=ugettext('UDS Report of users usage'),
         )
 
 
@@ -155,9 +164,19 @@ class UsageByPoolCSV(UsageByPool):
 
         reportData = self.getData()[0]
 
-        writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds'), ugettext('Pool'), ugettext('Origin')])
+        writer.writerow(
+            [
+                ugettext('Date'),
+                ugettext('User'),
+                ugettext('Seconds'),
+                ugettext('Pool'),
+                ugettext('Origin'),
+            ]
+        )
 
         for v in reportData:
-            writer.writerow([v['date'], v['name'], v['time'], v['pool_name'], v['origin']])
+            writer.writerow(
+                [v['date'], v['name'], v['time'], v['pool_name'], v['origin']]
+            )
 
         return output.getvalue()

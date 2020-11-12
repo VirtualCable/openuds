@@ -64,6 +64,7 @@ if typing.TYPE_CHECKING:
     from uds.models import (
         UserService,
         ServicePoolPublication,
+        ServicePoolPublicationChangelog,
         User,
         Group,
         Proxy,
@@ -157,6 +158,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     memberOfMeta: 'models.QuerySet[MetaPoolMember]'
     userServices: 'models.QuerySet[UserService]'
     calendarAccess: 'models.QuerySet[CalendarAccess]'
+    changelog: 'models.QuerySet[ServicePoolPublicationChangelog]'
 
     class Meta(UUIDModel.Meta):
         """

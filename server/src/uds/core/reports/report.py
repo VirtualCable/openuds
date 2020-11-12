@@ -30,8 +30,9 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import codecs
+import datetime
 import logging
-from datetime import datetime
 import typing
 
 from weasyprint import HTML, CSS, default_url_fetcher
@@ -40,7 +41,6 @@ from django.utils.translation import ugettext, ugettext_noop as _
 from django.template import loader
 
 from uds.core.ui import UserInterface, gui
-from uds.core.util import encoders
 from . import stock
 
 
@@ -116,13 +116,13 @@ class Report(UserInterface):
             .replace('{page}', _('Page'))
             .replace('{of}', _('of'))
             .replace('{water}', water or 'UDS Report')
-            .replace('{printed}', _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.now()))
+            .replace('{printed}', _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.datetime.now()))
         )
 
         h = HTML(string=html, url_fetcher=report_fetcher)
         c = CSS(string=css)
 
-        return h.write_pdf(stylesheets=[c])
+        return typing.cast(bytes, h.write_pdf(stylesheets=[c]))  # Return a new bytes object
 
     @staticmethod
     def templateAsPDF(templateName, dct, header=None, water=None, images=None) -> bytes:
@@ -161,7 +161,7 @@ class Report(UserInterface):
         This can be or can be not overriden
         """
 
-    def generate(self) -> typing.Union[str, bytes]:
+    def generate(self) -> bytes:
         """
         Generates the reports
 
@@ -178,7 +178,7 @@ class Report(UserInterface):
         """
         data = self.generate()
         if self.encoded:
-            return encoders.encodeAsStr(data, 'base64').replace('\n', '')
+            return codecs.encode(data, 'base64').decode().replace('\n', '')
 
         return typing.cast(str, data)
 

@@ -32,7 +32,7 @@
 """
 import logging
 
-from uds.core.environment import Environmentable
+from uds.core.environment import Environmentable, Environment
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +47,7 @@ class DelayedTask(Environmentable):
         """
         Remember to invoke parent init in derived clases using super(myClass,self).__init__() to let this initialize its own variables
         """
-        super().__init__(None)
-
+        super().__init__(Environment('DelayedTask'))
 
     def execute(self) -> None:
         """
@@ -59,14 +58,12 @@ class DelayedTask(Environmentable):
         except Exception as e:
             logger.error('Job %s raised an exception: %s', self.__class__, e)
 
-
     def run(self) -> None:
         """
         Run method, executes your code. Override this on your classes
         """
         logging.error("Base run of job called for class")
         raise NotImplementedError
-
 
     def register(self, suggestedTime: int, tag: str = '', check: bool = True) -> None:
         """

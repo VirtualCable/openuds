@@ -145,7 +145,10 @@ class StatsManager:
         """
         self.__doCleanup(StatsCounters)
 
-    def getEventFldFor(self, fld: str) -> typing.Optional[str]:
+    def getEventFldFor(self, fld: str) -> str:
+        '''
+        Get equivalency between "cool names" and field. Will raise "KeyError" if no equivalency
+        '''
         return {
             'username': 'fld1',
             'platform': 'fld1',
@@ -154,7 +157,7 @@ class StatsManager:
             'dstip': 'fld3',
             'version': 'fld3',
             'uniqueid': 'fld4'
-        }.get(fld, None)
+        }[fld]
 
     # Event stats
     def addEvent(self, owner_type: int, owner_id: int, eventType: int, **kwargs):
