@@ -93,18 +93,17 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
 
     logger.debug('Checking meta pools: %s', availMetaPools)
     services = []
-    meta: MetaPool
     # Preload all assigned user services for this user
 
     # Add meta pools data first
     for meta in availMetaPools:
         # Check that we have access to at least one transport on some of its children
         hasUsablePools = False
-        in_use =  meta.number_in_use > 0  # False
-        for pool in meta.pools.all():
+        in_use = typing.cast(typing.Any, meta).number_in_use > 0   # Override, because we used hear annotations
+        for member in meta.members.all():
             # if pool.isInMaintenance():
             #    continue
-            for t in pool.transports.all():
+            for t in member.pool.transports.all():
                 typeTrans = t.getType()
                 if t.getType() and t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
                     hasUsablePools = True
@@ -148,13 +147,12 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
             })
 
     # Now generic user service
-    svr: ServicePool
     for svr in availServicePools:
         # Skip pools that are part of meta pools
-        if svr.is_meta:
+        if svr.owned_by_meta:
             continue
 
-        use = str(svr.usage(svr.usage_count)) + '%'
+        use = str(svr.usage(typing.cast(typing.Any, svr).usage_count)) + '%'
 
         trans = []
         for t in sorted(svr.transports.all(), key=lambda x: x.priority):   # In memory sort, allows reuse prefetched and not too big array
@@ -186,7 +184,7 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
             imageId = 'x'
 
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
-        in_use = svr.number_in_use > 0
+        in_use = typing.cast(typing.Any, svr).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
         #     ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
         #     if ads:
@@ -195,15 +193,17 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
-        toBeReplaced = svr.toBeReplaced(request.user) if svr.pubs_active > 0 and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False) else None
+        toBeReplaced = svr.toBeReplaced(request.user) if typing.cast(
+            typing.Any, svr).pubs_active > 0 and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False) else None
         # tbr = False
         if toBeReplaced:
             toBeReplaced = formats.date_format(toBeReplaced, "SHORT_DATETIME_FORMAT")
-            toBeReplacedTxt = ugettext('This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.').format(toBeReplaced)
+            toBeReplacedTxt = ugettext(
+                'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.').format(toBeReplaced)
         else:
             toBeReplacedTxt = ''
 
-        datator = lambda x: x.replace('{use}', use).replace('{total}', str(svr.max_srvs))
+        def datator(x): return x.replace('{use}', use).replace('{total}', str(svr.max_srvs))
 
         services.append({
             'id': 'F' + svr.uuid,

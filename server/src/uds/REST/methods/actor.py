@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,17 +49,19 @@ from uds.models import UserService
 logger = logging.getLogger(__name__)
 
 # Actor key, configurable in Security Section of administration interface
-actorKey = config.Config.section(config.SECURITY_SECTION).value('Master Key',
-                                                                cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
-                                                                type=config.Config.TEXT_FIELD)
+actorKey = config.Config.section(config.SECURITY_SECTION).value(
+    'Master Key',
+    cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
+    type=config.Config.TEXT_FIELD,
+)
 
 actorKey.get()
 
 # Error codes:
-ERR_INVALID_KEY = 1
-ERR_HOST_NOT_MANAGED = 2
-ERR_USER_SERVICE_NOT_FOUND = 3
-ERR_OSMANAGER_ERROR = 4
+ERR_INVALID_KEY = '1'
+ERR_HOST_NOT_MANAGED = '2'
+ERR_USER_SERVICE_NOT_FOUND = '3'
+ERR_OSMANAGER_ERROR = '4'
 
 # Constants for tickets
 OWNER = 'ACTOR'
@@ -71,6 +73,7 @@ class Actor(Handler):
     """
     Processes actor requests
     """
+
     authenticated = False  # Actor requests are not authenticated
 
     @staticmethod
@@ -104,7 +107,7 @@ class Actor(Handler):
             return Actor.result(_('Invalid key'), error=ERR_INVALID_KEY)
         return None
 
-    def getUserServiceByIds(self) -> UserService:
+    def getUserServiceByIds(self) -> typing.Optional[UserService]:
         """
         This will get the client from the IDs passed from parameters
         """
@@ -115,7 +118,9 @@ class Actor(Handler):
         except Exception:
             raise RequestError('Invalid request: (no id found)')
 
-        services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
+        services = UserService.objects.filter(
+            unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING]
+        )
 
         return services[0] if services else None
 
@@ -176,11 +181,7 @@ class Actor(Handler):
                 maxIdle = service.deployed_service.osmanager.getInstance().maxIdle()
                 logger.debug('Max idle: %s', maxIdle)
             return Actor.result(
-                (
-                    service.uuid,
-                    service.unique_id,
-                    0 if maxIdle is None else maxIdle
-                )
+                (service.uuid, service.unique_id, 0 if maxIdle is None else maxIdle)
             )
         raise RequestError('Invalid request')
 
@@ -202,7 +203,9 @@ class Actor(Handler):
         try:
             service: UserService = UserService.objects.get(uuid=processUuid(uuid))
         except Exception:
-            return Actor.result(_('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND)
+            return Actor.result(
+                _('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND
+            )
 
         if message == 'notifyComms':
             logger.debug('Setting comms url to %s', data)
@@ -210,7 +213,7 @@ class Actor(Handler):
             return Actor.result('ok')
         if message == 'ssoAvailable':
             logger.debug('Setting that SSO is available')
-            service.setProperty('sso_available', 1)
+            service.setProperty('sso_available', '1')
             return Actor.result('ok')
         if message == 'version':
             version = self._params.get('version', 'unknown')
@@ -220,7 +223,9 @@ class Actor(Handler):
         # "Cook" some messages, common to all clients, such as "log"
         if message == 'log':
             logger.debug(self._params)
-            data = '\t'.join((self._params.get('message'), str(self._params.get('level', 10000))))
+            data = '\t'.join(
+                (self._params.get('message'), str(self._params.get('level', 10000)))
+            )
 
         osmanager = service.getInstance().osmanager()
 
@@ -234,7 +239,11 @@ class Actor(Handler):
                         # Mark for removal...
                         service.release()  # Release for removal
                     return 'ok'
-                raise Exception('Unknown message {} for an user service without os manager'.format(message))
+                raise Exception(
+                    'Unknown message {} for an user service without os manager'.format(
+                        message
+                    )
+                )
             res = osmanager.process(service, message, data, options={'scramble': False})
             if not res:
                 raise Exception('Old Actors not supported by this os Manager!')

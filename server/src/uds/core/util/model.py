@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2020 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,14 +31,14 @@ import typing
 from uds.core.managers import cryptoManager
 
 
-def generateUuid() -> str:
+def generateUuid(obj: typing.Any = None) -> str:
     """
     Generates a ramdom uuid for models default
     """
-    return cryptoManager().uuid().lower()
+    return cryptoManager().uuid(obj=obj).lower()
 
 
-def processUuid(uuid: typing.Union[str, bytes]) -> str:
+def processUuid(uuid: str) -> str:
     if isinstance(uuid, bytes):
-        uuid = uuid.decode('utf8')
+        uuid = uuid.decode('utf8')  # type: ignore
     return uuid.lower()
