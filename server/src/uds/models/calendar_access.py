@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2020 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,8 +47,8 @@ logger = logging.getLogger(__name__)
 
 
 class CalendarAccess(UUIDModel):
-    calendar: Calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    service_pool: ServicePool = models.ForeignKey(ServicePool, related_name='calendarAccess', on_delete=models.CASCADE)
+    calendar: 'models.ForeignKey[CalendarAccess, Calendar]' = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    service_pool: 'models.ForeignKey[CalendarAccess, ServicePool]' = models.ForeignKey(ServicePool, related_name='calendarAccess', on_delete=models.CASCADE)
     access = models.CharField(max_length=8, default=states.action.DENY)
     priority = models.IntegerField(default=0, db_index=True)
 
@@ -60,7 +60,7 @@ class CalendarAccess(UUIDModel):
         ordering = ('priority',)
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Calendar Access {}/{}'.format(self.calendar, self.access)
 
 
