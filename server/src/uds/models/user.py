@@ -151,7 +151,7 @@ class User(UUIDModel):
         """
         if self.parent:
             try:
-                usr = User.objects.prefetch_related('groups').get(uuid=self.parent)
+                usr = User.objects.prefetch_related('authenticator', 'groups').get(uuid=self.parent)
             except Exception:  # If parent do not exists
                 usr = self
         else:

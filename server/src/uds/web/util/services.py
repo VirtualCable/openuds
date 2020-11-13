@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -35,7 +35,14 @@ from django.utils.translation import ugettext
 from django.utils import formats
 from django.urls import reverse
 
-from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool, getSqlDatetime
+from uds.models import (
+    ServicePool,
+    Transport,
+    Network,
+    ServicePoolGroup,
+    MetaPool,
+    getSqlDatetime,
+)
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
 
@@ -43,14 +50,18 @@ from uds.core.managers import userServiceManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.tools import DictAsObj
 
 
 logger = logging.getLogger(__name__)
 
 
-def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+def getServicesData(
+    request: 'ExtendedHttpRequestWithUser',
+) -> typing.Dict[
+    str, typing.Any
+]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     """Obtains the service data dictionary will all available services for this request
 
     Arguments:
@@ -65,22 +76,22 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
             'autorun': autorun
 
     """
-    # Session data
-    os: 'DictAsObj' = request.os
-    if not request.user:
-        return {}
-
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
-    availServicePools = list(ServicePool.getDeployedServicesForGroups(groups, request.user))  # Pass in user to get "number_assigned" to optimize
-    availMetaPools = list(MetaPool.getForGroups(groups, request.user))  # Pass in user to get "number_assigned" to optimize
+    availServicePools = list(
+        ServicePool.getDeployedServicesForGroups(groups, request.user)
+    )  # Pass in user to get "number_assigned" to optimize
+    availMetaPools = list(
+        MetaPool.getForGroups(groups, request.user)
+    )  # Pass in user to get "number_assigned" to optimize
     now = getSqlDatetime()
 
     # Information for administrators
     nets = ''
     validTrans = ''
 
-    logger.debug('OS: %s', os['OS'])
+    osName = request.os['OS']
+    logger.debug('OS: %s', osName)
 
     if request.user.isStaff():
         nets = ','.join([n.name for n in Network.networksFor(request.ip)])
@@ -99,13 +110,20 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
     for meta in availMetaPools:
         # Check that we have access to at least one transport on some of its children
         hasUsablePools = False
-        in_use = typing.cast(typing.Any, meta).number_in_use > 0   # Override, because we used hear annotations
+        in_use = (
+            typing.cast(typing.Any, meta).number_in_use > 0
+        )  # Override, because we used hear annotations
         for member in meta.members.all():
             # if pool.isInMaintenance():
             #    continue
             for t in member.pool.transports.all():
                 typeTrans = t.getType()
-                if t.getType() and t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
+                if (
+                    t.getType()
+                    and t.validForIp(request.ip)
+                    and typeTrans.supportsOs(osName)
+                    and t.validForOs(osName)
+                ):
                     hasUsablePools = True
                     break
 
@@ -120,31 +138,39 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
 
         # If no usable pools, this is not visible
         if hasUsablePools:
-            group = meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
+            group = (
+                meta.servicesPoolGroup.as_dict
+                if meta.servicesPoolGroup
+                else ServicePoolGroup.default().as_dict
+            )
 
-            services.append({
-                'id': 'M' + meta.uuid,
-                'name': meta.name,
-                'visual_name': meta.visual_name,
-                'description': meta.comments,
-                'group': group,
-                'transports': [{
-                    'id': 'meta',
-                    'name': 'meta',
-                    'link': html.udsMetaLink(request, 'M' + meta.uuid),
-                    'priority': 0
-                }],
-                'imageId': meta.image and meta.image.uuid or 'x',
-                'show_transports': False,
-                'allow_users_remove': False,
-                'allow_users_reset': False,
-                'maintenance': meta.isInMaintenance(),
-                'not_accesible': not meta.isAccessAllowed(now),
-                'in_use': in_use,
-                'to_be_replaced': None,
-                'to_be_replaced_text': '',
-                'custom_calendar_text': meta.calendar_message,
-            })
+            services.append(
+                {
+                    'id': 'M' + meta.uuid,
+                    'name': meta.name,
+                    'visual_name': meta.visual_name,
+                    'description': meta.comments,
+                    'group': group,
+                    'transports': [
+                        {
+                            'id': 'meta',
+                            'name': 'meta',
+                            'link': html.udsMetaLink(request, 'M' + meta.uuid),
+                            'priority': 0,
+                        }
+                    ],
+                    'imageId': meta.image and meta.image.uuid or 'x',
+                    'show_transports': False,
+                    'allow_users_remove': False,
+                    'allow_users_reset': False,
+                    'maintenance': meta.isInMaintenance(),
+                    'not_accesible': not meta.isAccessAllowed(now),
+                    'in_use': in_use,
+                    'to_be_replaced': None,
+                    'to_be_replaced_text': '',
+                    'custom_calendar_text': meta.calendar_message,
+                }
+            )
 
     # Now generic user service
     for svr in availServicePools:
@@ -155,23 +181,24 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
         use = str(svr.usage(typing.cast(typing.Any, svr).usage_count)) + '%'
 
         trans = []
-        for t in sorted(svr.transports.all(), key=lambda x: x.priority):   # In memory sort, allows reuse prefetched and not too big array
+        for t in sorted(
+            svr.transports.all(), key=lambda x: x.priority
+        ):  # In memory sort, allows reuse prefetched and not too big array
             try:
                 typeTrans = t.getType()
             except Exception:
                 continue
-            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
+            if (
+                t.validForIp(request.ip)
+                and typeTrans.supportsOs(osName)
+                and t.validForOs(osName)
+            ):
                 if typeTrans.ownLink:
                     link = reverse('TransportOwnLink', args=('F' + svr.uuid, t.uuid))
                 else:
                     link = html.udsAccessLink(request, 'F' + svr.uuid, t.uuid)
                 trans.append(
-                    {
-                        'id': t.uuid,
-                        'name': t.name,
-                        'link': link,
-                        'priority': t.priority
-                    }
+                    {'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority}
                 )
 
         # If empty transports, do not include it on list
@@ -190,47 +217,69 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
         #     if ads:
         #         in_use = ads.in_use
 
-        group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup else ServicePoolGroup.default().as_dict
+        group = (
+            svr.servicesPoolGroup.as_dict
+            if svr.servicesPoolGroup
+            else ServicePoolGroup.default().as_dict
+        )
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
-        toBeReplaced = svr.toBeReplaced(request.user) if typing.cast(
-            typing.Any, svr).pubs_active > 0 and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False) else None
+        toBeReplaced = (
+            svr.toBeReplaced(request.user)
+            if typing.cast(typing.Any, svr).pubs_active > 0
+            and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False)
+            else None
+        )
         # tbr = False
         if toBeReplaced:
             toBeReplaced = formats.date_format(toBeReplaced, "SHORT_DATETIME_FORMAT")
             toBeReplacedTxt = ugettext(
-                'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.').format(toBeReplaced)
+                'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
+            ).format(toBeReplaced)
         else:
             toBeReplacedTxt = ''
 
-        def datator(x): return x.replace('{use}', use).replace('{total}', str(svr.max_srvs))
+        def datator(x):
+            return x.replace('{use}', use).replace('{total}', str(svr.max_srvs))
 
-        services.append({
-            'id': 'F' + svr.uuid,
-            'name': datator(svr.name),
-            'visual_name': datator(svr.visual_name.replace('{use}', use).replace('{total}', str(svr.max_srvs))),
-            'description': svr.comments,
-            'group': group,
-            'transports': trans,
-            'imageId': imageId,
-            'show_transports': svr.show_transports,
-            'allow_users_remove': svr.allow_users_remove,
-            'allow_users_reset': svr.allow_users_reset,
-            'maintenance': svr.isInMaintenance(),
-            'not_accesible': not svr.isAccessAllowed(now),
-            'in_use': in_use,
-            'to_be_replaced': toBeReplaced,
-            'to_be_replaced_text': toBeReplacedTxt,
-            'custom_calendar_text': svr.calendar_message,
-        })
+        services.append(
+            {
+                'id': 'F' + svr.uuid,
+                'name': datator(svr.name),
+                'visual_name': datator(
+                    svr.visual_name.replace('{use}', use).replace(
+                        '{total}', str(svr.max_srvs)
+                    )
+                ),
+                'description': svr.comments,
+                'group': group,
+                'transports': trans,
+                'imageId': imageId,
+                'show_transports': svr.show_transports,
+                'allow_users_remove': svr.allow_users_remove,
+                'allow_users_reset': svr.allow_users_reset,
+                'maintenance': svr.isInMaintenance(),
+                'not_accesible': not svr.isAccessAllowed(now),
+                'in_use': in_use,
+                'to_be_replaced': toBeReplaced,
+                'to_be_replaced_text': toBeReplacedTxt,
+                'custom_calendar_text': svr.calendar_message,
+            }
+        )
 
     # logger.debug('Services: %s', services)
 
     # Sort services and remove services with no transports...
-    services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']]
+    services = [
+        s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']
+    ]
 
     autorun = False
-    if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(False) and services[0]['transports']:
+    if (
+        len(services) == 1
+        and GlobalConfig.AUTORUN_SERVICE.getBool(False)
+        and services[0]['transports']
+    ):
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
             autorun = True
@@ -241,5 +290,5 @@ def getServicesData(request: 'ExtendedHttpRequest') -> typing.Dict[str, typing.A
         'ip': request.ip,
         'nets': nets,
         'transports': validTrans,
-        'autorun': autorun
+        'autorun': autorun,
     }

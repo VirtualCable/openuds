@@ -36,7 +36,16 @@ import typing
 
 from django.db.models import Q, Count
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import ServicePool, OSManager, Service, Image, ServicePoolGroup, Account, User, getSqlDatetime
+from uds.models import (
+    ServicePool,
+    OSManager,
+    Service,
+    Image,
+    ServicePoolGroup,
+    Account,
+    User,
+    getSqlDatetime,
+)
 from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
@@ -63,7 +72,14 @@ from uds.core.util import permissions
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 
-from .user_services import AssignedService, CachedService, Groups, Transports, Publications, Changelog
+from .user_services import (
+    AssignedService,
+    CachedService,
+    Groups,
+    Transports,
+    Publications,
+    Changelog,
+)
 from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
 
@@ -75,6 +91,7 @@ class ServicesPools(ModelHandler):
     """
     Handles Services Pools REST requests
     """
+
     model = ServicePool
     detail = {
         'services': AssignedService,
@@ -84,13 +101,30 @@ class ServicesPools(ModelHandler):
         'publications': Publications,
         'changelog': Changelog,
         'access': AccessCalendars,
-        'actions': ActionsCalendars
+        'actions': ActionsCalendars,
     }
 
-    save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id',
-                   'osmanager_id', 'image_id', 'pool_group_id', 'initial_srvs',
-                   'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports', 'visible',
-                   'allow_users_remove', 'allow_users_reset', 'ignores_unused', 'account_id', 'calendar_message']
+    save_fields = [
+        'name',
+        'short_name',
+        'comments',
+        'tags',
+        'service_id',
+        'osmanager_id',
+        'image_id',
+        'pool_group_id',
+        'initial_srvs',
+        'cache_l1_srvs',
+        'cache_l2_srvs',
+        'max_srvs',
+        'show_transports',
+        'visible',
+        'allow_users_remove',
+        'allow_users_reset',
+        'ignores_unused',
+        'account_id',
+        'calendar_message',
+    ]
 
     remove_fields = ['osmanager_id', 'service_id']
 
@@ -120,14 +154,53 @@ class ServicesPools(ModelHandler):
 
     def getItems(self, *args, **kwargs):
         # Optimized query, due that there is a lot of info needed for theee
-        d = getSqlDatetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
-        return super().getItems(overview=kwargs.get('overview', True),
-            query=(ServicePool.objects.prefetch_related('service', 'service__provider', 'servicesPoolGroup', 'image', 'tags', 'memberOfMeta__meta_pool', 'account')
-                    .annotate(valid_count=Count('userServices', filter=~Q(userServices__state__in=State.INFO_STATES)))
-                    .annotate(preparing_count=Count('userServices', filter=Q(userServices__state=State.PREPARING)))
-                    .annotate(error_count=Count('userServices', filter=Q(userServices__state=State.ERROR, userServices__state_date__gt=d)))
-                    .annotate(usage_count=Count('userServices', filter=Q(userServices__state__in=State.VALID_STATES, userServices__cache_level=0)))
-            )
+        d = getSqlDatetime() - datetime.timedelta(
+            seconds=GlobalConfig.RESTRAINT_TIME.getInt()
+        )
+        return super().getItems(
+            overview=kwargs.get('overview', True),
+            query=(
+                ServicePool.objects.prefetch_related(
+                    'service',
+                    'service__provider',
+                    'servicesPoolGroup',
+                    'servicesPoolGroup__image',
+                    'osmanager',
+                    'image',
+                    'tags',
+                    'memberOfMeta__meta_pool',
+                    'account',
+                )
+                .annotate(
+                    valid_count=Count(
+                        'userServices',
+                        filter=~Q(userServices__state__in=State.INFO_STATES),
+                    )
+                )
+                .annotate(
+                    preparing_count=Count(
+                        'userServices', filter=Q(userServices__state=State.PREPARING)
+                    )
+                )
+                .annotate(
+                    error_count=Count(
+                        'userServices',
+                        filter=Q(
+                            userServices__state=State.ERROR,
+                            userServices__state_date__gt=d,
+                        ),
+                    )
+                )
+                .annotate(
+                    usage_count=Count(
+                        'userServices',
+                        filter=Q(
+                            userServices__state__in=State.VALID_STATES,
+                            userServices__cache_level=0,
+                        ),
+                    )
+                )
+            ),
         )
         # return super().getItems(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
         # return super(ServicesPools, self).getItems(*args, **kwargs)
@@ -161,7 +234,9 @@ class ServicesPools(ModelHandler):
             'parent_type': item.service.data_type,
             'comments': item.comments,
             'state': state,
-            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
+            'thumb': item.image.thumb64
+            if item.image is not None
+            else DEFAULT_THUMB_BASE64,
             'account': item.account.name if item.account is not None else '',
             'account_id': item.account.uuid if item.account is not None else None,
             'service_id': item.service.uuid,
@@ -177,7 +252,10 @@ class ServicesPools(ModelHandler):
             'allow_users_reset': item.allow_users_reset,
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
-            'meta_member': [{'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()],
+            'meta_member': [
+                {'id': i.meta_pool.uuid, 'name': i.meta_pool.name}
+                for i in item.memberOfMeta.all()
+            ],
             'calendar_message': item.calendar_message,
         }
 
@@ -189,8 +267,12 @@ class ServicesPools(ModelHandler):
                 restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.getInt()  # type: ignore
                 usage_count = item.usage_count  # type: ignore
             else:
-                valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
-                preparing_count = item.userServices.filter(state=State.PREPARING).count()
+                valid_count = item.userServices.exclude(
+                    state__in=State.INFO_STATES
+                ).count()
+                preparing_count = item.userServices.filter(
+                    state=State.PREPARING
+                ).count()
                 restrained = item.isRestrained()
                 usage_count = -1
 
@@ -203,9 +285,10 @@ class ServicesPools(ModelHandler):
                 if item.servicesPoolGroup.image is not None:
                     poolGroupThumb = item.servicesPoolGroup.image.thumb64
 
-
             val['state'] = state
-            val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
+            val['thumb'] = (
+                item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
+            )
             val['user_services_count'] = valid_count
             val['user_services_in_preparation'] = preparing_count
             val['tags'] = [tag.tag for tag in item.tags.all()]
@@ -227,51 +310,74 @@ class ServicesPools(ModelHandler):
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
         #    raise ResponseError(ugettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
-            raise ResponseError(ugettext('Create at least a service before creating a new service pool'))
+            raise ResponseError(
+                ugettext('Create at least a service before creating a new service pool')
+            )
 
         g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
-        for f in [{
+        for f in [
+            {
                 'name': 'service_id',
-                'values': [gui.choiceItem('', '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]),
+                'values': [gui.choiceItem('', '')]
+                + gui.sortedChoices(
+                    [
+                        gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name)
+                        for v in Service.objects.all()
+                    ]
+                ),
                 'label': ugettext('Base service'),
                 'tooltip': ugettext('Service used as base of this service pool'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'rdonly': True,
                 'order': 100,  # Ensures is At end
-            }, {
+            },
+            {
                 'name': 'osmanager_id',
-                'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]),
+                'values': [gui.choiceItem(-1, '')]
+                + gui.sortedChoices(
+                    [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]
+                ),
                 'label': ugettext('OS Manager'),
                 'tooltip': ugettext('OS Manager used as base of this service pool'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'rdonly': True,
                 'order': 101,
-            }, {
+            },
+            {
                 'name': 'allow_users_remove',
                 'value': False,
                 'label': ugettext('Allow removal by users'),
-                'tooltip': ugettext('If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete it\'s own service'),
+                'tooltip': ugettext(
+                    'If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete it\'s own service'
+                ),
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 111,
                 'tab': ugettext('Advanced'),
-            }, {
+            },
+            {
                 'name': 'allow_users_reset',
                 'value': False,
                 'label': ugettext('Allow reset by users'),
-                'tooltip': ugettext('If active, the user will be allowed to reset the service'),
+                'tooltip': ugettext(
+                    'If active, the user will be allowed to reset the service'
+                ),
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 112,
                 'tab': ugettext('Advanced'),
-            }, {
+            },
+            {
                 'name': 'ignores_unused',
                 'value': False,
                 'label': ugettext('Ignores unused'),
-                'tooltip': ugettext('If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'),
+                'tooltip': ugettext(
+                    'If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'
+                ),
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 113,
                 'tab': ugettext('Advanced'),
-            }, {
+            },
+            {
                 'name': 'visible',
                 'value': True,
                 'label': ugettext('Visible'),
@@ -279,31 +385,51 @@ class ServicesPools(ModelHandler):
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 107,
                 'tab': ugettext('Display'),
-            }, {
+            },
+            {
                 'name': 'image_id',
-                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
+                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + gui.sortedChoices(
+                    [
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        for v in Image.objects.all()
+                    ]
+                ),
                 'label': ugettext('Associated Image'),
                 'tooltip': ugettext('Image assocciated with this service'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 120,
                 'tab': ugettext('Display'),
-            }, {
+            },
+            {
                 'name': 'pool_group_id',
-                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]),
+                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
+                + gui.sortedChoices(
+                    [
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        for v in ServicePoolGroup.objects.all()
+                    ]
+                ),
                 'label': ugettext('Pool group'),
-                'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
+                'tooltip': ugettext(
+                    'Pool group for this pool (for pool classify on display)'
+                ),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 121,
                 'tab': ugettext('Display'),
-            }, {
+            },
+            {
                 'name': 'calendar_message',
                 'value': '',
                 'label': ugettext('Calendar access denied text'),
-                'tooltip': ugettext('Custom message to be shown to users if access is limited by calendar rules.'),
+                'tooltip': ugettext(
+                    'Custom message to be shown to users if access is limited by calendar rules.'
+                ),
                 'type': gui.InputField.TEXT_TYPE,
                 'order': 122,
                 'tab': ugettext('Display'),
-            }, {
+            },
+            {
                 'name': 'initial_srvs',
                 'value': '0',
                 'minValue': '0',
@@ -312,55 +438,74 @@ class ServicesPools(ModelHandler):
                 'type': gui.InputField.NUMERIC_TYPE,
                 'order': 130,
                 'tab': ugettext('Availability'),
-            }, {
+            },
+            {
                 'name': 'cache_l1_srvs',
                 'value': '0',
                 'minValue': '0',
                 'label': ugettext('Services to keep in cache'),
-                'tooltip': ugettext('Services kept in cache for improved user service assignation'),
+                'tooltip': ugettext(
+                    'Services kept in cache for improved user service assignation'
+                ),
                 'type': gui.InputField.NUMERIC_TYPE,
                 'order': 131,
                 'tab': ugettext('Availability'),
-            }, {
+            },
+            {
                 'name': 'cache_l2_srvs',
                 'value': '0',
                 'minValue': '0',
                 'label': ugettext('Services to keep in L2 cache'),
-                'tooltip': ugettext('Services kept in cache of level2 for improved service generation'),
+                'tooltip': ugettext(
+                    'Services kept in cache of level2 for improved service generation'
+                ),
                 'type': gui.InputField.NUMERIC_TYPE,
                 'order': 132,
                 'tab': ugettext('Availability'),
-            }, {
+            },
+            {
                 'name': 'max_srvs',
                 'value': '0',
                 'minValue': '1',
                 'label': ugettext('Maximum number of services to provide'),
-                'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
+                'tooltip': ugettext(
+                    'Maximum number of service (assigned and L1 cache) that can be created for this service'
+                ),
                 'type': gui.InputField.NUMERIC_TYPE,
                 'order': 133,
                 'tab': ugettext('Availability'),
-            }, {
+            },
+            {
                 'name': 'show_transports',
                 'value': True,
                 'label': ugettext('Show transports'),
-                'tooltip': ugettext('If active, alternative transports for user will be shown'),
+                'tooltip': ugettext(
+                    'If active, alternative transports for user will be shown'
+                ),
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'tab': ugettext('Advanced'),
                 'order': 130,
-            }, {
+            },
+            {
                 'name': 'account_id',
-                'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]),
+                'values': [gui.choiceItem(-1, '')]
+                + gui.sortedChoices(
+                    [gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]
+                ),
                 'label': ugettext('Accounting'),
                 'tooltip': ugettext('Account associated to this service pool'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'tab': ugettext('Advanced'),
                 'order': 131,
-            }]:
+            },
+        ]:
             self.addField(g, f)
 
         return g
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None: # pylint: disable=too-many-branches,too-many-statements
+    def beforeSave(
+        self, fields: typing.Dict[str, typing.Any]
+    ) -> None:  # pylint: disable=too-many-branches,too-many-statements
         # logger.debug(self._params)
         try:
             try:
@@ -379,7 +524,9 @@ class ServicesPools(ModelHandler):
                     self._params['allow_users_reset'] = False
 
                 if serviceType.needsManager is True:
-                    osmanager = OSManager.objects.get(uuid=processUuid(fields['osmanager_id']))
+                    osmanager = OSManager.objects.get(
+                        uuid=processUuid(fields['osmanager_id'])
+                    )
                     fields['osmanager_id'] = osmanager.id
                 else:
                     del fields['osmanager_id']
@@ -390,14 +537,25 @@ class ServicesPools(ModelHandler):
                         fields[k] = v
 
                 if serviceType.maxDeployed != -1:
-                    fields['max_srvs'] = min((int(fields['max_srvs']), serviceType.maxDeployed))
-                    fields['initial_srvs'] = min(int(fields['initial_srvs']), serviceType.maxDeployed)
-                    fields['cache_l1_srvs'] = min(int(fields['cache_l1_srvs']), serviceType.maxDeployed)
+                    fields['max_srvs'] = min(
+                        (int(fields['max_srvs']), serviceType.maxDeployed)
+                    )
+                    fields['initial_srvs'] = min(
+                        int(fields['initial_srvs']), serviceType.maxDeployed
+                    )
+                    fields['cache_l1_srvs'] = min(
+                        int(fields['cache_l1_srvs']), serviceType.maxDeployed
+                    )
 
                 if serviceType.usesCache is False:
-                    for k in ('initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'):
+                    for k in (
+                        'initial_srvs',
+                        'cache_l1_srvs',
+                        'cache_l2_srvs',
+                        'max_srvs',
+                    ):
                         fields[k] = 0
-                
+
                 if serviceType.usesCache_L2 is False:
                     fields['cache_l2_srvs'] = 0
 
@@ -405,7 +563,13 @@ class ServicesPools(ModelHandler):
                 raise RequestError(ugettext('This service requires an OS Manager'))
 
             # If max < initial or cache_1 or cache_l2
-            fields['max_srvs'] = max((int(fields['initial_srvs']), int(fields['cache_l1_srvs']), int(fields['max_srvs'])))
+            fields['max_srvs'] = max(
+                (
+                    int(fields['initial_srvs']),
+                    int(fields['cache_l1_srvs']),
+                    int(fields['max_srvs']),
+                )
+            )
 
             # *** ACCOUNT ***
             accountId = fields['account_id']
@@ -414,7 +578,9 @@ class ServicesPools(ModelHandler):
 
             if accountId != '-1':
                 try:
-                    fields['account_id'] = Account.objects.get(uuid=processUuid(accountId)).id
+                    fields['account_id'] = Account.objects.get(
+                        uuid=processUuid(accountId)
+                    ).id
                 except Exception:
                     logger.exception('Getting account ID')
 
@@ -487,7 +653,11 @@ class ServicesPools(ModelHandler):
         validActions: typing.Tuple[typing.Dict, ...] = ()
         itemInfo = item.service.getType()
         if itemInfo.usesCache is True:
-            validActions += (CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_MAX)
+            validActions += (
+                CALENDAR_ACTION_INITIAL,
+                CALENDAR_ACTION_CACHE_L1,
+                CALENDAR_ACTION_MAX,
+            )
             if itemInfo.usesCache_L2 is True:
                 validActions += (CALENDAR_ACTION_CACHE_L2,)
 
@@ -495,21 +665,33 @@ class ServicesPools(ModelHandler):
             validActions += (CALENDAR_ACTION_PUBLISH,)
 
         # Transport & groups actions
-        validActions += (CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT, CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP)
+        validActions += (
+            CALENDAR_ACTION_ADD_TRANSPORT,
+            CALENDAR_ACTION_DEL_TRANSPORT,
+            CALENDAR_ACTION_ADD_GROUP,
+            CALENDAR_ACTION_DEL_GROUP,
+        )
 
         # Advanced actions
-        validActions += (CALENDAR_ACTION_IGNORE_UNUSED, CALENDAR_ACTION_REMOVE_USERSERVICES)
+        validActions += (
+            CALENDAR_ACTION_IGNORE_UNUSED,
+            CALENDAR_ACTION_REMOVE_USERSERVICES,
+        )
         return validActions
 
     def listAssignables(self, item: ServicePool) -> typing.Any:
         service = item.service.getInstance()
         return [gui.choiceItem(i[0], i[1]) for i in service.listAssignables()]
 
-    def createFromAssignable(self, item: ServicePool) ->typing.Any:
+    def createFromAssignable(self, item: ServicePool) -> typing.Any:
         if 'user_id' not in self._params or 'assignable_id' not in self._params:
             return self.invalidRequestException('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
-        userServiceManager().createFromAssignable(item, User.objects.get(uuid=processUuid(self._params['user_id'])), self._params['assignable_id'])
+        userServiceManager().createFromAssignable(
+            item,
+            User.objects.get(uuid=processUuid(self._params['user_id'])),
+            self._params['assignable_id'],
+        )
 
         return True

@@ -35,7 +35,8 @@ import logging
 # Utility imports
 from .util import getSqlDatetime, getSqlDatetimeAsUnix, NEVER, NEVER_UNIX
 
-# Imports all models so they are available for migrations
+# Imports all models so they are available for migrations, etc..
+from .managed_object_model import ManagedObjectModel
 
 # Permissions
 from .permissions import Permissions
@@ -104,7 +105,7 @@ from .account_usage import AccountUsage
 from .proxy import Proxy
 
 # Tagging
-from .tag import Tag
+from .tag import Tag, TaggingMixin
 
 # Utility
 from .dbfile import DBFile

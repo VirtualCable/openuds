@@ -138,7 +138,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
         if chkDateTime is None:
-            chkDateTime = typing.cast('datetime.datetime', getSqlDatetime())
+            chkDateTime = getSqlDatetime()
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime

@@ -129,7 +129,7 @@ class Cache:
         now = getSqlDatetime()
         try:
             DBCache.objects.create(
-                owner=self._owner, key=key, value=value, created=now, validity=validity
+                owner=self._owner, key=key, value=strValue, created=now, validity=validity
             )  # @UndefinedVariable
         except Exception:
             try:

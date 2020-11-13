@@ -55,6 +55,10 @@ from uds.core.auths import Authenticator as AuthenticatorInstance
 
 from uds.models import User, Authenticator
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from uds.core.util.request import ExtendedHttpRequest
+
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -110,11 +114,11 @@ def webLoginRequired(admin: typing.Union[bool, str] = False) -> typing.Callable[
     if admin == 'admin', needs admin
     """
     def decorator(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-        def _wrapped_view(request: HttpRequest, *args, **kwargs) -> RT:
+        def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
             """
             Wrapped function for decorator
             """
-            if request.user is None:
+            if not request.user:
                 # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
                 # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
                 #     url = url.replace('http://', 'https://')

@@ -141,7 +141,7 @@ class CalendarChecker:
         memCache = caches['memory']
 
         # First, try to get data from cache if it is valid
-        cacheKey = str(hash(self.calendar.modified)) + str(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
+        cacheKey = str(self.calendar.modified.toordinal()) + str(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
         # First, check "local memory cache", and if not found, from DB cache
         cached = memCache.get(cacheKey) or CalendarChecker.cache.get(cacheKey, None)
 

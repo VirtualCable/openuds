@@ -52,6 +52,9 @@ class ExtendedHttpRequest(HttpRequest):
     os: DictAsObj
     user: typing.Optional[User]  # type: ignore   # HttpRequests users "user" for it own, but we redefine it because base is not used...
 
+class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
+    user: User
+
 logger = logging.getLogger(__name__)
 
 _requests: typing.Dict[int, typing.Tuple[weakref.ref, datetime.datetime]] = {}

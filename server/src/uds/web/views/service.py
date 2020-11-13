@@ -51,14 +51,16 @@ from uds.web.util import services
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
 
 @webLoginRequired(admin=False)
-def transportOwnLink(request: 'HttpRequest', idService: str, idTransport: str):
+def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str):
     response: typing.MutableMapping[str, typing.Any] = {}
+
+    # For type checkers to "be happy"
     try:
         res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport)
         ip, userService, iads, trans, itrans = res  # pylint: disable=unused-variable
@@ -87,7 +89,7 @@ def transportOwnLink(request: 'HttpRequest', idService: str, idTransport: str):
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def transportIcon(request: 'HttpRequest', idTrans: str) -> HttpResponse:
+def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
     try:
         transport: Transport = Transport.objects.get(uuid=processUuid(idTrans))
         return HttpResponse(transport.getInstance().icon(), content_type='image/png')
@@ -96,7 +98,7 @@ def transportIcon(request: 'HttpRequest', idTrans: str) -> HttpResponse:
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def serviceImage(request: 'HttpRequest', idImage: str) -> HttpResponse:
+def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
     try:
         icon = Image.objects.get(uuid=processUuid(idImage))
         return icon.imageResponse()
@@ -112,7 +114,7 @@ def serviceImage(request: 'HttpRequest', idImage: str) -> HttpResponse:
 
 @webLoginRequired(admin=False)
 @never_cache
-def userServiceEnabler(request: 'HttpRequest', idService: str, idTransport: str) -> HttpResponse:
+def userServiceEnabler(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> HttpResponse:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''
@@ -166,12 +168,12 @@ def userServiceEnabler(request: 'HttpRequest', idService: str, idTransport: str)
         content_type='application/json'
     )
 
-def closer(request: 'HttpRequest') -> HttpResponse:
+def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
     return HttpResponse('<html><body onload="window.close()"></body></html>')
 
 @webLoginRequired(admin=False)
 @never_cache
-def action(request: 'HttpRequest', idService: str, actionString: str) -> HttpResponse:
+def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str) -> HttpResponse:
     userService = userServiceManager().locateUserService(request.user, idService, create=False)
     response: typing.Any = None
     rebuild: bool = False

@@ -45,7 +45,8 @@ from uds.core.ui import gui as uiGui
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
-from uds.models import Tag
+
+from uds.models import Tag, TaggingMixin, ManagedObjectModel
 
 from .handlers import (
     Handler,
@@ -54,12 +55,11 @@ from .handlers import (
     RequestError,
     ResponseError,
     AccessDenied,
-    NotSupportedError
+    NotSupportedError,
 )
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models.managed_object_model import ManagedObjectModel
     from uds.models import User
     from uds.core import Module
 
@@ -80,12 +80,15 @@ class SaveException(HandlerError):
     Exception thrown if couldn't save
     """
 
+
 class BaseModelHandler(Handler):
     """
     Base Handler for Master & Detail Handlers
     """
 
-    def addField(self, gui: typing.List[typing.Any], field: typing.Dict[str, typing.Any]) -> typing.List[typing.Any]:
+    def addField(
+        self, gui: typing.List[typing.Any], field: typing.Dict[str, typing.Any]
+    ) -> typing.List[typing.Any]:
         """
         Add a field to a "gui" description.
         This method checks that every required field element is in there.
@@ -108,15 +111,17 @@ class BaseModelHandler(Handler):
                 'rdonly': field.get('rdonly', False),
                 'type': field.get('type', uiGui.InputField.TEXT_TYPE),
                 'order': field.get('order', 0),
-                'values': field.get('values', [])
-            }
+                'values': field.get('values', []),
+            },
         }
         if 'tab' in field:
             v['gui']['tab'] = field['tab']
         gui.append(v)
         return gui
 
-    def addDefaultFields(self, gui: typing.List[typing.Any], flds: typing.List[str]) -> typing.List[typing.Any]:
+    def addDefaultFields(
+        self, gui: typing.List[typing.Any], flds: typing.List[str]
+    ) -> typing.List[typing.Any]:
         """
         Adds default fields (based in a list) to a "gui" description
         :param gui: Gui list where the "default" fielsds will be added
@@ -124,66 +129,88 @@ class BaseModelHandler(Handler):
                     'priority' and 'small_name', 'short_name', 'tags'
         """
         if 'tags' in flds:
-            self.addField(gui, {
-                'name': 'tags',
-                'label': _('Tags'),
-                'type': 'taglist',
-                'tooltip': _('Tags for this element'),
-                'order': 0 - 105,
-            })
+            self.addField(
+                gui,
+                {
+                    'name': 'tags',
+                    'label': _('Tags'),
+                    'type': 'taglist',
+                    'tooltip': _('Tags for this element'),
+                    'order': 0 - 105,
+                },
+            )
         if 'name' in flds:
-            self.addField(gui, {
-                'name': 'name',
-                'type': 'text',
-                'required': True,
-                'label': _('Name'),
-                'length': 128,
-                'tooltip': _('Name of this element'),
-                'order': 0 - 100,
-            })
+            self.addField(
+                gui,
+                {
+                    'name': 'name',
+                    'type': 'text',
+                    'required': True,
+                    'label': _('Name'),
+                    'length': 128,
+                    'tooltip': _('Name of this element'),
+                    'order': 0 - 100,
+                },
+            )
         if 'short_name' in flds:
-            self.addField(gui, {
-                'name': 'short_name',
-                'type': 'text',
-                'label': _('Short name'),
-                'tooltip': _('Short name for user service visualization'),
-                'required': False,
-                'length': 32,
-                'order': 0 - 95,
-            })
+            self.addField(
+                gui,
+                {
+                    'name': 'short_name',
+                    'type': 'text',
+                    'label': _('Short name'),
+                    'tooltip': _('Short name for user service visualization'),
+                    'required': False,
+                    'length': 32,
+                    'order': 0 - 95,
+                },
+            )
         if 'comments' in flds:
-            self.addField(gui, {
-                'name': 'comments',
-                'label': _('Comments'),
-                'tooltip': _('Comments for this element'),
-                'length': 256,
-                'order': 0 - 90,
-            })
+            self.addField(
+                gui,
+                {
+                    'name': 'comments',
+                    'label': _('Comments'),
+                    'tooltip': _('Comments for this element'),
+                    'length': 256,
+                    'order': 0 - 90,
+                },
+            )
         if 'priority' in flds:
-            self.addField(gui, {
-                'name': 'priority',
-                'type': 'numeric',
-                'label': _('Priority'),
-                'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
-                'required': True,
-                'value': 1,
-                'length': 4,
-                'order': 0 - 85,
-            })
+            self.addField(
+                gui,
+                {
+                    'name': 'priority',
+                    'type': 'numeric',
+                    'label': _('Priority'),
+                    'tooltip': _(
+                        'Selects the priority of this element (lower number means higher priority)'
+                    ),
+                    'required': True,
+                    'value': 1,
+                    'length': 4,
+                    'order': 0 - 85,
+                },
+            )
         if 'small_name' in flds:
-            self.addField(gui, {
-                'name': 'small_name',
-                'type': 'text',
-                'label': _('Label'),
-                'tooltip': _('Label for this element'),
-                'required': True,
-                'length': 128,
-                'order': 0 - 80,
-            })
+            self.addField(
+                gui,
+                {
+                    'name': 'small_name',
+                    'type': 'text',
+                    'label': _('Label'),
+                    'tooltip': _('Label for this element'),
+                    'required': True,
+                    'length': 128,
+                    'order': 0 - 80,
+                },
+            )
 
         return gui
 
-    def ensureAccess(self, obj: models.Model, permission: int, root: bool = False) -> int:
+    def ensureAccess(
+        self, obj: models.Model, permission: int, root: bool = False
+    ) -> int:
         perm = permissions.getEffectivePermission(self._user, obj, root)
         if perm < permission:
             raise self.accessDenied()
@@ -201,23 +228,25 @@ class BaseModelHandler(Handler):
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
         res = self.typeInfo(type_)
-        res.update({
-            'name': _(type_.name()),
-            'type': type_.type(),
-            'description': _(type_.description()),
-            'icon': type_.icon64().replace('\n', '')
-        })
+        res.update(
+            {
+                'name': _(type_.name()),
+                'type': type_.type(),
+                'description': _(type_.description()),
+                'icon': type_.icon64().replace('\n', ''),
+            }
+        )
         if hasattr(type_, 'group'):
             res['group'] = _(type_.group)  # Add group info is it is contained
         return res
 
     def processTableFields(
-            self,
-            title: str,
-            fields: typing.List[typing.Any],
-            row_style: typing.Dict[str, typing.Any],
-            subtitle: typing.Optional[str] = None
-        ) -> typing.Dict[str, typing.Any]:
+        self,
+        title: str,
+        fields: typing.List[typing.Any],
+        row_style: typing.MutableMapping[str, typing.Any],
+        subtitle: typing.Optional[str] = None,
+    ) -> typing.MutableMapping[str, typing.Any]:
         """
         Returns a dict containing the table fields description
         """
@@ -225,10 +254,12 @@ class BaseModelHandler(Handler):
             'title': title,
             'fields': fields,
             'row-style': row_style,
-            'subtitle': subtitle or ''
+            'subtitle': subtitle or '',
         }
 
-    def readFieldsFromParams(self, fldList: typing.List[str]) -> typing.Dict[str, typing.Any]:
+    def readFieldsFromParams(
+        self, fldList: typing.List[str]
+    ) -> typing.Dict[str, typing.Any]:
         """
         Reads the indicated fields from the parameters received, and if
         :param fldList: List of required fields
@@ -244,26 +275,32 @@ class BaseModelHandler(Handler):
 
         return args
 
-    def fillIntanceFields(self, item: 'ManagedObjectModel', res: typing.Dict[str, typing.Any]) -> typing.Dict[str, typing.Any]:
+    def fillIntanceFields(
+        self, item: 'models.Model', res: typing.Dict[str, typing.Any]
+    ) -> typing.Dict[str, typing.Any]:
         """
         For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
         For non managed objects, it does nothing
         :param item: Item to extract fields
         :param res: Dictionary to "extend" with instance key-values pairs
         """
-        if hasattr(item, 'getInstance'):
+        if isinstance(item, ManagedObjectModel):
             i = item.getInstance()
             i.initGui()  # Defaults & stuff
             value: typing.Any
             for key, value in i.valuesDict().items():
                 if isinstance(value, str):
-                    value = {"true": True, "false": False}.get(value, value)  # Translate "true" & "false" to True & False (booleans)
+                    value = {"true": True, "false": False}.get(
+                        value, value
+                    )  # Translate "true" & "false" to True & False (booleans)
                 logger.debug('%s = %s', key, value)
                 res[key] = value
         return res
 
     # Exceptions
-    def invalidRequestException(self, message: typing.Optional[str] = None) -> HandlerError:
+    def invalidRequestException(
+        self, message: typing.Optional[str] = None
+    ) -> HandlerError:
         """
         Raises an invalid request error with a default translated string
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
@@ -271,7 +308,9 @@ class BaseModelHandler(Handler):
         message = message or _('Invalid Request')
         return RequestError('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def invalidResponseException(self, message: typing.Optional[str] = None) -> HandlerError:
+    def invalidResponseException(
+        self, message: typing.Optional[str] = None
+    ) -> HandlerError:
         message = 'Invalid response' if message is None else message
         return ResponseError(message)
 
@@ -279,9 +318,13 @@ class BaseModelHandler(Handler):
         """
         Raises a NotFound exception with translated "Method not found" string to current locale
         """
-        return RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
+        return RequestError(
+            _('Method not found in {}: {}').format(self.__class__, self._args)
+        )
 
-    def invalidItemException(self, message: typing.Optional[str] = None) -> HandlerError:
+    def invalidItemException(
+        self, message: typing.Optional[str] = None
+    ) -> HandlerError:
         """
         Raises a NotFound exception, with location info
         """
@@ -307,7 +350,9 @@ class BaseModelHandler(Handler):
         """
         Invokes a test for an item
         """
-        logger.debug('Called base test for %s --> %s', self.__class__.__name__, self._params)
+        logger.debug(
+            'Called base test for %s --> %s', self.__class__.__name__, self._params
+        )
         raise self.invalidMethodException()
 
 
@@ -335,6 +380,7 @@ class DetailHandler(BaseModelHandler):
 
     Also accepts GET methods for "custom" methods
     """
+
     custom_methods: typing.ClassVar[typing.List[str]] = []
     _parent: typing.Optional['ModelHandler']
     _path: str
@@ -344,13 +390,13 @@ class DetailHandler(BaseModelHandler):
     _user: 'User'
 
     def __init__(
-            self,
-            parentHandler: 'ModelHandler',
-            path: str,
-            params: typing.Any,
-            *args: str,
-            **kwargs: typing.Any
-        ):  # pylint: disable=super-init-not-called
+        self,
+        parentHandler: 'ModelHandler',
+        path: str,
+        params: typing.Any,
+        *args: str,
+        **kwargs: typing.Any
+    ):  # pylint: disable=super-init-not-called
         """
         Detail Handlers in fact "disabled" handler most initialization, that is no needed because
         parent modelhandler has already done it (so we must access through parent handler)
@@ -363,7 +409,9 @@ class DetailHandler(BaseModelHandler):
         self._kwargs = kwargs
         self._user = kwargs.get('user', None)
 
-    def __checkCustom(self, check: str, parent: models.Model, arg: typing.Any = None) -> typing.Any:
+    def __checkCustom(
+        self, check: str, parent: models.Model, arg: typing.Any = None
+    ) -> typing.Any:
         """
         checks curron methods
         :param check: Method to check
@@ -380,7 +428,9 @@ class DetailHandler(BaseModelHandler):
 
         return None
 
-    def get(self) -> typing.Any:  # pylint: disable=too-many-branches,too-many-return-statements
+    def get(
+        self,
+    ) -> typing.Any:  # pylint: disable=too-many-branches,too-many-return-statements
         """
         Processes GET method for a detail Handler
         """
@@ -409,7 +459,11 @@ class DetailHandler(BaseModelHandler):
                 logger.debug('Types: %s', types_)
                 return types_
             if self._args[0] == TABLEINFO:
-                return self.processTableFields(self.getTitle(parent), self.getFields(parent), self.getRowStyle(parent))
+                return self.processTableFields(
+                    self.getTitle(parent),
+                    self.getFields(parent),
+                    self.getRowStyle(parent),
+                )
 
             # try to get id
             return self.getItems(parent, processUuid(self._args[0]))
@@ -449,7 +503,9 @@ class DetailHandler(BaseModelHandler):
             raise self.invalidRequestException()
 
         logger.debug('Invoking proper saving detail item %s', item)
-        return self.saveItem(parent, item)
+        self.saveItem(parent, item)
+        # Empty response
+        return ''
 
     def post(self) -> typing.Any:
         """
@@ -494,7 +550,9 @@ class DetailHandler(BaseModelHandler):
         # if item is None:  # Returns ALL detail items
         #     return []
         # return {}  # Returns one item
-        raise NotImplementedError('Must provide an getItems method for {} class'.format(self.__class__))
+        raise NotImplementedError(
+            'Must provide an getItems method for {} class'.format(self.__class__)
+        )
 
     # Default save
     def saveItem(self, parent: models.Model, item: typing.Optional[str]) -> None:
@@ -559,7 +617,9 @@ class DetailHandler(BaseModelHandler):
         # raise RequestError('Gui not provided for this type of object')
         return []
 
-    def getTypes(self, parent: models.Model, forType: typing.Optional[str]) -> typing.Iterable[typing.Dict[str, typing.Any]]:
+    def getTypes(
+        self, parent: models.Model, forType: typing.Optional[str]
+    ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
@@ -594,12 +654,13 @@ class ModelHandler(BaseModelHandler):
     Note: Instance variables are the variables declared and serialized by modules.
           The only detail that has types within is "Service", child of "Provider"
     """
+
     # Authentication related
     authenticated = True
     needs_staff = True
 
     # Which model does this manage, must be a django model ofc
-    model: typing.ClassVar[models.Model]
+    model: typing.ClassVar[typing.Type[models.Model]]
 
     # By default, filter is empty
     fltr: typing.Optional[str] = None
@@ -607,9 +668,13 @@ class ModelHandler(BaseModelHandler):
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id (normal behavior is it needs it)
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
-    custom_methods: typing.ClassVar[typing.List[typing.Tuple[str, bool]]] = []  # If this model respond to "custom" methods, we will declare them here
+    custom_methods: typing.ClassVar[
+        typing.List[typing.Tuple[str, bool]]
+    ] = []  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
-    detail: typing.ClassVar[typing.Optional[typing.Dict[str, typing.Type[DetailHandler]]]] = None  # Dictionary containing detail routing
+    detail: typing.ClassVar[
+        typing.Optional[typing.Dict[str, typing.Type[DetailHandler]]]
+    ] = None  # Dictionary containing detail routing
     # Put needed fields
     save_fields: typing.ClassVar[typing.List[str]] = []
     # Put removable fields before updating
@@ -704,7 +769,7 @@ class ModelHandler(BaseModelHandler):
             del self._params['filter']  # Remove parameter
             logger.debug('Found a filter expression (%s)', self.fltr)
 
-    def doFilter(self, data: typing.List[typing.Dict[str, typing.Any]]) -> typing.List[typing.Dict[str, typing.Any]]:
+    def doFilter(self, data: typing.Any) -> typing.Any:
         # Right now, filtering only supports a single filter, in a future
         # we may improve it
         if self.fltr is None:
@@ -727,7 +792,7 @@ class ModelHandler(BaseModelHandler):
 
             r = re.compile(s + fnmatch.translate(pattern) + e, re.RegexFlag.IGNORECASE)
 
-            def fltr_function(item: typing.Dict[str, typing.Any]):
+            def fltr_function(item: typing.MutableMapping[str, typing.Any]):
                 try:
                     if fld not in item or r.match(item[fld]) is None:
                         return False
@@ -746,8 +811,10 @@ class ModelHandler(BaseModelHandler):
 
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
-    def processDetail(self):
-        logger.debug('Processing detail %s for with params %s', self._path, self._params)
+    def processDetail(self) -> typing.Any:
+        logger.debug(
+            'Processing detail %s for with params %s', self._path, self._params
+        )
         try:
             item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]
             # If we do not have access to parent to, at least, read...
@@ -757,14 +824,28 @@ class ModelHandler(BaseModelHandler):
             else:
                 requiredPermission = permissions.PERMISSION_READ
 
-            if permissions.checkPermissions(self._user, item, requiredPermission) is False:
-                logger.debug('Permission for user %s does not comply with %s', self._user, requiredPermission)
+            if (
+                permissions.checkPermissions(self._user, item, requiredPermission)
+                is False
+            ):
+                logger.debug(
+                    'Permission for user %s does not comply with %s',
+                    self._user,
+                    requiredPermission,
+                )
                 raise self.accessDenied()
 
-            detailCls = self.detail[self._args[1]]  # pylint: disable=unsubscriptable-object
+            if not self.detail:
+                raise self.invalidRequestException()
+
+            detailCls = self.detail[
+                self._args[1]
+            ]  # pylint: disable=unsubscriptable-object
             args = list(self._args[2:])
             path = self._path + '/'.join(args[:2])
-            detail = detailCls(self, path, self._params, *args, parent=item, user=self._user)
+            detail = detailCls(
+                self, path, self._params, *args, parent=item, user=self._user
+            )
             method = getattr(detail, self._operation)
 
             return method()
@@ -775,7 +856,9 @@ class ModelHandler(BaseModelHandler):
 
         raise Exception('Invalid code executed on processDetail')
 
-    def getItems(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
+    def getItems(
+        self, *args, **kwargs
+    ) -> typing.Generator[typing.MutableMapping[str, typing.Any], None, None]:
         if 'overview' in kwargs:
             overview = kwargs['overview']
             del kwargs['overview']
@@ -795,11 +878,20 @@ class ModelHandler(BaseModelHandler):
             del kwargs['query']
         else:
             logger.debug('Args: %s, kwargs: %s', args, kwargs)
-            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
+            query = self.model.objects.filter(*args, **kwargs).prefetch_related(
+                *prefetch
+            )
 
         for item in query:
             try:
-                if permissions.checkPermissions(typing.cast('User', self._user), item, permissions.PERMISSION_READ) is False:
+                if (
+                    permissions.checkPermissions(
+                        typing.cast('User', self._user),
+                        item,
+                        permissions.PERMISSION_READ,
+                    )
+                    is False
+                ):
                     continue
                 if kwargs.get('overview', True):
                     yield self.item_as_dict_overview(item)
@@ -819,7 +911,7 @@ class ModelHandler(BaseModelHandler):
         self.extractFilter()
         return self.doFilter(self.doGet())
 
-    def doGet(self):  # pylint: disable=too-many-statements,too-many-branches,too-many-return-statements
+    def doGet(self) -> typing.Any:
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
         nArgs = len(self._args)
 
@@ -835,7 +927,13 @@ class ModelHandler(BaseModelHandler):
                         operation = getattr(self, self._args[1])
                         item = self.model.objects.get(uuid=self._args[0].lower())
                     except Exception as e:
-                        logger.error('Invalid custom method exception %s/%s/%s: %s', self.__class__.__name__, self._args, self._params, e)
+                        logger.error(
+                            'Invalid custom method exception %s/%s/%s: %s',
+                            self.__class__.__name__,
+                            self._args,
+                            self._params,
+                            e,
+                        )
                         raise self.invalidMethodException()
 
                     return operation(item)
@@ -855,9 +953,14 @@ class ModelHandler(BaseModelHandler):
             if self._args[0] == TYPES:
                 return list(self.getTypes())
             if self._args[0] == TABLEINFO:
-                return self.processTableFields(self.table_title, self.table_fields, self.table_row_style, self.table_subtitle)
+                return self.processTableFields(
+                    self.table_title,
+                    self.table_fields,
+                    self.table_row_style,
+                    self.table_subtitle,
+                )
             if self._args[0] == GUI:
-                return self.getGui(None)
+                return self.getGui('')
 
             # get item ID
             try:
@@ -890,7 +993,9 @@ class ModelHandler(BaseModelHandler):
             if nArgs != 2:
                 raise self.invalidRequestException()
             try:
-                item = self.model.objects.get(uuid=self._args[0].lower())  # DB maybe case sensitive??, anyway, uuids are stored in lowercase
+                item = self.model.objects.get(
+                    uuid=self._args[0].lower()
+                )  # DB maybe case sensitive??, anyway, uuids are stored in lowercase
                 return self.getLogs(item)
             except Exception:
                 raise self.invalidItemException()
@@ -901,8 +1006,7 @@ class ModelHandler(BaseModelHandler):
 
         raise self.invalidRequestException()  # Will not return
 
-
-    def post(self):
+    def post(self) -> typing.Any:
         """
         Processes a POST request
         """
@@ -914,7 +1018,7 @@ class ModelHandler(BaseModelHandler):
 
         raise self.invalidMethodException()  # Will not return
 
-    def put(self):  # pylint: disable=too-many-branches, too-many-statements
+    def put(self) -> typing.Any:
         """
         Processes a PUT request
         """
@@ -926,7 +1030,10 @@ class ModelHandler(BaseModelHandler):
         if len(self._args) > 1:  # Detail?
             return self.processDetail()
 
-        self.ensureAccess(self.model(), permissions.PERMISSION_ALL, root=True)  # Must have write permissions to create, modify, etc..
+        # Here, self.model() indicates an "django model object with default params"
+        self.ensureAccess(
+            self.model(), permissions.PERMISSION_ALL, root=True
+        )  # Must have write permissions to create, modify, etc..
 
         try:
             # Extract fields
@@ -954,11 +1061,16 @@ class ModelHandler(BaseModelHandler):
                 item.__dict__.update(args)  # Update fields from args
 
             # Now if tags, update them
-            if tags:
-                logger.debug('Updating tags: %s', tags)
-                item.tags.set([Tag.objects.get_or_create(tag=val)[0] for val in tags if val != ''])
-            elif isinstance(tags, list):  # Present, but list is empty (will be proccesed on "if" else)
-                item.tags.clear()
+            if isinstance(item, TaggingMixin):
+                if tags:
+                    logger.debug('Updating tags: %s', tags)
+                    item.tags.set(
+                        [Tag.objects.get_or_create(tag=val)[0] for val in tags if val != '']
+                    )
+                elif isinstance(
+                    tags, list
+                ):  # Present, but list is empty (will be proccesed on "if" else)
+                    item.tags.clear()
 
         except self.model.DoesNotExist:
             raise NotFound('Item not found')
@@ -973,14 +1085,19 @@ class ModelHandler(BaseModelHandler):
             raise RequestError('incorrect invocation to PUT')
 
         if not deleteOnError:
-            self.checkSave(item)  # Will raise an exception if item can't be saved (only for modify operations..)
+            self.checkSave(
+                item
+            )  # Will raise an exception if item can't be saved (only for modify operations..)
 
         # Store associated object if requested (data_type)
         try:
-            data_type: typing.Optional[str] = self._params.get('data_type', self._params.get('type'))
-            if data_type:
-                item.data_type = data_type
-                item.data = item.getInstance(self._params).serialize()
+            if isinstance(item, ManagedObjectModel):
+                data_type: typing.Optional[str] = self._params.get(
+                    'data_type', self._params.get('type')
+                )
+                if data_type:
+                    item.data_type = data_type
+                    item.data = item.getInstance(self._params).serialize()
 
             item.save()
 
@@ -995,7 +1112,7 @@ class ModelHandler(BaseModelHandler):
 
         return res
 
-    def delete(self) -> str:
+    def delete(self) -> typing.Any:
         """
         Processes a DELETE request
         """
@@ -1006,7 +1123,9 @@ class ModelHandler(BaseModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensureAccess(self.model(), permissions.PERMISSION_ALL, root=True)  # Must have write permissions to delete
+        self.ensureAccess(
+            self.model(), permissions.PERMISSION_ALL, root=True
+        )  # Must have write permissions to delete
 
         try:
             item = self.model.objects.get(uuid=self._args[0].lower())

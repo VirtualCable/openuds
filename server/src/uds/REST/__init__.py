@@ -56,6 +56,10 @@ from .handlers import (
 
 from . import processors
 
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from  uds.core.util.request import ExtendedHttpRequest
+
 logger = logging.getLogger(__name__)
 
 __all__ = ['Handler', 'Dispatcher']
@@ -72,7 +76,7 @@ class Dispatcher(View):
 
     # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
     @method_decorator(csrf_exempt)
-    def dispatch(self, request: http.HttpRequest, *args, **kwargs):
+    def dispatch(self, request: 'ExtendedHttpRequest', *args, **kwargs):
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
