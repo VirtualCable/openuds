@@ -31,6 +31,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import codecs
 import random
 import string
 import logging
@@ -41,7 +42,6 @@ from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core import osmanagers
 from uds.core.util import log
-from uds.core.util import encoders
 
 from .windows import WindowsOsManager
 
@@ -120,7 +120,7 @@ class WinRandomPassManager(WindowsOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        base = typing.cast(str, encoders.encode(super().marshal(), 'hex', asText=True))
+        base = codecs.encode(super().marshal(), 'hex').decode()
         return '\t'.join(['v1', self._userAccount, cryptoManager().encrypt(self._password), base]).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
@@ -128,7 +128,7 @@ class WinRandomPassManager(WindowsOsManager):
         if values[0] == 'v1':
             self._userAccount = values[1]
             self._password = cryptoManager().decrypt(values[2])
-            super().unmarshal(typing.cast(bytes, encoders.decode(values[3], 'hex')))
+            super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
     def valuesDict(self) -> gui.ValuesDictType:
         dic = super().valuesDict()

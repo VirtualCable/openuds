@@ -393,7 +393,7 @@ class UserServiceManager:
         checks if we can do a "remove" from a deployed service
         serviceIsntance is just a helper, so if we already have unserialized deployedService
         """
-        removing = self.getServicesInStateForProvider(servicePool.service.provider_id, State.REMOVING)
+        removing = self.getServicesInStateForProvider(servicePool.service.provider.id, State.REMOVING)
         serviceInstance = servicePool.service.getInstance()
         if removing >= serviceInstance.parent().getMaxRemovingServices() and serviceInstance.parent().getIgnoreLimits() is False:
             return False
@@ -403,7 +403,7 @@ class UserServiceManager:
         """
         Checks if we can start a new service
         """
-        preparing = self.getServicesInStateForProvider(servicePool.service.provider_id, State.PREPARING)
+        preparing = self.getServicesInStateForProvider(servicePool.service.provider.id, State.PREPARING)
         serviceInstance = servicePool.service.getInstance()
         if preparing >= serviceInstance.parent().getMaxPreparingServices() and serviceInstance.parent().getIgnoreLimits() is False:
             return False
@@ -539,7 +539,7 @@ class UserServiceManager:
     def getService( # pylint: disable=too-many-locals, too-many-branches, too-many-statements
             self,
             user: User,
-            os: typing.Dict,
+            os: typing.MutableMapping,
             srcIp: str,
             idService: str,
             idTransport: str,
@@ -643,7 +643,7 @@ class UserServiceManager:
             self,
             user: User,
             srcIp: str,
-            os: typing.Dict,
+            os: typing.MutableMapping,
             idMetaPool: str,
             clientHostName: typing.Optional[str] = None
         ) -> typing.Tuple[typing.Optional[str], UserService, typing.Optional['services.UserDeployment'], Transport, typing.Optional[transports.Transport]]:
@@ -660,9 +660,9 @@ class UserServiceManager:
         if meta.policy == MetaPool.PRIORITY_POOL:
             sortPools = [(p.priority, p.pool) for p in meta.members.all()]
         elif meta.policy == MetaPool.MOST_AVAILABLE_BY_NUMBER:
-            sortPools = [(p.usage(), p) for p in meta.pools.all()]
+            sortPools = [(p.pool.usage(), p.pool) for p in meta.members.all()]
         else:
-            sortPools = [(random.randint(0, 10000), p) for p in meta.pools.all()]  # Just shuffle them
+            sortPools = [(random.randint(0, 10000), p.pool) for p in meta.members.all()]  # Just shuffle them
 
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...

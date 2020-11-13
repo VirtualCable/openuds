@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 from django.db import migrations
 from uds.core.ui import gui
-from uds.core.util import encoders
 
 # Disabled, not needed on 3.0 and forward migrations... 
 # (can be squashed, this transforms data, that is nonexistant on 3.0 new install or recent migrations)

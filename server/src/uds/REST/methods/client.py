@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,11 +25,11 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import json
+import codecs
 import logging
 import typing
 
@@ -46,7 +45,6 @@ from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION
-from uds.core.util import encoders
 
 
 logger = logging.getLogger(__name__)
@@ -147,7 +145,8 @@ class Client(Handler):
             password = cryptoManager().symDecrpyt(data['password'], scrambler)
 
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
-
+            if not ip:
+                raise ServiceNotReadyError
             transportScript, signature, params = transportInstance.getEncodedTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 
             logger.debug('Signature: %s', signature)
@@ -156,7 +155,7 @@ class Client(Handler):
             return Client.result(result={
                 'script': transportScript,
                 'signature': signature,  # It is already on base64
-                'params': encoders.encode(encoders.encode(json.dumps(params), 'bz2'), 'base64', asText=True),
+                'params': codecs.encode(codecs.encode(json.dumps(params), 'bz2'), 'base64').decode(),
             })
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable

@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import traceback
+import codecs
 import logging
 import typing
 
@@ -39,7 +40,6 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from uds.core.util import encoders
 from uds.models import ServicePool, Transport, UserService, Authenticator
 
 # Not imported at runtime, just for type checking
@@ -108,7 +108,7 @@ def errorView(request: 'HttpRequest', errorCode: int) -> HttpResponseRedirect:
     if code != 0:
         errStr += ' (code {0:04X})'.format(code)
 
-    errStr = encoders.encodeAsStr(str(errStr), 'base64').replace('\n', '')
+    errStr = codecs.encode(str(errStr), 'base64').decode().replace('\n', '')
 
     logger.debug('Redirection to error view with %s', errStr)
     return HttpResponseRedirect(reverse('page.error', kwargs={'err': errStr}))

@@ -42,7 +42,7 @@ import django.template.defaultfilters as filters
 
 from uds.core import services
 
-class DictAsObj:
+class DictAsObj(dict):
     """
     Returns a mix between a dict and an obj
     Can be accesses as .xxxx or ['xxx']

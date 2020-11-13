@@ -31,8 +31,9 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import pickle
-import logging
 import datetime
+import codecs
+import logging
 import typing
 
 from uds import models
@@ -40,7 +41,6 @@ from uds import models
 from uds.core.util.stats import counters
 from uds.core.util.cache import Cache
 from uds.core.util.state import State
-from uds.core.util import encoders
 from uds.REST import Handler, RequestError, ResponseError
 
 logger = logging.getLogger(__name__)
@@ -53,10 +53,16 @@ SINCE = 365  # Days
 USE_MAX = True
 
 
-def getServicesPoolsCounters(servicePool: typing.Optional[models.ServicePool], counter_type: int) -> typing.List[typing.Dict[str, typing.Any]]:
-    # pylint: disable=no-value-for-parameter
+def getServicesPoolsCounters(
+    servicePool: typing.Optional[models.ServicePool], counter_type: int
+) -> typing.List[typing.Dict[str, typing.Any]]:
     try:
-        cacheKey = (servicePool and servicePool.id or 'all') + str(counter_type) + str(POINTS) + str(SINCE)
+        cacheKey = (
+            (servicePool and str(servicePool.id) or 'all')
+            + str(counter_type)
+            + str(POINTS)
+            + str(SINCE)
+        )
         to = models.getSqlDatetime()
         since: datetime.datetime = to - datetime.timedelta(days=SINCE)
 
@@ -69,14 +75,22 @@ def getServicesPoolsCounters(servicePool: typing.Optional[models.ServicePool], c
                 us = servicePool
                 complete = False
             val = []
-            for x in counters.getCounters(us, counter_type, since=since, to=to, max_intervals=POINTS, use_max=USE_MAX, all=complete):
+            for x in counters.getCounters(
+                us,
+                counter_type,
+                since=since,
+                to=to,
+                max_intervals=POINTS,
+                use_max=USE_MAX,
+                all=complete,
+            ):
                 val.append({'stamp': x[0], 'value': int(x[1])})
             if len(val) > 2:
-                cache.put(cacheKey, encoders.encode(pickle.dumps(val), 'zip'), 600)
+                cache.put(cacheKey, codecs.encode(pickle.dumps(val), 'zip'), 600)
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
-            val = pickle.loads(typing.cast(bytes, encoders.decode(val, 'zip')))
+            val = pickle.loads(codecs.decode(val, 'zip'))
 
         return val
     except:
@@ -91,13 +105,17 @@ class System(Handler):
         logger.debug('args: %s', self._args)
         if len(self._args) == 1:
             if self._args[0] == 'overview':  # System overview
-                users: models.User = models.User.objects.count()
-                groups: models.Group = models.Group.objects.count()
-                services: models.Service = models.Service.objects.count()
-                service_pools: models.ServicePool = models.ServicePool.objects.count()
-                meta_pools: models.MetaPool = models.MetaPool.objects.count()
-                user_services: models.UserService = models.UserService.objects.exclude(state__in=(State.REMOVED, State.ERROR)).count()
-                restrained_services_pools: int = models.ServicePool.getRestrainedsQuerySet().count()
+                users: int = models.User.objects.count()
+                groups: int = models.Group.objects.count()
+                services: int = models.Service.objects.count()
+                service_pools: int = models.ServicePool.objects.count()
+                meta_pools: int = models.MetaPool.objects.count()
+                user_services: int = models.UserService.objects.exclude(
+                    state__in=(State.REMOVED, State.ERROR)
+                ).count()
+                restrained_services_pools: int = (
+                    models.ServicePool.getRestrainedsQuerySet().count()
+                )
                 return {
                     'users': users,
                     'groups': groups,

@@ -345,7 +345,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         return State.FINISHED
 
-    def deployForCache(self, cacheLevel: int):
+    def deployForCache(self, cacheLevel: int) -> str:
         """
         Deploys a user deployment as cache.
 

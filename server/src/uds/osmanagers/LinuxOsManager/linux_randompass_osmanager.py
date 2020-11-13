@@ -32,6 +32,7 @@
 """
 import random
 import string
+import codecs
 import logging
 import typing
 
@@ -39,7 +40,6 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core import osmanagers
 from uds.core.util import log
-from uds.core.util import encoders
 
 from .linux_osmanager import LinuxOsManager
 
@@ -60,6 +60,8 @@ class LinuxRandomPassManager(LinuxOsManager):
     # Inherits base "onLogout"
     onLogout = LinuxOsManager.onLogout
     idle = LinuxOsManager.idle
+
+    _userAccount: str
 
     def __init__(self, environment, values):
         super(LinuxRandomPassManager, self).__init__(environment, values)
@@ -104,13 +106,13 @@ class LinuxRandomPassManager(LinuxOsManager):
         Serializes the os manager data so we can store it in database
         """
         base = LinuxOsManager.marshal(self)
-        return '\t'.join(['v1', self._userAccount, typing.cast(str, encoders.encode(base, 'hex', asText=True))]).encode('utf8')
+        return '\t'.join(['v1', self._userAccount, codecs.encode(base, 'hex').decode()]).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
-        values = data.decode('utf8').split('\t')
-        if values[0] == 'v1':
-            self._userAccount = values[1]
-            LinuxOsManager.unmarshal(self, typing.cast(bytes, encoders.decode(values[2], 'hex')))
+        values = data.split(b'\t')
+        if values[0] == b'v1':
+            self._userAccount = values[1].decode()
+            LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
     def valuesDict(self):
         dic = LinuxOsManager.valuesDict(self)
