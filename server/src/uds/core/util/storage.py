@@ -244,7 +244,7 @@ class Storage:
         if isinstance(attr1, str):
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
         else:
-            query = DBStorage.objects.filter(owner=self._owner, attr1_in=attr1)  # @UndefinedVariable
+            query = DBStorage.objects.filter(owner=self._owner, attr1__in=attr1)  # @UndefinedVariable
 
         for v in query:
             yield typing.cast(bytes, encoders.decode(v.data, 'base64'))
