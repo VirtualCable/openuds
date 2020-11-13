@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import codecs
 import logging
 import typing
 
@@ -38,7 +39,6 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util import os_detector as OsDetector
 from uds.core import Module
 from uds.core.transports import protocols
-from uds.core.util import encoders
 from uds.core.util import connection
 
 # Not imported at runtime, just for type checking
@@ -154,7 +154,7 @@ class Transport(Module):
         """
         Helper method to check if transport provides information about connection
         """
-        return cls.getConnectionInfo != Transport.getConnectionInfo
+        return cls.getConnectionInfo is not Transport.getConnectionInfo
 
     def getConnectionInfo(
             self,
@@ -241,7 +241,8 @@ class Transport(Module):
         """
         script, signature, params = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
         logger.debug('Transport script: %s', script)
-        return typing.cast(str, encoders.encode(encoders.encode(script, 'bz2'), 'base64', asText=True)).replace('\n', ''), signature, params
+        
+        return codecs.encode(codecs.encode(script, 'bz2'), 'base64').decode().replace('\n', ''), signature, params
 
     def getLink(
             self,

@@ -30,16 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import pickle
-import typing
 import base64
 import hashlib
+import codecs
 from collections.abc import MutableMapping
+import typing
+import logging
 
 from django.db import transaction, models
 from uds.models.storage import Storage as DBStorage
-from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
@@ -209,13 +209,13 @@ class Storage:
         key = self.getKey(skey)
         if isinstance(data, str):
             data = data.encode('utf-8')
-        data = encoders.encodeAsStr(data, 'base64')
+        dataStr = codecs.encode(data, 'base64').decode()
         attr1 = attr1 or ''
         try:
-            DBStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)
+            DBStorage.objects.create(owner=self._owner, key=key, data=dataStr, attr1=attr1)
         except Exception:
             with transaction.atomic():
-                DBStorage.objects.filter(key=key).select_for_update().update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
+                DBStorage.objects.filter(key=key).select_for_update().update(owner=self._owner, data=dataStr, attr1=attr1)  # @UndefinedVariable
         # logger.debug('Key saved')
 
     def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:
@@ -232,7 +232,7 @@ class Storage:
             key = self.getKey(skey)
             logger.debug('Accesing to %s %s', skey, key)
             c: DBStorage = DBStorage.objects.get(pk=key)  # @UndefinedVariable
-            val: bytes = typing.cast(bytes, encoders.decode(c.data, 'base64'))
+            val = codecs.decode(c.data.encode(), 'base64')
 
             if fromPickle:
                 return val
@@ -259,7 +259,7 @@ class Storage:
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)
             if forUpdate:
                 query = query.select_for_update()
-            return pickle.loads(typing.cast(bytes, encoders.decode(query[0].data, 'base64')))  # @UndefinedVariable
+            return pickle.loads(codecs.decode(query[0].data.encode(), 'base64'))  # @UndefinedVariable
         except Exception:
             return None
 
@@ -293,7 +293,7 @@ class Storage:
             query = DBStorage.objects.filter(owner=self._owner, attr1_in=attr1)  # @UndefinedVariable
 
         for v in query:
-            yield typing.cast(bytes, encoders.decode(v.data, 'base64'))
+            yield codecs.decode(v.data.encode(), 'base64')
 
     def filter(self, attr1: typing.Optional[str] = None, forUpdate: bool = False) -> typing.Iterable[typing.Tuple[str, bytes, str]]:
         if attr1 is None:
@@ -305,7 +305,7 @@ class Storage:
             query = query.select_for_update()
 
         for v in query:  # @UndefinedVariable
-            yield (v.key, typing.cast(bytes, encoders.decode(v.data, 'base64')), v.attr1)
+            yield (v.key, codecs.decode(v.data.encode(), 'base64'), v.attr1)
 
     def filterPickle(self, attr1: typing.Optional[str] = None, forUpdate: bool = False) -> typing.Iterable[typing.Tuple[str, typing.Any, str]]:
         for v in self.filter(attr1, forUpdate):

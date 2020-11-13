@@ -30,12 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import codecs
 import pickle
 import logging
 import typing
 
 from uds.core.serializable import Serializable
-from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
@@ -100,16 +100,16 @@ class AutoAttributes(Serializable):
     def marshal(self) -> bytes:
         for k, v in self.attrs.items():
             logger.debug('Marshall Autoattributes: %s=%s', k, v.getValue())
-        return typing.cast(bytes, encoders.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.attrs.items()]), 'bz2'))
+        return codecs.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.attrs.items()]), 'bz2')
 
-    def unmarshal(self, data: bytes):
+    def unmarshal(self, data: bytes) -> None:
         if not data:  # Can be empty
             return
         # We keep original data (maybe incomplete)
         try:
-            data = typing.cast(bytes, encoders.decode(data, 'bz2'))
+            data = codecs.decode(data, 'bz2')
         except Exception:  # With old zip encoding
-            data = typing.cast(bytes, encoders.decode(data, 'zip'))
+            data = codecs.decode(data, 'zip')
         # logger.debug('DATA: %s', data)
         for pair in data.split(b'\2'):
             k, v = pair.split(b'\1')
@@ -122,7 +122,7 @@ class AutoAttributes(Serializable):
         for k2, v2 in self.attrs.items():
             logger.debug('Marshall Autoattributes: %s=%s', k2, v2.getValue())
 
-    def __str__(self):
+    def __str__(self) -> str:
         str_ = '<AutoAttribute '
         for k, v in self.attrs.items():
             str_ += "%s (%s) = %s" % (k, v.getType(), v.getStrValue())

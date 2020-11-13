@@ -30,16 +30,16 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=too-many-lines
+import codecs
 import datetime
-import typing
 import time
 import pickle
-import logging
 import copy
+import typing
+import logging
 
 from django.utils.translation import get_language, ugettext as _, ugettext_noop
 
-from uds.core.util import encoders
 from uds.core.managers import cryptoManager
 
 logger = logging.getLogger(__name__)
@@ -1005,7 +1005,7 @@ class UserInterface(metaclass=UserInterfaceType):
             arr.append(k.encode('utf8') + b'\003' + val)
         logger.debug('Arr, >>%s<<', arr)
 
-        return typing.cast(bytes, encoders.encode(b'\002'.join(arr), 'zip'))
+        return codecs.encode(b'\002'.join(arr), 'zip')
 
     def unserializeForm(self, values: bytes) -> None:
         """
@@ -1027,7 +1027,7 @@ class UserInterface(metaclass=UserInterfaceType):
                     continue
                 self._gui[k].value = self._gui[k].defValue
 
-            values = typing.cast(bytes, encoders.decode(values, 'zip'))
+            values = codecs.decode(values, 'zip')
             if not values:  # Has nothing
                 return
 

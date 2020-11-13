@@ -122,7 +122,7 @@ class ServicesPools(ModelHandler):
         # Optimized query, due that there is a lot of info needed for theee
         d = getSqlDatetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         return super().getItems(overview=kwargs.get('overview', True),
-            query=(ServicePool.objects.prefetch_related('service', 'service__provider', 'servicesPoolGroup', 'image', 'tags', 'meta', 'account')
+            query=(ServicePool.objects.prefetch_related('service', 'service__provider', 'servicesPoolGroup', 'image', 'tags', 'memberOfMeta__meta_pool', 'account')
                     .annotate(valid_count=Count('userServices', filter=~Q(userServices__state__in=State.INFO_STATES)))
                     .annotate(preparing_count=Count('userServices', filter=Q(userServices__state=State.PREPARING)))
                     .annotate(error_count=Count('userServices', filter=Q(userServices__state=State.ERROR, userServices__state_date__gt=d)))
@@ -177,17 +177,17 @@ class ServicesPools(ModelHandler):
             'allow_users_reset': item.allow_users_reset,
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
-            'meta_member': [{'id': i.uuid, 'name': i.name} for i in item.meta.all()],
+            'meta_member': [{'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()],
             'calendar_message': item.calendar_message,
         }
 
         # Extended info
         if not summary:
             if hasattr(item, 'valid_count'):
-                valid_count = item.valid_count
-                preparing_count = item.preparing_count
-                restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.getInt()
-                usage_count = item.usage_count
+                valid_count = item.valid_count  # type: ignore
+                preparing_count = item.preparing_count  # type: ignore
+                restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.getInt()  # type: ignore
+                usage_count = item.usage_count  # type: ignore
             else:
                 valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
                 preparing_count = item.userServices.filter(state=State.PREPARING).count()
@@ -384,7 +384,8 @@ class ServicesPools(ModelHandler):
                 else:
                     del fields['osmanager_id']
 
-                if serviceType.cacheConstrains is not None:
+                # If service has "overrided fields", overwrite received ones now
+                if serviceType.cacheConstrains:
                     for k, v in serviceType.cacheConstrains.items():
                         fields[k] = v
 

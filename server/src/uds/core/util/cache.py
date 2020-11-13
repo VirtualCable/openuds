@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +29,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import hashlib
-import logging
+import codecs
 import pickle
-from datetime import datetime, timedelta
 import typing
+import logging
 
 from django.db import transaction
 from uds.models.cache import Cache as DBCache
 from uds.models.util import getSqlDatetime
-from uds.core.util import encoders
 
 logger = logging.getLogger(__name__)
 
@@ -65,20 +64,24 @@ class Cache:
         h.update(self._bowner + key)
         return h.hexdigest()
 
-    def get(self, skey: typing.Union[str, bytes], defValue: typing.Any = None) -> typing.Any:
-        now: datetime = typing.cast(datetime, getSqlDatetime())
+    def get(
+        self, skey: typing.Union[str, bytes], defValue: typing.Any = None
+    ) -> typing.Any:
+        now = getSqlDatetime()
         # logger.debug('Requesting key "%s" for cache "%s"', skey, self._owner)
         try:
             key = self.__getKey(skey)
             # logger.debug('Key: %s', key)
             c: DBCache = DBCache.objects.get(pk=key)  # @UndefinedVariable
             # If expired
-            if now > c.created + timedelta(seconds=c.validity):
+            if now > c.created + datetime.timedelta(seconds=c.validity):
                 return defValue
 
             try:
                 # logger.debug('value: %s', c.value)
-                val = pickle.loads(typing.cast(bytes, encoders.decode(c.value, 'base64')))
+                val = pickle.loads(
+                    typing.cast(bytes, codecs.decode(c.value.encode(), 'base64'))
+                )
             except Exception:  # If invalid, simple do no tuse it
                 logger.exception('Invalid pickle from cache. Removing it.')
                 c.delete()
@@ -112,22 +115,29 @@ class Cache:
     def clean(self) -> None:
         Cache.delete(self._owner)
 
-    def put(self, skey: typing.Union[str, bytes], value: typing.Any, validity: typing.Optional[int] = None) -> None:
+    def put(
+        self,
+        skey: typing.Union[str, bytes],
+        value: typing.Any,
+        validity: typing.Optional[int] = None,
+    ) -> None:
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
         if validity is None:
             validity = Cache.DEFAULT_VALIDITY
         key = self.__getKey(skey)
-        value = typing.cast(str, encoders.encode(pickle.dumps(value), 'base64', asText=True))
-        now: datetime = typing.cast(datetime, getSqlDatetime())
+        strValue: str = codecs.encode(pickle.dumps(value), 'base64').decode()
+        now = getSqlDatetime()
         try:
-            DBCache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable
+            DBCache.objects.create(
+                owner=self._owner, key=key, value=value, created=now, validity=validity
+            )  # @UndefinedVariable
         except Exception:
             try:
                 # Already exists, modify it
                 c: DBCache = DBCache.objects.get(pk=key)  # @UndefinedVariable
                 c.owner = self._owner
                 c.key = key
-                c.value = value
+                c.value = strValue
                 c.created = now
                 c.validity = validity
                 c.save()
