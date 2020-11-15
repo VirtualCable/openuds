@@ -24,7 +24,7 @@ def fixResolution():
 
 
 msrdc = '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
-xfreerdp = 'xfreerdp' # TODO
+xfreerdp = '/usr/local/bin/xfreerdp'
 executable = None
 
 # Check first xfreerdp, allow password redir
