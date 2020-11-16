@@ -51,7 +51,7 @@ if executable is None:
                     <p><b>Xfreerdp</b> from homebrew</p>
                     <p>
                         <ul>
-                            <li>Install brew (from brew.sh website)</li>
+                            <li>Install brew (from <a href="https://brew.sh">brew website</a>)</li>
                             <li>Install xquartz<br/>
                                 <b>brew cask install xquartz</b></li>
                             <li>Install freerdp<br/>
