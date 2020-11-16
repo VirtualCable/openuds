@@ -42,9 +42,10 @@ from uds.core import transports
 def createADUser():
     try:
         from . import AD
-        
+
     except ImportError:
         return
+
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -60,17 +61,57 @@ class BaseRDPTransport(transports.Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     iconFile = 'rdp.png'
     protocol = transports.protocols.RDP
 
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=11, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
-    fixedName = gui.TextField(label=_('Username'), order=12, tooltip=_('If not empty, this username will be always used as credential'), tab=gui.CREDENTIALS_TAB)
-    fixedPassword = gui.PasswordField(label=_('Password'), order=13, tooltip=_('If not empty, this password will be always used as credential'), tab=gui.CREDENTIALS_TAB)
-    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=14, tooltip=_('If checked, the domain part will always be emptied (to connect to xrdp for example is needed)'), tab=gui.CREDENTIALS_TAB)
-    fixedDomain = gui.TextField(label=_('Domain'), order=15, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'), tab=gui.CREDENTIALS_TAB)
+    useEmptyCreds = gui.CheckBoxField(
+        label=_('Empty creds'),
+        order=11,
+        tooltip=_('If checked, the credentials used to connect will be emtpy'),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    fixedName = gui.TextField(
+        label=_('Username'),
+        order=12,
+        tooltip=_('If not empty, this username will be always used as credential'),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    fixedPassword = gui.PasswordField(
+        label=_('Password'),
+        order=13,
+        tooltip=_('If not empty, this password will be always used as credential'),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    withoutDomain = gui.CheckBoxField(
+        label=_('Without Domain'),
+        order=14,
+        tooltip=_(
+            'If checked, the domain part will always be emptied (to connect to xrdp for example is needed)'
+        ),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    fixedDomain = gui.TextField(
+        label=_('Domain'),
+        order=15,
+        tooltip=_(
+            'If not empty, this domain will be always used as credential (used as DOMAIN\\user)'
+        ),
+        tab=gui.CREDENTIALS_TAB,
+    )
 
-    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=20, tooltip=_('If checked, this transport will allow the use of smartcards'), tab=gui.PARAMETERS_TAB)
-    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=21, tooltip=_('If checked, this transport will allow the use of user printers'), tab=gui.PARAMETERS_TAB)
+    allowSmartcards = gui.CheckBoxField(
+        label=_('Allow Smartcards'),
+        order=20,
+        tooltip=_('If checked, this transport will allow the use of smartcards'),
+        tab=gui.PARAMETERS_TAB,
+    )
+    allowPrinters = gui.CheckBoxField(
+        label=_('Allow Printers'),
+        order=21,
+        tooltip=_('If checked, this transport will allow the use of user printers'),
+        tab=gui.PARAMETERS_TAB,
+    )
     allowDrives = gui.ChoiceField(
         label=_('Local drives policy'),
         order=22,
@@ -81,20 +122,51 @@ class BaseRDPTransport(transports.Transport):
             {'id': 'dynamic', 'text': 'Allow PnP drives'},
             {'id': 'true', 'text': 'Allow any drive'},
         ],
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
     enforceDrives = gui.TextField(
         label=_('Force drives'),
         order=23,
-        tooltip=_('Use comma separated values, for example "C:,D:". If drives policy is disallowed, this will be ignored'),
-        tab=gui.PARAMETERS_TAB
+        tooltip=_(
+            'Use comma separated values, for example "C:,D:". If drives policy is disallowed, this will be ignored'
+        ),
+        tab=gui.PARAMETERS_TAB,
     )
 
-    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=24, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
-    allowClipboard = gui.CheckBoxField(label=_('Enable clipboard'), order=25, tooltip=_('If checked, copy-paste functions will be allowed'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
-    allowAudio = gui.CheckBoxField(label=_('Enable sound'), order=26, tooltip=_('If checked, sound will be redirected.'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
-    allowWebcam = gui.CheckBoxField(label=_('Enable webcam'), order=27, tooltip=_('If checked, webcam will be redirected (ONLY Windows).'), tab=gui.PARAMETERS_TAB, defvalue=gui.FALSE)
-    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=28, tooltip=_('If checked, will enable Credentials Provider Support)'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
+    allowSerials = gui.CheckBoxField(
+        label=_('Allow Serials'),
+        order=24,
+        tooltip=_('If checked, this transport will allow the use of user serial ports'),
+        tab=gui.PARAMETERS_TAB,
+    )
+    allowClipboard = gui.CheckBoxField(
+        label=_('Enable clipboard'),
+        order=25,
+        tooltip=_('If checked, copy-paste functions will be allowed'),
+        tab=gui.PARAMETERS_TAB,
+        defvalue=gui.TRUE,
+    )
+    allowAudio = gui.CheckBoxField(
+        label=_('Enable sound'),
+        order=26,
+        tooltip=_('If checked, sound will be redirected.'),
+        tab=gui.PARAMETERS_TAB,
+        defvalue=gui.TRUE,
+    )
+    allowWebcam = gui.CheckBoxField(
+        label=_('Enable webcam'),
+        order=27,
+        tooltip=_('If checked, webcam will be redirected (ONLY Windows).'),
+        tab=gui.PARAMETERS_TAB,
+        defvalue=gui.FALSE,
+    )
+    credssp = gui.CheckBoxField(
+        label=_('Credssp Support'),
+        order=28,
+        tooltip=_('If checked, will enable Credentials Provider Support)'),
+        tab=gui.PARAMETERS_TAB,
+        defvalue=gui.TRUE,
+    )
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),
@@ -109,7 +181,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '1920x1080', 'text': '1920x1080'},
             {'id': '-1x-1', 'text': 'Full screen'},
         ],
-        tab=gui.DISPLAY_TAB
+        tab=gui.DISPLAY_TAB,
     )
 
     colorDepth = gui.ChoiceField(
@@ -123,23 +195,105 @@ class BaseRDPTransport(transports.Transport):
             {'id': '24', 'text': '24'},
             {'id': '32', 'text': '32'},
         ],
-        tab=gui.DISPLAY_TAB
+        tab=gui.DISPLAY_TAB,
     )
 
-    wallpaper = gui.CheckBoxField(label=_('Wallpaper/theme'), order=32, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.DISPLAY_TAB)
-    multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=33, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'), tab=gui.DISPLAY_TAB)
-    aero = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=34, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.DISPLAY_TAB)
-    smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=35, tooltip=_('If checked, fonts smoothing will be allowed'), tab=gui.DISPLAY_TAB)
-    showConnectionBar = gui.CheckBoxField(label=_('Connection Bar'), order=36, tooltip=_('If checked, connection bar will be shown (only on Windows clients)'), tab=gui.DISPLAY_TAB, defvalue=gui.TRUE)
+    wallpaper = gui.CheckBoxField(
+        label=_('Wallpaper/theme'),
+        order=32,
+        tooltip=_(
+            'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
+        ),
+        tab=gui.DISPLAY_TAB,
+    )
+    multimon = gui.CheckBoxField(
+        label=_('Multiple monitors'),
+        order=33,
+        tooltip=_(
+            'If checked, all client monitors will be used for displaying (only works on windows clients)'
+        ),
+        tab=gui.DISPLAY_TAB,
+    )
+    aero = gui.CheckBoxField(
+        label=_('Allow Desk.Comp.'),
+        order=34,
+        tooltip=_('If checked, desktop composition will be allowed'),
+        tab=gui.DISPLAY_TAB,
+    )
+    smooth = gui.CheckBoxField(
+        label=_('Font Smoothing'),
+        order=35,
+        tooltip=_('If checked, fonts smoothing will be allowed'),
+        tab=gui.DISPLAY_TAB,
+    )
+    showConnectionBar = gui.CheckBoxField(
+        label=_('Connection Bar'),
+        order=36,
+        tooltip=_('If checked, connection bar will be shown (only on Windows clients)'),
+        tab=gui.DISPLAY_TAB,
+        defvalue=gui.TRUE,
+    )
 
-    multimedia = gui.CheckBoxField(label=_('Multimedia sync'), order=40, tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'), tab='Linux Client')
-    alsa = gui.CheckBoxField(label=_('Use Alsa'), order=41, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
-    redirectHome = gui.CheckBoxField(label=_('Redirect home folder'), order=42, tooltip=_('If checked, Linux client will try to redirect /home local folder'), tab='Linux Client', defvalue=gui.FALSE)
-    printerString = gui.TextField(label=_('Printer string'), order=43, tooltip=_('If printer is checked, the printer string used with xfreerdp client'), tab='Linux Client', length=256)
-    smartcardString = gui.TextField(label=_('Smartcard string'), order=44, tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'), tab='Linux Client', length=256)
-    customParameters = gui.TextField(label=_('Custom parameters'), order=45, tooltip=_('If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'), tab='Linux Client', length=256)
+    multimedia = gui.CheckBoxField(
+        label=_('Multimedia sync'),
+        order=40,
+        tooltip=_(
+            'If checked. Linux client will use multimedia parameter for xfreerdp'
+        ),
+        tab='Linux Client',
+    )
+    alsa = gui.CheckBoxField(
+        label=_('Use Alsa'),
+        order=41,
+        tooltip=_(
+            'If checked, Linux client will try to use ALSA, otherwise Pulse will be used'
+        ),
+        tab='Linux Client',
+    )
+    redirectHome = gui.CheckBoxField(
+        label=_('Redirect home folder'),
+        order=42,
+        tooltip=_('If checked, Linux client will try to redirect /home local folder'),
+        tab='Linux Client',
+        defvalue=gui.FALSE,
+    )
+    printerString = gui.TextField(
+        label=_('Printer string'),
+        order=43,
+        tooltip=_(
+            'If printer is checked, the printer string used with xfreerdp client'
+        ),
+        tab='Linux Client',
+        length=256,
+    )
+    smartcardString = gui.TextField(
+        label=_('Smartcard string'),
+        order=44,
+        tooltip=_(
+            'If smartcard is checked, the smartcard string used with xfreerdp client'
+        ),
+        tab='Linux Client',
+        length=256,
+    )
+    customParameters = gui.TextField(
+        label=_('Custom parameters'),
+        order=45,
+        tooltip=_(
+            'If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'
+        ),
+        tab='Linux Client',
+        length=256,
+    )
 
-    allowMacMSRDC = gui.CheckBoxField(label=_('Allow Microsoft Rdp Client'), order=40, tooltip=_('If checked, allows use of Microsoft Remote Desktop Clien. PASSWORD WILL BE PRONPTED!'), tab='Mac OS X', defvalue=gui.FALSE)
+    allowMacMSRDC = gui.CheckBoxField(
+        label=_('Allow Microsoft Rdp Client'),
+        order=40,
+        tooltip=_(
+            'If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'
+        ),
+        tab='Mac OS X',
+        defvalue=gui.FALSE,
+    )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -157,11 +311,15 @@ class BaseRDPTransport(transports.Transport):
                 self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+    def processedUser(
+        self, userService: 'models.UserService', user: 'models.User'
+    ) -> str:
         v = self.processUserPassword(userService, user, '')
         return v['username']
 
-    def processUserPassword(self, userService: 'models.UserService', user: 'models.User', password: 'str') -> typing.Dict[str, typing.Any]:
+    def processUserPassword(
+        self, userService: 'models.UserService', user: 'models.User', password: 'str'
+    ) -> typing.Dict[str, typing.Any]:
         username = user.getUsernameForAuth()
 
         if self.fixedName.value:
@@ -201,22 +359,31 @@ class BaseRDPTransport(transports.Transport):
         if '\\' in username:
             domain, username = username.split('\\')
 
-        return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
+        return {
+            'protocol': self.protocol,
+            'username': username,
+            'password': password,
+            'domain': domain,
+        }
 
     def getConnectionInfo(
-            self,
-            userService: typing.Union['models.UserService', 'models.ServicePool'],
-            user: 'models.User',
-            password: str
-        ) -> typing.Dict[str, str]:
+        self,
+        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        user: 'models.User',
+        password: str,
+    ) -> typing.Dict[str, str]:
         return self.processUserPassword(userService, user, password)
 
-    def getScript(self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+    def getScript(
+        self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]
+    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
         # Reads script
         scriptNameTemplate = scriptNameTemplate.format(osName)
         with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
             script = f.read()
         # Reads signature
-        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')) as f:
+        with open(
+            os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')
+        ) as f:
             signature = f.read()
         return script, signature, params

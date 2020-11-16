@@ -52,6 +52,16 @@ if executable is None:
             <ul>
                 <li>
                     <p><b>Xfreerdp</b> from homebrew</p>
+                    <p>
+                        <ul>
+                            <li>Install brew (from brew.sh website)</li>
+                            <li>Install xquartz<br/>
+                                <b>brew cask install xquartz</b></li>
+                            <li>Install freerdp<br/>
+                                <b>brew install freerdp</b></li>
+                            <li>Reboot so xquartz will be automatically started when needed</li>
+                        </ul>
+                    </p>
                 </li>
             </ul>
             ''')

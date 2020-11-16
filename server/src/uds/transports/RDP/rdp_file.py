@@ -67,7 +67,7 @@ class RDPFile:
     smartcardString = None
     enablecredsspsupport = False
     enableClipboard = False
-    linuxCustomParameters = None
+    linuxCustomParameters: typing.Optional[str] = None
     enforcedShares: typing.Optional[str] = None
 
     def __init__(
@@ -183,7 +183,7 @@ class RDPFile:
         if forceRDPSecurity:
             params.append('/sec:rdp')
 
-        if self.linuxCustomParameters is not None and self.linuxCustomParameters.strip() != '':
+        if self.linuxCustomParameters and self.linuxCustomParameters.strip() != '':
             params += shlex.split(self.linuxCustomParameters.strip())
 
         return params
@@ -191,15 +191,15 @@ class RDPFile:
     def getGeneric(self):  # pylint: disable=too-many-statements
         password = '{password}'
         screenMode = '2' if self.fullScreen else '1'
-        audioMode = self.redirectAudio and "0" or "2"
-        serials = self.redirectSerials and "1" or "0"
-        scards = self.redirectSmartcards and "1" or "0"
-        printers = self.redirectPrinters and "1" or "0"
-        compression = self.compression and "1" or "0"
-        connectionBar = self.displayConnectionBar and "1" or "0"
-        disableWallpaper = self.showWallpaper and "0" or "1"
-        useMultimon = self.multimon and "1" or "0"
-        enableClipboard = self.enableClipboard and "1" or "0"
+        audioMode =  '2' if self.redirectAudio else '0'
+        serials = '1' if self.redirectSerials else '0'
+        scards = '1' if self.redirectSmartcards else '0'
+        printers = '1' if self.redirectPrinters else '0'
+        compression = '1' if self.compression else '0'
+        connectionBar = '1' if self.displayConnectionBar else '0'
+        disableWallpaper = '1' if self.showWallpaper else '0'
+        useMultimon = '1' if self.multimon else '0'
+        enableClipboard = '1' if self.enableClipboard else '0'
 
         res = ''
         res += 'screen mode id:i:' + screenMode + '\n'
