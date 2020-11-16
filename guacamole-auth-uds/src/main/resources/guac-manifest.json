@@ -1,0 +1,18 @@
+{
+
+    "guacamoleVersion" : "1.1.0",
+
+    "name"      : "UDS Integration Extension for Apache Guacamole",
+    "namespace" : "uds",
+    "largeIcon" : "images/udsicon.png",
+    "smallIcon" : "images/udsicon.png",
+
+    "authProviders" : [
+        "org.openuds.guacamole.UDSAuthenticationProvider"
+    ],
+
+    "translations" : [
+        "translations/en.json"
+    ]
+
+}

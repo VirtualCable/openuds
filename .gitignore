@@ -32,9 +32,6 @@
 /client/administration/installer/UDSAdminInstaller/MSChart.exe
 /client/administration/installer/UDSAdminInstaller/UDSAdminSetup.exe
 
-# /guacamole-tunnel/
-/guacamole-tunnel/target
-
 # /linuxActor/
 /linuxActor/udsactor_*
 
