@@ -48,6 +48,8 @@ from uds.core.util.cache import Cache
 
 logger = logging.getLogger(__name__)
 
+ONE_DAY = 3600 * 24
+
 
 class CalendarChecker:
     calendar: Calendar
@@ -78,7 +80,11 @@ class CalendarChecker:
         for rule in self.calendar.rules.all():
             rr = rule.as_rrule()
 
-            r_end = datetime.datetime.combine(rule.end, datetime.datetime.max.time()) if rule.end is not None else None
+            r_end = (
+                datetime.datetime.combine(rule.end, datetime.datetime.max.time())
+                if rule.end is not None
+                else None
+            )
 
             ruleDurationMinutes = rule.duration_as_minutes
             ruleFrequencyMinutes = rule.frequency_as_minutes
@@ -90,8 +96,14 @@ class CalendarChecker:
             # ruleDurationMinutes = ruleDurationMinutes
             # Relative start, rrule can "spawn" the days, so we get the start at least the ruleDurationMinutes of rule to see if it "matches"
             # This means, we need the previous matching day to be "executed" so we can get the "actives" correctly
-            diff = ruleFrequencyMinutes if ruleFrequencyMinutes > ruleDurationMinutes else ruleDurationMinutes
-            _start = (start if start > rule.start else rule.start) - datetime.timedelta(minutes=diff)
+            diff = (
+                ruleFrequencyMinutes
+                if ruleFrequencyMinutes > ruleDurationMinutes
+                else ruleDurationMinutes
+            )
+            _start = (start if start > rule.start else rule.start) - datetime.timedelta(
+                minutes=diff
+            )
 
             _end = end if r_end is None or end < r_end else r_end
 
@@ -141,9 +153,18 @@ class CalendarChecker:
         memCache = caches['memory']
 
         # First, try to get data from cache if it is valid
-        cacheKey = str(self.calendar.modified.toordinal()) + str(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
+        cacheKey = (
+            str(self.calendar.modified.toordinal())
+            + str(dtime.date().toordinal())
+            + self.calendar.uuid
+            + 'checker'
+        )
         # First, check "local memory cache", and if not found, from DB cache
-        cached = memCache.get(cacheKey) or CalendarChecker.cache.get(cacheKey, None)
+        cached = memCache.get(cacheKey)
+        if not cached:
+            cached = CalendarChecker.cache.get(cacheKey, None)
+            if cached:
+                memCache.set(cacheKey, cached, ONE_DAY)
 
         if cached:
             data = bitarray.bitarray()  # Empty bitarray
@@ -154,8 +175,8 @@ class CalendarChecker:
 
             # Now data can be accessed as an array of booleans.
             # Store data on persistent cache
-            CalendarChecker.cache.put(cacheKey, data.tobytes(), 3600 * 24)
-            memCache.set(cacheKey, data.tobytes(), 3600*24)
+            CalendarChecker.cache.put(cacheKey, data.tobytes(), ONE_DAY)
+            memCache.set(cacheKey, data.tobytes(), ONE_DAY)
 
         return data[dtime.hour * 60 + dtime.minute]
 
@@ -171,13 +192,20 @@ class CalendarChecker:
         if offset is None:
             offset = datetime.timedelta(minutes=0)
 
-        cacheKey = str(hash(self.calendar.modified)) + self.calendar.uuid + str(
-            offset.seconds) + str(int(time.mktime(checkFrom.timetuple()))) + 'event' + ('x' if startEvent is True else '_')
+        cacheKey = (
+            str(hash(self.calendar.modified))
+            + self.calendar.uuid
+            + str(offset.seconds)
+            + str(int(time.mktime(checkFrom.timetuple())))
+            + 'event'
+            + ('x' if startEvent is True else '_')
+        )
         next_event = CalendarChecker.cache.get(cacheKey, None)
         if next_event is None:
             logger.debug('Regenerating cached nextEvent')
-            next_event = self._updateEvents(checkFrom + offset,
-                                            startEvent)  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
+            next_event = self._updateEvents(
+                checkFrom + offset, startEvent
+            )  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
             if next_event is not None:
                 next_event += offset
             CalendarChecker.cache.put(cacheKey, next_event, 3600)

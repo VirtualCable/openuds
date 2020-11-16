@@ -48,6 +48,7 @@ from .provider import Provider
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import services
+    from uds.models.service_pool import ServicePool
 
 
 logger = logging.getLogger(__name__)
@@ -55,8 +56,9 @@ logger = logging.getLogger(__name__)
 
 class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
-    A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
-    or a Terminal Server configuration).
+    A Service represents an specidied type of service offered to final users,
+    with it configuration (i.e. a KVM Base Machine for cloning or a Terminal
+    Server configuration).
     """
 
     provider: 'models.ForeignKey[Service, Provider]' = models.ForeignKey(
@@ -76,6 +78,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[Service]'
+    deployedServices: 'models.QuerySet[ServicePool]'
 
     class Meta(ManagedObjectModel.Meta):
         """

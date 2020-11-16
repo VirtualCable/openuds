@@ -46,14 +46,17 @@ from uds.models import User
 # How often to check the requests cache for stuck objects
 CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
+
 class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_proxy: str
     os: DictAsObj
     user: typing.Optional[User]  # type: ignore   # HttpRequests users "user" for it own, but we redefine it because base is not used...
 
+
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
     user: User
+
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +71,9 @@ def getIdent() -> int:
 def getRequest() -> ExtendedHttpRequest:
     ident = getIdent()
     if ident in _requests:
-        val = typing.cast(typing.Optional[ExtendedHttpRequest], _requests[ident][0]())  # Return obj from weakref
+        val = typing.cast(
+            typing.Optional[ExtendedHttpRequest], _requests[ident][0]()
+        )  # Return obj from weakref
         if val:
             return val
 
@@ -83,12 +88,17 @@ class GlobalRequestMiddleware:
 
     def _process_request(self, request: ExtendedHttpRequest) -> None:
         # Store request on cache
-        _requests[getIdent()] = (weakref.ref(typing.cast(ExtendedHttpRequest, request)), datetime.datetime.now())
+        _requests[getIdent()] = (
+            weakref.ref(typing.cast(ExtendedHttpRequest, request)),
+            datetime.datetime.now(),
+        )
 
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
         # Ensures request contains os
-        request.os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT', 'Unknown'))
+        request.os = OsDetector.getOsFromUA(
+            request.META.get('HTTP_USER_AGENT', 'Unknown')
+        )
         # Ensures that requests contains the valid user
         GlobalRequestMiddleware.getUser(request)
 
@@ -120,11 +130,16 @@ class GlobalRequestMiddleware:
     @staticmethod
     def cleanStuckRequests() -> None:
         # In case of some exception, keep clean very old request from time to time...
-        if GlobalRequestMiddleware.lastCheck > datetime.datetime.now() - datetime.timedelta(seconds=CHECK_SECONDS):
+        if (
+            GlobalRequestMiddleware.lastCheck
+            > datetime.datetime.now() - datetime.timedelta(seconds=CHECK_SECONDS)
+        ):
             return
         logger.debug('Cleaning stuck requestws from %s', _requests)
         # No request lives 60 seconds, so 60 seconds is fine
-        cleanFrom: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=60)
+        cleanFrom: datetime.datetime = datetime.datetime.now() - datetime.timedelta(
+            seconds=60
+        )
         toDelete: typing.List[int] = []
         for ident, request in _requests.items():
             if request[1] < cleanFrom:
@@ -133,8 +148,7 @@ class GlobalRequestMiddleware:
             try:
                 del _requests[ident]
             except Exception:
-                pass # Ignore it silently
-
+                pass  # Ignore it silently
 
     @staticmethod
     def fillIps(request: ExtendedHttpRequest):
@@ -154,8 +168,10 @@ class GlobalRequestMiddleware:
             proxies = request.META['HTTP_X_FORWARDED_FOR'].split(",")
             request.ip_proxy = proxies[0]
 
-            if not request.ip or behind_proxy is True:  # Request.IP will be None in case of nginx & gunicorn
-                # F5 may include "domains" on x-forwarded for, 
+            if (
+                not request.ip or behind_proxy is True
+            ):  # Request.IP will be None in case of nginx & gunicorn
+                # F5 may include "domains" on x-forwarded for,
                 request.ip = request.ip_proxy.split('%')[0]  # Stores the ip
 
                 # will raise "list out of range", leaving ip_proxy = proxy in case of no other proxy apart of nginx
@@ -163,9 +179,8 @@ class GlobalRequestMiddleware:
         except Exception:
             request.ip_proxy = request.ip
 
-
     @staticmethod
-    def getUser(request: ExtendedHttpRequest)-> None:
+    def getUser(request: ExtendedHttpRequest) -> None:
         """
         Ensures request user is the correct user
         """

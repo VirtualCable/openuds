@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -37,7 +36,12 @@ import logging
 import typing
 
 from functools import wraps
-from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse, HttpRequest
+from django.http import (
+    HttpResponseRedirect,
+    HttpResponseForbidden,
+    HttpResponse,
+    HttpRequest,
+)
 from django.utils.translation import get_language
 from django.urls import reverse
 
@@ -57,7 +61,7 @@ from uds.models import User, Authenticator
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 
 
 logger = logging.getLogger(__name__)
@@ -69,10 +73,15 @@ ROOT_ID = -20091204  # Any negative number will do the trick
 
 RT = typing.TypeVar('RT')
 
-def getUDSCookie(request: HttpRequest, response: typing.Optional[HttpResponse] = None, force: bool = False) -> str:
-    '''
+
+def getUDSCookie(
+    request: HttpRequest,
+    response: typing.Optional[HttpResponse] = None,
+    force: bool = False,
+) -> str:
+    """
     Generates a random cookie for uds, used, for example, to encript things
-    '''
+    """
     if 'uds' not in request.COOKIES:
         cookie = cryptoManager().randomString(48)
         if response is not None:
@@ -88,14 +97,19 @@ def getUDSCookie(request: HttpRequest, response: typing.Optional[HttpResponse] =
 
 
 def getRootUser() -> User:
-    # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+    """
+    Returns an user not in DB that is ROOT for the platform
+
+    Returns:
+        User: [description]
+    """
     user = User(
         id=ROOT_ID,
         name=GlobalConfig.SUPER_USER_LOGIN.get(True),
         real_name=_('System Administrator'),
         state=State.ACTIVE,
         staff_member=True,
-        is_admin=True
+        is_admin=True,
     )
     user.manager = Authenticator()
     # Fake overwrite some methods, a bit cheating? maybe? :)
@@ -106,13 +120,16 @@ def getRootUser() -> User:
 
 
 # Decorator to make easier protect pages that needs to be logged in
-def webLoginRequired(admin: typing.Union[bool, str] = False) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+def webLoginRequired(
+    admin: typing.Union[bool, str] = False
+) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     if admin == True, needs admin or staff
     if admin == 'admin', needs admin
     """
+
     def decorator(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
             """
@@ -126,7 +143,9 @@ def webLoginRequired(admin: typing.Union[bool, str] = False) -> typing.Callable[
                 return HttpResponseRedirect(reverse('page.login'))
 
             if admin is True or admin == 'admin':
-                if request.user.isStaff() is False or (admin == 'admin' and request.user.is_admin is False):
+                if request.user.isStaff() is False or (
+                    admin == 'admin' and request.user.is_admin is False
+                ):
                     return HttpResponseForbidden(_('Forbidden'))
 
             return view_func(request, *args, **kwargs)
@@ -137,39 +156,48 @@ def webLoginRequired(admin: typing.Union[bool, str] = False) -> typing.Callable[
 
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
-def trustedSourceRequired(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def trustedSourceRequired(
+    view_func: typing.Callable[..., RT]
+) -> typing.Callable[..., RT]:
     """
     Decorator to set protection to access page
     look for sample at uds.dispatchers.pam
     """
+
     @wraps(view_func)
-    def _wrapped_view(request: HttpRequest, *args, **kwargs) -> RT:
+    def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
         """
         Wrapped function for decorator
         """
         try:
-            if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
+            if not net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)):
                 return HttpResponseForbidden()
         except Exception as e:
-            logger.warning('Error checking trusted source: "%s" does not seems to be a valid network string. Using Unrestricted access.', GlobalConfig.TRUSTED_SOURCES.get())
+            logger.warning(
+                'Error checking trusted source: "%s" does not seems to be a valid network string. Using Unrestricted access.',
+                GlobalConfig.TRUSTED_SOURCES.get(),
+            )
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
 
 
 # decorator to deny non authenticated requests
-def denyNonAuthenticated(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-
+def denyNonAuthenticated(
+    view_func: typing.Callable[..., RT]
+) -> typing.Callable[..., RT]:
     @wraps(view_func)
-    def _wrapped_view(request: HttpRequest, *args, **kwargs) -> RT:
-        if request.user is None:
+    def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
+        if not request.user:
             return HttpResponseForbidden()
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
 
 
-def __registerUser(authenticator: Authenticator, authInstance: AuthenticatorInstance, username: str) -> typing.Optional[User]:
+def __registerUser(
+    authenticator: Authenticator, authInstance: AuthenticatorInstance, username: str
+) -> typing.Optional[User]:
     """
     Check if this user already exists on database with this authenticator, if don't, create it with defaults
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
@@ -189,15 +217,27 @@ def __registerUser(authenticator: Authenticator, authInstance: AuthenticatorInst
         # Now we update database groups for this user
         usr.getManager().recreateGroups(usr)
         # And add an login event
-        events.addEvent(authenticator, events.ET_LOGIN, username=username, srcip=request.ip)  # pylint: disable=maybe-no-member
-        events.addEvent(authenticator, events.ET_PLATFORM, platform=request.os.OS, browser=request.os.Browser,
-                        version=request.os.Version)  # pylint: disable=maybe-no-member
+        events.addEvent(
+            authenticator, events.ET_LOGIN, username=username, srcip=request.ip
+        )  # pylint: disable=maybe-no-member
+        events.addEvent(
+            authenticator,
+            events.ET_PLATFORM,
+            platform=request.os['OS'],
+            browser=request.os['Browser'],
+            version=request.os['Version'],
+        )  # pylint: disable=maybe-no-member
         return usr
 
     return None
 
 
-def authenticate(username: str, password: str, authenticator: Authenticator, useInternalAuthenticate: bool = False) -> typing.Optional[User]:
+def authenticate(
+    username: str,
+    password: str,
+    authenticator: Authenticator,
+    useInternalAuthenticate: bool = False,
+) -> typing.Optional[User]:
     """
     Given an username, password and authenticator, try to authenticate user
     @param username: username to authenticate
@@ -207,10 +247,17 @@ def authenticate(username: str, password: str, authenticator: Authenticator, use
                                     This is so because in some situations we may want to use a "trusted" method (internalAuthenticate is never invoked directly from web)
     @return: None if authentication fails, User object (database object) if authentication is o.k.
     """
-    logger.debug('Authenticating user %s with authenticator %s', username, authenticator)
+    logger.debug(
+        'Authenticating user %s with authenticator %s', username, authenticator
+    )
 
     # If global root auth is enabled && user/password is correct,
-    if not useInternalAuthenticate and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True) and username == GlobalConfig.SUPER_USER_LOGIN.get(True) and password == GlobalConfig.SUPER_USER_PASS.get(True):
+    if (
+        not useInternalAuthenticate
+        and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True)
+        and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
+        and password == GlobalConfig.SUPER_USER_PASS.get(True)
+    ):
         return getRootUser()
 
     gm = auths.GroupsManager(authenticator)
@@ -227,13 +274,17 @@ def authenticate(username: str, password: str, authenticator: Authenticator, use
 
     # If do not have any valid group
     if gm.hasValidGroups() is False:
-        logger.info('User {} has been authenticated, but he does not belongs to any UDS know group')
+        logger.info(
+            'User {} has been authenticated, but he does not belongs to any UDS know group'
+        )
         return None
 
     return __registerUser(authenticator, authInstance, username)
 
 
-def authenticateViaCallback(authenticator: Authenticator, params: typing.Any) -> typing.Optional[User]:
+def authenticateViaCallback(
+    authenticator: Authenticator, params: typing.Any
+) -> typing.Optional[User]:
     """
     Given an username, this method will get invoked whenever the url for a callback
     for an authenticator is requested.
@@ -256,7 +307,7 @@ def authenticateViaCallback(authenticator: Authenticator, params: typing.Any) ->
     authInstance = authenticator.getInstance()
 
     # If there is no callback for this authenticator...
-    if authInstance.authCallback == auths.Authenticator.authCallback:
+    if authInstance.authCallback is auths.Authenticator.authCallback:
         raise auths.exceptions.InvalidAuthenticatorException()
 
     username = authInstance.authCallback(params, gm)
@@ -288,14 +339,18 @@ def authInfoUrl(authenticator: typing.Union[str, bytes, Authenticator]) -> str:
     return reverse('page.auth.info', kwargs={'authName': name})
 
 
-def webLogin(request: HttpRequest, response: HttpResponse, user: User, password: str) -> bool:
+def webLogin(
+    request: 'ExtendedHttpRequest', response: HttpResponse, user: User, password: str
+) -> bool:
     """
     Helper function to, once the user is authenticated, store the information at the user session.
     @return: Always returns True
     """
     from uds import REST
 
-    if user.id != ROOT_ID:  # If not ROOT user (this user is not inside any authenticator)
+    if (
+        user.id != ROOT_ID
+    ):  # If not ROOT user (this user is not inside any authenticator)
         manager_id = user.manager.id
     else:
         manager_id = -1
@@ -306,9 +361,21 @@ def webLogin(request: HttpRequest, response: HttpResponse, user: User, password:
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = cryptoManager().symCrypt(password, cookie)  # Stores "bytes"
+    request.session[PASS_KEY] = cryptoManager().symCrypt(
+        password, cookie
+    )  # Stores "bytes"
     # Ensures that this user will have access through REST api if logged in through web interface
-    REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, password, get_language(), request.os, user.is_admin, user.staff_member, cookie)
+    REST.Handler.storeSessionAuthdata(
+        request.session,
+        manager_id,
+        user.name,
+        password,
+        get_language(),
+        request.os['OS'],
+        user.is_admin,
+        user.staff_member,
+        cookie,
+    )
     return True
 
 
@@ -318,10 +385,14 @@ def webPassword(request: HttpRequest) -> str:
     session (db) and client browser cookies. This method uses this two values to recompose the user password
     so we can provide it to remote sessions.
     """
-    return cryptoManager().symDecrpyt(request.session.get(PASS_KEY, ''), getUDSCookie(request))  # recover as original unicode string
+    return cryptoManager().symDecrpyt(
+        request.session.get(PASS_KEY, ''), getUDSCookie(request)
+    )  # recover as original unicode string
 
 
-def webLogout(request: HttpRequest, exit_url: typing.Optional[str] = None) -> HttpResponse:
+def webLogout(
+    request: 'ExtendedHttpRequest', exit_url: typing.Optional[str] = None
+) -> HttpResponse:
     """
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
@@ -333,7 +404,12 @@ def webLogout(request: HttpRequest, exit_url: typing.Optional[str] = None) -> Ht
         exit_url = authenticator.logout(username) or exit_url
         if request.user.id != ROOT_ID:
             # Try yo invoke logout of auth
-            events.addEvent(request.user.manager, events.ET_LOGOUT, username=request.user.name, srcip=request.ip)
+            events.addEvent(
+                request.user.manager,
+                events.ET_LOGOUT,
+                username=request.user.name,
+                srcip=request.ip,
+            )
     else:  # No user, redirect to /
         return HttpResponseRedirect(reverse('page.login'))
 
@@ -351,24 +427,57 @@ def webLogout(request: HttpRequest, exit_url: typing.Optional[str] = None) -> Ht
     return response
 
 
-def authLogLogin(request: HttpRequest, authenticator: Authenticator, userName: str, logStr: str = '') -> None:
+def authLogLogin(
+    request: 'ExtendedHttpRequest', authenticator: Authenticator, userName: str, logStr: str = ''
+) -> None:
     """
     Logs authentication
     """
     if logStr == '':
         logStr = 'Logged in'
 
-    authLogger.info('|'.join([authenticator.name, userName, request.ip, request.os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
+    authLogger.info(
+        '|'.join(
+            [
+                authenticator.name,
+                userName,
+                request.ip,
+                request.os['OS'],
+                logStr,
+                request.META.get('HTTP_USER_AGENT', 'Undefined'),
+            ]
+        )
+    )
     level = log.INFO if logStr == 'Logged in' else log.ERROR
-    log.doLog(authenticator, level, 'user {} has {} from {} where os is {}'.format(userName, logStr, request.ip, request.os['OS']), log.WEB)
+    log.doLog(
+        authenticator,
+        level,
+        'user {} has {} from {} where os is {}'.format(
+            userName, logStr, request.ip, request.os['OS']
+        ),
+        log.WEB,
+    )
 
     try:
         user = authenticator.users.get(name=userName)
-        log.doLog(user, level, '{} from {} where OS is {}'.format(logStr, request.ip, request.os['OS']), log.WEB)
+        log.doLog(
+            user,
+            level,
+            '{} from {} where OS is {}'.format(logStr, request.ip, request.os['OS']),
+            log.WEB,
+        )
     except Exception:
         pass
 
 
-def authLogLogout(request: HttpRequest) -> None:
-    log.doLog(request.user.manager, log.INFO, 'user {} has logged out from {}'.format(request.user.name, request.ip), log.WEB)
-    log.doLog(request.user, log.INFO, 'has logged out from {}'.format(request.ip), log.WEB)
+def authLogLogout(request: 'ExtendedHttpRequest') -> None:
+    if request.user:
+        log.doLog(
+            request.user.manager,
+            log.INFO,
+            'user {} has logged out from {}'.format(request.user.name, request.ip),
+            log.WEB,
+        )
+        log.doLog(
+            request.user, log.INFO, 'has logged out from {}'.format(request.ip), log.WEB
+        )

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -207,7 +207,8 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
             self.getGroups(user.name, groupsManager)
-            user.groups.set([g.dbGroup() for g in groupsManager.getValidGroups()])
+            # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there
+            typing.cast(typing.Any, user.groups).set([g.dbGroup() for g in groupsManager.getValidGroups()])
 
     def callbackUrl(self) -> str:
         """
@@ -231,14 +232,14 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.getJavascript != Authenticator.getJavascript
+        return cls.getJavascript is not Authenticator.getJavascript
 
     @classmethod
     def canCheckUserPassword(cls) -> bool:
         """
         Helper method to query if a class can do a login using credentials
         """
-        return cls.authenticate != Authenticator.authenticate
+        return cls.authenticate is not Authenticator.authenticate
 
     def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """

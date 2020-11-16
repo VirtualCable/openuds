@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -44,7 +44,10 @@ from uds.models import ServicePool, Transport, UserService, Authenticator
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from django.http import (
+        HttpRequest,
+        HttpResponse,
+    )  # pylint: disable=ungrouped-imports
 
 
 logger = logging.getLogger(__name__)
@@ -74,21 +77,25 @@ strings = [
     _('Transport not found'),
     _('Service not found'),
     _('Access denied'),
-    _('Invalid service. The service is not available at this moment. Please, try later'),
+    _(
+        'Invalid service. The service is not available at this moment. Please, try later'
+    ),
     _('Maximum services limit reached. Please, contact administrator'),
     _('You need to enable cookies to let this application work'),
     _('User service not found'),
     _('Authenticator not found'),
     _('Invalid authenticator'),
     _('Invalid request received'),
-    _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome'),
+    _(
+        'Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome'
+    ),
     _('The requested service is in maintenance mode'),
     _('The service is not ready.\nPlease, try again in a few moments.'),
     _('Preparing service'),
     _('Service access denied by calendars'),
     _('Page not found'),
     _('Unexpected error'),
-    _('Reloading this page is not supported. Please, reopen service from origin.')
+    _('Reloading this page is not supported. Please, reopen service from origin.'),
 ]
 
 
@@ -118,13 +125,21 @@ def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseR
     """
     Tries to render an error page with error information
     """
-    from uds.core.auths.exceptions import InvalidUserException, InvalidAuthenticatorException
-    from uds.core.services.exceptions import InvalidServiceException, MaxServicesReachedError, ServiceInMaintenanceMode, ServiceNotReadyError
+    from uds.core.auths.exceptions import (
+        InvalidUserException,
+        InvalidAuthenticatorException,
+    )
+    from uds.core.services.exceptions import (
+        InvalidServiceException,
+        MaxServicesReachedError,
+        ServiceInMaintenanceMode,
+        ServiceNotReadyError,
+    )
 
     logger.debug(traceback.format_exc())
 
     try:
-        raise exception # Raise it so we can "catch" and redirect
+        raise exception  # Raise it so we can "catch" and redirect
     except UserService.DoesNotExist:
         return errorView(request, ERR_USER_SERVICE_NOT_FOUND)
     except ServicePool.DoesNotExist:

@@ -57,8 +57,7 @@ class User(UUIDModel):
     """
     This class represents a single user, associated with one authenticator
     """
-    # pylint: disable=maybe-no-member
-    manager = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
+    manager : 'models.ForeignKey[User, Authenticator]' = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
     name = models.CharField(max_length=128, db_index=True)
     real_name = models.CharField(max_length=128)
     comments = models.CharField(max_length=256)

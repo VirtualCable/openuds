@@ -42,7 +42,8 @@ from .tag import TaggingMixin
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import services
+    from uds.core.services import ServiceProvider
+    from uds.models import Service
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[Provider]'
+    services: 'models.QuerySet[Service]'
 
     class Meta(ManagedObjectModel.Meta):
         """
@@ -65,7 +67,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
-    def getType(self) -> typing.Type['services.ServiceProvider']:
+    def getType(self) -> typing.Type['ServiceProvider']:
         """
         Get the type of the object this record represents.
 
@@ -85,9 +87,9 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
 
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
-    ) -> 'services.ServiceProvider':
-        prov: services.ServiceProvider = typing.cast(
-            'services.ServiceProvider', super().getInstance(values=values)
+    ) -> 'ServiceProvider':
+        prov: 'ServiceProvider' = typing.cast(
+            'ServiceProvider', super().getInstance(values=values)
         )
         # Set uuid
         prov.setUuid(self.uuid)

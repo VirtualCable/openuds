@@ -283,7 +283,6 @@ def getServicesData(
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
             autorun = True
-            # return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
     return {
         'services': services,
