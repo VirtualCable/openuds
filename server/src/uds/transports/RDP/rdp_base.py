@@ -372,7 +372,7 @@ class BaseRDPTransport(transports.Transport):
         user: 'models.User',
         password: str,
     ) -> typing.Dict[str, str]:
-        return self.processUserPassword(userService, user, password)
+        return self.processUserPassword(typing.cast('models.UserService', userService), user, password)
 
     def getScript(
         self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]

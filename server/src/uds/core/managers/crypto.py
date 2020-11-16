@@ -173,6 +173,9 @@ class CryptoManager:
         return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
 
     def xor(self, s1: typing.Union[str, bytes], s2: typing.Union[str, bytes]) -> bytes:
+        if len(s2) == 0:
+            return b''  # Protect against division by cero
+
         if isinstance(s1, str):
             s1 = s1.encode('utf-8')
         if isinstance(s2, str):
@@ -202,12 +205,12 @@ class CryptoManager:
         if isinstance(key, str):
             key = key.encode()
 
-        if not cryptText:
+        if not cryptText or not key:
             return ''
 
         try:
             return self.AESDecrypt(cryptText, key).decode('utf-8')
-        except Exception:  # Error decoding stored crypted password, return empty one
+        except Exception:  # Error decoding crypted element, return empty one
             return ''
 
     def loadPrivateKey(self, rsaKey: str):

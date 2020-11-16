@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -44,7 +44,11 @@ from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
 from uds.core.util import html, log
-from uds.core.services.exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
+from uds.core.services.exceptions import (
+    ServiceNotReadyError,
+    MaxServicesReachedError,
+    ServiceAccessDeniedByCalendar,
+)
 
 from uds.web.util import errors
 from uds.web.util import services
@@ -57,32 +61,37 @@ logger = logging.getLogger(__name__)
 
 
 @webLoginRequired(admin=False)
-def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str):
+def transportOwnLink(
+    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
+):
     response: typing.MutableMapping[str, typing.Any] = {}
 
     # For type checkers to "be happy"
     try:
-        res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport)
+        res = userServiceManager().getService(
+            request.user, request.os, request.ip, idService, idTransport
+        )
         ip, userService, iads, trans, itrans = res  # pylint: disable=unused-variable
         # This returns a response object in fact
         if itrans and ip:
             response = {
-                'url': itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
+                'url': itrans.getLink(
+                    userService,
+                    trans,
+                    ip,
+                    request.os,
+                    request.user,
+                    webPassword(request),
+                    request,
+                )
             }
     except ServiceNotReadyError as e:
-        response = {
-            'running': e.code * 25
-        }
+        response = {'running': e.code * 25}
     except Exception as e:
         logger.exception("Exception")
-        response = {
-            'error': str(e)
-        }
+        response = {'error': str(e)}
 
-    return HttpResponse(
-        content=json.dumps(response),
-        content_type='application/json'
-    )
+    return HttpResponse(content=json.dumps(response), content_type='application/json')
 
     # Will never reach this
     return errors.errorView(request, errors.UNKNOWN_ERROR)
@@ -114,7 +123,9 @@ def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
 
 @webLoginRequired(admin=False)
 @never_cache
-def userServiceEnabler(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> HttpResponse:
+def userServiceEnabler(
+    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
+) -> HttpResponse:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''
@@ -123,7 +134,9 @@ def userServiceEnabler(request: 'ExtendedHttpRequestWithUser', idService: str, i
     # If meta service, process and rebuild idService & idTransport
 
     try:
-        res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport, doTest=False)
+        res = userServiceManager().getService(
+            request.user, request.os, request.ip, idService, idTransport, doTest=False
+        )
         scrambler = cryptoManager().randomString(32)
         password = cryptoManager().symCrypt(webPassword(request), scrambler)
 
@@ -140,7 +153,7 @@ def userServiceEnabler(request: 'ExtendedHttpRequestWithUser', idService: str, i
                 'service': 'A' + userService.uuid,
                 'transport': trans.uuid,
                 'user': request.user.uuid,
-                'password': password
+                'password': password,
             }
 
             ticket = TicketStore.create(data)
@@ -149,7 +162,9 @@ def userServiceEnabler(request: 'ExtendedHttpRequestWithUser', idService: str, i
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while
         # error += ' (code {0:04X})'.format(e.code)
-        error = _('Your service is being created, please, wait for a few seconds while we complete it.)') +  '({}%)'.format(int(e.code * 25))
+        error = _(
+            'Your service is being created, please, wait for a few seconds while we complete it.)'
+        ) + '({}%)'.format(int(e.code * 25))
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)
         error = errors.errorString(errors.MAX_SERVICES_REACHED)
@@ -161,42 +176,54 @@ def userServiceEnabler(request: 'ExtendedHttpRequestWithUser', idService: str, i
         error = str(e)
 
     return HttpResponse(
-        json.dumps({
-            'url': str(url),
-            'error': str(error)
-        }),
-        content_type='application/json'
+        json.dumps({'url': str(url), 'error': str(error)}),
+        content_type='application/json',
     )
+
 
 def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
     return HttpResponse('<html><body onload="window.close()"></body></html>')
 
+
 @webLoginRequired(admin=False)
 @never_cache
-def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str) -> HttpResponse:
-    userService = userServiceManager().locateUserService(request.user, idService, create=False)
+def action(
+    request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str
+) -> HttpResponse:
+    userService = userServiceManager().locateUserService(
+        request.user, idService, create=False
+    )
     response: typing.Any = None
     rebuild: bool = False
     if userService:
-        if actionString == 'release' and userService.deployed_service.allow_users_remove:
+        if (
+            actionString == 'release'
+            and userService.deployed_service.allow_users_remove
+        ):
             rebuild = True
             log.doLog(
                 userService.deployed_service,
                 log.INFO,
-                "Removing User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
-                log.WEB
+                "Removing User Service {} as requested by {} from {}".format(
+                    userService.friendly_name, request.user.pretty_name, request.ip
+                ),
+                log.WEB,
             )
             userServiceManager().requestLogoff(userService)
             userService.release()
-        elif (actionString == 'reset'
-              and userService.deployed_service.allow_users_reset
-              and userService.deployed_service.service.getType().canReset):
+        elif (
+            actionString == 'reset'
+            and userService.deployed_service.allow_users_reset
+            and userService.deployed_service.service.getType().canReset
+        ):
             rebuild = True
             log.doLog(
                 userService.deployed_service,
                 log.INFO,
-                "Reseting User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
-                log.WEB
+                "Reseting User Service {} as requested by {} from {}".format(
+                    userService.friendly_name, request.user.pretty_name, request.ip
+                ),
+                log.WEB,
             )
             # userServiceManager().requestLogoff(userService)
             userServiceManager().reset(userService)

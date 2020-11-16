@@ -45,6 +45,7 @@ logger = logging.getLogger(__name__)
 
 ValidatorType = typing.Callable[[typing.Any], bool]
 
+SECURED = '#SECURE#'  # Just a "different" owner. If used anywhere, it's not important (will not fail), but 
 
 class TicketStore(UUIDModel):
     """
@@ -99,9 +100,14 @@ class TicketStore(UUIDModel):
         validity is in seconds
         """
         validator = pickle.dumps(validatorFnc) if validatorFnc else None
+
         data = pickle.dumps(data)
+
         if secure:
-            pass
+            if not owner:
+                raise ValueError('Tried to use a secure ticket without owner')
+            data = cryptoManager().AESCrypt(data, owner.encode())
+            owner = SECURED  # So data is REALLY encrypted
 
         return TicketStore.objects.create(
             stamp=getSqlDatetime(),
@@ -112,40 +118,6 @@ class TicketStore(UUIDModel):
         ).uuid
 
     @staticmethod
-    def store(
-        uuid: str,
-        data: str,
-        validatorFnc: typing.Optional[ValidatorType] = None,
-        validity: int = DEFAULT_VALIDITY,
-        owner: typing.Optional[str] = None,
-        secure: bool = False,
-    ) -> None:
-        """
-        Stores an ticketstore. If one with this uuid already exists, replaces it. Else, creates a new one
-        validity is in seconds
-        """
-        validator = pickle.dumps(validatorFnc) if validatorFnc else None
-
-        if secure:  # TODO: maybe in the future? what will mean "secure?" :)
-            pass
-
-        try:
-            t = TicketStore.objects.get(uuid=uuid)
-            t.data = pickle.dumps(data)
-            t.stamp = getSqlDatetime()
-            t.validity = validity
-            t.owner = owner
-            t.save()
-        except TicketStore.DoesNotExist:
-            TicketStore.objects.create(
-                uuid=uuid,
-                stamp=getSqlDatetime(),
-                data=pickle.dumps(data),
-                validator=validator,
-                validity=validity,
-            )
-
-    @staticmethod
     def get(
         uuid: str,
         invalidate: bool = True,
@@ -153,7 +125,13 @@ class TicketStore(UUIDModel):
         secure: bool = False,
     ) -> typing.Any:
         try:
-            t = TicketStore.objects.get(uuid=uuid, owner=owner)
+            dbOwner = owner
+            if secure:
+                if not owner:
+                    raise ValueError('Tried to use a secure ticket without owner')
+                dbOwner = SECURED
+
+            t = TicketStore.objects.get(uuid=uuid, owner=dbOwner)
             validity = datetime.timedelta(seconds=t.validity)
             now = getSqlDatetime()
 
@@ -161,8 +139,12 @@ class TicketStore(UUIDModel):
             if t.stamp + validity < now:
                 raise TicketStore.InvalidTicket('Not valid anymore')
 
-            # if secure: TODO
-            data = pickle.loads(t.data)
+            data: bytes = t.data
+
+            if secure:  # Owner has already been tested and it's not emtpy
+                data = cryptoManager().AESDecrypt(data, typing.cast(str, owner).encode())
+
+            data = pickle.loads(data)
 
             # If has validator, execute it
             if t.validator:
@@ -173,7 +155,7 @@ class TicketStore(UUIDModel):
 
             if invalidate is True:
                 t.stamp = now - validity - datetime.timedelta(seconds=1)
-                t.save()
+                t.save(update_fields=['stamp'])
 
             return data
         except TicketStore.DoesNotExist:
@@ -207,16 +189,12 @@ class TicketStore(UUIDModel):
         TicketStore.objects.filter(stamp__lt=cleanSince).delete()
 
     def __str__(self) -> str:
-        if self.validator:
-            validator = pickle.loads(self.validator)
-        else:
-            validator = None
+        data = pickle.loads(self.data) if self.owner != SECURED else '{Secure Ticket}'
 
-        return 'Ticket id: {}, Secure: {}, Stamp: {}, Validity: {}, Validator: {}, Data: {}'.format(
+        return 'Ticket id: {}, Owner: {}, Stamp: {}, Validity: {}, Data: {}'.format(
             self.uuid,
             self.owner,
             self.stamp,
             self.validity,
-            validator,
-            pickle.loads(self.data),
+            data,
         )
