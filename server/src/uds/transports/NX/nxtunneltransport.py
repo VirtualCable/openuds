@@ -267,4 +267,4 @@ class TSNXTransport(BaseNXTransport):
             'as_file_for_format': r.as_file_for_format
         }
 
-        return self.getScript('scripts/{}/direct.py', osName, sp)
+        return self.getScript('scripts/{}/tunnel.py', osName, sp)
