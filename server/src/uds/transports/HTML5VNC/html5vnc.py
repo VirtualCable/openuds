@@ -185,9 +185,9 @@ class HTML5VNCTransport(transports.Transport):
         scrambler = cryptoManager().randomString(32)
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
-        onw = 'o_n_w={};'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
+        onw = '&o_n_w={};'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
         return str(
-            "{}/transport/?{}.{}&{}".format(
+            "{}/guacamole/#/?data={}.{}{}".format(
                 self.guacamoleServer.value,
                 ticket,
                 scrambler,

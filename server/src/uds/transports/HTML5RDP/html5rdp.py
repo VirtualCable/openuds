@@ -60,6 +60,7 @@ class HTML5RDPTransport(transports.Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     typeName = _('HTML5 RDP')
     typeType = 'HTML5RDPTransport'
     typeDescription = _('RDP protocol using HTML5 client')
@@ -70,18 +71,110 @@ class HTML5RDPTransport(transports.Transport):
     protocol = transports.protocols.RDP
     group = transports.TUNNELED_GROUP
 
-    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order=1, tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue='https://', length=64, required=True, tab=gui.TUNNEL_TAB)
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=2, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
-    fixedName = gui.TextField(label=_('Username'), order=3, tooltip=_('If not empty, this username will be always used as credential'), tab=gui.CREDENTIALS_TAB)
-    fixedPassword = gui.PasswordField(label=_('Password'), order=4, tooltip=_('If not empty, this password will be always used as credential'), tab=gui.CREDENTIALS_TAB)
-    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=5, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'), tab=gui.CREDENTIALS_TAB)
-    fixedDomain = gui.TextField(label=_('Domain'), order=6, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'), tab=gui.CREDENTIALS_TAB)
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=20, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.PARAMETERS_TAB)
-    desktopComp = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=22, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
-    smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=23, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
-    enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=24, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
-    enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=25, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
-    enableFileSharing = gui.CheckBoxField(label=_('Enable File Sharing'), order=8, tooltip=_('If checked, the user will be able to upload/download files (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
+    guacamoleServer = gui.TextField(
+        label=_('Tunnel Server'),
+        order=1,
+        tooltip=_(
+            'Host of the tunnel server (use http/https & port if needed) as accesible from users'
+        ),
+        defvalue='https://',
+        length=64,
+        required=True,
+        tab=gui.TUNNEL_TAB,
+    )
+    useEmptyCreds = gui.CheckBoxField(
+        label=_('Empty creds'),
+        order=2,
+        tooltip=_('If checked, the credentials used to connect will be emtpy'),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    fixedName = gui.TextField(
+        label=_('Username'),
+        order=3,
+        tooltip=_('If not empty, this username will be always used as credential'),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    fixedPassword = gui.PasswordField(
+        label=_('Password'),
+        order=4,
+        tooltip=_('If not empty, this password will be always used as credential'),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    withoutDomain = gui.CheckBoxField(
+        label=_('Without Domain'),
+        order=5,
+        tooltip=_(
+            'If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'
+        ),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    fixedDomain = gui.TextField(
+        label=_('Domain'),
+        order=6,
+        tooltip=_(
+            'If not empty, this domain will be always used as credential (used as DOMAIN\\user)'
+        ),
+        tab=gui.CREDENTIALS_TAB,
+    )
+    wallpaper = gui.CheckBoxField(
+        label=_('Show wallpaper'),
+        order=20,
+        tooltip=_(
+            'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
+        ),
+        tab=gui.PARAMETERS_TAB,
+    )
+    desktopComp = gui.CheckBoxField(
+        label=_('Allow Desk.Comp.'),
+        order=22,
+        tooltip=_('If checked, desktop composition will be allowed'),
+        tab=gui.PARAMETERS_TAB,
+    )
+    smooth = gui.CheckBoxField(
+        label=_('Font Smoothing'),
+        order=23,
+        tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'),
+        tab=gui.PARAMETERS_TAB,
+    )
+    enableAudio = gui.CheckBoxField(
+        label=_('Enable Audio'),
+        order=24,
+        tooltip=_(
+            'If checked, the audio will be redirected to remote session (if client browser supports it)'
+        ),
+        tab=gui.PARAMETERS_TAB,
+        defvalue=gui.TRUE,
+    )
+    enableAudioInput = gui.CheckBoxField(
+        label=_('Enable Microphone'),
+        order=24,
+        tooltip=_(
+            'If checked, the microphone will be redirected to remote session (if client browser supports it)'
+        ),
+        tab=gui.PARAMETERS_TAB,
+    )
+    enablePrinting = gui.CheckBoxField(
+        label=_('Enable Printing'),
+        order=25,
+        tooltip=_(
+            'If checked, the printing will be redirected to remote session (if client browser supports it)'
+        ),
+        tab=gui.PARAMETERS_TAB,
+    )
+    enableFileSharing = gui.ChoiceField(
+        label=_('File Sharing'),
+        order=22,
+        tooltip=_('File upload/download redirection policy'),
+        defvalue='false',
+        values=[
+            {'id': 'false', 'text': 'Disable file sharing'},
+            {'id': 'down', 'text': 'Allow download only'},
+            {'id': 'up', 'text': 'Allow upload only'},
+            {'id': 'true', 'text': 'Enable file sharing'},
+        ],
+        tab=gui.PARAMETERS_TAB,
+    )
+
     serverLayout = gui.ChoiceField(
         order=26,
         label=_('Layout'),
@@ -104,7 +197,7 @@ class HTML5RDPTransport(transports.Transport):
             gui.choiceItem('failsafe', _('Failsafe')),
         ],
         defvalue='-',
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
     security = gui.ChoiceField(
         order=27,
@@ -112,13 +205,29 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('Connection security mode for Guacamole RDP connection'),
         required=True,
         values=[
-            gui.choiceItem('any', _('Any (Allow the server to choose the type of auth)')),
-            gui.choiceItem('rdp', _('RDP (Standard RDP encryption. Should be supported by all servers)')),
-            gui.choiceItem('nla', _('NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)')),
+            gui.choiceItem(
+                'any', _('Any (Allow the server to choose the type of auth)')
+            ),
+            gui.choiceItem(
+                'rdp',
+                _('RDP (Standard RDP encryption. Should be supported by all servers)'),
+            ),
+            gui.choiceItem(
+                'nla',
+                _(
+                    'NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)'
+                ),
+            ),
+            gui.choiceItem(
+                'nla-ext',
+                _(
+                    'NLA extended (Network Layer authentication. Requires VALID username&password, or connection will fail)'
+                ),
+            ),
             gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
         ],
         defvalue='rdp',
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
 
     ticketValidity = gui.NumericField(
@@ -126,17 +235,21 @@ class HTML5RDPTransport(transports.Transport):
         label=_('Ticket Validity'),
         defvalue='60',
         order=90,
-        tooltip=_('Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'),
+        tooltip=_(
+            'Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'
+        ),
         required=True,
         minValue=60,
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
     forceNewWindow = gui.CheckBoxField(
         label=_('Force new HTML Window'),
         order=91,
-        tooltip=_('If checked, every connection will try to open its own window instead of reusing the "global" one.'),
+        tooltip=_(
+            'If checked, every connection will try to open its own window instead of reusing the "global" one.'
+        ),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -145,9 +258,15 @@ class HTML5RDPTransport(transports.Transport):
         # Strip spaces
         self.guacamoleServer.value = self.guacamoleServer.value.strip()
         if self.guacamoleServer.value[0:4] != 'http':
-            raise transports.Transport.ValidationException(_('The server must be http or https'))
+            raise transports.Transport.ValidationException(
+                _('The server must be http or https')
+            )
         if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
-            raise transports.Transport.ValidationException(_('Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'))
+            raise transports.Transport.ValidationException(
+                _(
+                    'Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'
+                )
+            )
 
     # Same check as normal RDP transport
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
@@ -165,11 +284,15 @@ class HTML5RDPTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+    def processedUser(
+        self, userService: 'models.UserService', user: 'models.User'
+    ) -> str:
         v = self.processUserAndPassword(userService, user, '')
         return v['username']
 
-    def processUserAndPassword(self, userService: 'models.UserService', user: 'models.User', password: str) -> typing.Dict[str, str]:
+    def processUserAndPassword(
+        self, userService: 'models.UserService', user: 'models.User', password: str
+    ) -> typing.Dict[str, str]:
         username: str = user.getUsernameForAuth()
 
         if self.fixedName.value != '':
@@ -199,20 +322,29 @@ class HTML5RDPTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
+        return {
+            'protocol': self.protocol,
+            'username': username,
+            'password': password,
+            'domain': domain,
+        }
 
     def getLink(  # pylint: disable=too-many-locals
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> str:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> str:
         credsInfo = self.processUserAndPassword(userService, user, password)
-        username, password, domain = credsInfo['username'], credsInfo['password'], credsInfo['domain']
+        username, password, domain = (
+            credsInfo['username'],
+            credsInfo['password'],
+            credsInfo['domain'],
+        )
 
         scrambler = cryptoManager().randomString(32)
         passwordCrypted = cryptoManager().symCrypt(password, scrambler)
@@ -223,47 +355,58 @@ class HTML5RDPTransport(transports.Transport):
             'hostname': ip,
             'username': username,
             'password': passwordCrypted,
+            'resize-method': 'display-update',
             'ignore-cert': 'true',
             'security': self.security.value,
             'drive-path': '/share/{}'.format(user.uuid),
-            'create-drive-path': 'true'
+            'create-drive-path': 'true',
         }
 
         if domain:
             params['domain'] = domain
 
-        if self.enableFileSharing.isTrue():
+        if self.enableFileSharing.value == 'true':
             params['enable-drive'] = 'true'
+        elif self.enableFileSharing.value == 'down':
+            params['enable-drive'] = 'true'
+            params['disable-upload'] = 'true'
+        elif self.enableFileSharing.value == 'up':
+            params['enable-drive'] = 'true'
+            params['disable-download'] = 'true'
+        
 
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
 
-        if self.enableAudio.isTrue() is False:
+        if not self.enableAudio.isTrue():
             params['disable-audio'] = 'true'
+        elif self.enableAudioInput.isTrue():
+            params['enable-audio-input'] = 'true'
 
-        if self.enablePrinting.isTrue() is True:
+        if self.enablePrinting.isTrue():
             params['enable-printing'] = 'true'
             params['printer-name'] = 'UDS-Printer'
 
-        if self.wallpaper.isTrue() is True:
+        if self.wallpaper.isTrue():
             params['enable-wallpaper'] = 'true'
 
-        if self.desktopComp.isTrue() is True:
+        if self.desktopComp.isTrue():
             params['enable-desktop-composition'] = 'true'
 
-        if self.smooth.isTrue() is True:
+        if self.smooth.isTrue():
             params['enable-font-smoothing'] = 'true'
 
         logger.debug('RDP Params: %s', params)
 
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
-        onw = 'o_n_w={};'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
+        onw = (
+            '&o_n_w={};'.format(hash(transport.name))
+            if self.forceNewWindow.isTrue()
+            else ''
+        )
         return str(
-            "{}/transport/?{}.{}&{}".format(
-                self.guacamoleServer.value,
-                ticket,
-                scrambler,
-                onw
+            "{}/guacamole/#/?data={}.{}{}".format(
+                self.guacamoleServer.value, ticket, scrambler, onw
             )
         )

@@ -91,9 +91,9 @@ class MetaPools(ModelHandler):
             if item.servicesPoolGroup.image is not None:
                 poolGroupThumb = item.servicesPoolGroup.image.thumb64
 
-        allPools = item.pools.all()
-        userServicesCount = sum((i.userServices.exclude(state__in=State.INFO_STATES).count() for i in allPools))
-        userServicesInPreparation = sum((i.userServices.filter(state=State.PREPARING).count()) for i in allPools)
+        allPools = item.members.all()
+        userServicesCount = sum((i.pool.userServices.exclude(state__in=State.INFO_STATES).count() for i in allPools))
+        userServicesInPreparation = sum((i.pool.userServices.filter(state=State.PREPARING).count()) for i in allPools)
 
         val = {
             'id': item.uuid,

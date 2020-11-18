@@ -185,7 +185,7 @@ class TicketStore(UUIDModel):
             ):  # Delete only really old tickets. Avoid "revalidate" issues
                 v.delete()
         cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
-        # Also remove too long tickets (12 hours is the default)
+        # Also remove too long tickets, even if they are not  (12 hours is the default)
         TicketStore.objects.filter(stamp__lt=cleanSince).delete()
 
     def __str__(self) -> str:

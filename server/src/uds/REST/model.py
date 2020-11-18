@@ -899,7 +899,8 @@ class ModelHandler(BaseModelHandler):
                     res = self.item_as_dict(item)
                     self.fillIntanceFields(item, res)
                     yield res
-            except Exception:  # maybe an exception is thrown to skip an item
+            except Exception as e:  # maybe an exception is thrown to skip an item
+                logger.debug('Got exception processing item from model: %s', e)
                 # logger.exception('Exception getting item from {0}'.format(self.model))
                 pass
 
