@@ -30,12 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
+import re
 import logging
 import typing
+from uds.models.util import getSqlDatetime
 
 from django.utils.translation import ugettext_noop as _
-from django.urls import reverse
-from django.http import HttpResponseRedirect
 
 from uds.core.ui import gui
 
@@ -362,6 +363,18 @@ class HTML5RDPTransport(transports.Transport):
             'create-drive-path': 'true',
         }
 
+        if False:  # Future imp
+            sanitize = lambda x: re.sub("[^a-zA-Z0-9_-]", "_", x)
+            params['recording-path'] = (
+                '/share/recording/'
+                + sanitize(user.manager.name)
+                + '_'
+                + sanitize(user.name)
+                + '/'
+                + getSqlDatetime().strftime('%Y%m%d-%H%M')
+            )
+            params['create-recording-path'] = 'true'
+
         if domain:
             params['domain'] = domain
 
@@ -373,7 +386,6 @@ class HTML5RDPTransport(transports.Transport):
         elif self.enableFileSharing.value == 'up':
             params['enable-drive'] = 'true'
             params['disable-download'] = 'true'
-        
 
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
