@@ -252,20 +252,20 @@ class RDPFile:
         if self.domain != '':
             url += self.domain
 
-        url += '?screenDepth###{}'.format(self.bpp)
+        url += '?screenDepth={}'.format(self.bpp)
 
         if self.fullScreen:  # @UndefinedVariable
-            url += '&fullscreen###true'
+            url += '&fullscreen=true'
         else:
-            url += '&screenWidth###{}&screenHeight###{}'.format(self.width, self.height)
+            url += '&screenWidth={}&screenHeight={}'.format(self.width, self.height)
 
         # url += '&forwardAudio###' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
 
         if self.redirectDrives:  # @UndefinedVariable
-            url += '&forwardDisks###true'
+            url += '&forwardDisks=true'
 
         if self.redirectPrinters:  # @UndefinedVariable
-            url += '&forwardPrinters###true'
+            url += '&forwardPrinters=true'
 
         return url
 
