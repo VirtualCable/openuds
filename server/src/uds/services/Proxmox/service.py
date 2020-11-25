@@ -242,6 +242,9 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     def stopMachine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().stopMachine(vmId)
 
+    def resetMachine(self, vmId: int) -> 'client.types.UPID':
+        return self.parent().resetMachine(vmId)
+
     def suspendMachine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().suspendMachine(vmId)
 
