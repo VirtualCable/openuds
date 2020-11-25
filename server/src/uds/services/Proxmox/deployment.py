@@ -167,7 +167,7 @@ class ProxmoxDeployment(services.UserDeployment):
         o Proxmox, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
-            self.service().stopMachine(int(self._vmid))
+            self.service().resetMachine(int(self._vmid))
 
     def getConsoleConnection(self) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)

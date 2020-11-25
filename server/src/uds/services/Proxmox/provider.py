@@ -143,6 +143,9 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     def stopMachine(self, vmId: int) -> client.types.UPID:
         return self.__getApi().stopVm(vmId)
 
+    def resetMachine(self, vmId: int) -> client.types.UPID:
+        return self.__getApi().resetVm(vmId)
+
     def suspendMachine(self, vmId: int) -> client.types.UPID:
         return self.__getApi().suspendVm(vmId)
 
