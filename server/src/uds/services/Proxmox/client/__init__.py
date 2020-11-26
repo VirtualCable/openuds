@@ -394,9 +394,13 @@ class ProxmoxClient:
 
     @ensureConected
     def stopVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
-        # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
         return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/stop'.format(node, vmId)))
+
+    @ensureConected
+    def resetVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+        node = node or self.getVmInfo(vmId).node
+        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/reset'.format(node, vmId)))
 
     @ensureConected
     def suspendVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:

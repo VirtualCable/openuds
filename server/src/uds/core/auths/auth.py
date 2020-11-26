@@ -319,26 +319,27 @@ def webLogout(request: HttpRequest, exit_url: typing.Optional[str] = None) -> Ht
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     """
+    if exit_url is None:
+        exit_url = request.build_absolute_uri(reverse('page.logout'))
+        # exit_url = GlobalConfig.LOGIN_URL.get()
+        # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
+        #     exit_url = exit_url.replace('http://', 'https://')
 
     if request.user:
-        authenticator = request.user.manager.getInstance()
+        authenticator: 'auths.Authenticator' = request.user.manager.getInstance()
         username = request.user.name
         exit_url = authenticator.logout(username) or exit_url
         if request.user.id != ROOT_ID:
             # Try yo invoke logout of auth
             events.addEvent(request.user.manager, events.ET_LOGOUT, username=request.user.name, srcip=request.ip)
-    else:  # No user, redirect to /
-        return HttpResponseRedirect(reverse('page.login'))
-
-    request.session.clear()
-    if exit_url is None:
-        exit_url = reverse('page.logout')
-        # exit_url = GlobalConfig.LOGIN_URL.get()
-        # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
-        #     exit_url = exit_url.replace('http://', 'https://')
+    else:  # No user, redirect to logout page directly
+        return HttpResponseRedirect(exit_url)
 
     # Try to delete session
-    response = HttpResponseRedirect(request.build_absolute_uri(exit_url))
+    request.session.clear()
+
+    response = HttpResponseRedirect(exit_url)
+
     if authenticator:
         authenticator.webLogoutHook(username, request, response)
     return response
