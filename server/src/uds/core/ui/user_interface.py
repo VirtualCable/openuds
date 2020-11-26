@@ -883,9 +883,13 @@ class UserInterface(metaclass=UserInterfaceType):
     _gui: typing.Dict[str, gui.InputField]
 
     def __init__(self, values: gui.ValuesType = None) -> None:
-        # : If there is an array of elements to initialize, simply try to store values on form fields
-        # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
-        # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
+        # : If there is an array of elements to initialize, simply try to store
+        # values on form fields.
+
+        # Generate a deep copy of inherited Gui, so each User Interface instance
+        # has its own "field" set, and do not share the "fielset" with others, what
+        # can be really dangerous. Till now, nothing bad happened cause there where
+        # being used "serialized", but this do not have to be this way
         self._gui = copy.deepcopy(
             self._gui
         )  # Ensure "gui" is our own instance, deep copied from base
@@ -1065,7 +1069,7 @@ class UserInterface(metaclass=UserInterfaceType):
         represent it at user interface and manage it.
 
         Args:
-            object: If not none, object that will get its "initGui" invoked
+            obj: If any, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
         """
         logger.debug('Active language for theGui translation: %s', get_language())
@@ -1075,7 +1079,7 @@ class UserInterface(metaclass=UserInterfaceType):
             theGui = obj
 
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
-        # pylint: disable=protected-access,maybe-no-member
+
         for key, val in theGui._gui.items():
             logger.debug('%s ### %s', key, val)
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})

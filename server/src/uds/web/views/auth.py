@@ -72,6 +72,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         authenticator = Authenticator.objects.get(name=authName)
         params = request.GET.copy()
         params.update(request.POST)
+        params['_query'] = request.META.get('QUERY_STRING', '')
 
         logger.debug('Auth callback for %s with params %s', authenticator, params.keys())
 
@@ -110,9 +111,9 @@ def authCallback_stage2(request: HttpRequest, ticketId: str) -> HttpResponse:
 
         return response
     except auths.exceptions.Redirect as e:
-        return HttpResponseRedirect(request.build_absolute_uri(str(e)))
+        return HttpResponseRedirect(request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/' )
     except auths.exceptions.Logout as e:
-        return webLogout(request, request.build_absolute_uri(str(e)))
+        return webLogout(request, request.build_absolute_uri(str(e)) if e.args and e.args[0] else None)
     except Exception as e:
         logger.exception('authCallback')
         return errors.exceptionView(request, e)

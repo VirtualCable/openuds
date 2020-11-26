@@ -397,6 +397,11 @@ def webLogout(
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     """
+    if exit_url is None:
+        exit_url = request.build_absolute_uri(reverse('page.logout'))
+        # exit_url = GlobalConfig.LOGIN_URL.get()
+        # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
+        #     exit_url = exit_url.replace('http://', 'https://')
 
     if request.user:
         authenticator = request.user.manager.getInstance()
@@ -413,14 +418,10 @@ def webLogout(
     else:  # No user, redirect to /
         return HttpResponseRedirect(reverse('page.login'))
 
-    request.session.flush()
-    if exit_url is None:
-        exit_url = reverse('page.logout')
-        # exit_url = GlobalConfig.LOGIN_URL.get()
-        # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
-        #     exit_url = exit_url.replace('http://', 'https://')
-
     # Try to delete session
+    request.session.flush()
+    
+
     response = HttpResponseRedirect(request.build_absolute_uri(exit_url))
     if authenticator:
         authenticator.webLogoutHook(username, request, response)
