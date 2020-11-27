@@ -173,16 +173,16 @@ def getServicesData(
             )
 
     # Now generic user service
-    for svr in availServicePools:
+    for sPool in availServicePools:
         # Skip pools that are part of meta pools
-        if svr.owned_by_meta:
+        if sPool.owned_by_meta:
             continue
 
-        use = str(svr.usage(typing.cast(typing.Any, svr).usage_count)) + '%'
+        use = str(sPool.usage(typing.cast(typing.Any, sPool).usage_count)) + '%'
 
         trans = []
         for t in sorted(
-            svr.transports.all(), key=lambda x: x.priority
+            sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
             try:
                 typeTrans = t.getType()
@@ -194,9 +194,9 @@ def getServicesData(
                 and t.validForOs(osName)
             ):
                 if typeTrans.ownLink:
-                    link = reverse('TransportOwnLink', args=('F' + svr.uuid, t.uuid))
+                    link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))
                 else:
-                    link = html.udsAccessLink(request, 'F' + svr.uuid, t.uuid)
+                    link = html.udsAccessLink(request, 'F' + sPool.uuid, t.uuid)
                 trans.append(
                     {'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority}
                 )
@@ -205,65 +205,71 @@ def getServicesData(
         if not trans:
             continue
 
-        if svr.image:
-            imageId = svr.image.uuid
+        if sPool.image:
+            imageId = sPool.image.uuid
         else:
             imageId = 'x'
 
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
-        in_use = typing.cast(typing.Any, svr).number_in_use > 0
+        in_use = typing.cast(typing.Any, sPool).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
         #     ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
         #     if ads:
         #         in_use = ads.in_use
 
         group = (
-            svr.servicesPoolGroup.as_dict
-            if svr.servicesPoolGroup
+            sPool.servicesPoolGroup.as_dict
+            if sPool.servicesPoolGroup
             else ServicePoolGroup.default().as_dict
         )
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
         toBeReplaced = (
-            svr.toBeReplaced(request.user)
-            if typing.cast(typing.Any, svr).pubs_active > 0
+            sPool.toBeReplaced(request.user)
+            if typing.cast(typing.Any, sPool).pubs_active > 0
             and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False)
             else None
         )
         # tbr = False
         if toBeReplaced:
-            toBeReplaced = formats.date_format(toBeReplaced, "SHORT_DATETIME_FORMAT")
+            toBeReplaced = formats.date_format(toBeReplaced, 'SHORT_DATETIME_FORMAT')
             toBeReplacedTxt = ugettext(
                 'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
             ).format(toBeReplaced)
         else:
             toBeReplacedTxt = ''
 
-        def datator(x):
-            return x.replace('{use}', use).replace('{total}', str(svr.max_srvs))
+        # Calculate max deployed
+        maxDeployed = str(sPool.max_srvs)
+        # if sPool.service.getType().usesCache is False:
+        #    maxDeployed = sPool.service.getInstance().maxDeployed
+        
+        def datator(x) -> str:
+            return x.replace('{use}', use).replace('{total}', maxDeployed)
+
 
         services.append(
             {
-                'id': 'F' + svr.uuid,
-                'name': datator(svr.name),
+                'id': 'F' + sPool.uuid,
+                'name': datator(sPool.name),
                 'visual_name': datator(
-                    svr.visual_name.replace('{use}', use).replace(
-                        '{total}', str(svr.max_srvs)
+                    sPool.visual_name.replace('{use}', use).replace(
+                        '{total}', maxDeployed
                     )
                 ),
-                'description': svr.comments,
+                'description': sPool.comments,
                 'group': group,
                 'transports': trans,
                 'imageId': imageId,
-                'show_transports': svr.show_transports,
-                'allow_users_remove': svr.allow_users_remove,
-                'allow_users_reset': svr.allow_users_reset,
-                'maintenance': svr.isInMaintenance(),
-                'not_accesible': not svr.isAccessAllowed(now),
+                'show_transports': sPool.show_transports,
+                'allow_users_remove': sPool.allow_users_remove,
+                'allow_users_reset': sPool.allow_users_reset,
+                'maintenance': sPool.isInMaintenance(),
+                'not_accesible': not sPool.isAccessAllowed(now),
                 'in_use': in_use,
                 'to_be_replaced': toBeReplaced,
                 'to_be_replaced_text': toBeReplacedTxt,
-                'custom_calendar_text': svr.calendar_message,
+                'custom_calendar_text': sPool.calendar_message,
             }
         )
 
