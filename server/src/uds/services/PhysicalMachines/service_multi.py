@@ -147,6 +147,9 @@ class IPMachinesService(IPServiceBase):
             if values[0] == b'v4':
                 self._skipTimeOnFailure = int(values[3].decode())
 
+        # Sets maximum services for this
+        self.maxDeployed = len(self._ips)
+
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
         try:
