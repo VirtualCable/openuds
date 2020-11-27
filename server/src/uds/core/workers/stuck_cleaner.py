@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -43,13 +42,17 @@ from uds.core.util import log
 
 logger = logging.getLogger(__name__)
 
-MAX_STUCK_TIME = 3600 * 24  # At most 1 days "Stuck", not configurable (there is no need to)
+MAX_STUCK_TIME = (
+    3600 * 24
+)  # At most 1 days "Stuck", not configurable (there is no need to)
+
 
 class StuckCleaner(Job):
     """
     Kaputen Cleaner is very similar to Hanged Cleaner
     We keep it in a new place to "control" more specific thins
     """
+
     frecuency = 3601 * 8  # Executes Once a day
     friendly_name = 'Stuck States cleaner'
 
@@ -57,33 +60,43 @@ class StuckCleaner(Job):
         since_state: datetime = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
         # Filter for locating machine stuck on removing, cancelling, etc..
         # Locate service pools with pending assigned service in use
-        servicePoolswithStucks = ServicePool.objects.annotate(
-            stuckCount=Count(
-                'userServices', 
-                filter=Q(
-                    userServices__state_date__lt=since_state
-                ) & (Q(
-                    userServices__state=State.PREPARING, userServices__properties__name='destroy_after'
-                ) | ~Q(
-                    userServices__state__in=State.INFO_STATES + State.VALID_STATES
-                ))
+        servicePoolswithStucks = (
+            ServicePool.objects.annotate(
+                stuckCount=Count(
+                    'userServices',
+                    filter=Q(userServices__state_date__lt=since_state)
+                    & (
+                        Q(
+                            userServices__state=State.PREPARING,
+                            userServices__properties__name='destroy_after',
+                        )
+                        | ~Q(
+                            userServices__state__in=State.INFO_STATES
+                            + State.VALID_STATES
+                        )
+                    ),
+                )
             )
-        ).filter(service__provider__maintenance_mode=False, state=State.ACTIVE).exclude(stuckCount=0)
-        
+            .filter(service__provider__maintenance_mode=False, state=State.ACTIVE)
+            .exclude(stuckCount=0)
+        )
+
         # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
-        def stuckUserServices(servicePool: ServicePool ) -> typing.Iterable[UserService]:
-            q = servicePool.userServices.filter(
-                state_date__lt=since_state
-            )
-            yield from q.exclude(
-                state__in=State.INFO_STATES + State.VALID_STATES
-            )
+        def stuckUserServices(servicePool: ServicePool) -> typing.Iterable[UserService]:
+            q = servicePool.userServices.filter(state_date__lt=since_state)
+            yield from q.exclude(state__in=State.INFO_STATES + State.VALID_STATES)
             yield from q.filter(state=State.PREPARING, properties__name='destroy_after')
 
         for servicePool in servicePoolswithStucks:
             # logger.debug('Searching for stuck states for %s', servicePool.name)
             for stuck in stuckUserServices(servicePool):
                 logger.debug('Found stuck user service %s', stuck)
-                log.doLog(servicePool, log.ERROR, 'User service {} has been hard removed because it\'s stuck'.format(stuck.name))
+                log.doLog(
+                    servicePool,
+                    log.ERROR,
+                    'User service {} has been hard removed because it\'s stuck'.format(
+                        stuck.name
+                    ),
+                )
                 # stuck.setState(State.ERROR)
                 stuck.delete()

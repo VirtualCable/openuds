@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -41,17 +40,23 @@ from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 
+MAX_EXECUTION_MINUTES = 15  # Minutes
+
+
 class SchedulerHousekeeping(Job):
     """
     Ensures no task is executed for more than 15 minutes
     """
+
     frecuency = 301  # Frecuncy for this job
     friendly_name = 'Scheduler house keeping'
 
     def run(self):
         """
-        Look for "hanged" scheduler tasks and reset them
+        Look for "hanged" scheduler tasks and reschedule them
         """
-        since = getSqlDatetime() - timedelta(minutes=15)
+        since = getSqlDatetime() - timedelta(minutes=MAX_EXECUTION_MINUTES)
         with transaction.atomic():
-            Scheduler.objects.select_for_update().filter(last_execution__lt=since, state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)
+            Scheduler.objects.select_for_update().filter(
+                last_execution__lt=since, state=State.RUNNING
+            ).update(owner_server='', state=State.FOR_EXECUTE)

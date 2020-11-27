@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,12 +46,20 @@ class ScheduledAction(Job):
     def run(self):
         configuredAction: CalendarAction
         for configuredAction in CalendarAction.objects.filter(
-                service_pool__service__provider__maintenance_mode=False,  # Avoid maintenance
-                service_pool__state=states.servicePool.ACTIVE,  # Avoid Non active pools
-                next_execution__lt=getSqlDatetime()
-            ).order_by('next_execution'):
-            logger.info('Executing calendar action %s.%s (%s)', configuredAction.service_pool.name, configuredAction.calendar.name, configuredAction.action)
+            service_pool__service__provider__maintenance_mode=False,  # Avoid maintenance
+            service_pool__state=states.servicePool.ACTIVE,  # Avoid Non active pools
+            next_execution__lt=getSqlDatetime(),
+        ).order_by('next_execution'):
+            logger.info(
+                'Executing calendar action %s.%s (%s)',
+                configuredAction.service_pool.name,
+                configuredAction.calendar.name,
+                configuredAction.action,
+            )
             try:
                 configuredAction.execute()
             except Exception:
-                logger.exception('Got an exception executing calendar access action: %s', configuredAction)
+                logger.exception(
+                    'Got an exception executing calendar access action: %s',
+                    configuredAction,
+                )

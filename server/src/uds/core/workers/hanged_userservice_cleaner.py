@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,21 +48,34 @@ class HangedCleaner(Job):
     friendly_name = 'Hanged services checker'
 
     def run(self):
-        since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt())
+        since_state = getSqlDatetime() - timedelta(
+            seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt()
+        )
         # Filter for locating machine not ready
-        flt = (
-            Q(state_date__lt=since_state, state=State.PREPARING) |
-            Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING)
+        flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(
+            state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING
         )
 
-        withHangedServices = ServicePool.objects.annotate(
-            hanged = Count(
-                'userServices',
-                # Rewrited Filter for servicePool
-                filter=Q(userServices__state_date__lt=since_state, userServices__state=State.PREPARING) |
-                    Q(userServices__state_date__lt=since_state, userServices__state=State.USABLE, userServices__os_state=State.PREPARING)
+        withHangedServices = (
+            ServicePool.objects.annotate(
+                hanged=Count(
+                    'userServices',
+                    # Rewrited Filter for servicePool
+                    filter=Q(
+                        userServices__state_date__lt=since_state,
+                        userServices__state=State.PREPARING,
+                    )
+                    | Q(
+                        userServices__state_date__lt=since_state,
+                        userServices__state=State.USABLE,
+                        userServices__os_state=State.PREPARING,
+                    ),
+                )
             )
-        ).exclude(hanged=0).exclude(service__provider__maintenance_mode=True).filter(state=State.ACTIVE)
+            .exclude(hanged=0)
+            .exclude(service__provider__maintenance_mode=True)
+            .filter(state=State.ACTIVE)
+        )
 
         # Type
         servicePool: ServicePool
@@ -72,9 +84,22 @@ class HangedCleaner(Job):
             logger.debug('Searching for hanged services for %s', servicePool)
             us: UserService
             for us in servicePool.userServices.filter(flt):
-                if us.getProperty('destroy_after'):  # It's waiting for removal, skip this very specific case
+                if us.getProperty(
+                    'destroy_after'
+                ):  # It's waiting for removal, skip this very specific case
                     continue
                 logger.debug('Found hanged service %s', us)
-                log.doLog(us, log.ERROR, 'User Service seems to be hanged. Removing it.', log.INTERNAL)
-                log.doLog(servicePool, log.ERROR, 'Removing user service {} because it seems to be hanged'.format(us.friendly_name))
+                log.doLog(
+                    us,
+                    log.ERROR,
+                    'User Service seems to be hanged. Removing it.',
+                    log.INTERNAL,
+                )
+                log.doLog(
+                    servicePool,
+                    log.ERROR,
+                    'Removing user service {} because it seems to be hanged'.format(
+                        us.friendly_name
+                    ),
+                )
                 us.removeOrCancel()

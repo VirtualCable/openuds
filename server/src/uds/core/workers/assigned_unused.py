@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -48,18 +48,20 @@ class AssignedAndUnused(Job):
     friendly_name = 'Unused services checker'
 
     def run(self) -> None:
-        since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.CHECK_UNUSED_TIME.getInt())
+        since_state = getSqlDatetime() - timedelta(
+            seconds=GlobalConfig.CHECK_UNUSED_TIME.getInt()
+        )
         # Locate service pools with pending assigned service in use
         outdatedServicePools = ServicePool.objects.annotate(
             outdated=Count(
-                'userServices', 
+                'userServices',
                 filter=Q(
                     userServices__in_use=False,
                     userServices__state_date__lt=since_state,
                     userServices__state=State.USABLE,
                     userServices__os_state=State.USABLE,
-                    userServices__cache_level=0
-                )
+                    userServices__cache_level=0,
+                ),
             )
         ).filter(outdated__gt=0, state=State.ACTIVE)
         for ds in outdatedServicePools:
@@ -70,11 +72,25 @@ class AssignedAndUnused(Job):
             if ds.osmanager:
                 osm = ds.osmanager.getInstance()
                 if osm.processUnusedMachines is True:
-                    logger.debug('Processing unused services for %s, %s', ds, ds.osmanager)
-                    for us in ds.assignedUserServices().filter(in_use=False, state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
+                    logger.debug(
+                        'Processing unused services for %s, %s', ds, ds.osmanager
+                    )
+                    for us in ds.assignedUserServices().filter(
+                        in_use=False,
+                        state_date__lt=since_state,
+                        state=State.USABLE,
+                        os_state=State.USABLE,
+                    ):
                         logger.debug('Found unused assigned service %s', us)
                         osm.processUnused(us)
             else:  # No os manager, simply remove unused services in specified time
-                for us in ds.assignedUserServices().filter(in_use=False, state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
-                    logger.debug('Found unused assigned service with no OS Manager %s', us)
+                for us in ds.assignedUserServices().filter(
+                    in_use=False,
+                    state_date__lt=since_state,
+                    state=State.USABLE,
+                    os_state=State.USABLE,
+                ):
+                    logger.debug(
+                        'Found unused assigned service with no OS Manager %s', us
+                    )
                     us.remove()

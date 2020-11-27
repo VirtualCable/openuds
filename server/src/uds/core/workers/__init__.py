@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -39,7 +39,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def initialize():
+def initialize() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
@@ -56,9 +56,7 @@ def initialize():
 
     importlib.invalidate_caches()
 
-    p = jobs.Job
-    # This is marked as error in IDE, but it's not (__subclasses__)
-    for cls in p.__subclasses__():
+    for cls in jobs.Job.__subclasses__():
         logger.debug('Examining worker %s', cls.__module__)
         # Limit to autoregister just workers jobs inside this module
         if cls.__module__[0:16] == 'uds.core.workers':

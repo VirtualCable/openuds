@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,21 +44,31 @@ logger = logging.getLogger(__name__)
 
 class DeployedServiceInfoItemsCleaner(Job):
     frecuency = 3607
-    frecuency_cfg = GlobalConfig.CLEANUP_CHECK  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
+    frecuency_cfg = (
+        GlobalConfig.CLEANUP_CHECK
+    )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Info Cleaner'
 
     def run(self):
-        removeFrom = getSqlDatetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.getInt())
-        ServicePool.objects.filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
+        removeFrom = getSqlDatetime() - timedelta(
+            seconds=GlobalConfig.KEEP_INFO_TIME.getInt()
+        )
+        ServicePool.objects.filter(
+            state__in=State.INFO_STATES, state_date__lt=removeFrom
+        ).delete()
 
 
 class DeployedServiceRemover(Job):
     frecuency = 31
-    frecuency_cfg = GlobalConfig.REMOVAL_CHECK  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
+    frecuency_cfg = (
+        GlobalConfig.REMOVAL_CHECK
+    )  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Cleaner'
 
     def startRemovalOf(self, servicePool: ServicePool):
-        if servicePool.service is None:  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone "touched.. ;)")
+        if (
+            servicePool.service is None
+        ):  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone "touched.. ;)")
             logger.error('Found service pool %s without service', servicePool.name)
             servicePool.delete()  # Just remove it "a las bravas", the best we can do
             return
@@ -71,7 +80,9 @@ class DeployedServiceRemover(Job):
         for pub in publishing:
             pub.cancel()
         # Now all publishments are canceling, let's try to cancel cache and assigned
-        uServices: typing.Iterable[UserService] = servicePool.userServices.filter(state=State.PREPARING)
+        uServices: typing.Iterable[UserService] = servicePool.userServices.filter(
+            state=State.PREPARING
+        )
         for userService in uServices:
             logger.debug('Canceling %s', userService)
             userService.cancel()
@@ -90,7 +101,9 @@ class DeployedServiceRemover(Job):
 
         try:
             # Now all publications are canceling, let's try to cancel cache and assigned also
-            uServices: typing.Iterable[UserService] = servicePool.userServices.filter(state=State.PREPARING)
+            uServices: typing.Iterable[UserService] = servicePool.userServices.filter(
+                state=State.PREPARING
+            )
             for userService in uServices:
                 logger.debug('Canceling %s', userService)
                 userService.cancel()
@@ -99,13 +112,17 @@ class DeployedServiceRemover(Job):
 
         # First, we remove all publications and user services in "info_state"
         with transaction.atomic():
-            servicePool.userServices.select_for_update().filter(state__in=State.INFO_STATES).delete()
+            servicePool.userServices.select_for_update().filter(
+                state__in=State.INFO_STATES
+            ).delete()
 
         # Mark usable user services as removable
         now = getSqlDatetime()
 
         with transaction.atomic():
-            servicePool.userServices.select_for_update().filter(state=State.USABLE).update(state=State.REMOVABLE, state_date=now)
+            servicePool.userServices.select_for_update().filter(
+                state=State.USABLE
+            ).update(state=State.REMOVABLE, state_date=now)
 
         # When no service is at database, we start with publications
         if servicePool.userServices.all().count() == 0:
@@ -115,8 +132,12 @@ class DeployedServiceRemover(Job):
                     logger.debug('Active publication found, unpublishing it')
                     servicePool.unpublish()
                 else:
-                    logger.debug('No active publication found, removing info states and checking if removal is done')
-                    servicePool.publications.filter(state__in=State.INFO_STATES).delete()
+                    logger.debug(
+                        'No active publication found, removing info states and checking if removal is done'
+                    )
+                    servicePool.publications.filter(
+                        state__in=State.INFO_STATES
+                    ).delete()
                     if servicePool.publications.count() == 0:
                         servicePool.removed()  # Mark it as removed, clean later from database
             except Exception:
@@ -124,7 +145,9 @@ class DeployedServiceRemover(Job):
 
     def run(self):
         # First check if there is someone in "removable" estate
-        removableServicePools: typing.Iterable[ServicePool] = ServicePool.objects.filter(state=State.REMOVABLE)[:10]
+        removableServicePools: typing.Iterable[
+            ServicePool
+        ] = ServicePool.objects.filter(state=State.REMOVABLE)[:10]
         for servicePool in removableServicePools:
             try:
                 # Skips checking deployed services in maintenance mode
@@ -137,7 +160,9 @@ class DeployedServiceRemover(Job):
                 except Exception as e2:
                     logger.error('Could not delete %s', e2)
 
-        removingServicePools: typing.Iterable[ServicePool] = ServicePool.objects.filter(state=State.REMOVING)[:10]
+        removingServicePools: typing.Iterable[ServicePool] = ServicePool.objects.filter(
+            state=State.REMOVING
+        )[:10]
         for servicePool in removingServicePools:
             try:
                 # Skips checking deployed services in maintenance mode

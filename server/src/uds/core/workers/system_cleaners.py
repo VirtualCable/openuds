@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@
 """
 from importlib import import_module
 import logging
+import typing
 
 from django.conf import settings
 from uds.core.util.cache import Cache
@@ -65,13 +66,13 @@ class TicketStoreCleaner(Job):
 
 class SessionsCleaner(Job):
 
-    frecuency = 3600 * 24 * 7  # Once a day will be enough
+    frecuency = 3600 * 24 * 7  # Once a week will be enough
     friendly_name = 'User Sessions cleaner'
 
     def run(self):
         logger.debug('Starting session cleanup')
         try:
-            engine = import_module(settings.SESSION_ENGINE)
+            engine: typing.Any = import_module(settings.SESSION_ENGINE)
         except Exception:
             logger.exception('DjangoSessionsCleaner')
             return

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -46,5 +45,11 @@ class UsageAccounting(Job):
 
     def run(self):
         with transaction.atomic():
-            AccountUsage.objects.select_for_update().filter(user_service__in_use=True).update(end=getSqlDatetime())
-            AccountUsage.objects.select_for_update().filter(user_service__in_use=False).update(user_service=None)  # Cleanup
+            AccountUsage.objects.select_for_update().filter(
+                user_service__in_use=True
+            ).update(end=getSqlDatetime())
+            AccountUsage.objects.select_for_update().filter(
+                user_service__in_use=False
+            ).update(
+                user_service=None
+            )  # Cleanup

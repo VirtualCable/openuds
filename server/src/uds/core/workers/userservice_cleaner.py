@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -51,38 +50,58 @@ logger = logging.getLogger(__name__)
 
 class UserServiceInfoItemsCleaner(Job):
     frecuency = 14401
-    frecuency_cfg = GlobalConfig.KEEP_INFO_TIME  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
+    frecuency_cfg = (
+        GlobalConfig.KEEP_INFO_TIME
+    )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'User Service Info Cleaner'
 
-    def run(self):
-        removeFrom = getSqlDatetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True))
+    def run(self) -> None:
+        removeFrom = getSqlDatetime() - timedelta(
+            seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True)
+        )
         logger.debug('Removing information user services from %s', removeFrom)
         with transaction.atomic():
-            UserService.objects.select_for_update().filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
+            UserService.objects.select_for_update().filter(
+                state__in=State.INFO_STATES, state_date__lt=removeFrom
+            ).delete()
 
 
 class UserServiceRemover(Job):
     frecuency = 31
-    frecuency_cfg = GlobalConfig.REMOVAL_CHECK  # Request run cache "info" cleaner every configued seconds. If config value is changed, it will be used at next reload
+    frecuency_cfg = (
+        GlobalConfig.REMOVAL_CHECK
+    )  # Request run cache "info" cleaner every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'User Service Cleaner'
 
-
-    def run(self):
-        removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()  # Same, it will work at reload
+    def run(self) -> None:
+        removeAtOnce: int = (
+            GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()
+        )  # Same, it will work at reload
 
         with transaction.atomic():
-            removeFrom = getSqlDatetime() - timedelta(seconds=10)  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
-            removableUserServices: typing.Iterable[UserService] = UserService.objects.filter(
+            removeFrom = getSqlDatetime() - timedelta(
+                seconds=10
+            )  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
+            removableUserServices: typing.Iterable[
+                UserService
+            ] = UserService.objects.filter(
                 state=State.REMOVABLE,
                 state_date__lt=removeFrom,
-                deployed_service__service__provider__maintenance_mode=False
-            )[0:removeAtOnce].iterator()
+                deployed_service__service__provider__maintenance_mode=False,
+            )[
+                0:removeAtOnce
+            ].iterator()
 
         manager = managers.userServiceManager()
         for removableUserService in removableUserServices:
             logger.debug('Checking removal of %s', removableUserService.name)
             try:
-                if manager.canRemoveServiceFromDeployedService(removableUserService.deployed_service) is True:
+                if (
+                    manager.canRemoveServiceFromDeployedService(
+                        removableUserService.deployed_service
+                    )
+                    is True
+                ):
                     manager.remove(removableUserService)
             except Exception:
                 logger.exception('Exception removing user service')

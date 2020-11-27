@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -46,21 +45,34 @@ logger = logging.getLogger(__name__)
 
 class PublicationInfoItemsCleaner(Job):
     frecuency = 3607
-    frecuency_cfg = GlobalConfig.CLEANUP_CHECK  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
+    frecuency_cfg = (
+        GlobalConfig.CLEANUP_CHECK
+    )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publications Info Cleaner'
 
     def run(self):
-        removeFrom = getSqlDatetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True))
-        ServicePoolPublication.objects.filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
+        removeFrom = getSqlDatetime() - timedelta(
+            seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True)
+        )
+        ServicePoolPublication.objects.filter(
+            state__in=State.INFO_STATES, state_date__lt=removeFrom
+        ).delete()
 
 
 class PublicationCleaner(Job):
     frecuency = 31
-    frecuency_cfg = GlobalConfig.REMOVAL_CHECK  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
+    frecuency_cfg = (
+        GlobalConfig.REMOVAL_CHECK
+    )  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publication Cleaner'
 
     def run(self):
-        removables: typing.Iterable[ServicePoolPublication] = ServicePoolPublication.objects.filter(state=State.REMOVABLE, deployed_service__service__provider__maintenance_mode=False)
+        removables: typing.Iterable[
+            ServicePoolPublication
+        ] = ServicePoolPublication.objects.filter(
+            state=State.REMOVABLE,
+            deployed_service__service__provider__maintenance_mode=False,
+        )
         for removable in removables:
             try:
                 publicationManager().unpublish(removable)
