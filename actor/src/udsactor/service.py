@@ -318,7 +318,8 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     self._cfg.actorType,
                     self._cfg.own_token,
                     '',
-                    self._interfaces
+                    self._interfaces,
+                    self._secret
                 )
             except Exception as e:
                 logger.error('Error notifying final logout to UDS: %s', e)
@@ -448,7 +449,8 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 self._cfg.actorType,
                 token,
                 username,
-                self._interfaces
+                self._interfaces,
+                self._secret
             )
 
         self.onLogout(username)
