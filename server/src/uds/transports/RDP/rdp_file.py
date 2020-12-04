@@ -191,13 +191,13 @@ class RDPFile:
     def getGeneric(self):  # pylint: disable=too-many-statements
         password = '{password}'
         screenMode = '2' if self.fullScreen else '1'
-        audioMode =  '2' if self.redirectAudio else '0'
+        audioMode =  '0' if self.redirectAudio else '2'
         serials = '1' if self.redirectSerials else '0'
         scards = '1' if self.redirectSmartcards else '0'
         printers = '1' if self.redirectPrinters else '0'
         compression = '1' if self.compression else '0'
         connectionBar = '1' if self.displayConnectionBar else '0'
-        disableWallpaper = '1' if self.showWallpaper else '0'
+        disableWallpaper = '0' if self.showWallpaper else '1'
         useMultimon = '1' if self.multimon else '0'
         enableClipboard = '1' if self.enableClipboard else '0'
 
@@ -276,11 +276,11 @@ class RDPFile:
     def as_rdp_url(self) -> str:
         # Some parameters
         screenMode = '2' if self.fullScreen else '1'
-        audioMode = self.redirectAudio and '0' or '2'
-        useMultimon = self.multimon and '1' or '0'
-        disableWallpaper = self.showWallpaper and '0' or '1'
-        printers = self.redirectPrinters and '1' or '0'
-        credsspsupport = '0' if self.enablecredsspsupport is False else '1'
+        audioMode =  '0' if self.redirectAudio else '2'
+        useMultimon = '1' if self.multimon else '0'
+        disableWallpaper = '0' if self.showWallpaper else '1'
+        printers = '1' if self.redirectPrinters else '0'
+        credsspsupport = '1' if self.enablecredsspsupport else '0'
         
 
         parameters = [
@@ -312,7 +312,7 @@ class RDPFile:
             parameters.append(('allow font smoothing', 'i:1'))
 
         if self.redirectDrives != 'false':  # Only "all drives" is supported
-            parameters.append(('drivestoredirect', f's:*'))
+            parameters.append(('drivestoredirect', 's:*'))
 
         return 'rdp://' + '&'.join((urllib.parse.quote(i[0]) + '=' + i[1] for i in parameters))
 
