@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-10 16:28+0100\n"
-"PO-Revision-Date: 2020-11-09 16:46+0000\n"
+"POT-Creation-Date: 2020-12-15 13:51+0100\n"
+"PO-Revision-Date: 2020-11-12 11:34+0000\n"
 "Last-Translator: Lanmedia Comunicaciones <jetxaniz@lanmedia.es>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -815,7 +815,7 @@ msgstr "Kontabilitatea"
 
 #: REST/methods/services_pools.py:354
 msgid "Account associated to this service pool"
-msgstr "Kontu honi lotutako zerbitzuari lotutako kontua"
+msgstr "Zerbitzu-pool honi lotutako kontua"
 
 #: REST/methods/services_pools.py:370
 msgid "Base service does not exist anymore"
@@ -881,7 +881,7 @@ msgstr ""
 
 #: REST/methods/transports.py:106
 msgid "Currently assigned services pools"
-msgstr "Une honetan zerbitzu-igerilekuak esleitzen dira"
+msgstr "Une honetan esleiturik dauden zerbitzu-poolak"
 
 #: REST/methods/user_services.py:121 REST/methods/user_services.py:213
 #: REST/methods/user_services.py:377 REST/methods/user_services.py:406
@@ -1147,7 +1147,7 @@ msgstr "LDAP erabiltzailearen pasahitza"
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
-#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:62
+#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:63
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "Demboraz kampo"
@@ -2147,7 +2147,7 @@ msgstr "Kendu garraio bat"
 
 #: models/calendar_action.py:67
 msgid "Trasport"
-msgstr "Lehorreko garraioa"
+msgstr "Garraioak"
 
 #: models/calendar_action.py:68
 msgid "Add a group"
@@ -2606,7 +2606,7 @@ msgstr "Txostenaren datuetarako tartea"
 
 #: reports/auto/fields.py:97
 msgid "Service pool"
-msgstr "Zerbitzu igerilekua"
+msgstr "Zerbitzu-poola"
 
 #: reports/auto/fields.py:97
 msgid "Service pool for report"
@@ -2694,7 +2694,7 @@ msgstr "Estadistikak"
 
 #: reports/stats/pool_users_summary.py:52
 msgid "Pool Usage by users"
-msgstr "Igerilekuen erabilera erabiltzaileek"
+msgstr "Erabiltzaileen Pool erabilera"
 
 #: reports/stats/pool_users_summary.py:53
 msgid "Generates a report with the summary of users usage for a pool"
@@ -2704,7 +2704,7 @@ msgstr ""
 
 #: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:61
 msgid "Pool for report"
-msgstr "Txostena egiteko igerilekua"
+msgstr "Txostena egiteko pool-a"
 
 #: reports/stats/pool_users_summary.py:67 reports/stats/pools_performance.py:75
 #: reports/stats/usage_by_pool.py:68 reports/stats/user_access.py:67
@@ -2737,11 +2737,11 @@ msgstr "Batazbeztekoa"
 
 #: reports/stats/pools_performance.py:60
 msgid "Pools performance by date"
-msgstr "Igerilekuak data arabera errendimendua"
+msgstr "Pool errendimendua data arabera"
 
 #: reports/stats/pools_performance.py:61
 msgid "Pools performance report by date"
-msgstr "Piscinas de rendimiento por fecha de actualización"
+msgstr "Pool errendimendu txostena data arabera"
 
 #: reports/stats/pools_performance.py:67 reports/stats/pools_usage_day.py:73
 msgid "Pools"
@@ -2749,7 +2749,7 @@ msgstr "Pool-ak"
 
 #: reports/stats/pools_performance.py:68 reports/stats/pools_usage_day.py:74
 msgid "Pools for report"
-msgstr "Txostenentzako igerilekuak"
+msgstr "Txostenentzako poolak"
 
 #: reports/stats/pools_performance.py:90 reports/stats/user_access.py:82
 msgid "Number of intervals"
@@ -2761,7 +2761,7 @@ msgstr "Txarteletan erabilitako laginketa-puntuen kopurua"
 
 #: reports/stats/pools_performance.py:127
 msgid "Select at least a service pool for the report"
-msgstr "Aukeratu gutxienez txostenaren zerbitzu-igerilekua"
+msgstr "Aukeratu gutxienez zerbitzu-pool bat txostenarentzat"
 
 #: reports/stats/pools_performance.py:195
 msgid "Distinct Users"
@@ -2780,7 +2780,7 @@ msgstr "UDS Pools Performance Report"
 
 #: reports/stats/pools_performance.py:235
 msgid "Pools Performance"
-msgstr "Igerilekuen errendimendua"
+msgstr "Pool-en errendimendua"
 
 #: reports/stats/pools_performance.py:258 reports/stats/user_access.py:275
 #: templates/uds/reports/stats/pools-performance.html:34
@@ -2790,11 +2790,11 @@ msgstr "Data eremua"
 
 #: reports/stats/pools_usage_day.py:59
 msgid "Pools usage on a day"
-msgstr "Igerilekuen erabilera egun batean"
+msgstr "Pool-en erabilera egun batean"
 
 #: reports/stats/pools_usage_day.py:60
 msgid "Pools usage counters for an specific day"
-msgstr "Igerilekuen erabilera egun jakin bateko kontulariak"
+msgstr "Pool erabilera egun jakin bateko kontulariak"
 
 #: reports/stats/pools_usage_day.py:123
 msgid "Services by hour"
@@ -2816,7 +2816,7 @@ msgstr "Zerbitzuaren erabilera txostena"
 
 #: reports/stats/pools_usage_summary.py:47
 msgid "Summary of pools usage"
-msgstr "Igerilekuen erabilera laburpena"
+msgstr "Pool erabilera laburpena"
 
 #: reports/stats/pools_usage_summary.py:48
 msgid ""
@@ -2863,11 +2863,11 @@ msgstr "Guztira"
 
 #: reports/stats/usage_by_pool.py:53
 msgid "Pools usage by users"
-msgstr "Igerilekuen erabilera erabiltzaileek"
+msgstr "Erabiltzaileen Pool erabilera"
 
 #: reports/stats/usage_by_pool.py:54
 msgid "Pools usage by user report"
-msgstr "Igerilekuen erabilera erabiltzaileen txostenaren bidez"
+msgstr "Erabiltzaileen Pool erabilera txostena"
 
 #: reports/stats/usage_by_pool.py:86
 msgid "ALL POOLS"
@@ -2952,7 +2952,7 @@ msgstr "Harpidetzak lortu dira"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:107 services/Xen/provider.py:98
 msgid "Creation concurrency"
@@ -2964,7 +2964,7 @@ msgstr "Sorkuntza konkurrentzia"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr "VMak aldi berean sortzeko gehienezko kopurua"
@@ -2975,7 +2975,7 @@ msgstr "VMak aldi berean sortzeko gehienezko kopurua"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:61
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:108 services/Xen/provider.py:99
 msgid "Removal concurrency"
@@ -2987,13 +2987,13 @@ msgstr "Kentzea"
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:61
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr "VMak aldi berean kentzen diren gehienezko kopurua"
 
 #: services/Azure_enterprise/provider.py:48
-#: services/VCloud_enterprise/provider.py:62
+#: services/VCloud_enterprise/provider.py:63
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "Denbora-muga vCloud-en konexioaren segundotan"
 
@@ -3006,7 +3006,7 @@ msgid "Provides connection to Azure Platform"
 msgstr "Plataforma Azure konexioa eskaintzen du"
 
 #: services/Azure_enterprise/provider.py:99
-#: services/VCloud_enterprise/provider.py:106
+#: services/VCloud_enterprise/provider.py:107
 msgid "Connection parameters seems correct"
 msgstr "Konexio parametroak zuzena dirudi"
 
@@ -3208,7 +3208,7 @@ msgstr "Konexioaren proba arrakastatsua"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:216 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:204 services/Vmware_enterprise/provider.py:178
+#: services/Proxmox/provider.py:207 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
 
@@ -3379,12 +3379,12 @@ msgid "Remote WSman port.Leave to zero for default."
 msgstr "Urruneko WSman port.Leve zero zero lehenetsita."
 
 #: services/HyperV_enterprise/provider.py:123
-#: services/VCloud_enterprise/provider.py:50
+#: services/VCloud_enterprise/provider.py:51
 msgid "Force SSL certificate verification"
 msgstr "SSL ziurtagiria egiaztatzea"
 
 #: services/HyperV_enterprise/provider.py:125
-#: services/VCloud_enterprise/provider.py:52
+#: services/VCloud_enterprise/provider.py:53
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -4487,11 +4487,11 @@ msgstr "VCloud erabiltzailearen pasahitza"
 msgid "Select your vCloud version"
 msgstr "Hautatu zure vCloud bertsioa"
 
-#: services/VCloud_enterprise/provider.py:66
+#: services/VCloud_enterprise/provider.py:67
 msgid "VCloud Director Platform Provider"
 msgstr "VCloud zuzendaria plataforma hornitzailea"
 
-#: services/VCloud_enterprise/provider.py:68
+#: services/VCloud_enterprise/provider.py:69
 msgid "Provides connection to vCloud Director platform"
 msgstr "VCloud zuzendariaren plataforma hornitzen du"
 
@@ -4942,7 +4942,7 @@ msgstr "Zerbitzuen esleipena"
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "Pools usage summary"
-msgstr "Igerilekuen erabileraren laburpena"
+msgstr "Pool erabileraren laburpena"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
@@ -6102,7 +6102,7 @@ msgstr ""
 "Zerbitzu hau bertsio berri bat ordeztu behar da. Mesedez, itxaron saioa {} "
 "aurretik eta gorde zure lana guztia galdu gabe uzteko."
 
-#: web/views/auth.py:150
+#: web/views/auth.py:151
 msgid "Authenticator does not provide information"
 msgstr "Autentikatzaileak ez du informaziorik eman."
 
