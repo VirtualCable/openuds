@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-10 16:28+0100\n"
+"POT-Creation-Date: 2020-12-15 13:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1115,7 +1115,7 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:105 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:108 services/OpenStack/provider_legacy.py:115
-#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:62
+#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:63
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr ""
@@ -2827,7 +2827,7 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:107 services/Xen/provider.py:98
 msgid "Creation concurrency"
@@ -2839,7 +2839,7 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:102 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:105 services/OpenStack/provider_legacy.py:112
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:59
+#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:98
 msgid "Maximum number of concurrently creating VMs"
 msgstr ""
@@ -2850,7 +2850,7 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:61
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:108 services/Xen/provider.py:99
 msgid "Removal concurrency"
@@ -2862,13 +2862,13 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:103 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:106 services/OpenStack/provider_legacy.py:113
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:60
+#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:61
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:99
 msgid "Maximum number of concurrently removing VMs"
 msgstr ""
 
 #: services/Azure_enterprise/provider.py:48
-#: services/VCloud_enterprise/provider.py:62
+#: services/VCloud_enterprise/provider.py:63
 msgid "Timeout in seconds of connection to vCloud"
 msgstr ""
 
@@ -2881,7 +2881,7 @@ msgid "Provides connection to Azure Platform"
 msgstr ""
 
 #: services/Azure_enterprise/provider.py:99
-#: services/VCloud_enterprise/provider.py:106
+#: services/VCloud_enterprise/provider.py:107
 msgid "Connection parameters seems correct"
 msgstr ""
 
@@ -3078,7 +3078,7 @@ msgstr ""
 
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/Nutanix_enterprise/provider.py:216 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:204 services/Vmware_enterprise/provider.py:178
+#: services/Proxmox/provider.py:207 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr ""
 
@@ -3243,12 +3243,12 @@ msgid "Remote WSman port.Leave to zero for default."
 msgstr ""
 
 #: services/HyperV_enterprise/provider.py:123
-#: services/VCloud_enterprise/provider.py:50
+#: services/VCloud_enterprise/provider.py:51
 msgid "Force SSL certificate verification"
 msgstr ""
 
 #: services/HyperV_enterprise/provider.py:125
-#: services/VCloud_enterprise/provider.py:52
+#: services/VCloud_enterprise/provider.py:53
 msgid ""
 "If active, the certificate on cluster connection will be enforced to be "
 "verified."
@@ -4280,11 +4280,11 @@ msgstr ""
 msgid "Select your vCloud version"
 msgstr ""
 
-#: services/VCloud_enterprise/provider.py:66
+#: services/VCloud_enterprise/provider.py:67
 msgid "VCloud Director Platform Provider"
 msgstr ""
 
-#: services/VCloud_enterprise/provider.py:68
+#: services/VCloud_enterprise/provider.py:69
 msgid "Provides connection to vCloud Director platform"
 msgstr ""
 
@@ -5796,7 +5796,7 @@ msgid ""
 "session before {} and save all your work to avoid loosing it."
 msgstr ""
 
-#: web/views/auth.py:150
+#: web/views/auth.py:151
 msgid "Authenticator does not provide information"
 msgstr ""
 
