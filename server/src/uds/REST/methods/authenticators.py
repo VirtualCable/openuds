@@ -46,6 +46,7 @@ from .users_groups import Users, Groups
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from django.db import models
     from uds.core import Module
 
 logger = logging.getLogger(__name__)
@@ -78,13 +79,13 @@ class Authenticators(ModelHandler):
     def typeInfo(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:
         if issubclass(type_, auths.Authenticator):
             return {
-                'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,
-                'canSearchGroups': type_.searchGroups != auths.Authenticator.searchGroups,
+                'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,  # type: ignore
+                'canSearchGroups': type_.searchGroups != auths.Authenticator.searchGroups,  # type: ignore
                 'needsPassword': type_.needsPassword,
                 'userNameLabel': _(type_.userNameLabel),
                 'groupNameLabel': _(type_.groupNameLabel),
                 'passwordLabel': _(type_.passwordLabel),
-                'canCreateUsers': type_.createUser != auths.Authenticator.createUser,
+                'canCreateUsers': type_.createUser != auths.Authenticator.createUser,  # type: ignore
                 'isExternal': type_.isExternalSource,
             }
         # Not of my type
@@ -94,16 +95,24 @@ class Authenticators(ModelHandler):
         try:
             tgui = auths.factory().lookup(type_)
             if tgui:
-                g = self.addDefaultFields(tgui.guiDescription(), ['name', 'comments', 'tags', 'priority', 'small_name'])
-                self.addField(g, {
-                    'name': 'visible',
-                    'value': True,
-                    'label': ugettext('Visible'),
-                    'tooltip': ugettext('If active, transport will be visible for users'),
-                    'type': gui.InputField.CHECKBOX_TYPE,
-                    'order': 107,
-                    'tab': ugettext('Display'),
-                })
+                g = self.addDefaultFields(
+                    tgui.guiDescription(),
+                    ['name', 'comments', 'tags', 'priority', 'small_name'],
+                )
+                self.addField(
+                    g,
+                    {
+                        'name': 'visible',
+                        'value': True,
+                        'label': ugettext('Visible'),
+                        'tooltip': ugettext(
+                            'If active, transport will be visible for users'
+                        ),
+                        'type': gui.InputField.CHECKBOX_TYPE,
+                        'order': 107,
+                        'tab': ugettext('Display'),
+                    },
+                )
                 return g
             raise Exception()  # Not found
         except Exception:
@@ -124,7 +133,7 @@ class Authenticators(ModelHandler):
             'type': type_.type(),
             'type_name': type_.name(),
             'type_info': self.typeInfo(type_),
-            'permission': permissions.getEffectivePermission(self._user, item)
+            'permission': permissions.getEffectivePermission(self._user, item),
         }
 
     # Custom "search" method
@@ -141,7 +150,11 @@ class Authenticators(ModelHandler):
 
             auth = item.getInstance()
 
-            canDoSearch = type_ == 'user' and (auth.searchUsers != auths.Authenticator.searchUsers) or (auth.searchGroups != auths.Authenticator.searchGroups)
+            canDoSearch = (
+                type_ == 'user'
+                and (auth.searchUsers != auths.Authenticator.searchUsers)  # type: ignore
+                or (auth.searchGroups != auths.Authenticator.searchGroups)  # type: ignore
+            )
             if canDoSearch is False:
                 raise self.notSupported()
 
@@ -161,11 +174,10 @@ class Authenticators(ModelHandler):
         if not authType:
             raise self.invalidRequestException('Invalid type: {}'.format(type_))
 
-        self.ensureAccess(authType, permissions.PERMISSION_MANAGEMENT, root=True)
-
+        tmpEnvironment = Environment.getTempEnv()
         dct = self._params.copy()
         dct['_request'] = self._request
-        res = authType.test(Environment.getTempEnv(), dct)
+        res = authType.test(tmpEnvironment, dct)
         if res[0]:
             return self.success()
         return res[1]
@@ -175,7 +187,7 @@ class Authenticators(ModelHandler):
 
         for user in item.users.all():
             for userService in user.userServices.all():
-                userService.user = None
+                userService.user = None  # type: ignore
                 userService.removeOrCancel()
 
         item.delete()

@@ -182,7 +182,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service.tags.set(
                 [models.Tag.objects.get_or_create(tag=val)[0] for val in tags]
             )
-            service.proxy = proxy
+            service.proxy = proxy  # type: ignore  # Valid asignation, but mypy complains :)
 
             serviceInstance = service.getInstance(self._params)
 

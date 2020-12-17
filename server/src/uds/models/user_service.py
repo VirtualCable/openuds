@@ -193,7 +193,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
                 publicationInstance = self.publication.getInstance()
         except Exception:
             # The publication to witch this item points to, does not exists
-            self.publication = None
+            self.publication = None  # type: ignore
             logger.exception(
                 'Got exception at getInstance of an userService %s (seems that publication does not exists!)',
                 self,
@@ -401,7 +401,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         self.cache_level = 0
         self.state_date = getSqlDatetime()
-        self.user = user
+        self.user = user  # type: ignore
         self.save(update_fields=['cache_level', 'state_date', 'user'])
 
     def setInUse(self, inUse: bool) -> None:

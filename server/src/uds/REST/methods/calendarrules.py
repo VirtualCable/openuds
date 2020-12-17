@@ -134,8 +134,6 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Saving calendar')
             raise RequestError('incorrect invocation to PUT: {0}'.format(e))
 
-        return self.getItems(parent, calRule.uuid)
-
     def deleteItem(self, parent: 'Calendar', item: str) -> None:
         logger.debug('Deleting rule %s from %s', item, parent)
         try:

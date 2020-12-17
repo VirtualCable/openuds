@@ -97,8 +97,8 @@ class AccessCalendars(DetailHandler):
 
         if uuid is not None:
             calAccess: 'CalendarAccess' = parent.calendarAccess.get(uuid=uuid)
-            calAccess.calendar = calendar
-            calAccess.service_pool = parent
+            calAccess.calendar = calendar  # type: ignore
+            calAccess.service_pool = parent  # type: ignore
             calAccess.access = access
             calAccess.priority = priority
             calAccess.save()
@@ -183,8 +183,8 @@ class ActionsCalendars(DetailHandler):
 
         if uuid is not None:
             calAction = CalendarAction.objects.get(uuid=uuid)
-            calAction.calendar = calendar
-            calAction.service_pool = parent
+            calAction.calendar = calendar  # type: ignore
+            calAction.service_pool = parent  # type: ignore
             calAction.action = action
             calAction.at_start = atStart
             calAction.events_offset = eventsOffset
@@ -208,10 +208,10 @@ class ActionsCalendars(DetailHandler):
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
     def execute(self, parent: 'ServicePool', item: str):
-        self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
         logger.debug('Launching action')
         uuid = processUuid(item)
         calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)
+        self.ensureAccess(calendarAction, permissions.PERMISSION_MANAGEMENT)
         logStr = "Launched scheduled action \"{},{},{},{},{}\" by {}".format(
             calendarAction.calendar.name, calendarAction.action,
             calendarAction.events_offset, calendarAction.at_start and 'Start' or 'End', calendarAction.params,

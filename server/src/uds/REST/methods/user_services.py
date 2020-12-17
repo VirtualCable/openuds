@@ -221,7 +221,7 @@ class AssignedService(DetailHandler):
                 )
             )
 
-        userService.user = user
+        userService.user = user  # type: ignore
         userService.save()
 
         # Log change

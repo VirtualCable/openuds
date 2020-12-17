@@ -128,6 +128,9 @@ class Tickets(Handler):
 
         userIp: typing.Optional[str] = self._params.get('userIp', None)
 
+        spUuid: str = ''
+        trUuid: str = ''
+    
         try:
             authId = self._params.get('authId', None)
             authName = self._params.get('auth', None)
@@ -187,8 +190,8 @@ class Tickets(Handler):
                             logger.error('Service pool %s does not has valid transports for ip %s', servicePool.name, userIp)
                             raise Exception('Service pool does not has any valid transports for ip {}'.format(userIp))
 
-                servicePool = servicePool.uuid
-                transport = transport.uuid
+                spUuid = servicePool.uuid
+                trUuid = transport.uuid
 
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
@@ -205,8 +208,8 @@ class Tickets(Handler):
             'realname': realname,
             'groups': groupIds,
             'auth': auth.uuid,
-            'servicePool': servicePool,
-            'transport': transport,
+            'servicePool': spUuid,
+            'transport': trUuid,
         }
 
         ticket = models.TicketStore.create(data)

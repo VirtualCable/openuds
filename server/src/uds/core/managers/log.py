@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -92,7 +92,7 @@ class LogManager:
         if avoidDuplicates is True:
             try:
                 lg = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type, level=level, source=source).order_by('-created', '-id')[0]
-                if lg.message == message:
+                if lg.data == message:
                     # Do not log again, already logged
                     return
             except Exception:  # Do not exists log
@@ -127,7 +127,7 @@ class LogManager:
         owner_type = transDict.get(type(wichObject), None)
 
         if owner_type is not None:
-            self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)
+            self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)  # type: ignore
         else:
             logger.debug('Requested doLog for a type of object not covered: %s', wichObject)
 
@@ -140,7 +140,7 @@ class LogManager:
         logger.debug('Getting log: %s -> %s', wichObject, owner_type)
 
         if owner_type is not None:  # 0 is valid owner type
-            return self.__getLogs(owner_type, wichObject.id, limit)
+            return self.__getLogs(owner_type, wichObject.id, limit)  # type: ignore
 
         logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
         return []
@@ -154,6 +154,6 @@ class LogManager:
 
         owner_type = transDict.get(type(wichObject), None)
         if owner_type:
-            self.__clearLogs(owner_type, wichObject.id)
+            self.__clearLogs(owner_type, wichObject.id)  # type: ignore
         else:
             logger.debug('Requested clearLogs for a type of object not covered: %s', wichObject)

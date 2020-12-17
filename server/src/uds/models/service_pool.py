@@ -159,6 +159,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     userServices: 'models.QuerySet[UserService]'
     calendarAccess: 'models.QuerySet[CalendarAccess]'
     changelog: 'models.QuerySet[ServicePoolPublicationChangelog]'
+    
+    calendaraction_set: typing.Any
 
     class Meta(UUIDModel.Meta):
         """

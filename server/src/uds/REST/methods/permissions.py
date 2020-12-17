@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2020 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -52,6 +52,7 @@ class Permissions(Handler):
     """
     Processes permissions requests
     """
+
     needs_admin = True
 
     @staticmethod
@@ -75,7 +76,9 @@ class Permissions(Handler):
         return cls
 
     @staticmethod
-    def permsToDict(perms: typing.Iterable[models.Permissions]) -> typing.List[typing.Dict[str, str]]:
+    def permsToDict(
+        perms: typing.Iterable[models.Permissions],
+    ) -> typing.List[typing.Dict[str, str]]:
         res = []
         for perm in perms:
             if perm.user is None:
@@ -85,16 +88,18 @@ class Permissions(Handler):
                 kind = 'user'
                 entity = perm.user
 
-            res.append({
-                'id': perm.uuid,
-                'type': kind,
-                'auth': entity.manager.uuid,
-                'auth_name': entity.manager.name,
-                'entity_id': entity.uuid,
-                'entity_name': entity.name,
-                'perm': perm.permission,
-                'perm_name': perm.permission_as_string
-            })
+            res.append(
+                {
+                    'id': perm.uuid,
+                    'type': kind,
+                    'auth': entity.manager.uuid,
+                    'auth_name': entity.manager.name,
+                    'entity_id': entity.uuid,
+                    'entity_name': entity.name,
+                    'perm': perm.permission,
+                    'perm_name': perm.permission_as_string,
+                }
+            )
 
         return sorted(res, key=lambda v: v['auth_name'] + v['entity_name'])
 
@@ -125,7 +130,7 @@ class Permissions(Handler):
                 '0': permissions.PERMISSION_NONE,
                 '1': permissions.PERMISSION_READ,
                 '2': permissions.PERMISSION_MANAGEMENT,
-                '3': permissions.PERMISSION_ALL
+                '3': permissions.PERMISSION_ALL,
             }.get(self._params.get('perm', '0'), permissions.PERMISSION_NONE)
 
             cls = Permissions.getClass(self._args[0])

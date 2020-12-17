@@ -47,7 +47,7 @@ from .uuid_model import UUIDModel
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import auths
-    from uds.models import Group
+    from uds.models import Group, UserService
 
 
 logger = logging.getLogger(__name__)
@@ -72,6 +72,7 @@ class User(UUIDModel):
     # "fake" declarations for type checking
     objects: 'models.BaseManager[User]'
     groups: 'models.QuerySet[Group]'
+    userServices: 'models.QuerySet[UserService]'
 
     class Meta(UUIDModel.Meta):
         """

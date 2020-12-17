@@ -143,7 +143,7 @@ class Transports(ModelHandler):
         if networks is None:
             return
         logger.debug('Networks: %s', networks)
-        item.networks.set(Network.objects.filter(uuid__in=networks))
+        item.networks.set(Network.objects.filter(uuid__in=networks))  # type: ignore  # set is not part of "queryset"
 
         try:
             pools = self._params['pools']
@@ -155,7 +155,7 @@ class Transports(ModelHandler):
             return
 
         logger.debug('Pools: %s', pools)
-        item.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))
+        item.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))  # type: ignore  # set is not part of "queryset"
 
         # try:
         #    oss = ','.join(self._params['allowed_oss'])

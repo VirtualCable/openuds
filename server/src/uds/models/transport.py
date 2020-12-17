@@ -44,7 +44,7 @@ from .tag import TaggingMixin
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import Network
+    from uds.models import Network, ServicePool
 
 
 logger = logging.getLogger(__name__)
@@ -56,29 +56,33 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
     Sample of transports are RDP, Spice, Web file uploader, etc...
     """
+
     # pylint: disable=model-missing-unicode
     priority = models.IntegerField(default=0, db_index=True)
     nets_positive = models.BooleanField(default=False)
     # We store allowed oss as a comma-separated list
     allowed_oss = models.CharField(max_length=255, default='')
 
-    # "fake" relations declarations for type checking
-    networks: 'models.QuerySet[Network]'
-
     # "fake" declarations for type checking
     objects: 'models.BaseManager[Transport]'
+
+    deployedServices: 'models.QuerySet[ServicePool]'
+    networks: 'models.QuerySet[Network]'
 
     class Meta(ManagedObjectModel.Meta):
         """
         Meta class to declare default order
         """
+
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'transports.Transport':
+    def getInstance(
+        self, values: typing.Optional[typing.Dict[str, str]] = None
+    ) -> 'transports.Transport':
         return typing.cast('transports.Transport', super().getInstance(values=values))
 
-    def getType(self)  -> 'typing.Type[transports.Transport]':
+    def getType(self) -> 'typing.Type[transports.Transport]':
         """
         Get the type of the object this record represents.
 
@@ -144,6 +148,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         :note: If destroy raises an exception, the deletion is not taken.
         """
         from uds.core.util.permissions import clean
+
         toDelete = kwargs['instance']
 
         logger.debug('Before delete transport %s', toDelete)
@@ -155,6 +160,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
         # Clears related permissions
         clean(toDelete)
+
 
 # : Connects a pre deletion signal to OS Manager
 models.signals.pre_delete.connect(Transport.beforeDelete, sender=Transport)

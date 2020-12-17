@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -48,16 +48,17 @@ from .services_usage import ServicesUsage
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from django.db import models
+
 
 class Providers(ModelHandler):
     """
     Providers REST handler
     """
+
     model = Provider
-    detail = {
-        'services': DetailServices,
-        'usage': ServicesUsage
-    }
+    detail = {'services': DetailServices, 'usage': ServicesUsage}
 
     custom_methods = [('allservices', False), ('service', False), ('maintenance', True)]
 
@@ -72,7 +73,9 @@ class Providers(ModelHandler):
         {'comments': {'title': _('Comments')}},
         {'maintenance_state': {'title': _('Status')}},
         {'services_count': {'title': _('Services'), 'type': 'numeric'}},
-        {'user_services_count': {'title': _('User Services'), 'type': 'numeric'}},  # , 'width': '132px'
+        {
+            'user_services_count': {'title': _('User Services'), 'type': 'numeric'}
+        },  # , 'width': '132px'
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
@@ -82,25 +85,32 @@ class Providers(ModelHandler):
         type_ = item.getType()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
-        offers = [{
-            'name': ugettext(t.name()),
-            'type': t.type(),
-            'description': ugettext(t.description()),
-            'icon': t.icon64().replace('\n', '')
-        } for t in type_.getServicesTypes()]
+        offers = [
+            {
+                'name': ugettext(t.name()),
+                'type': t.type(),
+                'description': ugettext(t.description()),
+                'icon': t.icon64().replace('\n', ''),
+            }
+            for t in type_.getServicesTypes()
+        ]
 
         return {
             'id': item.uuid,
             'name': item.name,
             'tags': [tag.vtag for tag in item.tags.all()],
             'services_count': item.services.count(),
-            'user_services_count': UserService.objects.filter(deployed_service__service__provider=item).exclude(state__in=(State.REMOVED, State.ERROR)).count(),
+            'user_services_count': UserService.objects.filter(
+                deployed_service__service__provider=item
+            )
+            .exclude(state__in=(State.REMOVED, State.ERROR))
+            .count(),
             'maintenance_mode': item.maintenance_mode,
             'offers': offers,
             'type': type_.type(),
             'type_name': type_.name(),
             'comments': item.comments,
-            'permission': permissions.getEffectivePermission(self._user, item)
+            'permission': permissions.getEffectivePermission(self._user, item),
         }
 
     def checkDelete(self, item: Provider) -> None:
@@ -115,7 +125,9 @@ class Providers(ModelHandler):
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         clsType = services.factory().lookup(type_)
         if clsType:
-            return self.addDefaultFields(clsType.guiDescription(), ['name', 'comments', 'tags'])
+            return self.addDefaultFields(
+                clsType.guiDescription(), ['name', 'comments', 'tags']
+            )
         raise NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[typing.Dict, None, None]:
@@ -136,7 +148,9 @@ class Providers(ModelHandler):
         """
         try:
             service = Service.objects.get(uuid=self._args[1])
-            perm = self.ensureAccess(service.provider, permissions.PERMISSION_READ)  # Ensures that we can read this item
+            perm = self.ensureAccess(
+                service.provider, permissions.PERMISSION_READ
+            )  # Ensures that we can read this item
             return DetailServices.serviceToDict(service, perm, True)
         except Exception:
             # logger.exception('Exception')
@@ -161,13 +175,12 @@ class Providers(ModelHandler):
         if not spType:
             raise NotFound('Type not found!')
 
-        self.ensureAccess(spType, permissions.PERMISSION_MANAGEMENT, root=True)
-
+        tmpEnvironment = Environment.getTempEnv()
         logger.debug('spType: %s', spType)
 
         dct = self._params.copy()
         dct['_request'] = self._request
-        res = spType.test(Environment.getTempEnv(), dct)
+        res = spType.test(tmpEnvironment, dct)
         if res[0]:
             return 'ok'
 

@@ -193,7 +193,7 @@ class Users(DetailHandler):
             assignedUserService: 'UserService'
             for assignedUserService in user.userServices.all():
                 try:
-                    assignedUserService.user = None  # Remove assigned user (avoid cascade deletion)
+                    assignedUserService.user = None  # type: ignore  # Remove assigned user (avoid cascade deletion)
                     assignedUserService.save(update_fields=['user'])
                     assignedUserService.removeOrCancel()
                 except Exception:
@@ -423,7 +423,7 @@ class Groups(DetailHandler):
 
                         if not tmpSet:
                             break  # If already empty, stop
-            users = list(tmpSet)
+            users = list(tmpSet) if tmpSet else list()
             tmpSet = None
         else:
             users = group.users.all()

@@ -111,7 +111,7 @@ def getRootUser() -> User:
         staff_member=True,
         is_admin=True,
     )
-    user.manager = Authenticator()
+    user.manager = Authenticator()  # type: ignore
     # Fake overwrite some methods, a bit cheating? maybe? :)
     user.getGroups = lambda: []  # type: ignore
     user.updateLastAccess = lambda: None  # type: ignore
@@ -140,13 +140,13 @@ def webLoginRequired(
                 # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
                 #     url = url.replace('http://', 'https://')
                 # logger.debug('No user found, redirecting to %s', url)
-                return HttpResponseRedirect(reverse('page.login'))
+                return HttpResponseRedirect(reverse('page.login'))  # type: ignore
 
             if admin is True or admin == 'admin':
                 if request.user.isStaff() is False or (
                     admin == 'admin' and request.user.is_admin is False
                 ):
-                    return HttpResponseForbidden(_('Forbidden'))
+                    return HttpResponseForbidden(_('Forbidden'))  # type: ignore
 
             return view_func(request, *args, **kwargs)
 
@@ -171,7 +171,7 @@ def trustedSourceRequired(
         """
         try:
             if not net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)):
-                return HttpResponseForbidden()
+                return HttpResponseForbidden()  # type: ignore
         except Exception as e:
             logger.warning(
                 'Error checking trusted source: "%s" does not seems to be a valid network string. Using Unrestricted access.',
@@ -189,7 +189,7 @@ def denyNonAuthenticated(
     @wraps(view_func)
     def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
         if not request.user:
-            return HttpResponseForbidden()
+            return HttpResponseForbidden()  # type: ignore
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view

@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+from uds.REST.methods.permissions import Permissions
 
 from uds import models
 from uds.core.util import ot
@@ -56,17 +57,20 @@ def getPermissions(obj: 'Model') -> typing.List[models.Permissions]:
     return list(models.Permissions.enumeratePermissions(object_type=ot.getObjectType(obj), object_id=obj.pk))
 
 
-def getEffectivePermission(user: 'models.User', obj: 'Model', root: bool = False):
-    if user.is_admin is True:
-        return PERMISSION_ALL
+def getEffectivePermission(user: 'models.User', obj: 'Model', root: bool = False) -> int:
+    try:
+        if user.is_admin is True:
+            return PERMISSION_ALL
 
-    if user.staff_member is False:
+        if user.staff_member is False:
+            return PERMISSION_NONE
+
+        if root is False:
+            return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk)
+
+        return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
+    except Exception:
         return PERMISSION_NONE
-
-    if root is False:
-        return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk)
-
-    return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
 
 
 def addUserPermission(user: 'models.User', obj: 'Model', permission: int = PERMISSION_READ):

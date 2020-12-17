@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -63,8 +62,12 @@ class MetaServicesPool(DetailHandler):
             'comments': item.pool.comments,
             'priority': item.priority,
             'enabled': item.enabled,
-            'user_services_count': item.pool.userServices.exclude(state__in=State.INFO_STATES).count(),
-            'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
+            'user_services_count': item.pool.userServices.exclude(
+                state__in=State.INFO_STATES
+            ).count(),
+            'user_services_in_preparation': item.pool.userServices.filter(
+                state=State.PREPARING
+            ).count(),
         }
 
     def getItems(self, parent: MetaPool, item: typing.Optional[str]):
@@ -98,20 +101,30 @@ class MetaServicesPool(DetailHandler):
 
         if uuid is not None:
             member = parent.members.get(uuid=uuid)
-            member.pool = pool
+            member.pool = pool  # type: ignore
             member.enabled = enabled
             member.priority = priority
             member.save()
         else:
             parent.members.create(pool=pool, priority=priority, enabled=enabled)
 
-        log.doLog(parent, log.INFO, (uuid is None and "Added" or "Modified") + " meta pool member {}/{}/{} by {}".format(pool.name, priority, enabled, self._user.pretty_name), log.ADMIN)
+        log.doLog(
+            parent,
+            log.INFO,
+            ("Added" if uuid is None else "Modified")
+            + " meta pool member {}/{}/{} by {}".format(
+                pool.name, priority, enabled, self._user.pretty_name
+            ),
+            log.ADMIN,
+        )
 
         return self.success()
 
     def deleteItem(self, parent: MetaPool, item: str):
         member = parent.members.get(uuid=processUuid(self._args[0]))
-        logStr = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
+        logStr = "Removed meta pool member {} by {}".format(
+            member.pool.name, self._user.pretty_name
+        )
 
         member.delete()
 
@@ -130,30 +143,33 @@ class MetaAssignedService(DetailHandler):
         element['pool_name'] = item.deployed_service.name
         return element
 
-    def _getAssignedService(self, metaPool: MetaPool, userServiceId: str) -> UserService:
+    def _getAssignedService(
+        self, metaPool: MetaPool, userServiceId: str
+    ) -> UserService:
         """
         Gets an assigned service and checks that it belongs to this metapool
         If not found, raises InvalidItemException
         """
         try:
-            return UserService.objects.filter(uuid=processUuid(userServiceId), cache_level=0, deployed_service__meta=metaPool)[0]
+            return UserService.objects.filter(
+                uuid=processUuid(userServiceId),
+                cache_level=0,
+                deployed_service__meta=metaPool,
+            )[0]
         except Exception:
             pass
         raise self.invalidItemException()
 
-
     def getItems(self, parent: MetaPool, item: typing.Optional[str]):
         def assignedUserServicesForPools():
             for m in parent.members.filter(enabled=True):
-                for u in m.pool.assignedUserServices().filter(
-                        state__in=State.VALID_STATES
-                    ).prefetch_related(
-                        'properties'
-                    ).prefetch_related(
-                        'deployed_service'
-                    ).prefetch_related(
-                        'publication'
-                    ):
+                for u in (
+                    m.pool.assignedUserServices()
+                    .filter(state__in=State.VALID_STATES)
+                    .prefetch_related('properties')
+                    .prefetch_related('deployed_service')
+                    .prefetch_related('publication')
+                ):
                     yield u
 
         try:
@@ -163,7 +179,9 @@ class MetaAssignedService(DetailHandler):
                     result[k.uuid] = MetaAssignedService.itemToDict(parent, k)
                 return list(result.values())
 
-            return MetaAssignedService.itemToDict(parent, self._getAssignedService(parent, item))
+            return MetaAssignedService.itemToDict(
+                parent, self._getAssignedService(parent, item)
+            )
         except Exception:
             logger.exception('getItems')
             raise self.invalidItemException()
@@ -178,12 +196,18 @@ class MetaAssignedService(DetailHandler):
             {'unique_id': {'title': 'Unique ID'}},
             {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
-            {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
+            {
+                'state': {
+                    'title': _('status'),
+                    'type': 'dict',
+                    'dict': State.dictionary(),
+                }
+            },
             {'in_use': {'title': _('In Use')}},
             {'source_host': {'title': _('Src Host')}},
             {'source_ip': {'title': _('Src Ip')}},
             {'owner': {'title': _('Owner')}},
-            {'actor_version': {'title': _('Actor version')}}
+            {'actor_version': {'title': _('Actor version')}},
         ]
 
     def getRowStyle(self, parent: MetaPool) -> typing.Dict[str, typing.Any]:
@@ -191,9 +215,9 @@ class MetaAssignedService(DetailHandler):
 
     def getLogs(self, parent: MetaPool, item: str) -> typing.List[typing.Any]:
         try:
-            item = self._getAssignedService(parent, item)
-            logger.debug('Getting logs for %s', item)
-            return log.getLogs(item)
+            asignedService = self._getAssignedService(parent, item)
+            logger.debug('Getting logs for %s', asignedService)
+            return log.getLogs(asignedService)
         except Exception:
             raise self.invalidItemException()
 
@@ -201,9 +225,15 @@ class MetaAssignedService(DetailHandler):
         userService = self._getAssignedService(parent, item)
 
         if userService.user:
-            logStr = 'Deleted assigned service {} to user {} by {}'.format(userService.friendly_name, userService.user.pretty_name, self._user.pretty_name)
+            logStr = 'Deleted assigned service {} to user {} by {}'.format(
+                userService.friendly_name,
+                userService.user.pretty_name,
+                self._user.pretty_name,
+            )
         else:
-            logStr = 'Deleted cached service {} by {}'.format(userService.friendly_name, self._user.pretty_name)
+            logStr = 'Deleted cached service {} by {}'.format(
+                userService.friendly_name, self._user.pretty_name
+            )
 
         if userService.state in (State.USABLE, State.REMOVING):
             userService.remove()
@@ -225,13 +255,25 @@ class MetaAssignedService(DetailHandler):
         service = self._getAssignedService(parent, item)
         user: User = User.objects.get(uuid=processUuid(fields['user_id']))
 
-        logStr = 'Changing ownership of service from {} to {} by {}'.format(service.user.pretty_name, user.pretty_name, self._user.pretty_name)
+        logStr = 'Changing ownership of service from {} to {} by {}'.format(
+            service.user.pretty_name, user.pretty_name, self._user.pretty_name
+        )
 
         # If there is another service that has this same owner, raise an exception
-        if service.deployed_service.userServices.filter(user=user).exclude(uuid=service.uuid).exclude(state__in=State.INFO_STATES).count() > 0:
-            raise self.invalidResponseException('There is already another user service assigned to {}'.format(user.pretty_name))
+        if (
+            service.deployed_service.userServices.filter(user=user)
+            .exclude(uuid=service.uuid)
+            .exclude(state__in=State.INFO_STATES)
+            .count()
+            > 0
+        ):
+            raise self.invalidResponseException(
+                'There is already another user service assigned to {}'.format(
+                    user.pretty_name
+                )
+            )
 
-        service.user = user
+        service.user = user  # type: ignore
         service.save()
 
         # Log change
