@@ -160,6 +160,7 @@ class Register(ActorV3Action):
             # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
             actorToken = ActorToken.objects.get(mac=self._params['mac'])
             # Update parameters
+            actorToken.username = self._user.pretty_name
             actorToken.ip_from = self._request.ip
             actorToken.ip = self._params['ip']
             actorToken.hostname = self._params['hostname']
