@@ -40,7 +40,7 @@ theFile = sp['as_file'].format(# @UndefinedVariable
 filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
 if executable is None:
-    raise Exception('Unable to find mstsc.exe')
+    raise Exception('Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder')
 
 try:
     key = wreg.OpenKey(wreg.HKEY_CURRENT_USER, 'Software\Microsoft\Terminal Server Client\LocalDevices', 0, wreg.KEY_SET_VALUE)  # @UndefinedVariable
