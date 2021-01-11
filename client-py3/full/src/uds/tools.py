@@ -129,10 +129,6 @@ def getHostName():
     In fact, it's a wrapper for socket.gethostname()
     '''
     hostname = socket.gethostname()
-    if 'win32' in sys.platform:
-        hostname = hostname.decode(sys_fs_enc)
-
-    hostname = six.text_type(hostname)
     logger.info('Hostname: %s', hostname)
     return hostname
 
