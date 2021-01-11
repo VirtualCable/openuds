@@ -75,10 +75,6 @@ def saveTempFile(content, filename=None):
         filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         filename = filename + '.uds'
 
-    if 'win32' in sys.platform:
-        logger.info('Fixing for win32')
-        filename = filename.encode(sys_fs_enc)
-
     filename = os.path.join(tempfile.gettempdir(), filename)
 
     with open(filename, 'w') as f:
@@ -89,9 +85,6 @@ def saveTempFile(content, filename=None):
 
 
 def readTempFile(filename):
-    if 'win32' in sys.platform:
-        filename = filename.encode('utf-8')
-
     filename = os.path.join(tempfile.gettempdir(), filename)
     try:
         with open(filename, 'r') as f:
@@ -110,8 +103,6 @@ def testServer(host, port, timeOut=4):
 
 
 def findApp(appName, extraPath=None):
-    if 'win32' in sys.platform and isinstance(appName, six.text_type):
-        appName = appName.encode(sys_fs_enc)
     searchPath = os.environ['PATH'].split(os.pathsep)
     if extraPath is not None:
         searchPath += list(extraPath)
