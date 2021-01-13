@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2020 Virtual Cable S.L.U.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+'''
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
+import sys
+import argparse
+import multiprocessing
+import socket
+import logging
+import typing
+
+import curio
+import psutil
+
+from uds_tunnel import config
+from uds_tunnel import proxy
+from uds_tunnel import consts
+from uds_tunnel import message
+from uds_tunnel import stats
+
+if typing.TYPE_CHECKING:
+    from multiprocessing.connection import Connection
+
+BACKLOG = 100
+
+logger = logging.getLogger(__name__)
+
+
+def setup_log(cfg: config.ConfigurationType) -> None:
+    # Setup basic logging
+    log = logging.getLogger()
+    log.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(levelname)s - %(message)s'
+    )  # Basic log format, nice for syslog
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
+
+    # Update logging if needed
+    if cfg.log_file:
+        fileh = logging.FileHandler(cfg.log_file, 'a')
+        formatter = logging.Formatter(consts.LOGFORMAT)
+        fileh.setFormatter(formatter)
+        log = logging.getLogger()
+        for hdlr in log.handlers[:]:
+            log.removeHandler(hdlr)
+        log.addHandler(fileh)
+
+
+async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType) -> None:
+    def get_socket(pipe: 'Connection') -> typing.Tuple[socket.SocketType, typing.Any]:
+        try:
+            while True:
+                msg: message.Message = pipe.recv()
+                if msg.command == message.Command.TUNNEL and msg.connection:
+                    return msg.connection
+                # Process other messages, and retry
+        except Exception:
+            logger.exception('Receiving data from parent process')
+            return None, None
+
+    async def run_server(
+        pipe: 'Connection', cfg: config.ConfigurationType, group: curio.TaskGroup
+    ) -> None:
+        # Instantiate a proxy redirector for this process (we only need one per process!!)
+        tunneler = proxy.Proxy(cfg)
+
+        # Generate SSL context
+        context = curio.ssl.SSLContext(curio.ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(cfg.ssl_certificate, cfg.ssl_certificate_key)
+
+        if cfg.ssl_ciphers:
+            context.set_ciphers(cfg.ssl_ciphers)
+
+        if cfg.ssl_dhparam:
+            context.load_dh_params(cfg.ssl_dhparam)
+
+        while True:
+            sock, address = await curio.run_in_thread(get_socket, pipe)
+            if not sock:
+                break
+            logger.debug(
+                f'{multiprocessing.current_process().pid!r}: Got new connection from {address!r}'
+            )
+            sock = await context.wrap_socket(curio.io.Socket(sock), server_side=True)
+            await group.spawn(tunneler, sock, address)
+            del sock
+
+    async with curio.TaskGroup() as tg:
+        await tg.spawn(run_server, pipe, cfg, tg)
+        # Reap all of the children tasks as they complete
+        async for task in tg:
+            logger.debug(f'Deleting {task!r}')
+            task.joined = True
+            del task
+
+
+def tunnel_main():
+    cfg = config.read()
+    setup_log(cfg)
+
+    # Creates as many processes and pipes as required
+    child: typing.List[
+        typing.Tuple['Connection', multiprocessing.Process, psutil.Process]
+    ] = []
+
+    for i in range(cfg.workers):
+        own_conn, child_conn = multiprocessing.Pipe()
+        task = multiprocessing.Process(
+            target=curio.run, args=(tunnel_proc_async, child_conn, cfg)
+        )
+        task.start()
+        child.append((own_conn, task, psutil.Process(task.pid)))
+
+    def best_child() -> 'Connection':
+        best: typing.Tuple[float, 'Connection'] = (1000.0, child[0][0])
+        for c in child:
+            percent = c[2].cpu_percent()
+            logger.debug('PID %s has %s', c[2].pid, percent)
+            if percent < best[0]:
+                best = (percent, c[0])
+        return best[1]
+
+    sock = None
+    try:
+        # Wait for socket incoming connections and spread them
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+        try:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, True)
+        except (AttributeError, OSError) as e:
+            logger.warning('socket.REUSEPORT not available', exc_info=True)
+
+        sock.bind((cfg.listen_address, cfg.listen_port))
+        sock.listen(BACKLOG)
+        while True:
+            client, addr = sock.accept()
+            # Select BEST process for sending this new connection
+            best_child().send(message.Message(message.Command.TUNNEL, (client, addr)))
+
+    except Exception:
+        pass
+
+    if sock:
+        sock.close()
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        '-t', '--tunnel', help='Starts the tunnel server', action='store_true'
+    )
+    group.add_argument(
+        '-s',
+        '--stats',
+        help='get current global stats from RUNNING tunnel',
+        action='store_true',
+    )
+    group.add_argument(
+        '-d',
+        '--detailed-stats',
+        help='get current detailed stats from RUNNING tunnel',
+        action='store_true',
+    )
+    args = parser.parse_args()
+
+    if args.tunnel:
+        tunnel_main()
+    parser.print_help()
+
+
+if __name__ == "__main__":
+    main()
