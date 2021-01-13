@@ -143,6 +143,7 @@ class Handler(socketserver.BaseRequestHandler):
                     if not data:
                         break
                     self.request.sendall(data)
+            logger.debug('Finished process')
         except Exception as e:
             pass
 
@@ -173,8 +174,8 @@ def forward(
 if __name__ == "__main__":
     fs1 = forward(('fake.udsenterprise.com', 7777), '0'*64, local_port=49998)
     print(f'Listening on {fs1.server_address}')
-    #fs2 = forward(('fake.udsenterprise.com', 7777), '1'*64, local_port=49999)
-    #print(f'Listening on {fs2.server_address}')
+    fs2 = forward(('fake.udsenterprise.com', 7777), '1'*64, local_port=49999)
+    print(f'Listening on {fs2.server_address}')
 #    time.sleep(30)
 #    fs.stop()
 

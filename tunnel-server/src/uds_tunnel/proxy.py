@@ -38,15 +38,18 @@ from . import config
 from . import stats
 from . import consts
 
+if typing.TYPE_CHECKING:
+    from multiprocessing.managers import Namespace
+
 logger = logging.getLogger(__name__)
 
 class Proxy:
     cfg: config.ConfigurationType
-    stat: stats.Stats
+    ns: 'Namespace'
 
-    def __init__(self, cfg: config.ConfigurationType) -> None:
+    def __init__(self, cfg: config.ConfigurationType, ns: 'Namespace') -> None:
         self.cfg = cfg
-        self.stat = stats.Stats()
+        self.ns = ns
 
     @staticmethod
     def getFromUds(cfg: config.ConfigurationType, ticket: bytes) -> typing.MutableMapping[str, typing.Any]:
@@ -77,6 +80,10 @@ class Proxy:
             await destination.sendall(data)
             counter.add(len(data))
 
+    # Method responsible of proxying requests
+    async def __call__(self, source, address: typing.Tuple[str, int]) -> None:
+        await self.proxy(source, address)
+
     async def stats(self, full: bool, source, address: typing.Tuple[str, int]) -> None:
         # Check valid source ip
         if address[0] not in self.cfg.allow:
@@ -93,17 +100,12 @@ class Proxy:
 
         logger.info('STATS TO %s', address)
 
-        if full:
-            data = self.stat.full_as_csv()
-        else:
-            data = self.stat.simple_as_csv()
+        data = stats.GlobalStats.get_stats(self.ns)
 
-        async for v in data:
+        for v in data:
+            logger.debug('SENDING %s', v)
             await source.sendall(v.encode() + b'\n')
 
-    # Method responsible of proxying requests
-    async def __call__(self, source, address: typing.Tuple[str, int]) -> None:
-        await self.proxy(source, address)
 
     async def proxy(self, source, address: typing.Tuple[str, int]) -> None:
         logger.info('OPEN FROM %s', address)
@@ -119,7 +121,6 @@ class Proxy:
                 logger.exception('HANDSHAKE')
             logger.error('HANDSHAKE from %s', address)
             await source.sendall(b'HANDSHAKE_ERROR')
-
             # Closes connection now
             return
 
@@ -166,7 +167,7 @@ class Proxy:
         await source.sendall(b'OK')
 
         # Initialize own stats counter
-        counter = await self.stat.new()
+        counter = stats.Stats(self.ns)
 
         # Open remote server connection
         try:
@@ -184,8 +185,7 @@ class Proxy:
 
             logger.error('REMOTE from %s: %s', address, e)
         finally:
-            await counter.close()
+            counter.close()
 
 
         logger.info('CLOSED FROM %s', address)
-        logger.info('STATS: %s', counter.as_csv())

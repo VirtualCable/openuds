@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2020 Virtual Cable S.L.U.
+# Copyright (c) 2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@
 import sys
 import argparse
 import multiprocessing
+import threading
 import socket
 import logging
 import typing
@@ -47,6 +48,7 @@ from uds_tunnel import stats
 
 if typing.TYPE_CHECKING:
     from multiprocessing.connection import Connection
+    from multiprocessing.managers import Namespace
 
 BACKLOG = 100
 
@@ -76,7 +78,9 @@ def setup_log(cfg: config.ConfigurationType) -> None:
         log.addHandler(fileh)
 
 
-async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType) -> None:
+async def tunnel_proc_async(
+    pipe: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace'
+) -> None:
     def get_socket(pipe: 'Connection') -> typing.Tuple[socket.SocketType, typing.Any]:
         try:
             while True:
@@ -92,7 +96,7 @@ async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType) -
         pipe: 'Connection', cfg: config.ConfigurationType, group: curio.TaskGroup
     ) -> None:
         # Instantiate a proxy redirector for this process (we only need one per process!!)
-        tunneler = proxy.Proxy(cfg)
+        tunneler = proxy.Proxy(cfg, ns)
 
         # Generate SSL context
         context = curio.ssl.SSLContext(curio.ssl.PROTOCOL_TLS_SERVER)
@@ -105,15 +109,18 @@ async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType) -
             context.load_dh_params(cfg.ssl_dhparam)
 
         while True:
-            sock, address = await curio.run_in_thread(get_socket, pipe)
-            if not sock:
-                break
-            logger.debug(
-                f'{multiprocessing.current_process().pid!r}: Got new connection from {address!r}'
-            )
-            sock = await context.wrap_socket(curio.io.Socket(sock), server_side=True)
-            await group.spawn(tunneler, sock, address)
-            del sock
+            try:
+                sock, address = await curio.run_in_thread(get_socket, pipe)
+                if not sock:
+                    break
+                logger.debug(
+                    f'{multiprocessing.current_process().pid!r}: Got new connection from {address!r}'
+                )
+                sock = await context.wrap_socket(curio.io.Socket(sock), server_side=True)
+                await group.spawn(tunneler, sock, address)
+                del sock
+            except Exception as e:
+                logger.error('SETING UP CONNECTION: %s', e)
 
     async with curio.TaskGroup() as tg:
         await tg.spawn(run_server, pipe, cfg, tg)
@@ -133,10 +140,13 @@ def tunnel_main():
         typing.Tuple['Connection', multiprocessing.Process, psutil.Process]
     ] = []
 
+    stats_collector = stats.GlobalStats()
+
     for i in range(cfg.workers):
         own_conn, child_conn = multiprocessing.Pipe()
         task = multiprocessing.Process(
-            target=curio.run, args=(tunnel_proc_async, child_conn, cfg)
+            target=curio.run,
+            args=(tunnel_proc_async, child_conn, cfg, stats_collector.ns),
         )
         task.start()
         child.append((own_conn, task, psutil.Process(task.pid)))
@@ -166,9 +176,12 @@ def tunnel_main():
             client, addr = sock.accept()
             # Select BEST process for sending this new connection
             best_child().send(message.Message(message.Command.TUNNEL, (client, addr)))
-
+            del client  # Ensure socket is controlled on child process
     except Exception:
+        logger.exception('Mar')
         pass
+
+    logger.info('Exiting tunnel server')
 
     if sock:
         sock.close()
@@ -196,7 +209,12 @@ def main() -> None:
 
     if args.tunnel:
         tunnel_main()
-    parser.print_help()
+    elif args.detailed_stats:
+        curio.run(stats.getServerStats, True)
+    elif args.stats:
+        curio.run(stats.getServerStats, False)
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":

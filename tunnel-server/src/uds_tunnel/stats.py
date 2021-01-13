@@ -28,30 +28,30 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import multiprocessing
 import time
+import logging
+import typing
 import io
 import ssl
 import logging
 import typing
 
 import curio
-import blist
 
 from . import config
 from . import consts
 
 
+if typing.TYPE_CHECKING:
+    from multiprocessing.managers import Namespace, SyncManager
+
+INTERVAL = 2  # Interval in seconds between stats update
+
 logger = logging.getLogger(__name__)
 
-# Locker for id assigner
-assignLock = curio.Lock()
-
-# Tuple index for several stats
-SENT, RECV = 0, 1
-
-# Subclasses for += operation to work
 class StatsSingleCounter:
-    def __init__(self, parent: 'StatsConnection', for_receiving=True) -> None:
+    def __init__(self, parent: 'Stats', for_receiving=True) -> None:
         if for_receiving:
             self.adder = parent.add_recv
         else:
@@ -62,56 +62,34 @@ class StatsSingleCounter:
         return self
 
 
-class StatsConnection:
-    id: int
-    recv: int
+class Stats:
+    ns: 'Namespace'
     sent: int
-    start_time: int
-    parent: 'Stats'
+    recv: int
+    last: float
 
-    # Bandwidth stats (SENT, RECV)
-    last: typing.List[int]
-    last_time: typing.List[float]
+    def __init__(self, ns: 'Namespace'):
+        self.ns = ns
+        self.ns.current += 1
+        self.ns.total += 1
+        self.sent = 0
+        self.recv = 0
+        self.last = time.monotonic()
 
-    bandwidth: typing.List[int]
-    max_bandwidth: typing.List[int]
-
-    def __init__(self, parent: 'Stats', id: int) -> None:
-        self.id = id
-        self.recv = self.sent = 0
-
-        now = time.time()
-        self.start_time = int(now)
-        self.parent = parent
-
-        self.last = [0, 0]
-        self.last_time = [now, now]
-        self.bandwidth = [0, 0]
-        self.max_bandwidth = [0, 0]
-
-    def update_bandwidth(self, kind: int, counter: int):
-        now = time.time()
-        elapsed = now - self.last_time[kind]
-        # Update only when enouth data
-        if elapsed < consts.BANDWIDTH_TIME:
-            return
-        total = counter - self.last[kind]
-        self.bandwidth[kind] = int(float(total) / elapsed)
-        self.last[kind] = counter
-        self.last_time[kind] = now
-
-        if self.bandwidth[kind] > self.max_bandwidth[kind]:
-            self.max_bandwidth[kind] = self.bandwidth[kind]
+    def update(self, force: bool = False):
+        now = time.monotonic()
+        if force or now - self.last > INTERVAL:
+            self.last = now
+            self.ns.recv = self.recv
+            self.ns.sent = self.sent
 
     def add_recv(self, size: int) -> None:
         self.recv += size
-        self.update_bandwidth(RECV, counter=self.recv)
-        self.parent.add_recv(size)
+        self.update()
 
     def add_sent(self, size: int) -> None:
         self.sent += size
-        self.update_bandwidth(SENT, counter=self.sent)
-        self.parent.add_sent(size)
+        self.update()
 
     def as_sent_counter(self) -> 'StatsSingleCounter':
         return StatsSingleCounter(self, False)
@@ -119,114 +97,34 @@ class StatsConnection:
     def as_recv_counter(self) -> 'StatsSingleCounter':
         return StatsSingleCounter(self, True)
 
-    async def close(self) -> None:
-        if self.id:
-            logger.debug(f'STAT {self.id} closed')
-            await self.parent.remove(self.id)
-            self.id = 0
+    def close(self):
+        self.update(True)
+        self.ns.current -= 1
 
-    def as_csv(self, separator: typing.Optional[str] = None) -> str:
-        separator = separator or ';'
-        # With connections of less than a second, consider them as a second
-        elapsed = (int(time.time()) - self.start_time)
+# Stats collector thread
+class GlobalStats:
+    manager: 'SyncManager'
+    ns: 'Namespace'
+    counter: int
 
-        return separator.join(
-            str(i)
-            for i in (
-                self.id,
-                self.start_time,
-                elapsed,
-                self.sent,
-                self.bandwidth[SENT],
-                self.max_bandwidth[SENT],
-                self.recv,
-                self.bandwidth[RECV],
-                self.max_bandwidth[RECV],
-            )
-        )
+    def __init__(self):
+        super().__init__()
+        self.manager = multiprocessing.Manager()
+        self.ns = self.manager.Namespace()
 
-    def __str__(self) -> str:
-        return f'{self.id} t:{int(time.time())-self.start_time}, r:{self.recv}, s:{self.sent}>'
+        # Counters
+        self.ns.current = 0
+        self.ns.total = 0
+        self.ns.sent = 0
+        self.ns.recv = 0
+        self.counter = 0
 
-    # For sorted array
-    def __lt__(self, other) -> bool:
-        if isinstance(other, int):
-            return self.id < other
+    def info(self) -> typing.Iterable[str]:
+        return GlobalStats.get_stats(self.ns)
 
-        if not isinstance(other, StatsConnection):
-            raise NotImplemented
-
-        return self.id < other.id
-
-    def __eq__(self, other) -> bool:
-        if isinstance(other, int):
-            return self.id == other
-
-        if not isinstance(other, StatsConnection):
-            raise NotImplemented
-
-        return self.id == other.id
-
-
-class Stats:
-    counter_id: int
-
-    total_sent: int
-    total_received: int
-    current_connections: blist.sortedlist
-
-    def __init__(self) -> None:
-        # First connection will be 1
-        self.counter_id = 0
-        self.total_sent = self.total_received = 0
-        self.current_connections = blist.sortedlist()
-
-    async def new(self) -> StatsConnection:
-        """Initializes a connection stats counter and returns it id
-
-        Returns:
-            str: connection id
-        """
-        async with assignLock:
-            self.counter_id += 1
-            connection = StatsConnection(self, self.counter_id)
-            self.current_connections.add(connection)
-            return connection
-
-    def add_sent(self, size: int) -> None:
-        self.total_sent += size
-
-    def add_recv(self, size: int) -> None:
-        self.total_received += size
-
-    async def remove(self, connection_id: int) -> None:
-        async with assignLock:
-            try:
-                self.current_connections.remove(connection_id)
-            except Exception:
-                logger.debug(
-                    'Tried to remove %s from connections but was not present',
-                    connection_id,
-                )
-                # Does not exists, ignore it
-                pass
-
-    async def simple_as_csv(self, separator: typing.Optional[str] = None) -> typing.AsyncIterable[str]:
-        separator = separator or ';'
-        yield separator.join(
-            str(i)
-            for i in (
-                self.counter_id,
-                self.total_sent,
-                self.total_received,
-                len(self.current_connections),
-            )
-        )
-
-    async def full_as_csv(self, separator: typing.Optional[str] = None) -> typing.AsyncIterable[str]:
-        for i in self.current_connections:
-            yield i.as_csv(separator)
-
+    @staticmethod
+    def get_stats(ns: 'Namespace') -> typing.Iterable[str]:
+        yield ';'.join([str(ns.current), str(ns.total), str(ns.sent), str(ns.recv)])
 
 # Stats processor, invoked from command line
 async def getServerStats(detailed: bool = False) -> None:
