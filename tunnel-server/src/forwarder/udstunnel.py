@@ -126,7 +126,7 @@ class Handler(socketserver.BaseRequestHandler):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rsocket:
                 logger.info('CONNECT to %s', self.server.remote)
-                logger.debug('Ticket %s', self.server.remote, self.server.ticket)
+                logger.debug('Ticket %s', self.server.ticket)
 
                 rsocket.connect(self.server.remote)
 

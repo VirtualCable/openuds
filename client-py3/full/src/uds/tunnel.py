@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021 Virtual Cable S.L.U.
+# Copyright (c) 2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -126,7 +126,7 @@ class Handler(socketserver.BaseRequestHandler):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rsocket:
                 logger.info('CONNECT to %s', self.server.remote)
-                logger.debug('Ticket %s', self.server.remote, self.server.ticket)
+                logger.debug('Ticket %s', self.server.ticket)
 
                 rsocket.connect(self.server.remote)
 
