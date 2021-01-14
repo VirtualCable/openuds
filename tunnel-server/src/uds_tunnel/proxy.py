@@ -158,11 +158,8 @@ class Proxy:
                 result = await curio.run_in_thread(Proxy.getFromUds, self.cfg, ticket)
             except Exception as e:
                 logger.error('ERROR %s', e.args[0] if e.args else e)
-                raise
-
-            # Invalid result from UDS, not allowed to connect
-            if not result:
-                raise Exception('INVALID TICKET')
+                await source.sendall(b'ERROR INVALID TICKET')
+                return
 
             logger.info('OPEN TUNNEL FROM %s to %s:%s', pretty_adress, result['host'], result['port'])
 

@@ -64,7 +64,9 @@ class StatsSingleCounter:
 
 class Stats:
     ns: 'Namespace'
+    last_sent: int
     sent: int
+    last_recv: int
     recv: int
     last: float
 
@@ -72,16 +74,18 @@ class Stats:
         self.ns = ns
         self.ns.current += 1
         self.ns.total += 1
-        self.sent = 0
-        self.recv = 0
+        self.sent = self.last_sent = 0
+        self.recv = self.last_recv = 0
         self.last = time.monotonic()
 
     def update(self, force: bool = False):
         now = time.monotonic()
         if force or now - self.last > INTERVAL:
             self.last = now
-            self.ns.recv = self.recv
-            self.ns.sent = self.sent
+            self.ns.recv += self.recv - self.last_recv
+            self.ns.sent += self.sent - self.last_sent
+            self.last_sent = self.sent
+            self.last_recv = self.recv
 
     def add_recv(self, size: int) -> None:
         self.recv += size

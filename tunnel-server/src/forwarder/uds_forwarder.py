@@ -54,10 +54,11 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
     remote: typing.Tuple[str, int]
     ticket: str
-    running: bool
     stop_flag: threading.Event
     timeout: int
+    timer: typing.Optional[threading.Timer]
     check_certificate: bool
+    current_connections: int
     status: int
 
     def __init__(
@@ -76,15 +77,34 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.timeout = int(time.time()) + timeout if timeout else 0
         self.check_certificate = check_certificate
         self.stop_flag = threading.Event()  # False initial
-        self.running = True
+        self.current_connections = 0
 
         self.status = TUNNEL_LISTENING
 
+        if timeout:
+            self.timer = threading.Timer(timeout, ForwardServer.__checkStarted, args=(self,))
+            self.timer.start()
+        else:
+            self.timer = None
+
     def stop(self) -> None:
         if not self.stop_flag.is_set():
+            logger.debug('Stopping servers')
             self.stop_flag.set()
-            self.running = False
+            if self.timer:
+                self.timer.cancel()
+                self.timer = None
             self.shutdown()
+
+    @property
+    def stoppable(self) -> bool:
+        return self.timeout != 0 and int(time.time()) > self.timeout
+
+    @staticmethod
+    def __checkStarted(fs: 'ForwardServer') -> None:
+        fs.timer = None
+        if fs.current_connections <= 0:
+            fs.stop()
 
 
 class Handler(socketserver.BaseRequestHandler):
@@ -93,17 +113,30 @@ class Handler(socketserver.BaseRequestHandler):
 
     # server: ForwardServer
     def handle(self) -> None:
-        # If server processing is timed out...
-        if self.server.timeout and int(time.time()) > self.server.timeout:
+        self.server.current_connections += 1
+        self.server.status = TUNNEL_OPENING
+
+        # If server processing is over time 
+        if self.server.stoppable:
+            logger.info('Rejected timedout connection try')
             self.request.close()  # End connection without processing it
             return
 
         # Open remote connection
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rsocket:
+                logger.info('CONNECT to %s', self.server.remote)
+                logger.debug('Ticket %s', self.server.remote, self.server.ticket)
+
                 rsocket.connect(self.server.remote)
 
                 context = ssl.create_default_context()
+
+                # If ignore remote certificate
+                if self.server.check_certificate is False:
+                    context.check_hostname = False                    
+                    context.verify_mode = ssl.CERT_NONE
+                    logger.warning('Certificate checking is disabled!')
 
                 with context.wrap_socket(
                     rsocket, server_hostname=self.server.remote[0]
@@ -116,19 +149,24 @@ class Handler(socketserver.BaseRequestHandler):
                     data = ssl_socket.recv(2)
                     if data != b'OK':
                         data += ssl_socket.recv(128)
-                        raise Exception(data.decode())  # Notify error
+                        raise Exception(f'Error received: {data.decode()}')  # Notify error
 
                     # All is fine, now we can tunnel data
                     self.process(remote=ssl_socket)
         except Exception as e:
-            # TODO log error connecting...
-            if DEBUG:
-                logger.exception('Processing')
-            logger.error(f'Error connecting: {e!s}')
+            logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
             self.server.status = TUNNEL_ERROR
+            self.server.stop()
+        finally:
+            self.server.current_connections -= 1
+
+        if self.server.current_connections <= 0 and self.server.stoppable:
+            self.server.stop()
 
     # Processes data forwarding
     def process(self, remote: ssl.SSLSocket):
+        self.server.status = TUNNEL_PROCESSING
+        logger.debug('Processing tunnel with ticket %s', self.server.ticket)
         # Process data until stop requested or connection closed
         try:
             while not self.server.stop_flag.is_set():
@@ -143,14 +181,14 @@ class Handler(socketserver.BaseRequestHandler):
                     if not data:
                         break
                     self.request.sendall(data)
-            logger.debug('Finished process')
+            logger.debug('Finished tunnel with ticekt %s', self.server.ticket)
         except Exception as e:
             pass
 
 def _run(server: ForwardServer) -> None:
-    logger.debug('Starting server')
+    logger.debug('Starting forwarder: %s -> %s, timeout: %d', server.server_address, server.remote, server.timeout)
     server.serve_forever()
-    logger.debug('Stoped server')
+    logger.debug('Stoped forwarded %s -> %s', server.server_address, server.remote)
 
 def forward(
     remote: typing.Tuple[str, int],
@@ -172,10 +210,15 @@ def forward(
     return fs
 
 if __name__ == "__main__":
-    fs1 = forward(('fake.udsenterprise.com', 7777), '0'*64, local_port=49998)
-    print(f'Listening on {fs1.server_address}')
-    fs2 = forward(('fake.udsenterprise.com', 7777), '1'*64, local_port=49999)
-    print(f'Listening on {fs2.server_address}')
-#    time.sleep(30)
-#    fs.stop()
+    import sys
+    log = logging.getLogger()
+    log.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(levelname)s - %(message)s'
+    )  # Basic log format, nice for syslog
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
 
+    fs = forward(('172.27.0.1', 7777), '1'*64, local_port=49999, timeout=10, check_certificate=False)

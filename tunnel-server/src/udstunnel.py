@@ -198,10 +198,12 @@ def tunnel_main():
         # Wait for socket incoming connections and spread them
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-        try:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, True)
-        except (AttributeError, OSError) as e:
-            logger.warning('socket.REUSEPORT not available')
+        # We will not reuse port, we only want a UDS tunnel server running on a port
+        # but this may change on future...
+        # try:
+        #     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, True)
+        # except (AttributeError, OSError) as e:
+        #     logger.warning('socket.REUSEPORT not available')
 
         sock.settimeout(3.0)  # So we can check for stop from time to time
         sock.bind((cfg.listen_address, cfg.listen_port))
@@ -219,8 +221,8 @@ def tunnel_main():
             except Exception as e:
                 logger.error('LOOP: %s', e)
     except Exception as e:
+        sys.stderr.write(f'Error: {e}\n')
         logger.error('MAIN: %s', e)
-        pass
 
     if sock:
         sock.close()
