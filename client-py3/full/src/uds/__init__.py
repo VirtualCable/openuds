@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2017 Virtual Cable S.L.
+# Copyright (c) 2014-2021 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,7 +31,7 @@
 '''
 from __future__ import unicode_literals
 
-VERSION = '3.0.0'
+VERSION = '3.5.0'
 
 __title__ = 'udclient'
 __version__ = VERSION

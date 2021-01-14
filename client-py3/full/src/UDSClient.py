@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2017 Virtual Cable S.L.
+# Copyright (c) 2014-2021 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,6 +40,7 @@ import six
 
 from uds.rest import RestRequest
 from uds.forward import forward  # pylint: disable=unused-import
+from uds.tunnel import forward as f2  # pylint: disable=unused-import
 from uds.log import logger
 from uds import tools
 from uds import VERSION
