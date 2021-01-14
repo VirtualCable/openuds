@@ -43,6 +43,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class Proxy:
     cfg: config.ConfigurationType
     ns: 'Namespace'
@@ -52,13 +53,19 @@ class Proxy:
         self.ns = ns
 
     @staticmethod
-    def getFromUds(cfg: config.ConfigurationType, ticket: bytes) -> typing.MutableMapping[str, typing.Any]:
+    def getFromUds(
+        cfg: config.ConfigurationType, ticket: bytes
+    ) -> typing.MutableMapping[str, typing.Any]:
         # Sanity checks
         if len(ticket) != consts.TICKET_LENGTH:
             raise Exception(f'TICKET INVALID (len={len(ticket)})')
 
         for n, i in enumerate(ticket.decode(errors='ignore')):
-            if (i >= 'a' and i <= 'z') or (i >= '0' and i <= '9') or (i >= 'A' and i <= 'Z'):
+            if (
+                (i >= 'a' and i <= 'z')
+                or (i >= '0' and i <= '9')
+                or (i >= 'A' and i <= 'Z')
+            ):
                 continue  # Correctus
             raise Exception(f'TICKET INVALID (char {i} at pos {n})')
 
@@ -68,7 +75,7 @@ class Proxy:
         #     raise Exception(f'TICKET INVALID (check {r.json})')
         return {
             'host': ['172.27.1.15', '172.27.0.10'][int(ticket[0]) - 0x30],
-            'port': '3389'
+            'port': '3389',
         }
 
     @staticmethod
@@ -98,17 +105,16 @@ class Proxy:
             await source.sendall(b'FORBIDDEN')
             return
 
-        logger.info('STATS TO %s', address)
-
         data = stats.GlobalStats.get_stats(self.ns)
 
         for v in data:
             logger.debug('SENDING %s', v)
             await source.sendall(v.encode() + b'\n')
 
-
     async def proxy(self, source, address: typing.Tuple[str, int]) -> None:
-        logger.info('OPEN FROM %s', address)
+        pretty_adress = address[0]  # Get only source IP
+
+        logger.info('CONNECT FROM %s', pretty_adress)
 
         try:
             # First, ensure handshake (simple handshake) and command
@@ -128,12 +134,16 @@ class Proxy:
             # Handshake correct, get the command (4 bytes)
             command: bytes = await source.recv(consts.COMMAND_LENGTH)
             if command == consts.COMMAND_TEST:
+                logger.info('COMMAND: TEST')
                 await source.sendall(b'OK')
                 return
 
             if command in (consts.COMMAND_STAT, consts.COMMAND_INFO):
+                logger.info('COMMAND: %s', command.decode())
                 # This is an stats requests
-                await self.stats(full=command==consts.COMMAND_STAT, source=source, address=address)
+                await self.stats(
+                    full=command == consts.COMMAND_STAT, source=source, address=address
+                )
                 return
 
             if command != consts.COMMAND_OPEN:
@@ -147,19 +157,19 @@ class Proxy:
             try:
                 result = await curio.run_in_thread(Proxy.getFromUds, self.cfg, ticket)
             except Exception as e:
-                logger.error('%s', e.args[0] if e.args else e)
+                logger.error('ERROR %s', e.args[0] if e.args else e)
                 raise
-
-            print(f'Result: {result}')
 
             # Invalid result from UDS, not allowed to connect
             if not result:
-                raise Exception()
+                raise Exception('INVALID TICKET')
+
+            logger.info('OPEN TUNNEL FROM %s to %s:%s', pretty_adress, result['host'], result['port'])
 
         except Exception:
             if consts.DEBUG:
                 logger.exception('COMMAND')
-            logger.error('COMMAND from %s', address)
+            logger.error('ERROR from %s', address)
             await source.sendall(b'COMMAND_ERROR')
             return
 
@@ -171,11 +181,17 @@ class Proxy:
 
         # Open remote server connection
         try:
-            destination = await curio.open_connection(result['host'], int(result['port']))
+            destination = await curio.open_connection(
+                result['host'], int(result['port'])
+            )
             async with curio.TaskGroup(wait=any) as grp:
-                await grp.spawn(Proxy.doProxy, source, destination, counter.as_sent_counter())
-                await grp.spawn(Proxy.doProxy, destination, source, counter.as_recv_counter())
-                logger.debug('Launched proxies')
+                await grp.spawn(
+                    Proxy.doProxy, source, destination, counter.as_sent_counter()
+                )
+                await grp.spawn(
+                    Proxy.doProxy, destination, source, counter.as_recv_counter()
+                )
+                logger.debug('PROXIES READY')
 
             logger.debug('Proxies finalized: %s', grp.exceptions)
 
@@ -185,7 +201,6 @@ class Proxy:
 
             logger.error('REMOTE from %s: %s', address, e)
         finally:
-            counter.close()
+            counter.close()  # So we ensure stats are correctly updated on ns
 
-
-        logger.info('CLOSED FROM %s', address)
+        logger.info('TERMINATED %s', ':'.join(str(i) for i in address))

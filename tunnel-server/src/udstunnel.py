@@ -29,10 +29,11 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import os
 import sys
 import argparse
 import multiprocessing
-import threading
+import signal
 import socket
 import logging
 import typing
@@ -54,28 +55,44 @@ BACKLOG = 100
 
 logger = logging.getLogger(__name__)
 
+do_stop = False
+
+
+def stop_signal(signum, frame):
+    global do_stop
+    do_stop = True
+    logger.debug('SIGNAL %s, frame: %s', signum, frame)
+
 
 def setup_log(cfg: config.ConfigurationType) -> None:
-    # Setup basic logging
-    log = logging.getLogger()
-    log.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        '%(levelname)s - %(message)s'
-    )  # Basic log format, nice for syslog
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
+    from logging.handlers import RotatingFileHandler
 
     # Update logging if needed
     if cfg.log_file:
-        fileh = logging.FileHandler(cfg.log_file, 'a')
+        fileh = RotatingFileHandler(
+            filename=cfg.log_file,
+            mode='a',
+            maxBytes=cfg.log_size,
+            backupCount=cfg.log_number,
+        )
         formatter = logging.Formatter(consts.LOGFORMAT)
         fileh.setFormatter(formatter)
         log = logging.getLogger()
-        for hdlr in log.handlers[:]:
-            log.removeHandler(hdlr)
+        log.setLevel(cfg.log_level)
+        # for hdlr in log.handlers[:]:
+        #     log.removeHandler(hdlr)
         log.addHandler(fileh)
+    else:
+        # Setup basic logging
+        log = logging.getLogger()
+        log.setLevel(cfg.log_level)
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(cfg.log_level)
+        formatter = logging.Formatter(
+            '%(levelname)s - %(message)s'
+        )  # Basic log format, nice for syslog
+        handler.setFormatter(formatter)
+        log.addHandler(handler)
 
 
 async def tunnel_proc_async(
@@ -109,31 +126,46 @@ async def tunnel_proc_async(
             context.load_dh_params(cfg.ssl_dhparam)
 
         while True:
+            address = ('', '')
             try:
                 sock, address = await curio.run_in_thread(get_socket, pipe)
                 if not sock:
                     break
                 logger.debug(
-                    f'{multiprocessing.current_process().pid!r}: Got new connection from {address!r}'
+                    f'CONNECTION from {address!r} (pid: {os.getpid()})'
                 )
-                sock = await context.wrap_socket(curio.io.Socket(sock), server_side=True)
+                sock = await context.wrap_socket(
+                    curio.io.Socket(sock), server_side=True
+                )
                 await group.spawn(tunneler, sock, address)
                 del sock
-            except Exception as e:
-                logger.error('SETING UP CONNECTION: %s', e)
+            except Exception:
+                logger.error('NEGOTIATION ERROR from %s', address[0])
 
     async with curio.TaskGroup() as tg:
         await tg.spawn(run_server, pipe, cfg, tg)
         # Reap all of the children tasks as they complete
         async for task in tg:
-            logger.debug(f'Deleting {task!r}')
+            logger.debug(f'REMOVING async task {task!r}')
             task.joined = True
             del task
 
 
 def tunnel_main():
     cfg = config.read()
-    setup_log(cfg)
+
+    # Create pid file
+    try:
+        setup_log(cfg)
+        with open(cfg.pidfile, mode='w') as f:
+            f.write(str(os.getpid()))
+    except Exception as e:
+        sys.stderr.write(f'Tunnel startup error: {e}\n')
+        return
+
+    # Setup signal handlers
+    signal.signal(signal.SIGINT, stop_signal)
+    signal.signal(signal.SIGTERM, stop_signal)
 
     # Creates as many processes and pipes as required
     child: typing.List[
@@ -149,6 +181,7 @@ def tunnel_main():
             args=(tunnel_proc_async, child_conn, cfg, stats_collector.ns),
         )
         task.start()
+        logger.debug('ADD CHILD PID: %s', task.pid)
         child.append((own_conn, task, psutil.Process(task.pid)))
 
     def best_child() -> 'Connection':
@@ -168,23 +201,38 @@ def tunnel_main():
         try:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, True)
         except (AttributeError, OSError) as e:
-            logger.warning('socket.REUSEPORT not available', exc_info=True)
+            logger.warning('socket.REUSEPORT not available')
 
+        sock.settimeout(3.0)  # So we can check for stop from time to time
         sock.bind((cfg.listen_address, cfg.listen_port))
         sock.listen(BACKLOG)
-        while True:
-            client, addr = sock.accept()
-            # Select BEST process for sending this new connection
-            best_child().send(message.Message(message.Command.TUNNEL, (client, addr)))
-            del client  # Ensure socket is controlled on child process
-    except Exception:
-        logger.exception('Mar')
+        while not do_stop:
+            try:
+                client, addr = sock.accept()
+                # Select BEST process for sending this new connection
+                best_child().send(
+                    message.Message(message.Command.TUNNEL, (client, addr))
+                )
+                del client  # Ensure socket is controlled on child process
+            except socket.timeout:
+                pass  # Continue and retry
+            except Exception as e:
+                logger.error('LOOP: %s', e)
+    except Exception as e:
+        logger.error('MAIN: %s', e)
         pass
-
-    logger.info('Exiting tunnel server')
 
     if sock:
         sock.close()
+
+    # Try to stop running childs
+    for i in child:
+        try:
+            i[2].kill()
+        except Exception as e:
+            logger.info('KILLING child %s: %s', i[2], e)
+
+    logger.info('FINISHED')
 
 
 def main() -> None:

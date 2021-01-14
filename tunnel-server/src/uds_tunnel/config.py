@@ -39,8 +39,12 @@ from .consts import CONFIGFILE
 logger = logging.getLogger(__name__)
 
 class ConfigurationType(typing.NamedTuple):
+    pidfile: str
+
     log_level: str
     log_file: str
+    log_size: int
+    log_number: int
 
     listen_address: str
     listen_port: int
@@ -73,10 +77,18 @@ def read() -> ConfigurationType:
     h.update(uds.get('secret', '').encode())
     secret = h.hexdigest()
 
+
     try:
+        # log size
+        logsize: str = uds.get('logsize', '32M')
+        if logsize[-1] == 'M':
+            logsize = logsize[:-1]
         return ConfigurationType(
+            pidfile=uds.get('pidfile', '/dev/null'),
             log_level=uds.get('loglevel', 'ERROR'),
             log_file=uds.get('logfile', ''),
+            log_size=int(logsize)*1024*1024,
+            log_number=int(uds.get('lognumber', '3')),
             listen_address=uds.get('address', '0.0.0.0'),
             listen_port=int(uds.get('port', '443')),
             workers=int(uds.get('workers', '0')) or multiprocessing.cpu_count(),
