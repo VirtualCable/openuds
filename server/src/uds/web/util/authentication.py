@@ -43,6 +43,7 @@ import uds.web.util.errors as errors
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequest
     from uds.web.forms.LoginForm import LoginForm
     from uds.models import User
 
@@ -54,7 +55,7 @@ logger = logging.getLogger(__name__)
 # (None, NumericError) if errorview redirection
 # (User, password_string) if all is ok
 def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequest',
         form: 'LoginForm',
         tag: typing.Optional[str] = None
     ) -> typing.Tuple[typing.Optional['User'], typing.Any]:

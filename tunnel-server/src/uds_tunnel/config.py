@@ -73,10 +73,17 @@ def read() -> ConfigurationType:
 
     uds = cfg['uds']
 
+    # Gets and create secret hash
     h = hashlib.sha256()
     h.update(uds.get('secret', '').encode())
     secret = h.hexdigest()
 
+    # Now load and fix uds server url
+    uds_server = uds['uds_server']
+    if uds_server[:4] != 'http':
+        raise Exception('Invalid url for uds server')
+    if uds_server[-1] == '/':
+        uds_server = uds_server[:-1]
 
     try:
         # log size
@@ -84,7 +91,7 @@ def read() -> ConfigurationType:
         if logsize[-1] == 'M':
             logsize = logsize[:-1]
         return ConfigurationType(
-            pidfile=uds.get('pidfile', '/dev/null'),
+            pidfile=uds.get('pidfile', ''),
             log_level=uds.get('loglevel', 'ERROR'),
             log_file=uds.get('logfile', ''),
             log_size=int(logsize)*1024*1024,
@@ -96,10 +103,10 @@ def read() -> ConfigurationType:
             ssl_certificate_key=uds['ssl_certificate_key'],
             ssl_ciphers=uds.get('ssl_ciphers'),
             ssl_dhparam=uds.get('ssl_dhparam'),
-            uds_server=uds['uds_server'],
+            uds_server=uds_server,
             secret=secret,
             allow=set(uds.get('allow', '127.0.0.1').split(',')),
-            storage=uds['storage']
+            storage=uds.get('storage', '')
         )
     except ValueError as e:
         raise Exception(f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise  {CONFIGFILE}')

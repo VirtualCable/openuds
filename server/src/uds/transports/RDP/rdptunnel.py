@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -89,6 +88,27 @@ class TRDPTransport(BaseRDPTransport):
         tab=gui.TUNNEL_TAB,
     )
 
+    ticketValidity = gui.NumericField(
+        length=3,
+        label=_('Tunnel ticket validity time (seconds)'),
+        defvalue='7200',
+        minValue=60,          # One minute as min
+        maxValue=7*60*60*24,  # one week as max
+        order=3,
+        tooltip=_('Maximum validity time for user ticket to allow reconnection'),
+        required=True,
+        tab=gui.TUNNEL_TAB,
+    )
+
+    verifyCertificate = gui.CheckBoxField(
+        label=_('Force SSL certificate verification'),
+        order=23,
+        tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
+        defvalue=gui.TRUE,
+        tab=gui.TUNNEL_TAB
+    )
+
+
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName
     fixedPassword = BaseRDPTransport.fixedPassword
@@ -152,15 +172,14 @@ class TRDPTransport(BaseRDPTransport):
         width, height = self.screenSize.value.split('x')
         depth = self.colorDepth.value
 
-        tunpass = ''.join(
-            random.SystemRandom().choice(string.ascii_letters + string.digits)
-            for _i in range(12)
+        ticket = TicketStore.create_for_tunnel(
+            userService=userService,
+            port=3389,
+            validity=self.ticketValidity.num()
         )
-        tunuser = TicketStore.create(tunpass)
 
-        sshHost, sshPort = self.tunnelServer.value.split(':')
-
-        logger.debug('Username generated: %s, password: %s', tunuser, tunpass)
+        tunHost, tunPort = self.tunnelServer.value.split(':')
+        
 
         r = RDPFile(
             width == '-1' or height == '-1', width, height, depth, target=os['OS']
@@ -202,12 +221,11 @@ class TRDPTransport(BaseRDPTransport):
             )
 
         sp = {
-            'tunUser': tunuser,
-            'tunPass': tunpass,
-            'tunHost': sshHost,
-            'tunPort': sshPort,
+            'tunHost': tunHost,
+            'tunPort': tunPort,
             'tunWait': self.tunnelWait.num(),
-            'ip': ip,
+            'tunChk': self.verifyCertificate.isTrue(),
+            'ticket': ticket,
             'password': password,
             'this_server': request.build_absolute_uri('/'),
         }

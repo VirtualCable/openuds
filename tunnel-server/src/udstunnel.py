@@ -157,8 +157,9 @@ def tunnel_main():
     # Create pid file
     try:
         setup_log(cfg)
-        with open(cfg.pidfile, mode='w') as f:
-            f.write(str(os.getpid()))
+        if cfg.pidfile:
+            with open(cfg.pidfile, mode='w') as f:
+                f.write(str(os.getpid()))
     except Exception as e:
         sys.stderr.write(f'Tunnel startup error: {e}\n')
         return
@@ -233,6 +234,12 @@ def tunnel_main():
             i[2].kill()
         except Exception as e:
             logger.info('KILLING child %s: %s', i[2], e)
+
+    try:
+        if cfg.pidfile:
+            os.unlink(cfg.pidfile)
+    except Exception:
+        pass
 
     logger.info('FINISHED')
 

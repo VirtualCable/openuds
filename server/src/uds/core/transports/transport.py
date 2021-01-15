@@ -146,7 +146,6 @@ class Transport(Module):
         Helper method to check if transport supports requested operating system.
         Class method
         """
-        logger.debug('Checking suported os %s against %s', osName, cls.supportedOss)
         return cls.supportedOss.count(osName) > 0
 
     @classmethod
@@ -242,7 +241,7 @@ class Transport(Module):
         script, signature, params = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
         logger.debug('Transport script: %s', script)
         
-        return codecs.encode(codecs.encode(script, 'bz2'), 'base64').decode().replace('\n', ''), signature, params
+        return codecs.encode(codecs.encode(script.encode(), 'bz2'), 'base64').decode().replace('\n', ''), signature, params
 
     def getLink(
             self,

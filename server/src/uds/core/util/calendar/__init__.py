@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2019 Virtual Cable S.L.
+# Copyright (c) 2015-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@
 """
 import datetime
 import time
+import typing
 import logging
 
 import bitarray
@@ -61,10 +62,10 @@ class CalendarChecker:
 
     cache = Cache('calChecker')
 
-    def __init__(self, calendar: Calendar):
+    def __init__(self, calendar: Calendar) -> None:
         self.calendar = calendar
 
-    def _updateData(self, dtime: datetime.datetime):
+    def _updateData(self, dtime: datetime.datetime) -> bitarray.bitarray:
         logger.debug('Updating %s', dtime)
         # Else, update the array
         CalendarChecker.updates += 1
@@ -124,7 +125,6 @@ class CalendarChecker:
         return data
 
     def _updateEvents(self, checkFrom, startEvent=True):
-
         next_event = None
         for rule in self.calendar.rules.all():
             # logger.debug('RULE: start = {}, checkFrom = {}, end'.format(rule.start.date(), checkFrom.date()))
@@ -141,7 +141,7 @@ class CalendarChecker:
 
         return next_event
 
-    def check(self, dtime=None):
+    def check(self, dtime=None) -> int:
         """
         Checks if the given time is a valid event on calendar
         @param dtime: Datetime object to check
@@ -180,10 +180,9 @@ class CalendarChecker:
 
         return data[dtime.hour * 60 + dtime.minute]
 
-    def nextEvent(self, checkFrom=None, startEvent=True, offset=None):
+    def nextEvent(self, checkFrom=None, startEvent=True, offset=None) -> typing.Optional[datetime.datetime]:
         """
         Returns next event for this interval
-        Returns a list of two elements. First is datetime of event begining, second is timedelta of duration
         """
         logger.debug('Obtaining nextEvent')
         if checkFrom is None:
@@ -215,5 +214,5 @@ class CalendarChecker:
 
         return next_event
 
-    def debug(self):
+    def debug(self) -> str:
         return "Calendar checker for {}".format(self.calendar)

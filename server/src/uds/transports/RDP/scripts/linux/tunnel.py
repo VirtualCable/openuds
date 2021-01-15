@@ -5,9 +5,9 @@ from __future__ import unicode_literals
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
 import re
-from uds.forward import forward  # @UnresolvedImport
+from uds.tunnel import forward  # type: ignore
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 # Inject local passed sp into globals for functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
@@ -41,9 +41,6 @@ if app is None or fnc is None:
 ''')
 else:
     # Open tunnel
-    forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])
+    fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
 
-    if forwardThread.status == 2:
-        raise Exception('Unable to open tunnel')
-
-    fnc(app, port)  # @UndefinedVariable
+    fnc(app, fs.server_address[1])  

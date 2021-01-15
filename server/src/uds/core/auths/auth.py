@@ -154,6 +154,10 @@ def webLoginRequired(
 
     return decorator
 
+# Helper for checking if requests is from trusted source
+def isTrustedSource(ip: str) -> bool:
+    return net.ipInNetwork(ip, GlobalConfig.TRUSTED_SOURCES.get(True))
+
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
 def trustedSourceRequired(
@@ -170,7 +174,7 @@ def trustedSourceRequired(
         Wrapped function for decorator
         """
         try:
-            if not net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)):
+            if not isTrustedSource(request.ip):
                 return HttpResponseForbidden()  # type: ignore
         except Exception as e:
             logger.warning(

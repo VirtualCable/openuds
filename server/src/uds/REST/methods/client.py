@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2020 Virtual Cable S.L.U.
+# Copyright (c) 2014-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -50,13 +50,13 @@ from uds.core import VERSION as UDS_VERSION
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '3.0.0'
+REQUIRED_CLIENT_VERSION = '3.5.0'
 
 
-# Enclosed methods under /actor path
+# Enclosed methods under /client path
 class Client(Handler):
     """
-    Processes actor requests
+    Processes Client requests
     """
     authenticated = False  # Client requests are not authenticated
 
@@ -155,7 +155,7 @@ class Client(Handler):
             return Client.result(result={
                 'script': transportScript,
                 'signature': signature,  # It is already on base64
-                'params': codecs.encode(codecs.encode(json.dumps(params), 'bz2'), 'base64').decode(),
+                'params': codecs.encode(codecs.encode(json.dumps(params).encode(), 'bz2'), 'base64').decode(),
             })
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable

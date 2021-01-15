@@ -54,7 +54,8 @@ class Proxy:
 
     @staticmethod
     def getFromUds(
-        cfg: config.ConfigurationType, ticket: bytes
+        cfg: config.ConfigurationType, ticket: bytes,
+        address: typing.Tuple[str, int]
     ) -> typing.MutableMapping[str, typing.Any]:
         # Sanity checks
         if len(ticket) != consts.TICKET_LENGTH:
@@ -69,14 +70,16 @@ class Proxy:
                 continue  # Correctus
             raise Exception(f'TICKET INVALID (char {i} at pos {n})')
 
-        # Gets the UDS connection data
-        # r = requests.get(f'{cfg.uds_server}/XXXX/ticket')
-        # if not r.ok:
-        #     raise Exception(f'TICKET INVALID (check {r.json})')
-        return {
-            'host': ['172.27.1.15', '172.27.0.10'][int(ticket[0]) - 0x30],
-            'port': '3389',
-        }
+        try:
+            url = cfg.uds_server + '/' + ticket.decode() + '/' + address[0]
+            r = requests.get(url, headers={'content-type': 'application/json'})
+            if not r.ok:
+                raise Exception(r.content)
+
+            return r.json()
+        except Exception as e:
+            raise Exception(f'TICKET COMMS ERROR: {e!s}')
+
 
     @staticmethod
     async def doProxy(source, destination, counter: stats.StatsSingleCounter) -> None:
@@ -155,7 +158,7 @@ class Proxy:
 
             # Ticket received, now process it with UDS
             try:
-                result = await curio.run_in_thread(Proxy.getFromUds, self.cfg, ticket)
+                result = await curio.run_in_thread(Proxy.getFromUds, self.cfg, ticket, address)
             except Exception as e:
                 logger.error('ERROR %s', e.args[0] if e.args else e)
                 await source.sendall(b'ERROR INVALID TICKET')

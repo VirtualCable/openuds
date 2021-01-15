@@ -33,6 +33,7 @@ import socketserver
 import ssl
 import threading
 import time
+import random
 import threading
 import select
 import typing
@@ -47,6 +48,7 @@ LISTEN_ADDRESS = '0.0.0.0' if DEBUG else '127.0.0.1'
 TUNNEL_LISTENING, TUNNEL_OPENING, TUNNEL_PROCESSING, TUNNEL_ERROR = 0, 1, 2, 3
 
 logger = logging.getLogger(__name__)
+
 
 class ForwardServer(socketserver.ThreadingTCPServer):
     daemon_threads = True
@@ -69,6 +71,10 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         local_port: int = 0,
         check_certificate: bool = True,
     ) -> None:
+
+        if local_port == 0:
+            local_port = random.randrange(33000, 53000)
+
         super().__init__(
             server_address=(LISTEN_ADDRESS, local_port), RequestHandlerClass=Handler
         )
@@ -82,7 +88,9 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.status = TUNNEL_LISTENING
 
         if timeout:
-            self.timer = threading.Timer(timeout, ForwardServer.__checkStarted, args=(self,))
+            self.timer = threading.Timer(
+                timeout, ForwardServer.__checkStarted, args=(self,)
+            )
             self.timer.start()
         else:
             self.timer = None
@@ -116,7 +124,7 @@ class Handler(socketserver.BaseRequestHandler):
         self.server.current_connections += 1
         self.server.status = TUNNEL_OPENING
 
-        # If server processing is over time 
+        # If server processing is over time
         if self.server.stoppable:
             logger.info('Rejected timedout connection try')
             self.request.close()  # End connection without processing it
@@ -134,7 +142,7 @@ class Handler(socketserver.BaseRequestHandler):
 
                 # If ignore remote certificate
                 if self.server.check_certificate is False:
-                    context.check_hostname = False                    
+                    context.check_hostname = False
                     context.verify_mode = ssl.CERT_NONE
                     logger.warning('Certificate checking is disabled!')
 
@@ -149,7 +157,9 @@ class Handler(socketserver.BaseRequestHandler):
                     data = ssl_socket.recv(2)
                     if data != b'OK':
                         data += ssl_socket.recv(128)
-                        raise Exception(f'Error received: {data.decode()}')  # Notify error
+                        raise Exception(
+                            f'Error received: {data.decode()}'
+                        )  # Notify error
 
                     # All is fine, now we can tunnel data
                     self.process(remote=ssl_socket)
@@ -185,10 +195,17 @@ class Handler(socketserver.BaseRequestHandler):
         except Exception as e:
             pass
 
+
 def _run(server: ForwardServer) -> None:
-    logger.debug('Starting forwarder: %s -> %s, timeout: %d', server.server_address, server.remote, server.timeout)
+    logger.debug(
+        'Starting forwarder: %s -> %s, timeout: %d',
+        server.server_address,
+        server.remote,
+        server.timeout,
+    )
     server.serve_forever()
-    logger.debug('Stoped forwarded %s -> %s', server.server_address, server.remote)
+    logger.debug('Stoped forwarder %s -> %s', server.server_address, server.remote)
+
 
 def forward(
     remote: typing.Tuple[str, int],
@@ -197,6 +214,7 @@ def forward(
     local_port: int = 0,
     check_certificate=True,
 ) -> ForwardServer:
+
     fs = ForwardServer(
         remote=remote,
         ticket=ticket,
@@ -209,8 +227,10 @@ def forward(
 
     return fs
 
+
 if __name__ == "__main__":
     import sys
+
     log = logging.getLogger()
     log.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(sys.stdout)
@@ -221,4 +241,12 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     log.addHandler(handler)
 
-    fs = forward(('172.27.0.1', 7777), '1'*64, local_port=49999, timeout=10, check_certificate=False)
+    ticket = 'qcdn2jax6tx4nljdyed61hm3iqbld5nf44zxbh9gf355ofw2'
+
+    fs = forward(
+        ('172.27.0.1', 7777),
+        ticket,
+        local_port=49999,
+        timeout=60,
+        check_certificate=False,
+    )

@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR, OT_METAPOOL = range(9)  # @UndefinedVariable
 
 # Dict for translations
-transDict: typing.Dict['Model', int] = {
+transDict: typing.Dict[typing.Type['Model'], int] = {
     models.UserService: OT_USERSERVICE,
     models.ServicePoolPublication: OT_PUBLICATION,
     models.ServicePool: OT_DEPLOYED_SERVICE,

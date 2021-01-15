@@ -40,12 +40,15 @@ from uds.core.managers import cryptoManager
 from .uuid_model import UUIDModel
 from .util import getSqlDatetime
 
+from .user import User
+from .user_service import UserService
 
 logger = logging.getLogger(__name__)
 
 ValidatorType = typing.Callable[[typing.Any], bool]
 
-SECURED = '#SECURE#'  # Just a "different" owner. If used anywhere, it's not important (will not fail), but 
+SECURED = '#SECURE#'  # Just a "different" owner. If used anywhere, it's not important (will not fail), but weird enough
+
 
 class TicketStore(UUIDModel):
     """
@@ -142,7 +145,9 @@ class TicketStore(UUIDModel):
             data: bytes = t.data
 
             if secure:  # Owner has already been tested and it's not emtpy
-                data = cryptoManager().AESDecrypt(data, typing.cast(str, owner).encode())
+                data = cryptoManager().AESDecrypt(
+                    data, typing.cast(str, owner).encode()
+                )
 
             data = pickle.loads(data)
 
@@ -174,7 +179,69 @@ class TicketStore(UUIDModel):
                 t.validity = validity
             t.save(update_fields=['validity', 'stamp'])
         except TicketStore.DoesNotExist:
-            raise Exception('Does not exists')
+            raise TicketStore.InvalidTicket('Does not exists')
+
+    # Especific methods for tunnel
+    @staticmethod
+    def create_for_tunnel(
+        userService: 'UserService',
+        port: int,
+        host: typing.Optional[str] = None,
+        extra: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        validity: int = 60 * 60 * 24,  # 24 Hours default validity for tunnel tickets
+    ) -> str:
+        owner = cryptoManager().randomString(length=8)
+        data = {
+            'u': userService.user.uuid,
+            's': userService.uuid,
+            'h': host,
+            'p': port,
+            'e': extra,
+        }
+        return (
+            TicketStore.create(
+                data=data,
+                validity=validity,
+                owner=owner,
+                secure=True,
+            )
+            + owner
+        )
+
+    @staticmethod
+    def get_for_tunnel(
+        ticket: str,
+    ) -> typing.Tuple[
+        'User',
+        'UserService',
+        typing.Optional[str],
+        int,
+        typing.Optional[typing.Mapping[str, typing.Any]],
+    ]:
+        """
+        Returns the ticket for a tunneled connection
+        The returned value is a tuple:
+          (User, UserService, Host (nullable), Port, Extra Dict)
+        """
+        try:
+            if len(ticket) != 48:
+                raise Exception(f'Invalid ticket format: {ticket!r}')
+
+            uuid, owner = ticket[:-8], ticket[-8:]
+            data = TicketStore.get(uuid, invalidate=False, owner=owner, secure=True)
+
+            # Now, ensure elements exists, onwershit is fine
+            # if not found any, will raise an execption
+            user = User.objects.get(uuid=data['u'])
+            userService = UserService.objects.get(uuid=data['s'], user=user)
+            host = data['h']
+
+            if not host:
+                host = userService.getInstance().getIp()
+
+            return (user, userService, host, data['p'], data['e'])
+        except Exception as e:
+            raise TicketStore.InvalidTicket(str(e))
 
     @staticmethod
     def cleanup() -> None:

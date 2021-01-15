@@ -154,7 +154,7 @@ class Handler:
         """
         return self._headers
 
-    def header(self, headerName) -> typing.Optional[str]:
+    def header(self, headerName: str) -> typing.Optional[str]:
         """
         Get's an specific header name from REST request
         :param headerName: name of header to get

@@ -44,7 +44,7 @@ BUFFER_SIZE = 1024 * 16
 # Handshake for conversation start
 HANDSHAKE_V1 = b'\x5AMGB\xA5\x01\x00'
 # Ticket length
-TICKET_LENGTH = 64
+TICKET_LENGTH = 48
 # Admin password length, (size of an hex sha256)
 PASSWORD_LENGTH = 64
 # Bandwidth calc time lapse

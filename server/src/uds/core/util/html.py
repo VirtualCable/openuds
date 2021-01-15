@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,6 +39,7 @@ from uds.core.util import os_detector as OsDetector
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +101,7 @@ def extractKey(dictionary: typing.Dict, key: typing.Any, **kwargs) -> str:
     return value
 
 
-def checkBrowser(request: 'HttpRequest', browser: str) -> bool:
+def checkBrowser(request: 'ExtendedHttpRequest', browser: str) -> bool:
     """
     Known browsers right now:
     ie[version]
@@ -113,7 +113,7 @@ def checkBrowser(request: 'HttpRequest', browser: str) -> bool:
 
     for b, requires in _browsers.items():
         if browser.startswith(b):
-            if request.os.Browser not in requires:
+            if request.os['Browser'] not in requires:
                 return False
             browser = browser[len(b):]  # remove "browser name" from string
             break
@@ -132,7 +132,7 @@ def checkBrowser(request: 'HttpRequest', browser: str) -> bool:
             needs_version = 0
 
     try:
-        version = int(request.os.Version.split('.')[0])
+        version = int(request.os['Version'].split('.')[0])
         if needs == '<':
             return version < needs_version
         if needs == '>':

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2019 Virtual Cable S.L.
+# Copyright (c) 2013-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,32 +40,42 @@ from uds.models import Provider, Service, ServicePool, Authenticator
 logger = logging.getLogger(__name__)
 
 EventTupleType = typing.Tuple[datetime.datetime, str, str, str, str, int]
-EventClass = typing.TypeVar('EventClass', Provider, Service, ServicePool, Authenticator)
+EventClass = typing.Union[Provider, Service, ServicePool, Authenticator]
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 # Posible events, note that not all are used by every possible owner type
 (
     # Login - logout
-    ET_LOGIN, ET_LOGOUT,
+    ET_LOGIN,
+    ET_LOGOUT,
     # Service access
     ET_ACCESS,
     # Cache performance
-    ET_CACHE_HIT, ET_CACHE_MISS,
+    ET_CACHE_HIT,
+    ET_CACHE_MISS,
     # Platforms detected
     ET_PLATFORM,
     # Plugin downloads
     ET_PLUGIN_DOWNLOAD,
-) = range(7)
+    ET_TUNNEL_ACCESS,
+) = range(8)
 
 (
-    OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR,
+    OT_PROVIDER,
+    OT_SERVICE,
+    OT_DEPLOYED,
+    OT_AUTHENTICATOR,
 ) = range(4)
 
-__transDict = {
+__transDict: typing.Mapping[typing.Type['Model'], int] = {
     ServicePool: OT_DEPLOYED,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
     Authenticator: OT_AUTHENTICATOR,
 }
+
 
 def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
     """
@@ -81,7 +91,9 @@ def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
     return statsManager().addEvent(__transDict[type(obj)], obj.id, eventType, **kwargs)
 
 
-def getEvents(obj: EventClass, eventType: int, **kwargs) -> typing.Generator[EventTupleType, None, None]:
+def getEvents(
+    obj: EventClass, eventType: int, **kwargs
+) -> typing.Generator[EventTupleType, None, None]:
     """
     Get events
 
@@ -108,6 +120,15 @@ def getEvents(obj: EventClass, eventType: int, **kwargs) -> typing.Generator[Eve
     else:
         owner_id = obj.pk
 
-    for i in statsManager().getEvents(__transDict[type_], eventType, owner_id=owner_id, since=since, to=to):
-        val = (datetime.datetime.fromtimestamp(i.stamp), i.fld1, i.fld2, i.fld3, i.fld4, i.event_type)
+    for i in statsManager().getEvents(
+        __transDict[type_], eventType, owner_id=owner_id, since=since, to=to
+    ):
+        val = (
+            datetime.datetime.fromtimestamp(i.stamp),
+            i.fld1,
+            i.fld2,
+            i.fld3,
+            i.fld4,
+            i.event_type,
+        )
         yield val
