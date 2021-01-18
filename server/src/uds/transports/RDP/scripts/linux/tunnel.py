@@ -47,4 +47,4 @@ else:
     if fs.check() is False:
         raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-    fnc(app, fs.server_address[1])  
+    fnc(app, fs.server_address[1])

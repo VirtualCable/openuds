@@ -12,19 +12,19 @@ try:
     import winreg as wreg
 except ImportError:  # Python 2.7 fallback
     import _winreg as wreg  # type: ignore
-from uds.forward import forward  # type: ignore
+from uds.tunnel import forward  # type: ignore
 from uds.log import logger  # type: ignore
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 import six
 
-forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])  # @UndefinedVariable
+# Open tunnel
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
 
-if forwardThread.status == 2:
-    raise Exception('Unable to open tunnel')
-
-tools.addTaskToWait(forwardThread)
+# Check that tunnel works..
+if fs.check() is False:
+    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
 try:
     thePass = six.binary_type(sp['password'].encode('UTF-16LE'))  # @UndefinedVariable
@@ -36,7 +36,7 @@ except Exception:
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
 theFile = sp['as_file'].format(# @UndefinedVariable
     password=password,
-    address='127.0.0.1:{}'.format(port)
+    address='127.0.0.1:{}'.format(fs.server_address[1])
 )
 
 filename = tools.saveTempFile(theFile)

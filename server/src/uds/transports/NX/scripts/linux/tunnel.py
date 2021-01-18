@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, undefined-variable
 import subprocess
-from uds.forward import forward  # @UnresolvedImport
+from uds.tunnel import forward  # type: ignore
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 try:
     cmd = tools.findApp('nxclient', ['/usr/NX/bin/'])
@@ -18,14 +18,15 @@ except Exception:
 ''')
 
 # Open tunnel
-forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])
-if forwardThread.status == 2:
-    raise Exception('Unable to open tunnel')
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
 
+# Check that tunnel works..
+if fs.check() is False:
+    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
 theFile = sp['as_file_for_format'].format(
     address='127.0.0.1',
-    port=port
+    port=fs.server_address[1]
 )
 
 filename = tools.saveTempFile(theFile)

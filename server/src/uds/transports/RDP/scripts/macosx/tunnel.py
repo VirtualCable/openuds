@@ -7,9 +7,9 @@ import subprocess
 import shutil
 import os
 
-from uds.forward import forward  # @UnresolvedImport
+from uds.tunnel import forward  # type: ignore
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 # Inject local passed sp into globals for functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
@@ -66,31 +66,31 @@ if executable is None:
             </ul>
             ''')
 
-forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])  # @UndefinedVariable
-address = '127.0.0.1:{}'.format(port)
+# Open tunnel
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
 
-if forwardThread.status == 2:
-    raise Exception('Unable to open tunnel')
+# Check that tunnel works..
+if fs.check() is False:
+    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-else:
-    if executable == msrdc:
-        theFile = theFile = sp['as_file'].format(
-            address='127.0.0.1:{}'.format(port)
-        )
+if executable == msrdc:
+    theFile = theFile = sp['as_file'].format(
+        address='127.0.0.1:{}'.format(fs.server_address[1])
+    )
 
-        filename = tools.saveTempFile(theFile)
-        # Rename as .rdp, so open recognizes it
-        shutil.move(filename, filename + '.rdp')
+    filename = tools.saveTempFile(theFile)
+    # Rename as .rdp, so open recognizes it
+    shutil.move(filename, filename + '.rdp')
 
-        tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
-        tools.addFileToUnlink(filename + '.rdp')
-    elif executable == xfreerdp:
-        # Fix resolution...
-        try:
-            xfparms = fixResolution()
-        except Exception as e:
-            xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))
+    tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
+    tools.addFileToUnlink(filename + '.rdp')
+elif executable == xfreerdp:
+    # Fix resolution...
+    try:
+        xfparms = fixResolution()
+    except Exception as e:
+        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))
 
-        params = [executable] + xfparms + ['/v:{}'.format(address)]
-        subprocess.Popen(params)
+    params = [executable] + xfparms + ['/v:{}'.format(address)]
+    subprocess.Popen(params)
 
