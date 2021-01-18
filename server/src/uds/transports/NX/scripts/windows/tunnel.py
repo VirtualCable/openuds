@@ -13,23 +13,23 @@ from uds.tunnel import forward  # type: ignore
 
 from uds import tools  # type: ignore
 
-
 try:
-    k = wreg.OpenKey(wreg.HKEY_CURRENT_USER, 'Software\\Classes\\NXClient.session\\shell\\open\\command')  # @UndefinedVariable
+    k = wreg.OpenKey(wreg.HKEY_CURRENT_USER, 'Software\\Classes\\NXClient.session\\shell\\open\\command')
     cmd = wreg.QueryValue(k, '') 
+    wreg.CloseKey(k)
 except Exception:
     raise Exception('''<p>You need to have installed NX Client version 3.5 in order to connect to this UDS service.</p>
 <p>Please, install appropriate package for your system.</p>
 ''')
 
 # Open tunnel
-fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
 # Check that tunnel works..
 if fs.check() is False:
     raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-theFile = sp['as_file_for_format'].format(
+theFile = sp['as_file_for_format'].format(  # type: ignore
     address='127.0.0.1',
     port=fs.server_address[1]
 )

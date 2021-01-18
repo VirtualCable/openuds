@@ -7,7 +7,7 @@ import subprocess
 import shutil
 import os
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 # Inject local passed sp into globals for functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
@@ -20,18 +20,18 @@ def fixResolution():
     import re
     import subprocess
     results = str(subprocess.Popen(['system_profiler SPDisplaysDataType'],stdout=subprocess.PIPE, shell=True).communicate()[0])
-    res = re.search(': \d* x \d*', results).group(0).split(' ')
+    res = re.search(r': \d* x \d*', results).group(0).split(' ')
     width, height = str(int(res[1])-4), str(int(int(res[3])-128))  # Width and Height
-    return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))
+    return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
 # Check first xfreerdp, allow password redir
 if os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isfile(msrdc) and sp['as_file']:
+elif os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
     executable = msrdc
 
 if executable is None:
-    if sp['as_file']:
+    if sp['as_file']:  # type: ignore
         raise Exception('''<p><b>Microsoft Remote Desktop or xfreerdp not found</b></p>
             <p>In order to connect to UDS RDP Sessions, you need to have a<p>
             <ul>
@@ -63,7 +63,7 @@ if executable is None:
             </ul>
             ''')
 elif executable == msrdc:
-    theFile = sp['as_file']
+    theFile = sp['as_file']  # type: ignore
     filename = tools.saveTempFile(theFile)
     # Rename as .rdp, so open recognizes it
     shutil.move(filename, filename + '.rdp')
@@ -75,8 +75,8 @@ elif executable == xfreerdp:
     try:
         xfparms = fixResolution()
     except Exception as e:
-        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))
+        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
-    params = [executable] + xfparms + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
+    params = [executable] + xfparms + ['/v:{}'.format(sp['address'])]  # type: ignore
     subprocess.Popen(params)
 

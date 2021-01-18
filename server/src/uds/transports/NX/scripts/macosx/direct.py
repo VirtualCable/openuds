@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import subprocess
 import os
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 
 cmd = '/Applications/OpenNX/OpenNX.app/Contents/MacOS/OpenNXapp'
@@ -16,6 +16,6 @@ if os.path.isfile(cmd) is False:
 ''')
 
 
-filename = tools.saveTempFile(sp['as_file'])  # @UndefinedVariable
-tools.addTaskToWait(subprocess.Popen([cmd, '--session={{}}'.format(filename), '--autologin', '--killerrors']))
+filename = tools.saveTempFile(sp['as_file'])  # type: ignore
+tools.addTaskToWait(subprocess.Popen([cmd, '--session={{}}'.format(filename), '--autologin', '--killerrors']))  # type: ignore
 tools.addFileToUnlink(filename)

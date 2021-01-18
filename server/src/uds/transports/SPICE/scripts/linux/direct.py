@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 # pylint: disable=import-error, no-name-in-module
 import subprocess
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 executable = tools.findApp('remote-viewer')
 
@@ -16,7 +16,7 @@ if executable is None:
 </p>
 ''')
 
-theFile = sp['as_file']
+theFile = sp['as_file']  # type: ignore
 
 filename = tools.saveTempFile(theFile)
 

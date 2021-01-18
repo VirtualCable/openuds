@@ -2,24 +2,22 @@
 # Saved as .py for easier editing
 from __future__ import unicode_literals
 
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
-import re
 
-from uds import tools
+from uds import tools  # type: ignore
 
 # Inject local passed sp into globals for inner functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def execUdsRdp(udsrdp):
     import subprocess  # @Reimport
-    params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
+    params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execNewXFreeRdp(xfreerdp):
     import subprocess  # @Reimport
-    params = [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
+    params = [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 # Try to locate a "valid" version of xfreerdp as first option (<1.1 does not allows drive redirections, so it will not be used if found)

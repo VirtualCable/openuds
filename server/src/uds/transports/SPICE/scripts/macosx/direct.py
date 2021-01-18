@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import os
 import subprocess
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 remoteViewer = '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer'
 
@@ -25,7 +25,7 @@ if not os.path.isfile(remoteViewer):
 ''')
 
 
-theFile = sp['as_file']
+theFile = sp['as_file']  # type: ignore
 
 filename = tools.saveTempFile(theFile)
 

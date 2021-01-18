@@ -74,7 +74,6 @@ class TRDPTransport(BaseRDPTransport):
         ),
         tab=gui.TUNNEL_TAB,
     )
-    # tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
     tunnelWait = gui.NumericField(
         length=3,
@@ -88,26 +87,15 @@ class TRDPTransport(BaseRDPTransport):
         tab=gui.TUNNEL_TAB,
     )
 
-    ticketValidity = gui.NumericField(
-        length=3,
-        label=_('Tunnel ticket validity time (seconds)'),
-        defvalue='7200',
-        minValue=60,          # One minute as min
-        maxValue=7*60*60*24,  # one week as max
-        order=3,
-        tooltip=_('Maximum validity time for user ticket to allow reconnection'),
-        required=True,
-        tab=gui.TUNNEL_TAB,
-    )
-
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
         order=23,
-        tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
+        tooltip=_(
+            'If enabled, the certificate of tunnel server will be verified (recommended).'
+        ),
         defvalue=gui.TRUE,
-        tab=gui.TUNNEL_TAB
+        tab=gui.TUNNEL_TAB,
     )
-
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName
@@ -175,11 +163,10 @@ class TRDPTransport(BaseRDPTransport):
         ticket = TicketStore.create_for_tunnel(
             userService=userService,
             port=3389,
-            validity=self.ticketValidity.num()
+            validity=self.tunnelWait.num() + 60,  # Ticket overtime
         )
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
-        
 
         r = RDPFile(
             width == '-1' or height == '-1', width, height, depth, target=os['OS']
