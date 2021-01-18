@@ -226,27 +226,3 @@ def forward(
     threading.Thread(target=_run, args=(fs,)).start()
 
     return fs
-
-
-if __name__ == "__main__":
-    import sys
-
-    log = logging.getLogger()
-    log.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        '%(levelname)s - %(message)s'
-    )  # Basic log format, nice for syslog
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
-
-    ticket = 'qcdn2jax6tx4nljdyed61hm3iqbld5nf44zxbh9gf355ofw2'
-
-    fs = forward(
-        ('172.27.0.1', 7777),
-        ticket,
-        local_port=49999,
-        timeout=60,
-        check_certificate=False,
-    )
