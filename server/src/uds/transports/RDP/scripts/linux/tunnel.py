@@ -43,4 +43,8 @@ else:
     # Open tunnel
     fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
 
+    # Check that tunnel works..
+    if fs.check() is False:
+        raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
+
     fnc(app, fs.server_address[1])  

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2020 Virtual Cable S.L.U.
+# Copyright (c) 2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -72,8 +72,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         check_certificate: bool = True,
     ) -> None:
 
-        if local_port == 0:
-            local_port = random.randrange(33000, 53000)
+        local_port = local_port or random.randrange(33000, 53000)
 
         super().__init__(
             server_address=(LISTEN_ADDRESS, local_port), RequestHandlerClass=Handler
@@ -104,6 +103,36 @@ class ForwardServer(socketserver.ThreadingTCPServer):
                 self.timer = None
             self.shutdown()
 
+    def connect(self) -> ssl.SSLSocket:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rsocket:
+            logger.info('CONNECT to %s', self.remote)
+
+            rsocket.connect(self.remote)
+
+            context = ssl.create_default_context()
+
+            # If ignore remote certificate
+            if self.check_certificate is False:
+                context.check_hostname = False
+                context.verify_mode = ssl.CERT_NONE
+                logger.warning('Certificate checking is disabled!')
+
+            return context.wrap_socket(rsocket, server_hostname=self.remote[0])
+
+    def check(self) -> bool:
+        try:
+            with self.connect() as ssl_socket:
+                ssl_socket.sendall(HANDSHAKE_V1 + b'TEST')
+                resp = ssl_socket.recv(2)
+                if resp != b'OK':
+                    raise Exception({'Invalid  tunnelresponse: {resp}'})
+                return True
+        except Exception as e:
+            logger.error(
+                'Error connecting to tunnel server %s: %s', self.server_address, e
+            )
+        return False
+
     @property
     def stoppable(self) -> bool:
         return self.timeout != 0 and int(time.time()) > self.timeout
@@ -132,37 +161,18 @@ class Handler(socketserver.BaseRequestHandler):
 
         # Open remote connection
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rsocket:
-                logger.info('CONNECT to %s', self.server.remote)
-                logger.debug('Ticket %s', self.server.ticket)
+            logger.debug('Ticket %s', self.server.ticket)
+            with self.server.connect() as ssl_socket:
+                # Send handhshake + command + ticket
+                ssl_socket.sendall(HANDSHAKE_V1 + b'OPEN' + self.server.ticket.encode())
+                # Check response is OK
+                data = ssl_socket.recv(2)
+                if data != b'OK':
+                    data += ssl_socket.recv(128)
+                    raise Exception(f'Error received: {data.decode(errors="ignore")}')  # Notify error
 
-                rsocket.connect(self.server.remote)
-
-                context = ssl.create_default_context()
-
-                # If ignore remote certificate
-                if self.server.check_certificate is False:
-                    context.check_hostname = False
-                    context.verify_mode = ssl.CERT_NONE
-                    logger.warning('Certificate checking is disabled!')
-
-                with context.wrap_socket(
-                    rsocket, server_hostname=self.server.remote[0]
-                ) as ssl_socket:
-                    # Send handhshake + command + ticket
-                    ssl_socket.sendall(
-                        HANDSHAKE_V1 + b'OPEN' + self.server.ticket.encode()
-                    )
-                    # Check response is OK
-                    data = ssl_socket.recv(2)
-                    if data != b'OK':
-                        data += ssl_socket.recv(128)
-                        raise Exception(
-                            f'Error received: {data.decode()}'
-                        )  # Notify error
-
-                    # All is fine, now we can tunnel data
-                    self.process(remote=ssl_socket)
+                # All is fine, now we can tunnel data
+                self.process(remote=ssl_socket)
         except Exception as e:
             logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
             self.server.status = TUNNEL_ERROR
