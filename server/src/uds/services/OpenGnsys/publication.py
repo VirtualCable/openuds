@@ -47,9 +47,12 @@ class OGPublication(Publication):
     """
     This class provides the publication of a oVirtLinkedService
     """
+
     _name: str = ''
 
-    suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = (
+        5  # : Suggested recheck time if publication is unfinished in seconds
+    )
 
     def service(self) -> 'OGService':
         return typing.cast('OGService', super().service())
