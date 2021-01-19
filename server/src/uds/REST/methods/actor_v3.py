@@ -423,6 +423,13 @@ class Login(LoginLogout):
     """
     name = 'login'
 
+    @staticmethod
+    def process_login(userService: UserService, username: str) -> typing.Optional[osmanagers.OSManager]:
+        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+        if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
+            osmanagers.OSManager.loggedIn(userService, username)
+        return osManager
+
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         isManaged = self._params.get('type') != UNMANAGED
         ip = hostname = ''
@@ -432,9 +439,7 @@ class Login(LoginLogout):
 
         try:
             userService: UserService = self.getUserService()
-            osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
-            if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
-                osmanagers.OSManager.loggedIn(userService, self._params.get('username') or '')
+            osManager = Login.process_login(userService, self._params.get('username') or '')
 
             maxIdle = osManager.maxIdle() if osManager else None
 
@@ -462,21 +467,29 @@ class Logout(LoginLogout):
     """
     name = 'logout'
 
+    @staticmethod
+    def process_logout(userService: UserService, username: str) -> None: 
+        """
+        This method is static so can be invoked from elsewhere
+        """
+        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+        if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
+            osmanagers.OSManager.loggedOut(userService, username)
+            if osManager:
+                if osManager.isRemovableOnLogout(userService):
+                    logger.debug('Removable on logout: %s', osManager)
+                    userService.remove()
+            else:
+                userService.remove()
+
+
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         isManaged = self._params.get('type') != UNMANAGED
 
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
             userService: UserService = self.getUserService()
-            osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
-            if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
-                osmanagers.OSManager.loggedOut(userService, self._params.get('username') or '')
-                if osManager:
-                    if osManager.isRemovableOnLogout(userService):
-                        logger.debug('Removable on logout: %s', osManager)
-                        userService.remove()
-                else:
-                    userService.remove()
+            Logout.process_logout(userService, self._params.get('username') or '')
         except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise

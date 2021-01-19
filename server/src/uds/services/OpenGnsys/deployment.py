@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2015-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,6 +34,7 @@ import logging
 import typing
 
 from uds.core.services import UserDeployment
+from uds.core.managers import cryptoManager
 from uds.core.util.state import State
 from uds.core.util import log
 from uds.models.util import getSqlDatetimeAsUnix
@@ -47,7 +48,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-opCreate, opError, opFinish, opRemove, opRetry = range(5)
+opCreate, opError, opFinish, opRemove, opRetry, opStart = range(6)
 
 
 class OGDeployment(UserDeployment):
@@ -71,7 +72,9 @@ class OGDeployment(UserDeployment):
     _stamp: int = 0
     _reason: str = ''
 
-    _queue: typing.List[int]  # Do not initialize mutable, just declare and it is initialized on "initialize"
+    _queue: typing.List[
+        int
+    ]  # Do not initialize mutable, just declare and it is initialized on "initialize"
     _uuid: str
 
     def initialize(self) -> None:
@@ -93,16 +96,18 @@ class OGDeployment(UserDeployment):
         """
         Does nothing right here, we will use environment storage in this sample
         """
-        return b'\1'.join([
-            b'v1',
-            self._name.encode('utf8'),
-            self._ip.encode('utf8'),
-            self._mac.encode('utf8'),
-            self._machineId.encode('utf8'),
-            self._reason.encode('utf8'),
-            str(self._stamp).encode('utf8'),
-            pickle.dumps(self._queue, protocol=0)
-        ])
+        return b'\1'.join(
+            [
+                b'v1',
+                self._name.encode('utf8'),
+                self._ip.encode('utf8'),
+                self._mac.encode('utf8'),
+                self._machineId.encode('utf8'),
+                self._reason.encode('utf8'),
+                str(self._stamp).encode('utf8'),
+                pickle.dumps(self._queue, protocol=0),
+            ]
+        )
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -135,10 +140,33 @@ class OGDeployment(UserDeployment):
         OpenGnsys will try it best by sending an WOL
         """
         dbs = self.dbservice()
-        deadline = dbs.deployed_service.getDeadline() if dbs else 0
-        self.service().notifyDeadline(self._machineId, deadline)
+        if not dbs:
+            return State.FINISHED
 
-        return State.FINISHED
+        try:
+            # First, check Machine is alive..
+            status = self.__checkMachineReady()
+            if status == State.FINISHED:
+                self.service().notifyDeadline(
+                    self._machineId, dbs.deployed_service.getDeadline()
+                )
+                return State.FINISHED
+
+            if status == State.ERROR:
+                return State.ERROR
+
+            # Machine powered off, check what to do...
+            if self.service().isRemovableIfUnavailable():
+                return self.__error(
+                    'Machine is unavailable and service has "Remove if unavailable" flag active.'
+                )
+
+            # Try to start it, and let's see
+            self._queue = [opStart, opFinish]
+            return self.__executeQueue()
+
+        except Exception as e:
+            return self.__error('Error setting ready state: {}'.format(e))
 
     def deployForUser(self, user: 'models.User') -> str:
         """
@@ -159,7 +187,11 @@ class OGDeployment(UserDeployment):
         self._queue = [opCreate, opFinish]
 
     def __checkMachineReady(self) -> str:
-        logger.debug('Checking that state of machine %s (%s) is ready', self._machineId, self._name)
+        logger.debug(
+            'Checking that state of machine %s (%s) is ready',
+            self._machineId,
+            self._name,
+        )
 
         try:
             status = self.service().status(self._machineId)
@@ -202,7 +234,11 @@ class OGDeployment(UserDeployment):
         logger.debug('Setting error state, reason: %s', reason)
         self.doLog(log.ERROR, reason)
 
-        # TODO: Unreserve machine?? Maybe it just better to keep it assigned so UDS don't get it again in a while...
+        if self._machineId:
+            try:
+                self.service().unreserve(self._machineId)
+            except Exception:
+                pass
 
         self._queue = [opError]
         self._reason = str(reason)
@@ -222,13 +258,16 @@ class OGDeployment(UserDeployment):
             opCreate: self.__create,
             opRetry: self.__retry,
             opRemove: self.__remove,
+            opStart: self.__start,
         }
 
         try:
-            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
+            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op)
 
             if execFnc is None:
-                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at execution queue ({0})'.format(op)
+                )
 
             execFnc()
 
@@ -252,10 +291,11 @@ class OGDeployment(UserDeployment):
         """
         Deploys a machine from template for user/cache
         """
+        r: typing.Any = None
+        token = cryptoManager().randomString(32)
         try:
-            r: typing.Any = None
             r = self.service().reserve()
-            self.service().notifyEvents(r['id'], self._uuid)
+            self.service().notifyEvents(r['id'], token, self._uuid)
         except Exception as e:
             # logger.exception('Creating machine')
             if r:  # Reservation was done, unreserve it!!!
@@ -265,7 +305,7 @@ class OGDeployment(UserDeployment):
                 except Exception as ei:
                     # Error unreserving reserved machine on creation
                     logger.error('Error unreserving errored machine: %s', ei)
-            
+
             raise Exception('Error creating reservation: {}'.format(e))
 
         self._machineId = r['id']
@@ -274,12 +314,23 @@ class OGDeployment(UserDeployment):
         self._ip = r['ip']
         self._stamp = getSqlDatetimeAsUnix()
 
+        self.doLog(
+            log.INFO,
+            f'Reserved machine {self._name}: id: {self._machineId}, mac: {self._mac}, ip: {self._ip}',
+        )
+
         # Store actor version & Known ip
         dbs = self.dbservice()
         if dbs:
-            dbs.setProperty('actor_version', '1.0-OpenGnsys')
+            dbs.setProperty('actor_version', '1.1-OpenGnsys')
+            dbs.setProperty('token', token)
             dbs.logIP(self._ip)
 
+        return State.RUNNING
+
+    def __start(self) -> str:
+        if self._machineId:
+            self.service().powerOn(self._machineId)
         return State.RUNNING
 
     def __remove(self) -> str:
@@ -295,6 +346,9 @@ class OGDeployment(UserDeployment):
         Checks the state of a deploy for an user or cache
         """
         return self.__checkMachineReady()
+
+    # Alias for poweron check
+    __checkStart = __checkCreate
 
     def __checkRemoved(self) -> str:
         """
@@ -319,13 +373,18 @@ class OGDeployment(UserDeployment):
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opRemove: self.__checkRemoved,
+            opStart: self.__checkStart,
         }
 
         try:
-            chkFnc: typing.Optional[typing.Optional[typing.Callable[[], str]]] = fncs.get(op, None)
+            chkFnc: typing.Optional[
+                typing.Optional[typing.Callable[[], str]]
+            ] = fncs.get(op)
 
             if chkFnc is None:
-                return self.__error('Unknown operation found at check queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at check queue ({0})'.format(op)
+                )
 
             state = chkFnc()
             if state == State.FINISHED:
@@ -379,4 +438,12 @@ class OGDeployment(UserDeployment):
         }.get(op, '????')
 
     def __debug(self, txt) -> None:
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, machine:%s, queue: %s', txt, self._name, self._ip, self._mac, self._machineId, [OGDeployment.__op2str(op) for op in self._queue])
+        logger.debug(
+            'State at %s: name: %s, ip: %s, mac: %s, machine:%s, queue: %s',
+            txt,
+            self._name,
+            self._ip,
+            self._mac,
+            self._machineId,
+            [OGDeployment.__op2str(op) for op in self._queue],
+        )

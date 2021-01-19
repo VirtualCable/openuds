@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2015-2021 Virtual Cable S.L.U.
+# Copyright (c) 2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,45 +25,14 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""
+
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
-import logging
-import typing
+'''
+from django.conf.urls import url
 
-from django.utils.translation import ugettext as _
+from . import views
 
-from uds.core.environment import Environment
-from uds.core.ui import gui
-
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from .provider import OGProvider
-
-logger = logging.getLogger(__name__)
-
-
-def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.Any]]:
-    from .provider import OGProvider
-
-    logger.debug('Parameters received by getResources Helper: %s', parameters)
-    env = Environment(parameters['ev'])
-    provider = OGProvider(env)
-    provider.unserialize(parameters['ov'])
-
-    api = provider.api
-
-    labs = [gui.choiceItem('0', _('All Labs'))] + [
-        gui.choiceItem(l['id'], l['name']) for l in api.getLabs(ou=parameters['ou'])
-    ]
-    images = [
-        gui.choiceItem(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])
-    ]
-
-    data = [
-        {'name': 'lab', 'values': labs},
-        {'name': 'image', 'values': images},
-    ]
-    logger.debug('Return data: %s', data)
-
-    return data
+urlpatterns = [
+    url(r'^uds/ognotify/(?P<msg>[a-z]+)/(?P<token>[a-zA-Z0-9-_]+)/(?P<uuid>[a-zA-Z0-9-_]+)$', views.opengnsys, name='dispatcher.opengnsys'),
+]

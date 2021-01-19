@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2017-2019 Virtual Cable S.L.
+# Copyright (c) 2017-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -55,6 +54,7 @@ class OGService(Service):
     """
     OpenGnsys Service
     """
+
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -102,20 +102,17 @@ class OGService(Service):
         label=_("OU"),
         order=100,
         fills={
-            'callbackName' : 'osFillData',
-            'function' : helpers.getResources,
-            'parameters' : ['ov', 'ev', 'ou']
-            },
+            'callbackName': 'osFillData',
+            'function': helpers.getResources,
+            'parameters': ['ov', 'ev', 'ou'],
+        },
         tooltip=_('Organizational Unit'),
-        required=True
+        required=True,
     )
 
     # Lab is not required, but maybe used as filter
     lab = gui.ChoiceField(
-        label=_("lab"),
-        order=101,
-        tooltip=_('Laboratory'),
-        required=False
+        label=_("lab"), order=101, tooltip=_('Laboratory'), required=False
     )
 
     # Required, this is the base image
@@ -123,22 +120,34 @@ class OGService(Service):
         label=_("OS Image"),
         order=102,
         tooltip=_('OpenGnsys Operating System Image'),
-        required=True
+        required=True,
     )
 
     maxReservationTime = gui.NumericField(
         length=3,
         label=_("Max. reservation time"),
         order=110,
-        tooltip=_('Security parameter for OpenGnsys to keep reservations at most this hours. Handle with care!'),
+        tooltip=_(
+            'Security parameter for OpenGnsys to keep reservations at most this hours. Handle with care!'
+        ),
         defvalue='2400',  # 1 hundred days
         minValue='24',
         tab=_('Advanced'),
-        required=False
+        required=False,
+    )
+
+    removeIfUnavailable = gui.CheckBoxField(
+        label=_('Remove if unavailable'),
+        defvalue=gui.FALSE,
+        order=111,
+        tooltip=_('If active, opengnsys machines that are not available on connection will be unreserved'),
+        required=True
     )
 
     ov = gui.HiddenField(value=None)
-    ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
+    ev = gui.HiddenField(
+        value=None
+    )  # We need to keep the env so we can instantiate the Provider
 
     def initGui(self) -> None:
         """
@@ -157,27 +166,49 @@ class OGService(Service):
         return self.parent().status(machineId)
 
     def reserve(self) -> typing.Any:
-        return self.parent().reserve(self.ou.value, self.image.value, self.lab.value, self.maxReservationTime.num())
+        return self.parent().reserve(
+            self.ou.value,
+            self.image.value,
+            self.lab.value,
+            self.maxReservationTime.num(),
+        )
 
     def unreserve(self, machineId: str) -> typing.Any:
         return self.parent().unreserve(machineId)
 
-    def notifyEvents(self, machineId: str, serviceUUID: str) -> typing.Any:
-        return self.parent().notifyEvents(machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
+    def notifyEvents(self, machineId: str, token: str, uuid: str) -> typing.Any:
+        return self.parent().notifyEvents(
+            machineId,
+            self.getLoginNotifyURL(uuid, token),
+            self.getLogoutNotifyURL(uuid, token),
+            self.getReleaseURL(uuid, token)
+        )
 
-    def notifyDeadline(self, machineId: str, deadLine: typing.Optional[int]) -> typing.Any:
+    def notifyDeadline(
+        self, machineId: str, deadLine: typing.Optional[int]
+    ) -> typing.Any:
         return self.parent().notifyDeadline(machineId, deadLine)
 
-    def _notifyURL(self, uuid: str, message: str) -> str:
+    def powerOn(self, machineId: str) -> typing.Any:
+        return self.parent().powerOn(machineId, self.image.value)
+
+    def _notifyURL(self, uuid: str, token:str,  message: str) -> str:
         # The URL is "GET messages URL".
-        return '{accessURL}rest/actor/PostThoughGet/{uuid}/{message}'.format(
+        return '{accessURL}uds/ognotify/{message}/{token}/{uuid}'.format(
             accessURL=self.parent().getUDSServerAccessUrl(),
             uuid=uuid,
+            token=token,
             message=message
         )
 
-    def getLoginNotifyURL(self, serviceUUID: str) -> str:
-        return self._notifyURL(serviceUUID, 'login')
+    def getLoginNotifyURL(self, uuid: str, token: str) -> str:
+        return self._notifyURL(uuid, token, 'login')
 
-    def getLogoutNotifyURL(self, serviceUUID: str) -> str:
-        return self._notifyURL(serviceUUID, 'logout')
+    def getLogoutNotifyURL(self, uuid: str, token: str) -> str:
+        return self._notifyURL(uuid, token, 'logout')
+
+    def getReleaseURL(self, uuid: str, token: str) -> str:
+        return self._notifyURL(uuid, token, 'release')
+
+    def isRemovableIfUnavailable(self):
+        return self.removeIfUnavailable.isTrue()

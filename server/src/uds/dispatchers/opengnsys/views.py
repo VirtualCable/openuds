@@ -1,0 +1,96 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2021 Virtual Cable S.L.U.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+'''
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
+import typing
+import logging
+
+from django.http import HttpResponse, HttpRequest
+
+from uds.REST.methods import actor_v3
+from uds.core.auths import auth
+from uds.models import UserService
+from uds.core.util.model import processUuid
+
+
+logger = logging.getLogger(__name__)
+
+OK = 'OK'
+CONTENT_TYPE = 'text/plain'
+
+
+@auth.trustedSourceRequired
+def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResponse:
+    logger.debug('Received opengnsys message %s, token %s, uuid %s', msg, token, uuid)
+
+    def getUserService() -> typing.Optional[UserService]:
+        try:
+            userService = UserService.objects.get(uuid=processUuid(uuid))
+            if userService.getProperty('token') == token:
+                # Dispose service...
+                return userService
+            logger.warning(
+                'Invalid release requested: invalid token %s for userService %s. Not released.',
+                token,
+                uuid,
+            )
+            # Sleep a while?
+        except Exception as e:
+            # Any exception will stop process
+            logger.warning('Error processing request from OpenGnsys: %s.', e)
+
+        return None
+
+    def release() -> None:
+        userService = getUserService()
+        if userService:
+            userService.release()
+
+    def login() -> None:
+        userService = getUserService()
+        if userService:
+            actor_v3.Login.process_login(userService, 'OpenGnsys')
+
+    def logout() -> None:
+        userService = getUserService()
+        if userService:
+            actor_v3.Logout.process_logout(userService, 'OpenGnsys')
+
+    fnc: typing.Optional[typing.Callable[[], None]] = {
+        'login': login,
+        'logout': logout,
+        'release': release,
+    }.get(msg)
+
+    if fnc:
+        fnc()
+
+    # Silently fail errors, do not notify anything (not needed anyway)
+    return HttpResponse(OK, content_type=CONTENT_TYPE)
