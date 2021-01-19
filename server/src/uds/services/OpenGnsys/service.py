@@ -136,12 +136,11 @@ class OGService(Service):
         required=False,
     )
 
-    removeIfUnavailable = gui.CheckBoxField(
-        label=_('Remove if unavailable'),
-        defvalue=gui.FALSE,
+    startIfUnavailable = gui.CheckBoxField(
+        label=_('Start if unavailable'),
+        defvalue=gui.TRUE,
         order=111,
-        tooltip=_('If active, opengnsys machines that are not available on connection will be unreserved'),
-        required=True
+        tooltip=_('If active, machines that are not available on user connect (on some OS) will try to power on through OpenGnsys.'),
     )
 
     ov = gui.HiddenField(value=None)
@@ -211,4 +210,4 @@ class OGService(Service):
         return self._notifyURL(uuid, token, 'release')
 
     def isRemovableIfUnavailable(self):
-        return self.removeIfUnavailable.isTrue()
+        return self.startIfUnavailable.isTrue()
