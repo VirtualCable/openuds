@@ -6,11 +6,11 @@ from __future__ import unicode_literals
 import subprocess
 from os.path import expanduser
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 home = expanduser('~') + ':1;/media:1;'
-keyFile = tools.saveTempFile(sp['key'])
-theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip=sp['ip'], port=sp['port'])
+keyFile = tools.saveTempFile(sp['key'])  # type: ignore
+theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip=sp['ip'], port=sp['port'])  # type: ignore
 filename = tools.saveTempFile(theFile)
 
 # HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2015-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -53,8 +53,12 @@ def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.
 
     api = provider.api
 
-    labs = [gui.choiceItem('0', _('All Labs'))] + [gui.choiceItem(l['id'], l['name']) for l in api.getLabs(ou=parameters['ou'])]
-    images = [gui.choiceItem(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])]
+    labs = [gui.choiceItem('0', _('All Labs'))] + [
+        gui.choiceItem(l['id'], l['name']) for l in api.getLabs(ou=parameters['ou'])
+    ]
+    images = [
+        gui.choiceItem(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])
+    ]
 
     data = [
         {'name': 'lab', 'values': labs},

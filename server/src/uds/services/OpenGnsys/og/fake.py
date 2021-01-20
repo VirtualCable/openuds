@@ -40,20 +40,13 @@ from . import urls
 
 logger = logging.getLogger(__name__)
 
-AUTH = {
-    "userid": 1001,
-    "apikey": "fakeAPIKeyJustForDeveloping"
-}
+AUTH = {"userid": 1001, "apikey": "fakeAPIKeyJustForDeveloping"}
 
 INFO = {
     "project": "OpenGnsys",
     "version": "1.1.0pre",
     "release": "r5299",
-    "services": [
-        "server",
-        "repository",
-        "tracker"
-    ],
+    "services": ["server", "repository", "tracker"],
     "oglive": [
         {
             "distribution": "xenial",
@@ -61,7 +54,7 @@ INFO = {
             "architecture": "amd64",
             "revision": "r5225",
             "directory": "ogLive-xenial-4.8.0-amd64-r5225",
-            "iso": "ogLive-xenial-4.8.0-39-generic-amd64-r5225.iso"
+            "iso": "ogLive-xenial-4.8.0-39-generic-amd64-r5225.iso",
         },
         {
             "iso": "ogLive-precise-3.2.0-23-generic-r4820.iso",
@@ -69,19 +62,14 @@ INFO = {
             "revision": "r4820",
             "architecture": "i386",
             "kernel": "3.2.0-23-generic",
-            "distribution": "precise"
-        }]
+            "distribution": "precise",
+        },
+    ],
 }
 
 OUS = [
-    {
-        "id": "1",
-        "name": "Unidad Organizativa (Default)"
-    },
-    {
-        "id": "2",
-        "name": "Unidad Organizatva VACIA"
-    },
+    {"id": "1", "name": "Unidad Organizativa (Default)"},
+    {"id": "2", "name": "Unidad Organizatva VACIA"},
 ]
 
 LABS = [
@@ -89,58 +77,32 @@ LABS = [
         "id": "1",
         "name": "Sala de control",
         "inremotepc": True,
-        "group": {
-            "id": "0"
-        },
-        "ou": {
-            "id": "1"
-        }
+        "group": {"id": "0"},
+        "ou": {"id": "1"},
     },
     {
         "id": "2",
         "name": "Sala de computación cuántica",
         "inremotepc": True,
-        "group": {
-            "id": "0"
-        },
-        "ou": {
-            "id": "1"
-        }
-    }
+        "group": {"id": "0"},
+        "ou": {"id": "1"},
+    },
 ]
 
 IMAGES = [
-    {
-        "id": "1",
-        "name": "Basica1604",
-        "inremotepc": True,
-        "ou": {
-            "id": "1"
-        }
-    },
-    {
-        "id": "2",
-        "name": "Ubuntu16",
-        "inremotepc": True,
-        "ou": {
-            "id": "1"
-        }
-    },
+    {"id": "1", "name": "Basica1604", "inremotepc": True, "ou": {"id": "1"}},
+    {"id": "2", "name": "Ubuntu16", "inremotepc": True, "ou": {"id": "1"}},
     {
         "id": "3",
         "name": "Ubuntu64 Not in Remote",
         "inremotepc": False,
-        "ou": {
-            "id": "1"
-        }
+        "ou": {"id": "1"},
     },
     {
         "id": "4",
         "name": "Ubuntu96 Not In Remote",
         "inremotepc": False,
-        "ou": {
-            "id": "1"
-        }
+        "ou": {"id": "1"},
     },
 ]
 
@@ -149,58 +111,50 @@ RESERVE: typing.Dict[str, typing.Any] = {
     "name": "pcpruebas",
     "mac": "4061860521FE",
     "ip": "10.1.14.31",
-    "lab": {
-        "id": 1
-    },
-    "ou": {
-        "id": 1
-    }
+    "lab": {"id": 1},
+    "ou": {"id": 1},
 }
 
 UNRESERVE = ''
 
-STATUS_OFF = {
-    "id": 4,
-    "ip": "10.1.14.31",
-    "status": "off",
-    "loggedin": False
-}
+STATUS_OFF = {"id": 4, "ip": "10.1.14.31", "status": "off", "loggedin": False}
 
 # A couple of status for testing
-STATUS_READY_LINUX = {
-    "id": 4,
-    "ip": "10.1.14.31",
-    "status": "linux",
-    "loggedin": False
-}
+STATUS_READY_LINUX = {"id": 4, "ip": "10.1.14.31", "status": "linux", "loggedin": False}
 
 STATUS_READY_WINDOWS = {
     "id": 4,
     "ip": "10.1.14.31",
     "status": "windows",
-    "loggedin": False
+    "loggedin": False,
 }
 
 
 # FAKE post
-def post(path: str, data: typing.Any, errMsg: typing.Optional[str] = None) -> typing.Any:
+def post(
+    path: str, data: typing.Any, errMsg: typing.Optional[str] = None
+) -> typing.Any:
     logger.info('FAKE POST request to %s with %s data. (%s)', path, data, errMsg)
     if path == urls.LOGIN:
         return AUTH
 
-    if path == urls.RESERVE.format(ou=1, image=1) or path == urls.RESERVE.format(ou=1, image=2):
+    if path == urls.RESERVE.format(ou=1, image=1) or path == urls.RESERVE.format(
+        ou=1, image=2
+    ):
         res = copy.deepcopy(RESERVE)
         res['name'] += str(random.randint(5000, 100000))
         res['mac'] = ''.join(random.choice('0123456789ABCDEF') for _ in range(12))
         res['ip'] = '1.2.3.4'
         return res
 
-    # raise Exception('Unknown FAKE URL on POST: {}'.format(path))
-    return ''
+    # Ignore rest of responses
+    return {'status': 'ok'}
 
 
 # FAKE get
-def get(path, errMsg: typing.Optional[str]) -> typing.Any:  # pylint: disable=too-many-return-statements
+def get(
+    path, errMsg: typing.Optional[str]
+) -> typing.Any:  # pylint: disable=too-many-return-statements
     logger.info('FAKE GET request to %s. (%s)', path, errMsg)
     if path == urls.INFO:
         return INFO

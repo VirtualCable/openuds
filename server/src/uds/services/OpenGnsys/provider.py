@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -51,6 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class OGProvider(ServiceProvider):
     """
     This class represents the sample services provider
@@ -68,6 +68,7 @@ class OGProvider(ServiceProvider):
     we MUST register it at package __init__.
 
     """
+
     # : What kind of services we offer, this are classes inherited from Service
     offers = [OGService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -92,17 +93,81 @@ class OGProvider(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenGnsys Host'), required=True)
-    port = gui.NumericField(length=5, label=_('Port'), defvalue='443', order=2, tooltip=_('OpenGnsys Port (default is 443, and only ssl connection is allowed)'), required=True)
-    checkCert = gui.CheckBoxField(label=_('Check Cert.'), order=3, tooltip=_('If checked, ssl certificate of OpenGnsys server must be valid (not self signed)'))
-    username = gui.TextField(length=32, label=_('Username'), order=4, tooltip=_('User with valid privileges on OpenGnsys'), required=True)
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=5, tooltip=_('Password of the user of OpenGnsys'), required=True)
-    udsServerAccessUrl = gui.TextField(length=32, label=_('UDS Server URL'), order=6, tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'), required=False, tab=gui.PARAMETERS_TAB)
+    host = gui.TextField(
+        length=64, label=_('Host'), order=1, tooltip=_('OpenGnsys Host'), required=True
+    )
+    port = gui.NumericField(
+        length=5,
+        label=_('Port'),
+        defvalue='443',
+        order=2,
+        tooltip=_(
+            'OpenGnsys Port (default is 443, and only ssl connection is allowed)'
+        ),
+        required=True,
+    )
+    checkCert = gui.CheckBoxField(
+        label=_('Check Cert.'),
+        order=3,
+        tooltip=_(
+            'If checked, ssl certificate of OpenGnsys server must be valid (not self signed)'
+        ),
+    )
+    username = gui.TextField(
+        length=32,
+        label=_('Username'),
+        order=4,
+        tooltip=_('User with valid privileges on OpenGnsys'),
+        required=True,
+    )
+    password = gui.PasswordField(
+        lenth=32,
+        label=_('Password'),
+        order=5,
+        tooltip=_('Password of the user of OpenGnsys'),
+        required=True,
+    )
+    udsServerAccessUrl = gui.TextField(
+        length=32,
+        label=_('UDS Server URL'),
+        order=6,
+        tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'),
+        required=False,
+        tab=gui.PARAMETERS_TAB,
+    )
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='8', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        defvalue='10',
+        minValue=1,
+        maxValue=65536,
+        order=50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    maxRemovingServices = gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        defvalue='8',
+        minValue=1,
+        maxValue=65536,
+        order=51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to OpenGnsys'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(
+        length=3,
+        label=_('Timeout'),
+        defvalue='10',
+        order=90,
+        tooltip=_('Timeout in seconds of connection to OpenGnsys'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # Own variables
     _api: typing.Optional[og.OpenGnsysClient] = None
@@ -137,7 +202,13 @@ class OGProvider(ServiceProvider):
     @property
     def api(self) -> og.OpenGnsysClient:
         if not self._api:
-            self._api = og.OpenGnsysClient(self.username.value, self.password.value, self.endpoint, self.cache, self.checkCert.isTrue())
+            self._api = og.OpenGnsysClient(
+                self.username.value,
+                self.password.value,
+                self.endpoint,
+                self.cache,
+                self.checkCert.isTrue(),
+            )
 
         logger.debug('Api: %s', self._api)
         return self._api
@@ -155,7 +226,12 @@ class OGProvider(ServiceProvider):
         """
         try:
             if self.api.version[0:5] < '1.1.0':
-                return [False, 'OpenGnsys version is not supported (required version 1.1.0 or newer and found {})'.format(self.api.version)]
+                return [
+                    False,
+                    'OpenGnsys version is not supported (required version 1.1.0 or newer and found {})'.format(
+                        self.api.version
+                    ),
+                ]
         except Exception as e:
             logger.exception('Error')
             return [False, '{}'.format(e)]
@@ -184,16 +260,25 @@ class OGProvider(ServiceProvider):
     def getUDSServerAccessUrl(self) -> str:
         return self.udsServerAccessUrl.value
 
-    def reserve(self, ou: str, image: str, lab: int = 0, maxtime: int = 0) -> typing.Any:
+    def reserve(
+        self, ou: str, image: str, lab: int = 0, maxtime: int = 0
+    ) -> typing.Any:
         return self.api.reserve(ou, image, lab, maxtime)
 
     def unreserve(self, machineId: str) -> typing.Any:
         return self.api.unreserve(machineId)
 
-    def notifyEvents(self, machineId: str, loginURL: str, logoutURL: str) -> typing.Any:
-        return self.api.notifyURLs(machineId, loginURL, logoutURL)
+    def powerOn(self, machineId: str, image: str) -> typing.Any:
+        return self.api.powerOn(machineId, image)
 
-    def notifyDeadline(self, machineId: str, deadLine: typing.Optional[int]) -> typing.Any:
+    def notifyEvents(
+        self, machineId: str, loginURL: str, logoutURL: str, releaseURL: str
+    ) -> typing.Any:
+        return self.api.notifyURLs(machineId, loginURL, logoutURL, releaseURL)
+
+    def notifyDeadline(
+        self, machineId: str, deadLine: typing.Optional[int]
+    ) -> typing.Any:
         return self.api.notifyDeadline(machineId, deadLine)
 
     def status(self, machineId: str) -> typing.Any:

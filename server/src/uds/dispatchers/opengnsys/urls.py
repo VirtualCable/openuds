@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2017-2021 Virtual Cable S.L.U.
+# Copyright (c) 2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,21 +26,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
-# API URL 1: https://www.informatica.us.es/~ramon/opengnsys/?url=opengnsys-api.yml
-# API URL 2: http://opengnsys.es/wiki/ApiRest
+'''
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
+from django.conf.urls import url
 
-LOGIN = '/login'
-INFO = '/info'
-OUS = '/ous'
-LABS = '/ous/{ou}/labs'
-IMAGES = '/ous/{ou}/images'
-RESERVE = '/ous/{ou}/images/{image}/reserve'
-UNRESERVE = '/ous/{ou}/labs/{lab}/clients/{client}/unreserve'
-STATUS = '/ous/{ou}/labs/{lab}/clients/{client}/status'
-EVENTS = '/ous/{ou}/labs/{lab}/clients/{client}/events'
-SESSIONS = '/ous/{ou}/labs/{lab}/clients/{client}/session'
-# TODO: fix this
-START = '/ous/{ou}/labs/{lab}/clients/{client}/init'
+from . import views
+
+urlpatterns = [
+    url(r'^uds/ognotify/(?P<msg>[a-z]+)/(?P<token>[a-zA-Z0-9-_]+)/(?P<uuid>[a-zA-Z0-9-_]+)$', views.opengnsys, name='dispatcher.opengnsys'),
+]

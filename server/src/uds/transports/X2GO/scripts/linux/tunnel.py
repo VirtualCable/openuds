@@ -5,20 +5,21 @@ from __future__ import unicode_literals
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
 import subprocess
-from uds.forward import forward  # @UnresolvedImport
+from uds.tunnel import forward  # type: ignore
 from os.path import expanduser
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
-forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])
+# Open tunnel
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
-if forwardThread.status == 2:
-    raise Exception('Unable to open tunnel')
+# Check that tunnel works..
+if fs.check() is False:
+    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-tools.addTaskToWait(forwardThread)
 home = expanduser('~') + ':1;/media:1;'
-keyFile = tools.saveTempFile(sp['key'])
-theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
+keyFile = tools.saveTempFile(sp['key'])  # type: ignore
+theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=fs.server_address[1])  # type: ignore
 filename = tools.saveTempFile(theFile)
 
 # HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session

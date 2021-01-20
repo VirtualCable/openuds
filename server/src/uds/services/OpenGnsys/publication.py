@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2017-2019 Virtual Cable S.L.
+# Copyright (c) 2017-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -48,9 +47,12 @@ class OGPublication(Publication):
     """
     This class provides the publication of a oVirtLinkedService
     """
+
     _name: str = ''
 
-    suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = (
+        5  # : Suggested recheck time if publication is unfinished in seconds
+    )
 
     def service(self) -> 'OGService':
         return typing.cast('OGService', super().service())

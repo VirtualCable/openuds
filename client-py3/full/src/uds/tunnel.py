@@ -57,6 +57,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     remote: typing.Tuple[str, int]
     ticket: str
     stop_flag: threading.Event
+    can_stop: bool
     timeout: int
     timer: typing.Optional[threading.Timer]
     check_certificate: bool
@@ -79,20 +80,22 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         )
         self.remote = remote
         self.ticket = ticket
-        self.timeout = int(time.time()) + timeout if timeout else 0
+        # Negative values for timeout, means "accept always connections"
+        # "but if no connection is stablished on timeout (positive)"
+        # "stop the listener"
+        self.timeout = int(time.time()) + timeout if timeout > 0 else 0
         self.check_certificate = check_certificate
         self.stop_flag = threading.Event()  # False initial
         self.current_connections = 0
 
         self.status = TUNNEL_LISTENING
+        self.can_stop = False
 
-        if timeout:
-            self.timer = threading.Timer(
-                timeout, ForwardServer.__checkStarted, args=(self,)
-            )
-            self.timer.start()
-        else:
-            self.timer = None
+        timeout = abs(timeout) or 60
+        self.timer = threading.Timer(
+            abs(timeout), ForwardServer.__checkStarted, args=(self,)
+        )
+        self.timer.start()
 
     def stop(self) -> None:
         if not self.stop_flag.is_set():
@@ -120,6 +123,9 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             return context.wrap_socket(rsocket, server_hostname=self.remote[0])
 
     def check(self) -> bool:
+        if self.status == TUNNEL_ERROR:
+            return False
+
         try:
             with self.connect() as ssl_socket:
                 ssl_socket.sendall(HANDSHAKE_V1 + b'TEST')
@@ -135,11 +141,14 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
     @property
     def stoppable(self) -> bool:
-        return self.timeout != 0 and int(time.time()) > self.timeout
+        logger.debug('Is stoppable: %s', self.can_stop)
+        return self.can_stop or (self.timeout != 0 and int(time.time()) > self.timeout)
 
     @staticmethod
     def __checkStarted(fs: 'ForwardServer') -> None:
+        logger.debug('New connection limit reached')
         fs.timer = None
+        fs.can_stop = True
         if fs.current_connections <= 0:
             fs.stop()
 
@@ -150,14 +159,16 @@ class Handler(socketserver.BaseRequestHandler):
 
     # server: ForwardServer
     def handle(self) -> None:
-        self.server.current_connections += 1
         self.server.status = TUNNEL_OPENING
 
         # If server processing is over time
         if self.server.stoppable:
-            logger.info('Rejected timedout connection try')
+            self.server.status = TUNNEL_ERROR
+            logger.info('Rejected timedout connection')
             self.request.close()  # End connection without processing it
             return
+
+        self.server.current_connections += 1
 
         # Open remote connection
         try:
@@ -169,7 +180,9 @@ class Handler(socketserver.BaseRequestHandler):
                 data = ssl_socket.recv(2)
                 if data != b'OK':
                     data += ssl_socket.recv(128)
-                    raise Exception(f'Error received: {data.decode(errors="ignore")}')  # Notify error
+                    raise Exception(
+                        f'Error received: {data.decode(errors="ignore")}'
+                    )  # Notify error
 
                 # All is fine, now we can tunnel data
                 self.process(remote=ssl_socket)

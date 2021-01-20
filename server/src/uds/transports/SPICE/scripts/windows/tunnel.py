@@ -7,15 +7,15 @@ import os
 import glob
 import subprocess
 
-from uds import tools  # @UnresolvedImport
-from uds.forward import forward  # @UnresolvedImport
+from uds import tools  # type: ignore
+from uds.tunnel import forward  # type: ignore
 
 # Lets find remote viewer
 # There is a bug that when installed, the remote viewer (at least 64 bits version) does not store correctly its path, so lets find it "a las bravas"
 extraPaths = ()
 for env in ('PROGRAMFILES', 'PROGRAMW6432'):
     if env in os.environ:
-        extraPaths += tuple(p + '\\bin' for p in glob.glob(os.environ[env] + '\\VirtViewer*'))
+        extraPaths += tuple(p + '\\bin' for p in glob.glob(os.environ[env] + '\\VirtViewer*'))  # type: ignore
 
 executable = tools.findApp('remote-viewer.exe', extraPaths)
 
@@ -28,31 +28,28 @@ if executable is None:
     <a href="http://virt-manager.org/download/">Open download page</a>
 </p>
 ''')
-theFile = sp['as_file_ns']
-if sp['port'] != '-1':
-    forwardThread1, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])
+theFile = sp['as_file_ns']  # type: ignore
+fs = None
+if sp['ticket']:  # type: ignore
+    # Open tunnel
+    fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
+    # Check that tunnel works..
+    if fs.check() is False:
+        raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-    if forwardThread1.status == 2:
-        raise Exception('Unable to open tunnel')
-else:
-    port = -1
+fss = None
+if sp['ticket_secure']:  # type: ignore
+    # Open tunnel
+    fss = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket_secure'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
-if sp['secure_port'] != '-1':
-    theFile = sp['as_file']
-    if port != -1:
-        forwardThread2, secure_port = forwardThread1.clone(sp['ip'], sp['secure_port'])
-    else:
-        forwardThread2, secure_port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['secure_port'])
-
-    if forwardThread2.status == 2:
-        raise Exception('Unable to open tunnel')
-else:
-    secure_port = -1
+    # Check that tunnel works..
+    if fss.check() is False:
+        raise Exception('<p>Could not connect to tunnel server 2.</p><p>Please, check your network settings.</p>')
 
 theFile = theFile.format(
-    secure_port=secure_port,
-    port=port
+    secure_port='-1' if not fss else fss.server_address[1],
+    port='-1' if not fs else fs.server_address[1]
 )
 
 filename = tools.saveTempFile(theFile)

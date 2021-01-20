@@ -18,9 +18,9 @@ def fixResolution():
     import re
     import subprocess
     results = str(subprocess.Popen(['system_profiler SPDisplaysDataType'],stdout=subprocess.PIPE, shell=True).communicate()[0])
-    res = re.search(': \d* x \d*', results).group(0).split(' ')
+    res = re.search(r': \d* x \d*', results).group(0).split(' ')
     width, height = str(int(res[1])-4), str(int(int(res[3])-128))  # Width and Height
-    return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))
+    return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
 
 msrdc = '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
@@ -30,11 +30,11 @@ executable = None
 # Check first xfreerdp, allow password redir
 if os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isfile(msrdc) and sp['as_file']:
+elif os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
     executable = msrdc
 
 if executable is None:
-    if sp['as_rdp_url']:
+    if sp['as_rdp_url']:  # type: ignore
         raise Exception('''<p><b>Microsoft Remote Desktop or xfreerdp not found</b></p>
             <p>In order to connect to UDS RDP Sessions, you need to have a<p>
             <ul>
@@ -67,15 +67,16 @@ if executable is None:
             ''')
 
 # Open tunnel
-fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
+address = '127.0.0.1:{}'.format(fs.server_address[1])
 
 # Check that tunnel works..
 if fs.check() is False:
     raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
 if executable == msrdc:
-    theFile = theFile = sp['as_file'].format(
-        address='127.0.0.1:{}'.format(fs.server_address[1])
+    theFile = theFile = sp['as_file'].format(  # type: ignore
+        address=address
     )
 
     filename = tools.saveTempFile(theFile)
@@ -89,7 +90,7 @@ elif executable == xfreerdp:
     try:
         xfparms = fixResolution()
     except Exception as e:
-        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))
+        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
     params = [executable] + xfparms + ['/v:{}'.format(address)]
     subprocess.Popen(params)

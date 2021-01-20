@@ -56,17 +56,22 @@ def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     def inner(*args, **kwargs) -> RT:
         args[0].connect()
         return fnc(*args, **kwargs)
+
     return inner
 
 
 # Result checker
-def ensureResponseIsValid(response: requests.Response, errMsg: typing.Optional[str] = None) -> typing.Any:
+def ensureResponseIsValid(
+    response: requests.Response, errMsg: typing.Optional[str] = None
+) -> typing.Any:
     if not response.ok:
         if not errMsg:
             errMsg = 'Invalid response'
 
         try:
-            err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
+            err = response.json()[
+                'message'
+            ]  # Extract any key, in case of error is expected to have only one top key so this will work
         except Exception:
             err = response.content
         errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
@@ -76,7 +81,11 @@ def ensureResponseIsValid(response: requests.Response, errMsg: typing.Optional[s
     try:
         return json.loads(response.content)
     except Exception:
-        raise Exception('Error communicating with OpenGnsys: {}'.format(response.content[:128].decode()))
+        raise Exception(
+            'Error communicating with OpenGnsys: {}'.format(
+                response.content[:128].decode()
+            )
+        )
 
 
 class OpenGnsysClient:
@@ -88,7 +97,14 @@ class OpenGnsysClient:
     verifyCert: bool
     cachedVersion: typing.Optional[str]
 
-    def __init__(self, username: str, password: str, endpoint: str, cache: 'Cache', verifyCert: bool = False):
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        endpoint: str,
+        cache: 'Cache',
+        verifyCert: bool = False,
+    ):
         self.username = username
         self.password = password
         self.endpoint = endpoint
@@ -108,11 +124,18 @@ class OpenGnsysClient:
     def _ogUrl(self, path: str) -> str:
         return self.endpoint + '/' + path
 
-    def _post(self, path: str, data: typing.Any, errMsg: typing.Optional[str] = None) -> typing.Any:
+    def _post(
+        self, path: str, data: typing.Any, errMsg: typing.Optional[str] = None
+    ) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                requests.post(self._ogUrl(path), data=json.dumps(data), headers=self.headers, verify=self.verifyCert),
-                errMsg=errMsg
+                requests.post(
+                    self._ogUrl(path),
+                    data=json.dumps(data),
+                    headers=self.headers,
+                    verify=self.verifyCert,
+                ),
+                errMsg=errMsg,
             )
         # FAKE Connection :)
         return fake.post(path, data, errMsg)
@@ -120,8 +143,10 @@ class OpenGnsysClient:
     def _get(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                requests.get(self._ogUrl(path), headers=self.headers, verify=self.verifyCert),
-                errMsg=errMsg
+                requests.get(
+                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert
+                ),
+                errMsg=errMsg,
             )
         # FAKE Connection :)
         return fake.get(path, errMsg)
@@ -129,8 +154,10 @@ class OpenGnsysClient:
     def _delete(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                requests.delete(self._ogUrl(path), headers=self.headers, verify=self.verifyCert),
-                errMsg=errMsg
+                requests.delete(
+                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert
+                ),
+                errMsg=errMsg,
             )
         return fake.delete(path, errMsg)
 
@@ -145,11 +172,8 @@ class OpenGnsysClient:
 
         auth = self._post(
             urls.LOGIN,
-            data={
-                'username': self.username,
-                'password': self.password
-            },
-            errMsg='Loggin in'
+            data={'username': self.username, 'password': self.password},
+            errMsg='Loggin in',
         )
 
         self.auth = auth['apikey']
@@ -179,7 +203,11 @@ class OpenGnsysClient:
         # /ous/{ouid}/labs
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
         errMsg = 'Getting list of labs from ou {}'.format(ou)
-        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.LABS.format(ou=ou), errMsg=errMsg) if l.get('inremotepc', False) is True]
+        return [
+            {'id': l['id'], 'name': l['name']}
+            for l in self._get(urls.LABS.format(ou=ou), errMsg=errMsg)
+            if l.get('inremotepc', False) is True
+        ]
 
     @ensureConnected
     def getImages(self, ou: str) -> typing.List[typing.MutableMapping[str, str]]:
@@ -187,20 +215,23 @@ class OpenGnsysClient:
         # /ous/{ouid}/images
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
         errMsg = 'Getting list of images from ou {}'.format(ou)
-        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.IMAGES.format(ou=ou), errMsg=errMsg) if l.get('inremotepc', False) is True]
+        return [
+            {'id': l['id'], 'name': l['name']}
+            for l in self._get(urls.IMAGES.format(ou=ou), errMsg=errMsg)
+            if l.get('inremotepc', False) is True
+        ]
 
     @ensureConnected
-    def reserve(self, ou: str, image: str, lab: int = 0, maxtime: int = 24) -> typing.MutableMapping[str, typing.Union[str, int]]:
+    def reserve(
+        self, ou: str, image: str, lab: int = 0, maxtime: int = 24
+    ) -> typing.MutableMapping[str, typing.Union[str, int]]:
         # This method is inteded to "get" a machine from OpenGnsys
         # The method used is POST
         # invokes /ous/{ouid}}/images/{imageid}/reserve
         # also remember to store "labid"
         # Labid can be "0" that means "all laboratories"
         errMsg = 'Reserving image {} in ou {}'.format(image, ou)
-        data = {
-            'labid': lab,
-            'maxtime': maxtime
-        }
+        data = {'labid': lab, 'maxtime': maxtime}
         res = self._post(urls.RESERVE.format(ou=ou, image=image), data, errMsg=errMsg)
         return {
             'ou': ou,
@@ -210,7 +241,7 @@ class OpenGnsysClient:
             'id': '.'.join((str(ou), str(res['lab']['id']), str(res['id']))),
             'name': res['name'],
             'ip': res['ip'],
-            'mac': ':'.join(re.findall('..', res['mac']))
+            'mac': ':'.join(re.findall('..', res['mac'])),
         }
 
     @ensureConnected
@@ -219,29 +250,48 @@ class OpenGnsysClient:
         # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
         ou, lab, client = machineId.split('.')
         errMsg = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
-        return self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg)
+        return self._delete(
+            urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg
+        )
+
+    def powerOn(self, machineId, image):
+        # This method ask to poweron a machine to openGnsys
+        ou, lab, client = machineId.split('.')
+        errMsg = 'Powering on client {} in lab {} in ou {}'.format(client, lab, ou)
+        try:
+            data = {
+                'image': image,
+            }
+            return self._post(
+                urls.START.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
+            )
+        except Exception:  # For now, if this fails, ignore it to keep backwards compat
+            return 'OK'
 
     @ensureConnected
-    def notifyURLs(self, machineId: str, loginURL: str, logoutURL: str) -> typing.Any:
+    def notifyURLs(
+        self, machineId: str, loginURL: str, logoutURL: str, releaseURL: str
+    ) -> typing.Any:
         ou, lab, client = machineId.split('.')
         errMsg = 'Notifying login/logout urls'
-        data = {
-            'urlLogin': loginURL,
-            'urlLogout': logoutURL
-        }
+        data = {'urlLogin': loginURL, 'urlLogout': logoutURL, 'urlRelease': releaseURL}
 
-        return self._post(urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
+        return self._post(
+            urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
+        )
 
     @ensureConnected
-    def notifyDeadline(self, machineId: str, deadLine: typing.Optional[int]) -> typing.Any:
+    def notifyDeadline(
+        self, machineId: str, deadLine: typing.Optional[int]
+    ) -> typing.Any:
         ou, lab, client = machineId.split('.')
         deadLine = deadLine or 0
         errMsg = 'Notifying deadline'
-        data = {
-            'deadLine': deadLine
-        }
+        data = {'deadLine': deadLine}
 
-        return self._post(urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
+        return self._post(
+            urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
+        )
 
     @ensureConnected
     def status(self, id_: str) -> typing.Any:

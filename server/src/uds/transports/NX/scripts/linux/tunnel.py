@@ -18,13 +18,13 @@ except Exception:
 ''')
 
 # Open tunnel
-fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
 # Check that tunnel works..
 if fs.check() is False:
     raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-theFile = sp['as_file_for_format'].format(
+theFile = sp['as_file_for_format'].format(  # type: ignore
     address='127.0.0.1',
     port=fs.server_address[1]
 )

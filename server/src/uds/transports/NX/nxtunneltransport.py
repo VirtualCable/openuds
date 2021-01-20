@@ -84,21 +84,9 @@ class TSNXTransport(BaseNXTransport):
         label=_('Tunnel wait time'),
         defvalue='30',
         minValue=5,
-        maxValue=65536,
+        maxValue=3600 * 24,
         order=2,
         tooltip=_('Maximum time to wait before closing the tunnel listener'),
-        required=True,
-        tab=gui.TUNNEL_TAB,
-    )
-
-    ticketValidity = gui.NumericField(
-        length=3,
-        label=_('Tunnel ticket validity time (seconds)'),
-        defvalue='7200',
-        minValue=60,          # One minute as min
-        maxValue=7*60*60*24,  # one week as max
-        order=3,
-        tooltip=_('Maximum validity time for user ticket to allow reconnection'),
         required=True,
         tab=gui.TUNNEL_TAB,
     )
@@ -106,11 +94,12 @@ class TSNXTransport(BaseNXTransport):
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
         order=23,
-        tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
+        tooltip=_(
+            'If enabled, the certificate of tunnel server will be verified (recommended).'
+        ),
         defvalue=gui.TRUE,
-        tab=gui.TUNNEL_TAB
+        tab=gui.TUNNEL_TAB,
     )
-
 
     useEmptyCreds = gui.CheckBoxField(
         label=_('Empty creds'),
@@ -217,7 +206,6 @@ class TSNXTransport(BaseNXTransport):
     _cacheMem: str = ''
     _screenSize: str = ''
     _tunnelWait: int = 30
-    _ticketValidity: int = 60
     _verifyCertificate: bool = False
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -228,7 +216,6 @@ class TSNXTransport(BaseNXTransport):
                 )
             self._tunnelServer = values['tunnelServer']
             self._tunnelWait = int(values['tunnelWait'])
-            self._ticketValidity = int(values['ticketValidity'])
             self._verifyCertificate = gui.strToBool(values['verifyCertificate'])
             self._tunnelCheckServer = ''
             self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
@@ -240,7 +227,6 @@ class TSNXTransport(BaseNXTransport):
             self._cacheDisk = values['cacheDisk']
             self._cacheMem = values['cacheMem']
             self._screenSize = values['screenSize']
-            
 
     def marshal(self) -> bytes:
         """
@@ -262,7 +248,6 @@ class TSNXTransport(BaseNXTransport):
                 self._tunnelCheckServer,
                 self._screenSize,
                 str(self._tunnelWait),
-                str(self._ticketValidity),
                 gui.boolToStr(self._verifyCertificate),
             ],
         )
@@ -288,10 +273,9 @@ class TSNXTransport(BaseNXTransport):
                 values[11] if values[0] == 'v2' else CommonPrefs.SZ_FULLSCREEN
             )
             if values[0] == 'v3':
-                self._tunnelWait, self._ticketValidity, self._verifyCertificate = (
+                self._tunnelWait, self._verifyCertificate = (
                     int(values[12]),
-                    int(values[13]),
-                    gui.strToBool(values[14])
+                    gui.strToBool(values[13]),
                 )
 
     def valuesDict(self) -> gui.ValuesDictType:
@@ -306,7 +290,6 @@ class TSNXTransport(BaseNXTransport):
             'cacheMem': self._cacheMem,
             'tunnelServer': self._tunnelServer,
             'tunnelWait': str(self._tunnelWait),
-            'ticketValidity': str(self._ticketValidity),
             'verifyCertificate': gui.boolToStr(self._verifyCertificate),
         }
 
@@ -334,8 +317,8 @@ class TSNXTransport(BaseNXTransport):
 
         ticket = TicketStore.create_for_tunnel(
             userService=userService,
-            port=3389,
-            validity=self.ticketValidity.num()
+            port=int(self._listenPort),
+            validity=self._tunnelWait + 60,  # Ticket overtime
         )
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
@@ -367,10 +350,9 @@ class TSNXTransport(BaseNXTransport):
             'ip': ip,
             'tunHost': tunHost,
             'tunPort': tunPort,
-            'tunWait': self.tunnelWait.num(),
-            'tunChk': self.verifyCertificate.isTrue(),
+            'tunWait': self._tunnelWait,
+            'tunChk': self._verifyCertificate,
             'ticket': ticket,
-            'port': self._listenPort,
             'as_file_for_format': r.as_file_for_format,
         }
 

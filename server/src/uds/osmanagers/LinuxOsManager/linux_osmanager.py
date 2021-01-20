@@ -197,12 +197,12 @@ class LinuxOsManager(osmanagers.OSManager):
         elif message == "log":
             self.doLog(userService, data, log.ACTOR)
         elif message == "login":
-            osmanagers.OSManager.loggedIn(userService, data)
+            osmanagers.OSManager.loggedIn(userService, typing.cast(str, data))
             ip, hostname = userService.getConnectionSource()
             deadLine = userService.deployed_service.getDeadline()
             ret = "{}\t{}\t{}".format(ip, hostname, 0 if deadLine is None else deadLine)
         elif message == "logout":
-            osmanagers.OSManager.loggedOut(userService, data)
+            osmanagers.OSManager.loggedOut(userService, typing.cast(str, data))
             doRemove = self.isRemovableOnLogout(userService)
         elif message == "ip":
             # This ocurss on main loop inside machine, so userService is usable

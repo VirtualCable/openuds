@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -60,12 +59,43 @@ class TX2GOTransport(BaseX2GOTransport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     typeName = _('X2Go')
     typeType = 'TX2GOTransport'
     typeDescription = _('X2Go access (Experimental). Tunneled connection.')
     group = transports.TUNNELED_GROUP
 
-    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
+    tunnelServer = gui.TextField(
+        label=_('Tunnel server'),
+        order=1,
+        tooltip=_(
+            'IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'
+        ),
+        tab=gui.TUNNEL_TAB,
+    )
+
+    tunnelWait = gui.NumericField(
+        length=3,
+        label=_('Tunnel wait time'),
+        defvalue='30',
+        minValue=5,
+        maxValue=65536,
+        order=2,
+        tooltip=_('Maximum time to wait before closing the tunnel listener'),
+        required=True,
+        tab=gui.TUNNEL_TAB,
+    )
+
+    verifyCertificate = gui.CheckBoxField(
+        label=_('Force SSL certificate verification'),
+        order=23,
+        tooltip=_(
+            'If enabled, the certificate of tunnel server will be verified (recommended).'
+        ),
+        defvalue=gui.TRUE,
+        tab=gui.TUNNEL_TAB,
+    )
+
 
     fixedName = BaseX2GOTransport.fixedName
     screenSize = BaseX2GOTransport.screenSize
@@ -83,18 +113,20 @@ class TX2GOTransport(BaseX2GOTransport):
     def initialize(self, values: 'Module.ValuesType'):
         if values:
             if values['tunnelServer'].count(':') != 1:
-                raise BaseX2GOTransport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
+                raise BaseX2GOTransport.ValidationException(
+                    _('Must use HOST:PORT in Tunnel Server Field')
+                )
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
 
         ci = self.getConnectionInfo(userService, user, password)
         username = ci['username']
@@ -120,13 +152,16 @@ class TX2GOTransport(BaseX2GOTransport):
             rootless=rootless,
             width=width,
             height=height,
-            user=username
+            user=username,
         )
 
-        tunpass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _i in range(12))
-        tunuser = TicketStore.create(tunpass)
+        ticket = TicketStore.create_for_tunnel(
+            userService=userService,
+            port=22,
+            validity=self.tunnelWait.num() + 60,  # Ticket overtime
+        )
 
-        sshHost, sshPort = self.tunnelServer.value.split(':')
+        tunHost, tunPort = self.tunnelServer.value.split(':')
 
         # data
         data = {
@@ -140,7 +175,7 @@ class TX2GOTransport(BaseX2GOTransport):
             'drives': self.exports.isTrue(),
             'fullScreen': width == -1 or height == -1,
             'this_server': request.build_absolute_uri('/'),
-            'xf': xf
+            'xf': xf,
         }
 
         m = tools.DictAsObj(data)
@@ -152,17 +187,18 @@ class TX2GOTransport(BaseX2GOTransport):
         }.get(os['OS'])
 
         if osName is None:
-            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )
 
         sp = {
-            'tunUser': tunuser,
-            'tunPass': tunpass,
-            'tunHost': sshHost,
-            'tunPort': sshPort,
-            'ip': ip,
-            'port': '22',
+            'tunHost': tunHost,
+            'tunPort': tunPort,
+            'tunWait': self.tunnelWait.num(),
+            'tunChk': self.verifyCertificate.isTrue(),
+            'ticket': ticket,
             'key': priv,
-            'xf': xf
+            'xf': xf,
         }
 
         return self.getScript('scripts/{}/tunnel.py', osName, sp)

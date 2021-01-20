@@ -6,22 +6,22 @@
 
 import os
 import subprocess
-from uds.forward import forward  # @UnresolvedImport
+from uds.tunnel import forward  # type: ignore
 from os.path import expanduser
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
+# Open tunnel
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
-forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], sp['port'])
+# Check that tunnel works..
+if fs.check() is False:
+    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-if forwardThread.status == 2:
-    raise Exception('Unable to open tunnel')
-
-tools.addTaskToWait(forwardThread)
-# Care, expanduser is encoding using "mcbs", so treat it as bytes always
+# Care, expanduser is encoding using "mcbs", so treat it as bytes on python 2.7
 home = expanduser('~').replace('\\', '\\\\') + '#1;'
-keyFile = tools.saveTempFile(sp['key'])
-theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
+keyFile = tools.saveTempFile(sp['key'])  # type: ignore
+theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=fs.server_address[1])  # type: ignore
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'

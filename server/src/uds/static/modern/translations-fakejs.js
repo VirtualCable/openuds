@@ -25,7 +25,7 @@ gettext("Error launching service");
 gettext("Please wait until the service is launched.");
 gettext("Your connection is being prepared. It will open on a new window when ready.");
 gettext("The service is now being prepared. (It is at #).'.replace('#', '' + data.running + '%");
-gettext("Please, tray again in a few moments.");
+gettext("Please, try again in a few moments.");
 gettext("Error launching service");
 // HTML
 gettext("You can access UDS Open Source code at");

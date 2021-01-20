@@ -7,12 +7,12 @@ import os
 import subprocess
 from os.path import expanduser
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 home = expanduser('~').replace('\\', '\\\\') + '#1;'
-keyFile = tools.saveTempFile(sp['key'])
+keyFile = tools.saveTempFile(sp['key'])  # type: ignore
 # On windows, the separator beween active and not is "#"
-theFile = sp['xf'].format(export='c:\\\\#1;', keyFile=keyFile.replace('\\', '/'), ip=sp['ip'], port=sp['port'])
+theFile = sp['xf'].format(export='c:\\\\#1;', keyFile=keyFile.replace('\\', '/'), ip=sp['ip'], port=sp['port'])  # type: ignore
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
