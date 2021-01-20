@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.cache import Cache
 
 # Fake part
-FAKE = True
+FAKE = False
 CACHE_VALIDITY = 180
 
 RT = typing.TypeVar('RT')

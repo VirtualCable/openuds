@@ -336,8 +336,14 @@ class OGDeployment(UserDeployment):
     def __remove(self) -> str:
         """
         Removes a machine from system
+        Avoids "double unreserve" in case the reservation was made from release
         """
-        self.service().unreserve(self._machineId)
+        dbs = self.dbservice()
+        if dbs:
+            # On release callback, we will set a property on DB called "from_release"
+            # so we can avoid double unreserve
+            if dbs.getProperty('from_release') is None:
+                self.service().unreserve(self._machineId)
         return State.RUNNING
 
     # Check methods

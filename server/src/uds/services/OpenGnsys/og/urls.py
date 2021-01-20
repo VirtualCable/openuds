@@ -43,4 +43,4 @@ STATUS = '/ous/{ou}/labs/{lab}/clients/{client}/status'
 EVENTS = '/ous/{ou}/labs/{lab}/clients/{client}/events'
 SESSIONS = '/ous/{ou}/labs/{lab}/clients/{client}/session'
 # TODO: fix this
-START = '/ous/{ou}/labs/{lab}/clients/{client}/start'
+START = '/ous/{ou}/labs/{lab}/clients/{client}/init'
