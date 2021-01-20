@@ -35,7 +35,9 @@ import json
 import urllib
 import urllib.parse
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
+import certifi
+
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QObject, QUrl, QSettings
 from PyQt5.QtCore import Qt
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
@@ -57,12 +59,6 @@ class RestRequest(QObject):
         super(RestRequest, self).__init__()
         # private
         self._manager = QNetworkAccessManager()
-        try:
-            if os.path.exists('/etc/ssl/certs/ca-certificates.crt'):
-                pass
-                # os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
-        except Exception:
-            pass
 
 
         if params is not None:
@@ -119,5 +115,9 @@ class RestRequest(QObject):
 
     def get(self):
         request = QNetworkRequest(self.url)
+        # Ensure loads certifi certificates
+        sslCfg = request.sslConfiguration()
+        sslCfg.addCaCertificates(certifi.where())
+        request.setSslConfiguration(sslCfg)
         request.setRawHeader(b'User-Agent', osDetector.getOs().encode('utf-8') + b" - UDS Connector " + VERSION.encode('utf-8'))
         self._manager.get(request)
