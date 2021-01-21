@@ -184,6 +184,15 @@ def udsJs(request: 'HttpRequest') -> str:
         )
     ]
 
+    # We can add here custom downloads with something like this:
+    # plugins.append({
+    #     'url': 'http://www.google.com/coche.exe',
+    #     'description': 'Cliente SPICE for download',  # Text that appears on download
+    #     'name': 'Linux', # Can be 'Linux', 'Windows', o 'MacOS'. Sets the icon.
+    #     'legacy': False  # True = Gray, False = White
+    #})
+
+
     actors: typing.List[typing.Dict[str, str]] = []
 
     if user and user.isStaff():  # Add staff things
