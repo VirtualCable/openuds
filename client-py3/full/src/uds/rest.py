@@ -43,7 +43,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
 from PyQt5.QtWidgets import QMessageBox
 
-from . import osDetector
+from . import os_detector
 
 from . import VERSION
 
@@ -119,5 +119,5 @@ class RestRequest(QObject):
         sslCfg = request.sslConfiguration()
         sslCfg.addCaCertificates(certifi.where())
         request.setSslConfiguration(sslCfg)
-        request.setRawHeader(b'User-Agent', osDetector.getOs().encode('utf-8') + b" - UDS Connector " + VERSION.encode('utf-8'))
+        request.setRawHeader(b'User-Agent', os_detector.getOs().encode('utf-8') + b" - UDS Connector " + VERSION.encode('utf-8'))
         self._manager.get(request)
