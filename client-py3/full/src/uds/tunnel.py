@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -34,7 +34,6 @@ import ssl
 import threading
 import time
 import random
-import threading
 import select
 import typing
 import logging
@@ -91,6 +90,10 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.status = TUNNEL_LISTENING
         self.can_stop = False
 
+        # Max connection time for first connection. After this,
+        # Client will connect as soon as it has no active connections
+        # MAX WAIT TIME for first connection is sixty seconds, no matter
+        # how long will accept client connections
         timeout = abs(timeout) or 60
         self.timer = threading.Timer(
             abs(timeout), ForwardServer.__checkStarted, args=(self,)
@@ -187,7 +190,7 @@ class Handler(socketserver.BaseRequestHandler):
                 # All is fine, now we can tunnel data
                 self.process(remote=ssl_socket)
         except Exception as e:
-            logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
+            logger.error('Error connecting to %s: %s', self.server.remote, e)
             self.server.status = TUNNEL_ERROR
             self.server.stop()
         finally:
@@ -215,7 +218,7 @@ class Handler(socketserver.BaseRequestHandler):
                         break
                     self.request.sendall(data)
             logger.debug('Finished tunnel with ticekt %s', self.server.ticket)
-        except Exception as e:
+        except Exception:
             pass
 
 
