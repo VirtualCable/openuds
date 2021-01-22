@@ -52,8 +52,6 @@ _unlinkFiles = []
 _tasksToWait = []
 _execBeforeExit = []
 
-sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
-
 # Public key for scripts
 PUBLIC_KEY = b'''-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuNURlGjBpqbglkTTg2lh
@@ -73,7 +71,9 @@ nVgtClKcDDlSaBsO875WDR0CAwEAAQ==
 
 def saveTempFile(content, filename=None):
     if filename is None:
-        filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
+        filename = ''.join(
+            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
+        )
         filename = filename + '.uds'
 
     filename = os.path.join(tempfile.gettempdir(), filename)
@@ -116,28 +116,29 @@ def findApp(appName, extraPath=None):
 
 
 def getHostName():
-    '''
+    """
     Returns current host name
     In fact, it's a wrapper for socket.gethostname()
-    '''
+    """
     hostname = socket.gethostname()
     logger.info('Hostname: %s', hostname)
     return hostname
+
 
 # Queing operations (to be executed before exit)
 
 
 def addFileToUnlink(filename):
-    '''
+    """
     Adds a file to the wait-and-unlink list
-    '''
+    """
     _unlinkFiles.append(filename)
 
 
 def unlinkFiles():
-    '''
+    """
     Removes all wait-and-unlink files
-    '''
+    """
     if _unlinkFiles:
         time.sleep(5)  # Wait 5 seconds before deleting anything
 
@@ -171,16 +172,14 @@ def execBeforeExit():
     for fnc in _execBeforeExit:
         fnc.__call__()
 
+
 def verifySignature(script, signature):
     public_key = load_pem_public_key(backend=default_backend(), data=PUBLIC_KEY)
 
     # Message option
     try:
         public_key.verify(
-            base64.b64decode(signature),
-            script,
-            padding.PKCS1v15(),
-            hashes.SHA256()
+            base64.b64decode(signature), script, padding.PKCS1v15(), hashes.SHA256()
         )
     except Exception:  # InvalidSignature
         return False
