@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -31,18 +31,20 @@
 '''
 from __future__ import unicode_literals
 
-from base64 import b64decode
-
-import tempfile
-import string
-import random
+import base64
 import os
+import random
 import socket
 import stat
+import string
 import sys
+import tempfile
 import time
 
-import six
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
 from .log import logger
 
@@ -53,7 +55,7 @@ _execBeforeExit = []
 sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
 
 # Public key for scripts
-PUBLIC_KEY = '''-----BEGIN PUBLIC KEY-----
+PUBLIC_KEY = b'''-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuNURlGjBpqbglkTTg2lh
 dU5qPbg9Q+RofoDDucGfrbY0pjB9ULgWXUetUWDZhFG241tNeKw+aYFTEorK5P+g
 ud7h9KfyJ6huhzln9eyDu3k+kjKUIB1PLtA3lZLZnBx7nmrHRody1u5lRaLVplsb
@@ -169,23 +171,17 @@ def execBeforeExit():
     for fnc in _execBeforeExit:
         fnc.__call__()
 
-
 def verifySignature(script, signature):
-    '''
-    Verifies with a public key from whom the data came that it was indeed
-    signed by their private key
-    param: public_key_loc Path to public key
-    param: signature String signature to be verified
-    return: Boolean. True if the signature is valid; False otherwise.
-    '''
-    # For signature checking
-    from Crypto.PublicKey import RSA
-    from Crypto.Signature import PKCS1_v1_5
-    from Crypto.Hash import SHA256
+    public_key = load_pem_public_key(backend=default_backend(), data=PUBLIC_KEY)
 
-    rsakey = RSA.importKey(PUBLIC_KEY)
-    signer = PKCS1_v1_5.new(rsakey)
-    digest = SHA256.new(script)  # Script is "binary string" here
-    if signer.verify(digest, b64decode(signature)):
-        return True
-    return False
+    # Message option
+    try:
+        public_key.verify(
+            base64.b64decode(signature),
+            script,
+            padding.PKCS1v15(),
+            hashes.SHA256()
+        )
+    except Exception:  # InvalidSignature
+        return False
+    return True
