@@ -34,6 +34,7 @@ import ssl
 import threading
 import time
 import random
+import threading
 import select
 import typing
 import logging
@@ -90,10 +91,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.status = TUNNEL_LISTENING
         self.can_stop = False
 
-        # Max connection time for first connection. After this,
-        # Client will connect as soon as it has no active connections
-        # MAX WAIT TIME for first connection is sixty seconds, no matter
-        # how long will accept client connections
         timeout = abs(timeout) or 60
         self.timer = threading.Timer(
             abs(timeout), ForwardServer.__checkStarted, args=(self,)
@@ -116,6 +113,9 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             rsocket.connect(self.remote)
 
             context = ssl.create_default_context()
+
+            # Do not "recompress" data, use only "base protocol" compression
+            context.options |= ssl.OP_NO_COMPRESSION
 
             # If ignore remote certificate
             if self.check_certificate is False:
@@ -190,7 +190,7 @@ class Handler(socketserver.BaseRequestHandler):
                 # All is fine, now we can tunnel data
                 self.process(remote=ssl_socket)
         except Exception as e:
-            logger.error('Error connecting to %s: %s', self.server.remote, e)
+            logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
             self.server.status = TUNNEL_ERROR
             self.server.stop()
         finally:
@@ -218,7 +218,7 @@ class Handler(socketserver.BaseRequestHandler):
                         break
                     self.request.sendall(data)
             logger.debug('Finished tunnel with ticekt %s', self.server.ticket)
-        except Exception:
+        except Exception as e:
             pass
 
 

@@ -113,6 +113,9 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             rsocket.connect(self.remote)
 
             context = ssl.create_default_context()
+            
+            # Do not "recompress" data, use only "base protocol" compression
+            context.options |= ssl.OP_NO_COMPRESSION
 
             # If ignore remote certificate
             if self.check_certificate is False:

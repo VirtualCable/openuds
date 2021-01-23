@@ -40,13 +40,17 @@ import certifi
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QObject, QUrl, QSettings
 from PyQt5.QtCore import Qt
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
+from PyQt5.QtNetwork import (
+    QNetworkAccessManager,
+    QNetworkRequest,
+    QNetworkReply,
+    QSslCertificate,
+)
 from PyQt5.QtWidgets import QMessageBox
 
 from . import os_detector
 
 from . import VERSION
-
 
 
 class RestRequest(QObject):
@@ -60,9 +64,11 @@ class RestRequest(QObject):
         # private
         self._manager = QNetworkAccessManager()
 
-
         if params is not None:
-            url += '?' + '&'.join('{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8'))) for k, v in params.items())
+            url += '?' + '&'.join(
+                '{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8')))
+                for k, v in params.items()
+            )
 
         self.url = QUrl(RestRequest.restApiUrl + url)
 
@@ -74,19 +80,16 @@ class RestRequest(QObject):
         self.done.connect(done, Qt.QueuedConnection)
 
     def _finished(self, reply):
-        '''
+        """
         Handle signal 'finished'.  A network request has finished.
-        '''
+        """
         try:
             if reply.error() != QNetworkReply.NoError:
                 raise Exception(reply.errorString())
             data = bytes(reply.readAll())
             data = json.loads(data)
         except Exception as e:
-            data = {
-                'result': None,
-                'error': str(e)
-            }
+            data = {'result': None, 'error': str(e)}
 
         self.done.emit(data)
 
@@ -100,14 +103,27 @@ class RestRequest(QObject):
 
         approved = settings.value(digest, False)
 
-        errorString = '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(cert.subjectInfo(QSslCertificate.CommonName))
+        errorString = (
+            '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(
+                cert.subjectInfo(QSslCertificate.CommonName)
+            )
+        )
 
         for err in errors:
             errorString += '<li>' + err.errorString() + '</li>'
 
         errorString += '</ul>'
 
-        if approved or QMessageBox.warning(self._parentWindow, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
+        if (
+            approved
+            or QMessageBox.warning(
+                self._parentWindow,
+                'SSL Warning',
+                errorString,
+                QMessageBox.Yes | QMessageBox.No,
+            )
+            == QMessageBox.Yes
+        ):
             settings.setValue(digest, True)
             reply.ignoreSslErrors()
 
@@ -119,5 +135,10 @@ class RestRequest(QObject):
         sslCfg = request.sslConfiguration()
         sslCfg.addCaCertificates(certifi.where())
         request.setSslConfiguration(sslCfg)
-        request.setRawHeader(b'User-Agent', os_detector.getOs().encode('utf-8') + b" - UDS Connector " + VERSION.encode('utf-8'))
+        request.setRawHeader(
+            b'User-Agent',
+            os_detector.getOs().encode('utf-8')
+            + b" - UDS Connector "
+            + VERSION.encode('utf-8'),
+        )
         self._manager.get(request)
