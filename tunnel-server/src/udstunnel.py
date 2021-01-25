@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import os
+import pwd
 import sys
 import argparse
 import multiprocessing
@@ -154,15 +155,41 @@ async def tunnel_proc_async(
 def tunnel_main():
     cfg = config.read()
 
-    # Create pid file
+    # Try to bind to port as running user
+    # Wait for socket incoming connections and spread them
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+    sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+    sock.settimeout(3.0)  # So we can check for stop from time to time
+    # We will not reuse port, we only want a UDS tunnel server running on a port
+    # but this may change on future...
+    # try:
+    #     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, True)
+    # except (AttributeError, OSError) as e:
+    #     logger.warning('socket.REUSEPORT not available')
     try:
+        sock.bind((cfg.listen_address, cfg.listen_port))
+        sock.listen(BACKLOG)
+
+        # If running as root, and requested drop privileges after port bind
+        if os.getuid() == 0 and cfg.user:
+            logger.debug('Changing to  user %s', cfg.user)
+            pwu = pwd.getpwnam(cfg.user)
+            os.setgid(pwu.pw_gid)
+            os.setuid(pwu.pw_uid)
+
         setup_log(cfg)
+
+        # Create pid file
         if cfg.pidfile:
             with open(cfg.pidfile, mode='w') as f:
                 f.write(str(os.getpid()))
+
     except Exception as e:
         sys.stderr.write(f'Tunnel startup error: {e}\n')
+        logger.error('MAIN: %s', e)
         return
+
 
     # Setup signal handlers
     signal.signal(signal.SIGINT, stop_signal)
@@ -194,23 +221,7 @@ def tunnel_main():
                 best = (percent, c[0])
         return best[1]
 
-    sock = None
     try:
-        # Wait for socket incoming connections and spread them
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-
-        # We will not reuse port, we only want a UDS tunnel server running on a port
-        # but this may change on future...
-        # try:
-        #     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, True)
-        # except (AttributeError, OSError) as e:
-        #     logger.warning('socket.REUSEPORT not available')
-
-        sock.settimeout(3.0)  # So we can check for stop from time to time
-        sock.bind((cfg.listen_address, cfg.listen_port))
-        sock.listen(BACKLOG)
         while not do_stop:
             try:
                 client, addr = sock.accept()

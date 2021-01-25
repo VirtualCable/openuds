@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 class ConfigurationType(typing.NamedTuple):
     pidfile: str
+    user: str
 
     log_level: str
     log_file: str
@@ -90,6 +91,7 @@ def read() -> ConfigurationType:
             logsize = logsize[:-1]
         return ConfigurationType(
             pidfile=uds.get('pidfile', ''),
+            user=uds.get('user', ''),
             log_level=uds.get('loglevel', 'ERROR'),
             log_file=uds.get('logfile', ''),
             log_size=int(logsize)*1024*1024,
