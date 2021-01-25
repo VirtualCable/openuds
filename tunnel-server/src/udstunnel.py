@@ -175,7 +175,7 @@ def tunnel_main():
         if os.getuid() == 0 and cfg.user:
             logger.debug('Changing to  user %s', cfg.user)
             pwu = pwd.getpwnam(cfg.user)
-            os.setgid(pwu.pw_gid)
+            # os.setgid(pwu.pw_gid)
             os.setuid(pwu.pw_uid)
 
         setup_log(cfg)
