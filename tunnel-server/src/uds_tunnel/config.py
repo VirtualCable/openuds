@@ -61,8 +61,6 @@ class ConfigurationType(typing.NamedTuple):
     secret: str
     allow: typing.Set[str]
     
-    storage: str
-
 
 def read() -> ConfigurationType:
     with open(CONFIGFILE, 'r') as f:
@@ -106,7 +104,6 @@ def read() -> ConfigurationType:
             uds_server=uds_server,
             secret=secret,
             allow=set(uds.get('allow', '127.0.0.1').split(',')),
-            storage=uds.get('storage', '')
         )
     except ValueError as e:
         raise Exception(f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise  {CONFIGFILE}')

@@ -199,6 +199,8 @@ def tunnel_main():
         # Wait for socket incoming connections and spread them
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+
         # We will not reuse port, we only want a UDS tunnel server running on a port
         # but this may change on future...
         # try:

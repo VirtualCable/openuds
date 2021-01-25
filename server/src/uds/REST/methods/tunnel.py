@@ -80,7 +80,7 @@ class Tunnel(Handler):
                 extra = extra or {}
                 now = models.getSqlDatetimeAsUnix()
                 totalTime = now - extra.get('b', now-1)               
-                msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: s:{sent}/r:{recv}/t:{totalTime}.'
+                msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{totalTime}.'
                 log.doLog(user.manager, log.INFO, msg)
                 log.doLog(userService, log.INFO, msg)
             else:
