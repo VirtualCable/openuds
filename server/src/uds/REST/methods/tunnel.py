@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -31,9 +31,9 @@
 """
 import logging
 import typing
-from uds.models.user_service import UserService
 
 from uds import models
+from uds.core import managers
 from uds.REST import Handler
 from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
@@ -42,6 +42,7 @@ from uds.core.util.stats import events
 
 logger = logging.getLogger(__name__)
 
+MAX_SESSION_LENGTH = 60*60*24*7
 
 # Enclosed methods under /tunnel path
 class Tunnel(Handler):
@@ -56,12 +57,12 @@ class Tunnel(Handler):
         Processes get requests, currently none
         """
         logger.debug(
-            'Tunnel parameters for GET: %s from %s', self._args, self._request.ip
+            'Tunnel parameters for GET: %s (%s) from %s', self._args, self._params, self._request.ip
         )
 
         if (
             not isTrustedSource(self._request.ip)
-            or len(self._args) > 2
+            or len(self._args) != 2
             or len(self._args[0]) != 48
         ):
             # Invalid requests
@@ -69,16 +70,22 @@ class Tunnel(Handler):
 
         # Try to get ticket from DB
         try:
-            user, userService, host, port, _ = models.TicketStore.get_for_tunnel(
+            user, userService, host, port, extra = models.TicketStore.get_for_tunnel(
                 self._args[0]
             )
-            start = len(self._args) == 2  # Start requests include source IP request
-
-            if net.ipToLong(self._args[1][:32]) == 0:
-                raise Exception('Invalid from IP')
-
             data = {}
-            if start:
+            if self._args[1][:4] == 'stop':
+                sent, recv = self._params['sent'], self._params['recv']
+                # Ensures extra exists...
+                extra = extra or {}
+                now = models.getSqlDatetimeAsUnix()
+                totalTime = now - extra.get('b', now-1)               
+                msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: s:{sent}/r:{recv}/t:{totalTime}.'
+                log.doLog(user.manager, log.INFO, msg)
+                log.doLog(userService, log.INFO, msg)
+            else:
+                if net.ipToLong(self._args[1][:32]) == 0:
+                    raise Exception('Invalid from IP')
                 events.addEvent(
                     userService.deployed_service,
                     events.ET_TUNNEL_ACCESS,
@@ -87,10 +94,22 @@ class Tunnel(Handler):
                     dstip=host,
                     uniqueid=userService.unique_id,
                 )
-                msg = f'User {user.name} started tunnel to {host}:{port} from {self._args[1]}.'
+                msg = f'User {user.name} started tunnel {self._args[0][:8]}... to {host}:{port} from {self._args[1]}.'
                 log.doLog(user.manager, log.INFO, msg)
                 log.doLog(userService, log.INFO, msg)
-                data = {'host': host, 'port': port}
+                # Generate new, notify only, ticket
+                rstr = managers.cryptoManager().randomString(length=8)
+                notifyTicket = models.TicketStore.create_for_tunnel(
+                    userService=userService,
+                    port=port,
+                    host=host,
+                    extra={'t': self._args[0], 'b': models.getSqlDatetimeAsUnix()},
+                    validity=MAX_SESSION_LENGTH)
+                data = {
+                    'host': host,
+                    'port': port,
+                    'notify': notifyTicket
+                }
 
             return data
         except Exception as e:

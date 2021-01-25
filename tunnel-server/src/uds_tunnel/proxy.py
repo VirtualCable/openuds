@@ -53,6 +53,19 @@ class Proxy:
         self.ns = ns
 
     @staticmethod
+    def _getUdsUrl(cfg: config.ConfigurationType, ticket: bytes, msg: str) -> typing.MutableMapping[str, typing.Any]:
+        try:
+            url = cfg.uds_server + '/' + ticket.decode() + '/' + msg
+            r = requests.get(url, headers={'content-type': 'application/json'})
+            if not r.ok:
+                raise Exception(r.content)
+
+            return r.json()
+        except Exception as e:
+            raise Exception(f'TICKET COMMS ERROR: {e!s}')
+        
+
+    @staticmethod
     def getFromUds(
         cfg: config.ConfigurationType, ticket: bytes,
         address: typing.Tuple[str, int]
@@ -70,16 +83,12 @@ class Proxy:
                 continue  # Correctus
             raise Exception(f'TICKET INVALID (char {i} at pos {n})')
 
-        try:
-            url = cfg.uds_server + '/' + ticket.decode() + '/' + address[0]
-            r = requests.get(url, headers={'content-type': 'application/json'})
-            if not r.ok:
-                raise Exception(r.content)
+        return Proxy._getUdsUrl(cfg, ticket, address[0])
 
-            return r.json()
-        except Exception as e:
-            raise Exception(f'TICKET COMMS ERROR: {e!s}')
-
+    @staticmethod
+    def notifyEndToUds(cfg: config.ConfigurationType, ticket: bytes, counter: stats.Stats) -> None:
+        msg = f'stop?sent={counter.sent}&recv={counter.recv}'
+        Proxy._getUdsUrl(cfg, ticket, msg)  # Ignore results
 
     @staticmethod
     async def doProxy(source, destination, counter: stats.StatsSingleCounter) -> None:
@@ -194,6 +203,7 @@ class Proxy:
                 logger.debug('PROXIES READY')
 
             logger.debug('Proxies finalized: %s', grp.exceptions)
+            await curio.run_in_thread(Proxy.notifyEndToUds, self.cfg, result['notify'].encode(), counter)
 
         except Exception as e:
             if consts.DEBUG:

@@ -57,4 +57,4 @@ COMMAND_LENGTH = 4
 COMMAND_OPEN = b'OPEN'
 COMMAND_TEST = b'TEST'
 COMMAND_STAT = b'STAT'  # full stats
-COMMAND_INFO = b'INFO'  # Basic stats
+COMMAND_INFO = b'INFO'  # Basic stats, currently same as FULL
