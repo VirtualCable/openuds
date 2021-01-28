@@ -302,7 +302,7 @@ class TSNXTransport(BaseNXTransport):
         user: 'models.User',
         password: str,
         request: 'HttpRequest',
-    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         prefs = self.screenSize.value
 
         username = user.getUsernameForAuth()

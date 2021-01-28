@@ -199,7 +199,7 @@ class NXTransport(BaseNXTransport):
             user: 'models.User',
             password: str,
             request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         username = user.getUsernameForAuth()
         proc = username.split('@')
         username = proc[0]

@@ -37,6 +37,7 @@ import typing
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports
+from uds.models import UserService
 
 # TODO: do this
 def createADUser():
@@ -313,22 +314,26 @@ class BaseRDPTransport(transports.Transport):
     def processedUser(
         self, userService: 'models.UserService', user: 'models.User'
     ) -> str:
-        v = self.processUserPassword(userService, user, '')
+        v = self.processUserPassword(userService, user, '', altUsername=None)
         return v['username']
 
     def processUserPassword(
-        self, userService: 'models.UserService', user: 'models.User', password: 'str'
-    ) -> typing.Dict[str, typing.Any]:
-        username = user.getUsernameForAuth()
+        self,
+        userService: 'models.UserService',
+        user: 'models.User',
+        password: str,
+        *,
+        altUsername: typing.Optional[str]
+    ) -> typing.Mapping[str, str]:
+        username: str = altUsername or user.getUsernameForAuth()
 
         if self.fixedName.value:
             username = self.fixedName.value
 
         proc = username.split('@')
+        domain: str = ''
         if len(proc) > 1:
             domain = proc[1]
-        else:
-            domain = ''
         username = proc[0]
 
         if self.fixedPassword.value:
@@ -362,7 +367,7 @@ class BaseRDPTransport(transports.Transport):
             'protocol': self.protocol,
             'username': username,
             'password': password,
-            'domain': domain,
+            'domain': domain
         }
 
     def getConnectionInfo(
@@ -370,14 +375,24 @@ class BaseRDPTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Dict[str, str]:
+    ) -> typing.Mapping[str, str]:
+
+        username = None
+        if isinstance(userService, UserService):
+            cdata = userService.getInstance().getConnectionData()
+            if cdata:
+                _, username, password = cdata  # Host is unused
+
         return self.processUserPassword(
-            typing.cast('models.UserService', userService), user, password
+            typing.cast('models.UserService', userService), user, password, altUsername=username
         )
 
     def getScript(
-        self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]
-    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        self,
+        scriptNameTemplate: str,
+        osName: str,
+        params: typing.Mapping[str, typing.Any],
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         # Reads script
         scriptNameTemplate = scriptNameTemplate.format(osName)
         with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:

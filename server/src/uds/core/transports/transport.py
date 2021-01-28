@@ -160,7 +160,7 @@ class Transport(Module):
             userService: typing.Union['models.UserService', 'models.ServicePool'],
             user: 'models.User',
             password: str
-        ) -> typing.Dict[str, str]:
+        ) -> typing.Mapping[str, str]:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
@@ -203,7 +203,7 @@ class Transport(Module):
             user: 'models.User',
             password: str,
             request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
@@ -234,7 +234,7 @@ class Transport(Module):
             user: 'models.User',
             password: str,
             request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Dict[str, str]]:
+        ) -> typing.Tuple[str, str, typing.Mapping[str, str]]:
         """
         Encodes the script so the client can understand it
         """

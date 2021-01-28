@@ -98,7 +98,7 @@ class RDPTransport(BaseRDPTransport):
             user: 'models.User',
             password: str,
             request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         # We use helper to keep this clean
         # prefs = user.prefs('rdp')
 
@@ -151,7 +151,7 @@ class RDPTransport(BaseRDPTransport):
             logger.error('Os not detected for RDP Transport: %s', request.META.get('HTTP_USER_AGENT', 'Unknown'))
             return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        sp = {
+        sp: typing.MutableMapping[str, typing.Any] = {
             'password': password,
             'this_server': request.build_absolute_uri('/'),
             'ip': ip,

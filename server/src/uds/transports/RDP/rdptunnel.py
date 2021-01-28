@@ -145,7 +145,7 @@ class TRDPTransport(BaseRDPTransport):
         user: 'models.User',
         password: str,
         request: 'HttpRequest',
-    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         # We use helper to keep this clean
         # prefs = user.prefs('rdp')
 
@@ -207,7 +207,7 @@ class TRDPTransport(BaseRDPTransport):
                 userService, transport, ip, os, user, password, request
             )
 
-        sp = {
+        sp: typing.MutableMapping[str, typing.Any] = {
             'tunHost': tunHost,
             'tunPort': tunPort,
             'tunWait': self.tunnelWait.num(),

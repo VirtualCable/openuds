@@ -368,11 +368,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 and self.fallbackAccess == states.action.DENY
             ):
                 nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
-                if deadLine is None or deadLine > nextE:
+                if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
             elif ac.access == states.action.DENY:  # DENY
                 nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, True)
-                if deadLine is None or deadLine > nextE:
+                if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
 
         if deadLine is None:
