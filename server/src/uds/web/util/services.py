@@ -151,7 +151,9 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         if svr.is_meta:
             continue
 
-        use = str(svr.usage(svr.usage_count)) + '%'
+        use_percent = str(svr.usage(svr.usage_count)) + '%'
+        use_count = str(svr.usage_count)
+        left_count = str(svr.max_srvs - svr.usage_count)
 
         trans = []
         for t in sorted(svr.transports.all(), key=lambda x: x.priority):   # In memory sort, allows reuse prefetched and not too big array
@@ -200,12 +202,12 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         else:
             toBeReplacedTxt = ''
 
-        datator = lambda x: x.replace('{use}', use).replace('{total}', str(svr.max_srvs))
+        datator = lambda x: x.replace('{use}', use_percent).replace('{total}', str(svr.max_srvs)).replace('{usec}', use_count).replace('{left}', left_count)
 
         services.append({
             'id': 'F' + svr.uuid,
             'name': datator(svr.name),
-            'visual_name': datator(svr.visual_name.replace('{use}', use).replace('{total}', str(svr.max_srvs))),
+            'visual_name': datator(svr.visual_name.replace('{use}', use_percent).replace('{total}', str(svr.max_srvs))),
             'description': svr.comments,
             'group': group,
             'transports': trans,

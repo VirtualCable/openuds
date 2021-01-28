@@ -450,8 +450,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             state=states.servicePool.ACTIVE,
             visible=True
             )
-            .annotate(pubs_active=models.Count('publications', filter=models.Q(publications__state=states.publication.USABLE)))
-            .annotate(usage_count=models.Count('userServices', filter=models.Q(userServices__state__in=states.userService.VALID_STATES, userServices__cache_level=0)))
+            .annotate(pubs_active=models.Count('publications', filter=models.Q(publications__state=states.publication.USABLE), distinct=True))
+            .annotate(usage_count=models.Count('userServices', filter=models.Q(userServices__state__in=states.userService.VALID_STATES, userServices__cache_level=0), distinct=True))
             .prefetch_related(
                 'transports',
                 'transports__networks',
