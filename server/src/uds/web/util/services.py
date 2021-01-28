@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -45,8 +45,6 @@ from uds.models import (
 )
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
-
-from uds.core.managers import userServiceManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -178,7 +176,9 @@ def getServicesData(
         if sPool.owned_by_meta:
             continue
 
-        use = str(sPool.usage(typing.cast(typing.Any, sPool).usage_count)) + '%'
+        use_percent = str(sPool.usage(sPool.usage_count)) + '%'
+        use_count = str(sPool.usage_count)
+        left_count = str(sPool.max_srvs - sPool.usage_count)
 
         trans = []
         for t in sorted(
@@ -243,17 +243,21 @@ def getServicesData(
         maxDeployed = str(sPool.max_srvs)
         # if sPool.service.getType().usesCache is False:
         #    maxDeployed = sPool.service.getInstance().maxDeployed
-        
-        def datator(x) -> str:
-            return x.replace('{use}', use).replace('{total}', maxDeployed)
 
+        def datator(x) -> str:
+            return (
+                x.replace('{use}', use_percent)
+                .replace('{total}', str(sPool.max_srvs))
+                .replace('{usec}', use_count)
+                .replace('{left}', left_count)
+            )
 
         services.append(
             {
                 'id': 'F' + sPool.uuid,
                 'name': datator(sPool.name),
                 'visual_name': datator(
-                    sPool.visual_name.replace('{use}', use).replace(
+                    sPool.visual_name.replace('{use}', use_percent).replace(
                         '{total}', maxDeployed
                     )
                 ),
