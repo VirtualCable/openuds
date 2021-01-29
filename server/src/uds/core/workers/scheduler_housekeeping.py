@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from datetime import timedelta
+import time
 import logging
 
 from django.db import transaction
@@ -56,7 +57,14 @@ class SchedulerHousekeeping(Job):
         Look for "hanged" scheduler tasks and reschedule them
         """
         since = getSqlDatetime() - timedelta(minutes=MAX_EXECUTION_MINUTES)
-        with transaction.atomic():
-            Scheduler.objects.select_for_update().filter(
-                last_execution__lt=since, state=State.RUNNING
-            ).update(owner_server='', state=State.FOR_EXECUTE)
+        for i in range(3):  # Retry three times in case of lockout error
+            try:
+                with transaction.atomic():
+                    Scheduler.objects.select_for_update(skip_locked=True).filter(
+                        last_execution__lt=since, state=State.RUNNING
+                    ).update(owner_server='', state=State.FOR_EXECUTE)
+                break
+            except Exception as e:
+                logger.info('Retrying Scheduler cleanup transaction')
+                time.sleep(1)
+
