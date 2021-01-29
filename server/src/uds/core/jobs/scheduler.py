@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -50,6 +50,7 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from .job import Job
 
+
 class JobThread(threading.Thread):
     """
     Class responsible of executing one job.
@@ -57,13 +58,18 @@ class JobThread(threading.Thread):
       Ensures that the job is executed in a controlled way (any exception will be catch & processed)
       Ensures that the scheduler db entry is released after run
     """
+
     _jobInstance: 'Job'
-    def __init__(self, jobInstance, dbJob):
+    _dbJobId: int
+    _freq: int
+
+    def __init__(self, jobInstance: 'Job', dbJob: DBScheduler) -> None:
         super(JobThread, self).__init__()
         self._jobInstance = jobInstance
         self._dbJobId = dbJob.id
+        self._freq = dbJob.frecuency
 
-    def run(self):
+    def run(self) -> None:
         try:
             self._jobInstance.execute()
         except Exception:
@@ -97,18 +103,17 @@ class JobThread(threading.Thread):
         Atomically updates the scheduler db to "release" this job
         """
         with transaction.atomic():
-            job = DBScheduler.objects.select_for_update().get(id=self._dbJobId)  # @UndefinedVariable
-            job.state = State.FOR_EXECUTE
-            job.owner_server = ''
-            job.next_execution = getSqlDatetime() + timedelta(seconds=job.frecuency)
-            # Update state and last execution time at database
-            job.save()
-
+            DBScheduler.objects.select_for_update().filter(id=self._dbJobId).update(
+                state=State.FOR_EXECUTE,
+                owner_server='',
+                next_execution=getSqlDatetime() + timedelta(self._freq),
+            )
 
 class Scheduler:
     """
     Class responsible of maintain/execute scheduled jobs
     """
+
     granularity = 2  # We check for cron jobs every THIS seconds
 
     # to keep singleton Scheduler
@@ -141,17 +146,26 @@ class Scheduler:
         jobInstance = None
         try:
             now = getSqlDatetime()  # Datetimes are based on database server times
-            fltr = Q(state=State.FOR_EXECUTE) & (Q(last_execution__gt=now) | Q(next_execution__lt=now))
+            fltr = Q(state=State.FOR_EXECUTE) & (
+                Q(last_execution__gt=now) | Q(next_execution__lt=now)
+            )
             with transaction.atomic():
                 # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
                 # This params are all set inside fltr (look at __init__)
-                job: DBScheduler = DBScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]  # @UndefinedVariable
+                job: DBScheduler = (
+                    DBScheduler.objects.select_for_update()
+                    .filter(fltr)
+                    .order_by('next_execution')[0]
+                )
                 if job.last_execution > now:
-                    logger.warning('EXecuted %s due to last_execution being in the future!', job.name)
+                    logger.warning(
+                        'EXecuted %s due to last_execution being in the future!',
+                        job.name,
+                    )
                 job.state = State.RUNNING
                 job.owner_server = self._hostname
                 job.last_execution = now
-                job.save()
+                job.save(update_fields=['state', 'owner_server', 'last_execution'])
 
             jobInstance = job.getInstance()
 
@@ -170,7 +184,9 @@ class Scheduler:
             # Look at this http://dev.mysql.com/doc/refman/5.0/en/innodb-deadlocks.html
             # I have got some deadlock errors, but looking at that url, i found that it is not so abnormal
             # logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
-            raise DatabaseError('Database access problems. Retrying connection ({})'.format(e))
+            raise DatabaseError(
+                'Database access problems. Retrying connection ({})'.format(e)
+            )
 
     @staticmethod
     def releaseOwnShedules():
@@ -179,9 +195,20 @@ class Scheduler:
         """
         logger.debug('Releasing all owned scheduled tasks')
         with transaction.atomic():
-            DBScheduler.objects.select_for_update().filter(owner_server=platform.node()).update(owner_server='')  # @UndefinedVariable
-            DBScheduler.objects.select_for_update().filter(last_execution__lt=getSqlDatetime() - timedelta(minutes=15), state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)  # @UndefinedVariable
-            DBScheduler.objects.select_for_update().filter(owner_server='').update(state=State.FOR_EXECUTE)  # @UndefinedVariable
+            DBScheduler.objects.select_for_update().filter(
+                owner_server=platform.node()
+            ).update(
+                owner_server=''
+            )  # @UndefinedVariable
+            DBScheduler.objects.select_for_update().filter(
+                last_execution__lt=getSqlDatetime() - timedelta(minutes=15),
+                state=State.RUNNING,
+            ).update(
+                owner_server='', state=State.FOR_EXECUTE
+            )  # @UndefinedVariable
+            DBScheduler.objects.select_for_update().filter(owner_server='').update(
+                state=State.FOR_EXECUTE
+            )  # @UndefinedVariable
 
     def run(self):
         """
@@ -200,7 +227,9 @@ class Scheduler:
                 # This can happen often on sqlite, and this is not problem at all as we recover it.
                 # The log is removed so we do not get increased workers.log file size with no information at all
                 if not isinstance(e, DatabaseError):
-                    logger.error('Unexpected exception at run loop %s: %s', e.__class__, e)
+                    logger.error(
+                        'Unexpected exception at run loop %s: %s', e.__class__, e
+                    )
                 try:
                     connections['default'].close()
                 except Exception:
