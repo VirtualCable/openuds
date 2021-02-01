@@ -77,7 +77,7 @@ class JobThread(threading.Thread):
         finally:
             self.jobDone()
 
-    def jobDone(self):
+    def jobDone(self) -> None:
         """
         Invoked whenever a job is is finished (with or without exception)
         """
@@ -98,7 +98,7 @@ class JobThread(threading.Thread):
         # Ensures DB connection is released after job is done
         connections['default'].close()
 
-    def __updateDb(self):
+    def __updateDb(self) -> None:
         """
         Atomically updates the scheduler db to "release" this job
         """
@@ -109,6 +109,7 @@ class JobThread(threading.Thread):
                 next_execution=getSqlDatetime() + timedelta(self._freq),
             )
 
+
 class Scheduler:
     """
     Class responsible of maintain/execute scheduled jobs
@@ -117,15 +118,15 @@ class Scheduler:
     granularity = 2  # We check for cron jobs every THIS seconds
 
     # to keep singleton Scheduler
-    _scheduler = None
+    _scheduler: typing.Optional['Scheduler'] = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._hostname = platform.node()
         self._keepRunning = True
         logger.info('Initialized scheduler for host "%s"', self._hostname)
 
     @staticmethod
-    def scheduler():
+    def scheduler() -> 'Scheduler':
         """
         Returns a singleton to the Scheduler
         """
@@ -133,13 +134,13 @@ class Scheduler:
             Scheduler._scheduler = Scheduler()
         return Scheduler._scheduler
 
-    def notifyTermination(self):
+    def notifyTermination(self) -> None:
         """
         Invoked to signal that termination of scheduler task(s) is requested
         """
         self._keepRunning = False
 
-    def executeOneJob(self):
+    def executeOneJob(self) -> None:
         """
         Looks for the best waiting job and executes it
         """
@@ -189,7 +190,7 @@ class Scheduler:
             )
 
     @staticmethod
-    def releaseOwnShedules():
+    def releaseOwnShedules() -> None:
         """
         Releases all scheduleds being executed by this server
         """
@@ -210,7 +211,7 @@ class Scheduler:
                 state=State.FOR_EXECUTE
             )  # @UndefinedVariable
 
-    def run(self):
+    def run(self) -> None:
         """
         Loop that executes scheduled tasks
         Can be executed more than once, in differents threads
