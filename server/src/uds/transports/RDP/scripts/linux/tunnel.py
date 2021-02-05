@@ -14,13 +14,15 @@ globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def execUdsRdp(udsrdp, port):
     import subprocess  # @Reimport
-    params = [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]  # @UndefinedVariable
+    import os.path
+    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execNewXFreeRdp(xfreerdp, port):
-    import subprocess  # @Reimport
-    params = [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]  # @UndefinedVariable
+    import subprocess
+    import os.path
+    params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]
     tools.addTaskToWait(subprocess.Popen(params))
 
 # Try to locate a "valid" version of xfreerdp as first option (<1.1 does not allows drive redirections, so it will not be used if found)
