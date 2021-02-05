@@ -46,6 +46,8 @@ logger = logging.getLogger(__name__)
 READY_CACHE_TIMEOUT = 30
 
 class BaseNXTransport(transports.Transport):
+    _listenPort: str = ''
+
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
