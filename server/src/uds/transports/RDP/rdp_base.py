@@ -250,13 +250,6 @@ class BaseRDPTransport(transports.Transport):
         ),
         tab='Linux Client',
     )
-    redirectHome = gui.CheckBoxField(
-        label=_('Redirect home folder'),
-        order=42,
-        tooltip=_('If checked, Linux client will try to redirect /home local folder'),
-        tab='Linux Client',
-        defvalue=gui.FALSE,
-    )
     printerString = gui.TextField(
         label=_('Printer string'),
         order=43,

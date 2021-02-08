@@ -124,13 +124,10 @@ class RDPFile:
 
         if self.redirectDrives != 'false':
             if self.target == OsDetector.Linux:
-                params.append('/drive:media,/media')
+                params.append('/drive:home,$HOME')
             else:
                 params.append('/drive:Users,/Users')
             # params.append('/home-drive')
-
-        if self.redirectHome is True:
-            params.append('/drive:home,/home')
 
         if self.redirectSerials is True:
             params.append('/serial:/dev/ttyS0')

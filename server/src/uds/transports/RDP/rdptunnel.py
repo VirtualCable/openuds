@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -29,8 +29,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import random
-import string
 import logging
 import typing
 
@@ -123,7 +121,6 @@ class TRDPTransport(BaseRDPTransport):
 
     alsa = BaseRDPTransport.alsa
     multimedia = BaseRDPTransport.multimedia
-    redirectHome = BaseRDPTransport.redirectHome
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
@@ -179,7 +176,6 @@ class TRDPTransport(BaseRDPTransport):
         r.redirectPrinters = self.allowPrinters.isTrue()
         r.redirectSmartcards = self.allowSmartcards.isTrue()
         r.redirectDrives = self.allowDrives.value
-        r.redirectHome = self.redirectHome.isTrue()
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()
         r.redirectAudio = self.allowAudio.isTrue()

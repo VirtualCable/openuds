@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -83,7 +83,6 @@ class RDPTransport(BaseRDPTransport):
 
     alsa = BaseRDPTransport.alsa
     multimedia = BaseRDPTransport.multimedia
-    redirectHome = BaseRDPTransport.redirectHome
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
@@ -122,7 +121,6 @@ class RDPTransport(BaseRDPTransport):
         r.redirectPrinters = self.allowPrinters.isTrue()
         r.redirectSmartcards = self.allowSmartcards.isTrue()
         r.redirectDrives = self.allowDrives.value
-        r.redirectHome = self.redirectHome.isTrue()
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()
         r.redirectAudio = self.allowAudio.isTrue()
