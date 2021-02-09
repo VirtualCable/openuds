@@ -102,6 +102,9 @@ def udsJs(request: 'HttpRequest') -> str:
         except Exception:  # There is no authenticators yet...
             authenticators = []
 
+    if not tag and authenticators:
+        tag = authenticators[0].small_name
+
     # logger.debug('Authenticators: %s', authenticators)
 
     # the auths for client
