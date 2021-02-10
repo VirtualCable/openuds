@@ -67,15 +67,26 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         logger.debug('Setting IP to %s (ignored)', ip)
 
     def getIp(self) -> str:
-        return self._ip.split('~')[0]
+        # If single machine, ip is IP~counter,
+        # If multiple and has a ';' on IP, the values is IP;MAC
+        return self._ip.split('~')[0].split(';')[0]
 
     def getName(self) -> str:
+        # If single machine, ip is IP~counter,
+        # If multiple and has a ';' on IP, the values is IP;MAC
         return _("IP ") + self._ip.replace('~', ':')
 
     def getUniqueId(self) -> str:
-        return self._ip.replace('~', ':')
+        # If single machine, ip is IP~counter,
+        # If multiple and has a ';' on IP, the values is IP;MAC
+        return self._ip.replace('~', ':').split(';')[0]
 
     def setReady(self) -> str:
+        # If single machine, ip is IP~counter,
+        # If multiple and has a ';' on IP, the values is IP;MAC
+        if ';' in self._ip:  # Only try wakeup if mac is present
+            ip, mac = self._ip.split(';')[0:1]
+            self.service().wakeup(ip, mac)
         self._state = State.FINISHED
         return self._state
 

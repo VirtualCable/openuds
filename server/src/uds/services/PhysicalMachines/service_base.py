@@ -41,3 +41,6 @@ class IPServiceBase(services.Service):
 
     def unassignMachine(self, ip: str) -> None:
         raise NotADirectoryError('unassignMachine')
+
+    def wakeup(self, ip: str, mac: typing.Optional[str]) -> None:
+        pass

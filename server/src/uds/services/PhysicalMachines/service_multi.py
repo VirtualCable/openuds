@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import pickle
+import subprocess
 import logging
 import typing
 
@@ -53,6 +54,18 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# We have included a "hidden testing" for adding ip+mac as static machines list. 
+# (This is done using IP;MAC as IP on the IP list)
+# This is a test for WOL, and to be used at your risk. 
+# Example:
+# WOLAPP = "/usr/sbin/etherwake {MAC} -i eth0 -b"
+# Remember that you MUST setuid /usr/sbin/etherwake (chmod +s ....) and allow only for uds user,
+# so it allows uds user to execute "privileged" etherwake program
+# Note:
+#   {MAC} will be replaced with the MAC if it exists
+#   {IP} will be replaced with the IP of the machine
+# If empty, no WOL will be tried NEVER, if not empty
+WOLAPP = ''
 
 class IPMachinesService(IPServiceBase):
     # Gui
@@ -60,16 +73,40 @@ class IPMachinesService(IPServiceBase):
         order=1,
         label=_('Service Token'),
         length=16,
-        tooltip=_('Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'),
+        tooltip=_(
+            'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
+        ),
         defvalue='',
         required=False,
-        rdonly=False
+        rdonly=False,
     )
 
-    ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
+    ipList = gui.EditableList(
+        label=_('List of servers'),
+        tooltip=_('List of servers available for this service'),
+    )
 
-    port = gui.NumericField(length=5, label=_('Check Port'), defvalue='0', order=2, tooltip=_('If non zero, only hosts responding to connection on that port will be served.'), required=True, tab=gui.ADVANCED_TAB)
-    skipTimeOnFailure = gui.NumericField(length=6, label=_('Skip time'), defvalue='15', order=2, tooltip=_('If a host fails to check, skip it for this time (in minutes).'), minValue=0, required=True, tab=gui.ADVANCED_TAB)
+    port = gui.NumericField(
+        length=5,
+        label=_('Check Port'),
+        defvalue='0',
+        order=2,
+        tooltip=_(
+            'If non zero, only hosts responding to connection on that port will be served.'
+        ),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    skipTimeOnFailure = gui.NumericField(
+        length=6,
+        label=_('Skip time'),
+        defvalue='15',
+        order=2,
+        tooltip=_('If a host fails to check, skip it for this time (in minutes).'),
+        minValue=0,
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -78,7 +115,9 @@ class IPMachinesService(IPServiceBase):
     iconFile = 'machines.png'
 
     # Characteristics of service
-    maxDeployed = -1  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
+    maxDeployed = (
+        -1
+    )  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
     usesCache = False  # Cache are running machine awaiting to be assigned
     usesCache_L2 = False  # L2 Cache are running machines in suspended state
     needsManager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
@@ -93,6 +132,27 @@ class IPMachinesService(IPServiceBase):
     _port: int = 0
     _skipTimeOnFailure: int = 0
 
+    @staticmethod
+    def getIp(ipData: str) -> str:
+        return ipData.split('~')[0].split(';')[0]
+
+    @staticmethod
+    def getMac(ipData: str) -> typing.Optional[str]:
+        try:
+            return ipData.split('~')[0].split(';')[1]
+        except Exception:
+            return None
+
+    @staticmethod
+    def launchWOL(ip: str, mac: str) -> None:
+        if WOLAPP and mac:
+            cmd = WOLAPP.replace('{MAC}', mac)
+            logger.info('Launching WOL: %s', cmd)
+            try:
+                subprocess.run(cmd, shell=True)
+            except Exception as e:
+                logger.error('Error on WOL: %s', e)
+
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
             return
@@ -100,18 +160,25 @@ class IPMachinesService(IPServiceBase):
         if values.get('ipList', None) is None:
             self._ips = []
         else:
-            self._ips = ['{}~{}'.format(str(ip).strip(), i) for i, ip in enumerate(values['ipList']) if str(ip).strip()]  # Allow duplicates right now
-            active = {v for v in values['ipList']}
+            self._ips = [
+                '{}~{}'.format(str(ip).strip(), i)
+                for i, ip in enumerate(values['ipList'])
+                if str(ip).strip()
+            ]  # Allow duplicates right now
+            active = {IPMachinesService.getIp(v) for v in values['ipList']}
             # self._ips.sort()
             # Remove non existing "locked" ips from storage now
             skipKey = self.storage.getKey('ips')
             with transaction.atomic():
                 for key, data, _ in self.storage.filter(forUpdate=True):
-                    if key == skipKey: # Avoid "ips" key
+                    if key == skipKey:  # Avoid "ips" key
                         continue
                     # If not in current active list of ips, remove it
                     if data.decode() not in active:
-                        logger.info('IP %s locked but not in active list. Removed', data.decode())
+                        logger.info(
+                            'IP %s locked but not in active list. Removed',
+                            data.decode(),
+                        )
                         self.storage.remove(data.decode())
 
         self._token = self.token.value.strip()
@@ -124,11 +191,23 @@ class IPMachinesService(IPServiceBase):
     def valuesDict(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
 
-        return {'ipList': gui.convertToList(ips), 'token': self._token, 'port': str(self._port), 'skipTimeOnFailure': str(self._skipTimeOnFailure) }
+        return {
+            'ipList': gui.convertToList(ips),
+            'token': self._token,
+            'port': str(self._port),
+            'skipTimeOnFailure': str(self._skipTimeOnFailure),
+        }
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
-        return b'\0'.join([b'v4', self._token.encode(), str(self._port).encode(), str(self._skipTimeOnFailure).encode()])
+        return b'\0'.join(
+            [
+                b'v4',
+                self._token.encode(),
+                str(self._port).encode(),
+                str(self._skipTimeOnFailure).encode(),
+            ]
+        )
 
     def unmarshal(self, data: bytes) -> None:
         values: typing.List[bytes] = data.split(b'\0')
@@ -154,37 +233,69 @@ class IPMachinesService(IPServiceBase):
         # Search first unassigned machine
         try:
             for ip in self._ips:
-                theIP = ip.split('~')[0]
+                theIP = IPMachinesService.getIp(ip)
+                theMAC = IPMachinesService.getMac(ip)
                 if self.storage.readData(theIP) is None:
                     if self._port > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.saveData(theIP, theIP)
                     # Now, check if it is available on port, if required...
                     if self._port > 0:
-                        if connection.testServer(theIP, self._port, timeOut=0.5) is False:
+                        if (
+                            connection.testServer(theIP, self._port, timeOut=0.5)
+                            is False
+                        ):
                             # Log into logs of provider, so it can be "shown" on services logs
-                            self.parent().doLog(log.WARN, 'Host {} not accesible on port {}'.format(theIP, self._port))
+                            self.parent().doLog(
+                                log.WARN,
+                                'Host {} not accesible on port {}'.format(
+                                    theIP, self._port
+                                ),
+                            )
                             self.storage.remove(theIP)  # Return Machine to pool
-                            self.cache.put('port{}'.format(theIP), '1', validity=self.skipTimeOnFailure.num()*60)
+                            self.cache.put(
+                                'port{}'.format(theIP),
+                                '1',
+                                validity=self.skipTimeOnFailure.num() * 60,
+                            )
                             continue
+                    if theMAC:
+                        return theIP + ';' + theMAC
                     return theIP
             return None
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
             return None
 
+    def wakeup(self, ip: str, mac: typing.Optional[str]) -> None:
+        if mac:
+            IPMachinesService.launchWOL(ip, mac)
+
     def unassignMachine(self, ip: str) -> None:
         try:
+            if ';' in ip:
+                ip = ip.split(';')[0]  # ; means that HAS an attached MAC
             self.storage.remove(ip)
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
 
     def listAssignables(self):
-        return [(ip, ip.split('~')[0]) for ip in self._ips if self.storage.readData(ip) is None]
+        return [
+            (ip, ip.split('~')[0])
+            for ip in self._ips
+            if self.storage.readData(ip) is None
+        ]
 
-    def assignFromAssignables(self, assignableId: str, user: 'models.User', userDeployment: 'services.UserDeployment') -> str:
-        userServiceInstance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
-        theIP = assignableId.split('~')[0]
+    def assignFromAssignables(
+        self,
+        assignableId: str,
+        user: 'models.User',
+        userDeployment: 'services.UserDeployment',
+    ) -> str:
+        userServiceInstance: IPMachineDeployed = typing.cast(
+            IPMachineDeployed, userDeployment
+        )
+        theIP = IPMachinesService.getIp(assignableId)
         if self.storage.readData(theIP) is None:
             self.storage.saveData(theIP, theIP)
             return userServiceInstance.assign(theIP)
