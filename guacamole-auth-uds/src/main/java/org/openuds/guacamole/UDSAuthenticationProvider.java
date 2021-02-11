@@ -33,7 +33,6 @@ import com.google.inject.Injector;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.guacamole.GuacamoleException;
-import org.apache.guacamole.GuacamoleServerException;
 import org.apache.guacamole.form.Field;
 import org.apache.guacamole.net.auth.AbstractAuthenticationProvider;
 import org.apache.guacamole.net.auth.AuthenticatedUser;
@@ -41,9 +40,8 @@ import org.apache.guacamole.net.auth.Credentials;
 import org.apache.guacamole.net.auth.UserContext;
 import org.apache.guacamole.net.auth.credentials.CredentialsInfo;
 import org.apache.guacamole.net.auth.credentials.GuacamoleInvalidCredentialsException;
-import org.apache.guacamole.net.auth.simple.SimpleUserContext;
-import org.apache.guacamole.protocol.GuacamoleConfiguration;
 import org.openuds.guacamole.connection.ConnectionService;
+import org.openuds.guacamole.connection.UDSConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,16 +52,18 @@ import org.slf4j.LoggerFactory;
 public class UDSAuthenticationProvider extends AbstractAuthenticationProvider {
 
     /**
-     * The name of the single connection that should be exposed to any user
-     * that authenticates via UDS.
-     */
-    private static final String CONNECTION_NAME = "UDS";
-
-    /**
      * The name of the query parameter that should contain the data sent to
      * the UDS service for authentication.
      */
     private static final String DATA_PARAMETER_NAME = "data";
+
+    /**
+     * The form of credentials accepted by this extension.
+     */
+    private static final CredentialsInfo UDS_CREDENTIALS =
+            new CredentialsInfo(Collections.<Field>singletonList(
+                new Field(DATA_PARAMETER_NAME, Field.Type.QUERY_PARAMETER)
+            ));
 
     /**
      * Logger for this class.
@@ -109,29 +109,26 @@ public class UDSAuthenticationProvider extends AbstractAuthenticationProvider {
 
         // Pull OpenUDS-specific "data" parameter
         String data = request.getParameter(DATA_PARAMETER_NAME);
-        if (data != null && !data.isEmpty()) {
-
-            logger.debug("Retrieving connection configuration using data from \"{}\"...", data);
-
-            // Retrieve connection information using provided data
-            GuacamoleConfiguration config = connectionService.getConnectionConfiguration(data);
-            if (config != null) {
-
-                // Report successful authentication as a temporary, anonymous user,
-                // storing the retrieved connection configuration data for future use
-                return new UDSAuthenticatedUser(this, credentials, config);
-
-            }
-
+        if (data == null || data.isEmpty()) {
+            logger.debug("UDS connection data was not provided. No connection retrieval from UDS will be performed.");
+            throw new GuacamoleInvalidCredentialsException("Connection data was not provided.", UDS_CREDENTIALS);
         }
 
-        // Required parameter was missing or was invalid
-        throw new GuacamoleInvalidCredentialsException(
-            "Connection data was not provided or was rejected by UDS.",
-            new CredentialsInfo(Collections.<Field>singletonList(
-                new Field(DATA_PARAMETER_NAME, Field.Type.QUERY_PARAMETER)
-            ))
-        );
+        try {
+
+            // Retrieve connection information using provided data
+            UDSConnection connection = new UDSConnection(connectionService, data);
+
+            // Report successful authentication as a temporary, anonymous user,
+            // storing the retrieved connection configuration data for future use
+            return new UDSAuthenticatedUser(this, credentials, connection);
+
+        }
+        catch (GuacamoleException e) {
+            logger.info("Provided connection data could not be validated with UDS: {}", e.getMessage());
+            logger.debug("Validation of UDS connection data failed.", e);
+            throw new GuacamoleInvalidCredentialsException("Connection data was rejected by UDS.", e, UDS_CREDENTIALS);
+        }
 
     }
 
@@ -145,10 +142,7 @@ public class UDSAuthenticationProvider extends AbstractAuthenticationProvider {
 
         // Expose a single connection (derived from the "data" parameter
         // provided during authentication)
-        return new SimpleUserContext(this, Collections.singletonMap(
-            CONNECTION_NAME,
-            ((UDSAuthenticatedUser) authenticatedUser).getGuacamoleConfiguration()
-        ));
+        return new UDSUserContext(this, (UDSAuthenticatedUser) authenticatedUser);
 
     }
 
