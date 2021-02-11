@@ -176,7 +176,6 @@ public class ConnectionService {
 
         // Build URI of remote service from the base URI and given data
         URI serviceURI = UriBuilder.fromUri(configService.getUDSBaseURI())
-                .path(configService.getUDSConnectionPath())
                 .path(data)
                 .build();
 

@@ -38,7 +38,7 @@ import java.net.URISyntaxException;
 import org.apache.guacamole.GuacamoleException;
 import org.apache.guacamole.GuacamoleServerException;
 import org.apache.guacamole.environment.Environment;
-import org.apache.guacamole.properties.StringGuacamoleProperty;
+import org.apache.guacamole.properties.URIGuacamoleProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,25 +55,17 @@ public class ConfigurationService {
     private final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
 
     /**
-     * The name of the property within tunnel.properties which defines the file
-     * whose content dictates the base URL of the service providing connection
-     * configuration information.
+     * The name of the property within guacamole.properties which defines the
+     * base URL of the service providing connection configuration information.
      */
-    private static final StringGuacamoleProperty UDSFILE_PROPERTY = new StringGuacamoleProperty() {
+    private static final URIGuacamoleProperty UDS_BASE_URL_PROPERTY = new URIGuacamoleProperty() {
 
         @Override
         public String getName() {
-            return "udsfile";
+            return "uds-base-url";
         }
 
     };
-
-    /**
-     * The path beneath the OpenUDS service base URI (scheme + hostname) at
-     * which the connection configuration service can be found. Currently, this
-     * is hard-coded as "/guacamole/".
-     */
-    private static final String UDS_CONNECTION_PATH = "/guacamole/";
 
     /**
      * The Guacamole server environment.
@@ -138,34 +130,6 @@ public class ConfigurationService {
     }
 
     /**
-     * Given an arbitrary URI, returns a new URI which contains only the scheme
-     * and host. The path, fragment, etc. of the given URI, if any, are
-     * discarded.
-     *
-     * @param uri
-     *     An arbitrary URI from which a base URI should be derived.
-     *
-     * @return
-     *     A new URI containing only the scheme and host of the provided URI.
-     *
-     * @throws GuacamoleException
-     *     If the new URI could not be generated because the result is not a
-     *     valid URI.
-     */
-    private URI getBaseURI(URI uri) throws GuacamoleException {
-
-        // Build base URI from only the scheme and host of the given URI
-        try {
-            return new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(),
-                    null, null, null);
-        }
-        catch (URISyntaxException e) {
-            throw new GuacamoleServerException("Failed to derive base URI.", e);
-        }
-
-    }
-
-    /**
      * Returns the base URI of the OpenUDS service. All services providing data
      * to this Guacamole integration are hosted beneath this base URI.
      *
@@ -178,27 +142,7 @@ public class ConfigurationService {
      *     started.
      */
     public URI getUDSBaseURI() throws GuacamoleException {
-
-        // Parse URI from the UDS file (if defined)
-        String udsFile = environment.getRequiredProperty(UDSFILE_PROPERTY);
-
-        // Attempt to parse base URI from the UDS file
-        return getBaseURI(readServiceURI(udsFile));
-
-    }
-
-    /**
-     * Returns the path beneath the OpenUDS base URI at which the connection
-     * configuration service can be found. This service is expected to respond
-     * to HTTP GET requests, returning the configuration of requested
-     * connections.
-     *
-     * @return
-     *     The path beneath the OpenUDS base URI at which the connection
-     *     configuration service can be found.
-     */
-    public String getUDSConnectionPath() {
-        return UDS_CONNECTION_PATH;
+        return environment.getRequiredProperty(UDS_BASE_URL_PROPERTY);
     }
 
 }
