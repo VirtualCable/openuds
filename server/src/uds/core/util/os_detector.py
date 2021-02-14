@@ -50,7 +50,7 @@ iPhone = 'iPhone'  # In fact, these are IOS both, but we can diferentiate it...
 WYSE = 'WYSE'
 Unknown = 'Unknown'
 
-knownOss = (WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone, ChromeOS, WYSE)  # Android is linux also, so it is cheched on first place
+knownOss = (WindowsPhone, Android, Linux, Windows, iPad, iPhone, Macintosh, ChromeOS, WYSE)  # Android is linux also, so it is cheched on first place
 
 allOss = knownOss + (Unknown,)
 desktopOss = (Linux, Windows, Macintosh)
