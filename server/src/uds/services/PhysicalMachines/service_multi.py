@@ -164,8 +164,9 @@ class IPMachinesService(IPServiceBase):
                         if connection.testServer(theIP, self._port, timeOut=0.5) is False:
                             # Log into logs of provider, so it can be "shown" on services logs
                             self.parent().doLog(log.WARN, 'Host {} not accesible on port {}'.format(theIP, self._port))
+                            logger.warning('Static Machine check on %s:%s failed. Will be ignored for %s minutes.', theIP, self._port, self._skipTimeOnFailure)
                             self.storage.remove(theIP)  # Return Machine to pool
-                            self.cache.put('port{}'.format(theIP), '1', validity=self.skipTimeOnFailure.num()*60)
+                            self.cache.put('port{}'.format(theIP), '1', validity=self._skipTimeOnFailure*60)
                             continue
                     return theIP
             return None
