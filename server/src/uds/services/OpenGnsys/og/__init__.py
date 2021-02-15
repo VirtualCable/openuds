@@ -254,13 +254,14 @@ class OpenGnsysClient:
             urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg
         )
 
+    @ensureConnected
     def powerOn(self, machineId, image):
         # This method ask to poweron a machine to openGnsys
         ou, lab, client = machineId.split('.')
         errMsg = 'Powering on client {} in lab {} in ou {}'.format(client, lab, ou)
         try:
             data = {
-                'image': image,
+                'imageid': image,
             }
             return self._post(
                 urls.START.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg

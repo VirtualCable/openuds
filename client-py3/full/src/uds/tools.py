@@ -78,8 +78,12 @@ def saveTempFile(content, filename=None):
 
     filename = os.path.join(tempfile.gettempdir(), filename)
 
-    with open(filename, 'w') as f:
-        f.write(content)
+    try:
+        with open(filename, 'w') as f:
+            f.write(content)
+    except Exception as e:
+        logger.error('Error saving temporary file %s: %s', filename, e)
+        raise
 
     logger.info('Returning filename')
     return filename
@@ -90,7 +94,8 @@ def readTempFile(filename):
     try:
         with open(filename, 'r') as f:
             return f.read()
-    except Exception:
+    except Exception as e:
+        logger.warning('Could not read file %s: %s', filename, e)
         return None
 
 
@@ -112,6 +117,7 @@ def findApp(appName, extraPath=None):
         fileName = os.path.join(path, appName)
         if os.path.isfile(fileName) and (os.stat(fileName).st_mode & stat.S_IXUSR) != 0:
             return fileName
+    logger.warning('Application %s not found on path %s', appName, searchPath)
     return None
 
 
@@ -182,5 +188,6 @@ def verifySignature(script, signature):
             base64.b64decode(signature), script, padding.PKCS1v15(), hashes.SHA256()
         )
     except Exception:  # InvalidSignature
+        logger.error('Invalid signature for UDS plugin code. Contact Administrator.')
         return False
     return True
