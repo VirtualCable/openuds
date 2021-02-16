@@ -54,9 +54,9 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# We have included a "hidden testing" for adding ip+mac as static machines list. 
+# We have included a "hidden testing" for adding ip+mac as static machines list.
 # (This is done using IP;MAC as IP on the IP list)
-# This is a test for WOL, and to be used at your risk. 
+# This is a test for WOL, and to be used at your risk.
 # Example:
 # WOLAPP = "/usr/sbin/etherwake {MAC} -i eth0 -b"
 # Remember that you MUST setuid /usr/sbin/etherwake (chmod +s ....) and allow only for uds user,
@@ -66,6 +66,7 @@ logger = logging.getLogger(__name__)
 #   {IP} will be replaced with the IP of the machine
 # If empty, no WOL will be tried NEVER, if not empty
 WOLAPP = ''
+
 
 class IPMachinesService(IPServiceBase):
     # Gui
@@ -252,11 +253,17 @@ class IPMachinesService(IPServiceBase):
                                     theIP, self._port
                                 ),
                             )
+                            logger.warning(
+                                'Static Machine check on %s:%s failed. Will be ignored for %s minutes.',
+                                theIP,
+                                self._port,
+                                self._skipTimeOnFailure,
+                            )
                             self.storage.remove(theIP)  # Return Machine to pool
                             self.cache.put(
                                 'port{}'.format(theIP),
                                 '1',
-                                validity=self.skipTimeOnFailure.num() * 60,
+                                validity=self._skipTimeOnFailure * 60,
                             )
                             continue
                     if theMAC:

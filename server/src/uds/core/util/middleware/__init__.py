@@ -63,7 +63,8 @@ class RedirectMiddleware:
         # For new paths
         # 'uds/rest',  # REST must be HTTPS if redirect is enabled
         'uds/pam',
-        'uds/guacamole'
+        'uds/guacamole',
+        'uds/rest/client/test'
     ]
 
     def __init__(self, get_response):

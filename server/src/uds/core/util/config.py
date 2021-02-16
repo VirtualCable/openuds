@@ -271,6 +271,7 @@ class GlobalConfig:
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time
     # (only if os manager asks for this characteristic)
     CHECK_UNUSED_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631', type=Config.NUMERIC_FIELD)  # Defaults to 10 minutes
+    CHECK_UNUSED_DELAY: Config.Value = Config.section(GLOBAL_SECTION).value('checkUnusedDelay', '300', type=Config.NUMERIC_FIELD)  # Defaults to 10 minutes
     # Default CSS Used: REMOVED! (keep the for for naw, for reference, but will be cleaned on future...)
     # CSS: Config.Value = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.TEXT_FIELD)
     # Max logins before blocking an account
