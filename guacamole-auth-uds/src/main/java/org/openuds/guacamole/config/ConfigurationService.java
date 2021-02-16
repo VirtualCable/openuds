@@ -52,7 +52,7 @@ public class ConfigurationService {
     /**
      * Logger for this class.
      */
-    private final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
+    /* private final Logger logger = LoggerFactory.getLogger(ConfigurationService.class); */
 
     /**
      * The name of the property within guacamole.properties which defines the
@@ -72,62 +72,6 @@ public class ConfigurationService {
      */
     @Inject
     private Environment environment;
-
-    /**
-     * Parses the contents of the given file, reading the URI of the OpenUDS
-     * service contained therein. The file is expected to define this URI on
-     * the first line, and only the first line is read.
-     *
-     * @param udsFile
-     *     The file from which the URI of the OpenUDS service should be read.
-     *
-     * @return
-     *     The URI of the OpenUDS service.
-     *
-     * @throws GuacamoleException
-     *     If the file could not be opened or read for any reason, or if the
-     *     line read from the file is not a valid URI.
-     */
-    private URI readServiceURI(String udsFile) throws GuacamoleException {
-
-        // Open UDS file
-        BufferedReader input;
-        try {
-            input = new BufferedReader(new FileReader(udsFile));
-        }
-        catch (IOException e) {
-            throw new GuacamoleServerException("Failed to open UDS file.", e);
-        }
-
-        // Parse the first line (and only the first line) assuming it contains
-        // the URL of the OpenUDS service
-        try {
-            return new URI(input.readLine());
-        }
-
-        // Rethrow general failure to read from the file
-        catch (IOException e) {
-            throw new GuacamoleServerException("Failed to read UDS service URI from file.", e);
-        }
-
-        // Rethrow failure to parse the URL
-        catch (URISyntaxException e) {
-            throw new GuacamoleServerException("Failed to parse UDS service URI from file.", e);
-        }
-
-        // Always close the file
-        finally {
-
-            try {
-                input.close();
-            }
-            catch (IOException e) {
-                logger.warn("Closure of OpenUDS file failed. Resource may leak.", e);
-            }
-
-        }
-
-    }
 
     /**
      * Returns the base URI of the OpenUDS service. All services providing data
