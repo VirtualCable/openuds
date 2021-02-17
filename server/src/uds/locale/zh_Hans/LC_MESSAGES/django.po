@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-15 13:51+0100\n"
+"POT-Creation-Date: 2021-02-17 16:00+0100\n"
 "PO-Revision-Date: 2020-09-03 13:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -5066,28 +5066,44 @@ msgstr ""
 "HTML5客户端从UDS Broker重新加载数据的允许时间（以秒为单位）。建议使用默认值"
 "60。"
 
-#: transports/HTML5RDP/html5rdp.py:135
-#: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/HTML5VNC/html5vnc.py:118 transports/URL/url_custom.py:74
+#: transports/HTML5RDP/html5rdp.py:137
+#: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/HTML5VNC/html5vnc.py:119 transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr "强制新的HTML窗口"
 
-#: transports/HTML5RDP/html5rdp.py:137
-#: transports/HTML5RDS_enterprise/html5rds.py:139
-#: transports/HTML5VNC/html5vnc.py:120 transports/URL/url_custom.py:76
-msgid ""
-"If checked, every connection will try to open its own window instead of "
-"reusing the \"global\" one."
-msgstr "如果选中，则每个连接都将尝试打开自己的窗口，而不是重用“全局”窗口。"
+#: transports/HTML5RDP/html5rdp.py:138
+#: transports/HTML5RDS_enterprise/html5rds.py:140
+#: transports/HTML5VNC/html5vnc.py:120
+msgid "Select windows behavior for new connections on HTML5"
+msgstr "选择Windows行为以获取HTML5上的新连接"
 
-#: transports/HTML5RDP/html5rdp.py:148
-#: transports/HTML5RDS_enterprise/html5rds.py:149
-#: transports/HTML5VNC/html5vnc.py:131
+#: transports/HTML5RDP/html5rdp.py:141
+#: transports/HTML5RDS_enterprise/html5rds.py:143
+#: transports/HTML5VNC/html5vnc.py:123
+msgid "Open every connection on the same window, but keeps UDS window."
+msgstr "在同一窗口中打开每个连接，但保留UDS窗口。"
+
+#: transports/HTML5RDP/html5rdp.py:142
+#: transports/HTML5RDS_enterprise/html5rds.py:144
+#: transports/HTML5VNC/html5vnc.py:124
+msgid "Force every connection to be opened on a new window."
+msgstr "强制在新窗口中打开每个连接。"
+
+#: transports/HTML5RDP/html5rdp.py:143
+#: transports/HTML5RDS_enterprise/html5rds.py:145
+#: transports/HTML5VNC/html5vnc.py:125
+msgid "Override UDS window and replace it with the connection."
+msgstr "覆盖UDS窗口并将其替换为连接。"
+
+#: transports/HTML5RDP/html5rdp.py:155
+#: transports/HTML5RDS_enterprise/html5rds.py:156
+#: transports/HTML5VNC/html5vnc.py:137
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
-#: transports/HTML5RDP/html5rdp.py:150
-#: transports/HTML5RDS_enterprise/html5rds.py:151
+#: transports/HTML5RDP/html5rdp.py:157
+#: transports/HTML5RDS_enterprise/html5rds.py:158
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5651,6 +5667,12 @@ msgstr "网址格式"
 msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr "要打开的网址格式（即https：// _ IP_ / test？user = _USER_"
 
+#: transports/URL/url_custom.py:76
+msgid ""
+"If checked, every connection will try to open its own window instead of "
+"reusing the \"global\" one."
+msgstr "如果选中，则每个连接都将尝试打开自己的窗口，而不是重用“全局”窗口。"
+
 #: transports/URL/url_custom.py:86
 msgid "The url must be http or https"
 msgstr "网址必须是http或https"
@@ -5741,47 +5763,47 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:140
+#: web/util/configjs.py:143
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:179
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:180
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:181
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
 msgid "(requires Python-3.6 or newer)"
 msgstr "（需要Python-3.6或更高版本）"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:182
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "基于RPM的Linux客户端（Fedora，Suse等）"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:183
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:184
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "基于旧版Debian的Python 2.7 Linux客户端"
 
-#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+#: web/util/configjs.py:184 web/util/configjs.py:185 web/util/configjs.py:186
 msgid "(requires outdated Python-2.7)"
 msgstr "（要求使用过时的Python-2.7）"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:185
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "基于旧式RH的Linux客户端（Fedora，Centos，Suse等）"
 
-#: web/util/configjs.py:183
+#: web/util/configjs.py:186
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "基于旧版OpenSuse的Linux客户端）"
 
@@ -5846,7 +5868,7 @@ msgid ""
 "Reloading this page is not supported. Please, reopen service from origin."
 msgstr "不支持重新加载此页面。请从原点重新开始服务。"
 
-#: web/util/services.py:199
+#: web/util/services.py:201
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."

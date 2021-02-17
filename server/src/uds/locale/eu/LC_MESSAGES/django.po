@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-15 13:51+0100\n"
+"POT-Creation-Date: 2021-02-17 16:00+0100\n"
 "PO-Revision-Date: 2020-11-12 11:34+0000\n"
 "Last-Translator: Lanmedia Comunicaciones <jetxaniz@lanmedia.es>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -5274,30 +5274,44 @@ msgstr ""
 "Onartutako denbora, segundotan, HTML5 bezeroarentzako UDS Broker datuen "
 "birkargatzeko. 60 balio lehenetsia gomendatzen da."
 
-#: transports/HTML5RDP/html5rdp.py:135
-#: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/HTML5VNC/html5vnc.py:118 transports/URL/url_custom.py:74
+#: transports/HTML5RDP/html5rdp.py:137
+#: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/HTML5VNC/html5vnc.py:119 transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr "HTML leiho berria behartu"
 
-#: transports/HTML5RDP/html5rdp.py:137
-#: transports/HTML5RDS_enterprise/html5rds.py:139
-#: transports/HTML5VNC/html5vnc.py:120 transports/URL/url_custom.py:76
-msgid ""
-"If checked, every connection will try to open its own window instead of "
-"reusing the \"global\" one."
-msgstr ""
-"Hautatuta badago, konexio bakoitza bere leihoa irekitzen saiatuko da "
-"\"globala\" berrerabiltzen ordez."
+#: transports/HTML5RDP/html5rdp.py:138
+#: transports/HTML5RDS_enterprise/html5rds.py:140
+#: transports/HTML5VNC/html5vnc.py:120
+msgid "Select windows behavior for new connections on HTML5"
+msgstr "Aukeratu leihoen portaera HTML5 konexio berrietarako"
 
-#: transports/HTML5RDP/html5rdp.py:148
-#: transports/HTML5RDS_enterprise/html5rds.py:149
-#: transports/HTML5VNC/html5vnc.py:131
+#: transports/HTML5RDP/html5rdp.py:141
+#: transports/HTML5RDS_enterprise/html5rds.py:143
+#: transports/HTML5VNC/html5vnc.py:123
+msgid "Open every connection on the same window, but keeps UDS window."
+msgstr "Ireki leiho berean konexio guztiak, baina UDS leihoa mantentzen du."
+
+#: transports/HTML5RDP/html5rdp.py:142
+#: transports/HTML5RDS_enterprise/html5rds.py:144
+#: transports/HTML5VNC/html5vnc.py:124
+msgid "Force every connection to be opened on a new window."
+msgstr "Behartu konexio guztiak leiho berri batean irekitzera."
+
+#: transports/HTML5RDP/html5rdp.py:143
+#: transports/HTML5RDS_enterprise/html5rds.py:145
+#: transports/HTML5VNC/html5vnc.py:125
+msgid "Override UDS window and replace it with the connection."
+msgstr "Gainidatzi UDS leihoa eta ordeztu konexioarekin."
+
+#: transports/HTML5RDP/html5rdp.py:155
+#: transports/HTML5RDS_enterprise/html5rds.py:156
+#: transports/HTML5VNC/html5vnc.py:137
 msgid "The server must be http or https"
 msgstr "Zerbitzariak http edo https izan behar du"
 
-#: transports/HTML5RDP/html5rdp.py:150
-#: transports/HTML5RDS_enterprise/html5rds.py:151
+#: transports/HTML5RDP/html5rdp.py:157
+#: transports/HTML5RDS_enterprise/html5rds.py:158
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5893,6 +5907,14 @@ msgstr "URL eredua"
 msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr "URLaren eredua (hau da, https: // _ IP_ / test? User = _USER_)"
 
+#: transports/URL/url_custom.py:76
+msgid ""
+"If checked, every connection will try to open its own window instead of "
+"reusing the \"global\" one."
+msgstr ""
+"Hautatuta badago, konexio bakoitza bere leihoa irekitzen saiatuko da "
+"\"globala\" berrerabiltzen ordez."
+
 #: transports/URL/url_custom.py:86
 msgid "The url must be http or https"
 msgstr "URLak http edo https izan behar du"
@@ -5985,47 +6007,47 @@ msgstr "Autentifikazio errore gehiegi. Erabiltzailea aldi baterako blokeatu da"
 msgid "Invalid data"
 msgstr "Datu baliogabeak"
 
-#: web/util/configjs.py:140
+#: web/util/configjs.py:143
 msgid "Access limited by calendar"
 msgstr "Sarbidea egutegian mugatua"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:179
 msgid "Windows client"
 msgstr "Windows bezeroa"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:180
 msgid "Mac OS X client"
 msgstr "Mac OS X bezeroa"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:181
 msgid "Debian based Linux client"
 msgstr "Debian oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
 msgid "(requires Python-3.6 or newer)"
 msgstr "(Python-3.6 edo berriagoa behar du)"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:182
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "RPM oinarritutako Linux bezeroa (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:183
 msgid "Generic .tar.gz Linux client"
 msgstr "Generic .tar.gz Linux bezeroa"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:184
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Debian oinarritutako Python 2.7 Linux bezeroa"
 
-#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+#: web/util/configjs.py:184 web/util/configjs.py:185 web/util/configjs.py:186
 msgid "(requires outdated Python-2.7)"
 msgstr "(zaharkituta dago Python-2.7)"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:185
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Legacy RH oinarritutako Linux bezeroa (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:183
+#: web/util/configjs.py:186
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Legacy OpenSuse oinarritutako Linux bezeroa)"
 
@@ -6094,7 +6116,7 @@ msgstr ""
 "Orrialde hau berriro kargatzen ez da onartzen. Mesedez, berriro ireki "
 "zerbitzua jatorrian."
 
-#: web/util/services.py:199
+#: web/util/services.py:201
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
