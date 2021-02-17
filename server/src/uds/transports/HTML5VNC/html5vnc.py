@@ -114,10 +114,16 @@ class HTML5VNCTransport(transports.Transport):
         minValue=60,
         tab=gui.ADVANCED_TAB
     )
-    forceNewWindow = gui.CheckBoxField(
-        label=_('Force new HTML Window'),
+    forceNewWindow = gui.ChoiceField(
         order=91,
-        tooltip=_('If checked, every connection will try to open its own window instead of reusing the "global" one.'),
+        label=_('Force new HTML Window'),
+        tooltip=_('Select windows behavior for new connections on HTML5'),
+        required=True,
+        values=[
+            gui.choiceItem(gui.FALSE, _('Open every connection on the same window, but keeps UDS window.')),
+            gui.choiceItem(gui.TRUE, _('Force every connection to be opened on a new window.')),
+            gui.choiceItem('overwrite', _('Override UDS window and replace it with the connection.')),
+        ],
         defvalue=gui.FALSE,
         tab=gui.ADVANCED_TAB
     )

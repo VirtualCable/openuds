@@ -243,8 +243,8 @@ class HTML5RDPTransport(transports.Transport):
         minValue=60,
         tab=gui.ADVANCED_TAB,
     )
-    forceNewWindow = gui.CheckBoxField(
-        label=_('Force new HTML Window'),
+
+    forceNewWindow = gui.ChoiceField(
         order=91,
         tooltip=_(
             'If checked, every connection will try to open its own window instead of reusing the "global" one.'
