@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-15 13:51+0100\n"
+"POT-Creation-Date: 2021-02-17 16:00+0100\n"
 "PO-Revision-Date: 2020-09-03 13:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -5181,30 +5181,44 @@ msgstr ""
 "يسمح الوقت، بالثواني، للعميل HTML5 لإعادة تحميل البيانات من \"وسيط مصغراً\". "
 "ويوصي بالقيمة الافتراضية ل 60."
 
-#: transports/HTML5RDP/html5rdp.py:135
-#: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/HTML5VNC/html5vnc.py:118 transports/URL/url_custom.py:74
+#: transports/HTML5RDP/html5rdp.py:137
+#: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/HTML5VNC/html5vnc.py:119 transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr "فرض نافذة HTML جديدة"
 
-#: transports/HTML5RDP/html5rdp.py:137
-#: transports/HTML5RDS_enterprise/html5rds.py:139
-#: transports/HTML5VNC/html5vnc.py:120 transports/URL/url_custom.py:76
-msgid ""
-"If checked, every connection will try to open its own window instead of "
-"reusing the \"global\" one."
-msgstr ""
-"إذا تم تحديده ، فسيحاول كل اتصال فتح نافذته الخاصة بدلاً من إعادة استخدام "
-"النافذة \"العامة\"."
+#: transports/HTML5RDP/html5rdp.py:138
+#: transports/HTML5RDS_enterprise/html5rds.py:140
+#: transports/HTML5VNC/html5vnc.py:120
+msgid "Select windows behavior for new connections on HTML5"
+msgstr "حدد سلوك النوافذ للاتصالات الجديدة على HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:148
-#: transports/HTML5RDS_enterprise/html5rds.py:149
-#: transports/HTML5VNC/html5vnc.py:131
+#: transports/HTML5RDP/html5rdp.py:141
+#: transports/HTML5RDS_enterprise/html5rds.py:143
+#: transports/HTML5VNC/html5vnc.py:123
+msgid "Open every connection on the same window, but keeps UDS window."
+msgstr "افتح كل اتصال في نفس النافذة ، ولكن مع الاحتفاظ بنافذة UDS."
+
+#: transports/HTML5RDP/html5rdp.py:142
+#: transports/HTML5RDS_enterprise/html5rds.py:144
+#: transports/HTML5VNC/html5vnc.py:124
+msgid "Force every connection to be opened on a new window."
+msgstr "فرض كل اتصال ليتم فتحه في نافذة جديدة."
+
+#: transports/HTML5RDP/html5rdp.py:143
+#: transports/HTML5RDS_enterprise/html5rds.py:145
+#: transports/HTML5VNC/html5vnc.py:125
+msgid "Override UDS window and replace it with the connection."
+msgstr "تجاوز نافذة UDS واستبدلها بالاتصال."
+
+#: transports/HTML5RDP/html5rdp.py:155
+#: transports/HTML5RDS_enterprise/html5rds.py:156
+#: transports/HTML5VNC/html5vnc.py:137
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
-#: transports/HTML5RDP/html5rdp.py:150
-#: transports/HTML5RDS_enterprise/html5rds.py:151
+#: transports/HTML5RDP/html5rdp.py:157
+#: transports/HTML5RDS_enterprise/html5rds.py:158
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5778,6 +5792,14 @@ msgstr "نمط عنوان URL"
 msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr "نمط عنوان URL المراد فتحه (أي https: // _ IP_ / test؟ user = _USER_"
 
+#: transports/URL/url_custom.py:76
+msgid ""
+"If checked, every connection will try to open its own window instead of "
+"reusing the \"global\" one."
+msgstr ""
+"إذا تم تحديده ، فسيحاول كل اتصال فتح نافذته الخاصة بدلاً من إعادة استخدام "
+"النافذة \"العامة\"."
+
 #: transports/URL/url_custom.py:86
 msgid "The url must be http or https"
 msgstr "يجب أن يكون عنوان URL http أو https"
@@ -5870,47 +5892,47 @@ msgstr "الكثير من أخطاء التوثيق. المستخدم محظور
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
-#: web/util/configjs.py:140
+#: web/util/configjs.py:143
 msgid "Access limited by calendar"
 msgstr "وصول محدود بسبب الجدول الزمني."
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:179
 msgid "Windows client"
 msgstr "عميل ويندوز"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:180
 msgid "Mac OS X client"
 msgstr "عميل Mac OS X"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:181
 msgid "Debian based Linux client"
 msgstr "ديبين لينكس على أساس العميل"
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
 msgid "(requires Python-3.6 or newer)"
 msgstr "(يتطلب Python-3.6 أو أحدث)"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:182
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "عميل Linux القائم على RPM (Fedora ، Suse ، ...)"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:183
 msgid "Generic .tar.gz Linux client"
 msgstr "عام .tar.gz عميل لينكس"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:184
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "عميل Linux تراث دبيان القديم القائم على Python 2.7"
 
-#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+#: web/util/configjs.py:184 web/util/configjs.py:185 web/util/configjs.py:186
 msgid "(requires outdated Python-2.7)"
 msgstr "(يتطلب قديم Python-2.7)"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:185
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "عميل Linux القائم على Legacy RH (Fedora ، Centos ، Suse ، ...)"
 
-#: web/util/configjs.py:183
+#: web/util/configjs.py:186
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "عميل Linux القائم على OpenSuse القديم)"
 
@@ -5978,7 +6000,7 @@ msgid ""
 msgstr ""
 "إعادة تحميل هذه الصفحة غير مدعومة. من فضلك ، إعادة فتح الخدمة من الأصل."
 
-#: web/util/services.py:199
+#: web/util/services.py:201
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."

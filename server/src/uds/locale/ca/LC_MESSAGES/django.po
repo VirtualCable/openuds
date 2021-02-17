@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-15 13:51+0100\n"
+"POT-Creation-Date: 2021-02-17 16:00+0100\n"
 "PO-Revision-Date: 2020-09-17 10:17+0000\n"
 "Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -5304,30 +5304,45 @@ msgstr ""
 "Temps permès, en segons, al client HTML5 per a recarregar dades del Broker "
 "UDS. Es recomana el valor predeterminat de 60."
 
-#: transports/HTML5RDP/html5rdp.py:135
-#: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/HTML5VNC/html5vnc.py:118 transports/URL/url_custom.py:74
+#: transports/HTML5RDP/html5rdp.py:137
+#: transports/HTML5RDS_enterprise/html5rds.py:139
+#: transports/HTML5VNC/html5vnc.py:119 transports/URL/url_custom.py:74
 msgid "Force new HTML Window"
 msgstr "Forçar una nova finestra HTML"
 
-#: transports/HTML5RDP/html5rdp.py:137
-#: transports/HTML5RDS_enterprise/html5rds.py:139
-#: transports/HTML5VNC/html5vnc.py:120 transports/URL/url_custom.py:76
-msgid ""
-"If checked, every connection will try to open its own window instead of "
-"reusing the \"global\" one."
-msgstr ""
-"Si està seleccionat, totes les connexions intentaran obrir la seva pròpia "
-"finestra en lloc de reutilitzar la \"global\"."
+#: transports/HTML5RDP/html5rdp.py:138
+#: transports/HTML5RDS_enterprise/html5rds.py:140
+#: transports/HTML5VNC/html5vnc.py:120
+msgid "Select windows behavior for new connections on HTML5"
+msgstr "Seleccioneu el comportament de Windows per a noves connexions a HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:148
-#: transports/HTML5RDS_enterprise/html5rds.py:149
-#: transports/HTML5VNC/html5vnc.py:131
+#: transports/HTML5RDP/html5rdp.py:141
+#: transports/HTML5RDS_enterprise/html5rds.py:143
+#: transports/HTML5VNC/html5vnc.py:123
+msgid "Open every connection on the same window, but keeps UDS window."
+msgstr ""
+"Obriu totes les connexions a la mateixa finestra, però manté la finestra UDS."
+
+#: transports/HTML5RDP/html5rdp.py:142
+#: transports/HTML5RDS_enterprise/html5rds.py:144
+#: transports/HTML5VNC/html5vnc.py:124
+msgid "Force every connection to be opened on a new window."
+msgstr "Força l&#39;obertura de totes les connexions en una finestra nova."
+
+#: transports/HTML5RDP/html5rdp.py:143
+#: transports/HTML5RDS_enterprise/html5rds.py:145
+#: transports/HTML5VNC/html5vnc.py:125
+msgid "Override UDS window and replace it with the connection."
+msgstr "Substitueix la finestra UDS i substitueix-la per la connexió."
+
+#: transports/HTML5RDP/html5rdp.py:155
+#: transports/HTML5RDS_enterprise/html5rds.py:156
+#: transports/HTML5VNC/html5vnc.py:137
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
 
-#: transports/HTML5RDP/html5rdp.py:150
-#: transports/HTML5RDS_enterprise/html5rds.py:151
+#: transports/HTML5RDP/html5rdp.py:157
+#: transports/HTML5RDS_enterprise/html5rds.py:158
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5930,6 +5945,14 @@ msgstr "Patró d’URL"
 msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr "Patró d’URL per obrir (és a dir, https: // _ IP_ / test? User = _USER_"
 
+#: transports/URL/url_custom.py:76
+msgid ""
+"If checked, every connection will try to open its own window instead of "
+"reusing the \"global\" one."
+msgstr ""
+"Si està seleccionat, totes les connexions intentaran obrir la seva pròpia "
+"finestra en lloc de reutilitzar la \"global\"."
+
 #: transports/URL/url_custom.py:86
 msgid "The url must be http or https"
 msgstr "L’url ha de ser http o https"
@@ -6024,47 +6047,47 @@ msgstr "Excés d'errors d'autenticació. Usuari bloquejat temporalment"
 msgid "Invalid data"
 msgstr "Dades no vàlides"
 
-#: web/util/configjs.py:140
+#: web/util/configjs.py:143
 msgid "Access limited by calendar"
 msgstr "Accés limitat per calendari"
 
-#: web/util/configjs.py:176
+#: web/util/configjs.py:179
 msgid "Windows client"
 msgstr "Client Windows"
 
-#: web/util/configjs.py:177
+#: web/util/configjs.py:180
 msgid "Mac OS X client"
 msgstr "Client MacOS X"
 
-#: web/util/configjs.py:178
+#: web/util/configjs.py:181
 msgid "Debian based Linux client"
 msgstr "Client Linux basat en Debian"
 
-#: web/util/configjs.py:178 web/util/configjs.py:179 web/util/configjs.py:180
+#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requereix Python-3.6 o més recent)"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:182
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Client de Linux basat en RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:183
 msgid "Generic .tar.gz Linux client"
 msgstr " Client Linux genèric .tar.gz"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:184
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Client de Linux basat en Debian heretat de Python 2.7"
 
-#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+#: web/util/configjs.py:184 web/util/configjs.py:185 web/util/configjs.py:186
 msgid "(requires outdated Python-2.7)"
 msgstr "(requereix Python-2.7 desactualitzat)"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:185
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Client de Linux basat en Legacy RH (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:183
+#: web/util/configjs.py:186
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Client de Linux basat en Legacy OpenSuse)"
 
@@ -6139,7 +6162,7 @@ msgstr ""
 "No es pot recarregar aquesta pàgina. Si us plau, torneu a obrir el servei "
 "des de l'origen."
 
-#: web/util/services.py:199
+#: web/util/services.py:201
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
