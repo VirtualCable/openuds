@@ -123,7 +123,7 @@ class RDPFile:
             params.append('/video')
 
         if self.redirectDrives != 'false':
-            if self.target == OsDetector.Linux:
+            if self.target in (OsDetector.Linux, OsDetector.Macintosh):
                 params.append('/drive:home,$HOME')
             else:
                 params.append('/drive:Users,/Users')

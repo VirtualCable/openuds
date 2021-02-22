@@ -85,7 +85,7 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
         if ';' in self._ip:  # Only try wakeup if mac is present
-            ip, mac = self._ip.split(';')[0:1]
+            ip, mac = self._ip.split('~')[0].split(';')[0:2]
             self.service().wakeup(ip, mac)
         self._state = State.FINISHED
         return self._state

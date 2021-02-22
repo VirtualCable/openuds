@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import subprocess
 import shutil
 import os
+import os.path
 
 from uds import tools  # type: ignore
 
@@ -21,7 +22,7 @@ def fixResolution():
     import subprocess
     results = str(subprocess.Popen(['system_profiler SPDisplaysDataType'],stdout=subprocess.PIPE, shell=True).communicate()[0])
     res = re.search(r': \d* x \d*', results).group(0).split(' ')
-    width, height = str(int(res[1])-4), str(int(int(res[3])-128))  # Width and Height
+    width, height = str(int(res[1])-4), str(int(int(res[3])*90/100))  # Width and Height
     return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
 # Check first xfreerdp, allow password redir
@@ -77,6 +78,6 @@ elif executable == xfreerdp:
     except Exception as e:
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
-    params = [executable] + xfparms + ['/v:{}'.format(sp['address'])]  # type: ignore
+    params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
     subprocess.Popen(params)
 
