@@ -261,7 +261,7 @@ class OpenGnsysClient:
         errMsg = 'Powering on client {} in lab {} in ou {}'.format(client, lab, ou)
         try:
             data = {
-                'imageid': image,
+                'image': image,
             }
             return self._post(
                 urls.START.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
