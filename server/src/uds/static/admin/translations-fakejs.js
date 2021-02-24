@@ -23,6 +23,7 @@ gettext("Main");
 gettext("Cache flushed");
 gettext("dismiss");
 gettext("seconds");
+gettext("Test");
 gettext("Loading data...");
 gettext("dismiss");
 gettext("Error");

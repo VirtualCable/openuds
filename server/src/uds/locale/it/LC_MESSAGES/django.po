@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-17 16:00+0100\n"
-"PO-Revision-Date: 2020-09-03 13:47+0000\n"
+"POT-Creation-Date: 2021-02-24 15:15+0100\n"
+"PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -1194,7 +1194,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:338
 #: auths/ActiveDirectory_enterprise/authenticator.py:387
-#: auths/AzureAD_enterprise/azure_ad.py:225
+#: auths/AzureAD_enterprise/azure_ad.py:228
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
 #: auths/RegexLdap/authenticator.py:351 auths/RegexLdap/authenticator.py:382
@@ -1283,17 +1283,17 @@ msgstr "Callback"
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr "Callback URL (compilato da UDS, cambiare solo se necessario!!!)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:237
-#: auths/AzureAD_enterprise/azure_ad.py:261
-#: auths/AzureAD_enterprise/azure_ad.py:273
+#: auths/AzureAD_enterprise/azure_ad.py:240
+#: auths/AzureAD_enterprise/azure_ad.py:264
+#: auths/AzureAD_enterprise/azure_ad.py:276
 msgid "Authenticator exception:"
 msgstr "Eccezione dell'autenticatore:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:308 core/util/ldaputil.py:48
+#: auths/AzureAD_enterprise/azure_ad.py:311 core/util/ldaputil.py:48
 msgid "Connection error: "
 msgstr "Errore di connessione:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:309
+#: auths/AzureAD_enterprise/azure_ad.py:312
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr ""
 "I parametri di connessione sembrano corretti, il test è stato eseguito "
@@ -3231,7 +3231,7 @@ msgid "Connection test successful"
 msgstr "Test di connessione riuscito"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
-#: services/Nutanix_enterprise/provider.py:216 services/OVirt/provider.py:457
+#: services/Nutanix_enterprise/provider.py:228 services/OVirt/provider.py:457
 #: services/Proxmox/provider.py:207 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "Connessione fallita. Controllare i parametri di connessione"
@@ -3469,7 +3469,7 @@ msgstr "Timeout in secondi per la connessione a Nutanix"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Intervallo di mac validi per le VM gestite da UDS"
 
-#: services/Nutanix_enterprise/provider.py:214
+#: services/Nutanix_enterprise/provider.py:226
 msgid "Connection works fine"
 msgstr "La connessione funziona correttamente"
 
@@ -5313,7 +5313,8 @@ msgstr "Forza nuova finestra HTML"
 #: transports/HTML5RDS_enterprise/html5rds.py:140
 #: transports/HTML5VNC/html5vnc.py:120
 msgid "Select windows behavior for new connections on HTML5"
-msgstr "Seleziona il comportamento di Windows per le nuove connessioni su HTML5"
+msgstr ""
+"Seleziona il comportamento di Windows per le nuove connessioni su HTML5"
 
 #: transports/HTML5RDP/html5rdp.py:141
 #: transports/HTML5RDS_enterprise/html5rds.py:143
