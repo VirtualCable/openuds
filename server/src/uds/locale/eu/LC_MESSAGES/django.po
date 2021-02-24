@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-17 16:00+0100\n"
-"PO-Revision-Date: 2020-11-12 11:34+0000\n"
-"Last-Translator: Lanmedia Comunicaciones <jetxaniz@lanmedia.es>\n"
+"POT-Creation-Date: 2021-02-24 15:15+0100\n"
+"PO-Revision-Date: 2021-02-17 15:01+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
 "Language: eu\n"
@@ -1183,7 +1183,7 @@ msgstr "Erabiltzailea USERNAME@DOMAIN.DOM formatuan jarri behar da "
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:338
 #: auths/ActiveDirectory_enterprise/authenticator.py:387
-#: auths/AzureAD_enterprise/azure_ad.py:225
+#: auths/AzureAD_enterprise/azure_ad.py:228
 #: auths/EDirectory_enterprise/authenticator.py:196
 #: auths/EDirectory_enterprise/authenticator.py:227
 #: auths/RegexLdap/authenticator.py:351 auths/RegexLdap/authenticator.py:382
@@ -1275,17 +1275,17 @@ msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr ""
 "Dei-erantzunaren URLa (UDS-k beteta, konpondu hau beharrezkoa bada bakarrik!)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:237
-#: auths/AzureAD_enterprise/azure_ad.py:261
-#: auths/AzureAD_enterprise/azure_ad.py:273
+#: auths/AzureAD_enterprise/azure_ad.py:240
+#: auths/AzureAD_enterprise/azure_ad.py:264
+#: auths/AzureAD_enterprise/azure_ad.py:276
 msgid "Authenticator exception:"
 msgstr "Autentikatzaile salbuespena:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:308 core/util/ldaputil.py:48
+#: auths/AzureAD_enterprise/azure_ad.py:311 core/util/ldaputil.py:48
 msgid "Connection error: "
 msgstr "Konexioaren errorea:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:309
+#: auths/AzureAD_enterprise/azure_ad.py:312
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "Konexioaren parametak zuzena dirudi, proba ondo exekutatu da"
 
@@ -3207,7 +3207,7 @@ msgid "Connection test successful"
 msgstr "Konexioaren proba arrakastatsua"
 
 #: services/HyperV_enterprise/legacy/provider.py:268
-#: services/Nutanix_enterprise/provider.py:216 services/OVirt/provider.py:457
+#: services/Nutanix_enterprise/provider.py:228 services/OVirt/provider.py:457
 #: services/Proxmox/provider.py:207 services/Vmware_enterprise/provider.py:178
 msgid "Connection failed. Check connection params"
 msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
@@ -3445,7 +3445,7 @@ msgstr "Denbora-muga Nutanix-en konexioaren segundotan"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "UDS kudeatutako makinen baliozko makinak"
 
-#: services/Nutanix_enterprise/provider.py:214
+#: services/Nutanix_enterprise/provider.py:226
 msgid "Connection works fine"
 msgstr "Konexioa ondo funtzionatzen du"
 
