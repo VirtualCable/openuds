@@ -34,6 +34,7 @@ import sys
 import os
 import re
 import datetime
+import unicodedata
 import typing
 
 from django.utils import formats
@@ -167,3 +168,6 @@ def checkValidBasename(baseName: str, length: int = -1) -> None:
 
     if baseName.isdigit():
         raise services.Service.ValidationException(ugettext('The machine name can\'t be only numbers'))
+
+def removeControlCharacters(s: str) -> str:
+    return ''.join(ch for ch in s if unicodedata.category(ch)[0]!="C")
