@@ -37,9 +37,11 @@ import typing
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 
+from uds.models import getSqlDatetimeAsUnix
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util import connection
+from uds.core.util import config
 from uds.core.services import types as serviceTypes
 
 from .deployment import IPMachineDeployed
@@ -101,18 +103,13 @@ class IPMachinesService(IPServiceBase):
             self._ips = []
         else:
             self._ips = ['{}~{}'.format(str(ip).strip(), i) for i, ip in enumerate(values['ipList']) if str(ip).strip()]  # Allow duplicates right now
-            active = {v for v in values['ipList']}
-            # self._ips.sort()
-            # Remove non existing "locked" ips from storage now
-            skipKey = self.storage.getKey('ips')
+            # Current stored data, if it exists
+            d = self.storage.readData('ips')
+            old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []
             with transaction.atomic():
-                for key, data, _ in self.storage.filter(forUpdate=True):
-                    if key == skipKey: # Avoid "ips" key
-                        continue
-                    # If not in current active list of ips, remove it
-                    if data.decode() not in active:
-                        logger.info('IP %s locked but not in active list. Removed', data.decode())
-                        self.storage.remove(data.decode())
+                for old in old_ips:
+                    if old not in self._ips:
+                        self.storage.remove(old.split('~')[0])
 
         self._token = self.token.value.strip()
         self._port = self.port.value
@@ -153,12 +150,15 @@ class IPMachinesService(IPServiceBase):
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
         try:
+            now = getSqlDatetimeAsUnix()
+            consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 24
             for ip in self._ips:
                 theIP = ip.split('~')[0]
-                if self.storage.readData(theIP) is None:
+                locked = self.storage.getPickle(theIP)
+                if not locked or locked < consideredFreeTime:
                     if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
-                    self.storage.saveData(theIP, theIP)
+                    self.storage.putPickle(theIP, now)
                     # Now, check if it is available on port, if required...
                     if self._port > 0:
                         if connection.testServer(theIP, self._port, timeOut=0.5) is False:
