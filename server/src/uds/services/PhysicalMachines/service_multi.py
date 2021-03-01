@@ -133,21 +133,14 @@ class IPMachinesService(IPServiceBase):
                 for i, ip in enumerate(values['ipList'])
                 if str(ip).strip()
             ]  # Allow duplicates right now
-            active = {IPServiceBase.getIp(v) for v in values['ipList']}
-            # self._ips.sort()
-            # Remove non existing "locked" ips from storage now
-            skipKey = self.storage.getKey('ips')
+            # Current stored data, if it exists
+            d = self.storage.readData('ips')
+            old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []
+            # dissapeared ones
+            dissapeared = set(old_ips) - set(self._ips)
             with transaction.atomic():
-                for key, data, _ in self.storage.filter(forUpdate=True):
-                    if key == skipKey:  # Avoid "ips" key
-                        continue
-                    # If not in current active list of ips, remove it
-                    if data.decode() not in active:
-                        logger.info(
-                            'IP %s locked but not in active list. Removed',
-                            data.decode(),
-                        )
-                        self.storage.remove(data.decode())
+                for removable in dissapeared:
+                    self.storage.remove(removable.split('~')[0])
 
         self._token = self.token.value.strip()
         self._port = self.port.value
@@ -205,7 +198,8 @@ class IPMachinesService(IPServiceBase):
             for ip in self._ips:
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
-                if self.storage.readData(theIP) is None:
+                locked = self.storage.getPickle(theIP)
+                if not locked or locked < consideredFreeTime:
                     if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.putPickle(theIP, now)
