@@ -109,8 +109,8 @@ class IPMachinesService(IPServiceBase):
             # dissapeared ones
             dissapeared = set(old_ips) - set(self._ips)
             with transaction.atomic():
-                for old in dissapeared:
-                    self.storage.remove(old.split('~')[0])
+                for removable in dissapeared:
+                    self.storage.remove(removable.split('~')[0])
 
         self._token = self.token.value.strip()
         self._port = self.port.value
