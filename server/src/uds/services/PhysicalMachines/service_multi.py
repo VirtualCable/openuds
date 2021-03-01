@@ -87,7 +87,7 @@ class IPMachinesService(IPServiceBase):
     skipTimeOnFailure = gui.NumericField(
         length=6,
         label=_('Skip time'),
-        defvalue='15',
+        defvalue='0',
         order=2,
         tooltip=_('If a host fails to check, skip it for this time (in minutes).'),
         minValue=0,
@@ -225,11 +225,12 @@ class IPMachinesService(IPServiceBase):
                                 self._skipTimeOnFailure,
                             )
                             self.storage.remove(theIP)  # Return Machine to pool
-                            self.cache.put(
-                                'port{}'.format(theIP),
-                                '1',
-                                validity=self._skipTimeOnFailure * 60,
-                            )
+                            if self._skipTimeOnFailure > 0:
+                                self.cache.put(
+                                    'port{}'.format(theIP),
+                                    '1',
+                                    validity=self._skipTimeOnFailure * 60,
+                                )
                             continue
                     if theMAC:
                         return theIP + ';' + theMAC
