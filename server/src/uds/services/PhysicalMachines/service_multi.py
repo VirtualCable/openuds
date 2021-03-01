@@ -202,7 +202,7 @@ class IPMachinesService(IPServiceBase):
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
                 if self.storage.readData(theIP) is None:
-                    if self._port > 0 and self.cache.get('port{}'.format(theIP)):
+                    if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.saveData(theIP, theIP)
                     # Now, check if it is available on port, if required...
