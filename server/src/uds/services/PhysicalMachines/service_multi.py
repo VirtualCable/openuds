@@ -194,7 +194,7 @@ class IPMachinesService(IPServiceBase):
         # Search first unassigned machine
         try:
             now = getSqlDatetimeAsUnix()
-            consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 24
+            consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 3600
             for ip in self._ips:
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
