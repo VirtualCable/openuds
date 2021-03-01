@@ -1,13 +1,27 @@
 {% load i18n %}
 <html>
-    <head>
-        <script type="text/javascript">
+
+<head>
+    <!-- just in case translations cannot be loaded, provide a fallback -->
+    <script type="text/javascript">
+        django = {
+            gettext: function (s) {
+                return s;
+            }
+        }
+    </script>
+    <script type="text/javascript" src="{% url 'utility.jsCatalog' LANGUAGE_CODE %}"></script>
+    <script type="text/javascript" src="{% url 'utility-adm.js' %}"></script>
+
+    <script type="text/javascript">
         function onLoad() {
             var msg = window.btoa(django.gettext('Page not found'));
             window.location.href = "{% url 'page.error' 'param' %}".replace('param', msg);
         }
-        </script>
-    </head>
-    <body onload="onLoad()">
-    </body>
+    </script>
+</head>
+
+<body onload="onLoad()">
+</body>
+
 </html>
