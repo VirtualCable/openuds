@@ -69,7 +69,7 @@ class IPMachinesService(IPServiceBase):
     ipList = gui.EditableList(label=_('List of servers'), tooltip=_('List of servers available for this service'))
 
     port = gui.NumericField(length=5, label=_('Check Port'), defvalue='0', order=2, tooltip=_('If non zero, only hosts responding to connection on that port will be served.'), required=True, tab=gui.ADVANCED_TAB)
-    skipTimeOnFailure = gui.NumericField(length=6, label=_('Skip time'), defvalue='15', order=2, tooltip=_('If a host fails to check, skip it for this time (in minutes).'), minValue=0, required=True, tab=gui.ADVANCED_TAB)
+    skipTimeOnFailure = gui.NumericField(length=6, label=_('Skip time'), defvalue='0', order=2, tooltip=_('If a host fails to check, skip it for this time (in minutes).'), minValue=0, required=True, tab=gui.ADVANCED_TAB)
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -156,7 +156,7 @@ class IPMachinesService(IPServiceBase):
             for ip in self._ips:
                 theIP = ip.split('~')[0]
                 if self.storage.readData(theIP) is None:
-                    if self._port > 0 and self.cache.get('port{}'.format(theIP)):
+                    if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.saveData(theIP, theIP)
                     # Now, check if it is available on port, if required...
@@ -166,7 +166,9 @@ class IPMachinesService(IPServiceBase):
                             self.parent().doLog(log.WARN, 'Host {} not accesible on port {}'.format(theIP, self._port))
                             logger.warning('Static Machine check on %s:%s failed. Will be ignored for %s minutes.', theIP, self._port, self._skipTimeOnFailure)
                             self.storage.remove(theIP)  # Return Machine to pool
-                            self.cache.put('port{}'.format(theIP), '1', validity=self._skipTimeOnFailure*60)
+                            # Keep last check time
+                            if self._skipTimeOnFailure > 0:
+                                self.cache.put('port{}'.format(theIP), '1', validity=self._skipTimeOnFailure*60)
                             continue
                     return theIP
             return None
