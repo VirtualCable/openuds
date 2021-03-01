@@ -94,3 +94,16 @@ def useOldJoinSystem() -> bool:
         data = ''
 
     return data == 'old'
+
+def invokeScriptOnLogin() -> str:
+    try:
+        key = wreg.OpenKey(BASEKEY, PATH, 0, wreg.KEY_QUERY_VALUE)
+        try:
+            data, _ = wreg.QueryValueEx(key, 'logonScript')
+        except Exception:
+            data = ''
+        wreg.CloseKey(key)
+    except Exception:
+        data = ''
+
+    return data

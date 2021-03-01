@@ -100,3 +100,6 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
 
 def useOldJoinSystem() -> bool:
     return False
+
+def invokeScriptOnLogin() -> str:
+    return ''

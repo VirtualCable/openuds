@@ -434,6 +434,11 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 secret
             )
 
+        script = platform.store.invokeScriptOnLogin()
+        if script:
+            script += f'{username} {sessionType or "unknown"} {self._cfg.actorType}'
+            self.execute(script, 'Logon')
+
         return result
 
     def logout(self, username: str) -> None:
