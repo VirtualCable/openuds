@@ -152,7 +152,7 @@ class IPMachinesService(IPServiceBase):
         # Search first unassigned machine
         try:
             now = getSqlDatetimeAsUnix()
-            consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 24
+            consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 3600
             for ip in self._ips:
                 theIP = ip.split('~')[0]
                 locked = self.storage.getPickle(theIP)
