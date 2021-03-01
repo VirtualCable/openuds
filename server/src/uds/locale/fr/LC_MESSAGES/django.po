@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-24 15:15+0100\n"
+"POT-Creation-Date: 2021-03-01 11:43+0100\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -3253,7 +3253,7 @@ msgid "Connection failed. Check connection params"
 msgstr "La connexion a échoué. Vérifiez les paramètres de connexion"
 
 #: services/HyperV_enterprise/legacy/publication.py:96
-#: services/HyperV_enterprise/publication.py:98
+#: services/HyperV_enterprise/publication.py:100
 #: services/OVirt/publication.py:99 services/Xen/publication.py:80
 #, python-brace-format
 msgid "UDS pub for {0} at {1}"
@@ -5146,7 +5146,7 @@ msgid "Show wallpaper"
 msgstr "Afficher le papier peint"
 
 #: transports/HTML5RDP/html5rdp.py:79
-#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:129
+#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:137
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -5155,17 +5155,17 @@ msgstr ""
 "(meilleure expérience utilisateur, plus de bande passante)"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:131
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:139
 msgid "Allow Desk.Comp."
 msgstr "Autoriser Desk.Comp."
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:131
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:139
 msgid "If checked, desktop composition will be allowed"
 msgstr "Si cochée, la composition du bureau sera autorisée"
 
 #: transports/HTML5RDP/html5rdp.py:81
-#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:132
+#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:140
 #: transports/RDS_enterprise/rds_base.py:87
 msgid "Font Smoothing"
 msgstr "Lissage des polices"
@@ -5427,7 +5427,7 @@ msgstr "Port du serveur VNC"
 msgid "Port of the VNC server."
 msgstr "Port du serveur VNC."
 
-#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:116
+#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:124
 #: transports/RDS_enterprise/rds_base.py:74
 msgid "Color depth"
 msgstr "Profondeur de couleur"
@@ -5673,19 +5673,19 @@ msgstr "Taille de l'écran"
 msgid "Screen size for this transport"
 msgstr "Taille de l’écran pour ce type de transport"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:76
+#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:76
 msgid "Color depth for this connection"
 msgstr "Profondeur de couleur pour cette connexion"
 
-#: transports/RDP/rdp_base.py:129
+#: transports/RDP/rdp_base.py:137
 msgid "Wallpaper/theme"
 msgstr "Thème/fond d’écran"
 
-#: transports/RDP/rdp_base.py:130
+#: transports/RDP/rdp_base.py:138
 msgid "Multiple monitors"
 msgstr "Plusieurs moniteurs"
 
-#: transports/RDP/rdp_base.py:130
+#: transports/RDP/rdp_base.py:138
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -5693,75 +5693,75 @@ msgstr ""
 "Si cette case est cochée, tous les moniteurs clients seront utilisés pour "
 "l'affichage (ne fonctionne que sur les clients Windows)"
 
-#: transports/RDP/rdp_base.py:132
+#: transports/RDP/rdp_base.py:140
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Si coché, le lissage de polices pourront"
 
-#: transports/RDP/rdp_base.py:133
+#: transports/RDP/rdp_base.py:141
 msgid "Connection Bar"
 msgstr "Barre de connexion"
 
-#: transports/RDP/rdp_base.py:133
+#: transports/RDP/rdp_base.py:141
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Si cochée, barre de connexion s’affichera (uniquement sur les clients "
 "Windows)"
 
-#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:89
 msgid "Multimedia sync"
 msgstr "Sync Multimédia "
 
-#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:89
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "S’il est activé. Client Linux utilisera le paramètre multimédia pour xfreerdp"
 
-#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:144 transports/RDS_enterprise/rds_base.py:90
 msgid "Use Alsa"
 msgstr "Utiliser Alsa"
 
-#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:144 transports/RDS_enterprise/rds_base.py:90
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Si coché, le client Linux essayera d'utiliser ALSA, sinon, Pulse sera utilisé"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:91
 #: transports/X2GO/x2go_base.py:125
 msgid "Redirect home folder"
 msgstr "Rediriger le dossier home"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:91
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
 "Si cette case est cochée, le client Linux va essayer de rediriger / home "
 "local folder"
 
-#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:146 transports/RDS_enterprise/rds_base.py:92
 msgid "Printer string"
 msgstr "Chaîne de l’imprimante"
 
-#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:146 transports/RDS_enterprise/rds_base.py:92
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si l’imprimante est activée, la chaîne de l’imprimante sera utilisée avec "
 "xfreerdp client"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:93
+#: transports/RDP/rdp_base.py:147 transports/RDS_enterprise/rds_base.py:93
 msgid "Smartcard string"
 msgstr "Chaîne de carte à puce"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:93
+#: transports/RDP/rdp_base.py:147 transports/RDS_enterprise/rds_base.py:93
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si la carte à puce est cochée, la chaîne de carte à puce serautilisée avec "
 "xfreerdp client"
 
-#: transports/RDP/rdp_base.py:140 transports/RDS_enterprise/rds_base.py:94
+#: transports/RDP/rdp_base.py:148 transports/RDS_enterprise/rds_base.py:94
 msgid "Custom parameters"
 msgstr "Paramètres personnalisés"
 
-#: transports/RDP/rdp_base.py:140 transports/RDS_enterprise/rds_base.py:94
+#: transports/RDP/rdp_base.py:148 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"

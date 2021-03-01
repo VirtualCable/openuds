@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-24 15:15+0100\n"
+"POT-Creation-Date: 2021-03-01 11:43+0100\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -3109,7 +3109,7 @@ msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
 
 #: services/HyperV_enterprise/legacy/publication.py:96
-#: services/HyperV_enterprise/publication.py:98
+#: services/HyperV_enterprise/publication.py:100
 #: services/OVirt/publication.py:99 services/Xen/publication.py:80
 #, python-brace-format
 msgid "UDS pub for {0} at {1}"
@@ -4879,24 +4879,24 @@ msgid "Show wallpaper"
 msgstr "显示壁纸"
 
 #: transports/HTML5RDP/html5rdp.py:79
-#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:129
+#: transports/HTML5RDS_enterprise/html5rds.py:81 transports/RDP/rdp_base.py:137
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
 msgstr "如果选中，壁纸和主题将显示在机器上（更好的用户体验，更多带宽）"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:131
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:139
 msgid "Allow Desk.Comp."
 msgstr "允许Desk.Comp。"
 
 #: transports/HTML5RDP/html5rdp.py:80
-#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:131
+#: transports/HTML5RDS_enterprise/html5rds.py:82 transports/RDP/rdp_base.py:139
 msgid "If checked, desktop composition will be allowed"
 msgstr "如果选中，则允许桌面合成"
 
 #: transports/HTML5RDP/html5rdp.py:81
-#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:132
+#: transports/HTML5RDS_enterprise/html5rds.py:83 transports/RDP/rdp_base.py:140
 #: transports/RDS_enterprise/rds_base.py:87
 msgid "Font Smoothing"
 msgstr "字体平滑"
@@ -5143,7 +5143,7 @@ msgstr "VNC服务器端口"
 msgid "Port of the VNC server."
 msgstr "VNC服务器的端口。"
 
-#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:116
+#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:124
 #: transports/RDS_enterprise/rds_base.py:74
 msgid "Color depth"
 msgstr "颜色深度"
@@ -5377,83 +5377,83 @@ msgstr "屏幕尺寸"
 msgid "Screen size for this transport"
 msgstr "此运输的屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:76
+#: transports/RDP/rdp_base.py:126 transports/RDS_enterprise/rds_base.py:76
 msgid "Color depth for this connection"
 msgstr "此连接的颜色深度"
 
-#: transports/RDP/rdp_base.py:129
+#: transports/RDP/rdp_base.py:137
 msgid "Wallpaper/theme"
 msgstr "壁纸/主题"
 
-#: transports/RDP/rdp_base.py:130
+#: transports/RDP/rdp_base.py:138
 msgid "Multiple monitors"
 msgstr "多个显示器"
 
-#: transports/RDP/rdp_base.py:130
+#: transports/RDP/rdp_base.py:138
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr "如果选中，则将使用所有客户端监视器进行显示（仅适用于Windows客户端）"
 
-#: transports/RDP/rdp_base.py:132
+#: transports/RDP/rdp_base.py:140
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "如果选中，则允许字体平滑"
 
-#: transports/RDP/rdp_base.py:133
+#: transports/RDP/rdp_base.py:141
 msgid "Connection Bar"
 msgstr "连接栏"
 
-#: transports/RDP/rdp_base.py:133
+#: transports/RDP/rdp_base.py:141
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "如果选中，将显示连接栏（仅在Windows客户端上）"
 
-#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:89
 msgid "Multimedia sync"
 msgstr "多媒体同步"
 
-#: transports/RDP/rdp_base.py:135 transports/RDS_enterprise/rds_base.py:89
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:89
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr "如果选中。 Linux客户端将使用xfreerdp的多媒体参数"
 
-#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:144 transports/RDS_enterprise/rds_base.py:90
 msgid "Use Alsa"
 msgstr "使用Alsa"
 
-#: transports/RDP/rdp_base.py:136 transports/RDS_enterprise/rds_base.py:90
+#: transports/RDP/rdp_base.py:144 transports/RDS_enterprise/rds_base.py:90
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr "如果选中，Linux客户端将尝试使用ALSA，否则将使用Pulse"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:91
 #: transports/X2GO/x2go_base.py:125
 msgid "Redirect home folder"
 msgstr "重定向主文件夹"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:91
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr "如果选中，Linux客户端将尝试重定向/ home本地文件夹"
 
-#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:146 transports/RDS_enterprise/rds_base.py:92
 msgid "Printer string"
 msgstr "打印机字符串"
 
-#: transports/RDP/rdp_base.py:138 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:146 transports/RDS_enterprise/rds_base.py:92
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "如果选中打印机，则打印机字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:93
+#: transports/RDP/rdp_base.py:147 transports/RDS_enterprise/rds_base.py:93
 msgid "Smartcard string"
 msgstr "智能卡字符串"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:93
+#: transports/RDP/rdp_base.py:147 transports/RDS_enterprise/rds_base.py:93
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr "如果选中智能卡，则智能卡字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:140 transports/RDS_enterprise/rds_base.py:94
+#: transports/RDP/rdp_base.py:148 transports/RDS_enterprise/rds_base.py:94
 msgid "Custom parameters"
 msgstr "自定义参数"
 
-#: transports/RDP/rdp_base.py:140 transports/RDS_enterprise/rds_base.py:94
+#: transports/RDP/rdp_base.py:148 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"

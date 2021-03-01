@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-24 15:15+0100\n"
-"PO-Revision-Date: 2021-02-18 20:14+0000\n"
+"POT-Creation-Date: 2021-03-01 11:43+0100\n"
+"PO-Revision-Date: 2021-02-27 19:40+0000\n"
 "Last-Translator: Maxim Stepanov <msteapnov@sharxdc.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -54,7 +54,7 @@ msgstr "Пожалуйста, заполните обязательные пол
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:26
 msgid "Test"
-msgstr "Тест"
+msgstr "Проверить"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:27
 #: static/admin/translations-fakejs.js:39
@@ -1728,4 +1728,4 @@ msgstr "Сети UDS для этого IP"
 #: static/modern/translations-fakejs.js:72
 #: static/modern/translations-fakejs.js:74
 msgid "About"
-msgstr "О"
+msgstr "О программе"
