@@ -38,9 +38,11 @@ import typing
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 
+from uds.models import getSqlDatetimeAsUnix
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util import connection
+from uds.core.util import config
 from uds.core.services import types as serviceTypes
 
 from .deployment import IPMachineDeployed
@@ -198,13 +200,15 @@ class IPMachinesService(IPServiceBase):
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
         try:
+            now = getSqlDatetimeAsUnix()
+            consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 24
             for ip in self._ips:
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
                 if self.storage.readData(theIP) is None:
                     if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
-                    self.storage.saveData(theIP, theIP)
+                    self.storage.putPickle(theIP, now)
                     # Now, check if it is available on port, if required...
                     if self._port > 0:
                         if (
