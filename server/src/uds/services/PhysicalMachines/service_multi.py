@@ -137,10 +137,10 @@ class IPMachinesService(IPServiceBase):
             d = self.storage.readData('ips')
             old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []
             # dissapeared ones
-            dissapeared = set(old_ips) - set(self._ips)
+            dissapeared = set(i.split('~')[0] for i in old_ips) - set(i.split('~')[0] for i in self._ips)
             with transaction.atomic():
                 for removable in dissapeared:
-                    self.storage.remove(removable.split('~')[0])
+                    self.storage.remove(removable)
 
         self._token = self.token.value.strip()
         self._port = self.port.value
