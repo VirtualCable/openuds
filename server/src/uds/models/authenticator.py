@@ -184,9 +184,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         from uds.core.util.config import GlobalConfig
 
         if tag:
-            authsList: 'QuerySet' = Authenticator.objects.all()
-            if tag != 'disabled':
-                authsList = authsList.filter(small_name=tag).order_by('priority', 'name')
+            authsList: 'QuerySet' = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
             if not authsList:
                 authsList = Authenticator.objects.all().order_by('priority', 'name')
                 # If disallow global login (use all auths), get just the first by priority/name
