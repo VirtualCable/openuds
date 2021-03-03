@@ -94,7 +94,7 @@ def udsJs(request: 'HttpRequest') -> str:
     # logger.debug('Authenticators PRE: %s', authenticators)
 
     if tag and authenticators:  # Refilter authenticators, visible and with this tag if required
-        authenticators = [x for x in authenticators if x.small_name == tag]
+        authenticators = [x for x in authenticators if x.small_name == tag or (tag == 'disabled' and x.getType().isCustom() is False)]
 
     if not authenticators:
         try:
