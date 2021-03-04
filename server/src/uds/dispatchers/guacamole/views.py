@@ -33,7 +33,8 @@
 import logging
 
 from django.http import HttpResponse, HttpRequest
-from uds.models import TicketStore
+
+from uds.models import TicketStore, UserService
 from uds.core.auths import auth
 from uds.core.managers import cryptoManager
 
@@ -58,6 +59,20 @@ def guacamole(request: HttpRequest, tunnelId: str) -> HttpResponse:
         tunnelId, scrambler = tunnelId.split('.')
 
         val = TicketStore.get(tunnelId, invalidate=False)
+
+        # Extra check that the ticket data belongs to original requested user service/user
+        if 'ticket-info' in val:
+            ti = val['ticket-info']
+            del val['ticket-info']   # Do not send this data to guacamole!! :)
+
+            try:
+                userService = UserService.objects.get(uuid=ti['userService'])
+            except Exception:
+                logger.error('The requested guacamole userservice does not exists anymore')
+                raise
+            if userService.user.uuid != ti['user']:
+                logger.error('The requested userservice has changed owner and is not accesible')
+                raise Exception()
 
         if 'password' in val:
             val['password'] = cryptoManager().symDecrpyt(val['password'], scrambler)

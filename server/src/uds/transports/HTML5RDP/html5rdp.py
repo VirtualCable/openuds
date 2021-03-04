@@ -83,27 +83,37 @@ class HTML5RDPTransport(transports.Transport):
         required=True,
         tab=gui.TUNNEL_TAB,
     )
+
+    useGlyptodonTunnel = gui.CheckBoxField(
+        label=_('Use Glyptodon Enterprise tunnel'),
+        order=2,
+        tooltip=_(
+            'If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling instead of UDS Tunnel'
+        ),
+        tab=gui.TUNNEL_TAB,
+    )
+
     useEmptyCreds = gui.CheckBoxField(
         label=_('Empty creds'),
-        order=2,
+        order=3,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=gui.CREDENTIALS_TAB,
     )
     fixedName = gui.TextField(
         label=_('Username'),
-        order=3,
+        order=4,
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=gui.CREDENTIALS_TAB,
     )
     fixedPassword = gui.PasswordField(
         label=_('Password'),
-        order=4,
+        order=5,
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=gui.CREDENTIALS_TAB,
     )
     withoutDomain = gui.CheckBoxField(
         label=_('Without Domain'),
-        order=5,
+        order=6,
         tooltip=_(
             'If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'
         ),
@@ -111,7 +121,7 @@ class HTML5RDPTransport(transports.Transport):
     )
     fixedDomain = gui.TextField(
         label=_('Domain'),
-        order=6,
+        order=7,
         tooltip=_(
             'If not empty, this domain will be always used as credential (used as DOMAIN\\user)'
         ),
@@ -250,12 +260,32 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('Select windows behavior for new connections on HTML5'),
         required=True,
         values=[
-            gui.choiceItem(gui.FALSE, _('Open every connection on the same window, but keeps UDS window.')),
-            gui.choiceItem(gui.TRUE, _('Force every connection to be opened on a new window.')),
-            gui.choiceItem('overwrite', _('Override UDS window and replace it with the connection.')),
+            gui.choiceItem(
+                gui.FALSE,
+                _('Open every connection on the same window, but keeps UDS window.'),
+            ),
+            gui.choiceItem(
+                gui.TRUE, _('Force every connection to be opened on a new window.')
+            ),
+            gui.choiceItem(
+                'overwrite',
+                _('Override UDS window and replace it with the connection.'),
+            ),
         ],
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
+    )
+
+    customGEPath = gui.TextField(
+        label=_('Glyptodon Enterprise context path'),
+        order=92,
+        tooltip=_(
+            'Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon Enterprise Tunnel)'
+        ),
+        defvalue='/',
+        length=128,
+        required=False,
+        tab=gui.ADVANCED_TAB,
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -366,6 +396,10 @@ class HTML5RDPTransport(transports.Transport):
             'security': self.security.value,
             'drive-path': '/share/{}'.format(user.uuid),
             'create-drive-path': 'true',
+            'ticket-info': {
+                'userService': userService.uuid,
+                'user': userService.user.uuid
+            }
         }
 
         if False:  # Future imp
@@ -423,9 +457,17 @@ class HTML5RDPTransport(transports.Transport):
         elif self.forceNewWindow.value == 'overwrite':
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
+        path = self.customGEPath.value if self.useGlyptodonTunnel.isTrue() else '/guacamole'
+        # Remova trailing /
+        if path[-1] == '/':
+            path = path[:-1]
 
         return str(
-            "{}/guacamole/#/?data={}.{}{}".format(
-                self.guacamoleServer.value, ticket, scrambler, onw
+            "{server}{path}/#/?data={ticket}.{scrambler}{onw}".format(
+                server=self.guacamoleServer.value,
+                path=path,
+                ticket=ticket,
+                scrambler=scrambler,
+                onw=onw
             )
         )
