@@ -39,8 +39,6 @@ import org.apache.guacamole.GuacamoleException;
 import org.apache.guacamole.GuacamoleServerException;
 import org.apache.guacamole.environment.Environment;
 import org.apache.guacamole.properties.URIGuacamoleProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service that provides access to OpenUDS-specific configuration information
@@ -48,11 +46,6 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class ConfigurationService {
-
-    /**
-     * Logger for this class.
-     */
-    /* private final Logger logger = LoggerFactory.getLogger(ConfigurationService.class); */
 
     /**
      * The name of the property within guacamole.properties which defines the

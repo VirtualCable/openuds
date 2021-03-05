@@ -4,8 +4,6 @@
 
     "name"      : "UDS Integration Extension for Apache Guacamole",
     "namespace" : "uds",
-    "largeIcon" : "images/udsicon.png",
-    "smallIcon" : "images/udsicon.png",
 
     "authProviders" : [
         "org.openuds.guacamole.UDSAuthenticationProvider"
