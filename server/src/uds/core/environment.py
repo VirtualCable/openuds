@@ -145,6 +145,9 @@ class Environment:
         Provides a temporary environment needed in some calls (test provider, for example)
         It will not make environment persistent
         """
+        env = Environment(TEMP_ENV)
+        env.storage.delete()
+        env.cache.clean()
         return Environment(TEMP_ENV)
 
     @staticmethod

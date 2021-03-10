@@ -339,8 +339,13 @@ class BaseRDPTransport(transports.Transport):
 
         if self.fixedPassword.value:
             password = self.fixedPassword.value
-        if self.fixedDomain.value:
-            domain = self.fixedDomain.value
+        
+        azureAd = False
+        if self.fixedDomain.value != '':
+            if self.fixedDomain.value.lower() == 'azuread':
+                azureAd = True
+            else:
+                domain = self.fixedDomain.value
         if self.useEmptyCreds.isTrue():
             username, password, domain = '', '', ''
 
@@ -354,8 +359,6 @@ class BaseRDPTransport(transports.Transport):
             else:  # In case of a NETBIOS domain (not recomended), join it so processUserPassword can deal with it
                 username = domain + '\\' + username
                 domain = ''
-
-        # Temporal "fix" to check if we do something on processUserPassword
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
