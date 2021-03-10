@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -155,7 +155,10 @@ class IPMachinesService(IPServiceBase):
             consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 3600
             for ip in self._ips:
                 theIP = ip.split('~')[0]
-                locked = self.storage.getPickle(theIP)
+                try:
+                    locked = self.storage.getPickle(theIP)
+                except Exception:  # Old Storage saved
+                    locked = 0
                 if not locked or locked < consideredFreeTime:
                     if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
