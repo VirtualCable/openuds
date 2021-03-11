@@ -266,9 +266,5 @@ class Storage:
             yield (v[0], pickle.loads(v[1]), v[2])
 
     @staticmethod
-    def delete(owner: typing.Optional[str] = None) -> None:
-        if owner is None:
-            objects = DBStorage.objects.all()  # @UndefinedVariable
-        else:
-            objects = DBStorage.objects.filter(owner=owner)  # @UndefinedVariable
-        objects.delete()
+    def delete(owner: str) -> None:
+        DBStorage.objects.filter(owner=owner).delete()
