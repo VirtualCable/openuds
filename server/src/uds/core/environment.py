@@ -146,9 +146,9 @@ class Environment:
         It will not make environment persistent
         """
         env = Environment(TEMP_ENV)
-        env.storage.delete(TEMP_ENV)
+        env.storage.clean()
         env.cache.clean()
-        return Environment(TEMP_ENV)
+        return env
 
     @staticmethod
     def getGlobalEnv() -> 'Environment':

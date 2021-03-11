@@ -389,6 +389,9 @@ class Storage:
         for v in self.filter(attr1, forUpdate):
             yield (v[0], pickle.loads(v[1]), v[2])
 
+    def clean(self):
+        self.delete(self._owner)
+
     @staticmethod
     def delete(owner: str) -> None:
         DBStorage.objects.filter(owner=owner).delete()
