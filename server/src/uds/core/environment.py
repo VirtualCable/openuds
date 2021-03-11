@@ -146,7 +146,7 @@ class Environment:
         It will not make environment persistent
         """
         env = Environment(TEMP_ENV)
-        env.storage.delete()
+        env.storage.delete(TEMP_ENV)
         env.cache.clean()
         return Environment(TEMP_ENV)
 
