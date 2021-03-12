@@ -59,11 +59,18 @@ def index(request: HttpRequest) -> HttpResponse:
     return response
 
 
+# Includes a request.session ticket, indicating that 
+def ticketLauncher(request: HttpRequest) -> HttpResponse:
+    request.session['restricted'] = True  # Access is from ticket
+    return index(request)
+
+
 # Basically, the original /login method, but fixed for modern interface
 def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
     logger.debug('Tag: %s', tag)
     if request.method == 'POST':
+        request.session['restricted'] = False  # Access is from login
         form = LoginForm(request.POST, tag=tag)
         user, data = checkLogin(request, form, tag)
         if user:
@@ -92,6 +99,7 @@ def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpRespons
 @auth.webLoginRequired(admin=False)
 def logout(request: HttpRequest) -> HttpResponse:
     auth.authLogLogout(request)
+    request.session['restricted'] = False  # Remove restricted
     logoutUrl = request.user.logout()
     if logoutUrl is None:
         logoutUrl = request.session.get('logouturl', None)

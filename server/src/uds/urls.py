@@ -81,7 +81,7 @@ urlpatterns = [
 
     # Ticket authentication related
     re_path(r'^uds/page/ticket/auth/(?P<ticketId>[a-zA-Z0-9.-]+)$', uds.web.views.ticketAuth, name='page.ticket.auth'),
-    path(r'uds/page/ticket/launcher', uds.web.views.modern.index, name='page.ticket.launcher'),
+    path(r'uds/page/ticket/launcher', uds.web.views.modern.ticketLauncher, name='page.ticket.launcher'),
 
     # This must be the last, so any patition will be managed by client in fact
     re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.placeholder'),

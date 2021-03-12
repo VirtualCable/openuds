@@ -51,7 +51,7 @@ class Command(BaseCommand):
         try:
             for config in options['name_value']:
                 logger.debug('Config: %s', config)
-                first, value = config.split('=')
+                first, value = config.split('=', 1)  # Only first = is separator :)
                 first = first.split('.')
                 if len(first) == 2:
                     mod, name = first
