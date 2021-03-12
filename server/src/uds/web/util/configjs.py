@@ -68,6 +68,8 @@ def udsJs(request: 'HttpRequest') -> str:
 
     if user:
         role = 'staff' if user.isStaff() and not user.is_admin else 'admin' if user.is_admin else 'user'
+        if request.session.get('restricted', False):
+            role = 'restricted'
 
     profile: typing.Dict[str, typing.Any] = {
         'user': user.name if user else None,
