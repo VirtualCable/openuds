@@ -35,14 +35,15 @@ import typing
 from django.shortcuts import render
 from django.http import  HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
-from uds.web.util import errors
+from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth
 
+from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.util.authentication import checkLogin
-
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
+
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ def ticketLauncher(request: HttpRequest) -> HttpResponse:
 
 
 # Basically, the original /login method, but fixed for modern interface
-def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
+def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
     logger.debug('Tag: %s', tag)
     if request.method == 'POST':
@@ -97,7 +98,7 @@ def login(request: HttpRequest, tag: typing.Optional[str] = None) -> HttpRespons
 
 
 @auth.webLoginRequired(admin=False)
-def logout(request: HttpRequest) -> HttpResponse:
+def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.authLogLogout(request)
     request.session['restricted'] = False  # Remove restricted
     logoutUrl = request.user.logout()
@@ -111,5 +112,5 @@ def js(request: HttpRequest) -> HttpResponse:
 
 
 @auth.denyNonAuthenticated
-def servicesData(request: HttpRequest) -> HttpResponse:
+def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))

@@ -315,6 +315,9 @@ class GlobalConfig:
     # If we use new logout mechanics
     EXCLUSIVE_LOGOUT: Config.Value = Config.section(SECURITY_SECTION).value('Exclusive Logout', '0', type=Config.BOOLEAN_FIELD)
 
+    # Enable/Disable Actor attack block
+    BLOCK_ACTOR_FAILURES: Config.Value = Config.section(SECURITY_SECTION).value('Block actor failures', '1', type=Config.BOOLEAN_FIELD)
+
     RELOAD_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('Page reload Time', '300', type=Config.NUMERIC_FIELD)
 
     LIMITED_BY_CALENDAR_TEXT: Config.Value = Config.section(GLOBAL_SECTION).value('Calendar access denied text', '', type=Config.TEXT_FIELD)  # Defaults to Nothing
