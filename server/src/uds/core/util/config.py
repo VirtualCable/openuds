@@ -314,6 +314,9 @@ class GlobalConfig:
     # If we use new logout mechanics
     EXCLUSIVE_LOGOUT: Config.Value = Config.section(SECURITY_SECTION).value('Exclusive Logout', '0', type=Config.BOOLEAN_FIELD)
 
+    # Enable/Disable Actor attack block
+    BLOCK_ACTOR_FAILURES: Config.Value = Config.section(SECURITY_SECTION).value('Block actor failures', '1', type=Config.BOOLEAN_FIELD)
+
     # Clusters related vars
 
     # Maximum desired CPU Load. If cpu is over this value, a migration of a service is "desirable"

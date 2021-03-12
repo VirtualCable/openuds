@@ -66,6 +66,8 @@ class BlockAccess(Exception):
 
 # Helpers
 def checkBlockedIp(ip: str)-> None:
+    if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
+        return
     cache = Cache('actorv3')
     fails = cache.get(ip) or 0
     if fails > ALLOWED_FAILS:
