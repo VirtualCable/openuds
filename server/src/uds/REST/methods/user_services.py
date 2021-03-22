@@ -42,6 +42,7 @@ from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 from uds.core.util import permissions
+from uds.core.managers import userServiceManager
 
 
 logger = logging.getLogger(__name__)
@@ -51,6 +52,9 @@ class AssignedService(DetailHandler):
     """
     Rest handler for Assigned Services, wich parent is Service
     """
+    custom_methods = [
+        'reset',
+    ]
 
     @staticmethod
     def itemToDict(item: models.UserService, is_cache: bool = False) -> typing.Dict[str, typing.Any]:
@@ -186,11 +190,19 @@ class AssignedService(DetailHandler):
         # Log change
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
+    def reset(self, parent: models.ServicePool, item: str):
+        if parent.allow_users_reset and parent.service.getType().canReset:
+            userService = parent.userServices.get(uuid=processUuid(item))
+            userServiceManager().reset(userService)
+            return 'ok'
+        return 'unssuported'
+
 
 class CachedService(AssignedService):
     """
     Rest handler for Cached Services, wich parent is Service
     """
+    custom_methods: typing.ClassVar[typing.List[str]] = []  # Remove custom methods from assigned services
 
     def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         # Extract provider
