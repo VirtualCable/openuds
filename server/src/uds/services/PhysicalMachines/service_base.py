@@ -30,7 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import subprocess
+import requests
 import logging
 import typing
 
@@ -38,19 +38,8 @@ from uds.core import services
 
 logger = logging.getLogger(__name__)
 
-# We have included a "hidden testing" for adding ip+mac as static machines list.
-# (This is done using IP;MAC as IP on the IP list)
-# This is a test for WOL, and to be used at your risk.
-# Example:
-# WOLAPP = "/usr/sbin/etherwake {MAC} -i eth0 -b"
-# Remember that you MUST setuid /usr/sbin/etherwake (chmod +s ....) and allow only for uds user,
-# so it allows uds user to execute "privileged" etherwake program
-# Note:
-#   {MAC} will be replaced with the MAC if it exists
-#   {IP} will be replaced with the IP of the machine
-# If empty, no WOL will be tried NEVER, if not empty
-WOLAPP = ''
-
+if typing.TYPE_CHECKING:
+    from . import provider
 
 class IPServiceBase(services.Service):
 
@@ -65,6 +54,9 @@ class IPServiceBase(services.Service):
         except Exception:
             return None
 
+    def parent(self) -> 'provider.PhysicalMachinesProvider':
+        return typing.cast('provider.PhysicalMachinesProvider', super().parent())
+
     def getUnassignedMachine(self) -> typing.Optional[str]:
         raise NotADirectoryError('getUnassignedMachine')
 
@@ -72,11 +64,12 @@ class IPServiceBase(services.Service):
         raise NotADirectoryError('unassignMachine')
 
     def wakeup(self, ip: str, mac: typing.Optional[str]) -> None:
-        if WOLAPP and mac:
-            cmd = WOLAPP.replace('{MAC}', mac or '').replace('{IP}', ip or '')
-            logger.info('Launching WOL: %s', cmd)
-            try:
-                result = subprocess.run(cmd, shell=True, check=True)
-                # logger.debug('Result: %s', result)
-            except Exception as e:
-                logger.error('Error on WOL: %s', e)
+        if mac:
+            wolurl = self.parent().wolURL(ip).replace('{MAC}', mac or '').replace('{IP}', ip or '')
+            if wolurl:
+                logger.info('Launching WOL: %s', wolurl)
+                try:
+                    requests.get(wolurl, verify=False)
+                    # logger.debug('Result: %s', result)
+                except Exception as e:
+                    logger.error('Error on WOL: %s', e)

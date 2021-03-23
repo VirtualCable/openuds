@@ -46,7 +46,7 @@ from uds.core.util import config
 from uds.core.services import types as serviceTypes
 
 from .deployment import IPMachineDeployed
-from .service_base import IPServiceBase, WOLAPP
+from .service_base import IPServiceBase
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -204,7 +204,7 @@ class IPMachinesService(IPServiceBase):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.putPickle(theIP, now)
                     # Now, check if it is available on port, if required...
-                    if self._port > 0 and not WOLAPP:  # If configured WOLAPP, then check port is a nonsense...
+                    if self._port > 0 and not self.parent().wolURL(theIP):  # If configured WOL, check is a nonsense
                         if (
                             connection.testServer(theIP, self._port, timeOut=0.5)
                             is False
