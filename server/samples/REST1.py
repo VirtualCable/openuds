@@ -34,8 +34,9 @@ from __future__ import unicode_literals
 
 from httplib2 import Http
 import json
+import sys
 
-rest_url = 'http://172.27.0.1:8000/rest/'
+rest_url = 'http://172.27.0.1:8000/uds/rest/'
 
 headers = {}
 
@@ -46,19 +47,20 @@ def login():
     h = Http()
 
     # parameters = '{ "auth": "admin", "username": "root", "password": "temporal" }'
-    parameters = '{ "auth": "interna", "username": "admin", "password": "temporal" }'
+    # parameters = '{ "auth": "interna", "username": "admin", "password": "temporal" }'
+    parameters = '{ "auth": "interna", "username": "admin.1", "password": "temporal" }'
 
     resp, content = h.request(rest_url + 'auth/login', method='POST', body=parameters)
 
     if resp['status'] != '200':  # Authentication error due to incorrect parameters, bad request, etc...
-        print "Authentication error"
+        print("Authentication error")
         return -1
 
     # resp contiene las cabeceras, content el contenido de la respuesta (que es json), pero aún está en formato texto
     res = json.loads(content)
-    print res
+    print(res)
     if res['result'] != 'ok':  # Authentication error
-        print "Authentication error"
+        print("Authentication error")
         return -1
 
     headers['X-Auth-Token'] = res['token']
@@ -73,7 +75,7 @@ def logout():
     resp, content = h.request(rest_url + 'auth/logout', headers=headers)
 
     if resp['status'] != '200':  # Logout error due to incorrect parameters, bad request, etc...
-        print "Error requesting logout"
+        print("Error requesting logout")
         return -1
 
     # Return value of logout method is nonsense (returns always done right now, but it's not important)
@@ -102,7 +104,7 @@ def request_pools():
 
     resp, content = h.request(rest_url + 'servicespools/overview', headers=headers)
     if resp['status'] != '200':  # error due to incorrect parameters, bad request, etc...
-        print "Error requesting pools"
+        print("Error requesting pools")
         return {}
 
     return json.loads(content)
@@ -113,7 +115,7 @@ def request_service_info(provider_id, service_id):
 
     resp, content = h.request(rest_url + 'providers/{0}/services/{1}'.format(provider_id, service_id), headers=headers)
     if resp['status'] != '200':  # error due to incorrect parameters, bad request, etc...
-        print "Error requesting pools: response: {}, content: {}".format(resp, content)
+        print("Error requesting pools: response: {}, content: {}".format(resp, content))
         return None
 
     return json.loads(content)
@@ -123,20 +125,21 @@ if __name__ == '__main__':
 
     if login() == 0:  # If we can log in, will get the pools correctly
         res = request_pools()
-        print res
+        print(res)
+        sys.exit(0)
         for r in res:
             res2 = request_service_info(r['provider_id'], r['service_id'])
             if res2 is not None:
-                print "Base Service info por pool {0}: {1}".format(r['name'], res2['type'])
+                print("Base Service info por pool {0}: {1}".format(r['name'], res2['type']))
             else:
-                print "Base service {} is not accesible".format(r['name'])
-        print "First logout"
-        print logout()  # This will success
-        print "Second logout"
-        print logout()  # This will fail (already logged out)
+                print("Base service {} is not accesible".format(r['name']))
+        print("First logout")
+        print(logout())  # This will success
+        print("Second logout")
+        print(logout())  # This will fail (already logged out)
         # Also new requests will fail
-        print request_pools()
+        print(request_pools())
         # Until we do log in again
         login()
-        print request_pools()
+        print(request_pools())
 
