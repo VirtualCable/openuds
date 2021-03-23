@@ -203,8 +203,10 @@ class IPMachinesService(IPServiceBase):
                     if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.putPickle(theIP, now)
+                    # Is WOL enabled?
+                    wolENABLED = bool(theMAC and self.parent().wolURL(theIP))
                     # Now, check if it is available on port, if required...
-                    if self._port > 0 and not self.parent().wolURL(theIP):  # If configured WOL, check is a nonsense
+                    if self._port > 0 and not wolENABLED:  # If configured WOL, check is a nonsense
                         if (
                             connection.testServer(theIP, self._port, timeOut=0.5)
                             is False
