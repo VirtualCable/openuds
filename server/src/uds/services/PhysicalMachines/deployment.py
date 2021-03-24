@@ -35,9 +35,12 @@ import typing
 
 from django.utils.translation import ugettext_lazy as _
 
+import dns.resolver
+
 from uds.core import services
 from uds.core.util.state import State
 from uds.core.util.auto_attributes import AutoAttributes
+from uds.core.util import net
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -69,12 +72,22 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
     def getIp(self) -> str:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
-        return self._ip.split('~')[0].split(';')[0]
+        ip = self._ip.split('~')[0].split(';')[0]
+        # If ip is in fact a hostname...
+        if not net.ipToLong(ip):
+            # Try to resolve name...
+            try:
+                res = dns.resolver.resolve(ip)
+                ip = res[0].address
+            except Exception:
+                pass
+
+        return ip
 
     def getName(self) -> str:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
-        return _("IP ") + self._ip.replace('~', ':')
+        return self._ip.replace('~', ':')
 
     def getUniqueId(self) -> str:
         # If single machine, ip is IP~counter,

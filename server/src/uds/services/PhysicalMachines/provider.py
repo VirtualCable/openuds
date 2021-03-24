@@ -36,6 +36,8 @@ import typing
 
 from django.utils.translation import ugettext_noop as _
 
+import dns.resolver
+
 from uds.core import services
 from uds.core.ui.user_interface import gui
 from uds.core.util import net
@@ -47,15 +49,28 @@ logger = logging.getLogger(__name__)
 
 VALID_CONFIG_SECTIONS = set(('wol',))
 
+
 class PhysicalMachinesProvider(services.ServiceProvider):
     # No extra data needed
     config = gui.TextField(
-        length=8192, multiline=6, label=_('Advanced configuration'), order=3,
+        length=8192,
+        multiline=6,
+        label=_('Advanced configuration'),
+        order=3,
         tooltip=_('Advanced configuration data for the provider'),
-        required=True, tab=gui.ADVANCED_TAB
+        required=True,
+        tab=gui.ADVANCED_TAB,
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
+        """checks and initializes values
+
+        Args:
+            values (Module.ValuesType): List of values on initialization (maybe None)
+
+        Raises:
+            services.ServiceProvider.ValidationException
+        """
         if values is None:
             return
 
@@ -67,23 +82,30 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 config.read_string(self.config.value)
                 # Seems a valid configuration file, let's see if all se
             except Exception as e:
-                raise services.ServiceProvider.ValidationException(_('Invalid advanced configuration: ') + str(e))
+                raise services.ServiceProvider.ValidationException(
+                    _('Invalid advanced configuration: ') + str(e)
+                )
 
             for section in config.sections():
                 if section not in VALID_CONFIG_SECTIONS:
-                    raise services.ServiceProvider.ValidationException(_('Invalid section in advanced configuration: ') + section)
-            
+                    raise services.ServiceProvider.ValidationException(
+                        _('Invalid section in advanced configuration: ') + section
+                    )
+
             # Sections are valid, check values
             # wol section
             for key in config['wol']:
                 try:
                     net.networksFromString(key)  # Raises exception if net is invalid
                 except Exception:
-                    raise services.ServiceProvider.ValidationException(_('Invalid network in advanced configuration: ') + key)
+                    raise services.ServiceProvider.ValidationException(
+                        _('Invalid network in advanced configuration: ') + key
+                    )
                 # Now check value is an url
                 if config['wol'][key][:4] != 'http':
-                    raise services.ServiceProvider.ValidationException(_('Invalid url in advanced configuration: ') + key)
-
+                    raise services.ServiceProvider.ValidationException(
+                        _('Invalid url in advanced configuration: ') + key
+                    )
 
     # What services do we offer?
     typeName = _('Static IP Machines Provider')
@@ -93,11 +115,29 @@ class PhysicalMachinesProvider(services.ServiceProvider):
 
     from .service_multi import IPMachinesService
     from .service_single import IPSingleMachineService
+
     offers = [IPMachinesService, IPSingleMachineService]
 
-    def wolURL(self, ip: str):
-        if not self.config.value or not ip:
+    def wolURL(self, ip: str, mac: str) -> str:
+        """Tries to get WOL server for indicated IP
+
+        Args:
+            ip (str): ip of target machine
+
+        Returns:
+            str: URL of WOL server or empty ('') if no server for the ip is found
+        """
+        if not self.config.value or not ip or not mac:
             return ''
+
+        # If ip is in fact a hostname...
+        if not net.ipToLong(ip):
+            # Try to resolve name...
+            try:
+                res = dns.resolver.resolve(ip)
+                ip = res[0].address
+            except Exception:
+                return ''
 
         url = ''
         try:
@@ -105,10 +145,16 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             config.read_string(self.config.value)
             for key in config['wol']:
                 if net.ipInNetwork(ip, key):
-                    return config['wol'][key]
+                    return (
+                        config['wol'][key]
+                        .replace('{MAC}', mac)
+                        .replace('{IP}', ip)
+                    )
+
         except Exception as e:
             logger.error('Error parsing advanced configuration: %s', e)
-            
+
+        return ''
 
     def __str__(self):
         return "Physical Machines Provider"

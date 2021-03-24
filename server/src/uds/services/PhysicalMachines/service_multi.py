@@ -31,7 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import pickle
-import subprocess
 import logging
 import typing
 
@@ -197,18 +196,6 @@ class IPMachinesService(IPServiceBase):
             consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 3600
             for ip in self._ips:
                 theIP = IPServiceBase.getIp(ip)
-                if not theIP:
-                    self.parent().doLog(
-                        log.WARN,
-                        'Hostname in {} could not be resolved. Skipped.'.format(
-                            ip
-                        ),
-                    )
-                    logger.warning(
-                        'Hostname in %s could not be resolved. Skipped.', ip
-                    )
-                    continue
-                    
                 theMAC = IPServiceBase.getMac(ip)
                 locked = self.storage.getPickle(theIP)
                 if not locked or locked < consideredFreeTime:
@@ -216,7 +203,7 @@ class IPMachinesService(IPServiceBase):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.putPickle(theIP, now)
                     # Is WOL enabled?
-                    wolENABLED = bool(theMAC and self.parent().wolURL(theIP))
+                    wolENABLED = bool(self.parent().wolURL(theIP, theMAC))
                     # Now, check if it is available on port, if required...
                     if self._port > 0 and not wolENABLED:  # If configured WOL, check is a nonsense
                         if (
@@ -277,9 +264,6 @@ class IPMachinesService(IPServiceBase):
             IPMachineDeployed, userDeployment
         )
         theIP = IPServiceBase.getIp(assignableId)
-        if not theIP:
-            return userServiceInstance.error('Hostname could not be resolved')
-
         if self.storage.readData(theIP) is None:
             self.storage.saveData(theIP, theIP)
             return userServiceInstance.assign(theIP)

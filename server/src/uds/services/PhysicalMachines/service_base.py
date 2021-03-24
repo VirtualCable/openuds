@@ -34,39 +34,26 @@ import requests
 import logging
 import typing
 
-import dns.resolver
 
 from uds.core import services
-from uds.core.util import net
 
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from . import provider
 
-class IPServiceBase(services.Service):
 
+class IPServiceBase(services.Service):
     @staticmethod
     def getIp(ipData: str) -> str:
-        ip = ipData.split('~')[0].split(';')[0]
-        # If ip is in fact a hostname...
-        if not net.ipToLong(ip):
-            # Try to resolve name...
-            try:
-                res = dns.resolver.resolve(ip)
-                ip = res[0].address
-            except Exception:
-                return ''
-
-        return ip
-
+        return ipData.split('~')[0].split(';')[0]
 
     @staticmethod
-    def getMac(ipData: str) -> typing.Optional[str]:
+    def getMac(ipData: str) -> str:
         try:
             return ipData.split('~')[0].split(';')[1]
         except Exception:
-            return None
+            return ''
 
     def parent(self) -> 'provider.PhysicalMachinesProvider':
         return typing.cast('provider.PhysicalMachinesProvider', super().parent())
@@ -79,7 +66,10 @@ class IPServiceBase(services.Service):
 
     def wakeup(self, ip: str, mac: typing.Optional[str]) -> None:
         if mac:
-            wolurl = self.parent().wolURL(ip).replace('{MAC}', mac or '').replace('{IP}', ip or '')
+            wolurl = (
+                self.parent()
+                .wolURL(ip, mac)
+            )
             if wolurl:
                 logger.info('Launching WOL: %s', wolurl)
                 try:
