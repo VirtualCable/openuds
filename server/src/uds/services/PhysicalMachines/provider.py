@@ -96,7 +96,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
     offers = [IPMachinesService, IPSingleMachineService]
 
     def wolURL(self, ip: str):
-        if not self.config.value:
+        if not self.config.value or not ip:
             return ''
 
         url = ''
