@@ -41,6 +41,7 @@ import dns.resolver
 from uds.core import services
 from uds.core.ui.user_interface import gui
 from uds.core.util import net
+from uds.core.util import log
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -137,6 +138,8 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 res = dns.resolver.resolve(ip)
                 ip = res[0].address
             except Exception:
+                self.doLog(log.WARN, f'Name {ip} could not be resolved')
+                logger.warning('Name %s could not be resolved', ip)
                 return ''
 
         url = ''
