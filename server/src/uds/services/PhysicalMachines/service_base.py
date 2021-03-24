@@ -34,7 +34,10 @@ import requests
 import logging
 import typing
 
+import dns.resolver
+
 from uds.core import services
+from uds.core.util import net
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +48,18 @@ class IPServiceBase(services.Service):
 
     @staticmethod
     def getIp(ipData: str) -> str:
-        return ipData.split('~')[0].split(';')[0]
+        ip = ipData.split('~')[0].split(';')[0]
+        # If ip is in fact a hostname...
+        if not net.ipToLong(ip):
+            # Try to resolve name...
+            try:
+                res = dns.resolver.resolve(ip)
+                ip = res[0].address
+            except Exception:
+                return ''
+
+        return ip
+
 
     @staticmethod
     def getMac(ipData: str) -> typing.Optional[str]:

@@ -50,6 +50,7 @@ from uds.models import Authenticator, Image, Network, Transport
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequest 
     from uds.models import User
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
 @register.simple_tag(takes_context=True)
-def udsJs(request: 'HttpRequest') -> str:
+def udsJs(request: 'ExtendedHttpRequest') -> str:
     auth_host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
     role: str = 'user'
@@ -214,7 +215,7 @@ def udsJs(request: 'HttpRequest') -> str:
         # Admin config
         page_size = GlobalConfig.ADMIN_PAGESIZE.getInt(True)
         # Fix page size to razonable usable values
-        page_size = 10 if page_size < 10 else 50 if page_size > 50 else page_size
+        page_size = 10 if page_size < 10 else 100 if page_size > 100 else page_size
         config['admin'] = {
             'page_size': page_size,
         }
