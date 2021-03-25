@@ -41,6 +41,7 @@ from uds.core import services
 from uds.core.util.state import State
 from uds.core.util.auto_attributes import AutoAttributes
 from uds.core.util import net
+from uds.core.util import log
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -80,7 +81,7 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
                 res = dns.resolver.resolve(ip)
                 ip = res[0].address
             except Exception:
-                pass
+                self.service().parent().doLog(log.WARN, f'User service could not resolve Name {ip}.')
 
         return ip
 
