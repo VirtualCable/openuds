@@ -59,7 +59,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
         label=_('Advanced configuration'),
         order=3,
         tooltip=_('Advanced configuration data for the provider'),
-        required=True,
+        required=False,
         tab=gui.ADVANCED_TAB,
     )
 
