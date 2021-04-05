@@ -76,7 +76,7 @@ class TRDPTransport(BaseRDPTransport):
     tunnelWait = gui.NumericField(
         length=3,
         label=_('Tunnel wait time'),
-        defvalue='30',
+        defvalue='60',
         minValue=5,
         maxValue=65536,
         order=2,
