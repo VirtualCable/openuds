@@ -131,7 +131,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
     def checkLogin(self) -> bool:
         if not self._loggedIn:
-            self.login()
+            self.login(switchToMaster=True)
         return self._loggedIn
 
     def getXenapiProperty(self, prop: str) -> typing.Any:
@@ -184,7 +184,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             self._poolName = str(self.getPoolName())
         except XenAPI.Failure as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
             if switchToMaster and e.details[0] == 'HOST_IS_SLAVE':
-                logger.info('%s is an Slave, connecting to master at %s cause switchToMaster is True', self._host, e.details[1])
+                logger.info('%s is an Slave, connecting to master at %s', self._host, e.details[1])
                 self._host = e.details[1]
                 self.login()
             else:
