@@ -34,9 +34,11 @@ import typing
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
+
 # from uds.core.util import validators
 
 from .xen_client import XenServer
+
 # from xen_client import XenFailure, XenFault
 
 from .service import XenLinkedService
@@ -49,6 +51,7 @@ if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
 
 CACHE_TIME_FOR_SERVER = 1800
+
 
 class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     """
@@ -67,6 +70,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     we MUST register it at package __init__.
 
     """
+
     # : What kind of services we offer, this are classes inherited from Service
     offers = [XenLinkedService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -91,18 +95,82 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('XenServer Server IP or Hostname'), required=True)
-    username = gui.TextField(length=32, label=_('Username'), order=2, tooltip=_('User with valid privileges on XenServer'), required=True, defvalue='root')
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=3, tooltip=_('Password of the user of XenServer'), required=True)
+    host = gui.TextField(
+        length=64,
+        label=_('Host'),
+        order=1,
+        tooltip=_('XenServer Server IP or Hostname'),
+        required=True,
+    )
+    username = gui.TextField(
+        length=32,
+        label=_('Username'),
+        order=2,
+        tooltip=_('User with valid privileges on XenServer'),
+        required=True,
+        defvalue='root',
+    )
+    password = gui.PasswordField(
+        lenth=32,
+        label=_('Password'),
+        order=3,
+        tooltip=_('Password of the user of XenServer'),
+        required=True,
+    )
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        defvalue='10',
+        minValue=1,
+        maxValue=65536,
+        order=50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    maxRemovingServices = gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        defvalue='5',
+        minValue=1,
+        maxValue=65536,
+        order=51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF', order=90, rdonly=True,
-                              tooltip=_('Range of valid macs for created machines'), required=True, tab=gui.ADVANCED_TAB)
-    verifySSL = gui.CheckBoxField(label=_('Verify Certificate'), order=91,
-                                  tooltip=_('If selected, certificate will be checked against system valid certificate providers'), 
-                                  tab=gui.ADVANCED_TAB, defvalue=gui.FALSE)
+    macsRange = gui.TextField(
+        length=36,
+        label=_('Macs range'),
+        defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF',
+        order=90,
+        rdonly=True,
+        tooltip=_('Range of valid macs for created machines'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    verifySSL = gui.CheckBoxField(
+        label=_('Verify Certificate'),
+        order=91,
+        tooltip=_(
+            'If selected, certificate will be checked against system valid certificate providers'
+        ),
+        tab=gui.ADVANCED_TAB,
+        defvalue=gui.FALSE,
+    )
+
+    hostBackup = gui.TextField(
+        length=64,
+        label=_('Backup Host'),
+        order=92,
+        tooltip=_(
+            'XenServer BACKUP IP or Hostname (used on connection failure to main server)'
+        ),
+        tab=gui.ADVANCED_TAB,
+        required=False,
+    )
 
     _api: typing.Optional[XenServer]
 
@@ -115,7 +183,15 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns the connection API object for XenServer (using XenServersdk)
         """
         if not self._api or force:
-            self._api = XenServer(self.host.value, 443, self.username.value, self.password.value, True, self.verifySSL.isTrue())
+            self._api = XenServer(
+                self.host.value,
+                self.hostBackup.value,
+                443,
+                self.username.value,
+                self.password.value,
+                True,
+                self.verifySSL.isTrue(),
+            )
 
         return self._api
 
@@ -158,7 +234,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         # Any other state, raises an exception
         raise Exception(str(ts['result']))  # Should be error message
 
-    def getMachines(self, force: bool = False) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
+    def getMachines(
+        self, force: bool = False
+    ) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside XenServer.
         Machines starting with UDS are filtered out
@@ -179,7 +257,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
                 continue
             yield m
 
-    def getStorages(self, force: bool = False) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
+    def getStorages(
+        self, force: bool = False
+    ) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of storages inside XenServer.
 
@@ -196,7 +276,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
         return self.__getApi().getSRs()
 
-    def getStorageInfo(self, storageId: str, force=False) -> typing.MutableMapping[str, typing.Any]:
+    def getStorageInfo(
+        self, storageId: str, force=False
+    ) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the storage info
 
@@ -218,7 +300,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
         return self.__getApi().getSRInfo(storageId)
 
-    def getNetworks(self, force: bool = False) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
+    def getNetworks(
+        self, force: bool = False
+    ) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         return self.__getApi().getNetworks()
 
     def cloneForTemplate(self, name: str, comments: str, machineId: str, sr: str):
@@ -356,7 +440,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         self.__getApi().removeVM(machineId)
 
     def configureVM(self, machineId: str, netId: str, mac: str, memory: int) -> None:
-        self.__getApi().configureVM(machineId, mac={'network': netId, 'mac': mac}, memory=memory)
+        self.__getApi().configureVM(
+            machineId, mac={'network': netId, 'mac': mac}, memory=memory
+        )
 
     def provisionVM(self, machineId: str, asnc: bool = True) -> str:
         return self.__getApi().provisionVM(machineId, asnc=asnc)

@@ -100,6 +100,7 @@ class XenPowerState:  # pylint: disable=too-few-public-methods
 class XenServer:  # pylint: disable=too-many-public-methods
     _originalHost: str
     _host: str
+    _host_backup: str
     _port: str
     _useSSL: bool
     _verifySSL: bool
@@ -112,8 +113,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
     _poolName: str
     _apiVersion: str
 
-    def __init__(self, host: str, port: int, username: str, password: str, useSSL: bool = False, verifySSL: bool = False):
+    def __init__(self, host: str, host_backup: str, port: int, username: str, password: str, useSSL: bool = False, verifySSL: bool = False):
         self._originalHost = self._host = host
+        self._host_backup = host_backup or ''
         self._port = str(port)
         self._useSSL = bool(useSSL)
         self._verifySSL = bool(verifySSL)
@@ -189,9 +191,13 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 self.login()
             else:
                 raise XenFailure(e.details)
-        except Exception as e:
-            logger.exception('Unrecognized xenapi exception')
-            raise
+        except Exception:
+            if self._host == self._host_backup or not self._host_backup:
+                logger.exception('Unrecognized xenapi exception')
+                raise
+            # Retry connection to backup host
+            self._host = self._host_backup
+            self.login()
 
     def test(self) -> None:
         self.login(False)
