@@ -69,7 +69,9 @@ elif executable == msrdc:
     # Rename as .rdp, so open recognizes it
     shutil.move(filename, filename + '.rdp')
 
-    tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
+    #tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
+    # Force MSRDP to be used with -a (thanks to Dani Torregosa)
+    tools.addTaskToWait(subprocess.Popen(['open', '-a', '/Applications/Microsoft Remote Desktop.app', filename + '.rdp']))
     tools.addFileToUnlink(filename + '.rdp')
 elif executable == xfreerdp:
     # Fix resolution...
