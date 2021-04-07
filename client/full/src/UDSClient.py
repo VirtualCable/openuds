@@ -42,6 +42,7 @@ import six
 
 from uds.rest import RestRequest
 from uds.forward import forward  # pylint: disable=unused-import
+from uds.tunnel import forward as f2  # pylint: disable=unused-import
 from uds.log import logger
 from uds import tools
 from uds import VERSION
@@ -288,7 +289,7 @@ if __name__ == "__main__":
     if six.PY3 is False:
         logger.debug('Fixing threaded execution of commands')
         import threading
-        threading._DummyThread._Thread__stop = lambda x: 42  # type: ignore, pylint: disable=protected-access
+        threading._DummyThread._Thread__stop = lambda x: 42  # type: ignore pylint: disable=protected-access
 
     # First parameter must be url
     try:
