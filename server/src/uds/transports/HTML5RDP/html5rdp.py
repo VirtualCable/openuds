@@ -406,8 +406,8 @@ class HTML5RDPTransport(transports.Transport):
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
-                'user': userService.user.uuid
-            }
+                'user': userService.user.uuid,
+            },
         }
 
         if False:  # Future imp
@@ -465,8 +465,12 @@ class HTML5RDPTransport(transports.Transport):
         elif self.forceNewWindow.value == 'overwrite':
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
-        path = self.customGEPath.value if self.useGlyptodonTunnel.isTrue() else '/guacamole'
-        # Remova trailing /
+        path = (
+            self.customGEPath.value
+            if self.useGlyptodonTunnel.isTrue()
+            else '/guacamole'
+        )
+        # Remove trailing /
         if path[-1] == '/':
             path = path[:-1]
 
@@ -476,6 +480,6 @@ class HTML5RDPTransport(transports.Transport):
                 path=path,
                 ticket=ticket,
                 scrambler=scrambler,
-                onw=onw
+                onw=onw,
             )
         )
