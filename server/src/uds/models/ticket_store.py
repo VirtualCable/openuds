@@ -94,7 +94,7 @@ class TicketStore(UUIDModel):
     @staticmethod
     def create(
         data: typing.Any,
-        validatorFnc: typing.Optional[ValidatorType] = None,
+        validatorFnc: typing.Optional[ValidatorType] = None,  # type: ignore
         validity: int = DEFAULT_VALIDITY,
         owner: typing.Optional[str] = None,
         secure: bool = False,
