@@ -237,7 +237,7 @@ class HTML5RDPTransport(transports.Transport):
             ),
             gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
         ],
-        defvalue='rdp',
+        defvalue='any',
         tab=gui.PARAMETERS_TAB,
     )
 
@@ -461,9 +461,9 @@ class HTML5RDPTransport(transports.Transport):
 
         onw = ''
         if self.forceNewWindow.value == gui.TRUE:
-            onw = 'o_n_w={}'
+            onw = '&o_n_w={}'
         elif self.forceNewWindow.value == 'overwrite':
-            onw = 'o_s_w=yes'
+            onw = '&o_s_w=yes'
         onw = onw.format(hash(transport.name))
         path = (
             self.customGEPath.value
