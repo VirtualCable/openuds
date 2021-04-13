@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-01 11:43+0100\n"
+"POT-Creation-Date: 2021-04-13 12:46+0200\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -30,8 +30,8 @@ msgstr "Kontuak"
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
-#: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:301 REST/methods/users_groups.py:122
+#: REST/methods/transports.py:57 REST/methods/user_services.py:267
+#: REST/methods/user_services.py:313 REST/methods/users_groups.py:122
 #: REST/model.py:139
 msgid "Name"
 msgstr "Izena"
@@ -41,7 +41,7 @@ msgstr "Izena"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:59 REST/methods/user_services.py:303
+#: REST/methods/transports.py:59 REST/methods/user_services.py:315
 #: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
@@ -170,13 +170,13 @@ msgstr "Id"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:71 REST/methods/services.py:224
-#: REST/methods/transports.py:58 REST/methods/user_services.py:302
+#: REST/methods/transports.py:58 REST/methods/user_services.py:314
 msgid "Type"
 msgstr "Mota"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:56 REST/methods/user_services.py:300
+#: REST/methods/transports.py:56 REST/methods/user_services.py:312
 #: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "Lehentasuna"
@@ -358,12 +358,12 @@ msgstr "Pool-zerbitzu izena"
 msgid "Enabled"
 msgstr "Gaituta"
 
-#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:116
+#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:120
 msgid "Assigned services"
 msgstr "Esleitutako zerbitzuak"
 
-#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:120
-#: REST/methods/user_services.py:212
+#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:124
+#: REST/methods/user_services.py:224
 msgid "Creation date"
 msgstr "Sortze data"
 
@@ -380,51 +380,51 @@ msgid "Pool"
 msgstr "Pool"
 
 #: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:122
-#: REST/methods/user_services.py:123 REST/methods/user_services.py:215
+#: REST/methods/user_services.py:127 REST/methods/user_services.py:227
 #: auths/IP/authenticator.py:67
 msgid "IP"
 msgstr "IP"
 
 #: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
-#: REST/methods/user_services.py:124 REST/methods/user_services.py:216
+#: REST/methods/user_services.py:128 REST/methods/user_services.py:228
 msgid "Friendly name"
 msgstr "Izen adiskidetsua"
 
-#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:125
+#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:129
 msgid "status"
 msgstr "Egoera"
 
-#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:127
+#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:131
 msgid "In Use"
 msgstr "Erabiltzen"
 
 #: REST/methods/meta_service_pools.py:183 REST/methods/services_usage.py:125
-#: REST/methods/user_services.py:128
+#: REST/methods/user_services.py:132
 msgid "Src Host"
 msgstr "Jatorrizko ostalaria"
 
 #: REST/methods/meta_service_pools.py:184 REST/methods/services_usage.py:124
-#: REST/methods/user_services.py:129
+#: REST/methods/user_services.py:133
 msgid "Src Ip"
 msgstr "Jatorrizko IP-a"
 
 #: REST/methods/meta_service_pools.py:185 REST/methods/services_usage.py:118
-#: REST/methods/user_services.py:130
+#: REST/methods/user_services.py:134
 msgid "Owner"
 msgstr "Jabea"
 
-#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:131
-#: REST/methods/user_services.py:219
+#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:135
+#: REST/methods/user_services.py:231
 msgid "Actor version"
 msgstr "Aktore Bertsioa"
 
 #: REST/methods/meta_service_pools.py:213 REST/methods/services_usage.py:144
-#: REST/methods/user_services.py:163
+#: REST/methods/user_services.py:167
 msgid "Item already being removed"
 msgstr "Elementua dagoeneko ezabatzen ari da"
 
 #: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:146
-#: REST/methods/user_services.py:165
+#: REST/methods/user_services.py:169
 msgid "Item is not removable"
 msgstr "Elementua ez da ezabagarria"
 
@@ -825,8 +825,8 @@ msgstr "Zerbitzu-oinarria ez dago"
 msgid "This service requires an OS Manager"
 msgstr "Zerbitzu honek SE kudeatzailea behar du"
 
-#: REST/methods/services_usage.py:90 REST/methods/user_services.py:74
-#: REST/methods/user_services.py:75
+#: REST/methods/services_usage.py:90 REST/methods/user_services.py:78
+#: REST/methods/user_services.py:79
 msgid "unknown"
 msgstr "Ezezaguna"
 
@@ -883,57 +883,57 @@ msgstr ""
 msgid "Currently assigned services pools"
 msgstr "Une honetan esleiturik dauden zerbitzu-poolak"
 
-#: REST/methods/user_services.py:121 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:377 REST/methods/user_services.py:406
+#: REST/methods/user_services.py:125 REST/methods/user_services.py:225
+#: REST/methods/user_services.py:389 REST/methods/user_services.py:418
 msgid "Revision"
 msgstr "Berrikustea"
 
-#: REST/methods/user_services.py:126
+#: REST/methods/user_services.py:130
 msgid "Status date"
 msgstr "Egoera data"
 
-#: REST/methods/user_services.py:208
+#: REST/methods/user_services.py:220
 msgid "Cached services"
 msgstr "Cache-aturiko zerbitzuak"
 
-#: REST/methods/user_services.py:217 REST/methods/user_services.py:257
-#: REST/methods/user_services.py:379
+#: REST/methods/user_services.py:229 REST/methods/user_services.py:269
+#: REST/methods/user_services.py:391
 msgid "State"
 msgstr "Egoera"
 
-#: REST/methods/user_services.py:218
+#: REST/methods/user_services.py:230
 msgid "Cache level"
 msgstr "Cache maila"
 
-#: REST/methods/user_services.py:250
+#: REST/methods/user_services.py:262
 msgid "Assigned groups"
 msgstr "Esleitutako taldeak"
 
-#: REST/methods/user_services.py:256
+#: REST/methods/user_services.py:268
 msgid "comments"
 msgstr "Iruzkinak"
 
-#: REST/methods/user_services.py:296
+#: REST/methods/user_services.py:308
 msgid "Assigned transports"
 msgstr "Esleitutako garraioak"
 
-#: REST/methods/user_services.py:373
+#: REST/methods/user_services.py:385
 msgid "Publications"
 msgstr "Argitalpenak"
 
-#: REST/methods/user_services.py:378 REST/methods/user_services.py:407
+#: REST/methods/user_services.py:390 REST/methods/user_services.py:419
 msgid "Publish date"
 msgstr "Argitalpen data"
 
-#: REST/methods/user_services.py:380
+#: REST/methods/user_services.py:392
 msgid "Reason"
 msgstr "Arrazoia"
 
-#: REST/methods/user_services.py:402
+#: REST/methods/user_services.py:414
 msgid "Changelog"
 msgstr "Aldaketa Log-a"
 
-#: REST/methods/user_services.py:408
+#: REST/methods/user_services.py:420
 msgid "Comment"
 msgstr "Iruzkina"
 
@@ -3935,12 +3935,12 @@ msgstr "IP Makinen hornitzaile estatikoa"
 msgid "Provides connection to machines by IP"
 msgstr "Makinen konexioa eskaintzen du IP bidez"
 
-#: services/PhysicalMachines/service_multi.py:61
+#: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Zerbitzuaren tokena"
 
-#: services/PhysicalMachines/service_multi.py:63
+#: services/PhysicalMachines/service_multi.py:65
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -3949,41 +3949,41 @@ msgstr ""
 "Aktoreek zerbitzuarekin komunikatzeko erabiliko duten token zerbitzua. Utzi "
 "hutsik iraunkorra esleitzeko."
 
-#: services/PhysicalMachines/service_multi.py:69
+#: services/PhysicalMachines/service_multi.py:71
 #: services/RDS_enterprise/provider.py:48
 msgid "List of servers"
 msgstr "Zerbitzari zerrenda"
 
-#: services/PhysicalMachines/service_multi.py:69
+#: services/PhysicalMachines/service_multi.py:71
 msgid "List of servers available for this service"
 msgstr "Zerbitzu honetarako erabilgarri dauden zerbitzuen zerrenda"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:73
 msgid "Check Port"
 msgstr "Begiratu Portua"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:73
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
 "Zero ez bada, portu horretako konexioei erantzuten dieten ostalariak soilik "
 "zerbitzatuko dira."
 
-#: services/PhysicalMachines/service_multi.py:72
+#: services/PhysicalMachines/service_multi.py:74
 msgid "Skip time"
 msgstr "Saltatu denbora"
 
-#: services/PhysicalMachines/service_multi.py:72
+#: services/PhysicalMachines/service_multi.py:74
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr ""
 "Ostalari batek huts egiten badu egiaztatzen bada, salta ezazu oraingoan "
 "(minutu batzuetan)."
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:77
 msgid "Static Multiple IP"
 msgstr "IP estatiko anitz"
 
-#: services/PhysicalMachines/service_multi.py:77
+#: services/PhysicalMachines/service_multi.py:79
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Zerbitzu honek POWERED-ON makinak IP bidez sarbidea eskaintzen du"
 
@@ -4841,47 +4841,47 @@ msgstr "Itzala"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Itzal memoria biderkatzailea (erabili arretaz)"
 
-#: temp_for_locales.py:92
+#: temp_for_locales.py:93
 msgid "Spanish"
 msgstr "Gaztelera"
 
-#: temp_for_locales.py:93
+#: temp_for_locales.py:94
 msgid "English"
 msgstr "English"
 
-#: temp_for_locales.py:94
+#: temp_for_locales.py:95
 msgid "French"
 msgstr "Frantses"
 
-#: temp_for_locales.py:95
+#: temp_for_locales.py:96
 msgid "German"
 msgstr "Aleman"
 
-#: temp_for_locales.py:96
+#: temp_for_locales.py:97
 msgid "Portuguese"
 msgstr "Portugesa"
 
-#: temp_for_locales.py:97
+#: temp_for_locales.py:98
 msgid "Italian"
 msgstr "Italiera"
 
-#: temp_for_locales.py:98
+#: temp_for_locales.py:99
 msgid "Basque"
 msgstr "Euskera"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:100
 msgid "Arabic"
 msgstr "Arabiera"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:101
 msgid "Russian"
 msgstr "Errusiera"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:102
 msgid "Catalan"
 msgstr "Katalan"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:103
 msgid "Chinese"
 msgstr "Txinera"
 
@@ -6007,47 +6007,47 @@ msgstr "Autentifikazio errore gehiegi. Erabiltzailea aldi baterako blokeatu da"
 msgid "Invalid data"
 msgstr "Datu baliogabeak"
 
-#: web/util/configjs.py:143
+#: web/util/configjs.py:145
 msgid "Access limited by calendar"
 msgstr "Sarbidea egutegian mugatua"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:181
 msgid "Windows client"
 msgstr "Windows bezeroa"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:182
 msgid "Mac OS X client"
 msgstr "Mac OS X bezeroa"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:183
 msgid "Debian based Linux client"
 msgstr "Debian oinarritutako Linux bezeroa"
 
-#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+#: web/util/configjs.py:183 web/util/configjs.py:184 web/util/configjs.py:185
 msgid "(requires Python-3.6 or newer)"
 msgstr "(Python-3.6 edo berriagoa behar du)"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:184
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "RPM oinarritutako Linux bezeroa (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:183
+#: web/util/configjs.py:185
 msgid "Generic .tar.gz Linux client"
 msgstr "Generic .tar.gz Linux bezeroa"
 
-#: web/util/configjs.py:184
+#: web/util/configjs.py:186
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Debian oinarritutako Python 2.7 Linux bezeroa"
 
-#: web/util/configjs.py:184 web/util/configjs.py:185 web/util/configjs.py:186
+#: web/util/configjs.py:186 web/util/configjs.py:187 web/util/configjs.py:188
 msgid "(requires outdated Python-2.7)"
 msgstr "(zaharkituta dago Python-2.7)"
 
-#: web/util/configjs.py:185
+#: web/util/configjs.py:187
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Legacy RH oinarritutako Linux bezeroa (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:186
+#: web/util/configjs.py:188
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Legacy OpenSuse oinarritutako Linux bezeroa)"
 

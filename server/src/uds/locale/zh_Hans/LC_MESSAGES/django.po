@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-01 11:43+0100\n"
+"POT-Creation-Date: 2021-04-13 12:46+0200\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -28,8 +28,8 @@ msgstr "帐号"
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
-#: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:301 REST/methods/users_groups.py:122
+#: REST/methods/transports.py:57 REST/methods/user_services.py:267
+#: REST/methods/user_services.py:313 REST/methods/users_groups.py:122
 #: REST/model.py:139
 msgid "Name"
 msgstr "名称"
@@ -39,7 +39,7 @@ msgstr "名称"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:59 REST/methods/user_services.py:303
+#: REST/methods/transports.py:59 REST/methods/user_services.py:315
 #: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
@@ -168,13 +168,13 @@ msgstr "ID"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:71 REST/methods/services.py:224
-#: REST/methods/transports.py:58 REST/methods/user_services.py:302
+#: REST/methods/transports.py:58 REST/methods/user_services.py:314
 msgid "Type"
 msgstr "类型"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:56 REST/methods/user_services.py:300
+#: REST/methods/transports.py:56 REST/methods/user_services.py:312
 #: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "优先"
@@ -353,12 +353,12 @@ msgstr "服务池名称"
 msgid "Enabled"
 msgstr "启用"
 
-#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:116
+#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:120
 msgid "Assigned services"
 msgstr "分配的服务"
 
-#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:120
-#: REST/methods/user_services.py:212
+#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:124
+#: REST/methods/user_services.py:224
 msgid "Creation date"
 msgstr "创立日期"
 
@@ -375,51 +375,51 @@ msgid "Pool"
 msgstr "池"
 
 #: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:122
-#: REST/methods/user_services.py:123 REST/methods/user_services.py:215
+#: REST/methods/user_services.py:127 REST/methods/user_services.py:227
 #: auths/IP/authenticator.py:67
 msgid "IP"
 msgstr "IP"
 
 #: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
-#: REST/methods/user_services.py:124 REST/methods/user_services.py:216
+#: REST/methods/user_services.py:128 REST/methods/user_services.py:228
 msgid "Friendly name"
 msgstr "友好名称"
 
-#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:125
+#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:129
 msgid "status"
 msgstr "状态"
 
-#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:127
+#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:131
 msgid "In Use"
 msgstr "正在使用"
 
 #: REST/methods/meta_service_pools.py:183 REST/methods/services_usage.py:125
-#: REST/methods/user_services.py:128
+#: REST/methods/user_services.py:132
 msgid "Src Host"
 msgstr "Src主持人"
 
 #: REST/methods/meta_service_pools.py:184 REST/methods/services_usage.py:124
-#: REST/methods/user_services.py:129
+#: REST/methods/user_services.py:133
 msgid "Src Ip"
 msgstr "Src Ip"
 
 #: REST/methods/meta_service_pools.py:185 REST/methods/services_usage.py:118
-#: REST/methods/user_services.py:130
+#: REST/methods/user_services.py:134
 msgid "Owner"
 msgstr "所有者"
 
-#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:131
-#: REST/methods/user_services.py:219
+#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:135
+#: REST/methods/user_services.py:231
 msgid "Actor version"
 msgstr "演员版"
 
 #: REST/methods/meta_service_pools.py:213 REST/methods/services_usage.py:144
-#: REST/methods/user_services.py:163
+#: REST/methods/user_services.py:167
 msgid "Item already being removed"
 msgstr "物品已被删除"
 
 #: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:146
-#: REST/methods/user_services.py:165
+#: REST/methods/user_services.py:169
 msgid "Item is not removable"
 msgstr "物品不可拆卸"
 
@@ -806,8 +806,8 @@ msgstr "基本服务不再存在"
 msgid "This service requires an OS Manager"
 msgstr "此服务需要OS Manager"
 
-#: REST/methods/services_usage.py:90 REST/methods/user_services.py:74
-#: REST/methods/user_services.py:75
+#: REST/methods/services_usage.py:90 REST/methods/user_services.py:78
+#: REST/methods/user_services.py:79
 msgid "unknown"
 msgstr "未知"
 
@@ -857,57 +857,57 @@ msgstr "如果为空，将允许任何与此传输兼容的设备。否则，只
 msgid "Currently assigned services pools"
 msgstr "当前分配的服务池"
 
-#: REST/methods/user_services.py:121 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:377 REST/methods/user_services.py:406
+#: REST/methods/user_services.py:125 REST/methods/user_services.py:225
+#: REST/methods/user_services.py:389 REST/methods/user_services.py:418
 msgid "Revision"
 msgstr "调整"
 
-#: REST/methods/user_services.py:126
+#: REST/methods/user_services.py:130
 msgid "Status date"
 msgstr "状态日期"
 
-#: REST/methods/user_services.py:208
+#: REST/methods/user_services.py:220
 msgid "Cached services"
 msgstr "缓存服务"
 
-#: REST/methods/user_services.py:217 REST/methods/user_services.py:257
-#: REST/methods/user_services.py:379
+#: REST/methods/user_services.py:229 REST/methods/user_services.py:269
+#: REST/methods/user_services.py:391
 msgid "State"
 msgstr "州"
 
-#: REST/methods/user_services.py:218
+#: REST/methods/user_services.py:230
 msgid "Cache level"
 msgstr "缓存级别"
 
-#: REST/methods/user_services.py:250
+#: REST/methods/user_services.py:262
 msgid "Assigned groups"
 msgstr "分配的小组"
 
-#: REST/methods/user_services.py:256
+#: REST/methods/user_services.py:268
 msgid "comments"
 msgstr "评论"
 
-#: REST/methods/user_services.py:296
+#: REST/methods/user_services.py:308
 msgid "Assigned transports"
 msgstr "分配的运输"
 
-#: REST/methods/user_services.py:373
+#: REST/methods/user_services.py:385
 msgid "Publications"
 msgstr "出版物"
 
-#: REST/methods/user_services.py:378 REST/methods/user_services.py:407
+#: REST/methods/user_services.py:390 REST/methods/user_services.py:419
 msgid "Publish date"
 msgstr "发布日期"
 
-#: REST/methods/user_services.py:380
+#: REST/methods/user_services.py:392
 msgid "Reason"
 msgstr "原因"
 
-#: REST/methods/user_services.py:402
+#: REST/methods/user_services.py:414
 msgid "Changelog"
 msgstr "更新日志"
 
-#: REST/methods/user_services.py:408
+#: REST/methods/user_services.py:420
 msgid "Comment"
 msgstr "评论"
 
@@ -3797,49 +3797,49 @@ msgstr "静态IP机器提供商"
 msgid "Provides connection to machines by IP"
 msgstr "通过IP提供与机器的连接"
 
-#: services/PhysicalMachines/service_multi.py:61
+#: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "服务令牌"
 
-#: services/PhysicalMachines/service_multi.py:63
+#: services/PhysicalMachines/service_multi.py:65
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
 msgstr "参与者将用于与服务进行通信的服务令牌。留空以进行永久分配。"
 
-#: services/PhysicalMachines/service_multi.py:69
+#: services/PhysicalMachines/service_multi.py:71
 #: services/RDS_enterprise/provider.py:48
 msgid "List of servers"
 msgstr "服务器列表"
 
-#: services/PhysicalMachines/service_multi.py:69
+#: services/PhysicalMachines/service_multi.py:71
 msgid "List of servers available for this service"
 msgstr "可用于此服务的服务器列表"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:73
 msgid "Check Port"
 msgstr "检查端口"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:73
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr "如果非零，则仅响应该端口上的连接的主机。"
 
-#: services/PhysicalMachines/service_multi.py:72
+#: services/PhysicalMachines/service_multi.py:74
 msgid "Skip time"
 msgstr "跳过时间"
 
-#: services/PhysicalMachines/service_multi.py:72
+#: services/PhysicalMachines/service_multi.py:74
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr "如果主机无法检查，请跳过此时间（以分钟为单位）。"
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:77
 msgid "Static Multiple IP"
 msgstr "静态多IP"
 
-#: services/PhysicalMachines/service_multi.py:77
+#: services/PhysicalMachines/service_multi.py:79
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
 
@@ -4652,47 +4652,47 @@ msgstr "阴影"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "影子内存倍增器（谨慎使用）"
 
-#: temp_for_locales.py:92
+#: temp_for_locales.py:93
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: temp_for_locales.py:93
+#: temp_for_locales.py:94
 msgid "English"
 msgstr "英语"
 
-#: temp_for_locales.py:94
+#: temp_for_locales.py:95
 msgid "French"
 msgstr "法国"
 
-#: temp_for_locales.py:95
+#: temp_for_locales.py:96
 msgid "German"
 msgstr "德语"
 
-#: temp_for_locales.py:96
+#: temp_for_locales.py:97
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: temp_for_locales.py:97
+#: temp_for_locales.py:98
 msgid "Italian"
 msgstr "意大利"
 
-#: temp_for_locales.py:98
+#: temp_for_locales.py:99
 msgid "Basque"
 msgstr "巴斯克"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:100
 msgid "Arabic"
 msgstr "阿拉伯"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:101
 msgid "Russian"
 msgstr "俄语"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:102
 msgid "Catalan"
 msgstr "加泰罗尼亚"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:103
 msgid "Chinese"
 msgstr "中文"
 
@@ -5763,47 +5763,47 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:143
+#: web/util/configjs.py:145
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:181
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:182
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:183
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+#: web/util/configjs.py:183 web/util/configjs.py:184 web/util/configjs.py:185
 msgid "(requires Python-3.6 or newer)"
 msgstr "（需要Python-3.6或更高版本）"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:184
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "基于RPM的Linux客户端（Fedora，Suse等）"
 
-#: web/util/configjs.py:183
+#: web/util/configjs.py:185
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 
-#: web/util/configjs.py:184
+#: web/util/configjs.py:186
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "基于旧版Debian的Python 2.7 Linux客户端"
 
-#: web/util/configjs.py:184 web/util/configjs.py:185 web/util/configjs.py:186
+#: web/util/configjs.py:186 web/util/configjs.py:187 web/util/configjs.py:188
 msgid "(requires outdated Python-2.7)"
 msgstr "（要求使用过时的Python-2.7）"
 
-#: web/util/configjs.py:185
+#: web/util/configjs.py:187
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "基于旧式RH的Linux客户端（Fedora，Centos，Suse等）"
 
-#: web/util/configjs.py:186
+#: web/util/configjs.py:188
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "基于旧版OpenSuse的Linux客户端）"
 
