@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-01 11:43+0100\n"
+"POT-Creation-Date: 2021-04-13 12:46+0200\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -30,8 +30,8 @@ msgstr "Comptes"
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:70
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:99
-#: REST/methods/transports.py:57 REST/methods/user_services.py:255
-#: REST/methods/user_services.py:301 REST/methods/users_groups.py:122
+#: REST/methods/transports.py:57 REST/methods/user_services.py:267
+#: REST/methods/user_services.py:313 REST/methods/users_groups.py:122
 #: REST/model.py:139
 msgid "Name"
 msgstr "Nom"
@@ -41,7 +41,7 @@ msgstr "Nom"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:72 REST/methods/proxies.py:62
 #: REST/methods/services.py:223 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:59 REST/methods/user_services.py:303
+#: REST/methods/transports.py:59 REST/methods/user_services.py:315
 #: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:157
 msgid "Comments"
@@ -170,13 +170,13 @@ msgstr "ID"
 
 #: REST/methods/authenticators.py:66 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:71 REST/methods/services.py:224
-#: REST/methods/transports.py:58 REST/methods/user_services.py:302
+#: REST/methods/transports.py:58 REST/methods/user_services.py:314
 msgid "Type"
 msgstr "Type"
 
 #: REST/methods/authenticators.py:68 REST/methods/meta_service_pools.py:85
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:56 REST/methods/user_services.py:300
+#: REST/methods/transports.py:56 REST/methods/user_services.py:312
 #: REST/model.py:166 models/meta_pool.py:73
 msgid "Priority"
 msgstr "Priorité"
@@ -359,12 +359,12 @@ msgstr "Nom du pool de services"
 msgid "Enabled"
 msgstr "Activé"
 
-#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:116
+#: REST/methods/meta_service_pools.py:172 REST/methods/user_services.py:120
 msgid "Assigned services"
 msgstr "Services attribuées"
 
-#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:120
-#: REST/methods/user_services.py:212
+#: REST/methods/meta_service_pools.py:176 REST/methods/user_services.py:124
+#: REST/methods/user_services.py:224
 msgid "Creation date"
 msgstr "Date de création"
 
@@ -381,51 +381,51 @@ msgid "Pool"
 msgstr "Pool"
 
 #: REST/methods/meta_service_pools.py:179 REST/methods/services_usage.py:122
-#: REST/methods/user_services.py:123 REST/methods/user_services.py:215
+#: REST/methods/user_services.py:127 REST/methods/user_services.py:227
 #: auths/IP/authenticator.py:67
 msgid "IP"
 msgstr "IP "
 
 #: REST/methods/meta_service_pools.py:180 REST/methods/services_usage.py:123
-#: REST/methods/user_services.py:124 REST/methods/user_services.py:216
+#: REST/methods/user_services.py:128 REST/methods/user_services.py:228
 msgid "Friendly name"
 msgstr "Nom convivial"
 
-#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:125
+#: REST/methods/meta_service_pools.py:181 REST/methods/user_services.py:129
 msgid "status"
 msgstr "statut"
 
-#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:127
+#: REST/methods/meta_service_pools.py:182 REST/methods/user_services.py:131
 msgid "In Use"
 msgstr "En utilisation"
 
 #: REST/methods/meta_service_pools.py:183 REST/methods/services_usage.py:125
-#: REST/methods/user_services.py:128
+#: REST/methods/user_services.py:132
 msgid "Src Host"
 msgstr "Hôte de la SRC"
 
 #: REST/methods/meta_service_pools.py:184 REST/methods/services_usage.py:124
-#: REST/methods/user_services.py:129
+#: REST/methods/user_services.py:133
 msgid "Src Ip"
 msgstr "SRC Ip"
 
 #: REST/methods/meta_service_pools.py:185 REST/methods/services_usage.py:118
-#: REST/methods/user_services.py:130
+#: REST/methods/user_services.py:134
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:131
-#: REST/methods/user_services.py:219
+#: REST/methods/meta_service_pools.py:186 REST/methods/user_services.py:135
+#: REST/methods/user_services.py:231
 msgid "Actor version"
 msgstr "Version de l'acteur"
 
 #: REST/methods/meta_service_pools.py:213 REST/methods/services_usage.py:144
-#: REST/methods/user_services.py:163
+#: REST/methods/user_services.py:167
 msgid "Item already being removed"
 msgstr "Élément déjà retiré"
 
 #: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:146
-#: REST/methods/user_services.py:165
+#: REST/methods/user_services.py:169
 msgid "Item is not removable"
 msgstr "Point non amovible"
 
@@ -831,8 +831,8 @@ msgstr "Service de base n'existe plus"
 msgid "This service requires an OS Manager"
 msgstr "Ce service nécessite un gestionnaire de système d'exploitation"
 
-#: REST/methods/services_usage.py:90 REST/methods/user_services.py:74
-#: REST/methods/user_services.py:75
+#: REST/methods/services_usage.py:90 REST/methods/user_services.py:78
+#: REST/methods/user_services.py:79
 msgid "unknown"
 msgstr "inconnu"
 
@@ -890,57 +890,57 @@ msgstr ""
 msgid "Currently assigned services pools"
 msgstr "Actuellement affecté piscines services"
 
-#: REST/methods/user_services.py:121 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:377 REST/methods/user_services.py:406
+#: REST/methods/user_services.py:125 REST/methods/user_services.py:225
+#: REST/methods/user_services.py:389 REST/methods/user_services.py:418
 msgid "Revision"
 msgstr "Révision"
 
-#: REST/methods/user_services.py:126
+#: REST/methods/user_services.py:130
 msgid "Status date"
 msgstr "Date d'État"
 
-#: REST/methods/user_services.py:208
+#: REST/methods/user_services.py:220
 msgid "Cached services"
 msgstr "Services de mise en cache"
 
-#: REST/methods/user_services.py:217 REST/methods/user_services.py:257
-#: REST/methods/user_services.py:379
+#: REST/methods/user_services.py:229 REST/methods/user_services.py:269
+#: REST/methods/user_services.py:391
 msgid "State"
 msgstr "État"
 
-#: REST/methods/user_services.py:218
+#: REST/methods/user_services.py:230
 msgid "Cache level"
 msgstr "Niveau de cache"
 
-#: REST/methods/user_services.py:250
+#: REST/methods/user_services.py:262
 msgid "Assigned groups"
 msgstr "Groupes assignés"
 
-#: REST/methods/user_services.py:256
+#: REST/methods/user_services.py:268
 msgid "comments"
 msgstr "Commentaires"
 
-#: REST/methods/user_services.py:296
+#: REST/methods/user_services.py:308
 msgid "Assigned transports"
 msgstr "Transports assignés"
 
-#: REST/methods/user_services.py:373
+#: REST/methods/user_services.py:385
 msgid "Publications"
 msgstr "Publications"
 
-#: REST/methods/user_services.py:378 REST/methods/user_services.py:407
+#: REST/methods/user_services.py:390 REST/methods/user_services.py:419
 msgid "Publish date"
 msgstr "La date de publication"
 
-#: REST/methods/user_services.py:380
+#: REST/methods/user_services.py:392
 msgid "Reason"
 msgstr "Raison"
 
-#: REST/methods/user_services.py:402
+#: REST/methods/user_services.py:414
 msgid "Changelog"
 msgstr "Changelog"
 
-#: REST/methods/user_services.py:408
+#: REST/methods/user_services.py:420
 msgid "Comment"
 msgstr "Commentaire"
 
@@ -3995,12 +3995,12 @@ msgstr "Fournisseur de machines IP statiques"
 msgid "Provides connection to machines by IP"
 msgstr "Fournit une connexion aux machines par IP"
 
-#: services/PhysicalMachines/service_multi.py:61
+#: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Jeton de service"
 
-#: services/PhysicalMachines/service_multi.py:63
+#: services/PhysicalMachines/service_multi.py:65
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -4009,41 +4009,41 @@ msgstr ""
 "Jeton de service qui sera utilisé par les acteurs pour communiquer avec le "
 "service. Laissez vide pour une affectation persistante."
 
-#: services/PhysicalMachines/service_multi.py:69
+#: services/PhysicalMachines/service_multi.py:71
 #: services/RDS_enterprise/provider.py:48
 msgid "List of servers"
 msgstr "Liste des serveurs"
 
-#: services/PhysicalMachines/service_multi.py:69
+#: services/PhysicalMachines/service_multi.py:71
 msgid "List of servers available for this service"
 msgstr "Liste des serveurs disponibles pour ce service"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:73
 msgid "Check Port"
 msgstr "Vérifier le port"
 
-#: services/PhysicalMachines/service_multi.py:71
+#: services/PhysicalMachines/service_multi.py:73
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
 "Si différent de zéro, seuls les hôtes répondant à la connexion sur ce port "
 "seront servis."
 
-#: services/PhysicalMachines/service_multi.py:72
+#: services/PhysicalMachines/service_multi.py:74
 msgid "Skip time"
 msgstr "Passer le temps"
 
-#: services/PhysicalMachines/service_multi.py:72
+#: services/PhysicalMachines/service_multi.py:74
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr ""
 "Si un hôte ne parvient pas à vérifier, ignorez-le pendant cette période (en "
 "minutes)."
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:77
 msgid "Static Multiple IP"
 msgstr "IP statique multiple"
 
-#: services/PhysicalMachines/service_multi.py:77
+#: services/PhysicalMachines/service_multi.py:79
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Ce service fournit un accès aux machines sous tension par IP"
 
@@ -4908,47 +4908,47 @@ msgstr "Ombre"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Multiplicateur de mémoire fantôme (à utiliser avec précaution)"
 
-#: temp_for_locales.py:92
+#: temp_for_locales.py:93
 msgid "Spanish"
 msgstr "Espanol"
 
-#: temp_for_locales.py:93
+#: temp_for_locales.py:94
 msgid "English"
 msgstr "Anglais"
 
-#: temp_for_locales.py:94
+#: temp_for_locales.py:95
 msgid "French"
 msgstr "Français"
 
-#: temp_for_locales.py:95
+#: temp_for_locales.py:96
 msgid "German"
 msgstr "Allemand"
 
-#: temp_for_locales.py:96
+#: temp_for_locales.py:97
 msgid "Portuguese"
 msgstr "Portugais"
 
-#: temp_for_locales.py:97
+#: temp_for_locales.py:98
 msgid "Italian"
 msgstr "Italien"
 
-#: temp_for_locales.py:98
+#: temp_for_locales.py:99
 msgid "Basque"
 msgstr "Basque"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:100
 msgid "Arabic"
 msgstr "Arabe"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:101
 msgid "Russian"
 msgstr "Russe"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:102
 msgid "Catalan"
 msgstr "Catalan"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:103
 msgid "Chinese"
 msgstr "Chinois"
 
@@ -6087,47 +6087,47 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Données invalides"
 
-#: web/util/configjs.py:143
+#: web/util/configjs.py:145
 msgid "Access limited by calendar"
 msgstr "Accès limité par calendrier"
 
-#: web/util/configjs.py:179
+#: web/util/configjs.py:181
 msgid "Windows client"
 msgstr "Client Windows"
 
-#: web/util/configjs.py:180
+#: web/util/configjs.py:182
 msgid "Mac OS X client"
 msgstr "Client Mac OS X"
 
-#: web/util/configjs.py:181
+#: web/util/configjs.py:183
 msgid "Debian based Linux client"
 msgstr "Client Linux basé sur Debian"
 
-#: web/util/configjs.py:181 web/util/configjs.py:182 web/util/configjs.py:183
+#: web/util/configjs.py:183 web/util/configjs.py:184 web/util/configjs.py:185
 msgid "(requires Python-3.6 or newer)"
 msgstr "(nécessite Python-3.6 ou plus récent)"
 
-#: web/util/configjs.py:182
+#: web/util/configjs.py:184
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Client Linux basé sur RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:183
+#: web/util/configjs.py:185
 msgid "Generic .tar.gz Linux client"
 msgstr "Client Linux générique .tar.gz"
 
-#: web/util/configjs.py:184
+#: web/util/configjs.py:186
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Client Linux Python 2.7 basé sur Debian hérité"
 
-#: web/util/configjs.py:184 web/util/configjs.py:185 web/util/configjs.py:186
+#: web/util/configjs.py:186 web/util/configjs.py:187 web/util/configjs.py:188
 msgid "(requires outdated Python-2.7)"
 msgstr "(nécessite Python-2.7 obsolète)"
 
-#: web/util/configjs.py:185
+#: web/util/configjs.py:187
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Client Linux hérité RH (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:186
+#: web/util/configjs.py:188
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Client Linux basé sur OpenSuse hérité)"
 

@@ -158,6 +158,7 @@ gettext("Please, select a valid user");
 gettext("Error");
 gettext("Please, select a valid transport");
 gettext("Logs");
+gettext("VNC");
 gettext("Launch now");
 gettext("Change owner");
 gettext("Assign service");
