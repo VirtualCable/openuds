@@ -288,12 +288,22 @@ class BaseRDPTransport(transports.Transport):
 
     allowMacMSRDC = gui.CheckBoxField(
         label=_('Allow Microsoft Rdp Client'),
-        order=40,
+        order=50,
         tooltip=_(
             'If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'
         ),
         tab='Mac OS X',
         defvalue=gui.FALSE,
+    )
+
+    customParametersMAC = gui.TextField(
+        label=_('Custom parameters'),
+        order=51,
+        tooltip=_(
+            'If not empty, extra parameter to include for Mac OS X Freerdp Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'
+        ),
+        tab='Mac OS X',
+        length=256,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:

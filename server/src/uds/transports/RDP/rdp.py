@@ -87,6 +87,7 @@ class RDPTransport(BaseRDPTransport):
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
     allowMacMSRDC = BaseRDPTransport.allowMacMSRDC
+    customParametersMAC = BaseRDPTransport.customParametersMAC
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
             self,
@@ -169,6 +170,7 @@ class RDPTransport(BaseRDPTransport):
                 'address': r.address,
             })
         else:  # Mac
+            r.linuxCustomParameters = self.customParametersMAC.value
             sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.isTrue() else '',

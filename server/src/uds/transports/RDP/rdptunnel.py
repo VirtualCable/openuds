@@ -125,6 +125,7 @@ class TRDPTransport(BaseRDPTransport):
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
     allowMacMSRDC = BaseRDPTransport.allowMacMSRDC
+    customParametersMAC = BaseRDPTransport.customParametersMAC
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -228,6 +229,7 @@ class TRDPTransport(BaseRDPTransport):
                 }
             )
         else:  # Mac
+            r.linuxCustomParameters = self.customParametersMAC.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
