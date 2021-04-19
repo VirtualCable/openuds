@@ -181,7 +181,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.setValues([gui.choiceItem(str(m.vmid), '{}\{}'.format(m.node, m.name or m.vmid)) for m in self.parent().listMachines() if m.name and m.name[:3] != 'UDS'])
+        self.machine.setValues([gui.choiceItem(str(m.vmid), '{}\\{}'.format(m.node, m.name or m.vmid)) for m in self.parent().listMachines() if m.name and m.name[:3] != 'UDS'])
         self.pool.setValues([gui.choiceItem('', _('None'))] + [gui.choiceItem(p.poolid, p.poolid) for p in self.parent().listPools()])
         self.ha.setValues(
             [
