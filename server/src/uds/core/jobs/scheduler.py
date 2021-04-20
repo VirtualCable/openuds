@@ -106,7 +106,7 @@ class JobThread(threading.Thread):
             DBScheduler.objects.select_for_update().filter(id=self._dbJobId).update(
                 state=State.FOR_EXECUTE,
                 owner_server='',
-                next_execution=getSqlDatetime() + timedelta(self._freq),
+                next_execution=getSqlDatetime() + timedelta(seconds=self._freq),
             )
 
 
