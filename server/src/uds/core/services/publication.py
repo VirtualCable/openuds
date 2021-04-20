@@ -125,7 +125,7 @@ class Publication(Environmentable, Serializable):
         """
         return self._service
 
-    def osManager(self) -> 'osmanagers.OSManager':
+    def osManager(self) -> typing.Optional['osmanagers.OSManager']:
         """
         Utility method to access os manager for this publication.
 
