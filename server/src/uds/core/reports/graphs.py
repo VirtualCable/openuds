@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2018-2020 Virtual Cable S.L.U.
+# Copyright (c) 2018-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -47,14 +47,14 @@ logger = logging.getLogger(__name__)
 
 
 def barChart(
-    size: typing.Tuple[float, float, int], data: typing.Dict, output: typing.BinaryIO
+    size: typing.Tuple[float, float, int], data: typing.Mapping, output: typing.BinaryIO
 ) -> None:
     d = data['x']
     ind = np.arange(len(d))
     ys = data['y']
 
     width = 0.60
-    fig: typing.Any = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
+    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
     axis = fig.add_subplot(111)
@@ -81,12 +81,12 @@ def barChart(
 
 
 def lineChart(
-    size: typing.Tuple[float, float, int], data: typing.Dict, output: typing.BinaryIO
+    size: typing.Tuple[float, float, int], data: typing.Mapping, output: typing.BinaryIO
 ) -> None:
     x = data['x']
     y = data['y']
 
-    fig : typing.Any = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
+    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
     axis = fig.add_subplot(111)
@@ -113,7 +113,7 @@ def lineChart(
 
 
 def surfaceChart(
-    size: typing.Tuple[float, float, int], data: typing.Dict, output: typing.BinaryIO
+    size: typing.Tuple[float, float, int], data: typing.Mapping, output: typing.BinaryIO
 ) -> None:
     x = data['x']
     y = data['y']
@@ -130,7 +130,7 @@ def surfaceChart(
     logger.debug('Y\': %s', y)
     logger.debug('Z\': %s', z)
 
-    fig : typing.Any = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
+    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
     axis = fig.add_subplot(111, projection='3d')
@@ -138,12 +138,12 @@ def surfaceChart(
 
     if data.get('wireframe', False) is True:
         axis.plot_wireframe(
-            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm
-        )  # @UndefinedVariable
+            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm  # type: ignore
+        )
     else:
         axis.plot_surface(
-            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm
-        )  # @UndefinedVariable
+            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm  # type: ignore
+        )
 
     axis.set_title(data.get('title', ''))
     axis.set_xlabel(data['xlabel'])
