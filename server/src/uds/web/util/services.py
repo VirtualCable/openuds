@@ -101,6 +101,34 @@ def getServicesData(
 
     logger.debug('Checking meta pools: %s', availMetaPools)
     services = []
+
+    # Metapool helpers
+    def transportIterator(member) -> typing.Iterable[Transport]:
+        for t in member.pool.transports.all():
+            typeTrans = t.getType()
+            if (
+                typeTrans
+                and t.validForIp(request.ip)
+                and typeTrans.supportsOs(osName)
+                and t.validForOs(osName)
+            ):
+                yield t
+
+    def buildMetaTransports(
+        transports: typing.Iterable[Transport],
+        isLabel: bool,
+    ) -> typing.List[typing.Mapping[str, typing.Any]]:
+        idd = lambda i: i.uuid if not isLabel else 'LABEL:' + i.label
+        return [
+            {
+                'id': idd(i),
+                'name': i.name,
+                'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),
+                'priority': 0,
+            }
+            for i in transports
+        ]
+
     # Preload all assigned user services for this user
     # Add meta pools data first
     for meta in availMetaPools:
@@ -108,35 +136,48 @@ def getServicesData(
         metaTransports: typing.List[typing.Mapping[str, typing.Any]] = []
         in_use = meta.number_in_use > 0  # type: ignore # anotated value
 
-        if True:  # If meta.use_common_transports
+        inAll: typing.Optional[typing.Set[str]] = None
+        tmpSet: typing.Set[str]
+        if (
+            meta.transport_grouping == MetaPool.COMMON_TRANSPORT_SELECT
+        ):  # If meta.use_common_transports
             # only keep transports that are in ALL members
-            inAll: typing.Optional[typing.Set[str]] = None
-            for member in meta.members.all():
-                tmpSet: typing.Set[str] = set()
-                for t in member.pool.transports.all():
-                    if inAll is None:  # if first...
-                        typeTrans = t.getType()
-                        if (
-                            typeTrans
-                            and t.validForIp(request.ip)
-                            and typeTrans.supportsOs(osName)
-                            and t.validForOs(osName)
-                        ):
-                            tmpSet.add(t.uuid)
-                    elif t.uuid in inAll:
+            for member in meta.members.all().order_by('priority'):
+                tmpSet = set()
+                # if first pool, get all its transports and check that are valid
+                for t in transportIterator(member):
+                    if inAll is None:
                         tmpSet.add(t.uuid)
-                        
+                    elif t.uuid in inAll:  # For subsequent, reduce...
+                        tmpSet.add(t.uuid)
+
                 inAll = tmpSet
             # tmpSet has ALL common transports
-            metaTransports = [
-                {
-                    'id': i.uuid,
-                    'name': i.name,
-                    'link': html.udsAccessLink(request, 'M' + meta.uuid, i.uuid),
-                    'priority': 0,
-                }
-                for i in Transport.objects.filter(uuid__in=inAll or [])
-            ]
+            metaTransports = buildMetaTransports(
+                Transport.objects.filter(uuid__in=inAll or []),
+                isLabel=False
+            )
+        elif meta.transport_grouping == MetaPool.LABEL_TRANSPORT_SELECT:
+            ltrans: typing.MutableMapping[str, Transport] = {}
+            for member in meta.members.all():
+                tmpSet = set()
+                # if first pool, get all its transports and check that are valid
+                for t in transportIterator(member):
+                    if not t.label:
+                        continue
+                    if t.label not in ltrans:
+                        ltrans[t.label] = t
+                    if inAll is None:
+                        tmpSet.add(t.label)
+                    elif t.label in inAll:  # For subsequent, reduce...
+                        tmpSet.add(t.label)
+
+                inAll = tmpSet
+            # tmpSet has ALL common transports
+            metaTransports = buildMetaTransports(
+                (v for k, v in ltrans.items() if k in (inAll or set())),
+                isLabel=True
+            )
         else:
             for member in meta.members.all():
                 # if pool.isInMaintenance():
@@ -187,7 +228,7 @@ def getServicesData(
                     'group': group,
                     'transports': metaTransports,
                     'imageId': meta.image and meta.image.uuid or 'x',
-                    'show_transports': False,
+                    'show_transports': len(metaTransports) > 1,
                     'allow_users_remove': False,
                     'allow_users_reset': False,
                     'maintenance': meta.isInMaintenance(),
@@ -209,7 +250,7 @@ def getServicesData(
         use_count = str(sPool.usage_count)  # type: ignore # anotated value
         left_count = str(sPool.max_srvs - sPool.usage_count)  # type: ignore # anotated value
 
-        trans = []
+        trans: typing.List[typing.MutableMapping[str, typing.Any]] = []
         for t in sorted(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array

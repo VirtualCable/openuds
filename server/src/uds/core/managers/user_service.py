@@ -749,7 +749,7 @@ class UserServiceManager:
         Get service info from user service
         """
         if idService[0] == 'M':  # Meta pool
-            return self.getMeta(user, srcIp, os, idService[1:])
+            return self.getMeta(user, srcIp, os, idService[1:], idTransport)
 
         userService = self.locateUserService(user, idService, create=True)
 
@@ -908,6 +908,7 @@ class UserServiceManager:
         srcIp: str,
         os: typing.MutableMapping,
         idMetaPool: str,
+        idTransport: str,
         clientHostName: typing.Optional[str] = None,
     ) -> typing.Tuple[
         typing.Optional[str],
@@ -953,7 +954,13 @@ class UserServiceManager:
         ) -> typing.Optional[typing.Tuple[ServicePool, Transport]]:
             found = None
             t: Transport
-            for t in pool.transports.all().order_by('priority'):
+            if idTransport == 'meta':  # Autoselected:
+                q = pool.transports.all().order_by('priority')
+            elif idTransport[:6] == 'LABEL:':
+                q = pool.transports.filter(label=idTransport[6:])
+            else:
+                q = pool.transports.filter(uuid=idTransport)
+            for t in q:
                 typeTrans = t.getType()
                 if (
                     t.getType()

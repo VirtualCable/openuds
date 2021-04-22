@@ -36,6 +36,7 @@ import typing
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Transport, Network, ServicePool
 from uds.core import transports
+from uds.core.ui import gui
 from uds.core.util import permissions
 from uds.core.util import os_detector as OsDetector
 
@@ -49,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 class Transports(ModelHandler):
     model = Transport
-    save_fields = ['name', 'comments', 'tags', 'priority', 'nets_positive', 'allowed_oss']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'nets_positive', 'allowed_oss', 'label']
 
     table_title = _('Transports')
     table_fields = [
@@ -107,6 +108,16 @@ class Transports(ModelHandler):
             'type': 'multichoice',
             'order': 103
         })
+        field = self.addField(field, {
+            'name': 'label',
+            'length': 32,
+            'value': '',
+            'label': ugettext('Label'),
+            'tooltip': ugettext('Metapool transport label (only used on metapool transports grouping)'),
+            'type': 'text',
+            'order': 201,
+            'tab': gui.ADVANCED_TAB
+        })
 
         return field
 
@@ -120,6 +131,7 @@ class Transports(ModelHandler):
             'comments': item.comments,
             'priority': item.priority,
             'nets_positive': item.nets_positive,
+            'label': item.label,
             'networks': [{'id': n.uuid} for n in item.networks.all()],
             'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
             'pools': pools,

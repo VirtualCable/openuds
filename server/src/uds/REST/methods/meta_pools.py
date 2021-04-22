@@ -63,7 +63,7 @@ class MetaPools(ModelHandler):
     }
 
     save_fields = ['name', 'short_name', 'comments', 'tags',
-                   'image_id', 'servicesPoolGroup_id', 'visible', 'policy', 'calendar_message']
+                   'image_id', 'servicesPoolGroup_id', 'visible', 'policy', 'calendar_message', 'transport_grouping']
 
     table_title = _('Meta Pools')
     table_fields = [
@@ -74,6 +74,7 @@ class MetaPools(ModelHandler):
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},
         {'pool_group_name': {'title': _('Pool Group')}},
+        {'label': {'title': _('Label')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -113,6 +114,7 @@ class MetaPools(ModelHandler):
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
             'calendar_message': item.calendar_message,
+            'transport_grouping': item.transport_grouping
         }
 
         return val
@@ -135,7 +137,7 @@ class MetaPools(ModelHandler):
                 'tooltip': ugettext('Image assocciated with this service'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 120,
-                'tab': ugettext('Display'),
+                'tab': gui.DISPLAY_TAB,
             }, {
                 'name': 'servicesPoolGroup_id',
                 'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]),
@@ -143,7 +145,7 @@ class MetaPools(ModelHandler):
                 'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 121,
-                'tab': ugettext('Display'),
+                'tab': gui.DISPLAY_TAB,
             }, {
                 'name': 'visible',
                 'value': True,
@@ -151,7 +153,7 @@ class MetaPools(ModelHandler):
                 'tooltip': ugettext('If active, metapool will be visible for users'),
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 123,
-                'tab': ugettext('Display'),
+                'tab': gui.DISPLAY_TAB,
             }, {
                 'name': 'calendar_message',
                 'value': '',
@@ -159,7 +161,15 @@ class MetaPools(ModelHandler):
                 'tooltip': ugettext('Custom message to be shown to users if access is limited by calendar rules.'),
                 'type': gui.InputField.TEXT_TYPE,
                 'order': 124,
-                'tab': ugettext('Display'),
+                'tab': gui.DISPLAY_TAB,
+            }, {
+                'name': 'transport_grouping',
+                'values': [gui.choiceItem(k, str(v)) for k, v in MetaPool.TRANSPORT_SELECT.items()],
+                'label': ugettext('Transport Selection'),
+                'tooltip': ugettext('Transport selection policy'),
+                'type': gui.InputField.CHOICE_TYPE,
+                'order': 125,
+                'tab': gui.DISPLAY_TAB
             }]:
             self.addField(localGUI, field)
 

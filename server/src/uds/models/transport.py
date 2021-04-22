@@ -62,6 +62,8 @@ class Transport(ManagedObjectModel, TaggingMixin):
     nets_positive = models.BooleanField(default=False)
     # We store allowed oss as a comma-separated list
     allowed_oss = models.CharField(max_length=255, default='')
+    # Label, to group transports on meta pools
+    label = models.CharField(max_length=32, default='', db_index=True)
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[Transport]'

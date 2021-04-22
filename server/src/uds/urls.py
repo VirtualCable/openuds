@@ -101,12 +101,12 @@ urlpatterns = [
     re_path(r'^uds/utility/download/(?P<idDownload>[a-zA-Z0-9-]*)$', uds.web.views.download, name='utility.downloader'),
 
     # WEB API path (not REST api, frontend)
-    re_path(r'^uds/webapi/img/transport/(?P<idTrans>[a-zA-Z0-9-]+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
+    re_path(r'^uds/webapi/img/transport/(?P<idTrans>[a-zA-Z0-9:-]+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
     re_path(r'^uds/webapi/img/gallery/(?P<idImage>[a-zA-Z0-9-]+)$', uds.web.views.image, name='webapi.galleryImage'),
 
-    re_path(r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9-]+)$', uds.web.views.userServiceEnabler, name='webapi.enabler'),
+    re_path(r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9:-]+)$', uds.web.views.userServiceEnabler, name='webapi.enabler'),
 
-    re_path(r'^uds/webapi/action/(?P<idService>.+)/(?P<actionString>[a-zA-Z0-9-]+)$', uds.web.views.action, name='webapi.action'),
+    re_path(r'^uds/webapi/action/(?P<idService>.+)/(?P<actionString>[a-zA-Z0-9:-]+)$', uds.web.views.action, name='webapi.action'),
 
     # Services list, ...
     path(r'uds/webapi/services', uds.web.views.modern.servicesData, name='webapi.services'),

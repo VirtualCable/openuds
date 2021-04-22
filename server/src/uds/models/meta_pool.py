@@ -68,10 +68,20 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     PRIORITY_POOL = 1
     MOST_AVAILABLE_BY_NUMBER = 2
 
-    TYPES = {
+    TYPES: typing.Mapping[int, str] = {
         ROUND_ROBIN_POOL: _('Evenly distributed'),
         PRIORITY_POOL: _('Priority'),
         MOST_AVAILABLE_BY_NUMBER: _('Greater % available'),
+    }
+
+    # Type of transport grouping
+    AUTO_TRANSPORT_SELECT = 0
+    COMMON_TRANSPORT_SELECT = 1
+    LABEL_TRANSPORT_SELECT = 2
+    TRANSPORT_SELECT: typing.Mapping[int, str] = {
+        AUTO_TRANSPORT_SELECT: _('Automatic selection'),
+        COMMON_TRANSPORT_SELECT: _('Use only common transports'),
+        LABEL_TRANSPORT_SELECT: _('Group Transports by label')
     }
 
     name = models.CharField(max_length=128, default='')
@@ -103,6 +113,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
     # Pool selection policy
     policy = models.SmallIntegerField(default=0)
+    # If use common transports instead of auto select one
+    transport_grouping = models.IntegerField(default=0)
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[MetaPool]'

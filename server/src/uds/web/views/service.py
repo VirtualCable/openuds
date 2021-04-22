@@ -100,7 +100,12 @@ def transportOwnLink(
 @cache_page(3600, key_prefix='img', cache='memory')
 def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
     try:
-        transport: Transport = Transport.objects.get(uuid=processUuid(idTrans))
+        transport: Transport
+        if idTrans[:6] == 'LABEL:':
+            # Get First label
+            transport = Transport.objects.filter(label=idTrans[6:]).order_by('priority')[0]
+        else:
+            transport = Transport.objects.get(uuid=processUuid(idTrans))
         return HttpResponse(transport.getInstance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
