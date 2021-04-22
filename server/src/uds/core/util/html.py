@@ -62,12 +62,11 @@ def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
     return "{}://{}{}/{}".format(proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler)
 
 
-def udsAccessLink(request: 'HttpRequest', serviceId: str, transportId: str) -> str:
-    return 'udsa://{}/{}'.format(serviceId, transportId)
-
-
-def udsMetaLink(request: 'HttpRequest', serviceId: str) -> str:
-    return 'udsa://{}/{}'.format(serviceId, 'meta')
+def udsAccessLink(request: 'HttpRequest', serviceId: str, transportId: typing.Optional[str]) -> str:
+    '''
+    If transportId (uuid) is None, this will be a metaLink
+    '''
+    return 'udsa://{}/{}'.format(serviceId, transportId or 'meta')
 
 
 def parseDate(dateToParse) -> datetime.date:

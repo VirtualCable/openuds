@@ -49,7 +49,6 @@ from uds.core.util import html
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.util.request import ExtendedHttpRequestWithUser
-    from uds.core.util.tools import DictAsObj
 
 
 logger = logging.getLogger(__name__)
@@ -103,39 +102,76 @@ def getServicesData(
     logger.debug('Checking meta pools: %s', availMetaPools)
     services = []
     # Preload all assigned user services for this user
-
     # Add meta pools data first
     for meta in availMetaPools:
         # Check that we have access to at least one transport on some of its children
-        hasUsablePools = False
-        in_use = (
-            typing.cast(typing.Any, meta).number_in_use > 0
-        )  # Override, because we used hear annotations
-        for member in meta.members.all():
-            # if pool.isInMaintenance():
-            #    continue
-            for t in member.pool.transports.all():
-                typeTrans = t.getType()
-                if (
-                    t.getType()
-                    and t.validForIp(request.ip)
-                    and typeTrans.supportsOs(osName)
-                    and t.validForOs(osName)
-                ):
-                    hasUsablePools = True
+        metaTransports: typing.List[typing.Mapping[str, typing.Any]] = []
+        in_use = meta.number_in_use > 0  # type: ignore # anotated value
+
+        if True:  # If meta.use_common_transports
+            # only keep transports that are in ALL members
+            inAll: typing.Optional[typing.Set[str]] = None
+            for member in meta.members.all():
+                tmpSet: typing.Set[str] = set()
+                for t in member.pool.transports.all():
+                    if inAll is None:  # if first...
+                        typeTrans = t.getType()
+                        if (
+                            typeTrans
+                            and t.validForIp(request.ip)
+                            and typeTrans.supportsOs(osName)
+                            and t.validForOs(osName)
+                        ):
+                            tmpSet.add(t.uuid)
+                    elif t.uuid in inAll:
+                        tmpSet.add(t.uuid)
+                        
+                inAll = tmpSet
+            # tmpSet has ALL common transports
+            metaTransports = [
+                {
+                    'id': i.uuid,
+                    'name': i.name,
+                    'link': html.udsAccessLink(request, 'M' + meta.uuid, i.uuid),
+                    'priority': 0,
+                }
+                for i in Transport.objects.filter(uuid__in=inAll or [])
+            ]
+        else:
+            for member in meta.members.all():
+                # if pool.isInMaintenance():
+                #    continue
+                for t in member.pool.transports.all():
+                    typeTrans = t.getType()
+                    if (
+                        typeTrans
+                        and t.validForIp(request.ip)
+                        and typeTrans.supportsOs(osName)
+                        and t.validForOs(osName)
+                    ):
+                        metaTransports = [
+                            {
+                                'id': 'meta',
+                                'name': 'meta',
+                                'link': html.udsAccessLink(
+                                    request, 'M' + meta.uuid, None
+                                ),
+                                'priority': 0,
+                            }
+                        ]
+                        break
+
+                # if not in_use and meta.number_in_use:  # Only look for assignation on possible used
+                #     assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
+                #     if assignedUserService:
+                #         in_use = assignedUserService.in_use
+
+                # Stop when 1 usable pool is found (metaTransports is filled)
+                if metaTransports:
                     break
 
-            # if not in_use and meta.number_in_use:  # Only look for assignation on possible used
-            #     assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
-            #     if assignedUserService:
-            #         in_use = assignedUserService.in_use
-
-            # Stop when 1 usable pool is found
-            if hasUsablePools:
-                break
-
         # If no usable pools, this is not visible
-        if hasUsablePools:
+        if metaTransports:
             group = (
                 meta.servicesPoolGroup.as_dict
                 if meta.servicesPoolGroup
@@ -149,14 +185,7 @@ def getServicesData(
                     'visual_name': meta.visual_name,
                     'description': meta.comments,
                     'group': group,
-                    'transports': [
-                        {
-                            'id': 'meta',
-                            'name': 'meta',
-                            'link': html.udsMetaLink(request, 'M' + meta.uuid),
-                            'priority': 0,
-                        }
-                    ],
+                    'transports': metaTransports,
                     'imageId': meta.image and meta.image.uuid or 'x',
                     'show_transports': False,
                     'allow_users_remove': False,
@@ -176,9 +205,9 @@ def getServicesData(
         if sPool.owned_by_meta:
             continue
 
-        use_percent = str(sPool.usage(sPool.usage_count)) + '%'
-        use_count = str(sPool.usage_count)
-        left_count = str(sPool.max_srvs - sPool.usage_count)
+        use_percent = str(sPool.usage(sPool.usage_count)) + '%'  # type: ignore # anotated value
+        use_count = str(sPool.usage_count)  # type: ignore # anotated value
+        left_count = str(sPool.max_srvs - sPool.usage_count)  # type: ignore # anotated value
 
         trans = []
         for t in sorted(

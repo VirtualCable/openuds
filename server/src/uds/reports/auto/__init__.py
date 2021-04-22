@@ -44,7 +44,19 @@ from . import fields
 
 logger = logging.getLogger(__name__)
 
-ReportAutoModel = typing.TypeVar('ReportAutoModel', models.Authenticator, models.ServicePool, models.Service, models.Provider)
+ReportAutoModel = typing.Union[
+    models.Authenticator,
+    models.ServicePool,
+    models.Service,
+    models.Provider,
+]
+
+reportAutoModelDct: typing.Mapping[str, typing.Type[ReportAutoModel]] = {  # type: ignore
+    'ServicePool': models.ServicePool,
+    'Authenticator': models.Authenticator,
+    'Service': models.Service,
+    'Provider': models.Provider,
+}
 
 class ReportAutoType(UserInterfaceType):
     def __new__(cls, name, bases, attrs) -> 'ReportAutoType':
@@ -54,7 +66,9 @@ class ReportAutoType(UserInterfaceType):
         # Check what source
         if attrs.get('data_source'):
 
-            attrs['source'] = fields.source_field(order, attrs['data_source'], attrs['multiple'])
+            attrs['source'] = fields.source_field(
+                order, attrs['data_source'], attrs['multiple']
+            )
             order += 1
 
             # Check if date must be added
@@ -67,13 +81,16 @@ class ReportAutoType(UserInterfaceType):
                 order += 1
                 attrs['date_end'] = fields.end_date_field(order)
                 order += 1
-                
+
             # Check if data interval should be included
             if attrs.get('intervals'):
                 attrs['interval'] = fields.intervals_field(order)
                 order += 1
 
-        return UserInterfaceType.__new__(cls, name, bases, attrs)
+        return typing.cast(
+            'ReportAutoType', UserInterfaceType.__new__(cls, name, bases, attrs)
+        )
+
 
 class ReportAuto(Report, metaclass=ReportAutoType):
     # Variables that will be overwriten on new class creation
@@ -96,24 +113,23 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     # If True, will allow selection of multiple "source" elements
     multiple: bool = False
 
-    def getModel(self) -> typing.Type[ReportAutoModel]:
+    def getModel(self) -> typing.Type[ReportAutoModel]:  # type: ignore
         data_source = self.data_source.split('.')[0]
-
-        return typing.cast(ReportAutoModel, {
-            'ServicePool': models.ServicePool,
-            'Authenticator': models.Authenticator,
-            'Service': models.Service,
-            'Provider': models.Provider
-        }[data_source])
+        
+        return reportAutoModelDct[data_source]
 
     def initGui(self):
-        # Fills datasource 
+        # Fills datasource
         fields.source_field_data(self.getModel(), self.data_source, self.source)
 
-    def getModelItems(self) -> typing.Iterable[ReportAutoModel]:
+    def getModelItems(self) -> typing.Iterable[ReportAutoModel]:  # type: ignore
         model = self.getModel()
-        
-        filters = [self.source.value] if isinstance(self.source, gui.ChoiceField) else self.source.value
+
+        filters = (
+            [self.source.value]
+            if isinstance(self.source, gui.ChoiceField)
+            else self.source.value
+        )
 
         if '0-0-0-0' in filters:
             items = model.objects.all()
@@ -121,11 +137,8 @@ class ReportAuto(Report, metaclass=ReportAutoType):
             items = model.objects.filter(uuid__in=filters)
 
         return items
-    
+
     def getIntervalInHours(self):
-        return {
-            'hour': 1,
-            'day': 24,
-            'week': 24*7,
-            'month': 24*30
-        }[self.interval.value]
+        return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[
+            self.interval.value
+        ]

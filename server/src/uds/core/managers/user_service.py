@@ -45,17 +45,26 @@ from uds.core.services.exceptions import (
     ServiceInMaintenanceMode,
     InvalidServiceException,
     ServiceNotReadyError,
-    ServiceAccessDeniedByCalendar
+    ServiceAccessDeniedByCalendar,
 )
-from uds.models import MetaPool, ServicePool, UserService, getSqlDatetime, Transport, User, ServicePoolPublication
+from uds.models import (
+    MetaPool,
+    ServicePool,
+    UserService,
+    getSqlDatetime,
+    Transport,
+    User,
+    ServicePoolPublication,
+)
 from uds.core import services, transports
 from uds.core.util.stats import events
 
 from .userservice import comms
-from .userservice.opchecker  import UserServiceOpChecker
+from .userservice.opchecker import UserServiceOpChecker
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
+
 
 class UserServiceManager:
     _manager: typing.Optional['UserServiceManager'] = None
@@ -87,12 +96,18 @@ class UserServiceManager:
         if serviceInstance.maxDeployed == services.Service.UNLIMITED:
             return
 
-        numberOfServices = servicePool.userServices.filter(state__in=[State.PREPARING, State.USABLE]).count()
+        numberOfServices = servicePool.userServices.filter(
+            state__in=[State.PREPARING, State.USABLE]
+        ).count()
 
         if serviceInstance.maxDeployed <= numberOfServices:
-            raise MaxServicesReachedError('Max number of allowed deployments for service reached')
+            raise MaxServicesReachedError(
+                'Max number of allowed deployments for service reached'
+            )
 
-    def __createCacheAtDb(self, publication: ServicePoolPublication, cacheLevel: int) -> UserService:
+    def __createCacheAtDb(
+        self, publication: ServicePoolPublication, cacheLevel: int
+    ) -> UserService:
         """
         Private method to instatiate a cache element at database with default states
         """
@@ -108,10 +123,12 @@ class UserServiceManager:
             data='',
             deployed_service=publication.deployed_service,
             user=None,
-            in_use=False
+            in_use=False,
         )
 
-    def __createAssignedAtDb(self, publication: ServicePoolPublication, user: User) -> UserService:
+    def __createAssignedAtDb(
+        self, publication: ServicePoolPublication, user: User
+    ) -> UserService:
         """
         Private method to instatiate an assigned element at database with default state
         """
@@ -126,10 +143,12 @@ class UserServiceManager:
             data='',
             deployed_service=publication.deployed_service,
             user=user,
-            in_use=False
+            in_use=False,
         )
 
-    def __createAssignedAtDbForNoPublication(self, servicePool: ServicePool, user: User) -> UserService:
+    def __createAssignedAtDbForNoPublication(
+        self, servicePool: ServicePool, user: User
+    ) -> UserService:
         """
         __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
         There is cases where deployed services do not have publications (do not need them), so we need this method to create
@@ -146,14 +165,20 @@ class UserServiceManager:
             data='',
             publication=None,
             user=user,
-            in_use=False
+            in_use=False,
         )
 
-    def createCacheFor(self, publication: ServicePoolPublication, cacheLevel: int) -> UserService:
+    def createCacheFor(
+        self, publication: ServicePoolPublication, cacheLevel: int
+    ) -> UserService:
         """
         Creates a new cache for the deployed service publication at level indicated
         """
-        logger.debug('Creating a new cache element at level %s for publication %s', cacheLevel, publication)
+        logger.debug(
+            'Creating a new cache element at level %s for publication %s',
+            cacheLevel,
+            publication,
+        )
         cache = self.__createCacheAtDb(publication, cacheLevel)
         ci = cache.getInstance()
         state = ci.deployForCache(cacheLevel)
@@ -168,16 +193,26 @@ class UserServiceManager:
         # First, honor maxPreparingServices
         if self.canInitiateServiceFromDeployedService(servicePool) is False:
             # Cannot create new
-            logger.info('Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).')
+            logger.info(
+                'Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).'
+            )
             raise ServiceNotReadyError()
 
         if servicePool.service.getType().publicationType is not None:
             publication = servicePool.activePublication()
-            logger.debug('Creating a new assigned element for user %s por publication %s', user, publication)
+            logger.debug(
+                'Creating a new assigned element for user %s por publication %s',
+                user,
+                publication,
+            )
             if publication:
                 assigned = self.__createAssignedAtDb(publication, user)
             else:
-                raise Exception('Invalid publication creating service assignation: {} {}'.format(servicePool, user))
+                raise Exception(
+                    'Invalid publication creating service assignation: {} {}'.format(
+                        servicePool, user
+                    )
+                )
         else:
             logger.debug('Creating a new assigned element for user %s', user)
             assigned = self.__createAssignedAtDbForNoPublication(servicePool, user)
@@ -189,7 +224,9 @@ class UserServiceManager:
 
         return assigned
 
-    def createFromAssignable(self, servicePool: ServicePool, user: User, assignableId: str) -> UserService:
+    def createFromAssignable(
+        self, servicePool: ServicePool, user: User, assignableId: str
+    ) -> UserService:
         """
         Creates an assigned service from an "assignable" id
         """
@@ -199,18 +236,33 @@ class UserServiceManager:
 
         if servicePool.service.getType().publicationType is not None:
             publication = servicePool.activePublication()
-            logger.debug('Creating an assigned element from assignable %s for user %s por publication %s', user, assignableId, publication)
+            logger.debug(
+                'Creating an assigned element from assignable %s for user %s por publication %s',
+                user,
+                assignableId,
+                publication,
+            )
             if publication:
                 assigned = self.__createAssignedAtDb(publication, user)
             else:
-                raise Exception('Invalid publication creating service assignation: {} {}'.format(servicePool, user))
+                raise Exception(
+                    'Invalid publication creating service assignation: {} {}'.format(
+                        servicePool, user
+                    )
+                )
         else:
-            logger.debug('Creating an assigned element from assignable %s for user %s', assignableId, user)
+            logger.debug(
+                'Creating an assigned element from assignable %s for user %s',
+                assignableId,
+                user,
+            )
             assigned = self.__createAssignedAtDbForNoPublication(servicePool, user)
 
         # Now, get from serviceInstance the data
         assignedInstance = assigned.getInstance()
-        state = serviceInstance.assignFromAssignables(assignableId, user, assignedInstance)
+        state = serviceInstance.assignFromAssignables(
+            assignableId, user, assignedInstance
+        )
         # assigned.updateData(assignedInstance)
 
         UserServiceOpChecker.makeUnique(assigned, assignedInstance, state)
@@ -228,7 +280,12 @@ class UserServiceManager:
         state = cacheInstance.moveToCache(cacheLevel)
         cache.cache_level = cacheLevel
         cache.save(update_fields=['cache_level'])
-        logger.debug('Service State: %a %s %s', State.toString(state), State.toString(cache.state), State.toString(cache.os_state))
+        logger.debug(
+            'Service State: %a %s %s',
+            State.toString(state),
+            State.toString(cache.state),
+            State.toString(cache.os_state),
+        )
         if State.isRuning(state) and cache.isUsable():
             cache.setState(State.PREPARING)
 
@@ -244,12 +301,16 @@ class UserServiceManager:
         logger.debug('Canceling userService %s creation', userService)
 
         if userService.isPreparing() is False:
-            logger.info('Cancel requested for a non running operation, performing removal instead')
+            logger.info(
+                'Cancel requested for a non running operation, performing removal instead'
+            )
             return self.remove(userService)
 
         userServiceInstance = userService.getInstance()
 
-        if not userServiceInstance.supportsCancel(): # Does not supports cancel, but destroy, so mark it for "later" destroy
+        if (
+            not userServiceInstance.supportsCancel()
+        ):  # Does not supports cancel, but destroy, so mark it for "later" destroy
             # State is kept, just mark it for destroy after finished preparing
             userService.setProperty('destroy_after', 'y')
         else:
@@ -271,11 +332,18 @@ class UserServiceManager:
         with transaction.atomic():
             userService = UserService.objects.select_for_update().get(id=userService.id)
             logger.debug('Removing userService %a', userService)
-            if userService.isUsable() is False and State.isRemovable(userService.state) is False:
+            if (
+                userService.isUsable() is False
+                and State.isRemovable(userService.state) is False
+            ):
                 raise OperationException(_('Can\'t remove a non active element'))
             userService.setState(State.REMOVING)
-            logger.debug("***** The state now is %s *****", State.toString(userService.state))
-            userService.setInUse(False)  # For accounting, ensure that it is not in use right now
+            logger.debug(
+                "***** The state now is %s *****", State.toString(userService.state)
+            )
+            userService.setInUse(
+                False
+            )  # For accounting, ensure that it is not in use right now
             userService.save()
 
         userServiceInstance = userService.getInstance()
@@ -293,17 +361,29 @@ class UserServiceManager:
         if userService.isPreparing():
             return self.cancel(userService)
 
-        raise OperationException(_('Can\'t remove nor cancel {} cause its state don\'t allow it').format(userService.name))
+        raise OperationException(
+            _('Can\'t remove nor cancel {} cause its state don\'t allow it').format(
+                userService.name
+            )
+        )
 
-    def getExistingAssignationForUser(self, servicePool: ServicePool, user: User) -> typing.Optional[UserService]:
-        existing = servicePool.assignedUserServices().filter(user=user, state__in=State.VALID_STATES)  # , deployed_service__visible=True
+    def getExistingAssignationForUser(
+        self, servicePool: ServicePool, user: User
+    ) -> typing.Optional[UserService]:
+        existing = servicePool.assignedUserServices().filter(
+            user=user, state__in=State.VALID_STATES
+        )  # , deployed_service__visible=True
         lenExisting = existing.count()
         if lenExisting > 0:  # Already has 1 assigned
-            logger.debug('Found assigned service from %s to user %s', servicePool, user.name)
+            logger.debug(
+                'Found assigned service from %s to user %s', servicePool, user.name
+            )
             return existing[0]
         return None
 
-    def getAssignationForUser(self, servicePool: ServicePool, user: User) -> typing.Optional[UserService]:  # pylint: disable=too-many-branches
+    def getAssignationForUser(
+        self, servicePool: ServicePool, user: User
+    ) -> typing.Optional[UserService]:  # pylint: disable=too-many-branches
         if servicePool.service.getInstance().spawnsNew is False:
             assignedUserService = self.getExistingAssignationForUser(servicePool, user)
         else:
@@ -319,11 +399,26 @@ class UserServiceManager:
         cache: typing.Optional[UserService] = None
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():
-            caches = typing.cast(typing.List[UserService], servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1])
+            caches = typing.cast(
+                typing.List[UserService],
+                servicePool.cachedUserServices()
+                .select_for_update()
+                .filter(
+                    cache_level=services.UserDeployment.L1_CACHE,
+                    state=State.USABLE,
+                    os_state=State.USABLE,
+                )[:1],
+            )
             if caches:
                 cache = caches[0]
                 # Ensure element is reserved correctly on DB
-                if servicePool.cachedUserServices().select_for_update().filter(user=None, uuid=typing.cast(UserService, cache).uuid).update(user=user, cache_level=0) != 1:
+                if (
+                    servicePool.cachedUserServices()
+                    .select_for_update()
+                    .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
+                    .update(user=user, cache_level=0)
+                    != 1
+                ):
                     cache = None
             else:
                 cache = None
@@ -331,10 +426,23 @@ class UserServiceManager:
         # Out of previous atomic
         if not cache:
             with transaction.atomic():
-                caches = typing.cast(typing.List[UserService], servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1])
+                caches = typing.cast(
+                    typing.List[UserService],
+                    servicePool.cachedUserServices()
+                    .select_for_update()
+                    .filter(
+                        cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE
+                    )[:1],
+                )
                 if cache:
                     cache = caches[0]
-                    if servicePool.cachedUserServices().select_for_update().filter(user=None, uuid=typing.cast(UserService, cache).uuid).update(user=user, cache_level=0) != 1:
+                    if (
+                        servicePool.cachedUserServices()
+                        .select_for_update()
+                        .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
+                        .update(user=user, cache_level=0)
+                        != 1
+                    ):
                         cache = None
                 else:
                     cache = None
@@ -344,18 +452,43 @@ class UserServiceManager:
             # Early assign
             cache.assignToUser(user)
 
-            logger.debug('Found a cached-ready service from %s for user %s, item %s', servicePool, user, cache)
-            events.addEvent(servicePool, events.ET_CACHE_HIT, fld1=servicePool.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE).count())
+            logger.debug(
+                'Found a cached-ready service from %s for user %s, item %s',
+                servicePool,
+                user,
+                cache,
+            )
+            events.addEvent(
+                servicePool,
+                events.ET_CACHE_HIT,
+                fld1=servicePool.cachedUserServices()
+                .filter(
+                    cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE
+                )
+                .count(),
+            )
             return cache
 
         # Cache missed
 
         # Now find if there is a preparing one
         with transaction.atomic():
-            caches = servicePool.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
+            caches = (
+                servicePool.cachedUserServices()
+                .select_for_update()
+                .filter(
+                    cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING
+                )[:1]
+            )
             if caches:
                 cache = caches[0]
-                if servicePool.cachedUserServices().select_for_update().filter(user=None, uuid=typing.cast(UserService, cache).uuid).update(user=user, cache_level=0) != 1:
+                if (
+                    servicePool.cachedUserServices()
+                    .select_for_update()
+                    .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
+                    .update(user=user, cache_level=0)
+                    != 1
+                ):
                     cache = None
             else:
                 cache = None
@@ -364,18 +497,42 @@ class UserServiceManager:
         if cache:
             cache.assignToUser(user)
 
-            logger.debug('Found a cached-preparing service from %s for user %s, item %s', servicePool, user, cache)
-            events.addEvent(servicePool, events.ET_CACHE_MISS, fld1=servicePool.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING).count())
+            logger.debug(
+                'Found a cached-preparing service from %s for user %s, item %s',
+                servicePool,
+                user,
+                cache,
+            )
+            events.addEvent(
+                servicePool,
+                events.ET_CACHE_MISS,
+                fld1=servicePool.cachedUserServices()
+                .filter(
+                    cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING
+                )
+                .count(),
+            )
             return cache
 
         # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
         serviceType = servicePool.service.getType()
         if serviceType.usesCache:
             # inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
-            inAssigned = servicePool.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
+            inAssigned = (
+                servicePool.assignedUserServices()
+                .filter(UserServiceManager.getStateFilter())
+                .count()
+            )
             # totalL1Assigned = inCacheL1 + inAssigned
-            if inAssigned >= servicePool.max_srvs:  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
-                log.doLog(servicePool, log.WARN, 'Max number of services reached: {}'.format(servicePool.max_srvs), log.INTERNAL)
+            if (
+                inAssigned >= servicePool.max_srvs
+            ):  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
+                log.doLog(
+                    servicePool,
+                    log.WARN,
+                    'Max number of services reached: {}'.format(servicePool.max_srvs),
+                    log.INTERNAL,
+                )
                 raise MaxServicesReachedError()
 
         # Can create new service, create it
@@ -386,16 +543,23 @@ class UserServiceManager:
         """
         Returns the number of services of a service provider in the state indicated
         """
-        return UserService.objects.filter(deployed_service__service__provider__id=provider_id, state=state).count()
+        return UserService.objects.filter(
+            deployed_service__service__provider__id=provider_id, state=state
+        ).count()
 
     def canRemoveServiceFromDeployedService(self, servicePool: ServicePool) -> bool:
         """
         checks if we can do a "remove" from a deployed service
         serviceIsntance is just a helper, so if we already have unserialized deployedService
         """
-        removing = self.getServicesInStateForProvider(servicePool.service.provider.id, State.REMOVING)
+        removing = self.getServicesInStateForProvider(
+            servicePool.service.provider.id, State.REMOVING
+        )
         serviceInstance = servicePool.service.getInstance()
-        if removing >= serviceInstance.parent().getMaxRemovingServices() and serviceInstance.parent().getIgnoreLimits() is False:
+        if (
+            removing >= serviceInstance.parent().getMaxRemovingServices()
+            and serviceInstance.parent().getIgnoreLimits() is False
+        ):
             return False
         return True
 
@@ -403,9 +567,14 @@ class UserServiceManager:
         """
         Checks if we can start a new service
         """
-        preparing = self.getServicesInStateForProvider(servicePool.service.provider.id, State.PREPARING)
+        preparing = self.getServicesInStateForProvider(
+            servicePool.service.provider.id, State.PREPARING
+        )
         serviceInstance = servicePool.service.getInstance()
-        if preparing >= serviceInstance.parent().getMaxPreparingServices() and serviceInstance.parent().getIgnoreLimits() is False:
+        if (
+            preparing >= serviceInstance.parent().getMaxPreparingServices()
+            and serviceInstance.parent().getIgnoreLimits() is False
+        ):
             return False
         return True
 
@@ -450,16 +619,20 @@ class UserServiceManager:
         except Exception:
             logger.exception('Reseting service')
 
-    def notifyPreconnect(self, userService: UserService, userName: str, protocol: str) -> None:
+    def notifyPreconnect(
+        self, userService: UserService, userName: str, protocol: str
+    ) -> None:
         comms.notifyPreconnect(userService, userName, protocol)
 
-    def checkUuid(self, userService: UserService) ->  bool:
+    def checkUuid(self, userService: UserService) -> bool:
         return comms.checkUuid(userService)
 
     def requestScreenshot(self, userService: UserService) -> bytes:
         return comms.requestScreenshot(userService)
 
-    def sendScript(self, userService: UserService, script: str, forUser: bool = False) -> None:
+    def sendScript(
+        self, userService: UserService, script: str, forUser: bool = False
+    ) -> None:
         comms.sendScript(userService, script, forUser)
 
     def requestLogoff(self, userService: UserService) -> None:
@@ -475,21 +648,34 @@ class UserServiceManager:
         """
         osManager = userService.deployed_service.osmanager
         # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
-        doPublicationCleanup = True if not osManager else not osManager.getInstance().isPersistent()
+        doPublicationCleanup = (
+            True if not osManager else not osManager.getInstance().isPersistent()
+        )
 
         if doPublicationCleanup:
             remove = False
             with transaction.atomic():
-                userService = UserService.objects.select_for_update().get(id=userService.id)
+                userService = UserService.objects.select_for_update().get(
+                    id=userService.id
+                )
                 activePublication = userService.deployed_service.activePublication()
-                if userService.publication and activePublication and userService.publication.id != activePublication.id:
-                    logger.debug('Old revision of user service, marking as removable: %s', userService)
+                if (
+                    userService.publication
+                    and activePublication
+                    and userService.publication.id != activePublication.id
+                ):
+                    logger.debug(
+                        'Old revision of user service, marking as removable: %s',
+                        userService,
+                    )
                     remove = True
 
             if remove:
                 userService.remove()
 
-    def notifyReadyFromOsManager(self, userService: UserService, data: typing.Any) -> None:
+    def notifyReadyFromOsManager(
+        self, userService: UserService, data: typing.Any
+    ) -> None:
         try:
             userServiceInstance = userService.getInstance()
             logger.debug('Notifying user service ready state')
@@ -498,7 +684,10 @@ class UserServiceManager:
             if state == State.FINISHED:
                 userService.updateData(userServiceInstance)
                 logger.debug('Service is now ready')
-            elif userService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
+            elif userService.state in (
+                State.USABLE,
+                State.PREPARING,
+            ):  # We don't want to get active deleting or deleted machines...
                 userService.setState(State.PREPARING)
                 UserServiceOpChecker.makeUnique(userService, userServiceInstance, state)
             userService.save(update_fields=['os_state'])
@@ -507,7 +696,9 @@ class UserServiceManager:
             userService.setState(State.ERROR)
             return
 
-    def locateUserService(self, user: User, idService: str, create: bool = False) -> typing.Optional[UserService]:
+    def locateUserService(
+        self, user: User, idService: str, create: bool = False
+    ) -> typing.Optional[UserService]:
         kind, uuidService = idService[0], idService[1:]
 
         logger.debug('Kind of service: %s, idService: %s', kind, uuidService)
@@ -524,7 +715,9 @@ class UserServiceManager:
             servicePool.validateUser(user)
 
             # Now we have to locate an instance of the service, so we can assign it to user.
-            if create:  # getAssignation, if no assignation is found, tries to create one
+            if (
+                create
+            ):  # getAssignation, if no assignation is found, tries to create one
                 userService = self.getAssignationForUser(servicePool, user)
             else:  # Sometimes maybe we only need to locate the existint user service
                 userService = self.getExistingAssignationForUser(servicePool, user)
@@ -536,21 +729,22 @@ class UserServiceManager:
 
         return userService
 
-    def getService( # pylint: disable=too-many-locals, too-many-branches, too-many-statements
-            self,
-            user: User,
-            os: typing.MutableMapping,
-            srcIp: str,
-            idService: str,
-            idTransport: str,
-            doTest: bool = True,
-            clientHostname: typing.Optional[str] = None
-        ) -> typing.Tuple[
-            typing.Optional[str],
-            UserService,
-            typing.Optional['services.UserDeployment'],
-            Transport,
-            typing.Optional[transports.Transport]]:
+    def getService(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+        self,
+        user: User,
+        os: typing.MutableMapping,
+        srcIp: str,
+        idService: str,
+        idTransport: str,
+        doTest: bool = True,
+        clientHostname: typing.Optional[str] = None,
+    ) -> typing.Tuple[
+        typing.Optional[str],
+        UserService,
+        typing.Optional['services.UserDeployment'],
+        Transport,
+        typing.Optional[transports.Transport],
+    ]:
         """
         Get service info from user service
         """
@@ -560,7 +754,11 @@ class UserServiceManager:
         userService = self.locateUserService(user, idService, create=True)
 
         if not userService:
-            raise InvalidServiceException(_('Invalid service. The service is not available at this moment. Please, try later'))
+            raise InvalidServiceException(
+                _(
+                    'Invalid service. The service is not available at this moment. Please, try later'
+                )
+            )
 
         # Early log of "access try" so we can imagine what is going on
         userService.setConnectionSource(srcIp, clientHostname or srcIp)
@@ -575,7 +773,11 @@ class UserServiceManager:
             t: Transport
             for t in userService.deployed_service.transports.order_by('priority'):
                 typeTrans = t.getType()
-                if t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
+                if (
+                    t.validForIp(srcIp)
+                    and typeTrans.supportsOs(os['OS'])
+                    and t.validForOs(os['OS'])
+                ):
                     idTransport = t.uuid
                     break
 
@@ -585,12 +787,14 @@ class UserServiceManager:
             raise InvalidServiceException()
 
         # Ensures that the transport is allowed for this service
-        if  userService.deployed_service.transports.filter(id=transport.id).count() == 0:
+        if userService.deployed_service.transports.filter(id=transport.id).count() == 0:
             raise InvalidServiceException()
 
         # If transport is not available for the request IP...
         if not transport.validForIp(srcIp):
-            msg = _('The requested transport {} is not valid for {}').format(transport.name, srcIp)
+            msg = _('The requested transport {} is not valid for {}').format(
+                transport.name, srcIp
+            )
             logger.error(msg)
             raise InvalidServiceException(msg)
 
@@ -605,48 +809,113 @@ class UserServiceManager:
         # Test if the service is ready
         if userService.isReady():
             serviceNotReadyCode = 0x0002
-            log.doLog(userService, log.INFO, "User {0} from {1} has initiated access".format(user.name, srcIp), log.WEB)
+            log.doLog(
+                userService,
+                log.INFO,
+                "User {0} from {1} has initiated access".format(user.name, srcIp),
+                log.WEB,
+            )
             # If ready, show transport for this service, if also ready ofc
             userServiceInstance = userService.getInstance()
             ip = userServiceInstance.getIp()
             userService.logIP(ip)  # Update known ip
             logger.debug('IP: %s', ip)
 
-            if self.checkUuid(userService) is False:  # The service is not the expected one
+            if (
+                self.checkUuid(userService) is False
+            ):  # The service is not the expected one
                 serviceNotReadyCode = 0x0004
-                log.doLog(userService, log.WARN, "User service is not accessible due to invalid UUID (ip {0})".format(ip), log.TRANSPORT)
+                log.doLog(
+                    userService,
+                    log.WARN,
+                    "User service is not accessible due to invalid UUID (ip {0})".format(
+                        ip
+                    ),
+                    log.TRANSPORT,
+                )
                 logger.debug('UUID check failed for user service %s', userService)
             else:
-                events.addEvent(userService.deployed_service, events.ET_ACCESS, username=userName, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
+                events.addEvent(
+                    userService.deployed_service,
+                    events.ET_ACCESS,
+                    username=userName,
+                    srcip=srcIp,
+                    dstip=ip,
+                    uniqueid=userService.unique_id,
+                )
                 if ip:
                     serviceNotReadyCode = 0x0003
                     transportInstance = transport.getInstance()
                     if transportInstance.isAvailableFor(userService, ip):
                         # userService.setConnectionSource(srcIp, 'unknown')
                         log.doLog(userService, log.INFO, "User service ready", log.WEB)
-                        self.notifyPreconnect(userService, transportInstance.processedUser(userService, user), transportInstance.protocol)
-                        traceLogger.info('READY on service "%s" for user "%s" with transport "%s" (ip:%s)', userService.name, userName, transport.name, ip)
-                        return ip, userService, userServiceInstance, transport, transportInstance
+                        self.notifyPreconnect(
+                            userService,
+                            transportInstance.processedUser(userService, user),
+                            transportInstance.protocol,
+                        )
+                        traceLogger.info(
+                            'READY on service "%s" for user "%s" with transport "%s" (ip:%s)',
+                            userService.name,
+                            userName,
+                            transport.name,
+                            ip,
+                        )
+                        return (
+                            ip,
+                            userService,
+                            userServiceInstance,
+                            transport,
+                            transportInstance,
+                        )
 
-                    message = transportInstance.getCustomAvailableErrorMsg(userService, ip)
+                    message = transportInstance.getCustomAvailableErrorMsg(
+                        userService, ip
+                    )
                     log.doLog(userService, log.WARN, message, log.TRANSPORT)
-                    logger.debug('Transport is not ready for user service %s: %s', userService, message)
+                    logger.debug(
+                        'Transport is not ready for user service %s: %s',
+                        userService,
+                        message,
+                    )
                 else:
                     logger.debug('Ip not available from user service %s', userService)
         else:
-            log.doLog(userService, log.WARN, "User {} from {} tried to access, but service was not ready".format(user.name, srcIp), log.WEB)
+            log.doLog(
+                userService,
+                log.WARN,
+                "User {} from {} tried to access, but service was not ready".format(
+                    user.name, srcIp
+                ),
+                log.WEB,
+            )
 
-        traceLogger.error('ERROR %s on service "%s" for user "%s" with transport "%s" (ip:%s)', serviceNotReadyCode, userService.name, userName, transport.name, ip)
-        raise ServiceNotReadyError(code=serviceNotReadyCode, service=userService, transport=transport)
+        traceLogger.error(
+            'ERROR %s on service "%s" for user "%s" with transport "%s" (ip:%s)',
+            serviceNotReadyCode,
+            userService.name,
+            userName,
+            transport.name,
+            ip,
+        )
+        raise ServiceNotReadyError(
+            code=serviceNotReadyCode, service=userService, transport=transport
+        )
 
     def getMeta(
-            self,
-            user: User,
-            srcIp: str,
-            os: typing.MutableMapping,
-            idMetaPool: str,
-            clientHostName: typing.Optional[str] = None
-        ) -> typing.Tuple[typing.Optional[str], UserService, typing.Optional['services.UserDeployment'], Transport, typing.Optional[transports.Transport]]:
+        self,
+        user: User,
+        srcIp: str,
+        os: typing.MutableMapping,
+        idMetaPool: str,
+        clientHostName: typing.Optional[str] = None,
+    ) -> typing.Tuple[
+        typing.Optional[str],
+        UserService,
+        typing.Optional['services.UserDeployment'],
+        Transport,
+        typing.Optional[transports.Transport],
+    ]:
         logger.debug('This is meta')
         # We need to locate the service pool related to this meta, and also the transport
         # First, locate if there is a service in any pool associated with this metapool
@@ -662,23 +931,36 @@ class UserServiceManager:
         elif meta.policy == MetaPool.MOST_AVAILABLE_BY_NUMBER:
             sortPools = [(p.pool.usage(), p.pool) for p in meta.members.all()]
         else:
-            sortPools = [(random.randint(0, 10000), p.pool) for p in meta.members.all()]  # Just shuffle them
+            sortPools = [
+                (random.randint(0, 10000), p.pool) for p in meta.members.all()
+            ]  # Just shuffle them
 
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
-        pools: typing.List[ServicePool] = [p[1] for p in sorted(sortPools, key=lambda x: x[0]) if p[1].usage() < 100 and p[1].isUsable()]
+        pools: typing.List[ServicePool] = [
+            p[1]
+            for p in sorted(sortPools, key=lambda x: x[0])
+            if p[1].usage() < 100 and p[1].isUsable()
+        ]
 
         logger.debug('Pools: %s', pools)
 
         usable: typing.Optional[typing.Tuple[ServicePool, Transport]] = None
         # Now, Lets find first if there is one assigned in ANY pool
 
-        def ensureTransport(pool: ServicePool) -> typing.Optional[typing.Tuple[ServicePool, Transport]]:
+        def ensureTransport(
+            pool: ServicePool,
+        ) -> typing.Optional[typing.Tuple[ServicePool, Transport]]:
             found = None
             t: Transport
             for t in pool.transports.all().order_by('priority'):
                 typeTrans = t.getType()
-                if t.getType() and t.validForIp(srcIp) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
+                if (
+                    t.getType()
+                    and t.validForIp(srcIp)
+                    and typeTrans.supportsOs(os['OS'])
+                    and t.validForOs(os['OS'])
+                ):
                     found = (pool, t)
                     break
             return found
@@ -688,7 +970,7 @@ class UserServiceManager:
                 deployed_service__in=pools,
                 state__in=State.VALID_STATES,
                 user=user,
-                cache_level=0
+                cache_level=0,
             ).order_by('deployed_service__name')[0]
             logger.debug('Already assigned %s', alreadyAssigned)
 
@@ -696,10 +978,20 @@ class UserServiceManager:
             usable = ensureTransport(alreadyAssigned.deployed_service)
             # Found already assigned, ensure everythinf is fine
             if usable:
-                return self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False, clientHostname=clientHostName)
+                return self.getService(
+                    user,
+                    os,
+                    srcIp,
+                    'F' + usable[0].uuid,
+                    usable[1].uuid,
+                    doTest=False,
+                    clientHostname=clientHostName,
+                )
 
         except Exception:  # No service already assigned, lets find a suitable one
-            for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
+            for (
+                pool
+            ) in pools:  # Pools are already sorted, and "full" pools are filtered out
                 # Ensure transport is available for the OS
                 usable = ensureTransport(pool)
 
@@ -707,10 +999,31 @@ class UserServiceManager:
                 if usable:
                     try:
                         usable[0].validateUser(user)
-                        return self.getService(user, os, srcIp, 'F' + usable[0].uuid, usable[1].uuid, doTest=False, clientHostname=clientHostName)
+                        return self.getService(
+                            user,
+                            os,
+                            srcIp,
+                            'F' + usable[0].uuid,
+                            usable[1].uuid,
+                            doTest=False,
+                            clientHostname=clientHostName,
+                        )
                     except Exception as e:
-                        logger.info('Meta service %s:%s could not be assigned, trying a new one', usable[0].name, e)
+                        logger.info(
+                            'Meta service %s:%s could not be assigned, trying a new one',
+                            usable[0].name,
+                            e,
+                        )
                         usable = None
 
-        log.doLog(meta, log.WARN, "No user service accessible from device (ip {}, os: {})".format(srcIp, os['OS']), log.SERVICE)
-        raise InvalidServiceException(_('The service is not accessible from this device'))
+        log.doLog(
+            meta,
+            log.WARN,
+            "No user service accessible from device (ip {}, os: {})".format(
+                srcIp, os['OS']
+            ),
+            log.SERVICE,
+        )
+        raise InvalidServiceException(
+            _('The service is not accessible from this device')
+        )

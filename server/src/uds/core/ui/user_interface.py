@@ -856,16 +856,16 @@ class UserInterfaceType(type):
     better place
     """
 
-    def __new__(cls, classname, bases, classDict):
+    def __new__(cls: typing.Type['UserInterfaceType'], classname: str, bases: typing.Tuple[type, ...], namespace: typing.Dict[str, typing.Any]) -> 'UserInterfaceType':
         newClassDict = {}
-        _gui: typing.Dict[str, gui.InputField] = {}
+        _gui: typing.MutableMapping[str, gui.InputField] = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
-        for attrName, attr in classDict.items():
+        for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 _gui[attrName] = attr
             newClassDict[attrName] = attr
         newClassDict['_gui'] = _gui
-        return type.__new__(cls, classname, bases, newClassDict)
+        return  typing.cast('UserInterfaceType', type.__new__(cls, classname, bases, newClassDict))
 
 
 class UserInterface(metaclass=UserInterfaceType):
