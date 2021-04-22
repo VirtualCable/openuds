@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uds', '0025_deployedservice_ignores_unused'),
+        ('uds', '0001_squashed_0025_deployedservice_ignores_unused'),
     ]
 
     operations = [

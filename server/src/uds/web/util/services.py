@@ -104,7 +104,7 @@ def getServicesData(
 
     # Metapool helpers
     def transportIterator(member) -> typing.Iterable[Transport]:
-        for t in member.pool.transports.all():
+        for t in member.pool.transports.all().order_by('priority'):
             typeTrans = t.getType()
             if (
                 typeTrans
@@ -159,13 +159,13 @@ def getServicesData(
             )
         elif meta.transport_grouping == MetaPool.LABEL_TRANSPORT_SELECT:
             ltrans: typing.MutableMapping[str, Transport] = {}
-            for member in meta.members.all():
+            for member in meta.members.all().order_by('priority'):
                 tmpSet = set()
                 # if first pool, get all its transports and check that are valid
                 for t in transportIterator(member):
                     if not t.label:
                         continue
-                    if t.label not in ltrans:
+                    if t.label not in ltrans or ltrans[t.label].priority > t.priority:
                         ltrans[t.label] = t
                     if inAll is None:
                         tmpSet.add(t.label)

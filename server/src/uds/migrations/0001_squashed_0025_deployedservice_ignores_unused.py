@@ -8,8 +8,6 @@ import uds.models.util
 
 class Migration(migrations.Migration):
 
-    replaces = [('uds', '0001_initial'), ('uds', '0002_auto_20140908_1344'), ('uds', '0003_add_uuids'), ('uds', '0004_auto_20140916_1217'), ('uds', '0006_add_user_parent_uuid'), ('uds', '0007_image'), ('uds', '0008_userserviceproperty'), ('uds', '0009_TransportsToNewerModel'), ('uds', '0010_deployedservice_show_transports'), ('uds', '0011_auto_20141220_1203'), ('uds', '0012_auto_20141221_1210'), ('uds', '0013_statsevents_fld4'), ('uds', '0014_permissions'), ('uds', '0015_ticketstore'), ('uds', '0016_auto_20150617_0741'), ('uds', '0017_calendar_calendarrule'), ('uds', '0018_auto_20151005_1305'), ('uds', '0019_auto_20160210_0144'), ('uds', '0020_auto_20160216_0509'), ('uds', '0021_auto_20160405_0429'), ('uds', '0022_dbfile_owner'), ('uds', '0023_transport_allowed_oss'), ('uds', '0024_auto_20171025_1405'), ('uds', '0025_deployedservice_ignores_unused')]
-
     initial = True
 
     dependencies = [
