@@ -59,7 +59,7 @@ INTERFACE_VALUES = [
 
 
 class ProviderLegacy(ServiceProvider):
-    '''
+    """
     This class represents the sample services provider
 
     In this class we provide:
@@ -74,7 +74,8 @@ class ProviderLegacy(ServiceProvider):
     For this class to get visible at administration client as a provider type,
     we MUST register it at package __init__.
 
-    '''
+    """
+
     # : What kind of services we offer, this are classes inherited from Service
     offers = [LiveService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -84,7 +85,9 @@ class ProviderLegacy(ServiceProvider):
     # : Type used internally to identify this provider
     typeType = 'openStackPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenStack LEGACY platform service provider (for older Openstack Releases, previous to OCATA)')
+    typeDescription = _(
+        'OpenStack LEGACY platform service provider (for older Openstack Releases, previous to OCATA)'
+    )
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -99,20 +102,102 @@ class ProviderLegacy(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenStack Host'), required=True)
-    port = gui.NumericField(length=5, label=_('Port'), defvalue='5000', order=2, tooltip=_('5000 for older releases, 80/443 (ssl) for releases newer than OCATA'), required=True)
-    ssl = gui.CheckBoxField(label=_('Use SSL'), order=4, tooltip=_('If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'))
+    host = gui.TextField(
+        length=64, label=_('Host'), order=1, tooltip=_('OpenStack Host'), required=True
+    )
+    port = gui.NumericField(
+        length=5,
+        label=_('Port'),
+        defvalue='5000',
+        order=2,
+        tooltip=_(
+            '5000 for older releases, 80/443 (ssl) for releases newer than OCATA'
+        ),
+        required=True,
+    )
+    ssl = gui.CheckBoxField(
+        label=_('Use SSL'),
+        order=4,
+        tooltip=_(
+            'If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'
+        ),
+    )
 
-    access = gui.ChoiceField(label=_('Access interface'), order=5, tooltip=_('Access interface to be used'), values=INTERFACE_VALUES, defvalue='public')
+    access = gui.ChoiceField(
+        label=_('Access interface'),
+        order=5,
+        tooltip=_('Access interface to be used'),
+        values=INTERFACE_VALUES,
+        defvalue='public',
+    )
 
-    domain = gui.TextField(length=64, label=_('Domain'), order=8, tooltip=_('Domain name (default is Default)'), required=True, defvalue='Default')
-    username = gui.TextField(length=64, label=_('Username'), order=9, tooltip=_('User with valid privileges on OpenStack'), required=True, defvalue='admin')
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=10, tooltip=_('Password of the user of OpenStack'), required=True)
+    domain = gui.TextField(
+        length=64,
+        label=_('Domain'),
+        order=8,
+        tooltip=_('Domain name (default is Default)'),
+        required=True,
+        defvalue='Default',
+    )
+    username = gui.TextField(
+        length=64,
+        label=_('Username'),
+        order=9,
+        tooltip=_('User with valid privileges on OpenStack'),
+        required=True,
+        defvalue='admin',
+    )
+    password = gui.PasswordField(
+        lenth=32,
+        label=_('Password'),
+        order=10,
+        tooltip=_('Password of the user of OpenStack'),
+        required=True,
+    )
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        defvalue='10',
+        minValue=1,
+        maxValue=65536,
+        order=50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    maxRemovingServices = gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        defvalue='5',
+        minValue=1,
+        maxValue=65536,
+        order=51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', minValue=1, maxValue=128, order=99, tooltip=_('Timeout in seconds of connection to OpenStack'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(
+        length=3,
+        label=_('Timeout'),
+        defvalue='10',
+        minValue=1,
+        maxValue=128,
+        order=99,
+        tooltip=_('Timeout in seconds of connection to OpenStack'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+
+    httpsProxy = gui.TextField(
+        length=96,
+        label=_('Proxy'),
+        order=91,
+        tooltip=_('Proxy used for connection to azure for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'),
+        required=False,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
     # region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='RegionOne')
@@ -123,15 +208,18 @@ class ProviderLegacy(ServiceProvider):
     _api: typing.Optional[openstack.Client] = None
 
     def initialize(self, values: 'Module.ValuesType' = None):
-        '''
+        """
         We will use the "autosave" feature for form fields
-        '''
+        """
         # Just reset _api connection variable
 
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value)
 
     def api(self, projectId=None, region=None) -> openstack.Client:
+        proxies = None
+        if self.httpsProxy.value.strip():
+            proxies = {'https': self.httpsProxy.value}
         return openstack.Client(
             self.host.value,
             self.port.value,
@@ -142,20 +230,21 @@ class ProviderLegacy(ServiceProvider):
             useSSL=self.ssl.isTrue(),
             projectId=projectId,
             region=region,
-            access=self.access.value
+            access=self.access.value,
+            proxies=proxies,
         )
 
     def sanitizeVmName(self, name: str) -> str:
         return openstack.sanitizeName(name)
 
     def testConnection(self):
-        '''
+        """
         Test that conection to OpenStack server is fine
 
         Returns
 
             True if all went fine, false if id didn't
-        '''
+        """
 
         try:
             if self.api().testConnection() is False:
@@ -167,7 +256,7 @@ class ProviderLegacy(ServiceProvider):
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test ovirt Connectivity
 
         Args:
@@ -181,5 +270,5 @@ class ProviderLegacy(ServiceProvider):
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
 
-        '''
+        """
         return ProviderLegacy(env, data).testConnection()

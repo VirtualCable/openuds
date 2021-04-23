@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -35,6 +35,7 @@ import json
 import typing
 
 import requests
+
 # import dateutil.parser
 
 from django.utils.translation import ugettext as _
@@ -57,10 +58,17 @@ VERIFY_SSL = False
 
 
 # Helpers
-def ensureResponseIsValid(response: requests.Response, errMsg: typing.Optional[str] = None) -> None:
+def ensureResponseIsValid(
+    response: requests.Response, errMsg: typing.Optional[str] = None
+) -> None:
     if response.ok is False:
         try:
-            _, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
+            (
+                _,
+                err,
+            ) = (
+                response.json().popitem()
+            )  # Extract any key, in case of error is expected to have only one top key so this will work
             msg = ': {message}'.format(**err)
             errMsg = errMsg + msg if errMsg else msg
         except Exception:
@@ -72,18 +80,21 @@ def ensureResponseIsValid(response: requests.Response, errMsg: typing.Optional[s
 
 
 def getRecurringUrlJson(
-        url: str,
-        headers: typing.Dict[str, str],
-        key: str,
-        params: typing.Dict[str, str] = None,
-        errMsg: str = None,
-        timeout: int = 10
-    ) -> typing.Iterable[typing.Any]:
+    url: str,
+    session: requests.Session,
+    headers: typing.Dict[str, str],
+    key: str,
+    params: typing.Dict[str, str] = None,
+    errMsg: str = None,
+    timeout: int = 10,
+) -> typing.Iterable[typing.Any]:
     counter = 0
     while True:
         counter += 1
         logger.debug('Requesting url #%s: %s / %s', counter, url, params)
-        r = requests.get(url, params=params, headers=headers, verify=VERIFY_SSL, timeout=timeout)
+        r = session.get(
+            url, params=params, headers=headers, verify=VERIFY_SSL, timeout=timeout
+        )
 
         ensureResponseIsValid(r, errMsg)
 
@@ -96,6 +107,7 @@ def getRecurringUrlJson(
             break
 
         url = j['next']
+
 
 RT = typing.TypeVar('RT')
 
@@ -114,7 +126,7 @@ def authRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
 def authProjectRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     def ensurer(obj, *args, **kwargs) -> RT:
-        if obj._projectId is None: # pylint: disable=protected-access
+        if obj._projectId is None:  # pylint: disable=protected-access
             raise Exception('Need a project for method {}'.format(func))
         obj.ensureAuthenticated()
         return func(obj, *args, **kwargs)
@@ -142,21 +154,27 @@ class Client:  # pylint: disable=too-many-public-methods
     _project: typing.Optional[str]
     _region: typing.Optional[str]
     _timeout: int
+    _session: requests.Session
 
     # Legacyversion is True for versions <= Ocata
     def __init__(
-            self,
-            host: str,
-            port: typing.Union[str, int],
-            domain: str,
-            username: str,
-            password: str,
-            legacyVersion: bool = True,
-            useSSL: bool = False,
-            projectId: typing.Optional[str] = None,
-            region: typing.Optional[str] = None,
-            access: typing.Optional[str] = None
-        ):
+        self,
+        host: str,
+        port: typing.Union[str, int],
+        domain: str,
+        username: str,
+        password: str,
+        legacyVersion: bool = True,
+        useSSL: bool = False,
+        projectId: typing.Optional[str] = None,
+        region: typing.Optional[str] = None,
+        access: typing.Optional[str] = None,
+        proxies: typing.Optional[typing.MutableMapping[str, str]] = None,
+    ):
+        self._session = requests.Session()
+        if proxies:
+            self._session.proxies = proxies
+
         self._authenticated = False
         self._authenticatedProjectId = None
         self._tokenId = None
@@ -178,7 +196,9 @@ class Client:  # pylint: disable=too-many-public-methods
             if self._authUrl[-1] != '/':
                 self._authUrl += '/'
 
-    def _getEndpointFor(self, type_: str) -> str:  # If no region is indicatad, first endpoint is returned
+    def _getEndpointFor(
+        self, type_: str
+    ) -> str:  # If no region is indicatad, first endpoint is returned
         if not self._catalog:
             raise Exception('No catalog for endpoints')
         for i in filter(lambda v: v['type'] == type_, self._catalog):
@@ -199,18 +219,18 @@ class Client:  # pylint: disable=too-many-public-methods
         data: typing.Dict[str, typing.Any] = {
             'auth': {
                 'identity': {
-                    'methods': [
-                        'password'
-                    ],
+                    'methods': ['password'],
                     'password': {
                         'user': {
                             'name': self._username,
                             'domain': {
-                                'name': 'Default' if self._domain is None else self._domain
+                                'name': 'Default'
+                                if self._domain is None
+                                else self._domain
                             },
-                            'password': self._password
+                            'password': self._password,
                         }
-                    }
+                    },
                 }
             }
         }
@@ -222,22 +242,17 @@ class Client:  # pylint: disable=too-many-public-methods
         else:
             self._authenticatedProjectId = self._projectId
             data['auth']['scope'] = {
-                'project': {
-                    'id': self._projectId,
-                    'domain': {
-                        'name': self._domain
-                    }
-                }
+                'project': {'id': self._projectId, 'domain': {'name': self._domain}}
             }
 
         # logger.debug('Request data: {}'.format(data))
 
-        r = requests.post(
+        r = self._session.post(
             self._authUrl + 'v3/auth/tokens',
             data=json.dumps(data),
             headers={'content-type': 'application/json'},
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Invalid Credentials')
@@ -257,59 +272,71 @@ class Client:  # pylint: disable=too-many-public-methods
             self._catalog = token['catalog']
 
     def ensureAuthenticated(self) -> None:
-        if self._authenticated is False or self._projectId != self._authenticatedProjectId:
+        if (
+            self._authenticated is False
+            or self._projectId != self._authenticatedProjectId
+        ):
             self.authPassword()
 
     @authRequired
     def listProjects(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
+            self._session,
             headers=self._requestHeaders(),
             key='projects',
             errMsg='List Projects',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authRequired
     def listRegions(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._authUrl + 'v3/regions/',
+            self._session,
             headers=self._requestHeaders(),
             key='regions',
             errMsg='List Regions',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
-    def listServers(self, detail: bool = False, params: typing.Optional[typing.Dict[str, str]] = None) -> typing.Iterable[typing.Any]:
+    def listServers(
+        self,
+        detail: bool = False,
+        params: typing.Optional[typing.Dict[str, str]] = None,
+    ) -> typing.Iterable[typing.Any]:
         path = '/servers/' + 'detail' if detail is True else ''
         return getRecurringUrlJson(
             self._getEndpointFor('compute') + path,
+            self._session,
             headers=self._requestHeaders(),
             key='servers',
             params=params,
             errMsg='List Vms',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
     def listImages(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('image') + '/v2/images?status=active',
+            self._session,
             headers=self._requestHeaders(),
             key='images',
             errMsg='List Images',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
     def listVolumeTypes(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('volumev2') + '/types',
+            self._session,
             headers=self._requestHeaders(),
             key='volume_types',
             errMsg='List Volume Types',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
@@ -317,33 +344,38 @@ class Client:  # pylint: disable=too-many-public-methods
         # self._getEndpointFor('volumev2') + '/volumes'
         return getRecurringUrlJson(
             self._getEndpointFor('volumev2') + '/volumes/detail',
+            self._session,
             headers=self._requestHeaders(),
             key='volumes',
             errMsg='List Volumes',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
-    def listVolumeSnapshots(self, volumeId: typing.Optional[typing.Dict[str, typing.Any]] = None) -> typing.Iterable[typing.Any]:
+    def listVolumeSnapshots(
+        self, volumeId: typing.Optional[typing.Dict[str, typing.Any]] = None
+    ) -> typing.Iterable[typing.Any]:
         for s in getRecurringUrlJson(
-                self._getEndpointFor('volumev2') + '/snapshots',
-                headers=self._requestHeaders(),
-                key='snapshots',
-                errMsg='List snapshots',
-                timeout=self._timeout
-            ):
+            self._getEndpointFor('volumev2') + '/snapshots',
+            self._session,
+            headers=self._requestHeaders(),
+            key='snapshots',
+            errMsg='List snapshots',
+            timeout=self._timeout,
+        ):
             if volumeId is None or s['volume_id'] == volumeId:
                 yield s
 
     @authProjectRequired
     def listAvailabilityZones(self) -> typing.Iterable[typing.Any]:
         for az in getRecurringUrlJson(
-                self._getEndpointFor('compute') + '/os-availability-zone',
-                headers=self._requestHeaders(),
-                key='availabilityZoneInfo',
-                errMsg='List Availability Zones',
-                timeout=self._timeout
-            ):
+            self._getEndpointFor('compute') + '/os-availability-zone',
+            self._session,
+            headers=self._requestHeaders(),
+            key='availabilityZoneInfo',
+            errMsg='List Availability Zones',
+            timeout=self._timeout,
+        ):
             if az['zoneState']['available'] is True:
                 yield az['zoneName']
 
@@ -351,47 +383,55 @@ class Client:  # pylint: disable=too-many-public-methods
     def listFlavors(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('compute') + '/flavors',
+            self._session,
             headers=self._requestHeaders(),
             key='flavors',
             errMsg='List Flavors',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
     def listNetworks(self, nameFromSubnets=False) -> typing.Iterable[typing.Any]:
         nets = getRecurringUrlJson(
             self._getEndpointFor('network') + '/v2.0/networks',
+            self._session,
             headers=self._requestHeaders(),
             key='networks',
             errMsg='List Networks',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
         if not nameFromSubnets:
             yield from nets
         else:
             # Get and cache subnets names
-            subnetNames = { s['id']: s['name'] for s in self.listSubnets() }
+            subnetNames = {s['id']: s['name'] for s in self.listSubnets()}
             for net in nets:
-                name = ','.join(subnetNames[i] for i in net['subnets'] if i in subnetNames)
+                name = ','.join(
+                    subnetNames[i] for i in net['subnets'] if i in subnetNames
+                )
                 net['old_name'] = net['name']
                 if name:
                     net['name'] = name
 
                 yield net
 
-
     @authProjectRequired
     def listSubnets(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('network') + '/v2.0/subnets',
+            self._session,
             headers=self._requestHeaders(),
             key='subnets',
             errMsg='List Subnets',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
-    def listPorts(self, networkId: typing.Optional[str] = None, ownerId: typing.Optional[str] = None) -> typing.Iterable[typing.Any]:
+    def listPorts(
+        self,
+        networkId: typing.Optional[str] = None,
+        ownerId: typing.Optional[str] = None,
+    ) -> typing.Iterable[typing.Any]:
         params = {}
         if networkId is not None:
             params['network_id'] = networkId
@@ -400,41 +440,45 @@ class Client:  # pylint: disable=too-many-public-methods
 
         return getRecurringUrlJson(
             self._getEndpointFor('network') + '/v2.0/ports',
+            self._session,
             headers=self._requestHeaders(),
             key='ports',
             params=params,
             errMsg='List ports',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
     def listSecurityGroups(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('compute') + '/os-security-groups',
+            self._session,
             headers=self._requestHeaders(),
             key='security_groups',
             errMsg='List security groups',
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
     @authProjectRequired
     def getServer(self, serverId: str) -> typing.Dict[str, typing.Any]:
-        r = requests.get(
-            self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
+        r = self._session.get(
+            self._getEndpointFor('compute')
+            + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
         ensureResponseIsValid(r, 'Get Server information')
         return r.json()['server']
 
     @authProjectRequired
     def getVolume(self, volumeId: str) -> typing.Dict[str, typing.Any]:
-        r = requests.get(
-            self._getEndpointFor('volumev2') + '/volumes/{volume_id}'.format(volume_id=volumeId),
+        r = self._session.get(
+            self._getEndpointFor('volumev2')
+            + '/volumes/{volume_id}'.format(volume_id=volumeId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Get Volume information')
@@ -447,11 +491,12 @@ class Client:  # pylint: disable=too-many-public-methods
         States are:
             creating, available, deleting, error,  error_deleting
         """
-        r = requests.get(
-            self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+        r = self._session.get(
+            self._getEndpointFor('volumev2')
+            + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Get Snaphost information')
@@ -459,22 +504,26 @@ class Client:  # pylint: disable=too-many-public-methods
         return r.json()['snapshot']
 
     @authProjectRequired
-    def updateSnapshot(self, snapshotId: str, name: typing.Optional[str] = None, description: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
-        data: typing.Dict[str, typing.Any] = {
-            'snapshot': {}
-        }
+    def updateSnapshot(
+        self,
+        snapshotId: str,
+        name: typing.Optional[str] = None,
+        description: typing.Optional[str] = None,
+    ) -> typing.Dict[str, typing.Any]:
+        data: typing.Dict[str, typing.Any] = {'snapshot': {}}
         if name:
             data['snapshot']['name'] = name
 
         if description:
             data['snapshot']['description'] = description
 
-        r = requests.put(
-            self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+        r = self._session.put(
+            self._getEndpointFor('volumev2')
+            + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             data=json.dumps(data),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Update Snaphost information')
@@ -482,49 +531,55 @@ class Client:  # pylint: disable=too-many-public-methods
         return r.json()['snapshot']
 
     @authProjectRequired
-    def createVolumeSnapshot(self, volumeId: str, name: str, description: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
+    def createVolumeSnapshot(
+        self, volumeId: str, name: str, description: typing.Optional[str] = None
+    ) -> typing.Dict[str, typing.Any]:
         description = description or 'UDS Snapshot'
         data = {
             'snapshot': {
                 'name': name,
                 'description': description,
                 'volume_id': volumeId,
-                'force': True
+                'force': True,
             }
         }
 
         # First, ensure volume is in state "available"
 
-        r = requests.post(
+        r = self._session.post(
             self._getEndpointFor('volumev2') + '/snapshots',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
-        ensureResponseIsValid(r, 'Cannot create snapshot. Ensure volume is in state "available"')
+        ensureResponseIsValid(
+            r, 'Cannot create snapshot. Ensure volume is in state "available"'
+        )
 
         return r.json()['snapshot']
 
     @authProjectRequired
-    def createVolumeFromSnapshot(self, snapshotId: str, name: str, description: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
+    def createVolumeFromSnapshot(
+        self, snapshotId: str, name: str, description: typing.Optional[str] = None
+    ) -> typing.Dict[str, typing.Any]:
         description = description or 'UDS Volume'
         data = {
             'volume': {
                 'name': name,
                 'description': description,
                 # 'volume_type': volType,  # This seems to be the volume type name, not the id
-                'snapshot_id': snapshotId
+                'snapshot_id': snapshotId,
             }
         }
 
-        r = requests.post(
+        r = self._session.post(
             self._getEndpointFor('volumev2') + '/volumes',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Cannot create volume from snapshot.')
@@ -533,47 +588,49 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def createServerFromSnapshot(
-            self,
-            snapshotId: str,
-            name: str,
-            availabilityZone: str,
-            flavorId: str,
-            networkId: str,
-            securityGroupsIdsList: typing.Iterable[str],
-            count: int = 1
-        ) -> typing.Dict[str, typing.Any]:
+        self,
+        snapshotId: str,
+        name: str,
+        availabilityZone: str,
+        flavorId: str,
+        networkId: str,
+        securityGroupsIdsList: typing.Iterable[str],
+        count: int = 1,
+    ) -> typing.Dict[str, typing.Any]:
         data = {
             'server': {
                 'name': name,
                 'imageRef': '',
-                'metadata' : {
-                    'udsOwner' : 'xxxxx'
-                },
+                'metadata': {'udsOwner': 'xxxxx'},
                 # 'os-availability-zone': availabilityZone,
                 'availability_zone': availabilityZone,
-                'block_device_mapping_v2': [{
-                    'boot_index': '0',
-                    'uuid': snapshotId,
-                    # 'volume_size': 1,
-                    # 'device_name': 'vda',
-                    'source_type': 'snapshot',
-                    'destination_type': 'volume',
-                    'delete_on_termination': True
-                }],
+                'block_device_mapping_v2': [
+                    {
+                        'boot_index': '0',
+                        'uuid': snapshotId,
+                        # 'volume_size': 1,
+                        # 'device_name': 'vda',
+                        'source_type': 'snapshot',
+                        'destination_type': 'volume',
+                        'delete_on_termination': True,
+                    }
+                ],
                 'flavorRef': flavorId,
                 # 'OS-DCF:diskConfig': 'AUTO',
                 'max_count': count,
                 'min_count': count,
                 'networks': [{'uuid': networkId}],
-                'security_groups': [{'name': sg} for sg in securityGroupsIdsList]
+                'security_groups': [{'name': sg} for sg in securityGroupsIdsList],
             }
         }
 
-        r = requests.post(self._getEndpointFor('compute') + '/servers',
-                          data=json.dumps(data),
-                          headers=self._requestHeaders(),
-                          verify=VERIFY_SSL,
-                          timeout=self._timeout)
+        r = self._session.post(
+            self._getEndpointFor('compute') + '/servers',
+            data=json.dumps(data),
+            headers=self._requestHeaders(),
+            verify=VERIFY_SSL,
+            timeout=self._timeout,
+        )
 
         ensureResponseIsValid(r, 'Cannot create instance from snapshot.')
 
@@ -581,31 +638,35 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def deleteServer(self, serverId: str) -> None:
-        # r = requests.post(
+        # r = self._session.post(
         #     self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
         #     data='{"forceDelete": null}',
         #     headers=self._requestHeaders(),
         #     verify=VERIFY_SSL,
         #     timeout=self._timeout
         # )
-        r = requests.delete(
-            self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
+        r = self._session.delete(
+            self._getEndpointFor('compute')
+            + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
-        ensureResponseIsValid(r, 'Cannot delete server (probably server does not exists).')
+        ensureResponseIsValid(
+            r, 'Cannot delete server (probably server does not exists).'
+        )
 
         # This does not returns anything
 
     @authProjectRequired
     def deleteSnapshot(self, snapshotId: str) -> None:
-        r = requests.delete(
-            self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+        r = self._session.delete(
+            self._getEndpointFor('volumev2')
+            + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Cannot remove snapshot.')
@@ -614,12 +675,13 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def startServer(self, serverId: str) -> None:
-        r = requests.post(
-            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+        r = self._session.post(
+            self._getEndpointFor('compute')
+            + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-start": null}',
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Starting server')
@@ -628,48 +690,52 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def stopServer(self, serverId: str) -> None:
-        r = requests.post(
-            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+        r = self._session.post(
+            self._getEndpointFor('compute')
+            + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-stop": null}',
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Stoping server')
 
     @authProjectRequired
     def suspendServer(self, serverId: str) -> None:
-        r = requests.post(
-            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+        r = self._session.post(
+            self._getEndpointFor('compute')
+            + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"suspend": null}',
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Suspending server')
 
     @authProjectRequired
     def resumeServer(self, serverId: str) -> None:
-        r = requests.post(
-            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+        r = self._session.post(
+            self._getEndpointFor('compute')
+            + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"resume": null}',
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         ensureResponseIsValid(r, 'Resuming server')
 
     @authProjectRequired
     def resetServer(self, serverId: str) -> None:
-        r = requests.post(   # pylint: disable=unused-variable
-            self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+        r = self._session.post(  # pylint: disable=unused-variable
+            self._getEndpointFor('compute')
+            + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"reboot":{"type":"HARD"}}',
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
-            timeout=self._timeout
+            timeout=self._timeout,
         )
 
         # Ignore response for this...
@@ -679,10 +745,8 @@ class Client:  # pylint: disable=too-many-public-methods
         # First, ensure requested api is supported
         # We need api version 3.2 or greater
         try:
-            r = requests.get(
-                self._authUrl,
-                verify=VERIFY_SSL,
-                headers=self._requestHeaders()
+            r = self._session.get(
+                self._authUrl, verify=VERIFY_SSL, headers=self._requestHeaders()
             )
         except Exception:
             logger.exception('Testing')
@@ -702,4 +766,8 @@ class Client:  # pylint: disable=too-many-public-methods
             # logger.exception('xx')
             raise Exception('Invalid endpoint (maybe invalid version selected?)')
 
-        raise Exception(_('Openstack does not support identity API 3.2 or newer. This OpenStack server is not compatible with UDS.'))
+        raise Exception(
+            _(
+                'Openstack does not support identity API 3.2 or newer. This OpenStack server is not compatible with UDS.'
+            )
+        )

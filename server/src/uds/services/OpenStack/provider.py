@@ -53,6 +53,7 @@ INTERFACE_VALUES: typing.List[gui.ChoiceType] = [
     gui.choiceItem('admin', 'admin'),
 ]
 
+
 class OpenStackProvider(ServiceProvider):
     """
     This class represents the sample services provider
@@ -70,6 +71,7 @@ class OpenStackProvider(ServiceProvider):
     we MUST register it at package __init__.
 
     """
+
     # : What kind of services we offer, this are classes inherited from Service
     offers = [LiveService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -94,23 +96,122 @@ class OpenStackProvider(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    endpoint = gui.TextField(length=128, label=_('Identity endpoint'), order=1, tooltip=_('OpenStack identity endpoint API Access (for example, https://10.0.0.0/identity)'), required=True)
+    endpoint = gui.TextField(
+        length=128,
+        label=_('Identity endpoint'),
+        order=1,
+        tooltip=_(
+            'OpenStack identity endpoint API Access (for example, https://10.0.0.1/identity). Do not include /v3.'
+        ),
+        required=True,
+    )
 
-    access = gui.ChoiceField(label=_('Access interface'), order=5, tooltip=_('Access interface to be used'), values=INTERFACE_VALUES, defvalue='public')
+    access = gui.ChoiceField(
+        label=_('Access interface'),
+        order=5,
+        tooltip=_('Access interface to be used'),
+        values=INTERFACE_VALUES,
+        defvalue='public',
+    )
 
-    domain = gui.TextField(length=64, label=_('Domain'), order=8, tooltip=_('Domain name (default is Default)'), required=True, defvalue='Default')
-    username = gui.TextField(length=64, label=_('Username'), order=9, tooltip=_('User with valid privileges on OpenStack'), required=True, defvalue='admin')
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=10, tooltip=_('Password of the user of OpenStack'), required=True)
+    domain = gui.TextField(
+        length=64,
+        label=_('Domain'),
+        order=8,
+        tooltip=_('Domain name (default is Default)'),
+        required=True,
+        defvalue='Default',
+    )
+    username = gui.TextField(
+        length=64,
+        label=_('Username'),
+        order=9,
+        tooltip=_('User with valid privileges on OpenStack'),
+        required=True,
+        defvalue='admin',
+    )
+    password = gui.PasswordField(
+        lenth=32,
+        label=_('Password'),
+        order=10,
+        tooltip=_('Password of the user of OpenStack'),
+        required=True,
+    )
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        defvalue='10',
+        minValue=1,
+        maxValue=65536,
+        order=50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    maxRemovingServices = gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        defvalue='5',
+        minValue=1,
+        maxValue=65536,
+        order=51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', minValue=1, maxValue=128, order=99, tooltip=_('Timeout in seconds of connection to OpenStack'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(
+        length=3,
+        label=_('Timeout'),
+        defvalue='10',
+        minValue=1,
+        maxValue=128,
+        order=99,
+        tooltip=_('Timeout in seconds of connection to OpenStack'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    tenant = gui.TextField(length=64, label=_('Project Id'), order=6, tooltip=_('Project (tenant) for this provider. Set only if required by server.'), required=False, defvalue='', tab=gui.ADVANCED_TAB)
-    region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider. Set only if required by server.'), required=False, defvalue='', tab=gui.ADVANCED_TAB)
-    
-    useSubnetsName = gui.CheckBoxField(label=_('Subnets names'), order=8, tooltip=_('If checked, the name of the subnets will be used instead of the names of networks'), defvalue=gui.FALSE, tab=gui.ADVANCED_TAB)
+    tenant = gui.TextField(
+        length=64,
+        label=_('Project Id'),
+        order=6,
+        tooltip=_(
+            'Project (tenant) for this provider. Set only if required by server.'
+        ),
+        required=False,
+        defvalue='',
+        tab=gui.ADVANCED_TAB,
+    )
+    region = gui.TextField(
+        length=64,
+        label=_('Region'),
+        order=7,
+        tooltip=_('Region for this provider. Set only if required by server.'),
+        required=False,
+        defvalue='',
+        tab=gui.ADVANCED_TAB,
+    )
+
+    useSubnetsName = gui.CheckBoxField(
+        label=_('Subnets names'),
+        order=8,
+        tooltip=_(
+            'If checked, the name of the subnets will be used instead of the names of networks'
+        ),
+        defvalue=gui.FALSE,
+        tab=gui.ADVANCED_TAB,
+    )
+
+    httpsProxy = gui.TextField(
+        length=96,
+        label=_('Proxy'),
+        order=91,
+        tooltip=_('Proxy used for connection to azure for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'),
+        required=False,
+        tab=gui.ADVANCED_TAB,
+    )
 
     legacy = False
 
@@ -130,6 +231,11 @@ class OpenStackProvider(ServiceProvider):
         projectId = projectId or self.tenant.value or None
         region = region or self.region.value or None
         if self._api is None:
+            proxies = None
+            if self.httpsProxy.value.strip():
+                proxies = {
+                    'https': self.httpsProxy.value
+                }
             self._api = openstack.Client(
                 self.endpoint.value,
                 -1,
@@ -140,7 +246,8 @@ class OpenStackProvider(ServiceProvider):
                 useSSL=False,
                 projectId=projectId,
                 region=region,
-                access=self.access.value
+                access=self.access.value,
+                proxies=proxies
             )
         return self._api
 
