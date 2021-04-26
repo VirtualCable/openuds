@@ -183,7 +183,7 @@ def ticketAuth(request: 'HttpRequest', ticketId: str) -> HttpResponse:  # pylint
             groups = data['groups']
             auth = data['auth']
             realname = data['realname']
-            servicePool = data['servicePool']
+            poolUuid = data['servicePool']
             password = cryptoManager().decrypt(data['password'])
             transport = data['transport']
         except Exception:
@@ -220,12 +220,12 @@ def ticketAuth(request: 'HttpRequest', ticketId: str) -> HttpResponse:  # pylint
         # Override and recalc transport based on current os
         transport = None
 
-        logger.debug("Service & transport: %s, %s", servicePool, transport)
+        logger.debug("Service & transport: %s, %s", poolUuid, transport)
 
         # Check if servicePool is part of the ticket
-        if servicePool:
+        if poolUuid:
             # If service pool is in there, also is transport
-            res = userServiceManager().getService(request.user, request.os, request.ip, 'F' + servicePool, transport, False)
+            res = userServiceManager().getService(request.user, request.os, request.ip, poolUuid, transport, False)
             _, userService, _, transport, _ = res
 
             transportInstance = transport.getInstance()
