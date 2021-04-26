@@ -926,15 +926,14 @@ class UserServiceManager:
         if meta.isAccessAllowed() is False:
             raise ServiceAccessDeniedByCalendar()
 
+        poolMembers = [p for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()]
         # Sort pools based on meta selection
         if meta.policy == MetaPool.PRIORITY_POOL:
-            sortPools = [(p.priority, p.pool) for p in meta.members.all()]
+            sortPools = [(p.priority, p.pool) for p in poolMembers]
         elif meta.policy == MetaPool.MOST_AVAILABLE_BY_NUMBER:
-            sortPools = [(p.pool.usage(), p.pool) for p in meta.members.all()]
+            sortPools = [(p.usage(), p) for p in poolMembers]
         else:
-            sortPools = [
-                (random.randint(0, 10000), p.pool) for p in meta.members.all()
-            ]  # Just shuffle them
+            sortPools = [(random.randint(0, 10000), p) for p in poolMembers]  # Just shuffle them
 
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...

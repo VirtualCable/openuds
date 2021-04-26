@@ -128,10 +128,10 @@ class Tickets(Handler):
 
         userIp: typing.Optional[str] = self._params.get('userIp', None)
 
-        spUuid: str = ''
-        trUuid: str = ''
-    
         try:
+            servicePoolId = None
+            transportId = None
+
             authId = self._params.get('authId', None)
             authName = self._params.get('auth', None)
             authTag = self._params.get('authTag', self._params.get('authSmallName', None))
@@ -164,39 +164,61 @@ class Tickets(Handler):
             realname: str = self._params.get('realname', self._params['username'])
 
             if 'servicePool' in self._params:
-                servicePool: models.ServicePool = models.ServicePool.objects.get(uuid=processUuid(self._params['servicePool']))
+                # Check if is pool or metapool
+                poolUuid = processUuid(self._params['servicePool'])
+                pool : typing.Union[models.ServicePool, models.MetaPool]
 
-                # If forced that servicePool must honor groups
-                if force:
-                    for addGrp in set(groupIds) - set(servicePool.assignedGroups.values_list('uuid', flat=True)):
-                        servicePool.assignedGroups.add(auth.groups.get(uuid=addGrp))
+                try:
+                    pool = typing.cast(models.MetaPool, models.MetaPool.objects.get(uuid=poolUuid))  # If not an metapool uuid, will process it as a servicePool
+                    if force:
+                        # First, add groups to metapool
+                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
+                            pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
+                        # And now, to ALL metapool members
+                        for memberPool in pool.members.all():
+                            # First, add groups to metapool
+                            for addGrp in set(groupIds) - set(memberPool.assignedGroups.values_list('uuid', flat=True)):
+                                memberPool.assignedGroups.add(auth.groups.get(uuid=addGrp))
+                            
+                    # For metapool, transport is ignored..
 
-                if 'transport' in self._params:
-                    transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._params['transport']))
-                    try:
-                        servicePool.validateTransport(transport)
-                    except Exception:
-                        logger.error('Transport %s is not valid for Service Pool %s', transport.name, servicePool.name)
-                        raise Exception('Invalid transport for Service Pool')
-                else:
-                    transport = models.Transport(uuid=None)
-                    if userIp:
-                        for v in servicePool.transports.order_by('priority'):
-                            if v.validForIp(userIp):
-                                transport = v
-                                break
+                    servicePoolId = 'M' + pool.uuid
+                    transportId = 'meta'
+                    
+                except models.MetaPool.DoesNotExist:
+                    pool = typing.cast(models.ServicePool, models.ServicePool.objects.get(uuid=poolUuid))
 
-                        if transport.uuid is None:
-                            logger.error('Service pool %s does not has valid transports for ip %s', servicePool.name, userIp)
-                            raise Exception('Service pool does not has any valid transports for ip {}'.format(userIp))
+                    # If forced that servicePool must honor groups
+                    if force:
+                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
+                            pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
-                spUuid = servicePool.uuid
-                trUuid = transport.uuid
+                    if 'transport' in self._params:
+                        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._params['transport']))
+                        try:
+                            pool.validateTransport(transport)
+                        except Exception:
+                            logger.error('Transport %s is not valid for Service Pool %s', transport.name, pool.name)
+                            raise Exception('Invalid transport for Service Pool')
+                    else:
+                        transport = models.Transport(uuid=None)
+                        if userIp:
+                            for v in pool.transports.order_by('priority'):
+                                if v.validForIp(userIp):
+                                    transport = v
+                                    break
 
+                            if transport.uuid is None:
+                                logger.error('Service pool %s does not has valid transports for ip %s', pool.name, userIp)
+                                raise Exception('Service pool does not has any valid transports for ip {}'.format(userIp))
+
+                    servicePoolId = 'F' + pool.uuid
+                    transportId = transport.uuid
+            
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
         except models.ServicePool.DoesNotExist:
-            return Tickets.result(error='Service pool does not exists')
+            return Tickets.result(error='Service pool (or metapool) does not exists')
         except models.Transport.DoesNotExist:
             return Tickets.result(error='Transport does not exists')
         except Exception as e:
@@ -208,8 +230,8 @@ class Tickets(Handler):
             'realname': realname,
             'groups': groupIds,
             'auth': auth.uuid,
-            'servicePool': spUuid,
-            'transport': trUuid,
+            'servicePool': servicePoolId,
+            'transport': transportId,
         }
 
         ticket = models.TicketStore.create(data)
