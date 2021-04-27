@@ -931,7 +931,7 @@ class UserServiceManager:
         if meta.policy == MetaPool.PRIORITY_POOL:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
         elif meta.policy == MetaPool.MOST_AVAILABLE_BY_NUMBER:
-            sortPools = [(p.usage(), p) for p in poolMembers]
+            sortPools = [(p.pool.usage(), p) for p in poolMembers]
         else:
             sortPools = [(random.randint(0, 10000), p) for p in poolMembers]  # Just shuffle them
 
