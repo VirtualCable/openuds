@@ -114,7 +114,7 @@ class UDSTransport(xmlrpclib.Transport):
     def add_extra_header(self, key: str, value: str) -> None:
         self._extra_headers += [(key, value)]
 
-    def make_connection(self, host: str) -> httplib.HTTPConnection:
+    def make_connection(self, host: str) -> httplib.HTTPConnection:  # type: ignore # In our case, host is always an string
         return UDSHTTPConnection(host)
 
     def send_request(self, connection, handler, request_body, debug):  # pylint: disable=arguments-differ
@@ -188,18 +188,17 @@ class Session(xmlrpclib.ServerProxy):
             self.last_login_method = method
             self.last_login_params = params
             self.API_version = self._get_api_version()
-        except socket.error as e:
-            if e.errno == socket.errno.ETIMEDOUT:
-                raise xmlrpclib.Fault(504, 'The connection timed out')
-            else:
-                raise e
+        except TimeoutError as e:
+            raise xmlrpclib.Fault(504, 'The connection timed out')
+        except socket.error:
+            raise
 
     def _logout(self):
         try:
             if self.last_login_method.startswith("slave_local"):
-                return _parse_result(self.session.local_logout(self._session))
+                return _parse_result(self.session.local_logout(self._session))  # type: ignore
             else:
-                return _parse_result(self.session.logout(self._session))
+                return _parse_result(self.session.logout(self._session))  # type: ignore
         finally:
             self._session = None
             self.last_login_method = None
@@ -230,7 +229,7 @@ def xapi_local():
 
 def _parse_result(result):
     if not isinstance(result, dict) or 'Status' not in result:
-        raise xmlrpclib.Fault(500, 'Missing Status in response from server' + result)
+        raise xmlrpclib.Fault(500, 'Missing Status in response from server: {}'.format(result))
     if result['Status'] == 'Success':
         if 'Value' in result:
             return result['Value']

@@ -51,6 +51,7 @@ class User:
     An user represents a database user, associated with its authenticator (instance)
     and its groups.
     """
+
     _manager: 'AuthenticatorInstance'
     _grpsManager: typing.Optional['GroupsManager']
     _dbUser: 'DBUser'
@@ -80,7 +81,9 @@ class User:
 
         :note: Once obtained valid groups, it caches them until object removal.
         """
-        from uds.models.user import User as DBUser  # pylint: disable=redefined-outer-name
+        from uds.models.user import (
+            User as DBUser,
+        )  # pylint: disable=redefined-outer-name
 
         if self._groups is None:
             if self._manager.isExternalSource is True:
@@ -89,11 +92,8 @@ class User:
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
                 usr = DBUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
-                lst: typing.List[DBGroup] = []
-                for g in self._groups:
-                    if g.dbGroup().is_meta is False:
-                        lst += (g.dbGroup().id,)
-                usr.groups.set(lst)
+                lst: typing.List[int] = []
+                usr.groups.set((g.dbGroup().id for g in self._groups if g.dbGroup().is_meta is False))  # type: ignore
             else:
                 # From db
                 usr = DBUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
