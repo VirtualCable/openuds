@@ -57,14 +57,14 @@ freqs: typing.Tuple[typing.Tuple[str, str], ...] = (
     (WEEKDAYS, _('Weekdays')),
 )
 
-frq_to_rrl: typing.Dict[str, int] = {
+frq_to_rrl: typing.Mapping[str, int] = {
     'YEARLY': rules.YEARLY,
     'MONTHLY': rules.MONTHLY,
     'WEEKLY': rules.WEEKLY,
     'DAILY': rules.DAILY,
 }
 
-frq_to_mins: typing.Dict[str, int] = {
+frq_to_mins: typing.Mapping[str, int] = {
     'YEARLY': 366 * 24 * 60,
     'MONTHLY': 31 * 24 * 60,
     'WEEKLY': 7 * 24 * 60,
@@ -78,7 +78,7 @@ dunits: typing.Tuple[typing.Tuple[str, str], ...] = (
     ('WEEKS', _('Weeks')),
 )
 
-dunit_to_mins: typing.Dict[str, int] = {
+dunit_to_mins: typing.Mapping[str, int] = {
     'MINUTES': 1,
     'HOURS': 60,
     'DAYS': 60 * 24,
@@ -129,7 +129,7 @@ class CalendarRule(UUIDModel):
             self.interval = 1
 
         end = datetime.datetime.combine(
-            self.end if self.end is not None else datetime.datetime.max.date(),
+            self.end if self.end else datetime.datetime.max.date(),
             datetime.datetime.max.time(),
         )
 
