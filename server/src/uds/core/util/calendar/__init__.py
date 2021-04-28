@@ -83,7 +83,7 @@ class CalendarChecker:
 
             r_end = (
                 datetime.datetime.combine(rule.end, datetime.datetime.max.time())
-                if rule.end is not None
+                if rule.end
                 else None
             )
 
@@ -94,7 +94,6 @@ class CalendarChecker:
             if ruleDurationMinutes == 0 or ruleFrequencyMinutes == 0:
                 continue
 
-            # ruleDurationMinutes = ruleDurationMinutes
             # Relative start, rrule can "spawn" the days, so we get the start at least the ruleDurationMinutes of rule to see if it "matches"
             # This means, we need the previous matching day to be "executed" so we can get the "actives" correctly
             diff = (

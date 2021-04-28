@@ -47,13 +47,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-
-# Deprecating these. On future versions will only use
-# cryptography libraries. Keep here for backwards compat with
-# 1.x 2.x encriptions methods
-from Crypto.PublicKey import RSA
-from Crypto.Random import atfork  # type: ignore
-
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -66,7 +59,6 @@ class CryptoManager:
         self._rsa = serialization.load_pem_private_key(
             settings.RSA_KEY.encode(), password=None, backend=default_backend()
         )
-        self._oldRsa = RSA.importKey(settings.RSA_KEY)
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
         self._counter = 0
 
@@ -106,9 +98,6 @@ class CryptoManager:
             'base64',
         ).decode()
 
-        # atfork()
-        # return typing.cast(str, encoders.encode((self._rsa.encrypt(value, b'')[0]), 'base64', asText=True))
-
     def decrypt(self, value: str) -> str:
         data: bytes = codecs.decode(value.encode(), 'base64')
 
@@ -123,16 +112,8 @@ class CryptoManager:
                 ),
             )
         except Exception:  # If fails, try old method
-            try:
-                atfork()
-                decrypted = self._oldRsa.decrypt(
-                    codecs.decode(value.encode(), 'base64')
-                )
-                return decrypted.decode()
-            except Exception:
-                logger.exception('Decripting: %s', value)
-                # logger.error(inspect.stack())
-                return 'decript error'
+            logger.exception('Decripting: %s', value)
+            return 'decript error'
         # logger.debug('Decripted: %s %s', data, decrypted)
         return decrypted.decode()
 
@@ -215,10 +196,11 @@ class CryptoManager:
 
     def loadPrivateKey(self, rsaKey: str):
         try:
-            pk = RSA.importKey(rsaKey)
+            return serialization.load_pem_private_key(
+                settings.RSA_KEY.encode(), password=None, backend=default_backend()
+            )
         except Exception as e:
             raise e
-        return pk
 
     def loadCertificate(self, certificate: typing.Union[str, bytes]):
         if isinstance(certificate, str):
