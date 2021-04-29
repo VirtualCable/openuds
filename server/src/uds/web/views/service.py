@@ -163,6 +163,9 @@ def userServiceEnabler(
                 'password': password,
             }
 
+            # Ensure "client access" is removed on enable action...
+            userService.setProperty('accessedByClient', '0')
+
             ticket = TicketStore.create(data)
             url = html.udsLink(request, ticket, scrambler)
     except ServiceNotReadyError as e:
@@ -198,9 +201,14 @@ def userServiceStatus(
     request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
 ) -> HttpResponse:
     '''
-    Returns 'running' if not ready, or 'ready' if ready (as json)
+    Returns;
+     'running' if not ready
+     'ready' if is ready but not accesed by client
+     'accessed' if ready and accesed by UDS client
+    Note: 
     '''
     ip: typing.Union[str, None, bool]
+    userService = None
     try:
         (
             ip,
@@ -217,7 +225,11 @@ def userServiceStatus(
     except Exception as e:
         ip = False
 
-    status = 'running' if ip is None else 'error' if ip is False else 'ready'
+    ready = 'ready'
+    if userService and userService.getProperty('accessedByClient') != '0':
+        ready = 'accessed'
+
+    status = 'running' if ip is None else 'error' if ip is False else ready
 
     return HttpResponse(
         json.dumps({'status': status}), content_type='application/json'

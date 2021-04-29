@@ -535,7 +535,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             dct[v.name] = v.value
         return dct
 
-    def setProperty(self, propName: str, propValue: typing.Optional[str]) -> None:
+    def setProperty(self, propName: str, propValue: typing.Optional[str] = None) -> None:
         prop, _ = self.properties.get_or_create(name=propName)
         prop.value = propValue or ''
         prop.save()

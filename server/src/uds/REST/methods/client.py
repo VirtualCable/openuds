@@ -38,7 +38,7 @@ from django.utils.translation import ugettext as _
 from django.urls import reverse
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.models import TicketStore
+from uds.models import TicketStore, user
 from uds.models import User
 from uds.web.util import errors
 from uds.core.managers import cryptoManager, userServiceManager
@@ -147,6 +147,10 @@ class Client(Handler):
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
             if not ip:
                 raise ServiceNotReadyError
+
+            # Set "accesedByClient"
+            userService.setProperty('accessedByClient', '1')
+
             transportScript, signature, params = transportInstance.getEncodedTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 
             logger.debug('Signature: %s', signature)
