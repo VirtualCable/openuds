@@ -104,7 +104,9 @@ urlpatterns = [
     re_path(r'^uds/webapi/img/transport/(?P<idTrans>[a-zA-Z0-9:-]+)$', uds.web.views.transportIcon, name='webapi.transportIcon'),
     re_path(r'^uds/webapi/img/gallery/(?P<idImage>[a-zA-Z0-9-]+)$', uds.web.views.image, name='webapi.galleryImage'),
 
+    # Enabler and Status action are first processed, and if not match, execute the generic "action" handler
     re_path(r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9:-]+)$', uds.web.views.userServiceEnabler, name='webapi.enabler'),
+    re_path(r'^uds/webapi/action/(?P<idService>.+)/status/(?P<idTransport>[a-zA-Z0-9:-]+)$', uds.web.views.userServiceStatus, name='webapi.status'),
 
     re_path(r'^uds/webapi/action/(?P<idService>.+)/(?P<actionString>[a-zA-Z0-9:-]+)$', uds.web.views.action, name='webapi.action'),
 

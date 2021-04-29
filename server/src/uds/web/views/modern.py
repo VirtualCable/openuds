@@ -107,7 +107,7 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return auth.webLogout(request, logoutUrl)
 
 
-def js(request: HttpRequest) -> HttpResponse:
+def js(request: ExtendedHttpRequest) -> HttpResponse:
     return HttpResponse(content=configjs.udsJs(request), content_type='application/javascript')
 
 

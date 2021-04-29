@@ -103,7 +103,9 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
         transport: Transport
         if idTrans[:6] == 'LABEL:':
             # Get First label
-            transport = Transport.objects.filter(label=idTrans[6:]).order_by('priority')[0]
+            transport = Transport.objects.filter(label=idTrans[6:]).order_by(
+                'priority'
+            )[0]
         else:
             transport = Transport.objects.get(uuid=processUuid(idTrans))
         return HttpResponse(transport.getInstance().icon(), content_type='image/png')
@@ -188,6 +190,38 @@ def userServiceEnabler(
 
 def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
     return HttpResponse('<html><body onload="window.close()"></body></html>')
+
+
+@webLoginRequired(admin=False)
+@never_cache
+def userServiceStatus(
+    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
+) -> HttpResponse:
+    '''
+    Returns 'running' if not ready, or 'ready' if ready (as json)
+    '''
+    ip: typing.Union[str, None, bool]
+    try:
+        (
+            ip,
+            userService,
+            userServiceInstance,
+            transport,
+            transportInstance,
+        ) = userServiceManager().getService(
+            request.user, request.os, request.ip, idService, idTransport, doTest=True
+        )
+        # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
+    except ServiceNotReadyError:
+        ip = None
+    except Exception as e:
+        ip = False
+
+    status = 'running' if ip is None else 'error' if ip is False else 'ready'
+
+    return HttpResponse(
+        json.dumps({'status': status}), content_type='application/json'
+    )
 
 
 @webLoginRequired(admin=False)
