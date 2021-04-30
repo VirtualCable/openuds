@@ -158,6 +158,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'galleryImage': reverse('webapi.galleryImage', kwargs={'idImage': 'param1'}),
             'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
             'static': static(''),
+            'clientDownload': reverse('page.client-download'),
             # Launcher URL if exists
             'launch': request.session.get('launch', ''),
         }
