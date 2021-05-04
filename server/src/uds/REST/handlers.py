@@ -243,6 +243,7 @@ class Handler:
         session.save()
         self._authToken = session.session_key
         self._session = session
+        
         return self._authToken
 
     def cleanAuthToken(self) -> None:

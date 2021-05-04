@@ -28,6 +28,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import json
 import logging
 import typing
 
@@ -35,15 +36,19 @@ from django.utils.translation import ugettext
 from django.utils import formats
 from django.urls import reverse
 
-from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool, getSqlDatetime
+
+from uds.models import ServicePool, Transport, Network, ServicePoolGroup, MetaPool, getSqlDatetime, TicketStore
 from uds.core.util.config import GlobalConfig
+from uds.core.services.exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
+from uds.core.auths.auth import webPassword
+from uds.web.util import errors
 from uds.core.util import html
 
-from uds.core.managers import userServiceManager
+from uds.core.managers import userServiceManager, cryptoManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest # pylint: disable=ungrouped-imports
+    from django.http import HttpRequest, HttpResponse
 
 
 logger = logging.getLogger(__name__)
@@ -241,4 +246,55 @@ def getServicesData(request: 'HttpRequest') -> typing.Dict[str, typing.Any]:  # 
         'nets': nets,
         'transports': validTrans,
         'autorun': autorun
+    }
+
+def enableService(request: 'HttpRequest', idService: str, idTransport: str) -> typing.Mapping[str, typing.Any]:
+    # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
+    logger.debug('idService: %s, idTransport: %s', idService, idTransport)
+    url = ''
+    error = ugettext('Service not ready. Please, try again in a while.')
+
+    # If meta service, process and rebuild idService & idTransport
+
+    try:
+        res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport, doTest=False)
+        scrambler = cryptoManager().randomString(32)
+        password = cryptoManager().symCrypt(webPassword(request), scrambler)
+
+        userService, trans = res[1], res[3]
+
+        typeTrans = trans.getType()
+
+        error = ''  # No error
+
+        if typeTrans.ownLink:
+            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))
+        else:
+            data = {
+                'service': 'A' + userService.uuid,
+                'transport': trans.uuid,
+                'user': request.user.uuid,
+                'password': password
+            }
+
+            ticket = TicketStore.create(data)
+            url = html.udsLink(request, ticket, scrambler)
+    except ServiceNotReadyError as e:
+        logger.debug('Service not ready')
+        # Not ready, show message and return to this page in a while
+        # error += ' (code {0:04X})'.format(e.code)
+        error = ugettext('Your service is being created, please, wait for a few seconds while we complete it.)') +  '({}%)'.format(int(e.code * 25))
+    except MaxServicesReachedError:
+        logger.info('Number of service reached MAX for service pool "%s"', idService)
+        error = errors.errorString(errors.MAX_SERVICES_REACHED)
+    except ServiceAccessDeniedByCalendar:
+        logger.info('Access tried to a calendar limited access pool "%s"', idService)
+        error = errors.errorString(errors.SERVICE_CALENDAR_DENIED)
+    except Exception as e:
+        logger.exception('Error')
+        error = str(e)
+
+    return {
+        'url': str(url),
+        'error': str(error)
     }

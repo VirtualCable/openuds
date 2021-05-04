@@ -33,18 +33,16 @@ import logging
 import typing
 
 from django.utils.translation import ugettext as _
-from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
-from uds.core.managers import userServiceManager, cryptoManager
-from uds.models import TicketStore
+from uds.core.managers import userServiceManager
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
-from uds.core.util import html, log
-from uds.core.services.exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
+from uds.core.util import log
+from uds.core.services.exceptions import ServiceNotReadyError
 
 from uds.web.util import errors
 from uds.web.util import services
@@ -113,58 +111,11 @@ def serviceImage(request: 'HttpRequest', idImage: str) -> HttpResponse:
 @webLoginRequired(admin=False)
 @never_cache
 def userServiceEnabler(request: 'HttpRequest', idService: str, idTransport: str) -> HttpResponse:
-    # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
-    logger.debug('idService: %s, idTransport: %s', idService, idTransport)
-    url = ''
-    error = _('Service not ready. Please, try again in a while.')
-
-    # If meta service, process and rebuild idService & idTransport
-
-    try:
-        res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport, doTest=False)
-        scrambler = cryptoManager().randomString(32)
-        password = cryptoManager().symCrypt(webPassword(request), scrambler)
-
-        userService, trans = res[1], res[3]
-
-        typeTrans = trans.getType()
-
-        error = ''  # No error
-
-        if typeTrans.ownLink:
-            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))
-        else:
-            data = {
-                'service': 'A' + userService.uuid,
-                'transport': trans.uuid,
-                'user': request.user.uuid,
-                'password': password
-            }
-
-            ticket = TicketStore.create(data)
-            url = html.udsLink(request, ticket, scrambler)
-    except ServiceNotReadyError as e:
-        logger.debug('Service not ready')
-        # Not ready, show message and return to this page in a while
-        # error += ' (code {0:04X})'.format(e.code)
-        error = _('Your service is being created, please, wait for a few seconds while we complete it.)') +  '({}%)'.format(int(e.code * 25))
-    except MaxServicesReachedError:
-        logger.info('Number of service reached MAX for service pool "%s"', idService)
-        error = errors.errorString(errors.MAX_SERVICES_REACHED)
-    except ServiceAccessDeniedByCalendar:
-        logger.info('Access tried to a calendar limited access pool "%s"', idService)
-        error = errors.errorString(errors.SERVICE_CALENDAR_DENIED)
-    except Exception as e:
-        logger.exception('Error')
-        error = str(e)
-
     return HttpResponse(
-        json.dumps({
-            'url': str(url),
-            'error': str(error)
-        }),
+        json.dumps(services.enableService(request, idService=idService, idTransport=idTransport)),
         content_type='application/json'
     )
+     
 
 def closer(request: 'HttpRequest') -> HttpResponse:
     return HttpResponse('<html><body onload="window.close()"></body></html>')
