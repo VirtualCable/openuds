@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -31,20 +31,18 @@
 '''
 from __future__ import unicode_literals
 
-import base64
-import os
+from base64 import b64decode
+
+import tempfile
+import string
 import random
+import os
 import socket
 import stat
-import string
 import sys
-import tempfile
 import time
 
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.serialization import load_pem_public_key
+import six
 
 from .log import logger
 
@@ -52,8 +50,10 @@ _unlinkFiles = []
 _tasksToWait = []
 _execBeforeExit = []
 
+sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
+
 # Public key for scripts
-PUBLIC_KEY = b'''-----BEGIN PUBLIC KEY-----
+PUBLIC_KEY = '''-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuNURlGjBpqbglkTTg2lh
 dU5qPbg9Q+RofoDDucGfrbY0pjB9ULgWXUetUWDZhFG241tNeKw+aYFTEorK5P+g
 ud7h9KfyJ6huhzln9eyDu3k+kjKUIB1PLtA3lZLZnBx7nmrHRody1u5lRaLVplsb
@@ -71,19 +71,13 @@ nVgtClKcDDlSaBsO875WDR0CAwEAAQ==
 
 def saveTempFile(content, filename=None):
     if filename is None:
-        filename = ''.join(
-            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
-        )
+        filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         filename = filename + '.uds'
 
     filename = os.path.join(tempfile.gettempdir(), filename)
 
-    try:
-        with open(filename, 'w') as f:
-            f.write(content)
-    except Exception as e:
-        logger.error('Error saving temporary file %s: %s', filename, e)
-        raise
+    with open(filename, 'w') as f:
+        f.write(content)
 
     logger.info('Returning filename')
     return filename
@@ -94,8 +88,7 @@ def readTempFile(filename):
     try:
         with open(filename, 'r') as f:
             return f.read()
-    except Exception as e:
-        logger.warning('Could not read file %s: %s', filename, e)
+    except Exception:
         return None
 
 
@@ -117,34 +110,32 @@ def findApp(appName, extraPath=None):
         fileName = os.path.join(path, appName)
         if os.path.isfile(fileName) and (os.stat(fileName).st_mode & stat.S_IXUSR) != 0:
             return fileName
-    logger.warning('Application %s not found on path %s', appName, searchPath)
     return None
 
 
 def getHostName():
-    """
+    '''
     Returns current host name
     In fact, it's a wrapper for socket.gethostname()
-    """
+    '''
     hostname = socket.gethostname()
     logger.info('Hostname: %s', hostname)
     return hostname
-
 
 # Queing operations (to be executed before exit)
 
 
 def addFileToUnlink(filename):
-    """
+    '''
     Adds a file to the wait-and-unlink list
-    """
+    '''
     _unlinkFiles.append(filename)
 
 
 def unlinkFiles():
-    """
+    '''
     Removes all wait-and-unlink files
-    """
+    '''
     if _unlinkFiles:
         time.sleep(5)  # Wait 5 seconds before deleting anything
 
@@ -180,14 +171,21 @@ def execBeforeExit():
 
 
 def verifySignature(script, signature):
-    public_key = load_pem_public_key(backend=default_backend(), data=PUBLIC_KEY)
+    '''
+    Verifies with a public key from whom the data came that it was indeed
+    signed by their private key
+    param: public_key_loc Path to public key
+    param: signature String signature to be verified
+    return: Boolean. True if the signature is valid; False otherwise.
+    '''
+    # For signature checking
+    from Crypto.PublicKey import RSA
+    from Crypto.Signature import PKCS1_v1_5
+    from Crypto.Hash import SHA256
 
-    # Message option
-    try:
-        public_key.verify(
-            base64.b64decode(signature), script, padding.PKCS1v15(), hashes.SHA256()
-        )
-    except Exception:  # InvalidSignature
-        logger.error('Invalid signature for UDS plugin code. Contact Administrator.')
-        return False
-    return True
+    rsakey = RSA.importKey(PUBLIC_KEY)
+    signer = PKCS1_v1_5.new(rsakey)
+    digest = SHA256.new(script)  # Script is "binary string" here
+    if signer.verify(digest, b64decode(signature)):
+        return True
+    return False

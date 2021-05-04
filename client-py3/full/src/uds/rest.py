@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -32,25 +32,20 @@
 # pylint: disable=c-extension-no-member,no-name-in-module
 
 import json
+import os
 import urllib
 import urllib.parse
-
-import certifi
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QObject, QUrl, QSettings
 from PyQt5.QtCore import Qt
-from PyQt5.QtNetwork import (
-    QNetworkAccessManager,
-    QNetworkRequest,
-    QNetworkReply,
-    QSslCertificate,
-)
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
 from PyQt5.QtWidgets import QMessageBox
 
-from . import os_detector
+from . import osDetector
 
 from . import VERSION
+
 
 
 class RestRequest(QObject):
@@ -63,12 +58,16 @@ class RestRequest(QObject):
         super(RestRequest, self).__init__()
         # private
         self._manager = QNetworkAccessManager()
+        try:
+            if os.path.exists('/etc/ssl/certs/ca-certificates.crt'):
+                pass
+                # os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
+        except Exception:
+            pass
+
 
         if params is not None:
-            url += '?' + '&'.join(
-                '{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8')))
-                for k, v in params.items()
-            )
+            url += '?' + '&'.join('{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8'))) for k, v in params.items())
 
         self.url = QUrl(RestRequest.restApiUrl + url)
 
@@ -77,21 +76,24 @@ class RestRequest(QObject):
         self._manager.sslErrors.connect(self._sslError)
         self._parentWindow = parentWindow
 
-        self.done.connect(done, Qt.QueuedConnection)
+        self.done.connect(done, Qt.QueuedConnection)  # type: ignore
 
     def _finished(self, reply):
-        """
+        '''
         Handle signal 'finished'.  A network request has finished.
-        """
+        '''
         try:
             if reply.error() != QNetworkReply.NoError:
                 raise Exception(reply.errorString())
             data = bytes(reply.readAll())
             data = json.loads(data)
         except Exception as e:
-            data = {'result': None, 'error': str(e)}
+            data = {
+                'result': None,
+                'error': str(e)
+            }
 
-        self.done.emit(data)
+        self.done.emit(data)  # type: ignore
 
         reply.deleteLater()  # schedule for delete from main event loop
 
@@ -103,27 +105,14 @@ class RestRequest(QObject):
 
         approved = settings.value(digest, False)
 
-        errorString = (
-            '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(
-                cert.subjectInfo(QSslCertificate.CommonName)
-            )
-        )
+        errorString = '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(cert.subjectInfo(QSslCertificate.CommonName))
 
         for err in errors:
             errorString += '<li>' + err.errorString() + '</li>'
 
         errorString += '</ul>'
 
-        if (
-            approved
-            or QMessageBox.warning(
-                self._parentWindow,
-                'SSL Warning',
-                errorString,
-                QMessageBox.Yes | QMessageBox.No,
-            )
-            == QMessageBox.Yes
-        ):
+        if approved or QMessageBox.warning(self._parentWindow, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:  # type: ignore
             settings.setValue(digest, True)
             reply.ignoreSslErrors()
 
@@ -131,14 +120,5 @@ class RestRequest(QObject):
 
     def get(self):
         request = QNetworkRequest(self.url)
-        # Ensure loads certifi certificates
-        sslCfg = request.sslConfiguration()
-        sslCfg.addCaCertificates(certifi.where())
-        request.setSslConfiguration(sslCfg)
-        request.setRawHeader(
-            b'User-Agent',
-            os_detector.getOs().encode('utf-8')
-            + b" - UDS Connector "
-            + VERSION.encode('utf-8'),
-        )
+        request.setRawHeader(b'User-Agent', osDetector.getOs().encode('utf-8') + b" - UDS Connector " + VERSION.encode('utf-8'))
         self._manager.get(request)
