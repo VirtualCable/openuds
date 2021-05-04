@@ -187,7 +187,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             serviceInstance = service.getInstance(self._params)
 
             # Store token if this service provides one
-            service.token = serviceInstance.getToken()
+            service.token = serviceInstance.getToken() or None  # If '', use "None" to
 
             service.data = (
                 serviceInstance.serialize()
