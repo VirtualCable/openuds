@@ -40,7 +40,7 @@ from uds.REST import RequestError
 from uds.core.managers import userServiceManager
 from uds.core.managers import cryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.web.util import errors
+from uds.web.util import errors, services
 
 
 logger = logging.getLogger(__name__)
@@ -85,8 +85,6 @@ class Connection(Handler):
 
     def serviceList(self):
         # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
-        from uds.web.util.services import getServicesData
-
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
 
@@ -180,6 +178,16 @@ class Connection(Handler):
     def getTicketContent(self):
         return {}  # TODO: use this for something?
 
+    def getUdsLink(self):
+        # Returns the UDS link for the user & transport
+        self._request.user = self._user  # type: ignore
+        self._request._cryptedpass = self._session['REST']['password']  # type: ignore
+        self._request._scrambler = self._request.META['HTTP_SCRAMBLER']  # type: ignore
+        linkInfo = services.enableService(self._request, idService=self._args[0], idTransport=self._args[1])
+        if linkInfo['error']:
+            return Connection.result(error=linkInfo['error'])
+        return Connection.result(result=linkInfo['url'])
+
     def get(self):
         """
         Processes get requests
@@ -201,6 +209,9 @@ class Connection(Handler):
             # /connection/idService/idTransport/skipChecking
             if self._args[2] == 'skipChecking':
                 return self.connection(True)
+            # /connection/idService/idTransport/udslink
+            elif self._args[2] == 'udslink':
+                return self.getUdsLink()
 
         if len(self._args) == 4:
             # /connection/idService/idTransport/scrambler/hostname

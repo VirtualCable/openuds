@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -389,9 +389,10 @@ def webPassword(request: HttpRequest) -> str:
     session (db) and client browser cookies. This method uses this two values to recompose the user password
     so we can provide it to remote sessions.
     """
-    return cryptoManager().symDecrpyt(
-        request.session.get(PASS_KEY, ''), getUDSCookie(request)
-    )  # recover as original unicode string
+    if hasattr(request, 'session'):
+        return cryptoManager().symDecrpyt(request.session.get(PASS_KEY, ''), getUDSCookie(request))  # recover as original unicode string
+    else:  # No session, get from _session instead, this is an "client" REST request
+        return cryptoManager().symDecrpyt(request._cryptedpass, request._scrambler)  # type: ignore
 
 
 def webLogout(
