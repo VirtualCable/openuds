@@ -34,7 +34,7 @@ import pickle
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from django.db import transaction
 
 from uds.models import getSqlDatetimeAsUnix
@@ -42,6 +42,7 @@ from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util import connection
 from uds.core.util import config
+from uds.core.util import net
 from uds.core.services import types as serviceTypes
 
 from .deployment import IPMachineDeployed
@@ -127,6 +128,10 @@ class IPMachinesService(IPServiceBase):
         if values.get('ipList', None) is None:
             self._ips = []
         else:
+            # Check that ips are valid
+            for v in values['ipList']:
+                if not net.isValidHost(v):
+                    raise IPServiceBase.ValidationException(gettext('Invalid value detected on servers list: "{}"').format(v))
             self._ips = [
                 '{}~{}'.format(str(ip).strip(), i)
                 for i, ip in enumerate(values['ipList'])

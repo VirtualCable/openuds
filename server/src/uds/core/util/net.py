@@ -40,12 +40,18 @@ NetworklistType = typing.List[NetworkType]
 logger = logging.getLogger(__name__)
 
 # Test patters for networks
-reCIDR = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$')
-reMask = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})netmask([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+reCIDR = re.compile(
+    r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$'
+)
+reMask = re.compile(
+    r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})netmask([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
+)
 re1Asterisk = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
 re2Asterisk = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
 re3Asterisk = re.compile(r'^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
-reRange = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})-([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+reRange = re.compile(
+    r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})-([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
+)
 reHost = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 
 
@@ -78,11 +84,15 @@ def longToIp(n: int) -> str:
     except Exception:
         return '0.0.0.0'  # Invalid values will map to "0.0.0.0"
 
+
 def networkFromString(strNets: str) -> NetworkType:
     return typing.cast(NetworkType, networksFromString(strNets, False))
 
+
 # pylint: disable=too-many-return-statements, too-many-branches, too-many-statements
-def networksFromString(strNets: str, allowMultipleNetworks: bool = True) -> typing.Union[NetworklistType, NetworkType]:
+def networksFromString(
+    strNets: str, allowMultipleNetworks: bool = True
+) -> typing.Union[NetworklistType, NetworkType]:
     """
     Parses the network from strings in this forms:
       - A.* (or A.*.* or A.*.*.*)
@@ -141,7 +151,7 @@ def networksFromString(strNets: str, allowMultipleNetworks: bool = True) -> typi
                 raise Exception()
             val = toNum(*m.groups())
             bits = maskFromBits(bits)
-            noBits = ~bits & 0xffffffff
+            noBits = ~bits & 0xFFFFFFFF
             return val & bits, val | noBits
 
         m = reMask.match(strNets)
@@ -150,7 +160,7 @@ def networksFromString(strNets: str, allowMultipleNetworks: bool = True) -> typi
             check(*m.groups())
             val = toNum(*(m.groups()[0:4]))
             bits = toNum(*(m.groups()[4:8]))
-            noBits = ~bits & 0xffffffff
+            noBits = ~bits & 0xFFFFFFFF
             return val & bits, val | noBits
 
         m = reRange.match(strNets)
@@ -174,9 +184,9 @@ def networksFromString(strNets: str, allowMultipleNetworks: bool = True) -> typi
             m = v[0].match(strNets)
             if m is not None:
                 check(*m.groups())
-                val = toNum(*(m.groups()[0:v[1] + 1]))
+                val = toNum(*(m.groups()[0 : v[1] + 1]))
                 bits = maskFromBits(v[1] * 8)
-                noBits = ~bits & 0xffffffff
+                noBits = ~bits & 0xFFFFFFFF
                 return val & bits, val | noBits
 
         # No pattern recognized, invalid network
@@ -186,7 +196,9 @@ def networksFromString(strNets: str, allowMultipleNetworks: bool = True) -> typi
         raise ValueError(inputString)
 
 
-def ipInNetwork(ip: typing.Union[str, int], network: typing.Union[str, NetworklistType]) -> bool:
+def ipInNetwork(
+    ip: typing.Union[str, int], network: typing.Union[str, NetworklistType]
+) -> bool:
     if isinstance(ip, str):
         ip = ipToLong(ip)
     if isinstance(network, str):
@@ -196,3 +208,27 @@ def ipInNetwork(ip: typing.Union[str, int], network: typing.Union[str, Networkli
         if net[0] <= ip <= net[1]:
             return True
     return False
+
+
+def isValidIp(value: str) -> bool:
+    return (
+        re.match(
+            r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$',
+            value,
+        )
+        is not None
+    )
+
+
+def isValidFQDN(value: str) -> bool:
+    return (
+        re.match(
+            r'^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$',
+            value,
+        )
+        is not None
+    )
+
+
+def isValidHost(value: str):
+    return isValidIp(value) or isValidFQDN(value)

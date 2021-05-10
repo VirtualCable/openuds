@@ -33,9 +33,10 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _, gettext
 
 from uds.core.ui import gui
+from uds.core.util import net
 from uds.core.services import types as serviceTypes
 
 from .deployment import IPMachineDeployed
@@ -68,6 +69,13 @@ class IPSingleMachineService(IPServiceBase):
     deployedType = IPMachineDeployed
 
     servicesTypeProvided = (serviceTypes.VDI,)
+
+    def initialize(self, values: 'Module.ValuesType') -> None:
+        if values is None:
+            return
+
+        if not net.isValidHost(self.ip.value):
+            raise IPServiceBase.ValidationException(gettext('Invalid server used: "{}"'.format(self.ip.value)))
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         ip: typing.Optional[str] = None
