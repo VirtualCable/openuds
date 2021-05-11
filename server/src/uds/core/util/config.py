@@ -315,8 +315,12 @@ class GlobalConfig:
     # If we use new logout mechanics
     EXCLUSIVE_LOGOUT: Config.Value = Config.section(SECURITY_SECTION).value('Exclusive Logout', '0', type=Config.BOOLEAN_FIELD)
 
-    # Enable/Disable Actor attack block
+    # Enable/Disable Actor attack detection ip blocking
     BLOCK_ACTOR_FAILURES: Config.Value = Config.section(SECURITY_SECTION).value('Block actor failures', '1', type=Config.BOOLEAN_FIELD)
+
+    # Max session length configuration values
+    SESSION_DURATION_ADMIN: Config.Value = Config.section(SECURITY_SECTION).value('Session timeout for Admin', '14400', type=Config.NUMERIC_FIELD)
+    SESSION_DURATION_USER: Config.Value = Config.section(SECURITY_SECTION).value('Session timeout for User', '14400', type=Config.NUMERIC_FIELD)
 
     RELOAD_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('Page reload Time', '300', type=Config.NUMERIC_FIELD)
 
@@ -342,7 +346,7 @@ class GlobalConfig:
 
     # Admin config variables
     ADMIN_PAGESIZE: Config.Value = Config.section(ADMIN_SECTION).value('List page size', '10', type=Config.NUMERIC_FIELD)
-    ADMIN_TRUSTED_SOURCES: Config.Value = Config.section(ADMIN_SECTION).value('Trusted Hosts', '*', type=Config.TEXT_FIELD)
+    ADMIN_TRUSTED_SOURCES: Config.Value = Config.section(ADMIN_SECTION).value('Trusted Hosts for Admin', '*', type=Config.TEXT_FIELD)
 
     _initDone = False
 
