@@ -65,6 +65,10 @@ class StatsCounters(models.Model):
 
         db_table = 'uds_stats_c'
         app_label = 'uds'
+        index_together= [
+            ('owner_type', 'stamp'),
+            ('owner_type', 'counter_type', 'stamp'),
+        ]
 
     @staticmethod
     def get_grouped(

@@ -31,16 +31,17 @@
 """
 import threading
 import datetime
-from uds.core.util.tools import DictAsObj
 import weakref
 import logging
 import typing
 
 from django.http import HttpRequest, HttpResponse
+from django.utils import timezone
 
 from uds.core.util import os_detector as OsDetector
+from uds.core.util.tools import DictAsObj
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
+from uds.core.auths.auth import EXPIRY_KEY, ROOT_ID, USER_KEY, getRootUser, webLogout
 from uds.models import User
 
 # How often to check the requests cache for stuck objects
@@ -80,6 +81,11 @@ def getRequest() -> ExtendedHttpRequest:
     return ExtendedHttpRequest()
 
 
+class UDSSessionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+
 class GlobalRequestMiddleware:
     lastCheck: typing.ClassVar[datetime.datetime] = datetime.datetime.now()
 
@@ -88,6 +94,7 @@ class GlobalRequestMiddleware:
 
     def _process_request(self, request: ExtendedHttpRequest) -> None:
         # Store request on cache
+
         _requests[getIdent()] = (
             weakref.ref(typing.cast(ExtendedHttpRequest, request)),
             datetime.datetime.now(),
@@ -123,6 +130,21 @@ class GlobalRequestMiddleware:
     def __call__(self, request: ExtendedHttpRequest):
         self._process_request(request)
 
+        # Now, check if session is timed out...
+        if request.user:
+            # return HttpResponse(content='Session Expired', status=403, content_type='text/plain')
+            now = timezone.now()
+            expiry = request.session.get(EXPIRY_KEY, now)
+            if expiry < now:
+                webLogout(request=request)  # Ignore the response, just processes usere session logout
+                return HttpResponse(content='Session Expired', status=403)
+            # Update session timeout..self.
+            request.session[EXPIRY_KEY] = now + datetime.timedelta(
+                seconds=GlobalConfig.SESSION_DURATION_ADMIN.getInt()
+                if request.user.isStaff()
+                else GlobalConfig.SESSION_DURATION_USER.getInt()
+            )
+
         response = self._get_response(request)
 
         return self._process_response(request, response)
@@ -135,7 +157,7 @@ class GlobalRequestMiddleware:
             > datetime.datetime.now() - datetime.timedelta(seconds=CHECK_SECONDS)
         ):
             return
-        logger.debug('Cleaning stuck requestws from %s', _requests)
+        logger.debug('Cleaning stuck requests from %s', _requests)
         # No request lives 60 seconds, so 60 seconds is fine
         cleanFrom: datetime.datetime = datetime.datetime.now() - datetime.timedelta(
             seconds=60
@@ -196,4 +218,5 @@ class GlobalRequestMiddleware:
                 user = None
 
         logger.debug('User at Middleware: %s %s', user_id, user)
+
         request.user = user

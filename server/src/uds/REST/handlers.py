@@ -133,10 +133,6 @@ class Handler:
                 self._session = SessionStore(session_key=self._authToken)
                 if 'REST' not in self._session:
                     raise Exception()  # No valid session, so auth_token is also invalid
-
-                # Valid session, refresh expiry time
-                self._session.save()
-
             except Exception:  # Couldn't authenticate
                 self._authToken = None
                 self._session = None
@@ -216,9 +212,6 @@ class Handler:
         """
         if is_admin:
             staff_member = True  # Make admins also staff members :-)
-
-        # Now, set session max length
-        session.set_expiry(GlobalConfig.SESSION_DURATION_ADMIN.getInt() if staff_member else GlobalConfig.SESSION_DURATION_USER.getInt())
 
         session['REST'] = {
             'auth': id_auth,

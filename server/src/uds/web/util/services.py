@@ -41,12 +41,20 @@ from uds.models import (
     Network,
     ServicePoolGroup,
     MetaPool,
+    TicketStore,
     getSqlDatetime,
 )
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
+from uds.core.managers import cryptoManager, userServiceManager
+from uds.core.services.exceptions import (
+    ServiceNotReadyError,
+    MaxServicesReachedError,
+    ServiceAccessDeniedByCalendar,
+)
 
-from uds.core.managers import userServiceManager
+from uds.web.util import errors
+from uds.core.auths.auth import webPassword
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -374,7 +382,7 @@ def getServicesData(
         'autorun': autorun
     }
 
-def enableService(request: 'HttpRequest', idService: str, idTransport: str) -> typing.Mapping[str, typing.Any]:
+def enableService(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> typing.Mapping[str, typing.Any]:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''

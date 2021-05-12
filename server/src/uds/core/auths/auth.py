@@ -69,6 +69,7 @@ authLogger = logging.getLogger('authLog')
 
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
+EXPIRY_KEY = 'ek'
 ROOT_ID = -20091204  # Any negative number will do the trick
 
 RT = typing.TypeVar('RT')

@@ -52,8 +52,6 @@ def index(request: HttpRequest) -> HttpResponse:
     # return errorView(request, 1)
     response = render(request, 'uds/modern/index.html', {})
 
-    logger.debug('Session expires at %s', request.session.get_expiry_date())
-
     # Ensure UDS cookie is present
     auth.getUDSCookie(request, response)
 

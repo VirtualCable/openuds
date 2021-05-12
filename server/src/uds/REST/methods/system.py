@@ -48,14 +48,14 @@ logger = logging.getLogger(__name__)
 cache = Cache('StatsDispatcher')
 
 # Enclosed methods under /system path
-POINTS = 365
-SINCE = 365  # Days
+POINTS = 300
+SINCE = 30  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
 USE_MAX = True
 
 
 def getServicesPoolsCounters(
     servicePool: typing.Optional[models.ServicePool], counter_type: int
-) -> typing.List[typing.Dict[str, typing.Any]]:
+) -> typing.List[typing.Mapping[str, typing.Any]]:
     try:
         cacheKey = (
             (servicePool and str(servicePool.id) or 'all')
@@ -66,15 +66,15 @@ def getServicesPoolsCounters(
         to = models.getSqlDatetime()
         since: datetime.datetime = to - datetime.timedelta(days=SINCE)
 
-        val: typing.Any = cache.get(cacheKey)
-        if not val:
+        cachedValue: typing.Optional[bytes] = cache.get(cacheKey)
+        if not cachedValue:
             if not servicePool:
                 us = models.ServicePool()
                 complete = True  # Get all deployed services stats
             else:
                 us = servicePool
                 complete = False
-            val = []
+            val: typing.List[typing.Mapping[str, typing.Any]] = []
             for x in counters.getCounters(
                 us,
                 counter_type,
@@ -90,8 +90,9 @@ def getServicesPoolsCounters(
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
-            val = pickle.loads(codecs.decode(val, 'zip'))
+            val = pickle.loads(codecs.decode(cachedValue, 'zip'))
 
+        # return [{'stamp': since + datetime.timedelta(hours=i*10), 'value': i*i} for i in range(300)]
         return val
     except:
         logger.exception('exception')

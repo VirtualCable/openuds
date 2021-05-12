@@ -38,17 +38,12 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
-from uds.core.managers import userServiceManager, cryptoManager
-from uds.models import TicketStore
+from uds.core.managers import userServiceManager
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
-from uds.core.util import html, log
-from uds.core.services.exceptions import (
-    ServiceNotReadyError,
-    MaxServicesReachedError,
-    ServiceAccessDeniedByCalendar,
-)
+from uds.core.util import log
+from uds.core.services.exceptions import ServiceNotReadyError
 
 from uds.web.util import errors
 from uds.web.util import services
@@ -130,12 +125,17 @@ def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
 
 @webLoginRequired(admin=False)
 @never_cache
-def userServiceEnabler(request: 'HttpRequest', idService: str, idTransport: str) -> HttpResponse:
+def userServiceEnabler(
+    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
+) -> HttpResponse:
     return HttpResponse(
-        json.dumps(services.enableService(request, idService=idService, idTransport=idTransport)),
-        content_type='application/json'
+        json.dumps(
+            services.enableService(
+                request, idService=idService, idTransport=idTransport
+            )
+        ),
+        content_type='application/json',
     )
-     
 
 
 def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
@@ -152,7 +152,7 @@ def userServiceStatus(
      'running' if not ready
      'ready' if is ready but not accesed by client
      'accessed' if ready and accesed by UDS client
-    Note: 
+    Note:
     '''
     ip: typing.Union[str, None, bool]
     userService = None
@@ -178,9 +178,7 @@ def userServiceStatus(
 
     status = 'running' if ip is None else 'error' if ip is False else ready
 
-    return HttpResponse(
-        json.dumps({'status': status}), content_type='application/json'
-    )
+    return HttpResponse(json.dumps({'status': status}), content_type='application/json')
 
 
 @webLoginRequired(admin=False)
