@@ -36,6 +36,7 @@ import logging
 import typing
 
 import dns.resolver
+import dns.reversename
 
 from django.utils.translation import ugettext_noop as _
 from uds.core import auths
@@ -87,7 +88,7 @@ class InternalDBAuth(auths.Authenticator):
             try:
                 usr = auth.users.get(name=username, state=State.ACTIVE)
                 parent = usr.uuid
-                usr.id = usr.uuid = None  # Empty "key" fields for replication
+                usr.id = usr.uuid = None  # type: ignore  # Empty id
                 if usr.real_name.strip() == '':
                     usr.real_name = usr.name
                 usr.name = newUsername
