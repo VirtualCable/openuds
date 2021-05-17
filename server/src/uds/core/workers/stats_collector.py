@@ -63,8 +63,13 @@ class DeployedServiceStatsCollector(Job):
                 )
                 assigned = fltr.count()
                 inUse = fltr.filter(in_use=True).count()
+                # Cached user services
+                cached = servicePool.cachedUserServices().exclude(
+                    state__in=State.INFO_STATES
+                ).count()
                 counters.addCounter(servicePool, counters.CT_ASSIGNED, assigned)
                 counters.addCounter(servicePool, counters.CT_INUSE, inUse)
+                counters.addCounter(servicePool, counters.CT_CACHED, cached)
             except Exception:
                 logger.exception(
                     'Getting counters for service pool %s', servicePool.name

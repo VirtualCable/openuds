@@ -47,8 +47,8 @@ CounterClass = typing.TypeVar('CounterClass', Provider, Service, ServicePool, Au
 # Posible counters, note that not all are used by every posible type
 # FIRST_COUNTER_TYPE, LAST_COUNTER_TYPE are just a placeholder for sanity checks
 (
-    CT_LOAD, CT_STORAGE, CT_ASSIGNED, CT_INUSE, CT_AUTH_USERS, CT_AUTH_USERS_WITH_SERVICES, CT_AUTH_SERVICES
-) = range(7)
+    CT_LOAD, CT_STORAGE, CT_ASSIGNED, CT_INUSE, CT_AUTH_USERS, CT_AUTH_USERS_WITH_SERVICES, CT_AUTH_SERVICES, CT_CACHED
+) = range(8)
 
 __caRead: typing.Dict = {}
 __caWrite: typing.Dict = {}
