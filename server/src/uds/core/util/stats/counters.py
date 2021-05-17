@@ -68,7 +68,7 @@ def addCounter(obj: CounterClass, counterType: int, counterValue: int, stamp: ty
     """
     type_ = type(obj)
     if type_ not in __caWrite.get(counterType, ()):  # pylint: disable
-        logger.error('Type %s does not accepts counter of type %s', type_, counterValue)
+        logger.error('Type %s does not accepts counter of type %s', type_, counterValue, exc_info=True)
         return False
 
     return statsManager().addCounter(__transDict[type(obj)], obj.id, counterType, counterValue, stamp)
@@ -136,6 +136,7 @@ def _initializeData() -> None:
         CT_AUTH_USERS: (Authenticator,),
         CT_AUTH_SERVICES: (Authenticator,),
         CT_AUTH_USERS_WITH_SERVICES: (Authenticator,),
+        CT_CACHED: (ServicePool,),
     })
 
     # OBtain  ids from variups type of object to retrieve stats
@@ -168,7 +169,8 @@ def _initializeData() -> None:
         },
         ServicePool: {
             CT_ASSIGNED: get_Id,
-            CT_INUSE: get_Id
+            CT_INUSE: get_Id,
+            CT_CACHED: get_Id
         },
         Authenticator: {
             CT_AUTH_USERS: get_Id,
@@ -214,6 +216,7 @@ def _initializeData() -> None:
         CT_AUTH_USERS: _('Users'),
         CT_AUTH_USERS_WITH_SERVICES: _('Users with services'),
         CT_AUTH_SERVICES: _('User Services'),
+        CT_CACHED: _('Cached'),
     })
 
 _initializeData()
