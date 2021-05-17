@@ -117,7 +117,7 @@ async def tunnel_proc_async(
         tunneler = proxy.Proxy(cfg, ns)
 
         # Generate SSL context
-        context = curio.ssl.SSLContext(curio.ssl.PROTOCOL_TLS_SERVER)
+        context = curio.ssl.SSLContext(curio.ssl.PROTOCOL_TLS_SERVER)  # type: ignore
         context.load_cert_chain(cfg.ssl_certificate, cfg.ssl_certificate_key)
 
         if cfg.ssl_ciphers:
@@ -136,7 +136,7 @@ async def tunnel_proc_async(
                     f'CONNECTION from {address!r} (pid: {os.getpid()})'
                 )
                 sock = await context.wrap_socket(
-                    curio.io.Socket(sock), server_side=True
+                    curio.io.Socket(sock), server_side=True  # type: ignore
                 )
                 await group.spawn(tunneler, sock, address)
                 del sock
