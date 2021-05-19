@@ -47,7 +47,7 @@ class DeployedServiceStatsCollector(Job):
     This Job is responsible for collecting stats for every deployed service every ten minutes
     """
 
-    frecuency = 30  # Once every ten minutes, 601 is prime, 599 also is prime
+    frecuency = 599  # Once every ten minutes, 601 is prime, 599 also is prime
     friendly_name = 'Deployed Service Stats'
 
     def run(self):
