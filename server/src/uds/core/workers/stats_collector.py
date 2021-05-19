@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from uds.models import ServicePool, Authenticator
+from uds.models import ServicePool, Authenticator, getSqlDatetime
 from uds.core.util.state import State
 from uds.core.util.stats import counters
 from uds.core.managers import statsManager
@@ -47,7 +47,7 @@ class DeployedServiceStatsCollector(Job):
     This Job is responsible for collecting stats for every deployed service every ten minutes
     """
 
-    frecuency = 599  # Once every ten minutes, 601 is prime, 599 also is prime
+    frecuency = 30  # Once every ten minutes, 601 is prime, 599 also is prime
     friendly_name = 'Deployed Service Stats'
 
     def run(self):
@@ -56,6 +56,9 @@ class DeployedServiceStatsCollector(Job):
         servicePoolsToCheck: typing.Iterable[ServicePool] = ServicePool.objects.filter(
             state=State.ACTIVE
         ).iterator()
+        stamp = getSqlDatetime()
+        # Global counters
+        totalAssigned, totalInUse, totalCached = 0, 0, 0
         for servicePool in servicePoolsToCheck:
             try:
                 fltr = servicePool.assignedUserServices().exclude(
@@ -64,17 +67,33 @@ class DeployedServiceStatsCollector(Job):
                 assigned = fltr.count()
                 inUse = fltr.filter(in_use=True).count()
                 # Cached user services
-                cached = servicePool.cachedUserServices().exclude(
-                    state__in=State.INFO_STATES
-                ).count()
-                counters.addCounter(servicePool, counters.CT_ASSIGNED, assigned)
-                counters.addCounter(servicePool, counters.CT_INUSE, inUse)
-                counters.addCounter(servicePool, counters.CT_CACHED, cached)
+                cached = (
+                    servicePool.cachedUserServices()
+                    .exclude(state__in=State.INFO_STATES)
+                    .count()
+                )
+                totalAssigned += assigned
+                totalInUse += inUse
+                totalCached += cached
+                counters.addCounter(
+                    servicePool, counters.CT_ASSIGNED, assigned, stamp=stamp
+                )
+                counters.addCounter(servicePool, counters.CT_INUSE, inUse, stamp=stamp)
+                counters.addCounter(
+                    servicePool, counters.CT_CACHED, cached, stamp=stamp
+                )
             except Exception:
                 logger.exception(
                     'Getting counters for service pool %s', servicePool.name
                 )
+        # Store a global "fake pool" with all stats
+        sp = ServicePool()
+        sp.id = -1
+        counters.addCounter(sp, counters.CT_ASSIGNED, totalAssigned, stamp=stamp)
+        counters.addCounter(sp, counters.CT_INUSE, totalInUse, stamp=stamp)
+        counters.addCounter(sp, counters.CT_CACHED, totalCached, stamp=stamp)
 
+        totalUsers, totalAssigned, totalWithService = 0, 0, 0
         for auth in Authenticator.objects.all():
             fltr = auth.users.filter(userServices__isnull=False).exclude(
                 userServices__state__in=State.INFO_STATES
@@ -82,13 +101,29 @@ class DeployedServiceStatsCollector(Job):
             users = auth.users.all().count()
             users_with_service = fltr.distinct().count()
             number_assigned_services = fltr.count()
-            counters.addCounter(auth, counters.CT_AUTH_USERS, users)
+            # Global counters
+            totalUsers += users
+            totalAssigned += number_assigned_services
+            totalWithService += users_with_service
+
+            counters.addCounter(auth, counters.CT_AUTH_USERS, users, stamp=stamp)
             counters.addCounter(
-                auth, counters.CT_AUTH_SERVICES, number_assigned_services
+                auth, counters.CT_AUTH_SERVICES, number_assigned_services, stamp=stamp
             )
             counters.addCounter(
-                auth, counters.CT_AUTH_USERS_WITH_SERVICES, users_with_service
+                auth,
+                counters.CT_AUTH_USERS_WITH_SERVICES,
+                users_with_service,
+                stamp=stamp,
             )
+
+        au = Authenticator()
+        au.id = -1
+        counters.addCounter(au, counters.CT_AUTH_USERS, totalUsers, stamp=stamp)
+        counters.addCounter(au, counters.CT_AUTH_SERVICES, totalAssigned, stamp=stamp)
+        counters.addCounter(
+            au, counters.CT_AUTH_USERS_WITH_SERVICES, totalWithService, stamp=stamp
+        )
 
         logger.debug('Done Deployed service stats collector')
 

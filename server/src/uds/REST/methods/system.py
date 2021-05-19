@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -38,16 +38,21 @@ import typing
 
 from uds import models
 
+from uds.core.util.model import processUuid
 from uds.core.util.stats import counters
 from uds.core.util.cache import Cache
 from uds.core.util.state import State
-from uds.REST import Handler, RequestError, ResponseError
+from uds.core.util import permissions
+from uds.REST import Handler, RequestError, ResponseError, AccessDenied
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
+
 cache = Cache('StatsDispatcher')
 
-# Enclosed methods under /system path
+# Enclosed methods under /stats path
 POINTS = 300
 SINCE = 30  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
 USE_MAX = True
@@ -70,10 +75,9 @@ def getServicesPoolsCounters(
         if not cachedValue:
             if not servicePool:
                 us = models.ServicePool()
-                complete = True  # Get all deployed services stats
+                us.id = -1  # Global stats
             else:
                 us = servicePool
-                complete = False
             val: typing.List[typing.Mapping[str, typing.Any]] = []
             for x in counters.getCounters(
                 us,
@@ -82,10 +86,11 @@ def getServicesPoolsCounters(
                 to=to,
                 max_intervals=POINTS,
                 use_max=USE_MAX,
-                all=complete,
+                all=False,
             ):
                 val.append({'stamp': x[0], 'value': int(x[1])})
-            if len(val) > 2:
+            logger.debug('val: %s', val)
+            if len(val) >= 2:
                 cache.put(cacheKey, codecs.encode(pickle.dumps(val), 'zip'), 600)
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
@@ -100,12 +105,16 @@ def getServicesPoolsCounters(
 
 
 class System(Handler):
-    needs_admin = True
+    needs_admin = False
+    needs_staff = True
 
     def get(self):
         logger.debug('args: %s', self._args)
+        # Only allow admin user for global stats
         if len(self._args) == 1:
             if self._args[0] == 'overview':  # System overview
+                if not self._user.is_admin:
+                    raise AccessDenied()
                 users: int = models.User.objects.count()
                 groups: int = models.Group.objects.count()
                 services: int = models.Service.objects.count()
@@ -127,12 +136,25 @@ class System(Handler):
                     'restrained_services_pools': restrained_services_pools,
                 }
 
-        if len(self._args) == 2:
+        if len(self._args) in (2, 3):
+            # Extract pool if provided
+            pool: typing.Optional[models.ServicePool] = None
+            if len(self._args) == 3:
+                try:
+                    pool = models.ServicePool.objects.get(uuid=processUuid(self._args[3]))
+                except Exception:
+                    pool = None
+            # If pool is None, needs admin also
+            if not pool and not self._user.is_admin:
+                raise AccessDenied()
+            # Check permission for pool..
+            if not permissions.checkPermissions(self._user, typing.cast('Model', pool), permissions.PERMISSION_READ):
+                raise AccessDenied()
             if self._args[0] == 'stats':
                 if self._args[1] == 'assigned':
-                    return getServicesPoolsCounters(None, counters.CT_ASSIGNED)
+                    return getServicesPoolsCounters(pool, counters.CT_ASSIGNED)
                 if self._args[1] == 'inuse':
-                    return getServicesPoolsCounters(None, counters.CT_INUSE)
+                    return getServicesPoolsCounters(pool, counters.CT_INUSE)
 
         raise RequestError('invalid request')
 

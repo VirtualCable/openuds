@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-from uds.REST.methods.permissions import Permissions
 
 from uds import models
 from uds.core.util import ot
