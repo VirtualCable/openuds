@@ -87,7 +87,7 @@ class CryptoManager:
 
     def encrypt(self, value: str) -> str:
         return codecs.encode(
-            self._rsa.public_key().encrypt(
+            self._rsa.public_key().encrypt(  # type: ignore
                 value.encode(),
                 padding.OAEP(
                     mgf=padding.MGF1(algorithm=hashes.SHA256()),
@@ -103,7 +103,7 @@ class CryptoManager:
 
         try:
             # First, try new "cryptografy" decrpypting
-            decrypted: bytes = self._rsa.decrypt(
+            decrypted: bytes = self._rsa.decrypt(  # type: ignore
                 data,
                 padding.OAEP(
                     mgf=padding.MGF1(algorithm=hashes.SHA256()),
@@ -221,12 +221,24 @@ class CryptoManager:
 
     def hash(self, value: typing.Union[str, bytes]) -> str:
         if isinstance(value, str):
-            value = value.encode('utf-8')
+            value = value.encode()
 
         if not value:
             return ''
 
-        return str(hashlib.sha1(value).hexdigest())
+        return '{SHA256}' + str(hashlib.sha3_256(value).hexdigest())
+
+    def checkHash(self, value: typing.Union[str, bytes], hash: str) -> bool:
+        if isinstance(value, str):
+            value = value.encode()
+
+        if not value:
+            return not hash
+
+        if hash[:8] == '{SHA256}':
+            return str(hashlib.sha3_256(value).hexdigest()) == hash[8:]
+        else:  # Old sha1
+            return hash == str(hashlib.sha1(value).hexdigest())
 
     def uuid(self, obj: typing.Any = None) -> str:
         """
@@ -246,5 +258,5 @@ class CryptoManager:
         ).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 
     def randomString(self, length: int = 40, digits: bool = True) -> str:
-        base = string.ascii_lowercase + (string.digits if digits else '')
+        base = string.ascii_letters + (string.digits if digits else '')
         return ''.join(random.SystemRandom().choices(base, k=length))

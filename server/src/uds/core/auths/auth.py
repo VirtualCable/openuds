@@ -71,6 +71,7 @@ USER_KEY = 'uk'
 PASS_KEY = 'pk'
 EXPIRY_KEY = 'ek'
 ROOT_ID = -20091204  # Any negative number will do the trick
+UDS_COOKIE_LENGTH = 48
 
 RT = typing.TypeVar('RT')
 
@@ -84,12 +85,12 @@ def getUDSCookie(
     Generates a random cookie for uds, used, for example, to encript things
     """
     if 'uds' not in request.COOKIES:
-        cookie = cryptoManager().randomString(48)
+        cookie = cryptoManager().randomString(UDS_COOKIE_LENGTH)
         if response is not None:
             response.set_cookie('uds', cookie, samesite='Lax')
         request.COOKIES['uds'] = cookie
     else:
-        cookie = request.COOKIES['uds']
+        cookie = request.COOKIES['uds'][:UDS_COOKIE_LENGTH]
 
     if response and force:
         response.set_cookie('uds', cookie)

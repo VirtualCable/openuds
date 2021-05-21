@@ -111,9 +111,8 @@ class InternalDBAuth(auths.Authenticator):
         if user.parent:  # Direct auth not allowed for "derived" users
             return False
 
-        # Internal Db Auth has its own groups, and if it active it is valid
-        if user.password == cryptoManager().hash(credentials):
-            #  hashlib.sha1(credentials.encode('utf-8')).hexdigest():
+        # Internal Db Auth has its own groups. (That is, no external source). If a group is active it is valid
+        if cryptoManager().checkHash(credentials, user.password):
             groupsManager.validate([g.name for g in user.groups.all()])
             return True
         return False
