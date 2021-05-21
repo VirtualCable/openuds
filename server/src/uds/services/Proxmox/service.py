@@ -122,6 +122,15 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         rdonly=True
     )
 
+    guestShutdown = gui.CheckBoxField(
+        label=_('Try SOFT Shutdown first'),
+        defvalue=gui.FALSE,
+        order=103,
+        tooltip=_(
+            'If active, UDS will try to shutdown (soft) the machine using VMWare Guest Tools. Will delay 30 seconds the power off of hanged machines.'
+        ),
+    )
+
     machine = gui.ChoiceField(
         label=_("Base Machine"),
         order=110,
@@ -278,6 +287,9 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     def isHaEnabled(self) -> bool:
         return self.ha.isTrue()
+
+    def tryGracelyShutdown(self) -> bool:
+        return self.guestShutdown.isTrue()
 
     def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)

@@ -38,6 +38,7 @@ from uds.core import services
 from uds.core import managers
 from uds.core.util.state import State
 from uds.core.util import log
+from uds.models import getSqlDatetimeAsUnix
 
 from .jobs import ProxmoxDeferredRemoval
 
@@ -50,10 +51,23 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opShutdown, opRemove, opWait, opError, opFinish, opRetry, opGetMac = range(10)
+(
+    opCreate,
+    opStart,
+    opStop,
+    opShutdown,
+    opRemove,
+    opWait,
+    opError,
+    opFinish,
+    opRetry,
+    opGetMac,
+    opGracelyStop,
+) = range(11)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
+GUEST_SHUTDOWN_WAIT = 90  # Seconds
 
 
 class ProxmoxDeployment(services.UserDeployment):
@@ -67,6 +81,7 @@ class ProxmoxDeployment(services.UserDeployment):
     The logic for managing Proxmox deployments (user machines in this case) is here.
 
     """
+
     # : Recheck every this seconds by default (for task methods)
     suggestedTime = 12
 
@@ -103,16 +118,18 @@ class ProxmoxDeployment(services.UserDeployment):
         """
         Does nothing right here, we will use environment storage in this sample
         """
-        return b'\1'.join([
-            b'v1',
-            self._name.encode('utf8'),
-            self._ip.encode('utf8'),
-            self._mac.encode('utf8'),
-            self._task.encode('utf8'),
-            self._vmid.encode('utf8'),
-            self._reason.encode('utf8'),
-            pickle.dumps(self._queue, protocol=0)
-        ])
+        return b'\1'.join(
+            [
+                b'v1',
+                self._name.encode('utf8'),
+                self._ip.encode('utf8'),
+                self._mac.encode('utf8'),
+                self._task.encode('utf8'),
+                self._vmid.encode('utf8'),
+                self._reason.encode('utf8'),
+                pickle.dumps(self._queue, protocol=0),
+            ]
+        )
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -131,7 +148,9 @@ class ProxmoxDeployment(services.UserDeployment):
     def getName(self) -> str:
         if self._name == '':
             try:
-                self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
+                self._name = self.nameGenerator().get(
+                    self.service().getBaseName(), self.service().getLenName()
+                )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
@@ -169,7 +188,9 @@ class ProxmoxDeployment(services.UserDeployment):
         if self._vmid != '':
             self.service().resetMachine(int(self._vmid))
 
-    def getConsoleConnection(self) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    def getConsoleConnection(
+        self,
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
     def desktopLogin(self, username: str, password: str, domain: str = '') -> None:
@@ -177,7 +198,9 @@ class ProxmoxDeployment(services.UserDeployment):
 if sys.platform == 'win32':
     from uds import operations
     operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", struct.pack('!IsIs', 1, '{username}'.encode('utf8'), 2, '{password}'.encode('utf8')), True)
-'''.format(username=username, password=password)
+'''.format(
+            username=username, password=password
+        )
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         dbService = self.dbservice()
@@ -270,22 +293,25 @@ if sys.platform == 'win32':
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: typing.Mapping[int, typing.Optional[typing.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
             opStop: self.__stopMachine,
+            opGracelyStop: self.__gracelyStop,
             opShutdown: self.__shutdownMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
-            opGetMac: self.__getMac
+            opGetMac: self.__getMac,
         }
 
         try:
             execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
-                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at execution queue ({0})'.format(op)
+                )
 
             execFnc()
 
@@ -317,12 +343,14 @@ if sys.platform == 'win32':
         templateId = self.publication().machine()
         name = self.getName()
         if name == NO_MORE_NAMES:
-            raise Exception('No more names available for this service. (Increase digits for this service to fix)')
+            raise Exception(
+                'No more names available for this service. (Increase digits for this service to fix)'
+            )
 
         comments = 'UDS Linked clone'
 
         taskResult = self.service().cloneMachine(name, comments, templateId)
-        
+
         self.__setTask(taskResult.upid)
 
         self._vmid = str(taskResult.vmid)
@@ -381,9 +409,27 @@ if sys.platform == 'win32':
 
         return State.RUNNING
 
+    def __gracelyStop(self) -> str:
+        """
+        Tries to stop machine using vmware tools
+        If it takes too long to stop, or vmware tools are not installed,
+        will use "power off" "a las bravas"
+        """
+        self._task = ''
+        shutdown = -1  # Means machine already stopped
+        vmInfo = self.service().getMachineInfo(int(self._vmid))
+        if vmInfo.status != 'stopped':
+            self.__setTask(self.service().shutdownMachine(int(self._vmid)))
+            shutdown = getSqlDatetimeAsUnix()
+        logger.debug('Stoped vm using guest tools')
+        self.storage.putPickle('shutdown', shutdown)
+        return State.RUNNING
+
     def __getMac(self) -> str:
         try:
-            self.service().enableHA(int(self._vmid), True)  # Enable HA before continuing here
+            self.service().enableHA(
+                int(self._vmid), True
+            )  # Enable HA before continuing here
             self._mac = self.service().getMac(int(self._vmid))
         except Exception:
             logger.exception('Getting MAC on proxmox')
@@ -431,6 +477,39 @@ if sys.platform == 'win32':
         """
         return self.__checkTaskFinished()
 
+    def __checkGracelyStop(self) -> str:
+        """
+        Check if the machine has gracely stopped (timed shutdown)
+        """
+        shutdown_start = self.storage.getPickle('shutdown')
+        logger.debug('Shutdown start: %s', shutdown_start)
+        if shutdown_start < 0:  # Was already stopped
+            # Machine is already stop
+            logger.debug('Machine WAS stopped')
+            return State.FINISHED
+
+        if shutdown_start == 0:  # Was shut down a las bravas
+            logger.debug('Macine DO NOT HAVE guest tools')
+            return self.__checkStop()
+
+        logger.debug('Checking State')
+        # Check if machine is already stopped
+        if self.service().getMachineInfo(int(self._vmid)).status == 'stopped':
+            return State.FINISHED  # It's stopped
+
+        logger.debug('State is running')
+        if getSqlDatetimeAsUnix() - shutdown_start > GUEST_SHUTDOWN_WAIT:
+            logger.debug('Time is consumed, falling back to stop')
+            self.doLog(
+                log.ERROR,
+                f'Could not shutdown machine using soft power off in time ({GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
+            )
+            # Not stopped by guest in time, but must be stopped normally
+            self.storage.putPickle('shutdown', 0)
+            return self.__stopMachine()  # Launch "hard" stop
+
+        return State.RUNNING
+
     def __checkRemoved(self) -> str:
         """
         Checks if a machine has been removed
@@ -464,16 +543,21 @@ if sys.platform == 'win32':
             opWait: self.__wait,
             opStart: self.__checkStart,
             opStop: self.__checkStop,
+            opGracelyStop: self.__checkGracelyStop,
             opShutdown: self.__checkShutdown,
             opRemove: self.__checkRemoved,
-            opGetMac: self.__checkMac
+            opGetMac: self.__checkMac,
         }
 
         try:
-            chkFnc: typing.Optional[typing.Optional[typing.Callable[[], str]]] = fncs.get(op, None)
+            chkFnc: typing.Optional[
+                typing.Optional[typing.Callable[[], str]]
+            ] = fncs.get(op, None)
 
             if chkFnc is None:
-                return self.__error('Unknown operation found at check queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at check queue ({0})'.format(op)
+                )
 
             state = chkFnc()
             if state == State.FINISHED:
@@ -525,11 +609,14 @@ if sys.platform == 'win32':
         if op == opError:
             return self.__error('Machine is already in error state!')
 
+        lst = [] if not self.service().tryGracelyShutdown() else [opGracelyStop]
+        queue = lst + [opStop, opRemove, opFinish]
+
         if op == opFinish or op == opWait:
-            self._queue = [opStop, opRemove, opFinish]
+            self._queue[:] = queue
             return self.__executeQueue()
 
-        self._queue = [op, opStop, opRemove, opFinish]
+        self._queue = [op] + queue
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
@@ -552,13 +639,22 @@ if sys.platform == 'win32':
             opStart: 'start',
             opStop: 'stop',
             opShutdown: 'suspend',
+            opGracelyStop: 'gracely stop',
             opRemove: 'remove',
             opWait: 'wait',
             opError: 'error',
             opFinish: 'finish',
             opRetry: 'retry',
-            opGetMac: 'getting mac'
+            opGetMac: 'getting mac',
         }.get(op, '????')
 
     def __debug(self, txt):
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [ProxmoxDeployment.__op2str(op) for op in self._queue])
+        logger.debug(
+            'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
+            txt,
+            self._name,
+            self._ip,
+            self._mac,
+            self._vmid,
+            [ProxmoxDeployment.__op2str(op) for op in self._queue],
+        )
