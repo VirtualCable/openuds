@@ -50,11 +50,12 @@ logger = logging.getLogger(__name__)
 class Report(UserInterface):
     mime_type: typing.ClassVar[str] = 'application/pdf'  # Report returns pdfs by default, but could be anything else
     name: typing.ClassVar[str] = _('Base Report')  # Report name
-    description: typing.ClassVar[str] = _('Base report')  # Report description
-    filename: typing.ClassVar[str] = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
     group: typing.ClassVar[str] = ''  # So we can "group" reports by kind?
     encoded: typing.ClassVar[bool] = True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
     uuid: typing.ClassVar[str] = ''
+
+    description: str = _('Base report')  # Report description
+    filename: str = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
 
     @classmethod
     def translated_name(cls):

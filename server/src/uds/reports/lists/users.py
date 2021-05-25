@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2019 Virtual Cable S.L.
+# Copyright (c) 2015-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -32,7 +32,11 @@
 """
 import io
 import csv
+import zipfile
 import logging
+
+# import openpyxl
+# import openpyxl.writer.excel
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -115,3 +119,37 @@ class ListReportsUsersCSV(ListReportUsers):
         # writer.writerow(['ñoño', 'ádios', 'hola'])
 
         return output.getvalue().encode()
+
+# Sample XLSX report
+# Just for sampling purposses, not used...
+# class ListReportsUsersXlsx(ListReportUsers):
+#     filename = 'users.xlsx'
+#     mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+#     encoded = True
+
+#     uuid = 'b81a6680-bd78-11eb-971c-17d9a0bf977a'
+
+#     authenticator = ListReportUsers.authenticator
+
+#     def initialize(self, values):
+#         if values:
+#             auth = Authenticator.objects.get(uuid=self.authenticator.value)
+#             self.filename = auth.name + '.xlsx'
+
+#     def generate(self) -> bytes:
+#         wb = openpyxl.Workbook()
+#         ws = wb.active
+
+#         auth = Authenticator.objects.get(uuid=self.authenticator.value)
+#         users = auth.users.order_by('name')
+#         ws.append([ugettext('User ID'), ugettext('Real Name'), ugettext('Last access')])
+
+#         for v in users:
+#             ws.append([v.name, v.real_name, v.last_access])
+
+#         output = io.BytesIO()
+#         zip = zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED, allowZip64=True)
+#         writer = openpyxl.writer.excel.ExcelWriter(workbook=wb, archive=zip)
+#         writer.save()
+
+#         return output.getvalue()
