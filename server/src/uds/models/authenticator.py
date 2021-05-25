@@ -138,7 +138,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         user: 'User'
-        realName = realName if realName is None else username
+        realName = realName or username
         user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
         if (user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()) and realName != user.real_name:
             user.real_name = realName
