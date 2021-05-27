@@ -155,7 +155,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
         for ac in sorted(self.calendarAccess.all(), key=lambda x: x.priority):
-            if CalendarChecker(ac.calendar).check(chkDateTime) is True:
+            if CalendarChecker(ac.calendar).check(chkDateTime):
                 access = ac.access
                 break  # Stops on first rule match found
 

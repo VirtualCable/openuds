@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-13 12:46+0200\n"
+"POT-Creation-Date: 2021-05-26 11:38+0200\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -655,6 +655,7 @@ msgid "Services Pools"
 msgstr "Pool-Zerbitzua"
 
 #: REST/methods/services.py:228 REST/methods/services.py:268
+#: services/Azure_enterprise/provider.py:109
 msgid "Proxy"
 msgstr "Proxy"
 
@@ -1141,7 +1142,7 @@ msgstr "LDAP erabiltzailearen pasahitza"
 #: auths/ActiveDirectory_enterprise/authenticator.py:48
 #: auths/EDirectory_enterprise/authenticator.py:49
 #: auths/RegexLdap/authenticator.py:69 auths/SimpleLDAP/authenticator.py:62
-#: services/Azure_enterprise/provider.py:48
+#: services/Azure_enterprise/provider.py:98
 #: services/HyperV_enterprise/legacy/provider.py:93
 #: services/HyperV_enterprise/provider.py:131
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
@@ -1237,32 +1238,32 @@ msgid "Azure Active Directory Authenticator"
 msgstr "Azure Active Directory autentifikatzailea"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/provider.py:40
+#: services/Azure_enterprise/provider.py:46
 msgid "Tenant ID"
 msgstr "Tenant IDa"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/provider.py:40
+#: services/Azure_enterprise/provider.py:48
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "Azure Active Directory-tik lortutakoa - Properties - Directory ID"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/provider.py:41
+#: services/Azure_enterprise/provider.py:53
 msgid "Client ID"
 msgstr "Bezeroaren IDa"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/provider.py:41
+#: services/Azure_enterprise/provider.py:55
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr "Azure-k sortutako App lortutako UDS Enterprise-ra"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/provider.py:42
+#: services/Azure_enterprise/provider.py:60
 msgid "Client Secret"
 msgstr "Bezero sekretua"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/provider.py:42
+#: services/Azure_enterprise/provider.py:62
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr "Azurek sortutako App lortutako UDS Enteprise - Teklak"
 
@@ -1357,19 +1358,6 @@ msgstr ""
 "Ldap erabiltzailearen klasea edo erabiltzaile IDa ziurrenik oker dago (Ldap "
 "eDirectory bat da?)"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:68
-msgid "Accept proxy"
-msgstr "Proxy-a onartu"
-
-#: auths/IP/authenticator.py:55 auths/InternalDB/authenticator.py:68
-msgid ""
-"If checked, requests via proxy will get FORWARDED ip address (take care with "
-"this bein checked, can take internal IP addresses from internet)"
-msgstr ""
-"Egiaztatuta badago, proxyaren bidez eskaerak IP helbidetik jasoko dira "
-"(zaindu bein hau egiaztaturik, barruko IP helbideak internetetik atera "
-"daitezke)"
-
 #: auths/IP/authenticator.py:61 auths/IP/authenticator.py:63
 msgid "IP Authenticator"
 msgstr "IP autentikatzailea"
@@ -1378,7 +1366,7 @@ msgstr "IP autentikatzailea"
 msgid "IP Range"
 msgstr "IP bitartea"
 
-#: auths/IP/authenticator.py:106 auths/IP/authenticator.py:109
+#: auths/IP/authenticator.py:107 auths/IP/authenticator.py:110
 msgid "All seems to be fine."
 msgstr "Dirudienez dena ondo dago"
 
@@ -1405,6 +1393,19 @@ msgstr "Atzeranzko DNS-a"
 #: auths/InternalDB/authenticator.py:67
 msgid "If checked, the host will be reversed dns"
 msgstr "Aktibo izanez gero, ostalariak atzeranzko dns-a izango du"
+
+#: auths/InternalDB/authenticator.py:68
+msgid "Accept proxy"
+msgstr "Proxy-a onartu"
+
+#: auths/InternalDB/authenticator.py:68
+msgid ""
+"If checked, requests via proxy will get FORWARDED ip address (take care with "
+"this bein checked, can take internal IP addresses from internet)"
+msgstr ""
+"Egiaztatuta badago, proxyaren bidez eskaerak IP helbidetik jasoko dira "
+"(zaindu bein hau egiaztaturik, barruko IP helbideak internetetik atera "
+"daitezke)"
 
 #: auths/InternalDB/authenticator.py:134
 msgid "Internal structures seems ok"
@@ -1782,19 +1783,19 @@ msgstr "Ezin da argitalpen erabilgarririk argitaratu"
 msgid "Can't unpublish publications with services in process"
 msgstr "Ezin dira argitalpenak argitaratu zerbitzuen prozesuan"
 
-#: core/managers/user_service.py:275
+#: core/managers/user_service.py:276
 msgid "Can't remove a non active element"
 msgstr "Ezin da elementu ez aktiboa ezabatu"
 
-#: core/managers/user_service.py:296
+#: core/managers/user_service.py:297
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "Ezin da {} kendu edo ezeztatu {} egoera ez baimendu horrek"
 
-#: core/managers/user_service.py:317
+#: core/managers/user_service.py:318
 msgid "The requested service is restrained"
 msgstr "Eskatutako zerbitzua geldiarazi egiten da"
 
-#: core/managers/user_service.py:563 web/util/errors.py:77
+#: core/managers/user_service.py:564 web/util/errors.py:77
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -1802,11 +1803,11 @@ msgstr ""
 "Zerbitzu baliogabea. Une honetan zerbitzua ez dago erabilgarri. Saiatu "
 "geroago"
 
-#: core/managers/user_service.py:593
+#: core/managers/user_service.py:594
 msgid "The requested transport {} is not valid for {}"
 msgstr "Eskatutako garraioa {} ez da {} baliozkoa"
 
-#: core/managers/user_service.py:716
+#: core/managers/user_service.py:718
 msgid "The service is not accessible from this device"
 msgstr "Zerbitzua ez dago gailutik eskura"
 
@@ -2938,15 +2939,15 @@ msgstr "Erabiltzaileak UDS-ra sartzeko"
 msgid "UDS Report for users access"
 msgstr "Erabiltzaileentzako sarbideen UDS txostena"
 
-#: services/Azure_enterprise/provider.py:43
+#: services/Azure_enterprise/provider.py:67
 msgid "Subscription ID"
 msgstr "Harpidetza IDa"
 
-#: services/Azure_enterprise/provider.py:43
+#: services/Azure_enterprise/provider.py:69
 msgid "Obtained from subscriptions"
 msgstr "Harpidetzak lortu dira"
 
-#: services/Azure_enterprise/provider.py:46
+#: services/Azure_enterprise/provider.py:76
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:79
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
@@ -2958,7 +2959,7 @@ msgstr "Harpidetzak lortu dira"
 msgid "Creation concurrency"
 msgstr "Sorkuntza konkurrentzia"
 
-#: services/Azure_enterprise/provider.py:46
+#: services/Azure_enterprise/provider.py:81
 #: services/HyperV_enterprise/legacy/provider.py:89
 #: services/HyperV_enterprise/provider.py:84
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
@@ -2969,7 +2970,7 @@ msgstr "Sorkuntza konkurrentzia"
 msgid "Maximum number of concurrently creating VMs"
 msgstr "VMak aldi berean sortzeko gehienezko kopurua"
 
-#: services/Azure_enterprise/provider.py:47
+#: services/Azure_enterprise/provider.py:87
 #: services/HyperV_enterprise/legacy/provider.py:90
 #: services/HyperV_enterprise/provider.py:91
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
@@ -2981,7 +2982,7 @@ msgstr "VMak aldi berean sortzeko gehienezko kopurua"
 msgid "Removal concurrency"
 msgstr "Kentzea"
 
-#: services/Azure_enterprise/provider.py:47
+#: services/Azure_enterprise/provider.py:92
 #: services/HyperV_enterprise/legacy/provider.py:91
 #: services/HyperV_enterprise/provider.py:96
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
@@ -2992,25 +2993,33 @@ msgstr "Kentzea"
 msgid "Maximum number of concurrently removing VMs"
 msgstr "VMak aldi berean kentzen diren gehienezko kopurua"
 
-#: services/Azure_enterprise/provider.py:48
+#: services/Azure_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:63
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "Denbora-muga vCloud-en konexioaren segundotan"
 
-#: services/Azure_enterprise/provider.py:53
+#: services/Azure_enterprise/provider.py:111
+msgid ""
+"Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
+"host:port, i.e. https://10.10.0.1:8080)"
+msgstr ""
+"HTTPS konexioetarako azure konexiorako erabiltzen den proxy-a (erabili "
+"PROTOCOL: // host: port, hau da, https://10.10.0.1:8080)"
+
+#: services/Azure_enterprise/provider.py:120
 msgid "Azure Platform Provider"
 msgstr "Azure plataforma hornitzailea"
 
-#: services/Azure_enterprise/provider.py:55
+#: services/Azure_enterprise/provider.py:122
 msgid "Provides connection to Azure Platform"
 msgstr "Plataforma Azure konexioa eskaintzen du"
 
-#: services/Azure_enterprise/provider.py:99
+#: services/Azure_enterprise/provider.py:180
 #: services/VCloud_enterprise/provider.py:107
 msgid "Connection parameters seems correct"
 msgstr "Konexio parametroak zuzena dirudi"
 
-#: services/Azure_enterprise/provider.py:275
+#: services/Azure_enterprise/provider.py:460
 msgid "Azure Provider: "
 msgstr "Azure hornitzailea:"
 
@@ -3027,8 +3036,9 @@ msgid "Number of desired VMs to keep running waiting for an user"
 msgstr "Erabiltzaile baten zain exekutatzen jarraitzeko beharrezko VM kopurua"
 
 #: services/Azure_enterprise/service.py:44
-msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr "Nahi dituzun VM-ak erabiltzeko itxaronaldia mantentzea"
+#| msgid "Number of desired VMs to keep suspended waiting for use"
+msgid "Number of desired VMs to keep stopped waiting for use"
+msgstr "Erabiltzeko zain gelditu beharreko VMen kopurua"
 
 #: services/Azure_enterprise/service.py:58
 msgid "Resource Group"
@@ -6116,7 +6126,7 @@ msgstr ""
 "Orrialde hau berriro kargatzen ez da onartzen. Mesedez, berriro ireki "
 "zerbitzua jatorrian."
 
-#: web/util/services.py:201
+#: web/util/services.py:206
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -6124,19 +6134,19 @@ msgstr ""
 "Zerbitzu hau bertsio berri bat ordeztu behar da. Mesedez, itxaron saioa {} "
 "aurretik eta gorde zure lana guztia galdu gabe uzteko."
 
-#: web/views/auth.py:151
-msgid "Authenticator does not provide information"
-msgstr "Autentikatzaileak ez du informaziorik eman."
-
-#: web/views/service.py:119
+#: web/util/services.py:255
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
 "Mesedez, aldi batean proba ezazu, zerbitzua ez dago prest oraindik eta."
 
-#: web/views/service.py:150
+#: web/util/services.py:286
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
 msgstr ""
 "Zure zerbitzua sortzen ari da, mesedez, itxaron segundo batzuk betetzen "
 "dugun bitartean.)"
+
+#: web/views/auth.py:151
+msgid "Authenticator does not provide information"
+msgstr "Autentikatzaileak ez du informaziorik eman."

@@ -140,7 +140,7 @@ class CalendarChecker:
 
         return next_event
 
-    def check(self, dtime=None) -> int:
+    def check(self, dtime=None) -> bool:
         """
         Checks if the given time is a valid event on calendar
         @param dtime: Datetime object to check
@@ -177,7 +177,7 @@ class CalendarChecker:
             CalendarChecker.cache.put(cacheKey, data.tobytes(), ONE_DAY)
             memCache.set(cacheKey, data.tobytes(), ONE_DAY)
 
-        return data[dtime.hour * 60 + dtime.minute]
+        return bool(data[dtime.hour * 60 + dtime.minute])
 
     def nextEvent(self, checkFrom=None, startEvent=True, offset=None) -> typing.Optional[datetime.datetime]:
         """
