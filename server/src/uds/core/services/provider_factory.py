@@ -86,7 +86,7 @@ class ServiceProviderFactory:
 
         offers = []
         for s in type_.offers:
-            if s.usesCache_L2 is True:
+            if s.usesCache_L2:
                 s.usesCache = True
                 if s.publicationType is None:
                     logger.error('Provider %s offers %s, but %s needs cache and do not have publicationType defined', type_, s, s)

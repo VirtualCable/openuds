@@ -84,7 +84,7 @@ class GroupsManager:
         name = groupName.lower()
         res = []
         for gName, grp in self._groups.items():
-            if grp['pattern'] is True:
+            if grp['pattern']:
                 logger.debug('Group is a pattern: %s', grp)
                 try:
                     logger.debug('Match: %s->%s', grp['name'][4:], name)
@@ -114,14 +114,14 @@ class GroupsManager:
 
         lst: typing.List[str] = []
         for g in self._groups.values():
-            if g['valid'] is True:
+            if g['valid']:
                 lst += (g['group'].dbGroup().id,)
                 yield g['group']
 
         # Now, get metagroups and also return them
         for g2 in DBGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=True):  # @UndefinedVariable
             gn = g2.groups.filter(id__in=lst, state=State.ACTIVE).count()
-            if g2.meta_if_any is True and gn > 0:
+            if g2.meta_if_any and gn > 0:
                 gn = g2.groups.count()
             if gn == g2.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
@@ -133,7 +133,7 @@ class GroupsManager:
         validated (using :py:meth:.validate)
         """
         for g in self._groups.values():
-            if g['valid'] is True:
+            if g['valid']:
                 return True
         return False
 

@@ -89,7 +89,7 @@ class LogManager:
             for i in qs.order_by('-created',)[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1:]:
                 i.delete()
 
-        if avoidDuplicates is True:
+        if avoidDuplicates:
             try:
                 lg = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type, level=level, source=source).order_by('-created', '-id')[0]
                 if lg.data == message:

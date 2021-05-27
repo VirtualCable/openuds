@@ -144,9 +144,9 @@ def webLoginRequired(
                 # logger.debug('No user found, redirecting to %s', url)
                 return HttpResponseRedirect(reverse('page.login'))  # type: ignore
 
-            if admin is True or admin == 'admin':
+            if admin is True or admin == 'admin':  # bool or string "admin"
                 if request.user.isStaff() is False or (
-                    admin == 'admin' and request.user.is_admin is False
+                    admin == 'admin' and not request.user.is_admin
                 ):
                     return HttpResponseForbidden(_('Forbidden'))  # type: ignore
 

@@ -86,7 +86,7 @@ class User:
         )  # pylint: disable=redefined-outer-name
 
         if self._groups is None:
-            if self._manager.isExternalSource is True:
+            if self._manager.isExternalSource:
                 self._manager.getGroups(self._dbUser.name, self._groupsManager())
                 self._groups = list(self._groupsManager().getValidGroups())
                 logger.debug(self._groups)

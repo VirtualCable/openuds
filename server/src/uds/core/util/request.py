@@ -136,7 +136,9 @@ class GlobalRequestMiddleware:
             now = timezone.now()
             expiry = request.session.get(EXPIRY_KEY, now)
             if expiry < now:
-                webLogout(request=request)  # Ignore the response, just processes usere session logout
+                webLogout(
+                    request=request
+                )  # Ignore the response, just processes usere session logout
                 return HttpResponse(content='Session Expired', status=403)
             # Update session timeout..self.
             request.session[EXPIRY_KEY] = now + datetime.timedelta(
@@ -190,10 +192,9 @@ class GlobalRequestMiddleware:
             proxies = request.META['HTTP_X_FORWARDED_FOR'].split(",")
             request.ip_proxy = proxies[0]
 
-            if (
-                not request.ip or behind_proxy is True
-            ):  # Request.IP will be None in case of nginx & gunicorn
-                # F5 may include "domains" on x-forwarded for,
+            if not request.ip or behind_proxy:
+                # Request.IP will be None in case of nginx & gunicorn
+                # Some load balancers may include "domains" on x-forwarded for,
                 request.ip = request.ip_proxy.split('%')[0]  # Stores the ip
 
                 # will raise "list out of range", leaving ip_proxy = proxy in case of no other proxy apart of nginx

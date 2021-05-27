@@ -71,7 +71,7 @@ class DelayedTask(Environmentable):
         """
         from .delayed_task_runner import DelayedTaskRunner
 
-        if check is True and DelayedTaskRunner.runner().checkExists(tag):
+        if check and DelayedTaskRunner.runner().checkExists(tag):
             return
 
         DelayedTaskRunner.runner().insert(self, suggestedTime, tag)

@@ -66,12 +66,12 @@ class AssignedAndUnused(Job):
         ).filter(outdated__gt=0, state=State.ACTIVE)
         for ds in outdatedServicePools:
             # Skips checking deployed services in maintenance mode or ignores assigned and unused
-            if ds.isInMaintenance() is True or ds.ignores_unused:
+            if ds.isInMaintenance() or ds.ignores_unused:
                 continue
             # If do not needs os manager, this is
             if ds.osmanager:
                 osm = ds.osmanager.getInstance()
-                if osm.processUnusedMachines is True:
+                if osm.processUnusedMachines:
                     logger.debug(
                         'Processing unused services for %s, %s', ds, ds.osmanager
                     )

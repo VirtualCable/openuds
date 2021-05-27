@@ -58,12 +58,14 @@ def getPermissions(obj: 'Model') -> typing.List[models.Permissions]:
 
 def getEffectivePermission(user: 'models.User', obj: 'Model', root: bool = False) -> int:
     try:
-        if user.is_admin is True:
+        if user.is_admin:
             return PERMISSION_ALL
 
-        if user.staff_member is False:
+        if not user.staff_member:
             return PERMISSION_NONE
 
+        # Just check permissions for staff members
+        # root means for "object type" not for an object
         if root is False:
             return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk)
 

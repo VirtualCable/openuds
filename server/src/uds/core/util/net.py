@@ -128,7 +128,7 @@ def networksFromString(
             v |= 1 << (31 - n)
         return v
 
-    if allowMultipleNetworks is True:
+    if allowMultipleNetworks:
         res = []
         for strNet in re.split('[;,]', strNets):
             if strNet != '':

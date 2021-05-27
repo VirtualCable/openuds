@@ -196,7 +196,7 @@ class CalendarChecker:
             + str(offset.seconds)
             + str(int(time.mktime(checkFrom.timetuple())))
             + 'event'
-            + ('x' if startEvent is True else '_')
+            + ('x' if startEvent else '_')
         )
         next_event = CalendarChecker.cache.get(cacheKey, None)
         if next_event is None:

@@ -96,11 +96,8 @@ class UserServiceRemover(Job):
         for removableUserService in removableUserServices:
             logger.debug('Checking removal of %s', removableUserService.name)
             try:
-                if (
-                    manager.canRemoveServiceFromDeployedService(
-                        removableUserService.deployed_service
-                    )
-                    is True
+                if manager.canRemoveServiceFromDeployedService(
+                    removableUserService.deployed_service
                 ):
                     manager.remove(removableUserService)
             except Exception:

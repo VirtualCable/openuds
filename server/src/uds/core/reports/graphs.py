@@ -69,7 +69,7 @@ def barChart(
     axis.set_xlabel(data['xlabel'])
     axis.set_ylabel(data['ylabel'])
 
-    if data.get('allTicks', True) is True:
+    if data.get('allTicks', True):
         axis.set_xticks(ind)
 
     if 'xtickFnc' in data:
@@ -101,7 +101,7 @@ def lineChart(
     axis.set_xlabel(data['xlabel'])
     axis.set_ylabel(data['ylabel'])
 
-    if data.get('allTicks', True) is True:
+    if data.get('allTicks', True):
         axis.set_xticks(x)
 
     if 'xtickFnc' in data:
@@ -136,7 +136,7 @@ def surfaceChart(
     axis = fig.add_subplot(111, projection='3d')
     # axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
-    if data.get('wireframe', False) is True:
+    if data.get('wireframe', False):
         axis.plot_wireframe(
             x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm  # type: ignore
         )
@@ -150,7 +150,7 @@ def surfaceChart(
     axis.set_ylabel(data['ylabel'])
     axis.set_zlabel(data['zlabel'])
 
-    if data.get('allTicks', True) is True:
+    if data.get('allTicks', True):
         axis.set_xticks(data['x'])
         axis.set_yticks(data['y'])
 

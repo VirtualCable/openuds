@@ -81,7 +81,7 @@ class Config:
         def get(self, force: bool = False) -> str:
             # Ensures DB contains configuration values
             # From Django 1.7, DB can only be accessed AFTER all apps are initialized (and ofc, not migrating...)
-            if apps.ready is True:
+            if apps.ready:
                 if not GlobalConfig.isInitialized():
                     logger.debug('Initializing configuration & updating db values')
                     GlobalConfig.initialize()
@@ -108,7 +108,7 @@ class Config:
                     self.set(self._default)
                 self._data = self._default
 
-            if self._crypt is True:
+            if self._crypt:
                 return cryptoManager().decrypt(typing.cast(str, self._data))
             return typing.cast(str, self._data)
 
@@ -154,7 +154,7 @@ class Config:
                 _saveLater.append((self, value))
                 return
 
-            if self._crypt is True:
+            if self._crypt:
                 value = cryptoManager().encrypt(value)
 
             # Editable here means that this configuration value can be edited by admin directly (generally, that this is a "clean text" value)
@@ -206,7 +206,7 @@ class Config:
             if cfg.field_type == Config.HIDDEN_FIELD:
                 continue
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
-            if cfg.crypt is True:
+            if cfg.crypt:
                 val = Config.section(cfg.section).valueCrypt(cfg.key)
             else:
                 val = Config.section(cfg.section).value(cfg.key)
@@ -220,7 +220,7 @@ class Config:
             if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
                 return  False # Skip non writable elements
 
-            if cfg.crypt is True:
+            if cfg.crypt:
                 value = cryptoManager().encrypt(value)
             cfg.value = value
             cfg.save()
