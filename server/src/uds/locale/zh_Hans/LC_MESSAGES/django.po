@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-13 12:46+0200\n"
+"POT-Creation-Date: 2021-05-26 11:38+0200\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -642,6 +642,7 @@ msgid "Services Pools"
 msgstr "服务池"
 
 #: REST/methods/services.py:228 REST/methods/services.py:268
+#: services/Azure_enterprise/provider.py:109
 msgid "Proxy"
 msgstr "代理"
 
@@ -1112,7 +1113,7 @@ msgstr "ldap用户的密码"
 #: auths/ActiveDirectory_enterprise/authenticator.py:48
 #: auths/EDirectory_enterprise/authenticator.py:49
 #: auths/RegexLdap/authenticator.py:69 auths/SimpleLDAP/authenticator.py:62
-#: services/Azure_enterprise/provider.py:48
+#: services/Azure_enterprise/provider.py:98
 #: services/HyperV_enterprise/legacy/provider.py:93
 #: services/HyperV_enterprise/provider.py:131
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
@@ -1202,32 +1203,32 @@ msgid "Azure Active Directory Authenticator"
 msgstr "Azure Active Directory身份验证器"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/provider.py:40
+#: services/Azure_enterprise/provider.py:46
 msgid "Tenant ID"
 msgstr "租户ID"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/provider.py:40
+#: services/Azure_enterprise/provider.py:48
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "从Azure Active Directory获取 - 属性 - 目录ID"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/provider.py:41
+#: services/Azure_enterprise/provider.py:53
 msgid "Client ID"
 msgstr "客户ID"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/provider.py:41
+#: services/Azure_enterprise/provider.py:55
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr "从Azure上为UDS Enterprise创建的应用程序获取"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/provider.py:42
+#: services/Azure_enterprise/provider.py:60
 msgid "Client Secret"
 msgstr "客户秘密"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/provider.py:42
+#: services/Azure_enterprise/provider.py:62
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr "从Azure上为UDS Enteprise创建的应用程序获得 - 密钥"
 
@@ -1314,18 +1315,6 @@ msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr "Ldap用户类或用户ID attr可能是错误的（Ldap是eDirectory？）"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:68
-msgid "Accept proxy"
-msgstr "接受代理"
-
-#: auths/IP/authenticator.py:55 auths/InternalDB/authenticator.py:68
-msgid ""
-"If checked, requests via proxy will get FORWARDED ip address (take care with "
-"this bein checked, can take internal IP addresses from internet)"
-msgstr ""
-"如果选中，通过代理的请求将获得FORWARDED IP地址（请注意这个bein检查，可以从"
-"Internet获取内部IP地址）"
-
 #: auths/IP/authenticator.py:61 auths/IP/authenticator.py:63
 msgid "IP Authenticator"
 msgstr "IP身份验证器"
@@ -1334,7 +1323,7 @@ msgstr "IP身份验证器"
 msgid "IP Range"
 msgstr "IP范围"
 
-#: auths/IP/authenticator.py:106 auths/IP/authenticator.py:109
+#: auths/IP/authenticator.py:107 auths/IP/authenticator.py:110
 msgid "All seems to be fine."
 msgstr "一切似乎都很好。"
 
@@ -1361,6 +1350,18 @@ msgstr "反向DNS"
 #: auths/InternalDB/authenticator.py:67
 msgid "If checked, the host will be reversed dns"
 msgstr "如果选中，则主机将被反转dns"
+
+#: auths/InternalDB/authenticator.py:68
+msgid "Accept proxy"
+msgstr "接受代理"
+
+#: auths/InternalDB/authenticator.py:68
+msgid ""
+"If checked, requests via proxy will get FORWARDED ip address (take care with "
+"this bein checked, can take internal IP addresses from internet)"
+msgstr ""
+"如果选中，通过代理的请求将获得FORWARDED IP地址（请注意这个bein检查，可以从"
+"Internet获取内部IP地址）"
 
 #: auths/InternalDB/authenticator.py:134
 msgid "Internal structures seems ok"
@@ -1710,29 +1711,29 @@ msgstr "无法取消发布不可用的出版物"
 msgid "Can't unpublish publications with services in process"
 msgstr "无法取消发布正在处理的服务的出版物"
 
-#: core/managers/user_service.py:275
+#: core/managers/user_service.py:276
 msgid "Can't remove a non active element"
 msgstr "无法删除非活动元素"
 
-#: core/managers/user_service.py:296
+#: core/managers/user_service.py:297
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "无法删除或取消{}，导致其状态不允许"
 
-#: core/managers/user_service.py:317
+#: core/managers/user_service.py:318
 msgid "The requested service is restrained"
 msgstr "请求的服务被限制"
 
-#: core/managers/user_service.py:563 web/util/errors.py:77
+#: core/managers/user_service.py:564 web/util/errors.py:77
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr "服务无效。目前无法使用该服务。请稍后再试"
 
-#: core/managers/user_service.py:593
+#: core/managers/user_service.py:594
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/user_service.py:716
+#: core/managers/user_service.py:718
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
@@ -2837,15 +2838,15 @@ msgstr "用户可以访问UDS"
 msgid "UDS Report for users access"
 msgstr "UDS报告供用户访问"
 
-#: services/Azure_enterprise/provider.py:43
+#: services/Azure_enterprise/provider.py:67
 msgid "Subscription ID"
 msgstr "订阅ID"
 
-#: services/Azure_enterprise/provider.py:43
+#: services/Azure_enterprise/provider.py:69
 msgid "Obtained from subscriptions"
 msgstr "从订阅中获得"
 
-#: services/Azure_enterprise/provider.py:46
+#: services/Azure_enterprise/provider.py:76
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:79
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
@@ -2857,7 +2858,7 @@ msgstr "从订阅中获得"
 msgid "Creation concurrency"
 msgstr "创建并发"
 
-#: services/Azure_enterprise/provider.py:46
+#: services/Azure_enterprise/provider.py:81
 #: services/HyperV_enterprise/legacy/provider.py:89
 #: services/HyperV_enterprise/provider.py:84
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
@@ -2868,7 +2869,7 @@ msgstr "创建并发"
 msgid "Maximum number of concurrently creating VMs"
 msgstr "最大并发创建VM的数量"
 
-#: services/Azure_enterprise/provider.py:47
+#: services/Azure_enterprise/provider.py:87
 #: services/HyperV_enterprise/legacy/provider.py:90
 #: services/HyperV_enterprise/provider.py:91
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
@@ -2880,7 +2881,7 @@ msgstr "最大并发创建VM的数量"
 msgid "Removal concurrency"
 msgstr "删除并发"
 
-#: services/Azure_enterprise/provider.py:47
+#: services/Azure_enterprise/provider.py:92
 #: services/HyperV_enterprise/legacy/provider.py:91
 #: services/HyperV_enterprise/provider.py:96
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
@@ -2891,25 +2892,31 @@ msgstr "删除并发"
 msgid "Maximum number of concurrently removing VMs"
 msgstr "最大并发删除VM数"
 
-#: services/Azure_enterprise/provider.py:48
+#: services/Azure_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:63
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "连接到vCloud的超时时间"
 
-#: services/Azure_enterprise/provider.py:53
+#: services/Azure_enterprise/provider.py:111
+msgid ""
+"Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
+"host:port, i.e. https://10.10.0.1:8080)"
+msgstr "用于连接到Azure的HTTPS连接的代理（使用PROTOCOL：// host：port，即https://10.10.0.1:8080）"
+
+#: services/Azure_enterprise/provider.py:120
 msgid "Azure Platform Provider"
 msgstr "Azure平台提供程序"
 
-#: services/Azure_enterprise/provider.py:55
+#: services/Azure_enterprise/provider.py:122
 msgid "Provides connection to Azure Platform"
 msgstr "提供与Azure平台的连接"
 
-#: services/Azure_enterprise/provider.py:99
+#: services/Azure_enterprise/provider.py:180
 #: services/VCloud_enterprise/provider.py:107
 msgid "Connection parameters seems correct"
 msgstr "连接参数似乎正确"
 
-#: services/Azure_enterprise/provider.py:275
+#: services/Azure_enterprise/provider.py:460
 msgid "Azure Provider: "
 msgstr "Azure提供商："
 
@@ -2926,8 +2933,9 @@ msgid "Number of desired VMs to keep running waiting for an user"
 msgstr "要继续运行等待用户的所需VM数"
 
 #: services/Azure_enterprise/service.py:44
-msgid "Number of desired VMs to keep suspended waiting for use"
-msgstr "要暂停等待使用的所需VM的数量"
+#| msgid "Number of desired VMs to keep suspended waiting for use"
+msgid "Number of desired VMs to keep stopped waiting for use"
+msgstr "保持停止等待使用的虚拟机数量"
 
 #: services/Azure_enterprise/service.py:58
 msgid "Resource Group"
@@ -5868,22 +5876,22 @@ msgid ""
 "Reloading this page is not supported. Please, reopen service from origin."
 msgstr "不支持重新加载此页面。请从原点重新开始服务。"
 
-#: web/util/services.py:201
+#: web/util/services.py:206
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
 msgstr "该服务即将被新版本取代。请在{}之前关闭会话并保存所有工作以避免丢失。"
 
-#: web/views/auth.py:151
-msgid "Authenticator does not provide information"
-msgstr "Authenticator不提供信息"
-
-#: web/views/service.py:119
+#: web/util/services.py:255
 msgid "Service not ready. Please, try again in a while."
 msgstr "服务没准备好。请稍后再试一次。"
 
-#: web/views/service.py:150
+#: web/util/services.py:286
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
 msgstr "我们正在创建您的服务，请等待几秒钟。）"
+
+#: web/views/auth.py:151
+msgid "Authenticator does not provide information"
+msgstr "Authenticator不提供信息"

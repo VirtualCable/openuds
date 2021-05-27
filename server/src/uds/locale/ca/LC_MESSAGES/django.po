@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-13 12:46+0200\n"
+"POT-Creation-Date: 2021-05-26 11:38+0200\n"
 "PO-Revision-Date: 2021-02-17 15:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -654,6 +654,7 @@ msgid "Services Pools"
 msgstr "Pools de serveis"
 
 #: REST/methods/services.py:228 REST/methods/services.py:268
+#: services/Azure_enterprise/provider.py:109
 msgid "Proxy"
 msgstr "Proxy"
 
@@ -1147,7 +1148,7 @@ msgstr "Contrasenya de l'usuari LDAP"
 #: auths/ActiveDirectory_enterprise/authenticator.py:48
 #: auths/EDirectory_enterprise/authenticator.py:49
 #: auths/RegexLdap/authenticator.py:69 auths/SimpleLDAP/authenticator.py:62
-#: services/Azure_enterprise/provider.py:48
+#: services/Azure_enterprise/provider.py:98
 #: services/HyperV_enterprise/legacy/provider.py:93
 #: services/HyperV_enterprise/provider.py:131
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
@@ -1241,32 +1242,32 @@ msgid "Azure Active Directory Authenticator"
 msgstr "Autenticador d'Azure Directori Actiu"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/provider.py:40
+#: services/Azure_enterprise/provider.py:46
 msgid "Tenant ID"
 msgstr "Tenant ID"
 
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: services/Azure_enterprise/provider.py:40
+#: services/Azure_enterprise/provider.py:48
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "Obtingut d'Azure Directori Actiu - Propietats - ID de directori"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/provider.py:41
+#: services/Azure_enterprise/provider.py:53
 msgid "Client ID"
 msgstr "ID de client"
 
 #: auths/AzureAD_enterprise/azure_ad.py:96
-#: services/Azure_enterprise/provider.py:41
+#: services/Azure_enterprise/provider.py:55
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr "Obtingut amb l'App creada amb Azure per a UDS Enterprise"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/provider.py:42
+#: services/Azure_enterprise/provider.py:60
 msgid "Client Secret"
 msgstr "Clau de Client"
 
 #: auths/AzureAD_enterprise/azure_ad.py:97
-#: services/Azure_enterprise/provider.py:42
+#: services/Azure_enterprise/provider.py:62
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr "Obtinguts amb l'App creada amb Azure per a UDS Enterprise - Claus"
 
@@ -1364,19 +1365,6 @@ msgstr ""
 "La classe de l'usuari o l'atribut d'ID de l'usuari LDAP probablement són "
 "erronis (el LDAP és un eDirectory?)"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:68
-msgid "Accept proxy"
-msgstr "Acceptar proxy"
-
-#: auths/IP/authenticator.py:55 auths/InternalDB/authenticator.py:68
-msgid ""
-"If checked, requests via proxy will get FORWARDED ip address (take care with "
-"this bein checked, can take internal IP addresses from internet)"
-msgstr ""
-"Si està seleccionat, les sol·licituds a través de proxy tindran una adreça "
-"IP REENVIADA (alerta si ho seleccionau, podeu obtenir adreces IP internes "
-"d'Internet)"
-
 #: auths/IP/authenticator.py:61 auths/IP/authenticator.py:63
 msgid "IP Authenticator"
 msgstr "Autenticador IP"
@@ -1385,7 +1373,7 @@ msgstr "Autenticador IP"
 msgid "IP Range"
 msgstr "Rang IP"
 
-#: auths/IP/authenticator.py:106 auths/IP/authenticator.py:109
+#: auths/IP/authenticator.py:107 auths/IP/authenticator.py:110
 msgid "All seems to be fine."
 msgstr "Tot sembla ser correcte"
 
@@ -1412,6 +1400,19 @@ msgstr "DNS invers"
 #: auths/InternalDB/authenticator.py:67
 msgid "If checked, the host will be reversed dns"
 msgstr "Si està seleccionat, el host serà DNS invers"
+
+#: auths/InternalDB/authenticator.py:68
+msgid "Accept proxy"
+msgstr "Acceptar proxy"
+
+#: auths/InternalDB/authenticator.py:68
+msgid ""
+"If checked, requests via proxy will get FORWARDED ip address (take care with "
+"this bein checked, can take internal IP addresses from internet)"
+msgstr ""
+"Si està seleccionat, les sol·licituds a través de proxy tindran una adreça "
+"IP REENVIADA (alerta si ho seleccionau, podeu obtenir adreces IP internes "
+"d'Internet)"
 
 #: auths/InternalDB/authenticator.py:134
 msgid "Internal structures seems ok"
@@ -1790,19 +1791,19 @@ msgstr "No es pot anul·lar una publicació que no es pot utilitzar"
 msgid "Can't unpublish publications with services in process"
 msgstr "No es poden anul·lar publicacions amb serveis en procés"
 
-#: core/managers/user_service.py:275
+#: core/managers/user_service.py:276
 msgid "Can't remove a non active element"
 msgstr "No es pot eliminar un element no actiu"
 
-#: core/managers/user_service.py:296
+#: core/managers/user_service.py:297
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "No es pot eliminar ni cancel·lar {} perquè el seu estat no ho permet"
 
-#: core/managers/user_service.py:317
+#: core/managers/user_service.py:318
 msgid "The requested service is restrained"
 msgstr "El servei sol·licitat està restringit"
 
-#: core/managers/user_service.py:563 web/util/errors.py:77
+#: core/managers/user_service.py:564 web/util/errors.py:77
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -1810,11 +1811,11 @@ msgstr ""
 "Servei no vàlid. El servei no està disponible ara mateix. Si us plau, "
 "intenteu-ho més tard"
 
-#: core/managers/user_service.py:593
+#: core/managers/user_service.py:594
 msgid "The requested transport {} is not valid for {}"
 msgstr "El transport sol·licitat {} no és vàlid per a {}"
 
-#: core/managers/user_service.py:716
+#: core/managers/user_service.py:718
 msgid "The service is not accessible from this device"
 msgstr "El servei no és accessible des d'aquest dispositiu"
 
@@ -2947,15 +2948,15 @@ msgstr "Accés d'usuaris a UDS"
 msgid "UDS Report for users access"
 msgstr "Informe UDS d'accés d'usuaris"
 
-#: services/Azure_enterprise/provider.py:43
+#: services/Azure_enterprise/provider.py:67
 msgid "Subscription ID"
 msgstr "ID de subscripció"
 
-#: services/Azure_enterprise/provider.py:43
+#: services/Azure_enterprise/provider.py:69
 msgid "Obtained from subscriptions"
 msgstr "Obtingut de les subscripcions"
 
-#: services/Azure_enterprise/provider.py:46
+#: services/Azure_enterprise/provider.py:76
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:79
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
@@ -2967,7 +2968,7 @@ msgstr "Obtingut de les subscripcions"
 msgid "Creation concurrency"
 msgstr "Concurrència de creació"
 
-#: services/Azure_enterprise/provider.py:46
+#: services/Azure_enterprise/provider.py:81
 #: services/HyperV_enterprise/legacy/provider.py:89
 #: services/HyperV_enterprise/provider.py:84
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
@@ -2978,7 +2979,7 @@ msgstr "Concurrència de creació"
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Nombre màxim de màquines virtuals creant-se simultàniament "
 
-#: services/Azure_enterprise/provider.py:47
+#: services/Azure_enterprise/provider.py:87
 #: services/HyperV_enterprise/legacy/provider.py:90
 #: services/HyperV_enterprise/provider.py:91
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
@@ -2990,7 +2991,7 @@ msgstr "Nombre màxim de màquines virtuals creant-se simultàniament "
 msgid "Removal concurrency"
 msgstr "Concurrència d'eliminació"
 
-#: services/Azure_enterprise/provider.py:47
+#: services/Azure_enterprise/provider.py:92
 #: services/HyperV_enterprise/legacy/provider.py:91
 #: services/HyperV_enterprise/provider.py:96
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
@@ -3001,25 +3002,33 @@ msgstr "Concurrència d'eliminació"
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Nombre màxim de màquines virtuals eliminant-se simultàniament "
 
-#: services/Azure_enterprise/provider.py:48
+#: services/Azure_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:63
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "Temps d'espera de la connexió a vCloud en segons"
 
-#: services/Azure_enterprise/provider.py:53
+#: services/Azure_enterprise/provider.py:111
+msgid ""
+"Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
+"host:port, i.e. https://10.10.0.1:8080)"
+msgstr ""
+"Proxy utilitzat per a la connexió a azure per a connexions HTTPS (utilitzeu "
+"PROTOCOL: // host: port, és a dir, https://10.10.0.1:8080)"
+
+#: services/Azure_enterprise/provider.py:120
 msgid "Azure Platform Provider"
 msgstr "Proveïdor de la Plataforma Azure"
 
-#: services/Azure_enterprise/provider.py:55
+#: services/Azure_enterprise/provider.py:122
 msgid "Provides connection to Azure Platform"
 msgstr "Proporciona connexió a la Plataforma Azure"
 
-#: services/Azure_enterprise/provider.py:99
+#: services/Azure_enterprise/provider.py:180
 #: services/VCloud_enterprise/provider.py:107
 msgid "Connection parameters seems correct"
 msgstr "Els paràmetres de connexió semblen correctes"
 
-#: services/Azure_enterprise/provider.py:275
+#: services/Azure_enterprise/provider.py:460
 msgid "Azure Provider: "
 msgstr "Proveïdor Azure:"
 
@@ -3039,10 +3048,11 @@ msgstr ""
 "usuari"
 
 #: services/Azure_enterprise/service.py:44
-msgid "Number of desired VMs to keep suspended waiting for use"
+#| msgid "Number of desired VMs to keep suspended waiting for use"
+msgid "Number of desired VMs to keep stopped waiting for use"
 msgstr ""
-"Nombre desitjat de màquines virtuals que es mantenen en suspens esperant per "
-"a utilitzar-se"
+"Nombre de màquines virtuals que es volen deixar d&#39;esperar per utilitzar-"
+"les"
 
 #: services/Azure_enterprise/service.py:58
 msgid "Resource Group"
@@ -6162,7 +6172,7 @@ msgstr ""
 "No es pot recarregar aquesta pàgina. Si us plau, torneu a obrir el servei "
 "des de l'origen."
 
-#: web/util/services.py:201
+#: web/util/services.py:206
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -6170,18 +6180,18 @@ msgstr ""
 "Aquest servei està a punt de ser reemplaçat per una nova versió. Si us plau, "
 "tanqueu la sessió abans {} i deseu tot el treball per evitar-ne pèrdues."
 
-#: web/views/auth.py:151
-msgid "Authenticator does not provide information"
-msgstr "L'autenticador no proporciona informació"
-
-#: web/views/service.py:119
+#: web/util/services.py:255
 msgid "Service not ready. Please, try again in a while."
 msgstr "Servei no disponible ara mateix. Si us plau, intenteu-ho més tard"
 
-#: web/views/service.py:150
+#: web/util/services.py:286
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
 msgstr ""
 "El vostre servei s'està creant, si us plau, espereu uns segons mentre es "
 "completa.)"
+
+#: web/views/auth.py:151
+msgid "Authenticator does not provide information"
+msgstr "L'autenticador no proporciona informació"
