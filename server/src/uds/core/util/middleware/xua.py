@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2013-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,12 +25,30 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
 """
-Sample authenticator. We import here the module, and uds.auths module will
-take care of registering it as provider
-
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .authenticator import RadiusAuth
+
+import logging
+
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from uds.core.util.config import GlobalConfig
+
+logger = logging.getLogger(__name__)
+
+
+class XUACompatibleMiddleware:
+    """
+    Add a X-UA-Compatible header to the response
+    This header tells to Internet Explorer to render page with latest
+    possible version or to use chrome frame if it is installed.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if response.get('content-type', '').startswith('text/html'):
+            response['X-UA-Compatible'] = 'IE=edge'
+        return response

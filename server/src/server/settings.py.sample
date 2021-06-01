@@ -175,9 +175,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'uds.core.util.request.GlobalRequestMiddleware',
-    'uds.core.util.middleware.XUACompatibleMiddleware',
-    'uds.core.util.middleware.RedirectMiddleware',
+    'uds.core.util.middleware.request.GlobalRequestMiddleware',
+    'uds.core.util.middleware.xua.XUACompatibleMiddleware',
+    'uds.core.util.middleware.redirect.RedirectMiddleware',
 ]
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
