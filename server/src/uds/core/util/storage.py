@@ -165,7 +165,7 @@ class StorageAsDict(MutableMapping):
             return self._filtered.filter(key=self._key(key)).exists()
         return False
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._filtered.count()
 
     # Optimized methods, avoid re-reading from DB
@@ -174,6 +174,9 @@ class StorageAsDict(MutableMapping):
 
     def values(self):
         return iter(_decodeValue(i.key, i.data)[1] for i in self._filtered)
+
+    def get(self, key: str, default: typing.Any = None) -> typing.Any:
+        return self[key] or default
 
     # Custom utility methods
     @property
