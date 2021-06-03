@@ -110,7 +110,7 @@ class URLCustomTransport(transports.Transport):
                                  .replace('_USERNAME_', username)
         )
 
-        onw = '&o_n_w={};'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
+        onw = '&o_n_w={}'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
         return str(
             "{}{}".format(
                 url,
