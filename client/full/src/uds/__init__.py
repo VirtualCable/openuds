@@ -31,11 +31,11 @@
 '''
 from __future__ import unicode_literals
 
-VERSION = '3.0.0'
+VERSION = '3.5.0'
 
 __title__ = 'udclient'
 __version__ = VERSION
-__build__ = 0x010760
+__build__ = 0x010780
 __author__ = 'Adolfo Gómez'
 __license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014-2017 VirtualCable S.L.U."
+__copyright__ = "Copyright 2014-2021 VirtualCable S.L.U."
