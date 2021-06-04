@@ -175,10 +175,10 @@ class Tickets(Handler):
                         for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
                         # And now, to ALL metapool members
-                        for memberPool in pool.members.all():
+                        for metaMember in pool.members.all():
                             # First, add groups to metapool
-                            for addGrp in set(groupIds) - set(memberPool.assignedGroups.values_list('uuid', flat=True)):
-                                memberPool.assignedGroups.add(auth.groups.get(uuid=addGrp))
+                            for addGrp in set(groupIds) - set(metaMember.pool.assignedGroups.values_list('uuid', flat=True)):
+                                metaMember.assignedGroups.add(auth.groups.get(uuid=addGrp))
                             
                     # For metapool, transport is ignored..
 
