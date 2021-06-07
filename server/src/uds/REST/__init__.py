@@ -32,7 +32,6 @@
 import os.path
 import pkgutil
 import sys
-import time
 import importlib
 import logging
 import typing
@@ -41,8 +40,8 @@ from django import http
 from django.views.generic.base import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _, activate
-from django.conf import settings
+from django.utils.translation import ugettext as _
+from uds.core import VERSION, VERSION_STAMP
 
 from .handlers import (
     Handler,
@@ -155,6 +154,7 @@ class Dispatcher(View):
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
                 response = processor.getResponse(response)
             # Set response headers
+            response['UDS-Version'] = f'{VERSION};{VERSION_STAMP}'
             for k, val in handler.headers().items():
                 response[k] = val
             return response
