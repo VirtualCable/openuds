@@ -115,7 +115,8 @@ class RadiusAuth(auths.Authenticator):
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         pass
 
-    def radiusClient(self) -> client.RadiusClient:
+    def radiusClient(self) -> client.RadiusClient: 
+        """ Return a new radius client . """
         return client.RadiusClient(
             self.server.value,
             self.secret.value.encode(),
@@ -158,7 +159,8 @@ class RadiusAuth(auths.Authenticator):
         return super().removeUser(username)
 
     @staticmethod
-    def test(env, data):
+    def test(env, data): 
+        """ Test the connection to the server . """
         try:
             auth = RadiusAuth(None, env, data)  # type: ignore
             return auth.testConnection()
@@ -168,7 +170,8 @@ class RadiusAuth(auths.Authenticator):
             )
             return [False, _('Error testing connection')]
 
-    def testConnection(self):  # pylint: disable=too-many-return-statements
+    def testConnection(self): 
+        """ Test connection to Radius Server """
         try:
             connection = self.radiusClient()
             # Reply is not important...
