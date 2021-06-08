@@ -41,6 +41,7 @@ import typing
 
 import curio
 import psutil
+import setproctitle
 
 from uds_tunnel import config
 from uds_tunnel import proxy
@@ -99,7 +100,7 @@ def setup_log(cfg: config.ConfigurationType) -> None:
 async def tunnel_proc_async(
     pipe: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace'
 ) -> None:
-    def get_socket(pipe: 'Connection') -> typing.Tuple[socket.SocketType, typing.Any]:
+    def get_socket(pipe: 'Connection') -> typing.Tuple[typing.Optional[socket.SocketType], typing.Any]:
         try:
             while True:
                 msg: message.Message = pipe.recv()
@@ -180,6 +181,9 @@ def tunnel_main():
 
         setup_log(cfg)
 
+        logger.info('Starting tunnel server on %s:%s', cfg.listen_address, cfg.listen_port)
+        setproctitle.setproctitle(f'UDSTunnel {cfg.listen_address}:{cfg.listen_port}')
+
         # Create pid file
         if cfg.pidfile:
             with open(cfg.pidfile, mode='w') as f:
@@ -202,7 +206,7 @@ def tunnel_main():
 
     stats_collector = stats.GlobalStats()
 
-    for i in range(cfg.workers):
+    def add_child_pid():
         own_conn, child_conn = multiprocessing.Pipe()
         task = multiprocessing.Process(
             target=curio.run,
@@ -212,13 +216,47 @@ def tunnel_main():
         logger.debug('ADD CHILD PID: %s', task.pid)
         child.append((own_conn, task, psutil.Process(task.pid)))
 
+    for i in range(cfg.workers):
+        add_child_pid()
+
     def best_child() -> 'Connection':
         best: typing.Tuple[float, 'Connection'] = (1000.0, child[0][0])
-        for c in child:
-            percent = c[2].cpu_percent()
+        missingProcesses = []
+        for i, c in enumerate(child):
+            try:
+                if c[2].status() == 'zombie': # Bad kill!!
+                    raise psutil.ZombieProcess(c[2].pid)
+                percent = c[2].cpu_percent()
+            except (psutil.ZombieProcess, psutil.NoSuchProcess) as e:
+                # Process is missing...
+                logger.warning('Missing process found: %s', e.pid)
+                try:
+                    c[0].close()  # Close pipe to missing process
+                except Exception:
+                    logger.debug('Could not close handle for %s', e.pid)
+                try:
+                    c[1].kill()
+                    c[1].close()
+                except Exception:
+                    logger.debug('Could not close process %s', e.pid)
+
+                missingProcesses.append(i)
+                continue
+                
             logger.debug('PID %s has %s', c[2].pid, percent)
+
             if percent < best[0]:
                 best = (percent, c[0])
+
+        if missingProcesses:
+            logger.debug('Regenerating missing processes: %s', len(missingProcesses))
+            # Regenerate childs and recreate new proceeses to process requests...
+            tmpChilds = [child[i] for i in range(len(child)) if i not in missingProcesses]
+            child[:] = tmpChilds
+            # Now add new children
+            for i in range(len(missingProcesses)):
+                add_child_pid()
+
         return best[1]
 
     try:
