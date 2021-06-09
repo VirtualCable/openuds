@@ -3,4 +3,4 @@
 FOLDER=/usr/share/UDSActor
 
 cd $FOLDER
-exec python3 actor_config_unmanaged.py $@
+exec python3 actor_config_unmanaged.py -platform xcb $@

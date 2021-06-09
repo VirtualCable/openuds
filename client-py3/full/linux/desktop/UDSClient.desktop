@@ -2,7 +2,7 @@
 Name=UDSClient
 Comment=UDS Helper
 Keywords=uds;client;vdi;
-Exec=/usr/lib/UDSClient/UDSClient.py %u
+Exec=/usr/lib/UDSClient/UDSClient.py %u -platform xcb
 Icon=help-browser
 StartupNotify=true
 Terminal=false
