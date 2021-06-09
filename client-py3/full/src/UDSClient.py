@@ -36,7 +36,6 @@ import json
 import base64, bz2
 
 from PyQt5 import QtCore, QtGui, QtWidgets  # @UnresolvedImport
-import six
 
 from uds.rest import RestRequest
 from uds.forward import forward  # pylint: disable=unused-import
@@ -222,10 +221,10 @@ class UDSClient(QtWidgets.QMainWindow):
             QtCore.QTimer.singleShot(3000, self.endScript)
             self.hide()
 
-            six.exec_(script.decode("utf-8"), globals(), {'parent': self, 'sp': params})
+            exec(script.decode("utf-8"), globals(), {'parent': self, 'sp': params})
 
         except RetryException as e:
-            self.ui.info.setText(six.text_type(e) + ', retrying access...')
+            self.ui.info.setText(str(e) + ', retrying access...')
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
 
@@ -260,8 +259,8 @@ class UDSClient(QtWidgets.QMainWindow):
         QtCore.QTimer.singleShot(100, self.getVersion)
 
 
-def done(data):
-    QtWidgets.QMessageBox.critical(None, 'Notice', six.text_type(data.data), QtWidgets.QMessageBox.Ok)  # type: ignore
+def done(data) -> None:
+    QtWidgets.QMessageBox.critical(None, 'Notice', str(data.data), QtWidgets.QMessageBox.Ok)  # type: ignore
     sys.exit(0)
 
 
@@ -298,13 +297,7 @@ if __name__ == "__main__":
 
     if 'darwin' not in sys.platform:
         logger.debug('Mac OS *NOT* Detected')
-        app.setStyle('plastique')
-
-    if six.PY3 is False:
-        logger.debug('Fixing threaded execution of commands')
-        import threading
-
-        threading._DummyThread._Thread__stop = lambda x: 42  # type: ignore # pylint: disable=protected-access
+        app.setStyle('plastique')  # type: ignore
 
     # First parameter must be url
     try:
@@ -360,7 +353,7 @@ if __name__ == "__main__":
         logger.exception('Got an exception executing client:')
         exitVal = 128
         QtWidgets.QMessageBox.critical(
-            None, 'Error', six.text_type(e), QtWidgets.QMessageBox.Ok  # type: ignore
+            None, 'Error', str(e), QtWidgets.QMessageBox.Ok  # type: ignore
         )
 
     logger.debug('Exiting')
