@@ -179,7 +179,7 @@ def verifySignature(script, signature):
     from cryptography.hazmat.primitives import serialization, hashes
     from cryptography.hazmat.primitives.asymmetric import utils, padding
 
-    public_key = serialization.load_pem_public_key(data=PUBLIC_KEY)
+    public_key = serialization.load_pem_public_key(data=PUBLIC_KEY, backend=default_backend())
 
     try:
         public_key.verify(
