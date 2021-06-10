@@ -3,7 +3,4 @@
 /UDSClient*.pkg
 /UDSClient*.dist
 /UDSClient*.build
-/UDSClientDir
-/appimage-builder-cache
-/*.AppImage
 /.eggs
