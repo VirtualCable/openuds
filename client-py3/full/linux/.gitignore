@@ -2,3 +2,7 @@
 /udsclient-[0-9]*.spec
 /debian/udsclient
 /targz
+/UDSClientDir
+/UDSClient*.AppImage
+/appimage*
+/UDSClient.desktop

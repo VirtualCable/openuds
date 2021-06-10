@@ -46,8 +46,22 @@ endif
 ifeq ($(DISTRO),rh)
 endif
 
-	# chmod 0755 $(BINDIR)/udsclient
 uninstall:
 	rm -rf $(LIBDIR)
 	# rm -f $(BINDIR)/udsclient
 	#  rm -rf $(CFGDIR)
+
+build-appimage:
+	cat udsclient-appimage.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g > appimage.recipe
+	appimage-builder --recipe appimage.recipe
+# Now create dist and move appimage
+	rm -rf $(DESTDIR)
+	mkdir -p $(DESTDIR)
+	cp UDSClient-$(VERSION)-x86_64.AppImage $(DESTDIR)
+# Generate the .desktop fixed for new path
+	cat desktop/UDSClient.desktop | sed -e s/".usr.lib.UDSClient.UDSClient.py"/"\/usr\/bin\/UDSClient-$(VERSION)-x86_64.AppImage"/g > $(DESTDIR)/UDSClient.desktop
+# And also, generater installer
+	cat installer-appimage-template.sh | sed -e s/"0.0.0"/"$(VERSION)"/g > $(DESTDIR)/installer.sh
+	chmod 755 $(DESTDIR)/installer.sh
+	tar czvf ../udsclient3-portable-$(VERSION).tar.gz -C $(DESTDIR) .
+# Now

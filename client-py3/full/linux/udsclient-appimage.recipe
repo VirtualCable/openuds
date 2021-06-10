@@ -1,0 +1,56 @@
+version: 1
+script:
+  # Remove any previous build
+  - rm -rf UDSClientDir  | true
+  # Make usr and icons dirs
+  - mkdir -p UDSClientDir/usr/src
+  # Copy the python application code into the UDSClientDir
+  - cp ../src/UDS*.py UDSClientDir/usr/src
+  - cp -r ../src/uds UDSClientDir/usr/src
+  # Remove __pycache__ and .mypy if exists
+  - rm UDSClientDir/usr/src/.mypy_cache -rf 2>&1 > /dev/null
+  - rm UDSClientDir/usr/src/uds/.mypy_cache -rf 2>&1 > /dev/null
+  - rm UDSClientDir/usr/src/__pycache__ -rf 2>&1 > /dev/null
+  - rm UDSClientDir/usr/src/uds/__pycache__ -rf 2>&1 > /dev/null
+
+AppDir:
+  path: ./UDSClientDir
+
+  app_info:
+    id: com.udsenterprise.UDSClient3
+    name: UDSClient
+    icon: utilities-terminal
+    version: 0.0.0
+    # Set the python executable as entry point
+    exec: usr/bin/python3
+    # Set the application main script path as argument. Use '$@' to forward CLI parameters
+    exec_args: "$APPDIR/usr/src/UDSClient.py $@"
+
+  apt:
+    arch: amd64
+    sources:
+      - sourceline: 'deb [arch=amd64] http://ftp.de.debian.org/debian/ bullseye main contrib non-free'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x04EE7237B7D453EC'
+
+    include:
+      - python3
+      - python3-pkg-resources
+      - python3-pyqt5
+      - python3-paramiko
+      - python3-cryptography
+      - freerdp2-x11
+    exclude: []
+
+  runtime:
+    env:
+      # Set python home
+      # See https://docs.python.org/3/using/cmdline.html#envvar-PYTHONHOME
+      PYTHONHOME: '${APPDIR}/usr'
+      # Path to the site-packages dir or other modules dirs
+      # See https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH
+      PYTHONPATH: '${APPDIR}/usr/lib/python3.9/site-packages'
+
+AppImage:
+  update-information: None
+  sign-key: None
+  arch: x86_64
