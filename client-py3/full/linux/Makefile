@@ -52,16 +52,20 @@ uninstall:
 	#  rm -rf $(CFGDIR)
 
 build-appimage:
-	cat udsclient-appimage.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g > appimage.recipe
+ifeq ($(DISTRO),x86_64)
+	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g > appimage.recipe
+else
+	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g | sed -e s/amd64\\\|x86_64/armhf/g > appimage.recipe
+endif
+
 	appimage-builder --recipe appimage.recipe
 # Now create dist and move appimage
 	rm -rf $(DESTDIR)
 	mkdir -p $(DESTDIR)
-	cp UDSClient-$(VERSION)-x86_64.AppImage $(DESTDIR)
+	cp UDSClient-$(VERSION)-$(DISTRO).AppImage $(DESTDIR)
 # Generate the .desktop fixed for new path
-	cat desktop/UDSClient.desktop | sed -e s/".usr.lib.UDSClient.UDSClient.py"/"\/usr\/bin\/UDSClient-$(VERSION)-x86_64.AppImage"/g > $(DESTDIR)/UDSClient.desktop
+	cat desktop/UDSClient.desktop | sed -e s/".usr.lib.UDSClient.UDSClient.py"/"\/usr\/bin\/UDSClient-$(VERSION)-$(DISTRO).AppImage"/g > $(DESTDIR)/UDSClient.desktop
 # And also, generater installer
 	cat installer-appimage-template.sh | sed -e s/"0.0.0"/"$(VERSION)"/g > $(DESTDIR)/installer.sh
 	chmod 755 $(DESTDIR)/installer.sh
-	tar czvf ../udsclient3-portable-$(VERSION).tar.gz -C $(DESTDIR) .
-# Now
+	tar czvf ../udsclient3-$(DISTRO)-$(VERSION).tar.gz -C $(DESTDIR) .

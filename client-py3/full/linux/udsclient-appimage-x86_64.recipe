@@ -39,6 +39,7 @@ AppDir:
       - python3-paramiko
       - python3-cryptography
       - freerdp2-x11
+      - x2goclient
     exclude: []
 
   runtime:
