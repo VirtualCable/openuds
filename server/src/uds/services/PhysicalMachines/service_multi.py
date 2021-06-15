@@ -130,7 +130,7 @@ class IPMachinesService(IPServiceBase):
         else:
             # Check that ips are valid
             for v in values['ipList']:
-                if not net.isValidHost(v):
+                if not net.isValidHost(v.split(';')[0]):  # Get only IP/hostname
                     raise IPServiceBase.ValidationException(gettext('Invalid value detected on servers list: "{}"').format(v))
             self._ips = [
                 '{}~{}'.format(str(ip).strip(), i)
