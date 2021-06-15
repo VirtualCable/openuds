@@ -269,7 +269,12 @@ class IPMachinesService(IPServiceBase):
             IPMachineDeployed, userDeployment
         )
         theIP = IPServiceBase.getIp(assignableId)
+        theMAC = IPServiceBase.getMac(assignableId)
+
         if self.storage.readData(theIP) is None:
             self.storage.saveData(theIP, theIP)
+            if theMAC:
+                theIP += ';' + theMAC
             return userServiceInstance.assign(theIP)
+
         return userServiceInstance.error('IP already assigned')
