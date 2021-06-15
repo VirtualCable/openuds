@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# Disabled OLD NX. Will be removed soon
 
-from django.utils.translation import ugettext_noop as _
+# from django.utils.translation import ugettext_noop as _
+# from uds.core.managers.user_preferences import UserPrefsManager, CommonPrefs
+# from uds.core.util.config import Config
+# from .nxtransport import NXTransport
+# from .nxtunneltransport import TSNXTransport
 
-from uds.core.managers.user_preferences import UserPrefsManager, CommonPrefs
-from uds.core.util.config import Config
-from .nxtransport import NXTransport
-from .nxtunneltransport import TSNXTransport
-
-Config.section('NX').value('downloadUrl', 'http://sourceforge.net/projects/opennx/files/opennx/CI-win32/OpenNX-0.16.0.725-Setup.exe/download').get()
-Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()
+# Config.section('NX').value('downloadUrl', 'http://sourceforge.net/projects/opennx/files/opennx/CI-win32/OpenNX-0.16.0.725-Setup.exe/download').get()
+# Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()

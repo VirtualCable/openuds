@@ -58,6 +58,7 @@ class URLCustomTransport(transports.Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     typeName = _('URL Launcher')
     typeType = 'URLTransport'
     typeDescription = _('Launchs an external UDS customized URL')
@@ -68,22 +69,36 @@ class URLCustomTransport(transports.Transport):
     protocol = transports.protocols.OTHER
     group = transports.DIRECT_GROUP
 
-    urlPattern = gui.TextField(label=_('URL Pattern'), order=1, tooltip=_('URL Pattern to open (i.e. https://_IP_/test?user=_USER_'), defvalue='https://www.udsenterprise.com', length=64, required=True)
+    urlPattern = gui.TextField(
+        label=_('URL Pattern'),
+        order=1,
+        tooltip=_('URL Pattern to open (i.e. https://_IP_/test?user=_USER_'),
+        defvalue='https://www.udsenterprise.com',
+        length=256,
+        required=True,
+    )
 
     forceNewWindow = gui.CheckBoxField(
         label=_('Force new HTML Window'),
         order=91,
-        tooltip=_('If checked, every connection will try to open its own window instead of reusing the "global" one.'),
+        tooltip=_(
+            'If checked, every connection will try to open its own window instead of reusing the "global" one.'
+        ),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
 
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
             return
         # Strip spaces
-        if not (self.urlPattern.value.startswith('http://') or self.urlPattern.value.startswith('https://')):
-            raise transports.Transport.ValidationException(_('The url must be http or https'))
+        if not (
+            self.urlPattern.value.startswith('http://')
+            or self.urlPattern.value.startswith('https://')
+        ):
+            raise transports.Transport.ValidationException(
+                _('The url must be http or https')
+            )
 
     # Same check as normal RDP transport
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
@@ -91,29 +106,25 @@ class URLCustomTransport(transports.Transport):
         return True
 
     def getLink(  # pylint: disable=too-many-locals
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> str:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> str:
 
         # Fix username/password acording to os manager
         username: str = user.getUsernameForAuth()
         username, password = userService.processUserPassword(username, password)
 
-        url = (
-            self.urlPattern.value.replace('_IP_', ip)
-                                 .replace('_USERNAME_', username)
-        )
+        url = self.urlPattern.value.replace('_IP_', ip).replace('_USERNAME_', username)
 
-        onw = '&o_n_w={}'.format(hash(transport.name)) if self.forceNewWindow.isTrue() else ''
-        return str(
-            "{}{}".format(
-                url,
-                onw
-            )
+        onw = (
+            '&o_n_w={}'.format(hash(transport.name))
+            if self.forceNewWindow.isTrue()
+            else ''
         )
+        return str("{}{}".format(url, onw))
