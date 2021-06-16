@@ -14,7 +14,8 @@ script:
   - rm UDSClientDir/usr/src/uds/__pycache__ -rf 2>&1 > /dev/null
 
 AppDir:
-  path: ./UDSClientDir
+  # On /tmp, that is an ext4 filesystem. On btrfs squashfs complains with "Unrecognised xattr prefix btrfs.compression"
+  path: /tmp/UDSClientDir
 
   app_info:
     id: com.udsenterprise.UDSClient3
@@ -39,7 +40,9 @@ AppDir:
       - python3-paramiko
       - python3-cryptography
       - freerdp2-x11
+      - freerdp2-wayland
       - x2goclient
+      - openssh-sftp-server
     exclude: []
 
   runtime:

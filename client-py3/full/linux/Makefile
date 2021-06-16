@@ -57,6 +57,8 @@ ifeq ($(DISTRO),x86_64)
 else
 	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g | sed -e s/amd64\\\|x86_64/armhf/g > appimage.recipe
 endif
+# In case of error, continue
+	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir
 
 	appimage-builder --recipe appimage.recipe
 # Now create dist and move appimage
