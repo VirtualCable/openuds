@@ -39,6 +39,7 @@ import win32net
 import win32event
 import pythoncom
 import servicemanager
+import winreg as wreg
 
 from . import operations
 from . import store
@@ -197,6 +198,17 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             except Exception as e:
                 logger.error('Exception removing user from Remote Desktop Users: {}'.format(e))
 
+    def isInstallationRunning(self):
+        '''
+        Detect if windows is installing anything, so we can delay the execution of Service
+        '''
+        try:
+            key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State')
+            data, _ = wreg.QueryValueEx(key, 'ImageState')
+            return data != 'IMAGE_STATE_COMPLETE'  # If ImageState is different of ImageStateComplete, there is something running on installation
+        except Exception:  # If not found, means that no installation is running 
+            return False
+
     def SvcDoRun(self) -> None:  # pylint: disable=too-many-statements, too-many-branches
         '''
         Main service loop
@@ -208,6 +220,17 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         logger.debug('Initializing coms')
 
         pythoncom.CoInitialize()  # pylint: disable=no-member
+
+        # Check if some install is running on windows before proceeding
+        while self._isAlive:
+            if self.isInstallationRunning():
+                win32event.WaitForSingleObject(self._hWaitStop, 1000)  # Wait a bit, and check again
+                continue
+            break
+
+        if not self._isAlive:  # Has been stopped while waiting windows installations
+            self.finish()
+            return
 
         # Unmanaged services does not initializes "on start", but rather when user logs in (because userservice does not exists "as such" before that)
         if self.isManaged():
