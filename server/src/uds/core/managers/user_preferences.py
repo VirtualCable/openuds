@@ -37,14 +37,14 @@ import typing
 
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
     from uds.models import User
 
 logger = logging.getLogger(__name__)
 
-
+# UserPrefs is DEPRECATED
+# Currently not used anywhere
 class UserPrefsManager:
     _manager: typing.Optional['UserPrefsManager'] = None
     _prefs: typing.Dict[str, typing.Dict]
@@ -73,7 +73,7 @@ class UserPrefsManager:
         """
         # logger.debug('Self prefs: %s', self._prefs)
         prefs = {}
-        for up in user.preferences.filter(module=modName):
+        for up in user.preferences.filter(module=modName):  # type: ignore
             prefs[up.name] = up.value
         for p in self._prefs[modName]['prefs']:
             if p.getName() not in prefs:
@@ -83,14 +83,14 @@ class UserPrefsManager:
 
     def setPreferenceForUser(self, user: 'User', modName: str, prefName: str, value: str):
         try:
-            user.preferences.create(module=modName, name=prefName, value=value)
+            user.preferences.create(module=modName, name=prefName, value=value)  # type: ignore
         except Exception:  # Already exits, update it
-            user.preferences.filter(module=modName, name=prefName).update(value=value)
+            user.preferences.filter(module=modName, name=prefName).update(value=value)  # type: ignore
 
     def getHtmlForUserPreferences(self, user: 'User'):
         # First fill data for all preferences
         data = {}
-        for up in user.preferences.all().order_by('module'):
+        for up in user.preferences.all().order_by('module'):  # type: ignore
             data[self.__nameFor(up.module, up.name)] = up.value
         res = ''
         for mod, v in sorted(self._prefs.items()):
@@ -189,57 +189,6 @@ class UserPreference(object):
         """
         return None
 
-
-class UserTextPreference(UserPreference):
-    TYPE = 'text'
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._length = kwargs.get('length', None)
-
-    def formField(self, value):
-        return forms.CharField(label=_(self._label), initial=value, attrs={'class': self._css})
-
-
-class UserNumericPreference(UserPreference):
-    TYPE = 'numeric'
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._min = kwargs.get('minvalue', None)
-        self._max = kwargs.get('maxvalue', None)
-
-    def formField(self, value):
-        return forms.IntegerField(label=_(self._label), initial=value, min_value=self._min, max_value=self._max,
-                                  widget=forms.TextInput(attrs={'class': self._css}))  # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-
-
-class UserChoicePreference(UserPreference):
-    TYPE = 'choice'
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._values = kwargs['values']
-
-    def formField(self, value):
-        return forms.ChoiceField(label=_(self._label), initial=value, choices=self._values,
-                                 widget=forms.Select(attrs={'class': self._css}))  # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-
-    def guiField(self, value):
-        vals = []
-        for v in self._values:
-            vals.append({'id': v[0], 'text': _(v[1])})
-        return gui.ChoiceField(label=_(self._label), rdonly=False, values=vals, defvalue=value, tooltip=_(self._label))
-
-
-class UserCheckboxPreference(UserPreference):
-    TYPE = 'checkbox'
-
-    def formField(self, value):
-        if value is None:
-            value = False
-        logger.debug('Value type: %s', type(value))
-        return forms.BooleanField(label=_(self._label), initial=value)
 
 
 class CommonPrefs(object):
