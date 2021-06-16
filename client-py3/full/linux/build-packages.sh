@@ -39,8 +39,9 @@ done
 make DESTDIR=targz DISTRO=targz VERSION=${VERSION} install
 
 # And make FULL CLIENT .tar.gz for x86 and raspberry
-make DESTDIR=appimage DISTRO=x86_64 VERSION=${VERSION} build-appimage-x86_64
-make DESTDIR=appimage DISTRO=armhf VERSION=${VERSION} build-appimage-x86_64
+make DESTDIR=appimage DISTRO=x86_64 VERSION=${VERSION} build-appimage
+
+make DESTDIR=appimage DISTRO=armhf VERSION=${VERSION} build-appimage
 
 
 rpm --addsign ../*rpm
