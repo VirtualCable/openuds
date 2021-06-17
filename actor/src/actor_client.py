@@ -67,7 +67,7 @@ if __name__ == "__main__":
     # Note: Signals are only checked on python code execution, so we create a timer to force call back to python
     timer = QTimer(qApp)
     timer.start(1000)
-    timer.timeout.connect(lambda *a: None)
+    timer.timeout.connect(lambda *a: None)  # type: ignore  # timeout can be connected to a callable
 
     qApp.exec_()
 

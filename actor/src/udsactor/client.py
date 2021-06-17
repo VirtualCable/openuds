@@ -65,9 +65,9 @@ class UDSClientQApp(QApplication):
         self._initialized = False
 
         # This will be invoked on session close
-        self.commitDataRequest.connect(self.end)  # Will be invoked on session close, to gracely close app
+        self.commitDataRequest.connect(self.end)  # type: ignore  # Will be invoked on session close, to gracely close app
         # self.aboutToQuit.connect(self.end)
-        self.message.connect(self.showMessage)
+        self.message.connect(self.showMessage)  # type: ignore  # there are problems with Pylance and connects on PyQt5... :)
 
         # Execute backgroup thread for actions
         self._app = UDSActorClient(self)
@@ -94,7 +94,7 @@ class UDSClientQApp(QApplication):
         self._app.join()
 
     def showMessage(self, message: str) -> None:
-        QMessageBox.information(None, 'Message', message)
+        QMessageBox.information(None, 'Message', message)  # type: ignore
 
     def setMainWindow(self, mw: 'QMainWindow'):
         self._mainWindow = mw
@@ -108,6 +108,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
     _listener: client.HTTPServerThread
     _loginInfo: typing.Optional['types.LoginResultInfoType']
     _notified: bool
+    _notifiedDeadline: bool
     _sessionStartTime: datetime.datetime
     api: rest.UDSClientApi
 
@@ -115,13 +116,14 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
         super().__init__()
 
         self.api = rest.UDSClientApi()  # Self initialized
-        self._qApp = qApp
+        self._qApp = typing.cast(UDSClientQApp, qApp)
         self._running = False
         self._forceLogoff = False
         self._extraLogoff = ''
         self._listener = client.HTTPServerThread(self)
         self._loginInfo = None
         self._notified = False
+        self._notifiedDeadline = False
 
         # Capture stop signals..
         logger.debug('Setting signals...')
@@ -139,8 +141,8 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
         remainingTime = self._loginInfo.dead_line - (datetime.datetime.now() - self._sessionStartTime).total_seconds()
         logger.debug('Remaining time: {}'.format(remainingTime))
 
-        if not self._notified and remainingTime < 300:  # With five minutes, show a warning message
-            self._notified = True
+        if not self._notifiedDeadline and remainingTime < 300:  # With five minutes, show a warning message
+            self._notifiedDeadline = True
             self._showMessage('Your session will expire in less that 5 minutes. Please, save your work and disconnect.')
             return
 
@@ -210,7 +212,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
             platform.operations.loggoff()
 
     def _showMessage(self, message: str) -> None:
-        self._qApp.message.emit(message)
+        self._qApp.message.emit(message)   # type: ignore  # there are problems with Pylance and connects on PyQt5... :)
 
     def stop(self) -> None:
         logger.debug('Stopping client Service')
@@ -236,7 +238,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
         buffer.open(QIODevice.WriteOnly)
         pixmap.save(buffer, 'PNG')
         buffer.close()
-        scrBase64 = bytes(ba.toBase64()).decode()
+        scrBase64 = bytes(ba.toBase64()).decode()    # type: ignore  # there are problems with Pylance and connects on PyQt5... :)
         logger.debug('Screenshot length: %s', len(scrBase64))
         return scrBase64  # 'result' of JSON will contain base64 of screen
 
