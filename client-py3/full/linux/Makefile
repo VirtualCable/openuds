@@ -54,8 +54,12 @@ uninstall:
 build-appimage:
 ifeq ($(DISTRO),x86_64)
 	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g > appimage.recipe
-else
+endif
+ifeq ($(DISTRO),armf)
 	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g | sed -e s/amd64\\\|x86_64/armhf/g > appimage.recipe
+endif
+ifeq ($(DISTRO),i686)
+	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g | sed -e s/amd64/i386/g | sed -e s/x86_64/i686/g > appimage.recipe
 endif
 # In case of error, continue
 	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir
