@@ -115,14 +115,17 @@ def getServicesData(
     # Metapool helpers
     def transportIterator(member) -> typing.Iterable[Transport]:
         for t in member.pool.transports.all().order_by('priority'):
-            typeTrans = t.getType()
-            if (
-                typeTrans
-                and t.validForIp(request.ip)
-                and typeTrans.supportsOs(osName)
-                and t.validForOs(osName)
-            ):
-                yield t
+            try:
+                typeTrans = t.getType()
+                if (
+                    typeTrans
+                    and t.validForIp(request.ip)
+                    and typeTrans.supportsOs(osName)
+                    and t.validForOs(osName)
+                ):
+                    yield t
+            except Exception as e:
+                logger.warning('Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e)
 
     def buildMetaTransports(
         transports: typing.Iterable[Transport],

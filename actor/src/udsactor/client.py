@@ -232,7 +232,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
         On windows, an RDP session with minimized screen will render "black screen"
         So only when user is using RDP connection will return an "actual" screenshot
         '''
-        pixmap: 'QPixmap' = self._qApp.primaryScreen().grabWindow(0)
+        pixmap: 'QPixmap' = self._qApp.primaryScreen().grabWindow(0)  # type: ignore
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.WriteOnly)

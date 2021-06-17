@@ -131,6 +131,7 @@ class WinDomainOsManager(WindowsOsManager):
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
+    deadLine = WindowsOsManager.deadLine
 
     _domain: str
     _ou: str

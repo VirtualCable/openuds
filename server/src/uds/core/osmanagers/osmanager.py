@@ -171,6 +171,9 @@ class OSManager(Module):
         """
         return None
 
+    def ignoreDeadLine(self) -> bool:
+        return False
+
     @classmethod
     def transformsUserOrPasswordForService(cls: typing.Type['OSManager']) -> bool:
         """

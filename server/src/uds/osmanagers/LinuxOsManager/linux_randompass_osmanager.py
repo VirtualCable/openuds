@@ -60,6 +60,7 @@ class LinuxRandomPassManager(LinuxOsManager):
     # Inherits base "onLogout"
     onLogout = LinuxOsManager.onLogout
     idle = LinuxOsManager.idle
+    deadLine = LinuxOsManager.deadLine
 
     _userAccount: str
 

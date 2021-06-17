@@ -75,8 +75,20 @@ class WindowsOsManager(osmanagers.OSManager):
         ),
         required=True,
     )
+
+    deadLine = gui.CheckBoxField(
+        label=_('Calendar logout'),
+        order=90,
+        tooltip=_(
+            'If checked, UDS will try to logout user when the calendar for his current access expires'
+        ),
+        tab=gui.ADVANCED_TAB,
+        defvalue=gui.TRUE,
+    )
+
     _onLogout: str
     _idle: int
+    _deadLine: bool
 
     @staticmethod
     def validateLen(length):
@@ -100,9 +112,11 @@ class WindowsOsManager(osmanagers.OSManager):
         if values is not None:
             self._onLogout = values['onLogout']
             self._idle = int(values['idle'])
+            self._deadLine = gui.strToBool(values['deadLine'])
         else:
             self._onLogout = ''
             self._idle = -1
+            self._deadLine = True
 
         self.__setProcessUnusedMachines()
 
@@ -120,6 +134,9 @@ class WindowsOsManager(osmanagers.OSManager):
 
     def release(self, userService: 'UserService') -> None:
         pass
+
+    def ignoreDeadLine(self) -> bool:
+        return not self._deadLine
 
     def getName(self, userService: 'UserService') -> str:
         return userService.getName()
@@ -333,16 +350,19 @@ class WindowsOsManager(osmanagers.OSManager):
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v2', self._onLogout, str(self._idle)]).encode('utf8')
+        return '\t'.join(['v3', self._onLogout, str(self._idle), gui.boolToStr(self._deadLine)]).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         vals = data.decode('utf8').split('\t')
+        self._idle = -1
+        self._deadLine = True
         try:
             if vals[0] == 'v1':
                 self._onLogout = vals[1]
-                self._idle = -1
             elif vals[0] == 'v2':
                 self._onLogout, self._idle = vals[1], int(vals[2])
+            elif vals[0] == 'v3':
+                self._onLogout, self._idle, self._deadLine = vals[1], int(vals[2]), gui.strToBool(vals[3])
         except Exception:
             logger.exception(
                 'Exception unmarshalling. Some values left as default ones'
@@ -351,4 +371,4 @@ class WindowsOsManager(osmanagers.OSManager):
         self.__setProcessUnusedMachines()
 
     def valuesDict(self) -> gui.ValuesDictType:
-        return {'onLogout': self._onLogout, 'idle': str(self._idle)}
+        return {'onLogout': self._onLogout, 'idle': str(self._idle), 'deadLine': gui.boolToStr(self._deadLine) }

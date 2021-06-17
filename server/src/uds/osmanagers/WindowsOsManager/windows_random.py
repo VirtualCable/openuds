@@ -68,6 +68,7 @@ class WinRandomPassManager(WindowsOsManager):
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
+    deadLine = WindowsOsManager.deadLine
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType'):
         super().__init__(environment, values)

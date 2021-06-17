@@ -77,6 +77,16 @@ class LinuxOsManager(osmanagers.OSManager):
         tooltip=_('Maximum idle time (in seconds) before session is automatically closed to the user (<= 0 means no max idle time).'),
         required=True)
 
+    deadLine = gui.CheckBoxField(
+        label=_('Calendar logout'),
+        order=90,
+        tooltip=_(
+            'If checked, UDS will try to logout user when the calendar for his current access expires'
+        ),
+        tab=gui.ADVANCED_TAB,
+        defvalue=gui.TRUE,
+    )
+
     def __setProcessUnusedMachines(self):
         self.processUnusedMachines = self._onLogout == 'remove'
 
@@ -85,14 +95,19 @@ class LinuxOsManager(osmanagers.OSManager):
         if values is not None:
             self._onLogout = values['onLogout']
             self._idle = int(values['idle'])
+            self._deadLine = gui.strToBool(values['deadLine'])
         else:
             self._onLogout = ''
             self._idle = -1
+            self._deadLine = True
 
         self.__setProcessUnusedMachines()
 
     def release(self, userService: 'UserService') -> None:
         pass
+
+    def ignoreDeadLine(self) -> bool:
+        return not self._deadLine
 
     def isRemovableOnLogout(self, userService: 'UserService') -> bool:
         '''
@@ -254,17 +269,20 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v2', self._onLogout, str(self._idle)]).encode('utf8')
+        return '\t'.join(['v3', self._onLogout, str(self._idle), gui.boolToStr(self._deadLine)]).encode('utf8')
 
     def unmarshal(self, data: bytes):
         values = data.decode('utf8').split('\t')
+        self._idle = -1
+        self._deadLine = True
         if values[0] == 'v1':
             self._onLogout = values[1]
-            self._idle = -1
         elif values[0] == 'v2':
             self._onLogout, self._idle = values[1], int(values[2])
+        elif values[0] == 'v3':
+            self._onLogout, self._idle, self._deadLine = values[1], int(values[2]), gui.strToBool(values[3])
 
         self.__setProcessUnusedMachines()
 
-    def valuesDict(self):
-        return {'onLogout': self._onLogout, 'idle': self._idle}
+    def valuesDict(self) -> gui.ValuesDictType:
+        return {'onLogout': self._onLogout, 'idle': str(self._idle), 'deadLine': gui.boolToStr(self._deadLine) }

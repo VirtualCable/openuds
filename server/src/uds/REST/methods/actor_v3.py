@@ -447,7 +447,15 @@ class Login(LoginLogout):
             logger.debug('Max idle: %s', maxIdle)
 
             ip, hostname = userService.getConnectionSource()
-            deadLine = userService.deployed_service.getDeadline()
+
+            if osManager:  # For os managed services, let's check if we honor deadline
+                if osManager.ignoreDeadLine():
+                    deadLine = userService.deployed_service.getDeadline()
+                else:
+                    deadLine = None
+            else:  # For non os manager machines, process deadline as always
+                deadLine = userService.deployed_service.getDeadline()
+
         except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
