@@ -72,6 +72,6 @@ endif
 # Generate the .desktop fixed for new path
 	cat desktop/UDSClient.desktop | sed -e s/".usr.lib.UDSClient.UDSClient.py"/"\/usr\/bin\/UDSClient-$(VERSION)-$(DISTRO).AppImage"/g > $(DESTDIR)/UDSClient.desktop
 # And also, generater installer
-	cat installer-appimage-template.sh | sed -e s/"0.0.0"/"$(VERSION)"/g > $(DESTDIR)/installer.sh
+	cat installer-appimage-template.sh | sed -e s/"0.0.0"/"$(VERSION)"/g | sed -e s/x86_64/$(DISTRO)/g > $(DESTDIR)/installer.sh
 	chmod 755 $(DESTDIR)/installer.sh
 	tar czvf ../udsclient3-$(DISTRO)-$(VERSION).tar.gz -C $(DESTDIR) .

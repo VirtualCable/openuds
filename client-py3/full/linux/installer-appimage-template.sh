@@ -1,6 +1,12 @@
 #!/bin/sh
 
-echo "Installing UDSClient..."
+# Check for root
+if ! [ $(id -u) = 0 ]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+echo "Installing UDSClient Portable..."
 
 cp UDSClient-0.0.0-x86_64.AppImage /usr/bin
 cp UDSClient.desktop /usr/share/applications
