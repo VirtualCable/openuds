@@ -205,6 +205,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         try:
             key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State')
             data, _ = wreg.QueryValueEx(key, 'ImageState')
+            logger.debug('State: %s', data)
             return data != 'IMAGE_STATE_COMPLETE'  # If ImageState is different of ImageStateComplete, there is something running on installation
         except Exception:  # If not found, means that no installation is running 
             return False
