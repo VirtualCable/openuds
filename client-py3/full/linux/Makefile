@@ -61,7 +61,7 @@ endif
 ifeq ($(DISTRO),i686)
 	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g | sed -e s/amd64/i386/g | sed -e s/x86_64/i686/g > appimage.recipe
 endif
-# In case of error, continue
+# Ensure all working folders are "clean"
 	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir
 
 	appimage-builder --recipe appimage.recipe
@@ -75,3 +75,6 @@ endif
 	cat installer-appimage-template.sh | sed -e s/"0.0.0"/"$(VERSION)"/g | sed -e s/x86_64/$(DISTRO)/g > $(DESTDIR)/installer.sh
 	chmod 755 $(DESTDIR)/installer.sh
 	tar czvf ../udsclient3-$(DISTRO)-$(VERSION).tar.gz -C $(DESTDIR) .
+
+# cleanup
+	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir
