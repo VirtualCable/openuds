@@ -303,6 +303,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
             + '\n\nPlease, retry again in a while.',
             QtWidgets.QMessageBox.Ok,
         )
+    return 0
 
 
 if __name__ == "__main__":

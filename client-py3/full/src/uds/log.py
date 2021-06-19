@@ -38,7 +38,7 @@ import tempfile
 
 LOGLEVEL = logging.INFO
 
-if sys.platform.startswith('linux'):
+if 'linux' in sys.platform or 'darwin' in sys.platform:
     from os.path import expanduser  # pylint: disable=ungrouped-imports
     logFile = expanduser('~/udsclient.log')
 else:
