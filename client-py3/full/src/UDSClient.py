@@ -307,7 +307,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
 
 
 if __name__ == "__main__":
-    logger.debug('Initializing connector')
+    logger.debug('Initializing connector for %s(%s)', sys.platform, platform.machine())
 
     # Initialize app
     app = QtWidgets.QApplication(sys.argv)
