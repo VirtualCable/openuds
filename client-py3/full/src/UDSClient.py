@@ -53,7 +53,6 @@ from uds import VERSION
 from UDSWindow import Ui_MainWindow
 
 
-
 class UDSClient(QtWidgets.QMainWindow):
 
     ticket: str = ''
@@ -107,7 +106,7 @@ class UDSClient(QtWidgets.QMainWindow):
             None,  # type: ignore
             'UDS Plugin Error',
             '{}'.format(error),
-            QtWidgets.QMessageBox.Ok
+            QtWidgets.QMessageBox.Ok,
         )
         self.withError = True
 
@@ -142,7 +141,7 @@ class UDSClient(QtWidgets.QMainWindow):
                 self,
                 'Upgrade required',
                 'A newer connector version is required.\nA browser will be opened to download it.',
-                QtWidgets.QMessageBox.Ok
+                QtWidgets.QMessageBox.Ok,
             )
             webbrowser.open(e.downloadUrl)
             self.closeWindow()
@@ -174,8 +173,8 @@ class UDSClient(QtWidgets.QMainWindow):
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
         except Exception as e:
-            logger.exception('Got exception on getTransportData')
-            raise e
+            # logger.exception('Got exception on getTransportData')
+            self.showError(e)
 
     def start(self):
         """
@@ -183,6 +182,7 @@ class UDSClient(QtWidgets.QMainWindow):
         """
         self.ui.info.setText('Initializing...')
         QtCore.QTimer.singleShot(100, self.getVersion)
+
 
 def endScript():
     # Wait a bit before start processing ending sequence
@@ -200,7 +200,7 @@ def endScript():
     except Exception:
         pass
 
-    # Removing 
+    # Removing
     try:
         logger.debug('Executing threads before exit')
         tools.execBeforeExit()
@@ -224,17 +224,21 @@ def approveHost(hostName: str):
     )
 
     if not approved:
-        if QtWidgets.QMessageBox.warning(
-            None,  # type: ignore
-            'ACCESS Warning',
-            errorString,
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No  # type: ignore
-        ) == QtWidgets.QMessageBox.Yes:
+        if (
+            QtWidgets.QMessageBox.warning(
+                None,  # type: ignore
+                'ACCESS Warning',
+                errorString,
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,  # type: ignore
+            )
+            == QtWidgets.QMessageBox.Yes
+        ):
             settings.setValue(hostName, True)
             approved = True
 
     settings.endGroup()
     return approved
+
 
 def sslError(hostname: str, serial):
     settings = QSettings()
@@ -245,7 +249,7 @@ def sslError(hostname: str, serial):
     if (
         approved
         or QtWidgets.QMessageBox.warning(
-            None,                                                  # type: ignore
+            None,  # type: ignore
             'SSL Warning',
             f'Could not check sll certificate for {hostname}',
             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,  # type: ignore
@@ -258,6 +262,7 @@ def sslError(hostname: str, serial):
     settings.endGroup()
     return approved
 
+
 def minimal(api: RestApi, ticket: str, scrambler: str):
     try:
         logger.info('M1 Execution')
@@ -269,7 +274,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
                 None,  # type: ignore
                 'Upgrade required',
                 'A newer connector version is required.\nA browser will be opened to download it.',
-                QtWidgets.QMessageBox.Ok
+                QtWidgets.QMessageBox.Ok,
             )
             webbrowser.open(e.downloadUrl)
             return 0
@@ -283,17 +288,22 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
 
     except RetryException as e:
         QtWidgets.QMessageBox.warning(
-                    None,  # type: ignore
-                    'Service not ready',
-                    '{}'.format('.\n'.join(str(e).split('.'))) + '\n\nPlease, retry again in a while.' ,
-                    QtWidgets.QMessageBox.Ok
-                )
+            None,  # type: ignore
+            'Service not ready',
+            '{}'.format('.\n'.join(str(e).split('.')))
+            + '\n\nPlease, retry again in a while.',
+            QtWidgets.QMessageBox.Ok,
+        )
     except Exception as e:
-        logger.exception('Got exception on getTransportData')
-        raise e
+        # logger.exception('Got exception on getTransportData')
+        QtWidgets.QMessageBox.critical(
+            None,  # type: ignore
+            'Error',
+            '{}'.format(str(e))
+            + '\n\nPlease, retry again in a while.',
+            QtWidgets.QMessageBox.Ok,
+        )
 
-    except Exception:
-        logger.exception('Uncaught exception')
 
 if __name__ == "__main__":
     logger.debug('Initializing connector')
@@ -340,9 +350,9 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Setup REST api endpoint
-    api = RestApi('{}://{}/uds/rest/client'.format(
-        ['http', 'https'][ssl], host
-    ), sslError)
+    api = RestApi(
+        '{}://{}/uds/rest/client'.format(['http', 'https'][ssl], host), sslError
+    )
 
     try:
         if platform.mac_ver()[2] == 'arm64':
