@@ -36,6 +36,8 @@ import os
 import sys
 import tempfile
 
+LOGLEVEL = logging.INFO
+
 if sys.platform.startswith('linux'):
     from os.path import expanduser  # pylint: disable=ungrouped-imports
     logFile = expanduser('~/udsclient.log')
@@ -47,9 +49,9 @@ try:
         filename=logFile,
         filemode='a',
         format='%(levelname)s %(asctime)s %(message)s',
-        level=logging.INFO
+        level=LOGLEVEL
     )
 except Exception:
-    logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s', level=logging.INFO)
+    logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s', level=LOGLEVEL)
 
 logger = logging.getLogger('udsclient')

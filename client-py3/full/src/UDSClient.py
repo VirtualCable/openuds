@@ -266,7 +266,7 @@ class UDSClient(QtWidgets.QMainWindow):
 
         approved = settings.value(serial, False)
 
-        if approved or QMessageBox.warning(self, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:  # type: ignore
+        if approved or QtWidgets.QMessageBox.warning(self, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:  # type: ignore
             approved = True
             settings.setValue(serial, True)
 
