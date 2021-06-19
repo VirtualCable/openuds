@@ -35,11 +35,15 @@ import webbrowser
 import json
 import base64, bz2
 
-from PyQt5 import QtCore, QtGui, QtWidgets  # @UnresolvedImport
+from PyQt5 import QtCore,QtWidgets
+from PyQt5.QtCore import QSettings
 
 from uds.rest import RestRequest
-from uds.forward import forward  # pylint: disable=unused-import
-from uds.tunnel import forward as f2  # pylint: disable=unused-import
+
+# Just to ensure there are available on runtime
+from uds.forward import forward  # type: ignore
+from uds.tunnel import forward as f2  # type: ignore
+
 from uds.log import logger
 from uds import tools
 from uds import VERSION
@@ -139,10 +143,9 @@ class UDSClient(QtWidgets.QMainWindow):
         self.animTimer.stop()
 
     def getVersion(self):
-        self.req = RestRequest('', self, self.version)
-        self.req.get()
+        req = RestRequest('', msgFunction=self._sslError)
+        data = req.get()
 
-    def version(self, data):
         try:
             self.processError(data)
             self.ui.info.setText('Processing...')
@@ -159,6 +162,7 @@ class UDSClient(QtWidgets.QMainWindow):
                 return
 
             self.serverVersion = data['result']['requiredVersion']
+            # Now load transport data...
             self.getTransportData()
 
         except RetryException as e:
@@ -170,18 +174,16 @@ class UDSClient(QtWidgets.QMainWindow):
 
     def getTransportData(self):
         try:
-            self.req = RestRequest(
+            req = RestRequest(
                 '/{}/{}'.format(self.ticket, self.scrambler),
-                self,
-                self.transportDataReceived,
+                msgFunction=self._sslError,
                 params={'hostname': tools.getHostName(), 'version': VERSION},
             )
-            self.req.get()
+            data = req.get()
         except Exception as e:
             logger.exception('Got exception on getTransportData')
             raise e
 
-    def transportDataReceived(self, data):
         logger.debug('Transport data received')
         try:
             self.processError(data)
@@ -257,6 +259,20 @@ class UDSClient(QtWidgets.QMainWindow):
         """
         self.ui.info.setText('Initializing...')
         QtCore.QTimer.singleShot(100, self.getVersion)
+
+    def _sslError(self, hostname, serial):
+        settings = QSettings()
+        settings.beginGroup('ssl')
+
+        approved = settings.value(serial, False)
+
+        if approved or QMessageBox.warning(self, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:  # type: ignore
+            approved = True
+            settings.setValue(serial, True)
+
+        settings.endGroup()
+        return approved
+
 
 
 def done(data) -> None:

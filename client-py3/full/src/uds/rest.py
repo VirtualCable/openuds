@@ -32,93 +32,109 @@
 # pylint: disable=c-extension-no-member,no-name-in-module
 
 import json
-import os
 import urllib
 import urllib.parse
+import urllib.request
+import urllib.error
+import ssl
+import socket
+import typing
 
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import QObject, QUrl, QSettings
-from PyQt5.QtCore import Qt
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
-from PyQt5.QtWidgets import QMessageBox
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 
 from . import osDetector
-
 from . import VERSION
 
+# Callback for error on cert
+# parameters are hostname, serial
+# If returns True, ignores error
+CertCallbackType = typing.Callable[[str, str], bool]
 
 
-class RestRequest(QObject):
+def _open(
+    url: str, certErrorCallback: typing.Optional[CertCallbackType] = None
+) -> typing.Any:
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    hostname = urllib.parse.urlparse(url)[1]
+    serial = ''
 
-    restApiUrl = ''  #
+    if url.startswith('https'):
+        with ctx.wrap_socket(
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM), server_hostname=hostname
+        ) as s:
+            s.connect((hostname, 443))
+            # Get binary certificate
+            binCert = s.getpeercert(True)
+            if binCert:
+                cert = x509.load_der_x509_certificate(binCert, default_backend())
+            else:
+                raise Exception('Certificate not found!')
 
-    done = pyqtSignal(dict, name='done')
+        serial = hex(cert.serial_number)[2:]
 
-    def __init__(self, url, parentWindow, done, params=None):  # parent not used
-        super(RestRequest, self).__init__()
-        # private
-        self._manager = QNetworkAccessManager()
-        try:
-            if os.path.exists('/etc/ssl/certs/ca-certificates.crt'):
-                pass
-                # os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
-        except Exception:
-            pass
+    response = None
+    ctx.check_hostname = True
+    ctx.verify_mode = ssl.CERT_REQUIRED
+
+    def urlopen(url: str):
+        # Generate the request with the headers
+        req = urllib.request.Request(url, headers={
+            'User-Agent': osDetector.getOs() + " - UDS Connector " + VERSION
+        })
+        return urllib.request.urlopen(req, context=ctx)
+
+    try:
+        response = urlopen(url)
+    except urllib.error.URLError as e:
+        if isinstance(e.reason, ssl.SSLCertVerificationError):
+            # Ask about invalid certificate
+            if certErrorCallback:
+                if certErrorCallback(hostname, serial):
+                    ctx.check_hostname = False
+                    ctx.verify_mode = ssl.CERT_NONE
+                    response = urlopen(url)
+            else:
+                raise
+        else:
+            raise
+
+    return response
 
 
-        if params is not None:
-            url += '?' + '&'.join('{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8'))) for k, v in params.items())
+def getUrl(
+    url: str, certErrorCallback: typing.Optional[CertCallbackType] = None
+) -> bytes:
+    with _open(url, certErrorCallback) as response:
+        resp = response.read()
 
-        self.url = QUrl(RestRequest.restApiUrl + url)
+    return resp
 
-        # connect asynchronous result, when a request finishes
-        self._manager.finished.connect(self._finished)
-        self._manager.sslErrors.connect(self._sslError)
-        self._parentWindow = parentWindow
 
-        self.done.connect(done, Qt.QueuedConnection)  # type: ignore
+class RestRequest:
 
-    def _finished(self, reply):
-        '''
-        Handle signal 'finished'.  A network request has finished.
-        '''
-        try:
-            if reply.error() != QNetworkReply.NoError:
-                raise Exception(reply.errorString())
-            data = bytes(reply.readAll())
-            data = json.loads(data)
-        except Exception as e:
-            data = {
-                'result': None,
-                'error': str(e)
-            }
+    restApiUrl: typing.ClassVar[str] = ''  # base Rest API URL
+    _msgFunction: typing.Optional[CertCallbackType]
+    _url: str
 
-        self.done.emit(data)  # type: ignore
+    def __init__(
+        self,
+        url,
+        msgFunction: typing.Optional[CertCallbackType] = None,
+        params: typing.Optional[typing.Mapping[str, str]] = None,
+    ) -> None:  # parent not used
+        self._msgFunction = msgFunction
 
-        reply.deleteLater()  # schedule for delete from main event loop
+        if params:
+            url += '?' + '&'.join(
+                '{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8')))
+                for k, v in params.items()
+            )
 
-    def _sslError(self, reply, errors):
-        settings = QSettings()
-        settings.beginGroup('ssl')
-        cert = errors[0].certificate()
-        digest = str(cert.digest().toHex())
+        self._url = RestRequest.restApiUrl + url
 
-        approved = settings.value(digest, False)
+    def get(self) -> typing.Any:
+        return json.loads(getUrl(self._url, self._msgFunction))
 
-        errorString = '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(cert.subjectInfo(QSslCertificate.CommonName))
-
-        for err in errors:
-            errorString += '<li>' + err.errorString() + '</li>'
-
-        errorString += '</ul>'
-
-        if approved or QMessageBox.warning(self._parentWindow, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:  # type: ignore
-            settings.setValue(digest, True)
-            reply.ignoreSslErrors()
-
-        settings.endGroup()
-
-    def get(self):
-        request = QNetworkRequest(self.url)
-        request.setRawHeader(b'User-Agent', osDetector.getOs().encode('utf-8') + b" - UDS Connector " + VERSION.encode('utf-8'))
-        self._manager.get(request)

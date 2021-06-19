@@ -401,6 +401,10 @@ class gui:
                 multiline = 8
             self._data['multiline'] = multiline
 
+        def cleanStr(self):
+            return str(self.value).strip()
+
+
     class NumericField(InputField):
         """
         This represents a numeric field. It apears with an spin up/down button.
@@ -534,6 +538,9 @@ class gui:
         def __init__(self, **options):
             super().__init__(**options)
             self._type(gui.InputField.PASSWORD_TYPE)
+
+        def cleanStr(self):
+            return str(self.value).strip()      
 
     class HiddenField(InputField):
         """
