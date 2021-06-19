@@ -31,9 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import sys
+import platform
+import time
 import webbrowser
-import typing
 import threading
+import typing
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSettings
@@ -62,9 +64,11 @@ class UDSClient(QtWidgets.QMainWindow):
     animInverted: bool = False
     api: RestApi
 
-    def __init__(self, api: RestApi):
+    def __init__(self, api: RestApi, ticket: str, scrambler: str):
         QtWidgets.QMainWindow.__init__(self)
         self.api = api
+        self.ticket = ticket
+        self.scrambler = scrambler
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)  # type: ignore
 
         self.ui = Ui_MainWindow()
@@ -82,7 +86,7 @@ class UDSClient(QtWidgets.QMainWindow):
         self.move(hpos, vpos)
 
         self.animTimer = QtCore.QTimer()
-        self.animTimer.timeout.connect(self.updateAnim)
+        self.animTimer.timeout.connect(self.updateAnim)  # type: ignore
         # QtCore.QObject.connect(self.animTimer, QtCore.SIGNAL('timeout()'), self.updateAnim)
 
         self.activateWindow()
@@ -99,7 +103,12 @@ class UDSClient(QtWidgets.QMainWindow):
             'UDS Plugin Error'
         )  # In fact, main window is hidden, so this is not visible... :)
         self.closeWindow()
-        QtWidgets.QMessageBox.critical(None, 'UDS Plugin Error', '{}'.format(error), QtWidgets.QMessageBox.Ok)  # type: ignore
+        QtWidgets.QMessageBox.critical(
+            None,  # type: ignore
+            'UDS Plugin Error',
+            '{}'.format(error),
+            QtWidgets.QMessageBox.Ok
+        )
         self.withError = True
 
     def cancelPushed(self):
@@ -129,6 +138,12 @@ class UDSClient(QtWidgets.QMainWindow):
         try:
             self.api.getVersion()
         except InvalidVersion as e:
+            QtWidgets.QMessageBox.critical(
+                self,
+                'Upgrade required',
+                'A newer connector version is required.\nA browser will be opened to download it.',
+                QtWidgets.QMessageBox.Ok
+            )
             webbrowser.open(e.downloadUrl)
             self.closeWindow()
             return
@@ -145,14 +160,15 @@ class UDSClient(QtWidgets.QMainWindow):
             if 'darwin' in sys.platform:
                 self.showMinimized()
 
-            # Execute the waiting task...
-            threading.Thread(target=endScript).start()
-
             # QtCore.QTimer.singleShot(3000, self.endScript)
             # self.hide()
             self.closeWindow()
 
             exec(script, globals(), {'parent': self, 'sp': params})
+
+            # Execute the waiting tasks...
+            threading.Thread(target=endScript).start()
+
         except RetryException as e:
             self.ui.info.setText(str(e) + ', retrying access...')
             # Retry operation in ten seconds
@@ -169,26 +185,29 @@ class UDSClient(QtWidgets.QMainWindow):
         QtCore.QTimer.singleShot(100, self.getVersion)
 
 def endScript():
+    # Wait a bit before start processing ending sequence
+    time.sleep(3)
     # After running script, wait for stuff
     try:
+        logger.debug('Wating for tasks to finish...')
         tools.waitForTasks()
     except Exception:
         pass
 
     try:
+        logger.debug('Unlinking files')
         tools.unlinkFiles()
     except Exception:
         pass
 
+    # Removing 
     try:
+        logger.debug('Executing threads before exit')
         tools.execBeforeExit()
     except Exception:
         pass
 
-
-def done(data) -> None:
-    QtWidgets.QMessageBox.critical(None, 'Notice', str(data.data), QtWidgets.QMessageBox.Ok)  # type: ignore
-    sys.exit(0)
+    logger.debug('endScript done')
 
 
 # Ask user to approve endpoint
@@ -239,6 +258,42 @@ def sslError(hostname: str, serial):
     settings.endGroup()
     return approved
 
+def minimal(api: RestApi, ticket: str, scrambler: str):
+    try:
+        logger.info('M1 Execution')
+        logger.debug('Getting version')
+        try:
+            api.getVersion()
+        except InvalidVersion as e:
+            QtWidgets.QMessageBox.critical(
+                None,  # type: ignore
+                'Upgrade required',
+                'A newer connector version is required.\nA browser will be opened to download it.',
+                QtWidgets.QMessageBox.Ok
+            )
+            webbrowser.open(e.downloadUrl)
+            return 0
+        logger.debug('Transport data')
+        script, params = api.getScriptAndParams(ticket, scrambler)
+
+        # Execute UDS transport script
+        exec(script, globals(), {'parent': None, 'sp': params})
+        # Execute the waiting task...
+        threading.Thread(target=endScript).start()
+
+    except RetryException as e:
+        QtWidgets.QMessageBox.warning(
+                    None,  # type: ignore
+                    'Service not ready',
+                    '{}'.format('.\n'.join(str(e).split('.'))) + '\n\nPlease, retry again in a while.' ,
+                    QtWidgets.QMessageBox.Ok
+                )
+    except Exception as e:
+        logger.exception('Got exception on getTransportData')
+        raise e
+
+    except Exception:
+        logger.exception('Uncaught exception')
 
 if __name__ == "__main__":
     logger.debug('Initializing connector')
@@ -266,7 +321,7 @@ if __name__ == "__main__":
             raise Exception()
 
         ssl = uri[3] == 's'
-        host, UDSClient.ticket, UDSClient.scrambler = uri.split('//')[1].split('/')  # type: ignore
+        host, ticket, scrambler = uri.split('//')[1].split('/')  # type: ignore
         logger.debug(
             'ssl:%s, host:%s, ticket:%s, scrambler:%s',
             ssl,
@@ -290,13 +345,20 @@ if __name__ == "__main__":
     ), sslError)
 
     try:
+        if platform.mac_ver()[2] == 'arm64':
+            minimal(api, ticket, scrambler)
+            sys.exit(0)
+    except Exception:
+        pass  # Ignore check (should not be any problem)
+
+    try:
         logger.debug('Starting execution')
 
         # Approbe before going on
         if approveHost(host) is False:
             raise Exception('Host {} was not approved'.format(host))
 
-        win = UDSClient(api)
+        win = UDSClient(api, ticket, scrambler)
         win.show()
 
         win.start()
