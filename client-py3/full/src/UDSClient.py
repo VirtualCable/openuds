@@ -355,12 +355,12 @@ if __name__ == "__main__":
         '{}://{}/uds/rest/client'.format(['http', 'https'][ssl], host), sslError
     )
 
-    try:
-        if platform.mac_ver()[2] == 'arm64':
-            minimal(api, ticket, scrambler)
-            sys.exit(0)
-    except Exception:
-        pass  # Ignore check (should not be any problem)
+    # try:
+    #     if platform.mac_ver()[2] == 'arm64':
+    #         minimal(api, ticket, scrambler)
+    #         sys.exit(0)
+    # except Exception:
+    #     pass  # Ignore check (should not be any problem)
 
     try:
         logger.debug('Starting execution')
