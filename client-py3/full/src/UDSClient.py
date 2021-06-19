@@ -32,13 +32,13 @@
 '''
 import sys
 import webbrowser
-import json
-import base64, bz2
+import typing
+import threading
 
-from PyQt5 import QtCore,QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSettings
 
-from uds.rest import RestRequest
+from uds.rest import RestApi, RetryException, InvalidVersion, UDSException
 
 # Just to ensure there are available on runtime
 from uds.forward import forward  # type: ignore
@@ -50,27 +50,21 @@ from uds import VERSION
 
 from UDSWindow import Ui_MainWindow
 
-# Server before this version uses "unsigned" scripts
-OLD_METHOD_VERSION = '2.4.0'
-
-
-class RetryException(Exception):
-    pass
 
 
 class UDSClient(QtWidgets.QMainWindow):
 
-    ticket = None
-    scrambler = None
+    ticket: str = ''
+    scrambler: str = ''
     withError = False
-    animTimer = None
-    anim = 0
-    animInverted = False
-    serverVersion = 'X.Y.Z'  # Will be overwriten on getVersion
-    req = None
+    animTimer: typing.Optional[QtCore.QTimer] = None
+    anim: int = 0
+    animInverted: bool = False
+    api: RestApi
 
-    def __init__(self):
+    def __init__(self, api: RestApi):
         QtWidgets.QMainWindow.__init__(self)
+        self.api = api
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)  # type: ignore
 
         self.ui = Ui_MainWindow()
@@ -97,17 +91,6 @@ class UDSClient(QtWidgets.QMainWindow):
 
     def closeWindow(self):
         self.close()
-
-    def processError(self, data):
-        if 'error' in data:
-            # QtWidgets.QMessageBox.critical(self, 'Request error {}'.format(data.get('retryable', '0')), data['error'], QtWidgets.QMessageBox.Ok)
-            if data.get('retryable', '0') == '1':
-                raise RetryException(data['error'])
-
-            raise Exception(data['error'])
-            # QtWidgets.QMessageBox.critical(self, 'Request error', rest.data['error'], QtWidgets.QMessageBox.Ok)
-            # self.closeWindow()
-            # return
 
     def showError(self, error):
         logger.error('got error: %s', error)
@@ -143,115 +126,40 @@ class UDSClient(QtWidgets.QMainWindow):
         self.animTimer.stop()
 
     def getVersion(self):
-        req = RestRequest('', msgFunction=self._sslError)
-        data = req.get()
-
         try:
-            self.processError(data)
-            self.ui.info.setText('Processing...')
-
-            if data['result']['requiredVersion'] > VERSION:
-                QtWidgets.QMessageBox.critical(
-                    self,
-                    'Upgrade required',
-                    'A newer connector version is required.\nA browser will be opened to download it.',
-                    QtWidgets.QMessageBox.Ok,
-                )
-                webbrowser.open(data['result']['downloadUrl'])
-                self.closeWindow()
-                return
-
-            self.serverVersion = data['result']['requiredVersion']
-            # Now load transport data...
-            self.getTransportData()
-
-        except RetryException as e:
-            self.ui.info.setText(str(e))
-            QtCore.QTimer.singleShot(1000, self.getVersion)
-
+            self.api.getVersion()
+        except InvalidVersion as e:
+            webbrowser.open(e.downloadUrl)
+            self.closeWindow()
+            return
         except Exception as e:
             self.showError(e)
 
+        self.getTransportData()
+
     def getTransportData(self):
         try:
-            req = RestRequest(
-                '/{}/{}'.format(self.ticket, self.scrambler),
-                msgFunction=self._sslError,
-                params={'hostname': tools.getHostName(), 'version': VERSION},
-            )
-            data = req.get()
-        except Exception as e:
-            logger.exception('Got exception on getTransportData')
-            raise e
-
-        logger.debug('Transport data received')
-        try:
-            self.processError(data)
-
-            params = None
-
-            if self.serverVersion <= OLD_METHOD_VERSION:
-                script = bz2.decompress(base64.b64decode(data['result']))
-                # This fixes uds 2.2 "write" string on binary streams on some transport
-                script = script.replace(b'stdin.write("', b'stdin.write(b"')
-                script = script.replace(b'version)', b'version.decode("utf-8"))')
-            else:
-                res = data['result']
-                # We have three elements on result:
-                # * Script
-                # * Signature
-                # * Script data
-                # We test that the Script has correct signature, and them execute it with the parameters
-                # script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
-                script, signature, params = (
-                    bz2.decompress(base64.b64decode(res['script'])),
-                    res['signature'],
-                    json.loads(bz2.decompress(base64.b64decode(res['params']))),
-                )
-                if tools.verifySignature(script, signature) is False:
-                    logger.error('Signature is invalid')
-
-                    raise Exception(
-                        'Invalid UDS code signature. Please, report to administrator'
-                    )
-
+            script, params = self.api.getScriptAndParams(self.ticket, self.scrambler)
             self.stopAnim()
 
             if 'darwin' in sys.platform:
                 self.showMinimized()
 
-            QtCore.QTimer.singleShot(3000, self.endScript)
-            self.hide()
+            # Execute the waiting task...
+            threading.Thread(target=endScript).start()
 
-            exec(script.decode("utf-8"), globals(), {'parent': self, 'sp': params})
+            # QtCore.QTimer.singleShot(3000, self.endScript)
+            # self.hide()
+            self.closeWindow()
 
+            exec(script, globals(), {'parent': self, 'sp': params})
         except RetryException as e:
             self.ui.info.setText(str(e) + ', retrying access...')
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
-
         except Exception as e:
-            # logger.exception('Got exception executing script:')
-            self.showError(e)
-
-    def endScript(self):
-        # After running script, wait for stuff
-        try:
-            tools.waitForTasks()
-        except Exception:
-            pass
-
-        try:
-            tools.unlinkFiles()
-        except Exception:
-            pass
-
-        try:
-            tools.execBeforeExit()
-        except Exception:
-            pass
-
-        self.closeWindow()
+            logger.exception('Got exception on getTransportData')
+            raise e
 
     def start(self):
         """
@@ -260,19 +168,22 @@ class UDSClient(QtWidgets.QMainWindow):
         self.ui.info.setText('Initializing...')
         QtCore.QTimer.singleShot(100, self.getVersion)
 
-    def _sslError(self, hostname, serial):
-        settings = QSettings()
-        settings.beginGroup('ssl')
+def endScript():
+    # After running script, wait for stuff
+    try:
+        tools.waitForTasks()
+    except Exception:
+        pass
 
-        approved = settings.value(serial, False)
+    try:
+        tools.unlinkFiles()
+    except Exception:
+        pass
 
-        if approved or QtWidgets.QMessageBox.warning(self, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:  # type: ignore
-            approved = True
-            settings.setValue(serial, True)
-
-        settings.endGroup()
-        return approved
-
+    try:
+        tools.execBeforeExit()
+    except Exception:
+        pass
 
 
 def done(data) -> None:
@@ -281,7 +192,7 @@ def done(data) -> None:
 
 
 # Ask user to approve endpoint
-def approveHost(hostName, parentWindow=None):
+def approveHost(hostName: str):
     settings = QtCore.QSettings()
     settings.beginGroup('endpoints')
 
@@ -293,9 +204,37 @@ def approveHost(hostName, parentWindow=None):
         '<p>Only approve UDS servers that you trust to avoid security issues.</p>'
     )
 
-    if approved or QtWidgets.QMessageBox.warning(parentWindow, 'ACCESS Warning', errorString, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:  # type: ignore
-        settings.setValue(hostName, True)
+    if not approved:
+        if QtWidgets.QMessageBox.warning(
+            None,  # type: ignore
+            'ACCESS Warning',
+            errorString,
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No  # type: ignore
+        ) == QtWidgets.QMessageBox.Yes:
+            settings.setValue(hostName, True)
+            approved = True
+
+    settings.endGroup()
+    return approved
+
+def sslError(hostname: str, serial):
+    settings = QSettings()
+    settings.beginGroup('ssl')
+
+    approved = settings.value(serial, False)
+
+    if (
+        approved
+        or QtWidgets.QMessageBox.warning(
+            None,                                                  # type: ignore
+            'SSL Warning',
+            f'Could not check sll certificate for {hostname}',
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,  # type: ignore
+        )
+        == QtWidgets.QMessageBox.Yes
+    ):
         approved = True
+        settings.setValue(serial, True)
 
     settings.endGroup()
     return approved
@@ -346,9 +285,9 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Setup REST api endpoint
-    RestRequest.restApiUrl = '{}://{}/uds/rest/client'.format(['http', 'https'][ssl], host)
-    logger.debug('Setting request URL to %s', RestRequest.restApiUrl)
-    # RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
+    api = RestApi('{}://{}/uds/rest/client'.format(
+        ['http', 'https'][ssl], host
+    ), sslError)
 
     try:
         logger.debug('Starting execution')
@@ -357,7 +296,7 @@ if __name__ == "__main__":
         if approveHost(host) is False:
             raise Exception('Host {} was not approved'.format(host))
 
-        win = UDSClient()
+        win = UDSClient(api)
         win.show()
 
         win.start()
