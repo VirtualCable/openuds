@@ -11,7 +11,7 @@ Release: %{release}
 Summary: Client for Universal Desktop Services (UDS) Broker
 License: BSD3
 Group: Applications/Productivity
-Requires: python3-requests python3-paramiko python3-qt5 python3-cryptography
+Requires: python3-paramiko python3-qt5 python3-cryptography python3-certifi
 Vendor: Virtual Cable S.L.U.
 URL: http://www.udsenterprise.com
 Provides: udsclient
