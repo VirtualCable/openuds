@@ -54,7 +54,7 @@ if executable is None:
                         <ul>
                             <li>Install brew (from <a href="https://brew.sh">brew website</a>)</li>
                             <li>Install xquartz<br/>
-                                <b>brew cask install xquartz</b></li>
+                                <b>brew install --cask xquartz</b></li>
                             <li>Install freerdp<br/>
                                 <b>brew install freerdp</b></li>
                             <li>Reboot so xquartz will be automatically started when needed</li>
