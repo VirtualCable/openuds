@@ -153,7 +153,7 @@ def unlinkFiles() -> None:
 
 
 def addTaskToWait(taks: typing.Any, includeSubprocess: bool = False) -> None:
-    _tasksToWait.append(taks)
+    _tasksToWait.append((taks, includeSubprocess))
 
 
 def waitForTasks() -> None:
