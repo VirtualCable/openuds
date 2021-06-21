@@ -44,7 +44,7 @@ from .log import logger
 
 _unlinkFiles: typing.List[str] = []
 _tasksToWait: typing.List[typing.Any] = []
-_execBeforeExit: typing.List[typing.Callable[[],None]] = []
+_execBeforeExit: typing.List[typing.Callable[[], None]] = []
 
 sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
 
@@ -65,9 +65,11 @@ nVgtClKcDDlSaBsO875WDR0CAwEAAQ==
 -----END PUBLIC KEY-----'''
 
 
-def saveTempFile(content: str, filename: typing.Optional[str]=None) -> str:
+def saveTempFile(content: str, filename: typing.Optional[str] = None) -> str:
     if filename is None:
-        filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
+        filename = ''.join(
+            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
+        )
         filename = filename + '.uds'
 
     filename = os.path.join(tempfile.gettempdir(), filename)
@@ -88,7 +90,7 @@ def readTempFile(filename: str) -> typing.Optional[str]:
         return None
 
 
-def testServer(host: str, port: typing.Union[str, int], timeOut: int=4) -> bool:
+def testServer(host: str, port: typing.Union[str, int], timeOut: int = 4) -> bool:
     try:
         sock = socket.create_connection((host, int(port)), timeOut)
         sock.close()
@@ -97,7 +99,9 @@ def testServer(host: str, port: typing.Union[str, int], timeOut: int=4) -> bool:
     return True
 
 
-def findApp(appName: str, extraPath:typing.Optional[str] = None) -> typing.Optional[str]:
+def findApp(
+    appName: str, extraPath: typing.Optional[str] = None
+) -> typing.Optional[str]:
     searchPath = os.environ['PATH'].split(os.pathsep)
     if extraPath:
         searchPath += list(extraPath)
@@ -117,6 +121,7 @@ def getHostName() -> str:
     hostname = socket.gethostname()
     logger.info('Hostname: %s', hostname)
     return hostname
+
 
 # Queing operations (to be executed before exit)
 
@@ -179,14 +184,13 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
     from cryptography.hazmat.primitives import serialization, hashes
     from cryptography.hazmat.primitives.asymmetric import utils, padding
 
-    public_key = serialization.load_pem_public_key(data=PUBLIC_KEY, backend=default_backend())
+    public_key = serialization.load_pem_public_key(
+        data=PUBLIC_KEY, backend=default_backend()
+    )
 
     try:
         public_key.verify(
-            base64.b64decode(signature),
-            script,
-            padding.PKCS1v15(),
-            hashes.SHA256()
+            base64.b64decode(signature), script, padding.PKCS1v15(), hashes.SHA256()
         )
     except Exception:  # InvalidSignature
         return False
