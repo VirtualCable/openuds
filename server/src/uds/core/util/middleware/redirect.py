@@ -48,7 +48,10 @@ class RedirectMiddleware:
         # 'uds/rest',  # REST must be HTTPS if redirect is enabled
         'uds/pam',
         'uds/guacamole',
+        # Test client can be http
         'uds/rest/client/test'
+        # And also the tunnel
+        '/uds/rest/tunnel'
     ]
 
     def __init__(self, get_response):
