@@ -147,7 +147,7 @@ def unlinkFiles(early: bool = False) -> None:
         # Wait 2 seconds before deleting anything on early and 5 on later stages
         time.sleep(1 + 2 * (1 + int(early)))
 
-        for f in _unlinkFiles:
+        for f in filesToUnlink:
             try:
                 os.unlink(f[0])
             except Exception as e:
