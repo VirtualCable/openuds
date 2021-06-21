@@ -33,16 +33,21 @@ from __future__ import unicode_literals
 
 import logging
 import os
+import os.path
 import sys
 import tempfile
 
 LOGLEVEL = logging.INFO
 
+# Update debug level if uds-debug-on exists
 if 'linux' in sys.platform or 'darwin' in sys.platform:
-    from os.path import expanduser  # pylint: disable=ungrouped-imports
-    logFile = expanduser('~/udsclient.log')
+    logFile = os.path.expanduser('~/udsclient.log')
+    if os.path.isfile(os.path.expanduser('~/uds-debug-on')):
+        LOGLEVEL = logging.DEBUG
 else:
     logFile = os.path.join(tempfile.gettempdir(), 'udsclient.log')
+    if os.path.isfile(os.path.join(tempfile.gettempdir(), 'uds-debug-on')):
+        LOGLEVEL = logging.DEBUG
 
 try:
     logging.basicConfig(
