@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import sys
+import os
 import platform
 import time
 import webbrowser
@@ -262,7 +263,7 @@ def sslError(hostname: str, serial):
     settings.endGroup()
     return approved
 
-
+# Used only if command line says so
 def minimal(api: RestApi, ticket: str, scrambler: str):
     try:
         logger.info('M1 Execution')
@@ -319,10 +320,19 @@ if __name__ == "__main__":
     if 'darwin' not in sys.platform:
         logger.debug('Mac OS *NOT* Detected')
         app.setStyle('plastique')  # type: ignore
+    else:
+        logger.debug('Platform is Mac OS, adding homebrew possible paths')
+        os.environ['PATH'] += os.pathsep.join(['/opt/homebrew/bin'])
+        logger.debug('Now path is %s', os.environ['PATH'])
 
     # First parameter must be url
+    useMinimal = False
     try:
         uri = sys.argv[1]
+
+        if uri == '--minimal':
+            useMinimal = True
+            uri = sys.argv[2]  # And get URI
 
         if uri == '--test':
             sys.exit(0)
@@ -354,13 +364,6 @@ if __name__ == "__main__":
     api = RestApi(
         '{}://{}/uds/rest/client'.format(['http', 'https'][ssl], host), sslError
     )
-
-    # try:
-    #     if platform.mac_ver()[2] == 'arm64':
-    #         minimal(api, ticket, scrambler)
-    #         sys.exit(0)
-    # except Exception:
-    #     pass  # Ignore check (should not be any problem)
 
     try:
         logger.debug('Starting execution')

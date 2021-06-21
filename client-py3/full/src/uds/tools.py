@@ -38,13 +38,13 @@ import stat
 import sys
 import time
 import base64
-
+import typing
 
 from .log import logger
 
-_unlinkFiles = []
-_tasksToWait = []
-_execBeforeExit = []
+_unlinkFiles: typing.List[str] = []
+_tasksToWait: typing.List[typing.Any] = []
+_execBeforeExit: typing.List[typing.Callable[[],None]] = []
 
 sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
 
@@ -65,7 +65,7 @@ nVgtClKcDDlSaBsO875WDR0CAwEAAQ==
 -----END PUBLIC KEY-----'''
 
 
-def saveTempFile(content, filename=None):
+def saveTempFile(content: str, filename: typing.Optional[str]=None) -> str:
     if filename is None:
         filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         filename = filename + '.uds'
@@ -79,7 +79,7 @@ def saveTempFile(content, filename=None):
     return filename
 
 
-def readTempFile(filename):
+def readTempFile(filename: str) -> typing.Optional[str]:
     filename = os.path.join(tempfile.gettempdir(), filename)
     try:
         with open(filename, 'r') as f:
@@ -88,7 +88,7 @@ def readTempFile(filename):
         return None
 
 
-def testServer(host, port, timeOut=4):
+def testServer(host: str, port: typing.Union[str, int], timeOut: int=4) -> bool:
     try:
         sock = socket.create_connection((host, int(port)), timeOut)
         sock.close()
@@ -97,9 +97,9 @@ def testServer(host, port, timeOut=4):
     return True
 
 
-def findApp(appName, extraPath=None):
+def findApp(appName: str, extraPath:typing.Optional[str] = None) -> typing.Optional[str]:
     searchPath = os.environ['PATH'].split(os.pathsep)
-    if extraPath is not None:
+    if extraPath:
         searchPath += list(extraPath)
 
     for path in searchPath:
@@ -109,7 +109,7 @@ def findApp(appName, extraPath=None):
     return None
 
 
-def getHostName():
+def getHostName() -> str:
     '''
     Returns current host name
     In fact, it's a wrapper for socket.gethostname()
@@ -121,14 +121,14 @@ def getHostName():
 # Queing operations (to be executed before exit)
 
 
-def addFileToUnlink(filename):
+def addFileToUnlink(filename: str) -> None:
     '''
     Adds a file to the wait-and-unlink list
     '''
     _unlinkFiles.append(filename)
 
 
-def unlinkFiles():
+def unlinkFiles() -> None:
     '''
     Removes all wait-and-unlink files
     '''
@@ -142,11 +142,11 @@ def unlinkFiles():
                 pass
 
 
-def addTaskToWait(taks):
+def addTaskToWait(taks: typing.Any) -> None:
     _tasksToWait.append(taks)
 
 
-def waitForTasks():
+def waitForTasks() -> None:
     for t in _tasksToWait:
         try:
             if hasattr(t, 'join'):
@@ -157,16 +157,16 @@ def waitForTasks():
             pass
 
 
-def addExecBeforeExit(fnc):
+def addExecBeforeExit(fnc: typing.Callable[[], None]) -> None:
     _execBeforeExit.append(fnc)
 
 
-def execBeforeExit():
+def execBeforeExit() -> None:
     for fnc in _execBeforeExit:
-        fnc.__call__()
+        fnc()
 
 
-def verifySignature(script, signature):
+def verifySignature(script: bytes, signature: bytes) -> bool:
     '''
     Verifies with a public key from whom the data came that it was indeed
     signed by their private key
