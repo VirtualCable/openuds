@@ -157,6 +157,7 @@ def addTaskToWait(taks: typing.Any, includeSubprocess: bool = False) -> None:
 
 
 def waitForTasks() -> None:
+    logger.debug('Started to wait %s', _tasksToWait)
     for task, waitForSubp in _tasksToWait:
         logger.debug('Waiting for task %s, subprocess wait: %s', task, waitForSubp)
         try:
@@ -170,8 +171,8 @@ def waitForTasks() -> None:
                 for i in filter(lambda x: x.ppid() == task.pid, psutil.process_iter(attrs=('ppid',))):
                     logger.debug('Found %s', i)
                     i.wait()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error('Waiting for tasks to finish error: %s', e)
 
 
 def addExecBeforeExit(fnc: typing.Callable[[], None]) -> None:

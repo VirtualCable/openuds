@@ -192,21 +192,22 @@ def endScript():
     try:
         logger.debug('Wating for tasks to finish...')
         tools.waitForTasks()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug('Watiting for tasks to finish: %s', e)
 
     try:
         logger.debug('Unlinking files')
         tools.unlinkFiles()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug('Unlinking files: %s', e)
+
 
     # Removing
     try:
         logger.debug('Executing threads before exit')
         tools.execBeforeExit()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug('execBeforeExit: %s', e)
 
     logger.debug('endScript done')
 
