@@ -158,7 +158,7 @@ def addTaskToWait(taks: typing.Any, includeSubprocess: bool = False) -> None:
 
 def waitForTasks() -> None:
     logger.debug('Started to wait %s', _tasksToWait)
-    for task, waitForSubp in _tasksToWait:
+    for task, waitForSubp in sorted(_tasksToWait, key=lambda x: int(x[1])):
         logger.debug('Waiting for task %s, subprocess wait: %s', task, waitForSubp)
         try:
             if hasattr(task, 'join'):
