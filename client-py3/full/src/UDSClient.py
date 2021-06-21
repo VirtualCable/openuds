@@ -188,6 +188,12 @@ class UDSClient(QtWidgets.QMainWindow):
 def endScript():
     # Wait a bit before start processing ending sequence
     time.sleep(3)
+    try:
+        # Remove early stage files...
+        tools.unlinkFiles(early=True)
+    except Exception as e:
+        logger.debug('Unlinking files on early stage: %s', e)
+
     # After running script, wait for stuff
     try:
         logger.debug('Wating for tasks to finish...')
@@ -197,10 +203,9 @@ def endScript():
 
     try:
         logger.debug('Unlinking files')
-        tools.unlinkFiles()
+        tools.unlinkFiles(early=False)
     except Exception as e:
-        logger.debug('Unlinking files: %s', e)
-
+        logger.debug('Unlinking files on later stage: %s', e)
 
     # Removing
     try:
@@ -323,7 +328,13 @@ if __name__ == "__main__":
         app.setStyle('plastique')  # type: ignore
     else:
         logger.debug('Platform is Mac OS, adding homebrew possible paths')
-        os.environ['PATH'] += ''.join(os.pathsep + i for i in ('/usr/local/bin', '/opt/homebrew/bin',))
+        os.environ['PATH'] += ''.join(
+            os.pathsep + i
+            for i in (
+                '/usr/local/bin',
+                '/opt/homebrew/bin',
+            )
+        )
         logger.debug('Now path is %s', os.environ['PATH'])
 
     # First parameter must be url

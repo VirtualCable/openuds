@@ -47,7 +47,7 @@ except ImportError:
 
 from .log import logger
 
-_unlinkFiles: typing.List[str] = []
+_unlinkFiles: typing.List[typing.Tuple[str, bool]] = []
 _tasksToWait: typing.List[typing.Tuple[typing.Any, bool]] = []
 _execBeforeExit: typing.List[typing.Callable[[], None]] = []
 
@@ -131,25 +131,27 @@ def getHostName() -> str:
 # Queing operations (to be executed before exit)
 
 
-def addFileToUnlink(filename: str) -> None:
+def addFileToUnlink(filename: str, early: bool = False) -> None:
     '''
     Adds a file to the wait-and-unlink list
     '''
-    _unlinkFiles.append(filename)
+    _unlinkFiles.append((filename, early))
 
 
-def unlinkFiles() -> None:
+def unlinkFiles(early: bool = False) -> None:
     '''
     Removes all wait-and-unlink files
     '''
-    if _unlinkFiles:
-        time.sleep(5)  # Wait 5 seconds before deleting anything
+    filesToUnlink = list(filter(lambda x: x[1] == early, _unlinkFiles))
+    if filesToUnlink:
+        # Wait 2 seconds before deleting anything on early and 5 on later stages
+        time.sleep(1 + 2 * (1 + int(early)))
 
         for f in _unlinkFiles:
             try:
-                os.unlink(f)
-            except Exception:
-                pass
+                os.unlink(f[0])
+            except Exception as e:
+                logger.debug('File %s not deleted: %s', f[0], e)
 
 
 def addTaskToWait(taks: typing.Any, includeSubprocess: bool = False) -> None:
@@ -158,7 +160,7 @@ def addTaskToWait(taks: typing.Any, includeSubprocess: bool = False) -> None:
 
 def waitForTasks() -> None:
     logger.debug('Started to wait %s', _tasksToWait)
-    for task, waitForSubp in sorted(_tasksToWait, key=lambda x: int(x[1])):
+    for task, waitForSubp in _tasksToWait:
         logger.debug('Waiting for task %s, subprocess wait: %s', task, waitForSubp)
         try:
             if hasattr(task, 'join'):
@@ -168,7 +170,9 @@ def waitForTasks() -> None:
             # If wait for spanwed process (look for process with task pid) and we can look for them...
             if psutil and waitForSubp and hasattr(task, 'pid'):
                 logger.debug('Waiting for subprocesses...')
-                for i in filter(lambda x: x.ppid() == task.pid, psutil.process_iter(attrs=('ppid',))):
+                for i in filter(
+                    lambda x: x.ppid() == task.pid, psutil.process_iter(attrs=('ppid',))
+                ):
                     logger.debug('Found %s', i)
                     i.wait()
         except Exception as e:
