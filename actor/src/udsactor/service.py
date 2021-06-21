@@ -299,6 +299,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             except rest.RESTError as e: # Invalid key?
                 logger.error('Error validating with broker. (Invalid token?): {}'.format(e))
                 return False
+            except Exception:
+                logger.exception()
+                self.doWait(5000)  # Wait a bit and retry...
 
         return self.configureMachine()
 
