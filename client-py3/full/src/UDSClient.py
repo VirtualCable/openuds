@@ -322,7 +322,7 @@ if __name__ == "__main__":
         app.setStyle('plastique')  # type: ignore
     else:
         logger.debug('Platform is Mac OS, adding homebrew possible paths')
-        os.environ['PATH'] += ''.join(os.pathsep + i for i in ('/opt/homebrew/bin',))
+        os.environ['PATH'] += ''.join(os.pathsep + i for i in ('/usr/local/bin', '/opt/homebrew/bin',))
         logger.debug('Now path is %s', os.environ['PATH'])
 
     # First parameter must be url

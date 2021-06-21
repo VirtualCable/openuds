@@ -14,7 +14,7 @@ from uds import tools  # type: ignore
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 msrdc = '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
-xfreerdp = '/usr/local/bin/xfreerdp'
+xfreerdp = tools.findApp('xfreerdp')
 executable = None
 
 def fixResolution():
