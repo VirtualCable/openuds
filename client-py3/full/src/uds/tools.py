@@ -40,10 +40,15 @@ import time
 import base64
 import typing
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 from .log import logger
 
 _unlinkFiles: typing.List[str] = []
-_tasksToWait: typing.List[typing.Any] = []
+_tasksToWait: typing.List[typing.Tuple[typing.Any, bool]] = []
 _execBeforeExit: typing.List[typing.Callable[[], None]] = []
 
 sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
@@ -147,17 +152,21 @@ def unlinkFiles() -> None:
                 pass
 
 
-def addTaskToWait(taks: typing.Any) -> None:
+def addTaskToWait(taks: typing.Any, includeSubprocess: bool = False) -> None:
     _tasksToWait.append(taks)
 
 
 def waitForTasks() -> None:
-    for t in _tasksToWait:
+    for task, waitForSubp in _tasksToWait:
         try:
-            if hasattr(t, 'join'):
-                t.join()
-            elif hasattr(t, 'wait'):
-                t.wait()
+            if hasattr(task, 'join'):
+                task.join()
+            elif hasattr(task, 'wait'):
+                task.wait()
+            # If wait for spanwed process (look for process with task pid) and we can look for them...
+            if psutil and waitForSubp and hasattr(task, 'pid'):
+                for i in filter(lambda x: x.ppid() == task.pid, psutil.process_iter(attrs=('ppid',))):
+                    i.wait()
         except Exception:
             pass
 
