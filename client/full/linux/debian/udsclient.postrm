@@ -1,6 +1,0 @@
-#!/bin/sh -e
-
-. /usr/share/debconf/confmodule
-
-set -e
-

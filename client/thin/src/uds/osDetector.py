@@ -1,1 +1,0 @@
-../../../full/src/uds/osDetector.py
