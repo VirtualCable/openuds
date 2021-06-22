@@ -9,6 +9,7 @@ import random
 import time
 import select
 import socketserver
+import typing
 
 import paramiko
 
@@ -36,6 +37,11 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
 
 class Handler(socketserver.BaseRequestHandler):
+    event: threading.Event
+    thread: 'ForwardThread'
+    ssh_transport: paramiko.Transport
+    chain_host: str
+    chain_port: int
 
     def handle(self):
         self.thread.currentConnections += 1
@@ -86,6 +92,7 @@ class Handler(socketserver.BaseRequestHandler):
 
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
+    client: typing.Optional[paramiko.SSHClient]
 
     def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime, fingerPrints):
         threading.Thread.__init__(self)
@@ -118,7 +125,7 @@ class ForwardThread(threading.Thread):
 
         ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort, self.waitTime, self.fingerPrints)
         ft.client = self.client
-        self.client.useCount += 1  # One more using this client
+        self.client.useCount += 1  # type: ignore
         ft.start()
 
         while ft.status == 0:
@@ -138,7 +145,7 @@ class ForwardThread(threading.Thread):
         if self.client is None:
             try:
                 self.client = paramiko.SSHClient()
-                self.client.useCount = 1  # Custom added variable, to keep track on when to close tunnel
+                self.client.useCount = 1  # type: ignore
                 self.client.load_system_host_keys()
                 self.client.set_missing_host_key_policy(CheckfingerPrints(self.fingerPrints))
 
@@ -176,8 +183,8 @@ class ForwardThread(threading.Thread):
             self.fs.shutdown()
 
             if self.client is not None:
-                self.client.useCount -= 1
-                if self.client.useCount == 0:
+                self.client.useCount -= 1  # type: ignore
+                if self.client.useCount == 0:  # type: ignore
                     self.client.close()
                 self.client = None  # Clean up
         except Exception:

@@ -46,7 +46,7 @@ import certifi
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
-from . import osDetector
+from . import os_detector
 from . import tools
 from . import VERSION
 from .log import logger
@@ -206,7 +206,7 @@ class RestApi:
         def urlopen(url: str):
             # Generate the request with the headers
             req = urllib.request.Request(url, headers={
-                'User-Agent': osDetector.getOs() + " - UDS Connector " + VERSION
+                'User-Agent': os_detector.getOs() + " - UDS Connector " + VERSION
             })
             return urllib.request.urlopen(req, context=ctx)
 
