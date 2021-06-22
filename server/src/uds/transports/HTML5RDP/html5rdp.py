@@ -281,7 +281,7 @@ class HTML5RDPTransport(transports.Transport):
         onw = onw.format(hash(transport.name))
 
         return str(
-            "{}/transport/?{}.{}&{}".format(
+            "{}/transport/?{}.{}&uds&{}".format(
                 self.guacamoleServer.value,
                 ticket,
                 scrambler,
