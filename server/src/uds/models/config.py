@@ -33,6 +33,7 @@
 import logging
 
 from django.db import models
+from django.db.models import constraints
 
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,10 @@ class Config(models.Model):
         """
 
         db_table = 'uds_configuration'
-        unique_together = (('section', 'key'),)
+        constraints = [
+            models.UniqueConstraint(fields=['section', 'key'], name='u_cfg_section_key')
+        ]
+        
         app_label = 'uds'
 
     def __str__(self) -> str:

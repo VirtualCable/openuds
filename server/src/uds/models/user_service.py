@@ -132,7 +132,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         db_table = 'uds__user_service'
         ordering = ('creation_date',)
         app_label = 'uds'
-        index_together = ('deployed_service', 'cache_level', 'state')
+        indexes = [
+            models.Index(fields=['deployed_service', 'cache_level', 'state']),
+        ]
 
     @property
     def name(self) -> str:
@@ -535,7 +537,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             dct[v.name] = v.value
         return dct
 
-    def setProperty(self, propName: str, propValue: typing.Optional[str] = None) -> None:
+    def setProperty(
+        self, propName: str, propValue: typing.Optional[str] = None
+    ) -> None:
         prop, _ = self.properties.get_or_create(name=propName)
         prop.value = propValue or ''
         prop.save()

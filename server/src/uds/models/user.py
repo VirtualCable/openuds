@@ -57,13 +57,20 @@ class User(UUIDModel):
     """
     This class represents a single user, associated with one authenticator
     """
-    manager : 'models.ForeignKey[User, Authenticator]' = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
+
+    manager: 'models.ForeignKey[User, Authenticator]' = UnsavedForeignKey(
+        Authenticator, on_delete=models.CASCADE, related_name='users'
+    )
     name = models.CharField(max_length=128, db_index=True)
     real_name = models.CharField(max_length=128)
     comments = models.CharField(max_length=256)
     state = models.CharField(max_length=1, db_index=True)
-    password = models.CharField(max_length=128, default='')  # Only used on "internal" sources
-    staff_member = models.BooleanField(default=False)  # Staff members can login to admin
+    password = models.CharField(
+        max_length=128, default=''
+    )  # Only used on "internal" sources
+    staff_member = models.BooleanField(
+        default=False
+    )  # Staff members can login to admin
     is_admin = models.BooleanField(default=False)  # is true, this is a super-admin
     last_access = models.DateTimeField(default=NEVER)
     parent = models.CharField(max_length=50, default=None, null=True)
@@ -78,9 +85,12 @@ class User(UUIDModel):
         """
         Meta class to declare default order and unique multiple field index
         """
-        unique_together = (("manager", "name"),)
+
         ordering = ('name',)
         app_label = 'uds'
+        constraints = [
+            models.UniqueConstraint(fields=['manager', 'name'], name='u_usr_manager_name')
+        ]
 
     def getUsernameForAuth(self) -> str:
         """
@@ -129,6 +139,7 @@ class User(UUIDModel):
 
         """
         from uds.core.managers.user_preferences import UserPrefsManager
+
         return UserPrefsManager.manager().getPreferencesForUser(modName, self)
 
     def updateLastAccess(self) -> None:
@@ -151,7 +162,9 @@ class User(UUIDModel):
         """
         if self.parent:
             try:
-                usr = User.objects.prefetch_related('authenticator', 'groups').get(uuid=self.parent)
+                usr = User.objects.prefetch_related('authenticator', 'groups').get(
+                    uuid=self.parent
+                )
             except Exception:  # If parent do not exists
                 usr = self
         else:
@@ -164,14 +177,17 @@ class User(UUIDModel):
             yield g
 
         # Locate metagroups
-        for g in (self.manager.groups.filter(is_meta=True)
-                    .annotate(number_groups=Count('groups'))  # g.groups.count() 
-                    .annotate(number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))) # g.groups.filter(id__in=grps).count()
-            ):
-            numberGroupsBelongingInMeta: int = g.number_belongs_meta 
+        for g in (
+            self.manager.groups.filter(is_meta=True)
+            .annotate(number_groups=Count('groups'))  # g.groups.count()
+            .annotate(
+                number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))
+            )  # g.groups.filter(id__in=grps).count()
+        ):
+            numberGroupsBelongingInMeta: int = g.number_belongs_meta
 
             logger.debug('gn = %s', numberGroupsBelongingInMeta)
-            logger.debug('groups count: %s', g.number_groups) 
+            logger.debug('groups count: %s', g.number_groups)
 
             if g.meta_if_any is True and numberGroupsBelongingInMeta > 0:
                 numberGroupsBelongingInMeta = g.number_groups
@@ -179,12 +195,14 @@ class User(UUIDModel):
             logger.debug('gn after = %s', numberGroupsBelongingInMeta)
 
             # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
-            if numberGroupsBelongingInMeta == g.number_groups:  
+            if numberGroupsBelongingInMeta == g.number_groups:
                 # This group matches
                 yield g
 
     def __str__(self):
-        return 'User {} (id:{}) from auth {}'.format(self.name, self.id, self.manager.name)
+        return 'User {} (id:{}) from auth {}'.format(
+            self.name, self.id, self.manager.name
+        )
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

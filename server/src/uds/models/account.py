@@ -87,7 +87,7 @@ class Account(UUIDModel, TaggingMixin):  # type: ignore
             return
 
         tmp = userService.accounting
-        tmp.user_service = None
+        tmp.user_service = None  # type: ignore
         tmp.end = getSqlDatetime()
         tmp.save()
 

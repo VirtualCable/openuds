@@ -65,9 +65,9 @@ class StatsCounters(models.Model):
 
         db_table = 'uds_stats_c'
         app_label = 'uds'
-        index_together= [
-            ('owner_type', 'stamp'),
-            ('owner_type', 'counter_type', 'stamp'),
+        indexes = [
+            models.Index(fields=['owner_type', 'stamp']),
+            models.Index(fields=['owner_type', 'counter_type', 'stamp']),
         ]
 
     @staticmethod

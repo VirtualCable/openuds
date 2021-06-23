@@ -57,9 +57,11 @@ class UniqueId(models.Model):
         Meta class to declare default order and unique multiple field index
         """
 
-        unique_together = (('basename', 'seq'),)
         ordering = ('-seq',)
         app_label = 'uds'
+        constraints = [
+            models.UniqueConstraint(fields=['basename', 'seq'], name='u_uid_base_seq')
+        ]
 
     def __str__(self) -> str:
         return u"{0} {1}.{2}, assigned is {3}".format(

@@ -86,8 +86,10 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
 
         ordering = ('name',)
-        unique_together = (("provider", "name"),)
         app_label = 'uds'
+        constraints = [
+            models.UniqueConstraint(fields=['provider', 'name'], name='u_srv_provider_name')
+        ]
 
     def getEnvironment(self) -> Environment:
         """

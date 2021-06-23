@@ -75,9 +75,11 @@ class Group(UUIDModel):
         Meta class to declare default order and unique multiple field index
         """
 
-        unique_together = (("manager", "name"),)
         ordering = ('name',)
         app_label = 'uds'
+        constraints = [
+            models.UniqueConstraint(fields=['manager', 'name'], name='u_grp_manager_name')
+        ]
 
     @property
     def pretty_name(self) -> str:
