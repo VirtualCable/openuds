@@ -135,6 +135,9 @@ def addFileToUnlink(filename: str, early: bool = False) -> None:
     '''
     Adds a file to the wait-and-unlink list
     '''
+    logger.debug(
+        'Added file %s to unlink on %s stage', filename, 'early' if early else 'later'
+    )
     _unlinkFiles.append((filename, early))
 
 
@@ -142,8 +145,10 @@ def unlinkFiles(early: bool = False) -> None:
     '''
     Removes all wait-and-unlink files
     '''
+    logger.debug('Unlinking files on %s stage', 'early' if early else 'later')
     filesToUnlink = list(filter(lambda x: x[1] == early, _unlinkFiles))
     if filesToUnlink:
+        logger.debug('Files to unlink: %s', filesToUnlink)
         # Wait 2 seconds before deleting anything on early and 5 on later stages
         time.sleep(1 + 2 * (1 + int(early)))
 
@@ -154,8 +159,11 @@ def unlinkFiles(early: bool = False) -> None:
                 logger.debug('File %s not deleted: %s', f[0], e)
 
 
-def addTaskToWait(taks: typing.Any, includeSubprocess: bool = False) -> None:
-    _tasksToWait.append((taks, includeSubprocess))
+def addTaskToWait(task: typing.Any, includeSubprocess: bool = False) -> None:
+    logger.debug(
+        'Added task %s to wait %s', task, 'with subprocesses' if includeSubprocess else ''
+    )
+    _tasksToWait.append((task, includeSubprocess))
 
 
 def waitForTasks() -> None:
@@ -180,10 +188,12 @@ def waitForTasks() -> None:
 
 
 def addExecBeforeExit(fnc: typing.Callable[[], None]) -> None:
+    logger.debug('Added exec before exit: %s', fnc)
     _execBeforeExit.append(fnc)
 
 
 def execBeforeExit() -> None:
+    logger.debug('Esecuting exec before exit: %s', _execBeforeExit)
     for fnc in _execBeforeExit:
         fnc()
 
