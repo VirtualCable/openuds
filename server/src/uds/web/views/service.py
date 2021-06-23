@@ -156,27 +156,31 @@ def userServiceStatus(
     '''
     ip: typing.Union[str, None, bool]
     userService = None
-    try:
-        (
-            ip,
-            userService,
-            userServiceInstance,
-            transport,
-            transportInstance,
-        ) = userServiceManager().getService(
-            request.user, request.os, request.ip, idService, idTransport, doTest=True
-        )
-        # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
-    except ServiceNotReadyError:
-        ip = None
-    except Exception as e:
-        ip = False
+    status = 'error'
+    # If service exists
+    if userServiceManager().locateUserService(user=request.user, idService=idService, create=False):
+        # Service exists...
+        try:
+            (
+                ip,
+                userService,
+                userServiceInstance,
+                transport,
+                transportInstance,
+            ) = userServiceManager().getService(
+                request.user, request.os, request.ip, idService, idTransport, doTest=True
+            )
+            # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
+        except ServiceNotReadyError:
+            ip = None
+        except Exception as e:
+            ip = False
 
-    ready = 'ready'
-    if userService and userService.getProperty('accessedByClient') != '0':
-        ready = 'accessed'
+        ready = 'ready'
+        if userService and userService.getProperty('accessedByClient') != '0':
+            ready = 'accessed'
 
-    status = 'running' if ip is None else 'error' if ip is False else ready
+        status = 'running' if ip is None else 'error' if ip is False else ready
 
     return HttpResponse(json.dumps({'status': status}), content_type='application/json')
 
