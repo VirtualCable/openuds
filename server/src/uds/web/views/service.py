@@ -156,7 +156,7 @@ def userServiceStatus(
     '''
     ip: typing.Union[str, None, bool]
     userService = None
-    status = 'error'
+    status = 'running'
     # If service exists
     if userServiceManager().locateUserService(user=request.user, idService=idService, create=False):
         # Service exists...
@@ -177,7 +177,7 @@ def userServiceStatus(
             ip = False
 
         ready = 'ready'
-        if userService and userService.getProperty('accessedByClient') != '0':
+        if userService and userService.getProperty('accessedByClient', '0') != '0':
             ready = 'accessed'
 
         status = 'running' if ip is None else 'error' if ip is False else ready
