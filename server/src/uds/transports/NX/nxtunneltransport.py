@@ -97,7 +97,7 @@ class TSNXTransport(BaseNXTransport):
         tooltip=_(
             'If enabled, the certificate of tunnel server will be verified (recommended).'
         ),
-        defvalue=gui.TRUE,
+        defvalue=gui.FALSE,
         tab=gui.TUNNEL_TAB,
     )
 
