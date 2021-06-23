@@ -47,7 +47,7 @@ from uds.rest import RestApi, RetryException, InvalidVersion, UDSException
 from uds.forward import forward  # type: ignore
 from uds.tunnel import forward as f2  # type: ignore
 
-from uds.log import logger
+from uds.log import logger, DEBUG
 from uds import tools
 from uds import VERSION
 
@@ -174,7 +174,8 @@ class UDSClient(QtWidgets.QMainWindow):
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
         except Exception as e:
-            # logger.exception('Got exception on getTransportData')
+            if DEBUG:
+                logger.exception('Got exception on getTransportData')
             self.showError(e)
 
     def start(self):

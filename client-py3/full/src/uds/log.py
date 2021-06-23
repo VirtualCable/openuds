@@ -38,16 +38,19 @@ import sys
 import tempfile
 
 LOGLEVEL = logging.INFO
+DEBUG = False
 
 # Update debug level if uds-debug-on exists
 if 'linux' in sys.platform or 'darwin' in sys.platform:
     logFile = os.path.expanduser('~/udsclient.log')
     if os.path.isfile(os.path.expanduser('~/uds-debug-on')):
         LOGLEVEL = logging.DEBUG
+        DEBUG = True
 else:
     logFile = os.path.join(tempfile.gettempdir(), 'udsclient.log')
     if os.path.isfile(os.path.join(tempfile.gettempdir(), 'uds-debug-on')):
         LOGLEVEL = logging.DEBUG
+        DEBUG = True
 
 try:
     logging.basicConfig(
