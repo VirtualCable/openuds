@@ -176,11 +176,12 @@ def waitForTasks() -> None:
             elif hasattr(task, 'wait'):
                 task.wait()
             # If wait for spanwed process (look for process with task pid) and we can look for them...
+            logger.debug('Psutil: %s, waitForSubp: %s, hasattr: %s', psutil, waitForSubp, hasattr(task, 'pid'))
             if psutil and waitForSubp and hasattr(task, 'pid'):
                 subProcesses = list(filter(
                     lambda x: x.ppid() == task.pid, psutil.process_iter(attrs=('ppid',))
                 ))
-                logger.debug('Waiting for subprocesses... %s', task.pid, subProcesses)
+                logger.debug('Waiting for subprocesses... %s, %s', task.pid, subProcesses)
                 for i in subProcesses:
                     logger.debug('Found %s', i)
                     i.wait()
