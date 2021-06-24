@@ -77,10 +77,10 @@ class Group(UUIDModel):
 
         ordering = ('name',)
         app_label = 'uds'
-        unique_together = (("manager", "name"),)
-        # constraints = [
-        #    models.UniqueConstraint(fields=['manager', 'name'], name='u_grp_manager_name')
-        # ]
+        # unique_together = (("manager", "name"),)
+        constraints = [
+           models.UniqueConstraint(fields=['manager', 'name'], name='u_grp_manager_name')
+        ]
 
     @property
     def pretty_name(self) -> str:
