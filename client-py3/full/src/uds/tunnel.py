@@ -39,6 +39,8 @@ import select
 import typing
 import logging
 
+import certifi
+
 HANDSHAKE_V1 = b'\x5AMGB\xA5\x01\x00'
 BUFFER_SIZE = 1024 * 16  # Max buffer length
 DEBUG = True
@@ -116,6 +118,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             
             # Do not "recompress" data, use only "base protocol" compression
             context.options |= ssl.OP_NO_COMPRESSION
+            context.load_verify_locations(certifi.where())  # Load certifi certificates
 
             # If ignore remote certificate
             if self.check_certificate is False:
