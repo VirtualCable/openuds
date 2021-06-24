@@ -77,7 +77,7 @@ class Group(UUIDModel):
 
         ordering = ('name',)
         app_label = 'uds'
-        # unique_together = (("manager", "name"),)
+        unique_together = (("manager", "name"),)
         # constraints = [
         #    models.UniqueConstraint(fields=['manager', 'name'], name='u_grp_manager_name')
         # ]
