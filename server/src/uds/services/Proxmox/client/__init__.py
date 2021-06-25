@@ -198,7 +198,7 @@ class ProxmoxClient:
         )
 
         logger.debug(
-            'DELETE result to %s: %s -- %s', path, result.status_code, result.content
+            'DELETE result to %s: %s -- %s -- %s', path, result.status_code, result.content, result.headers
         )
 
         return ProxmoxClient.checkError(result)
@@ -390,7 +390,7 @@ class ProxmoxClient:
         self, vmId: int, node: typing.Optional[str] = None, purge: bool = True
     ) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._delete('nodes/{}/qemu/{}'.format(node, vmId)))
+        return types.UPID.fromDict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId)))
 
     @ensureConected
     def getTask(self, node: str, upid: str) -> types.TaskStatus:
