@@ -259,7 +259,7 @@ def sslError(hostname: str, serial):
         or QtWidgets.QMessageBox.warning(
             None,  # type: ignore
             'SSL Warning',
-            f'Could not check sll certificate for {hostname}',
+            f'Could not check SSL certificate for {hostname}.\nDo you trust this host?',
             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,  # type: ignore
         )
         == QtWidgets.QMessageBox.Yes
@@ -274,7 +274,7 @@ def sslError(hostname: str, serial):
 # Used only if command line says so
 def minimal(api: RestApi, ticket: str, scrambler: str):
     try:
-        logger.info('M1 Execution')
+        logger.info('Minimal Execution')
         logger.debug('Getting version')
         try:
             api.getVersion()
