@@ -107,8 +107,8 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     def listMachines(self) -> typing.List[client.types.VMInfo]:
         return self.__getApi().listVms()
 
-    def getMachineInfo(self, vmId: int) -> client.types.VMInfo:
-        return self.__getApi().getVmInfo(vmId, force=True)
+    def getMachineInfo(self, vmId: int, poolId: typing.Optional[str] = None) -> client.types.VMInfo:
+        return self.__getApi().getVMPoolInfo(vmId, poolId, force=True)
 
     def getMachineConfiguration(self, vmId: int) -> client.types.VMConfiguration:
         return self.__getApi().getVmConfiguration(vmId, force=True)

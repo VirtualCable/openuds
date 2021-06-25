@@ -236,7 +236,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         )
 
     def getMachineInfo(self, vmId: int) -> 'client.types.VMInfo':
-        return self.parent().getMachineInfo(vmId)
+        return self.parent().getMachineInfo(vmId, self.pool.value.strip())
 
     def getMac(self, vmId: int) -> str:
         config = self.parent().getMachineConfiguration(vmId)
