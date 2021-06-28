@@ -120,7 +120,7 @@ class Dispatcher(View):
         processor = processors.available_processors_ext_dict.get(content_type, processors.default_processor)(request)
 
         # Obtain method to be invoked
-        http_method: str = request.method.lower()
+        http_method: str = request.method.lower() if request.method else ''
 
         # Path here has "remaining" path, that is, method part has been removed
         args = tuple(path)

@@ -29,6 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import secrets
 import logging
 import typing
 
@@ -39,18 +40,20 @@ from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
 from uds.core.util import log, net
 from uds.core.util.stats import events
+from uds.models.util import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
 MAX_SESSION_LENGTH = 60*60*24*7
 
 # Enclosed methods under /tunnel path
-class Tunnel(Handler):
+class TunnelTicket(Handler):
     """
     Processes tunnel requests
     """
-
     authenticated = False  # Client requests are not authenticated
+    path = 'tunnel'
+    name = 'ticket'
 
     def get(self) -> typing.MutableMapping[str, typing.Any]:
         """
@@ -62,7 +65,7 @@ class Tunnel(Handler):
 
         if (
             not isTrustedSource(self._request.ip)
-            or len(self._args) not in (2, 3)
+            or len(self._args) != 3
             or len(self._args[0]) != 48
         ):
             # Invalid requests
@@ -119,3 +122,41 @@ class Tunnel(Handler):
         except Exception as e:
             logger.info('Ticket ignored: %s', e)
             raise AccessDenied()
+
+
+class TunnelRegister(Handler):
+    needs_admin = True
+    path = 'tunnel'
+    name = 'register'
+
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        tunnelToken: models.TunnelToken
+        now = models.getSqlDatetimeAsUnix()
+        try:
+            # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
+            tunnelToken = models.TunnelToken.objects.get(ip=self._params['ip'], hostname= self._params['hostname'])
+            # Update parameters
+            tunnelToken.username = self._user.pretty_name
+            tunnelToken.ip_from = self._request.ip
+            tunnelToken.stamp = models.getSqlDatetime()
+            tunnelToken.save()
+        except Exception:
+            try:
+                tunnelToken = models.TunnelToken.objects.create(
+                    username=self._user.pretty_name,
+                    ip_from=self._request.ip,
+                    ip=self._params['ip'],
+                    hostname=self._params['hostname'],
+                    token=secrets.token_urlsafe(36),
+                    stamp=models.getSqlDatetime()
+                )
+            except Exception as e:
+                return {
+                    'result': '',
+                    'stamp': now,
+                    'error': str(e)
+                }
+        return {
+            'result': tunnelToken.token,
+            'stamp': now
+        }

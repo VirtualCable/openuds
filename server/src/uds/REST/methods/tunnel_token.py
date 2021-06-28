@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import ugettext_lazy as _
 
-from uds.models import ActorToken
+from uds.models import TunnelToken
 from uds.REST.handlers import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
 from uds.core.util import permissions
@@ -45,35 +45,27 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /osm path
 
 
-class ActorTokens(ModelHandler):
-    model = ActorToken
+class TunnelTokens(ModelHandler):
+    model = TunnelToken
 
     table_title = _('Actor tokens')
     table_fields = [
-        # {'token': {'title': _('Token')}},
+        {'token': {'title': _('Token')}},
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
         {'username': {'title': _('Issued by')}},
-        {'host': {'title': _('Origin')}},
-        {'hostname': {'title': _('Hostname')}},
-        {'pre_command': {'title': _('Pre-connect')}},
-        {'post_command': {'title': _('Post-Configure')}},
-        {'runonce_command': {'title': _('Run Once')}},
-        {'log_level': {'title': _('Log level')}},
+        {'hostname': {'title': _('Origin')}},
+        {'ip': {'title': _('IP')}},
     ]
 
-    def item_as_dict(self, item: ActorToken) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: TunnelToken) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.token,
-            'name': _('Token isued by {} from {}').format(item.username, item.hostname or item.ip),
+            'name': _('Token isued by {} from {}').format(item.username, item.ip),
             'stamp': item.stamp,
             'username': item.username,
             'ip': item.ip,
-            'host': '{} - {}'.format(item.ip, item.mac),
             'hostname': item.hostname,
-            'pre_command': item.pre_command,
-            'post_command': item.post_command,
-            'runonce_command': item.runonce_command,
-            'log_level': ['DEBUG', 'INFO', 'ERROR', 'FATAL'][item.log_level%4]
+            'token': item.token
         }
 
     def delete(self) -> str:

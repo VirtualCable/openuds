@@ -110,7 +110,8 @@ from .tag import Tag, TaggingMixin
 # Utility
 from .dbfile import DBFile
 
-# Actor tokens
+# Tokens
 from .actor_token import ActorToken
+from .tunnel_token import TunnelToken
 
 logger = logging.getLogger(__name__)

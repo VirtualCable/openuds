@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,31 +31,30 @@
 from django.db import models
 
 
-class ActorToken(models.Model):
+class TunnelToken(models.Model):
     """
-    UDS Actors tokens on DB
+    UDS Tunnel tokens on DB
     """
 
     username = models.CharField(max_length=128)
-    ip_from = models.CharField(max_length=128)
-    ip = models.CharField(max_length=128)
+    ip_from = models.CharField(max_length=16)
+    ip = models.CharField(max_length=16)
     hostname = models.CharField(max_length=128)
-    mac = models.CharField(max_length=128, db_index=True, unique=True)
-    pre_command = models.CharField(max_length=255, blank=True, default='')
-    post_command = models.CharField(max_length=255, blank=True, default='')
-    runonce_command = models.CharField(max_length=255, blank=True, default='')
-    log_level = models.IntegerField()
 
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[ActorToken]'
+    objects: 'models.BaseManager[TunnelToken]'
 
     class Meta:
         app_label = 'uds'
+        constraints = [
+            models.UniqueConstraint(fields=['ip', 'hostname'], name='tt_ip_hostname')
+        ]
+        
 
     def __str__(self):
-        return '<ActorToken {} created on {} by {} from {}/{}>'.format(
-            self.token, self.stamp, self.username, self.hostname, self.ip_from
+        return '<TunnelToken {} created on {} by {} from {}/{}>'.format(
+            self.token, self.stamp, self.username, self.ip, self.hostname
         )

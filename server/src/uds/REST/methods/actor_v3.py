@@ -31,7 +31,6 @@
 import secrets
 import logging
 import typing
-from uds.models import user
 
 from uds.models import (
     getSqlDatetimeAsUnix,
