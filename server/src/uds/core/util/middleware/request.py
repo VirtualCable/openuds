@@ -40,7 +40,12 @@ from django.utils import timezone
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import EXPIRY_KEY, ROOT_ID, USER_KEY, getRootUser, webLogout
-from uds.core.util.request import setRequest, delCurrentRequest, cleanOldRequests, ExtendedHttpRequest
+from uds.core.util.request import (
+    setRequest,
+    delCurrentRequest,
+    cleanOldRequests,
+    ExtendedHttpRequest,
+)
 from uds.models import User
 
 logger = logging.getLogger(__name__)
@@ -124,20 +129,38 @@ class GlobalRequestMiddleware:
         except Exception:
             request.ip = ''  # No remote addr?? ...
 
-        try:
-            proxies = request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
-            request.ip_proxy = proxies[0]
+        # X-FORWARDED-FOR: CLIENT, FAR_PROXY, PROXY, NEAR_PROXY, NGINX
+        # We will accept only 2 proxies, the last ones
+        proxies = list(
+            reversed(
+                [
+                    i.split('%')[0]
+                    for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
+                ]
+            )
+        )
+        proxies = list(reversed(['172.27.0.8', '172.27.0.128', '172.27.0.1']))
+        # proxies = list(reversed(['172.27.0.12', '172.27.0.1']))
+        # proxies = list(reversed(['172.27.0.12']))
+        request.ip = ''
 
-            if not request.ip or behind_proxy:
-                # Request.IP will be None in case of nginx & gunicorn
-                # Some load balancers may include "domains with a %" on x-forwarded for,
-                request.ip = request.ip_proxy.split('%')[0]  # Stores the ip
+        logger.debug('Detected proxies: %s', proxies)
 
-                # will raise "list out of range", leaving ip_proxy = proxy in case of no other proxy apart of nginx
-                # Also, behind_proxy must be activated to work correctly (security concerns)
-                request.ip_proxy = proxies[1].strip() if behind_proxy else request.ip
-        except Exception:
-            request.ip_proxy = request.ip
+        # Request.IP will be None in case of nginx & gunicorn using sockets, as we do
+        if not request.ip:
+            request.ip = proxies[0]  # Stores the ip
+            proxies = proxies[1:]  # Remove from proxies list
+
+        logger.debug('Proxies: %s', proxies)
+
+        request.ip_proxy = proxies[0] if proxies and proxies[0] else request.ip
+
+        if behind_proxy:
+            request.ip = request.ip_proxy
+            request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
+            logger.debug('Behind a proxy is active')
+
+        logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
 
     @staticmethod
     def getUser(request: ExtendedHttpRequest) -> None:

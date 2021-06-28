@@ -83,3 +83,9 @@ def guacamole(request: HttpRequest, tunnelId: str) -> HttpResponse:
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
 
     return HttpResponse(response, content_type=CONTENT_TYPE)
+
+@auth.trustedSourceRequired
+def guacamole_authenticated(request: HttpRequest, authId: str, tunnelId: str) -> HttpResponse:
+    authId = authId[:48]
+    # TODO: Check the authId validity
+    return guacamole(request, tunnelId)

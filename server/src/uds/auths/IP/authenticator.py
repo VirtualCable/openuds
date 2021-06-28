@@ -48,15 +48,16 @@ logger = logging.getLogger(__name__)
 
 
 class IPAuth(auths.Authenticator):
-    #acceptProxy = gui.CheckBoxField(
-    #    label=_('Accept proxy'),
-    #    order=3,
-    #    tooltip=_(
-    #        'If checked, requests via proxy will get FORWARDED ip address'
-    #        ' (take care with this bein checked, can take internal IP addresses from internet)'
-    #    ),
-    #    tab=gui.ADVANCED_TAB
-    #)
+    acceptProxy = gui.CheckBoxField(
+        label=_('Accept proxy'),
+        defvalue=gui.FALSE,
+        order=3,
+        tooltip=_(
+            'If checked, requests via proxy will get FORWARDED ip address'
+            ' (take care with this bein checked, can take internal IP addresses from internet)'
+        ),
+        tab=gui.ADVANCED_TAB
+    )
 
     typeName = _('IP Authenticator')
     typeType = 'IPAuth'
@@ -71,8 +72,7 @@ class IPAuth(auths.Authenticator):
     blockUserOnLoginFailures = False
 
     def getIp(self) -> str:
-        # ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
-        ip = getRequest().ip  # Proxy is identified by UDS
+        ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
         logger.debug('Client IP: %s', ip)
         return ip
 

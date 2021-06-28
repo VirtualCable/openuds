@@ -38,4 +38,6 @@ urlpatterns = [
     url(r'^guacamole/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole'),
     # New path
     url(r'^uds/guacamole/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole'),
+    # Authenticated path
+    url(r'^uds/guacamole/auth/(?P<authId>.+)/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole'),
 ]

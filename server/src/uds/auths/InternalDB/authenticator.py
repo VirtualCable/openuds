@@ -55,7 +55,9 @@ logger = logging.getLogger(__name__)
 class InternalDBAuth(auths.Authenticator):
     typeName = _('Internal Database')
     typeType = 'InternalDBAuth'
-    typeDescription = _('Internal dabasase authenticator. Doesn\'t use external sources')
+    typeDescription = _(
+        'Internal dabasase authenticator. Doesn\'t use external sources'
+    )
     iconFile = 'auth.png'
 
     # If we need to enter the password for this user
@@ -64,15 +66,40 @@ class InternalDBAuth(auths.Authenticator):
     # This is the only internal source
     isExternalSource = False
 
-    differentForEachHost = gui.CheckBoxField(label=_('Different user for each host'), order=1, tooltip=_('If checked, each host will have a different user name'), defvalue="false", rdonly=True, tab=gui.ADVANCED_TAB)
-    reverseDns = gui.CheckBoxField(label=_('Reverse DNS'), order=2, tooltip=_('If checked, the host will be reversed dns'), defvalue="false", rdonly=True, tab=gui.ADVANCED_TAB)
-    acceptProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'), tab=gui.ADVANCED_TAB)
+    differentForEachHost = gui.CheckBoxField(
+        label=_('Different user for each host'),
+        order=1,
+        tooltip=_('If checked, each host will have a different user name'),
+        defvalue="false",
+        rdonly=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    reverseDns = gui.CheckBoxField(
+        label=_('Reverse DNS'),
+        order=2,
+        tooltip=_('If checked, the host will be reversed dns'),
+        defvalue="false",
+        rdonly=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    acceptProxy = gui.CheckBoxField(
+        label=_('Accept proxy'),
+        order=3,
+        tooltip=_(
+            'If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'
+        ),
+        tab=gui.ADVANCED_TAB,
+    )
 
     def getIp(self) -> str:
-        ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
+        ip = (
+            getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
+        )  # pylint: disable=maybe-no-member
         if self.reverseDns.isTrue():
             try:
-                return str(dns.resolver.query(dns.reversename.from_address(ip), 'PTR')[0])
+                return str(
+                    dns.resolver.query(dns.reversename.from_address(ip), 'PTR')[0]
+                )
             except Exception:
                 pass
         return ip
@@ -100,7 +127,9 @@ class InternalDBAuth(auths.Authenticator):
 
         return username
 
-    def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
+    def authenticate(
+        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
+    ) -> bool:
         logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbAuthenticator()
         try:

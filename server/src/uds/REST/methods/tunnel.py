@@ -62,11 +62,15 @@ class Tunnel(Handler):
 
         if (
             not isTrustedSource(self._request.ip)
-            or len(self._args) != 2
+            or len(self._args) not in (2, 3)
             or len(self._args[0]) != 48
         ):
             # Invalid requests
             raise AccessDenied()
+
+        # If args is 3, the last one is the authId
+        authId = self._args[2][:48]
+        # TODO: Check auth Id
 
         # Try to get ticket from DB
         try:

@@ -131,7 +131,6 @@ class Transport(ManagedObjectModel, TaggingMixin):
         return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
 
     def validForOs(self, os: str) -> bool:
-        logger.debug('Checkin if os "%s" is in "%s"', os, self.allowed_oss)
         if not self.allowed_oss or os in self.allowed_oss.split(','):
             return True
         return False

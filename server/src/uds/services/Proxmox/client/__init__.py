@@ -198,7 +198,11 @@ class ProxmoxClient:
         )
 
         logger.debug(
-            'DELETE result to %s: %s -- %s -- %s', path, result.status_code, result.content, result.headers
+            'DELETE result to %s: %s -- %s -- %s',
+            path,
+            result.status_code,
+            result.content,
+            result.headers,
         )
 
         return ProxmoxClient.checkError(result)
@@ -390,7 +394,9 @@ class ProxmoxClient:
         self, vmId: int, node: typing.Optional[str] = None, purge: bool = True
     ) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId)))
+        return types.UPID.fromDict(
+            self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId))
+        )
 
     @ensureConected
     def getTask(self, node: str, upid: str) -> types.TaskStatus:
@@ -426,13 +432,19 @@ class ProxmoxClient:
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
     @ensureConected
-    @allowCache('vmip', CACHE_INFO_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'poolId'], cachingKeyFnc=cachingKeyHelper)
+    @allowCache(
+        'vmip',
+        CACHE_INFO_DURATION,
+        cachingArgs=[1, 2],
+        cachingKWArgs=['vmId', 'poolId'],
+        cachingKeyFnc=cachingKeyHelper,
+    )
     def getVMPoolInfo(self, vmId: int, poolId: str, **kwargs) -> types.VMInfo:
         # try to locate machine in pool
         node = None
         if poolId:
             try:
-                for i in  self._get(f'pools/{poolId}')['data']['members']:
+                for i in self._get(f'pools/{poolId}')['data']['members']:
                     try:
                         if i['vmid'] == vmId:
                             node = i['node']
@@ -445,7 +457,13 @@ class ProxmoxClient:
         return self.getVmInfo(vmId, node)
 
     @ensureConected
-    @allowCache('vmin', CACHE_INFO_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
+    @allowCache(
+        'vmin',
+        CACHE_INFO_DURATION,
+        cachingArgs=[1, 2],
+        cachingKWArgs=['vmId', 'node'],
+        cachingKeyFnc=cachingKeyHelper,
+    )
     def getVmInfo(
         self, vmId: int, node: typing.Optional[str] = None, **kwargs
     ) -> types.VMInfo:
@@ -557,7 +575,7 @@ class ProxmoxClient:
         self,
         node: typing.Union[None, str, typing.Iterable[str]] = None,
         content: typing.Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> typing.List[types.StorageInfo]:
         """We use a list for storage instead of an iterator, so we can cache it..."""
         nodeList: typing.Iterable[str]
