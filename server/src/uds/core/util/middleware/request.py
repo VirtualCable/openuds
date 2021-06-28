@@ -120,22 +120,22 @@ class GlobalRequestMiddleware:
         """
         behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
         try:
-            request.ip = request.META['REMOTE_ADDR']
+            request.ip = request.META.get('REMOTE_ADDR', '')
         except Exception:
-            logger.exception('Request ip not found!!')
             request.ip = ''  # No remote addr?? ...
 
         try:
-            proxies = request.META['HTTP_X_FORWARDED_FOR'].split(",")
+            proxies = request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
             request.ip_proxy = proxies[0]
 
             if not request.ip or behind_proxy:
                 # Request.IP will be None in case of nginx & gunicorn
-                # Some load balancers may include "domains" on x-forwarded for,
+                # Some load balancers may include "domains with a %" on x-forwarded for,
                 request.ip = request.ip_proxy.split('%')[0]  # Stores the ip
 
                 # will raise "list out of range", leaving ip_proxy = proxy in case of no other proxy apart of nginx
-                request.ip_proxy = proxies[1].strip()
+                # Also, behind_proxy must be activated to work correctly (security concerns)
+                request.ip_proxy = proxies[1].strip() if behind_proxy else request.ip
         except Exception:
             request.ip_proxy = request.ip
 
