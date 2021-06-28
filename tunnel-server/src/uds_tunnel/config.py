@@ -58,6 +58,7 @@ class ConfigurationType(typing.NamedTuple):
     ssl_dhparam: str
 
     uds_server: str
+    uds_auth: str
 
     secret: str
     allow: typing.Set[str]
@@ -104,6 +105,7 @@ def read() -> ConfigurationType:
             ssl_ciphers=uds.get('ssl_ciphers'),
             ssl_dhparam=uds.get('ssl_dhparam'),
             uds_server=uds_server,
+            uds_auth=uds.get('uds_auth', 'unauthorized'),
             secret=secret,
             allow=set(uds.get('allow', '127.0.0.1').split(',')),
         )

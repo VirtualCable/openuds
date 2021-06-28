@@ -55,7 +55,7 @@ class Proxy:
     @staticmethod
     def _getUdsUrl(cfg: config.ConfigurationType, ticket: bytes, msg: str) -> typing.MutableMapping[str, typing.Any]:
         try:
-            url = cfg.uds_server + '/' + ticket.decode() + '/' + msg
+            url = cfg.uds_server + '/' + ticket.decode() + '/' + msg + '/' + cfg.uds_auth
             r = requests.get(url, headers={'content-type': 'application/json'})
             if not r.ok:
                 raise Exception(r.content)

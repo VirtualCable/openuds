@@ -139,10 +139,10 @@ class GlobalRequestMiddleware:
                 ]
             )
         )
-        proxies = list(reversed(['172.27.0.8', '172.27.0.128', '172.27.0.1']))
+        # proxies = list(reversed(['172.27.0.8', '172.27.0.128', '172.27.0.1']))
         # proxies = list(reversed(['172.27.0.12', '172.27.0.1']))
         # proxies = list(reversed(['172.27.0.12']))
-        request.ip = ''
+        # request.ip = ''
 
         logger.debug('Detected proxies: %s', proxies)
 
