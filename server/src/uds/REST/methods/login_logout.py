@@ -112,11 +112,11 @@ class Login(Handler):
             logger.info('Access to REST API %s is blocked for %s seconds since last fail', self._request.ip, GlobalConfig.LOGIN_BLOCK.getInt())
         
         try:
-            if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
+            if 'auth_id' not in self._params and 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
 
             scrambler: str = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
-            authId: typing.Optional[str] = self._params.get('authId', None)
+            authId: typing.Optional[str] = self._params.get('authId', self._params.get('auth_id', None))
             authSmallName: typing.Optional[str] = self._params.get('authSmallName', None)
             authName: typing.Optional[str] = self._params.get('auth', None)
             platform: str = self._params.get('platform', self._request.os)
