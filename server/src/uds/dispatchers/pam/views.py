@@ -35,6 +35,7 @@ import logging
 from django.http import HttpResponseNotAllowed, HttpResponse, HttpRequest
 from uds.models import TicketStore
 from uds.core.auths import auth
+from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 @auth.trustedSourceRequired
-def pam(request: HttpRequest) -> HttpResponse:
+def pam(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     response = ''
     if request.method == 'POST':
         return HttpResponseNotAllowed(['GET'])
