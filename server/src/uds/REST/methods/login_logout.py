@@ -126,7 +126,7 @@ class Login(Handler):
 
             username, password = self._params['username'], self._params['password']
             locale: str = self._params.get('locale', 'en')
-            if authName == 'admin' or authSmallName == 'admin':
+            if authName == 'admin' or authSmallName == 'admin' or authId == '00000000-0000-0000-0000-000000000000':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
                     self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
                     return Login.result(result='ok', token=self.getAuthToken())
