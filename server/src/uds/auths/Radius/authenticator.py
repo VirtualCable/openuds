@@ -34,16 +34,17 @@ import logging
 import typing
 
 from django.utils.translation import ugettext_noop as _
+
 from uds.core.ui import gui
 from uds.core import auths
 from uds.core.managers import cryptoManager
+from uds.core.auths.auth import authLogLogin
+from uds.core.util.request import getRequest
 
 from . import client
 
 if typing.TYPE_CHECKING:
-    from django.http import (
-        HttpRequest
-    )
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -131,6 +132,7 @@ class RadiusAuth(auths.Authenticator):
             connection = self.radiusClient()
             groups = connection.authenticate(username=username, password=credentials)
         except Exception:
+            authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Access denied by Raiuds')
             return False
 
         if self.globalGroup.value.strip():

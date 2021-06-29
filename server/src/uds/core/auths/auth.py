@@ -51,7 +51,6 @@ from uds.core import auths
 from uds.core.util import log
 from uds.core.util import net
 from uds.core.util.config import GlobalConfig
-from uds.core.util.decorators import deprecated
 from uds.core.util.stats import events
 from uds.core.util.state import State
 from uds.core.managers import cryptoManager
@@ -378,7 +377,7 @@ def webLogin(
         manager_id,
         user.name,
         password,
-        get_language(),
+        get_language() or '',
         request.os['OS'],
         user.is_admin,
         user.staff_member,

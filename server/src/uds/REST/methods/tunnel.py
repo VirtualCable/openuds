@@ -72,8 +72,9 @@ class TunnelTicket(Handler):
             raise AccessDenied()
 
         # If args is 3, the last one is the authId
-        authId = self._args[2][:48]
+        token = self._args[2][:48]
         # TODO: Check auth Id
+        logger.debug('Token: %s', token)
 
         # Try to get ticket from DB
         try:

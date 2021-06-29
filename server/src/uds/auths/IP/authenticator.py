@@ -37,8 +37,8 @@ import typing
 from django.utils.translation import ugettext_noop as _
 from uds.core import auths
 from uds.core.util import net
-from uds.core.util.request import getRequest
 from uds.core.ui import gui
+from uds.core.util.request import getRequest
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -72,7 +72,7 @@ class IPAuth(auths.Authenticator):
     blockUserOnLoginFailures = False
 
     def getIp(self) -> str:
-        ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
+        ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
         logger.debug('Client IP: %s', ip)
         return ip
 
@@ -88,7 +88,6 @@ class IPAuth(auths.Authenticator):
 
     def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
-        # We use this "trick" so authenticators
         if username == self.getIp():
             self.getGroups(username, groupsManager)
             return True

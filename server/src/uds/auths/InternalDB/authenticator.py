@@ -44,6 +44,7 @@ from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core.util.state import State
 from uds.core.util.request import getRequest
+from uds.core.auths.auth import authLogLogin
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -135,6 +136,7 @@ class InternalDBAuth(auths.Authenticator):
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
+            authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid user')
             return False
 
         if user.parent:  # Direct auth not allowed for "derived" users
@@ -144,6 +146,7 @@ class InternalDBAuth(auths.Authenticator):
         if cryptoManager().checkHash(credentials, user.password):
             groupsManager.validate([g.name for g in user.groups.all()])
             return True
+        authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid password')
         return False
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):

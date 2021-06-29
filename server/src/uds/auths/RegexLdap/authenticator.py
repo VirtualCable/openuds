@@ -38,9 +38,12 @@ import typing
 import ldap
 
 from django.utils.translation import ugettext_noop as _
+
 from uds.core import auths
 from uds.core.ui import gui
 from uds.core.util import ldaputil
+from uds.core.auths.auth import authLogLogin
+from uds.core.util.request import getRequest
 
 try:
     # pylint: disable=no-name-in-module
@@ -498,12 +501,17 @@ class RegexLdap(auths.Authenticator):
             usr = self.__getUser(username)
 
             if usr is None:
+                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid user')
                 return False
 
-            # Let's see first if it credentials are fine
-            self.__connectAs(
-                usr['dn'], credentials
-            )  # Will raise an exception if it can't connect
+            try:
+                # Let's see first if it credentials are fine
+                self.__connectAs(
+                    usr['dn'], credentials
+                )  # Will raise an exception if it can't connect
+            except:
+                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid password')
+                return False
 
             groupsManager.validate(self.__getGroups(usr))
 

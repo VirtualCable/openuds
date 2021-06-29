@@ -37,9 +37,12 @@ import ldap.filter
 import ldap
 
 from django.utils.translation import ugettext_noop as _
+
 from uds.core.ui import gui
 from uds.core import auths
 from uds.core.util import ldaputil
+from uds.core.auths.auth import authLogLogin
+from uds.core.util.request import getRequest
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -398,12 +401,17 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             user = self.__getUser(username)
 
             if user is None:
+                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid user')
                 return False
 
-            # Let's see first if it credentials are fine
-            self.__connectAs(
-                user['dn'], credentials
-            )  # Will raise an exception if it can't connect
+            try:
+                # Let's see first if it credentials are fine
+                self.__connectAs(
+                    user['dn'], credentials
+                )  # Will raise an exception if it can't connect
+            except:
+                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid password')
+                return False
 
             groupsManager.validate(self.__getGroups(user))
 
