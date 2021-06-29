@@ -400,7 +400,7 @@ def enableService(request: 'ExtendedHttpRequestWithUser', idService: str, idTran
 
         userService, trans = res[1], res[3]
 
-        userService.setProperty('accesedByClient', '0')  # Reset accesed property to 
+        userService.setProperty('accessedByClient', '0')  # Reset accesed property to 
 
         typeTrans = trans.getType()
 

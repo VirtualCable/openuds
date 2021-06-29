@@ -28,8 +28,10 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from django.db import models
+import typing
 
+from django.db import models
+from uds.core.util.request import ExtendedHttpRequest
 
 class TunnelToken(models.Model):
     """
@@ -52,7 +54,18 @@ class TunnelToken(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['ip', 'hostname'], name='tt_ip_hostname')
         ]
-        
+
+    @staticmethod
+    def validateToken(token: str, request: typing.Optional[ExtendedHttpRequest] = None) -> bool:
+        try:
+            tt = TunnelToken.objects.get(token=token)
+            # We could check the request ip here
+            if request and request.ip != tt.ip:
+                raise Exception('Invalid ip')
+            return True
+        except TunnelToken.DoesNotExist:
+            pass
+        return False
 
     def __str__(self):
         return '<TunnelToken {} created on {} by {} from {}/{}>'.format(

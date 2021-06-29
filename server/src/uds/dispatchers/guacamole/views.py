@@ -34,10 +34,10 @@ import logging
 
 from django.http import HttpResponse, HttpRequest
 
-from uds.models import TicketStore, UserService
+from uds.models import TicketStore, UserService, TunnelToken
 from uds.core.auths import auth
 from uds.core.managers import cryptoManager
-
+from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ def dict2resp(dct):
 
 
 @auth.trustedSourceRequired
-def guacamole(request: HttpRequest, tunnelId: str) -> HttpResponse:
+def guacamole(request: ExtendedHttpRequestWithUser, tunnelId: str) -> HttpResponse:
     logger.debug('Received credentials request for tunnel id %s', tunnelId)
 
     try:
@@ -85,7 +85,9 @@ def guacamole(request: HttpRequest, tunnelId: str) -> HttpResponse:
     return HttpResponse(response, content_type=CONTENT_TYPE)
 
 @auth.trustedSourceRequired
-def guacamole_authenticated(request: HttpRequest, authId: str, tunnelId: str) -> HttpResponse:
-    authId = authId[:48]
+def guacamole_authenticated(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
+    if not TunnelToken.validateToken(token):
+        logger.error('Invalid token %s from %s', token, request.ip)
+        return HttpResponse(ERROR, content_type=CONTENT_TYPE)
     # TODO: Check the authId validity
     return guacamole(request, tunnelId)

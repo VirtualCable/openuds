@@ -38,9 +38,8 @@ from uds.core import managers
 from uds.REST import Handler
 from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
-from uds.core.util import log, net
+from uds.core.util import log, net, request
 from uds.core.util.stats import events
-from uds.models.util import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
@@ -71,10 +70,12 @@ class TunnelTicket(Handler):
             # Invalid requests
             raise AccessDenied()
 
-        # If args is 3, the last one is the authId
+        # Take token from url
         token = self._args[2][:48]
-        # TODO: Check auth Id
-        logger.debug('Token: %s', token)
+        if not models.TunnelToken.validateToken(token):
+            logger.error('Invalid token %s from %s', token, self._request.ip)
+            raise AccessDenied()
+        
 
         # Try to get ticket from DB
         try:
