@@ -19,8 +19,11 @@ def fixResolution():
     import re
     import subprocess
     results = str(subprocess.Popen(['system_profiler SPDisplaysDataType'],stdout=subprocess.PIPE, shell=True).communicate()[0])
-    res = re.search(r': \d* x \d*', results).group(0).split(' ')
-    width, height = str(int(res[1])-4), str(int(int(res[3])*90/100))  # Width and Height
+    groups = re.search(r': \d* x \d*', results)
+    width, height = '1024', '768'  # Safe default values
+    if groups:
+        res = groups.group(0).split(' ')
+        width, height = str(int(res[1])-4), str(int(int(res[3])*90/100))  # Width and Height
     return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
 
@@ -29,9 +32,9 @@ xfreerdp = tools.findApp('xfreerdp')
 executable = None
 
 # Check first xfreerdp, allow password redir
-if os.path.isfile(xfreerdp):
+if xfreerdp and os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
+elif msrdc and os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
     executable = msrdc
 
 if executable is None:
