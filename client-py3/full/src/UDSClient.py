@@ -128,11 +128,13 @@ class UDSClient(QtWidgets.QMainWindow):
         self.anim = 0
         self.animInverted = False
         self.ui.progressBar.setInvertedAppearance(self.animInverted)
-        self.animTimer.start(40)
+        if self.animTimer:
+            self.animTimer.start(40)
 
     def stopAnim(self):
         self.ui.progressBar.invertedAppearance = False  # type: ignore
-        self.animTimer.stop()
+        if self.animTimer:
+            self.animTimer.stop()
 
     def getVersion(self):
         try:

@@ -132,12 +132,15 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         if self.status == TUNNEL_ERROR:
             return False
 
+        logger.debug('Checking tunnel availability')
+
         try:
             with self.connect() as ssl_socket:
                 ssl_socket.sendall(HANDSHAKE_V1 + b'TEST')
                 resp = ssl_socket.recv(2)
                 if resp != b'OK':
                     raise Exception({'Invalid  tunnelresponse: {resp}'})
+                logger.debug('Tunnel is available!')
                 return True
         except Exception as e:
             logger.error(
@@ -220,7 +223,7 @@ class Handler(socketserver.BaseRequestHandler):
                     if not data:
                         break
                     self.request.sendall(data)
-            logger.debug('Finished tunnel with ticekt %s', self.server.ticket)
+            logger.debug('Finished tunnel with ticket %s', self.server.ticket)
         except Exception as e:
             pass
 

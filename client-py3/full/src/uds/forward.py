@@ -93,6 +93,7 @@ class Handler(socketserver.BaseRequestHandler):
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
     client: typing.Optional[paramiko.SSHClient]
+    fs: typing.Optional[ForwardServer]
 
     def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime, fingerPrints):
         threading.Thread.__init__(self)
@@ -180,7 +181,9 @@ class ForwardThread(threading.Thread):
                 self.timer.cancel()
 
             self.stopEvent.set()
-            self.fs.shutdown()
+
+            if self.fs:
+                self.fs.shutdown()
 
             if self.client is not None:
                 self.client.useCount -= 1  # type: ignore
