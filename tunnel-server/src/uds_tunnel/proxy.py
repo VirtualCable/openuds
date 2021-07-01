@@ -56,7 +56,7 @@ class Proxy:
     def _getUdsUrl(cfg: config.ConfigurationType, ticket: bytes, msg: str) -> typing.MutableMapping[str, typing.Any]:
         try:
             url = cfg.uds_server + '/' + ticket.decode() + '/' + msg + '/' + cfg.uds_token
-            r = requests.get(url, headers={'content-type': 'application/json'})
+            r = requests.get(url, headers={'content-type': 'application/json', 'User-Agent': f'UDSTunnel-{consts.VERSION}'})
             if not r.ok:
                 raise Exception(r.content)
 
