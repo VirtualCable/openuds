@@ -62,7 +62,7 @@ class Proxy:
 
             return r.json()
         except Exception as e:
-            raise Exception(f'TICKET COMMS ERROR: {e!s}')
+            raise Exception(f'TICKET COMMS ERROR: {ticket.decode()} {msg} {e!s}')
         
 
     @staticmethod
