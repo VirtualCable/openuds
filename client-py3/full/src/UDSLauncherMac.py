@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UDSWindow.ui'
+# Form implementation generated from reading ui file 'UDSLauncherMac.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -11,17 +11,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(259, 185)
-        MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.BusyCursor))
+class Ui_MacLauncher(object):
+    def setupUi(self, MacLauncher):
+        MacLauncher.setObjectName("MacLauncher")
+        MacLauncher.setWindowModality(QtCore.Qt.NonModal)
+        MacLauncher.resize(256, 150)
+        MacLauncher.setCursor(QtGui.QCursor(QtCore.Qt.BusyCursor))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/images/logo-uds-small"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        MainWindow.setWindowIcon(icon)
-        MainWindow.setWindowOpacity(1.0)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        MacLauncher.setWindowIcon(icon)
+        MacLauncher.setWindowOpacity(1.0)
+        self.centralwidget = QtWidgets.QWidget(MacLauncher)
         self.centralwidget.setAutoFillBackground(True)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -49,45 +49,30 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.image)
         self.info = QtWidgets.QLabel(self.frame)
         self.info.setMaximumSize(QtCore.QSize(16777215, 16))
+        self.info.setAlignment(QtCore.Qt.AlignCenter)
         self.info.setObjectName("info")
         self.verticalLayout.addWidget(self.info)
-        self.progressBar = QtWidgets.QProgressBar(self.frame)
-        self.progressBar.setProperty("value", 24)
-        self.progressBar.setTextVisible(False)
-        self.progressBar.setObjectName("progressBar")
-        self.verticalLayout.addWidget(self.progressBar)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
-        self.cancelButton = QtWidgets.QPushButton(self.frame)
-        self.cancelButton.setDefault(True)
-        self.cancelButton.setFlat(False)
-        self.cancelButton.setObjectName("cancelButton")
-        self.horizontalLayout.addWidget(self.cancelButton)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        spacerItem = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacerItem)
         self.verticalLayout_3.addLayout(self.verticalLayout)
         self.verticalLayout_2.addWidget(self.frame)
-        MainWindow.setCentralWidget(self.centralwidget)
+        MacLauncher.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(MacLauncher)
+        QtCore.QMetaObject.connectSlotsByName(MacLauncher)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, MacLauncher):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "UDS Connection"))
-        self.info.setText(_translate("MainWindow", "TextLabel"))
-        self.cancelButton.setText(_translate("MainWindow", "Cancel"))
+        MacLauncher.setWindowTitle(_translate("MacLauncher", "UDS Launcher"))
+        self.info.setText(_translate("MacLauncher", "UDS Launcher"))
 import UDSResources_rc
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    MacLauncher = QtWidgets.QMainWindow()
+    ui = Ui_MacLauncher()
+    ui.setupUi(MacLauncher)
+    MacLauncher.show()
     sys.exit(app.exec_())

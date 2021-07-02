@@ -44,10 +44,10 @@ from PyQt5.QtCore import QSettings
 from uds.rest import RestApi, RetryException, InvalidVersion, UDSException
 
 # Just to ensure there are available on runtime
-from uds.forward import forward  # type: ignore
-from uds.tunnel import forward as f2  # type: ignore
+from uds.forward import forward as ssh_forward # type: ignore
+from uds.tunnel import forward as tunnel_forwards  # type: ignore
 
-from uds.log import logger, DEBUG
+from uds.log import logger
 from uds import tools
 from uds import VERSION
 
@@ -176,8 +176,6 @@ class UDSClient(QtWidgets.QMainWindow):
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
         except Exception as e:
-            if DEBUG:
-                logger.exception('Got exception on getTransportData')
             self.showError(e)
 
     def start(self):
@@ -316,12 +314,11 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
     return 0
 
 
-if __name__ == "__main__":
+def main(args: typing.List[str]):
+    app = QtWidgets.QApplication(sys.argv)
     logger.debug('Initializing connector for %s(%s)', sys.platform, platform.machine())
 
-    # Initialize app
-    app = QtWidgets.QApplication(sys.argv)
-
+    logger.debug('Arguments: %s', args)
     # Set several info for settings
     QtCore.QCoreApplication.setOrganizationName('Virtual Cable S.L.U.')
     QtCore.QCoreApplication.setApplicationName('UDS Connector')
@@ -343,11 +340,11 @@ if __name__ == "__main__":
     # First parameter must be url
     useMinimal = False
     try:
-        uri = sys.argv[1]
+        uri = args[1]
 
         if uri == '--minimal':
             useMinimal = True
-            uri = sys.argv[2]  # And get URI
+            uri = args[2]  # And get URI
 
         if uri == '--test':
             sys.exit(0)
@@ -362,8 +359,8 @@ if __name__ == "__main__":
             'ssl:%s, host:%s, ticket:%s, scrambler:%s',
             ssl,
             host,
-            UDSClient.ticket,
-            UDSClient.scrambler,
+            ticket,
+            scrambler,
         )
     except Exception:
         logger.debug('Detected execution without valid URI, exiting')
@@ -404,3 +401,6 @@ if __name__ == "__main__":
 
     logger.debug('Exiting')
     sys.exit(exitVal)
+
+if __name__ == "__main__":
+    main(sys.argv)
