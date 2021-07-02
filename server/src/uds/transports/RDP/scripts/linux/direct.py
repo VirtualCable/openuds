@@ -1,12 +1,7 @@
-# This is a template
-# Saved as .py for easier editing
-from __future__ import unicode_literals
-
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
 import re
 
-from uds import tools
+from uds import tools  # type: ignore
 
 # Inject local passed sp into globals for inner functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable

@@ -1,13 +1,9 @@
-# This is a template
-# Saved as .py for easier editing
-from __future__ import unicode_literals
-
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
 import re
-from uds.forward import forward  # @UnresolvedImport
+from uds.forward import forward  # type: ignore
 
-from uds import tools  # @UnresolvedImport
+from uds import tools  # type: ignore
 
 # Inject local passed sp into globals for functions
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
@@ -15,14 +11,14 @@ globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 def execUdsRdp(udsrdp, port):
     import subprocess  # @Reimport
     import os.path
-    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]
+    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execNewXFreeRdp(xfreerdp, port):
     import subprocess
     import os.path
-    params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]
+    params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]] # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 # Try to locate a "valid" version of xfreerdp as first option (<1.1 does not allows drive redirections, so it will not be used if found)
@@ -43,7 +39,7 @@ if app is None or fnc is None:
 ''')
 else:
     # Open tunnel
-    forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])
+    forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, waitTime=sp['tunWait'])  # type: ignore
 
     if forwardThread.status == 2:
         raise Exception('Unable to open tunnel')
