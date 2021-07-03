@@ -35,12 +35,14 @@ class UdsApplication(QtWidgets.QApplication):
 
     def event(self, evnt: QtCore.QEvent) -> bool:
         if evnt.type() == QtCore.QEvent.FileOpen:
-            # First, remove all finished tunnel processed from check queue
             fe = typing.cast(QtGui.QFileOpenEvent, evnt)
             logger.debug('Got url: %s', fe.url().url())
             fe.accept()
             logger.debug('Spawning %s', self.path)
-            subprocess.Popen([self.path, fe.url().url()])
+            # First, remove all finished tunnel processed from check queue
+            self.cleanTunnels()
+            # And now add a new one
+            self.tunnels.append(subprocess.Popen([self.path, fe.url().url()]))
 
         return super().event(evnt)
 
