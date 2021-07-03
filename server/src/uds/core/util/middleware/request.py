@@ -28,9 +28,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import threading
+import re
 import datetime
-import weakref
 import logging
 import typing
 
@@ -50,6 +49,9 @@ from uds.models import User
 
 logger = logging.getLogger(__name__)
 
+# Simple Bot detection
+bot = re.compile('bot|spider', re.IGNORECASE)
+
 # How often to check the requests cache for stuck objects
 CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
@@ -59,19 +61,6 @@ class GlobalRequestMiddleware:
 
     def __init__(self, get_response: typing.Callable[[HttpRequest], HttpResponse]):
         self._get_response: typing.Callable[[HttpRequest], HttpResponse] = get_response
-
-    def _process_request(self, request: ExtendedHttpRequest) -> None:
-        # Store request on cache
-        setRequest(request=request)
-
-        # Add IP to request
-        GlobalRequestMiddleware.fillIps(request)
-        # Ensures request contains os
-        request.os = OsDetector.getOsFromUA(
-            request.META.get('HTTP_USER_AGENT', 'Unknown')
-        )
-        # Ensures that requests contains the valid user
-        GlobalRequestMiddleware.getUser(request)
 
     def _process_response(self, request: ExtendedHttpRequest, response: HttpResponse):
         # Remove IP from global cache (processing responses after this will make global request unavailable,
@@ -83,7 +72,24 @@ class GlobalRequestMiddleware:
         return response
 
     def __call__(self, request: ExtendedHttpRequest):
-        self._process_request(request)
+        # Add IP to request
+        GlobalRequestMiddleware.fillIps(request)
+
+        # If bot, break now
+        ua = request.META.get('HTTP_USER_AGENT', 'Unknown')
+        if bot.search(ua):
+            # Return emty response if bot is detected
+            logger.info('Denied Bot %s from %s to %s', ua, request.ip, request.path)
+            return HttpResponse(content='Forbbiden', status=403)
+
+        # Store request on cache
+        setRequest(request=request)
+
+        # Ensures request contains os
+        request.os = OsDetector.getOsFromUA(ua)
+
+        # Ensures that requests contains the valid user
+        GlobalRequestMiddleware.getUser(request)
 
         # Now, check if session is timed out...
         if request.user:
