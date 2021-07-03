@@ -53,9 +53,11 @@ class Proxy:
         self.ns = ns
 
     @staticmethod
-    def _getUdsUrl(cfg: config.ConfigurationType, ticket: bytes, msg: str) -> typing.MutableMapping[str, typing.Any]:
+    def _getUdsUrl(cfg: config.ConfigurationType, ticket: bytes, msg: str, queryParams: typing.Mapping[str, str] = None) -> typing.MutableMapping[str, typing.Any]:
         try:
             url = cfg.uds_server + '/' + ticket.decode() + '/' + msg + '/' + cfg.uds_token
+            if queryParams:
+                url += '?' + '&'. join([f'{key}={value}' for key, value in queryParams.items()])
             r = requests.get(url, headers={'content-type': 'application/json', 'User-Agent': f'UDSTunnel-{consts.VERSION}'})
             if not r.ok:
                 raise Exception(r.content)
@@ -87,17 +89,21 @@ class Proxy:
 
     @staticmethod
     def notifyEndToUds(cfg: config.ConfigurationType, ticket: bytes, counter: stats.Stats) -> None:
-        msg = f'stop?sent={counter.sent}&recv={counter.recv}'
-        Proxy._getUdsUrl(cfg, ticket, msg)  # Ignore results
+        Proxy._getUdsUrl(cfg, ticket, 'stop', {'sent': str(counter.sent), 'recv': str(counter.recv)})  # Ignore results
 
     @staticmethod
     async def doProxy(source, destination, counter: stats.StatsSingleCounter) -> None:
-        while True:
-            data = await source.recv(consts.BUFFER_SIZE)
-            if not data:
-                break
-            await destination.sendall(data)
-            counter.add(len(data))
+        try:
+            while True:
+                data = await source.recv(consts.BUFFER_SIZE)
+                if not data:
+                    break
+                await destination.sendall(data)
+                counter.add(len(data))
+        except Exception:
+            # Connection broken
+            logger.info('CONNECTION LOST FROM %s to %s', source, destination)
+
 
     # Method responsible of proxying requests
     async def __call__(self, source, address: typing.Tuple[str, int]) -> None:
