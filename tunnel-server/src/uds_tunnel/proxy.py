@@ -102,7 +102,9 @@ class Proxy:
                 await destination.sendall(data)
                 counter.add(len(data))
         except Exception:
-            # Connection broken, same result as closed for us (even log is removed)
+            # Connection broken, same result as closed for us 
+            # We must notice that i'ts easy that when closing one part of the tunnel,
+            # the other can break (due to some internal data), that's why even log is removed
             # logger.info('CONNECTION LOST FROM %s to %s', source.getsockname(), destination.getpeername())
             pass
 
