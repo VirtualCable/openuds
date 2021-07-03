@@ -40,6 +40,7 @@ from . import consts
 
 if typing.TYPE_CHECKING:
     from multiprocessing.managers import Namespace
+    import curio.io
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +93,7 @@ class Proxy:
         Proxy._getUdsUrl(cfg, ticket, 'stop', {'sent': str(counter.sent), 'recv': str(counter.recv)})  # Ignore results
 
     @staticmethod
-    async def doProxy(source, destination, counter: stats.StatsSingleCounter) -> None:
+    async def doProxy(source: 'curio.io.Socket', destination: 'curio.io.Socket', counter: stats.StatsSingleCounter) -> None:
         try:
             while True:
                 data = await source.recv(consts.BUFFER_SIZE)
@@ -101,8 +102,9 @@ class Proxy:
                 await destination.sendall(data)
                 counter.add(len(data))
         except Exception:
-            # Connection broken
-            logger.info('CONNECTION LOST FROM %s to %s', source, destination)
+            # Connection broken, same result as closed for us (even log is removed)
+            # logger.info('CONNECTION LOST FROM %s to %s', source.getsockname(), destination.getpeername())
+            pass
 
 
     # Method responsible of proxying requests
