@@ -28,6 +28,7 @@ class UdsApplication(QtWidgets.QApplication):
     def closeTunnels(self) -> None:
         logger.debug('Closing remaining tunnels')
         for tunnel in self.tunnels:
+            logger.debug('Checking %s - "%s"', tunnel, tunnel.poll())
             if tunnel.poll() is None:  # Running
                 logger.info('Found running tunnel %s, closing it', tunnel.pid)
                 tunnel.kill()
