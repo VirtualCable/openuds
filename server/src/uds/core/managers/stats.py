@@ -41,6 +41,16 @@ from uds.models import StatsEvents
 
 logger = logging.getLogger(__name__)
 
+FLDS_EQUIV: typing.Mapping[str, typing.Iterable[str]] = {
+    'fld1': ('username', 'platform'),
+    'fld2': ('source', 'srcip', 'browser'),
+    'fld3': ('destionation', 'dstip'),
+    'fld4': ('uniqueid',),
+}
+
+REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {
+    i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases
+}
 
 class StatsManager:
     """
@@ -149,15 +159,7 @@ class StatsManager:
         '''
         Get equivalency between "cool names" and field. Will raise "KeyError" if no equivalency
         '''
-        return {
-            'username': 'fld1',
-            'platform': 'fld1',
-            'srcip': 'fld2',
-            'browser': 'fld2',
-            'dstip': 'fld3',
-            'version': 'fld3',
-            'uniqueid': 'fld4'
-        }[fld]
+        return REVERSE_FLDS_EQUIV[fld]
 
     # Event stats
     def addEvent(self, owner_type: int, owner_id: int, eventType: int, **kwargs):
@@ -184,15 +186,18 @@ class StatsManager:
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
+            def getKwarg(fld: str) -> str:
+                val = None
+                for i in FLDS_EQUIV[fld]:
+                    val = kwargs.get(i)
+                    if val is not None:
+                        break
+                return val or ''
 
-            # Replaces nulls for ''
-            def noneToEmpty(value):
-                return str(value) if value else ''
-
-            fld1 = noneToEmpty(kwargs.get('fld1', kwargs.get('username', kwargs.get('platform', ''))))
-            fld2 = noneToEmpty(kwargs.get('fld2', kwargs.get('srcip', kwargs.get('browser', ''))))
-            fld3 = noneToEmpty(kwargs.get('fld3', kwargs.get('dstip', kwargs.get('version', ''))))
-            fld4 = noneToEmpty(kwargs.get('fld4', kwargs.get('uniqueid', '')))
+            fld1 = getKwarg('fld1')
+            fld2 = getKwarg('fld2')
+            fld3 = getKwarg('fld3')
+            fld4 = getKwarg('fld4')
 
             StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3, fld4=fld4)
             return True

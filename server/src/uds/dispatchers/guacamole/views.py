@@ -30,13 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse
 
 from uds.models import TicketStore, UserService, TunnelToken
 from uds.core.auths import auth
 from uds.core.managers import cryptoManager
+from uds.core.util import log
+from uds.core.util.stats import events
 from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -58,15 +61,32 @@ def guacamole(request: ExtendedHttpRequestWithUser, tunnelId: str) -> HttpRespon
     try:
         tunnelId, scrambler = tunnelId.split('.')
 
-        val = TicketStore.get(tunnelId, invalidate=False)
+        # All strings excetp "ticket-info", that is fixed if it exists later
+        val = typing.cast(typing.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False))
 
         # Extra check that the ticket data belongs to original requested user service/user
         if 'ticket-info' in val:
-            ti = val['ticket-info']
+            ti = typing.cast(typing.Mapping[str, str], val['ticket-info'])
             del val['ticket-info']   # Do not send this data to guacamole!! :)
 
             try:
                 userService = UserService.objects.get(uuid=ti['userService'])
+                # Log message and event
+                protocol = 'RDS' if 'remote-app' in val else val['protocol'].upper()
+                host = val.get('hostname', '0.0.0.0')
+                msg = f'User {userService.user.name} started HTML5 {protocol} tunnel to {host}.'
+                log.doLog(userService.user.manager, log.INFO, msg)
+                log.doLog(userService, log.INFO, msg)
+
+                events.addEvent(
+                    userService.deployed_service,
+                    events.ET_TUNNEL_ACCESS,
+                    username=userService.user.pretty_name,
+                    source='HTML5 ' + protocol,  # On HTML5, currently src is not provided by Guacamole
+                    dstip=host,
+                    uniqueid=userService.unique_id,
+                )
+
             except Exception:
                 logger.error('The requested guacamole userservice does not exists anymore')
                 raise

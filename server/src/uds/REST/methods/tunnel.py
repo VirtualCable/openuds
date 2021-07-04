@@ -38,12 +38,12 @@ from uds.core import managers
 from uds.REST import Handler
 from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
-from uds.core.util import log, net, request
+from uds.core.util import log, net
 from uds.core.util.stats import events
 
 logger = logging.getLogger(__name__)
 
-MAX_SESSION_LENGTH = 60*60*24*7
+MAX_SESSION_LENGTH = 60*60*24*7*2  # Two weeks is max session length for a tunneled connection
 
 # Enclosed methods under /tunnel path
 class TunnelTicket(Handler):
