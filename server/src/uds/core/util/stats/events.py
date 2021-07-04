@@ -60,7 +60,7 @@ if typing.TYPE_CHECKING:
     # Tunnel
     ET_TUNNEL_OPEN,
     ET_TUNNEL_CLOSE,
-) = range(9)
+) = range(8)
 
 (
     OT_PROVIDER,
