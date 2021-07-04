@@ -43,13 +43,16 @@ from uds.core.util.stats import events
 
 logger = logging.getLogger(__name__)
 
-MAX_SESSION_LENGTH = 60*60*24*7*2  # Two weeks is max session length for a tunneled connection
+MAX_SESSION_LENGTH = (
+    60 * 60 * 24 * 7 * 2
+)  # Two weeks is max session length for a tunneled connection
 
 # Enclosed methods under /tunnel path
 class TunnelTicket(Handler):
     """
     Processes tunnel requests
     """
+
     authenticated = False  # Client requests are not authenticated
     path = 'tunnel'
     name = 'ticket'
@@ -59,7 +62,10 @@ class TunnelTicket(Handler):
         Processes get requests, currently none
         """
         logger.debug(
-            'Tunnel parameters for GET: %s (%s) from %s', self._args, self._params, self._request.ip
+            'Tunnel parameters for GET: %s (%s) from %s',
+            self._args,
+            self._params,
+            self._request.ip,
         )
 
         if (
@@ -75,29 +81,45 @@ class TunnelTicket(Handler):
         if not models.TunnelToken.validateToken(token):
             logger.error('Invalid token %s from %s', token, self._request.ip)
             raise AccessDenied()
-        
 
         # Try to get ticket from DB
         try:
             user, userService, host, port, extra = models.TicketStore.get_for_tunnel(
                 self._args[0]
             )
+            host = host or ''
             data = {}
             if self._args[1][:4] == 'stop':
                 sent, recv = self._params['sent'], self._params['recv']
                 # Ensures extra exists...
                 extra = extra or {}
                 now = models.getSqlDatetimeAsUnix()
-                totalTime = now - extra.get('b', now-1)               
+                totalTime = now - extra.get('b', now - 1)
                 msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{totalTime}.'
                 log.doLog(user.manager, log.INFO, msg)
                 log.doLog(userService, log.INFO, msg)
+
+                # Try to log Close event
+                try:
+                    pool = models.ServicePool.objects.filter(uuid=extra['p'])
+                    # If pool does not exists, do not log anything
+                    events.addEvent(
+                        userService.deployed_service,
+                        events.ET_TUNNEL_CLOSE,
+                        username=extra.get('u', 'unknown'),
+                        srcip=extra.get('s', 'unkown'),
+                        dstip=extra.get('d', 'unknown'),
+                        uniqueid=extra.get('m', 'unknown'),
+                    )
+                except Exception:
+                    pass
+
             else:
                 if net.ipToLong(self._args[1][:32]) == 0:
                     raise Exception('Invalid from IP')
                 events.addEvent(
                     userService.deployed_service,
-                    events.ET_TUNNEL_ACCESS,
+                    events.ET_TUNNEL_OPEN,
                     username=user.pretty_name,
                     srcip=self._args[1],
                     dstip=host,
@@ -112,13 +134,18 @@ class TunnelTicket(Handler):
                     userService=userService,
                     port=port,
                     host=host,
-                    extra={'t': self._args[0], 'b': models.getSqlDatetimeAsUnix()},
-                    validity=MAX_SESSION_LENGTH)
-                data = {
-                    'host': host,
-                    'port': port,
-                    'notify': notifyTicket
-                }
+                    extra={
+                        't': self._args[0],                      # ticket
+                        'b': models.getSqlDatetimeAsUnix(),      # Begin time stamp
+                        'p': userService.deployed_service.uuid,  # Pool
+                        'u': userService.user.pretty_name,       # Username
+                        'm': userService.unique_id,               # USerService unique id (MAC normally)
+                        's': self._args[1],
+                        'd': host + ':' + str(port)
+                    },
+                    validity=MAX_SESSION_LENGTH,
+                )
+                data = {'host': host, 'port': port, 'notify': notifyTicket}
 
             return data
         except Exception as e:
@@ -136,7 +163,9 @@ class TunnelRegister(Handler):
         now = models.getSqlDatetimeAsUnix()
         try:
             # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
-            tunnelToken = models.TunnelToken.objects.get(ip=self._params['ip'], hostname= self._params['hostname'])
+            tunnelToken = models.TunnelToken.objects.get(
+                ip=self._params['ip'], hostname=self._params['hostname']
+            )
             # Update parameters
             tunnelToken.username = self._user.pretty_name
             tunnelToken.ip_from = self._request.ip
@@ -150,15 +179,8 @@ class TunnelRegister(Handler):
                     ip=self._params['ip'],
                     hostname=self._params['hostname'],
                     token=secrets.token_urlsafe(36),
-                    stamp=models.getSqlDatetime()
+                    stamp=models.getSqlDatetime(),
                 )
             except Exception as e:
-                return {
-                    'result': '',
-                    'stamp': now,
-                    'error': str(e)
-                }
-        return {
-            'result': tunnelToken.token,
-            'stamp': now
-        }
+                return {'result': '', 'stamp': now, 'error': str(e)}
+        return {'result': tunnelToken.token, 'stamp': now}

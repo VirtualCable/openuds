@@ -59,8 +59,9 @@ if typing.TYPE_CHECKING:
     ET_PLATFORM,
     # Plugin downloads
     ET_PLUGIN_DOWNLOAD,
-    ET_TUNNEL_ACCESS,
-) = range(8)
+    ET_TUNNEL_OPEN,
+    ET_TUNNEL_CLOSE
+) = range(9)
 
 (
     OT_PROVIDER,
