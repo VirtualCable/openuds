@@ -42,10 +42,10 @@ from uds.models import StatsEvents
 logger = logging.getLogger(__name__)
 
 FLDS_EQUIV: typing.Mapping[str, typing.Iterable[str]] = {
-    'fld1': ('username', 'platform'),
-    'fld2': ('source', 'srcip', 'browser'),
-    'fld3': ('destionation', 'dstip'),
-    'fld4': ('uniqueid',),
+    'fld1': ('username', 'platform', 'duration'),
+    'fld2': ('source', 'srcip', 'browser', 'sent'),
+    'fld3': ('destination', 'dstip', 'received'),
+    'fld4': ('uniqueid', 'tunnel'),
 }
 
 REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {

@@ -224,14 +224,14 @@ def __registerUser(
         # And add an login event
         events.addEvent(
             authenticator, events.ET_LOGIN, username=username, srcip=request.ip
-        )  # pylint: disable=maybe-no-member
+        ) 
         events.addEvent(
             authenticator,
             events.ET_PLATFORM,
             platform=request.os['OS'],
             browser=request.os['Browser'],
             version=request.os['Version'],
-        )  # pylint: disable=maybe-no-member
+        )
         return usr
 
     return None

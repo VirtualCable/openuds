@@ -101,15 +101,14 @@ class TunnelTicket(Handler):
 
                 # Try to log Close event
                 try:
-                    pool = models.ServicePool.objects.filter(uuid=extra['p'])
                     # If pool does not exists, do not log anything
                     events.addEvent(
                         userService.deployed_service,
                         events.ET_TUNNEL_CLOSE,
-                        username=extra.get('u', 'unknown'),
-                        srcip=extra.get('s', 'unkown'),
-                        dstip=extra.get('d', 'unknown'),
-                        uniqueid=extra.get('m', 'unknown'),
+                        duration=totalTime,
+                        sent=sent,
+                        received=recv,
+                        tunnel=extra.get('t', 'unknown'),
                     )
                 except Exception:
                     pass
@@ -123,7 +122,7 @@ class TunnelTicket(Handler):
                     username=user.pretty_name,
                     srcip=self._args[1],
                     dstip=host,
-                    uniqueid=userService.unique_id,
+                    tunnel=self._args[0],
                 )
                 msg = f'User {user.name} started tunnel {self._args[0][:8]}... to {host}:{port} from {self._args[1]}.'
                 log.doLog(user.manager, log.INFO, msg)
@@ -137,11 +136,6 @@ class TunnelTicket(Handler):
                     extra={
                         't': self._args[0],                      # ticket
                         'b': models.getSqlDatetimeAsUnix(),      # Begin time stamp
-                        'p': userService.deployed_service.uuid,  # Pool
-                        'u': userService.user.pretty_name,       # Username
-                        'm': userService.unique_id,               # USerService unique id (MAC normally)
-                        's': self._args[1],
-                        'd': host + ':' + str(port)
                     },
                     validity=MAX_SESSION_LENGTH,
                 )

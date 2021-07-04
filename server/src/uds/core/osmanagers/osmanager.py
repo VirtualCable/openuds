@@ -46,6 +46,7 @@ if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
     from uds.core.environment import Environment
 
+
 class OSManager(Module):
     """
     An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
@@ -54,6 +55,7 @@ class OSManager(Module):
     Server will iterate thought them and look for an identifier associated with the service. This list is a comma separated values (i.e. AA:BB:CC:DD:EE:FF,00:11:22:...)
     Remember also that we inherit the test and check methods from BaseModule
     """
+
     # Service informational related data
     typeName = _('Base OS Manager')
     typeType = 'osmanager'
@@ -95,7 +97,13 @@ class OSManager(Module):
         @return nothing
         """
 
-    def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str:
+    def process(
+        self,
+        userService: 'UserService',
+        message: str,
+        data: typing.Any,
+        options: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> str:
         """
         @param userService: Service that sends the request (virtual machine or whatever)
         @param message: message to process (os manager dependent)
@@ -108,7 +116,9 @@ class OSManager(Module):
         return ''
 
     # These methods must be overriden
-    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+    def actorData(
+        self, userService: 'UserService'
+    ) -> typing.MutableMapping[str, typing.Any]:
         """
         This method provides information to actor, so actor can complete os configuration.
         Currently exists 3 types of os managers actions
@@ -182,7 +192,9 @@ class OSManager(Module):
         """
         return hash(cls.processUserPassword) != hash(OSManager.processUserPassword)
 
-    def processUserPassword(self, userService: 'UserService', username: str, password: str) -> typing.Tuple[str, str]:
+    def processUserPassword(
+        self, userService: 'UserService', username: str, password: str
+    ) -> typing.Tuple[str, str]:
         """
         This will be invoked prior to passsing username/password to Transport.
 
@@ -214,7 +226,9 @@ class OSManager(Module):
         userService.setProperty('loginsCounter', '0')
 
     @staticmethod
-    def loggedIn(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def loggedIn(
+        userService: 'UserService', userName: typing.Optional[str] = None
+    ) -> None:
         """
         This method:
           - Add log in event to stats
@@ -229,24 +243,49 @@ class OSManager(Module):
 
         serviceIp = userServiceInstance.getIp()
 
-        fullUserName = userService.user.manager.name + '\\' + userService.user.name  if userService.user else 'unknown'
+        fullUserName = userService.user.pretty_name if userService.user else 'unknown'
 
         knownUserIP = userService.src_ip + ':' + userService.src_hostname
         knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
 
         userName = userName or 'unknown'
 
-        addEvent(userService.deployed_service, ET_LOGIN, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
+        addEvent(
+            userService.deployed_service,
+            ET_LOGIN,
+            fld1=userName,
+            fld2=knownUserIP,
+            fld3=serviceIp,
+            fld4=fullUserName,
+        )
 
-        log.doLog(userService, log.INFO, "User {0} has logged in".format(userName), log.OSMANAGER)
+        log.doLog(
+            userService,
+            log.INFO,
+            "User {0} has logged in".format(userName),
+            log.OSMANAGER,
+        )
 
-        log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
+        log.useLog(
+            'login',
+            uniqueId,
+            serviceIp,
+            userName,
+            knownUserIP,
+            fullUserName,
+            userService.friendly_name,
+            userService.deployed_service.name,
+        )
 
-        counter = int(typing.cast(str, userService.getProperty('loginsCounter', '0'))) + 1
+        counter = (
+            int(typing.cast(str, userService.getProperty('loginsCounter', '0'))) + 1
+        )
         userService.setProperty('loginsCounter', str(counter))
 
     @staticmethod
-    def loggedOut(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def loggedOut(
+        userService: 'UserService', userName: typing.Optional[str] = None
+    ) -> None:
         """
         This method:
           - Add log in event to stats
@@ -269,25 +308,48 @@ class OSManager(Module):
 
         serviceIp = userServiceInstance.getIp()
 
-        fullUserName = 'unknown'
-        if userService.user:
-            fullUserName = userService.user.manager.name + '\\' + userService.user.name
+        fullUserName = userService.user.pretty_name if userService.user else 'unknown'
 
         knownUserIP = userService.src_ip + ':' + userService.src_hostname
         knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
 
         userName = userName or 'unknown'
 
-        addEvent(userService.deployed_service, ET_LOGOUT, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
+        addEvent(
+            userService.deployed_service,
+            ET_LOGOUT,
+            fld1=userName,
+            fld2=knownUserIP,
+            fld3=serviceIp,
+            fld4=fullUserName,
+        )
 
-        log.doLog(userService, log.INFO, "User {0} has logged out".format(userName), log.OSMANAGER)
+        log.doLog(
+            userService,
+            log.INFO,
+            "User {0} has logged out".format(userName),
+            log.OSMANAGER,
+        )
 
-        log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
+        log.useLog(
+            'logout',
+            uniqueId,
+            serviceIp,
+            userName,
+            knownUserIP,
+            fullUserName,
+            userService.friendly_name,
+            userService.deployed_service.name,
+        )
 
-    def loginNotified(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def loginNotified(
+        self, userService: 'UserService', userName: typing.Optional[str] = None
+    ) -> None:
         OSManager.loggedIn(userService, userName)
 
-    def logoutNotified(self, userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def logoutNotified(
+        self, userService: 'UserService', userName: typing.Optional[str] = None
+    ) -> None:
         OSManager.loggedOut(userService, userName)
 
     def readyNotified(self, userService: 'UserService') -> None:
