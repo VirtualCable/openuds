@@ -49,9 +49,9 @@ class RedirectMiddleware:
         'uds/pam',
         'uds/guacamole',
         # Test client can be http
-        'uds/rest/client/test'
+        'uds/rest/client/test',
         # And also the tunnel
-        '/uds/rest/tunnel'
+        'uds/rest/tunnel'
     ]
 
     def __init__(self, get_response):
@@ -65,7 +65,7 @@ class RedirectMiddleware:
                 redirect = False
                 break
 
-        if redirect and request.is_secure() is False and GlobalConfig.REDIRECT_TO_HTTPS.getBool():
+        if redirect and not request.is_secure() and GlobalConfig.REDIRECT_TO_HTTPS.getBool():
             if request.method == 'POST':
                 # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
                 url = reverse('page.login')
