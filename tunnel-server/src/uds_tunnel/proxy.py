@@ -223,4 +223,4 @@ class Proxy:
         finally:
             counter.close()  # So we ensure stats are correctly updated on ns
 
-        logger.info('TERMINATED %s', ':'.join(str(i) for i in address))
+        logger.info('TERMINATED %s, s:%s, r: %s', ':'.join(str(i) for i in address), counter.sent, counter.recv)
