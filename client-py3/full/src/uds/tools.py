@@ -230,18 +230,10 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
     return True
 
 def getCaCertsFile() -> str:
-    logger.debug('Certifi: %s', certifi.where())
-    logger.debug('File: %s', __file__)
     try:
         if os.path.exists(certifi.where()):
-            logger.debug('Certifi file exists: %s', certifi.where())
             return certifi.where()
     except Exception:
-        pass
+        logger.debug('Certifi file does not exists: %s', certifi.where())
 
-    if 'darwin' in sys.platform:
-        path = __file__
-        logger.debug('Certifi file: %s', path)
-        return path
-
-    return ''
+    return ''  # Return empty path
