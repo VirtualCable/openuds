@@ -39,7 +39,7 @@ import select
 import typing
 import logging
 
-import certifi
+from . import tools
 
 HANDSHAKE_V1 = b'\x5AMGB\xA5\x01\x00'
 BUFFER_SIZE = 1024 * 16  # Max buffer length
@@ -50,7 +50,6 @@ LISTEN_ADDRESS = '0.0.0.0' if DEBUG else '127.0.0.1'
 TUNNEL_LISTENING, TUNNEL_OPENING, TUNNEL_PROCESSING, TUNNEL_ERROR = 0, 1, 2, 3
 
 logger = logging.getLogger(__name__)
-
 
 class ForwardServer(socketserver.ThreadingTCPServer):
     daemon_threads = True
@@ -118,7 +117,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             
             # Do not "recompress" data, use only "base protocol" compression
             context.options |= ssl.OP_NO_COMPRESSION
-            context.load_verify_locations(certifi.where())  # Load certifi certificates
+            context.load_verify_locations(tools.getCaCertsFile())  # Load certifi certificates
 
             # If ignore remote certificate
             if self.check_certificate is False:

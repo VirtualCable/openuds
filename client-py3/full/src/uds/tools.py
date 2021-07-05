@@ -33,12 +33,14 @@ import tempfile
 import string
 import random
 import os
+import os.path
 import socket
 import stat
 import sys
 import time
 import base64
 import typing
+import certifi
 
 try:
     import psutil
@@ -226,3 +228,20 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
 
     # If no exception, the script was fine...
     return True
+
+def getCaCertsFile() -> str:
+    logger.debug('Certifi: %s', certifi.where())
+    logger.debug('File: %s', __file__)
+    try:
+        if os.path.exists(certifi.where()):
+            logger.debug('Certifi file exists: %s', certifi.where())
+            return certifi.where()
+    except Exception:
+        pass
+
+    if 'darwin' in sys.platform:
+        path = __file__
+        logger.debug('Certifi file: %s', path)
+        return path
+
+    return ''

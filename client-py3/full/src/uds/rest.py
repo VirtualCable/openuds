@@ -178,18 +178,24 @@ class RestApi:
     def _open(
         url: str, certErrorCallback: typing.Optional[CertCallbackType] = None
     ) -> typing.Any:
+        print('Open')
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
-        ctx.load_verify_locations(certifi.where())
+        ctx.load_verify_locations(tools.getCaCertsFile())
         hostname = urllib.parse.urlparse(url)[1]
         serial = ''
 
+        port = ''
+        if ':' in hostname:
+            hostname, port = hostname.split(':')
+
         if url.startswith('https'):
+            port = port or '443'
             with ctx.wrap_socket(
                 socket.socket(socket.AF_INET, socket.SOCK_STREAM), server_hostname=hostname
             ) as s:
-                s.connect((hostname, 443))
+                s.connect((hostname, int(port)))
                 # Get binary certificate
                 binCert = s.getpeercert(True)
                 if binCert:
@@ -231,6 +237,7 @@ class RestApi:
     def getUrl(
         url: str, certErrorCallback: typing.Optional[CertCallbackType] = None
     ) -> bytes:
+        print(url)
         with RestApi._open(url, certErrorCallback) as response:
             resp = response.read()
 
