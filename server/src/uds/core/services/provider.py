@@ -113,12 +113,12 @@ class ServiceProvider(Module):
     # : This defines the maximum number of concurrent services that should be in state "in preparation" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
-    maxPreparingServices: typing.Any = None
+    maxPreparingServices: typing.Optional[typing.Union[int, gui.InputField]] = None
 
     # : This defines the maximum number of concurrent services that should be in state "removing" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_REMOVING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
-    maxRemovingServices: typing.Any = None
+    maxRemovingServices: typing.Optional[typing.Union[int, gui.InputField]] = None
 
     # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
     # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
@@ -179,7 +179,10 @@ class ServiceProvider(Module):
         if val is None:
             val = self.maxPreparingServices = GlobalConfig.MAX_PREPARING_SERVICES.getInt(force=True)  # Recover global an cache till restart
 
-        retVal = int(getattr(val, 'value', val))
+        if isinstance(val, gui.InputField):
+            retVal = val.value
+        else:
+            retVal = val
         return retVal if retVal > 0 else 1
 
     def getMaxRemovingServices(self) -> int:
@@ -187,7 +190,10 @@ class ServiceProvider(Module):
         if val is None:
             val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(force=True)  # Recover global an cache till restart
 
-        retVal = int(getattr(val, 'value', val))
+        if isinstance(val, gui.InputField):
+            retVal = val.value
+        else:
+            retVal = val
         return retVal if retVal > 0 else 1
 
     def getIgnoreLimits(self) -> bool:

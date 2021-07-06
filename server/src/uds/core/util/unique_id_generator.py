@@ -54,7 +54,7 @@ class UniqueIDGenerator:
     _owner: str
     _baseName: str
 
-    def __init__(self, typeName: str, owner: typing.Any, baseName: typing.Optional[str] = None):
+    def __init__(self, typeName: str, owner: str, baseName: typing.Optional[str] = None):
         self._owner = owner + typeName
         self._baseName = 'uds' if baseName is None else baseName
 

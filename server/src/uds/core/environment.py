@@ -50,7 +50,7 @@ class Environment:
     _key: str
     _cache: Cache
     _storage: Storage
-    _idGenerators: typing.Optional[typing.Dict[str, UniqueIDGenerator]]
+    _idGenerators: typing.Dict[str, UniqueIDGenerator]
 
     def __init__(self, uniqueKey: str, idGenerators: typing.Optional[typing.Dict[str, UniqueIDGenerator]] = None):
         """

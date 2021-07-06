@@ -229,7 +229,8 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         Logs a message with requested level associated with this user deployment
         """
-        log.doLog(self._dbService, level, message, log.SERVICE)
+        if self._dbService:
+            log.doLog(self._dbService, level, message, log.SERVICE)
 
     def macGenerator(self) -> 'UniqueMacGenerator':
         """
@@ -574,7 +575,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.cancel != UserDeployment.cancel
+        return cls.cancel != UserDeployment.cancel  # type: ignore
 
     def reset(self) -> None:
         """
