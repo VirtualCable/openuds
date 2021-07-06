@@ -28,8 +28,8 @@
 from uds.core import managers
 
 from .provider import ProxmoxProvider
-from .jobs import ProxmoxDeferredRemoval
+from .jobs import ProxmoxDeferredRemoval, ProxmoxVmidReleaser
 
 # Scheduled task to do clean processes
-for cls in (ProxmoxDeferredRemoval, ):
+for cls in (ProxmoxDeferredRemoval, ProxmoxVmidReleaser):
     managers.taskManager().registerJob(cls)

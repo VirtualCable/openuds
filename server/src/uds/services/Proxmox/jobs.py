@@ -33,14 +33,16 @@ import typing
 
 from uds.core import jobs
 
-from uds.models import Provider
+from uds.models import Provider, getSqlDatetimeAsUnix
+from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 from . import provider
 from . import client
 
-# Not imported at runtime, just for type checking
+MAX_VMID_LIFE_SECS = 365 * 24 * 60 * 60 * 3  # 3 years for "reseting"
 
 logger = logging.getLogger(__name__)
+
 
 class ProxmoxDeferredRemoval(jobs.Job):
     frecuency = 60 * 5  # Once every NN minutes
@@ -49,55 +51,81 @@ class ProxmoxDeferredRemoval(jobs.Job):
 
     @staticmethod
     def remove(providerInstance: 'provider.ProxmoxProvider', vmId: int) -> None:
-        logger.debug('Adding %s from %s to defeffed removal process', vmId, providerInstance)
+        logger.debug(
+            'Adding %s from %s to defeffed removal process', vmId, providerInstance
+        )
         ProxmoxDeferredRemoval.counter += 1
         try:
             # First check state & stop machine if needed
             vmInfo = providerInstance.getMachineInfo(vmId)
             if vmInfo.status == 'running':
-                # If running vm,  simply stops it and wait for next 
-                ProxmoxDeferredRemoval.waitForTaskFinish(providerInstance, providerInstance.stopMachine(vmId))
+                # If running vm,  simply stops it and wait for next
+                ProxmoxDeferredRemoval.waitForTaskFinish(
+                    providerInstance, providerInstance.stopMachine(vmId)
+                )
 
-            ProxmoxDeferredRemoval.waitForTaskFinish(providerInstance, providerInstance.removeMachine(vmId))
+            ProxmoxDeferredRemoval.waitForTaskFinish(
+                providerInstance, providerInstance.removeMachine(vmId)
+            )
         except client.ProxmoxNotFound:
             return  # Machine does not exists
         except Exception as e:
             providerInstance.storage.saveData('tr' + str(vmId), str(vmId), attr1='tRm')
-            logger.info('Machine %s could not be removed right now, queued for later: %s', vmId, e)
+            logger.info(
+                'Machine %s could not be removed right now, queued for later: %s',
+                vmId,
+                e,
+            )
 
     @staticmethod
-    def waitForTaskFinish(providerInstance: 'provider.ProxmoxProvider', upid: 'client.types.UPID', maxWait: int = 30) -> bool:
+    def waitForTaskFinish(
+        providerInstance: 'provider.ProxmoxProvider',
+        upid: 'client.types.UPID',
+        maxWait: int = 30,
+    ) -> bool:
         counter = 0
-        while providerInstance.getTaskInfo(upid.node, upid.upid).isRunning() and counter < maxWait:
+        while (
+            providerInstance.getTaskInfo(upid.node, upid.upid).isRunning()
+            and counter < maxWait
+        ):
             time.sleep(0.3)
             counter += 1
-        
+
         return counter < maxWait
 
     def run(self) -> None:
         dbProvider: Provider
         # Look for Providers of type proxmox
-        for dbProvider in Provider.objects.filter(maintenance_mode=False, data_type=provider.ProxmoxProvider.typeType):
+        for dbProvider in Provider.objects.filter(
+            maintenance_mode=False, data_type=provider.ProxmoxProvider.typeType
+        ):
             logger.debug('Provider %s if os type proxmox', dbProvider)
 
             storage = dbProvider.getEnvironment().storage
-            instance: provider.ProxmoxProvider = typing.cast(provider.ProxmoxProvider, dbProvider.getInstance())
+            instance: provider.ProxmoxProvider = typing.cast(
+                provider.ProxmoxProvider, dbProvider.getInstance()
+            )
 
             for i in storage.filter('tRm'):
                 vmId = int(i[1].decode())
-                
+
                 try:
                     vmInfo = instance.getMachineInfo(vmId)
                     logger.debug('Found %s for removal %s', vmId, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
                     if vmInfo.status == 'running':
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.stopMachine(vmId))
+                        ProxmoxDeferredRemoval.waitForTaskFinish(
+                            instance, instance.stopMachine(vmId)
+                        )
                         return
 
-                    if vmInfo.status == 'stopped':  # Machine exists, try to remove it now
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.removeMachine(vmId))
-
+                    if (
+                        vmInfo.status == 'stopped'
+                    ):  # Machine exists, try to remove it now
+                        ProxmoxDeferredRemoval.waitForTaskFinish(
+                            instance, instance.removeMachine(vmId)
+                        )
 
                     # It this is reached, remove check
                     storage.remove('tr' + str(vmId))
@@ -108,3 +136,13 @@ class ProxmoxDeferredRemoval(jobs.Job):
                     logger.error('Delayed removal of %s failed: %s', i, e)
 
         logger.debug('Deferred removal for proxmox finished')
+
+
+class ProxmoxVmidReleaser(jobs.Job):
+    frecuency = 60 * 60 * 24 * 30  # Once a month
+    friendly_name = 'Proxmox maintenance'
+
+    def run(self) -> None:
+        logger.debug('Proxmox Vmid releader running')
+        gen = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
+        gen.releaseOlderThan(getSqlDatetimeAsUnix() - MAX_VMID_LIFE_SECS)

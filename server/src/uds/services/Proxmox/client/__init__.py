@@ -257,6 +257,14 @@ class ProxmoxClient:
         return int(self._get('cluster/nextid')['data'])
 
     @ensureConected
+    def isVMIdAvailable(self, vmId: int) -> bool:
+        try:
+            self._get(f'cluster/nextid?vmid={vmId}')
+        except Exception: # Not available
+            return False
+        return True
+
+    @ensureConected
     @allowCache(
         'nodeNets',
         CACHE_DURATION,
@@ -289,6 +297,7 @@ class ProxmoxClient:
     def cloneVm(
         self,
         vmId: int,
+        newVmId: int,
         name: str,
         description: typing.Optional[str],
         linkedClone: bool,
@@ -296,7 +305,6 @@ class ProxmoxClient:
         toStorage: typing.Optional[str] = None,
         toPool: typing.Optional[str] = None,
     ) -> types.VmCreationResult:
-        newVmId = self.getNextVMId()
         vmInfo = self.getVmInfo(vmId)
 
         fromNode = vmInfo.node

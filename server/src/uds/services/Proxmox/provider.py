@@ -32,9 +32,11 @@ import typing
 
 from django.utils.translation import ugettext_noop as _
 
+from uds.models import getSqlDatetimeAsUnix
 from uds.core import services
 from uds.core.ui import gui
 from uds.core.util import validators
+from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 from .service import ProxmoxLinkedService
 
@@ -48,35 +50,114 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 CACHE_TIME_FOR_SERVER = 1800
+MAX_VM_ID = 999999999
 
-
-class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-public-methods
+class ProxmoxProvider(
+    services.ServiceProvider
+):  # pylint: disable=too-many-public-methods
     offers = [ProxmoxLinkedService]
     typeName = _('Proxmox Platform Provider')
     typeType = 'ProxmoxPlatform'
     typeDescription = _('Proxmox platform service provider')
     iconFile = 'provider.png'
 
-    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('Proxmox Server IP or Hostname'), required=True)
-    port = gui.NumericField(lengh=5, label=_('Port'), order=2, tooltip=_('Proxmox API port (default is 8006)'), required=True, defvalue='8006')
+    host = gui.TextField(
+        length=64,
+        label=_('Host'),
+        order=1,
+        tooltip=_('Proxmox Server IP or Hostname'),
+        required=True,
+    )
+    port = gui.NumericField(
+        lengh=5,
+        label=_('Port'),
+        order=2,
+        tooltip=_('Proxmox API port (default is 8006)'),
+        required=True,
+        defvalue='8006',
+    )
 
-    username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on Proxmox, (use "user@authenticator" form)'), required=True, defvalue='root@pam')
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of Proxmox'), required=True)
+    username = gui.TextField(
+        length=32,
+        label=_('Username'),
+        order=3,
+        tooltip=_(
+            'User with valid privileges on Proxmox, (use "user@authenticator" form)'
+        ),
+        required=True,
+        defvalue='root@pam',
+    )
+    password = gui.PasswordField(
+        lenth=32,
+        label=_('Password'),
+        order=4,
+        tooltip=_('Password of the user of Proxmox'),
+        required=True,
+    )
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        defvalue='10',
+        minValue=1,
+        maxValue=65536,
+        order=50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    maxRemovingServices = gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        defvalue='5',
+        minValue=1,
+        maxValue=65536,
+        order=51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='20', order=90, tooltip=_('Timeout in seconds of connection to Proxmox'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(
+        length=3,
+        label=_('Timeout'),
+        defvalue='20',
+        order=90,
+        tooltip=_('Timeout in seconds of connection to Proxmox'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+
+    startVmId = gui.NumericField(
+        length=3,
+        label=_('Starting VmId'),
+        defvalue='10000',
+        minValue=10000,
+        maxValue=100000,
+        order=91,
+        tooltip=_('Starting machine id on proxmox'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # Own variables
     _api: typing.Optional[client.ProxmoxClient] = None
+    _vmid_generator: UniqueIDGenerator
 
     def __getApi(self) -> client.ProxmoxClient:
         """
         Returns the connection API object
         """
         if self._api is None:
-            self._api = client.ProxmoxClient(self.host.value, self.port.num(), self.username.value, self.password.value, self.timeout.num(), False, self.cache)
+            self._api = client.ProxmoxClient(
+                self.host.value,
+                self.port.num(),
+                self.username.value,
+                self.password.value,
+                self.timeout.num(),
+                False,
+                self.cache,
+            )
 
         return self._api
 
@@ -88,6 +169,8 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
 
         # Just reset _api connection variable
         self._api = None
+        # All proxmox use same UniqueId generator
+        self._vmid_generator = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
 
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value)
@@ -107,16 +190,20 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     def listMachines(self) -> typing.List[client.types.VMInfo]:
         return self.__getApi().listVms()
 
-    def getMachineInfo(self, vmId: int, poolId: typing.Optional[str] = None) -> client.types.VMInfo:
+    def getMachineInfo(
+        self, vmId: int, poolId: typing.Optional[str] = None
+    ) -> client.types.VMInfo:
         return self.__getApi().getVMPoolInfo(vmId, poolId, force=True)
 
     def getMachineConfiguration(self, vmId: int) -> client.types.VMConfiguration:
         return self.__getApi().getVmConfiguration(vmId, force=True)
-  
+
     def getStorageInfo(self, storageId: str, node: str) -> client.types.StorageInfo:
         return self.__getApi().getStorage(storageId, node)
 
-    def listStorages(self, node: typing.Optional[str]) -> typing.List[client.types.StorageInfo]:
+    def listStorages(
+        self, node: typing.Optional[str]
+    ) -> typing.List[client.types.StorageInfo]:
         return self.__getApi().listStorages(node=node, content='images')
 
     def listPools(self) -> typing.List[client.types.PoolInfo]:
@@ -133,11 +220,13 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         linkedClone: bool,
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
-        toPool: typing.Optional[str] = None
+        toPool: typing.Optional[str] = None,
     ) -> client.types.VmCreationResult:
-        return self.__getApi().cloneVm(vmId, name, description, linkedClone, toNode, toStorage, toPool)
+        return self.__getApi().cloneVm(
+            vmId, self.getNewVmId(), name, description, linkedClone, toNode, toStorage, toPool
+        )
 
-    def startMachine(self,vmId: int) -> client.types.UPID:
+    def startMachine(self, vmId: int) -> client.types.UPID:
         return self.__getApi().startVm(vmId)
 
     def stopMachine(self, vmId: int) -> client.types.UPID:
@@ -158,21 +247,34 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     def getTaskInfo(self, node: str, upid: str) -> client.types.TaskStatus:
         return self.__getApi().getTask(node, upid)
 
-    def enableHA(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
+    def enableHA(
+        self, vmId: int, started: bool = False, group: typing.Optional[str] = None
+    ) -> None:
         self.__getApi().enableVmHA(vmId, started, group)
 
     def disableHA(self, vmId: int) -> None:
         self.__getApi().disableVmHA(vmId)
 
-    def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self.__getApi().setProtection(vmId, node, protection) 
+    def setProtection(
+        self, vmId: int, node: typing.Optional[str] = None, protection: bool = False
+    ) -> None:
+        self.__getApi().setProtection(vmId, node, protection)
 
     def listHaGroups(self) -> typing.List[str]:
         return self.__getApi().listHAGroups()
 
-    def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    def getConsoleConnection(
+        self, machineId: str
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         # TODO: maybe proxmox also supports "spice"? for future release...
         return None
+
+    def getNewVmId(self) -> int:
+        while True:  # look for an unused VmId
+            vmId = self._vmid_generator.get(self.startVmId.num(), MAX_VM_ID)
+            if self.__getApi().isVMIdAvailable(vmId):
+                return vmId
+            # All assigned VMId will be left as unusable on UDS until released by time (3 months)
 
     @staticmethod
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:

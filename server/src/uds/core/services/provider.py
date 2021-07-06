@@ -180,7 +180,7 @@ class ServiceProvider(Module):
             val = self.maxPreparingServices = GlobalConfig.MAX_PREPARING_SERVICES.getInt(force=True)  # Recover global an cache till restart
 
         if isinstance(val, gui.InputField):
-            retVal = val.value
+            retVal = int(val.value)
         else:
             retVal = val
         return retVal if retVal > 0 else 1
@@ -191,7 +191,7 @@ class ServiceProvider(Module):
             val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(force=True)  # Recover global an cache till restart
 
         if isinstance(val, gui.InputField):
-            retVal = val.value
+            retVal = int(val.value)
         else:
             retVal = val
         return retVal if retVal > 0 else 1
