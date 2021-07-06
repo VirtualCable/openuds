@@ -41,7 +41,7 @@ from uds.core.util import log
 
 logger = logging.getLogger(__name__)
 
-MAX_REMOVAL_TIME = 48*60*60
+MAX_REMOVAL_TIME = 24*60*60
 
 class HangedCleaner(Job):
     frecuency = 3601
@@ -110,7 +110,7 @@ class HangedCleaner(Job):
                         us.friendly_name
                     ),
                 )
-                if us.state == State.REMOVING:
-                    us.delete()
+                if us.state == State.REMOVING:  # Removing too long, remark it as removable
+                    us.remove()  # Mark it again as removable, and let's see
                 else:
                     us.removeOrCancel()
