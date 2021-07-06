@@ -41,6 +41,7 @@ from uds.core.util import log
 
 logger = logging.getLogger(__name__)
 
+MAX_REMOVAL_TIME = 48*60*60
 
 class HangedCleaner(Job):
     frecuency = 3601
@@ -48,8 +49,12 @@ class HangedCleaner(Job):
     friendly_name = 'Hanged services checker'
 
     def run(self):
-        since_state = getSqlDatetime() - timedelta(
+        now = getSqlDatetime()
+        since_state = now - timedelta(
             seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt()
+        )
+        since_removing = now -timedelta(
+            seconds=MAX_REMOVAL_TIME
         )
         # Filter for locating machine not ready
         flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(
@@ -69,6 +74,9 @@ class HangedCleaner(Job):
                         userServices__state_date__lt=since_state,
                         userServices__state=State.USABLE,
                         userServices__os_state=State.PREPARING,
+                    ) | Q(
+                        userServices__state_date__lt=since_removing,
+                        userServices__state=State.REMOVING,
                     ),
                 )
             )
@@ -102,4 +110,7 @@ class HangedCleaner(Job):
                         us.friendly_name
                     ),
                 )
-                us.removeOrCancel()
+                if us.state == State.REMOVING:
+                    us.delete()
+                else:
+                    us.removeOrCancel()
