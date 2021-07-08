@@ -57,6 +57,7 @@ if typing.TYPE_CHECKING:
     from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
     from cryptography.hazmat.primitives.asymmetric.dh import DHPrivateKey
 
+
 class CryptoManager:
     instance = None
 
@@ -199,7 +200,11 @@ class CryptoManager:
         except Exception:  # Error decoding crypted element, return empty one
             return ''
 
-    def loadPrivateKey(self, rsaKey: str) -> typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey']:
+    def loadPrivateKey(
+        self, rsaKey: str
+    ) -> typing.Union[
+        'RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey'
+    ]:
         try:
             return serialization.load_pem_private_key(
                 settings.RSA_KEY.encode(), password=None, backend=default_backend()
@@ -207,7 +212,9 @@ class CryptoManager:
         except Exception as e:
             raise e
 
-    def loadCertificate(self, certificate: typing.Union[str, bytes]) -> x509.Certificate:
+    def loadCertificate(
+        self, certificate: typing.Union[str, bytes]
+    ) -> x509.Certificate:
         if isinstance(certificate, str):
             certificate = certificate.encode()
 
