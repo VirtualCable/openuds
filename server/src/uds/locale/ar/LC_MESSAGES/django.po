@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-24 11:16+0200\n"
-"PO-Revision-Date: 2021-05-26 09:38+0000\n"
+"POT-Creation-Date: 2021-07-08 12:57+0200\n"
+"PO-Revision-Date: 2021-06-24 09:23+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -115,23 +115,24 @@ msgstr "مضيف غير مدار"
 msgid "User service not found"
 msgstr "لم يتم العثور على خدمة المستخدم"
 
-#: REST/methods/actor_token.py:51
+#: REST/methods/actor_token.py:51 REST/methods/tunnel_token.py:51
 msgid "Actor tokens"
 msgstr "الرموز الفاعلة"
 
-#: REST/methods/actor_token.py:54 reports/auto/fields.py:56
-#: reports/stats/pools_performance.py:217
+#: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:54
+#: reports/auto/fields.py:56 reports/stats/pools_performance.py:217
 #: reports/stats/pools_performance.py:236 reports/stats/pools_usage_day.py:64
 #: reports/stats/usage_by_pool.py:169 reports/stats/user_access.py:190
 #: templates/uds/reports/stats/authenticator_stats.html:14
 msgid "Date"
 msgstr "تاريخ"
 
-#: REST/methods/actor_token.py:55
+#: REST/methods/actor_token.py:55 REST/methods/tunnel_token.py:55
 msgid "Issued by"
 msgstr "صادر عن"
 
-#: REST/methods/actor_token.py:56 reports/stats/usage_by_pool.py:173
+#: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:56
+#: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
 msgstr "الأصل"
@@ -156,7 +157,7 @@ msgstr "تشغيل مرة واحدة"
 msgid "Log level"
 msgstr "تسجيل مستوى"
 
-#: REST/methods/actor_token.py:67
+#: REST/methods/actor_token.py:67 REST/methods/tunnel_token.py:63
 msgid "Token isued by {} from {}"
 msgstr "يتم إقفال الرمز بواسطة {} من {}"
 
@@ -343,7 +344,6 @@ msgid ""
 msgstr "يتم عرض رسالة مخصصة للمستخدمين إذا كان الوصول مقيدًا بقواعد التقويم."
 
 #: REST/methods/meta_pools.py:168
-#| msgid "Transport not found"
 msgid "Transport Selection"
 msgstr "اختيار النقل"
 
@@ -385,8 +385,8 @@ msgid "Pool"
 msgstr "تجمع"
 
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:122
-#: REST/methods/user_services.py:139 REST/methods/user_services.py:270
-#: auths/IP/authenticator.py:67
+#: REST/methods/tunnel_token.py:57 REST/methods/user_services.py:139
+#: REST/methods/user_services.py:270 auths/IP/authenticator.py:68
 msgid "IP"
 msgstr "IP"
 
@@ -549,15 +549,15 @@ msgstr "تحقق من الشهادة"
 
 #: REST/methods/proxies.py:87
 #: auths/ActiveDirectory_enterprise/authenticator.py:44
-#: auths/EDirectory_enterprise/authenticator.py:46
-#: auths/Radius/authenticator.py:66 auths/RegexLdap/authenticator.py:66
-#: auths/SimpleLDAP/authenticator.py:57
+#: auths/EDirectory_enterprise/authenticator.py:47
+#: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
+#: auths/SimpleLDAP/authenticator.py:60
 #: services/HyperV_enterprise/legacy/provider.py:83
 #: services/HyperV_enterprise/provider.py:60
 #: services/NutanixPrism_enterprise/provider.py:39
 #: services/Nutanix_enterprise/provider.py:36 services/OVirt/provider.py:109
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:77
-#: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:60
+#: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:66
 #: services/VCloud_enterprise/provider.py:32
 #: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:100
 msgid "Host"
@@ -567,15 +567,15 @@ msgstr "المضيف"
 msgid "Server (IP or FQDN) that will serve as proxy."
 msgstr "الخادم (IP أو FQDN) الذي سيعمل بمثابة وكيل."
 
-#: REST/methods/proxies.py:95 auths/EDirectory_enterprise/authenticator.py:53
-#: auths/Radius/authenticator.py:73 auths/RegexLdap/authenticator.py:73
-#: auths/SimpleLDAP/authenticator.py:64
+#: REST/methods/proxies.py:95 auths/EDirectory_enterprise/authenticator.py:54
+#: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
+#: auths/SimpleLDAP/authenticator.py:67
 #: services/HyperV_enterprise/legacy/provider.py:84
 #: services/HyperV_enterprise/provider.py:114
 #: services/NutanixPrism_enterprise/provider.py:46
 #: services/Nutanix_enterprise/provider.py:37
 #: services/OpenGnsys/provider.py:101 services/OpenNebula/provider.py:78
-#: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:61
+#: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:73
 #: services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
 #: services/Vmware_enterprise/provider.py:42
@@ -588,8 +588,8 @@ msgstr "ميناء الخادم الوكيل"
 
 #: REST/methods/proxies.py:102
 #: auths/ActiveDirectory_enterprise/authenticator.py:50
-#: auths/EDirectory_enterprise/authenticator.py:60
-#: auths/RegexLdap/authenticator.py:80 auths/SimpleLDAP/authenticator.py:71
+#: auths/EDirectory_enterprise/authenticator.py:61
+#: auths/RegexLdap/authenticator.py:83 auths/SimpleLDAP/authenticator.py:74
 #: osmanagers/WindowsOsManager/windows_domain.py:124
 #: services/OpenNebula/provider.py:79 services/OpenStack/provider_legacy.py:119
 msgid "Use SSL"
@@ -619,9 +619,9 @@ msgstr "التقارير المتوفرة"
 #: REST/methods/users_groups.py:297
 #: auths/ActiveDirectory_enterprise/authenticator.py:143
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: auths/EDirectory_enterprise/authenticator.py:104
-#: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:188
-#: auths/SAML_enterprise/saml.py:120 auths/SimpleLDAP/authenticator.py:179
+#: auths/EDirectory_enterprise/authenticator.py:105
+#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:191
+#: auths/SAML_enterprise/saml.py:120 auths/SimpleLDAP/authenticator.py:182
 #: models/calendar_action.py:142 models/calendar_action.py:149
 msgid "Group"
 msgstr "المجموعة"
@@ -676,7 +676,7 @@ msgstr "وكيل للخدمات وراء جدار الحماية"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:356
 #: REST/methods/services_pools.py:367 REST/methods/services_pools.py:378
 #: REST/methods/services_pools.py:486 REST/methods/services_pools.py:498
-#: auths/RegexLdap/authenticator.py:173 core/ui/user_interface.py:99
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:99
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -895,6 +895,10 @@ msgstr "مجمعات الخدمات المعينة حاليا"
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr "ملصق نقل Metapool (يُستخدم فقط في تجميع عمليات نقل metapool)"
 
+#: REST/methods/tunnel_token.py:53
+msgid "Token"
+msgstr "رمز"
+
 #: REST/methods/user_services.py:137 REST/methods/user_services.py:268
 #: REST/methods/user_services.py:518 REST/methods/user_services.py:554
 msgid "Revision"
@@ -960,8 +964,8 @@ msgstr "موظف"
 #: REST/methods/users_groups.py:97 REST/methods/users_groups.py:103
 #: auths/ActiveDirectory_enterprise/authenticator.py:70
 #: auths/AzureAD_enterprise/azure_ad.py:94
-#: auths/EDirectory_enterprise/authenticator.py:68
-#: auths/Radius/authenticator.py:61 auths/RegexLdap/authenticator.py:88
+#: auths/EDirectory_enterprise/authenticator.py:69
+#: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
 #: auths/SAML_enterprise/saml.py:117 reports/stats/pool_users_summary.py:162
 #: reports/stats/usage_by_pool.py:170
 #: templates/uds/reports/stats/pool-users-summary.html:14
@@ -980,19 +984,18 @@ msgstr "المستخدمون الحاليون"
 
 #: REST/methods/users_groups.py:120
 #: auths/ActiveDirectory_enterprise/authenticator.py:141
-#: auths/EDirectory_enterprise/authenticator.py:102
-#: auths/RegexLdap/authenticator.py:186 auths/SimpleLDAP/authenticator.py:177
+#: auths/EDirectory_enterprise/authenticator.py:103
+#: auths/RegexLdap/authenticator.py:189 auths/SimpleLDAP/authenticator.py:180
 #: services/HyperV_enterprise/legacy/provider.py:85
 #: services/HyperV_enterprise/provider.py:74
 #: services/NutanixPrism_enterprise/provider.py:54
 #: services/Nutanix_enterprise/provider.py:38 services/OVirt/provider.py:110
 #: services/OpenGnsys/provider.py:118 services/OpenNebula/provider.py:80
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
-#: services/Proxmox/provider.py:63 services/RDS_enterprise/provider.py:118
+#: services/Proxmox/provider.py:82 services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
 #: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:75
-#: transports/NX/nxtransport.py:71 transports/NX/nxtunneltransport.py:111
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:75
 #: transports/SPICE/spice_base.py:68 transports/X2GO/x2go_base.py:69
@@ -1122,9 +1125,9 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
 #: auths/ActiveDirectory_enterprise/authenticator.py:145
-#: auths/EDirectory_enterprise/authenticator.py:76
-#: auths/RegexLdap/authenticator.py:96 auths/RegexLdap/authenticator.py:190
-#: auths/SimpleLDAP/authenticator.py:87 auths/SimpleLDAP/authenticator.py:181
+#: auths/EDirectory_enterprise/authenticator.py:77
+#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:193
+#: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
 #: core/auths/authenticator.py:144
 #: osmanagers/WindowsOsManager/windows_domain.py:85
 #: osmanagers/WindowsOsManager/windows_random.py:66
@@ -1134,11 +1137,10 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:111
 #: services/OpenGnsys/provider.py:125 services/OpenNebula/provider.py:81
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
-#: services/Proxmox/provider.py:64 services/RDS_enterprise/provider.py:126
+#: services/Proxmox/provider.py:92 services/RDS_enterprise/provider.py:126
 #: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:76
-#: transports/NX/nxtransport.py:72 transports/NX/nxtunneltransport.py:117
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:81
 #: transports/SPICE/spice_base.py:74 web/forms/LoginForm.py:43
@@ -1146,14 +1148,14 @@ msgid "Password"
 msgstr "كلمة المرور"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:82
-#: auths/EDirectory_enterprise/authenticator.py:78
-#: auths/RegexLdap/authenticator.py:98 auths/SimpleLDAP/authenticator.py:89
+#: auths/EDirectory_enterprise/authenticator.py:79
+#: auths/RegexLdap/authenticator.py:101 auths/SimpleLDAP/authenticator.py:92
 msgid "Password of the ldap user"
 msgstr "كلمة مرور المستخدم ldap"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:88
-#: auths/EDirectory_enterprise/authenticator.py:84
-#: auths/RegexLdap/authenticator.py:104 auths/SimpleLDAP/authenticator.py:95
+#: auths/EDirectory_enterprise/authenticator.py:85
+#: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
 #: services/Azure_enterprise/provider.py:98
 #: services/HyperV_enterprise/legacy/provider.py:93
 #: services/HyperV_enterprise/provider.py:131
@@ -1161,7 +1163,7 @@ msgstr "كلمة مرور المستخدم ldap"
 #: services/Nutanix_enterprise/provider.py:43 services/OVirt/provider.py:116
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
-#: services/Proxmox/provider.py:69 services/VCloud_enterprise/provider.py:63
+#: services/Proxmox/provider.py:123 services/VCloud_enterprise/provider.py:63
 #: services/Vmware_enterprise/provider.py:50
 msgid "Timeout"
 msgstr "مهلة"
@@ -1183,7 +1185,6 @@ msgstr ""
 "dc =...)"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:108
-#| msgid "Default"
 msgid "Default domain"
 msgstr "نطاق إفتراضي"
 
@@ -1198,12 +1199,10 @@ msgstr ""
 "بدلاً من مجال المستخدم الذي تم تكوينه في علامة تبويب بيانات الاعتماد"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:120
-#| msgid "Sound server"
 msgid "Backup server"
 msgstr "خادم النسخ الاحتياطي"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:123
-#| msgid "If not empty, this username will be always used as credential"
 msgid ""
 "If not empty, this host will be used in case main host server is not "
 "reachable"
@@ -1220,50 +1219,50 @@ msgid "Authenticate against Active Directory"
 msgstr "المصادقة بالمقابلة مع خدمة Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:175
-#: auths/ActiveDirectory_enterprise/authenticator.py:589
+#: auths/ActiveDirectory_enterprise/authenticator.py:594
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "يجب تحديد اسم المستخدم في النموذج USERNAME@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:468
-#: auths/ActiveDirectory_enterprise/authenticator.py:519
+#: auths/ActiveDirectory_enterprise/authenticator.py:473
+#: auths/ActiveDirectory_enterprise/authenticator.py:524
 #: auths/AzureAD_enterprise/azure_ad.py:289
-#: auths/EDirectory_enterprise/authenticator.py:263
-#: auths/EDirectory_enterprise/authenticator.py:294
-#: auths/RegexLdap/authenticator.py:526 auths/RegexLdap/authenticator.py:557
-#: auths/SimpleLDAP/authenticator.py:423 auths/SimpleLDAP/authenticator.py:466
+#: auths/EDirectory_enterprise/authenticator.py:269
+#: auths/EDirectory_enterprise/authenticator.py:300
+#: auths/RegexLdap/authenticator.py:534 auths/RegexLdap/authenticator.py:565
+#: auths/SimpleLDAP/authenticator.py:431 auths/SimpleLDAP/authenticator.py:474
 msgid "Username not found"
 msgstr "لم يتم العثور على اسم المستخدم"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:501
-#: auths/SimpleLDAP/authenticator.py:456
+#: auths/ActiveDirectory_enterprise/authenticator.py:506
+#: auths/SimpleLDAP/authenticator.py:464
 msgid "Group not found"
 msgstr "لم يتم العثور على المجموعة"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:546
-#: auths/ActiveDirectory_enterprise/authenticator.py:568
-#: auths/EDirectory_enterprise/authenticator.py:316
-#: auths/RegexLdap/authenticator.py:585 auths/SimpleLDAP/authenticator.py:491
-#: auths/SimpleLDAP/authenticator.py:511
+#: auths/ActiveDirectory_enterprise/authenticator.py:551
+#: auths/ActiveDirectory_enterprise/authenticator.py:573
+#: auths/EDirectory_enterprise/authenticator.py:322
+#: auths/RegexLdap/authenticator.py:593 auths/SimpleLDAP/authenticator.py:499
+#: auths/SimpleLDAP/authenticator.py:519
 msgid "Too many results, be more specific"
 msgstr "الكثير من النتائج، كن أكثر تحديداً"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:600
+#: auths/ActiveDirectory_enterprise/authenticator.py:605
 msgid "Domain seems to be incorrect, please check it"
 msgstr "المجال غير صحيح، الرجاء التحقق من ذلك"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:619
+#: auths/ActiveDirectory_enterprise/authenticator.py:624
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنات المستخدم)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:642
+#: auths/ActiveDirectory_enterprise/authenticator.py:647
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنات المجموعة)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:651
-#: auths/EDirectory_enterprise/authenticator.py:439
-#: auths/RegexLdap/authenticator.py:695 auths/SimpleLDAP/authenticator.py:674
+#: auths/ActiveDirectory_enterprise/authenticator.py:656
+#: auths/EDirectory_enterprise/authenticator.py:445
+#: auths/RegexLdap/authenticator.py:703 auths/SimpleLDAP/authenticator.py:682
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "يبدو الاتصال params  صحيحا، تم تنفيذ الأختبار بنجاح"
 
@@ -1348,111 +1347,75 @@ msgstr "خطأ في الاتصال: "
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "يبدو params الاتصال الصحيح، واختبار تم تنفيذها بنجاح"
 
-#: auths/EDirectory_enterprise/authenticator.py:48
+#: auths/EDirectory_enterprise/authenticator.py:49
 msgid "EDirectory Server IP or Hostname"
 msgstr "EDirectory Server IP أو اسم المضيف"
 
-#: auths/EDirectory_enterprise/authenticator.py:56
-#: auths/RegexLdap/authenticator.py:76 auths/SimpleLDAP/authenticator.py:67
+#: auths/EDirectory_enterprise/authenticator.py:57
+#: auths/RegexLdap/authenticator.py:79 auths/SimpleLDAP/authenticator.py:70
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
 msgstr "منفذ Ldap (عادة 389 ل ssl غير) و 636 ل ssl"
 
-#: auths/EDirectory_enterprise/authenticator.py:63
-#: auths/RegexLdap/authenticator.py:83 auths/SimpleLDAP/authenticator.py:74
+#: auths/EDirectory_enterprise/authenticator.py:64
+#: auths/RegexLdap/authenticator.py:86 auths/SimpleLDAP/authenticator.py:77
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr "إذا كانت محددة، يكون الاتصال ssl, باستخدام منفذ 636 بدلاً من 389"
 
-#: auths/EDirectory_enterprise/authenticator.py:70
+#: auths/EDirectory_enterprise/authenticator.py:71
 msgid "Username with read privileges on the eDirectory"
 msgstr "اسم المستخدم امتيازات القراءة على eDirectory"
 
-#: auths/EDirectory_enterprise/authenticator.py:87
-#: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
+#: auths/EDirectory_enterprise/authenticator.py:88
+#: auths/RegexLdap/authenticator.py:110 auths/SimpleLDAP/authenticator.py:101
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "المهلة بالثواني لاتصال LDAP"
 
-#: auths/EDirectory_enterprise/authenticator.py:92
+#: auths/EDirectory_enterprise/authenticator.py:93
 msgid "eDirectory Authenticator"
 msgstr "eDirectory المصادق"
 
-#: auths/EDirectory_enterprise/authenticator.py:94
+#: auths/EDirectory_enterprise/authenticator.py:95
 msgid "Authenticate against eDirectory"
 msgstr "مصادقة ضد eDirectory"
 
-#: auths/EDirectory_enterprise/authenticator.py:334
+#: auths/EDirectory_enterprise/authenticator.py:340
 msgid "Edirectory connection error: {}"
 msgstr "خطأ في اتصال Edirectory: {}"
 
-#: auths/EDirectory_enterprise/authenticator.py:339
-#: auths/RegexLdap/authenticator.py:608 auths/SimpleLDAP/authenticator.py:536
+#: auths/EDirectory_enterprise/authenticator.py:345
+#: auths/RegexLdap/authenticator.py:616 auths/SimpleLDAP/authenticator.py:544
 msgid "Ldap search base is incorrect"
 msgstr "قاعدة البحث Ldap غير صحيح"
 
-#: auths/EDirectory_enterprise/authenticator.py:357
-#: auths/RegexLdap/authenticator.py:626 auths/SimpleLDAP/authenticator.py:544
+#: auths/EDirectory_enterprise/authenticator.py:363
+#: auths/RegexLdap/authenticator.py:634 auths/SimpleLDAP/authenticator.py:552
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
 
-#: auths/EDirectory_enterprise/authenticator.py:380
-#: auths/SimpleLDAP/authenticator.py:590
+#: auths/EDirectory_enterprise/authenticator.py:386
+#: auths/SimpleLDAP/authenticator.py:598
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
 msgstr ""
 "يبدو أن Ldap المستخدم معرف السمة غير صحيحة (أي مستخدم موجود بذلك السمة)"
 
-#: auths/EDirectory_enterprise/authenticator.py:403
+#: auths/EDirectory_enterprise/authenticator.py:409
 msgid "Expected group attribute "
 msgstr "مجموعة السمة المتوقعة "
 
-#: auths/EDirectory_enterprise/authenticator.py:430
+#: auths/EDirectory_enterprise/authenticator.py:436
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr ""
 "Attr معرف المستخدم أو فئة المستخدم Ldap خاطئ ربما (Ldap هو eDirectory)؟"
 
-#: auths/IP/authenticator.py:61 auths/IP/authenticator.py:63
-msgid "IP Authenticator"
-msgstr "IP المصادق"
-
-#: auths/IP/authenticator.py:68
-msgid "IP Range"
-msgstr "نطاق IP"
-
-#: auths/IP/authenticator.py:107 auths/IP/authenticator.py:110
-msgid "All seems to be fine."
-msgstr "على ما يبدو الكل على ما يرام."
-
-#: auths/InternalDB/authenticator.py:56
-msgid "Internal Database"
-msgstr "قاعدة البيانات الداخلية"
-
-#: auths/InternalDB/authenticator.py:58
-msgid "Internal dabasase authenticator. Doesn't use external sources"
-msgstr "قاعدة البيانات الداخلية للمصادق. لا تستخدم مصادر خارجية"
-
-#: auths/InternalDB/authenticator.py:67
-msgid "Different user for each host"
-msgstr "مستخدم مختلف لكل مضيف"
-
-#: auths/InternalDB/authenticator.py:67
-msgid "If checked, each host will have a different user name"
-msgstr "في حالة تحديد كل مضيف سوف يكون اسم مستخدم مختلف"
-
-#: auths/InternalDB/authenticator.py:68
-msgid "Reverse DNS"
-msgstr "عكس DNS"
-
-#: auths/InternalDB/authenticator.py:68
-msgid "If checked, the host will be reversed dns"
-msgstr "في حالة تحديد المضيف سوف تكون عكس dns"
-
-#: auths/InternalDB/authenticator.py:69
+#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:87
 msgid "Accept proxy"
 msgstr "قبول الوكيل"
 
-#: auths/InternalDB/authenticator.py:69
+#: auths/IP/authenticator.py:56 auths/InternalDB/authenticator.py:90
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -1460,168 +1423,196 @@ msgstr ""
 "إذا راجعت، الطلبات عن طريق الوكيل سوف تحصل على عنوان ip يتم إعادة توجيهها "
 "(يمكن أن يستغرق هذا التحقق عناوين IP داخلية من الإنترنت)"
 
-#: auths/InternalDB/authenticator.py:134
+#: auths/IP/authenticator.py:62 auths/IP/authenticator.py:64
+msgid "IP Authenticator"
+msgstr "IP المصادق"
+
+#: auths/IP/authenticator.py:69
+msgid "IP Range"
+msgstr "نطاق IP"
+
+#: auths/IP/authenticator.py:106 auths/IP/authenticator.py:109
+msgid "All seems to be fine."
+msgstr "على ما يبدو الكل على ما يرام."
+
+#: auths/InternalDB/authenticator.py:57
+msgid "Internal Database"
+msgstr "قاعدة البيانات الداخلية"
+
+#: auths/InternalDB/authenticator.py:60
+msgid "Internal dabasase authenticator. Doesn't use external sources"
+msgstr "قاعدة البيانات الداخلية للمصادق. لا تستخدم مصادر خارجية"
+
+#: auths/InternalDB/authenticator.py:71
+msgid "Different user for each host"
+msgstr "مستخدم مختلف لكل مضيف"
+
+#: auths/InternalDB/authenticator.py:73
+msgid "If checked, each host will have a different user name"
+msgstr "في حالة تحديد كل مضيف سوف يكون اسم مستخدم مختلف"
+
+#: auths/InternalDB/authenticator.py:79
+msgid "Reverse DNS"
+msgstr "عكس DNS"
+
+#: auths/InternalDB/authenticator.py:81
+msgid "If checked, the host will be reversed dns"
+msgstr "في حالة تحديد المضيف سوف تكون عكس dns"
+
+#: auths/InternalDB/authenticator.py:166
 msgid "Internal structures seems ok"
 msgstr "هياكل داخلية على ما يرام"
 
-#: auths/InternalDB/authenticator.py:137
+#: auths/InternalDB/authenticator.py:169
 msgid "All seems fine in the authenticator."
 msgstr "كل شيء يبدو بشكل جيد في المصادق."
 
-#: auths/Radius/authenticator.py:56 auths/Radius/authenticator.py:58
-#| msgid "Base Authenticator"
+#: auths/Radius/authenticator.py:57 auths/Radius/authenticator.py:59
 msgid "Radius Authenticator"
 msgstr "Radius Authenticator"
 
-#: auths/Radius/authenticator.py:68
-#| msgid "Ldap Server IP or Hostname"
+#: auths/Radius/authenticator.py:69
 msgid "Radius Server IP or Hostname"
 msgstr "Radius Server IP أو اسم المضيف"
 
-#: auths/Radius/authenticator.py:76
+#: auths/Radius/authenticator.py:77
 msgid "Radius authentication port (usually 1812)"
 msgstr "منفذ مصادقة نصف قطر (عادة 1812)"
 
-#: auths/Radius/authenticator.py:81
-#| msgid "Client Secret"
+#: auths/Radius/authenticator.py:82
 msgid "Secret"
 msgstr "سر"
 
-#: auths/Radius/authenticator.py:83
-#| msgid "Client Secret"
+#: auths/Radius/authenticator.py:84
 msgid "Radius client secret"
 msgstr "سر عميل Radius"
 
-#: auths/Radius/authenticator.py:89
+#: auths/Radius/authenticator.py:90
 msgid "NAS Identifier"
 msgstr "معرف NAS"
 
-#: auths/Radius/authenticator.py:92
+#: auths/Radius/authenticator.py:93
 msgid "NAS Identifier for Radius Server"
 msgstr "معرف NAS لخادم Radius"
 
-#: auths/Radius/authenticator.py:99
+#: auths/Radius/authenticator.py:100
 msgid "App Prefix for Class Attributes"
 msgstr "بادئة التطبيق لسمات الفئة"
 
-#: auths/Radius/authenticator.py:102
+#: auths/Radius/authenticator.py:103
 msgid "Application prefix for filtering groups from \"Class\" attribute"
 msgstr "بادئة تطبيق لتصفية المجموعات من سمة \"Class\""
 
-#: auths/Radius/authenticator.py:108
-#| msgid "Pool group"
+#: auths/Radius/authenticator.py:109
 msgid "Global group"
 msgstr "المجموعة العالمية"
 
-#: auths/Radius/authenticator.py:111
+#: auths/Radius/authenticator.py:112
 msgid "If set, this value will be added as group for all radius users"
 msgstr ""
 "في حالة التعيين ، ستتم إضافة هذه القيمة كمجموعة لجميع مستخدمي النطاق الجغرافي"
 
-#: auths/Radius/authenticator.py:171
-#| msgid "Color depth for this connection"
+#: auths/Radius/authenticator.py:173
 msgid "Error testing connection"
 msgstr "خطأ في اختبار الاتصال"
 
-#: auths/Radius/authenticator.py:183
-#| msgid "Connection to {}, port {} failed."
+#: auths/Radius/authenticator.py:185
 msgid "Connection to Radius server failed"
 msgstr "فشل الاتصال بخادم Radius"
 
-#: auths/Radius/authenticator.py:184
-#| msgid "Connection parameters seems correct"
+#: auths/Radius/authenticator.py:186
 msgid "Connection to Radius server seems ok"
 msgstr "يبدو الاتصال بخادم Radius جيدًا"
 
-#: auths/RegexLdap/authenticator.py:68
+#: auths/RegexLdap/authenticator.py:71
 msgid "Ldap Server Host"
 msgstr "المضيف ملقم Ldap"
 
-#: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:81
+#: auths/RegexLdap/authenticator.py:93 auths/SimpleLDAP/authenticator.py:84
 msgid "Username with read privileges on the base selected"
 msgstr "اسم المستخدم مع امتيازات القراءة على القاعدة المحددة "
 
-#: auths/RegexLdap/authenticator.py:114 auths/SimpleLDAP/authenticator.py:104
+#: auths/RegexLdap/authenticator.py:117 auths/SimpleLDAP/authenticator.py:107
 msgid "Base"
 msgstr "قاعدة"
 
-#: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:106
+#: auths/RegexLdap/authenticator.py:119 auths/SimpleLDAP/authenticator.py:109
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr "قاعدة البحث المشترك (المستخدم ل \"المستخدمين\" و \"مجموعات\")"
 
-#: auths/RegexLdap/authenticator.py:118 auths/RegexLdap/authenticator.py:127
-#: auths/RegexLdap/authenticator.py:136 auths/RegexLdap/authenticator.py:148
-#: auths/RegexLdap/authenticator.py:160 auths/SimpleLDAP/authenticator.py:108
-#: auths/SimpleLDAP/authenticator.py:117 auths/SimpleLDAP/authenticator.py:126
-#: auths/SimpleLDAP/authenticator.py:137 auths/SimpleLDAP/authenticator.py:146
-#: auths/SimpleLDAP/authenticator.py:155 auths/SimpleLDAP/authenticator.py:164
+#: auths/RegexLdap/authenticator.py:121 auths/RegexLdap/authenticator.py:130
+#: auths/RegexLdap/authenticator.py:139 auths/RegexLdap/authenticator.py:151
+#: auths/RegexLdap/authenticator.py:163 auths/SimpleLDAP/authenticator.py:111
+#: auths/SimpleLDAP/authenticator.py:120 auths/SimpleLDAP/authenticator.py:129
+#: auths/SimpleLDAP/authenticator.py:140 auths/SimpleLDAP/authenticator.py:149
+#: auths/SimpleLDAP/authenticator.py:158 auths/SimpleLDAP/authenticator.py:167
 msgid "Ldap info"
 msgstr "معلومات Ldap"
 
-#: auths/RegexLdap/authenticator.py:122 auths/SimpleLDAP/authenticator.py:112
+#: auths/RegexLdap/authenticator.py:125 auths/SimpleLDAP/authenticator.py:115
 msgid "User class"
 msgstr "فئة المستخدم"
 
-#: auths/RegexLdap/authenticator.py:125 auths/SimpleLDAP/authenticator.py:115
+#: auths/RegexLdap/authenticator.py:128 auths/SimpleLDAP/authenticator.py:118
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "فئة المستخدمين LDAP (عادة Posix account)"
 
-#: auths/RegexLdap/authenticator.py:131 auths/SimpleLDAP/authenticator.py:121
+#: auths/RegexLdap/authenticator.py:134 auths/SimpleLDAP/authenticator.py:124
 msgid "User Id Attr"
 msgstr "User Id Attr"
 
-#: auths/RegexLdap/authenticator.py:134 auths/SimpleLDAP/authenticator.py:124
+#: auths/RegexLdap/authenticator.py:137 auths/SimpleLDAP/authenticator.py:127
 msgid "Attribute that contains the user id"
 msgstr "السمة تحتوي على معرف المستخدم"
 
-#: auths/RegexLdap/authenticator.py:140 auths/SimpleLDAP/authenticator.py:130
+#: auths/RegexLdap/authenticator.py:143 auths/SimpleLDAP/authenticator.py:133
 msgid "User Name Attr"
 msgstr "User Name Attr"
 
-#: auths/RegexLdap/authenticator.py:145
+#: auths/RegexLdap/authenticator.py:148
 msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
 msgstr ""
 "السمات التي تحتوي على سمات اسم المستخدم أو أنماط السمات (واحدة لكل سطر)"
 
-#: auths/RegexLdap/authenticator.py:152
+#: auths/RegexLdap/authenticator.py:155
 msgid "Group Name Attr"
 msgstr "Group Name Attr"
 
-#: auths/RegexLdap/authenticator.py:157
+#: auths/RegexLdap/authenticator.py:160
 msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
 msgstr "السمة التي تحتوي على سمات اسم المجموعة أو أنماط السمة (واحدة لكل سطر)"
 
-#: auths/RegexLdap/authenticator.py:166
+#: auths/RegexLdap/authenticator.py:169
 msgid "Alt. class"
 msgstr "فئة البديل"
 
-#: auths/RegexLdap/authenticator.py:170
+#: auths/RegexLdap/authenticator.py:173
 msgid ""
 "Class for LDAP objects that will be also checked for groups retrieval "
 "(normally empty)"
 msgstr ""
 "فئة لكائنات LDAP التي سيتم التحقق منها أيضا لاسترجاعها للمجموعات (عادة فارغة)"
 
-#: auths/RegexLdap/authenticator.py:176
+#: auths/RegexLdap/authenticator.py:179
 msgid "Regex LDAP Authenticator"
 msgstr "المصادق Regex LDAP"
 
-#: auths/RegexLdap/authenticator.py:178
+#: auths/RegexLdap/authenticator.py:181
 msgid "Regular Expressions LDAP authenticator"
 msgstr " التعبيرات العادية لمصادق LDAP"
 
-#: auths/RegexLdap/authenticator.py:651
+#: auths/RegexLdap/authenticator.py:659
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
 "ربما Ldap user id attr خاطئ (لا يمكن العثور على أي مستخدم مع كل الشروط)"
 
-#: auths/RegexLdap/authenticator.py:680 auths/SimpleLDAP/authenticator.py:613
+#: auths/RegexLdap/authenticator.py:688 auths/SimpleLDAP/authenticator.py:621
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1783,56 +1774,56 @@ msgstr "المجموعات"
 msgid "We need more than two groups!"
 msgstr "نحن بحاجة إلى أكثر من مجموعتين!"
 
-#: auths/SimpleLDAP/authenticator.py:59
+#: auths/SimpleLDAP/authenticator.py:62
 msgid "Ldap Server IP or Hostname"
 msgstr "Ldap Server IP أو اسم المضيف"
 
-#: auths/SimpleLDAP/authenticator.py:79
+#: auths/SimpleLDAP/authenticator.py:82
 msgid "Ldap User"
 msgstr "Ldap المستخدم"
 
-#: auths/SimpleLDAP/authenticator.py:134
+#: auths/SimpleLDAP/authenticator.py:137
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr "السمات التي تحتوي على اسم المستخدم (قائمة قيم مفصولة بفاصلة)"
 
-#: auths/SimpleLDAP/authenticator.py:141
+#: auths/SimpleLDAP/authenticator.py:144
 msgid "Group class"
 msgstr "فئة المجموعة"
 
-#: auths/SimpleLDAP/authenticator.py:144
+#: auths/SimpleLDAP/authenticator.py:147
 msgid "Class for LDAP groups (normally poxisGroup)"
 msgstr "فئة لمجموعات LDAP (عادةً poxisGroup)"
 
-#: auths/SimpleLDAP/authenticator.py:150
+#: auths/SimpleLDAP/authenticator.py:153
 msgid "Group Id Attr"
 msgstr "معرف المجموعة Attr"
 
-#: auths/SimpleLDAP/authenticator.py:153
+#: auths/SimpleLDAP/authenticator.py:156
 msgid "Attribute that contains the group id"
 msgstr "السمة التي تحتوي على معرف المجموعة"
 
-#: auths/SimpleLDAP/authenticator.py:159
+#: auths/SimpleLDAP/authenticator.py:162
 msgid "Group membership attr"
 msgstr "عضوية المجموعة"
 
-#: auths/SimpleLDAP/authenticator.py:162
+#: auths/SimpleLDAP/authenticator.py:165
 msgid "Attribute of the group that contains the users belonging to it"
 msgstr "سمة المجموعة التي تحتوي على المستخدمين الذين ينتمون إليها"
 
-#: auths/SimpleLDAP/authenticator.py:167
+#: auths/SimpleLDAP/authenticator.py:170
 msgid "SimpleLDAP (DEPRECATED)"
 msgstr "SimpleLDAP (تم إزالته)"
 
-#: auths/SimpleLDAP/authenticator.py:169
+#: auths/SimpleLDAP/authenticator.py:172
 msgid "Simple LDAP authenticator (DEPRECATED)"
 msgstr "مصادقة LDAP بسيطة (تم إزالتها)"
 
-#: auths/SimpleLDAP/authenticator.py:567
+#: auths/SimpleLDAP/authenticator.py:575
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
 msgstr ""
 "يبدو أن فئة مجموعة Ldap غير صحيحة (لم يتم العثور على مجموعة من تلك الفئة)"
 
-#: auths/SimpleLDAP/authenticator.py:638
+#: auths/SimpleLDAP/authenticator.py:646
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
@@ -1840,7 +1831,7 @@ msgstr ""
 "من المحتمل أن فئة مستخدم Ldap أو معرف المستخدم خاطئة (لا يمكن العثور على أي "
 "مستخدم لديه الشرطين)"
 
-#: auths/SimpleLDAP/authenticator.py:657
+#: auths/SimpleLDAP/authenticator.py:665
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
@@ -1848,15 +1839,15 @@ msgstr ""
 "من المحتمل أن تكون فئة مجموعة Ldap أو معرف المجموعة خاطئة (لا يمكن العثور "
 "على أي مجموعة بكلتا الحالتين)"
 
-#: auths/SimpleLDAP/authenticator.py:667
+#: auths/SimpleLDAP/authenticator.py:675
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "لا يمكن تحديد موقع أي مجموعة مع تحديد سمة العضوية"
 
-#: core/auths/auth.py:111
+#: core/auths/auth.py:110
 msgid "System Administrator"
 msgstr "مسؤول النظام"
 
-#: core/auths/auth.py:151
+#: core/auths/auth.py:150
 msgid "Forbidden"
 msgstr "ممنوع"
 
@@ -1924,11 +1915,11 @@ msgstr "لم ينفذ أي اتصال بالتحقق من الأسلوب."
 msgid "No check method provided."
 msgstr "لم يقدم  أسلوب الاختيار ."
 
-#: core/osmanagers/osmanager.py:58
+#: core/osmanagers/osmanager.py:60
 msgid "Base OS Manager"
 msgstr "إدارة قاعدة نظام التشغيل "
 
-#: core/osmanagers/osmanager.py:60
+#: core/osmanagers/osmanager.py:62
 msgid "Base Manager"
 msgstr "مدير قاعدة"
 
@@ -2089,7 +2080,6 @@ msgid "Users with services"
 msgstr "المستخدمون مع الخدمات"
 
 #: core/util/stats/counters.py:219
-#| msgid "Cache size"
 msgid "Cached"
 msgstr "مخبأ"
 
@@ -2326,7 +2316,6 @@ msgid "Greater % available"
 msgstr "أكبر ٪ المتاحة"
 
 #: models/meta_pool.py:82
-#| msgid "Waiting execution"
 msgid "Automatic selection"
 msgstr "التحديد التلقائي"
 
@@ -2449,7 +2438,6 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:81
 #: osmanagers/WindowsOsManager/windows.py:80
-#| msgid "Calendar"
 msgid "Calendar logout"
 msgstr "التقويم الخروج"
 
@@ -2491,19 +2479,19 @@ msgstr "يجب تقديم حساب المستخدم !!!"
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgstr "ممثل RDS UDS (للتطبيقات عن بعد على Windows Server 2012 و 2016 و 2019)"
 
-#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:31
+#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:32
 msgid "RDS OS Manager"
 msgstr "مدير نظام  للسيطرة على خدمات RDS"
 
-#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:33
+#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:34
 msgid "Os Manager to control RDS provided services"
 msgstr "مدير السراج للسيطرة على الخدمات المقدمة RDS"
 
-#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:40
+#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:41
 msgid "Max. session time"
 msgstr "الوقت الأقصى للجلسة "
 
-#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:44
+#: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:45
 msgid ""
 "Maximum duration in hours for a session (0 means no limit). After this "
 "period, session will be released."
@@ -3079,7 +3067,7 @@ msgstr "التي تم الحصول عليها من اشتراكات"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:60
+#: services/Proxmox/provider.py:100 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:47
 #: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:123
 msgid "Creation concurrency"
@@ -3092,7 +3080,7 @@ msgstr "تزامن الخلق"
 #: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:113
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
-#: services/Proxmox/provider.py:66 services/VCloud_enterprise/provider.py:60
+#: services/Proxmox/provider.py:105 services/VCloud_enterprise/provider.py:60
 #: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:128
 msgid "Maximum number of concurrently creating VMs"
 msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة الظاهرية."
@@ -3104,7 +3092,7 @@ msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة ا
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:61
+#: services/Proxmox/provider.py:111 services/VCloud_enterprise/provider.py:61
 #: services/Vmware_enterprise/provider.py:48
 #: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:134
 msgid "Removal concurrency"
@@ -3117,7 +3105,7 @@ msgstr "تزامن الإزالة."
 #: services/Nutanix_enterprise/provider.py:42 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
-#: services/Proxmox/provider.py:67 services/VCloud_enterprise/provider.py:61
+#: services/Proxmox/provider.py:116 services/VCloud_enterprise/provider.py:61
 #: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:139
 msgid "Maximum number of concurrently removing VMs"
 msgstr "الحد الأقصى لعدد الأجهزة الافتراضية إزالة في وقت واحد"
@@ -3344,7 +3332,7 @@ msgstr "اختبار اتصال ناجح"
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/NutanixPrism_enterprise/provider.py:262
 #: services/Nutanix_enterprise/provider.py:228 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:210 services/Vmware_enterprise/provider.py:168
+#: services/Proxmox/provider.py:312 services/Vmware_enterprise/provider.py:168
 msgid "Connection failed. Check connection params"
 msgstr "فشل الاتصال. تحقق اتصال params"
 
@@ -3518,7 +3506,6 @@ msgstr "منفذ WSman عن بعد. ترك إلى الصفر افتراضيًا.
 
 #: services/HyperV_enterprise/provider.py:123
 #: services/VCloud_enterprise/provider.py:51
-#: transports/NX/nxtunneltransport.py:95
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
 #: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
@@ -3555,12 +3542,10 @@ msgid "Hyper Services based on templates and differential disks"
 msgstr "خدمات عالية تعتمد على القوالب والأقراص التفاضلية"
 
 #: services/NutanixPrism_enterprise/provider.py:30
-#| msgid "VMWare VCenter Platform Provider"
 msgid "Prism Central Platform Provider"
 msgstr "مزود منصة Prism المركزية"
 
 #: services/NutanixPrism_enterprise/provider.py:32
-#| msgid "Nutanix based VM provider"
 msgid "Nutanix Prism Central based VM provider"
 msgstr "مزود VM يستند إلى Nutanix Prism Central"
 
@@ -3575,12 +3560,10 @@ msgid "Nutanix Acropolis server Port (default 9440)"
 msgstr "Nutanix أكروبوليس الخادم ميناء (افتراضي 9440)"
 
 #: services/NutanixPrism_enterprise/provider.py:55
-#| msgid "User with valid privileges on Nutanix Acropolis"
 msgid "User with valid privileges on Nutanix Prism Central"
 msgstr "مستخدم بامتيازات صالحة على Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:62
-#| msgid "Password of the user of Nutanix Acropolis"
 msgid "Password of the user of Nutanix  Prism Central"
 msgstr "كلمة مرور مستخدم Nutanix Prism Central"
 
@@ -3595,12 +3578,10 @@ msgid "Connection works fine"
 msgstr "اتصال يعمل بشكل جيد"
 
 #: services/NutanixPrism_enterprise/service.py:32
-#| msgid "Parent service"
 msgid "Prism Central Service"
 msgstr "بريزم سنترال سيرفيس"
 
 #: services/NutanixPrism_enterprise/service.py:34
-#| msgid "Nutanix Acropolis based service"
 msgid "Nutanix Prism Central based service"
 msgstr "الخدمة المستندة إلى Nutanix Prism Central"
 
@@ -3896,7 +3877,6 @@ msgstr ""
 "مع الرعاية!"
 
 #: services/OpenGnsys/service.py:140
-#| msgid "Greater % available"
 msgid "Start if unavailable"
 msgstr "ابدأ إذا لم يكن متاحًا"
 
@@ -3997,9 +3977,6 @@ msgid "Identity endpoint"
 msgstr "هوية نقطة النهاية"
 
 #: services/OpenStack/provider.py:104
-#| msgid ""
-#| "OpenStack identity endpoint API Access (for example, https://10.0.0.0/"
-#| "identity)"
 msgid ""
 "OpenStack identity endpoint API Access (for example, https://10.0.0.1/"
 "identity). Do not include /v3."
@@ -4059,9 +4036,6 @@ msgstr ""
 "إذا تم تحديده ، فسيتم استخدام اسم الشبكات الفرعية بدلاً من أسماء الشبكات"
 
 #: services/OpenStack/provider.py:211 services/OpenStack/provider_legacy.py:197
-#| msgid ""
-#| "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
-#| "host:port, i.e. https://10.10.0.1:8080)"
 msgid ""
 "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
 "host:port, i.e. http://10.10.0.1:8080)"
@@ -4154,7 +4128,6 @@ msgid "Advanced configuration data for the provider"
 msgstr "بيانات التكوين المتقدمة للمزود"
 
 #: services/PhysicalMachines/provider.py:87
-#| msgid "Invalid authorization"
 msgid "Invalid advanced configuration: "
 msgstr "التكوين المتقدم غير صالح:"
 
@@ -4245,7 +4218,6 @@ msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى الجهاز عن طريق IP"
 
 #: services/PhysicalMachines/service_single.py:78
-#| msgid "Invalid server certificate. "
 msgid "Invalid server used: \"{}\""
 msgstr "تم استخدام خادم غير صالح: \"{}\""
 
@@ -4257,36 +4229,45 @@ msgstr "مشترك"
 msgid " (bound to {})"
 msgstr "(منضم إلى {})"
 
-#: services/Proxmox/provider.py:55
+#: services/Proxmox/provider.py:59
 msgid "Proxmox Platform Provider"
 msgstr "Proxmox Platform Provider"
 
-#: services/Proxmox/provider.py:57
+#: services/Proxmox/provider.py:61
 msgid "Proxmox platform service provider"
 msgstr "مزود خدمة منصة Proxmox"
 
-#: services/Proxmox/provider.py:60
+#: services/Proxmox/provider.py:68
 msgid "Proxmox Server IP or Hostname"
 msgstr "Proxmox Server IP أو اسم المضيف"
 
-#: services/Proxmox/provider.py:61
+#: services/Proxmox/provider.py:75
 msgid "Proxmox API port (default is 8006)"
 msgstr "منفذ API Proxmox (الافتراضي هو 8006)"
 
-#: services/Proxmox/provider.py:63
+#: services/Proxmox/provider.py:85
 msgid ""
 "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgstr ""
 "مستخدم لديه امتيازات صالحة في Proxmox ، (استخدم نموذج \"user @ Authenticator"
 "\")"
 
-#: services/Proxmox/provider.py:64
+#: services/Proxmox/provider.py:94
 msgid "Password of the user of Proxmox"
 msgstr "كلمة مرور مستخدم Proxmox"
 
-#: services/Proxmox/provider.py:69
+#: services/Proxmox/provider.py:126
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "المهلة بالثواني من الاتصال بـ Proxmox"
+
+#: services/Proxmox/provider.py:133
+#| msgid "Starting date"
+msgid "Starting VmId"
+msgstr "بدء تشغيل VmId"
+
+#: services/Proxmox/provider.py:138
+msgid "Starting machine id on proxmox"
+msgstr "جارٍ بدء معرف الجهاز في proxmox"
 
 #: services/Proxmox/publication.py:94
 #: services/Vmware_enterprise/publication.py:67
@@ -4325,8 +4306,8 @@ msgid ""
 "If active, UDS will try to shutdown (soft) the machine using VMWare Guest "
 "Tools. Will delay 30 seconds the power off of hanged machines."
 msgstr ""
-"إذا كانت نشطة ، فستحاول UDS إيقاف تشغيل الجهاز (ضعيفًا) باستخدام VMWare "
-"Guest Tools. سوف يؤخر 30 ثانية من انقطاع التيار الكهربائي عن الآلات المعلقة."
+"إذا كانت نشطة ، فستحاول UDS إيقاف تشغيل الجهاز (ضعيفًا) باستخدام VMWare Guest "
+"Tools. سوف يؤخر 30 ثانية من انقطاع التيار الكهربائي عن الآلات المعلقة."
 
 #: services/Proxmox/service.py:151
 msgid "Storage for publications & machines."
@@ -4578,12 +4559,10 @@ msgid "A valid application path is required"
 msgstr "مطلوب مسار تطبيق صحيح"
 
 #: services/RDS_enterprise/service_session.py:31
-#| msgid "RDS Platform RemoteAPP"
 msgid "RDS Platform Session"
 msgstr "جلسة منصة RDS"
 
 #: services/RDS_enterprise/service_session.py:33
-#| msgid "RDS Platform RemoteAPP based service"
 msgid "RDS Platform Full session desktop service"
 msgstr "منصة RDS خدمة سطح المكتب لجلسة كاملة"
 
@@ -4948,7 +4927,6 @@ msgid ""
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات النسخ مرتبط على مركز الظاهري"
 
 #: services/Vmware_enterprise/service_linked.py:50
-#| msgid "Number of desired machines to keep suspended waiting for use"
 msgid "Number of desired machines to keep stopped waiting for use"
 msgstr "عدد الآلات المطلوبة لتظل متوقفة في انتظار الاستخدام"
 
@@ -5043,7 +5021,6 @@ msgid ""
 msgstr "إذا حدد، سيتم فحص الشهادة ضد نظام مقدمي الشهادة."
 
 #: services/Xen/provider.py:166
-#| msgid "OpenStack Host"
 msgid "Backup Host"
 msgstr "مضيف النسخ الاحتياطي"
 
@@ -5268,7 +5245,6 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:97
 #: transports/HTML5RDS_enterprise/html5rds.py:98
-#: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:105
 #: transports/NoMachine_enterprise/nomachine_base.py:57
 #: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
 msgid "Empty creds"
@@ -5276,23 +5252,20 @@ msgstr "أوراق الاعتماد فارغة."
 
 #: transports/HTML5RDP/html5rdp.py:99
 #: transports/HTML5RDS_enterprise/html5rds.py:100
-#: transports/NX/nxtransport.py:70 transports/NX/nxtunneltransport.py:107
 #: transports/NoMachine_enterprise/nomachine_base.py:59
 #: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
 #: transports/SPICE/spice_base.py:63
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدمة للاتصال أن تكون فارغة."
 
-#: transports/HTML5RDP/html5rdp.py:105 transports/NX/nxtransport.py:71
-#: transports/NX/nxtunneltransport.py:113
+#: transports/HTML5RDP/html5rdp.py:105
 #: transports/NoMachine_enterprise/nomachine_base.py:65
 #: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:77
 #: transports/SPICE/spice_base.py:69 transports/X2GO/x2go_base.py:70
 msgid "If not empty, this username will be always used as credential"
 msgstr "إن لم يكن فارغا، هذا المستخدم سيستخدم دائما الاعتماد."
 
-#: transports/HTML5RDP/html5rdp.py:111 transports/NX/nxtransport.py:72
-#: transports/NX/nxtunneltransport.py:119
+#: transports/HTML5RDP/html5rdp.py:111
 #: transports/NoMachine_enterprise/nomachine_base.py:71
 #: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:83
 #: transports/SPICE/spice_base.py:75
@@ -5371,9 +5344,6 @@ msgstr "تمكين الصوت"
 
 #: transports/HTML5RDP/html5rdp.py:154
 #: transports/HTML5RDS_enterprise/html5rds.py:143
-#| msgid ""
-#| "If checked, the audio will be redirected to client (if client browser "
-#| "supports it)"
 msgid ""
 "If checked, the audio will be redirected to remote session (if client "
 "browser supports it)"
@@ -5383,15 +5353,11 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:160
 #: transports/HTML5RDS_enterprise/html5rds.py:149
-#| msgid "Enable Audio"
 msgid "Enable Microphone"
 msgstr "تمكين الميكروفون"
 
 #: transports/HTML5RDP/html5rdp.py:163
 #: transports/HTML5RDS_enterprise/html5rds.py:152
-#| msgid ""
-#| "If checked, the audio will be redirected to client (if client browser "
-#| "supports it)"
 msgid ""
 "If checked, the microphone will be redirected to remote session (if client "
 "browser supports it)"
@@ -5406,9 +5372,6 @@ msgstr "تمكين الطباعة"
 
 #: transports/HTML5RDP/html5rdp.py:171
 #: transports/HTML5RDS_enterprise/html5rds.py:160
-#| msgid ""
-#| "If checked, the printing will be redirected to client (if client browser "
-#| "supports it)"
 msgid ""
 "If checked, the printing will be redirected to remote session (if client "
 "browser supports it)"
@@ -5417,12 +5380,10 @@ msgstr ""
 "العميل يدعمها)"
 
 #: transports/HTML5RDP/html5rdp.py:176
-#| msgid "Enable File Sharing"
 msgid "File Sharing"
 msgstr "مشاركة الملفات"
 
 #: transports/HTML5RDP/html5rdp.py:178
-#| msgid "Local drives redirection policy"
 msgid "File upload/download redirection policy"
 msgstr "سياسة إعادة توجيه تحميل / تنزيل الملف"
 
@@ -5531,9 +5492,6 @@ msgstr ""
 "سيفشل الاتصال)"
 
 #: transports/HTML5RDP/html5rdp.py:235
-#| msgid ""
-#| "NLA (Network Layer authentication. Requires VALID username&password, or "
-#| "connection will fail)"
 msgid ""
 "NLA extended (Network Layer authentication. Requires VALID "
 "username&password, or connection will fail)"
@@ -5701,80 +5659,49 @@ msgstr "يقرأ فقط"
 msgid "If set, the connection will be read only"
 msgstr "في حالة الضبط ، سيتم قراءة الاتصال فقط"
 
-#: transports/NX/nxtransport.py:64 transports/NX/nxtunneltransport.py:66
-msgid "NX v3.5 (DEPRECATED)"
-msgstr "الإصدار NX v3.5 (تم إزالته)"
-
-#: transports/NX/nxtransport.py:66
-msgid "NX Protocol v3.5. Direct connection."
-msgstr "بروتوكول NX v3.5. الاتصال المباشر."
-
-#: transports/NX/nxtransport.py:73 transports/NX/nxtunneltransport.py:123
 #: transports/NoMachine_enterprise/nomachine_base.py:75
 msgid "Listening port"
 msgstr "منفذ الاستماع"
 
-#: transports/NX/nxtransport.py:73 transports/NX/nxtunneltransport.py:126
-msgid "Listening port of NX (ssh) at client machine"
-msgstr "منفذ الاستماع NX (SSH) على جهاز العميل"
+#: transports/NoMachine_enterprise/nomachine_base.py:78
+msgid "Listening port of NX (Defaults to 4000 for NX, 22 for SSH)"
+msgstr "منفذ الاستماع من NX (الافتراضيات إلى 4000 لـ NX و 22 لـ SSH)"
 
-#: transports/NX/nxtransport.py:75 transports/NX/nxtunneltransport.py:130
-msgid "Connection"
-msgstr "صلة"
+#: transports/NoMachine_enterprise/nomachine_base.py:82
+msgid "Window Size"
+msgstr "بحجم النافذه"
 
-#: transports/NX/nxtransport.py:77 transports/NX/nxtunneltransport.py:132
-msgid "Connection speed for this transport (quality)"
-msgstr "سرعة الاتصال لهذا النقل (الجودة)"
+#: transports/NoMachine_enterprise/nomachine_base.py:84
+msgid "Window size on connection"
+msgstr "حجم النافذة عند الاتصال"
 
-#: transports/NX/nxtransport.py:88 transports/NX/nxtunneltransport.py:143
-msgid "Session"
-msgstr "جلسة"
+#: transports/NoMachine_enterprise/nomachine_transport.py:59
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:66
+msgid "NoMachine Protocol"
+msgstr "بروتوكول NoMachine"
 
-#: transports/NX/nxtransport.py:90 transports/NX/nxtunneltransport.py:145
-#: transports/X2GO/x2go_base.py:93
-msgid "Desktop session"
-msgstr "جلسة المكتب"
+#: transports/NoMachine_enterprise/nomachine_transport.py:61
+msgid "NoMachine Protocol Direct connection."
+msgstr "بروتوكول NoMachine اتصال مباشر."
 
-#: transports/NX/nxtransport.py:99 transports/NX/nxtunneltransport.py:154
-msgid "Disk Cache"
-msgstr "قرص ذاكرة التخزين المؤقت"
+#: transports/NoMachine_enterprise/nomachine_transport.py:71
+msgid "Use UDP traffic for multimedia"
+msgstr "استخدام حركة مرور UDP للوسائط المتعددة"
 
-#: transports/NX/nxtransport.py:101 transports/NX/nxtunneltransport.py:156
-msgid "Cache size en Mb stored at disk"
-msgstr "حجم ذاكرة التخزين المؤقت ميجا بايت تخزين في القرص"
+#: transports/NoMachine_enterprise/nomachine_transport.py:74
+msgid "If checked, the multimedia will use UDP traffic instead of RDP"
+msgstr "إذا تم تحديده ، فستستخدم الوسائط المتعددة حركة مرور UDP بدلاً من RDP"
 
-#: transports/NX/nxtransport.py:113 transports/NX/nxtunneltransport.py:168
-msgid "Memory Cache"
-msgstr "ذاكرة التخزين المؤقت"
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:68
+msgid "NoMachine protocol Tunneled."
+msgstr "بروتوكول NoMachine نفق."
 
-#: transports/NX/nxtransport.py:115 transports/NX/nxtunneltransport.py:170
-msgid "Cache size en Mb kept at memory"
-msgstr "حجم ذاكرة التخزين المؤقت ميغابايت الاحتفاظ بها في الذاكرة"
-
-#: transports/NX/nxtransport.py:127 transports/NX/nxtransport.py:129
-#: transports/NX/nxtunneltransport.py:182
-#: transports/NX/nxtunneltransport.py:184 transports/X2GO/x2go_base.py:75
-#: transports/X2GO/x2go_base.py:77
-msgid "Screen size"
-msgstr "حجم الشاشة"
-
-#: transports/NX/nxtransport.py:137 transports/NX/nxtunneltransport.py:192
-#: transports/X2GO/x2go_base.py:85
-msgid "Full Screen"
-msgstr "كامل الشاشة"
-
-#: transports/NX/nxtunneltransport.py:68
-msgid "NX protocol v3.5. Tunneled connection."
-msgstr "NX بروتوكول v3.5. اتصال النفق."
-
-#: transports/NX/nxtunneltransport.py:74
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
 #: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
 #: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "ملقم نفق"
 
-#: transports/NX/nxtunneltransport.py:77
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
 #: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
 #: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
@@ -5785,75 +5712,30 @@ msgstr ""
 "IP أو اسم المضيف لخادم نفق إرسالها إلى جهاز العميل (\"العام\" الملكية "
 "الفكرية) والميناء. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/nxtunneltransport.py:84
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
 #: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
 #: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "وقت الانتظار النفق"
 
-#: transports/NX/nxtunneltransport.py:89
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
 #: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
 #: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق النفق المستمع"
 
-#: transports/NX/nxtunneltransport.py:98
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
 #: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
 #: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
-#| msgid ""
-#| "If checked, ssl certificate of OpenGnsys server must be valid (not self "
-#| "signed)"
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
 msgstr "في حالة التمكين ، سيتم التحقق من شهادة خادم النفق (موصى به)."
 
-#: transports/NX/nxtunneltransport.py:215
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:134 transports/RDS_enterprise/rdstunnel.py:124
+#: transports/RDP/rdptunnel.py:134 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:106 transports/X2GO/x2go_tunnel.py:117
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
-
-#: transports/NoMachine_enterprise/nomachine_base.py:78
-msgid "Listening port of NX (Defaults to 4000 for NX, 22 for SSH)"
-msgstr "منفذ الاستماع من NX (الافتراضيات إلى 4000 لـ NX و 22 لـ SSH)"
-
-#: transports/NoMachine_enterprise/nomachine_base.py:82
-#| msgid "Windows client"
-msgid "Window Size"
-msgstr "بحجم النافذه"
-
-#: transports/NoMachine_enterprise/nomachine_base.py:84
-msgid "Window size on connection"
-msgstr "حجم النافذة عند الاتصال"
-
-#: transports/NoMachine_enterprise/nomachine_transport.py:59
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:66
-#| msgid "Fixed Machines Pool"
-msgid "NoMachine Protocol"
-msgstr "بروتوكول NoMachine"
-
-#: transports/NoMachine_enterprise/nomachine_transport.py:61
-#| msgid "RDP Protocol. Direct connection."
-msgid "NoMachine Protocol Direct connection."
-msgstr "بروتوكول NoMachine اتصال مباشر."
-
-#: transports/NoMachine_enterprise/nomachine_transport.py:71
-msgid "Use UDP traffic for multimedia"
-msgstr "استخدام حركة مرور UDP للوسائط المتعددة"
-
-#: transports/NoMachine_enterprise/nomachine_transport.py:74
-#| msgid "If checked, the Audio will be redirected."
-msgid "If checked, the multimedia will use UDP traffic instead of RDP"
-msgstr "إذا تم تحديده ، فستستخدم الوسائط المتعددة حركة مرور UDP بدلاً من RDP"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:68
-#| msgid "NX protocol v3.5. Tunneled connection."
-msgid "NoMachine protocol Tunneled."
-msgstr "بروتوكول NoMachine نفق."
 
 #: transports/PCoIP_enterprise/pcoip.py:50
 msgid "PCoIP Cloud Access"
@@ -5998,49 +5880,49 @@ msgstr "شريط الاتصال"
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "إذا راجعت، سيظهر شريط الاتصال (فقط على عملاء Windows)"
 
-#: transports/RDP/rdp_base.py:246 transports/RDS_enterprise/rds_base.py:157
+#: transports/RDP/rdp_base.py:246 transports/RDS_enterprise/rds_base.py:174
 msgid "Multimedia sync"
 msgstr "تزامن الوسائط المتعددة"
 
-#: transports/RDP/rdp_base.py:249 transports/RDS_enterprise/rds_base.py:160
+#: transports/RDP/rdp_base.py:249 transports/RDS_enterprise/rds_base.py:177
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
 
-#: transports/RDP/rdp_base.py:254 transports/RDS_enterprise/rds_base.py:165
+#: transports/RDP/rdp_base.py:254 transports/RDS_enterprise/rds_base.py:182
 msgid "Use Alsa"
 msgstr "استخدام ALSA"
 
-#: transports/RDP/rdp_base.py:257 transports/RDS_enterprise/rds_base.py:168
+#: transports/RDP/rdp_base.py:257 transports/RDS_enterprise/rds_base.py:185
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
-#: transports/RDP/rdp_base.py:262 transports/RDS_enterprise/rds_base.py:173
+#: transports/RDP/rdp_base.py:262 transports/RDS_enterprise/rds_base.py:190
 msgid "Printer string"
 msgstr "سلسلة الطابعة"
 
-#: transports/RDP/rdp_base.py:265 transports/RDS_enterprise/rds_base.py:176
+#: transports/RDP/rdp_base.py:265 transports/RDS_enterprise/rds_base.py:193
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "إذا تم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل XFreeRDP"
 
-#: transports/RDP/rdp_base.py:271 transports/RDS_enterprise/rds_base.py:182
+#: transports/RDP/rdp_base.py:271 transports/RDS_enterprise/rds_base.py:199
 msgid "Smartcard string"
 msgstr "سلسلة البطاقة الذكية"
 
-#: transports/RDP/rdp_base.py:274 transports/RDS_enterprise/rds_base.py:185
+#: transports/RDP/rdp_base.py:274 transports/RDS_enterprise/rds_base.py:202
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "إذا تم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع العميل "
 "XFreeRDP"
 
 #: transports/RDP/rdp_base.py:280 transports/RDP/rdp_base.py:300
-#: transports/RDS_enterprise/rds_base.py:191
+#: transports/RDS_enterprise/rds_base.py:208
 msgid "Custom parameters"
 msgstr "معلمات مخصصة"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:194
+#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:211
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6061,9 +5943,6 @@ msgstr ""
 "كلمة المرور!"
 
 #: transports/RDP/rdp_base.py:303
-#| msgid ""
-#| "If not empty, extra parameter to include for Linux Client (for example /"
-#| "usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgid ""
 "If not empty, extra parameter to include for Mac OS X Freerdp Client (for "
 "example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp "
@@ -6085,6 +5964,27 @@ msgstr "RDS for vApps"
 #: transports/RDS_enterprise/rds.py:58
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "الوصول RDS باستخدام RDP VApps. الاتصال المباشر."
+
+#: transports/RDS_enterprise/rds_base.py:157
+msgid "Maximized"
+msgstr "مكبرة"
+
+#: transports/RDS_enterprise/rds_base.py:160
+msgid "If checked, UDS Actor will try to execute application maximized)"
+msgstr "إذا تم تحديده ، سيحاول UDS Actor تنفيذ التطبيق إلى أقصى حد)"
+
+#: transports/RDS_enterprise/rds_base.py:165
+msgid "Execute as shell"
+msgstr "نفذ كقذيفة"
+
+#: transports/RDS_enterprise/rds_base.py:169
+#| msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
+msgid ""
+"If checked, Linux client will execute application in a session instead of a "
+"remoteapp"
+msgstr ""
+"إذا تم تحديده ، فسيقوم عميل Linux بتنفيذ التطبيق في جلسة بدلاً من تطبيق عن "
+"بعد"
 
 #: transports/RDS_enterprise/rdstunnel.py:66
 msgid "RDS access using RDP for vApps. Tunneled connection."
@@ -6182,9 +6082,21 @@ msgstr "X2Go"
 msgid "X2Go access (Experimental). Direct connection."
 msgstr "X2Go إتصال (تجريبية). الاتصال المباشر."
 
+#: transports/X2GO/x2go_base.py:75 transports/X2GO/x2go_base.py:77
+msgid "Screen size"
+msgstr "حجم الشاشة"
+
+#: transports/X2GO/x2go_base.py:85
+msgid "Full Screen"
+msgstr "كامل الشاشة"
+
 #: transports/X2GO/x2go_base.py:91
 msgid "Desktop"
 msgstr "سطح المكتب"
+
+#: transports/X2GO/x2go_base.py:93
+msgid "Desktop session"
+msgstr "جلسة المكتب"
 
 #: transports/X2GO/x2go_base.py:110
 msgid "vAPP"
@@ -6296,12 +6208,10 @@ msgid "Generic .tar.gz Linux client"
 msgstr "عام .tar.gz عميل لينكس"
 
 #: web/util/configjs.py:189
-#| msgid "Debian based Linux client"
 msgid "Binary appimage X86_64 Linux client"
 msgstr "ثنائي التطبيق X86_64 Linux العميل"
 
 #: web/util/configjs.py:190
-#| msgid "Debian based Linux client"
 msgid "Binary appimage Raspberry Linux client"
 msgstr "ثنائي appimage Raspberry Linux العميل"
 
