@@ -158,18 +158,13 @@ def userServiceStatus(
     userService = None
     status = 'running'
     # If service exists
-    if userServiceManager().locateUserService(user=request.user, idService=idService, create=False):
+    userService = userServiceManager().locateUserService(user=request.user, idService=idService, create=False)
+    if userService:
         # Service exists...
         try:
-            (
-                ip,
-                userService,
-                userServiceInstance,
-                transport,
-                transportInstance,
-            ) = userServiceManager().getService(
-                request.user, request.os, request.ip, idService, idTransport, doTest=True
-            )
+            userServiceInstance = userService.getInstance()
+            ip = userServiceInstance.getIp()
+            userService.logIP(ip)
             # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
         except ServiceNotReadyError:
             ip = None
@@ -177,7 +172,7 @@ def userServiceStatus(
             ip = False
 
         ready = 'ready'
-        if userService and userService.getProperty('accessedByClient', '0') != '0':
+        if userService.getProperty('accessedByClient', '0') != '0':
             ready = 'accessed'
 
         status = 'running' if ip is None else 'error' if ip is False else ready
