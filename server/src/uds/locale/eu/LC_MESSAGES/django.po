@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 12:57+0200\n"
-"PO-Revision-Date: 2021-06-24 09:23+0000\n"
+"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"PO-Revision-Date: 2021-07-08 10:58+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -1758,24 +1758,24 @@ msgstr ""
 "Gako pribatua PEM baliagarria izan behar da (PEM gako pribatuak hasten dira "
 "----- BEGIN RSA PRIBATUA KEY -----"
 
-#: auths/SAML_enterprise/saml.py:204
+#: auths/SAML_enterprise/saml.py:197
 msgid "Invalid private key. "
 msgstr "Gako pribatua baliogabea da."
 
-#: auths/SAML_enterprise/saml.py:221
+#: auths/SAML_enterprise/saml.py:214
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Ezin da URL {0} eskuratu: {1}"
 
-#: auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:222
 msgid " (obtained from URL)"
 msgstr "(URLetik lortzen da)"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:223
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML IDP Metadata ez da baliozkoa"
 
-#: auths/SAML_enterprise/saml.py:246
+#: auths/SAML_enterprise/saml.py:239
 msgid "Can't access idp metadata"
 msgstr "Ezin dira idp metadatuak atzitu"
 
@@ -4323,7 +4323,6 @@ msgid "Timeout in seconds of connection to Proxmox"
 msgstr "Denbora-muga Proxmox-ekin konexioaren segundotan"
 
 #: services/Proxmox/provider.py:133
-#| msgid "Starting date"
 msgid "Starting VmId"
 msgstr "VmId abiarazten"
 
@@ -6092,7 +6091,6 @@ msgid "Execute as shell"
 msgstr "Exekutatu shell gisa"
 
 #: transports/RDS_enterprise/rds_base.py:169
-#| msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"

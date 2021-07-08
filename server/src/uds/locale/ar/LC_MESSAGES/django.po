@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 12:57+0200\n"
-"PO-Revision-Date: 2021-06-24 09:23+0000\n"
+"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"PO-Revision-Date: 2021-07-08 10:58+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -1729,24 +1729,24 @@ msgstr ""
 "يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN "
 "RSA PRIVATE KEY-----"
 
-#: auths/SAML_enterprise/saml.py:204
+#: auths/SAML_enterprise/saml.py:197
 msgid "Invalid private key. "
 msgstr "المفتاح الخاص غير صالح. "
 
-#: auths/SAML_enterprise/saml.py:221
+#: auths/SAML_enterprise/saml.py:214
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "لا يمكن إحضار url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:222
 msgid " (obtained from URL)"
 msgstr " (تم الحصول عليها من URL)"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:223
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML لا تبدو صالحة لبيانات التعريف IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:246
+#: auths/SAML_enterprise/saml.py:239
 msgid "Can't access idp metadata"
 msgstr "لا يمكن الوصول إلى بيانات التعريف IDP Metadata"
 
@@ -4261,7 +4261,6 @@ msgid "Timeout in seconds of connection to Proxmox"
 msgstr "المهلة بالثواني من الاتصال بـ Proxmox"
 
 #: services/Proxmox/provider.py:133
-#| msgid "Starting date"
 msgid "Starting VmId"
 msgstr "بدء تشغيل VmId"
 
@@ -5978,13 +5977,11 @@ msgid "Execute as shell"
 msgstr "نفذ كقذيفة"
 
 #: transports/RDS_enterprise/rds_base.py:169
-#| msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
 msgstr ""
-"إذا تم تحديده ، فسيقوم عميل Linux بتنفيذ التطبيق في جلسة بدلاً من تطبيق عن "
-"بعد"
+"إذا تم تحديده ، فسيقوم عميل Linux بتنفيذ التطبيق في جلسة بدلاً من تطبيق عن بعد"
 
 #: transports/RDS_enterprise/rdstunnel.py:66
 msgid "RDS access using RDP for vApps. Tunneled connection."

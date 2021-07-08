@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 12:58+0200\n"
-"PO-Revision-Date: 2021-06-24 09:24+0000\n"
+"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -287,6 +287,7 @@ msgstr "الخدمات قيد الاستخدام"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:21
 #: static/admin/translations-fakejs.js:291
 #: static/admin/translations-fakejs.js:299
+#: static/modern/translations-fakejs.js:30
 msgid "Filter"
 msgstr "مصفاة "
 
@@ -322,7 +323,7 @@ msgstr "المجموعة"
 #: static/admin/translations-fakejs.js:409
 #: static/admin/translations-fakejs.js:422
 #: static/admin/translations-fakejs.js:443
-#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:73
 msgid "Authenticator"
 msgstr "الموثق"
 
@@ -414,14 +415,14 @@ msgstr "مجمعات الخدمة"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:3
 #: static/admin/translations-fakejs.js:7
 #: static/admin/translations-fakejs.js:306
-#: static/modern/translations-fakejs.js:43
+#: static/modern/translations-fakejs.js:44
 msgid "Yes"
 msgstr "نعم"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:4
 #: static/admin/translations-fakejs.js:8
 #: static/admin/translations-fakejs.js:307
-#: static/modern/translations-fakejs.js:44
+#: static/modern/translations-fakejs.js:45
 msgid "No"
 msgstr "لا"
 
@@ -435,7 +436,7 @@ msgstr "العناصر المختارة:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:106
 #: static/admin/translations-fakejs.js:233
-#: static/modern/translations-fakejs.js:34
+#: static/modern/translations-fakejs.js:35
 msgid "Information"
 msgstr "معلومات"
 
@@ -1087,7 +1088,6 @@ msgid "xhrListener"
 msgstr "xhrListener"
 
 #: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-#| msgid "Scheduled actions"
 msgid "xhrScheduled"
 msgstr "مجدول"
 
@@ -1198,7 +1198,7 @@ msgid "Detail"
 msgstr "التفاصيل"
 
 #: static/admin/translations-fakejs.js:305
-#: static/modern/translations-fakejs.js:42
+#: static/modern/translations-fakejs.js:43
 msgid "Close"
 msgstr "إغلاق"
 
@@ -1207,7 +1207,7 @@ msgid "User mode"
 msgstr "وضع المستخدم"
 
 #: static/admin/translations-fakejs.js:309
-#: static/modern/translations-fakejs.js:47
+#: static/modern/translations-fakejs.js:48
 msgid "Logout"
 msgstr "الخروج"
 
@@ -1239,12 +1239,12 @@ msgstr "الاتصال"
 
 #: static/admin/translations-fakejs.js:315
 #: static/admin/translations-fakejs.js:453
-#: static/modern/translations-fakejs.js:38
+#: static/modern/translations-fakejs.js:39
 msgid "Transports"
 msgstr "وسائل النقل"
 
 #: static/admin/translations-fakejs.js:316
-#: static/modern/translations-fakejs.js:40
+#: static/modern/translations-fakejs.js:41
 msgid "Networks"
 msgstr "الشبكات"
 
@@ -1524,7 +1524,7 @@ msgid "Usage"
 msgstr "استعمال"
 
 #: static/admin/translations-fakejs.js:467
-#: static/modern/translations-fakejs.js:45
+#: static/modern/translations-fakejs.js:46
 msgid "Dashboard"
 msgstr "لوحة القيادة"
 
@@ -1626,9 +1626,6 @@ msgid "UDS Client not launching"
 msgstr "لا يتم تشغيل عميل UDS"
 
 #: static/modern/main-es5.js:1
-#| msgid ""
-#| "It seems that you don't have UDS Client installed. Please, install it "
-#| "from here: "
 msgid ""
 "It seems that you don't have UDS Client installed. Please, install it from "
 "here:"
@@ -1727,134 +1724,134 @@ msgstr "أعرف أكثر"
 msgid "This service is currently not accessible due to schedule restrictions."
 msgstr "هذه الخدمة غير متاحة حاليًا بسبب قيود الجدول الزمني."
 
-#: static/modern/translations-fakejs.js:30
+#: static/modern/translations-fakejs.js:31
 msgid "Release service"
 msgstr "الافراج عن الخدمة"
 
-#: static/modern/translations-fakejs.js:31
+#: static/modern/translations-fakejs.js:32
 msgid "Reset service"
 msgstr "إعادة ضبط الخدمة"
 
-#: static/modern/translations-fakejs.js:32
+#: static/modern/translations-fakejs.js:33
 msgid "Connections"
 msgstr "روابط"
 
-#: static/modern/translations-fakejs.js:33
+#: static/modern/translations-fakejs.js:34
 msgid "Actions"
 msgstr "أفعال"
 
-#: static/modern/translations-fakejs.js:35
 #: static/modern/translations-fakejs.js:36
+#: static/modern/translations-fakejs.js:37
 msgid "Client IP"
 msgstr "العميل IP"
 
-#: static/modern/translations-fakejs.js:37
+#: static/modern/translations-fakejs.js:38
 msgid "Detected proxy ip"
 msgstr "تم اكتشاف عنوان IP للخادم الوكيل"
 
-#: static/modern/translations-fakejs.js:39
+#: static/modern/translations-fakejs.js:40
 msgid "UDS transports for this client"
 msgstr "ينقل UDS لهذا العميل"
 
-#: static/modern/translations-fakejs.js:41
+#: static/modern/translations-fakejs.js:42
 msgid "UDS networks for this IP"
 msgstr "شبكات UDS لهذا IP"
 
-#: static/modern/translations-fakejs.js:46
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:47
+#: static/modern/translations-fakejs.js:59
 msgid "Downloads"
 msgstr "التنزيلات"
 
-#: static/modern/translations-fakejs.js:48
-#: static/modern/translations-fakejs.js:50
-#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:49
+#: static/modern/translations-fakejs.js:51
+#: static/modern/translations-fakejs.js:56
 msgid "UDS Client"
 msgstr "عميل UDS"
 
-#: static/modern/translations-fakejs.js:49
-#: static/modern/translations-fakejs.js:51
+#: static/modern/translations-fakejs.js:50
+#: static/modern/translations-fakejs.js:52
 msgid "About"
 msgstr "حول"
 
-#: static/modern/translations-fakejs.js:52
+#: static/modern/translations-fakejs.js:53
 msgid "You can access UDS Open Source code at"
 msgstr "يمكنك الوصول إلى كود UDS Open Source في"
 
-#: static/modern/translations-fakejs.js:53
+#: static/modern/translations-fakejs.js:54
 msgid "UDS has been developed using these components:"
 msgstr "تم تطوير UDS باستخدام هذه المكونات:"
 
-#: static/modern/translations-fakejs.js:54
+#: static/modern/translations-fakejs.js:55
 msgid "If you find that we missed any component, please let us know"
 msgstr "إذا اكتشفت أننا فقدنا أي مكون ، فالرجاء إخبارنا بذلك"
 
-#: static/modern/translations-fakejs.js:56
+#: static/modern/translations-fakejs.js:57
 msgid "Download UDS client for your platform"
 msgstr "قم بتنزيل عميل UDS الخاص بمنصتك"
 
-#: static/modern/translations-fakejs.js:57
+#: static/modern/translations-fakejs.js:58
 msgid ""
 "Legacy clients are only provided for old operating system support. Try to "
 "avoid them."
 msgstr "يتم توفير العملاء القدامى فقط لدعم نظام التشغيل القديم. حاول تجنبها."
 
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:60
 msgid "Always download the UDS actor matching your platform"
 msgstr "قم دائمًا بتنزيل ممثل UDS المطابق للنظام الأساسي الخاص بك"
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:61
 msgid ""
 "Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
 "يتم توفير الجهات الفاعلة القديمة فقط لدعم نظام التشغيل القديم. حاول تجنبها."
 
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:62
 msgid "An error has occurred"
 msgstr "حدث خطأ"
 
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:63
 msgid "Return"
 msgstr "إرجاع"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:64
 msgid "UDS Service launcher"
 msgstr "قاذفة خدمة UDS"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:65
 msgid "The service you have requested is being launched."
 msgstr "يتم تشغيل الخدمة التي طلبتها."
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:66
 msgid "Please, note that reloading this page will not work."
 msgstr "يرجى ملاحظة أن إعادة تحميل هذه الصفحة لن تعمل."
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:67
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "لإعادة تشغيل الخدمة ، سيكون عليك القيام بذلك من الأصل."
 
-#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:68
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
 msgstr "إذا لم يتم تشغيل الخدمة تلقائيًا ، فربما لا يكون لديك عميل UDS مثبتًا"
 
-#: static/modern/translations-fakejs.js:68
+#: static/modern/translations-fakejs.js:69
 msgid "You can obtain it from the"
 msgstr "يمكنك الحصول عليها من"
 
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:70
 msgid "UDS Client download page"
 msgstr "صفحة تنزيل عميل UDS"
 
-#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:71
 msgid "Username"
 msgstr "اسم المستخدم"
 
-#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:72
 msgid "Password"
 msgstr "كلمه السر"
 
-#: static/modern/translations-fakejs.js:73
+#: static/modern/translations-fakejs.js:74
 msgid "Login"
 msgstr "تسجيل الدخول"

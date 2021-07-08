@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 12:58+0200\n"
-"PO-Revision-Date: 2021-06-24 09:24+0000\n"
+"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -283,6 +283,7 @@ msgstr "使用中的服务"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:21
 #: static/admin/translations-fakejs.js:291
 #: static/admin/translations-fakejs.js:299
+#: static/modern/translations-fakejs.js:30
 msgid "Filter"
 msgstr "过滤"
 
@@ -318,7 +319,7 @@ msgstr "组"
 #: static/admin/translations-fakejs.js:409
 #: static/admin/translations-fakejs.js:422
 #: static/admin/translations-fakejs.js:443
-#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:73
 msgid "Authenticator"
 msgstr "认证"
 
@@ -410,14 +411,14 @@ msgstr "服务池"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:3
 #: static/admin/translations-fakejs.js:7
 #: static/admin/translations-fakejs.js:306
-#: static/modern/translations-fakejs.js:43
+#: static/modern/translations-fakejs.js:44
 msgid "Yes"
 msgstr "是"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:4
 #: static/admin/translations-fakejs.js:8
 #: static/admin/translations-fakejs.js:307
-#: static/modern/translations-fakejs.js:44
+#: static/modern/translations-fakejs.js:45
 msgid "No"
 msgstr "没有"
 
@@ -431,7 +432,7 @@ msgstr "选定项目："
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:106
 #: static/admin/translations-fakejs.js:233
-#: static/modern/translations-fakejs.js:34
+#: static/modern/translations-fakejs.js:35
 msgid "Information"
 msgstr "信息"
 
@@ -1083,7 +1084,6 @@ msgid "xhrListener"
 msgstr "监听器"
 
 #: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-#| msgid "Scheduled actions"
 msgid "xhrScheduled"
 msgstr "xhr预定"
 
@@ -1194,7 +1194,7 @@ msgid "Detail"
 msgstr "详情"
 
 #: static/admin/translations-fakejs.js:305
-#: static/modern/translations-fakejs.js:42
+#: static/modern/translations-fakejs.js:43
 msgid "Close"
 msgstr "关"
 
@@ -1203,7 +1203,7 @@ msgid "User mode"
 msgstr "用户模式"
 
 #: static/admin/translations-fakejs.js:309
-#: static/modern/translations-fakejs.js:47
+#: static/modern/translations-fakejs.js:48
 msgid "Logout"
 msgstr "登出"
 
@@ -1235,12 +1235,12 @@ msgstr "连接"
 
 #: static/admin/translations-fakejs.js:315
 #: static/admin/translations-fakejs.js:453
-#: static/modern/translations-fakejs.js:38
+#: static/modern/translations-fakejs.js:39
 msgid "Transports"
 msgstr "运输"
 
 #: static/admin/translations-fakejs.js:316
-#: static/modern/translations-fakejs.js:40
+#: static/modern/translations-fakejs.js:41
 msgid "Networks"
 msgstr "网络"
 
@@ -1520,7 +1520,7 @@ msgid "Usage"
 msgstr "用法"
 
 #: static/admin/translations-fakejs.js:467
-#: static/modern/translations-fakejs.js:45
+#: static/modern/translations-fakejs.js:46
 msgid "Dashboard"
 msgstr "仪表板"
 
@@ -1620,9 +1620,6 @@ msgid "UDS Client not launching"
 msgstr "UDS 客户端未启动"
 
 #: static/modern/main-es5.js:1
-#| msgid ""
-#| "It seems that you don't have UDS Client installed. Please, install it "
-#| "from here: "
 msgid ""
 "It seems that you don't have UDS Client installed. Please, install it from "
 "here:"
@@ -1721,133 +1718,133 @@ msgstr "学到更多"
 msgid "This service is currently not accessible due to schedule restrictions."
 msgstr "由于时间表限制，目前无法访问此服务。"
 
-#: static/modern/translations-fakejs.js:30
+#: static/modern/translations-fakejs.js:31
 msgid "Release service"
 msgstr "发布服务"
 
-#: static/modern/translations-fakejs.js:31
+#: static/modern/translations-fakejs.js:32
 msgid "Reset service"
 msgstr "重置服务"
 
-#: static/modern/translations-fakejs.js:32
+#: static/modern/translations-fakejs.js:33
 msgid "Connections"
 msgstr "连接"
 
-#: static/modern/translations-fakejs.js:33
+#: static/modern/translations-fakejs.js:34
 msgid "Actions"
 msgstr "操作"
 
-#: static/modern/translations-fakejs.js:35
 #: static/modern/translations-fakejs.js:36
+#: static/modern/translations-fakejs.js:37
 msgid "Client IP"
 msgstr "客户IP"
 
-#: static/modern/translations-fakejs.js:37
+#: static/modern/translations-fakejs.js:38
 msgid "Detected proxy ip"
 msgstr "检测到代理IP"
 
-#: static/modern/translations-fakejs.js:39
+#: static/modern/translations-fakejs.js:40
 msgid "UDS transports for this client"
 msgstr "UDS为此客户传输"
 
-#: static/modern/translations-fakejs.js:41
+#: static/modern/translations-fakejs.js:42
 msgid "UDS networks for this IP"
 msgstr "此IP的UDS网络"
 
-#: static/modern/translations-fakejs.js:46
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:47
+#: static/modern/translations-fakejs.js:59
 msgid "Downloads"
 msgstr "下载"
 
-#: static/modern/translations-fakejs.js:48
-#: static/modern/translations-fakejs.js:50
-#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:49
+#: static/modern/translations-fakejs.js:51
+#: static/modern/translations-fakejs.js:56
 msgid "UDS Client"
 msgstr "UDS客户端"
 
-#: static/modern/translations-fakejs.js:49
-#: static/modern/translations-fakejs.js:51
+#: static/modern/translations-fakejs.js:50
+#: static/modern/translations-fakejs.js:52
 msgid "About"
 msgstr "关于"
 
-#: static/modern/translations-fakejs.js:52
+#: static/modern/translations-fakejs.js:53
 msgid "You can access UDS Open Source code at"
 msgstr "您可以访问UDS开源代码"
 
-#: static/modern/translations-fakejs.js:53
+#: static/modern/translations-fakejs.js:54
 msgid "UDS has been developed using these components:"
 msgstr "UDS是使用以下组件开发的："
 
-#: static/modern/translations-fakejs.js:54
+#: static/modern/translations-fakejs.js:55
 msgid "If you find that we missed any component, please let us know"
 msgstr "如果您发现我们错过了任何组件，请告诉我们"
 
-#: static/modern/translations-fakejs.js:56
+#: static/modern/translations-fakejs.js:57
 msgid "Download UDS client for your platform"
 msgstr "下载适用于您平台的UDS客户端"
 
-#: static/modern/translations-fakejs.js:57
+#: static/modern/translations-fakejs.js:58
 msgid ""
 "Legacy clients are only provided for old operating system support. Try to "
 "avoid them."
 msgstr "仅向旧客户端提供旧操作系统支持。尽量避免它们。"
 
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:60
 msgid "Always download the UDS actor matching your platform"
 msgstr "始终下载与您的平台匹配的UDS actor"
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:61
 msgid ""
 "Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
 msgstr "传统参与者仅提供旧操作系统支持。尽量避免它们。"
 
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:62
 msgid "An error has occurred"
 msgstr "发生了错误"
 
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:63
 msgid "Return"
 msgstr "返回"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:64
 msgid "UDS Service launcher"
 msgstr "UDS服务启动器"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:65
 msgid "The service you have requested is being launched."
 msgstr "您请求的服务正在启动。"
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:66
 msgid "Please, note that reloading this page will not work."
 msgstr "请注意，重新加载此页面将不起作用。"
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:67
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "要重新启动服务，您必须从源头开始进行。"
 
-#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:68
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
 msgstr "如果该服务没有自动启动，则可能您没有安装UDS客户端"
 
-#: static/modern/translations-fakejs.js:68
+#: static/modern/translations-fakejs.js:69
 msgid "You can obtain it from the"
 msgstr "您可以从"
 
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:70
 msgid "UDS Client download page"
 msgstr "UDS客户端下载页面"
 
-#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:71
 msgid "Username"
 msgstr "用户名"
 
-#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:72
 msgid "Password"
 msgstr "密码"
 
-#: static/modern/translations-fakejs.js:73
+#: static/modern/translations-fakejs.js:74
 msgid "Login"
 msgstr "登录"

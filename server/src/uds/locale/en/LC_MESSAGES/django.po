@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 12:57+0200\n"
+"POT-Creation-Date: 2021-07-08 14:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1676,24 +1676,24 @@ msgid ""
 "RSA PRIVATE KEY-----"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:204
+#: auths/SAML_enterprise/saml.py:197
 msgid "Invalid private key. "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:221
+#: auths/SAML_enterprise/saml.py:214
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:222
 msgid " (obtained from URL)"
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:223
 msgid "XML does not seem valid for IDP Metadata "
 msgstr ""
 
-#: auths/SAML_enterprise/saml.py:246
+#: auths/SAML_enterprise/saml.py:239
 msgid "Can't access idp metadata"
 msgstr ""
 

@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 12:57+0200\n"
-"PO-Revision-Date: 2021-06-24 09:23+0000\n"
+"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -1770,24 +1770,24 @@ msgstr ""
 "La chiave privata dovrebbe essere un PEM valido (le chiavi private PEM "
 "iniziano con ----- BEGIN RSA PRIVATE KEY-----)"
 
-#: auths/SAML_enterprise/saml.py:204
+#: auths/SAML_enterprise/saml.py:197
 msgid "Invalid private key. "
 msgstr "Chiave privata non valida."
 
-#: auths/SAML_enterprise/saml.py:221
+#: auths/SAML_enterprise/saml.py:214
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Impossibile recuperare l'URL {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:222
 msgid " (obtained from URL)"
 msgstr "(ottenuto dall'URL)"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:223
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML non sembra valido per i metadati IDP"
 
-#: auths/SAML_enterprise/saml.py:246
+#: auths/SAML_enterprise/saml.py:239
 msgid "Can't access idp metadata"
 msgstr "Impossibile accedere ai metadati idp"
 
@@ -4354,7 +4354,6 @@ msgid "Timeout in seconds of connection to Proxmox"
 msgstr "Timeout in secondi per la connessione a Proxmox"
 
 #: services/Proxmox/provider.py:133
-#| msgid "Starting date"
 msgid "Starting VmId"
 msgstr "Inizio VmId"
 
@@ -6127,7 +6126,6 @@ msgid "Execute as shell"
 msgstr "Esegui come shell"
 
 #: transports/RDS_enterprise/rds_base.py:169
-#| msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
