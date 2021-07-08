@@ -27,6 +27,7 @@ gettext("We use cookies to track usage and preferences");
 gettext("I Understand");
 gettext("Learn more");
 // HTML
+gettext("Filter");
 gettext("Release service");
 gettext("Reset service");
 gettext("Connections");
