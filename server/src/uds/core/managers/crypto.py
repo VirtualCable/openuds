@@ -51,6 +51,11 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
+    from cryptography.hazmat.primitives.asymmetric.dsa import DSAPrivateKey
+    from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
+    from cryptography.hazmat.primitives.asymmetric.dh import DHPrivateKey
 
 class CryptoManager:
     instance = None
@@ -194,7 +199,7 @@ class CryptoManager:
         except Exception:  # Error decoding crypted element, return empty one
             return ''
 
-    def loadPrivateKey(self, rsaKey: str):
+    def loadPrivateKey(self, rsaKey: str) -> typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey']:
         try:
             return serialization.load_pem_private_key(
                 settings.RSA_KEY.encode(), password=None, backend=default_backend()
