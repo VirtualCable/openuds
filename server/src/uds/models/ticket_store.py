@@ -89,7 +89,7 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def generateUuid() -> str:
-        return cryptoManager().randomString(40)
+        return cryptoManager().randomString(40).lower()  # Temporary fix lower() for compat with 3.0
 
     @staticmethod
     def create(
