@@ -49,7 +49,6 @@ from uds.models import Authenticator, Image, Network, Transport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
     from uds.core.util.request import ExtendedHttpRequest 
     from uds.models import User
 
@@ -161,7 +160,8 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'clientDownload': reverse('page.client-download'),
             # Launcher URL if exists
             'launch': request.session.get('launch', ''),
-        }
+        },
+        'min_for_filter': GlobalConfig.SITE_FILTER_MIN.getInt(True),
     }
 
     info: typing.Optional[typing.MutableMapping] = None

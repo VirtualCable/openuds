@@ -341,6 +341,7 @@ class GlobalConfig:
     SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value('CSS', '', type=Config.LONGTEXT_FIELD)
     SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value('Site information', '', type=Config.LONGTEXT_FIELD)
     SITE_FILTER_ONTOP: Config.Value = Config.section(CUSTOM_SECTION).value('Show Filter on Top', '0', type=Config.BOOLEAN_FIELD)
+    SITE_FILTER_MIN: Config.Value = Config.section(CUSTOM_SECTION).value('Min. Services to show filter', '8', type=Config.NUMERIC_FIELD)
 
     EXPERIMENTAL_FEATURES: Config.Value = Config.section(GLOBAL_SECTION).value('Experimental Features', '0', type=Config.BOOLEAN_FIELD)
 
