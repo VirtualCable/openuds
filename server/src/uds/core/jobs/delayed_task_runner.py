@@ -38,7 +38,7 @@ import logging
 import typing
 
 from django.db import connections
-from django.db import transaction
+from django.db import transaction, OperationalError
 from django.db.models import Q
 
 from uds.models import DelayedTask as DBDelayedTask
@@ -119,6 +119,9 @@ class DelayedTaskRunner:
             taskInstance = pickle.loads(taskInstanceDump)
         except IndexError:
             return  # No problem, there is no waiting delayed task
+        except OperationalError:
+            logger.info('Retrying delayed task')
+            return
         except Exception:
             # Transaction have been rolled back using the "with atomic", so here just return
             # Note that is taskInstance can't be loaded, this task will not be run

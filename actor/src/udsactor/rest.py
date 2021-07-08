@@ -37,7 +37,7 @@ import typing
 import requests
 
 from . import types
-from .info import VERSION
+from .version import VERSION
 
 # Default public listen port
 LISTEN_PORT = 43910
