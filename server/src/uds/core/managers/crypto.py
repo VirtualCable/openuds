@@ -159,7 +159,7 @@ class CryptoManager:
         return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
 
     def xor(self, s1: typing.Union[str, bytes], s2: typing.Union[str, bytes]) -> bytes:
-        if len(s2) == 0:
+        if not s2:
             return b''  # Protect against division by cero
 
         if isinstance(s1, str):
@@ -207,7 +207,7 @@ class CryptoManager:
         except Exception as e:
             raise e
 
-    def loadCertificate(self, certificate: typing.Union[str, bytes]):
+    def loadCertificate(self, certificate: typing.Union[str, bytes]) -> x509.Certificate:
         if isinstance(certificate, str):
             certificate = certificate.encode()
 
