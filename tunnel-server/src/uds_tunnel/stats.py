@@ -69,6 +69,8 @@ class Stats:
     last_recv: int
     recv: int
     last: float
+    start: float  # timestamp
+    end: float    
 
     def __init__(self, ns: 'Namespace'):
         self.ns = ns
@@ -77,6 +79,8 @@ class Stats:
         self.sent = self.last_sent = 0
         self.recv = self.last_recv = 0
         self.last = time.monotonic()
+        self.start = time.monotonic()
+        self.end = self.start
 
     def update(self, force: bool = False):
         now = time.monotonic()
@@ -104,6 +108,7 @@ class Stats:
     def close(self):
         self.update(True)
         self.ns.current -= 1
+        self.end = time.monotonic()
 
 # Stats collector thread
 class GlobalStats:
