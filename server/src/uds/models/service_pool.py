@@ -250,8 +250,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         logger.debug(
             "SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name
         )
-        if self.short_name is not None and str(self.short_name).strip() != '':
-            return str(self.short_name)
+        if self.short_name and str(self.short_name).strip():
+            return str(self.short_name.strip())
         return str(self.name)
 
     def isRestrained(self) -> bool:
