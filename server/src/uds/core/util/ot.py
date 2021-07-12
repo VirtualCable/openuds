@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -59,6 +59,8 @@ CALENDAR_RULE_TYPE = 14
 PROXY_TYPE = 16
 METAPOOL_TYPE = 15
 ACCOUNT_TYPE = 16
+ACTOR_TOKEN_TYPE = 17
+TUNNEL_TOKEN_TYPE = 18
 
 objTypeDict: typing.Dict[typing.Type, int] = {
     models.Provider: PROVIDER_TYPE,
@@ -77,8 +79,11 @@ objTypeDict: typing.Dict[typing.Type, int] = {
     models.CalendarRule: CALENDAR_RULE_TYPE,
     models.Proxy: PROXY_TYPE,
     models.MetaPool: METAPOOL_TYPE,
-    models.Account: ACCOUNT_TYPE
+    models.Account: ACCOUNT_TYPE,
+    models.ActorToken: ACTOR_TOKEN_TYPE,
+    models.TunnelToken: TUNNEL_TOKEN_TYPE,
 }
+
 
 def getObjectType(obj: 'Model') -> typing.Optional[int]:
     return objTypeDict.get(type(obj))
