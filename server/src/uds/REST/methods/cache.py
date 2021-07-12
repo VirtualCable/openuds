@@ -32,7 +32,7 @@
 """
 import logging
 
-from django.core.cache import cache as djCache
+from django.core.cache import caches
 from uds.core.util.cache import Cache as uCache
 from uds.REST import Handler, RequestError
 
@@ -57,5 +57,9 @@ class Cache(Handler):
             raise RequestError('Invalid Request')
 
         uCache.purge()
-        djCache.clear()
+        for i in ('default', 'memory'):
+            try:
+                caches[i].clear()
+            except Exception:
+                pass  # Ignore non existing cache
         return 'done'
