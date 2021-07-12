@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -50,7 +50,15 @@ logger = logging.getLogger(__name__)
 
 class Transports(ModelHandler):
     model = Transport
-    save_fields = ['name', 'comments', 'tags', 'priority', 'nets_positive', 'allowed_oss', 'label']
+    save_fields = [
+        'name',
+        'comments',
+        'tags',
+        'priority',
+        'nets_positive',
+        'allowed_oss',
+        'label',
+    ]
 
     table_title = _('Transports')
     table_fields = [
@@ -58,7 +66,13 @@ class Transports(ModelHandler):
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
-        {'pools_count': {'title':  _('Service Pools'), 'type': 'numeric', 'width': '6em'}},
+        {
+            'pools_count': {
+                'title': _('Service Pools'),
+                'type': 'numeric',
+                'width': '6em',
+            }
+        },
         {'allowed_oss': {'title': _('Devices'), 'width': '8em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
@@ -72,52 +86,90 @@ class Transports(ModelHandler):
         if not transport:
             raise self.invalidItemException()
 
-        field = self.addDefaultFields(transport.guiDescription(), ['name', 'comments', 'tags', 'priority'])
-        field = self.addField(field, {
-            'name': 'nets_positive',
-            'value': True,
-            'label': ugettext('Network access'),
-            'tooltip': ugettext('If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'),
-            'type': 'checkbox',
-            'order': 100,  # At end
-        })
-        field = self.addField(field, {
-            'name': 'networks',
-            'value': [],
-            'values': sorted([{'id': x.uuid, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),
-            'label': ugettext('Networks'),
-            'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
-            'type': 'multichoice',
-            'order': 101
-        })
-        field = self.addField(field, {
-            'name': 'allowed_oss',
-            'value': [],
-            'values': sorted([{'id': x, 'text': x.replace('CrOS', 'Chrome OS')} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),
-            'label': ugettext('Allowed Devices'),
-            'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
-            'type': 'multichoice',
-            'order': 102
-        })
-        field = self.addField(field, {
-            'name': 'pools',
-            'value': [],
-            'values': [{'id': x.uuid, 'text': x.name} for x in ServicePool.objects.all().order_by('name') if transport.protocol in x.service.getType().allowedProtocols],
-            'label': ugettext('Service Pools'),
-            'tooltip': ugettext('Currently assigned services pools'),
-            'type': 'multichoice',
-            'order': 103
-        })
-        field = self.addField(field, {
-            'name': 'label',
-            'length': 32,
-            'value': '',
-            'label': ugettext('Label'),
-            'tooltip': ugettext('Metapool transport label (only used on metapool transports grouping)'),
-            'type': 'text',
-            'order': 201,
-            'tab': gui.ADVANCED_TAB
-        })
+        field = self.addDefaultFields(
+            transport.guiDescription(), ['name', 'comments', 'tags', 'priority']
+        )
+        field = self.addField(
+            field,
+            {
+                'name': 'nets_positive',
+                'value': True,
+                'label': ugettext('Network access'),
+                'tooltip': ugettext(
+                    'If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'
+                ),
+                'type': 'checkbox',
+                'order': 100,  # At end
+            },
+        )
+        field = self.addField(
+            field,
+            {
+                'name': 'networks',
+                'value': [],
+                'values': sorted(
+                    [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
+                    key=lambda x: x['text'].lower(),
+                ),
+                'label': ugettext('Networks'),
+                'tooltip': ugettext(
+                    'Networks associated with this transport. If No network selected, will mean "all networks"'
+                ),
+                'type': 'multichoice',
+                'order': 101,
+            },
+        )
+        field = self.addField(
+            field,
+            {
+                'name': 'allowed_oss',
+                'value': [],
+                'values': sorted(
+                    [
+                        {'id': x, 'text': x.replace('CrOS', 'Chrome OS')}
+                        for x in OsDetector.knownOss
+                    ],
+                    key=lambda x: x['text'].lower(),
+                ),
+                'label': ugettext('Allowed Devices'),
+                'tooltip': ugettext(
+                    'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
+                ),
+                'type': 'multichoice',
+                'order': 102,
+            },
+        )
+        field = self.addField(
+            field,
+            {
+                'name': 'pools',
+                'value': [],
+                'values': [
+                    {'id': x.uuid, 'text': x.name}
+                    for x in ServicePool.objects.all().order_by('name')
+                    if transport.protocol in x.service.getType().allowedProtocols
+                ],
+                'label': ugettext('Service Pools'),
+                'tooltip': ugettext('Currently assigned services pools'),
+                'type': 'multichoice',
+                'order': 103,
+            },
+        )
+        field = self.addField(
+            field,
+            {
+                'name': 'label',
+                'length': 32,
+                'value': '',
+                'label': ugettext('Label'),
+                'tooltip': ugettext(
+                    'Metapool transport label (only used on metapool transports grouping)'
+                ),
+                'type': 'text',
+                'order': 201,
+                'tab': gui.ADVANCED_TAB,
+            },
+        )
 
         return field
 
@@ -133,14 +185,16 @@ class Transports(ModelHandler):
             'nets_positive': item.nets_positive,
             'label': item.label,
             'networks': [{'id': n.uuid} for n in item.networks.all()],
-            'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
+            'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')]
+            if item.allowed_oss != ''
+            else [],
             'pools': pools,
             'pools_count': len(pools),
             'deployed_count': item.deployedServices.count(),
             'type': type_.type(),
             'type_name': type_.name(),
             'protocol': type_.protocol,
-            'permission': permissions.getEffectivePermission(self._user, item)
+            'permission': permissions.getEffectivePermission(self._user, item),
         }
 
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:

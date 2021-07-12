@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -50,7 +50,17 @@ iPhone = 'iPhone'  # In fact, these are IOS both, but we can diferentiate it...
 WYSE = 'WYSE'
 Unknown = 'Unknown'
 
-knownOss = (WindowsPhone, Android, Linux, Windows, iPad, iPhone, Macintosh, ChromeOS, WYSE)  # Android is linux also, so it is cheched on first place
+knownOss = (
+    WindowsPhone,
+    Android,
+    Linux,
+    Windows,
+    iPad,
+    iPhone,
+    Macintosh,
+    ChromeOS,
+    WYSE,
+)  # Android is linux also, so it is cheched on first place
 
 allOss = knownOss + (Unknown,)
 desktopOss = (Linux, Windows, Macintosh)
@@ -77,8 +87,14 @@ browsersREs: typing.Dict[str, typing.Tuple] = {
     Chrome: (re.compile(r'Chrome/([0-9.]+)'),),
     Chromium: (re.compile(r'Chromium/([0-9.]+)'),),
     Safari: (re.compile(r'Safari/([0-9.]+)'),),
-    Opera: (re.compile(r'OPR/([0-9.]+)'), re.compile(r'Opera/([0-9.]+)'),),
-    IExplorer: (re.compile(r';MSIE ([0-9.]+);'), re.compile(r'Trident/.*rv:([0-9.]+)'),)
+    Opera: (
+        re.compile(r'OPR/([0-9.]+)'),
+        re.compile(r'Opera/([0-9.]+)'),
+    ),
+    IExplorer: (
+        re.compile(r';MSIE ([0-9.]+);'),
+        re.compile(r'Trident/.*rv:([0-9.]+)'),
+    ),
 }
 
 browserRules: typing.Dict[str, typing.Tuple] = {
@@ -92,7 +108,9 @@ browserRules: typing.Dict[str, typing.Tuple] = {
 }
 
 
-def getOsFromUA(ua: typing.Optional[str]) -> DictAsObj:  # pylint: disable=too-many-branches
+def getOsFromUA(
+    ua: typing.Optional[str],
+) -> DictAsObj:  # pylint: disable=too-many-branches
     """
     Basic OS Client detector (very basic indeed :-))
     """
