@@ -208,7 +208,7 @@ class Proxy:
                 await source.sendall(b'ERROR_TICKET')
                 return
 
-            prettyDest = result['host'] + ':' + result['port']
+            prettyDest = f"{result['host']}:{result['port']}"
             logger.info('OPEN TUNNEL FROM %s to %s', prettySource, prettyDest)
 
         except Exception:

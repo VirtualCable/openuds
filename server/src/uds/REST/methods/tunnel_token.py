@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 class TunnelTokens(ModelHandler):
     model = TunnelToken
 
-    table_title = _('Actor tokens')
+    table_title = _('Tunnel tokens')
     table_fields = [
         {'token': {'title': _('Token')}},
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
