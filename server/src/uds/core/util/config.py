@@ -288,6 +288,7 @@ class GlobalConfig:
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
     MAX_INITIALIZING_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('maxInitTime', '3601', type=Config.NUMERIC_FIELD)
+    MAX_REMOVAL_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('maxRemovalTime', '86400', type=Config.NUMERIC_FIELD)
     # Maximum logs per user service
     MAX_LOGS_PER_ELEMENT: Config.Value = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100', type=Config.NUMERIC_FIELD)
     # Time to restrain a deployed service in case it gives some errors at some point

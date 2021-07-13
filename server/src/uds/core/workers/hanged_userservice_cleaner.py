@@ -41,8 +41,6 @@ from uds.core.util import log
 
 logger = logging.getLogger(__name__)
 
-MAX_REMOVAL_TIME = 24*60*60
-
 class HangedCleaner(Job):
     frecuency = 3601
     frecuency_cfg = GlobalConfig.MAX_INITIALIZING_TIME
@@ -54,7 +52,7 @@ class HangedCleaner(Job):
             seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt()
         )
         since_removing = now -timedelta(
-            seconds=MAX_REMOVAL_TIME
+            seconds=GlobalConfig.MAX_REMOVAL_TIME.getInt()
         )
         # Filter for locating machine not ready
         flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(
@@ -97,20 +95,33 @@ class HangedCleaner(Job):
                 ):  # It's waiting for removal, skip this very specific case
                     continue
                 logger.debug('Found hanged service %s', us)
-                log.doLog(
-                    us,
-                    log.ERROR,
-                    'User Service seems to be hanged. Removing it.',
-                    log.INTERNAL,
-                )
-                log.doLog(
-                    servicePool,
-                    log.ERROR,
-                    'Removing user service {} because it seems to be hanged'.format(
-                        us.friendly_name
-                    ),
-                )
                 if us.state == State.REMOVING:  # Removing too long, remark it as removable
+                    log.doLog(
+                        us,
+                        log.ERROR,
+                        'User Service hanged on removal process. Restarting removal.',
+                        log.INTERNAL,
+                    )
+                    log.doLog(
+                        servicePool,
+                        log.ERROR,
+                        'User service {} hanged on removal. Restarting removal.'.format(
+                            us.friendly_name
+                        ),
+                    )
                     us.remove()  # Mark it again as removable, and let's see
                 else:
+                    log.doLog(
+                        us,
+                        log.ERROR,
+                        'User Service seems to be hanged. Removing it.',
+                        log.INTERNAL,
+                    )
+                    log.doLog(
+                        servicePool,
+                        log.ERROR,
+                        'Removing user service {} because it seems to be hanged'.format(
+                            us.friendly_name
+                        ),
+                    )
                     us.removeOrCancel()

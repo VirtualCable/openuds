@@ -1,9 +1,3 @@
-# This is a template
-# Saved as .py for easier editing
-from __future__ import unicode_literals
-
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
-
 import subprocess
 import win32crypt  # type: ignore
 import codecs
@@ -17,8 +11,6 @@ from uds.log import logger  # type: ignore
 
 from uds import tools  # type: ignore
 
-import six
-
 # Open tunnel
 fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
@@ -26,7 +18,7 @@ fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], ti
 if fs.check() is False:
     raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-thePass = six.binary_type(sp['password'].encode('UTF-16LE'))  # type: ignore
+thePass = sp['password'].encode('UTF-16LE')  # type: ignore
 
 try:
     password = codecs.encode(win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01), 'hex').decode()

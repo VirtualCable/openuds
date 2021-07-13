@@ -1,8 +1,3 @@
-# This is a template
-# Saved as .py for easier editing
-from __future__ import unicode_literals
-
-# pylint: disable=import-error, no-name-in-module
 import subprocess
 import win32crypt  # type: ignore
 import codecs
@@ -15,9 +10,7 @@ except ImportError:  # Python 2.7 fallback
 from uds.log import logger  # type: ignore
 from uds import tools  # type: ignore
 
-import six
-
-thePass = six.binary_type(sp['password'].encode('UTF-16LE'))  # type: ignore
+thePass = sp['password'].encode('UTF-16LE')  # type: ignore
 
 try:
     password = codecs.encode(win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01), 'hex').decode()
