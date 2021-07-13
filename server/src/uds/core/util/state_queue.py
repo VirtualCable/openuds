@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -32,6 +32,7 @@
 """
 import typing
 
+
 class StateQueue:
     _queue: typing.List[typing.Any]
     _current: typing.Optional[typing.Any]
@@ -41,7 +42,10 @@ class StateQueue:
         self._current = None
 
     def __str__(self):
-        res = '<StateQueue Current: %s, Queue: (%s)>' % (self._current, ','.join(state for state in self._queue))
+        res = '<StateQueue Current: %s, Queue: (%s)>' % (
+            self._current,
+            ','.join(state for state in self._queue),
+        )
         return res
 
     def clearQueue(self) -> None:
@@ -60,10 +64,11 @@ class StateQueue:
 
     def contains(self, state: typing.Any) -> bool:
         # if self._queue.co
-        for s in self._queue:
-            if s == state:
-                return True
-        return False
+        return state in self._queue
+        # for s in self._queue:
+        #     if s == state:
+        #         return True
+        # return False
 
     def push_back(self, state: typing.Any) -> None:
         self._queue.append(state)

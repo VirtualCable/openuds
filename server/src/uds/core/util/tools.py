@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -43,13 +43,16 @@ import django.template.defaultfilters as filters
 
 from uds.core import services
 
+
 class DictAsObj(dict):
     """
     Returns a mix between a dict and an obj
     Can be accesses as .xxxx or ['xxx']
     """
 
-    def __init__(self, dct: typing.Optional[typing.Dict[str, typing.Any]] = None, **kwargs):
+    def __init__(
+        self, dct: typing.Optional[typing.Dict[str, typing.Any]] = None, **kwargs
+    ):
         if dct:
             self.__dict__.update(dct)
         self.__dict__.update(kwargs)
@@ -58,14 +61,11 @@ class DictAsObj(dict):
         return self.__dict__[key]
 
     def __unicode__(self):
-        return ', '.join(
-            '{}={}'.format(v, self.__dict__[v]) for v in self.__dict__
-        )
+        return ', '.join('{}={}'.format(v, self.__dict__[v]) for v in self.__dict__)
 
 
 # pylint: disable=protected-access
 class CaseInsensitiveDict(dict):
-
     @classmethod
     def _k(cls, key):
         return key.lower() if isinstance(key, str) else key
@@ -87,13 +87,19 @@ class CaseInsensitiveDict(dict):
         return super(CaseInsensitiveDict, self).__contains__(self.__class__._k(key))
 
     def pop(self, key, *args, **kwargs):
-        return super(CaseInsensitiveDict, self).pop(self.__class__._k(key), *args, **kwargs)
+        return super(CaseInsensitiveDict, self).pop(
+            self.__class__._k(key), *args, **kwargs
+        )
 
     def get(self, key, *args, **kwargs):
-        return super(CaseInsensitiveDict, self).get(self.__class__._k(key), *args, **kwargs)
+        return super(CaseInsensitiveDict, self).get(
+            self.__class__._k(key), *args, **kwargs
+        )
 
     def setdefault(self, key, *args, **kwargs):
-        return super(CaseInsensitiveDict, self).setdefault(self.__class__._k(key), *args, **kwargs)
+        return super(CaseInsensitiveDict, self).setdefault(
+            self.__class__._k(key), *args, **kwargs
+        )
 
     def update(self, E=None, **F):
         if E is None:
@@ -106,6 +112,7 @@ class CaseInsensitiveDict(dict):
             v = super(CaseInsensitiveDict, self).pop(k)
             self.__setitem__(k, v)
 
+
 def asList(value: typing.Any) -> typing.List[typing.Any]:
     if isinstance(value, list):
         return value
@@ -115,6 +122,7 @@ def asList(value: typing.Any) -> typing.List[typing.Any]:
         return [v for v in value]
     except Exception:
         return [value]
+
 
 def packageRelativeFile(moduleName: str, fileName: str) -> str:
     """
@@ -143,8 +151,9 @@ def secondsToTimeString(seconds: int) -> str:
     hours %= 24
     return ugettext('{} days {:d}:{:02d}:{:02d}').format(days, hours, minutes, seconds)
 
+
 def checkValidBasename(baseName: str, length: int = -1) -> None:
-    """"Checks if the basename + length is valid for services. Raises an exception if not valid"
+    """ "Checks if the basename + length is valid for services. Raises an exception if not valid"
 
     Arguments:
         baseName {str} -- basename to check
@@ -158,16 +167,25 @@ def checkValidBasename(baseName: str, length: int = -1) -> None:
         None -- [description]
     """
     if re.match(r'^[a-zA-Z0-9][a-zA-Z0-9-]*$', baseName) is None:
-        raise services.Service.ValidationException(ugettext('The basename is not a valid for a hostname'))
+        raise services.Service.ValidationException(
+            ugettext('The basename is not a valid for a hostname')
+        )
 
     if length == 0:
-        raise services.Service.ValidationException(ugettext('The length of basename plus length must be greater than 0'))
+        raise services.Service.ValidationException(
+            ugettext('The length of basename plus length must be greater than 0')
+        )
 
     if length != -1 and len(baseName) + length > 15:
-        raise services.Service.ValidationException(ugettext('The length of basename plus length must not be greater than 15'))
+        raise services.Service.ValidationException(
+            ugettext('The length of basename plus length must not be greater than 15')
+        )
 
     if baseName.isdigit():
-        raise services.Service.ValidationException(ugettext('The machine name can\'t be only numbers'))
+        raise services.Service.ValidationException(
+            ugettext('The machine name can\'t be only numbers')
+        )
+
 
 def removeControlCharacters(s: str) -> str:
-    return ''.join(ch for ch in s if unicodedata.category(ch)[0]!="C")
+    return ''.join(ch for ch in s if unicodedata.category(ch)[0] != "C")

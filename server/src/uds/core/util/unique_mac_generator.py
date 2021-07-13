@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -39,8 +39,7 @@ logger = logging.getLogger(__name__)
 
 
 class UniqueMacGenerator(UniqueIDGenerator):
-
-    def __init__(self, owner: str):
+    def __init__(self, owner: str) -> None:
         super().__init__('mac', owner, '\tmac')
 
     def __toInt(self, mac: str) -> int:
@@ -52,14 +51,14 @@ class UniqueMacGenerator(UniqueIDGenerator):
         return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
 
     # noinspection PyMethodOverriding
-    def get(self, macRange: str) -> str:  # type: ignore # pylint: disable=arguments-differ
+    def get(self, macRange: str) -> str:  # type: ignore
         firstMac, lastMac = macRange.split('-')
         return self.__toMac(super().get(self.__toInt(firstMac), self.__toInt(lastMac)))
 
-    def transfer(self, mac: str, toUMgen: 'UniqueMacGenerator'):  # type: ignore # pylint: disable=arguments-differ
+    def transfer(self, mac: str, toUMgen: 'UniqueMacGenerator'):  # type: ignore
         super().transfer(self.__toInt(mac), toUMgen)
 
-    def free(self, mac: str):  # pylint: disable=arguments-differ
+    def free(self, mac: str) -> None:
         super().free(self.__toInt(mac))
 
     # Release is inherited, no mod needed

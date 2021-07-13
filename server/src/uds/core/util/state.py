@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +39,7 @@ class State:
     This class represents possible states for objects at database.
     Take in consideration that objects do not have to support all states, they are here for commodity
     """
+
     ACTIVE = 'A'
     BLOCKED = 'B'
     CANCELED = 'C'
@@ -58,7 +59,7 @@ class State:
     RUNNING = 'W'
     FOR_EXECUTE = 'X'
     MAINTENANCE = 'Y'  # "Visual" state, no element will be in fact in maintenance, but used to show "Services Pools" for which a Provider is in maintenance
-    WAITING_OS = 'Z'   # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
+    WAITING_OS = 'Z'  # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
     META_MEMBER = 'V'  # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
 
     string = {
@@ -68,7 +69,7 @@ class State:
         LAUNCHING: _('Waiting publication'),
         PREPARING: _('In preparation'),
         USABLE: _('Valid'),
-        REMOVABLE: _('Removing'),    # Display as it is removing
+        REMOVABLE: _('Removing'),  # Display as it is removing
         RESTRAINED: _('Restrained'),
         REMOVING: _('Removing'),
         REMOVED: _('Removed'),
@@ -82,7 +83,7 @@ class State:
         MAINTENANCE: _('In maintenance'),
         WAITING_OS: _('Waiting OS'),
         SLOWED_DOWN: _('Too many preparing services'),
-        META_MEMBER: _('Meta member')
+        META_MEMBER: _('Meta member'),
     }
 
     # States that are merely for "information" to the user. They don't contain any usable instance

@@ -1,12 +1,7 @@
-"""
-Created on Jul 11, 2016
-
-@author: dkmaster
-"""
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2013-2019 Virtual Cable S.L.
+# Copyright (c) 2013-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -17,7 +12,7 @@ Created on Jul 11, 2016
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -31,20 +26,27 @@ Created on Jul 11, 2016
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+@author: dkmaster@dkmon.com
+"""
 import typing
 
 from collections import defaultdict
 from xml.etree import cElementTree
 
+
 def etree_to_dict(t):
-    d = {t.tag: {} if t.attrib else None}
+    d = {}
+    if t.attrib:
+        d.update({t.tag: {}})
+
     children = list(t)
     if children:
         dd = defaultdict(list)
         for dc in map(etree_to_dict, children):
             for k, v in dc.items():
                 dd[k].append(v)
-        d = {t.tag: {k:v[0] if len(v) == 1 else v for k, v in dd.items()}}
+        d = {t.tag: {k: v[0] if len(v) == 1 else v for k, v in dd.items()}}
     if t.attrib:
         d[t.tag].update(('@' + k, v) for k, v in t.attrib.items())
     if t.text:
@@ -56,5 +58,6 @@ def etree_to_dict(t):
             d[t.tag] = text
     return d
 
+
 def parse(xml_string: str) -> typing.Dict:
-    return  etree_to_dict(cElementTree.XML(xml_string))
+    return etree_to_dict(cElementTree.XML(xml_string))

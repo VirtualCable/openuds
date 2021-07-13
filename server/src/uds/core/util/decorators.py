@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -46,9 +46,11 @@ RT = typing.TypeVar('RT')
 # Decorator that protects pages that needs at least a browser version
 # Default is to deny IE < 9
 def denyBrowsers(
-        browsers: typing.Optional[typing.List[str]] = None,
-        errorResponse: typing.Callable = lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)
-    ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+    browsers: typing.Optional[typing.List[str]] = None,
+    errorResponse: typing.Callable = lambda request: errors.errorView(
+        request, errors.BROWSER_NOT_SUPPORTED
+    ),
+) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
@@ -82,7 +84,12 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     def new_func(*args, **kwargs) -> RT:
         try:
             caller = inspect.stack()[1]
-            logger.warning('Call to deprecated function %s from %s:%s.', func.__name__, caller[1], caller[2])
+            logger.warning(
+                'Call to deprecated function %s from %s:%s.',
+                func.__name__,
+                caller[1],
+                caller[2],
+            )
         except Exception:
             logger.info('No stack info on deprecated function call %s', func.__name__)
 
@@ -92,28 +99,31 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
 
 def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-    """This decorator calls "connect" method of the class of the wrapped object
-    """
+    """This decorator calls "connect" method of the class of the wrapped object"""
+
     @wraps(func)
     def new_func(*args, **kwargs) -> RT:
         args[0].connect()
         return func(*args, **kwargs)
-    
+
     return new_func
 
-    
 
 # Decorator that allows us a "fast&clean" caching system on service providers
 #
 # Decorator for caching
 # Decorator that tries to get from cache before executing
 def allowCache(
-        cachePrefix: str,
-        cacheTimeout: int,
-        cachingArgs: typing.Optional[typing.Union[typing.List[int], typing.Tuple[int], int]] = None,
-        cachingKWArgs: typing.Optional[typing.Union[typing.List[str], typing.Tuple[str], str]] = None,
-        cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None
-    ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+    cachePrefix: str,
+    cacheTimeout: int,
+    cachingArgs: typing.Optional[
+        typing.Union[typing.List[int], typing.Tuple[int], int]
+    ] = None,
+    cachingKWArgs: typing.Optional[
+        typing.Union[typing.List[str], typing.Tuple[str], str]
+    ] = None,
+    cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None,
+) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """Decorator that give us a "quick& clean" caching feature on service providers.
 
     Note: This decorator is intended ONLY for service providers
@@ -130,11 +140,19 @@ def allowCache(
         def wrapper(*args, **kwargs) -> RT:
             argList: typing.List[str] = []
             if cachingArgs:
-                ar = [cachingArgs] if not isinstance(cachingArgs, (list, tuple)) else cachingArgs
+                ar = (
+                    [cachingArgs]
+                    if not isinstance(cachingArgs, (list, tuple))
+                    else cachingArgs
+                )
                 argList = [args[i] if i < len(args) else '' for i in ar]
 
             if cachingKWArgs:
-                kw = [cachingKWArgs] if not isinstance(cachingKWArgs, (list, tuple)) else cachingKWArgs
+                kw = (
+                    [cachingKWArgs]
+                    if not isinstance(cachingKWArgs, (list, tuple))
+                    else cachingKWArgs
+                )
                 argList += [str(kwargs.get(i, '')) for i in kw]
 
             if argList:
@@ -156,7 +174,13 @@ def allowCache(
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
                     args[0].cache.put(cacheKey, data, cacheTimeout)
                 except Exception as e:
-                    logger.debug('Data for %s is not serializable on call to %s, not cached. %s (%s)', cacheKey, fnc.__name__, data, e)
+                    logger.debug(
+                        'Data for %s is not serializable on call to %s, not cached. %s (%s)',
+                        cacheKey,
+                        fnc.__name__,
+                        data,
+                        e,
+                    )
             return data
 
         return wrapper

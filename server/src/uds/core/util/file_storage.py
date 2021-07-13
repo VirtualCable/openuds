@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -88,9 +88,9 @@ class FileStorage(Storage):
 
     def _getKey(self, name):
         """
-            We have only a few files on db, an we are running on a 64 bits system
-            memcached does not allow keys bigger than 250 chars, so we are going to use hash() to
-            get a key for this
+        We have only a few files on db, an we are running on a 64 bits system
+        memcached does not allow keys bigger than 250 chars, so we are going to use hash() to
+        get a key for this
         """
         return 'fstor' + str(hash(self.get_valid_name(name)))
 
@@ -112,14 +112,16 @@ class FileStorage(Storage):
         if self.cache is None:
             return
 
-        dbf = DictAsObj({
-            'name': f.name,
-            'uuid': f.uuid,
-            'size': f.size,
-            'data': f.data,
-            'created': f.created,
-            'modified': f.modified
-        })
+        dbf = DictAsObj(
+            {
+                'name': f.name,
+                'uuid': f.uuid,
+                'size': f.size,
+                'data': f.data,
+                'created': f.created,
+                'modified': f.modified,
+            }
+        )
 
         self.cache.set(self._getKey(f.name), dbf, 3600)  # Cache defaults to one hour
 
@@ -131,7 +133,6 @@ class FileStorage(Storage):
     def _open(self, name, mode='rb'):
         f = io.BytesIO(self._dbFileForReadOnly(name).data)
         f.name = name
-        f.mode = mode
         return File(f)
 
     def _save(self, name, content):
@@ -140,7 +141,9 @@ class FileStorage(Storage):
             f = self._dbFileForReadWrite(name)
         except DBFile.DoesNotExist:
             now = getSqlDatetime()
-            f = DBFile.objects.create(owner=self.owner, name=name, created=now, modified=now)
+            f = DBFile.objects.create(
+                owner=self.owner, name=name, created=now, modified=now
+            )
 
         f.data = content.read()
         f.modified = getSqlDatetime()

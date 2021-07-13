@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -97,7 +97,7 @@ class StorageAsDict(MutableMapping):
             owner (str): owner of the storage
             group (typing.Optional[str]): group for this dict
             atomic (bool, optional): if True, operations with DB will be atomic
-            compat (bool, optional): if True, keys will be SAVED with old format 
+            compat (bool, optional): if True, keys will be SAVED with old format
                                      (that is, without the key) so it can be read by old api
         """
         self._group = group or ''

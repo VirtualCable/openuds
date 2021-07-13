@@ -54,10 +54,16 @@ def clean(obj: 'Model') -> None:
 
 
 def getPermissions(obj: 'Model') -> typing.List[models.Permissions]:
-    return list(models.Permissions.enumeratePermissions(object_type=ot.getObjectType(obj), object_id=obj.pk))
+    return list(
+        models.Permissions.enumeratePermissions(
+            object_type=ot.getObjectType(obj), object_id=obj.pk
+        )
+    )
 
 
-def getEffectivePermission(user: 'models.User', obj: 'Model', root: bool = False) -> int:
+def getEffectivePermission(
+    user: 'models.User', obj: 'Model', root: bool = False
+) -> int:
     try:
         if user.is_admin:
             return PERMISSION_ALL
@@ -68,23 +74,49 @@ def getEffectivePermission(user: 'models.User', obj: 'Model', root: bool = False
         # Just check permissions for staff members
         # root means for "object type" not for an object
         if root is False:
-            return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk)
+            return models.Permissions.getPermissions(
+                user=user,
+                groups=user.groups.all(),
+                object_type=ot.getObjectType(obj),
+                object_id=obj.pk,
+            )
 
-        return models.Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj))
+        return models.Permissions.getPermissions(
+            user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj)
+        )
     except Exception:
         return PERMISSION_NONE
 
 
-def addUserPermission(user: 'models.User', obj: 'Model', permission: int = PERMISSION_READ):
+def addUserPermission(
+    user: 'models.User', obj: 'Model', permission: int = PERMISSION_READ
+):
     # Some permissions added to some object types needs at least READ_PERMISSION on parent
-    models.Permissions.addPermission(user=user, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
+    models.Permissions.addPermission(
+        user=user,
+        object_type=ot.getObjectType(obj),
+        object_id=obj.pk,
+        permission=permission,
+    )
 
 
-def addGroupPermission(group: 'models.Group', obj: 'Model', permission: int = PERMISSION_READ):
-    models.Permissions.addPermission(group=group, object_type=ot.getObjectType(obj), object_id=obj.pk, permission=permission)
+def addGroupPermission(
+    group: 'models.Group', obj: 'Model', permission: int = PERMISSION_READ
+):
+    models.Permissions.addPermission(
+        group=group,
+        object_type=ot.getObjectType(obj),
+        object_id=obj.pk,
+        permission=permission,
+    )
 
 
-def checkPermissions(user: 'models.User', obj: 'Model', permission: int = PERMISSION_ALL, root: bool = False):
+def checkPermissions(
+    user: 'models.User',
+    obj: 'Model',
+    permission: int = PERMISSION_ALL,
+    root: bool = False,
+):
     return getEffectivePermission(user, obj, root) >= permission
 
 

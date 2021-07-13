@@ -156,12 +156,3 @@ def getOsFromUA(
         res.Version = match.groups(1)[0]  # type: ignore
 
     return res
-
-
-def getOsFromRequest(request):
-    try:
-        return request.os
-    except Exception:
-        request.os = getOsFromUA(request.META.get('HTTP_USER_AGENT'))
-
-    return request.os

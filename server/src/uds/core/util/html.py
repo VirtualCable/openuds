@@ -59,10 +59,14 @@ def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
     else:
         proto = 'uds'
 
-    return "{}://{}{}/{}".format(proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler)
+    return "{}://{}{}/{}".format(
+        proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler
+    )
 
 
-def udsAccessLink(request: 'HttpRequest', serviceId: str, transportId: typing.Optional[str]) -> str:
+def udsAccessLink(
+    request: 'HttpRequest', serviceId: str, transportId: typing.Optional[str]
+) -> str:
     '''
     If transportId (uuid) is None, this will be a metaLink
     '''
@@ -73,7 +77,12 @@ def parseDate(dateToParse) -> datetime.date:
     if get_language() == 'fr':
         date_format = '%d/%m/%Y'
     else:
-        date_format = formats.get_format('SHORT_DATE_FORMAT').replace('Y', '%Y').replace('m', '%m').replace('d', '%d')  # pylint: disable=maybe-no-member
+        date_format = (
+            formats.get_format('SHORT_DATE_FORMAT')
+            .replace('Y', '%Y')
+            .replace('m', '%m')
+            .replace('d', '%d')
+        )  # pylint: disable=maybe-no-member
 
     return datetime.datetime.strptime(dateToParse, date_format).date()
 
@@ -114,7 +123,7 @@ def checkBrowser(request: 'ExtendedHttpRequest', browser: str) -> bool:
         if browser.startswith(b):
             if request.os['Browser'] not in requires:
                 return False
-            browser = browser[len(b):]  # remove "browser name" from string
+            browser = browser[len(b) :]  # remove "browser name" from string
             break
 
     browser += ' '  # So we ensure we have at least beowser[0]

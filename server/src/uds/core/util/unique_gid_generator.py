@@ -38,7 +38,6 @@ logger = logging.getLogger(__name__)
 
 
 class UniqueGIDGenerator(UniqueIDGenerator):
-
     def __init__(self, owner, baseName=None):
         super().__init__('id', owner, baseName)
 

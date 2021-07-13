@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -43,12 +43,30 @@ logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
 # Logging levels
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))  # @UndefinedVariable
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (
+    10000 * (x + 1) for x in range(6)
+)  # @UndefinedVariable
 
 # Logging sources
-INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE = ('internal', 'actor', 'transport', 'osmanager', 'unknown', 'web', 'admin', 'service')
+INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE = (
+    'internal',
+    'actor',
+    'transport',
+    'osmanager',
+    'unknown',
+    'web',
+    'admin',
+    'service',
+)
 
-OTHERSTR, DEBUGSTR, INFOSTR, WARNSTR, ERRORSTR, FATALSTR = ('OTHER', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')
+OTHERSTR, DEBUGSTR, INFOSTR, WARNSTR, ERRORSTR, FATALSTR = (
+    'OTHER',
+    'DEBUG',
+    'INFO',
+    'WARN',
+    'ERROR',
+    'FATAL',
+)
 
 # Names for defined log levels
 __nameLevels = {
@@ -57,7 +75,7 @@ __nameLevels = {
     WARNSTR: WARN,
     ERRORSTR: ERROR,
     FATALSTR: FATAL,
-    OTHERSTR: OTHER
+    OTHERSTR: OTHER,
 }
 
 # Reverse dict of names
@@ -76,15 +94,15 @@ def logStrFromLevel(level: int) -> str:
 
 
 def useLog(
-        type_: str,
-        serviceUniqueId: str,
-        serviceIp: str,
-        username: str,
-        srcIP: typing.Optional[str] = None,
-        srcUser: typing.Optional[str] = None,
-        userServiceName: typing.Optional[str] = None,
-        poolName: typing.Optional[str] = None
-    ) -> None:
+    type_: str,
+    serviceUniqueId: str,
+    serviceIp: str,
+    username: str,
+    srcIP: typing.Optional[str] = None,
+    srcUser: typing.Optional[str] = None,
+    userServiceName: typing.Optional[str] = None,
+    poolName: typing.Optional[str] = None,
+) -> None:
     """
     Logs an "use service" event (logged from actors)
     :param type_: Type of event (commonly 'login' or 'logout')
@@ -99,21 +117,36 @@ def useLog(
     userServiceName = 'unknown' if userServiceName is None else userServiceName
     poolName = 'unknown' if poolName is None else poolName
 
-    useLogger.info('|'.join([type_, serviceUniqueId, serviceIp, srcIP, srcUser, username, userServiceName, poolName]))
+    useLogger.info(
+        '|'.join(
+            [
+                type_,
+                serviceUniqueId,
+                serviceIp,
+                srcIP,
+                srcUser,
+                username,
+                userServiceName,
+                poolName,
+            ]
+        )
+    )
 
 
 def doLog(
-        wichObject: 'Model',
-        level: int,
-        message: str,
-        source: str = UNKNOWN,
-        avoidDuplicates: bool = True
-    ) -> None:
+    wichObject: 'Model',
+    level: int,
+    message: str,
+    source: str = UNKNOWN,
+    avoidDuplicates: bool = True,
+) -> None:
     logger.debug('%s %s %s', wichObject, level, message)
     logManager().doLog(wichObject, level, message, source, avoidDuplicates)
 
 
-def getLogs(wichObject: 'Model', limit: typing.Optional[int] = None) -> typing.List[typing.Dict]:
+def getLogs(
+    wichObject: 'Model', limit: typing.Optional[int] = None
+) -> typing.List[typing.Dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """

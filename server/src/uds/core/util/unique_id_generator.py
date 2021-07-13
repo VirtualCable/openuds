@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -54,18 +54,24 @@ class UniqueIDGenerator:
     _owner: str
     _baseName: str
 
-    def __init__(self, typeName: str, owner: str, baseName: typing.Optional[str] = None):
+    def __init__(
+        self, typeName: str, owner: str, baseName: typing.Optional[str] = None
+    ):
         self._owner = owner + typeName
         self._baseName = 'uds' if baseName is None else baseName
 
     def setBaseName(self, newBaseName: str):
         self._baseName = newBaseName
 
-    def __filter(self, rangeStart: int, rangeEnd: int = MAX_SEQ, forUpdate: bool = False) -> QuerySet:
+    def __filter(
+        self, rangeStart: int, rangeEnd: int = MAX_SEQ, forUpdate: bool = False
+    ) -> QuerySet:
         # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
         # if not for update, do not use the clause :)
         obj = UniqueId.objects.select_for_update() if forUpdate else UniqueId.objects
-        return obj.filter(basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd)  # @UndefinedVariable
+        return obj.filter(
+            basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd
+        )  # @UndefinedVariable
 
     def get(self, rangeStart: int = 0, rangeEnd: int = MAX_SEQ) -> int:
         """
@@ -99,7 +105,9 @@ class UniqueIDGenerator:
                     if not item:
                         # logger.debug('No free found, creating new one')
                         try:
-                            last = flt.filter(assigned=True)[0]  # DB Returns correct order so the 0 item is the last
+                            last = flt.filter(assigned=True)[
+                                0
+                            ]  # DB Returns correct order so the 0 item is the last
                             seq = last.seq + 1
                         except IndexError:  # If there is no assigned at database
                             seq = rangeStart
@@ -108,7 +116,13 @@ class UniqueIDGenerator:
                             return -1  # No ids free in range
                         # May ocurr on some circustance that a concurrency access gives same item twice, in this case, we
                         # will get an "duplicate key error",
-                        UniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable
+                        UniqueId.objects.create(
+                            owner=self._owner,
+                            basename=self._baseName,
+                            seq=seq,
+                            assigned=True,
+                            stamp=stamp,
+                        )  # @UndefinedVariable
                         break
             except OperationalError:  # Locked, may ocurr for example on sqlite. We will wait a bit
                 # logger.exception('Got database locked')
@@ -125,24 +139,20 @@ class UniqueIDGenerator:
         return seq
 
     def transfer(self, seq: int, toUidGen: 'UniqueIDGenerator') -> bool:
-        self.__filter(
-            0, forUpdate=True
-        ).filter(
-            owner=self._owner, seq=seq
-        ).update(
-            owner=toUidGen._owner, basename=toUidGen._baseName, stamp=getSqlDatetimeAsUnix()  # pylint: disable=protected-access
+        self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(
+            owner=toUidGen._owner,
+            basename=toUidGen._baseName,
+            stamp=getSqlDatetimeAsUnix(),  # pylint: disable=protected-access
         )
         return True
 
     def free(self, seq) -> None:
         logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._baseName)
         with transaction.atomic():
-            flt = self.__filter(
-                0, forUpdate=True
-            ).filter(
-                owner=self._owner, seq=seq
-            ).update(
-                owner='', assigned=False, stamp=getSqlDatetimeAsUnix()
+            flt = (
+                self.__filter(0, forUpdate=True)
+                .filter(owner=self._owner, seq=seq)
+                .update(owner='', assigned=False, stamp=getSqlDatetimeAsUnix())
             )
         if flt > 0:
             self.__purge()
@@ -157,13 +167,21 @@ class UniqueIDGenerator:
             # logger.exception('Error here')
             seq = 0
         with transaction.atomic():
-            self.__filter(seq).delete()  # Clean ups all unassigned after last assigned in this range
+            self.__filter(
+                seq
+            ).delete()  # Clean ups all unassigned after last assigned in this range
 
     def release(self) -> None:
-        UniqueId.objects.select_for_update().filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetimeAsUnix())  # @UndefinedVariable
+        UniqueId.objects.select_for_update().filter(owner=self._owner).update(
+            assigned=False, owner='', stamp=getSqlDatetimeAsUnix()
+        )  # @UndefinedVariable
         self.__purge()
 
     def releaseOlderThan(self, stamp=None) -> None:
         stamp = getSqlDatetimeAsUnix() if stamp is None else stamp
-        UniqueId.objects.select_for_update().filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
+        UniqueId.objects.select_for_update().filter(
+            owner=self._owner, stamp__lt=stamp
+        ).update(
+            assigned=False, owner='', stamp=stamp
+        )  # @UndefinedVariable
         self.__purge()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -83,13 +83,13 @@ class AutoAttributes(Serializable):
     def __getattribute__(self, name):
         if name.startswith('_') and name[1:] in self.attrs:
             return self.attrs[name[1:]].getValue()
-        return object.__getattribute__(self, name)
+        return super().__getattribute__(name)
 
     def __setattr__(self, name, value):
         if name.startswith('_') and name[1:] in self.attrs:
             self.attrs[name[1:]].setValue(value)
         else:
-            object.__setattr__(self, name, value)
+            super().__setattr__(name, value)
 
     def declare(self, **kwargs):
         d = {}
@@ -100,7 +100,15 @@ class AutoAttributes(Serializable):
     def marshal(self) -> bytes:
         for k, v in self.attrs.items():
             logger.debug('Marshall Autoattributes: %s=%s', k, v.getValue())
-        return codecs.encode(b'\2'.join([b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0)) for k, v in self.attrs.items()]), 'bz2')
+        return codecs.encode(
+            b'\2'.join(
+                [
+                    b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0))
+                    for k, v in self.attrs.items()
+                ]
+            ),
+            'bz2',
+        )
 
     def unmarshal(self, data: bytes) -> None:
         if not data:  # Can be empty
@@ -116,7 +124,7 @@ class AutoAttributes(Serializable):
             # logger.debug('k: %s  ---   v: %s', k, v)
             try:
                 self.attrs[k.decode()] = pickle.loads(v)
-            except Exception: # Old encoding on python2, set encoding for loading
+            except Exception:  # Old encoding on python2, set encoding for loading
                 self.attrs[k.decode()] = pickle.loads(v, encoding='utf8')
 
         for k2, v2 in self.attrs.items():

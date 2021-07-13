@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -63,8 +63,15 @@ class Config:
     HIDDEN_FIELD: int = 6  # Not visible on "admin" config edition
 
     class Value:
-
-        def __init__(self, section: 'Config.Section', key: str, default: str = '', crypt: bool = False, longText: bool = False, **kwargs):
+        def __init__(
+            self,
+            section: 'Config.Section',
+            key: str,
+            default: str = '',
+            crypt: bool = False,
+            longText: bool = False,
+            **kwargs
+        ):
             logger.debug('Var: %s %s KWARGS: %s', section, key, kwargs)
             self._type: int = kwargs.get('type', -1)
 
@@ -92,9 +99,13 @@ class Config:
             try:
                 if force or self._data is None:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
-                    readed = DBConfig.objects.get(section=self._section.name(), key=self._key)  # @UndefinedVariable
+                    readed = DBConfig.objects.get(
+                        section=self._section.name(), key=self._key
+                    )  # @UndefinedVariable
                     self._data = readed.value
-                    self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
+                    self._crypt = [self._crypt, True][
+                        readed.crypt
+                    ]  # True has "higher" precedende than False
                     self._longText = readed.long
                     if self._type != -1 and self._type != readed.field_type:
                         readed.field_type = self._type
@@ -119,11 +130,19 @@ class Config:
             try:
                 return int(self.get(force))
             except Exception:
-                logger.error('Value for %s.%s is invalid (integer expected)', self._section, self._key)
+                logger.error(
+                    'Value for %s.%s is invalid (integer expected)',
+                    self._section,
+                    self._key,
+                )
                 try:
                     return int(self._default)
                 except Exception:
-                    logger.error('Default value for %s.%s is also invalid (integer expected)', self._section, self._key)
+                    logger.error(
+                        'Default value for %s.%s is also invalid (integer expected)',
+                        self._section,
+                        self._key,
+                    )
                     return -1
 
         def getBool(self, force: bool = False) -> bool:
@@ -159,17 +178,32 @@ class Config:
 
             # Editable here means that this configuration value can be edited by admin directly (generally, that this is a "clean text" value)
 
-            logger.debug('Saving config %s.%s as %s', self._section.name(), self._key, value)
+            logger.debug(
+                'Saving config %s.%s as %s', self._section.name(), self._key, value
+            )
             try:
-                obj, _ = DBConfig.objects.get_or_create(section=self._section.name(), key=self._key)  # @UndefinedVariable
-                obj.value, obj.crypt, obj.long, obj.field_type = value, self._crypt, self._longText, self._type
+                obj, _ = DBConfig.objects.get_or_create(
+                    section=self._section.name(), key=self._key
+                )  # @UndefinedVariable
+                obj.value, obj.crypt, obj.long, obj.field_type = (
+                    value,
+                    self._crypt,
+                    self._longText,
+                    self._type,
+                )
                 obj.save()
             except Exception:
-                if 'migrate' in sys.argv:  # During migration, set could be saved as part of initialization...
+                if (
+                    'migrate' in sys.argv
+                ):  # During migration, set could be saved as part of initialization...
                     return
                 logger.exception('Exception')
                 # Probably a migration issue, just ignore it
-                logger.info("Could not save configuration key %s.%s", self._section.name(), self._key)
+                logger.info(
+                    "Could not save configuration key %s.%s",
+                    self._section.name(),
+                    self._key,
+                )
 
     class Section:
         def __init__(self, sectionName: str):
@@ -192,7 +226,14 @@ class Config:
         return Config.Section(sectionName)
 
     @staticmethod
-    def value(section: Section, key: str, default: str, crypt: bool = False, longText: bool = False, **kwargs) -> 'Config.Value':
+    def value(
+        section: Section,
+        key: str,
+        default: str,
+        crypt: bool = False,
+        longText: bool = False,
+        **kwargs
+    ) -> 'Config.Value':
         return Config.Value(section, key, default, crypt, longText, **kwargs)
 
     @staticmethod
@@ -216,9 +257,11 @@ class Config:
     def update(section, key, value, checkType=False) -> bool:
         # If cfg value does not exists, simply ignore request
         try:
-            cfg = DBConfig.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
+            cfg = DBConfig.objects.filter(section=section, key=key)[
+                0
+            ]  # @UndefinedVariable
             if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
-                return  False # Skip non writable elements
+                return False  # Skip non writable elements
 
             if cfg.crypt:
                 value = cryptoManager().encrypt(value)
@@ -234,121 +277,224 @@ class GlobalConfig:
     """
     Simple helper to keep track of global configuration
     """
-    SESSION_EXPIRE_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('sessionExpireTime', '24', type=Config.NUMERIC_FIELD)  # Max session duration (in use) after a new publishment has been made
+
+    SESSION_EXPIRE_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'sessionExpireTime', '24', type=Config.NUMERIC_FIELD
+    )  # Max session duration (in use) after a new publishment has been made
     # Delay between cache checks. reducing this number will increase cache generation speed but also will load service providers
-    CACHE_CHECK_DELAY: Config.Value = Config.section(GLOBAL_SECTION).value('cacheCheckDelay', '19', type=Config.NUMERIC_FIELD)
+    CACHE_CHECK_DELAY: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'cacheCheckDelay', '19', type=Config.NUMERIC_FIELD
+    )
     # Delayed task number of threads PER SERVER, with higher number of threads, deplayed task will complete sooner, but it will give more load to overall system
-    DELAYED_TASKS_THREADS: Config.Value = Config.section(GLOBAL_SECTION).value('delayedTasksThreads', '4', type=Config.NUMERIC_FIELD)
+    DELAYED_TASKS_THREADS: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'delayedTasksThreads', '4', type=Config.NUMERIC_FIELD
+    )
     # Number of scheduler threads running PER SERVER, with higher number of threads, deplayed task will complete sooner, but it will give more load to overall system
-    SCHEDULER_THREADS: Config.Value = Config.section(GLOBAL_SECTION).value('schedulerThreads', '3', type=Config.NUMERIC_FIELD)
+    SCHEDULER_THREADS: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'schedulerThreads', '3', type=Config.NUMERIC_FIELD
+    )
     # Waiting time before removing "errored" and "removed" publications, cache, and user assigned machines. Time is in seconds
-    CLEANUP_CHECK: Config.Value = Config.section(GLOBAL_SECTION).value('cleanupCheck', '3607', type=Config.NUMERIC_FIELD)
+    CLEANUP_CHECK: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'cleanupCheck', '3607', type=Config.NUMERIC_FIELD
+    )
     # Time to maintaing "info state" items before removing it, in seconds
-    KEEP_INFO_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('keepInfoTime', '14401', type=Config.NUMERIC_FIELD)  # Defaults to 2 days 172800?? better 4 hours xd
+    KEEP_INFO_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'keepInfoTime', '14401', type=Config.NUMERIC_FIELD
+    )  # Defaults to 2 days 172800?? better 4 hours xd
     # Max number of services to be "preparing" at same time
-    MAX_PREPARING_SERVICES: Config.Value = Config.section(GLOBAL_SECTION).value('maxPreparingServices', '15', type=Config.NUMERIC_FIELD)  # Defaults to 15 services at once (per service provider)
+    MAX_PREPARING_SERVICES: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'maxPreparingServices', '15', type=Config.NUMERIC_FIELD
+    )  # Defaults to 15 services at once (per service provider)
     # Max number of service to be at "removal" state at same time
-    MAX_REMOVING_SERVICES: Config.Value = Config.section(GLOBAL_SECTION).value('maxRemovingServices', '15', type=Config.NUMERIC_FIELD)  # Defaults to 15 services at once (per service provider)
+    MAX_REMOVING_SERVICES: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'maxRemovingServices', '15', type=Config.NUMERIC_FIELD
+    )  # Defaults to 15 services at once (per service provider)
     # If we ignore limits (max....)
-    IGNORE_LIMITS: Config.Value = Config.section(GLOBAL_SECTION).value('ignoreLimits', '0', type=Config.BOOLEAN_FIELD)
+    IGNORE_LIMITS: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'ignoreLimits', '0', type=Config.BOOLEAN_FIELD
+    )
     # Number of services to initiate removal per run of CacheCleaner
-    USER_SERVICE_CLEAN_NUMBER: Config.Value = Config.section(GLOBAL_SECTION).value('userServiceCleanNumber', '8', type=Config.NUMERIC_FIELD)  # Defaults to 3 per wun
+    USER_SERVICE_CLEAN_NUMBER: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'userServiceCleanNumber', '8', type=Config.NUMERIC_FIELD
+    )  # Defaults to 3 per wun
     # Removal Check time for cache, publications and deployed services
-    REMOVAL_CHECK: Config.Value = Config.section(GLOBAL_SECTION).value('removalCheck', '31', type=Config.NUMERIC_FIELD)  # Defaults to 30 seconds
+    REMOVAL_CHECK: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'removalCheck', '31', type=Config.NUMERIC_FIELD
+    )  # Defaults to 30 seconds
     # Login URL: deprecated & not used anymore
     # LOGIN_URL: Config.Value = Config.section(GLOBAL_SECTION).value('loginUrl', '/uds/page/login', type=Config.TEXT_FIELD)  # Defaults to /login
     # Session duration
     # USER_SESSION_LENGTH: Config.Value = Config.section(SECURITY_SECTION).value('userSessionLength', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hours
     # Superuser (do not need to be at database!!!)
-    SUPER_USER_LOGIN: Config.Value = Config.section(SECURITY_SECTION).value('superUser', 'root', type=Config.TEXT_FIELD)
+    SUPER_USER_LOGIN: Config.Value = Config.section(SECURITY_SECTION).value(
+        'superUser', 'root', type=Config.TEXT_FIELD
+    )
     # Superuser password (do not need to be at database!!!)
-    SUPER_USER_PASS: Config.Value = Config.section(SECURITY_SECTION).valueCrypt('rootPass', 'udsmam0', type=Config.TEXT_FIELD)
+    SUPER_USER_PASS: Config.Value = Config.section(SECURITY_SECTION).valueCrypt(
+        'rootPass', 'udsmam0', type=Config.TEXT_FIELD
+    )
     # Idle time before closing session on admin
-    SUPER_USER_ALLOW_WEBACCESS: Config.Value = Config.section(SECURITY_SECTION).value('allowRootWebAccess', '1', type=Config.BOOLEAN_FIELD)
+    SUPER_USER_ALLOW_WEBACCESS: Config.Value = Config.section(SECURITY_SECTION).value(
+        'allowRootWebAccess', '1', type=Config.BOOLEAN_FIELD
+    )
     # Time an admi session can be idle before being "logged out"
     # ADMIN_IDLE_TIME: Config.Value = Config.section(SECURITY_SECTION).value('adminIdleTime', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hous
     # Time betwen checks of unused services by os managers
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time
     # (only if os manager asks for this characteristic)
-    CHECK_UNUSED_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631', type=Config.NUMERIC_FIELD)  # Defaults to 10 minutes
-    CHECK_UNUSED_DELAY: Config.Value = Config.section(GLOBAL_SECTION).value('checkUnusedDelay', '300', type=Config.NUMERIC_FIELD)  # Defaults to 10 minutes
+    CHECK_UNUSED_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'checkUnusedTime', '631', type=Config.NUMERIC_FIELD
+    )  # Defaults to 10 minutes
+    CHECK_UNUSED_DELAY: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'checkUnusedDelay', '300', type=Config.NUMERIC_FIELD
+    )  # Defaults to 10 minutes
     # Default CSS Used: REMOVED! (keep the for for naw, for reference, but will be cleaned on future...)
     # CSS: Config.Value = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.TEXT_FIELD)
     # Max logins before blocking an account
-    MAX_LOGIN_TRIES: Config.Value = Config.section(SECURITY_SECTION).value('maxLoginTries', '5', type=Config.NUMERIC_FIELD)
+    MAX_LOGIN_TRIES: Config.Value = Config.section(SECURITY_SECTION).value(
+        'maxLoginTries', '5', type=Config.NUMERIC_FIELD
+    )
     # Block time in second for an user that makes too many mistakes, 5 minutes default
-    LOGIN_BLOCK: Config.Value = Config.section(SECURITY_SECTION).value('loginBlockTime', '300', type=Config.NUMERIC_FIELD)
-    LOGIN_BLOCK_IP: Config.Value = Config.section(SECURITY_SECTION).value('Block ip on login failure', '0', type=Config.BOOLEAN_FIELD)
+    LOGIN_BLOCK: Config.Value = Config.section(SECURITY_SECTION).value(
+        'loginBlockTime', '300', type=Config.NUMERIC_FIELD
+    )
+    LOGIN_BLOCK_IP: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Block ip on login failure', '0', type=Config.BOOLEAN_FIELD
+    )
     # Do autorun of service if just one service.
     # 0 = No autorun, 1 = Autorun at login
     # In a future, maybe necessary another value "2" that means that autorun always
-    AUTORUN_SERVICE: Config.Value = Config.section(GLOBAL_SECTION).value('autorunService', '0', type=Config.BOOLEAN_FIELD)
+    AUTORUN_SERVICE: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'autorunService', '0', type=Config.BOOLEAN_FIELD
+    )
     # Redirect HTTP to HTTPS
-    REDIRECT_TO_HTTPS: Config.Value = Config.section(GLOBAL_SECTION).value('redirectToHttps', '0', type=Config.BOOLEAN_FIELD)
+    REDIRECT_TO_HTTPS: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'redirectToHttps', '0', type=Config.BOOLEAN_FIELD
+    )
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
-    MAX_INITIALIZING_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('maxInitTime', '3601', type=Config.NUMERIC_FIELD)
-    MAX_REMOVAL_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('maxRemovalTime', '86400', type=Config.NUMERIC_FIELD)
+    MAX_INITIALIZING_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'maxInitTime', '3601', type=Config.NUMERIC_FIELD
+    )
+    MAX_REMOVAL_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'maxRemovalTime', '86400', type=Config.NUMERIC_FIELD
+    )
     # Maximum logs per user service
-    MAX_LOGS_PER_ELEMENT: Config.Value = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100', type=Config.NUMERIC_FIELD)
+    MAX_LOGS_PER_ELEMENT: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'maxLogPerElement', '100', type=Config.NUMERIC_FIELD
+    )
     # Time to restrain a deployed service in case it gives some errors at some point
-    RESTRAINT_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('restrainTime', '600', type=Config.NUMERIC_FIELD)
+    RESTRAINT_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'restrainTime', '600', type=Config.NUMERIC_FIELD
+    )
     # Number of errors that must occurr in RESTRAIN_TIME to restrain deployed service
-    RESTRAINT_COUNT: Config.Value = Config.section(GLOBAL_SECTION).value('restrainCount', '3', type=Config.NUMERIC_FIELD)
+    RESTRAINT_COUNT: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'restrainCount', '3', type=Config.NUMERIC_FIELD
+    )
 
     # Statistics duration, in days
-    STATS_DURATION: Config.Value = Config.section(GLOBAL_SECTION).value('statsDuration', '365', type=Config.NUMERIC_FIELD)
+    STATS_DURATION: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'statsDuration', '365', type=Config.NUMERIC_FIELD
+    )
     # If disallow login using /login url, and must go to an authenticator
-    DISALLOW_GLOBAL_LOGIN: Config.Value = Config.section(GLOBAL_SECTION).value('disallowGlobalLogin', '0', type=Config.BOOLEAN_FIELD)
+    DISALLOW_GLOBAL_LOGIN: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'disallowGlobalLogin', '0', type=Config.BOOLEAN_FIELD
+    )
 
     # Allos preferences access to users
-    NOTIFY_REMOVAL_BY_PUB: Config.Value = Config.section(GLOBAL_SECTION).value('Notify on new publication', '0', type=Config.BOOLEAN_FIELD)
+    NOTIFY_REMOVAL_BY_PUB: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Notify on new publication', '0', type=Config.BOOLEAN_FIELD
+    )
 
     # Allowed "trusted sources" for request
-    TRUSTED_SOURCES: Config.Value = Config.section(SECURITY_SECTION).value('Trusted Hosts', '*', type=Config.TEXT_FIELD)
+    TRUSTED_SOURCES: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Trusted Hosts', '*', type=Config.TEXT_FIELD
+    )
 
     # Allow clients to notify their own ip (if set), or use always the request extracted IP
-    HONOR_CLIENT_IP_NOTIFY: Config.Value = Config.section(SECURITY_SECTION).value('honorClientNotifyIP', '0', type=Config.BOOLEAN_FIELD)
+    HONOR_CLIENT_IP_NOTIFY: Config.Value = Config.section(SECURITY_SECTION).value(
+        'honorClientNotifyIP', '0', type=Config.BOOLEAN_FIELD
+    )
 
     # If there is a proxy in front of us
-    BEHIND_PROXY: Config.Value = Config.section(SECURITY_SECTION).value('Behind a proxy', '0', type=Config.BOOLEAN_FIELD)
+    BEHIND_PROXY: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Behind a proxy', '0', type=Config.BOOLEAN_FIELD
+    )
 
     # If we use new logout mechanics
-    EXCLUSIVE_LOGOUT: Config.Value = Config.section(SECURITY_SECTION).value('Exclusive Logout', '0', type=Config.BOOLEAN_FIELD)
+    EXCLUSIVE_LOGOUT: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Exclusive Logout', '0', type=Config.BOOLEAN_FIELD
+    )
 
     # Enable/Disable Actor attack detection ip blocking
-    BLOCK_ACTOR_FAILURES: Config.Value = Config.section(SECURITY_SECTION).value('Block actor failures', '1', type=Config.BOOLEAN_FIELD)
+    BLOCK_ACTOR_FAILURES: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Block actor failures', '1', type=Config.BOOLEAN_FIELD
+    )
 
     # Max session length configuration values
-    SESSION_DURATION_ADMIN: Config.Value = Config.section(SECURITY_SECTION).value('Session timeout for Admin', '14400', type=Config.NUMERIC_FIELD)
-    SESSION_DURATION_USER: Config.Value = Config.section(SECURITY_SECTION).value('Session timeout for User', '14400', type=Config.NUMERIC_FIELD)
+    SESSION_DURATION_ADMIN: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Session timeout for Admin', '14400', type=Config.NUMERIC_FIELD
+    )
+    SESSION_DURATION_USER: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Session timeout for User', '14400', type=Config.NUMERIC_FIELD
+    )
 
-    RELOAD_TIME: Config.Value = Config.section(GLOBAL_SECTION).value('Page reload Time', '300', type=Config.NUMERIC_FIELD)
+    RELOAD_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Page reload Time', '300', type=Config.NUMERIC_FIELD
+    )
 
-    LIMITED_BY_CALENDAR_TEXT: Config.Value = Config.section(GLOBAL_SECTION).value('Calendar access denied text', '', type=Config.TEXT_FIELD)  # Defaults to Nothing
+    LIMITED_BY_CALENDAR_TEXT: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Calendar access denied text', '', type=Config.TEXT_FIELD
+    )  # Defaults to Nothing
     # Custom message for error when limiting by calendar
 
     # If convert username to lowercase
-    LOWERCASE_USERNAME: Config.Value = Config.section(SECURITY_SECTION).value('Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD)
+    LOWERCASE_USERNAME: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD
+    )
 
     # Global UDS ID (common for all servers on the same cluster)
-    UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value('UDS ID', cryptoManager().uuid(), type=Config.READ_FIELD)
+    UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'UDS ID', cryptoManager().uuid(), type=Config.READ_FIELD
+    )
 
     # Site display name & copyright info
-    SITE_NAME: Config.Value = Config.section(CUSTOM_SECTION).value('Site name', 'UDS Enterprise', type=Config.TEXT_FIELD)
-    SITE_COPYRIGHT: Config.Value = Config.section(CUSTOM_SECTION).value('Site copyright info', '© Virtual Cable S.L.U.', type=Config.TEXT_FIELD)
-    SITE_COPYRIGHT_LINK: Config.Value = Config.section(CUSTOM_SECTION).value('Site copyright link', 'https://www.udsenterprise.com', type=Config.TEXT_FIELD)
-    SITE_LOGO_NAME: Config.Value = Config.section(CUSTOM_SECTION).value('Logo name', 'UDS', type=Config.TEXT_FIELD)
-    SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value('CSS', '', type=Config.LONGTEXT_FIELD)
-    SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value('Site information', '', type=Config.LONGTEXT_FIELD)
-    SITE_FILTER_ONTOP: Config.Value = Config.section(CUSTOM_SECTION).value('Show Filter on Top', '0', type=Config.BOOLEAN_FIELD)
-    SITE_FILTER_MIN: Config.Value = Config.section(CUSTOM_SECTION).value('Min. Services to show filter', '8', type=Config.NUMERIC_FIELD)
+    SITE_NAME: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Site name', 'UDS Enterprise', type=Config.TEXT_FIELD
+    )
+    SITE_COPYRIGHT: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Site copyright info', '© Virtual Cable S.L.U.', type=Config.TEXT_FIELD
+    )
+    SITE_COPYRIGHT_LINK: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Site copyright link', 'https://www.udsenterprise.com', type=Config.TEXT_FIELD
+    )
+    SITE_LOGO_NAME: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Logo name', 'UDS', type=Config.TEXT_FIELD
+    )
+    SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'CSS', '', type=Config.LONGTEXT_FIELD
+    )
+    SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Site information', '', type=Config.LONGTEXT_FIELD
+    )
+    SITE_FILTER_ONTOP: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Show Filter on Top', '0', type=Config.BOOLEAN_FIELD
+    )
+    SITE_FILTER_MIN: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Min. Services to show filter', '8', type=Config.NUMERIC_FIELD
+    )
 
-    EXPERIMENTAL_FEATURES: Config.Value = Config.section(GLOBAL_SECTION).value('Experimental Features', '0', type=Config.BOOLEAN_FIELD)
+    EXPERIMENTAL_FEATURES: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Experimental Features', '0', type=Config.BOOLEAN_FIELD
+    )
 
     # Admin config variables
-    ADMIN_PAGESIZE: Config.Value = Config.section(ADMIN_SECTION).value('List page size', '10', type=Config.NUMERIC_FIELD)
-    ADMIN_TRUSTED_SOURCES: Config.Value = Config.section(ADMIN_SECTION).value('Trusted Hosts for Admin', '*', type=Config.TEXT_FIELD)
+    ADMIN_PAGESIZE: Config.Value = Config.section(ADMIN_SECTION).value(
+        'List page size', '10', type=Config.NUMERIC_FIELD
+    )
+    ADMIN_TRUSTED_SOURCES: Config.Value = Config.section(ADMIN_SECTION).value(
+        'Trusted Hosts for Admin', '*', type=Config.TEXT_FIELD
+    )
 
     _initDone = False
 
@@ -381,4 +527,6 @@ class GlobalConfig:
                 # GlobalConfig.UDS_THEME.setParams(['html5', 'semantic'])
 
             except Exception:
-                logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
+                logger.debug(
+                    'Config table do not exists!!!, maybe we are installing? :-)'
+                )

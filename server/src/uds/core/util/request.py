@@ -49,7 +49,7 @@ class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_proxy: str
     os: DictAsObj
-    user: typing.Optional[User]  # type: ignore   # HttpRequests users "user" for it own, but we redefine it because base is not used...
+    user: typing.Optional[User]  # type: ignore
 
 
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
@@ -72,6 +72,7 @@ def getRequest() -> ExtendedHttpRequest:
 
     return ExtendedHttpRequest()
 
+
 def delCurrentRequest() -> None:
     ident = getIdent()
     logger.debug('Deleting %s', ident)
@@ -82,6 +83,7 @@ def delCurrentRequest() -> None:
             logger.info('Request id %s not stored in cache', ident)
     except Exception:
         logger.exception('Deleting stored request')
+
 
 def cleanOldRequests() -> None:
     logger.debug('Cleaning stuck requests from %s', _requests)
@@ -98,7 +100,7 @@ def cleanOldRequests() -> None:
             del _requests[ident]
         except Exception:
             pass  # Ignore it silently
-    
+
 
 def setRequest(request: ExtendedHttpRequest):
     _requests[getIdent()] = (
