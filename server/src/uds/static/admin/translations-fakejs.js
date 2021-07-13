@@ -299,6 +299,7 @@ gettext("Export");
 gettext("Delete");
 gettext("Filter");
 gettext("Selected items");
+gettext("Copy");
 gettext("Detail");
 gettext("Edit");
 gettext("Permissions");
