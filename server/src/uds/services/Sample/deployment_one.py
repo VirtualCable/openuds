@@ -36,6 +36,8 @@ import typing
 from uds.core import services
 from uds.core.util.state import State
 
+from . import service as sample_service
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
@@ -77,6 +79,9 @@ class SampleUserDeploymentOne(services.UserDeployment):
 
     # : Recheck every five seconds by default (for task methods)
     suggestedTime = 5
+
+    def service(self) -> 'sample_service.ServiceOne':
+        return typing.cast('sample_service.ServiceOne', super().service())
 
     # Serializable needed methods
     def marshal(self) -> bytes:
