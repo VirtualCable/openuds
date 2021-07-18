@@ -32,7 +32,7 @@ var config struct {
 	IgnoreCertificates    bool     // If true, will ignore certificates (when requesting)
 }
 
-func validOrigin(w http.ResponseWriter, r *http.Request) error {
+func validateOrigin(w http.ResponseWriter, r *http.Request) error {
 	ip := strings.Split(r.RemoteAddr, ":")[0]
 	for _, v := range config.AllowFrom {
 		if v == ip {
@@ -46,7 +46,7 @@ func validOrigin(w http.ResponseWriter, r *http.Request) error {
 
 // Test service
 func testService(w http.ResponseWriter, r *http.Request) {
-	if validOrigin(w, r) != nil {
+	if validateOrigin(w, r) != nil {
 		return
 	}
 
@@ -77,7 +77,7 @@ func testService(w http.ResponseWriter, r *http.Request) {
 }
 
 func proxyRequest(w http.ResponseWriter, r *http.Request) {
-	if validOrigin(w, r) != nil {
+	if validateOrigin(w, r) != nil {
 		return
 	}
 	log.Print("Proxy Request from ", r.RemoteAddr)
