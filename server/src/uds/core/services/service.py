@@ -303,6 +303,18 @@ class Service(Module):
         """
         return None
 
+    def lockId(self, id: str) -> bool:
+        """
+        Locks the id, so it cannot be used by a service pool.
+
+        Args:
+            id (str): Id to lock
+
+        Returns:
+            bool: True if the id has been locked, False if not
+        """
+        return False
+
     def processLogin(self, id: str, remote_login: bool) -> None:
         """
         In the case that a login is invoked directly on an actor controlled machine with

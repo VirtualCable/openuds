@@ -91,12 +91,12 @@ def _getInterfaces() -> typing.List[str]:
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     names = array.array(str('B'), b'\0' * space)
-    outbytes = struct.unpack(str('iL'), fcntl.ioctl(
+    outbytes = struct.unpack('iL', fcntl.ioctl(
         s.fileno(),
         0x8912,  # SIOCGIFCONF
-        struct.pack(str('iL'), space, names.buffer_info()[0])
+        struct.pack('iL', space, names.buffer_info()[0])
     ))[0]
-    namestr = names.tostring()
+    namestr = names.tobytes()
     # return namestr, outbytes
     return [namestr[i:i + offset].split(b'\0', 1)[0].decode('utf-8') for i in range(0, outbytes, length)]
 
@@ -155,7 +155,7 @@ def renameComputer(newName: str) -> bool:
     Returns True if reboot needed
     '''
     rename(newName)
-    return True  # Always reboot right now. Not much slower but much more better
+    return True  # Always reboot right now. Not much slower but much more convenient
 
 
 def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False):
