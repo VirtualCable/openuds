@@ -134,8 +134,8 @@ class TunnelTicket(Handler):
                     port=port,
                     host=host,
                     extra={
-                        't': self._args[0],                      # ticket
-                        'b': models.getSqlDatetimeAsUnix(),      # Begin time stamp
+                        't': self._args[0],  # ticket
+                        'b': models.getSqlDatetimeAsUnix(),  # Begin time stamp
                     },
                     validity=MAX_SESSION_LENGTH,
                 )

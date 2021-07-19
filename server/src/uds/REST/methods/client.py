@@ -144,12 +144,16 @@ class Client(Handler):
             logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
             password = cryptoManager().symDecrpyt(data['password'], scrambler)
 
-            # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
-            if not ip:
-                raise ServiceNotReadyError
-
             # Set "accesedByClient"
             userService.setProperty('accessedByClient', '1')
+
+            # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
+            if not ip:
+                raise ServiceNotReadyError()
+
+            # This should never happen, but it's here just in case
+            if not transportInstance:
+                raise Exception('No transport instance!!!')
 
             transportScript, signature, params = transportInstance.getEncodedTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 

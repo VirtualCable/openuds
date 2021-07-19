@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,9 +45,18 @@ from uds.core.util import tools
 logger = logging.getLogger(__name__)
 
 VALID_PARAMS = (
-    'authId', 'authTag', 'authSmallName', 'auth', 'username',
-    'realname', 'password', 'groups', 'servicePool', 'transport',
-    'force', 'userIp'
+    'authId',
+    'authTag',
+    'authSmallName',
+    'auth',
+    'username',
+    'realname',
+    'password',
+    'groups',
+    'servicePool',
+    'transport',
+    'force',
+    'userIp',
 )
 
 
@@ -72,10 +81,13 @@ class Tickets(Handler):
                  - Groups exists on authenticator
                  - servicePool has these groups in it's allowed list
     """
+
     needs_admin = True  # By default, staff is lower level needed
 
     @staticmethod
-    def result(result: str = '', error: typing.Optional[str] = None) -> typing.Dict[str, typing.Any]:
+    def result(
+        result: str = '', error: typing.Optional[str] = None
+    ) -> typing.Dict[str, typing.Any]:
         """
         Returns a result for a Ticket request
         """
@@ -112,7 +124,9 @@ class Tickets(Handler):
             raise RequestError('Invalid parameters (no auth)')
 
     # Must be invoked as '/rest/ticket/create, with "username", ("authId" or ("authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
-    def put(self):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def put(
+        self,
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """
         Processes put requests, currently only under "create"
         """
@@ -134,30 +148,48 @@ class Tickets(Handler):
 
             authId = self._params.get('authId', None)
             authName = self._params.get('auth', None)
-            authTag = self._params.get('authTag', self._params.get('authSmallName', None))
+            authTag = self._params.get(
+                'authTag', self._params.get('authSmallName', None)
+            )
 
             # Will raise an exception if no auth found
             if authId:
-                auth = models.Authenticator.objects.get(uuid=processUuid(authId.lower()))
+                auth = models.Authenticator.objects.get(
+                    uuid=processUuid(authId.lower())
+                )
             elif authName:
                 auth = models.Authenticator.objects.get(name=authName)
             else:
                 auth = models.Authenticator.objects.get(small_name=authTag)
 
             username: str = self._params['username']
-            password: str = self._params.get('password', '')  # Some machines needs password, depending on configuration
+            password: str = self._params.get(
+                'password', ''
+            )  # Some machines needs password, depending on configuration
 
             groupIds: typing.List[str] = []
             for groupName in tools.asList(self._params['groups']):
                 try:
                     groupIds.append(auth.groups.get(name=groupName).uuid)
                 except Exception:
-                    logger.info('Group %s from ticket does not exists on auth %s, forced creation: %s', groupName, auth, force)
+                    logger.info(
+                        'Group %s from ticket does not exists on auth %s, forced creation: %s',
+                        groupName,
+                        auth,
+                        force,
+                    )
                     if force:  # Force creation by call
-                        groupIds.append(auth.groups.create(name=groupName, comments='Autocreated form ticket by using force paratemeter').uuid)
+                        groupIds.append(
+                            auth.groups.create(
+                                name=groupName,
+                                comments='Autocreated form ticket by using force paratemeter',
+                            ).uuid
+                        )
 
             if not groupIds:  # No valid group in groups names
-                raise RequestError('Authenticator does not contain ANY of the requested groups and force is not used')
+                raise RequestError(
+                    'Authenticator does not contain ANY of the requested groups and force is not used'
+                )
 
             time = int(self._params.get('time', 60))
             time = 60 if time < 1 else time
@@ -166,39 +198,60 @@ class Tickets(Handler):
             if 'servicePool' in self._params:
                 # Check if is pool or metapool
                 poolUuid = processUuid(self._params['servicePool'])
-                pool : typing.Union[models.ServicePool, models.MetaPool]
+                pool: typing.Union[models.ServicePool, models.MetaPool]
 
                 try:
-                    pool = typing.cast(models.MetaPool, models.MetaPool.objects.get(uuid=poolUuid))  # If not an metapool uuid, will process it as a servicePool
+                    pool = typing.cast(
+                        models.MetaPool, models.MetaPool.objects.get(uuid=poolUuid)
+                    )  # If not an metapool uuid, will process it as a servicePool
                     if force:
                         # First, add groups to metapool
-                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
+                        for addGrp in set(groupIds) - set(
+                            pool.assignedGroups.values_list('uuid', flat=True)
+                        ):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
                         # And now, to ALL metapool members
                         for metaMember in pool.members.all():
-                            # First, add groups to metapool
-                            for addGrp in set(groupIds) - set(metaMember.pool.assignedGroups.values_list('uuid', flat=True)):
-                                metaMember.assignedGroups.add(auth.groups.get(uuid=addGrp))
-                            
+                            # Now add groups to pools
+                            for addGrp in set(groupIds) - set(
+                                metaMember.pool.assignedGroups.values_list(
+                                    'uuid', flat=True
+                                )
+                            ):
+                                metaMember.pool.assignedGroups.add(
+                                    auth.groups.get(uuid=addGrp)
+                                )
+
                     # For metapool, transport is ignored..
 
                     servicePoolId = 'M' + pool.uuid
                     transportId = 'meta'
-                    
+
                 except models.MetaPool.DoesNotExist:
-                    pool = typing.cast(models.ServicePool, models.ServicePool.objects.get(uuid=poolUuid))
+                    pool = typing.cast(
+                        models.ServicePool,
+                        models.ServicePool.objects.get(uuid=poolUuid),
+                    )
 
                     # If forced that servicePool must honor groups
                     if force:
-                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
+                        for addGrp in set(groupIds) - set(
+                            pool.assignedGroups.values_list('uuid', flat=True)
+                        ):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
                     if 'transport' in self._params:
-                        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._params['transport']))
+                        transport: models.Transport = models.Transport.objects.get(
+                            uuid=processUuid(self._params['transport'])
+                        )
                         try:
                             pool.validateTransport(transport)
                         except Exception:
-                            logger.error('Transport %s is not valid for Service Pool %s', transport.name, pool.name)
+                            logger.error(
+                                'Transport %s is not valid for Service Pool %s',
+                                transport.name,
+                                pool.name,
+                            )
                             raise Exception('Invalid transport for Service Pool')
                     else:
                         transport = models.Transport(uuid=None)
@@ -209,12 +262,20 @@ class Tickets(Handler):
                                     break
 
                             if transport.uuid is None:
-                                logger.error('Service pool %s does not has valid transports for ip %s', pool.name, userIp)
-                                raise Exception('Service pool does not has any valid transports for ip {}'.format(userIp))
+                                logger.error(
+                                    'Service pool %s does not has valid transports for ip %s',
+                                    pool.name,
+                                    userIp,
+                                )
+                                raise Exception(
+                                    'Service pool does not has any valid transports for ip {}'.format(
+                                        userIp
+                                    )
+                                )
 
                     servicePoolId = 'F' + pool.uuid
                     transportId = transport.uuid
-            
+
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
         except models.ServicePool.DoesNotExist:

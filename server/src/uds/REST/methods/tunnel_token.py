@@ -42,9 +42,6 @@ from uds.core.util import permissions
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /osm path
-
-
 class TunnelTokens(ModelHandler):
     model = TunnelToken
 

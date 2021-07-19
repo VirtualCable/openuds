@@ -34,9 +34,12 @@ import typing
 from collections import defaultdict
 from xml.etree import cElementTree
 
+if typing.TYPE_CHECKING:
+    from xml.etree.cElementTree import Element
 
-def etree_to_dict(t):
-    d = {}
+
+def etree_to_dict(t: 'Element') -> typing.Mapping[str, typing.Any]:
+    d: typing.MutableMapping[str, typing.Any] = {}
     if t.attrib:
         d.update({t.tag: {}})
 
@@ -59,5 +62,5 @@ def etree_to_dict(t):
     return d
 
 
-def parse(xml_string: str) -> typing.Dict:
+def parse(xml_string: str) -> typing.Mapping[str, typing.Any]:
     return etree_to_dict(cElementTree.XML(xml_string))

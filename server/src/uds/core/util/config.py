@@ -377,7 +377,7 @@ class GlobalConfig:
         'maxInitTime', '3601', type=Config.NUMERIC_FIELD
     )
     MAX_REMOVAL_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
-        'maxRemovalTime', '86400', type=Config.NUMERIC_FIELD
+        'maxRemovalTime', '14400', type=Config.NUMERIC_FIELD
     )
     # Maximum logs per user service
     MAX_LOGS_PER_ELEMENT: Config.Value = Config.section(GLOBAL_SECTION).value(
