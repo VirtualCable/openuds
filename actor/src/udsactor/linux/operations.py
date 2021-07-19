@@ -96,7 +96,7 @@ def _getInterfaces() -> typing.List[str]:
         0x8912,  # SIOCGIFCONF
         struct.pack(str('iL'), space, names.buffer_info()[0])
     ))[0]
-    namestr = names.tostring()
+    namestr = names.tobytes()
     # return namestr, outbytes
     return [namestr[i:i + offset].split(b'\0', 1)[0].decode('utf-8') for i in range(0, outbytes, length)]
 
