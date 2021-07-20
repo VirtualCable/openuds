@@ -102,10 +102,10 @@ class ServiceNotReadyError(ServiceException):
     Can include an optional code error
     """
     code: int
-    service: 'UserService'
-    transport: 'Transport'
+    userService: typing.Optional['UserService']
+    transport: typing.Optional['Transport']
     def __init__(self, *args, **kwargs):
-        super(ServiceNotReadyError, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.code = kwargs.get('code', 0x0000)
-        self.service = kwargs.get('service', None)
+        self.userService = kwargs.get('service', None)
         self.transport = kwargs.get('transport', None)

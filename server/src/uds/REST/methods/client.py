@@ -38,7 +38,7 @@ from django.utils.translation import ugettext as _
 from django.urls import reverse
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.models import TicketStore, user
+from uds.models import TicketStore
 from uds.models import User
 from uds.web.util import errors
 from uds.core.managers import cryptoManager, userServiceManager
@@ -166,9 +166,14 @@ class Client(Handler):
                 'params': codecs.encode(codecs.encode(json.dumps(params).encode(), 'bz2'), 'base64').decode(),
             })
         except ServiceNotReadyError as e:
+            # Set that client has accesed userService
+            if e.userService:
+                e.userService.setProperty('accessedByClient', '1')
+
             # Refresh ticket and make this retrayable
             TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds, so 20 is fine :)
             return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=str(e))
+

@@ -32,7 +32,7 @@ import logging
 import typing
 
 from django.urls import reverse
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -48,6 +48,9 @@ from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.models import Authenticator, ServicePool
 from uds.models import TicketStore
+
+if typing.TYPE_CHECKING:
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +86,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         return errors.exceptionView(request, e)
 
 
-def authCallback_stage2(request: HttpRequest, ticketId: str) -> HttpResponse:
+def authCallback_stage2(request: ExtendedHttpRequestWithUser, ticketId: str) -> HttpResponse:
     try:
         ticket = TicketStore.get(ticketId)
         params: typing.Dict[str, typing.Any] = ticket['params']
@@ -134,7 +137,7 @@ def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
         logger.debug('Getting info for %s', authName)
         authenticator = Authenticator.objects.get(name=authName)
         authInstance = authenticator.getInstance()
-        if authInstance.getInfo == auths.Authenticator.getInfo:
+        if typing.cast(typing.Any, authInstance.getInfo) == auths.Authenticator.getInfo:
             raise Exception()  # This authenticator do not provides info
 
         info = authInstance.getInfo(request.GET)
@@ -170,7 +173,7 @@ def customAuth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
 
 
 @never_cache
-def ticketAuth(request: 'HttpRequest', ticketId: str) -> HttpResponse:  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+def ticketAuth(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     """
     Used to authenticate an user via a ticket
     """
@@ -209,7 +212,7 @@ def ticketAuth(request: 'HttpRequest', ticketId: str) -> HttpResponse:  # pylint
             raise auths.exceptions.InvalidUserException()
 
         # Add groups to user (replace existing groups)
-        usr.groups.set(grps)
+        usr.groups.set(grps)  # type: ignore
 
         # Force cookie generation
         webLogin(request, None, usr, password)

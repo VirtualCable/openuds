@@ -491,7 +491,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def getInfo(self, parameters: typing.Dict[str, str]) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
+    def getInfo(self, parameters: typing.Mapping[str, str]) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
         """
         This method is invoked whenever the authinfo url is invoked, with the name of the authenticator
         If this is implemented, information returned by this will be shown via web.

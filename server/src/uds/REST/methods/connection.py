@@ -88,7 +88,7 @@ class Connection(Handler):
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
 
-        return Connection.result(result=getServicesData(typing.cast(ExtendedHttpRequestWithUser, self._request)))
+        return Connection.result(result=services.getServicesData(typing.cast(ExtendedHttpRequestWithUser, self._request)))
 
     def connection(self, doNotCheck: bool = False):
         idService = self._args[0]
@@ -152,7 +152,7 @@ class Connection(Handler):
                 self._request.ip, hostname
             )  # Store where we are accessing from so we can notify Service
 
-            if not ip:
+            if not ip or not transportInstance:
                 raise ServiceNotReadyError()
 
             transportScript = transportInstance.getEncodedTransportScript(

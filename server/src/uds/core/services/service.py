@@ -303,17 +303,17 @@ class Service(Module):
         """
         return None
 
-    def lockId(self, id: str) -> bool:
+    def lockId(self, id: typing.List[str]) -> typing.Optional[str]:
         """
         Locks the id, so it cannot be used by a service pool.
 
         Args:
-            id (str): Id to lock
+            id (typing.List[str]): Id to lock (list of possible ids)
 
         Returns:
-            bool: True if the id has been locked, False if not
+            str: Valid id of locked element, or None if no id found
         """
-        return False
+        return None
 
     def processLogin(self, id: str, remote_login: bool) -> None:
         """

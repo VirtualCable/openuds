@@ -345,7 +345,7 @@ def authInfoUrl(authenticator: typing.Union[str, bytes, Authenticator]) -> str:
 
 
 def webLogin(
-    request: 'ExtendedHttpRequest', response: HttpResponse, user: User, password: str
+    request: 'ExtendedHttpRequest', response: typing.Optional[HttpResponse], user: User, password: str
 ) -> bool:
     """
     Helper function to, once the user is authenticated, store the information at the user session.

@@ -46,7 +46,7 @@ from uds.core.managers import cryptoManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.util.request import ExtendedHttpRequestWithUser
     
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ class Handler:
     needs_admin: typing.ClassVar[bool] = False  # By default, the methods will be accessible by anyone if nothing else indicated
     needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
-    _request: 'ExtendedHttpRequest'  # It's a modified HttpRequest
+    _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str
     _params: typing.Any  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
@@ -113,7 +113,7 @@ class Handler:
 
 
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
-    def __init__(self, request: 'ExtendedHttpRequest', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
+    def __init__(self, request: 'ExtendedHttpRequestWithUser', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
 
         logger.debug('Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated)
         if (self.needs_admin or self.needs_staff) and not self.authenticated:  # If needs_admin, must also be authenticated

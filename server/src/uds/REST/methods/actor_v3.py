@@ -240,11 +240,12 @@ class Initialize(ActorV3Action):
         """
         # First, validate token...
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
+        service: typing.Optional[Service] = None
         try:
             # First, try to locate an user service providing this token.
             if self._params['type'] == UNMANAGED:
                 # If unmanaged, use Service locator
-                service: Service = Service.objects.get(token=self._params['token'])
+                service = Service.objects.get(token=self._params['token'])
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service
                 idsList = [x['ip'] for x in self._params['id']] + [
@@ -262,6 +263,30 @@ class Initialize(ActorV3Action):
 
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
+                # Set full filter
+                dbFilter = dbFilter.filter(
+                    unique_id__in=idsList,
+                    state__in=[State.USABLE, State.PREPARING],
+                )
+
+                # If no UserService exists,
+                # ist managed (service exists), then it's a "local login"
+                if dbFilter.exists() is False and service:
+                    # The userService does not exists, try to lock the id on the service
+                    serviceInstance = service.getInstance()
+                    lockedId = serviceInstance.lockId(idsList)
+                    if lockedId:
+                        # Return an "generic" result allowing login/logout processing
+                        return ActorV3Action.actorResult(
+                            {
+                                'own_token': self._params['token'],
+                                'unique_id': lockedId,
+                                'os': None,
+                            }
+                        )
+                    else:  # if no lock, return empty result
+                        raise Exception()  # Unmanaged host
+
                 userService: UserService = next(
                     iter(
                         dbFilter.filter(
@@ -462,6 +487,16 @@ class Login(LoginLogout):
     """
 
     name = 'login'
+
+    # payload received
+    #   {
+    #        'type': actor_type or types.MANAGED,
+    #        'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
+    #        'token': token,
+    #        'username': username,
+    #        'session_type': sessionType,
+    #        'secret': secret or '',
+    #    }
 
     @staticmethod
     def process_login(

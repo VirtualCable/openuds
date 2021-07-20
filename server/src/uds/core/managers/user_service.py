@@ -736,7 +736,7 @@ class UserServiceManager:
         os: typing.MutableMapping,
         srcIp: str,
         idService: str,
-        idTransport: str,
+        idTransport: typing.Optional[str],
         doTest: bool = True,
         clientHostname: typing.Optional[str] = None,
     ) -> typing.Tuple[
@@ -750,7 +750,7 @@ class UserServiceManager:
         Get service info from user service
         """
         if idService[0] == 'M':  # Meta pool
-            return self.getMeta(user, srcIp, os, idService[1:], idTransport)
+            return self.getMeta(user, srcIp, os, idService[1:], idTransport or '')
 
         userService = self.locateUserService(user, idService, create=True)
 
@@ -900,7 +900,7 @@ class UserServiceManager:
             ip,
         )
         raise ServiceNotReadyError(
-            code=serviceNotReadyCode, service=userService, transport=transport
+            code=serviceNotReadyCode, userService=userService, transport=transport
         )
 
     def getMeta(

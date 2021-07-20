@@ -44,6 +44,7 @@ class UserPreference(models.Model):
     """
     This class represents a single user preference for an user and a module
     """
+
     module = models.CharField(max_length=32, db_index=True)
     name = models.CharField(max_length=32, db_index=True)
     value = models.CharField(max_length=128, db_index=True)
@@ -56,4 +57,6 @@ class UserPreference(models.Model):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return '{}.{} = "{}" for user {}'.format(self.module, self.name, self.value, self.user)
+        return '{}.{} = "{}" for user {}'.format(
+            self.module, self.name, self.value, self.user
+        )

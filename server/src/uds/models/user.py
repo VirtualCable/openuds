@@ -88,9 +88,11 @@ class User(UUIDModel):
 
         ordering = ('name',)
         app_label = 'uds'
-        # unique_together = (("manager", "name"),)        
+        # unique_together = (("manager", "name"),)
         constraints = [
-            models.UniqueConstraint(fields=['manager', 'name'], name='u_usr_manager_name')
+            models.UniqueConstraint(
+                fields=['manager', 'name'], name='u_usr_manager_name'
+            )
         ]
 
     def getUsernameForAuth(self) -> str:
