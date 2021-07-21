@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -38,7 +38,10 @@ from uds.core.ui import gui
 from uds.core import auths
 
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from django.http import (
+        HttpRequest,
+        HttpResponse,
+    )  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +128,9 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values and len(self.groups.value) < 2:
-            raise auths.Authenticator.ValidationException(_('We need more than two groups!'))
+            raise auths.Authenticator.ValidationException(
+                _('We need more than two groups!')
+            )
 
     def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
@@ -137,7 +142,13 @@ class SampleAuth(auths.Authenticator):
         facility for users. In our case, we will simply return a list of users
         (array of dictionaries with ids and names) with the pattern plus 1..10
         """
-        return [{'id': '{0}-{1}'.format(pattern, a), 'name': '{0} number {1}'.format(pattern, a)} for a in range(1, 10)]
+        return [
+            {
+                'id': '{0}-{1}'.format(pattern, a),
+                'name': '{0} number {1}'.format(pattern, a),
+            }
+            for a in range(1, 10)
+        ]
 
     def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
@@ -154,7 +165,9 @@ class SampleAuth(auths.Authenticator):
                 res.append({'id': g, 'name': ''})
         return res
 
-    def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
+    def authenticate(
+        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
+    ) -> bool:
         """
         This method is invoked by UDS whenever it needs an user to be authenticated.
         It is used from web interface, but also from administration interface to
@@ -196,7 +209,9 @@ class SampleAuth(auths.Authenticator):
 
         :note: groupsManager is an in/out parameter
         """
-        if username != credentials:  # All users with same username and password are allowed
+        if (
+            username != credentials
+        ):  # All users with same username and password are allowed
             return False
 
         # Now the tricky part. We will make this user belong to groups that contains at leat
@@ -247,11 +262,17 @@ class SampleAuth(auths.Authenticator):
         # I know, this is a bit ugly, but this is just a sample :-)
 
         res = '<p>Login name: <input id="logname" type="text"/></p>'
-        res += '<p><a href="" onclick="window.location.replace(\'' + self.callbackUrl() + '?user='
+        res += (
+            '<p><a href="" onclick="window.location.replace(\''
+            + self.callbackUrl()
+            + '?user='
+        )
         res += '\' + $(\'#logname\').val()); return false;">Login</a></p>'
         return res
 
-    def authCallback(self, parameters: typing.Dict[str, typing.Any], gm: 'auths.GroupsManager') -> typing.Optional[str]:
+    def authCallback(
+        self, parameters: typing.Dict[str, typing.Any], gm: 'auths.GroupsManager'
+    ) -> typing.Optional[str]:
         """
         We provide this as a sample of callback for an user.
         We will accept all petitions that has "user" parameter
@@ -286,6 +307,7 @@ class SampleAuth(auths.Authenticator):
         Here, we will set the state to "Inactive" and realName to the same as username, but twice :-)
         """
         from uds.core.util.state import State
+
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
 

@@ -97,6 +97,19 @@ class IPMachinesService(IPServiceBase):
         tab=gui.ADVANCED_TAB,
     )
 
+    maxSessionForMachine = gui.NumericField(
+        length=3,
+        label=_('Max session per machine'),
+        defvalue='0',
+        order=3,
+        tooltip=_('Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'),
+        minValue=0,
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+
+
+
     # Description of service
     typeName = _('Static Multiple IP')
     typeType = 'IPMachinesService'
@@ -120,6 +133,7 @@ class IPMachinesService(IPServiceBase):
     _token: str = ''
     _port: int = 0
     _skipTimeOnFailure: int = 0
+    _maxSessionForMachine: int = 0
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
@@ -141,7 +155,7 @@ class IPMachinesService(IPServiceBase):
             d = self.storage.readData('ips')
             old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []
             # dissapeared ones
-            dissapeared = set(i.split('~')[0] for i in old_ips) - set(i.split('~')[0] for i in self._ips)
+            dissapeared = set(IPServiceBase.getIp(i.split('~')[0]) for i in old_ips) - set(i.split('~')[0] for i in self._ips)
             with transaction.atomic():
                 for removable in dissapeared:
                     self.storage.remove(removable)
@@ -149,6 +163,7 @@ class IPMachinesService(IPServiceBase):
         self._token = self.token.value.strip()
         self._port = self.port.value
         self._skipTimeOnFailure = self.skipTimeOnFailure.num()
+        self._maxSessionForMachine = self.maxSessionForMachine.num()
 
     def getToken(self):
         return self._token or None
@@ -161,16 +176,18 @@ class IPMachinesService(IPServiceBase):
             'token': self._token,
             'port': str(self._port),
             'skipTimeOnFailure': str(self._skipTimeOnFailure),
+            'maxSessionForMachine': str(self._maxSessionForMachine),
         }
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
         return b'\0'.join(
             [
-                b'v4',
+                b'v5',
                 self._token.encode(),
                 str(self._port).encode(),
                 str(self._skipTimeOnFailure).encode(),
+                str(self._maxSessionForMachine).encode(),
             ]
         )
 
@@ -186,24 +203,41 @@ class IPMachinesService(IPServiceBase):
             self._ips = []
         if values[0] != b'v1':
             self._token = values[1].decode()
-            if values[0] in (b'v3', b'v4'):
+            if values[0] in (b'v3', b'v4', b'v5'):
                 self._port = int(values[2].decode())
-            if values[0] == b'v4':
+            if values[0] in (b'v4', b'v5'):
                 self._skipTimeOnFailure = int(values[3].decode())
+            if values[0] == b'v5':
+                self._maxSessionForMachine = int(values[4].decode())
 
         # Sets maximum services for this
         self.maxDeployed = len(self._ips)
+
+    def canBeUsed(self, locked: typing.Optional[int], now: int) -> int:
+        # If _maxSessionForMachine is 0, it can be used only if not locked
+        # (that is locked is None)
+        if self._maxSessionForMachine <= 0:
+            return bool(locked)
+
+        if not isinstance(locked, int):  # May have "old" data, that was the IP repeated
+            return False
+
+        if not locked or locked < now - self._maxSessionForMachine * 3600:
+            return True
+
+        return False
+
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
         try:
             now = getSqlDatetimeAsUnix()
-            consideredFreeTime = now - config.GlobalConfig.SESSION_EXPIRE_TIME.getInt(force=False) * 3600
+
             for ip in self._ips:
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
                 locked = self.storage.getPickle(theIP)
-                if not locked or locked < consideredFreeTime:
+                if self.canBeUsed(locked, now):
                     if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.putPickle(theIP, now)
@@ -246,9 +280,7 @@ class IPMachinesService(IPServiceBase):
 
     def unassignMachine(self, ip: str) -> None:
         try:
-            if ';' in ip:
-                ip = ip.split(';')[0]  # ; means that HAS an attached MAC
-            self.storage.remove(ip)
+            self.storage.remove(IPServiceBase.getIp(ip))
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
 
@@ -271,8 +303,10 @@ class IPMachinesService(IPServiceBase):
         theIP = IPServiceBase.getIp(assignableId)
         theMAC = IPServiceBase.getMac(assignableId)
 
-        if self.storage.readData(theIP) is None:
-            self.storage.saveData(theIP, theIP)
+        now = getSqlDatetimeAsUnix()
+        locked = self.storage.getPickle(theIP)
+        if self.canBeUsed(locked, now):
+            self.storage.saveData(theIP, now)
             if theMAC:
                 theIP += ';' + theMAC
             return userServiceInstance.assign(theIP)

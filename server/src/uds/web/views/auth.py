@@ -86,7 +86,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         return errors.exceptionView(request, e)
 
 
-def authCallback_stage2(request: ExtendedHttpRequestWithUser, ticketId: str) -> HttpResponse:
+def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
     try:
         ticket = TicketStore.get(ticketId)
         params: typing.Dict[str, typing.Any] = ticket['params']
