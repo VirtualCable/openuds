@@ -56,6 +56,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class IPMachinesService(IPServiceBase):
     # Gui
     token = gui.TextField(
@@ -102,13 +103,13 @@ class IPMachinesService(IPServiceBase):
         label=_('Max session per machine'),
         defvalue='0',
         order=3,
-        tooltip=_('Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'),
+        tooltip=_(
+            'Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'
+        ),
         minValue=0,
         required=True,
         tab=gui.ADVANCED_TAB,
     )
-
-
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -145,7 +146,11 @@ class IPMachinesService(IPServiceBase):
             # Check that ips are valid
             for v in values['ipList']:
                 if not net.isValidHost(v.split(';')[0]):  # Get only IP/hostname
-                    raise IPServiceBase.ValidationException(gettext('Invalid value detected on servers list: "{}"').format(v))
+                    raise IPServiceBase.ValidationException(
+                        gettext('Invalid value detected on servers list: "{}"').format(
+                            v
+                        )
+                    )
             self._ips = [
                 '{}~{}'.format(str(ip).strip(), i)
                 for i, ip in enumerate(values['ipList'])
@@ -155,7 +160,9 @@ class IPMachinesService(IPServiceBase):
             d = self.storage.readData('ips')
             old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []
             # dissapeared ones
-            dissapeared = set(IPServiceBase.getIp(i.split('~')[0]) for i in old_ips) - set(i.split('~')[0] for i in self._ips)
+            dissapeared = set(
+                IPServiceBase.getIp(i.split('~')[0]) for i in old_ips
+            ) - set(i.split('~')[0] for i in self._ips)
             with transaction.atomic():
                 for removable in dissapeared:
                     self.storage.remove(removable)
@@ -217,7 +224,7 @@ class IPMachinesService(IPServiceBase):
         # If _maxSessionForMachine is 0, it can be used only if not locked
         # (that is locked is None)
         if self._maxSessionForMachine <= 0:
-            return bool(locked)
+            return not bool(locked)  # If locked is None, it can be used
 
         if not isinstance(locked, int):  # May have "old" data, that was the IP repeated
             return False
@@ -226,7 +233,6 @@ class IPMachinesService(IPServiceBase):
             return True
 
         return False
-
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
@@ -238,13 +244,19 @@ class IPMachinesService(IPServiceBase):
                 theMAC = IPServiceBase.getMac(ip)
                 locked = self.storage.getPickle(theIP)
                 if self.canBeUsed(locked, now):
-                    if self._port > 0 and self._skipTimeOnFailure > 0 and self.cache.get('port{}'.format(theIP)):
+                    if (
+                        self._port > 0
+                        and self._skipTimeOnFailure > 0
+                        and self.cache.get('port{}'.format(theIP))
+                    ):
                         continue  # The check failed not so long ago, skip it...
                     self.storage.putPickle(theIP, now)
                     # Is WOL enabled?
                     wolENABLED = bool(self.parent().wolURL(theIP, theMAC))
                     # Now, check if it is available on port, if required...
-                    if self._port > 0 and not wolENABLED:  # If configured WOL, check is a nonsense
+                    if (
+                        self._port > 0 and not wolENABLED
+                    ):  # If configured WOL, check is a nonsense
                         if (
                             connection.testServer(theIP, self._port, timeOut=0.5)
                             is False
@@ -306,7 +318,7 @@ class IPMachinesService(IPServiceBase):
         now = getSqlDatetimeAsUnix()
         locked = self.storage.getPickle(theIP)
         if self.canBeUsed(locked, now):
-            self.storage.saveData(theIP, now)
+            self.storage.putPickle(theIP, now)
             if theMAC:
                 theIP += ';' + theMAC
             return userServiceInstance.assign(theIP)

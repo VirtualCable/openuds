@@ -257,5 +257,5 @@ class Proxy:
             prettyDest,
             counter.sent,
             counter.recv,
-            int(counter.end-counter.start)
+            int(counter.end - counter.start),
         )
