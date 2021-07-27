@@ -240,6 +240,15 @@ class HTML5RDPTransport(transports.Transport):
         defvalue='any',
         tab=gui.PARAMETERS_TAB,
     )
+    rdpPort = gui.NumericField(
+        order=29,
+        length=5,  # That is, max allowed value is 65535
+        label=_('RDP Port'),
+        tooltip=_('Use this port as RDP port. Defaults to 3389.'),
+        tab=gui.PARAMETERS_TAB,
+        required=True,  #: Numeric fields have always a value, so this not really needed
+        defvalue='3389',
+    )
 
     ticketValidity = gui.NumericField(
         length=3,
@@ -314,7 +323,7 @@ class HTML5RDPTransport(transports.Transport):
         ready = self.cache.get(ip)
         if not ready:
             # Check again for readyness
-            if self.testServer(userService, ip, '3389') is True:
+            if self.testServer(userService, ip, self.rdpPort.num()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -397,6 +406,7 @@ class HTML5RDPTransport(transports.Transport):
         params = {
             'protocol': 'rdp',
             'hostname': ip,
+            'port': self.rdpPort.num(),
             'username': username,
             'password': passwordCrypted,
             'resize-method': 'display-update',

@@ -104,7 +104,6 @@ def guacamole(request: ExtendedHttpRequestWithUser, tunnelId: str) -> HttpRespon
 
     return HttpResponse(response, content_type=CONTENT_TYPE)
 
-@auth.trustedSourceRequired
 def guacamole_authenticated(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
     if not TunnelToken.validateToken(token):
         logger.error('Invalid token %s from %s', token, request.ip)

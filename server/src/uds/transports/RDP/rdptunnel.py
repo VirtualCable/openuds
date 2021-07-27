@@ -115,6 +115,7 @@ class TRDPTransport(BaseRDPTransport):
     smooth = BaseRDPTransport.smooth
     showConnectionBar = BaseRDPTransport.showConnectionBar
     credssp = BaseRDPTransport.credssp
+    rdpPort = BaseRDPTransport.rdpPort
 
     screenSize = BaseRDPTransport.screenSize
     colorDepth = BaseRDPTransport.colorDepth
@@ -160,7 +161,7 @@ class TRDPTransport(BaseRDPTransport):
 
         ticket = TicketStore.create_for_tunnel(
             userService=userService,
-            port=3389,
+            port=self.rdpPort.num(),
             validity=self.tunnelWait.num() + 60,  # Ticket overtime
         )
 

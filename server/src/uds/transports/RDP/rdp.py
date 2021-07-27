@@ -77,6 +77,7 @@ class RDPTransport(BaseRDPTransport):
     smooth = BaseRDPTransport.smooth
     showConnectionBar = BaseRDPTransport.showConnectionBar
     credssp = BaseRDPTransport.credssp
+    rdpPort = BaseRDPTransport.rdpPort
 
     screenSize = BaseRDPTransport.screenSize
     colorDepth = BaseRDPTransport.colorDepth
@@ -115,7 +116,7 @@ class RDPTransport(BaseRDPTransport):
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os['OS'])
         r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
-        r.address = '{}:{}'.format(ip, 3389)
+        r.address = '{}:{}'.format(ip, self.rdpPort.value)
         r.username = username
         r.password = password
         r.domain = domain
@@ -154,7 +155,7 @@ class RDPTransport(BaseRDPTransport):
             'password': password,
             'this_server': request.build_absolute_uri('/'),
             'ip': ip,
-            'port': '3389',
+            'port': self.rdpPort.value,  # As string, because we need to use it in the template
             'address': r.address,
         }
 

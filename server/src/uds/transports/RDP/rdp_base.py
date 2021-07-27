@@ -39,7 +39,7 @@ from uds.core.ui import gui
 from uds.core import transports
 from uds.models import UserService
 
-# TODO: do this
+# TODO: implement this finally?
 def createADUser():
     try:
         from . import AD  # type: ignore
@@ -167,6 +167,15 @@ class BaseRDPTransport(transports.Transport):
         tab=gui.PARAMETERS_TAB,
         defvalue=gui.TRUE,
     )
+    rdpPort = gui.NumericField(order = 29,
+        length = 5, # That is, max allowed value is 65535
+        label=_('RDP Port'),
+        tooltip=_('Use this port as RDP port. Defaults to 3389.'),
+        tab=gui.PARAMETERS_TAB,
+        required = True, #: Numeric fields have always a value, so this not really needed
+        defvalue = '3389',
+    )
+
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),
@@ -315,7 +324,7 @@ class BaseRDPTransport(transports.Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if self.testServer(userService, ip, '3389') is True:
+            if self.testServer(userService, ip, self.rdpPort.num()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:

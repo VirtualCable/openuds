@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2020 Virtual Cable S.L.U.
+# Copyright (c) 2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -43,7 +43,7 @@ BUFFER_SIZE = 1024 * 16
 HANDSHAKE_V1 = b'\x5AMGB\xA5\x01\x00'
 # Ticket length
 TICKET_LENGTH = 48
-# Admin password length, (size of an hex sha256)
+# Max Admin password length (stats basically right now)
 PASSWORD_LENGTH = 64
 # Bandwidth calc time lapse
 BANDWIDTH_TIME = 10
