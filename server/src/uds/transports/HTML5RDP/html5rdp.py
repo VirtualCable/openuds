@@ -240,6 +240,7 @@ class HTML5RDPTransport(transports.Transport):
         defvalue='any',
         tab=gui.PARAMETERS_TAB,
     )
+
     rdpPort = gui.NumericField(
         order=29,
         length=5,  # That is, max allowed value is 65535
