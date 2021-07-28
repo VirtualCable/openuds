@@ -55,6 +55,13 @@ class IPServiceBase(services.Service):
         except Exception:
             return ''
 
+    @staticmethod
+    def getOrder(ipData: str) -> str:
+        try:
+            return ipData.split('~')[0]
+        except Exception:
+            return ''
+
     def parent(self) -> 'provider.PhysicalMachinesProvider':
         return typing.cast('provider.PhysicalMachinesProvider', super().parent())
 

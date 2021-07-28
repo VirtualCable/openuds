@@ -31,11 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from django.conf.urls import url
-from .views import guacamole, guacamole_authenticated
+from .views import guacamole
 
 urlpatterns = [
     # Authenticated path
-    url(r'^uds/guacamole/auth/(?P<token>[^/]+)/(?P<tunnelId>.+)$', guacamole_authenticated, name='dispatcher.guacamole'),
+    url(r'^uds/guacamole/auth/(?P<token>[^/]+)/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole'),
     # Non authenticated path. Disabled
     # url(r'^uds/guacamole/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole.noauth'),
 ]

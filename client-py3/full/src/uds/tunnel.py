@@ -51,6 +51,7 @@ TUNNEL_LISTENING, TUNNEL_OPENING, TUNNEL_PROCESSING, TUNNEL_ERROR = 0, 1, 2, 3
 
 logger = logging.getLogger(__name__)
 
+
 class ForwardServer(socketserver.ThreadingTCPServer):
     daemon_threads = True
     allow_reuse_address = True
@@ -113,11 +114,15 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
             rsocket.connect(self.remote)
 
+            rsocket.sendall(HANDSHAKE_V1)  # No response, just the handshake
+
             context = ssl.create_default_context()
-            
+
             # Do not "recompress" data, use only "base protocol" compression
             context.options |= ssl.OP_NO_COMPRESSION
-            context.load_verify_locations(tools.getCaCertsFile())  # Load certifi certificates
+            context.load_verify_locations(
+                tools.getCaCertsFile()
+            )  # Load certifi certificates
 
             # If ignore remote certificate
             if self.check_certificate is False:
@@ -135,7 +140,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
         try:
             with self.connect() as ssl_socket:
-                ssl_socket.sendall(HANDSHAKE_V1 + b'TEST')
+                ssl_socket.sendall(b'TEST')
                 resp = ssl_socket.recv(2)
                 if resp != b'OK':
                     raise Exception({'Invalid  tunnelresponse: {resp}'})
@@ -183,7 +188,7 @@ class Handler(socketserver.BaseRequestHandler):
             logger.debug('Ticket %s', self.server.ticket)
             with self.server.connect() as ssl_socket:
                 # Send handhshake + command + ticket
-                ssl_socket.sendall(HANDSHAKE_V1 + b'OPEN' + self.server.ticket.encode())
+                ssl_socket.sendall(b'OPEN' + self.server.ticket.encode())
                 # Check response is OK
                 data = ssl_socket.recv(2)
                 if data != b'OK':

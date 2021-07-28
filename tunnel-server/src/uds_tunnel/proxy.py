@@ -159,21 +159,6 @@ class Proxy:
         logger.info('CONNECT FROM %s', prettySource)
 
         try:
-            # First, ensure handshake (simple handshake) and command
-            data: bytes = await source.recv(len(consts.HANDSHAKE_V1))
-
-            if data != consts.HANDSHAKE_V1:
-                logger.error('INVALID HANDSHAKE %s', data)
-                raise Exception()
-        except Exception:
-            if consts.DEBUG:
-                logger.exception('HANDSHAKE')
-            logger.error('HANDSHAKE from %s', address)
-            await source.sendall(b'ERROR_HANDSHAKE')
-            # Closes connection now
-            return
-
-        try:
             # Handshake correct, get the command (4 bytes)
             command: bytes = await source.recv(consts.COMMAND_LENGTH)
             if command == consts.COMMAND_TEST:

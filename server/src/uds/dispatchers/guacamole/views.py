@@ -54,8 +54,11 @@ def dict2resp(dct):
     return '\r'.join((k + '\t' + v for k, v in dct.items()))
 
 
-@auth.trustedSourceRequired
-def guacamole(request: ExtendedHttpRequestWithUser, tunnelId: str) -> HttpResponse:
+def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
+    if not TunnelToken.validateToken(token):
+        logger.error('Invalid token %s from %s', token, request.ip)
+        return HttpResponse(ERROR, content_type=CONTENT_TYPE)
+    # TODO: Check the authId validity
     logger.debug('Received credentials request for tunnel id %s', tunnelId)
 
     try:
@@ -103,10 +106,3 @@ def guacamole(request: ExtendedHttpRequestWithUser, tunnelId: str) -> HttpRespon
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
 
     return HttpResponse(response, content_type=CONTENT_TYPE)
-
-def guacamole_authenticated(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
-    if not TunnelToken.validateToken(token):
-        logger.error('Invalid token %s from %s', token, request.ip)
-        return HttpResponse(ERROR, content_type=CONTENT_TYPE)
-    # TODO: Check the authId validity
-    return guacamole(request, tunnelId)

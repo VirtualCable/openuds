@@ -105,7 +105,25 @@ async def tunnel_proc_async(
             while True:
                 msg: message.Message = pipe.recv()
                 if msg.command == message.Command.TUNNEL and msg.connection:
+                    # Connection done, check for handshake
+                    source, address = msg.connection
+
+                    try:
+                        # First, ensure handshake (simple handshake) and command
+                        data: bytes = source.recv(len(consts.HANDSHAKE_V1))
+
+                        if data != consts.HANDSHAKE_V1:
+                            raise Exception()  # Invalid handshake
+                    except Exception:
+                        if consts.DEBUG:
+                            logger.exception('HANDSHAKE')
+                        logger.error('HANDSHAKE from %s', address)
+                        # Close Source and continue
+                        source.close()
+                        continue
+
                     return msg.connection
+
                 # Process other messages, and retry
         except Exception:
             logger.exception('Receiving data from parent process')
