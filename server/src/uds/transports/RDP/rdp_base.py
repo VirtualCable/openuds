@@ -239,6 +239,7 @@ class BaseRDPTransport(transports.Transport):
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
+        defvalue=gui.TRUE,
         order=35,
         tooltip=_('If checked, fonts smoothing will be allowed'),
         tab=gui.DISPLAY_TAB,

@@ -158,8 +158,8 @@ class Proxy:
         prettyDest = ''
         logger.info('CONNECT FROM %s', prettySource)
 
+        # Handshake correct in this point, start SSL connection
         try:
-            # Handshake correct, get the command (4 bytes)
             command: bytes = await source.recv(consts.COMMAND_LENGTH)
             if command == consts.COMMAND_TEST:
                 logger.info('COMMAND: TEST')
