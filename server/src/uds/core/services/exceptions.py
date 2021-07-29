@@ -107,5 +107,5 @@ class ServiceNotReadyError(ServiceException):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.code = kwargs.get('code', 0x0000)
-        self.userService = kwargs.get('service', None)
+        self.userService = kwargs.get('userService', None)
         self.transport = kwargs.get('transport', None)

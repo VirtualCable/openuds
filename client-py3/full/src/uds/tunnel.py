@@ -114,7 +114,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
             rsocket.connect(self.remote)
 
-            rsocket.sendall(HANDSHAKE_V1)  # No response, just the handshake
+            rsocket.sendall(HANDSHAKE_V1)  # No response expected, just the handshake
 
             context = ssl.create_default_context()
 
