@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"POT-Creation-Date: 2021-07-29 13:12+0200\n"
 "PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -35,7 +35,7 @@ msgstr "Resoconti"
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:71
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:133
-#: REST/methods/transports.py:58 REST/methods/user_services.py:321
+#: REST/methods/transports.py:66 REST/methods/user_services.py:321
 #: REST/methods/user_services.py:396 REST/methods/users_groups.py:122
 #: REST/model.py:149
 msgid "Name"
@@ -46,7 +46,7 @@ msgstr "Nome"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:73 REST/methods/proxies.py:62
 #: REST/methods/services.py:241 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:60 REST/methods/user_services.py:398
+#: REST/methods/transports.py:68 REST/methods/user_services.py:398
 #: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:173
 msgid "Comments"
@@ -61,7 +61,7 @@ msgstr "Marca temporale"
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:79 REST/methods/proxies.py:63
 #: REST/methods/services.py:250 REST/methods/services_pools.py:142
-#: REST/methods/transports.py:63
+#: REST/methods/transports.py:77
 msgid "tags"
 msgstr "tag"
 
@@ -73,7 +73,7 @@ msgstr "Nome del pool"
 msgid "User name"
 msgstr "Nome utente"
 
-#: REST/methods/accountsusage.py:94 core/util/state.py:78
+#: REST/methods/accountsusage.py:94 core/util/state.py:79
 #: core/util/states/common.py:71
 msgid "Running"
 msgstr "In esecuzione"
@@ -120,11 +120,11 @@ msgstr "Host non gestito"
 msgid "User service not found"
 msgstr "Servizio utente non trovato"
 
-#: REST/methods/actor_token.py:51 REST/methods/tunnel_token.py:51
+#: REST/methods/actor_token.py:51
 msgid "Actor tokens"
 msgstr "Token Actor"
 
-#: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:54
+#: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:51
 #: reports/auto/fields.py:56 reports/stats/pools_performance.py:217
 #: reports/stats/pools_performance.py:236 reports/stats/pools_usage_day.py:64
 #: reports/stats/usage_by_pool.py:169 reports/stats/user_access.py:190
@@ -132,11 +132,11 @@ msgstr "Token Actor"
 msgid "Date"
 msgstr "Data"
 
-#: REST/methods/actor_token.py:55 REST/methods/tunnel_token.py:55
+#: REST/methods/actor_token.py:55 REST/methods/tunnel_token.py:52
 msgid "Issued by"
 msgstr "Rilasciato da"
 
-#: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:56
+#: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:53
 #: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
@@ -162,7 +162,7 @@ msgstr "Esegui una volta"
 msgid "Log level"
 msgstr "Livello dei log"
 
-#: REST/methods/actor_token.py:67 REST/methods/tunnel_token.py:63
+#: REST/methods/actor_token.py:67 REST/methods/tunnel_token.py:60
 msgid "Token isued by {} from {}"
 msgstr "Token emesso per {} da {}"
 
@@ -176,13 +176,13 @@ msgstr "Id"
 
 #: REST/methods/authenticators.py:67 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:72 REST/methods/services.py:242
-#: REST/methods/transports.py:59 REST/methods/user_services.py:397
+#: REST/methods/transports.py:67 REST/methods/user_services.py:397
 msgid "Type"
 msgstr "Tipo"
 
 #: REST/methods/authenticators.py:69 REST/methods/meta_service_pools.py:88
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:57 REST/methods/user_services.py:395
+#: REST/methods/transports.py:65 REST/methods/user_services.py:395
 #: REST/model.py:185 models/meta_pool.py:73
 msgid "Priority"
 msgstr "Priorità"
@@ -194,7 +194,7 @@ msgid "Visible"
 msgstr "Visibile"
 
 #: REST/methods/authenticators.py:71 REST/methods/meta_pools.py:77
-#: REST/methods/transports.py:115 REST/model.py:201
+#: REST/methods/transports.py:164 REST/model.py:201
 msgid "Label"
 msgstr "Etichetta"
 
@@ -394,7 +394,7 @@ msgid "Pool"
 msgstr "Pool"
 
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:122
-#: REST/methods/tunnel_token.py:57 REST/methods/user_services.py:139
+#: REST/methods/tunnel_token.py:54 REST/methods/user_services.py:139
 #: REST/methods/user_services.py:270 auths/IP/authenticator.py:68
 msgid "IP"
 msgstr "IP"
@@ -442,7 +442,7 @@ msgstr "Elemento già rimosso"
 msgid "Item is not removable"
 msgstr "L'elemento non è rimovibile"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:88
+#: REST/methods/networks.py:58 REST/methods/transports.py:114
 msgid "Networks"
 msgstr "Reti"
 
@@ -568,7 +568,7 @@ msgstr "Controllare il certificato"
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:77
 #: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:66
 #: services/VCloud_enterprise/provider.py:32
-#: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:100
+#: services/Vmware_enterprise/provider.py:45 services/Xen/provider.py:100
 msgid "Host"
 msgstr "Host"
 
@@ -587,7 +587,7 @@ msgstr "Server (IP o FQDN) che fungerà da proxy."
 #: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:73
 #: services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
-#: services/Vmware_enterprise/provider.py:42
+#: services/Vmware_enterprise/provider.py:52
 msgid "Port"
 msgstr "Porta"
 
@@ -708,8 +708,8 @@ msgstr "Ok"
 msgid "Services Pool Groups"
 msgstr "Gruppi di Pool di servizi"
 
-#: REST/methods/services_pools.py:131 REST/methods/transports.py:61
-#: REST/methods/transports.py:106
+#: REST/methods/services_pools.py:131 REST/methods/transports.py:71
+#: REST/methods/transports.py:152
 msgid "Service Pools"
 msgstr "Pool di servizi"
 
@@ -860,19 +860,19 @@ msgstr "Utilizzo dei servizi"
 msgid "Service"
 msgstr "Servizio"
 
-#: REST/methods/transports.py:55
+#: REST/methods/transports.py:63
 msgid "Transports"
 msgstr "Trasporti"
 
-#: REST/methods/transports.py:62
+#: REST/methods/transports.py:76
 msgid "Devices"
 msgstr "Dispositivi"
 
-#: REST/methods/transports.py:79
+#: REST/methods/transports.py:97
 msgid "Network access"
 msgstr "Accesso alla rete"
 
-#: REST/methods/transports.py:80
+#: REST/methods/transports.py:99
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -880,7 +880,7 @@ msgstr ""
 "Se selezionato, il trasporto verrà abilitato per le reti selezionate. Se "
 "deselezionato, il trasporto verrà disabilitato per le reti selezionate"
 
-#: REST/methods/transports.py:89
+#: REST/methods/transports.py:116
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
@@ -888,11 +888,11 @@ msgstr ""
 "Reti associate a questo trasporto. Se nessuna rete selezionata, significa "
 "\"tutte le reti\""
 
-#: REST/methods/transports.py:97
+#: REST/methods/transports.py:134
 msgid "Allowed Devices"
 msgstr "Dispositivi autorizzati"
 
-#: REST/methods/transports.py:98
+#: REST/methods/transports.py:136
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
@@ -901,17 +901,22 @@ msgstr ""
 "questo trasporto. Altrimenti, saranno autorizzati solo i dispositivi "
 "compatibili con i valori selezionati"
 
-#: REST/methods/transports.py:107
+#: REST/methods/transports.py:153
 msgid "Currently assigned services pools"
 msgstr "Pool di servizi attualmente assegnati"
 
-#: REST/methods/transports.py:116
+#: REST/methods/transports.py:166
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr ""
 "Etichetta di trasporto Metapool (utilizzata solo nel raggruppamento di "
 "trasporti metapool)"
 
-#: REST/methods/tunnel_token.py:53
+#: REST/methods/tunnel_token.py:48
+#| msgid "Tunneled"
+msgid "Tunnel tokens"
+msgstr "Gettoni tunnel"
+
+#: REST/methods/tunnel_token.py:50
 msgid "Token"
 msgstr "Gettone"
 
@@ -1010,7 +1015,7 @@ msgstr "Utenti attuali"
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
 #: services/Proxmox/provider.py:82 services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
-#: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:107
+#: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:75
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:75
@@ -1160,7 +1165,7 @@ msgstr ""
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
 #: services/Proxmox/provider.py:92 services/RDS_enterprise/provider.py:126
 #: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
-#: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:115
+#: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:76
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:81
@@ -1185,7 +1190,7 @@ msgstr "Password dell'utente ldap"
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
 #: services/Proxmox/provider.py:123 services/VCloud_enterprise/provider.py:63
-#: services/Vmware_enterprise/provider.py:50
+#: services/Vmware_enterprise/provider.py:99
 msgid "Timeout"
 msgstr "TImeout"
 
@@ -1666,11 +1671,11 @@ msgstr "Autenticatore SAML"
 msgid "SAML (v2.0) Authenticator"
 msgstr "Autenticatore SAML (v2.0)"
 
-#: auths/SAML_enterprise/saml.py:127
+#: auths/SAML_enterprise/saml.py:129
 msgid "Private key"
 msgstr "Chiave privata"
 
-#: auths/SAML_enterprise/saml.py:128
+#: auths/SAML_enterprise/saml.py:132
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1678,15 +1683,15 @@ msgstr ""
 "Chiave privata utilizzata per firma e la crittografia, in formato base64 "
 "come generata da openssl"
 
-#: auths/SAML_enterprise/saml.py:129 auths/SAML_enterprise/saml.py:134
+#: auths/SAML_enterprise/saml.py:135 auths/SAML_enterprise/saml.py:146
 msgid "Certificates"
 msgstr "Certificati"
 
-#: auths/SAML_enterprise/saml.py:132 transports/SPICE/spice_base.py:82
+#: auths/SAML_enterprise/saml.py:140 transports/SPICE/spice_base.py:82
 msgid "Certificate"
 msgstr "Certificato"
 
-#: auths/SAML_enterprise/saml.py:133
+#: auths/SAML_enterprise/saml.py:143
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1694,63 +1699,63 @@ msgstr ""
 "Chiave pubblica utilizzata per la firma e la crittografia (parte pubblica "
 "della chiave privata precedente), in formato base64 come generata da openssl"
 
-#: auths/SAML_enterprise/saml.py:137
+#: auths/SAML_enterprise/saml.py:151
 msgid "IDP Metadata"
 msgstr "Metadati IDP"
 
-#: auths/SAML_enterprise/saml.py:138
+#: auths/SAML_enterprise/saml.py:154
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "Puoi inserire qui l'URL o i metadati IDP o i metadati stessi (xml)"
 
-#: auths/SAML_enterprise/saml.py:139 auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:157 auths/SAML_enterprise/saml.py:166
 msgid "Metadata"
 msgstr "Metadati"
 
-#: auths/SAML_enterprise/saml.py:142
+#: auths/SAML_enterprise/saml.py:161
 msgid "Entity ID"
 msgstr "Entity ID"
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:164
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "ID dello SP. Se lasciato vuoto, questo verrà generato automaticamente "
 "dall'URL del server"
 
-#: auths/SAML_enterprise/saml.py:147
+#: auths/SAML_enterprise/saml.py:172
 msgid "User name attrs"
 msgstr "Attributi nome utente"
 
-#: auths/SAML_enterprise/saml.py:148
+#: auths/SAML_enterprise/saml.py:174
 msgid "Fields from where to extract user name"
 msgstr "Campi da cui estrarre il nome utente"
 
-#: auths/SAML_enterprise/saml.py:148 auths/SAML_enterprise/saml.py:153
-#: auths/SAML_enterprise/saml.py:158
+#: auths/SAML_enterprise/saml.py:176 auths/SAML_enterprise/saml.py:186
+#: auths/SAML_enterprise/saml.py:196
 msgid "Attributes"
 msgstr "Attributi"
 
-#: auths/SAML_enterprise/saml.py:152
+#: auths/SAML_enterprise/saml.py:182
 msgid "Group name attrs"
 msgstr "Attributi nome di gruppo"
 
-#: auths/SAML_enterprise/saml.py:153
+#: auths/SAML_enterprise/saml.py:184
 msgid "Fields from where to extract the groups"
 msgstr "Campi da cui estrarre i gruppi"
 
-#: auths/SAML_enterprise/saml.py:157
+#: auths/SAML_enterprise/saml.py:192
 msgid "Real name attrs"
 msgstr "Attributi nome reale"
 
-#: auths/SAML_enterprise/saml.py:158
+#: auths/SAML_enterprise/saml.py:194
 msgid "Fields from where to extract the real name"
 msgstr "Campi da cui estrarre il nome reale"
 
-#: auths/SAML_enterprise/saml.py:176
+#: auths/SAML_enterprise/saml.py:216
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "Autenticatore SAML, spazi non supportati nel campo Nome"
 
-#: auths/SAML_enterprise/saml.py:183
+#: auths/SAML_enterprise/saml.py:230
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1758,11 +1763,11 @@ msgstr ""
 "Il certificato del server deve essere in formato PEM valido (i certificati "
 "PEM iniziano con ----- BEGIN CERTIFICATE -----)"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:238
 msgid "Invalid server certificate. "
 msgstr "Certificato del server non valido."
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:249
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1770,48 +1775,48 @@ msgstr ""
 "La chiave privata dovrebbe essere un PEM valido (le chiavi private PEM "
 "iniziano con ----- BEGIN RSA PRIVATE KEY-----)"
 
-#: auths/SAML_enterprise/saml.py:197
+#: auths/SAML_enterprise/saml.py:257
 msgid "Invalid private key. "
 msgstr "Chiave privata non valida."
 
-#: auths/SAML_enterprise/saml.py:214
+#: auths/SAML_enterprise/saml.py:276
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Impossibile recuperare l'URL {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:222
+#: auths/SAML_enterprise/saml.py:287
 msgid " (obtained from URL)"
 msgstr "(ottenuto dall'URL)"
 
-#: auths/SAML_enterprise/saml.py:223
+#: auths/SAML_enterprise/saml.py:289
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML non sembra valido per i metadati IDP"
 
-#: auths/SAML_enterprise/saml.py:239
+#: auths/SAML_enterprise/saml.py:311
 msgid "Can't access idp metadata"
 msgstr "Impossibile accedere ai metadati idp"
 
-#: auths/Sample/SampleAuth.py:76
+#: auths/Sample/SampleAuth.py:79
 msgid "Sample Authenticator"
 msgstr "Autenticatore di esempio"
 
-#: auths/Sample/SampleAuth.py:88
+#: auths/Sample/SampleAuth.py:91
 msgid "Sample dummy authenticator"
 msgstr "Autenticatore fittizio di esempio"
 
-#: auths/Sample/SampleAuth.py:106
+#: auths/Sample/SampleAuth.py:109
 msgid "Fake User"
 msgstr "Utente falso"
 
-#: auths/Sample/SampleAuth.py:109
+#: auths/Sample/SampleAuth.py:112
 msgid "Fake Group"
 msgstr "Gruppo falso"
 
-#: auths/Sample/SampleAuth.py:115
+#: auths/Sample/SampleAuth.py:118
 msgid "Groups"
 msgstr "Gruppi"
 
-#: auths/Sample/SampleAuth.py:128
+#: auths/Sample/SampleAuth.py:132
 msgid "We need more than two groups!"
 msgstr "Sono necessari più di due gruppi!"
 
@@ -2006,7 +2011,7 @@ msgstr "Servizio di base"
 
 #: core/services/service.py:141 core/services/service.py:150
 #: models/permissions.py:92 models/permissions.py:96
-#: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:74
+#: services/Azure_enterprise/helpers.py:100 services/OpenStack/helpers.py:74
 #: services/Proxmox/service.py:194 services/Sample/service.py:98
 #: services/Sample/service.py:104 services/TestService_enterprise/service.py:28
 msgid "None"
@@ -2032,79 +2037,79 @@ msgstr "Tunnel"
 msgid "Can't contact LDAP server"
 msgstr "Impossibile contattare il server LDAP"
 
-#: core/util/state.py:65 core/util/states/common.py:59
+#: core/util/state.py:66 core/util/states/common.py:59
 msgid "Active"
 msgstr "Attivo"
 
-#: core/util/state.py:66 core/util/states/common.py:60
+#: core/util/state.py:67 core/util/states/common.py:60
 msgid "Inactive"
 msgstr "Non attivo"
 
-#: core/util/state.py:67 core/util/states/common.py:61
+#: core/util/state.py:68 core/util/states/common.py:61
 msgid "Blocked"
 msgstr "Bloccato"
 
-#: core/util/state.py:68 core/util/states/common.py:62
+#: core/util/state.py:69 core/util/states/common.py:62
 msgid "Waiting publication"
 msgstr "In attesa di pubblicazione"
 
-#: core/util/state.py:69 core/util/states/common.py:63
+#: core/util/state.py:70 core/util/states/common.py:63
 msgid "In preparation"
 msgstr "In preparazione"
 
-#: core/util/state.py:70 core/util/states/common.py:64
+#: core/util/state.py:71 core/util/states/common.py:64
 msgid "Valid"
 msgstr "Valido"
 
-#: core/util/state.py:71 core/util/state.py:73 core/util/states/common.py:66
+#: core/util/state.py:72 core/util/state.py:74 core/util/states/common.py:66
 msgid "Removing"
 msgstr "Rimozione"
 
-#: core/util/state.py:72
+#: core/util/state.py:73
 msgid "Restrained"
 msgstr "Riservato"
 
-#: core/util/state.py:74 core/util/states/common.py:67
+#: core/util/state.py:75 core/util/states/common.py:67
 msgid "Removed"
 msgstr "Rimosso"
 
-#: core/util/state.py:75 core/util/states/common.py:68
+#: core/util/state.py:76 core/util/states/common.py:68
 msgid "Canceled"
 msgstr "Annullato"
 
-#: core/util/state.py:76 core/util/states/common.py:69
+#: core/util/state.py:77 core/util/states/common.py:69
 msgid "Canceling"
 msgstr "Annullamento"
 
-#: core/util/state.py:77 core/util/states/common.py:70
+#: core/util/state.py:78 core/util/states/common.py:70
 msgid "Error"
 msgstr "Errore"
 
-#: core/util/state.py:79 core/util/states/common.py:72
+#: core/util/state.py:80 core/util/states/common.py:72
 msgid "Finished"
 msgstr "Finito"
 
-#: core/util/state.py:80 core/util/states/common.py:73
+#: core/util/state.py:81 core/util/states/common.py:73
 msgid "Waiting execution"
 msgstr "In attesa di esecuzione"
 
-#: core/util/state.py:81 core/util/states/common.py:74
+#: core/util/state.py:82 core/util/states/common.py:74
 msgid "Balancing"
 msgstr "Bilanciamento"
 
-#: core/util/state.py:82 core/util/states/common.py:75
+#: core/util/state.py:83 core/util/states/common.py:75
 msgid "In maintenance"
 msgstr "In manutenzione"
 
-#: core/util/state.py:83 core/util/states/common.py:76
+#: core/util/state.py:84 core/util/states/common.py:76
 msgid "Waiting OS"
 msgstr "In attesa del sistema operativo"
 
-#: core/util/state.py:84
+#: core/util/state.py:85
 msgid "Too many preparing services"
 msgstr "Troppi servizi di preparazione"
 
-#: core/util/state.py:85
+#: core/util/state.py:86
 msgid "Meta member"
 msgstr "Meta membro"
 
@@ -2136,24 +2141,24 @@ msgstr "Utenti con servizi"
 msgid "Cached"
 msgstr "Memorizzato nella cache"
 
-#: core/util/tools.py:144
+#: core/util/tools.py:152
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{} giorni {: d}: {: 02d}: {: 02d}"
 
-#: core/util/tools.py:161
+#: core/util/tools.py:171
 msgid "The basename is not a valid for a hostname"
 msgstr "Il nome base non è valido per un nome host"
 
-#: core/util/tools.py:164
+#: core/util/tools.py:176
 msgid "The length of basename plus length must be greater than 0"
 msgstr "La lunghezza del nome base più la lunghezza deve essere maggiore di 0"
 
-#: core/util/tools.py:167
+#: core/util/tools.py:181
 msgid "The length of basename plus length must not be greater than 15"
 msgstr ""
 "La lunghezza del nome base più la lunghezza non deve essere maggiore di 15"
 
-#: core/util/tools.py:170
+#: core/util/tools.py:186
 msgid "The machine name can't be only numbers"
 msgstr "Il nome della macchina non può essere solo numeri"
 
@@ -2161,30 +2166,30 @@ msgstr "Il nome della macchina non può essere solo numeri"
 msgid "Numeric"
 msgstr "Numerico"
 
-#: core/util/validators.py:64
+#: core/util/validators.py:66
 #, python-brace-format
 msgid "{0} must be greater than or equal to {1}"
 msgstr "{0} deve essere maggiore o uguale a {1}"
 
-#: core/util/validators.py:67
+#: core/util/validators.py:74
 #, python-brace-format
 msgid "{0} must be lower than or equal to {1}"
 msgstr "{0} deve essere inferiore o uguale a {1}"
 
-#: core/util/validators.py:72
+#: core/util/validators.py:81
 #, python-brace-format
 msgid "{0} contains invalid characters"
 msgstr "{0} contiene caratteri non validi"
 
-#: core/util/validators.py:81
+#: core/util/validators.py:90
 msgid "{} exceeds maximum host name length."
 msgstr "{} supera la lunghezza massima del nome host."
 
-#: core/util/validators.py:92
+#: core/util/validators.py:103
 msgid "{} is not a valid hostname"
 msgstr "{} non è un nome host valido"
 
-#: core/util/validators.py:136
+#: core/util/validators.py:152
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
@@ -3135,8 +3140,8 @@ msgstr "Ottenuto da sottoscrizione"
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:100 services/VCloud_enterprise/provider.py:60
-#: services/Vmware_enterprise/provider.py:47
-#: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:123
+#: services/Vmware_enterprise/provider.py:76
+#: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
 msgid "Creation concurrency"
 msgstr "Concorrenza di creazione"
 
@@ -3148,7 +3153,7 @@ msgstr "Concorrenza di creazione"
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
 #: services/Proxmox/provider.py:105 services/VCloud_enterprise/provider.py:60
-#: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:128
+#: services/Vmware_enterprise/provider.py:81 services/Xen/provider.py:128
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Numero massimo di VM create contemporaneamente"
 
@@ -3160,8 +3165,8 @@ msgstr "Numero massimo di VM create contemporaneamente"
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:111 services/VCloud_enterprise/provider.py:61
-#: services/Vmware_enterprise/provider.py:48
-#: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:134
+#: services/Vmware_enterprise/provider.py:87
+#: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
 msgid "Removal concurrency"
 msgstr "Concorrenza di rimozione"
 
@@ -3173,7 +3178,7 @@ msgstr "Concorrenza di rimozione"
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
 #: services/Proxmox/provider.py:116 services/VCloud_enterprise/provider.py:61
-#: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:139
+#: services/Vmware_enterprise/provider.py:92 services/Xen/provider.py:139
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Numero massimo di VM rimosse contemporaneamente"
 
@@ -3387,7 +3392,7 @@ msgstr "Timeout in secondi per la connessione a HyperV"
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:103
 #: services/Nutanix_enterprise/provider.py:45 services/OVirt/provider.py:117
-#: services/Vmware_enterprise/provider.py:51 services/Xen/provider.py:146
+#: services/Vmware_enterprise/provider.py:109 services/Xen/provider.py:146
 msgid "Macs range"
 msgstr "Intervallo di Mac"
 
@@ -3404,7 +3409,7 @@ msgstr "Test di connessione riuscito"
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/NutanixPrism_enterprise/provider.py:262
 #: services/Nutanix_enterprise/provider.py:228 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:312 services/Vmware_enterprise/provider.py:168
+#: services/Proxmox/provider.py:312 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "Connessione fallita. Controllare i parametri di connessione"
 
@@ -4242,12 +4247,12 @@ msgstr "Static IP Machines Provider"
 msgid "Provides connection to machines by IP"
 msgstr "Fornisce la connessione alle macchine tramite IP"
 
-#: services/PhysicalMachines/service_multi.py:63
+#: services/PhysicalMachines/service_multi.py:64
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Token di servizio"
 
-#: services/PhysicalMachines/service_multi.py:66
+#: services/PhysicalMachines/service_multi.py:67
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -4256,45 +4261,58 @@ msgstr ""
 "Token di servizio che verrà utilizzato dagli Actor per comunicare con il "
 "servizio. Lasciare vuoto per assegnazione persistente."
 
-#: services/PhysicalMachines/service_multi.py:74
+#: services/PhysicalMachines/service_multi.py:75
 #: services/RDS_enterprise/provider.py:49
 msgid "List of servers"
 msgstr "Elenco dei server"
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:76
 msgid "List of servers available for this service"
 msgstr "Elenco dei server disponibili per questo servizio"
 
-#: services/PhysicalMachines/service_multi.py:80
+#: services/PhysicalMachines/service_multi.py:81
 msgid "Check Port"
 msgstr "Verifica la porta"
 
-#: services/PhysicalMachines/service_multi.py:84
+#: services/PhysicalMachines/service_multi.py:85
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
 "Se diverso da zero, verranno serviti solo gli host che rispondono alla "
 "connessione su quella porta."
 
-#: services/PhysicalMachines/service_multi.py:91
+#: services/PhysicalMachines/service_multi.py:92
 msgid "Skip time"
 msgstr "Salta il tempo"
 
-#: services/PhysicalMachines/service_multi.py:94
+#: services/PhysicalMachines/service_multi.py:95
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr ""
 "Se un host non riesce ad effettuare il controllo, lo salta per questo tempo "
 "(in minuti)."
 
-#: services/PhysicalMachines/service_multi.py:101
+#: services/PhysicalMachines/service_multi.py:103
+#| msgid "Max. session time"
+msgid "Max session per machine"
+msgstr "Sessione massima per macchina"
+
+#: services/PhysicalMachines/service_multi.py:107
+msgid ""
+"Maximum session duration before UDS thinks this machine got locked and "
+"releases it (hours). 0 means \"never\"."
+msgstr ""
+"Durata massima della sessione prima che UDS ritenga che questa macchina sia "
+"stata bloccata e la rilasci (ore). 0 significa \"mai\"."
+
+#: services/PhysicalMachines/service_multi.py:115
 msgid "Static Multiple IP"
 msgstr "IP statico multiplo"
 
-#: services/PhysicalMachines/service_multi.py:103
+#: services/PhysicalMachines/service_multi.py:117
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Questo servizio fornisce l'accesso ai computer POWERED-ON tramite IP"
 
-#: services/PhysicalMachines/service_multi.py:134
+#: services/PhysicalMachines/service_multi.py:150
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "Rilevato valore non valido nell&#39;elenco dei server: \"{}\""
 
@@ -4653,7 +4671,7 @@ msgstr "Numero massimo di servizi consentiti (0 significa nessun limite)"
 msgid "Wait spawned processes"
 msgstr "Attendi i processi generati"
 
-#: services/RDS_enterprise/service.py:99
+#: services/RDS_enterprise/service.py:100
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -4661,7 +4679,7 @@ msgstr ""
 "Se attivo, RDS Actor attenderà che l'applicazione e tutti i processi "
 "spawnati terminino prima di considerare l'app disconnessa"
 
-#: services/RDS_enterprise/service.py:109
+#: services/RDS_enterprise/service.py:112
 msgid "A valid application path is required"
 msgstr "È richiesto un percorso dell'applicazione valido"
 
@@ -4908,27 +4926,27 @@ msgstr "Locale"
 msgid "Remote"
 msgstr "Remoto"
 
-#: services/Vmware_enterprise/provider.py:41
+#: services/Vmware_enterprise/provider.py:47
 msgid "VMWare VCenter Server IP or Hostname"
 msgstr "IP o nome host del server VMWare VCenter"
 
-#: services/Vmware_enterprise/provider.py:42
+#: services/Vmware_enterprise/provider.py:55
 msgid "VMWare VC Server Port (usually 443)"
 msgstr "Porta del server VMWare VC (in genere 443)"
 
-#: services/Vmware_enterprise/provider.py:43
+#: services/Vmware_enterprise/provider.py:62
 msgid "User with valid privileges on VC"
 msgstr "Utente con privilegi validi su VC"
 
-#: services/Vmware_enterprise/provider.py:44
+#: services/Vmware_enterprise/provider.py:69
 msgid "Password of the user of the VC"
 msgstr "Password dell';utente del VC"
 
-#: services/Vmware_enterprise/provider.py:50
+#: services/Vmware_enterprise/provider.py:102
 msgid "Timeout in seconds of connection to VC"
 msgstr "Timeout in secondi per la connessione a VC"
 
-#: services/Vmware_enterprise/provider.py:52
+#: services/Vmware_enterprise/provider.py:114
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
@@ -4936,15 +4954,15 @@ msgstr ""
 "Intervallo di mac validi per le VM create. Deve essere all'interno di "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
-#: services/Vmware_enterprise/provider.py:56
+#: services/Vmware_enterprise/provider.py:126
 msgid "VMWare VCenter Platform Provider"
 msgstr "VMWare VCenter Platform Provider"
 
-#: services/Vmware_enterprise/provider.py:58
+#: services/Vmware_enterprise/provider.py:128
 msgid "Provides connection to Virtual Center Services"
 msgstr "Fornisce la connessione ai Virtual Center Services"
 
-#: services/Vmware_enterprise/provider.py:166
+#: services/Vmware_enterprise/provider.py:287
 msgid "Connection params ok"
 msgstr "Parametri di connessione validi"
 
@@ -5428,7 +5446,7 @@ msgstr "Mostra sfondo"
 
 #: transports/HTML5RDP/html5rdp.py:134
 #: transports/HTML5RDS_enterprise/html5rds.py:123
-#: transports/RDP/rdp_base.py:213
+#: transports/RDP/rdp_base.py:222
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -5438,25 +5456,25 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:139
 #: transports/HTML5RDS_enterprise/html5rds.py:128
-#: transports/RDP/rdp_base.py:226
+#: transports/RDP/rdp_base.py:235
 msgid "Allow Desk.Comp."
 msgstr "Consenti Desk.Comp."
 
 #: transports/HTML5RDP/html5rdp.py:141
 #: transports/HTML5RDS_enterprise/html5rds.py:130
-#: transports/RDP/rdp_base.py:228
+#: transports/RDP/rdp_base.py:237
 msgid "If checked, desktop composition will be allowed"
 msgstr "Se selezionato, la composizione desktop sarà consentita"
 
 #: transports/HTML5RDP/html5rdp.py:145
 #: transports/HTML5RDS_enterprise/html5rds.py:134
-#: transports/RDP/rdp_base.py:232 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:241 transports/RDS_enterprise/rds_base.py:150
 msgid "Font Smoothing"
 msgstr "Font Smoothing"
 
 #: transports/HTML5RDP/html5rdp.py:147
 #: transports/HTML5RDS_enterprise/html5rds.py:136
-#: transports/RDS_enterprise/rds_base.py:152
+#: transports/RDS_enterprise/rds_base.py:153
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Se selezionato, sarà consentita la smussatura dei caratteri (solo per i "
@@ -5631,13 +5649,22 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "Crittografia TLS (Transport Security Layer)"
 
-#: transports/HTML5RDP/html5rdp.py:246
+#: transports/HTML5RDP/html5rdp.py:247 transports/RDP/rdp_base.py:172
+#| msgid "Port"
+msgid "RDP Port"
+msgstr "Porta RDP"
+
+#: transports/HTML5RDP/html5rdp.py:248 transports/RDP/rdp_base.py:173
+msgid "Use this port as RDP port. Defaults to 3389."
+msgstr "Usa questa porta come porta RDP. Il valore predefinito è 3389."
+
+#: transports/HTML5RDP/html5rdp.py:256
 #: transports/HTML5RDS_enterprise/html5rds.py:223
 #: transports/HTML5VNC/html5vnc.py:109
 msgid "Ticket Validity"
 msgstr "Validità del ticket"
 
-#: transports/HTML5RDP/html5rdp.py:250
+#: transports/HTML5RDP/html5rdp.py:260
 #: transports/HTML5RDS_enterprise/html5rds.py:227
 #: transports/HTML5VNC/html5vnc.py:112
 msgid ""
@@ -5647,44 +5674,44 @@ msgstr ""
 "Tempo consentito, in secondi, al client HTML5 per ricaricare i dati da UDS "
 "Broker. Il valore predefinito e consigliato è 60."
 
-#: transports/HTML5RDP/html5rdp.py:259
+#: transports/HTML5RDP/html5rdp.py:269
 #: transports/HTML5RDS_enterprise/html5rds.py:236
 #: transports/HTML5VNC/html5vnc.py:119 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "Forza nuova finestra HTML"
 
-#: transports/HTML5RDP/html5rdp.py:260
+#: transports/HTML5RDP/html5rdp.py:270
 #: transports/HTML5RDS_enterprise/html5rds.py:237
 #: transports/HTML5VNC/html5vnc.py:120
 msgid "Select windows behavior for new connections on HTML5"
 msgstr ""
 "Seleziona il comportamento di Windows per le nuove connessioni su HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:265
+#: transports/HTML5RDP/html5rdp.py:275
 #: transports/HTML5RDS_enterprise/html5rds.py:242
 #: transports/HTML5VNC/html5vnc.py:123
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr ""
 "Apri ogni connessione sulla stessa finestra, ma mantiene la finestra UDS."
 
-#: transports/HTML5RDP/html5rdp.py:268
+#: transports/HTML5RDP/html5rdp.py:278
 #: transports/HTML5RDS_enterprise/html5rds.py:245
 #: transports/HTML5VNC/html5vnc.py:124
 msgid "Force every connection to be opened on a new window."
 msgstr "Forza l&#39;apertura di ogni connessione in una nuova finestra."
 
-#: transports/HTML5RDP/html5rdp.py:272
+#: transports/HTML5RDP/html5rdp.py:282
 #: transports/HTML5RDS_enterprise/html5rds.py:249
 #: transports/HTML5VNC/html5vnc.py:125
 msgid "Override UDS window and replace it with the connection."
 msgstr "Ignora la finestra UDS e sostituiscila con la connessione."
 
-#: transports/HTML5RDP/html5rdp.py:280
+#: transports/HTML5RDP/html5rdp.py:290
 #: transports/HTML5RDS_enterprise/html5rds.py:256
 msgid "Glyptodon Enterprise context path"
 msgstr "Percorso di contesto Glyptodon Enterprise"
 
-#: transports/HTML5RDP/html5rdp.py:283
+#: transports/HTML5RDP/html5rdp.py:293
 #: transports/HTML5RDS_enterprise/html5rds.py:259
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
@@ -5693,13 +5720,13 @@ msgstr ""
 "Percorso personalizzato per il tunnel Glyptodon Enterprise. (Valido solo per "
 "Glyptodon Enterprise Tunnel)"
 
-#: transports/HTML5RDP/html5rdp.py:298
+#: transports/HTML5RDP/html5rdp.py:308
 #: transports/HTML5RDS_enterprise/html5rds.py:273
 #: transports/HTML5VNC/html5vnc.py:137
 msgid "The server must be http or https"
 msgstr "Il server deve essere http o https"
 
-#: transports/HTML5RDP/html5rdp.py:303
+#: transports/HTML5RDP/html5rdp.py:313
 #: transports/HTML5RDS_enterprise/html5rds.py:278
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
@@ -5752,7 +5779,7 @@ msgstr "Porta del server VNC"
 msgid "Port of the VNC server."
 msgstr "Porta del server VNC."
 
-#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:196
+#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:205
 #: transports/RDS_enterprise/rds_base.py:136
 msgid "Color depth"
 msgstr "Profondità di colore"
@@ -5865,7 +5892,7 @@ msgstr ""
 "(consigliato)."
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:134 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:106 transports/X2GO/x2go_tunnel.py:117
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Occorre usare il formato HOST: PORT nel campo Tunnel Server"
@@ -5981,27 +6008,27 @@ msgstr ""
 "Se selezionato, abiliterà il protocollo CredSSP (Credential Security Support "
 "Provider)"
 
-#: transports/RDP/rdp_base.py:172
+#: transports/RDP/rdp_base.py:181
 msgid "Screen Size"
 msgstr "Dimensione dello schermo"
 
-#: transports/RDP/rdp_base.py:174
+#: transports/RDP/rdp_base.py:183
 msgid "Screen size for this transport"
 msgstr "Dimensioni dello schermo per questo trasporto"
 
-#: transports/RDP/rdp_base.py:198 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:207 transports/RDS_enterprise/rds_base.py:138
 msgid "Color depth for this connection"
 msgstr "Profondità del colore per questa connessione"
 
-#: transports/RDP/rdp_base.py:210
+#: transports/RDP/rdp_base.py:219
 msgid "Wallpaper/theme"
 msgstr "Sfondo/tema"
 
-#: transports/RDP/rdp_base.py:218
+#: transports/RDP/rdp_base.py:227
 msgid "Multiple monitors"
 msgstr "Monitor multipli"
 
-#: transports/RDP/rdp_base.py:221
+#: transports/RDP/rdp_base.py:230
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -6009,67 +6036,67 @@ msgstr ""
 "Se selezionato, tutti i monitor client verranno utilizzati per la "
 "visualizzazione (funziona solo su client Windows)"
 
-#: transports/RDP/rdp_base.py:234
+#: transports/RDP/rdp_base.py:244
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Se selezionato, sarà consentita la smussatura dei caratteri"
 
-#: transports/RDP/rdp_base.py:238
+#: transports/RDP/rdp_base.py:248
 msgid "Connection Bar"
 msgstr "Barra di connessione"
 
-#: transports/RDP/rdp_base.py:240
+#: transports/RDP/rdp_base.py:250
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Se selezionato, verrà mostrata la barra di connessione (solo su client "
 "Windows)"
 
-#: transports/RDP/rdp_base.py:246 transports/RDS_enterprise/rds_base.py:174
+#: transports/RDP/rdp_base.py:256 transports/RDS_enterprise/rds_base.py:179
 msgid "Multimedia sync"
 msgstr "Sincronizzazione multimediale"
 
-#: transports/RDP/rdp_base.py:249 transports/RDS_enterprise/rds_base.py:177
+#: transports/RDP/rdp_base.py:259 transports/RDS_enterprise/rds_base.py:182
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Se selezionato. Il client Linux utilizzerà i parametri multimediali per "
 "xfreerdp"
 
-#: transports/RDP/rdp_base.py:254 transports/RDS_enterprise/rds_base.py:182
+#: transports/RDP/rdp_base.py:264 transports/RDS_enterprise/rds_base.py:187
 msgid "Use Alsa"
 msgstr "Usa Alsa"
 
-#: transports/RDP/rdp_base.py:257 transports/RDS_enterprise/rds_base.py:185
+#: transports/RDP/rdp_base.py:267 transports/RDS_enterprise/rds_base.py:190
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Se selezionato, il client Linux proverà ad usare ALSA, altrimenti verrà "
 "utilizzato Pulse"
 
-#: transports/RDP/rdp_base.py:262 transports/RDS_enterprise/rds_base.py:190
+#: transports/RDP/rdp_base.py:272 transports/RDS_enterprise/rds_base.py:195
 msgid "Printer string"
 msgstr "Stringa della stampante"
 
-#: transports/RDP/rdp_base.py:265 transports/RDS_enterprise/rds_base.py:193
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:198
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Se la stampante è selezionata, la stringa della stampante viene utilizzata "
 "con il client xfreerdp"
 
-#: transports/RDP/rdp_base.py:271 transports/RDS_enterprise/rds_base.py:199
+#: transports/RDP/rdp_base.py:281 transports/RDS_enterprise/rds_base.py:204
 msgid "Smartcard string"
 msgstr "Stringa della smartcard"
 
-#: transports/RDP/rdp_base.py:274 transports/RDS_enterprise/rds_base.py:202
+#: transports/RDP/rdp_base.py:284 transports/RDS_enterprise/rds_base.py:207
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Se la smartcard è selezionata, la stringa della smartcard viene utilizzata "
 "con il client xfreerdp"
 
-#: transports/RDP/rdp_base.py:280 transports/RDP/rdp_base.py:300
-#: transports/RDS_enterprise/rds_base.py:208
+#: transports/RDP/rdp_base.py:290 transports/RDP/rdp_base.py:310
+#: transports/RDS_enterprise/rds_base.py:213
 msgid "Custom parameters"
 msgstr "Parametri personalizzati"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:211
+#: transports/RDP/rdp_base.py:293 transports/RDS_enterprise/rds_base.py:216
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6077,11 +6104,11 @@ msgstr ""
 "Se non vuoto, parametro extra da includere per client Linux (per esempio /"
 "usb i, dev:054c:0268, o altro compatibile con il tuo client xfreerdp)"
 
-#: transports/RDP/rdp_base.py:290
+#: transports/RDP/rdp_base.py:300
 msgid "Allow Microsoft Rdp Client"
 msgstr "Consenti client Microsoft Rdp"
 
-#: transports/RDP/rdp_base.py:293
+#: transports/RDP/rdp_base.py:303
 msgid ""
 "If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE "
 "PROMPTED!"
@@ -6089,7 +6116,7 @@ msgstr ""
 "Se selezionato, consente l&#39;utilizzo di Microsoft Remote Desktop Client. "
 "LA PASSWORD SARÀ RICHIESTA!"
 
-#: transports/RDP/rdp_base.py:303
+#: transports/RDP/rdp_base.py:313
 msgid ""
 "If not empty, extra parameter to include for Mac OS X Freerdp Client (for "
 "example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp "
@@ -6113,19 +6140,33 @@ msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "Accesso RDS mediante RDP per vApp. Connessione diretta."
 
 #: transports/RDS_enterprise/rds_base.py:157
+#| msgid "Window Size"
+msgid "Window state"
+msgstr "Stato della finestra"
+
+#: transports/RDS_enterprise/rds_base.py:159
+msgid "UDS Will try to execute the applicaiton with the window in this state"
+msgstr ""
+"UDS tenterà di eseguire l&#39;applicazione con la finestra in questo stato"
+
+#: transports/RDS_enterprise/rds_base.py:162
+msgid "Normal"
+msgstr "Normale"
+
+#: transports/RDS_enterprise/rds_base.py:163
 msgid "Maximized"
 msgstr "Massimizzato"
 
-#: transports/RDS_enterprise/rds_base.py:160
-msgid "If checked, UDS Actor will try to execute application maximized)"
-msgstr ""
-"Se selezionato, UDS Actor tenterà di eseguire l&#39;applicazione ingrandita)"
+#: transports/RDS_enterprise/rds_base.py:164
+#| msgid "Maximized"
+msgid "Minimized"
+msgstr "Ridotto a icona"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:170
 msgid "Execute as shell"
 msgstr "Esegui come shell"
 
-#: transports/RDS_enterprise/rds_base.py:169
+#: transports/RDS_enterprise/rds_base.py:174
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
@@ -6332,7 +6373,7 @@ msgstr "Troppi errori di autenticazione. Utente temporaneamente bloccato"
 msgid "Invalid data"
 msgstr "Dati non validi"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:145
 msgid "Access limited by calendar"
 msgstr "Accesso limitato dal calendario"
 
@@ -6474,6 +6515,6 @@ msgstr ""
 "Il tuo servizio è in fase di creazione, per favore, attendi qualche secondo "
 "mentre viene completato.)"
 
-#: web/views/auth.py:151
+#: web/views/auth.py:154
 msgid "Authenticator does not provide information"
 msgstr "Autenticatore non fornisce informazioni"

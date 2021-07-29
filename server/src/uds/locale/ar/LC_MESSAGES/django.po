@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"POT-Creation-Date: 2021-07-29 13:12+0200\n"
 "PO-Revision-Date: 2021-07-08 10:58+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -30,7 +30,7 @@ msgstr "حسابات"
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:71
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:133
-#: REST/methods/transports.py:58 REST/methods/user_services.py:321
+#: REST/methods/transports.py:66 REST/methods/user_services.py:321
 #: REST/methods/user_services.py:396 REST/methods/users_groups.py:122
 #: REST/model.py:149
 msgid "Name"
@@ -41,7 +41,7 @@ msgstr "الاسم"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:73 REST/methods/proxies.py:62
 #: REST/methods/services.py:241 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:60 REST/methods/user_services.py:398
+#: REST/methods/transports.py:68 REST/methods/user_services.py:398
 #: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:173
 msgid "Comments"
@@ -56,7 +56,7 @@ msgstr "علامة الوقت"
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:79 REST/methods/proxies.py:63
 #: REST/methods/services.py:250 REST/methods/services_pools.py:142
-#: REST/methods/transports.py:63
+#: REST/methods/transports.py:77
 msgid "tags"
 msgstr "العلامات"
 
@@ -68,7 +68,7 @@ msgstr "اسم حمام السباحة"
 msgid "User name"
 msgstr "اسم المستخدم"
 
-#: REST/methods/accountsusage.py:94 core/util/state.py:78
+#: REST/methods/accountsusage.py:94 core/util/state.py:79
 #: core/util/states/common.py:71
 msgid "Running"
 msgstr "تشغيل"
@@ -115,11 +115,11 @@ msgstr "مضيف غير مدار"
 msgid "User service not found"
 msgstr "لم يتم العثور على خدمة المستخدم"
 
-#: REST/methods/actor_token.py:51 REST/methods/tunnel_token.py:51
+#: REST/methods/actor_token.py:51
 msgid "Actor tokens"
 msgstr "الرموز الفاعلة"
 
-#: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:54
+#: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:51
 #: reports/auto/fields.py:56 reports/stats/pools_performance.py:217
 #: reports/stats/pools_performance.py:236 reports/stats/pools_usage_day.py:64
 #: reports/stats/usage_by_pool.py:169 reports/stats/user_access.py:190
@@ -127,11 +127,11 @@ msgstr "الرموز الفاعلة"
 msgid "Date"
 msgstr "تاريخ"
 
-#: REST/methods/actor_token.py:55 REST/methods/tunnel_token.py:55
+#: REST/methods/actor_token.py:55 REST/methods/tunnel_token.py:52
 msgid "Issued by"
 msgstr "صادر عن"
 
-#: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:56
+#: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:53
 #: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
@@ -157,7 +157,7 @@ msgstr "تشغيل مرة واحدة"
 msgid "Log level"
 msgstr "تسجيل مستوى"
 
-#: REST/methods/actor_token.py:67 REST/methods/tunnel_token.py:63
+#: REST/methods/actor_token.py:67 REST/methods/tunnel_token.py:60
 msgid "Token isued by {} from {}"
 msgstr "يتم إقفال الرمز بواسطة {} من {}"
 
@@ -171,13 +171,13 @@ msgstr "Id"
 
 #: REST/methods/authenticators.py:67 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:72 REST/methods/services.py:242
-#: REST/methods/transports.py:59 REST/methods/user_services.py:397
+#: REST/methods/transports.py:67 REST/methods/user_services.py:397
 msgid "Type"
 msgstr "نوع"
 
 #: REST/methods/authenticators.py:69 REST/methods/meta_service_pools.py:88
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:57 REST/methods/user_services.py:395
+#: REST/methods/transports.py:65 REST/methods/user_services.py:395
 #: REST/model.py:185 models/meta_pool.py:73
 msgid "Priority"
 msgstr "الأولوية"
@@ -189,7 +189,7 @@ msgid "Visible"
 msgstr "مرئي"
 
 #: REST/methods/authenticators.py:71 REST/methods/meta_pools.py:77
-#: REST/methods/transports.py:115 REST/model.py:201
+#: REST/methods/transports.py:164 REST/model.py:201
 msgid "Label"
 msgstr "التسمية"
 
@@ -385,7 +385,7 @@ msgid "Pool"
 msgstr "تجمع"
 
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:122
-#: REST/methods/tunnel_token.py:57 REST/methods/user_services.py:139
+#: REST/methods/tunnel_token.py:54 REST/methods/user_services.py:139
 #: REST/methods/user_services.py:270 auths/IP/authenticator.py:68
 msgid "IP"
 msgstr "IP"
@@ -433,7 +433,7 @@ msgstr "تمت ازالت البند مسبقاً"
 msgid "Item is not removable"
 msgstr "البند غير قابل للإزالة"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:88
+#: REST/methods/networks.py:58 REST/methods/transports.py:114
 msgid "Networks"
 msgstr "الشبكات"
 
@@ -559,7 +559,7 @@ msgstr "تحقق من الشهادة"
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:77
 #: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:66
 #: services/VCloud_enterprise/provider.py:32
-#: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:100
+#: services/Vmware_enterprise/provider.py:45 services/Xen/provider.py:100
 msgid "Host"
 msgstr "المضيف"
 
@@ -578,7 +578,7 @@ msgstr "الخادم (IP أو FQDN) الذي سيعمل بمثابة وكيل."
 #: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:73
 #: services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
-#: services/Vmware_enterprise/provider.py:42
+#: services/Vmware_enterprise/provider.py:52
 msgid "Port"
 msgstr "منفذ"
 
@@ -699,8 +699,8 @@ msgstr "موافق"
 msgid "Services Pool Groups"
 msgstr "خدمات تجمع مجموعات"
 
-#: REST/methods/services_pools.py:131 REST/methods/transports.py:61
-#: REST/methods/transports.py:106
+#: REST/methods/services_pools.py:131 REST/methods/transports.py:71
+#: REST/methods/transports.py:152
 msgid "Service Pools"
 msgstr "تجمعات الخدمة "
 
@@ -847,19 +847,19 @@ msgstr "استخدام الخدمات"
 msgid "Service"
 msgstr "خدمة"
 
-#: REST/methods/transports.py:55
+#: REST/methods/transports.py:63
 msgid "Transports"
 msgstr "النقل"
 
-#: REST/methods/transports.py:62
+#: REST/methods/transports.py:76
 msgid "Devices"
 msgstr "جهاز"
 
-#: REST/methods/transports.py:79
+#: REST/methods/transports.py:97
 msgid "Network access"
 msgstr "الوصول إلى شبكة الاتصال"
 
-#: REST/methods/transports.py:80
+#: REST/methods/transports.py:99
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -867,7 +867,7 @@ msgstr ""
 "إذا تم تحديده، سيتم تمكين النقل للشبكات المحددة. إذا تم إلغاء تحديده، سيتم "
 "تعطيل النقل لشبكات محددة"
 
-#: REST/methods/transports.py:89
+#: REST/methods/transports.py:116
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
@@ -875,11 +875,11 @@ msgstr ""
 "الشبكات المرتبطة بهذا النقل. في حالة عدم وجود شبكة اتصال محددة، سوف يعني "
 "\"جميع الشبكات\""
 
-#: REST/methods/transports.py:97
+#: REST/methods/transports.py:134
 msgid "Allowed Devices"
 msgstr "أجهزة مسموحة "
 
-#: REST/methods/transports.py:98
+#: REST/methods/transports.py:136
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
@@ -887,15 +887,20 @@ msgstr ""
 "إذا كان فارغا، لن يسمح لأي نوع من الأجهزة المتوافقة مع هذا النقل. خلاف ذلك،  "
 "يسمح لأجهزة متوافقة فقط مع القيم المحددة"
 
-#: REST/methods/transports.py:107
+#: REST/methods/transports.py:153
 msgid "Currently assigned services pools"
 msgstr "مجمعات الخدمات المعينة حاليا"
 
-#: REST/methods/transports.py:116
+#: REST/methods/transports.py:166
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr "ملصق نقل Metapool (يُستخدم فقط في تجميع عمليات نقل metapool)"
 
-#: REST/methods/tunnel_token.py:53
+#: REST/methods/tunnel_token.py:48
+#| msgid "Tunneled"
+msgid "Tunnel tokens"
+msgstr "رموز النفق"
+
+#: REST/methods/tunnel_token.py:50
 msgid "Token"
 msgstr "رمز"
 
@@ -994,7 +999,7 @@ msgstr "المستخدمون الحاليون"
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
 #: services/Proxmox/provider.py:82 services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
-#: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:107
+#: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:75
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:75
@@ -1139,7 +1144,7 @@ msgstr ""
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
 #: services/Proxmox/provider.py:92 services/RDS_enterprise/provider.py:126
 #: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
-#: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:115
+#: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:76
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:81
@@ -1164,7 +1169,7 @@ msgstr "كلمة مرور المستخدم ldap"
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
 #: services/Proxmox/provider.py:123 services/VCloud_enterprise/provider.py:63
-#: services/Vmware_enterprise/provider.py:50
+#: services/Vmware_enterprise/provider.py:99
 msgid "Timeout"
 msgstr "مهلة"
 
@@ -1626,11 +1631,11 @@ msgstr "المصادق SAML"
 msgid "SAML (v2.0) Authenticator"
 msgstr "المصادق (SAML (v2.0"
 
-#: auths/SAML_enterprise/saml.py:127
+#: auths/SAML_enterprise/saml.py:129
 msgid "Private key"
 msgstr "المفتاح الخاص"
 
-#: auths/SAML_enterprise/saml.py:128
+#: auths/SAML_enterprise/saml.py:132
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1638,15 +1643,15 @@ msgstr ""
 "استخدام المفتاح الخاص للتسجيل ولهذه السمة، كما تم إنشاؤه في الأساس 64 من "
 "OpenSSL"
 
-#: auths/SAML_enterprise/saml.py:129 auths/SAML_enterprise/saml.py:134
+#: auths/SAML_enterprise/saml.py:135 auths/SAML_enterprise/saml.py:146
 msgid "Certificates"
 msgstr "شهادات"
 
-#: auths/SAML_enterprise/saml.py:132 transports/SPICE/spice_base.py:82
+#: auths/SAML_enterprise/saml.py:140 transports/SPICE/spice_base.py:82
 msgid "Certificate"
 msgstr "شهادة"
 
-#: auths/SAML_enterprise/saml.py:133
+#: auths/SAML_enterprise/saml.py:143
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1654,62 +1659,62 @@ msgstr ""
 "المفتاح العمومي يستخدم للإمضاء والتشفير (الجزء العلني من المفتاح الخاص "
 "السابق)، كما ولد في base64 من OpenSSL"
 
-#: auths/SAML_enterprise/saml.py:137
+#: auths/SAML_enterprise/saml.py:151
 msgid "IDP Metadata"
 msgstr "IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:138
+#: auths/SAML_enterprise/saml.py:154
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "يمكنك إدخال URL أو بيانات IDP Metadata هنا داخليا أو بيان التعريف نفسه (xml)"
 
-#: auths/SAML_enterprise/saml.py:139 auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:157 auths/SAML_enterprise/saml.py:166
 msgid "Metadata"
 msgstr "بيانات التعريف"
 
-#: auths/SAML_enterprise/saml.py:142
+#: auths/SAML_enterprise/saml.py:161
 msgid "Entity ID"
 msgstr "معرف الكيان"
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:164
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP ID. إذا ترك فارغاً، ستكون هذه المعطيات من محدد موقع معلومات الخادم"
 
-#: auths/SAML_enterprise/saml.py:147
+#: auths/SAML_enterprise/saml.py:172
 msgid "User name attrs"
 msgstr "User name attrs"
 
-#: auths/SAML_enterprise/saml.py:148
+#: auths/SAML_enterprise/saml.py:174
 msgid "Fields from where to extract user name"
 msgstr "حقول منها يستخرج اسم المستخدم"
 
-#: auths/SAML_enterprise/saml.py:148 auths/SAML_enterprise/saml.py:153
-#: auths/SAML_enterprise/saml.py:158
+#: auths/SAML_enterprise/saml.py:176 auths/SAML_enterprise/saml.py:186
+#: auths/SAML_enterprise/saml.py:196
 msgid "Attributes"
 msgstr "سمات"
 
-#: auths/SAML_enterprise/saml.py:152
+#: auths/SAML_enterprise/saml.py:182
 msgid "Group name attrs"
 msgstr "Group name attrs"
 
-#: auths/SAML_enterprise/saml.py:153
+#: auths/SAML_enterprise/saml.py:184
 msgid "Fields from where to extract the groups"
 msgstr "حقول منها تستخرج المجموعات"
 
-#: auths/SAML_enterprise/saml.py:157
+#: auths/SAML_enterprise/saml.py:192
 msgid "Real name attrs"
 msgstr "Real name attrs"
 
-#: auths/SAML_enterprise/saml.py:158
+#: auths/SAML_enterprise/saml.py:194
 msgid "Fields from where to extract the real name"
 msgstr "حقول منها يستخرج الاسم الحقيقي"
 
-#: auths/SAML_enterprise/saml.py:176
+#: auths/SAML_enterprise/saml.py:216
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "لا يدعم أداة مصادقة SAML المسافات البيضاء في الحقل NAME"
 
-#: auths/SAML_enterprise/saml.py:183
+#: auths/SAML_enterprise/saml.py:230
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1717,11 +1722,11 @@ msgstr ""
 "يجب أن تكون شهادة الملقم PEM صالحة (PEM شهادات تبدأ ب-----BEGIN "
 "CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:238
 msgid "Invalid server certificate. "
 msgstr "شهادة الملقم غير صالحة. "
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:249
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1729,48 +1734,48 @@ msgstr ""
 "يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN "
 "RSA PRIVATE KEY-----"
 
-#: auths/SAML_enterprise/saml.py:197
+#: auths/SAML_enterprise/saml.py:257
 msgid "Invalid private key. "
 msgstr "المفتاح الخاص غير صالح. "
 
-#: auths/SAML_enterprise/saml.py:214
+#: auths/SAML_enterprise/saml.py:276
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "لا يمكن إحضار url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:222
+#: auths/SAML_enterprise/saml.py:287
 msgid " (obtained from URL)"
 msgstr " (تم الحصول عليها من URL)"
 
-#: auths/SAML_enterprise/saml.py:223
+#: auths/SAML_enterprise/saml.py:289
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML لا تبدو صالحة لبيانات التعريف IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:239
+#: auths/SAML_enterprise/saml.py:311
 msgid "Can't access idp metadata"
 msgstr "لا يمكن الوصول إلى بيانات التعريف IDP Metadata"
 
-#: auths/Sample/SampleAuth.py:76
+#: auths/Sample/SampleAuth.py:79
 msgid "Sample Authenticator"
 msgstr "مصادق نموذجي"
 
-#: auths/Sample/SampleAuth.py:88
+#: auths/Sample/SampleAuth.py:91
 msgid "Sample dummy authenticator"
 msgstr "نموذج المصادق الغبي"
 
-#: auths/Sample/SampleAuth.py:106
+#: auths/Sample/SampleAuth.py:109
 msgid "Fake User"
 msgstr "مستخدم وهمي"
 
-#: auths/Sample/SampleAuth.py:109
+#: auths/Sample/SampleAuth.py:112
 msgid "Fake Group"
 msgstr "مجموعة وهمية"
 
-#: auths/Sample/SampleAuth.py:115
+#: auths/Sample/SampleAuth.py:118
 msgid "Groups"
 msgstr "المجموعات"
 
-#: auths/Sample/SampleAuth.py:128
+#: auths/Sample/SampleAuth.py:132
 msgid "We need more than two groups!"
 msgstr "نحن بحاجة إلى أكثر من مجموعتين!"
 
@@ -1953,7 +1958,7 @@ msgstr "خدمة قاعدة"
 
 #: core/services/service.py:141 core/services/service.py:150
 #: models/permissions.py:92 models/permissions.py:96
-#: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:74
+#: services/Azure_enterprise/helpers.py:100 services/OpenStack/helpers.py:74
 #: services/Proxmox/service.py:194 services/Sample/service.py:98
 #: services/Sample/service.py:104 services/TestService_enterprise/service.py:28
 msgid "None"
@@ -1979,79 +1984,79 @@ msgstr "النفق"
 msgid "Can't contact LDAP server"
 msgstr "لا يمكن الاتصال بخادم LDAP"
 
-#: core/util/state.py:65 core/util/states/common.py:59
+#: core/util/state.py:66 core/util/states/common.py:59
 msgid "Active"
 msgstr "نشط"
 
-#: core/util/state.py:66 core/util/states/common.py:60
+#: core/util/state.py:67 core/util/states/common.py:60
 msgid "Inactive"
 msgstr "غير نشط"
 
-#: core/util/state.py:67 core/util/states/common.py:61
+#: core/util/state.py:68 core/util/states/common.py:61
 msgid "Blocked"
 msgstr "محظور"
 
-#: core/util/state.py:68 core/util/states/common.py:62
+#: core/util/state.py:69 core/util/states/common.py:62
 msgid "Waiting publication"
 msgstr "في انتظار النشر"
 
-#: core/util/state.py:69 core/util/states/common.py:63
+#: core/util/state.py:70 core/util/states/common.py:63
 msgid "In preparation"
 msgstr "في إعداد"
 
-#: core/util/state.py:70 core/util/states/common.py:64
+#: core/util/state.py:71 core/util/states/common.py:64
 msgid "Valid"
 msgstr "صالحة"
 
-#: core/util/state.py:71 core/util/state.py:73 core/util/states/common.py:66
+#: core/util/state.py:72 core/util/state.py:74 core/util/states/common.py:66
 msgid "Removing"
 msgstr "إزالة"
 
-#: core/util/state.py:72
+#: core/util/state.py:73
 msgid "Restrained"
 msgstr "المقيد"
 
-#: core/util/state.py:74 core/util/states/common.py:67
+#: core/util/state.py:75 core/util/states/common.py:67
 msgid "Removed"
 msgstr "مزال"
 
-#: core/util/state.py:75 core/util/states/common.py:68
+#: core/util/state.py:76 core/util/states/common.py:68
 msgid "Canceled"
 msgstr "ملغى"
 
-#: core/util/state.py:76 core/util/states/common.py:69
+#: core/util/state.py:77 core/util/states/common.py:69
 msgid "Canceling"
 msgstr "إلغاء"
 
-#: core/util/state.py:77 core/util/states/common.py:70
+#: core/util/state.py:78 core/util/states/common.py:70
 msgid "Error"
 msgstr "خطأ"
 
-#: core/util/state.py:79 core/util/states/common.py:72
+#: core/util/state.py:80 core/util/states/common.py:72
 msgid "Finished"
 msgstr "انتهى"
 
-#: core/util/state.py:80 core/util/states/common.py:73
+#: core/util/state.py:81 core/util/states/common.py:73
 msgid "Waiting execution"
 msgstr "في انتظار التنفيذ"
 
-#: core/util/state.py:81 core/util/states/common.py:74
+#: core/util/state.py:82 core/util/states/common.py:74
 msgid "Balancing"
 msgstr "موازنة"
 
-#: core/util/state.py:82 core/util/states/common.py:75
+#: core/util/state.py:83 core/util/states/common.py:75
 msgid "In maintenance"
 msgstr "في الصيانة"
 
-#: core/util/state.py:83 core/util/states/common.py:76
+#: core/util/state.py:84 core/util/states/common.py:76
 msgid "Waiting OS"
 msgstr "في انتظار نظام التشغيل"
 
-#: core/util/state.py:84
+#: core/util/state.py:85
 msgid "Too many preparing services"
 msgstr "عدد كبير من الخدمات المهيأة"
 
-#: core/util/state.py:85
+#: core/util/state.py:86
 msgid "Meta member"
 msgstr "عضو ميتا"
 
@@ -2083,23 +2088,23 @@ msgstr "المستخدمون مع الخدمات"
 msgid "Cached"
 msgstr "مخبأ"
 
-#: core/util/tools.py:144
+#: core/util/tools.py:152
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{} أيام {: d}: {: 02d}: {: 02d}"
 
-#: core/util/tools.py:161
+#: core/util/tools.py:171
 msgid "The basename is not a valid for a hostname"
 msgstr "اسم القاعدة ليس صالحًا لاسم المضيف"
 
-#: core/util/tools.py:164
+#: core/util/tools.py:176
 msgid "The length of basename plus length must be greater than 0"
 msgstr "يجب أن يكون طول اسم القاعدة زائد الطول أكبر من 0"
 
-#: core/util/tools.py:167
+#: core/util/tools.py:181
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "لا يجب أن يكون طول اسم بالإضافة إلى طول قاعدة  أكبر من 15"
 
-#: core/util/tools.py:170
+#: core/util/tools.py:186
 msgid "The machine name can't be only numbers"
 msgstr "لا يمكن أن يكون اسم الجهاز أرقام فقط"
 
@@ -2107,30 +2112,30 @@ msgstr "لا يمكن أن يكون اسم الجهاز أرقام فقط"
 msgid "Numeric"
 msgstr "رقمية"
 
-#: core/util/validators.py:64
+#: core/util/validators.py:66
 #, python-brace-format
 msgid "{0} must be greater than or equal to {1}"
 msgstr "{0} يجب أن يكون أكبر من أو يساوي {1}"
 
-#: core/util/validators.py:67
+#: core/util/validators.py:74
 #, python-brace-format
 msgid "{0} must be lower than or equal to {1}"
 msgstr "{0} يجب أن يكون أقل من أو يساوي {1}"
 
-#: core/util/validators.py:72
+#: core/util/validators.py:81
 #, python-brace-format
 msgid "{0} contains invalid characters"
 msgstr "{0} يحتوي على أحرف غير صالحة"
 
-#: core/util/validators.py:81
+#: core/util/validators.py:90
 msgid "{} exceeds maximum host name length."
 msgstr "{} يتجاوز الحد الأقصى لطول اسم المضيف."
 
-#: core/util/validators.py:92
+#: core/util/validators.py:103
 msgid "{} is not a valid hostname"
 msgstr "{} ليس اسم مضيف صالحًا"
 
-#: core/util/validators.py:136
+#: core/util/validators.py:152
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
@@ -3068,8 +3073,8 @@ msgstr "التي تم الحصول عليها من اشتراكات"
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:100 services/VCloud_enterprise/provider.py:60
-#: services/Vmware_enterprise/provider.py:47
-#: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:123
+#: services/Vmware_enterprise/provider.py:76
+#: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
 msgid "Creation concurrency"
 msgstr "تزامن الخلق"
 
@@ -3081,7 +3086,7 @@ msgstr "تزامن الخلق"
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
 #: services/Proxmox/provider.py:105 services/VCloud_enterprise/provider.py:60
-#: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:128
+#: services/Vmware_enterprise/provider.py:81 services/Xen/provider.py:128
 msgid "Maximum number of concurrently creating VMs"
 msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة الظاهرية."
 
@@ -3093,8 +3098,8 @@ msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة ا
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:111 services/VCloud_enterprise/provider.py:61
-#: services/Vmware_enterprise/provider.py:48
-#: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:134
+#: services/Vmware_enterprise/provider.py:87
+#: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
 msgid "Removal concurrency"
 msgstr "تزامن الإزالة."
 
@@ -3106,7 +3111,7 @@ msgstr "تزامن الإزالة."
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
 #: services/Proxmox/provider.py:116 services/VCloud_enterprise/provider.py:61
-#: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:139
+#: services/Vmware_enterprise/provider.py:92 services/Xen/provider.py:139
 msgid "Maximum number of concurrently removing VMs"
 msgstr "الحد الأقصى لعدد الأجهزة الافتراضية إزالة في وقت واحد"
 
@@ -3315,7 +3320,7 @@ msgstr "المهلة بالثواني لاتصال HyperV"
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:103
 #: services/Nutanix_enterprise/provider.py:45 services/OVirt/provider.py:117
-#: services/Vmware_enterprise/provider.py:51 services/Xen/provider.py:146
+#: services/Vmware_enterprise/provider.py:109 services/Xen/provider.py:146
 msgid "Macs range"
 msgstr "نطاق MAC"
 
@@ -3332,7 +3337,7 @@ msgstr "اختبار اتصال ناجح"
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/NutanixPrism_enterprise/provider.py:262
 #: services/Nutanix_enterprise/provider.py:228 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:312 services/Vmware_enterprise/provider.py:168
+#: services/Proxmox/provider.py:312 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "فشل الاتصال. تحقق اتصال params"
 
@@ -4151,12 +4156,12 @@ msgstr "ثابت IP آلات مزود"
 msgid "Provides connection to machines by IP"
 msgstr "يوفر اتصال إلى الأجهزة عن طريق IP"
 
-#: services/PhysicalMachines/service_multi.py:63
+#: services/PhysicalMachines/service_multi.py:64
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "رمز الخدمة"
 
-#: services/PhysicalMachines/service_multi.py:66
+#: services/PhysicalMachines/service_multi.py:67
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -4165,43 +4170,56 @@ msgstr ""
 "رمز الخدمة الذي سيتم استخدامه بواسطة الجهات الفاعلة للتواصل مع الخدمة. اتركه "
 "فارغًا للتخصيص المستمر."
 
-#: services/PhysicalMachines/service_multi.py:74
+#: services/PhysicalMachines/service_multi.py:75
 #: services/RDS_enterprise/provider.py:49
 msgid "List of servers"
 msgstr "قائمة ملقمات"
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:76
 msgid "List of servers available for this service"
 msgstr "قائمة الخوادم المتاحة لهذه الخدمة"
 
-#: services/PhysicalMachines/service_multi.py:80
+#: services/PhysicalMachines/service_multi.py:81
 msgid "Check Port"
 msgstr "تحقق من المنفذ"
 
-#: services/PhysicalMachines/service_multi.py:84
+#: services/PhysicalMachines/service_multi.py:85
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
 "إذا لم تكن صفرية ، فسيتم تقديم المضيفين الذين يستجيبون للاتصال على هذا "
 "المنفذ فقط."
 
-#: services/PhysicalMachines/service_multi.py:91
+#: services/PhysicalMachines/service_multi.py:92
 msgid "Skip time"
 msgstr "تخطي الوقت"
 
-#: services/PhysicalMachines/service_multi.py:94
+#: services/PhysicalMachines/service_multi.py:95
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr "إذا فشل مضيف في التحقق ، فتخطه لهذا الوقت (بالدقائق)."
 
-#: services/PhysicalMachines/service_multi.py:101
+#: services/PhysicalMachines/service_multi.py:103
+#| msgid "Max. session time"
+msgid "Max session per machine"
+msgstr "أقصى جلسة لكل آلة"
+
+#: services/PhysicalMachines/service_multi.py:107
+msgid ""
+"Maximum session duration before UDS thinks this machine got locked and "
+"releases it (hours). 0 means \"never\"."
+msgstr ""
+"المدة القصوى للجلسة قبل أن تعتقد UDS أن هذا الجهاز قد تم قفله وتحريره (ساعات)"
+". 0 يعني \"أبدًا\"."
+
+#: services/PhysicalMachines/service_multi.py:115
 msgid "Static Multiple IP"
 msgstr "IP ثابت متعدد."
 
-#: services/PhysicalMachines/service_multi.py:103
+#: services/PhysicalMachines/service_multi.py:117
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات مشتغلة ب IP"
 
-#: services/PhysicalMachines/service_multi.py:134
+#: services/PhysicalMachines/service_multi.py:150
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "تم اكتشاف قيمة غير صالحة في قائمة الخوادم: \"{}\""
 
@@ -4545,7 +4563,7 @@ msgstr "الحد الأقصى لعدد الخدمات  المسموح بها (0 
 msgid "Wait spawned processes"
 msgstr "انتظر العمليات الناتجة"
 
-#: services/RDS_enterprise/service.py:99
+#: services/RDS_enterprise/service.py:100
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -4553,7 +4571,7 @@ msgstr ""
 "إذا تم تحديده، RDS Actor سينتظر إنهاء التطبيق وجميع العمليات قبل النظر في "
 "تطبيق الخروج"
 
-#: services/RDS_enterprise/service.py:109
+#: services/RDS_enterprise/service.py:112
 msgid "A valid application path is required"
 msgstr "مطلوب مسار تطبيق صحيح"
 
@@ -4800,27 +4818,27 @@ msgstr "محلي"
 msgid "Remote"
 msgstr "التحكم عن بعد"
 
-#: services/Vmware_enterprise/provider.py:41
+#: services/Vmware_enterprise/provider.py:47
 msgid "VMWare VCenter Server IP or Hostname"
 msgstr "برنامج VMWare IP خادم VCenter أو اسم المضيف"
 
-#: services/Vmware_enterprise/provider.py:42
+#: services/Vmware_enterprise/provider.py:55
 msgid "VMWare VC Server Port (usually 443)"
 msgstr "VMWare الخادم ميناء VC (عادة 443)"
 
-#: services/Vmware_enterprise/provider.py:43
+#: services/Vmware_enterprise/provider.py:62
 msgid "User with valid privileges on VC"
 msgstr "المستخدم مع امتيازات صالح على VC"
 
-#: services/Vmware_enterprise/provider.py:44
+#: services/Vmware_enterprise/provider.py:69
 msgid "Password of the user of the VC"
 msgstr "كلمة السر للمستخدم من VC"
 
-#: services/Vmware_enterprise/provider.py:50
+#: services/Vmware_enterprise/provider.py:102
 msgid "Timeout in seconds of connection to VC"
 msgstr "المهلة بالثواني لاتصال VC"
 
-#: services/Vmware_enterprise/provider.py:52
+#: services/Vmware_enterprise/provider.py:114
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
@@ -4828,15 +4846,15 @@ msgstr ""
 "مجموعة MAC الصالحة للآلات التي تم إنشاؤها. يجب أن يكون داخل 00: 50: 56: 00: "
 "00: 00-00: 50: 56: 3F: FF: FF"
 
-#: services/Vmware_enterprise/provider.py:56
+#: services/Vmware_enterprise/provider.py:126
 msgid "VMWare VCenter Platform Provider"
 msgstr "مزود برنامج VMWare VCenter منصة"
 
-#: services/Vmware_enterprise/provider.py:58
+#: services/Vmware_enterprise/provider.py:128
 msgid "Provides connection to Virtual Center Services"
 msgstr "توفر وصولا إلى مركز الظاهرية"
 
-#: services/Vmware_enterprise/provider.py:166
+#: services/Vmware_enterprise/provider.py:287
 msgid "Connection params ok"
 msgstr "اتصال params ok"
 
@@ -5304,7 +5322,7 @@ msgstr "اظهر خلفية."
 
 #: transports/HTML5RDP/html5rdp.py:134
 #: transports/HTML5RDS_enterprise/html5rds.py:123
-#: transports/RDP/rdp_base.py:213
+#: transports/RDP/rdp_base.py:222
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -5314,25 +5332,25 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:139
 #: transports/HTML5RDS_enterprise/html5rds.py:128
-#: transports/RDP/rdp_base.py:226
+#: transports/RDP/rdp_base.py:235
 msgid "Allow Desk.Comp."
 msgstr "السماح Desk.Comp."
 
 #: transports/HTML5RDP/html5rdp.py:141
 #: transports/HTML5RDS_enterprise/html5rds.py:130
-#: transports/RDP/rdp_base.py:228
+#: transports/RDP/rdp_base.py:237
 msgid "If checked, desktop composition will be allowed"
 msgstr "إذا تم، سيكون يسمح تكوين سطح المكتب."
 
 #: transports/HTML5RDP/html5rdp.py:145
 #: transports/HTML5RDS_enterprise/html5rds.py:134
-#: transports/RDP/rdp_base.py:232 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:241 transports/RDS_enterprise/rds_base.py:150
 msgid "Font Smoothing"
 msgstr "تجانس الخطوط"
 
 #: transports/HTML5RDP/html5rdp.py:147
 #: transports/HTML5RDS_enterprise/html5rds.py:136
-#: transports/RDS_enterprise/rds_base.py:152
+#: transports/RDS_enterprise/rds_base.py:153
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "في حالة تحديد تجانس الخطوط سيتم السماح (عملاء windows فقط)"
 
@@ -5503,13 +5521,22 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (تشفير طبقة النقل الأمن)"
 
-#: transports/HTML5RDP/html5rdp.py:246
+#: transports/HTML5RDP/html5rdp.py:247 transports/RDP/rdp_base.py:172
+#| msgid "Port"
+msgid "RDP Port"
+msgstr "منفذ RDP"
+
+#: transports/HTML5RDP/html5rdp.py:248 transports/RDP/rdp_base.py:173
+msgid "Use this port as RDP port. Defaults to 3389."
+msgstr "استخدم هذا المنفذ كمنفذ RDP. الافتراضي هو 3389."
+
+#: transports/HTML5RDP/html5rdp.py:256
 #: transports/HTML5RDS_enterprise/html5rds.py:223
 #: transports/HTML5VNC/html5vnc.py:109
 msgid "Ticket Validity"
 msgstr "صلاحية التذكرة"
 
-#: transports/HTML5RDP/html5rdp.py:250
+#: transports/HTML5RDP/html5rdp.py:260
 #: transports/HTML5RDS_enterprise/html5rds.py:227
 #: transports/HTML5VNC/html5vnc.py:112
 msgid ""
@@ -5519,42 +5546,42 @@ msgstr ""
 "يسمح الوقت، بالثواني، للعميل HTML5 لإعادة تحميل البيانات من \"وسيط مصغراً\". "
 "ويوصي بالقيمة الافتراضية ل 60."
 
-#: transports/HTML5RDP/html5rdp.py:259
+#: transports/HTML5RDP/html5rdp.py:269
 #: transports/HTML5RDS_enterprise/html5rds.py:236
 #: transports/HTML5VNC/html5vnc.py:119 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "فرض نافذة HTML جديدة"
 
-#: transports/HTML5RDP/html5rdp.py:260
+#: transports/HTML5RDP/html5rdp.py:270
 #: transports/HTML5RDS_enterprise/html5rds.py:237
 #: transports/HTML5VNC/html5vnc.py:120
 msgid "Select windows behavior for new connections on HTML5"
 msgstr "حدد سلوك النوافذ للاتصالات الجديدة على HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:265
+#: transports/HTML5RDP/html5rdp.py:275
 #: transports/HTML5RDS_enterprise/html5rds.py:242
 #: transports/HTML5VNC/html5vnc.py:123
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr "افتح كل اتصال في نفس النافذة ، ولكن مع الاحتفاظ بنافذة UDS."
 
-#: transports/HTML5RDP/html5rdp.py:268
+#: transports/HTML5RDP/html5rdp.py:278
 #: transports/HTML5RDS_enterprise/html5rds.py:245
 #: transports/HTML5VNC/html5vnc.py:124
 msgid "Force every connection to be opened on a new window."
 msgstr "فرض كل اتصال ليتم فتحه في نافذة جديدة."
 
-#: transports/HTML5RDP/html5rdp.py:272
+#: transports/HTML5RDP/html5rdp.py:282
 #: transports/HTML5RDS_enterprise/html5rds.py:249
 #: transports/HTML5VNC/html5vnc.py:125
 msgid "Override UDS window and replace it with the connection."
 msgstr "تجاوز نافذة UDS واستبدلها بالاتصال."
 
-#: transports/HTML5RDP/html5rdp.py:280
+#: transports/HTML5RDP/html5rdp.py:290
 #: transports/HTML5RDS_enterprise/html5rds.py:256
 msgid "Glyptodon Enterprise context path"
 msgstr "مسار سياق Glyptodon Enterprise"
 
-#: transports/HTML5RDP/html5rdp.py:283
+#: transports/HTML5RDP/html5rdp.py:293
 #: transports/HTML5RDS_enterprise/html5rds.py:259
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
@@ -5563,13 +5590,13 @@ msgstr ""
 "مسار مخصص لنفق Glyptodon Enterprise. (صالح فقط لـ Glyptodon Enterprise "
 "Tunnel)"
 
-#: transports/HTML5RDP/html5rdp.py:298
+#: transports/HTML5RDP/html5rdp.py:308
 #: transports/HTML5RDS_enterprise/html5rds.py:273
 #: transports/HTML5VNC/html5vnc.py:137
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
-#: transports/HTML5RDP/html5rdp.py:303
+#: transports/HTML5RDP/html5rdp.py:313
 #: transports/HTML5RDS_enterprise/html5rds.py:278
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
@@ -5622,7 +5649,7 @@ msgstr "منفذ خادم VNC"
 msgid "Port of the VNC server."
 msgstr "منفذ خادم VNC."
 
-#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:196
+#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:205
 #: transports/RDS_enterprise/rds_base.py:136
 msgid "Color depth"
 msgstr "عمق اللون"
@@ -5731,7 +5758,7 @@ msgid ""
 msgstr "في حالة التمكين ، سيتم التحقق من شهادة خادم النفق (موصى به)."
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:134 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:106 transports/X2GO/x2go_tunnel.py:117
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
@@ -5840,88 +5867,88 @@ msgstr "دعم Credssp"
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "إذا راجعت، سيمكن دعم موفر بيانات الاعتماد)"
 
-#: transports/RDP/rdp_base.py:172
+#: transports/RDP/rdp_base.py:181
 msgid "Screen Size"
 msgstr "حجم الشاشة"
 
-#: transports/RDP/rdp_base.py:174
+#: transports/RDP/rdp_base.py:183
 msgid "Screen size for this transport"
 msgstr "حجم الشاشة لهذا النقل"
 
-#: transports/RDP/rdp_base.py:198 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:207 transports/RDS_enterprise/rds_base.py:138
 msgid "Color depth for this connection"
 msgstr "عمق الألوان لهذا الاتصال"
 
-#: transports/RDP/rdp_base.py:210
+#: transports/RDP/rdp_base.py:219
 msgid "Wallpaper/theme"
 msgstr "خلفية/الموضوع"
 
-#: transports/RDP/rdp_base.py:218
+#: transports/RDP/rdp_base.py:227
 msgid "Multiple monitors"
 msgstr "أجهزة عرض متعددة"
 
-#: transports/RDP/rdp_base.py:221
+#: transports/RDP/rdp_base.py:230
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr ""
 "إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
 
-#: transports/RDP/rdp_base.py:234
+#: transports/RDP/rdp_base.py:244
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "إذا راجعت، سيسمح لتجانس الخطوط"
 
-#: transports/RDP/rdp_base.py:238
+#: transports/RDP/rdp_base.py:248
 msgid "Connection Bar"
 msgstr "شريط الاتصال"
 
-#: transports/RDP/rdp_base.py:240
+#: transports/RDP/rdp_base.py:250
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "إذا راجعت، سيظهر شريط الاتصال (فقط على عملاء Windows)"
 
-#: transports/RDP/rdp_base.py:246 transports/RDS_enterprise/rds_base.py:174
+#: transports/RDP/rdp_base.py:256 transports/RDS_enterprise/rds_base.py:179
 msgid "Multimedia sync"
 msgstr "تزامن الوسائط المتعددة"
 
-#: transports/RDP/rdp_base.py:249 transports/RDS_enterprise/rds_base.py:177
+#: transports/RDP/rdp_base.py:259 transports/RDS_enterprise/rds_base.py:182
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
 
-#: transports/RDP/rdp_base.py:254 transports/RDS_enterprise/rds_base.py:182
+#: transports/RDP/rdp_base.py:264 transports/RDS_enterprise/rds_base.py:187
 msgid "Use Alsa"
 msgstr "استخدام ALSA"
 
-#: transports/RDP/rdp_base.py:257 transports/RDS_enterprise/rds_base.py:185
+#: transports/RDP/rdp_base.py:267 transports/RDS_enterprise/rds_base.py:190
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
-#: transports/RDP/rdp_base.py:262 transports/RDS_enterprise/rds_base.py:190
+#: transports/RDP/rdp_base.py:272 transports/RDS_enterprise/rds_base.py:195
 msgid "Printer string"
 msgstr "سلسلة الطابعة"
 
-#: transports/RDP/rdp_base.py:265 transports/RDS_enterprise/rds_base.py:193
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:198
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "إذا تم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل XFreeRDP"
 
-#: transports/RDP/rdp_base.py:271 transports/RDS_enterprise/rds_base.py:199
+#: transports/RDP/rdp_base.py:281 transports/RDS_enterprise/rds_base.py:204
 msgid "Smartcard string"
 msgstr "سلسلة البطاقة الذكية"
 
-#: transports/RDP/rdp_base.py:274 transports/RDS_enterprise/rds_base.py:202
+#: transports/RDP/rdp_base.py:284 transports/RDS_enterprise/rds_base.py:207
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "إذا تم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع العميل "
 "XFreeRDP"
 
-#: transports/RDP/rdp_base.py:280 transports/RDP/rdp_base.py:300
-#: transports/RDS_enterprise/rds_base.py:208
+#: transports/RDP/rdp_base.py:290 transports/RDP/rdp_base.py:310
+#: transports/RDS_enterprise/rds_base.py:213
 msgid "Custom parameters"
 msgstr "معلمات مخصصة"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:211
+#: transports/RDP/rdp_base.py:293 transports/RDS_enterprise/rds_base.py:216
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5929,11 +5956,11 @@ msgstr ""
 "إذا لم تكن المعلمة فارغة، إضافية تشمل لينكس العميل (على سبيل المثال /usb:id,"
 "dev:054c:0268، أو أي شيء متوافق مع العميل الخاص بك XFreeRDP)"
 
-#: transports/RDP/rdp_base.py:290
+#: transports/RDP/rdp_base.py:300
 msgid "Allow Microsoft Rdp Client"
 msgstr "السماح لعميل Microsoft Rdp"
 
-#: transports/RDP/rdp_base.py:293
+#: transports/RDP/rdp_base.py:303
 msgid ""
 "If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE "
 "PROMPTED!"
@@ -5941,7 +5968,7 @@ msgstr ""
 "إذا تم تحديده ، فإنه يسمح باستخدام Microsoft Remote Desktop Client. سيتم دفع "
 "كلمة المرور!"
 
-#: transports/RDP/rdp_base.py:303
+#: transports/RDP/rdp_base.py:313
 msgid ""
 "If not empty, extra parameter to include for Mac OS X Freerdp Client (for "
 "example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp "
@@ -5965,18 +5992,32 @@ msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "الوصول RDS باستخدام RDP VApps. الاتصال المباشر."
 
 #: transports/RDS_enterprise/rds_base.py:157
+#| msgid "Window Size"
+msgid "Window state"
+msgstr "حالة النافذة"
+
+#: transports/RDS_enterprise/rds_base.py:159
+msgid "UDS Will try to execute the applicaiton with the window in this state"
+msgstr "ستحاول UDS تنفيذ التطبيق مع النافذة في هذه الحالة"
+
+#: transports/RDS_enterprise/rds_base.py:162
+msgid "Normal"
+msgstr "طبيعي"
+
+#: transports/RDS_enterprise/rds_base.py:163
 msgid "Maximized"
 msgstr "مكبرة"
 
-#: transports/RDS_enterprise/rds_base.py:160
-msgid "If checked, UDS Actor will try to execute application maximized)"
-msgstr "إذا تم تحديده ، سيحاول UDS Actor تنفيذ التطبيق إلى أقصى حد)"
+#: transports/RDS_enterprise/rds_base.py:164
+#| msgid "Maximized"
+msgid "Minimized"
+msgstr "مصغر"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:170
 msgid "Execute as shell"
 msgstr "نفذ كقذيفة"
 
-#: transports/RDS_enterprise/rds_base.py:169
+#: transports/RDS_enterprise/rds_base.py:174
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
@@ -6175,7 +6216,7 @@ msgstr "الكثير من أخطاء التوثيق. المستخدم محظور
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:145
 msgid "Access limited by calendar"
 msgstr "وصول محدود بسبب الجدول الزمني."
 
@@ -6310,6 +6351,6 @@ msgid ""
 "complete it.)"
 msgstr "جاري إنشاء الخدمة الخاصة بك ، يرجى الانتظار لبضع ثوان أثناء إكمالها.)"
 
-#: web/views/auth.py:151
+#: web/views/auth.py:154
 msgid "Authenticator does not provide information"
 msgstr "الموثق لا يوفر المعلومات"

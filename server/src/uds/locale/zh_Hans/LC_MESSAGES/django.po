@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 14:18+0200\n"
+"POT-Creation-Date: 2021-07-29 13:12+0200\n"
 "PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -28,7 +28,7 @@ msgstr "帐号"
 #: REST/methods/osmanagers.py:55 REST/methods/providers.py:71
 #: REST/methods/proxies.py:59 REST/methods/reports.py:57
 #: REST/methods/services_pool_groups.py:63 REST/methods/services_pools.py:133
-#: REST/methods/transports.py:58 REST/methods/user_services.py:321
+#: REST/methods/transports.py:66 REST/methods/user_services.py:321
 #: REST/methods/user_services.py:396 REST/methods/users_groups.py:122
 #: REST/model.py:149
 msgid "Name"
@@ -39,7 +39,7 @@ msgstr "名称"
 #: REST/methods/meta_pools.py:71 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:73 REST/methods/proxies.py:62
 #: REST/methods/services.py:241 REST/methods/services_pool_groups.py:64
-#: REST/methods/transports.py:60 REST/methods/user_services.py:398
+#: REST/methods/transports.py:68 REST/methods/user_services.py:398
 #: REST/methods/users_groups.py:123 REST/methods/users_groups.py:291
 #: REST/model.py:173
 msgid "Comments"
@@ -54,7 +54,7 @@ msgstr "时间标记"
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:59
 #: REST/methods/providers.py:79 REST/methods/proxies.py:63
 #: REST/methods/services.py:250 REST/methods/services_pools.py:142
-#: REST/methods/transports.py:63
+#: REST/methods/transports.py:77
 msgid "tags"
 msgstr "标签"
 
@@ -66,7 +66,7 @@ msgstr "池名称"
 msgid "User name"
 msgstr "用户名"
 
-#: REST/methods/accountsusage.py:94 core/util/state.py:78
+#: REST/methods/accountsusage.py:94 core/util/state.py:79
 #: core/util/states/common.py:71
 msgid "Running"
 msgstr "运行"
@@ -113,11 +113,11 @@ msgstr "非托管主机"
 msgid "User service not found"
 msgstr "找不到用户服务"
 
-#: REST/methods/actor_token.py:51 REST/methods/tunnel_token.py:51
+#: REST/methods/actor_token.py:51
 msgid "Actor tokens"
 msgstr "演员代币"
 
-#: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:54
+#: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:51
 #: reports/auto/fields.py:56 reports/stats/pools_performance.py:217
 #: reports/stats/pools_performance.py:236 reports/stats/pools_usage_day.py:64
 #: reports/stats/usage_by_pool.py:169 reports/stats/user_access.py:190
@@ -125,11 +125,11 @@ msgstr "演员代币"
 msgid "Date"
 msgstr "日期"
 
-#: REST/methods/actor_token.py:55 REST/methods/tunnel_token.py:55
+#: REST/methods/actor_token.py:55 REST/methods/tunnel_token.py:52
 msgid "Issued by"
 msgstr "由...发出"
 
-#: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:56
+#: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:53
 #: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
@@ -155,7 +155,7 @@ msgstr "运行一次"
 msgid "Log level"
 msgstr "日志级别"
 
-#: REST/methods/actor_token.py:67 REST/methods/tunnel_token.py:63
+#: REST/methods/actor_token.py:67 REST/methods/tunnel_token.py:60
 msgid "Token isued by {} from {}"
 msgstr "{}从{}发来的令牌"
 
@@ -169,13 +169,13 @@ msgstr "ID"
 
 #: REST/methods/authenticators.py:67 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:72 REST/methods/services.py:242
-#: REST/methods/transports.py:59 REST/methods/user_services.py:397
+#: REST/methods/transports.py:67 REST/methods/user_services.py:397
 msgid "Type"
 msgstr "类型"
 
 #: REST/methods/authenticators.py:69 REST/methods/meta_service_pools.py:88
 #: REST/methods/op_calendars.py:80 REST/methods/services_pool_groups.py:61
-#: REST/methods/transports.py:57 REST/methods/user_services.py:395
+#: REST/methods/transports.py:65 REST/methods/user_services.py:395
 #: REST/model.py:185 models/meta_pool.py:73
 msgid "Priority"
 msgstr "优先"
@@ -187,7 +187,7 @@ msgid "Visible"
 msgstr "可见"
 
 #: REST/methods/authenticators.py:71 REST/methods/meta_pools.py:77
-#: REST/methods/transports.py:115 REST/model.py:201
+#: REST/methods/transports.py:164 REST/model.py:201
 msgid "Label"
 msgstr "标签"
 
@@ -383,7 +383,7 @@ msgid "Pool"
 msgstr "池"
 
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:122
-#: REST/methods/tunnel_token.py:57 REST/methods/user_services.py:139
+#: REST/methods/tunnel_token.py:54 REST/methods/user_services.py:139
 #: REST/methods/user_services.py:270 auths/IP/authenticator.py:68
 msgid "IP"
 msgstr "IP"
@@ -431,7 +431,7 @@ msgstr "物品已被删除"
 msgid "Item is not removable"
 msgstr "物品不可拆卸"
 
-#: REST/methods/networks.py:58 REST/methods/transports.py:88
+#: REST/methods/networks.py:58 REST/methods/transports.py:114
 msgid "Networks"
 msgstr "网络"
 
@@ -555,7 +555,7 @@ msgstr "检查证书"
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:77
 #: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:66
 #: services/VCloud_enterprise/provider.py:32
-#: services/Vmware_enterprise/provider.py:41 services/Xen/provider.py:100
+#: services/Vmware_enterprise/provider.py:45 services/Xen/provider.py:100
 msgid "Host"
 msgstr "主办"
 
@@ -574,7 +574,7 @@ msgstr "将充当代理的服务器（IP或FQDN）。"
 #: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:73
 #: services/RDS_enterprise/provider.py:101
 #: services/VCloud_enterprise/provider.py:33
-#: services/Vmware_enterprise/provider.py:42
+#: services/Vmware_enterprise/provider.py:52
 msgid "Port"
 msgstr "港口"
 
@@ -691,8 +691,8 @@ msgstr "好"
 msgid "Services Pool Groups"
 msgstr "服务池组"
 
-#: REST/methods/services_pools.py:131 REST/methods/transports.py:61
-#: REST/methods/transports.py:106
+#: REST/methods/services_pools.py:131 REST/methods/transports.py:71
+#: REST/methods/transports.py:152
 msgid "Service Pools"
 msgstr "服务池"
 
@@ -835,49 +835,54 @@ msgstr "服务使用"
 msgid "Service"
 msgstr "服务"
 
-#: REST/methods/transports.py:55
+#: REST/methods/transports.py:63
 msgid "Transports"
 msgstr "运输"
 
-#: REST/methods/transports.py:62
+#: REST/methods/transports.py:76
 msgid "Devices"
 msgstr "设备"
 
-#: REST/methods/transports.py:79
+#: REST/methods/transports.py:97
 msgid "Network access"
 msgstr "网络访问"
 
-#: REST/methods/transports.py:80
+#: REST/methods/transports.py:99
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr "如果选中，将为所选网络启用传输。如果未选中，将禁用所选网络的传输"
 
-#: REST/methods/transports.py:89
+#: REST/methods/transports.py:116
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
 msgstr "与此传输相关的网络。如果没有选择网络，则表示“所有网络”"
 
-#: REST/methods/transports.py:97
+#: REST/methods/transports.py:134
 msgid "Allowed Devices"
 msgstr "允许的设备"
 
-#: REST/methods/transports.py:98
+#: REST/methods/transports.py:136
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
 msgstr "如果为空，将允许任何与此传输兼容的设备。否则，只允许与所选值兼容的设备"
 
-#: REST/methods/transports.py:107
+#: REST/methods/transports.py:153
 msgid "Currently assigned services pools"
 msgstr "当前分配的服务池"
 
-#: REST/methods/transports.py:116
+#: REST/methods/transports.py:166
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr "元池传输标签（仅用于元池传输分组）"
 
-#: REST/methods/tunnel_token.py:53
+#: REST/methods/tunnel_token.py:48
+#| msgid "Tunneled"
+msgid "Tunnel tokens"
+msgstr "隧道令牌"
+
+#: REST/methods/tunnel_token.py:50
 msgid "Token"
 msgstr "令牌"
 
@@ -976,7 +981,7 @@ msgstr "目前的用户"
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
 #: services/Proxmox/provider.py:82 services/RDS_enterprise/provider.py:118
 #: services/VCloud_enterprise/provider.py:35
-#: services/Vmware_enterprise/provider.py:43 services/Xen/provider.py:107
+#: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:75
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:59 transports/RDP/rdp_base.py:75
@@ -1119,7 +1124,7 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
 #: services/Proxmox/provider.py:92 services/RDS_enterprise/provider.py:126
 #: services/Sample/service.py:140 services/VCloud_enterprise/provider.py:36
-#: services/Vmware_enterprise/provider.py:44 services/Xen/provider.py:115
+#: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:76
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:60 transports/RDP/rdp_base.py:81
@@ -1144,7 +1149,7 @@ msgstr "ldap用户的密码"
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:86
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
 #: services/Proxmox/provider.py:123 services/VCloud_enterprise/provider.py:63
-#: services/Vmware_enterprise/provider.py:50
+#: services/Vmware_enterprise/provider.py:99
 msgid "Timeout"
 msgstr "超时"
 
@@ -1591,143 +1596,143 @@ msgstr "SAML身份验证器"
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML（v2.0）身份验证器"
 
-#: auths/SAML_enterprise/saml.py:127
+#: auths/SAML_enterprise/saml.py:129
 msgid "Private key"
 msgstr "私钥"
 
-#: auths/SAML_enterprise/saml.py:128
+#: auths/SAML_enterprise/saml.py:132
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
 msgstr "用于签名和登记的私钥，由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:129 auths/SAML_enterprise/saml.py:134
+#: auths/SAML_enterprise/saml.py:135 auths/SAML_enterprise/saml.py:146
 msgid "Certificates"
 msgstr "证书"
 
-#: auths/SAML_enterprise/saml.py:132 transports/SPICE/spice_base.py:82
+#: auths/SAML_enterprise/saml.py:140 transports/SPICE/spice_base.py:82
 msgid "Certificate"
 msgstr "证书"
 
-#: auths/SAML_enterprise/saml.py:133
+#: auths/SAML_enterprise/saml.py:143
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
 msgstr "用于签名和登记的公钥（前一个私钥的公共部分），由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:137
+#: auths/SAML_enterprise/saml.py:151
 msgid "IDP Metadata"
 msgstr "IDP元数据"
 
-#: auths/SAML_enterprise/saml.py:138
+#: auths/SAML_enterprise/saml.py:154
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "您可以在此处输入URL或IDP元数据或元数据本身（xml）"
 
-#: auths/SAML_enterprise/saml.py:139 auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:157 auths/SAML_enterprise/saml.py:166
 msgid "Metadata"
 msgstr "元数据"
 
-#: auths/SAML_enterprise/saml.py:142
+#: auths/SAML_enterprise/saml.py:161
 msgid "Entity ID"
 msgstr "实体ID"
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:164
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP的ID。如果留空，则会从服务器URL自动生成"
 
-#: auths/SAML_enterprise/saml.py:147
+#: auths/SAML_enterprise/saml.py:172
 msgid "User name attrs"
 msgstr "用户名attrs"
 
-#: auths/SAML_enterprise/saml.py:148
+#: auths/SAML_enterprise/saml.py:174
 msgid "Fields from where to extract user name"
 msgstr "从哪里提取用户名的字段"
 
-#: auths/SAML_enterprise/saml.py:148 auths/SAML_enterprise/saml.py:153
-#: auths/SAML_enterprise/saml.py:158
+#: auths/SAML_enterprise/saml.py:176 auths/SAML_enterprise/saml.py:186
+#: auths/SAML_enterprise/saml.py:196
 msgid "Attributes"
 msgstr "属性"
 
-#: auths/SAML_enterprise/saml.py:152
+#: auths/SAML_enterprise/saml.py:182
 msgid "Group name attrs"
 msgstr "集团名称attrs"
 
-#: auths/SAML_enterprise/saml.py:153
+#: auths/SAML_enterprise/saml.py:184
 msgid "Fields from where to extract the groups"
 msgstr "从哪里提取组的字段"
 
-#: auths/SAML_enterprise/saml.py:157
+#: auths/SAML_enterprise/saml.py:192
 msgid "Real name attrs"
 msgstr "真名牌"
 
-#: auths/SAML_enterprise/saml.py:158
+#: auths/SAML_enterprise/saml.py:194
 msgid "Fields from where to extract the real name"
 msgstr "字段从哪里提取真实姓名"
 
-#: auths/SAML_enterprise/saml.py:176
+#: auths/SAML_enterprise/saml.py:216
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "SAML身份验证器不支持字段NAME上的空格"
 
-#: auths/SAML_enterprise/saml.py:183
+#: auths/SAML_enterprise/saml.py:230
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
 "服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:238
 msgid "Invalid server certificate. "
 msgstr "服务器证书无效。"
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:249
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr "私钥应该是有效的PEM（PEM私钥以----- BEGIN RSA私钥开头-----"
 
-#: auths/SAML_enterprise/saml.py:197
+#: auths/SAML_enterprise/saml.py:257
 msgid "Invalid private key. "
 msgstr "私钥无效。"
 
-#: auths/SAML_enterprise/saml.py:214
+#: auths/SAML_enterprise/saml.py:276
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "无法获取网址{0}：{1}"
 
-#: auths/SAML_enterprise/saml.py:222
+#: auths/SAML_enterprise/saml.py:287
 msgid " (obtained from URL)"
 msgstr "（从URL获得）"
 
-#: auths/SAML_enterprise/saml.py:223
+#: auths/SAML_enterprise/saml.py:289
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML似乎对IDP元数据无效"
 
-#: auths/SAML_enterprise/saml.py:239
+#: auths/SAML_enterprise/saml.py:311
 msgid "Can't access idp metadata"
 msgstr "无法访问idp元数据"
 
-#: auths/Sample/SampleAuth.py:76
+#: auths/Sample/SampleAuth.py:79
 msgid "Sample Authenticator"
 msgstr "样本验证器"
 
-#: auths/Sample/SampleAuth.py:88
+#: auths/Sample/SampleAuth.py:91
 msgid "Sample dummy authenticator"
 msgstr "样本虚拟验证器"
 
-#: auths/Sample/SampleAuth.py:106
+#: auths/Sample/SampleAuth.py:109
 msgid "Fake User"
 msgstr "假用户"
 
-#: auths/Sample/SampleAuth.py:109
+#: auths/Sample/SampleAuth.py:112
 msgid "Fake Group"
 msgstr "假团体"
 
-#: auths/Sample/SampleAuth.py:115
+#: auths/Sample/SampleAuth.py:118
 msgid "Groups"
 msgstr "组"
 
-#: auths/Sample/SampleAuth.py:128
+#: auths/Sample/SampleAuth.py:132
 msgid "We need more than two groups!"
 msgstr "我们需要两个以上的团体！"
 
@@ -1904,7 +1909,7 @@ msgstr "基础服务"
 
 #: core/services/service.py:141 core/services/service.py:150
 #: models/permissions.py:92 models/permissions.py:96
-#: services/Azure_enterprise/helpers.py:97 services/OpenStack/helpers.py:74
+#: services/Azure_enterprise/helpers.py:100 services/OpenStack/helpers.py:74
 #: services/Proxmox/service.py:194 services/Sample/service.py:98
 #: services/Sample/service.py:104 services/TestService_enterprise/service.py:28
 msgid "None"
@@ -1930,79 +1935,79 @@ msgstr "隧道"
 msgid "Can't contact LDAP server"
 msgstr "无法联系LDAP服务器"
 
-#: core/util/state.py:65 core/util/states/common.py:59
+#: core/util/state.py:66 core/util/states/common.py:59
 msgid "Active"
 msgstr "活性"
 
-#: core/util/state.py:66 core/util/states/common.py:60
+#: core/util/state.py:67 core/util/states/common.py:60
 msgid "Inactive"
 msgstr "待用"
 
-#: core/util/state.py:67 core/util/states/common.py:61
+#: core/util/state.py:68 core/util/states/common.py:61
 msgid "Blocked"
 msgstr "阻止"
 
-#: core/util/state.py:68 core/util/states/common.py:62
+#: core/util/state.py:69 core/util/states/common.py:62
 msgid "Waiting publication"
 msgstr "等待出版"
 
-#: core/util/state.py:69 core/util/states/common.py:63
+#: core/util/state.py:70 core/util/states/common.py:63
 msgid "In preparation"
 msgstr "在筹备"
 
-#: core/util/state.py:70 core/util/states/common.py:64
+#: core/util/state.py:71 core/util/states/common.py:64
 msgid "Valid"
 msgstr "有效"
 
-#: core/util/state.py:71 core/util/state.py:73 core/util/states/common.py:66
+#: core/util/state.py:72 core/util/state.py:74 core/util/states/common.py:66
 msgid "Removing"
 msgstr "删除"
 
-#: core/util/state.py:72
+#: core/util/state.py:73
 msgid "Restrained"
 msgstr "矜持"
 
-#: core/util/state.py:74 core/util/states/common.py:67
+#: core/util/state.py:75 core/util/states/common.py:67
 msgid "Removed"
 msgstr "删除"
 
-#: core/util/state.py:75 core/util/states/common.py:68
+#: core/util/state.py:76 core/util/states/common.py:68
 msgid "Canceled"
 msgstr "取消"
 
-#: core/util/state.py:76 core/util/states/common.py:69
+#: core/util/state.py:77 core/util/states/common.py:69
 msgid "Canceling"
 msgstr "取消"
 
-#: core/util/state.py:77 core/util/states/common.py:70
+#: core/util/state.py:78 core/util/states/common.py:70
 msgid "Error"
 msgstr "错误"
 
-#: core/util/state.py:79 core/util/states/common.py:72
+#: core/util/state.py:80 core/util/states/common.py:72
 msgid "Finished"
 msgstr "成品"
 
-#: core/util/state.py:80 core/util/states/common.py:73
+#: core/util/state.py:81 core/util/states/common.py:73
 msgid "Waiting execution"
 msgstr "等待执行"
 
-#: core/util/state.py:81 core/util/states/common.py:74
+#: core/util/state.py:82 core/util/states/common.py:74
 msgid "Balancing"
 msgstr "平衡"
 
-#: core/util/state.py:82 core/util/states/common.py:75
+#: core/util/state.py:83 core/util/states/common.py:75
 msgid "In maintenance"
 msgstr "在维护"
 
-#: core/util/state.py:83 core/util/states/common.py:76
+#: core/util/state.py:84 core/util/states/common.py:76
 msgid "Waiting OS"
 msgstr "等待操作系统"
 
-#: core/util/state.py:84
+#: core/util/state.py:85
 msgid "Too many preparing services"
 msgstr "准备服务太多了"
 
-#: core/util/state.py:85
+#: core/util/state.py:86
 msgid "Meta member"
 msgstr "元成员"
 
@@ -2034,23 +2039,23 @@ msgstr "为用户提供服务"
 msgid "Cached"
 msgstr "缓存"
 
-#: core/util/tools.py:144
+#: core/util/tools.py:152
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{}天{：d}：{：02d}：{：02d}"
 
-#: core/util/tools.py:161
+#: core/util/tools.py:171
 msgid "The basename is not a valid for a hostname"
 msgstr "基本名称对于主机名无效"
 
-#: core/util/tools.py:164
+#: core/util/tools.py:176
 msgid "The length of basename plus length must be greater than 0"
 msgstr "基本名称的长度加上长度必须大于0"
 
-#: core/util/tools.py:167
+#: core/util/tools.py:181
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "basename加长度的长度不得大于15"
 
-#: core/util/tools.py:170
+#: core/util/tools.py:186
 msgid "The machine name can't be only numbers"
 msgstr "机器名称不能只是数字"
 
@@ -2058,30 +2063,30 @@ msgstr "机器名称不能只是数字"
 msgid "Numeric"
 msgstr "数字"
 
-#: core/util/validators.py:64
+#: core/util/validators.py:66
 #, python-brace-format
 msgid "{0} must be greater than or equal to {1}"
 msgstr "{0}必须大于或等于{1}"
 
-#: core/util/validators.py:67
+#: core/util/validators.py:74
 #, python-brace-format
 msgid "{0} must be lower than or equal to {1}"
 msgstr "{0}必须小于或等于{1}"
 
-#: core/util/validators.py:72
+#: core/util/validators.py:81
 #, python-brace-format
 msgid "{0} contains invalid characters"
 msgstr "{0}包含无效字符"
 
-#: core/util/validators.py:81
+#: core/util/validators.py:90
 msgid "{} exceeds maximum host name length."
 msgstr "{}超过了主机名的最大长度。"
 
-#: core/util/validators.py:92
+#: core/util/validators.py:103
 msgid "{} is not a valid hostname"
 msgstr "{}不是有效的主机名"
 
-#: core/util/validators.py:136
+#: core/util/validators.py:152
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
@@ -3002,8 +3007,8 @@ msgstr "从订阅中获得"
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:100 services/VCloud_enterprise/provider.py:60
-#: services/Vmware_enterprise/provider.py:47
-#: services/Vmware_enterprise/provider.py:99 services/Xen/provider.py:123
+#: services/Vmware_enterprise/provider.py:76
+#: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
 msgid "Creation concurrency"
 msgstr "创建并发"
 
@@ -3015,7 +3020,7 @@ msgstr "创建并发"
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:83
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
 #: services/Proxmox/provider.py:105 services/VCloud_enterprise/provider.py:60
-#: services/Vmware_enterprise/provider.py:47 services/Xen/provider.py:128
+#: services/Vmware_enterprise/provider.py:81 services/Xen/provider.py:128
 msgid "Maximum number of concurrently creating VMs"
 msgstr "最大并发创建VM的数量"
 
@@ -3027,8 +3032,8 @@ msgstr "最大并发创建VM的数量"
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:111 services/VCloud_enterprise/provider.py:61
-#: services/Vmware_enterprise/provider.py:48
-#: services/Vmware_enterprise/provider.py:100 services/Xen/provider.py:134
+#: services/Vmware_enterprise/provider.py:87
+#: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
 msgid "Removal concurrency"
 msgstr "删除并发"
 
@@ -3040,7 +3045,7 @@ msgstr "删除并发"
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:84
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
 #: services/Proxmox/provider.py:116 services/VCloud_enterprise/provider.py:61
-#: services/Vmware_enterprise/provider.py:48 services/Xen/provider.py:139
+#: services/Vmware_enterprise/provider.py:92 services/Xen/provider.py:139
 msgid "Maximum number of concurrently removing VMs"
 msgstr "最大并发删除VM数"
 
@@ -3247,7 +3252,7 @@ msgstr "连接到HyperV的超时时间"
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:103
 #: services/Nutanix_enterprise/provider.py:45 services/OVirt/provider.py:117
-#: services/Vmware_enterprise/provider.py:51 services/Xen/provider.py:146
+#: services/Vmware_enterprise/provider.py:109 services/Xen/provider.py:146
 msgid "Macs range"
 msgstr "Macs系列"
 
@@ -3264,7 +3269,7 @@ msgstr "连接测试成功"
 #: services/HyperV_enterprise/legacy/provider.py:268
 #: services/NutanixPrism_enterprise/provider.py:262
 #: services/Nutanix_enterprise/provider.py:228 services/OVirt/provider.py:457
-#: services/Proxmox/provider.py:312 services/Vmware_enterprise/provider.py:168
+#: services/Proxmox/provider.py:312 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
 
@@ -4063,53 +4068,64 @@ msgstr "静态IP机器提供商"
 msgid "Provides connection to machines by IP"
 msgstr "通过IP提供与机器的连接"
 
-#: services/PhysicalMachines/service_multi.py:63
+#: services/PhysicalMachines/service_multi.py:64
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "服务令牌"
 
-#: services/PhysicalMachines/service_multi.py:66
+#: services/PhysicalMachines/service_multi.py:67
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
 msgstr "参与者将用于与服务进行通信的服务令牌。留空以进行永久分配。"
 
-#: services/PhysicalMachines/service_multi.py:74
+#: services/PhysicalMachines/service_multi.py:75
 #: services/RDS_enterprise/provider.py:49
 msgid "List of servers"
 msgstr "服务器列表"
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:76
 msgid "List of servers available for this service"
 msgstr "可用于此服务的服务器列表"
 
-#: services/PhysicalMachines/service_multi.py:80
+#: services/PhysicalMachines/service_multi.py:81
 msgid "Check Port"
 msgstr "检查端口"
 
-#: services/PhysicalMachines/service_multi.py:84
+#: services/PhysicalMachines/service_multi.py:85
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr "如果非零，则仅响应该端口上的连接的主机。"
 
-#: services/PhysicalMachines/service_multi.py:91
+#: services/PhysicalMachines/service_multi.py:92
 msgid "Skip time"
 msgstr "跳过时间"
 
-#: services/PhysicalMachines/service_multi.py:94
+#: services/PhysicalMachines/service_multi.py:95
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr "如果主机无法检查，请跳过此时间（以分钟为单位）。"
 
-#: services/PhysicalMachines/service_multi.py:101
+#: services/PhysicalMachines/service_multi.py:103
+#| msgid "Max. session time"
+msgid "Max session per machine"
+msgstr "每台机器的最大会话数"
+
+#: services/PhysicalMachines/service_multi.py:107
+msgid ""
+"Maximum session duration before UDS thinks this machine got locked and "
+"releases it (hours). 0 means \"never\"."
+msgstr "UDS 认为这台机器被锁定并释放它之前的最大会话持续时间（小时）。 0 表示“从不”。"
+
+#: services/PhysicalMachines/service_multi.py:115
 msgid "Static Multiple IP"
 msgstr "静态多IP"
 
-#: services/PhysicalMachines/service_multi.py:103
+#: services/PhysicalMachines/service_multi.py:117
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
 
-#: services/PhysicalMachines/service_multi.py:134
+#: services/PhysicalMachines/service_multi.py:150
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "在服务器列表中检测到无效值：“{}”"
 
@@ -4447,7 +4463,7 @@ msgstr "允许的最大服务数（0表示没有限制）"
 msgid "Wait spawned processes"
 msgstr "等待产生的进程"
 
-#: services/RDS_enterprise/service.py:99
+#: services/RDS_enterprise/service.py:100
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -4455,7 +4471,7 @@ msgstr ""
 "如果处于活动状态，RDS Actor将等到应用程序和所有生成的进程完成后再考虑应用程序"
 "注销"
 
-#: services/RDS_enterprise/service.py:109
+#: services/RDS_enterprise/service.py:112
 msgid "A valid application path is required"
 msgstr "需要有效的应用程序路径"
 
@@ -4698,27 +4714,27 @@ msgstr "本地"
 msgid "Remote"
 msgstr "远程"
 
-#: services/Vmware_enterprise/provider.py:41
+#: services/Vmware_enterprise/provider.py:47
 msgid "VMWare VCenter Server IP or Hostname"
 msgstr "VMWare VCenter服务器IP或主机名"
 
-#: services/Vmware_enterprise/provider.py:42
+#: services/Vmware_enterprise/provider.py:55
 msgid "VMWare VC Server Port (usually 443)"
 msgstr "VMWare VC服务器端口（通常为443）"
 
-#: services/Vmware_enterprise/provider.py:43
+#: services/Vmware_enterprise/provider.py:62
 msgid "User with valid privileges on VC"
 msgstr "具有VC有效权限的用户"
 
-#: services/Vmware_enterprise/provider.py:44
+#: services/Vmware_enterprise/provider.py:69
 msgid "Password of the user of the VC"
 msgstr "VC用户的密码"
 
-#: services/Vmware_enterprise/provider.py:50
+#: services/Vmware_enterprise/provider.py:102
 msgid "Timeout in seconds of connection to VC"
 msgstr "连接VC的超时时间"
 
-#: services/Vmware_enterprise/provider.py:52
+#: services/Vmware_enterprise/provider.py:114
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
@@ -4726,15 +4742,15 @@ msgstr ""
 "已创建计算机的有效mac范围。必须在00：50：56：00：00：00-00：50：56：3F：FF："
 "FF内"
 
-#: services/Vmware_enterprise/provider.py:56
+#: services/Vmware_enterprise/provider.py:126
 msgid "VMWare VCenter Platform Provider"
 msgstr "VMWare VCenter平台提供商"
 
-#: services/Vmware_enterprise/provider.py:58
+#: services/Vmware_enterprise/provider.py:128
 msgid "Provides connection to Virtual Center Services"
 msgstr "提供与Virtual Center Services的连接"
 
-#: services/Vmware_enterprise/provider.py:166
+#: services/Vmware_enterprise/provider.py:287
 msgid "Connection params ok"
 msgstr "连接参数确定"
 
@@ -5191,7 +5207,7 @@ msgstr "显示壁纸"
 
 #: transports/HTML5RDP/html5rdp.py:134
 #: transports/HTML5RDS_enterprise/html5rds.py:123
-#: transports/RDP/rdp_base.py:213
+#: transports/RDP/rdp_base.py:222
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -5199,25 +5215,25 @@ msgstr "如果选中，壁纸和主题将显示在机器上（更好的用户体
 
 #: transports/HTML5RDP/html5rdp.py:139
 #: transports/HTML5RDS_enterprise/html5rds.py:128
-#: transports/RDP/rdp_base.py:226
+#: transports/RDP/rdp_base.py:235
 msgid "Allow Desk.Comp."
 msgstr "允许Desk.Comp。"
 
 #: transports/HTML5RDP/html5rdp.py:141
 #: transports/HTML5RDS_enterprise/html5rds.py:130
-#: transports/RDP/rdp_base.py:228
+#: transports/RDP/rdp_base.py:237
 msgid "If checked, desktop composition will be allowed"
 msgstr "如果选中，则允许桌面合成"
 
 #: transports/HTML5RDP/html5rdp.py:145
 #: transports/HTML5RDS_enterprise/html5rds.py:134
-#: transports/RDP/rdp_base.py:232 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:241 transports/RDS_enterprise/rds_base.py:150
 msgid "Font Smoothing"
 msgstr "字体平滑"
 
 #: transports/HTML5RDP/html5rdp.py:147
 #: transports/HTML5RDS_enterprise/html5rds.py:136
-#: transports/RDS_enterprise/rds_base.py:152
+#: transports/RDS_enterprise/rds_base.py:153
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "如果选中，将允许字体平滑（仅限Windows客户端）"
 
@@ -5378,13 +5394,22 @@ msgstr "NLA 扩展（网络层身份验证。需要有效的用户名和密码�
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS（传输安全层加密）"
 
-#: transports/HTML5RDP/html5rdp.py:246
+#: transports/HTML5RDP/html5rdp.py:247 transports/RDP/rdp_base.py:172
+#| msgid "Port"
+msgid "RDP Port"
+msgstr "RDP 端口"
+
+#: transports/HTML5RDP/html5rdp.py:248 transports/RDP/rdp_base.py:173
+msgid "Use this port as RDP port. Defaults to 3389."
+msgstr "将此端口用作 RDP 端口。默认为 3389。"
+
+#: transports/HTML5RDP/html5rdp.py:256
 #: transports/HTML5RDS_enterprise/html5rds.py:223
 #: transports/HTML5VNC/html5vnc.py:109
 msgid "Ticket Validity"
 msgstr "机票有效期"
 
-#: transports/HTML5RDP/html5rdp.py:250
+#: transports/HTML5RDP/html5rdp.py:260
 #: transports/HTML5RDS_enterprise/html5rds.py:227
 #: transports/HTML5VNC/html5vnc.py:112
 msgid ""
@@ -5394,42 +5419,42 @@ msgstr ""
 "HTML5客户端从UDS Broker重新加载数据的允许时间（以秒为单位）。建议使用默认值"
 "60。"
 
-#: transports/HTML5RDP/html5rdp.py:259
+#: transports/HTML5RDP/html5rdp.py:269
 #: transports/HTML5RDS_enterprise/html5rds.py:236
 #: transports/HTML5VNC/html5vnc.py:119 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "强制新的HTML窗口"
 
-#: transports/HTML5RDP/html5rdp.py:260
+#: transports/HTML5RDP/html5rdp.py:270
 #: transports/HTML5RDS_enterprise/html5rds.py:237
 #: transports/HTML5VNC/html5vnc.py:120
 msgid "Select windows behavior for new connections on HTML5"
 msgstr "选择Windows行为以获取HTML5上的新连接"
 
-#: transports/HTML5RDP/html5rdp.py:265
+#: transports/HTML5RDP/html5rdp.py:275
 #: transports/HTML5RDS_enterprise/html5rds.py:242
 #: transports/HTML5VNC/html5vnc.py:123
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr "在同一窗口中打开每个连接，但保留UDS窗口。"
 
-#: transports/HTML5RDP/html5rdp.py:268
+#: transports/HTML5RDP/html5rdp.py:278
 #: transports/HTML5RDS_enterprise/html5rds.py:245
 #: transports/HTML5VNC/html5vnc.py:124
 msgid "Force every connection to be opened on a new window."
 msgstr "强制在新窗口中打开每个连接。"
 
-#: transports/HTML5RDP/html5rdp.py:272
+#: transports/HTML5RDP/html5rdp.py:282
 #: transports/HTML5RDS_enterprise/html5rds.py:249
 #: transports/HTML5VNC/html5vnc.py:125
 msgid "Override UDS window and replace it with the connection."
 msgstr "覆盖UDS窗口并将其替换为连接。"
 
-#: transports/HTML5RDP/html5rdp.py:280
+#: transports/HTML5RDP/html5rdp.py:290
 #: transports/HTML5RDS_enterprise/html5rds.py:256
 msgid "Glyptodon Enterprise context path"
 msgstr "Glyptodon 企业上下文路径"
 
-#: transports/HTML5RDP/html5rdp.py:283
+#: transports/HTML5RDP/html5rdp.py:293
 #: transports/HTML5RDS_enterprise/html5rds.py:259
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
@@ -5438,13 +5463,13 @@ msgstr ""
 "Glyptodon Enterprise 隧道的自定义路径。 （仅对 Glyptodon Enterprise Tunnel 有"
 "效）"
 
-#: transports/HTML5RDP/html5rdp.py:298
+#: transports/HTML5RDP/html5rdp.py:308
 #: transports/HTML5RDS_enterprise/html5rds.py:273
 #: transports/HTML5VNC/html5vnc.py:137
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
-#: transports/HTML5RDP/html5rdp.py:303
+#: transports/HTML5RDP/html5rdp.py:313
 #: transports/HTML5RDS_enterprise/html5rds.py:278
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
@@ -5495,7 +5520,7 @@ msgstr "VNC服务器端口"
 msgid "Port of the VNC server."
 msgstr "VNC服务器的端口。"
 
-#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:196
+#: transports/HTML5VNC/html5vnc.py:90 transports/RDP/rdp_base.py:205
 #: transports/RDS_enterprise/rds_base.py:136
 msgid "Color depth"
 msgstr "颜色深度"
@@ -5602,7 +5627,7 @@ msgid ""
 msgstr "如果启用，将验证隧道服务器的证书（推荐）。"
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:134 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:106 transports/X2GO/x2go_tunnel.py:117
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "必须在隧道服务器字段中使用HOST：PORT"
@@ -5709,83 +5734,83 @@ msgstr "Credssp支持"
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "如果选中，将启用凭据提供程序支持）"
 
-#: transports/RDP/rdp_base.py:172
+#: transports/RDP/rdp_base.py:181
 msgid "Screen Size"
 msgstr "屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:174
+#: transports/RDP/rdp_base.py:183
 msgid "Screen size for this transport"
 msgstr "此运输的屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:198 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:207 transports/RDS_enterprise/rds_base.py:138
 msgid "Color depth for this connection"
 msgstr "此连接的颜色深度"
 
-#: transports/RDP/rdp_base.py:210
+#: transports/RDP/rdp_base.py:219
 msgid "Wallpaper/theme"
 msgstr "壁纸/主题"
 
-#: transports/RDP/rdp_base.py:218
+#: transports/RDP/rdp_base.py:227
 msgid "Multiple monitors"
 msgstr "多个显示器"
 
-#: transports/RDP/rdp_base.py:221
+#: transports/RDP/rdp_base.py:230
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr "如果选中，则将使用所有客户端监视器进行显示（仅适用于Windows客户端）"
 
-#: transports/RDP/rdp_base.py:234
+#: transports/RDP/rdp_base.py:244
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "如果选中，则允许字体平滑"
 
-#: transports/RDP/rdp_base.py:238
+#: transports/RDP/rdp_base.py:248
 msgid "Connection Bar"
 msgstr "连接栏"
 
-#: transports/RDP/rdp_base.py:240
+#: transports/RDP/rdp_base.py:250
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "如果选中，将显示连接栏（仅在Windows客户端上）"
 
-#: transports/RDP/rdp_base.py:246 transports/RDS_enterprise/rds_base.py:174
+#: transports/RDP/rdp_base.py:256 transports/RDS_enterprise/rds_base.py:179
 msgid "Multimedia sync"
 msgstr "多媒体同步"
 
-#: transports/RDP/rdp_base.py:249 transports/RDS_enterprise/rds_base.py:177
+#: transports/RDP/rdp_base.py:259 transports/RDS_enterprise/rds_base.py:182
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr "如果选中。 Linux客户端将使用xfreerdp的多媒体参数"
 
-#: transports/RDP/rdp_base.py:254 transports/RDS_enterprise/rds_base.py:182
+#: transports/RDP/rdp_base.py:264 transports/RDS_enterprise/rds_base.py:187
 msgid "Use Alsa"
 msgstr "使用Alsa"
 
-#: transports/RDP/rdp_base.py:257 transports/RDS_enterprise/rds_base.py:185
+#: transports/RDP/rdp_base.py:267 transports/RDS_enterprise/rds_base.py:190
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr "如果选中，Linux客户端将尝试使用ALSA，否则将使用Pulse"
 
-#: transports/RDP/rdp_base.py:262 transports/RDS_enterprise/rds_base.py:190
+#: transports/RDP/rdp_base.py:272 transports/RDS_enterprise/rds_base.py:195
 msgid "Printer string"
 msgstr "打印机字符串"
 
-#: transports/RDP/rdp_base.py:265 transports/RDS_enterprise/rds_base.py:193
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:198
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "如果选中打印机，则打印机字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:271 transports/RDS_enterprise/rds_base.py:199
+#: transports/RDP/rdp_base.py:281 transports/RDS_enterprise/rds_base.py:204
 msgid "Smartcard string"
 msgstr "智能卡字符串"
 
-#: transports/RDP/rdp_base.py:274 transports/RDS_enterprise/rds_base.py:202
+#: transports/RDP/rdp_base.py:284 transports/RDS_enterprise/rds_base.py:207
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr "如果选中智能卡，则智能卡字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:280 transports/RDP/rdp_base.py:300
-#: transports/RDS_enterprise/rds_base.py:208
+#: transports/RDP/rdp_base.py:290 transports/RDP/rdp_base.py:310
+#: transports/RDS_enterprise/rds_base.py:213
 msgid "Custom parameters"
 msgstr "自定义参数"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:211
+#: transports/RDP/rdp_base.py:293 transports/RDS_enterprise/rds_base.py:216
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5793,17 +5818,17 @@ msgstr ""
 "如果不为空，则为Linux客户端包含额外参数（例如/usb：id，dev：054c：0268，或者"
 "与xfreerdp客户端兼容的东西）"
 
-#: transports/RDP/rdp_base.py:290
+#: transports/RDP/rdp_base.py:300
 msgid "Allow Microsoft Rdp Client"
 msgstr "允许 Microsoft Rdp 客户端"
 
-#: transports/RDP/rdp_base.py:293
+#: transports/RDP/rdp_base.py:303
 msgid ""
 "If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE "
 "PROMPTED!"
 msgstr "如果选中，则允许使用 Microsoft 远程桌面客户端。密码将被提示！"
 
-#: transports/RDP/rdp_base.py:303
+#: transports/RDP/rdp_base.py:313
 msgid ""
 "If not empty, extra parameter to include for Mac OS X Freerdp Client (for "
 "example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp "
@@ -5826,18 +5851,32 @@ msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "使用RDP为vApp进行RDS访问。直接连接。"
 
 #: transports/RDS_enterprise/rds_base.py:157
+#| msgid "Window Size"
+msgid "Window state"
+msgstr "窗口状态"
+
+#: transports/RDS_enterprise/rds_base.py:159
+msgid "UDS Will try to execute the applicaiton with the window in this state"
+msgstr "UDS 将尝试在此状态下使用窗口执行应用程序"
+
+#: transports/RDS_enterprise/rds_base.py:162
+msgid "Normal"
+msgstr "普通的"
+
+#: transports/RDS_enterprise/rds_base.py:163
 msgid "Maximized"
 msgstr "最大化"
 
-#: transports/RDS_enterprise/rds_base.py:160
-msgid "If checked, UDS Actor will try to execute application maximized)"
-msgstr "如果选中，UDS Actor 将尝试最大化执行应用程序）"
+#: transports/RDS_enterprise/rds_base.py:164
+#| msgid "Maximized"
+msgid "Minimized"
+msgstr "最小化"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:170
 msgid "Execute as shell"
 msgstr "作为 shell 执行"
 
-#: transports/RDS_enterprise/rds_base.py:169
+#: transports/RDS_enterprise/rds_base.py:174
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
@@ -6031,7 +6070,7 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:146
+#: web/util/configjs.py:145
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
@@ -6161,6 +6200,6 @@ msgid ""
 "complete it.)"
 msgstr "我们正在创建您的服务，请等待几秒钟。）"
 
-#: web/views/auth.py:151
+#: web/views/auth.py:154
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
