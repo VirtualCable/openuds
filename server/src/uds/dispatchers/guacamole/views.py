@@ -50,8 +50,8 @@ CONTENT_TYPE = 'text/plain'
 # We will use the cache to "hold" the tickets valid for users
 
 
-def dict2resp(dct):
-    return '\r'.join((k + '\t' + v for k, v in dct.items()))
+def dict2resp(dct: typing.Mapping[typing.Any, typing.Any]) -> str:
+    return '\r'.join((str(k) + '\t' + str(v) for k, v in dct.items()))
 
 
 def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
