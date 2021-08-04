@@ -320,6 +320,9 @@ def main() -> None:
         '-t', '--tunnel', help='Starts the tunnel server', action='store_true'
     )
     group.add_argument(
+        '-r', '--rdp', help='RDP Tunnel for traffic accounting'
+    )
+    group.add_argument(
         '-s',
         '--stats',
         help='get current global stats from RUNNING tunnel',
@@ -335,6 +338,8 @@ def main() -> None:
 
     if args.tunnel:
         tunnel_main()
+    elif args.rdp:
+        pass
     elif args.detailed_stats:
         curio.run(stats.getServerStats, True)
     elif args.stats:
