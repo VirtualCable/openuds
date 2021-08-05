@@ -48,6 +48,7 @@ from uds_tunnel import proxy
 from uds_tunnel import consts
 from uds_tunnel import message
 from uds_tunnel import stats
+from uds_tunnel import processes
 
 if typing.TYPE_CHECKING:
     from multiprocessing.connection import Connection
@@ -217,72 +218,16 @@ def tunnel_main():
     signal.signal(signal.SIGINT, stop_signal)
     signal.signal(signal.SIGTERM, stop_signal)
 
-    # Creates as many processes and pipes as required
-    child: typing.List[
-        typing.Tuple['Connection', multiprocessing.Process, psutil.Process]
-    ] = []
-
     stats_collector = stats.GlobalStats()
 
-    def add_child_pid():
-        own_conn, child_conn = multiprocessing.Pipe()
-        task = multiprocessing.Process(
-            target=curio.run,
-            args=(tunnel_proc_async, child_conn, cfg, stats_collector.ns),
-        )
-        task.start()
-        logger.debug('ADD CHILD PID: %s', task.pid)
-        child.append((own_conn, task, psutil.Process(task.pid)))
-
-    for i in range(cfg.workers):
-        add_child_pid()
-
-    def best_child() -> 'Connection':
-        best: typing.Tuple[float, 'Connection'] = (1000.0, child[0][0])
-        missingProcesses = []
-        for i, c in enumerate(child):
-            try:
-                if c[2].status() == 'zombie': # Bad kill!!
-                    raise psutil.ZombieProcess(c[2].pid)
-                percent = c[2].cpu_percent()
-            except (psutil.ZombieProcess, psutil.NoSuchProcess) as e:
-                # Process is missing...
-                logger.warning('Missing process found: %s', e.pid)
-                try:
-                    c[0].close()  # Close pipe to missing process
-                except Exception:
-                    logger.debug('Could not close handle for %s', e.pid)
-                try:
-                    c[1].kill()
-                    c[1].close()
-                except Exception:
-                    logger.debug('Could not close process %s', e.pid)
-
-                missingProcesses.append(i)
-                continue
-                
-            logger.debug('PID %s has %s', c[2].pid, percent)
-
-            if percent < best[0]:
-                best = (percent, c[0])
-
-        if missingProcesses:
-            logger.debug('Regenerating missing processes: %s', len(missingProcesses))
-            # Regenerate childs and recreate new proceeses to process requests...
-            tmpChilds = [child[i] for i in range(len(child)) if i not in missingProcesses]
-            child[:] = tmpChilds
-            # Now add new children
-            for i in range(len(missingProcesses)):
-                add_child_pid()
-
-        return best[1]
+    prcs = processes.Processes(tunnel_proc_async, cfg, stats_collector.ns)
 
     try:
         while not do_stop:
             try:
                 client, addr = sock.accept()
                 # Select BEST process for sending this new connection
-                best_child().send(
+                prcs.best_child().send(
                     message.Message(message.Command.TUNNEL, (client, addr))
                 )
                 del client  # Ensure socket is controlled on child process
@@ -297,12 +242,7 @@ def tunnel_main():
     if sock:
         sock.close()
 
-    # Try to stop running childs
-    for i in child:
-        try:
-            i[2].kill()
-        except Exception as e:
-            logger.info('KILLING child %s: %s', i[2], e)
+    prcs.stop()
 
     try:
         if cfg.pidfile:
