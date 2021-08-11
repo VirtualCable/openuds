@@ -25,7 +25,11 @@ class CheckfingerPrints(paramiko.MissingHostKeyPolicy):
         if self.fingerPrints:
             remotefingerPrints = hexlify(key.get_fingerprint()).decode().lower()
             if remotefingerPrints not in self.fingerPrints.split(','):
-                logger.error("Server {!r} has invalid fingerPrints. ({} vs {})".format(hostname, remotefingerPrints, self.fingerPrints))
+                logger.error(
+                    "Server {!r} has invalid fingerPrints. ({} vs {})".format(
+                        hostname, remotefingerPrints, self.fingerPrints
+                    )
+                )
                 raise paramiko.SSHException(
                     "Server {!r} has invalid fingerPrints".format(hostname)
                 )
@@ -47,21 +51,39 @@ class Handler(socketserver.BaseRequestHandler):
         self.thread.currentConnections += 1
 
         try:
-            chan = self.ssh_transport.open_channel('direct-tcpip',
-                                                   (self.chain_host, self.chain_port),
-                                                   self.request.getpeername())
+            chan = self.ssh_transport.open_channel(
+                'direct-tcpip',
+                (self.chain_host, self.chain_port),
+                self.request.getpeername(),
+            )
         except Exception as e:
-            logger.exception('Incoming request to %s:%d failed: %s', self.chain_host, self.chain_port, repr(e))
+            logger.exception(
+                'Incoming request to %s:%d failed: %s',
+                self.chain_host,
+                self.chain_port,
+                repr(e),
+            )
             return
         if chan is None:
-            logger.error('Incoming request to %s:%d was rejected by the SSH server.', self.chain_host, self.chain_port)
+            logger.error(
+                'Incoming request to %s:%d was rejected by the SSH server.',
+                self.chain_host,
+                self.chain_port,
+            )
             return
 
-        logger.debug('Connected!  Tunnel open %r -> %r -> %r', self.request.getpeername(), chan.getpeername(), (self.chain_host, self.chain_port))
+        logger.debug(
+            'Connected!  Tunnel open %r -> %r -> %r',
+            self.request.getpeername(),
+            chan.getpeername(),
+            (self.chain_host, self.chain_port),
+        )
         # self.ssh_transport.set_keepalive(10)  # Keep alive every 10 seconds...
         try:
             while self.event.is_set() is False:
-                r, _w, _x = select.select([self.request, chan], [], [], 1)  # pylint: disable=unused-variable
+                r, _w, _x = select.select(
+                    [self.request, chan], [], [], 1
+                )  # pylint: disable=unused-variable
 
                 if self.request in r:
                     data = self.request.recv(1024)
@@ -80,7 +102,10 @@ class Handler(socketserver.BaseRequestHandler):
             peername = self.request.getpeername()
             chan.close()
             self.request.close()
-            logger.debug('Tunnel closed from %r', peername,)
+            logger.debug(
+                'Tunnel closed from %r',
+                peername,
+            )
         except Exception:
             pass
 
@@ -95,7 +120,18 @@ class ForwardThread(threading.Thread):
     client: typing.Optional[paramiko.SSHClient]
     fs: typing.Optional[ForwardServer]
 
-    def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime, fingerPrints):
+    def __init__(
+        self,
+        server,
+        port,
+        username,
+        password,
+        localPort,
+        redirectHost,
+        redirectPort,
+        waitTime,
+        fingerPrints,
+    ):
         threading.Thread.__init__(self)
         self.client = None
         self.fs = None
@@ -110,7 +146,7 @@ class ForwardThread(threading.Thread):
         self.redirectPort = redirectPort
 
         self.waitTime = waitTime
-        
+
         self.fingerPrints = fingerPrints
 
         self.stopEvent = threading.Event()
@@ -124,7 +160,17 @@ class ForwardThread(threading.Thread):
         if localPort is None:
             localPort = random.randrange(33000, 53000)
 
-        ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort, self.waitTime, self.fingerPrints)
+        ft = ForwardThread(
+            self.server,
+            self.port,
+            self.username,
+            self.password,
+            localPort,
+            redirectHost,
+            redirectPort,
+            self.waitTime,
+            self.fingerPrints,
+        )
         ft.client = self.client
         self.client.useCount += 1  # type: ignore
         ft.start()
@@ -133,7 +179,6 @@ class ForwardThread(threading.Thread):
             time.sleep(0.1)
 
         return (ft, localPort)
-
 
     def _timerFnc(self):
         self.timer = None
@@ -148,12 +193,21 @@ class ForwardThread(threading.Thread):
                 self.client = paramiko.SSHClient()
                 self.client.useCount = 1  # type: ignore
                 self.client.load_system_host_keys()
-                self.client.set_missing_host_key_policy(CheckfingerPrints(self.fingerPrints))
+                self.client.set_missing_host_key_policy(
+                    CheckfingerPrints(self.fingerPrints)
+                )
 
                 logger.debug('Connecting to ssh host %s:%d ...', self.server, self.port)
 
                 # To disable ssh-ageng asking for passwords: allow_agent=False
-                self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5, allow_agent=False)
+                self.client.connect(
+                    self.server,
+                    self.port,
+                    username=self.username,
+                    password=self.password,
+                    timeout=5,
+                    allow_agent=False,
+                )
             except Exception:
                 logger.exception('Exception connecting: ')
                 self.status = 2  # Error
@@ -194,7 +248,17 @@ class ForwardThread(threading.Thread):
             logger.exception('Exception stopping')
 
 
-def forward(server, port, username, password, redirectHost, redirectPort, localPort=None, waitTime=10, fingerPrints=None):
+def forward(
+    server,
+    port,
+    username,
+    password,
+    redirectHost,
+    redirectPort,
+    localPort=None,
+    waitTime=10,
+    fingerPrints=None,
+):
     '''
     Instantiates an ssh connection to server:port
     Returns the Thread created and the local redirected port as a list: (thread, port)
@@ -204,10 +268,28 @@ def forward(server, port, username, password, redirectHost, redirectPort, localP
     if localPort is None:
         localPort = random.randrange(40000, 50000)
 
-    logger.debug('Connecting to %s:%s using %s/%s redirecting to %s:%s, listening on 127.0.0.1:%s',
-                 server, port, username, password, redirectHost, redirectPort, localPort)
+    logger.debug(
+        'Connecting to %s:%s using %s/%s redirecting to %s:%s, listening on 127.0.0.1:%s',
+        server,
+        port,
+        username,
+        password,
+        redirectHost,
+        redirectPort,
+        localPort,
+    )
 
-    ft = ForwardThread(server, port, username, password, localPort, redirectHost, redirectPort, waitTime, fingerPrints)
+    ft = ForwardThread(
+        server,
+        port,
+        username,
+        password,
+        localPort,
+        redirectHost,
+        redirectPort,
+        waitTime,
+        fingerPrints,
+    )
 
     ft.start()
 

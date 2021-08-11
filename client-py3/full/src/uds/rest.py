@@ -29,8 +29,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=c-extension-no-member,no-name-in-module
-
 import json
 import bz2
 import base64
@@ -63,8 +61,10 @@ CertCallbackType = typing.Callable[[str, str], bool]
 class UDSException(Exception):
     pass
 
+
 class RetryException(UDSException):
     pass
+
 
 class InvalidVersion(UDSException):
     downloadUrl: str
@@ -73,9 +73,10 @@ class InvalidVersion(UDSException):
         super().__init__(downloadUrl)
         self.downloadUrl = downloadUrl
 
+
 class RestApi:
 
-    _restApiUrl: str      # base Rest API URL
+    _restApiUrl: str  # base Rest API URL
     _callbackInvalidCert: typing.Optional[CertCallbackType]
     _serverVersion: str
 
@@ -90,14 +91,18 @@ class RestApi:
         self._callbackInvalidCert = callbackInvalidCert
         self._serverVersion = ''
 
-    def get(self, url: str, params: typing.Optional[typing.Mapping[str, str]] = None) -> typing.Any:
+    def get(
+        self, url: str, params: typing.Optional[typing.Mapping[str, str]] = None
+    ) -> typing.Any:
         if params:
             url += '?' + '&'.join(
                 '{}={}'.format(k, urllib.parse.quote(str(v).encode('utf8')))
                 for k, v in params.items()
             )
 
-        return json.loads(RestApi.getUrl(self._restApiUrl + url, self._callbackInvalidCert))
+        return json.loads(
+            RestApi.getUrl(self._restApiUrl + url, self._callbackInvalidCert)
+        )
 
     def processError(self, data: typing.Any) -> None:
         if 'error' in data:
@@ -105,7 +110,6 @@ class RestApi:
                 raise RetryException(data['error'])
 
             raise UDSException(data['error'])
-
 
     def getVersion(self) -> str:
         '''Gets and stores the serverVersion.
@@ -122,12 +126,14 @@ class RestApi:
         try:
             if self._serverVersion > VERSION:
                 raise InvalidVersion(downloadUrl)
-            
+
             return self._serverVersion
         except Exception as e:
             raise UDSException(e)
 
-    def getScriptAndParams(self, ticket: str, scrambler: str) -> typing.Tuple[str, typing.Any]:
+    def getScriptAndParams(
+        self, ticket: str, scrambler: str
+    ) -> typing.Tuple[str, typing.Any]:
         '''Gets the transport script, validates it if necesary
         and returns it'''
         try:
@@ -173,7 +179,6 @@ class RestApi:
 
         # exec(script.decode("utf-8"), globals(), {'parent': self, 'sp': params})
 
-
     @staticmethod
     def _open(
         url: str, certErrorCallback: typing.Optional[CertCallbackType] = None
@@ -193,7 +198,8 @@ class RestApi:
         if url.startswith('https'):
             port = port or '443'
             with ctx.wrap_socket(
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM), server_hostname=hostname
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM),
+                server_hostname=hostname,
             ) as s:
                 s.connect((hostname, int(port)))
                 # Get binary certificate
@@ -211,9 +217,12 @@ class RestApi:
 
         def urlopen(url: str):
             # Generate the request with the headers
-            req = urllib.request.Request(url, headers={
-                'User-Agent': os_detector.getOs() + " - UDS Connector " + VERSION
-            })
+            req = urllib.request.Request(
+                url,
+                headers={
+                    'User-Agent': os_detector.getOs() + " - UDS Connector " + VERSION
+                },
+            )
             return urllib.request.urlopen(req, context=ctx)
 
         try:

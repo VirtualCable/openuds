@@ -163,7 +163,9 @@ def unlinkFiles(early: bool = False) -> None:
 
 def addTaskToWait(task: typing.Any, includeSubprocess: bool = False) -> None:
     logger.debug(
-        'Added task %s to wait %s', task, 'with subprocesses' if includeSubprocess else ''
+        'Added task %s to wait %s',
+        task,
+        'with subprocesses' if includeSubprocess else '',
     )
     _tasksToWait.append((task, includeSubprocess))
 
@@ -178,12 +180,22 @@ def waitForTasks() -> None:
             elif hasattr(task, 'wait'):
                 task.wait()
             # If wait for spanwed process (look for process with task pid) and we can look for them...
-            logger.debug('Psutil: %s, waitForSubp: %s, hasattr: %s', psutil, waitForSubp, hasattr(task, 'pid'))
+            logger.debug(
+                'Psutil: %s, waitForSubp: %s, hasattr: %s',
+                psutil,
+                waitForSubp,
+                hasattr(task, 'pid'),
+            )
             if psutil and waitForSubp and hasattr(task, 'pid'):
-                subProcesses = list(filter(
-                    lambda x: x.ppid() == task.pid, psutil.process_iter(attrs=('ppid',))
-                ))
-                logger.debug('Waiting for subprocesses... %s, %s', task.pid, subProcesses)
+                subProcesses = list(
+                    filter(
+                        lambda x: x.ppid() == task.pid,  # type: ignore
+                        psutil.process_iter(attrs=('ppid',)),
+                    )
+                )
+                logger.debug(
+                    'Waiting for subprocesses... %s, %s', task.pid, subProcesses
+                )
                 for i in subProcesses:
                     logger.debug('Found %s', i)
                     i.wait()
@@ -228,6 +240,7 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
 
     # If no exception, the script was fine...
     return True
+
 
 def getCaCertsFile() -> str:
     try:

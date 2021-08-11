@@ -30,13 +30,12 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
 import sys
 
 LINUX = 'Linux'
 WINDOWS = 'Windows'
 MAC_OS_X = 'Mac os x'
+
 
 def getOs():
     if sys.platform.startswith('linux'):

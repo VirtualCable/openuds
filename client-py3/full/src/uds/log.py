@@ -29,8 +29,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
 import logging
 import os
 import os.path
@@ -57,7 +55,7 @@ try:
         filename=logFile,
         filemode='a',
         format='%(levelname)s %(asctime)s %(message)s',
-        level=LOGLEVEL
+        level=LOGLEVEL,
     )
 except Exception:
     logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s', level=LOGLEVEL)

@@ -145,6 +145,7 @@ class Client:  # pylint: disable=too-many-public-methods
     _tokenId: typing.Optional[str]
     _catalog: typing.Optional[typing.List[typing.Dict[str, typing.Any]]]
     _isLegacy: bool
+    _volume: str
     _access: typing.Optional[str]
     _domain: str
     _username: str
@@ -188,6 +189,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self._project = None
         self._region = region
         self._timeout = 10
+        self._volume = 'volumev2' if self._isLegacy else 'volumev3'
 
         if legacyVersion:
             self._authUrl = 'http{}://{}:{}/'.format('s' if useSSL else '', host, port)
@@ -270,6 +272,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectId is not None:
             self._catalog = token['catalog']
+                
 
     def ensureAuthenticated(self) -> None:
         if (
@@ -331,7 +334,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listVolumeTypes(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('volumev2') + '/types',
+            self._getEndpointFor(self._volume) + '/types',
             self._session,
             headers=self._requestHeaders(),
             key='volume_types',
@@ -341,9 +344,8 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def listVolumes(self) -> typing.Iterable[typing.Any]:
-        # self._getEndpointFor('volumev2') + '/volumes'
         return getRecurringUrlJson(
-            self._getEndpointFor('volumev2') + '/volumes/detail',
+            self._getEndpointFor(self._volume) + '/volumes/detail',
             self._session,
             headers=self._requestHeaders(),
             key='volumes',
@@ -356,7 +358,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self, volumeId: typing.Optional[typing.Dict[str, typing.Any]] = None
     ) -> typing.Iterable[typing.Any]:
         for s in getRecurringUrlJson(
-            self._getEndpointFor('volumev2') + '/snapshots',
+            self._getEndpointFor(self._volume) + '/snapshots',
             self._session,
             headers=self._requestHeaders(),
             key='snapshots',
@@ -474,7 +476,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def getVolume(self, volumeId: str) -> typing.Dict[str, typing.Any]:
         r = self._session.get(
-            self._getEndpointFor('volumev2')
+            self._getEndpointFor(self._volume)
             + '/volumes/{volume_id}'.format(volume_id=volumeId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
@@ -492,7 +494,7 @@ class Client:  # pylint: disable=too-many-public-methods
             creating, available, deleting, error,  error_deleting
         """
         r = self._session.get(
-            self._getEndpointFor('volumev2')
+            self._getEndpointFor(self._volume)
             + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
@@ -518,7 +520,7 @@ class Client:  # pylint: disable=too-many-public-methods
             data['snapshot']['description'] = description
 
         r = self._session.put(
-            self._getEndpointFor('volumev2')
+            self._getEndpointFor(self._volume)
             + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             data=json.dumps(data),
             headers=self._requestHeaders(),
@@ -547,7 +549,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # First, ensure volume is in state "available"
 
         r = self._session.post(
-            self._getEndpointFor('volumev2') + '/snapshots',
+            self._getEndpointFor(self._volume) + '/snapshots',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
@@ -575,7 +577,7 @@ class Client:  # pylint: disable=too-many-public-methods
         }
 
         r = self._session.post(
-            self._getEndpointFor('volumev2') + '/volumes',
+            self._getEndpointFor(self._volume) + '/volumes',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
@@ -662,7 +664,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def deleteSnapshot(self, snapshotId: str) -> None:
         r = self._session.delete(
-            self._getEndpointFor('volumev2')
+            self._getEndpointFor(self._volume)
             + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
