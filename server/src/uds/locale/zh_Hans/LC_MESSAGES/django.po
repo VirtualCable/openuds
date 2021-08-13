@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 13:12+0200\n"
+"POT-Creation-Date: 2021-08-13 13:34+0200\n"
 "PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -1172,13 +1172,14 @@ msgid "Default domain"
 msgstr "默认域"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:111
+#| msgid ""
+#| "If not empty, the compatibility is \"Windows 2000 and later\" and the "
+#| "user does not use an UPN (user@domain) as login, this domain will be "
+#| "appended instead of domain of configured user on credentails tab"
 msgid ""
 "If not empty, the compatibility is \"Windows 2000 and later\" and the user "
-"does not use an UPN (user@domain) as login, this domain will be appended "
-"instead of domain of configured user on credentails tab"
-msgstr ""
-"如果不为空，则兼容性为“Windows 2000 及更高版本”并且用户不使用 UPN（用户@域）"
-"作为登录名，将附加此域而不是凭据选项卡上配置的用户域"
+"does not use UPN (user@domain) as login, this domain will be appended."
+msgstr "如果不为空，则兼容性为“Windows 2000 及更高版本”且用户未使用 UPN (user@domain) 作为登录名，将附加此域。"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:120
 msgid "Backup server"
@@ -3873,11 +3874,11 @@ msgstr "基本模板"
 msgid "Service base template"
 msgstr "服务基础模板"
 
-#: services/OpenStack/openstack/openstack_client.py:764
+#: services/OpenStack/openstack/openstack_client.py:774
 msgid "Authentication error"
 msgstr "授权错误"
 
-#: services/OpenStack/openstack/openstack_client.py:771
+#: services/OpenStack/openstack/openstack_client.py:781
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."

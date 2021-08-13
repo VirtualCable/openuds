@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 13:12+0200\n"
+"POT-Creation-Date: 2021-08-13 13:34+0200\n"
 "PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
@@ -1203,14 +1203,17 @@ msgid "Default domain"
 msgstr "Domínio padrão"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:111
+#| msgid ""
+#| "If not empty, the compatibility is \"Windows 2000 and later\" and the "
+#| "user does not use an UPN (user@domain) as login, this domain will be "
+#| "appended instead of domain of configured user on credentails tab"
 msgid ""
 "If not empty, the compatibility is \"Windows 2000 and later\" and the user "
-"does not use an UPN (user@domain) as login, this domain will be appended "
-"instead of domain of configured user on credentails tab"
+"does not use UPN (user@domain) as login, this domain will be appended."
 msgstr ""
 "Se não estiver vazio, a compatibilidade é \"Windows 2000 e posterior\" e o "
-"usuário não usa um UPN (usuário @ domínio) como login, este domínio será "
-"anexado em vez do domínio do usuário configurado na guia credentails"
+"usuário não usa UPN (usuário @ domínio) como login, este domínio será "
+"anexado."
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:120
 msgid "Backup server"
@@ -4017,11 +4020,11 @@ msgstr "Modelo base"
 msgid "Service base template"
 msgstr "Modelo base de serviço"
 
-#: services/OpenStack/openstack/openstack_client.py:764
+#: services/OpenStack/openstack/openstack_client.py:774
 msgid "Authentication error"
 msgstr "Erro de autenticação"
 
-#: services/OpenStack/openstack/openstack_client.py:771
+#: services/OpenStack/openstack/openstack_client.py:781
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."

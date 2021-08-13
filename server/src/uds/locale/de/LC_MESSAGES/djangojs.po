@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 13:12+0200\n"
+"POT-Creation-Date: 2021-08-13 13:34+0200\n"
 "PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -22,10 +22,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: static/admin/main.js:1
-msgid "category"
-msgstr "Kategorie"
-
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:23
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
 msgid "seconds"
@@ -35,8 +31,7 @@ msgstr "Sekunden"
 msgid "Main"
 msgstr "Main"
 
-#: static/admin/main.js:1 static/admin/polyfills-es5.js:1
-#: static/admin/polyfills.js:1 static/admin/translations-fakejs.js:11
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:11
 #: static/admin/translations-fakejs.js:29
 #: static/admin/translations-fakejs.js:179
 #: static/admin/translations-fakejs.js:191
@@ -1038,82 +1033,6 @@ msgstr "Objekte pro Seite"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:5
 msgid ", (%i more items)"
 msgstr ", (% i weitere Artikel)"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "ON_PROPERTY"
-msgstr "ON_PROPERTY"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "on"
-msgstr "auf"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "originalInstance"
-msgstr "ursprünglicheInstanz"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "OriginalDelegate"
-msgstr "Ursprünglicher Delegierter"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "Promise"
-msgstr "Versprechen"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "propagationStopped"
-msgstr "VermehrungGestoppt"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "UNPATCHED_EVENTS"
-msgstr "UNPATCHED_EVENTS"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "PASSIVE_EVENTS"
-msgstr "PASSIVE_EVENTS"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "zoneTask"
-msgstr "zoneAufgabe"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "fetchTaskAborting"
-msgstr "fetchTaskAborting"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "fetchTaskScheduling"
-msgstr "fetchTaskScheduling"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrTask"
-msgstr "xhrTask"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrSync"
-msgstr "xhrSync"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrListener"
-msgstr "xhrListener"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrScheduled"
-msgstr "xhrGeplant"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrURL"
-msgstr "xhrURL"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrErrorBeforeScheduled"
-msgstr "xhrErrorBeforeGeplant"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "unhandledPromiseRejectionHandler"
-msgstr "unhandledPromiseRejectionHandler"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "rejectionHandledHandler"
-msgstr "AblehnungHandledHandler"
 
 #: static/admin/translations-fakejs.js:275
 msgid "Remove all"

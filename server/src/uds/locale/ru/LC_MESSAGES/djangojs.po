@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 13:12+0200\n"
+"POT-Creation-Date: 2021-08-13 13:34+0200\n"
 "PO-Revision-Date: 2021-07-08 10:59+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
@@ -25,10 +25,6 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: static/admin/main.js:1
-msgid "category"
-msgstr "категория"
-
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:23
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
 msgid "seconds"
@@ -38,8 +34,7 @@ msgstr "секунд"
 msgid "Main"
 msgstr "Основной"
 
-#: static/admin/main.js:1 static/admin/polyfills-es5.js:1
-#: static/admin/polyfills.js:1 static/admin/translations-fakejs.js:11
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:11
 #: static/admin/translations-fakejs.js:29
 #: static/admin/translations-fakejs.js:179
 #: static/admin/translations-fakejs.js:191
@@ -1025,7 +1020,7 @@ msgstr "Удалить ключ клиента - ИСПОЛЬЗУЙТЕ С БО�
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
 #| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
-msgstr "Удалите токен туннеля - ИСПОЛЬЗУЙТЕ С КРАЙНЕЙ ВНИМАНИЕМ !!!"
+msgstr "Удалите токен туннеля - ИСПОЛЬЗУЙТЕ С КРАЙНЕЙ ПРЕДОСТОРОЖНОСТЬЮ !!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:24
 msgid "Cache flushed"
@@ -1038,82 +1033,6 @@ msgstr "Строк на страницу"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:5
 msgid ", (%i more items)"
 msgstr ", (% я больше строк)"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "ON_PROPERTY"
-msgstr "ON_PROPERTY"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "on"
-msgstr "на"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "originalInstance"
-msgstr "originalInstance"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "OriginalDelegate"
-msgstr "ИсходныйДелегат"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "Promise"
-msgstr "Обещать"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "propagationStopped"
-msgstr "распространение остановлено"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "UNPATCHED_EVENTS"
-msgstr "UNPATCHED_EVENTS"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "PASSIVE_EVENTS"
-msgstr "ПАССИВНЫЕ_СОБЫТИЯ"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "zoneTask"
-msgstr "zoneTask"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "fetchTaskAborting"
-msgstr "fetchTaskAborting"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "fetchTaskScheduling"
-msgstr "fetchTaskScheduling"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrTask"
-msgstr "xhrTask"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrSync"
-msgstr "xhrSync"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrListener"
-msgstr "xhrListener"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrScheduled"
-msgstr "xhrScheduled"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrURL"
-msgstr "xhrURL"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrErrorBeforeScheduled"
-msgstr "xhrErrorBeforeScheduled"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "unhandledPromiseRejectionHandler"
-msgstr "unhandledPromiseRejectionHandler"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "rejectionHandledHandler"
-msgstr "rejectionHandledHandler"
 
 #: static/admin/translations-fakejs.js:275
 msgid "Remove all"

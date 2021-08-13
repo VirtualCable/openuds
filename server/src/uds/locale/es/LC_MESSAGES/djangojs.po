@@ -8,6 +8,7 @@
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
 # blafuente <blafuente@virtualcable.es>, 2014
 # blafuente <blafuente@virtualcable.es>, 2014-2015
+# Francisco Javier Gómez Seijo <jgomez@virtualcable.es>, 2021
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014,2020
 # Javier <jgonzalez@virtualcable.es>, 2014
@@ -18,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 13:12+0200\n"
-"PO-Revision-Date: 2021-07-22 10:50+0000\n"
+"POT-Creation-Date: 2021-08-13 13:34+0200\n"
+"PO-Revision-Date: 2021-08-11 08:06+0000\n"
 "Last-Translator: Francisco Javier Gómez Seijo <jgomez@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -28,10 +29,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: static/admin/main.js:1
-msgid "category"
-msgstr "categoría"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:23
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:12
@@ -42,8 +39,7 @@ msgstr "segundos"
 msgid "Main"
 msgstr "Principal"
 
-#: static/admin/main.js:1 static/admin/polyfills-es5.js:1
-#: static/admin/polyfills.js:1 static/admin/translations-fakejs.js:11
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:11
 #: static/admin/translations-fakejs.js:29
 #: static/admin/translations-fakejs.js:179
 #: static/admin/translations-fakejs.js:191
@@ -1031,7 +1027,7 @@ msgstr "Eliminar token de actor - ¡USAR CON EXTREMA PRECAUCIÓN!"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
 #| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
-msgstr "Elimine el token del túnel: ¡UTILICE CON EXTREMA PRECAUCIÓN!"
+msgstr "Eliminar el token del túnel: ¡UTILÍCELO CON EXTREMA PRECAUCIÓN!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:24
 msgid "Cache flushed"
@@ -1044,82 +1040,6 @@ msgstr "Entradas por página"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:5
 msgid ", (%i more items)"
 msgstr ", (%i más artículos)"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "ON_PROPERTY"
-msgstr "ON_PROPERTY"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "on"
-msgstr "en"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "originalInstance"
-msgstr "originalInstance"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "OriginalDelegate"
-msgstr "Original Delegado"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "Promise"
-msgstr "Promesa"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "propagationStopped"
-msgstr "propagación"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "UNPATCHED_EVENTS"
-msgstr "UNPATCHED_EVENTS"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "PASSIVE_EVENTS"
-msgstr "EVENTOS_PASSIVE"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "zoneTask"
-msgstr "zoneTask"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "fetchTaskAborting"
-msgstr "fetchTaskAborting"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "fetchTaskScheduling"
-msgstr "fetchTaskScheduling"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrTask"
-msgstr "xhrTask"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrSync"
-msgstr "xhrSync"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrListener"
-msgstr "xhrListener"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrScheduled"
-msgstr "xhrScheduled"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrURL"
-msgstr "xhrURL"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "xhrErrorBeforeScheduled"
-msgstr "xhrErrorBeforeScheduled"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "unhandledPromiseRejectionHandler"
-msgstr "unhandledPromiseRejectionHandler"
-
-#: static/admin/polyfills-es5.js:1 static/admin/polyfills.js:1
-msgid "rejectionHandledHandler"
-msgstr "rejectionHandledHandler"
 
 #: static/admin/translations-fakejs.js:275
 msgid "Remove all"
@@ -1566,11 +1486,11 @@ msgstr "Ver service pools"
 
 #: static/admin/translations-fakejs.js:476
 msgid "Assigned services chart"
-msgstr "Cuadro de servicios asignados"
+msgstr "Gráfico de servicios asignados"
 
 #: static/admin/translations-fakejs.js:477
 msgid "In use services chart"
-msgstr "Cuadro de servicios en uso"
+msgstr "Gráfico de servicios en uso"
 
 #: static/admin/translations-fakejs.js:478
 msgid "UDS Administration"
@@ -1648,7 +1568,7 @@ msgstr ""
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
 msgid "Service ready"
-msgstr "Listo para el servicio"
+msgstr "Servicio Listo"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
 msgid "UDS Client not launching"
