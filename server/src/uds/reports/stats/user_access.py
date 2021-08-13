@@ -41,6 +41,7 @@ import django.template.defaultfilters as filters
 from uds.core.ui import gui
 from uds.core.util.stats import events
 from uds.core.util import tools
+from uds.core.managers.stats import StatsManager
 from uds.core.reports import graphs
 
 from .base import StatsReport
@@ -126,7 +127,7 @@ class StatsReportLogin(StatsReport):
         for interval in samplingIntervals:
             key = (interval[0] + interval[1]) / 2
             val = (
-                events.statsManager()
+                StatsManager.manager()
                 .getEvents(
                     events.OT_AUTHENTICATOR,
                     events.ET_LOGIN,
@@ -154,7 +155,7 @@ class StatsReportLogin(StatsReport):
         dataWeek = [0] * 7
         dataHour = [0] * 24
         dataWeekHour = [[0] * 24 for _ in range(7)]
-        for val in events.statsManager().getEvents(
+        for val in StatsManager.manager().getEvents(
             events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end
         ):
             s = datetime.datetime.fromtimestamp(val.stamp)

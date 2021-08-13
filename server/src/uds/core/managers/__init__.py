@@ -40,7 +40,6 @@ if typing.TYPE_CHECKING:
     from .task import TaskManager
     from .downloads import DownloadsManager
     from .log import LogManager
-    from .stats import StatsManager
     from .user_service import UserServiceManager
     from .publication import PublicationManager
 
@@ -62,11 +61,6 @@ def downloadsManager() -> 'DownloadsManager':
 def logManager() -> 'LogManager':
     from .log import LogManager  # pylint: disable=redefined-outer-name
     return LogManager.manager()
-
-
-def statsManager() -> 'StatsManager':
-    from .stats import StatsManager  # pylint: disable=redefined-outer-name
-    return StatsManager.manager()
 
 
 def userServiceManager() -> 'UserServiceManager':

@@ -34,7 +34,7 @@ import datetime
 import logging
 import typing
 
-from uds.core.managers import statsManager
+from uds.core.managers.stats import StatsManager
 from uds.models import Provider, Service, ServicePool, Authenticator
 
 logger = logging.getLogger(__name__)
@@ -128,7 +128,9 @@ def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     """
 
-    return statsManager().addEvent(__transDict[type(obj)], obj.id, eventType, **kwargs)
+    return StatsManager.manager().addEvent(
+        __transDict[type(obj)], obj.id, eventType, **kwargs
+    )
 
 
 def getEvents(
@@ -160,7 +162,7 @@ def getEvents(
     else:
         owner_id = obj.pk
 
-    for i in statsManager().getEvents(
+    for i in StatsManager.manager().getEvents(
         __transDict[type_], eventType, owner_id=owner_id, since=since, to=to
     ):
         val = (

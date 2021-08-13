@@ -39,6 +39,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import events
+from uds.core.managers.stats import StatsManager
 from uds.models import ServicePool
 
 from .base import StatsReport
@@ -97,7 +98,7 @@ class UsageByPool(StatsReport):
         data = []
         for pool in pools:
             items = (
-                events.statsManager()
+                StatsManager.manager()
                 .getEvents(
                     events.OT_DEPLOYED,
                     (events.ET_LOGIN, events.ET_LOGOUT),

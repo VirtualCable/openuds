@@ -35,7 +35,7 @@ import typing
 from uds.models import ServicePool, Authenticator, getSqlDatetime
 from uds.core.util.state import State
 from uds.core.util.stats import counters
-from uds.core.managers import statsManager
+from uds.core.managers.stats import StatsManager
 from uds.core.jobs import Job
 
 
@@ -142,12 +142,12 @@ class StatsCleaner(Job):
     def run(self):
         logger.debug('Starting statistics cleanup')
         try:
-            statsManager().cleanupCounters()
+            StatsManager.manager().cleanupCounters()
         except Exception:
             logger.exception('Cleaning up counters')
 
         try:
-            statsManager().cleanupEvents()
+            StatsManager.manager().cleanupEvents()
         except Exception:
             logger.exception('Cleaning up events')
 

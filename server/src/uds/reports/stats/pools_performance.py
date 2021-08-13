@@ -43,6 +43,7 @@ import django.template.defaultfilters as filters
 from uds.core.ui import gui
 from uds.core.util.stats import events
 from uds.core.util import tools
+from uds.core.managers.stats import StatsManager
 from uds.core.reports import graphs
 from uds.models import ServicePool
 
@@ -147,7 +148,7 @@ class PoolPerformanceReport(StatsReport):
         # Store dataUsers for all pools
         poolsData = []
 
-        fld = events.statsManager().getEventFldFor('username')
+        fld = StatsManager.manager().getEventFldFor('username')
 
         reportData = []
         for p in pools:
@@ -156,7 +157,7 @@ class PoolPerformanceReport(StatsReport):
             for interval in samplingIntervals:
                 key = (interval[0] + interval[1]) / 2
                 q = (
-                    events.statsManager()
+                    StatsManager.manager()
                     .getEvents(
                         events.OT_DEPLOYED,
                         events.ET_ACCESS,

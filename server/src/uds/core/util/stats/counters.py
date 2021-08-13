@@ -36,18 +36,27 @@ import typing
 
 from django.utils.translation import ugettext_lazy as _
 
-from uds.core.managers import statsManager
-from uds.models import NEVER, Provider, Service, ServicePool, Authenticator 
+from uds.core.managers.stats import StatsManager
+from uds.models import NEVER, Provider, Service, ServicePool, Authenticator
 
 
 logger = logging.getLogger(__name__)
 
-CounterClass = typing.TypeVar('CounterClass', Provider, Service, ServicePool, Authenticator)
+CounterClass = typing.TypeVar(
+    'CounterClass', Provider, Service, ServicePool, Authenticator
+)
 
 # Posible counters, note that not all are used by every posible type
 # FIRST_COUNTER_TYPE, LAST_COUNTER_TYPE are just a placeholder for sanity checks
 (
-    CT_LOAD, CT_STORAGE, CT_ASSIGNED, CT_INUSE, CT_AUTH_USERS, CT_AUTH_USERS_WITH_SERVICES, CT_AUTH_SERVICES, CT_CACHED
+    CT_LOAD,
+    CT_STORAGE,
+    CT_ASSIGNED,
+    CT_INUSE,
+    CT_AUTH_USERS,
+    CT_AUTH_USERS_WITH_SERVICES,
+    CT_AUTH_SERVICES,
+    CT_CACHED,
 ) = range(8)
 
 __caRead: typing.Dict = {}
@@ -56,7 +65,12 @@ __transDict: typing.Dict = {}
 __typeTitles: typing.Dict = {}
 
 
-def addCounter(obj: CounterClass, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None) -> bool:
+def addCounter(
+    obj: CounterClass,
+    counterType: int,
+    counterValue: int,
+    stamp: typing.Optional[datetime.datetime] = None,
+) -> bool:
     """
     Adds a counter stat to specified object
 
@@ -68,13 +82,22 @@ def addCounter(obj: CounterClass, counterType: int, counterValue: int, stamp: ty
     """
     type_ = type(obj)
     if type_ not in __caWrite.get(counterType, ()):  # pylint: disable
-        logger.error('Type %s does not accepts counter of type %s', type_, counterValue, exc_info=True)
+        logger.error(
+            'Type %s does not accepts counter of type %s',
+            type_,
+            counterValue,
+            exc_info=True,
+        )
         return False
 
-    return statsManager().addCounter(__transDict[type(obj)], obj.id, counterType, counterValue, stamp)
+    return StatsManager.manager().addCounter(
+        __transDict[type(obj)], obj.id, counterType, counterValue, stamp
+    )
 
 
-def getCounters(obj: CounterClass, counterType: int, **kwargs) -> typing.Generator[typing.Tuple[datetime.datetime, int], None, None]:
+def getCounters(
+    obj: CounterClass, counterType: int, **kwargs
+) -> typing.Generator[typing.Tuple[datetime.datetime, int], None, None]:
     """
     Get counters
 
@@ -112,7 +135,17 @@ def getCounters(obj: CounterClass, counterType: int, **kwargs) -> typing.Generat
     else:
         owner_ids = None
 
-    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, kwargs.get('interval'), kwargs.get('max_intervals'), limit, use_max):
+    for i in StatsManager.manager().getCounters(
+        __transDict[type(obj)],
+        counterType,
+        owner_ids,
+        since,
+        to,
+        kwargs.get('interval'),
+        kwargs.get('max_intervals'),
+        limit,
+        use_max,
+    ):
         yield (datetime.datetime.fromtimestamp(i.stamp), i.value)
 
 
@@ -128,67 +161,67 @@ def _initializeData() -> None:
     Hides data from global var space
     """
 
-    __caWrite.update({
-        CT_LOAD: (Provider,),
-        CT_STORAGE: (Service,),
-        CT_ASSIGNED: (ServicePool,),
-        CT_INUSE: (ServicePool,),
-        CT_AUTH_USERS: (Authenticator,),
-        CT_AUTH_SERVICES: (Authenticator,),
-        CT_AUTH_USERS_WITH_SERVICES: (Authenticator,),
-        CT_CACHED: (ServicePool,),
-    })
+    __caWrite.update(
+        {
+            CT_LOAD: (Provider,),
+            CT_STORAGE: (Service,),
+            CT_ASSIGNED: (ServicePool,),
+            CT_INUSE: (ServicePool,),
+            CT_AUTH_USERS: (Authenticator,),
+            CT_AUTH_SERVICES: (Authenticator,),
+            CT_AUTH_USERS_WITH_SERVICES: (Authenticator,),
+            CT_CACHED: (ServicePool,),
+        }
+    )
 
     # OBtain  ids from variups type of object to retrieve stats
     def get_Id(obj):
         return obj.id
 
-    def get_P_S_Ids(provider):
-        return (i.id for i in provider.services.all())
+    def get_P_S_Ids(provider) -> typing.Tuple:
+        return tuple(i.id for i in provider.services.all())
 
-    def get_S_DS_Ids(service):
-        return (i.id for i in service.deployedServices.all())
+    def get_S_DS_Ids(service) -> typing.Tuple:
+        return tuple(i.id for i in service.deployedServices.all())
 
-    def get_P_S_DS_Ids(provider):
-        res = ()
+    def get_P_S_DS_Ids(provider) -> typing.Tuple:
+        res: typing.Tuple = ()
         for i in provider.services.all():
             res += get_S_DS_Ids(i)
         return res
 
-    __caRead.update({
-        Provider: {
-            CT_LOAD: get_Id,
-            CT_STORAGE: get_P_S_Ids,
-            CT_ASSIGNED: get_P_S_DS_Ids,
-            CT_INUSE: get_P_S_DS_Ids
-        },
-        Service: {
-            CT_STORAGE: get_Id,
-            CT_ASSIGNED: get_S_DS_Ids,
-            CT_INUSE: get_S_DS_Ids
-        },
-        ServicePool: {
-            CT_ASSIGNED: get_Id,
-            CT_INUSE: get_Id,
-            CT_CACHED: get_Id
-        },
-        Authenticator: {
-            CT_AUTH_USERS: get_Id,
-            CT_AUTH_SERVICES: get_Id,
-            CT_AUTH_USERS_WITH_SERVICES: get_Id,
+    __caRead.update(
+        {
+            Provider: {
+                CT_LOAD: get_Id,
+                CT_STORAGE: get_P_S_Ids,
+                CT_ASSIGNED: get_P_S_DS_Ids,
+                CT_INUSE: get_P_S_DS_Ids,
+            },
+            Service: {
+                CT_STORAGE: get_Id,
+                CT_ASSIGNED: get_S_DS_Ids,
+                CT_INUSE: get_S_DS_Ids,
+            },
+            ServicePool: {CT_ASSIGNED: get_Id, CT_INUSE: get_Id, CT_CACHED: get_Id},
+            Authenticator: {
+                CT_AUTH_USERS: get_Id,
+                CT_AUTH_SERVICES: get_Id,
+                CT_AUTH_USERS_WITH_SERVICES: get_Id,
+            },
         }
-    })
+    )
 
-    def _getIds(obj):
+    def _getIds(obj) -> typing.Tuple:
         to = type(obj)
 
         if to is ServicePool or to is Authenticator:
             return to.id
 
         if to is Service:
-            return (i.id for i in obj.userServices.all())
+            return tuple(i.id for i in obj.userServices.all())
 
-        res = ()
+        res: typing.Tuple = ()
         if to is Provider:
             for i in obj.services.all():
                 res += _getIds(i)
@@ -200,23 +233,28 @@ def _initializeData() -> None:
 
     # Dict to convert objects to owner types
     # Dict for translations
-    __transDict.update({
-        ServicePool: OT_DEPLOYED,
-        Service: OT_SERVICE,
-        Provider: OT_PROVIDER,
-        Authenticator: OT_AUTHENTICATOR,
-    })
+    __transDict.update(
+        {
+            ServicePool: OT_DEPLOYED,
+            Service: OT_SERVICE,
+            Provider: OT_PROVIDER,
+            Authenticator: OT_AUTHENTICATOR,
+        }
+    )
 
     # Titles of types
-    __typeTitles.update({
-        CT_ASSIGNED: _('Assigned'),
-        CT_INUSE: _('In use'),
-        CT_LOAD: _('Load'),
-        CT_STORAGE: _('Storage'),
-        CT_AUTH_USERS: _('Users'),
-        CT_AUTH_USERS_WITH_SERVICES: _('Users with services'),
-        CT_AUTH_SERVICES: _('User Services'),
-        CT_CACHED: _('Cached'),
-    })
+    __typeTitles.update(
+        {
+            CT_ASSIGNED: _('Assigned'),
+            CT_INUSE: _('In use'),
+            CT_LOAD: _('Load'),
+            CT_STORAGE: _('Storage'),
+            CT_AUTH_USERS: _('Users'),
+            CT_AUTH_USERS_WITH_SERVICES: _('Users with services'),
+            CT_AUTH_SERVICES: _('User Services'),
+            CT_CACHED: _('Cached'),
+        }
+    )
+
 
 _initializeData()
