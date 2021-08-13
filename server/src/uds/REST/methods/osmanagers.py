@@ -70,7 +70,7 @@ class OsManagers(ModelHandler):
             'type_name': type_.name(),
             'servicesTypes': type_.servicesType,
             'comments': osm.comments,
-            'permission': permissions.getEffectivePermission(self._user, osm)
+            'permission': permissions.getEffectivePermission(self._user, osm),
         }
 
     def item_as_dict(self, item: OSManager) -> typing.Dict[str, typing.Any]:
@@ -79,7 +79,9 @@ class OsManagers(ModelHandler):
     def checkDelete(self, item: OSManager) -> None:
         # Only can delete if no ServicePools attached
         if item.deployedServices.count() > 0:
-            raise RequestError(ugettext('Can\'t delete an OS Manager with services pools associated'))
+            raise RequestError(
+                ugettext('Can\'t delete an OS Manager with services pools associated')
+            )
 
     # Types related
     def enum_types(self) -> typing.Iterable[typing.Type[osmanagers.OSManager]]:
@@ -88,6 +90,9 @@ class OsManagers(ModelHandler):
     # Gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
-            return self.addDefaultFields(osmanagers.factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags'])
+            return self.addDefaultFields(
+                osmanagers.factory().lookup(type_).guiDescription(),  # type: ignore  # may raise an exception if lookup fails
+                ['name', 'comments', 'tags'],
+            )
         except:
             raise NotFound('type not found')

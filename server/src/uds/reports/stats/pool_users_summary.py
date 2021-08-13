@@ -50,15 +50,14 @@ logger = logging.getLogger(__name__)
 class UsageSummaryByUsersPool(StatsReport):
     filename = 'pool_user_usage.pdf'
     name = _('Pool Usage by users')  # Report name
-    description = _('Generates a report with the summary of users usage for a pool')  # Report description
+    description = _(
+        'Generates a report with the summary of users usage for a pool'
+    )  # Report description
     uuid = '202c6438-30a8-11e7-80e4-77c1e4cb9e09'
 
     # Input fields
     pool = gui.ChoiceField(
-        order=1,
-        label=_('Pool'),
-        tooltip=_('Pool for report'),
-        required=True
+        order=1, label=_('Pool'), tooltip=_('Pool for report'), required=True
     )
 
     startDate = gui.DateField(
@@ -66,7 +65,7 @@ class UsageSummaryByUsersPool(StatsReport):
         label=_('Starting date'),
         tooltip=_('starting date for report'),
         defvalue=datetime.date.min,
-        required=True
+        required=True,
     )
 
     endDate = gui.DateField(
@@ -74,22 +73,32 @@ class UsageSummaryByUsersPool(StatsReport):
         label=_('Finish date'),
         tooltip=_('finish date for report'),
         defvalue=datetime.date.max,
-        required=True
+        required=True,
     )
 
     def initGui(self) -> None:
         logger.debug('Initializing gui')
-        vals = [
-            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all()
-        ]
+        vals = [gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all()]
         self.pool.setValues(vals)
 
-    def getPoolData(self, pool) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
+    def getPoolData(
+        self, pool
+    ) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         logger.debug(self.pool.value)
 
-        items = StatsManager.manager().getEvents(events.OT_DEPLOYED, (events.ET_LOGIN, events.ET_LOGOUT), owner_id=pool.id, since=start, to=end).order_by('stamp')
+        items = (
+            StatsManager.manager()
+            .getEvents(
+                events.OT_DEPLOYED,
+                (events.ET_LOGIN, events.ET_LOGOUT),
+                owner_id=pool.id,
+                since=start,
+                to=end,
+            )
+            .order_by('stamp')
+        )
 
         logins: typing.Dict[str, int] = {}
         users: typing.Dict[str, typing.Dict] = {}
@@ -115,12 +124,15 @@ class UsageSummaryByUsersPool(StatsReport):
                     # })
 
         # Extract different number of users
-        data = [{
-            'user': k,
-            'sessions': v['sessions'],
-            'hours': '{:.2f}'.format(float(v['time']) / 3600),
-            'average': '{:.2f}'.format(float(v['time']) / 3600 / v['sessions'])
-        } for k, v in users.items()]
+        data = [
+            {
+                'user': k,
+                'sessions': v['sessions'],
+                'hours': '{:.2f}'.format(float(v['time']) / 3600),
+                'average': '{:.2f}'.format(float(v['time']) / 3600 / v['sessions']),
+            }
+            for k, v in users.items()
+        ]
 
         return data, pool.name
 
@@ -139,7 +151,7 @@ class UsageSummaryByUsersPool(StatsReport):
                 'ending': self.endDate.date(),
             },
             header=ugettext('Users usage list for {}').format(poolName),
-            water=ugettext('UDS Report of users in {}').format(poolName)
+            water=ugettext('UDS Report of users in {}').format(poolName),
         )
 
 
@@ -160,7 +172,14 @@ class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
 
         reportData = self.getData()[0]
 
-        writer.writerow([ugettext('User'), ugettext('Sessions'), ugettext('Hours'), ugettext('Average')])
+        writer.writerow(
+            [
+                ugettext('User'),
+                ugettext('Sessions'),
+                ugettext('Hours'),
+                ugettext('Average'),
+            ]
+        )
 
         for v in reportData:
             writer.writerow([v['user'], v['sessions'], v['hours'], v['average']])

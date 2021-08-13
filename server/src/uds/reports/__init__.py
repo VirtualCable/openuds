@@ -51,6 +51,7 @@ logger = logging.getLogger(__name__)
 
 availableReports: typing.List[typing.Type['reports.Report']] = []
 
+
 def __init__() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
@@ -66,7 +67,10 @@ def __init__() -> None:
             alreadyAdded.add(reportClass.uuid)
             addReportCls(reportClass)
         else:
-            logger.debug('Report class %s not added because it lacks of uuid (it is probably a base class)', reportClass)
+            logger.debug(
+                'Report class %s not added because it lacks of uuid (it is probably a base class)',
+                reportClass,
+            )
 
         subReport: typing.Type[reports.Report]
         for subReport in reportClass.__subclasses__():

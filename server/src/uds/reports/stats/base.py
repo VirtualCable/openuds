@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core import reports
 from ..auto import ReportAuto
 
+
 class StatsReport(reports.Report):
     group = _('Statistics')  # So we can make submenus with reports
 

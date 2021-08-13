@@ -70,7 +70,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             'running': item.user_service is not None,
             'elapsed': item.elapsed,
             'elapsed_timemark': item.elapsed_timemark,
-            'permission': perm
+            'permission': perm,
         }
 
         return retVal

@@ -53,15 +53,22 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /auth path
 
+
 class Login(Handler):
     """
     Responsible of user authentication
     """
+
     path = 'auth'
     authenticated = False  # Public method
 
     @staticmethod
-    def result(result: str = 'error', token: str = None, scrambler: str = None, error: str = None) -> typing.MutableMapping[str, typing.Any]:
+    def result(
+        result: str = 'error',
+        token: str = None,
+        scrambler: str = None,
+        error: str = None,
+    ) -> typing.MutableMapping[str, typing.Any]:
         res = {
             'result': result,
             'token': token,
@@ -109,15 +116,31 @@ class Login(Handler):
         cache = Cache('RESTapi')
         fails = cache.get(self._request.ip) or 0
         if fails > ALLOWED_FAILS:
-            logger.info('Access to REST API %s is blocked for %s seconds since last fail', self._request.ip, GlobalConfig.LOGIN_BLOCK.getInt())
-        
+            logger.info(
+                'Access to REST API %s is blocked for %s seconds since last fail',
+                self._request.ip,
+                GlobalConfig.LOGIN_BLOCK.getInt(),
+            )
+
         try:
-            if 'auth_id' not in self._params and 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
+            if (
+                'auth_id' not in self._params
+                and 'authId' not in self._params
+                and 'authSmallName' not in self._params
+                and 'auth' not in self._params
+            ):
                 raise RequestError('Invalid parameters (no auth)')
 
-            scrambler: str = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
-            authId: typing.Optional[str] = self._params.get('authId', self._params.get('auth_id', None))
-            authSmallName: typing.Optional[str] = self._params.get('authSmallName', None)
+            scrambler: str = ''.join(
+                random.SystemRandom().choice(string.ascii_letters + string.digits)
+                for _ in range(32)
+            )  # @UndefinedVariable
+            authId: typing.Optional[str] = self._params.get(
+                'authId', self._params.get('auth_id', None)
+            )
+            authSmallName: typing.Optional[str] = self._params.get(
+                'authSmallName', None
+            )
             authName: typing.Optional[str] = self._params.get('auth', None)
             platform: str = self._params.get('platform', self._request.os)
 
@@ -126,9 +149,18 @@ class Login(Handler):
 
             username, password = self._params['username'], self._params['password']
             locale: str = self._params.get('locale', 'en')
-            if authName == 'admin' or authSmallName == 'admin' or authId == '00000000-0000-0000-0000-000000000000':
-                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
-                    self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
+            if (
+                authName == 'admin'
+                or authSmallName == 'admin'
+                or authId == '00000000-0000-0000-0000-000000000000'
+            ):
+                if (
+                    GlobalConfig.SUPER_USER_LOGIN.get(True) == username
+                    and GlobalConfig.SUPER_USER_PASS.get(True) == password
+                ):
+                    self.genAuthToken(
+                        -1, username, password, locale, platform, True, True, scrambler
+                    )
                     return Login.result(result='ok', token=self.getAuthToken())
                 return Login.result(error='Invalid credentials')
 
@@ -149,13 +181,24 @@ class Login(Handler):
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
                 # And store in cache for blocking for a while if fails
-                cache.put(self._request.ip, fails+1, GlobalConfig.LOGIN_BLOCK.getInt())
-                
+                cache.put(
+                    self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.getInt()
+                )
+
                 return Login.result(error='Invalid credentials')
             return Login.result(
                 result='ok',
-                token=self.genAuthToken(auth.id, user.name, password, locale, platform, user.is_admin, user.staff_member, scrambler),
-                scrambler=scrambler
+                token=self.genAuthToken(
+                    auth.id,
+                    user.name,
+                    password,
+                    locale,
+                    platform,
+                    user.is_admin,
+                    user.staff_member,
+                    scrambler,
+                ),
+                scrambler=scrambler,
             )
 
         except Exception:
@@ -169,6 +212,7 @@ class Logout(Handler):
     """
     Responsible of user de-authentication
     """
+
     path = 'auth'
     authenticated = True  # By default, all handlers needs authentication
 
@@ -190,14 +234,16 @@ class Auths(Handler):
         auth: Authenticator
         for auth in Authenticator.objects.all():
             theType = auth.getType()
-            if paramAll or (theType.isCustom() is False and theType.typeType not in ('IP',)):
+            if paramAll or (
+                theType.isCustom() is False and theType.typeType not in ('IP',)
+            ):
                 yield {
                     'authId': auth.uuid,
                     'authSmallName': str(auth.small_name),
                     'auth': auth.name,
                     'type': theType.typeType,
                     'priority': auth.priority,
-                    'isCustom': theType.isCustom()
+                    'isCustom': theType.isCustom(),
                 }
 
     def get(self):

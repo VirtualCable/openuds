@@ -64,16 +64,10 @@ class ServicesUsage(DetailHandler):
 
         if item.user is None:
             owner = ''
-            owner_info = {
-                'auth_id': '',
-                'user_id': ''
-            }
+            owner_info = {'auth_id': '', 'user_id': ''}
         else:
             owner = item.user.pretty_name
-            owner_info = {
-                'auth_id': item.user.manager.uuid,
-                'user_id': item.user.uuid
-            }
+            owner_info = {'auth_id': item.user.manager.uuid, 'user_id': item.user.uuid}
 
         return {
             'id': item.uuid,
@@ -90,19 +84,30 @@ class ServicesUsage(DetailHandler):
             'ip': props.get('ip', _('unknown')),
             'source_host': item.src_hostname,
             'source_ip': item.src_ip,
-            'in_use': item.in_use
+            'in_use': item.in_use,
         }
 
     def getItems(self, parent: 'Provider', item: typing.Optional[str]):
         try:
             if item is None:
-                userServicesQuery = UserService.objects.filter(deployed_service__service__provider=parent)
+                userServicesQuery = UserService.objects.filter(
+                    deployed_service__service__provider=parent
+                )
             else:
-                userServicesQuery = UserService.objects.filter(deployed_service__service_uuid=processUuid(item))
+                userServicesQuery = UserService.objects.filter(
+                    deployed_service__service_uuid=processUuid(item)
+                )
 
-            return [ServicesUsage.itemToDict(k) for k in userServicesQuery.filter(state=State.USABLE).order_by('creation_date').
-                    prefetch_related('deployed_service').prefetch_related('deployed_service__service').prefetch_related('properties').
-                    prefetch_related('user').prefetch_related('user__manager')]
+            return [
+                ServicesUsage.itemToDict(k)
+                for k in userServicesQuery.filter(state=State.USABLE)
+                .order_by('creation_date')
+                .prefetch_related('deployed_service')
+                .prefetch_related('deployed_service__service')
+                .prefetch_related('properties')
+                .prefetch_related('user')
+                .prefetch_related('user__manager')
+            ]
 
         except Exception:
             logger.exception('getItems')
@@ -131,7 +136,9 @@ class ServicesUsage(DetailHandler):
     def deleteItem(self, parent: 'Provider', item: str) -> None:
         userService: UserService
         try:
-            userService = UserService.objects.get(uuid=processUuid(item), deployed_service__service__provider=parent)
+            userService = UserService.objects.get(
+                uuid=processUuid(item), deployed_service__service__provider=parent
+            )
         except Exception:
             raise self.invalidItemException()
 

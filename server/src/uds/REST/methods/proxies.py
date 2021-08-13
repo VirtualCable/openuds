@@ -50,6 +50,7 @@ class Proxies(ModelHandler):
     """
     Processes REST requests about proxys
     """
+
     model = Proxy
 
     save_fields = ['name', 'host', 'port', 'ssl', 'check_cert', 'comments', 'tags']
@@ -74,42 +75,49 @@ class Proxies(ModelHandler):
             'port': item.port,
             'ssl': item.ssl,
             'check_cert': item.check_cert,
-            'permission': permissions.getEffectivePermission(self._user, item)
+            'permission': permissions.getEffectivePermission(self._user, item),
         }
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         g = self.addDefaultFields([], ['name', 'comments', 'tags'])
 
         for f in [
-                {
-                    'name': 'host',
-                    'value': '',
-                    'label': ugettext('Host'),
-                    'tooltip': ugettext('Server (IP or FQDN) that will serve as proxy.'),
-                    'type': gui.InputField.TEXT_TYPE,
-                    'order': 110,
-                }, {
-                    'name': 'port',
-                    'value': '9090',
-                    'minValue': '0',
-                    'label': ugettext('Port'),
-                    'tooltip': ugettext('Port of proxy server'),
-                    'type': gui.InputField.NUMERIC_TYPE,
-                    'order': 111,
-                }, {
-                    'name': 'ssl',
-                    'value': True,
-                    'label': ugettext('Use SSL'),
-                    'tooltip': ugettext('If active, the proxied connections will be done using HTTPS'),
-                    'type': gui.InputField.CHECKBOX_TYPE,
-                }, {
-                    'name': 'check_cert',
-                    'value': True,
-                    'label': ugettext('Check Certificate'),
-                    'tooltip': ugettext('If active, any SSL certificate will be checked (will not allow self signed certificates on proxy)'),
-                    'type': gui.InputField.CHECKBOX_TYPE,
-                },
-            ]:
+            {
+                'name': 'host',
+                'value': '',
+                'label': ugettext('Host'),
+                'tooltip': ugettext('Server (IP or FQDN) that will serve as proxy.'),
+                'type': gui.InputField.TEXT_TYPE,
+                'order': 110,
+            },
+            {
+                'name': 'port',
+                'value': '9090',
+                'minValue': '0',
+                'label': ugettext('Port'),
+                'tooltip': ugettext('Port of proxy server'),
+                'type': gui.InputField.NUMERIC_TYPE,
+                'order': 111,
+            },
+            {
+                'name': 'ssl',
+                'value': True,
+                'label': ugettext('Use SSL'),
+                'tooltip': ugettext(
+                    'If active, the proxied connections will be done using HTTPS'
+                ),
+                'type': gui.InputField.CHECKBOX_TYPE,
+            },
+            {
+                'name': 'check_cert',
+                'value': True,
+                'label': ugettext('Check Certificate'),
+                'tooltip': ugettext(
+                    'If active, any SSL certificate will be checked (will not allow self signed certificates on proxy)'
+                ),
+                'type': gui.InputField.CHECKBOX_TYPE,
+            },
+        ]:
             self.addField(g, f)
 
         return g

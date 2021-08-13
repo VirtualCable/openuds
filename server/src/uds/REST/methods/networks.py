@@ -52,12 +52,20 @@ class Networks(ModelHandler):
     Processes REST requests about networks
     Implements specific handling for network related requests using GUI
     """
+
     model = Network
     save_fields = ['name', 'net_string', 'tags']
 
     table_title = _('Networks')
     table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success'}},
+        {
+            'name': {
+                'title': _('Name'),
+                'visible': True,
+                'type': 'icon',
+                'icon': 'fa fa-globe text-success',
+            }
+        },
         {'net_string': {'title': _('Range')}},
         {'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
@@ -75,14 +83,17 @@ class Networks(ModelHandler):
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addField(
-            self.addDefaultFields([], ['name', 'tags']), {
+            self.addDefaultFields([], ['name', 'tags']),
+            {
                 'name': 'net_string',
                 'value': '',
                 'label': ugettext('Network range'),
-                'tooltip': ugettext('Network range. Accepts most network definitions formats (range, subnet, host, etc...'),
+                'tooltip': ugettext(
+                    'Network range. Accepts most network definitions formats (range, subnet, host, etc...'
+                ),
                 'type': gui.InputField.TEXT_TYPE,
                 'order': 100,  # At end
-            }
+            },
         )
 
     def item_as_dict(self, item: Network) -> typing.Dict[str, typing.Any]:
@@ -92,5 +103,5 @@ class Networks(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'net_string': item.net_string,
             'networks_count': item.transports.count(),
-            'permission': permissions.getEffectivePermission(self._user, item)
+            'permission': permissions.getEffectivePermission(self._user, item),
         }

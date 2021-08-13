@@ -50,6 +50,7 @@ class ServicesPoolGroups(ModelHandler):
     """
     Handles the gallery REST interface
     """
+
     # needs_admin = True
 
     path = 'gallery'
@@ -59,7 +60,14 @@ class ServicesPoolGroups(ModelHandler):
     table_title = _('Services Pool Groups')
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image', 'width': '96px'}},
+        {
+            'thumb': {
+                'title': _('Image'),
+                'visible': True,
+                'type': 'image',
+                'width': '96px',
+            }
+        },
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
     ]
@@ -79,14 +87,22 @@ class ServicesPoolGroups(ModelHandler):
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         localGui = self.addDefaultFields([], ['name', 'comments', 'priority'])
 
-        for field in [{
+        for field in [
+            {
                 'name': 'image_id',
-                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
+                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + gui.sortedChoices(
+                    [
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        for v in Image.objects.all()
+                    ]
+                ),
                 'label': ugettext('Associated Image'),
                 'tooltip': ugettext('Image assocciated with this service'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 102,
-            }]:
+            }
+        ]:
             self.addField(localGui, field)
 
         return localGui
@@ -100,7 +116,9 @@ class ServicesPoolGroups(ModelHandler):
             'image_id': item.image.uuid if item.image else None,
         }
 
-    def item_as_dict_overview(self, item: ServicePoolGroup) -> typing.Dict[str, typing.Any]:
+    def item_as_dict_overview(
+        self, item: ServicePoolGroup
+    ) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'priority': item.priority,

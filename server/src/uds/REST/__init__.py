@@ -50,14 +50,14 @@ from .handlers import (
     NotFound,
     RequestError,
     ResponseError,
-    NotSupportedError
+    NotSupportedError,
 )
 
 from . import processors
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from  uds.core.util.request import ExtendedHttpRequest
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -70,12 +70,15 @@ class Dispatcher(View):
     """
     This class is responsible of dispatching REST requests
     """
+
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    services: typing.ClassVar[typing.Dict[str, typing.Any]] = {'': None}  # Will include a default /rest handler, but rigth now this will be fine
+    services: typing.ClassVar[typing.Dict[str, typing.Any]] = {
+        '': None
+    }  # Will include a default /rest handler, but rigth now this will be fine
 
     # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
     @method_decorator(csrf_exempt)
-    def dispatch(self, request: 'ExtendedHttpRequest', *args, **kwargs):
+    def dispatch(self, request: 'ExtendedHttpRequestWithUser', *args, **kwargs):
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
@@ -98,7 +101,9 @@ class Dispatcher(View):
                 content_type = path[0].split('.')[1]
 
             clean_path = path[0].split('.')[0]
-            if not clean_path:  # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
+            if (
+                not clean_path
+            ):  # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
                 path = path[1:]
                 continue
 
@@ -115,9 +120,13 @@ class Dispatcher(View):
         # Here, service points to the path
         cls: typing.Optional[typing.Type[Handler]] = service['']
         if cls is None:
-            return http.HttpResponseNotFound('Method not found', content_type="text/plain")
+            return http.HttpResponseNotFound(
+                'Method not found', content_type="text/plain"
+            )
 
-        processor = processors.available_processors_ext_dict.get(content_type, processors.default_processor)(request)
+        processor = processors.available_processors_ext_dict.get(
+            content_type, processors.default_processor
+        )(request)
 
         # Obtain method to be invoked
         http_method: str = request.method.lower() if request.method else ''
@@ -128,24 +137,40 @@ class Dispatcher(View):
         handler = None
 
         try:
-            handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)
+            handler = cls(
+                request,
+                full_path,
+                http_method,
+                processor.processParameters(),
+                *args,
+                **kwargs,
+            )
             operation: typing.Callable[[], typing.Any] = getattr(handler, http_method)
         except processors.ParametersException as e:
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)
-            return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(full_path, e), content_type="text/plain")
+            return http.HttpResponseServerError(
+                'Invalid parameters invoking {0}: {1}'.format(full_path, e),
+                content_type="text/plain",
+            )
         except AttributeError:
             allowedMethods = []
             for n in ['get', 'post', 'put', 'delete']:
                 if hasattr(handler, n):
                     allowedMethods.append(n)
-            return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
+            return http.HttpResponseNotAllowed(
+                allowedMethods, content_type="text/plain"
+            )
         except AccessDenied:
-            return http.HttpResponseForbidden('access denied', content_type="text/plain")
+            return http.HttpResponseForbidden(
+                'access denied', content_type="text/plain"
+            )
         except Exception:
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, full_path)
-            return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
+            return http.HttpResponseServerError(
+                'Unexcepected error', content_type="text/plain"
+            )
 
         # Invokes the handler's operation, add headers to response and returns
         try:
@@ -180,12 +205,16 @@ class Dispatcher(View):
         Try to register Handler subclasses that have not been inherited
         """
         for cls in classes:
-            if not cls.__subclasses__():  # Only classes that has not been inherited will be registered as Handlers
+            if (
+                not cls.__subclasses__()
+            ):  # Only classes that has not been inherited will be registered as Handlers
                 if not cls.name:
                     name = cls.__name__.lower()
                 else:
                     name = cls.name
-                logger.debug('Adding handler %s for method %s in path %s', cls, name, cls.path)
+                logger.debug(
+                    'Adding handler %s for method %s in path %s', cls, name, cls.path
+                )
                 service_node = Dispatcher.services  # Root path
                 if cls.path:
                     for k in cls.path.split('/'):
@@ -214,7 +243,9 @@ class Dispatcher(View):
         pkgpath = os.path.join(os.path.dirname(sys.modules[__name__].__file__), package)
         for _, name, _ in pkgutil.iter_modules([pkgpath]):
             # __import__(__name__ + '.' + package + '.' + name, globals(), locals(), [], 0)
-            importlib.import_module( __name__ + '.' + package + '.' + name)  # import module
+            importlib.import_module(
+                __name__ + '.' + package + '.' + name
+            )  # import module
 
         importlib.invalidate_caches()
 

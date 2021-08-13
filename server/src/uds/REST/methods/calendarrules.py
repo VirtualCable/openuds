@@ -75,7 +75,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             'interval': item.interval,
             'duration': item.duration,
             'duration_unit': item.duration_unit,
-            'permission': perm
+            'permission': perm,
         }
 
         return retVal
@@ -98,7 +98,13 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             {'name': {'title': _('Rule name')}},
             {'start': {'title': _('Starts'), 'type': 'datetime'}},
             {'end': {'title': _('Ends'), 'type': 'date'}},
-            {'frequency': {'title': _('Repeats'), 'type': 'dict', 'dict': dict((v[0], str(v[1])) for v in freqs)}},
+            {
+                'frequency': {
+                    'title': _('Repeats'),
+                    'type': 'dict',
+                    'dict': dict((v[0], str(v[1])) for v in freqs),
+                }
+            },
             {'interval': {'title': _('Every'), 'type': 'callback'}},
             {'duration': {'title': _('Duration'), 'type': 'callback'}},
             {'comments': {'title': _('Comments')}},
@@ -108,7 +114,18 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving rule %s / %s', parent, item)
-        fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration', 'duration_unit'])
+        fields = self.readFieldsFromParams(
+            [
+                'name',
+                'comments',
+                'frequency',
+                'start',
+                'end',
+                'interval',
+                'duration',
+                'duration_unit',
+            ]
+        )
 
         if int(fields['interval']) < 1:
             raise self.invalidItemException('Repeat must be greater than zero')

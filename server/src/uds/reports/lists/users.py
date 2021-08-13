@@ -61,7 +61,7 @@ class ListReportUsers(ListReport):
         label=_("Authenticator"),
         order=1,
         tooltip=_('Authenticator from where to list users'),
-        required=True
+        required=True,
     )
 
     name = _('Users list')  # Report name
@@ -70,9 +70,7 @@ class ListReportUsers(ListReport):
 
     def initGui(self) -> None:
         logger.debug('Initializing gui')
-        vals = [
-            gui.choiceItem(v.uuid, v.name) for v in Authenticator.objects.all()
-        ]
+        vals = [gui.choiceItem(v.uuid, v.name) for v in Authenticator.objects.all()]
 
         self.authenticator.setValues(vals)
 
@@ -87,7 +85,7 @@ class ListReportUsers(ListReport):
                 'auth': auth.name,
             },
             header=ugettext('Users List for {}').format(auth.name),
-            water=ugettext('UDS Report of users in {}').format(auth.name)
+            water=ugettext('UDS Report of users in {}').format(auth.name),
         )
 
 
@@ -111,7 +109,9 @@ class ListReportsUsersCSV(ListReportUsers):
         auth = Authenticator.objects.get(uuid=self.authenticator.value)
         users = auth.users.order_by('name')
 
-        writer.writerow([ugettext('User ID'), ugettext('Real Name'), ugettext('Last access')])
+        writer.writerow(
+            [ugettext('User ID'), ugettext('Real Name'), ugettext('Last access')]
+        )
 
         for v in users:
             writer.writerow([v.name, v.real_name, v.last_access])
@@ -119,6 +119,7 @@ class ListReportsUsersCSV(ListReportUsers):
         # writer.writerow(['ñoño', 'ádios', 'hola'])
 
         return output.getvalue().encode()
+
 
 # Sample XLSX report
 # Just for sampling purposses, not used...

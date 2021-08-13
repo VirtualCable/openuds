@@ -64,7 +64,9 @@ class ActorTokens(ModelHandler):
     def item_as_dict(self, item: ActorToken) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.token,
-            'name': _('Token isued by {} from {}').format(item.username, item.hostname or item.ip),
+            'name': _('Token isued by {} from {}').format(
+                item.username, item.hostname or item.ip
+            ),
             'stamp': item.stamp,
             'username': item.username,
             'ip': item.ip,
@@ -73,7 +75,7 @@ class ActorTokens(ModelHandler):
             'pre_command': item.pre_command,
             'post_command': item.post_command,
             'runonce_command': item.runonce_command,
-            'log_level': ['DEBUG', 'INFO', 'ERROR', 'FATAL'][item.log_level%4]
+            'log_level': ['DEBUG', 'INFO', 'ERROR', 'FATAL'][item.log_level % 4],
         }
 
     def delete(self) -> str:
@@ -83,7 +85,9 @@ class ActorTokens(ModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensureAccess(self.model(), permissions.PERMISSION_ALL, root=True)  # Must have write permissions to delete
+        self.ensureAccess(
+            self.model(), permissions.PERMISSION_ALL, root=True
+        )  # Must have write permissions to delete
 
         try:
             self.model.objects.get(token=self._args[0]).delete()

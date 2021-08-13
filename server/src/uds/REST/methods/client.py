@@ -58,15 +58,16 @@ class Client(Handler):
     """
     Processes Client requests
     """
+
     authenticated = False  # Client requests are not authenticated
 
     @staticmethod
     def result(
-            result: typing.Any = None,
-            error: typing.Optional[typing.Union[str, int]] = None,
-            errorCode: int = 0,
-            retryable: bool = False
-        ) -> typing.Dict[str, typing.Any]:
+        result: typing.Any = None,
+        error: typing.Optional[typing.Union[str, int]] = None,
+        errorCode: int = 0,
+        retryable: bool = False,
+    ) -> typing.Dict[str, typing.Any]:
         """
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -84,7 +85,9 @@ class Client(Handler):
             if errorCode != 0:
                 # Reformat error so it is better understood by users
                 # error += ' (code {0:04X})'.format(errorCode)
-                error = _('Your service is being created. Please, wait while we complete it') +  ' ({}%)'.format(int(errorCode * 25))
+                error = _(
+                    'Your service is being created. Please, wait while we complete it'
+                ) + ' ({}%)'.format(int(errorCode * 25))
 
             res['error'] = error
             res['retryable'] = '1' if retryable else '0'
@@ -106,17 +109,26 @@ class Client(Handler):
         logger.debug('Client args for GET: %s', self._args)
 
         if not self._args:  # Gets version
-            return Client.result({
-                'availableVersion': CLIENT_VERSION,
-                'requiredVersion': REQUIRED_CLIENT_VERSION,
-                'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download'))
-            })
+            return Client.result(
+                {
+                    'availableVersion': CLIENT_VERSION,
+                    'requiredVersion': REQUIRED_CLIENT_VERSION,
+                    'downloadUrl': self._request.build_absolute_uri(
+                        reverse('page.client-download')
+                    ),
+                }
+            )
 
         if len(self._args) == 1:  # Simple test
             return Client.result(_('Correct'))
 
         try:
-            ticket, scrambler = self._args  # If more than 2 args, got an error.  pylint: disable=unbalanced-tuple-unpacking
+            (
+                ticket,
+                scrambler,
+            ) = (
+                self._args
+            )  # If more than 2 args, got an error.  pylint: disable=unbalanced-tuple-unpacking
             hostname = self._params['hostname']  # Or if hostname is not included...
             srcIp = self._request.ip
 
@@ -127,7 +139,13 @@ class Client(Handler):
         except Exception:
             raise RequestError('Invalid request')
 
-        logger.debug('Got Ticket: %s, scrambled: %s, Hostname: %s, Ip: %s', ticket, scrambler, hostname, srcIp)
+        logger.debug(
+            'Got Ticket: %s, scrambled: %s, Hostname: %s, Ip: %s',
+            ticket,
+            scrambler,
+            hostname,
+            srcIp,
+        )
 
         try:
             data = TicketStore.get(ticket)
@@ -138,10 +156,28 @@ class Client(Handler):
 
         try:
             logger.debug(data)
-            ip, userService, userServiceInstance, transport, transportInstance = userServiceManager().getService(
-                self._request.user, self._request.os, self._request.ip, data['service'], data['transport'], clientHostname=hostname
+            (
+                ip,
+                userService,
+                userServiceInstance,
+                transport,
+                transportInstance,
+            ) = userServiceManager().getService(
+                self._request.user,
+                self._request.os,
+                self._request.ip,
+                data['service'],
+                data['transport'],
+                clientHostname=hostname,
             )
-            logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
+            logger.debug(
+                'Res: %s %s %s %s %s',
+                ip,
+                userService,
+                userServiceInstance,
+                transport,
+                transportInstance,
+            )
             password = cryptoManager().symDecrpyt(data['password'], scrambler)
 
             # Set "accesedByClient"
@@ -155,25 +191,44 @@ class Client(Handler):
             if not transportInstance:
                 raise Exception('No transport instance!!!')
 
-            transportScript, signature, params = transportInstance.getEncodedTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
+            (
+                transportScript,
+                signature,
+                params,
+            ) = transportInstance.getEncodedTransportScript(
+                userService,
+                transport,
+                ip,
+                self._request.os,
+                self._request.user,
+                password,
+                self._request,
+            )
 
             logger.debug('Signature: %s', signature)
             logger.debug('Data:#######\n%s\n###########', params)
 
-            return Client.result(result={
-                'script': transportScript,
-                'signature': signature,  # It is already on base64
-                'params': codecs.encode(codecs.encode(json.dumps(params).encode(), 'bz2'), 'base64').decode(),
-            })
+            return Client.result(
+                result={
+                    'script': transportScript,
+                    'signature': signature,  # It is already on base64
+                    'params': codecs.encode(
+                        codecs.encode(json.dumps(params).encode(), 'bz2'), 'base64'
+                    ).decode(),
+                }
+            )
         except ServiceNotReadyError as e:
             # Set that client has accesed userService
             if e.userService:
                 e.userService.setProperty('accessedByClient', '1')
 
             # Refresh ticket and make this retrayable
-            TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds, so 20 is fine :)
-            return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+            TicketStore.revalidate(
+                ticket, 20
+            )  # Retry will be in at most 5 seconds, so 20 is fine :)
+            return Client.result(
+                error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
+            )
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=str(e))
-

@@ -41,7 +41,17 @@ from uds import reports
 
 logger = logging.getLogger(__name__)
 
-VALID_PARAMS = ('authId', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool', 'transport')
+VALID_PARAMS = (
+    'authId',
+    'authSmallName',
+    'auth',
+    'username',
+    'realname',
+    'password',
+    'groups',
+    'servicePool',
+    'transport',
+)
 
 
 # Enclosed methods under /actor path
@@ -49,14 +59,21 @@ class Reports(model.BaseModelHandler):
     """
     Processes actor requests
     """
+
     needs_admin = True  # By default, staff is lower level needed
 
     table_title = _('Available reports')
     table_fields = [
         {'group': {'title': _('Group')}},
-        {'name': {'title': _('Name')}},  # Will process this field on client in fact, not sent by server
-        {'description': {'title': _('Description')}},  # Will process this field on client in fact, not sent by server
-        {'mime_type': {'title': _('Generates')}},  # Will process this field on client in fact, not sent by server
+        {
+            'name': {'title': _('Name')}
+        },  # Will process this field on client in fact, not sent by server
+        {
+            'description': {'title': _('Description')}
+        },  # Will process this field on client in fact, not sent by server
+        {
+            'mime_type': {'title': _('Generates')}
+        },  # Will process this field on client in fact, not sent by server
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
@@ -85,7 +102,9 @@ class Reports(model.BaseModelHandler):
             if self._args[0] == model.OVERVIEW:
                 return list(self.getItems())
             elif self._args[0] == model.TABLEINFO:
-                return self.processTableFields(self.table_title, self.table_fields, self.table_row_style)
+                return self.processTableFields(
+                    self.table_title, self.table_fields, self.table_row_style
+                )
 
         if nArgs == 2:
             if self._args[0] == model.GUI:
@@ -97,7 +116,12 @@ class Reports(model.BaseModelHandler):
         """
         Processes a PUT request
         """
-        logger.debug('method PUT for %s, %s, %s', self.__class__.__name__, self._args, self._params)
+        logger.debug(
+            'method PUT for %s, %s, %s',
+            self.__class__.__name__,
+            self._args,
+            self._params,
+        )
 
         if len(self._args) != 1:
             raise self.invalidRequestException()
@@ -112,7 +136,7 @@ class Reports(model.BaseModelHandler):
                 'mime_type': report.mime_type,
                 'encoded': report.encoded,
                 'filename': report.filename,
-                'data': result
+                'data': result,
             }
 
             return data
@@ -126,7 +150,9 @@ class Reports(model.BaseModelHandler):
         return sorted(report.guiDescription(report), key=lambda f: f['gui']['order'])
 
     # Returns the list of
-    def getItems(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
+    def getItems(
+        self, *args, **kwargs
+    ) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
         for i in reports.availableReports:
             yield {
                 'id': i.getUuid(),
@@ -134,5 +160,5 @@ class Reports(model.BaseModelHandler):
                 'encoded': i.encoded,
                 'group': i.translated_group(),
                 'name': i.translated_name(),
-                'description': i.translated_description()
+                'description': i.translated_description(),
             }

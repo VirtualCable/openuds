@@ -37,12 +37,10 @@ from ..handlers import Handler
 
 logger = logging.getLogger(__name__)
 
+
 class UDSVersion(Handler):
     authenticated = False  # Version requests are public
     name = 'version'
 
     def get(self) -> typing.MutableMapping[str, typing.Any]:
-        return {
-            'version': VERSION,
-            'build': VERSION_STAMP
-        }
+        return {'version': VERSION, 'build': VERSION_STAMP}

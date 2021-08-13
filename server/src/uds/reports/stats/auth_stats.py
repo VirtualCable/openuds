@@ -29,9 +29,6 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import io
-import csv
-import datetime
 import logging
 import typing
 
@@ -42,9 +39,14 @@ from uds.core.util.stats import counters
 
 from .base import StatsReportAuto
 
+if typing.TYPE_CHECKING:
+    from uds import models
+
+
 logger = logging.getLogger(__name__)
 
 MAX_ELEMENTS = 10000
+
 
 class AuthenticatorsStats(StatsReportAuto):
     dates = 'range'
@@ -54,7 +56,9 @@ class AuthenticatorsStats(StatsReportAuto):
 
     filename = 'auths_stats.pdf'
     name = _('Statistics by authenticator')  # Report name
-    description = _('Generates a report with the statistics of an authenticator for a desired period')  # Report description
+    description = _(
+        'Generates a report with the statistics of an authenticator for a desired period'
+    )  # Report description
     uuid = 'a5a43bc0-d543-11ea-af8f-af01fa65994e'
 
     def generate(self) -> typing.Any:
@@ -69,9 +73,34 @@ class AuthenticatorsStats(StatsReportAuto):
 
             services = 0
             userServices = 0
-            servicesCounterIter = iter(counters.getCounters(a, counters.CT_AUTH_SERVICES, since=since, interval=interval, limit=MAX_ELEMENTS, use_max=True))
-            usersWithServicesCounterIter = iter(counters.getCounters(a, counters.CT_AUTH_USERS_WITH_SERVICES, since=since, interval=interval, limit=MAX_ELEMENTS, use_max=True))
-            for userCounter in counters.getCounters(a, counters.CT_AUTH_USERS, since=since, interval=interval, limit=MAX_ELEMENTS, use_max=True):
+            servicesCounterIter = iter(
+                counters.getCounters(
+                    typing.cast('models.Authenticator', a),
+                    counters.CT_AUTH_SERVICES,
+                    since=since,
+                    interval=interval,
+                    limit=MAX_ELEMENTS,
+                    use_max=True,
+                )
+            )
+            usersWithServicesCounterIter = iter(
+                counters.getCounters(
+                    typing.cast('models.Authenticator', a),
+                    counters.CT_AUTH_USERS_WITH_SERVICES,
+                    since=since,
+                    interval=interval,
+                    limit=MAX_ELEMENTS,
+                    use_max=True,
+                )
+            )
+            for userCounter in counters.getCounters(
+                typing.cast('models.Authenticator', a),
+                counters.CT_AUTH_USERS,
+                since=since,
+                interval=interval,
+                limit=MAX_ELEMENTS,
+                use_max=True,
+            ):
                 try:
                     while True:
                         servicesCounter = next(servicesCounterIter)
@@ -92,18 +121,18 @@ class AuthenticatorsStats(StatsReportAuto):
                 except StopIteration:
                     pass
 
-                stats.append({
-                    'date': userCounter[0],
-                    'users': userCounter[1] or 0,
-                    'services': services,
-                    'user_services': userServices
-                })
+                stats.append(
+                    {
+                        'date': userCounter[0],
+                        'users': userCounter[1] or 0,
+                        'services': services,
+                        'user_services': userServices,
+                    }
+                )
         logger.debug('Report Data Done')
         return self.templateAsPDF(
             'uds/reports/stats/authenticator_stats.html',
-            dct={
-                'data': stats
-            },
+            dct={'data': stats},
             header=ugettext('Users usage list'),
-            water=ugettext('UDS Report of users usage')
+            water=ugettext('UDS Report of users usage'),
         )

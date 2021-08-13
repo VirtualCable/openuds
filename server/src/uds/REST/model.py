@@ -1066,7 +1066,11 @@ class ModelHandler(BaseModelHandler):
                 if tags:
                     logger.debug('Updating tags: %s', tags)
                     item.tags.set(
-                        [Tag.objects.get_or_create(tag=val)[0] for val in tags if val != '']
+                        [
+                            Tag.objects.get_or_create(tag=val)[0]
+                            for val in tags
+                            if val != ''
+                        ]
                     )
                 elif isinstance(
                     tags, list

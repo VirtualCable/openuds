@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -52,6 +52,7 @@ class ContentProcessor:
     """
     Process contents (request/response) so Handlers can manage them
     """
+
     mime_type: typing.ClassVar[str] = ''
     extensions: typing.ClassVar[typing.Iterable[str]] = []
 
@@ -81,7 +82,9 @@ class ContentProcessor:
         Converts an obj to a response of specific type (json, XML, ...)
         This is done using "render" method of specific type
         """
-        return http.HttpResponse(content=self.render(obj), content_type=self.mime_type + "; charset=utf-8")
+        return http.HttpResponse(
+            content=self.render(obj), content_type=self.mime_type + "; charset=utf-8"
+        )
 
     def render(self, obj: typing.Any):
         """
@@ -98,7 +101,7 @@ class ContentProcessor:
             return obj
 
         if isinstance(obj, dict):
-            return {k:ContentProcessor.procesForRender(v) for k, v in obj.items()}
+            return {k: ContentProcessor.procesForRender(v) for k, v in obj.items()}
 
         if isinstance(obj, (list, tuple, types.GeneratorType)):
             return [ContentProcessor.procesForRender(v) for v in obj]
@@ -117,11 +120,15 @@ class MarshallerProcessor(ContentProcessor):
     If we have a simple marshaller for processing contents
     this class will allow us to set up a new one simply setting "marshaller"
     """
+
     marshaller: typing.ClassVar[typing.Any] = None
 
     def processParameters(self) -> typing.MutableMapping[str, typing.Any]:
         try:
-            if self._request.META.get('CONTENT_LENGTH', '0') == '0' or not self._request.body:
+            if (
+                self._request.META.get('CONTENT_LENGTH', '0') == '0'
+                or not self._request.body
+            ):
                 return self.processGetParameters()
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body.decode('utf8'))
@@ -143,14 +150,16 @@ class JsonProcessor(MarshallerProcessor):
     """
     Provides JSON content processor
     """
+
     mime_type = 'application/json'
     extensions = ['json']
     marshaller = json  # type: ignore
 
+
 # ---------------
 # XML Processor
 # ---------------
-#===============================================================================
+# ===============================================================================
 # class XMLProcessor(MarshallerProcessor):
 #     """
 #     Provides XML content processor
@@ -158,12 +167,14 @@ class JsonProcessor(MarshallerProcessor):
 #     mime_type = 'application/xml'
 #     extensions = ['xml']
 #     marshaller = xml_marshaller
-#===============================================================================
+# ===============================================================================
 
 
 processors_list = (JsonProcessor,)
 default_processor: typing.Type[ContentProcessor] = JsonProcessor
-available_processors_mime_dict: typing.Dict[str, typing.Type[ContentProcessor]] = {cls.mime_type: cls for cls in processors_list}
+available_processors_mime_dict: typing.Dict[str, typing.Type[ContentProcessor]] = {
+    cls.mime_type: cls for cls in processors_list
+}
 available_processors_ext_dict: typing.Dict[str, typing.Type[ContentProcessor]] = {}
 for cls in processors_list:
     for ext in cls.extensions:

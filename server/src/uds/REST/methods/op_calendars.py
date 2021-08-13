@@ -52,6 +52,7 @@ logger = logging.getLogger(__name__)
 ALLOW = 'ALLOW'
 DENY = 'DENY'
 
+
 class AccessCalendars(DetailHandler):
     @staticmethod
     def as_dict(item: 'CalendarAccess'):
@@ -67,7 +68,9 @@ class AccessCalendars(DetailHandler):
         try:
             if not item:
                 return [AccessCalendars.as_dict(i) for i in parent.calendarAccess.all()]
-            return AccessCalendars.as_dict(parent.calendarAccess.get(uuid=processUuid(item)))
+            return AccessCalendars.as_dict(
+                parent.calendarAccess.get(uuid=processUuid(item))
+            )
         except Exception:
             logger.exception('err: %s', item)
             raise self.invalidItemException()
@@ -87,7 +90,9 @@ class AccessCalendars(DetailHandler):
         uuid = processUuid(item) if item is not None else None
 
         try:
-            calendar: Calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
+            calendar: Calendar = Calendar.objects.get(
+                uuid=processUuid(self._params['calendarId'])
+            )
             access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
                 raise Exception()
@@ -103,13 +108,24 @@ class AccessCalendars(DetailHandler):
             calAccess.priority = priority
             calAccess.save()
         else:
-            parent.calendarAccess.create(calendar=calendar, access=access, priority=priority)
+            parent.calendarAccess.create(
+                calendar=calendar, access=access, priority=priority
+            )
 
-        log.doLog(parent, log.INFO, "Added access calendar {}/{} by {}".format(calendar.name, access, self._user.pretty_name), log.ADMIN)
+        log.doLog(
+            parent,
+            log.INFO,
+            "Added access calendar {}/{} by {}".format(
+                calendar.name, access, self._user.pretty_name
+            ),
+            log.ADMIN,
+        )
 
     def deleteItem(self, parent: 'ServicePool', item: str) -> None:
         calendarAccess = parent.calendarAccess.get(uuid=processUuid(self._args[0]))
-        logStr = "Removed access calendar {} by {}".format(calendarAccess.calendar.name, self._user.pretty_name)
+        logStr = "Removed access calendar {} by {}".format(
+            calendarAccess.calendar.name, self._user.pretty_name
+        )
 
         calendarAccess.delete()
 
@@ -120,7 +136,10 @@ class ActionsCalendars(DetailHandler):
     """
     Processes the transports detail requests of a Service Pool
     """
-    custom_methods = ['execute',]
+
+    custom_methods = [
+        'execute',
+    ]
 
     @staticmethod
     def as_dict(item: 'CalendarAction') -> typing.Dict[str, typing.Any]:
@@ -131,19 +150,21 @@ class ActionsCalendars(DetailHandler):
             'calendarId': item.calendar.uuid,
             'calendar': item.calendar.name,
             'action': item.action,
-            'actionDescription':  action.get('description'),
+            'actionDescription': action.get('description'),
             'atStart': item.at_start,
             'eventsOffset': item.events_offset,
             'params': params,
             'pretty_params': item.prettyParams,
             'nextExecution': item.next_execution,
-            'lastExecution': item.last_execution
+            'lastExecution': item.last_execution,
         }
 
     def getItems(self, parent: 'ServicePool', item: typing.Optional[str]):
         try:
             if item is None:
-                return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
+                return [
+                    ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()
+                ]
             i = parent.calendaraction_set.get(uuid=processUuid(item))
             return ActionsCalendars.as_dict(i)
         except Exception:
@@ -177,8 +198,12 @@ class ActionsCalendars(DetailHandler):
 
         # logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, eventsOffset, atStart, params))
         logStr = "Added scheduled action \"{},{},{},{},{}\" by {}".format(
-            calendar.name, action, eventsOffset,
-            atStart and 'Start' or 'End', params, self._user.pretty_name
+            calendar.name,
+            action,
+            eventsOffset,
+            atStart and 'Start' or 'End',
+            params,
+            self._user.pretty_name,
         )
 
         if uuid is not None:
@@ -191,16 +216,26 @@ class ActionsCalendars(DetailHandler):
             calAction.params = params
             calAction.save()
         else:
-            CalendarAction.objects.create(calendar=calendar, service_pool=parent, action=action, at_start=atStart, events_offset=eventsOffset, params=params)
+            CalendarAction.objects.create(
+                calendar=calendar,
+                service_pool=parent,
+                action=action,
+                at_start=atStart,
+                events_offset=eventsOffset,
+                params=params,
+            )
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
 
     def deleteItem(self, parent: 'ServicePool', item: str) -> None:
         calendarAction = CalendarAction.objects.get(uuid=processUuid(self._args[0]))
         logStr = "Removed scheduled action \"{},{},{},{},{}\" by {}".format(
-            calendarAction.calendar.name, calendarAction.action,
-            calendarAction.events_offset, calendarAction.at_start and 'Start' or 'End', calendarAction.params,
-            self._user.pretty_name
+            calendarAction.calendar.name,
+            calendarAction.action,
+            calendarAction.events_offset,
+            calendarAction.at_start and 'Start' or 'End',
+            calendarAction.params,
+            self._user.pretty_name,
         )
 
         calendarAction.delete()
@@ -213,11 +248,14 @@ class ActionsCalendars(DetailHandler):
         calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)
         self.ensureAccess(calendarAction, permissions.PERMISSION_MANAGEMENT)
         logStr = "Launched scheduled action \"{},{},{},{},{}\" by {}".format(
-            calendarAction.calendar.name, calendarAction.action,
-            calendarAction.events_offset, calendarAction.at_start and 'Start' or 'End', calendarAction.params,
-            self._user.pretty_name
+            calendarAction.calendar.name,
+            calendarAction.action,
+            calendarAction.events_offset,
+            calendarAction.at_start and 'Start' or 'End',
+            calendarAction.params,
+            self._user.pretty_name,
         )
-        
+
         calendarAction.execute()
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)

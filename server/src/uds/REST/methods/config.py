@@ -42,9 +42,15 @@ logger = logging.getLogger(__name__)
 # Pair of section/value removed from current UDS version
 REMOVED = {
     'UDS': (
-        'allowPreferencesAccess', 'customHtmlLogin', 'UDS Theme', 
-        'UDS Theme Enhaced', 'css', 'allowPreferencesAccess', 
-        'loginUrl', 'maxLoginTries', 'loginBlockTime'
+        'allowPreferencesAccess',
+        'customHtmlLogin',
+        'UDS Theme',
+        'UDS Theme Enhaced',
+        'css',
+        'allowPreferencesAccess',
+        'loginUrl',
+        'maxLoginTries',
+        'loginBlockTime',
     ),
     'Cluster': ('Destination CPU Load', 'Migration CPU Load', 'Migration Free Memory'),
     'IPAUTH': ('autoLogin',),
@@ -81,7 +87,7 @@ class Config(Handler):
                 'crypt': cfg.isCrypted(),
                 'longText': cfg.isLongText(),
                 'type': cfg.getType(),
-                'params': cfg.getParams()
+                'params': cfg.getParams(),
             }
         logger.debug('Configuration: %s', res)
         return res

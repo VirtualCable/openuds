@@ -50,6 +50,7 @@ class Calendars(ModelHandler):
     """
     Processes REST requests about calendars
     """
+
     model = Calendar
     detail = {'rules': CalendarRules}
 
@@ -57,7 +58,14 @@ class Calendars(ModelHandler):
 
     table_title = _('Calendars')
     table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-calendar text-success'}},
+        {
+            'name': {
+                'title': _('Name'),
+                'visible': True,
+                'type': 'icon',
+                'icon': 'fa fa-calendar text-success',
+            }
+        },
         {'comments': {'title': _('Comments')}},
         {'modified': {'title': _('Modified'), 'type': 'datetime'}},
         {'tags': {'title': _('tags'), 'visible': False}},
@@ -70,7 +78,7 @@ class Calendars(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'modified': item.modified,
-            'permission': permissions.getEffectivePermission(self._user, item)
+            'permission': permissions.getEffectivePermission(self._user, item),
         }
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:

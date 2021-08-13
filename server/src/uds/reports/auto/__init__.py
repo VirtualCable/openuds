@@ -122,7 +122,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         # Fills datasource
         fields.source_field_data(self.getModel(), self.data_source, self.source)
 
-    def getModelItems(self) -> typing.Iterable[ReportAutoModel]:  # type: ignore
+    def getModelItems(self) -> typing.Iterable[ReportAutoModel]:
         model = self.getModel()
 
         filters = (

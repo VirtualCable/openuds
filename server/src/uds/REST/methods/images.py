@@ -49,13 +49,21 @@ class Images(ModelHandler):
     """
     Handles the gallery REST interface
     """
+
     path = 'gallery'
     model = Image
     save_fields = ['name', 'data']
 
     table_title = _('Image Gallery')
     table_fields = [
-        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image', 'width': '96px'}},
+        {
+            'thumb': {
+                'title': _('Image'),
+                'visible': True,
+                'type': 'image',
+                'width': '96px',
+            }
+        },
         {'name': {'title': _('Name')}},
         {'size': {'title': _('Size')}},
     ]
@@ -69,17 +77,17 @@ class Images(ModelHandler):
         item.updateThumbnail()
         item.save()
 
-
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addField(
-            self.addDefaultFields([], ['name']), {
+            self.addDefaultFields([], ['name']),
+            {
                 'name': 'data',
                 'value': '',
                 'label': ugettext('Image'),
                 'tooltip': ugettext('Image object'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 100,  # At end
-            }
+            },
         )
 
     def item_as_dict(self, item: Image) -> typing.Dict[str, typing.Any]:
@@ -92,7 +100,9 @@ class Images(ModelHandler):
     def item_as_dict_overview(self, item: Image) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
-            'size': '{}x{}, {} bytes (thumb {} bytes)'.format(item.width, item.height, len(item.data), len(item.thumb)),
+            'size': '{}x{}, {} bytes (thumb {} bytes)'.format(
+                item.width, item.height, len(item.data), len(item.thumb)
+            ),
             'name': item.name,
             'thumb': item.thumb64,
         }

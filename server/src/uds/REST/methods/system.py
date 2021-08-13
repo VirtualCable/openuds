@@ -59,7 +59,9 @@ USE_MAX = True
 
 
 def getServicesPoolsCounters(
-    servicePool: typing.Optional[models.ServicePool], counter_type: int, since_days: int = SINCE
+    servicePool: typing.Optional[models.ServicePool],
+    counter_type: int,
+    since_days: int = SINCE,
 ) -> typing.List[typing.Mapping[str, typing.Any]]:
     try:
         cacheKey = (
@@ -142,14 +144,18 @@ class System(Handler):
             pool: typing.Optional[models.ServicePool] = None
             if len(self._args) == 3:
                 try:
-                    pool = models.ServicePool.objects.get(uuid=processUuid(self._args[2]))
+                    pool = models.ServicePool.objects.get(
+                        uuid=processUuid(self._args[2])
+                    )
                 except Exception:
                     pool = None
             # If pool is None, needs admin also
             if not pool and not self._user.is_admin:
                 raise AccessDenied()
             # Check permission for pool..
-            if not permissions.checkPermissions(self._user, typing.cast('Model', pool), permissions.PERMISSION_READ):
+            if not permissions.checkPermissions(
+                self._user, typing.cast('Model', pool), permissions.PERMISSION_READ
+            ):
                 raise AccessDenied()
             if self._args[0] == 'stats':
                 if self._args[1] == 'assigned':
@@ -160,9 +166,15 @@ class System(Handler):
                     return getServicesPoolsCounters(pool, counters.CT_CACHED)
                 elif self._args[1] == 'complete':
                     return {
-                        'assigned': getServicesPoolsCounters(pool, counters.CT_ASSIGNED, since_days=7),
-                        'inuse': getServicesPoolsCounters(pool, counters.CT_INUSE, since_days=7),
-                        'cached': getServicesPoolsCounters(pool, counters.CT_CACHED, since_days=7),
+                        'assigned': getServicesPoolsCounters(
+                            pool, counters.CT_ASSIGNED, since_days=7
+                        ),
+                        'inuse': getServicesPoolsCounters(
+                            pool, counters.CT_INUSE, since_days=7
+                        ),
+                        'cached': getServicesPoolsCounters(
+                            pool, counters.CT_CACHED, since_days=7
+                        ),
                     }
 
         raise RequestError('invalid request')

@@ -42,6 +42,7 @@ from uds.core.util import permissions
 
 logger = logging.getLogger(__name__)
 
+
 class TunnelTokens(ModelHandler):
     model = TunnelToken
 
@@ -62,7 +63,7 @@ class TunnelTokens(ModelHandler):
             'username': item.username,
             'ip': item.ip,
             'hostname': item.hostname,
-            'token': item.token
+            'token': item.token,
         }
 
     def delete(self) -> str:
@@ -72,7 +73,9 @@ class TunnelTokens(ModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensureAccess(self.model(), permissions.PERMISSION_ALL, root=True)  # Must have write permissions to delete
+        self.ensureAccess(
+            self.model(), permissions.PERMISSION_ALL, root=True
+        )  # Must have write permissions to delete
 
         try:
             self.model.objects.get(token=self._args[0]).delete()

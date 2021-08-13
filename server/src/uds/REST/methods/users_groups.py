@@ -92,15 +92,49 @@ class Users(DetailHandler):
         # Extract authenticator
         try:
             if item is None:
-                values = list(Users.uuid_to_id(parent.users.all().values('uuid', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent')))
+                values = list(
+                    Users.uuid_to_id(
+                        parent.users.all().values(
+                            'uuid',
+                            'name',
+                            'real_name',
+                            'comments',
+                            'state',
+                            'staff_member',
+                            'is_admin',
+                            'last_access',
+                            'parent',
+                        )
+                    )
+                )
                 for res in values:
-                    res['role'] = res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
+                    res['role'] = (
+                        res['staff_member']
+                        and (res['is_admin'] and _('Admin') or _('Staff member'))
+                        or _('User')
+                    )
                 return values
             else:
                 u = parent.users.get(uuid=processUuid(item))
-                res = model_to_dict(u, fields=('name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent'))
+                res = model_to_dict(
+                    u,
+                    fields=(
+                        'name',
+                        'real_name',
+                        'comments',
+                        'state',
+                        'staff_member',
+                        'is_admin',
+                        'last_access',
+                        'parent',
+                    ),
+                )
                 res['id'] = u.uuid
-                res['role'] = res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
+                res['role'] = (
+                    res['staff_member']
+                    and (res['is_admin'] and _('Admin') or _('Staff member'))
+                    or _('User')
+                )
                 usr = aUser(u)
                 res['groups'] = [g.dbGroup().uuid for g in usr.groups()]
                 logger.debug('Item: %s', res)
@@ -111,17 +145,34 @@ class Users(DetailHandler):
 
     def getTitle(self, parent):
         try:
-            return _('Users of {0}').format(Authenticator.objects.get(uuid=processUuid(self._kwargs['parent_id'])).name)
+            return _('Users of {0}').format(
+                Authenticator.objects.get(
+                    uuid=processUuid(self._kwargs['parent_id'])
+                ).name
+            )
         except Exception:
             return _('Current users')
 
     def getFields(self, parent):
         return [
-            {'name': {'title': _('Username'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-user text-success'}},
+            {
+                'name': {
+                    'title': _('Username'),
+                    'visible': True,
+                    'type': 'icon',
+                    'icon': 'fa fa-user text-success',
+                }
+            },
             {'role': {'title': _('Role')}},
             {'real_name': {'title': _('Name')}},
             {'comments': {'title': _('Comments')}},
-            {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
+            {
+                'state': {
+                    'title': _('state'),
+                    'type': 'dict',
+                    'dict': State.dictionary(),
+                }
+            },
             {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
         ]
 
@@ -139,7 +190,14 @@ class Users(DetailHandler):
 
     def saveItem(self, parent, item):
         logger.debug('Saving user %s / %s', parent, item)
-        valid_fields = ['name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin']
+        valid_fields = [
+            'name',
+            'real_name',
+            'comments',
+            'state',
+            'staff_member',
+            'is_admin',
+        ]
         if 'password' in self._params:
             valid_fields.append('password')
             self._params['password'] = cryptoManager().hash(self._params['password'])
@@ -153,7 +211,9 @@ class Users(DetailHandler):
         try:
             auth = parent.getInstance()
             if item is None:  # Create new
-                auth.createUser(fields)  # this throws an exception if there is an error (for example, this auth can't create users)
+                auth.createUser(
+                    fields
+                )  # this throws an exception if there is an error (for example, this auth can't create users)
                 user = parent.users.create(**fields)
             else:
                 auth.modifyUser(fields)  # Notifies authenticator
@@ -161,7 +221,9 @@ class Users(DetailHandler):
                 user.__dict__.update(fields)
 
             logger.debug('User parent: %s', user.parent)
-            if auth.isExternalSource is False and (user.parent is None or user.parent == ''):
+            if auth.isExternalSource is False and (
+                user.parent is None or user.parent == ''
+            ):
                 groups = self.readFieldsFromParams(['groups'])['groups']
                 logger.debug('Groups: %s', groups)
                 logger.debug('Got Groups %s', parent.groups.filter(uuid__in=groups))
@@ -188,7 +250,9 @@ class Users(DetailHandler):
             user = parent.users.get(uuid=processUuid(item))
             if not self._user.is_admin and (user.is_admin or user.staff_member):
                 logger.warn('Removal of user {} denied due to insufficients rights')
-                raise self.invalidItemException('Removal of user {} denied due to insufficients rights')
+                raise self.invalidItemException(
+                    'Removal of user {} denied due to insufficients rights'
+                )
 
             assignedUserService: 'UserService'
             for assignedUserService in user.userServices.all():
@@ -216,13 +280,19 @@ class Users(DetailHandler):
         res = []
         groups = list(user.getGroups())
         for i in getPoolsForGroups(groups):
-            res.append({
-                'id': i.uuid,
-                'name': i.name,
-                'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                'user_services_count': i.userServices.exclude(state__in=(State.REMOVED, State.ERROR)).count(),
-                'state': _('With errors') if i.isRestrained() else _('Ok'),
-            })
+            res.append(
+                {
+                    'id': i.uuid,
+                    'name': i.name,
+                    'thumb': i.image.thumb64
+                    if i.image is not None
+                    else DEFAULT_THUMB_BASE64,
+                    'user_services_count': i.userServices.exclude(
+                        state__in=(State.REMOVED, State.ERROR)
+                    ).count(),
+                    'state': _('With errors') if i.isRestrained() else _('Ok'),
+                }
+            )
 
         return res
 
@@ -261,19 +331,25 @@ class Groups(DetailHandler):
                     'comments': i.comments,
                     'state': i.state,
                     'type': i.is_meta and 'meta' or 'group',
-                    'meta_if_any': i.meta_if_any
+                    'meta_if_any': i.meta_if_any,
                 }
                 if i.is_meta:
-                    val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
+                    val['groups'] = list(
+                        x.uuid for x in i.groups.all().order_by('name')
+                    )
                 res.append(val)
             if multi or not i:
                 return res
             # Add pools field if 1 item only
             res = res[0]
             if i.is_meta:
-                res['pools'] = []  # Meta groups do not have "assigned "pools, they get it from groups interaction
+                res[
+                    'pools'
+                ] = (
+                    []
+                )  # Meta groups do not have "assigned "pools, they get it from groups interaction
             else:
-                res['pools'] = [v.uuid for v in  i.deployedServices.all()]
+                res['pools'] = [v.uuid for v in i.deployedServices.all()]
             return res
         except Exception:
             logger.exception('REST groups')
@@ -281,15 +357,35 @@ class Groups(DetailHandler):
 
     def getTitle(self, parent):
         try:
-            return _('Groups of {0}').format(Authenticator.objects.get(uuid=processUuid(self._kwargs['parent_id'])).name)
+            return _('Groups of {0}').format(
+                Authenticator.objects.get(
+                    uuid=processUuid(self._kwargs['parent_id'])
+                ).name
+            )
         except Exception:
             return _('Current groups')
 
     def getFields(self, parent):
         return [
-            {'name': {'title': _('Group'), 'visible': True, 'type': 'icon_dict', 'icon_dict': {'group': 'fa fa-group text-success', 'meta': 'fa fa-gears text-info'}}},
+            {
+                'name': {
+                    'title': _('Group'),
+                    'visible': True,
+                    'type': 'icon_dict',
+                    'icon_dict': {
+                        'group': 'fa fa-group text-success',
+                        'meta': 'fa fa-gears text-info',
+                    },
+                }
+            },
             {'comments': {'title': _('Comments')}},
-            {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
+            {
+                'state': {
+                    'title': _('state'),
+                    'type': 'dict',
+                    'dict': State.dictionary(),
+                }
+            },
         ]
 
     def getTypes(self, parent, forType):
@@ -297,12 +393,15 @@ class Groups(DetailHandler):
             'group': {'name': _('Group'), 'description': _('UDS Group')},
             'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
         }
-        types = [{
-            'name': tDct[t]['name'],
-            'type': t,
-            'description': tDct[t]['description'],
-            'icon': ''
-        } for t in tDct]
+        types = [
+            {
+                'name': tDct[t]['name'],
+                'type': t,
+                'description': tDct[t]['description'],
+                'icon': '',
+            }
+            for t in tDct
+        ]
 
         if forType is None:
             return types
@@ -327,7 +426,9 @@ class Groups(DetailHandler):
             auth = parent.getInstance()
             if item is None:  # Create new
                 if not is_meta and not is_pattern:
-                    auth.createGroup(fields)  # this throws an exception if there is an error (for example, this auth can't create groups)
+                    auth.createGroup(
+                        fields
+                    )  # this throws an exception if there is an error (for example, this auth can't create groups)
                 toSave = {}
                 for k in valid_fields:
                     toSave[k] = fields[k]
@@ -383,13 +484,19 @@ class Groups(DetailHandler):
         group = parent.groups.get(uuid=processUuid(uuid))
         res = []
         for i in getPoolsForGroups((group,)):
-            res.append({
-                'id': i.uuid,
-                'name': i.name,
-                'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                'user_services_count': i.userServices.exclude(state__in=(State.REMOVED, State.ERROR)).count(),
-                'state': _('With errors') if i.isRestrained() else _('Ok'),
-            })
+            res.append(
+                {
+                    'id': i.uuid,
+                    'name': i.name,
+                    'thumb': i.image.thumb64
+                    if i.image is not None
+                    else DEFAULT_THUMB_BASE64,
+                    'user_services_count': i.userServices.exclude(
+                        state__in=(State.REMOVED, State.ERROR)
+                    ).count(),
+                    'state': _('With errors') if i.isRestrained() else _('Ok'),
+                }
+            )
 
         return res
 
@@ -403,7 +510,7 @@ class Groups(DetailHandler):
                 'name': user.name,
                 'real_name': user.real_name,
                 'state': user.state,
-                'last_access': user.last_access
+                'last_access': user.last_access,
             }
 
         res = []

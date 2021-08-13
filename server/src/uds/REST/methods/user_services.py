@@ -51,6 +51,7 @@ class AssignedService(DetailHandler):
     """
     Rest handler for Assigned Services, wich parent is Service
     """
+
     custom_methods = [
         'reset',
     ]
@@ -239,7 +240,10 @@ class CachedService(AssignedService):
     """
     Rest handler for Cached Services, wich parent is Service
     """
-    custom_methods: typing.ClassVar[typing.List[str]] = []  # Remove custom methods from assigned services
+
+    custom_methods: typing.ClassVar[
+        typing.List[str]
+    ] = []  # Remove custom methods from assigned services
 
     def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         # Extract provider

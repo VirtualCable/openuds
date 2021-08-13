@@ -88,7 +88,11 @@ class Connection(Handler):
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
 
-        return Connection.result(result=services.getServicesData(typing.cast(ExtendedHttpRequestWithUser, self._request)))
+        return Connection.result(
+            result=services.getServicesData(
+                typing.cast(ExtendedHttpRequestWithUser, self._request)
+            )
+        )
 
     def connection(self, doNotCheck: bool = False):
         idService = self._args[0]
@@ -183,7 +187,9 @@ class Connection(Handler):
         self._request.user = self._user  # type: ignore
         self._request._cryptedpass = self._session['REST']['password']  # type: ignore
         self._request._scrambler = self._request.META['HTTP_SCRAMBLER']  # type: ignore
-        linkInfo = services.enableService(self._request, idService=self._args[0], idTransport=self._args[1])
+        linkInfo = services.enableService(
+            self._request, idService=self._args[0], idTransport=self._args[1]
+        )
         if linkInfo['error']:
             return Connection.result(error=linkInfo['error'])
         return Connection.result(result=linkInfo['url'])

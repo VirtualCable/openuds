@@ -54,6 +54,7 @@ class MetaPools(ModelHandler):
     """
     Handles Services Pools REST requests
     """
+
     model = MetaPool
     detail = {
         'pools': MetaServicesPool,
@@ -62,8 +63,18 @@ class MetaPools(ModelHandler):
         'access': AccessCalendars,
     }
 
-    save_fields = ['name', 'short_name', 'comments', 'tags',
-                   'image_id', 'servicesPoolGroup_id', 'visible', 'policy', 'calendar_message', 'transport_grouping']
+    save_fields = [
+        'name',
+        'short_name',
+        'comments',
+        'tags',
+        'image_id',
+        'servicesPoolGroup_id',
+        'visible',
+        'policy',
+        'calendar_message',
+        'transport_grouping',
+    ]
 
     table_title = _('Meta Pools')
     table_fields = [
@@ -93,8 +104,16 @@ class MetaPools(ModelHandler):
                 poolGroupThumb = item.servicesPoolGroup.image.thumb64
 
         allPools = item.members.all()
-        userServicesCount = sum((i.pool.userServices.exclude(state__in=State.INFO_STATES).count() for i in allPools))
-        userServicesInPreparation = sum((i.pool.userServices.filter(state=State.PREPARING).count()) for i in allPools)
+        userServicesCount = sum(
+            (
+                i.pool.userServices.exclude(state__in=State.INFO_STATES).count()
+                for i in allPools
+            )
+        )
+        userServicesInPreparation = sum(
+            (i.pool.userServices.filter(state=State.PREPARING).count())
+            for i in allPools
+        )
 
         val = {
             'id': item.uuid,
@@ -102,7 +121,9 @@ class MetaPools(ModelHandler):
             'short_name': item.short_name,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
-            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
+            'thumb': item.image.thumb64
+            if item.image is not None
+            else DEFAULT_THUMB_BASE64,
             'image_id': item.image.uuid if item.image is not None else None,
             'servicesPoolGroup_id': poolGroupId,
             'pool_group_name': poolGroupName,
@@ -114,7 +135,7 @@ class MetaPools(ModelHandler):
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
             'calendar_message': item.calendar_message,
-            'transport_grouping': item.transport_grouping
+            'transport_grouping': item.transport_grouping,
         }
 
         return val
@@ -123,30 +144,50 @@ class MetaPools(ModelHandler):
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         localGUI = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
-        for field in [{
+        for field in [
+            {
                 'name': 'policy',
-                'values': [gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()],
+                'values': [
+                    gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()
+                ],
                 'label': ugettext('Policy'),
                 'tooltip': ugettext('Service pool policy'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'order': 100,
-            }, {
+            },
+            {
                 'name': 'image_id',
-                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
+                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + gui.sortedChoices(
+                    [
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        for v in Image.objects.all()
+                    ]
+                ),
                 'label': ugettext('Associated Image'),
                 'tooltip': ugettext('Image assocciated with this service'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 120,
                 'tab': gui.DISPLAY_TAB,
-            }, {
+            },
+            {
                 'name': 'servicesPoolGroup_id',
-                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]),
+                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
+                + gui.sortedChoices(
+                    [
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        for v in ServicePoolGroup.objects.all()
+                    ]
+                ),
                 'label': ugettext('Pool group'),
-                'tooltip': ugettext('Pool group for this pool (for pool classify on display)'),
+                'tooltip': ugettext(
+                    'Pool group for this pool (for pool classify on display)'
+                ),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 121,
                 'tab': gui.DISPLAY_TAB,
-            }, {
+            },
+            {
                 'name': 'visible',
                 'value': True,
                 'label': ugettext('Visible'),
@@ -154,23 +195,31 @@ class MetaPools(ModelHandler):
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 123,
                 'tab': gui.DISPLAY_TAB,
-            }, {
+            },
+            {
                 'name': 'calendar_message',
                 'value': '',
                 'label': ugettext('Calendar access denied text'),
-                'tooltip': ugettext('Custom message to be shown to users if access is limited by calendar rules.'),
+                'tooltip': ugettext(
+                    'Custom message to be shown to users if access is limited by calendar rules.'
+                ),
                 'type': gui.InputField.TEXT_TYPE,
                 'order': 124,
                 'tab': gui.DISPLAY_TAB,
-            }, {
+            },
+            {
                 'name': 'transport_grouping',
-                'values': [gui.choiceItem(k, str(v)) for k, v in MetaPool.TRANSPORT_SELECT.items()],
+                'values': [
+                    gui.choiceItem(k, str(v))
+                    for k, v in MetaPool.TRANSPORT_SELECT.items()
+                ],
                 'label': ugettext('Transport Selection'),
                 'tooltip': ugettext('Transport selection policy'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'order': 125,
-                'tab': gui.DISPLAY_TAB
-            }]:
+                'tab': gui.DISPLAY_TAB,
+            },
+        ]:
             self.addField(localGUI, field)
 
         return localGUI

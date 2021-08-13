@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -30,11 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import typing
 import logging
 
-from django.utils import timezone
 from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
 
@@ -47,7 +45,7 @@ from uds.core.managers import cryptoManager
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.util.request import ExtendedHttpRequestWithUser
-    
+
 logger = logging.getLogger(__name__)
 
 AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'
@@ -93,31 +91,59 @@ class Handler:
     """
     REST requests handler base class
     """
-    raw: typing.ClassVar[bool] = False  # If true, Handler will return directly an HttpResponse Object
-    name: typing.ClassVar[typing.Optional[str]] = None  # If name is not used, name will be the class name in lower case
-    path: typing.ClassVar[typing.Optional[str]] = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
-    authenticated: typing.ClassVar[bool] = True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff,
-    needs_admin: typing.ClassVar[bool] = False  # By default, the methods will be accessible by anyone if nothing else indicated
+
+    raw: typing.ClassVar[
+        bool
+    ] = False  # If true, Handler will return directly an HttpResponse Object
+    name: typing.ClassVar[
+        typing.Optional[str]
+    ] = None  # If name is not used, name will be the class name in lower case
+    path: typing.ClassVar[
+        typing.Optional[str]
+    ] = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
+    authenticated: typing.ClassVar[
+        bool
+    ] = True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff,
+    needs_admin: typing.ClassVar[
+        bool
+    ] = False  # By default, the methods will be accessible by anyone if nothing else indicated
     needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str
     _params: typing.Any  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
-    _args: typing.Tuple[str, ...]  # This are the "path" split by /, that is, the REST invocation arguments
+    _args: typing.Tuple[
+        str, ...
+    ]  # This are the "path" split by /, that is, the REST invocation arguments
     _kwargs: typing.Dict
     _headers: typing.Dict[str, str]
     _session: typing.Optional[SessionStore]
     _authToken: typing.Optional[str]
     _user: 'User'
 
-
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
-    def __init__(self, request: 'ExtendedHttpRequestWithUser', path: str, operation: str, params: typing.Any, *args: str, **kwargs):
+    def __init__(
+        self,
+        request: 'ExtendedHttpRequestWithUser',
+        path: str,
+        operation: str,
+        params: typing.Any,
+        *args: str,
+        **kwargs
+    ):
 
-        logger.debug('Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated)
-        if (self.needs_admin or self.needs_staff) and not self.authenticated:  # If needs_admin, must also be authenticated
-            raise Exception('class {} is not authenticated but has needs_admin or needs_staff set!!'.format(self.__class__))
+        logger.debug(
+            'Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated
+        )
+        if (
+            self.needs_admin or self.needs_staff
+        ) and not self.authenticated:  # If needs_admin, must also be authenticated
+            raise Exception(
+                'class {} is not authenticated but has needs_admin or needs_staff set!!'.format(
+                    self.__class__
+                )
+            )
 
         self._request = request
         self._path = path
@@ -127,7 +153,9 @@ class Handler:
         self._kwargs = kwargs
         self._headers = {}
         self._authToken = None
-        if self.authenticated:  # Only retrieve auth related data on authenticated handlers
+        if (
+            self.authenticated
+        ):  # Only retrieve auth related data on authenticated handlers
             try:
                 self._authToken = self._request.META.get(AUTH_TOKEN_HEADER, '')
                 self._session = SessionStore(session_key=self._authToken)
@@ -149,7 +177,6 @@ class Handler:
             self._user = self.getUser()
         else:
             self._user = User()  # Empty user for non authenticated handlers
-
 
     def headers(self) -> typing.Dict[str, str]:
         """
@@ -191,16 +218,16 @@ class Handler:
 
     @staticmethod
     def storeSessionAuthdata(
-            session: SessionBase,
-            id_auth: int,
-            username: str,
-            password: str,
-            locale: str,
-            platform: str,
-            is_admin: bool,
-            staff_member: bool,
-            scrambler: str
-        ):
+        session: SessionBase,
+        id_auth: int,
+        username: str,
+        password: str,
+        locale: str,
+        platform: str,
+        is_admin: bool,
+        staff_member: bool,
+        scrambler: str,
+    ):
         """
         Stores the authentication data inside current session
         :param session: session handler (Djano user session object)
@@ -220,20 +247,20 @@ class Handler:
             'locale': locale,
             'platform': platform,
             'is_admin': is_admin,
-            'staff_member': staff_member
+            'staff_member': staff_member,
         }
 
     def genAuthToken(
-            self,
-            id_auth: int,
-            username: str,
-            password: str,
-            locale: str,
-            platform: str,
-            is_admin: bool,
-            staf_member: bool,
-            scrambler: str
-        ):
+        self,
+        id_auth: int,
+        username: str,
+        password: str,
+        locale: str,
+        platform: str,
+        is_admin: bool,
+        staf_member: bool,
+        scrambler: str,
+    ):
         """
         Generates the authentication token from a session, that is basically
         the session key itself
@@ -244,11 +271,21 @@ class Handler:
         :param staf_member: If user is considered staff member or not
         """
         session = SessionStore()
-        Handler.storeSessionAuthdata(session, id_auth, username, password, locale, platform, is_admin, staf_member, scrambler)
+        Handler.storeSessionAuthdata(
+            session,
+            id_auth,
+            username,
+            password,
+            locale,
+            platform,
+            is_admin,
+            staf_member,
+            scrambler,
+        )
         session.save()
         self._authToken = session.session_key
         self._session = session
-        
+
         return self._authToken
 
     def cleanAuthToken(self) -> None:
@@ -282,13 +319,20 @@ class Handler:
                 self._session.accessed = True
                 self._session.save()
         except Exception:
-            logger.exception('Got an exception setting session value %s to %s', key, value)
+            logger.exception(
+                'Got an exception setting session value %s to %s', key, value
+            )
 
     def validSource(self) -> bool:
         try:
-            return net.ipInNetwork(self._request.ip, GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True))
+            return net.ipInNetwork(
+                self._request.ip, GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True)
+            )
         except Exception as e:
-            logger.warning('Error checking truted ADMIN source: "%s" does not seems to be a valid network string. Using Unrestricted access.', GlobalConfig.ADMIN_TRUSTED_SOURCES.get())
+            logger.warning(
+                'Error checking truted ADMIN source: "%s" does not seems to be a valid network string. Using Unrestricted access.',
+                GlobalConfig.ADMIN_TRUSTED_SOURCES.get(),
+            )
 
         return True
 
@@ -312,8 +356,10 @@ class Handler:
         authId = self.getValue('auth')
         username = self.getValue('username')
         # Maybe it's root user??
-        if (GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True) and
-                username == GlobalConfig.SUPER_USER_LOGIN.get(True) and
-                authId == -1):
+        if (
+            GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True)
+            and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
+            and authId == -1
+        ):
             return getRootUser()
         return Authenticator.objects.get(pk=authId).users.get(name=username)
