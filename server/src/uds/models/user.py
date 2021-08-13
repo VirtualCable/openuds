@@ -187,18 +187,18 @@ class User(UUIDModel):
                 number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))
             )  # g.groups.filter(id__in=grps).count()
         ):
-            numberGroupsBelongingInMeta: int = g.number_belongs_meta
+            numberGroupsBelongingInMeta: int = g.number_belongs_meta  # type: ignore  # anottation
 
             logger.debug('gn = %s', numberGroupsBelongingInMeta)
-            logger.debug('groups count: %s', g.number_groups)
+            logger.debug('groups count: %s', g.number_groups)  # type: ignore  # anottation
 
             if g.meta_if_any is True and numberGroupsBelongingInMeta > 0:
-                numberGroupsBelongingInMeta = g.number_groups
+                numberGroupsBelongingInMeta = g.number_groups  # type: ignore  # anottation
 
             logger.debug('gn after = %s', numberGroupsBelongingInMeta)
 
             # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
-            if numberGroupsBelongingInMeta == g.number_groups:
+            if numberGroupsBelongingInMeta == g.number_groups:  # type: ignore  # anottation
                 # This group matches
                 yield g
 

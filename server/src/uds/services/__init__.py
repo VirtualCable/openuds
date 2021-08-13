@@ -58,7 +58,7 @@ def __init__():
     """
     from uds.core import services
 
-    # Dinamycally import children of this package. The __init__.py files must register, if needed, inside ServiceProviderFactory
+    # Dinamycally import children of this package.
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         # __import__('uds.services.' + name, globals(), locals(), [])

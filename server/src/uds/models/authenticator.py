@@ -105,7 +105,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         Get the type of the object this record represents.
 
-        The type is Python type, it obtains this type from ServiceProviderFactory and associated record field.
+        The type is Python type, it obtains this type from AuthsFactory and associated record field.
 
         Returns:
             The python type for this record object

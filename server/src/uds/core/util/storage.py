@@ -108,9 +108,9 @@ class StorageAsDict(MutableMapping):
     @property
     def _db(self) -> typing.Union[models.QuerySet, models.Manager]:
         if self._atomic:
-            return DBStorage.objects.select_for_update()
+            return DBStorage.objects.select_for_update()  # type: ignore
         else:
-            return DBStorage.objects
+            return DBStorage.objects  # type: ignore
 
     @property
     def _filtered(self) -> 'models.QuerySet[DBStorage]':

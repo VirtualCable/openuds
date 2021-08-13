@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 NEVER = datetime(1972, 7, 1)
 NEVER_UNIX = int(mktime(NEVER.timetuple()))
 
+
 class UnsavedForeignKey(models.ForeignKey):
     """
     From 1.8 of django, we need to point to "saved" objects.
@@ -49,8 +50,10 @@ class UnsavedForeignKey(models.ForeignKey):
 
     We need to trick in some cases, because for example, root user is not in DB
     """
+
     # Allows pointing to an unsaved object
     allow_unsaved_instance_assignment = True
+
 
 def getSqlDatetime() -> datetime:
     """
@@ -64,16 +67,24 @@ def getSqlDatetime() -> datetime:
     """
     if connection.vendor in ('mysql', 'microsoft'):
         cursor = connection.cursor()
-        sentence = 'SELECT NOW()' if connection.vendor == 'mysql' else 'SELECT CURRENT_TIMESTAMP'
+        sentence = (
+            'SELECT NOW()'
+            if connection.vendor == 'mysql'
+            else 'SELECT CURRENT_TIMESTAMP'
+        )
         cursor.execute(sentence)
         date = cursor.fetchone()[0]
     else:
-        date = datetime.now()  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
+        date = (
+            datetime.now()
+        )  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
 
     return date
 
+
 def getSqlDatetimeAsUnix() -> int:
     return int(mktime(getSqlDatetime().timetuple()))
+
 
 def getSqlFnc(fncName: str) -> str:
     """

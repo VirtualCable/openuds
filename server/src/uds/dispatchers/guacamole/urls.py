@@ -35,7 +35,11 @@ from .views import guacamole
 
 urlpatterns = [
     # Authenticated path
-    url(r'^uds/guacamole/auth/(?P<token>[^/]+)/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole'),
+    url(
+        r'^uds/guacamole/auth/(?P<token>[^/]+)/(?P<tunnelId>.+)$',
+        guacamole,
+        name='dispatcher.guacamole',
+    ),
     # Non authenticated path. Disabled
     # url(r'^uds/guacamole/(?P<tunnelId>.+)$', guacamole, name='dispatcher.guacamole.noauth'),
 ]

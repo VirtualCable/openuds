@@ -81,7 +81,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     TRANSPORT_SELECT: typing.Mapping[int, str] = {
         AUTO_TRANSPORT_SELECT: _('Automatic selection'),
         COMMON_TRANSPORT_SELECT: _('Use only common transports'),
-        LABEL_TRANSPORT_SELECT: _('Group Transports by label')
+        LABEL_TRANSPORT_SELECT: _('Group Transports by label'),
     }
 
     name = models.CharField(max_length=128, default='')

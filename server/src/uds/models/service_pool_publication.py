@@ -109,7 +109,6 @@ class ServicePoolPublication(UUIDModel):
     objects: 'models.BaseManager[ServicePoolPublication]'
     userServices: 'models.QuerySet[UserService]'
 
-
     class Meta(UUIDModel.Meta):
         """
         Meta class to declare default order and unique multiple field index

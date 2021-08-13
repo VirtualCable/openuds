@@ -48,8 +48,11 @@ class DelayedTask(models.Model):
 
     This table contains uds.core.util.jobs.DelayedTask references
     """
+
     type = models.CharField(max_length=128)
-    tag = models.CharField(max_length=64, db_index=True)  # A tag for letting us locate delayed publications...
+    tag = models.CharField(
+        max_length=64, db_index=True
+    )  # A tag for letting us locate delayed publications...
     instance = models.TextField()
     insert_date = models.DateTimeField()
     execution_delay = models.PositiveIntegerField()
@@ -62,7 +65,10 @@ class DelayedTask(models.Model):
         """
         Meta class to declare default order and unique multiple field index
         """
+
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return "Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.execution_time)
+        return "Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(
+            self.type, self.insert_date, self.execution_delay, self.execution_time
+        )

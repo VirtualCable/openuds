@@ -42,10 +42,13 @@ class Storage(models.Model):
     General storage model. Used to store specific instances (transport, service, servicemanager, ...) persistent information
     not intended to be serialized/deserialized everytime one object instance is loaded/saved.
     """
+
     owner = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, primary_key=True)
     data = models.TextField(default='')
-    attr1 = models.CharField(max_length=64, db_index=True, null=True, blank=True, default=None)
+    attr1 = models.CharField(
+        max_length=64, db_index=True, null=True, blank=True, default=None
+    )
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[Storage]'
@@ -54,7 +57,10 @@ class Storage(models.Model):
         """
         Meta class to declare the name of the table at database
         """
+
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return '{} {}  > str= {}, {}'.format(self.owner, self.key, self.data, '/'.join([self.attr1]))
+        return '{} {}  > str= {}, {}'.format(
+            self.owner, self.key, self.data, '/'.join([self.attr1])
+        )

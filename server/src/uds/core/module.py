@@ -97,8 +97,11 @@ class Module(UserInterface, Environmentable, Serializable):
     Environmentable is a base class that provides utility method to access a separate Environment for every single
     module.
     """
+
     # Types
-    ValuesType = typing.Optional[typing.Dict[str, typing.Any]]  # values type value will be str or list[str] int most cases
+    ValuesType = typing.Optional[
+        typing.Dict[str, typing.Any]
+    ]  # values type value will be str or list[str] int most cases
 
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
@@ -108,7 +111,9 @@ class Module(UserInterface, Environmentable, Serializable):
     # : Description of this module, used at admin level
     typeDescription: typing.ClassVar[str] = 'Base Module'
     # : Icon file, relative to module folders
-    iconFile: typing.ClassVar[str] = 'base.png'  # This is expected to be png, use this format always
+    iconFile: typing.ClassVar[
+        str
+    ] = 'base.png'  # This is expected to be png, use this format always
 
     # Not defined, but declared. If module is groupable, this value will contain to which group belongs
     group: typing.ClassVar[str]
@@ -175,7 +180,10 @@ class Module(UserInterface, Environmentable, Serializable):
             Base 64 encoded or raw image, obtained from the specified file at
             'iconFile' class attribute
         """
-        file_ = open(os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile, 'rb')
+        file_ = open(
+            os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile,
+            'rb',
+        )
         data = file_.read()
         file_.close()
 
@@ -206,7 +214,12 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return [True, _("No connection checking method is implemented.")]
 
-    def __init__(self, environment: Environment, values: ValuesType = None, uuid: typing.Optional[str] = None):
+    def __init__(
+        self,
+        environment: Environment,
+        values: ValuesType = None,
+        uuid: typing.Optional[str] = None,
+    ):
         """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(environment, values)".
@@ -273,7 +286,7 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Internacionalized (using ugettext) string of result of the check.
         """
-        return  _("No check method provided.")
+        return _("No check method provided.")
 
     def getUuid(self) -> str:
         return self._uuid

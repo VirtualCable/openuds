@@ -32,7 +32,3 @@
 """
 
 from .provider import PhysicalMachinesProvider
-
-# Now we use __subclasses__ method to locate Service Providers
-# and register them inside factory
-# ServiceProviderFactory.factory().insert(PhysicalMachinesProvider)

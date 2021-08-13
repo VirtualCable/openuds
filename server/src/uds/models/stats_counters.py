@@ -73,7 +73,7 @@ class StatsCounters(models.Model):
     @staticmethod
     def get_grouped(
         owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs
-    ) -> 'models.QuerySet[StatsCounters]':  # pylint: disable=too-many-locals
+    ) -> 'models.QuerySet[StatsCounters]':
         """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 

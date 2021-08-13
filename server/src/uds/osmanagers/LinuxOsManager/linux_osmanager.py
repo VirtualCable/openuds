@@ -65,17 +65,25 @@ class LinuxOsManager(osmanagers.OSManager):
         values=[
             {'id': 'keep', 'text': ugettext_lazy('Keep service assigned')},
             {'id': 'remove', 'text': ugettext_lazy('Remove service')},
-            {'id': 'keep-always', 'text': ugettext_lazy('Keep service assigned even on new publication')},
+            {
+                'id': 'keep-always',
+                'text': ugettext_lazy('Keep service assigned even on new publication'),
+            },
         ],
-        defvalue='keep')
+        defvalue='keep',
+    )
 
     idle = gui.NumericField(
         label=_("Max.Idle time"),
         length=4,
         defvalue=-1,
-        rdonly=False, order=11,
-        tooltip=_('Maximum idle time (in seconds) before session is automatically closed to the user (<= 0 means no max idle time).'),
-        required=True)
+        rdonly=False,
+        order=11,
+        tooltip=_(
+            'Maximum idle time (in seconds) before session is automatically closed to the user (<= 0 means no max idle time).'
+        ),
+        required=True,
+    )
 
     deadLine = gui.CheckBoxField(
         label=_('Calendar logout'),
@@ -114,7 +122,9 @@ class LinuxOsManager(osmanagers.OSManager):
         Says if a machine is removable on logout
         '''
         if not userService.in_use:
-            if (self._onLogout == 'remove') or (not userService.isValidPublication() and self._onLogout == 'keep'):
+            if (self._onLogout == 'remove') or (
+                not userService.isValidPublication() and self._onLogout == 'keep'
+            ):
                 return True
 
         return False
@@ -174,13 +184,18 @@ class LinuxOsManager(osmanagers.OSManager):
     def readyNotified(self, userService):
         return
 
-    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
-        return {
-            'action': 'rename',
-            'name': userService.getName()
-        }
+    def actorData(
+        self, userService: 'UserService'
+    ) -> typing.MutableMapping[str, typing.Any]:
+        return {'action': 'rename', 'name': userService.getName()}
 
-    def process(self, userService: 'UserService', message: str, data: typing.Any, options: typing.Optional[typing.Dict[str, typing.Any]] = None) -> str:
+    def process(
+        self,
+        userService: 'UserService',
+        message: str,
+        data: typing.Any,
+        options: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> str:
         """
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), old method
@@ -189,17 +204,24 @@ class LinuxOsManager(osmanagers.OSManager):
         * msg = logoff, data = Username, Informs that the username has logged out of the machine
         * msg = ready, data = None, Informs machine ready to be used
         """
-        logger.info("Invoked LinuxOsManager for %s with params: %s, %s", userService, message, data)
+        logger.info(
+            "Invoked LinuxOsManager for %s with params: %s, %s",
+            userService,
+            message,
+            data,
+        )
         # We get from storage the name for this userService. If no name, we try to assign a new one
         ret = "ok"
         notifyReady = False
         doRemove = False
         state = userService.os_state
         if message in ('ready', 'ip'):
-            if not isinstance(data, dict):  # Older actors?, previous to 2.5, convert it information..
+            if not isinstance(
+                data, dict
+            ):  # Older actors?, previous to 2.5, convert it information..
                 data = {
                     'ips': [v.split('=') for v in typing.cast(str, data).split(',')],
-                    'hostname': userService.friendly_name
+                    'hostname': userService.friendly_name,
                 }
 
         # Old "info" state, will be removed in a near future
@@ -246,7 +268,12 @@ class LinuxOsManager(osmanagers.OSManager):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
         if self.isRemovableOnLogout(userService):
-            log.doLog(userService, log.INFO, 'Unused user service for too long. Removing due to OS Manager parameters.', log.OSMANAGER)
+            log.doLog(
+                userService,
+                log.INFO,
+                'Unused user service for too long. Removing due to OS Manager parameters.',
+                log.OSMANAGER,
+            )
             userService.remove()
 
     def isPersistent(self):
@@ -260,7 +287,9 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         On production environments, will return no idle for non removable machines
         """
-        if self._idle <= 0:  # or (settings.DEBUG is False and self._onLogout != 'remove'):
+        if (
+            self._idle <= 0
+        ):  # or (settings.DEBUG is False and self._onLogout != 'remove'):
             return None
 
         return self._idle
@@ -269,7 +298,9 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v3', self._onLogout, str(self._idle), gui.boolToStr(self._deadLine)]).encode('utf8')
+        return '\t'.join(
+            ['v3', self._onLogout, str(self._idle), gui.boolToStr(self._deadLine)]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes):
         values = data.decode('utf8').split('\t')
@@ -280,9 +311,17 @@ class LinuxOsManager(osmanagers.OSManager):
         elif values[0] == 'v2':
             self._onLogout, self._idle = values[1], int(values[2])
         elif values[0] == 'v3':
-            self._onLogout, self._idle, self._deadLine = values[1], int(values[2]), gui.strToBool(values[3])
+            self._onLogout, self._idle, self._deadLine = (
+                values[1],
+                int(values[2]),
+                gui.strToBool(values[3]),
+            )
 
         self.__setProcessUnusedMachines()
 
     def valuesDict(self) -> gui.ValuesDictType:
-        return {'onLogout': self._onLogout, 'idle': str(self._idle), 'deadLine': gui.boolToStr(self._deadLine) }
+        return {
+            'onLogout': self._onLogout,
+            'idle': str(self._idle),
+            'deadLine': gui.boolToStr(self._deadLine),
+        }

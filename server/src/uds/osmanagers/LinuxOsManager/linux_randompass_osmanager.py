@@ -48,14 +48,23 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
 
+
 class LinuxRandomPassManager(LinuxOsManager):
     typeName = _('Linux Random Password OS Manager')
     typeType = 'LinRandomPasswordManager'
-    typeDescription = _('Os Manager to control linux machines, with user password set randomly.')
+    typeDescription = _(
+        'Os Manager to control linux machines, with user password set randomly.'
+    )
     iconFile = 'losmanager.png'
 
     # Apart form data from linux os manager, we need also domain and credentials
-    userAccount = gui.TextField(length=64, label=_('Account'), order=2, tooltip=_('User account to change password'), required=True)
+    userAccount = gui.TextField(
+        length=64,
+        label=_('Account'),
+        order=2,
+        tooltip=_('User account to change password'),
+        required=True,
+    )
 
     # Inherits base "onLogout"
     onLogout = LinuxOsManager.onLogout
@@ -68,12 +77,16 @@ class LinuxRandomPassManager(LinuxOsManager):
         super(LinuxRandomPassManager, self).__init__(environment, values)
         if values is not None:
             if values['userAccount'] == '':
-                raise osmanagers.OSManager.ValidationException(_('Must provide an user account!!!'))
+                raise osmanagers.OSManager.ValidationException(
+                    _('Must provide an user account!!!')
+                )
             self._userAccount = values['userAccount']
         else:
             self._userAccount = ''
 
-    def processUserPassword(self, userService: 'UserService', username: str, password: str) -> typing.Tuple[str, str]:
+    def processUserPassword(
+        self, userService: 'UserService', username: str, password: str
+    ) -> typing.Tuple[str, str]:
         if username == self._userAccount:
             return (username, userService.recoverValue('linOsRandomPass'))
         return username, password
@@ -81,25 +94,39 @@ class LinuxRandomPassManager(LinuxOsManager):
     def genPassword(self, service):
         randomPass = service.recoverValue('linOsRandomPass')
         if randomPass is None:
-            randomPass = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16))
+            randomPass = ''.join(
+                random.SystemRandom().choice(string.ascii_letters + string.digits)
+                for _ in range(16)
+            )
             service.storeValue('linOsRandomPass', randomPass)
-            log.doLog(service, log.INFO, "Password set to \"{}\"".format(randomPass), log.OSMANAGER)
+            log.doLog(
+                service,
+                log.INFO,
+                "Password set to \"{}\"".format(randomPass),
+                log.OSMANAGER,
+            )
 
         return randomPass
 
     def infoVal(self, service):
-        return 'rename:{0}\t{1}\t\t{2}'.format(self.getName(service), self._userAccount, self.genPassword(service))
+        return 'rename:{0}\t{1}\t\t{2}'.format(
+            self.getName(service), self._userAccount, self.genPassword(service)
+        )
 
     def infoValue(self, service):
-        return 'rename\r{0}\t{1}\t\t{2}'.format(self.getName(service), self._userAccount, self.genPassword(service))
+        return 'rename\r{0}\t{1}\t\t{2}'.format(
+            self.getName(service), self._userAccount, self.genPassword(service)
+        )
 
-    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+    def actorData(
+        self, userService: 'UserService'
+    ) -> typing.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
             'name': userService.getName(),
             'username': self._userAccount,
             'password': '',  # On linux, user password is not needed so we provide an empty one
-            'new_password': self.genPassword(userService)
+            'new_password': self.genPassword(userService),
         }
 
     def marshal(self) -> bytes:
@@ -107,7 +134,9 @@ class LinuxRandomPassManager(LinuxOsManager):
         Serializes the os manager data so we can store it in database
         """
         base = LinuxOsManager.marshal(self)
-        return '\t'.join(['v1', self._userAccount, codecs.encode(base, 'hex').decode()]).encode('utf8')
+        return '\t'.join(
+            ['v1', self._userAccount, codecs.encode(base, 'hex').decode()]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         values = data.split(b'\t')

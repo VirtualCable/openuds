@@ -57,7 +57,9 @@ class Command(BaseCommand):
                     mod, name = first
                 else:
                     mod, name = GLOBAL_SECTION, first[0]
-                if Config.update(mod, name, value) is False:  # If not exists, try to store value without any special parameters
+                if (
+                    Config.update(mod, name, value) is False
+                ):  # If not exists, try to store value without any special parameters
                     Config.section(mod).value(name, value).get()
         except Exception as e:
             print('The command could not be processed: {}'.format(e))

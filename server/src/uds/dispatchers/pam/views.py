@@ -54,7 +54,11 @@ def pam(request: ExtendedHttpRequestWithUser) -> HttpResponse:
         # If request is not forged...
         if len(ids) == 1:
             userId = ids[0]
-            logger.debug("Auth request for user [%s] and pass [%s]", request.GET['id'], request.GET['pass'])
+            logger.debug(
+                "Auth request for user [%s] and pass [%s]",
+                request.GET['id'],
+                request.GET['pass'],
+            )
             try:
                 password = TicketStore.get(userId)
                 if password == request.GET['pass']:
@@ -63,7 +67,11 @@ def pam(request: ExtendedHttpRequestWithUser) -> HttpResponse:
                 # Non existing ticket, log it and stop
                 logger.info('Invalid access from %s using user %s', request.ip, userId)
         else:
-            logger.warning('Invalid request from %s: %s', request.ip, [v for v in request.GET.lists()])
+            logger.warning(
+                'Invalid request from %s: %s',
+                request.ip,
+                [v for v in request.GET.lists()],
+            )
     elif 'uid' in request.GET:
         # This is an "get name for id" call
         logger.debug("NSS Request for id [%s]", request.GET['uid'])

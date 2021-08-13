@@ -47,12 +47,17 @@ class Environment:
     not stored with main module data.
     The environment is composed of a "cache" and a "storage". First are volatile data, while second are persistent data.
     """
+
     _key: str
     _cache: Cache
     _storage: Storage
     _idGenerators: typing.Dict[str, UniqueIDGenerator]
 
-    def __init__(self, uniqueKey: str, idGenerators: typing.Optional[typing.Dict[str, UniqueIDGenerator]] = None):
+    def __init__(
+        self,
+        uniqueKey: str,
+        idGenerators: typing.Optional[typing.Dict[str, UniqueIDGenerator]] = None,
+    ):
         """
         Initialized the Environment for the specified id
         @param uniqueKey: Key for this environment
@@ -112,7 +117,11 @@ class Environment:
             v.release()
 
     @staticmethod
-    def getEnvForTableElement(tblName, id_, idGeneratorsTypes: typing.Optional[typing.Dict[str, typing.Any]] = None) -> 'Environment':
+    def getEnvForTableElement(
+        tblName,
+        id_,
+        idGeneratorsTypes: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> 'Environment':
         """
         From a table name, and a id, tries to load the associated environment or creates a new
         one if no environment exists at database. The table name and the id are used to obtain the key
@@ -155,7 +164,9 @@ class Environment:
         """
         Provides global environment
         """
-        return Environment(GLOBAL_ENV)  # This environment is a global environment for general utility.
+        return Environment(
+            GLOBAL_ENV
+        )  # This environment is a global environment for general utility.
 
 
 class Environmentable:

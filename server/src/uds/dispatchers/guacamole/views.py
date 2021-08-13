@@ -54,7 +54,9 @@ def dict2resp(dct: typing.Mapping[typing.Any, typing.Any]) -> str:
     return '\r'.join((str(k) + '\t' + str(v) for k, v in dct.items()))
 
 
-def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
+def guacamole(
+    request: ExtendedHttpRequestWithUser, token: str, tunnelId: str
+) -> HttpResponse:
     if not TunnelToken.validateToken(token):
         logger.error('Invalid token %s from %s', token, request.ip)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
@@ -65,12 +67,14 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -
         tunnelId, scrambler = tunnelId.split('.')
 
         # All strings excetp "ticket-info", that is fixed if it exists later
-        val = typing.cast(typing.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False))
+        val = typing.cast(
+            typing.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False)
+        )
 
         # Extra check that the ticket data belongs to original requested user service/user
         if 'ticket-info' in val:
             ti = typing.cast(typing.Mapping[str, str], val['ticket-info'])
-            del val['ticket-info']   # Do not send this data to guacamole!! :)
+            del val['ticket-info']  # Do not send this data to guacamole!! :)
 
             try:
                 userService = UserService.objects.get(uuid=ti['userService'])
@@ -85,16 +89,21 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -
                     userService.deployed_service,
                     events.ET_TUNNEL_OPEN,
                     username=userService.user.pretty_name,
-                    source='HTML5-' + protocol,  # On HTML5, currently src is not provided by Guacamole
+                    source='HTML5-'
+                    + protocol,  # On HTML5, currently src is not provided by Guacamole
                     dstip=host,
                     uniqueid=userService.unique_id,
                 )
 
             except Exception:
-                logger.error('The requested guacamole userservice does not exists anymore')
+                logger.error(
+                    'The requested guacamole userservice does not exists anymore'
+                )
                 raise
             if userService.user.uuid != ti['user']:
-                logger.error('The requested userservice has changed owner and is not accesible')
+                logger.error(
+                    'The requested userservice has changed owner and is not accesible'
+                )
                 raise Exception()
 
         if 'password' in val:

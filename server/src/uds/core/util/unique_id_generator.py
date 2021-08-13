@@ -36,10 +36,12 @@ import typing
 
 from django.db import transaction, OperationalError, connection
 from django.db.utils import IntegrityError
-from django.db.models.query import QuerySet
 
 from uds.models.unique_id import UniqueId
 from uds.models.util import getSqlDatetimeAsUnix
+
+if typing.TYPE_CHECKING:
+    from django.db import models
 
 logger = logging.getLogger(__name__)
 
@@ -65,13 +67,13 @@ class UniqueIDGenerator:
 
     def __filter(
         self, rangeStart: int, rangeEnd: int = MAX_SEQ, forUpdate: bool = False
-    ) -> QuerySet:
+    ) -> 'models.QuerySet[UniqueId]':
         # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
         # if not for update, do not use the clause :)
         obj = UniqueId.objects.select_for_update() if forUpdate else UniqueId.objects
         return obj.filter(
             basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd
-        )  # @UndefinedVariable
+        )
 
     def get(self, rangeStart: int = 0, rangeEnd: int = MAX_SEQ) -> int:
         """

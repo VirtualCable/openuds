@@ -63,7 +63,9 @@ class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-meth
         db_table = 'uds__user_service_property'
         app_label = 'uds'
         constraints = [
-            models.UniqueConstraint(fields=['name', 'user_service'], name='u_uprop_name_userservice')
+            models.UniqueConstraint(
+                fields=['name', 'user_service'], name='u_uprop_name_userservice'
+            )
         ]
 
     def __str__(self) -> str:

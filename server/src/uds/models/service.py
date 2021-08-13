@@ -88,7 +88,9 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
         constraints = [
-            models.UniqueConstraint(fields=['provider', 'name'], name='u_srv_provider_name')
+            models.UniqueConstraint(
+                fields=['provider', 'name'], name='u_srv_provider_name'
+            )
         ]
 
     def getEnvironment(self) -> Environment:
@@ -105,7 +107,9 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             },
         )
 
-    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'services.Service':
+    def getInstance(
+        self, values: typing.Optional[typing.Dict[str, str]] = None
+    ) -> 'services.Service':
         """
         Instantiates the object this record contains.
 

@@ -49,11 +49,18 @@ class ServicePoolGroup(UUIDModel):
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
+
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='', db_index=True, unique=True)
     comments = models.CharField(max_length=256, default='')
     priority = models.IntegerField(default=0, db_index=True)
-    image: 'models.ForeignKey[ServicePoolGroup, Image]' = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGroup', on_delete=models.SET_NULL)
+    image: 'models.ForeignKey[ServicePoolGroup, Image]' = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        related_name='servicesPoolsGroup',
+        on_delete=models.SET_NULL,
+    )
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[ServicePoolGroup]'
@@ -62,11 +69,14 @@ class ServicePoolGroup(UUIDModel):
         """
         Meta class to declare the name of the table at database
         """
+
         db_table = 'uds__pools_groups'
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return 'Service Pool group {}({}): {}'.format(self.name, self.comments, self.image.name)
+        return 'Service Pool group {}({}): {}'.format(
+            self.name, self.comments, self.image.name
+        )
 
     @property
     def as_dict(self) -> typing.MutableMapping[str, typing.Any]:
@@ -75,12 +85,12 @@ class ServicePoolGroup(UUIDModel):
             'name': self.name,
             'comments': self.comments,
             'priority': self.priority,
-            'imageUuid': self.image.uuid if self.image is not None else 'x'
+            'imageUuid': self.image.uuid if self.image is not None else 'x',
         }
 
     @property
     def thumb64(self) -> str:
-        return self.image.thumb64 if self.image else  DEFAULT_THUMB_BASE64
+        return self.image.thumb64 if self.image else DEFAULT_THUMB_BASE64
 
     @staticmethod
     def default() -> 'ServicePoolGroup':

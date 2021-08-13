@@ -350,7 +350,9 @@ class WindowsOsManager(osmanagers.OSManager):
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v3', self._onLogout, str(self._idle), gui.boolToStr(self._deadLine)]).encode('utf8')
+        return '\t'.join(
+            ['v3', self._onLogout, str(self._idle), gui.boolToStr(self._deadLine)]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         vals = data.decode('utf8').split('\t')
@@ -362,7 +364,11 @@ class WindowsOsManager(osmanagers.OSManager):
             elif vals[0] == 'v2':
                 self._onLogout, self._idle = vals[1], int(vals[2])
             elif vals[0] == 'v3':
-                self._onLogout, self._idle, self._deadLine = vals[1], int(vals[2]), gui.strToBool(vals[3])
+                self._onLogout, self._idle, self._deadLine = (
+                    vals[1],
+                    int(vals[2]),
+                    gui.strToBool(vals[3]),
+                )
         except Exception:
             logger.exception(
                 'Exception unmarshalling. Some values left as default ones'
@@ -371,4 +377,8 @@ class WindowsOsManager(osmanagers.OSManager):
         self.__setProcessUnusedMachines()
 
     def valuesDict(self) -> gui.ValuesDictType:
-        return {'onLogout': self._onLogout, 'idle': str(self._idle), 'deadLine': gui.boolToStr(self._deadLine) }
+        return {
+            'onLogout': self._onLogout,
+            'idle': str(self._idle),
+            'deadLine': gui.boolToStr(self._deadLine),
+        }

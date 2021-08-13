@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -53,7 +53,7 @@ def __init__():
     """
     from uds.core import osmanagers
 
-    # Dinamycally import children of this package. The __init__.py files must register, if needed, inside ServiceProviderFactory
+    # Dinamycally import children of this package. 
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
 
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
@@ -63,7 +63,7 @@ def __init__():
     importlib.invalidate_caches()
 
     p = osmanagers.OSManager
-    # This is marked as error in IDE, but it's not (__subclasses__)
+
     for cls in p.__subclasses__():
         osmanagers.factory().insert(cls)
 

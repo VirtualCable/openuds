@@ -50,9 +50,15 @@ PID_FILE = 'taskmanager.pid'
 def getPidFile():
     return settings.BASE_DIR + '/' + PID_FILE
 
+
 # become_daemon seems te be removed on django 1.9
 # This is a copy of posix version from django 1.8
-def become_daemon(our_home_dir: str = '.', out_log: str = '/dev/null', err_log: str = '/dev/null', umask: int = 0o022):
+def become_daemon(
+    our_home_dir: str = '.',
+    out_log: str = '/dev/null',
+    err_log: str = '/dev/null',
+    umask: int = 0o022,
+):
     """Robustly turn into a UNIX daemon, running in our_home_dir."""
     # First fork
     try:
@@ -93,21 +99,21 @@ class Command(BaseCommand):
             action='store_true',
             dest='start',
             default=False,
-            help='Starts a new daemon'
+            help='Starts a new daemon',
         )
         parser.add_argument(
             '--stop',
             action='store_true',
             dest='stop',
             default=False,
-            help='Stop any running daemon'
+            help='Stop any running daemon',
         )
         parser.add_argument(
             '--foreground',
             action='store_true',
             dest='foreground',
             default=False,
-            help='Stop any running daemon'
+            help='Stop any running daemon',
         )
 
     def handle(self, *args, **options) -> None:
@@ -141,7 +147,11 @@ class Command(BaseCommand):
             logger.info('Starting task manager.')
 
             if not foreground:
-                become_daemon(settings.BASE_DIR, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
+                become_daemon(
+                    settings.BASE_DIR,
+                    settings.LOGDIR + '/taskManagerStdout.log',
+                    settings.LOGDIR + '/taskManagerStderr.log',
+                )
                 pid = os.getpid()
 
                 open(getPidFile(), 'w+').write('{}\n'.format(pid))
@@ -149,8 +159,10 @@ class Command(BaseCommand):
             manager = taskManager()()
             manager.run()
 
-        if not start and  not stop:
+        if not start and not stop:
             if pid:
-                sys.stdout.write("Task manager found running (pid file exists: {0})\n".format(pid))
+                sys.stdout.write(
+                    "Task manager found running (pid file exists: {0})\n".format(pid)
+                )
             else:
                 sys.stdout.write("Task manager not foud (pid file do not exits)\n")

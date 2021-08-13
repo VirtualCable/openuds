@@ -52,7 +52,9 @@ def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResp
 
     def getUserService() -> typing.Optional[UserService]:
         try:
-            userService = UserService.objects.get(uuid=processUuid(uuid), state=states.userService.USABLE)
+            userService = UserService.objects.get(
+                uuid=processUuid(uuid), state=states.userService.USABLE
+            )
             if userService.getProperty('token') == token:
                 return userService
             logger.warning(
@@ -63,7 +65,9 @@ def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResp
             # Sleep a while in case of error?
         except Exception as e:
             # Any exception will stop process
-            logger.warning('OpenGnsys: invalid userService %s:%s. (Ignored)', token, uuid)
+            logger.warning(
+                'OpenGnsys: invalid userService %s:%s. (Ignored)', token, uuid
+            )
 
         return None
 
@@ -79,9 +83,14 @@ def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResp
         if userService:
             # Ignore login to cached machines...
             if userService.cache_level != 0:
-                logger.info('Ignored OpenGnsys login to %s to cached machine', userService.friendly_name)
+                logger.info(
+                    'Ignored OpenGnsys login to %s to cached machine',
+                    userService.friendly_name,
+                )
                 return
-            logger.debug('Processing login from OpenGnsys %s', userService.friendly_name)
+            logger.debug(
+                'Processing login from OpenGnsys %s', userService.friendly_name
+            )
             actor_v3.Login.process_login(userService, 'OpenGnsys')
 
     def logout() -> None:
@@ -89,9 +98,14 @@ def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResp
         if userService:
             # Ignore logout to cached machines...
             if userService.cache_level != 0:
-                logger.info('Ignored OpenGnsys logout to %s to cached machine', userService.friendly_name)
+                logger.info(
+                    'Ignored OpenGnsys logout to %s to cached machine',
+                    userService.friendly_name,
+                )
                 return
-            logger.debug('Processing logout from OpenGnsys %s', userService.friendly_name)
+            logger.debug(
+                'Processing logout from OpenGnsys %s', userService.friendly_name
+            )
             actor_v3.Logout.process_logout(userService, 'OpenGnsys')
 
     fnc: typing.Optional[typing.Callable[[], None]] = {

@@ -64,7 +64,7 @@ class Config(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['section', 'key'], name='u_cfg_section_key')
         ]
-        
+
         app_label = 'uds'
 
     def __str__(self) -> str:

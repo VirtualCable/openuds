@@ -58,12 +58,26 @@ logger = logging.getLogger(__name__)
 class WinRandomPassManager(WindowsOsManager):
     typeName = _('Windows Random Password OS Manager')
     typeType = 'WinRandomPasswordManager'
-    typeDescription = _('Os Manager to control windows machines, with user password set randomly.')
+    typeDescription = _(
+        'Os Manager to control windows machines, with user password set randomly.'
+    )
     iconFile = 'wosmanager.png'
 
     # Apart form data from windows os manager, we need also domain and credentials
-    userAccount = gui.TextField(length=64, label=_('Account'), order=2, tooltip=_('User account to change password'), required=True)
-    password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Current (template) password of the user account'), required=True)
+    userAccount = gui.TextField(
+        length=64,
+        label=_('Account'),
+        order=2,
+        tooltip=_('User account to change password'),
+        required=True,
+    )
+    password = gui.PasswordField(
+        length=64,
+        label=_('Password'),
+        order=3,
+        tooltip=_('Current (template) password of the user account'),
+        required=True,
+    )
 
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
@@ -74,55 +88,87 @@ class WinRandomPassManager(WindowsOsManager):
         super().__init__(environment, values)
         if values:
             if values['userAccount'] == '':
-                raise osmanagers.OSManager.ValidationException(_('Must provide an user account!!!'))
+                raise osmanagers.OSManager.ValidationException(
+                    _('Must provide an user account!!!')
+                )
             if values['password'] == '':
-                raise osmanagers.OSManager.ValidationException(_('Must provide a password for the account!!!'))
+                raise osmanagers.OSManager.ValidationException(
+                    _('Must provide a password for the account!!!')
+                )
             self._userAccount = values['userAccount']
             self._password = values['password']
         else:
             self._userAccount = ''
             self._password = ""
 
-    def processUserPassword(self, userService: 'UserService', username: str, password: str) -> typing.Tuple[str, str]:
+    def processUserPassword(
+        self, userService: 'UserService', username: str, password: str
+    ) -> typing.Tuple[str, str]:
         if username == self._userAccount:
             password = userService.recoverValue('winOsRandomPass')
 
-        return WindowsOsManager.processUserPassword(self, userService, username, password)
+        return WindowsOsManager.processUserPassword(
+            self, userService, username, password
+        )
 
     def genPassword(self, userService: 'UserService'):
         randomPass = userService.recoverValue('winOsRandomPass')
         if not randomPass:
             # Generates a password that conforms to complexity
             rnd = random.SystemRandom()
-            base = ''.join(rnd.choice(v) for v in (string.ascii_lowercase, string.ascii_uppercase, string.digits)) + rnd.choice('.+-')
-            randomPass = ''.join(rnd.choice(string.ascii_letters + string.digits) for _ in range(12))
+            base = ''.join(
+                rnd.choice(v)
+                for v in (string.ascii_lowercase, string.ascii_uppercase, string.digits)
+            ) + rnd.choice('.+-')
+            randomPass = ''.join(
+                rnd.choice(string.ascii_letters + string.digits) for _ in range(12)
+            )
             pos = rnd.randrange(0, len(randomPass))
             randomPass = randomPass[:pos] + base + randomPass[pos:]
             userService.storeValue('winOsRandomPass', randomPass)
-            log.doLog(userService, log.INFO, "Password set to \"{}\"".format(randomPass), log.OSMANAGER)
+            log.doLog(
+                userService,
+                log.INFO,
+                "Password set to \"{}\"".format(randomPass),
+                log.OSMANAGER,
+            )
         return randomPass
 
-    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+    def actorData(
+        self, userService: 'UserService'
+    ) -> typing.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
             'name': userService.getName(),
             'username': self._userAccount,
             'password': self._password,
-            'new_password': self.genPassword(userService)
+            'new_password': self.genPassword(userService),
         }
 
     def infoVal(self, userService: 'UserService') -> str:
-        return 'rename:{0}\t{1}\t{2}\t{3}'.format(self.getName(userService), self._userAccount, self._password, self.genPassword(userService))
+        return 'rename:{0}\t{1}\t{2}\t{3}'.format(
+            self.getName(userService),
+            self._userAccount,
+            self._password,
+            self.genPassword(userService),
+        )
 
     def infoValue(self, userService: 'UserService') -> str:
-        return 'rename\r{0}\t{1}\t{2}\t{3}'.format(self.getName(userService), self._userAccount, self._password, self.genPassword(userService))
+        return 'rename\r{0}\t{1}\t{2}\t{3}'.format(
+            self.getName(userService),
+            self._userAccount,
+            self._password,
+            self.genPassword(userService),
+        )
 
     def marshal(self) -> bytes:
         '''
         Serializes the os manager data so we can store it in database
         '''
         base = codecs.encode(super().marshal(), 'hex').decode()
-        return '\t'.join(['v1', self._userAccount, cryptoManager().encrypt(self._password), base]).encode('utf8')
+        return '\t'.join(
+            ['v1', self._userAccount, cryptoManager().encrypt(self._password), base]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         values = data.decode('utf8').split('\t')

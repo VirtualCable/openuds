@@ -33,6 +33,7 @@ import typing
 from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
 
+
 class TunnelToken(models.Model):
     """
     UDS Tunnel tokens on DB
@@ -56,7 +57,9 @@ class TunnelToken(models.Model):
         ]
 
     @staticmethod
-    def validateToken(token: str, request: typing.Optional[ExtendedHttpRequest] = None) -> bool:
+    def validateToken(
+        token: str, request: typing.Optional[ExtendedHttpRequest] = None
+    ) -> bool:
         try:
             tt = TunnelToken.objects.get(token=token)
             # We could check the request ip here
