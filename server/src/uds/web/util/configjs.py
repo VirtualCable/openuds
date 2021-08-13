@@ -219,10 +219,12 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
         # Admin config
         page_size = GlobalConfig.ADMIN_PAGESIZE.getInt(True)
+        vnc_userservices = GlobalConfig.ADMIN_ENABLE_USERSERVICES_VNC.getBool(True)
         # Fix page size to razonable usable values
         page_size = 10 if page_size < 10 else 100 if page_size > 100 else page_size
         config['admin'] = {
             'page_size': page_size,
+            'vnc_userservices': vnc_userservices,
         }
 
     errors: typing.List = []

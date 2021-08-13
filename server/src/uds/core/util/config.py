@@ -495,6 +495,9 @@ class GlobalConfig:
     ADMIN_TRUSTED_SOURCES: Config.Value = Config.section(ADMIN_SECTION).value(
         'Trusted Hosts for Admin', '*', type=Config.TEXT_FIELD
     )
+    ADMIN_ENABLE_USERSERVICES_VNC: Config.Value = Config.section(ADMIN_SECTION).value(
+        'Enable VNC for user services', '0', type=Config.BOOLEAN_FIELD
+    )
 
     _initDone = False
 

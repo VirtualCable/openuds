@@ -189,7 +189,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self._project = None
         self._region = region
         self._timeout = 10
-        self._volume = 'volumev2' if self._isLegacy else 'volumev3'
+        self._volume = ''
 
         if legacyVersion:
             self._authUrl = 'http{}://{}:{}/'.format('s' if useSSL else '', host, port)
@@ -272,8 +272,16 @@ class Client:  # pylint: disable=too-many-public-methods
         # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectId is not None:
             self._catalog = token['catalog']
-                
+            # Check for the presence of the endpoint for volumes
+            # Volume v2 api was deprecated in Pike release, and removed on Xena release
+            # Volume v3 api is available since Mitaka. Both are API compatible
+            if self._catalog:
+                if any(v['type'] == 'volumev3' for v in self._catalog):
+                    self._volume = 'volumev3'
+                else:
+                    self._volume = 'volumev2'
 
+ 
     def ensureAuthenticated(self) -> None:
         if (
             self._authenticated is False
