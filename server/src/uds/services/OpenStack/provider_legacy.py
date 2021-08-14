@@ -194,7 +194,9 @@ class ProviderLegacy(ServiceProvider):
         length=96,
         label=_('Proxy'),
         order=91,
-        tooltip=_('Proxy used for connection to azure for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'),
+        tooltip=_(
+            'Proxy used for connection to azure for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'
+        ),
         required=False,
         tab=gui.ADVANCED_TAB,
     )

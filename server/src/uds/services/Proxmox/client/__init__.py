@@ -260,7 +260,7 @@ class ProxmoxClient:
     def isVMIdAvailable(self, vmId: int) -> bool:
         try:
             self._get(f'cluster/nextid?vmid={vmId}')
-        except Exception: # Not available
+        except Exception:  # Not available
             return False
         return True
 

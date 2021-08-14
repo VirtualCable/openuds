@@ -74,16 +74,72 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenNebula Host'), required=True)
-    port = gui.NumericField(length=5, label=_('Port'), defvalue='2633', order=2, tooltip=_('OpenNebula Port (default is 2633 for non ssl connection)'), required=True)
-    ssl = gui.CheckBoxField(label=_('Use SSL'), order=3, tooltip=_('If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'))
-    username = gui.TextField(length=32, label=_('Username'), order=4, tooltip=_('User with valid privileges on OpenNebula'), required=True, defvalue='oneadmin')
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=5, tooltip=_('Password of the user of OpenNebula'), required=True)
+    host = gui.TextField(
+        length=64, label=_('Host'), order=1, tooltip=_('OpenNebula Host'), required=True
+    )
+    port = gui.NumericField(
+        length=5,
+        label=_('Port'),
+        defvalue='2633',
+        order=2,
+        tooltip=_('OpenNebula Port (default is 2633 for non ssl connection)'),
+        required=True,
+    )
+    ssl = gui.CheckBoxField(
+        label=_('Use SSL'),
+        order=3,
+        tooltip=_(
+            'If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'
+        ),
+    )
+    username = gui.TextField(
+        length=32,
+        label=_('Username'),
+        order=4,
+        tooltip=_('User with valid privileges on OpenNebula'),
+        required=True,
+        defvalue='oneadmin',
+    )
+    password = gui.PasswordField(
+        lenth=32,
+        label=_('Password'),
+        order=5,
+        tooltip=_('Password of the user of OpenNebula'),
+        required=True,
+    )
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        defvalue='10',
+        minValue=1,
+        maxValue=65536,
+        order=50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    maxRemovingServices = gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        defvalue='5',
+        minValue=1,
+        maxValue=65536,
+        order=51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to OpenNebula'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(
+        length=3,
+        label=_('Timeout'),
+        defvalue='10',
+        order=90,
+        tooltip=_('Timeout in seconds of connection to OpenNebula'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # Own variables
     _api: typing.Optional[on.client.OpenNebulaClient] = None
@@ -102,12 +158,16 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
     @property
     def endpoint(self) -> str:
-        return 'http{}://{}:{}/RPC2'.format('s' if self.ssl.isTrue() else '', self.host.value, self.port.value)
+        return 'http{}://{}:{}/RPC2'.format(
+            's' if self.ssl.isTrue() else '', self.host.value, self.port.value
+        )
 
     @property
     def api(self) -> on.client.OpenNebulaClient:
         if self._api is None:
-            self._api = on.client.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
+            self._api = on.client.OpenNebulaClient(
+                self.username.value, self.password.value, self.endpoint
+            )
 
         return self._api
 
@@ -128,16 +188,23 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         try:
             if self.api.version[0] < '4':
-                return [False, 'OpenNebula version is not supported (required version 4.1 or newer)']
+                return [
+                    False,
+                    'OpenNebula version is not supported (required version 4.1 or newer)',
+                ]
         except Exception as e:
             return [False, '{}'.format(e)]
 
         return [True, _('Opennebula test connection passed')]
 
-    def getDatastores(self, datastoreType: int = 0) -> typing.Iterable[on.types.StorageType]:
+    def getDatastores(
+        self, datastoreType: int = 0
+    ) -> typing.Iterable[on.types.StorageType]:
         yield from on.storage.enumerateDatastores(self.api, datastoreType)
 
-    def getTemplates(self, force: bool = False) -> typing.Iterable[on.types.TemplateType]:
+    def getTemplates(
+        self, force: bool = False
+    ) -> typing.Iterable[on.types.TemplateType]:
         yield from on.template.getTemplates(self.api, force)
 
     def makeTemplate(self, fromTemplateId: str, name, toDataStore: str) -> str:
@@ -234,7 +301,9 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         '''
         on.vm.removeMachine(self.api, machineId)
 
-    def getNetInfo(self, machineId: str, networkId: typing.Optional[str] = None) -> typing.Tuple[str, str]:
+    def getNetInfo(
+        self, machineId: str, networkId: typing.Optional[str] = None
+    ) -> typing.Tuple[str, str]:
         '''
         Changes the mac address of first nic of the machine to the one specified
         '''
@@ -250,20 +319,17 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
             'type': display['type'],
             'address': display['host'],
             'port': display['port'],
-            'secure_port':-1,
+            'secure_port': -1,
             'monitors': 1,
             'cert_subject': '',
-            'ticket': {
-                'value': display['passwd'],
-                'expiry': ''
-            }
+            'ticket': {'value': display['passwd'], 'expiry': ''},
         }
 
-    def desktopLogin(self, machineId: str, username: str, password: str, domain: str):
+    def desktopLogin(self, machineId: str, username: str, password: str, domain: str) -> typing.Dict[str, typing.Any]:
         '''
         Not provided by OpenNebula API right now
         '''
-        return
+        return dict()
 
     @staticmethod
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:

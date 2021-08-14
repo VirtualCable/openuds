@@ -57,6 +57,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
     """
     oVirt Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
+
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -113,9 +114,10 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         fills={
             'callbackName': 'ovFillResourcesFromCluster',
             'function': helpers.getResources,
-            'parameters': ['cluster', 'ov', 'ev']
+            'parameters': ['cluster', 'ov', 'ev'],
         },
-        tooltip=_("Cluster to contain services"), required=True
+        tooltip=_("Cluster to contain services"),
+        required=True,
     )
 
     datastore = gui.ChoiceField(
@@ -123,7 +125,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         rdonly=False,
         order=101,
         tooltip=_('Datastore domain where to publish and put incrementals'),
-        required=True
+        required=True,
     )
 
     minSpaceGB = gui.NumericField(
@@ -133,7 +135,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         minValue=0,
         order=102,
         tooltip=_('Minimal free space in GB'),
-        required=True
+        required=True,
     )
 
     machine = gui.ChoiceField(
@@ -141,7 +143,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=110,
         tooltip=_('Service base machine'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     memory = gui.NumericField(
@@ -153,7 +155,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=111,
         tooltip=_('Memory assigned to machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     memoryGuaranteed = gui.NumericField(
@@ -165,7 +167,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=112,
         tooltip=_('Physical memory guaranteed to machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     usb = gui.ChoiceField(
@@ -179,7 +181,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
             # gui.choiceItem('legacy', 'legacy (deprecated)'),
         ],
         tab=_('Machine'),
-        defvalue='1'  # Default value is the ID of the choicefield
+        defvalue='1',  # Default value is the ID of the choicefield
     )
 
     display = gui.ChoiceField(
@@ -187,12 +189,9 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         rdonly=False,
         order=114,
         tooltip=_('Display type (only for administration purposes)'),
-        values=[
-            gui.choiceItem('spice', 'Spice'),
-            gui.choiceItem('vnc', 'Vnc')
-        ],
+        values=[gui.choiceItem('spice', 'Spice'), gui.choiceItem('vnc', 'Vnc')],
         tab=_('Machine'),
-        defvalue='1'  # Default value is the ID of the choicefield
+        defvalue='1',  # Default value is the ID of the choicefield
     )
     baseName = gui.TextField(
         label=_('Machine Names'),
@@ -200,7 +199,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=115,
         tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     lenName = gui.NumericField(
@@ -210,11 +209,13 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=116,
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     ov = gui.HiddenField(value=None)
-    ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
+    ev = gui.HiddenField(
+        value=None
+    )  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         """
@@ -226,7 +227,9 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         if values:
             tools.checkValidBasename(self.baseName.value, self.lenName.num())
             if int(self.memory.value) < 256 or int(self.memoryGuaranteed.value) < 256:
-                raise Service.ValidationException(_('The minimum allowed memory is 256 Mb'))
+                raise Service.ValidationException(
+                    _('The minimum allowed memory is 256 Mb')
+                )
             if int(self.memoryGuaranteed.value) > int(self.memory.value):
                 self.memoryGuaranteed.value = self.memory.value
 
@@ -275,7 +278,11 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         logger.debug('Datastore Info: %s', info)
         availableGB = info['available'] / (1024 * 1024 * 1024)
         if availableGB < self.minSpaceGB.num():
-            raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(self.minSpaceGB.num(), availableGB))
+            raise Exception(
+                'Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(
+                    self.minSpaceGB.num(), availableGB
+                )
+            )
 
     def sanitizeVmName(self, name: str) -> str:
         """
@@ -301,7 +308,14 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         # Get storages for that datacenter
 
         self.datastoreHasSpace()
-        return self.parent().makeTemplate(name, comments, self.machine.value, self.cluster.value, self.datastore.value, self.display.value)
+        return self.parent().makeTemplate(
+            name,
+            comments,
+            self.machine.value,
+            self.cluster.value,
+            self.datastore.value,
+            self.display.value,
+        )
 
     def getTemplateState(self, templateId: str) -> str:
         """
@@ -333,8 +347,16 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         """
         logger.debug('Deploying from template %s machine %s', templateId, name)
         self.datastoreHasSpace()
-        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value,
-                                                self.display.value, self.usb.value, int(self.memory.value), int(self.memoryGuaranteed.value))
+        return self.parent().deployFromTemplate(
+            name,
+            comments,
+            templateId,
+            self.cluster.value,
+            self.display.value,
+            self.usb.value,
+            int(self.memory.value),
+            int(self.memoryGuaranteed.value),
+        )
 
     def removeTemplate(self, templateId: str) -> None:
         """
@@ -440,5 +462,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         """
         return self.display.value
 
-    def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    def getConsoleConnection(
+        self, machineId: str
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)

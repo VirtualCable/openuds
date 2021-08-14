@@ -35,10 +35,12 @@ from django.utils.translation import ugettext as _
 
 logger = logging.getLogger(__name__)
 
+
 def getStorage(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.Any]]:
     from .provider import ProxmoxProvider
 
     from uds.core.environment import Environment
+
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     env = Environment(parameters['ev'])
     provider: ProxmoxProvider = ProxmoxProvider(env)
@@ -54,19 +56,27 @@ def getStorage(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.An
 
     res = []
     # Get storages for that datacenter
-    for storage in sorted(provider.listStorages(vmInfo.node), key=lambda x: int(not x.shared)):
+    for storage in sorted(
+        provider.listStorages(vmInfo.node), key=lambda x: int(not x.shared)
+    ):
         if storage.type in ('lvm', 'iscsi', 'iscsidirect'):
             continue
-        space, free = storage.avail / 1024 / 1024 / 1024, (storage.avail - storage.used) / 1024 / 1024 / 1024
-        extra = _(' shared') if storage.shared else _(' (bound to {})').format(vmInfo.node)
-        res.append({'id': storage.storage, 'text': "%s (%4.2f GB/%4.2f GB)%s" % (storage.storage, space, free, extra)})
+        space, free = (
+            storage.avail / 1024 / 1024 / 1024,
+            (storage.avail - storage.used) / 1024 / 1024 / 1024,
+        )
+        extra = (
+            _(' shared') if storage.shared else _(' (bound to {})').format(vmInfo.node)
+        )
+        res.append(
+            {
+                'id': storage.storage,
+                'text': "%s (%4.2f GB/%4.2f GB)%s"
+                % (storage.storage, space, free, extra),
+            }
+        )
 
-    data = [
-        {
-            'name': 'datastore',
-            'values': res
-        }
-    ]
+    data = [{'name': 'datastore', 'values': res}]
 
     logger.debug('return data: %s', data)
     return data

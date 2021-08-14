@@ -39,6 +39,7 @@ from . import openstack
 
 logger = logging.getLogger(__name__)
 
+
 def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openstack.Client, bool]:
     from .provider_legacy import ProviderLegacy
     from .provider import OpenStackProvider
@@ -61,17 +62,26 @@ def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openstack.Client, 
     return (provider.api(parameters['project'], parameters['region']), useSubnetsName)
 
 
-def getResources(parameters: typing.Dict[str, str]) -> typing.List[typing.Dict[str, typing.Any]]:
+def getResources(
+    parameters: typing.Dict[str, str]
+) -> typing.List[typing.Dict[str, typing.Any]]:
     '''
     This helper is designed as a callback for Project Selector
     '''
     api, nameFromSubnets = getApi(parameters)
 
     zones = [gui.choiceItem(z, z) for z in api.listAvailabilityZones()]
-    networks = [gui.choiceItem(z['id'], z['name']) for z in api.listNetworks(nameFromSubnets=nameFromSubnets)]
+    networks = [
+        gui.choiceItem(z['id'], z['name'])
+        for z in api.listNetworks(nameFromSubnets=nameFromSubnets)
+    ]
     flavors = [gui.choiceItem(z['id'], z['name']) for z in api.listFlavors()]
-    securityGroups = [gui.choiceItem(z['id'], z['name']) for z in api.listSecurityGroups()]
-    volumeTypes = [gui.choiceItem('-', _('None'))] + [gui.choiceItem(t['id'], t['name']) for t in api.listVolumeTypes()]
+    securityGroups = [
+        gui.choiceItem(z['id'], z['name']) for z in api.listSecurityGroups()
+    ]
+    volumeTypes = [gui.choiceItem('-', _('None'))] + [
+        gui.choiceItem(t['id'], t['name']) for t in api.listVolumeTypes()
+    ]
 
     data = [
         {'name': 'availabilityZone', 'values': zones},
@@ -83,14 +93,19 @@ def getResources(parameters: typing.Dict[str, str]) -> typing.List[typing.Dict[s
     logger.debug('Return data: %s', data)
     return data
 
-def getVolumes(parameters: typing.Dict[str, str]) -> typing.List[typing.Dict[str, typing.Any]]:
+
+def getVolumes(
+    parameters: typing.Dict[str, str]
+) -> typing.List[typing.Dict[str, typing.Any]]:
     '''
     This helper is designed as a callback for Zone Selector
     '''
     api, _ = getApi(parameters)
     # Source volumes are all available for us
     # volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
-    volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '']
+    volumes = [
+        gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != ''
+    ]
 
     data = [
         {'name': 'volume', 'values': volumes},

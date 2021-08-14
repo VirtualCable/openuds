@@ -32,5 +32,5 @@ from .provider import OGProvider
 from .jobs import OpenGnsysMaintainer
 
 # Scheduled task to do clean processes
-for cls in (OpenGnsysMaintainer, ):
+for cls in (OpenGnsysMaintainer,):
     managers.taskManager().registerJob(cls)

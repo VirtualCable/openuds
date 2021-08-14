@@ -58,7 +58,9 @@ def getMachineState(api: 'client.OpenNebulaClient', machineId: str) -> types.VmS
     try:
         return api.getVMState(machineId)
     except Exception as e:
-        logger.error('Error obtaining machine state for %s on OpenNebula: %s', machineId, e)
+        logger.error(
+            'Error obtaining machine state for %s on OpenNebula: %s', machineId, e
+        )
 
     return types.VmState.UNKNOWN
 
@@ -70,7 +72,9 @@ def getMachineSubstate(api: 'client.OpenNebulaClient', machineId: str) -> int:
     try:
         return api.getVMSubstate(machineId)
     except Exception as e:
-        logger.error('Error obtaining machine substate for %s on OpenNebula: %s', machineId, e)
+        logger.error(
+            'Error obtaining machine substate for %s on OpenNebula: %s', machineId, e
+        )
 
     return types.VmState.UNKNOWN.value
 
@@ -122,6 +126,7 @@ def suspendMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     except Exception as e:
         logger.error('Error suspending %s on OpenNebula: %s', machineId, e)
 
+
 def shutdownMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to "gracefully" shutdown a machine. No check is done, it is simply requested to OpenNebula
@@ -171,7 +176,9 @@ def removeMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
         raise Exception(err)
 
 
-def enumerateMachines(api: 'client.OpenNebulaClient') -> typing.Iterable[types.VirtualMachineType]:
+def enumerateMachines(
+    api: 'client.OpenNebulaClient',
+) -> typing.Iterable[types.VirtualMachineType]:
     '''
     Obtains the list of machines inside OpenNebula.
     Machines starting with UDS are filtered out
@@ -189,7 +196,11 @@ def enumerateMachines(api: 'client.OpenNebulaClient') -> typing.Iterable[types.V
     yield from api.enumVMs()
 
 
-def getNetInfo(api: 'client.OpenNebulaClient', machineId: str, networkId: typing.Optional[str] = None) -> typing.Tuple[str, str]:
+def getNetInfo(
+    api: 'client.OpenNebulaClient',
+    machineId: str,
+    networkId: typing.Optional[str] = None,
+) -> typing.Tuple[str, str]:
     '''
     Get the MAC and the IP for the network and machine. If network is None, for the first network
     '''
@@ -204,7 +215,9 @@ def getNetInfo(api: 'client.OpenNebulaClient', machineId: str, networkId: typing
                 node = nic
                 break
     except Exception:
-        raise Exception('No network interface found on template. Please, add a network and republish.')
+        raise Exception(
+            'No network interface found on template. Please, add a network and republish.'
+        )
 
     logger.debug(node.toxml())
 
@@ -217,10 +230,14 @@ def getNetInfo(api: 'client.OpenNebulaClient', machineId: str, networkId: typing
 
         return (node.getElementsByTagName('MAC')[0].childNodes[0].data, ip)
     except Exception:
-        raise Exception('No network interface found on template. Please, add a network and republish.')
+        raise Exception(
+            'No network interface found on template. Please, add a network and republish.'
+        )
 
 
-def getDisplayConnection(api: 'client.OpenNebulaClient', machineId: str) -> typing.Optional[typing.Dict[str, typing.Any]]:
+def getDisplayConnection(
+    api: 'client.OpenNebulaClient', machineId: str
+) -> typing.Optional[typing.Dict[str, typing.Any]]:
     '''
     If machine is not running or there is not a display, will return NONE
     SPICE connections should check that 'type' is 'SPICE'
@@ -236,16 +253,17 @@ def getDisplayConnection(api: 'client.OpenNebulaClient', machineId: str) -> typi
         except Exception:
             passwd = ''
 
-        host = md.getElementsByTagName('HISTORY_RECORDS')[0].lastChild.getElementsByTagName('HOSTNAME')[0].childNodes[0].data
-        return {
-            'type': type_,
-            'host': host,
-            'port': int(port),
-            'passwd': passwd
-        }
+        host = (
+            md.getElementsByTagName('HISTORY_RECORDS')[0]
+            .lastChild.getElementsByTagName('HOSTNAME')[0]
+            .childNodes[0]
+            .data
+        )
+        return {'type': type_, 'host': host, 'port': int(port), 'passwd': passwd}
 
     except Exception:
         return None  # No SPICE connection
+
 
 # Sample NIC Content (there will be as much as nics)
 #         <NIC>

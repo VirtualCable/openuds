@@ -45,6 +45,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class ProxmoxPublication(services.Publication):
     suggestedTime = 20
 
@@ -74,7 +75,18 @@ class ProxmoxPublication(services.Publication):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._vm, self._task, self._state,  self._operation, self._destroyAfter, self._reason]).encode('utf8')
+        return '\t'.join(
+            [
+                'v1',
+                self._name,
+                self._vm,
+                self._task,
+                self._state,
+                self._operation,
+                self._destroyAfter,
+                self._reason,
+            ]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -83,7 +95,15 @@ class ProxmoxPublication(services.Publication):
         logger.debug('Data: %s', data)
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            self._name, self._vm, self._task, self._state,  self._operation, self._destroyAfter, self._reason = vals[1:]
+            (
+                self._name,
+                self._vm,
+                self._task,
+                self._state,
+                self._operation,
+                self._destroyAfter,
+                self._reason,
+            ) = vals[1:]
 
     def publish(self) -> str:
         """
@@ -91,8 +111,17 @@ class ProxmoxPublication(services.Publication):
         """
         try:
             # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
-            self._name = 'UDS ' + _('Publication') + ' ' + self.dsName() + "-" + str(self.revision())
-            comments = _('UDS Publication for {0} created at {1}').format(self.dsName(), str(datetime.now()).split('.')[0])
+            self._name = (
+                'UDS '
+                + _('Publication')
+                + ' '
+                + self.dsName()
+                + "-"
+                + str(self.revision())
+            )
+            comments = _('UDS Publication for {0} created at {1}').format(
+                self.dsName(), str(datetime.now()).split('.')[0]
+            )
             task = self.service().cloneMachine(self._name, comments)
             self._vm = str(task.vmid)
             self._task = ','.join((task.upid.node, task.upid.upid))
@@ -105,7 +134,9 @@ class ProxmoxPublication(services.Publication):
             self._reason = str(e)
             return State.ERROR
 
-    def checkState(self) -> str:  # pylint: disable = too-many-branches,too-many-return-statements
+    def checkState(
+        self,
+    ) -> str:  # pylint: disable = too-many-branches,too-many-return-statements
         if self._state != State.RUNNING:
             return self._state
         node, upid = self._task.split(',')
@@ -122,14 +153,16 @@ class ProxmoxPublication(services.Publication):
         if task.isErrored():
             self._reason = task.exitstatus
             self._state = State.ERROR
-        else: # Finished
+        else:  # Finished
             if self._destroyAfter:
                 return self.destroy()
             self._state = State.FINISHED
             if self._operation == 'p':  # not Destroying
                 # Disable Protection (removal)
                 self.service().setProtection(int(self._vm), protection=False)
-                time.sleep(0.5)  # Give some tome to proxmox. We have observed some concurrency issues
+                time.sleep(
+                    0.5
+                )  # Give some tome to proxmox. We have observed some concurrency issues
                 # And add it to HA if
                 self.service().enableHA(int(self._vm))
                 time.sleep(0.5)
@@ -139,7 +172,7 @@ class ProxmoxPublication(services.Publication):
                 # This seems to cause problems on Proxmox
                 # makeTemplate --> setProtection (that calls "config"). Seems that the HD dissapears...
                 # Seems a concurrency problem?
-                
+
         return self._state
 
     def finish(self) -> None:
@@ -147,7 +180,9 @@ class ProxmoxPublication(services.Publication):
         self._destroyAfter = ''
 
     def destroy(self) -> str:
-        if self._state == State.RUNNING and self._destroyAfter is False:  # If called destroy twice, will BREAK STOP publication
+        if (
+            self._state == State.RUNNING and self._destroyAfter is False
+        ):  # If called destroy twice, will BREAK STOP publication
             self._destroyAfter = 'y'
             return State.RUNNING
 

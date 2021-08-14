@@ -2,7 +2,7 @@ import datetime
 import re
 import typing
 
-networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)') # May have vla id at end
+networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
 conversors: typing.MutableMapping[typing.Type, typing.Callable] = {
@@ -13,8 +13,18 @@ conversors: typing.MutableMapping[typing.Type, typing.Callable] = {
     datetime.datetime: lambda x: datetime.datetime.fromtimestamp(int(x)),
 }
 
-def convertFromDict(type: typing.Type[typing.Any], dictionary: typing.MutableMapping[str, typing.Any]) -> typing.Any:
-    return type(**{ k:conversors.get(type.__annotations__.get(k, str), lambda x: x)(dictionary.get(k, None)) for k in type._fields})
+
+def convertFromDict(
+    type: typing.Type[typing.Any], dictionary: typing.MutableMapping[str, typing.Any]
+) -> typing.Any:
+    return type(
+        **{
+            k: conversors.get(type.__annotations__.get(k, str), lambda x: x)(
+                dictionary.get(k, None)
+            )
+            for k in type._fields
+        }
+    )
 
 
 class Cluster(typing.NamedTuple):
@@ -28,6 +38,7 @@ class Cluster(typing.NamedTuple):
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'Cluster':
         return convertFromDict(Cluster, dictionary)
 
+
 class Node(typing.NamedTuple):
     name: str
     online: bool
@@ -40,6 +51,7 @@ class Node(typing.NamedTuple):
     @staticmethod
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'Node':
         return convertFromDict(Node, dictionary)
+
 
 class NodeStats(typing.NamedTuple):
     name: str
@@ -61,7 +73,20 @@ class NodeStats(typing.NamedTuple):
 
     @staticmethod
     def empty():
-        return NodeStats(name='', status='offline', uptime=0, disk=0, maxdisk=0, level='', id='', mem=1, maxmem=1, cpu=1, maxcpu=1)
+        return NodeStats(
+            name='',
+            status='offline',
+            uptime=0,
+            disk=0,
+            maxdisk=0,
+            level='',
+            id='',
+            mem=1,
+            maxmem=1,
+            cpu=1,
+            maxcpu=1,
+        )
+
 
 class ClusterStatus(typing.NamedTuple):
     cluster: typing.Optional[Cluster]
@@ -80,6 +105,7 @@ class ClusterStatus(typing.NamedTuple):
 
         return ClusterStatus(cluster=cluster, nodes=nodes)
 
+
 class UPID(typing.NamedTuple):
     node: str
     pid: int
@@ -92,7 +118,7 @@ class UPID(typing.NamedTuple):
 
     @staticmethod
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'UPID':
-        upid=dictionary['data']
+        upid = dictionary['data']
         d = upid.split(':')
         return UPID(
             node=d[1],
@@ -102,8 +128,9 @@ class UPID(typing.NamedTuple):
             type=d[5],
             vmid=int(d[6]),
             user=d[7],
-            upid=upid
+            upid=upid,
         )
+
 
 class TaskStatus(typing.NamedTuple):
     node: str
@@ -133,6 +160,7 @@ class TaskStatus(typing.NamedTuple):
     def isErrored(self) -> bool:
         return self.isFinished() and not self.isCompleted()
 
+
 class NetworkConfiguration(typing.NamedTuple):
     type: str
     mac: str
@@ -154,7 +182,9 @@ class VMInfo(typing.NamedTuple):
     template: bool
 
     cpus: typing.Optional[int]
-    lock: typing.Optional[str]  # if suspended, lock == "suspended" & qmpstatus == "stopped"
+    lock: typing.Optional[
+        str
+    ]  # if suspended, lock == "suspended" & qmpstatus == "stopped"
     disk: typing.Optional[int]
     maxdisk: typing.Optional[int]
     mem: typing.Optional[int]
@@ -173,6 +203,7 @@ class VMInfo(typing.NamedTuple):
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'VMInfo':
         return convertFromDict(VMInfo, dictionary)
 
+
 class VMConfiguration(typing.NamedTuple):
     name: str
     vga: str
@@ -185,7 +216,9 @@ class VMConfiguration(typing.NamedTuple):
     template: bool
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
+    def fromDict(
+        dictionary: typing.MutableMapping[str, typing.Any]
+    ) -> 'VMConfiguration':
         nets: typing.List[NetworkConfiguration] = []
         for k in dictionary.keys():
             if k[:3] == 'net':
@@ -194,10 +227,12 @@ class VMConfiguration(typing.NamedTuple):
         dictionary['networks'] = nets
         return convertFromDict(VMConfiguration, dictionary)
 
+
 class VmCreationResult(typing.NamedTuple):
     node: str
     vmid: int
     upid: UPID
+
 
 class StorageInfo(typing.NamedTuple):
     node: str
@@ -212,10 +247,10 @@ class StorageInfo(typing.NamedTuple):
     total: int
     used_fraction: float
 
-
     @staticmethod
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'StorageInfo':
         return convertFromDict(StorageInfo, dictionary)
+
 
 class PoolInfo(typing.NamedTuple):
     poolid: str

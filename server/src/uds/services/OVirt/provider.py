@@ -52,7 +52,9 @@ logger = logging.getLogger(__name__)
 CACHE_TIME_FOR_SERVER = 1800
 
 
-class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-public-methods
+class OVirtProvider(
+    services.ServiceProvider
+):  # pylint: disable=too-many-public-methods
     """
     This class represents the sample services provider
 
@@ -69,6 +71,7 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
     we MUST register it at package __init__.
 
     """
+
     # : What kind of services we offer, this are classes inherited from Service
     offers = [OVirtLinkedService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -103,19 +106,74 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         values=[
             gui.choiceItem('4', '4.x'),
         ],
-        defvalue='4'  # Default value is the ID of the choicefield
+        defvalue='4',  # Default value is the ID of the choicefield
     )
 
-    host = gui.TextField(length=64, label=_('Host'), order=2, tooltip=_('oVirt Server IP or Hostname'), required=True)
-    username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on oVirt, (use "user@domain" form)'), required=True, defvalue='admin@internal')
-    password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of oVirt'), required=True)
+    host = gui.TextField(
+        length=64,
+        label=_('Host'),
+        order=2,
+        tooltip=_('oVirt Server IP or Hostname'),
+        required=True,
+    )
+    username = gui.TextField(
+        length=32,
+        label=_('Username'),
+        order=3,
+        tooltip=_('User with valid privileges on oVirt, (use "user@domain" form)'),
+        required=True,
+        defvalue='admin@internal',
+    )
+    password = gui.PasswordField(
+        lenth=32,
+        label=_('Password'),
+        order=4,
+        tooltip=_('Password of the user of oVirt'),
+        required=True,
+    )
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
-    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        defvalue='10',
+        minValue=1,
+        maxValue=65536,
+        order=50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    maxRemovingServices = gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        defvalue='5',
+        minValue=1,
+        maxValue=65536,
+        order=51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to oVirt'), required=True, tab=gui.ADVANCED_TAB)
-    macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF', order=91, rdonly=True,
-                              tooltip=_('Range of valid macs for UDS managed machines'), required=True, tab=gui.ADVANCED_TAB)
+    timeout = gui.NumericField(
+        length=3,
+        label=_('Timeout'),
+        defvalue='10',
+        order=90,
+        tooltip=_('Timeout in seconds of connection to oVirt'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+    macsRange = gui.TextField(
+        length=36,
+        label=_('Macs range'),
+        defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF',
+        order=91,
+        rdonly=True,
+        tooltip=_('Range of valid macs for UDS managed machines'),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # Own variables
     _api: typing.Optional[client.Client] = None
@@ -129,7 +187,13 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         Returns the connection API object for oVirt (using ovirtsdk)
         """
         if self._api is None:
-            self._api = client.Client(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache)
+            self._api = client.Client(
+                self.host.value,
+                self.username.value,
+                self.password.value,
+                self.timeout.value,
+                self.cache,
+            )
 
         return self._api
 
@@ -164,7 +228,9 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         """
         return list(self.__getApi().isFullyFunctionalVersion())
 
-    def getMachines(self, force: bool = False) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    def getMachines(
+        self, force: bool = False
+    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside oVirt.
         Machines starting with UDS are filtered out
@@ -182,7 +248,9 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
 
         return self.__getApi().getVms(force)
 
-    def getClusters(self, force: bool = False) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    def getClusters(
+        self, force: bool = False
+    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside oVirt.
 
@@ -200,7 +268,9 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
 
         return self.__getApi().getClusters(force)
 
-    def getClusterInfo(self, clusterId: str, force: bool = False) -> typing.MutableMapping[str, typing.Any]:
+    def getClusterInfo(
+        self, clusterId: str, force: bool = False
+    ) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the cluster info
 
@@ -218,7 +288,9 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         """
         return self.__getApi().getClusterInfo(clusterId, force)
 
-    def getDatacenterInfo(self, datacenterId: str, force: bool = False) -> typing.MutableMapping[str, typing.Any]:
+    def getDatacenterInfo(
+        self, datacenterId: str, force: bool = False
+    ) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the datacenter info
 
@@ -246,7 +318,9 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         """
         return self.__getApi().getDatacenterInfo(datacenterId, force)
 
-    def getStorageInfo(self, storageId: str, force: bool = False) -> typing.MutableMapping[str, typing.Any]:
+    def getStorageInfo(
+        self, storageId: str, force: bool = False
+    ) -> typing.MutableMapping[str, typing.Any]:
         """
         Obtains the storage info
 
@@ -269,14 +343,14 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         return self.__getApi().getStorageInfo(storageId, force)
 
     def makeTemplate(
-            self,
-            name: str,
-            comments: str,
-            machineId: str,
-            clusterId: str,
-            storageId: str,
-            displayType: str
-        ) -> str:
+        self,
+        name: str,
+        comments: str,
+        machineId: str,
+        clusterId: str,
+        storageId: str,
+        displayType: str,
+    ) -> str:
         """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -291,7 +365,9 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         """
-        return self.__getApi().makeTemplate(name, comments, machineId, clusterId, storageId, displayType)
+        return self.__getApi().makeTemplate(
+            name, comments, machineId, clusterId, storageId, displayType
+        )
 
     def getTemplateState(self, templateId: str) -> str:
         """
@@ -333,16 +409,16 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         return self.__getApi().removeTemplate(templateId)
 
     def deployFromTemplate(
-            self,
-            name: str,
-            comments: str,
-            templateId: str,
-            clusterId: str,
-            displayType: str,
-            usbType: str,
-            memoryMB: int,
-            guaranteedMB: int
-        ) -> str:
+        self,
+        name: str,
+        comments: str,
+        templateId: str,
+        clusterId: str,
+        displayType: str,
+        usbType: str,
+        memoryMB: int,
+        guaranteedMB: int,
+    ) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -358,7 +434,16 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         Returns:
             Id of the machine being created form template
         """
-        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB)
+        return self.__getApi().deployFromTemplate(
+            name,
+            comments,
+            templateId,
+            clusterId,
+            displayType,
+            usbType,
+            memoryMB,
+            guaranteedMB,
+        )
 
     def startMachine(self, machineId: str) -> None:
         """
@@ -418,7 +503,9 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
     def getMacRange(self) -> str:
         return self.macsRange.value
 
-    def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    def getConsoleConnection(
+        self, machineId: str
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.__getApi().getConsoleConnection(machineId)
 
     @staticmethod

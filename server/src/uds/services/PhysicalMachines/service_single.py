@@ -51,7 +51,13 @@ logger = logging.getLogger(__name__)
 
 class IPSingleMachineService(IPServiceBase):
     # Gui
-    ip = gui.TextField(length=64, label=_('Machine IP'), order=1, tooltip=_('Machine IP'), required=True)
+    ip = gui.TextField(
+        length=64,
+        label=_('Machine IP'),
+        order=1,
+        tooltip=_('Machine IP'),
+        required=True,
+    )
 
     # Description of service
     typeName = _('Static Single IP')
@@ -60,7 +66,9 @@ class IPSingleMachineService(IPServiceBase):
     iconFile = 'machine.png'
 
     # Characteristics of service
-    maxDeployed = -1  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
+    maxDeployed = (
+        -1
+    )  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
     usesCache = False  # Cache are running machine awaiting to be assigned
     usesCache_L2 = False  # L2 Cache are running machines in suspended state
     needsManager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
@@ -75,7 +83,9 @@ class IPSingleMachineService(IPServiceBase):
             return
 
         if not net.isValidHost(self.ip.value):
-            raise IPServiceBase.ValidationException(gettext('Invalid server used: "{}"'.format(self.ip.value)))
+            raise IPServiceBase.ValidationException(
+                gettext('Invalid server used: "{}"'.format(self.ip.value))
+            )
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         ip: typing.Optional[str] = None

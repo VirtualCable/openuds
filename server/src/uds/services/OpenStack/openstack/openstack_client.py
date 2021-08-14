@@ -281,7 +281,6 @@ class Client:  # pylint: disable=too-many-public-methods
                 else:
                     self._volume = 'volumev2'
 
- 
     def ensureAuthenticated(self) -> None:
         if (
             self._authenticated is False

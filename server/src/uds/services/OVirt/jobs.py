@@ -58,7 +58,9 @@ class OVirtDeferredRemoval(jobs.Job):
 
     @staticmethod
     def remove(providerInstance: 'OVirtProvider', vmId: str) -> None:
-        logger.debug('Adding %s from %s to defeffed removal process', vmId, providerInstance)
+        logger.debug(
+            'Adding %s from %s to defeffed removal process', vmId, providerInstance
+        )
         OVirtDeferredRemoval.counter += 1
         try:
             # Tries to stop machine sync when found, if any error is done, defer removal for a scheduled task
@@ -72,7 +74,11 @@ class OVirtDeferredRemoval(jobs.Job):
 
             except Exception as e:
                 providerInstance.storage.saveData('tr' + vmId, vmId, attr1='tRm')
-                logger.info('Machine %s could not be removed right now, queued for later: %s', vmId, e)
+                logger.info(
+                    'Machine %s could not be removed right now, queued for later: %s',
+                    vmId,
+                    e,
+                )
 
         except Exception as e:
             logger.warning('Exception got queuing for Removal: %s', e)
@@ -84,7 +90,9 @@ class OVirtDeferredRemoval(jobs.Job):
 
         provider: Provider
         # Look for Providers of type Ovirt
-        for provider in Provider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.typeType):
+        for provider in Provider.objects.filter(
+            maintenance_mode=False, data_type=OVirtProvider.typeType
+        ):
             logger.debug('Provider %s if os type ovirt', provider)
 
             storage = provider.getEnvironment().storage

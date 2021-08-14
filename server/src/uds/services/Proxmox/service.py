@@ -57,6 +57,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     """
     Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
+
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -103,7 +104,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = ProxmoxDeployment
 
-    allowedProtocols = protocols.GENERIC # + (protocols.SPICE,)
+    allowedProtocols = protocols.GENERIC  # + (protocols.SPICE,)
     servicesTypeProvided = (serviceTypes.VDI,)
 
     pool = gui.ChoiceField(
@@ -112,14 +113,14 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         tooltip=_('Pool that will contain UDS created vms'),
         # tab=_('Machine'),
         # required=True,
-        defvalue=''
+        defvalue='',
     )
 
     ha = gui.ChoiceField(
         label=_('HA'),
         order=2,
         tooltip=_('Select if HA is enabled and HA group for machines of this service'),
-        rdonly=True
+        rdonly=True,
     )
 
     guestShutdown = gui.CheckBoxField(
@@ -137,11 +138,11 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         fills={
             'callbackName': 'pmFillResourcesFromMachine',
             'function': helpers.getStorage,
-            'parameters': ['machine', 'ov', 'ev']
+            'parameters': ['machine', 'ov', 'ev'],
         },
         tooltip=_('Service base machine'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     datastore = gui.ChoiceField(
@@ -150,7 +151,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=111,
         tooltip=_('Storage for publications & machines.'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     baseName = gui.TextField(
@@ -159,7 +160,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=115,
         tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     lenName = gui.NumericField(
@@ -169,15 +170,19 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=116,
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     ov = gui.HiddenField(value=None)
-    ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
+    ev = gui.HiddenField(
+        value=None
+    )  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values:
-            self.baseName.value = validators.validateHostname(self.baseName.value, 15, asPattern=True)
+            self.baseName.value = validators.validateHostname(
+                self.baseName.value, 15, asPattern=True
+            )
             # if int(self.memory.value) < 128:
             #     raise Service.ValidationException(_('The minimum allowed memory is 128 Mb'))
 
@@ -190,15 +195,22 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.setValues([gui.choiceItem(str(m.vmid), '{}\\{} ({})'.format(m.node, m.name or m.vmid, m.vmid)) for m in self.parent().listMachines() if m.name and m.name[:3] != 'UDS'])
-        self.pool.setValues([gui.choiceItem('', _('None'))] + [gui.choiceItem(p.poolid, p.poolid) for p in self.parent().listPools()])
-        self.ha.setValues(
+        self.machine.setValues(
             [
-                gui.choiceItem('', _('Enabled')), gui.choiceItem('__', _('Disabled'))
-            ] + 
-            [
-                gui.choiceItem(group, group) for group in self.parent().listHaGroups()
+                gui.choiceItem(
+                    str(m.vmid), '{}\\{} ({})'.format(m.node, m.name or m.vmid, m.vmid)
+                )
+                for m in self.parent().listMachines()
+                if m.name and m.name[:3] != 'UDS'
             ]
+        )
+        self.pool.setValues(
+            [gui.choiceItem('', _('None'))]
+            + [gui.choiceItem(p.poolid, p.poolid) for p in self.parent().listPools()]
+        )
+        self.ha.setValues(
+            [gui.choiceItem('', _('Enabled')), gui.choiceItem('__', _('Disabled'))]
+            + [gui.choiceItem(group, group) for group in self.parent().listHaGroups()]
         )
 
     def parent(self) -> 'ProxmoxProvider':
@@ -213,7 +225,9 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     def makeTemplate(self, vmId: int) -> None:
         self.parent().makeTemplate(vmId)
 
-    def cloneMachine(self, name: str, description: str, vmId: int = -1) -> 'client.types.VmCreationResult':
+    def cloneMachine(
+        self, name: str, description: str, vmId: int = -1
+    ) -> 'client.types.VmCreationResult':
         name = self.sanitizeVmName(name)
         pool = self.pool.value or None
         if vmId == -1:  # vmId == -1 if cloning for template
@@ -223,7 +237,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
                 description,
                 linkedClone=False,
                 toStorage=self.datastore.value,
-                toPool=pool
+                toPool=pool,
             )
 
         return self.parent().cloneMachine(
@@ -232,7 +246,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
             description,
             linkedClone=True,
             toStorage=self.datastore.value,
-            toPool=pool
+            toPool=pool,
         )
 
     def getMachineInfo(self, vmId: int) -> 'client.types.VMInfo':
@@ -245,7 +259,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     def getTaskInfo(self, node: str, upid: str) -> 'client.types.TaskStatus':
         return self.parent().getTaskInfo(node, upid)
 
-    def startMachine(self,vmId: int) -> 'client.types.UPID':
+    def startMachine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().startMachine(vmId)
 
     def stopMachine(self, vmId: int) -> 'client.types.UPID':
@@ -276,7 +290,9 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
             return
         self.parent().disableHA(vmId)
 
-    def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool=False) -> None:
+    def setProtection(
+        self, vmId: int, node: typing.Optional[str] = None, protection: bool = False
+    ) -> None:
         self.parent().setProtection(vmId, node, protection)
 
     def getBaseName(self) -> str:
@@ -291,5 +307,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     def tryGracelyShutdown(self) -> bool:
         return self.guestShutdown.isTrue()
 
-    def getConsoleConnection(self, machineId: str) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    def getConsoleConnection(
+        self, machineId: str
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)

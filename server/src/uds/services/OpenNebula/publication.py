@@ -38,7 +38,7 @@ from uds.core.util.state import State
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from . import service
+    from .service import LiveService
 
 logger = logging.getLogger(__name__)
 
@@ -48,21 +48,25 @@ class LivePublication(Publication):
     This class provides the publication of a oVirtLinkedService
     """
 
-    suggestedTime = 2  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = (
+        2  # : Suggested recheck time if publication is unfinished in seconds
+    )
 
     _name: str = ''
     _reason: str = ''
     _templateId: str = ''
     _state: str = 'r'
 
-    def service(self) -> 'service.LiveService':
-        return typing.cast('service.LiveService', super().service())
+    def service(self) -> 'LiveService':
+        return typing.cast('LiveService', super().service())
 
     def marshal(self) -> bytes:
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state]).encode('utf8')
+        return '\t'.join(
+            ['v1', self._name, self._reason, self._templateId, self._state]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -77,7 +81,9 @@ class LivePublication(Publication):
         """
         Realizes the publication of the service
         """
-        self._name = self.service().sanitizeVmName('UDSP ' + self.dsName() + "-" + str(self.revision()))
+        self._name = self.service().sanitizeVmName(
+            'UDSP ' + self.dsName() + "-" + str(self.revision())
+        )
         self._reason = ''  # No error, no reason for it
         self._state = 'running'
 

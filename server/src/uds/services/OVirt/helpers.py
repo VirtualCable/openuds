@@ -13,12 +13,14 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.Any]]:
     """
     This helper is designed as a callback for machine selector, so we can provide valid clusters and datastores domains based on it
     """
     from .provider import OVirtProvider
     from uds.core.environment import Environment
+
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     env = Environment(parameters['ev'])
     provider: 'OVirtProvider' = OVirtProvider(env)
@@ -31,15 +33,23 @@ def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.
     # Get storages for that datacenter
     for storage in provider.getDatacenterInfo(ci['datacenter_id'])['storage']:
         if storage['type'] == 'data':
-            space, free = (storage['available'] + storage['used']) / 1024 / 1024 / 1024, storage['available'] / 1024 / 1024 / 1024
+            space, free = (
+                storage['available'] + storage['used']
+            ) / 1024 / 1024 / 1024, storage['available'] / 1024 / 1024 / 1024
 
-            res.append({'id': storage['id'], 'text': "%s (%4.2f GB/%4.2f GB) %s" % (storage['name'], space, free, storage['active'] and '(ok)' or '(disabled)')})
-    data = [
-        {
-            'name': 'datastore',
-            'values': res
-        }
-    ]
+            res.append(
+                {
+                    'id': storage['id'],
+                    'text': "%s (%4.2f GB/%4.2f GB) %s"
+                    % (
+                        storage['name'],
+                        space,
+                        free,
+                        storage['active'] and '(ok)' or '(disabled)',
+                    ),
+                }
+            )
+    data = [{'name': 'datastore', 'values': res}]
 
     logger.debug('return data: %s', data)
     return data

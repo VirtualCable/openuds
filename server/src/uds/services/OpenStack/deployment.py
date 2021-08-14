@@ -64,6 +64,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
     The logic for managing ovirt deployments (user machines in this case) is here.
     """
+
     _name: str = ''
     _ip: str = ''
     _mac: str = ''
@@ -92,15 +93,17 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
     # Serializable needed methods
     def marshal(self) -> bytes:
-        return b'\1'.join([
-            b'v1',
-            self._name.encode('utf8'),
-            self._ip.encode('utf8'),
-            self._mac.encode('utf8'),
-            self._vmid.encode('utf8'),
-            self._reason.encode('utf8'),
-            pickle.dumps(self._queue, protocol=0)
-        ])
+        return b'\1'.join(
+            [
+                b'v1',
+                self._name.encode('utf8'),
+                self._ip.encode('utf8'),
+                self._mac.encode('utf8'),
+                self._vmid.encode('utf8'),
+                self._reason.encode('utf8'),
+                pickle.dumps(self._queue, protocol=0),
+            ]
+        )
 
     def unmarshal(self, data: bytes) -> None:
         vals = data.split(b'\1')
@@ -115,7 +118,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     def getName(self) -> str:
         if self._name == '':
             try:
-                self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
+                self._name = self.nameGenerator().get(
+                    self.service().getBaseName(), self.service().getLenName()
+                )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
@@ -188,7 +193,12 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._queue = [opCreate, opWait, opSuspend, opFinish]
 
     def __checkMachineState(self, chkState: str) -> str:
-        logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
+        logger.debug(
+            'Checking that state of machine %s (%s) is %s',
+            self._vmid,
+            self._name,
+            chkState,
+        )
         status = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
@@ -263,7 +273,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         try:
             if op not in fncs:
-                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at execution queue ({0})'.format(op)
+                )
 
             fncs[op]()
 
@@ -295,9 +307,13 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         templateId = self.publication().getTemplateId()
         name = self.getName()
         if name == NO_MORE_NAMES:
-            raise Exception('No more names available for this service. (Increase digits for this service to fix)')
+            raise Exception(
+                'No more names available for this service. (Increase digits for this service to fix)'
+            )
 
-        name = self.service().sanitizeVmName(name)  # OpenNebula don't let us to create machines with more than 15 chars!!!
+        name = self.service().sanitizeVmName(
+            name
+        )  # OpenNebula don't let us to create machines with more than 15 chars!!!
 
         self._vmid = self.service().deployFromTemplate(name, templateId)
         if self._vmid is None:
@@ -388,7 +404,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
         try:
             if op not in fncs:
-                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at execution queue ({0})'.format(op)
+                )
 
             state = fncs[op]()
             if state == State.FINISHED:
@@ -462,4 +480,12 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         }.get(op, '????')
 
     def __debug(self, txt: str) -> None:
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [LiveDeployment.__op2str(op) for op in self._queue])
+        logger.debug(
+            'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
+            txt,
+            self._name,
+            self._ip,
+            self._mac,
+            self._vmid,
+            [LiveDeployment.__op2str(op) for op in self._queue],
+        )

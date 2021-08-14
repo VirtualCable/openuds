@@ -39,7 +39,10 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-def enumerateDatastores(api: 'client.OpenNebulaClient', datastoreType: int = 0) -> typing.Iterable['types.StorageType']:
+
+def enumerateDatastores(
+    api: 'client.OpenNebulaClient', datastoreType: int = 0
+) -> typing.Iterable['types.StorageType']:
     """
     0 seems to be images datastore
     """

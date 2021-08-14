@@ -140,7 +140,9 @@ class OGService(Service):
         label=_('Start if unavailable'),
         defvalue=gui.TRUE,
         order=111,
-        tooltip=_('If active, machines that are not available on user connect (on some OS) will try to power on through OpenGnsys.'),
+        tooltip=_(
+            'If active, machines that are not available on user connect (on some OS) will try to power on through OpenGnsys.'
+        ),
     )
 
     ov = gui.HiddenField(value=None)
@@ -180,7 +182,7 @@ class OGService(Service):
             machineId,
             self.getLoginNotifyURL(uuid, token),
             self.getLogoutNotifyURL(uuid, token),
-            self.getReleaseURL(uuid, token)
+            self.getReleaseURL(uuid, token),
         )
 
     def notifyDeadline(
@@ -191,13 +193,13 @@ class OGService(Service):
     def powerOn(self, machineId: str) -> typing.Any:
         return self.parent().powerOn(machineId, self.image.value)
 
-    def _notifyURL(self, uuid: str, token:str,  message: str) -> str:
+    def _notifyURL(self, uuid: str, token: str, message: str) -> str:
         # The URL is "GET messages URL".
         return '{accessURL}uds/ognotify/{message}/{token}/{uuid}'.format(
             accessURL=self.parent().getUDSServerAccessUrl(),
             uuid=uuid,
             token=token,
-            message=message
+            message=message,
         )
 
     def getLoginNotifyURL(self, uuid: str, token: str) -> str:

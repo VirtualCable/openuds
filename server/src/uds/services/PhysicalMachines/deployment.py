@@ -81,7 +81,9 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
                 res = dns.resolver.resolve(ip)
                 ip = res[0].address
             except Exception:
-                self.service().parent().doLog(log.WARN, f'User service could not resolve Name {ip}.')
+                self.service().parent().doLog(
+                    log.WARN, f'User service could not resolve Name {ip}.'
+                )
 
         return ip
 

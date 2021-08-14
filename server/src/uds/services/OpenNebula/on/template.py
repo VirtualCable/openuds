@@ -45,13 +45,18 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-def getTemplates(api: 'client.OpenNebulaClient', force: bool = False) -> typing.Iterable[types.TemplateType]:
+
+def getTemplates(
+    api: 'client.OpenNebulaClient', force: bool = False
+) -> typing.Iterable[types.TemplateType]:
     for t in api.enumTemplates():
         if t.name[:4] != 'UDSP':
             yield t
 
 
-def create(api: 'client.OpenNebulaClient', fromTemplateId: str, name: str, toDataStore: str) -> str:
+def create(
+    api: 'client.OpenNebulaClient', fromTemplateId: str, name: str, toDataStore: str
+) -> str:
     """
     Publish the machine (makes a template from it so we can create COWs) and returns the template id of
     the creating machine
@@ -92,7 +97,11 @@ def create(api: 'client.OpenNebulaClient', fromTemplateId: str, name: str, toDat
                 try:
                     imgId = imgs[imgName.strip()]
                 except KeyError:
-                    raise Exception('Image "{}" could not be found!. Check the opennebula template'.format(imgName.strip()))
+                    raise Exception(
+                        'Image "{}" could not be found!. Check the opennebula template'.format(
+                            imgName.strip()
+                        )
+                    )
             else:
                 fromId = True
                 node = imgIds[0].childNodes[0]
@@ -105,7 +114,9 @@ def create(api: 'client.OpenNebulaClient', fromTemplateId: str, name: str, toDat
 
             # Now clone the image
             imgName = sanitizeName(name + ' DSK ' + str(counter))
-            newId = api.cloneImage(imgId, imgName, toDataStore)  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
+            newId = api.cloneImage(
+                imgId, imgName, toDataStore
+            )  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
             # Now Store id/name
             if fromId is True:
                 node.data = str(newId)
@@ -120,7 +131,9 @@ def create(api: 'client.OpenNebulaClient', fromTemplateId: str, name: str, toDat
     except Exception as e:
         logger.exception('Creating template on OpenNebula')
         try:
-            api.deleteTemplate(templateId)  # Try to remove created template in case of fail
+            api.deleteTemplate(
+                templateId
+            )  # Try to remove created template in case of fail
         except Exception:
             pass
         raise e
@@ -165,6 +178,7 @@ def remove(api: 'client.OpenNebulaClient', templateId: str) -> None:
     except Exception:
         logger.error('Removing template on OpenNebula')
 
+
 def deployFrom(api: 'client.OpenNebulaClient', templateId: str, name: str) -> str:
     """
     Deploys a virtual machine on selected cluster from selected template
@@ -177,8 +191,11 @@ def deployFrom(api: 'client.OpenNebulaClient', templateId: str, name: str) -> st
     Returns:
         Id of the machine being created form template
     """
-    vmId = api.instantiateTemplate(templateId, name, False, '', False)  # api.call('template.instantiate', int(templateId), name, False, '')
+    vmId = api.instantiateTemplate(
+        templateId, name, False, '', False
+    )  # api.call('template.instantiate', int(templateId), name, False, '')
     return vmId
+
 
 def checkPublished(api: 'client.OpenNebulaClient', templateId):
     """
@@ -209,7 +226,9 @@ def checkPublished(api: 'client.OpenNebulaClient', templateId):
             if state in (types.ImageState.INIT, types.ImageState.LOCKED):
                 return False
             if state != types.ImageState.READY:  # If error is not READY
-                raise Exception('Error publishing. Image is in an invalid state. (Check it and delete it if not needed anymore)')
+                raise Exception(
+                    'Error publishing. Image is in an invalid state. (Check it and delete it if not needed anymore)'
+                )
 
             # Ensure image is non persistent. This may be invoked more than once, but it does not matters
             api.makePersistentImage(imgId, False)

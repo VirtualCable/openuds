@@ -148,11 +148,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             config.read_string(self.config.value)
             for key in config['wol']:
                 if net.ipInNetwork(ip, key):
-                    return (
-                        config['wol'][key]
-                        .replace('{MAC}', mac)
-                        .replace('{IP}', ip)
-                    )
+                    return config['wol'][key].replace('{MAC}', mac).replace('{IP}', ip)
 
         except Exception as e:
             logger.error('Error parsing advanced configuration: %s', e)

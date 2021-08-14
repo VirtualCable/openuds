@@ -51,6 +51,7 @@ if typing.TYPE_CHECKING:
     from . import openstack
     from .provider import OpenStackProvider
     from .provider_legacy import ProviderLegacy
+
     Provider = typing.Union[OpenStackProvider, ProviderLegacy]
 
 
@@ -58,6 +59,7 @@ class LiveService(Service):
     """
     OpenStack Live Service
     """
+
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -104,37 +106,74 @@ class LiveService(Service):
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
-    region = gui.ChoiceField(label=_('Region'), order=1, tooltip=_('Service region'), required=True, rdonly=True)
+    region = gui.ChoiceField(
+        label=_('Region'),
+        order=1,
+        tooltip=_('Service region'),
+        required=True,
+        rdonly=True,
+    )
     project = gui.ChoiceField(
         label=_('Project'),
         order=2,
         fills={
-            'callbackName' : 'osFillResources',
-            'function' : helpers.getResources,
-            'parameters' : ['ov', 'ev', 'project', 'region', 'legacy']
+            'callbackName': 'osFillResources',
+            'function': helpers.getResources,
+            'parameters': ['ov', 'ev', 'project', 'region', 'legacy'],
         },
         tooltip=_('Project for this service'),
         required=True,
-        rdonly=True
+        rdonly=True,
     )
     availabilityZone = gui.ChoiceField(
         label=_('Availability Zones'),
         order=3,
         fills={
-            'callbackName' : 'osFillVolumees',
-            'function' : helpers.getVolumes,
-            'parameters' : ['ov', 'ev', 'project', 'region', 'availabilityZone', 'legacy']
+            'callbackName': 'osFillVolumees',
+            'function': helpers.getVolumes,
+            'parameters': [
+                'ov',
+                'ev',
+                'project',
+                'region',
+                'availabilityZone',
+                'legacy',
+            ],
         },
         tooltip=_('Service availability zones'),
         required=True,
-        rdonly=True
+        rdonly=True,
     )
-    volume = gui.ChoiceField(label=_('Volume'), order=4, tooltip=_('Base volume for service (restricted by availability zone)'), required=True, tab=_('Machine'))
+    volume = gui.ChoiceField(
+        label=_('Volume'),
+        order=4,
+        tooltip=_('Base volume for service (restricted by availability zone)'),
+        required=True,
+        tab=_('Machine'),
+    )
     # volumeType = gui.ChoiceField(label=_('Volume Type'), order=5, tooltip=_('Volume type for service'), required=True)
-    network = gui.ChoiceField(label=_('Network'), order=6, tooltip=_('Network to attach to this service'), required=True, tab=_('Machine'))
-    flavor = gui.ChoiceField(label=_('Flavor'), order=7, tooltip=_('Flavor for service'), required=True, tab=_('Machine'))
+    network = gui.ChoiceField(
+        label=_('Network'),
+        order=6,
+        tooltip=_('Network to attach to this service'),
+        required=True,
+        tab=_('Machine'),
+    )
+    flavor = gui.ChoiceField(
+        label=_('Flavor'),
+        order=7,
+        tooltip=_('Flavor for service'),
+        required=True,
+        tab=_('Machine'),
+    )
 
-    securityGroups = gui.MultiChoiceField(label=_('Security Groups'), order=8, tooltip=_('Service security groups'), required=True, tab=_('Machine'))
+    securityGroups = gui.MultiChoiceField(
+        label=_('Security Groups'),
+        order=8,
+        tooltip=_('Service security groups'),
+        required=True,
+        tab=_('Machine'),
+    )
 
     baseName = gui.TextField(
         label=_('Machine Names'),
@@ -142,7 +181,7 @@ class LiveService(Service):
         order=9,
         tooltip=_('Base name for clones from this machine'),
         required=True,
-        tab=_('Machine')
+        tab=_('Machine'),
     )
 
     lenName = gui.NumericField(
@@ -152,12 +191,14 @@ class LiveService(Service):
         order=10,
         tooltip=_('Size of numeric part for the names of these machines'),
         required=True,
-        tab=_('Machine')
+        tab=_('Machine'),
     )
 
     ov = gui.HiddenField(value=None)
     ev = gui.HiddenField(value=None)
-    legacy = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
+    legacy = gui.HiddenField(
+        value=None
+    )  # We need to keep the env so we can instantiate the Provider
 
     _api: typing.Optional['openstack.Client'] = None
 
@@ -183,15 +224,26 @@ class LiveService(Service):
         """
         api = self.parent().api()
 
-        if not self.parent().legacy and self.parent().region.value:
-            regions = [gui.choiceItem(self.parent().region.value, self.parent().region.value)]
+        # Checks if legacy or current openstack provider
+        parentCurrent = (
+            typing.cast('OpenStackProvider', self.parent())
+            if not self.parent().legacy
+            else None
+        )
+
+        if parentCurrent and parentCurrent.region.value:
+            regions = [
+                gui.choiceItem(parentCurrent.region.value, parentCurrent.region.value)
+            ]
         else:
             regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
 
         self.region.setValues(regions)
 
-        if not self.parent().legacy and self.parent().tenant.value:
-            tenants = [gui.choiceItem(self.parent().tenant.value, self.parent().tenant.value)]
+        if parentCurrent and parentCurrent.tenant.value:
+            tenants = [
+                gui.choiceItem(parentCurrent.tenant.value, parentCurrent.tenant.value)
+            ]
         else:
             tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
         self.project.setValues(tenants)
@@ -206,7 +258,9 @@ class LiveService(Service):
     @property
     def api(self) -> 'openstack.Client':
         if not self._api:
-            self._api = self.parent().api(projectId=self.project.value, region=self.region.value)
+            self._api = self.parent().api(
+                projectId=self.project.value, region=self.region.value
+            )
 
         return self._api
 
@@ -219,7 +273,9 @@ class LiveService(Service):
         #    raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
 
         description = description or 'UDS Template snapshot'
-        return self.api.createVolumeSnapshot(self.volume.value, templateName, description)
+        return self.api.createVolumeSnapshot(
+            self.volume.value, templateName, description
+        )
 
     def getTemplate(self, snapshotId: str):
         """
@@ -247,7 +303,7 @@ class LiveService(Service):
             availabilityZone=self.availabilityZone.value,
             flavorId=self.flavor.value,
             networkId=self.network.value,
-            securityGroupsIdsList=self.securityGroups.value
+            securityGroupsIdsList=self.securityGroups.value,
         )['id']
 
     def removeTemplate(self, templateId: str) -> None:
@@ -286,7 +342,12 @@ class LiveService(Service):
         """
         server = self.api.getServer(machineId)
         if server['status'] in ('ERROR', 'DELETED'):
-            logger.warning('Got server status %s for %s: %s', server['status'], machineId, server.get('fault'))
+            logger.warning(
+                'Got server status %s for %s: %s',
+                server['status'],
+                machineId,
+                server.get('fault'),
+            )
         return server['status']
 
     def startMachine(self, machineId: str) -> None:
@@ -362,8 +423,10 @@ class LiveService(Service):
         Gets the mac address of first nic of the machine
         """
         net = self.api.getServer(machineId)['addresses']
-        vals = next(iter(net.values()))[0]  # Returns "any" mac address of any interface. We just need only one interface info
-        # vals = six.next(six.itervalues(net))[0]  
+        vals = next(iter(net.values()))[
+            0
+        ]  # Returns "any" mac address of any interface. We just need only one interface info
+        # vals = six.next(six.itervalues(net))[0]
         return vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr']
 
     def getBaseName(self) -> str:

@@ -55,6 +55,7 @@ class LiveService(Service):
     """
     Opennebula Live Service
     """
+
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -109,7 +110,7 @@ class LiveService(Service):
         label=_("Datastore"),
         order=100,
         tooltip=_('Service clones datastore'),
-        required=True
+        required=True,
     )
 
     template = gui.ChoiceField(
@@ -117,7 +118,7 @@ class LiveService(Service):
         order=110,
         tooltip=_('Service base template'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     baseName = gui.TextField(
@@ -126,7 +127,7 @@ class LiveService(Service):
         order=111,
         tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     lenName = gui.NumericField(
@@ -136,7 +137,7 @@ class LiveService(Service):
         order=112,
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
@@ -149,7 +150,9 @@ class LiveService(Service):
         if not values:
             return
 
-        self.baseName.value = validators.validateHostname(self.baseName.value, maxLength=15-self.lenName.num(), asPattern=True)
+        self.baseName.value = validators.validateHostname(
+            self.baseName.value, maxLength=15 - self.lenName.num(), asPattern=True
+        )
 
     def parent(self) -> 'OpenNebulaProvider':
         return typing.cast('OpenNebulaProvider', super().parent())
@@ -173,7 +176,9 @@ class LiveService(Service):
         return self.parent().sanitizeVmName(name)
 
     def makeTemplate(self, templateName: str) -> str:
-        return self.parent().makeTemplate(self.template.value, templateName, self.datastore.value)
+        return self.parent().makeTemplate(
+            self.template.value, templateName, self.datastore.value
+        )
 
     def checkTemplatePublished(self, templateId: str) -> bool:
         return self.parent().checkTemplatePublished(templateId)
@@ -288,7 +293,9 @@ class LiveService(Service):
         """
         self.parent().removeMachine(machineId)
 
-    def getNetInfo(self, machineId: str, networkId: typing.Optional[str] = None) -> typing.Tuple[str, str]:
+    def getNetInfo(
+        self, machineId: str, networkId: typing.Optional[str] = None
+    ) -> typing.Tuple[str, str]:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
@@ -309,5 +316,7 @@ class LiveService(Service):
     def getConsoleConnection(self, machineId: str) -> typing.Dict[str, typing.Any]:
         return self.parent().getConsoleConnection(machineId)
 
-    def desktopLogin(self, machineId: str, username: str, password: str, domain: str) -> typing.Dict[str, typing.Any]:
+    def desktopLogin(
+        self, machineId: str, username: str, password: str, domain: str
+    ) -> typing.Dict[str, typing.Any]:
         return self.parent().desktopLogin(machineId, username, password, domain)

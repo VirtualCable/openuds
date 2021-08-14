@@ -208,7 +208,9 @@ class OpenStackProvider(ServiceProvider):
         length=96,
         label=_('Proxy'),
         order=91,
-        tooltip=_('Proxy used for connection to azure for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'),
+        tooltip=_(
+            'Proxy used for connection to azure for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'
+        ),
         required=False,
         tab=gui.ADVANCED_TAB,
     )
@@ -233,9 +235,7 @@ class OpenStackProvider(ServiceProvider):
         if self._api is None:
             proxies = None
             if self.httpsProxy.value.strip():
-                proxies = {
-                    'https': self.httpsProxy.value
-                }
+                proxies = {'https': self.httpsProxy.value}
             self._api = openstack.Client(
                 self.endpoint.value,
                 -1,
@@ -247,7 +247,7 @@ class OpenStackProvider(ServiceProvider):
                 projectId=projectId,
                 region=region,
                 access=self.access.value,
-                proxies=proxies
+                proxies=proxies,
             )
         return self._api
 

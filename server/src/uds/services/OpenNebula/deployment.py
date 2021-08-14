@@ -53,6 +53,7 @@ opCreate, opStart, opShutdown, opRemove, opWait, opError, opFinish, opRetry = ra
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
+
 class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 6
@@ -64,7 +65,6 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     _vmid: str = ''
     _reason: str = ''
     _queue: typing.List[int]
-
 
     def initialize(self):
         self._name = ''
@@ -85,15 +85,17 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
     # Serializable needed methods
     def marshal(self) -> bytes:
-        return b'\1'.join([
-            b'v1',
-            self._name.encode('utf8'),
-            self._ip.encode('utf8'),
-            self._mac.encode('utf8'),
-            self._vmid.encode('utf8'),
-            self._reason.encode('utf8'),
-            pickle.dumps(self._queue, protocol=0)
-        ])
+        return b'\1'.join(
+            [
+                b'v1',
+                self._name.encode('utf8'),
+                self._ip.encode('utf8'),
+                self._mac.encode('utf8'),
+                self._vmid.encode('utf8'),
+                self._reason.encode('utf8'),
+                pickle.dumps(self._queue, protocol=0),
+            ]
+        )
 
     def unmarshal(self, data: bytes) -> None:
         vals = data.split(b'\1')
@@ -108,7 +110,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     def getName(self) -> str:
         if self._name == '':
             try:
-                self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
+                self._name = self.nameGenerator().get(
+                    self.service().getBaseName(), self.service().getLenName()
+                )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
@@ -179,11 +183,19 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._queue = [opCreate, opStart, opWait, opShutdown, opFinish]
 
     def __checkMachineState(self, chkState: on.types.VmState) -> str:
-        logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
+        logger.debug(
+            'Checking that state of machine %s (%s) is %s',
+            self._vmid,
+            self._name,
+            chkState,
+        )
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state in [on.types.VmState.UNKNOWN, on.types.VmState.DONE]:  # @UndefinedVariable
+        if state in [
+            on.types.VmState.UNKNOWN,
+            on.types.VmState.DONE,
+        ]:  # @UndefinedVariable
             return self.__error('Machine not found')
 
         ret = State.RUNNING
@@ -260,7 +272,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
-                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at execution queue ({0})'.format(op)
+                )
 
             execFnc()
 
@@ -293,9 +307,13 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         templateId = self.publication().getTemplateId()
         name = self.getName()
         if name == NO_MORE_NAMES:
-            raise Exception('No more names available for this service. (Increase digits for this service to fix)')
+            raise Exception(
+                'No more names available for this service. (Increase digits for this service to fix)'
+            )
 
-        name = self.service().sanitizeVmName(name)  # OpenNebula don't let us to create machines with more than 15 chars!!!
+        name = self.service().sanitizeVmName(
+            name
+        )  # OpenNebula don't let us to create machines with more than 15 chars!!!
 
         self._vmid = self.service().deployFromTemplate(name, templateId)
         if self._vmid is None:
@@ -395,7 +413,9 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             chkFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
-                return self.__error('Unknown operation found at check queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at check queue ({0})'.format(op)
+                )
 
             state = chkFnc()
             if state == State.FINISHED:
@@ -476,4 +496,12 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         }.get(op, '????')
 
     def __debug(self, txt: str) -> None:
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [LiveDeployment.__op2str(op) for op in self._queue])
+        logger.debug(
+            'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
+            txt,
+            self._name,
+            self._ip,
+            self._mac,
+            self._vmid,
+            [LiveDeployment.__op2str(op) for op in self._queue],
+        )

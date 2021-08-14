@@ -47,13 +47,16 @@ class LivePublication(Publication):
     """
     This class provides the publication of a oVirtLinkedService
     """
+
     _name: str = ''
     _reason: str = ''
     _templateId: str = ''
     _state: str = 'r'
     _destroyAfter: str = 'n'
 
-    suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = (
+        20  # : Suggested recheck time if publication is unfinished in seconds
+    )
 
     def initialize(self):
         """
@@ -78,7 +81,16 @@ class LivePublication(Publication):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state, self._destroyAfter]).encode('utf8')
+        return '\t'.join(
+            [
+                'v1',
+                self._name,
+                self._reason,
+                self._templateId,
+                self._state,
+                self._destroyAfter,
+            ]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -86,13 +98,21 @@ class LivePublication(Publication):
         """
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            self._name, self._reason, self._templateId, self._state, self._destroyAfter = vals[1:]
+            (
+                self._name,
+                self._reason,
+                self._templateId,
+                self._state,
+                self._destroyAfter,
+            ) = vals[1:]
 
     def publish(self) -> str:
         """
         Realizes the publication of the service
         """
-        self._name = self.service().sanitizeVmName('UDSP ' + self.dsName() + "-" + str(self.revision()))
+        self._name = self.service().sanitizeVmName(
+            'UDSP ' + self.dsName() + "-" + str(self.revision())
+        )
         self._reason = ''  # No error, no reason for it
         self._destroyAfter = 'n'
 
@@ -118,7 +138,9 @@ class LivePublication(Publication):
         if self._state == 'available':
             return State.FINISHED
 
-        self._state = self.service().getTemplate(self._templateId)['status']  # For next check
+        self._state = self.service().getTemplate(self._templateId)[
+            'status'
+        ]  # For next check
 
         if self._destroyAfter == 'y' and self._state == 'available':
             return self.destroy()
@@ -131,7 +153,7 @@ class LivePublication(Publication):
     def destroy(self) -> str:
         # We do not do anything else to destroy this instance of publication
         if self._state == 'error':
-            return  State.ERROR # Nothing to cancel
+            return State.ERROR  # Nothing to cancel
 
         if self._state == 'creating':
             self._destroyAfter = 'y'

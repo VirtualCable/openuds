@@ -11,7 +11,7 @@
 #      this list of conditions and the following disclaimer.
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
-#      and/or other materials provided with the distribution.
+#      and/or other materials provided with the distribution.u
 #    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
@@ -49,7 +49,18 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opChangeMac = range(10)
+(
+    opCreate,
+    opStart,
+    opStop,
+    opSuspend,
+    opRemove,
+    opWait,
+    opError,
+    opFinish,
+    opRetry,
+    opChangeMac,
+) = range(10)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
@@ -66,6 +77,7 @@ class OVirtLinkedDeployment(services.UserDeployment):
     The logic for managing ovirt deployments (user machines in this case) is here.
 
     """
+
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 6
 
@@ -100,15 +112,17 @@ class OVirtLinkedDeployment(services.UserDeployment):
         """
         Does nothing right here, we will use environment storage in this sample
         """
-        return b'\1'.join([
-            b'v1',
-            self._name.encode('utf8'),
-            self._ip.encode('utf8'),
-            self._mac.encode('utf8'),
-            self._vmid.encode('utf8'),
-            self._reason.encode('utf8'),
-            pickle.dumps(self._queue, protocol=0)
-        ])
+        return b'\1'.join(
+            [
+                b'v1',
+                self._name.encode('utf8'),
+                self._ip.encode('utf8'),
+                self._mac.encode('utf8'),
+                self._vmid.encode('utf8'),
+                self._reason.encode('utf8'),
+                pickle.dumps(self._queue, protocol=0),
+            ]
+        )
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -126,7 +140,9 @@ class OVirtLinkedDeployment(services.UserDeployment):
     def getName(self) -> str:
         if self._name == '':
             try:
-                self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
+                self._name = self.nameGenerator().get(
+                    self.service().getBaseName(), self.service().getLenName()
+                )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
@@ -207,7 +223,9 @@ class OVirtLinkedDeployment(services.UserDeployment):
         if self._vmid != '':
             self.service().stopMachine(self._vmid)
 
-    def getConsoleConnection(self) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    def getConsoleConnection(
+        self,
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
     def desktopLogin(self, username: str, password: str, domain: str = '') -> None:
@@ -215,7 +233,9 @@ class OVirtLinkedDeployment(services.UserDeployment):
 if sys.platform == 'win32':
     from uds import operations
     operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", struct.pack('!IsIs', 1, '{username}'.encode('utf8'), 2, '{password}'.encode('utf8')), True)
-'''.format(username=username, password=password)
+'''.format(
+            username=username, password=password
+        )
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         dbService = self.dbservice()
@@ -254,8 +274,15 @@ if sys.platform == 'win32':
         else:
             self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
 
-    def __checkMachineState(self, chkState: typing.Union[typing.List[str], typing.Tuple[str, ...], str]) -> str:
-        logger.debug('Checking that state of machine %s (%s) is %s', self._vmid, self._name, chkState)
+    def __checkMachineState(
+        self, chkState: typing.Union[typing.List[str], typing.Tuple[str, ...], str]
+    ) -> str:
+        logger.debug(
+            'Checking that state of machine %s (%s) is %s',
+            self._vmid,
+            self._name,
+            chkState,
+        )
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
@@ -329,14 +356,16 @@ if sys.platform == 'win32':
             opSuspend: self.__suspendMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
-            opChangeMac: self.__changeMac
+            opChangeMac: self.__changeMac,
         }
 
         try:
             execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
-                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at execution queue ({0})'.format(op)
+                )
 
             execFnc()
 
@@ -368,9 +397,13 @@ if sys.platform == 'win32':
         templateId = self.publication().getTemplateId()
         name = self.getName()
         if name == NO_MORE_NAMES:
-            raise Exception('No more names available for this service. (Increase digits for this service to fix)')
+            raise Exception(
+                'No more names available for this service. (Increase digits for this service to fix)'
+            )
 
-        name = self.service().sanitizeVmName(name)  # oVirt don't let us to create machines with more than 15 chars!!!
+        name = self.service().sanitizeVmName(
+            name
+        )  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
         self._vmid = self.service().deployFromTemplate(name, comments, templateId)
@@ -409,7 +442,9 @@ if sys.platform == 'win32':
             return State.RUNNING
 
         if state != 'down' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
+            self.__pushFrontOp(
+                opRetry
+            )  # Will call "check Retry", that will finish inmediatly and again call this one
         self.service().startMachine(self._vmid)
 
         return State.RUNNING
@@ -427,7 +462,9 @@ if sys.platform == 'win32':
             return State.RUNNING
 
         if state != 'up' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
+            self.__pushFrontOp(
+                opRetry
+            )  # Will call "check Retry", that will finish inmediatly and again call this one
         else:
             self.service().stopMachine(self._vmid)
 
@@ -446,7 +483,9 @@ if sys.platform == 'win32':
             return State.RUNNING
 
         if state != 'up':
-            self.__pushFrontOp(opRetry)  # Remember here, the return State.FINISH will make this retry be "poped" right ar return
+            self.__pushFrontOp(
+                opRetry
+            )  # Remember here, the return State.FINISH will make this retry be "poped" right ar return
         else:
             self.service().suspendMachine(self._vmid)
 
@@ -522,14 +561,18 @@ if sys.platform == 'win32':
             opStop: self.__checkStop,
             opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
-            opChangeMac: self.__checkMac
+            opChangeMac: self.__checkMac,
         }
 
         try:
-            chkFnc: typing.Optional[typing.Optional[typing.Callable[[], str]]] = fncs.get(op, None)
+            chkFnc: typing.Optional[
+                typing.Optional[typing.Callable[[], str]]
+            ] = fncs.get(op, None)
 
             if chkFnc is None:
-                return self.__error('Unknown operation found at check queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at check queue ({0})'.format(op)
+                )
 
             state = chkFnc()
             if state == State.FINISHED:
@@ -613,8 +656,16 @@ if sys.platform == 'win32':
             opError: 'error',
             opFinish: 'finish',
             opRetry: 'retry',
-            opChangeMac: 'changing mac'
+            opChangeMac: 'changing mac',
         }.get(op, '????')
 
     def __debug(self, txt):
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [OVirtLinkedDeployment.__op2str(op) for op in self._queue])
+        logger.debug(
+            'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
+            txt,
+            self._name,
+            self._ip,
+            self._mac,
+            self._vmid,
+            [OVirtLinkedDeployment.__op2str(op) for op in self._queue],
+        )

@@ -52,6 +52,7 @@ logger = logging.getLogger(__name__)
 CACHE_TIME_FOR_SERVER = 1800
 MAX_VM_ID = 999999999
 
+
 class ProxmoxProvider(
     services.ServiceProvider
 ):  # pylint: disable=too-many-public-methods
@@ -223,7 +224,14 @@ class ProxmoxProvider(
         toPool: typing.Optional[str] = None,
     ) -> client.types.VmCreationResult:
         return self.__getApi().cloneVm(
-            vmId, self.getNewVmId(), name, description, linkedClone, toNode, toStorage, toPool
+            vmId,
+            self.getNewVmId(),
+            name,
+            description,
+            linkedClone,
+            toNode,
+            toStorage,
+            toPool,
         )
 
     def startMachine(self, vmId: int) -> client.types.UPID:

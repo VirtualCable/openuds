@@ -32,6 +32,7 @@
 import enum
 import typing
 
+
 class VmState(enum.Enum):  # pylint: disable=too-few-public-methods
     INIT = 0
     PENDING = 1
@@ -81,7 +82,7 @@ class StorageType(typing.NamedTuple):
     id: str
     name: str
     total: int  # In Megabytes
-    free: int   # In Megabytes
+    free: int  # In Megabytes
     xml: typing.Optional[str]
 
 
@@ -95,7 +96,7 @@ class TemplateType(typing.NamedTuple):
 class ImageType(typing.NamedTuple):
     id: str
     name: str
-    size: int   # In Megabytes
+    size: int  # In Megabytes
     persistent: bool
     running_vms: int
     state: ImageState
