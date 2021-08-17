@@ -32,7 +32,6 @@ import typing
 
 from django.utils.translation import ugettext_noop as _
 
-from uds.models import getSqlDatetimeAsUnix
 from uds.core import services
 from uds.core.ui import gui
 from uds.core.util import validators

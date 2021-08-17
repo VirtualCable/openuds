@@ -41,14 +41,15 @@ from uds.core.util import log
 from uds.models import getSqlDatetimeAsUnix
 
 from .jobs import ProxmoxDeferredRemoval
+from . import client
+
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
     from .service import ProxmoxLinkedService
     from .publication import ProxmoxPublication
-    from . import client
-
+    
 logger = logging.getLogger(__name__)
 
 (
@@ -171,6 +172,8 @@ class ProxmoxDeployment(services.UserDeployment):
 
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except client.ProxmoxConnectionError:
+            raise  # If connection fails, let it fail on parent
         except Exception:
             return self.__error('Machine not found')
 
@@ -178,7 +181,7 @@ class ProxmoxDeployment(services.UserDeployment):
             self._queue = [opStart, opFinish]
             return self.__executeQueue()
 
-            self.cache.put('ready', '1')
+        self.cache.put('ready', '1')
         return State.FINISHED
 
     def reset(self) -> None:
@@ -186,7 +189,10 @@ class ProxmoxDeployment(services.UserDeployment):
         o Proxmox, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
-            self.service().resetMachine(int(self._vmid))
+            try:
+                self.service().resetMachine(int(self._vmid))
+            except Exception:
+                pass  # If could not reset, ignore it...
 
     def getConsoleConnection(
         self,
@@ -205,7 +211,10 @@ if sys.platform == 'win32':
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         dbService = self.dbservice()
         if dbService:
-            managers.userServiceManager().sendScript(dbService, script)
+            try:
+                managers.userServiceManager().sendScript(dbService, script)
+            except Exception as e:
+                logger.info('Exception sending loggin to %s: %s', dbService, e)
 
     def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
@@ -264,6 +273,10 @@ if sys.platform == 'win32':
 
     def __pushBackOp(self, op: int):
         self._queue.append(op)
+
+    def __retryLater(self) -> str:
+        self.__pushFrontOp(opRetry)
+        return State.RUNNING
 
     def __error(self, reason: typing.Union[str, Exception]) -> str:
         """
@@ -378,6 +391,8 @@ if sys.platform == 'win32':
     def __startMachine(self) -> str:
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except client.ProxmoxConnectionError:
+            return self.__retryLater()
         except Exception:
             raise Exception('Machine not found on start machine')
 
@@ -401,6 +416,8 @@ if sys.platform == 'win32':
     def __shutdownMachine(self) -> str:
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
+        except client.ProxmoxConnectionError:
+            return State.RUNNING  # Try again later
         except Exception:
             raise Exception('Machine not found on suspend machine')
 
@@ -443,7 +460,10 @@ if sys.platform == 'win32':
 
         node, upid = self.__getTask()
 
-        task = self.service().getTaskInfo(node, upid)
+        try:
+            task = self.service().getTaskInfo(node, upid)
+        except client.ProxmoxConnectionError:
+            return State.RUNNING  # Try again later
 
         if task.isErrored():
             return self.__error(task.exitstatus)

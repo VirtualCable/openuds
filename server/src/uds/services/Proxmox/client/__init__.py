@@ -149,17 +149,20 @@ class ProxmoxClient:
         return self._url + path
 
     def _get(self, path: str) -> typing.Any:
-        result = requests.get(
-            self._getPath(path),
-            headers=self.headers,
-            cookies={'PVEAuthCookie': self._ticket},
-            verify=self._validateCert,
-            timeout=self._timeout,
-        )
+        try:
+            result = requests.get(
+                self._getPath(path),
+                headers=self.headers,
+                cookies={'PVEAuthCookie': self._ticket},
+                verify=self._validateCert,
+                timeout=self._timeout,
+            )
 
-        logger.debug(
-            'GET result to %s: %s -- %s', path, result.status_code, result.content
-        )
+            logger.debug(
+                'GET result to %s: %s -- %s', path, result.status_code, result.content
+            )
+        except requests.ConnectionError as e:
+            raise ProxmoxConnectionError(e)
 
         return ProxmoxClient.checkError(result)
 
@@ -168,18 +171,21 @@ class ProxmoxClient:
         path: str,
         data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None,
     ) -> typing.Any:
-        result = requests.post(
-            self._getPath(path),
-            data=data,
-            headers=self.headers,
-            cookies={'PVEAuthCookie': self._ticket},
-            verify=self._validateCert,
-            timeout=self._timeout,
-        )
+        try:
+            result = requests.post(
+                self._getPath(path),
+                data=data,
+                headers=self.headers,
+                cookies={'PVEAuthCookie': self._ticket},
+                verify=self._validateCert,
+                timeout=self._timeout,
+            )
 
-        logger.debug(
-            'POST result to %s: %s -- %s', path, result.status_code, result.content
-        )
+            logger.debug(
+                'POST result to %s: %s -- %s', path, result.status_code, result.content
+            )
+        except requests.ConnectionError as e:
+            raise ProxmoxConnectionError(e)
 
         return ProxmoxClient.checkError(result)
 
@@ -188,22 +194,25 @@ class ProxmoxClient:
         path: str,
         data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None,
     ) -> typing.Any:
-        result = requests.delete(
-            self._getPath(path),
-            data=data,
-            headers=self.headers,
-            cookies={'PVEAuthCookie': self._ticket},
-            verify=self._validateCert,
-            timeout=self._timeout,
-        )
+        try:
+            result = requests.delete(
+                self._getPath(path),
+                data=data,
+                headers=self.headers,
+                cookies={'PVEAuthCookie': self._ticket},
+                verify=self._validateCert,
+                timeout=self._timeout,
+            )
 
-        logger.debug(
-            'DELETE result to %s: %s -- %s -- %s',
-            path,
-            result.status_code,
-            result.content,
-            result.headers,
-        )
+            logger.debug(
+                'DELETE result to %s: %s -- %s -- %s',
+                path,
+                result.status_code,
+                result.content,
+                result.headers,
+            )
+        except requests.ConnectionError as e:
+            raise ProxmoxConnectionError(e)
 
         return ProxmoxClient.checkError(result)
 
