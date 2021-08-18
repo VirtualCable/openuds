@@ -471,7 +471,7 @@ class ProxmoxClient:
             except Exception:  # Error requesting pool, fallback to getVmInfo
                 pass
 
-        return self.getVmInfo(vmId, node)
+        return self.getVmInfo(vmId, node, **kwargs)
 
     @ensureConected
     @allowCache(
@@ -561,6 +561,8 @@ class ProxmoxClient:
     def convertToTemplate(self, vmId: int, node: typing.Optional[str] = None) -> None:
         node = node or self.getVmInfo(vmId).node
         self._post('nodes/{}/qemu/{}/template'.format(node, vmId))
+        # Ensure cache is reset for this VM (as it is now a template)
+        self.getVmInfo(vmId, force=True)
 
     # proxmox has a "resume", but start works for suspended vm so we use it
     resumeVm = startVm
