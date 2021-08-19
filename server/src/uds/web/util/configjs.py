@@ -185,7 +185,6 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS', False),
             ('udsclient3_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
             ('udsclient3-{version}-1.noarch.rpm', gettext('RPM based Linux client (Fedora, Suse, ...)') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
-            ('udsclient3-{version}.tar.gz', gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
             ('udsclient3-x86_64-{version}.tar.gz', gettext('Binary appimage X86_64 Linux client'), 'Linux', False),
             ('udsclient3-armhf-{version}.tar.gz', gettext('Binary appimage Raspberry Linux client'), 'Linux', False),
             ('udsclient3-{version}.tar.gz', gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
