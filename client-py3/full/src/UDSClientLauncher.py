@@ -68,7 +68,7 @@ def main(args: typing.List[str]):
 
         window.showMinimized()
 
-        sys.exit(app.exec_())
+        sys.exit(app.exec())
 
 if __name__ == "__main__":
     main(args=sys.argv)

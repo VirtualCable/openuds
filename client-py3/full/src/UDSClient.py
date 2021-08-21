@@ -389,7 +389,7 @@ def main(args: typing.List[str]):
 
         win.start()
 
-        exitVal = app.exec_()
+        exitVal = app.exec()
         logger.debug('Execution finished correctly')
 
     except Exception as e:
