@@ -62,7 +62,7 @@ class UDSConfigDialog(QDialog):
         self.ui.host.setText(self._config.host)
         self.ui.validateCertificate.setCurrentIndex(1 if self._config.validateCertificate else 0)
         self.ui.logLevelComboBox.setCurrentIndex(self._config.log_level)
-        self.ui.serviceToken.setText(self._config.master_token)
+        self.ui.serviceToken.setText(self._config.master_token or '')
 
         self.ui.testButton.setEnabled(bool(self._config.master_token and self._config.host))
 
@@ -153,4 +153,4 @@ if __name__ == "__main__":
 
     myapp = UDSConfigDialog()
     myapp.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -192,4 +192,4 @@ if __name__ == "__main__":
 
     myapp = UDSConfigDialog()
     myapp.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -69,7 +69,7 @@ if __name__ == "__main__":
     timer.start(1000)
     timer.timeout.connect(lambda *a: None)  # timeout can be connected to a callable
 
-    qApp.exec_()
+    qApp.exec()
 
     # On windows, if no window is created, this point will never be reached.
     qApp.end()
