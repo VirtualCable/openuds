@@ -84,7 +84,9 @@ class SamplePublication(services.Publication):
     it's expressed in seconds, (i.e. "suggestedTime = 10")
     """
 
-    suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = (
+        5  # : Suggested recheck time if publication is unfinished in seconds
+    )
     _name: str = ''
     _reason: str = ''
     _number: int = -1
@@ -217,7 +219,9 @@ class SamplePublication(services.Publication):
         Returned value, if any, is ignored
         """
         # Make simply a random string
-        self._name = ''.join(random.SystemRandom().choices(string.ascii_uppercase + string.digits, k=10))
+        self._name = ''.join(
+            random.SystemRandom().choices(string.ascii_uppercase + string.digits, k=10)
+        )
 
     def reasonOfError(self) -> str:
         """

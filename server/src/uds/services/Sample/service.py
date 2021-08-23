@@ -49,6 +49,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class ServiceOne(services.Service):
     """
     Basic service, the first part (variables) include the description of the service.
@@ -71,6 +72,7 @@ class ServiceOne(services.Service):
     information.
 
     """
+
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -130,9 +132,9 @@ class ServiceOne(services.Service):
             gui.choiceItem('red', 'Red'),
             gui.choiceItem('green', 'Green'),
             gui.choiceItem('blue', 'Blue'),
-            gui.choiceItem('nonsense', 'Blagenta')
+            gui.choiceItem('nonsense', 'Blagenta'),
         ],
-        defvalue='1'  # Default value is the ID of the choicefield
+        defvalue='1',  # Default value is the ID of the choicefield
     )
 
     passw = gui.PasswordField(
@@ -140,7 +142,7 @@ class ServiceOne(services.Service):
         label=_('Password'),
         tooltip=_('Password for testing purposes'),
         required=True,
-        defvalue='1234'  # : Default password are nonsense?? :-)
+        defvalue='1234',  # : Default password are nonsense?? :-)
     )
 
     baseName = gui.TextField(
@@ -149,7 +151,7 @@ class ServiceOne(services.Service):
         tooltip=_('Base name for this user services'),
         # In this case, the choice can have none value selected by default
         required=True,
-        defvalue=''  # Default value is the ID of the choicefield
+        defvalue='',  # Default value is the ID of the choicefield
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
@@ -165,12 +167,12 @@ class ServiceOne(services.Service):
         # so we only need to validate params if values is not None
         if values:
             if self.colour.value == 'nonsense':
-                raise services.Service.ValidationException('The selected colour is invalid!!!')
-
+                raise services.Service.ValidationException(
+                    'The selected colour is invalid!!!'
+                )
 
     # Services itself are non testeable right now, so we don't even have
     # to provide one!!!
-
 
     # Congratulations!!!, the needed part of your first simple service is done!
     # Now you can go to administration panel, and check it
@@ -200,6 +202,7 @@ class ServiceTwo(services.Service):
     """
     Just a second service, no comments here (almost same that ServiceOne
     """
+
     typeName = _('Sample Service Two')
     typeType = 'SampleService2'
     typeDescription = _('Sample (and dummy) service ONE+ONE')
@@ -221,7 +224,6 @@ class ServiceTwo(services.Service):
     publicationType = SamplePublication
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = SampleUserDeploymentTwo
-
 
     # Gui, we will use here the EditableList field
     names = gui.EditableList(label=_('List of names'))

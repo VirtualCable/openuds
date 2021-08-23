@@ -48,7 +48,20 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opConfigure, opProvision, opWaitSuspend = range(12)
+(
+    opCreate,
+    opStart,
+    opStop,
+    opSuspend,
+    opRemove,
+    opWait,
+    opError,
+    opFinish,
+    opRetry,
+    opConfigure,
+    opProvision,
+    opWaitSuspend,
+) = range(12)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
@@ -80,16 +93,18 @@ class XenLinkedDeployment(UserDeployment):
 
     # Serializable needed methods
     def marshal(self) -> bytes:
-        return b'\1'.join([
-            b'v1',
-            self._name.encode('utf8'),
-            self._ip.encode('utf8'),
-            self._mac.encode('utf8'),
-            self._vmid.encode('utf8'),
-            self._reason.encode('utf8'),
-            pickle.dumps(self._queue, protocol=0),
-            self._task.encode('utf8')
-        ])
+        return b'\1'.join(
+            [
+                b'v1',
+                self._name.encode('utf8'),
+                self._ip.encode('utf8'),
+                self._mac.encode('utf8'),
+                self._vmid.encode('utf8'),
+                self._reason.encode('utf8'),
+                pickle.dumps(self._queue, protocol=0),
+                self._task.encode('utf8'),
+            ]
+        )
 
     def unmarshal(self, data: bytes) -> None:
         vals = data.split(b'\1')
@@ -106,7 +121,9 @@ class XenLinkedDeployment(UserDeployment):
     def getName(self) -> str:
         if not self._name:
             try:
-                self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
+                self._name = self.nameGenerator().get(
+                    self.service().getBaseName(), self.service().getLenName()
+                )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
@@ -168,7 +185,16 @@ class XenLinkedDeployment(UserDeployment):
         if forLevel2 is False:
             self._queue = [opCreate, opConfigure, opProvision, opStart, opFinish]
         else:
-            self._queue = [opCreate, opConfigure, opProvision, opStart, opWait, opWaitSuspend, opSuspend, opFinish]
+            self._queue = [
+                opCreate,
+                opConfigure,
+                opProvision,
+                opStart,
+                opWait,
+                opWaitSuspend,
+                opSuspend,
+                opFinish,
+            ]
 
     def __getCurrentOp(self) -> int:
         if len(self._queue) == 0:
@@ -196,7 +222,11 @@ class XenLinkedDeployment(UserDeployment):
         if self._vmid != '':  # Powers off and delete VM
             try:
                 state = self.service().getVMPowerState(self._vmid)
-                if state in (XenPowerState.running, XenPowerState.paused, XenPowerState.suspended):
+                if state in (
+                    XenPowerState.running,
+                    XenPowerState.paused,
+                    XenPowerState.suspended,
+                ):
                     self.service().stopVM(self._vmid, False)  # In sync mode
                 self.service().removeVM(self._vmid)
             except Exception:
@@ -226,14 +256,16 @@ class XenLinkedDeployment(UserDeployment):
             opWait: self.__wait,
             opRemove: self.__remove,
             opConfigure: self.__configure,
-            opProvision: self.__provision
+            opProvision: self.__provision,
         }
 
         try:
             execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
-                return self.__error('Unknown operation found at execution queue ({0})'.format(op))
+                return self.__error(
+                    'Unknown operation found at execution queue ({0})'.format(op)
+                )
 
             execFnc()
 
@@ -265,9 +297,13 @@ class XenLinkedDeployment(UserDeployment):
         templateId = self.publication().getTemplateId()
         name = self.getName()
         if name == NO_MORE_NAMES:
-            raise Exception('No more names available for this service. (Increase digits for this service to fix)')
+            raise Exception(
+                'No more names available for this service. (Increase digits for this service to fix)'
+            )
 
-        name = 'UDS service ' + self.service().sanitizeVmName(name)  # oVirt don't let us to create machines with more than 15 chars!!!
+        name = 'UDS service ' + self.service().sanitizeVmName(
+            name
+        )  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
         self._task = self.service().startDeployFromTemplate(name, comments, templateId)
@@ -282,7 +318,7 @@ class XenLinkedDeployment(UserDeployment):
         """
         state = self.service().getVMPowerState(self._vmid)
 
-        if state not in(XenPowerState.halted, XenPowerState.suspended):
+        if state not in (XenPowerState.halted, XenPowerState.suspended):
             self.__pushFrontOp(opStop)
             self.__executeQueue()
         else:
@@ -348,7 +384,9 @@ class XenLinkedDeployment(UserDeployment):
         """
         Makes machine usable on Xen
         """
-        self.service().provisionVM(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
+        self.service().provisionVM(
+            self._vmid, False
+        )  # Let's try this in "sync" mode, this must be fast enough
 
         return State.RUNNING
 
@@ -434,14 +472,16 @@ class XenLinkedDeployment(UserDeployment):
             opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
             opConfigure: self.__checkConfigure,
-            opProvision: self.__checkProvision
+            opProvision: self.__checkProvision,
         }
 
         try:
             chkFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
-                return self.__error('Unknown operation found at check queue ({})'.format(op))
+                return self.__error(
+                    'Unknown operation found at check queue ({})'.format(op)
+                )
 
             state = chkFnc()
             if state == State.FINISHED:
@@ -503,8 +543,16 @@ class XenLinkedDeployment(UserDeployment):
             opFinish: 'finish',
             opRetry: 'retry',
             opConfigure: 'configuring',
-            opProvision: 'provisioning'
+            opProvision: 'provisioning',
         }.get(op, '????')
 
     def __debug(self, txt: str) -> None:
-        logger.debug('State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s', txt, self._name, self._ip, self._mac, self._vmid, [XenLinkedDeployment.__op2str(op) for op in self._queue])
+        logger.debug(
+            'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
+            txt,
+            self._name,
+            self._ip,
+            self._mac,
+            self._vmid,
+            [XenLinkedDeployment.__op2str(op) for op in self._queue],
+        )

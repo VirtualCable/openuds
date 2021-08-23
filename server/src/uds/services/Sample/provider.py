@@ -66,6 +66,7 @@ class Provider(services.ServiceProvider):
     we MUST register it at package __init__.
 
     """
+
     # : What kind of services we offer, this are classes inherited from Service
     offers = [ServiceOne, ServiceTwo]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -107,7 +108,7 @@ class Provider(services.ServiceProvider):
         label=_('Your pet\'s name'),
         tooltip=_('If you like, write the name of your pet'),
         requred=False,
-        defvalue='Tux'  # : This will not get translated
+        defvalue='Tux',  # : This will not get translated
     )
     # : Age of Methuselah (matusalén in spanish)
     # : in Spain there is a well-known to say that something is very old,
@@ -118,7 +119,7 @@ class Provider(services.ServiceProvider):
         label=_('Age of Methuselah'),
         tooltip=_('If you know it, please, tell me!!!'),
         required=True,  # : Numeric fields have always a value, so this not really needed
-        defvalue='4500'
+        defvalue='4500',
     )
 
     # : Is Methuselah istill alive?
@@ -126,7 +127,7 @@ class Provider(services.ServiceProvider):
         order=4,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
-        defvalue=gui.TRUE  # : By default, at new item, check this
+        defvalue=gui.TRUE,  # : By default, at new item, check this
     )
 
     methText = gui.TextField(
@@ -136,7 +137,7 @@ class Provider(services.ServiceProvider):
         label=_('Text area'),
         tooltip=_('This is a text area'),
         requred=False,
-        defvalue='Write\nsomething'  # : This will not get translated
+        defvalue='Write\nsomething',  # : This will not get translated
     )
 
     # There is more fields type, but not here the best place to cover it
@@ -154,7 +155,9 @@ class Provider(services.ServiceProvider):
         # values are only passed from administration client. Internals
         # instantiations are always empty.
         if values and self.methAlive.isTrue():
-            raise services.ServiceProvider.ValidationException(_('Methuselah is not alive!!! :-)'))
+            raise services.ServiceProvider.ValidationException(
+                _('Methuselah is not alive!!! :-)')
+            )
 
     # Marshal and unmarshal are defaults ones, also enought
 
@@ -162,7 +165,9 @@ class Provider(services.ServiceProvider):
     # base class so we don't have to mess with all those things...
 
     @staticmethod
-    def test(env: 'Environment', data: typing.Dict[str, str]) -> typing.List[typing.Any]:
+    def test(
+        env: 'Environment', data: typing.Dict[str, str]
+    ) -> typing.List[typing.Any]:
         """
         Create your test method here so the admin can push the "check" button
         and this gets executed.
@@ -186,7 +191,11 @@ class Provider(services.ServiceProvider):
         try:
             # We instantiate the provider, but this may fail...
             instance = Provider(env, data)
-            logger.debug('Methuselah has %s years and is %s :-)', instance.methAge.value, instance.methAlive.value)
+            logger.debug(
+                'Methuselah has %s years and is %s :-)',
+                instance.methAge.value,
+                instance.methAlive.value,
+            )
         except services.ServiceProvider.ValidationException as e:
             # If we say that meth is alive, instantiation will
             return [False, str(e)]

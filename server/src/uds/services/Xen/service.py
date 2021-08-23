@@ -54,6 +54,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
 
 
     """
+
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -78,15 +79,13 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
     usesCache = True
     # : Tooltip shown to user when this item is pointed at admin interface, none
     # : because we don't use it
-    cacheTooltip = _(
-        'Number of desired machines to keep running waiting for a user')
+    cacheTooltip = _('Number of desired machines to keep running waiting for a user')
     # : If we need to generate a "Level 2" cache for this service (i.e., L1
     # : could be running machines and L2 suspended machines)
     usesCache_L2 = True
     # : Tooltip shown to user when this item is pointed at admin interface, None
     # : also because we don't use it
-    cacheTooltip_L2 = _(
-        'Number of desired machines to keep suspended waiting for use')
+    cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use')
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
@@ -109,8 +108,10 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         label=_("Storage SR"),
         rdonly=False,
         order=100,
-        tooltip=_('Storage where to publish and put incrementals (only shared storages are supported)'),
-        required=True
+        tooltip=_(
+            'Storage where to publish and put incrementals (only shared storages are supported)'
+        ),
+        required=True,
     )
 
     minSpaceGB = gui.NumericField(
@@ -119,7 +120,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         defvalue='32',
         order=101,
         tooltip=_('Minimal free space in GB'),
-        required=True
+        required=True,
     )
 
     machine = gui.ChoiceField(
@@ -127,7 +128,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=110,
         tooltip=_('Service base machine'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     network = gui.ChoiceField(
@@ -136,17 +137,18 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=111,
         tooltip=_('Network used for virtual machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     memory = gui.NumericField(
         label=_("Memory (Mb)"),
-        length=4, defvalue=512,
+        length=4,
+        defvalue=512,
         rdonly=False,
         order=112,
         tooltip=_('Memory assigned to machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     shadow = gui.NumericField(
@@ -157,7 +159,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=113,
         tooltip=_('Shadow memory multiplier (use with care)'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     baseName = gui.TextField(
@@ -166,7 +168,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=114,
         tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     lenName = gui.NumericField(
@@ -176,7 +178,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         order=115,
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
-        required=True
+        required=True,
     )
 
     def initialize(self, values):
@@ -191,7 +193,8 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
 
             if int(self.memory.value) < 256:
                 raise Service.ValidationException(
-                    _('The minimum allowed memory is 256 Mb'))
+                    _('The minimum allowed memory is 256 Mb')
+                )
 
     def parent(self) -> 'XenProvider':
         return typing.cast('XenProvider', super().parent())
@@ -201,14 +204,27 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
 
-        machines_list = [gui.choiceItem(m['id'], m['name']) for m in self.parent().getMachines()]
+        machines_list = [
+            gui.choiceItem(m['id'], m['name']) for m in self.parent().getMachines()
+        ]
 
         storages_list = []
         for storage in self.parent().getStorages():
-            space, free = storage['size'] / 1024, (storage['size'] - storage['used']) / 1024
-            storages_list.append(gui.choiceItem(storage['id'], "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free)))
+            space, free = (
+                storage['size'] / 1024,
+                (storage['size'] - storage['used']) / 1024,
+            )
+            storages_list.append(
+                gui.choiceItem(
+                    storage['id'],
+                    "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free),
+                )
+            )
 
-        network_list = [gui.choiceItem(net['id'], net['name']) for net in self.parent().getNetworks()]
+        network_list = [
+            gui.choiceItem(net['id'], net['name'])
+            for net in self.parent().getNetworks()
+        ]
 
         self.machine.setValues(machines_list)
         self.datastore.setValues(storages_list)
@@ -223,7 +239,11 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
         availableGB = (info['size'] - info['used']) / 1024
         if availableGB < self.minSpaceGB.num():
-            raise Exception('Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(self.minSpaceGB.num(), availableGB))
+            raise Exception(
+                'Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(
+                    self.minSpaceGB.num(), availableGB
+                )
+            )
 
     def sanitizeVmName(self, name: str) -> str:
         """
@@ -245,12 +265,18 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         Raises an exception if operation fails.
         """
 
-        logger.debug('Starting deploy of template from machine %s on datastore %s', self.machine.value, self.datastore.value)
+        logger.debug(
+            'Starting deploy of template from machine %s on datastore %s',
+            self.machine.value,
+            self.datastore.value,
+        )
 
         # Checks datastore available space, raises exeception in no min available
         self.datastoreHasSpace()
 
-        return self.parent().cloneForTemplate(name, comments, self.machine.value, self.datastore.value)
+        return self.parent().cloneForTemplate(
+            name, comments, self.machine.value, self.datastore.value
+        )
 
     def convertToTemplate(self, machineId: str) -> None:
         """

@@ -45,7 +45,9 @@ logger = logging.getLogger(__name__)
 
 
 class XenPublication(Publication):
-    suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = (
+        20  # : Suggested recheck time if publication is unfinished in seconds
+    )
 
     _name: str = ''
     _reason: str = ''
@@ -61,23 +63,44 @@ class XenPublication(Publication):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task]).encode('utf8')
+        return '\t'.join(
+            [
+                'v1',
+                self._name,
+                self._reason,
+                self._destroyAfter,
+                self._templateId,
+                self._state,
+                self._task,
+            ]
+        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
-        #logger.debug('Data: {0}'.format(data))
+        # logger.debug('Data: {0}'.format(data))
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task = vals[1:]
+            (
+                self._name,
+                self._reason,
+                self._destroyAfter,
+                self._templateId,
+                self._state,
+                self._task,
+            ) = vals[1:]
 
     def publish(self) -> str:
         """
         Realizes the publication of the service
         """
-        self._name = self.service().sanitizeVmName('UDS Pub ' + self.dsName() + "-" + str(self.revision()))
-        comments = _('UDS pub for {0} at {1}').format(self.dsName(), str(datetime.now()).split('.')[0])
+        self._name = self.service().sanitizeVmName(
+            'UDS Pub ' + self.dsName() + "-" + str(self.revision())
+        )
+        comments = _('UDS pub for {0} at {1}').format(
+            self.dsName(), str(datetime.now()).split('.')[0]
+        )
         self._reason = ''  # No error, no reason for it
         self._destroyAfter = 'f'
         self._state = 'ok'

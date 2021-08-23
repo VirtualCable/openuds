@@ -118,7 +118,9 @@ class SampleUserDeploymentOne(services.UserDeployment):
         """
         name: str = typing.cast(str, self.storage.readData('name'))
         if name is None:
-            name = self.nameGenerator().get(self.service().getBaseName() + '-' + self.service().getColour(), 3)
+            name = self.nameGenerator().get(
+                self.service().getBaseName() + '-' + self.service().getColour(), 3
+            )
             # Store value for persistence
             self.storage.saveData('name', name)
 
@@ -269,7 +271,10 @@ class SampleUserDeploymentOne(services.UserDeployment):
         destroying, and cancel will simply invoke destroy
         """
         import random
-        countStr: typing.Optional[str] = typing.cast(str, self.storage.readData('count'))
+
+        countStr: typing.Optional[str] = typing.cast(
+            str, self.storage.readData('count')
+        )
         count: int = 0
         if countStr:
             count = int(countStr) + 1

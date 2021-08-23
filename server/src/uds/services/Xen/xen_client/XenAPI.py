@@ -69,8 +69,10 @@ translation = gettext.translation('xen-xm', fallback=True)
 API_VERSION_1_1 = '1.1'
 API_VERSION_1_2 = '1.2'
 
+
 class Failure(Exception):
     details: typing.List[typing.Any]
+
     def __init__(self, details: typing.List[typing.Any]):
         super().__init__()
         self.details = details
@@ -87,18 +89,23 @@ class Failure(Exception):
         # dict([(str(i), self.details[i]) for i in range(len(self.details))])
         return {str(i): d for i, d in enumerate(self.details)}
 
+
 # Just a "constant" that we use to decide whether to retry the RPC
 _RECONNECT_AND_RETRY = object()
 
+
 class UDSHTTPConnection(httplib.HTTPConnection):
-    """HTTPConnection subclass to allow HTTP over Unix domain sockets. """
+    """HTTPConnection subclass to allow HTTP over Unix domain sockets."""
+
     def connect(self):
         path = self.host.replace("_", "/")
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.sock.connect(path)
 
+
 class UDSHTTP(httplib.HTTPConnection):
     _connection_class = UDSHTTPConnection
+
 
 class UDSTransport(xmlrpclib.Transport):
     _use_datetime: bool
@@ -117,10 +124,13 @@ class UDSTransport(xmlrpclib.Transport):
     def make_connection(self, host: str) -> httplib.HTTPConnection:  # type: ignore # In our case, host is always an string
         return UDSHTTPConnection(host)
 
-    def send_request(self, connection, handler, request_body, debug):  # pylint: disable=arguments-differ
+    def send_request(
+        self, connection, handler, request_body, debug
+    ):  # pylint: disable=arguments-differ
         connection.putrequest("POST", handler)
         for key, value in self._extra_headers:
             connection.putheader(key, value)
+
 
 class Session(xmlrpclib.ServerProxy):
     """A server proxy and session manager for communicating with xapi using
@@ -134,24 +144,39 @@ class Session(xmlrpclib.ServerProxy):
     session.xenapi.session.logout()
     """
 
-    def __init__(self, uri, transport=None, encoding=None, verbose=0,
-                 allow_none=1, ignore_ssl=False):
+    def __init__(
+        self,
+        uri,
+        transport=None,
+        encoding=None,
+        verbose=0,
+        allow_none=1,
+        ignore_ssl=False,
+    ):
 
         # Fix for CA-172901 (+ Python 2.4 compatibility)
         # Fix for context=ctx ( < Python 2.7.9 compatibility)
-        if not (sys.version_info[0] <= 2 and sys.version_info[1] <= 7 and sys.version_info[2] <= 9) and ignore_ssl:
+        if (
+            not (
+                sys.version_info[0] <= 2
+                and sys.version_info[1] <= 7
+                and sys.version_info[2] <= 9
+            )
+            and ignore_ssl
+        ):
             ctx = ssl._create_unverified_context()
-            xmlrpclib.ServerProxy.__init__(self, uri, transport, encoding,
-                                           verbose, allow_none, context=ctx)
+            xmlrpclib.ServerProxy.__init__(
+                self, uri, transport, encoding, verbose, allow_none, context=ctx
+            )
         else:
-            xmlrpclib.ServerProxy.__init__(self, uri, transport, encoding,
-                                           verbose, allow_none)
+            xmlrpclib.ServerProxy.__init__(
+                self, uri, transport, encoding, verbose, allow_none
+            )
         self.transport = transport
         self._session = None
         self.last_login_method = None
         self.last_login_params = None
         self.API_version = API_VERSION_1_1
-
 
     def xenapi_request(self, methodname, params):
         if methodname.startswith('login'):
@@ -168,22 +193,20 @@ class Session(xmlrpclib.ServerProxy):
                 if result is _RECONNECT_AND_RETRY:
                     retry_count += 1
                     if self.last_login_method:
-                        self._login(self.last_login_method,
-                                    self.last_login_params)
+                        self._login(self.last_login_method, self.last_login_params)
                     else:
                         raise xmlrpclib.Fault(401, 'You must log in')
                 else:
                     return result
             raise xmlrpclib.Fault(
-                500, 'Tried 3 times to get a valid session, but failed')
+                500, 'Tried 3 times to get a valid session, but failed'
+            )
 
     def _login(self, method, params):
         try:
-            result = _parse_result(
-                getattr(self, 'session.%s' % method)(*params))
+            result = _parse_result(getattr(self, 'session.%s' % method)(*params))
             if result is _RECONNECT_AND_RETRY:
-                raise xmlrpclib.Fault(
-                    500, 'Received SESSION_INVALID when logging in')
+                raise xmlrpclib.Fault(500, 'Received SESSION_INVALID when logging in')
             self._session = result
             self.last_login_method = method
             self.last_login_params = params
@@ -195,7 +218,7 @@ class Session(xmlrpclib.ServerProxy):
 
     def _logout(self):
         try:
-            if self.last_login_method.startswith("slave_local"):
+            if self.last_login_method.startswith("slave_local"):  # type: ignore
                 return _parse_result(self.session.local_logout(self._session))  # type: ignore
             else:
                 return _parse_result(self.session.logout(self._session))  # type: ignore
@@ -210,7 +233,7 @@ class Session(xmlrpclib.ServerProxy):
         host = self.xenapi.pool.get_master(pool)
         major = self.xenapi.host.get_API_version_major(host)
         minor = self.xenapi.host.get_API_version_minor(host)
-        return "%s.%s"%(major, minor)
+        return "%s.%s" % (major, minor)
 
     def __getattr__(self, name):
         if name == 'handle':
@@ -224,12 +247,16 @@ class Session(xmlrpclib.ServerProxy):
         else:
             return xmlrpclib.ServerProxy.__getattr__(self, name)
 
+
 def xapi_local():
     return Session("http://_var_lib_xcp_xapi/", transport=UDSTransport())
 
+
 def _parse_result(result):
     if not isinstance(result, dict) or 'Status' not in result:
-        raise xmlrpclib.Fault(500, 'Missing Status in response from server: {}'.format(result))
+        raise xmlrpclib.Fault(
+            500, 'Missing Status in response from server: {}'.format(result)
+        )
     if result['Status'] == 'Success':
         if 'Value' in result:
             return result['Value']
@@ -258,7 +285,9 @@ class _Dispatcher:
         if self.__name is None:
             return _Dispatcher(self.__API_version, self.__send, name)
         else:
-            return _Dispatcher(self.__API_version, self.__send, "%s.%s" % (self.__name, name))
+            return _Dispatcher(
+                self.__API_version, self.__send, "%s.%s" % (self.__name, name)
+            )
 
     def __call__(self, *args):
         return self.__send(self.__name, args)

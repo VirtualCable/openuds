@@ -119,8 +119,9 @@ class SampleUserDeploymentTwo(services.UserDeployment):
                beside the values, so we can, at a later stage, treat with old
                data for current modules.
         """
-        data = '\t'.join(['v1', self._name, self._ip, self._mac, self._error,
-                          str(self._count)])
+        data = '\t'.join(
+            ['v1', self._name, self._ip, self._mac, self._error, str(self._count)]
+        )
         return codecs.encode(data.encode(), encoding='zip')  # type: ignore
 
     def unmarshal(self, data: bytes) -> None:
