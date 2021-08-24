@@ -62,6 +62,7 @@ class GroupsManager:
 
     Managed groups names are compared using case insensitive comparison.
     """
+
     _groups: typing.Dict[str, dict]
 
     def __init__(self, dbAuthenticator: 'DBAuthenticator'):
@@ -71,11 +72,18 @@ class GroupsManager:
         to which this groupsManager will be associated
         """
         self._dbAuthenticator = dbAuthenticator
-        self._groups = {}  # We just get active groups, inactive aren't visible to this class
+        self._groups = (
+            {}
+        )  # We just get active groups, inactive aren't visible to this class
         for g in dbAuthenticator.groups.filter(state=State.ACTIVE, is_meta=False):
             name = g.name.lower()
             isPattern = name.find('pat:') == 0  # Is a pattern?
-            self._groups[name] = {'name': g.name, 'group': Group(g), 'valid': False, 'pattern': isPattern}
+            self._groups[name] = {
+                'name': g.name,
+                'group': Group(g),
+                'valid': False,
+                'pattern': isPattern,
+            }
 
     def checkAllGroups(self, groupName: str):
         """
@@ -119,11 +127,15 @@ class GroupsManager:
                 yield g['group']
 
         # Now, get metagroups and also return them
-        for g2 in DBGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=True):  # @UndefinedVariable
+        for g2 in DBGroup.objects.filter(
+            manager__id=self._dbAuthenticator.id, is_meta=True
+        ):  # @UndefinedVariable
             gn = g2.groups.filter(id__in=lst, state=State.ACTIVE).count()
             if g2.meta_if_any and gn > 0:
                 gn = g2.groups.count()
-            if gn == g2.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
+            if (
+                gn == g2.groups.count()
+            ):  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield Group(g2)
 

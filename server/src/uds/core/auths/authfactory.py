@@ -36,6 +36,7 @@ import typing
 if typing.TYPE_CHECKING:
     from .authenticator import Authenticator
 
+
 class AuthsFactory:
     """
     This class holds the register of all known authentication modules
@@ -43,6 +44,7 @@ class AuthsFactory:
 
     It provides a way to register and recover Authentication providers.
     """
+
     _factory: typing.Optional['AuthsFactory'] = None
     _auths: typing.Dict[str, typing.Type['Authenticator']] = {}
 

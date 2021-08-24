@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -46,7 +46,10 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_mac_generator import UniqueMacGenerator
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
 
-class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many-public-methods
+
+class UserDeployment(
+    Environmentable, Serializable
+):  # pylint: disable=too-many-public-methods
     """
     Interface for deployed services.
 
@@ -109,6 +112,7 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         method reasonOfError can be called multiple times, including
         serializations in middle, so remember to include reason of error in serializations
     """
+
     L1_CACHE = 1  # : Constant for Cache of level 1
     L2_CACHE = 2  # : Constant for Cache of level 2
 
@@ -147,7 +151,9 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
         """
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._service = kwargs['service']  # Raises an exception if service is not included. Parent
+        self._service = kwargs[
+            'service'
+        ]  # Raises an exception if service is not included. Parent
         self._publication = kwargs.get('publication', None)
         self._osmanager = kwargs.get('osmanager', None)
         self._dbService = kwargs.get('dbservice', None)
@@ -383,7 +389,11 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception('Base deploy for cache invoked! for class {0}'.format(self.__class__.__name__))
+        raise Exception(
+            'Base deploy for cache invoked! for class {0}'.format(
+                self.__class__.__name__
+            )
+        )
 
     def deployForUser(self, user: 'models.User') -> str:
         """
@@ -418,7 +428,11 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('Base deploy for user invoked! for class {0}'.format(self.__class__.__name__))
+        raise NotImplementedError(
+            'Base deploy for user invoked! for class {0}'.format(
+                self.__class__.__name__
+            )
+        )
 
     def checkState(self) -> str:
         """
@@ -443,7 +457,9 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('Base check state invoked! for class {0}'.format(self.__class__.__name__))
+        raise NotImplementedError(
+            'Base check state invoked! for class {0}'.format(self.__class__.__name__)
+        )
 
     def finish(self) -> None:
         """
@@ -549,7 +565,9 @@ class UserDeployment(Environmentable, Serializable):  # pylint: disable=too-many
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('destroy method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError(
+            'destroy method for class {0} not provided!'.format(self.__class__.__name__)
+        )
 
     def cancel(self) -> str:
         """

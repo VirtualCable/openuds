@@ -52,6 +52,7 @@ REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {
     i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases
 }
 
+
 class StatsManager:
     """
     Manager for statistics, so we can provide usefull info about platform usage
@@ -60,6 +61,7 @@ class StatsManager:
     that has counters (such as how many users is at a time active at platform, how many services
     are assigned, are in use, in cache, etc...
     """
+
     _manager: typing.Optional['StatsManager'] = None
 
     def __init__(self):
@@ -72,11 +74,23 @@ class StatsManager:
         return StatsManager._manager
 
     def __doCleanup(self, model):
-        minTime = time.mktime((getSqlDatetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple())
+        minTime = time.mktime(
+            (
+                getSqlDatetime()
+                - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())
+            ).timetuple()
+        )
         model.objects.filter(stamp__lt=minTime).delete()
 
     # Counter stats
-    def addCounter(self, owner_type: int, owner_id: int, counterType: int, counterValue: int, stamp: typing.Optional[datetime.datetime] = None) -> bool:
+    def addCounter(
+        self,
+        owner_type: int,
+        owner_id: int,
+        counterType: int,
+        counterValue: int,
+        stamp: typing.Optional[datetime.datetime] = None,
+    ) -> bool:
         """
         Adds a new counter stats to database.
 
@@ -97,13 +111,23 @@ class StatsManager:
             stamp = typing.cast(datetime.datetime, getSqlDatetime())
 
         # To Unix epoch
-        stampInt = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
+        stampInt = int(
+            time.mktime(stamp.timetuple())
+        )  # pylint: disable=maybe-no-member
 
         try:
-            StatsCounters.objects.create(owner_type=owner_type, owner_id=owner_id, counter_type=counterType, value=counterValue, stamp=stampInt)
+            StatsCounters.objects.create(
+                owner_type=owner_type,
+                owner_id=owner_id,
+                counter_type=counterType,
+                value=counterValue,
+                stamp=stampInt,
+            )
             return True
         except Exception:
-            logger.error('Exception handling counter stats saving (maybe database is full?)')
+            logger.error(
+                'Exception handling counter stats saving (maybe database is full?)'
+            )
         return False
 
     def getCounters(
@@ -116,7 +140,7 @@ class StatsManager:
         interval: typing.Optional[int],
         max_intervals: typing.Optional[int],
         limit: typing.Optional[int],
-        use_max: bool = False
+        use_max: bool = False,
     ) -> typing.Iterable:
         """
         Retrieves counters from item
@@ -146,7 +170,7 @@ class StatsManager:
             interval=interval,
             max_intervals=max_intervals,
             limit=limit,
-            use_max=use_max
+            use_max=use_max,
         )
 
     def cleanupCounters(self):
@@ -183,9 +207,12 @@ class StatsManager:
             stamp = getSqlDatetimeAsUnix()
         else:
             # To Unix epoch
-            stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
+            stamp = int(
+                time.mktime(stamp.timetuple())
+            )  # pylint: disable=maybe-no-member
 
         try:
+
             def getKwarg(fld: str) -> str:
                 val = None
                 for i in FLDS_EQUIV[fld]:
@@ -199,13 +226,29 @@ class StatsManager:
             fld3 = getKwarg('fld3')
             fld4 = getKwarg('fld4')
 
-            StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3, fld4=fld4)
+            StatsEvents.objects.create(
+                owner_type=owner_type,
+                owner_id=owner_id,
+                event_type=eventType,
+                stamp=stamp,
+                fld1=fld1,
+                fld2=fld2,
+                fld3=fld3,
+                fld4=fld4,
+            )
             return True
         except Exception:
-            logger.exception('Exception handling event stats saving (maybe database is full?)')
+            logger.exception(
+                'Exception handling event stats saving (maybe database is full?)'
+            )
         return False
 
-    def getEvents(self, ownerType: typing.Union[int, typing.Iterable[int]], eventType: typing.Union[int, typing.Iterable[int]], **kwargs):
+    def getEvents(
+        self,
+        ownerType: typing.Union[int, typing.Iterable[int]],
+        eventType: typing.Union[int, typing.Iterable[int]],
+        **kwargs
+    ):
         """
         Retrieves counters from item
 

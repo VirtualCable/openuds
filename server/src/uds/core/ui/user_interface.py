@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -404,7 +404,6 @@ class gui:
         def cleanStr(self):
             return str(self.value).strip()
 
-
     class NumericField(InputField):
         """
         This represents a numeric field. It apears with an spin up/down button.
@@ -428,8 +427,12 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
-            self._data['minValue'] = int(options.get('minValue', options.get('minvalue', '987654321')))
-            self._data['maxValue'] = int(options.get('maxValue', options.get('maxvalue', '987654321')))
+            self._data['minValue'] = int(
+                options.get('minValue', options.get('minvalue', '987654321'))
+            )
+            self._data['maxValue'] = int(
+                options.get('maxValue', options.get('maxvalue', '987654321'))
+            )
 
             self._type(gui.InputField.NUMERIC_TYPE)
 
@@ -540,7 +543,7 @@ class gui:
             self._type(gui.InputField.PASSWORD_TYPE)
 
         def cleanStr(self):
-            return str(self.value).strip()      
+            return str(self.value).strip()
 
     class HiddenField(InputField):
         """
@@ -863,7 +866,12 @@ class UserInterfaceType(type):
     better place
     """
 
-    def __new__(cls: typing.Type['UserInterfaceType'], classname: str, bases: typing.Tuple[type, ...], namespace: typing.Dict[str, typing.Any]) -> 'UserInterfaceType':
+    def __new__(
+        cls: typing.Type['UserInterfaceType'],
+        classname: str,
+        bases: typing.Tuple[type, ...],
+        namespace: typing.Dict[str, typing.Any],
+    ) -> 'UserInterfaceType':
         newClassDict = {}
         _gui: typing.MutableMapping[str, gui.InputField] = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
@@ -872,7 +880,9 @@ class UserInterfaceType(type):
                 _gui[attrName] = attr
             newClassDict[attrName] = attr
         newClassDict['_gui'] = _gui
-        return  typing.cast('UserInterfaceType', type.__new__(cls, classname, bases, newClassDict))
+        return typing.cast(
+            'UserInterfaceType', type.__new__(cls, classname, bases, newClassDict)
+        )
 
 
 class UserInterface(metaclass=UserInterfaceType):

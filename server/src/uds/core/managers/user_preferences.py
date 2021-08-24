@@ -61,7 +61,9 @@ class UserPrefsManager:
     def __nameFor(self, module, name):
         return module + "_" + name
 
-    def registerPrefs(self, modName: str, friendlyModName: str, prefs: typing.Any) -> None:
+    def registerPrefs(
+        self, modName: str, friendlyModName: str, prefs: typing.Any
+    ) -> None:
         """
         Register an array of preferences for a module
         """
@@ -81,7 +83,9 @@ class UserPrefsManager:
         logger.debug('Preferences: %s', prefs)
         return prefs
 
-    def setPreferenceForUser(self, user: 'User', modName: str, prefName: str, value: str):
+    def setPreferenceForUser(
+        self, user: 'User', modName: str, prefName: str, value: str
+    ):
         try:
             user.preferences.create(module=modName, name=prefName, value=value)  # type: ignore
         except Exception:  # Already exits, update it
@@ -99,7 +103,13 @@ class UserPrefsManager:
                 name = self.__nameFor(mod, p.getName())
                 val = data[name] if name in data else p.getDefValue()
                 form.fields[name] = p.formField(val)
-            res += '<fieldset class="prefset"><legend>' + v['friendlyName'] + '</legend>' + form.as_p() + '</fieldset>'
+            res += (
+                '<fieldset class="prefset"><legend>'
+                + v['friendlyName']
+                + '</legend>'
+                + form.as_p()
+                + '</fieldset>'
+            )
         return res
 
     def getGuiForUserPreferences(self, user=None):
@@ -113,7 +123,13 @@ class UserPrefsManager:
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
                 val = data[name] if name in data else p.getDefValue()
-                grp.append({'name': name, 'gui': p.guiField(val).guiDescription(), 'value': val})
+                grp.append(
+                    {
+                        'name': name,
+                        'gui': p.guiField(val).guiDescription(),
+                        'value': val,
+                    }
+                )
             res.append({'moduleLabel': v['friendlyName'], 'prefs': grp})
         return res
 
@@ -136,11 +152,19 @@ class UserPrefsManager:
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
                 logger.debug(name)
-                prefs.append({'module': mod, 'name': p.getName(), 'value': form.cleaned_data[name]})
+                prefs.append(
+                    {
+                        'module': mod,
+                        'name': p.getName(),
+                        'value': form.cleaned_data[name],
+                    }
+                )
         user.preferences.all().delete()
         try:
             for p in prefs:
-                user.preferences.create(module=p['module'], name=p['name'], value=p['value'])
+                user.preferences.create(
+                    module=p['module'], name=p['name'], value=p['value']
+                )
         except Exception:  # User does not exists
             logger.info('Trying to dave user preferences failed (probably root user?)')
         return None
@@ -156,10 +180,14 @@ class UserPrefsManager:
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
                 if name in data:
-                    prefs.append({'module': mod, 'name': p.getName(), 'value': data[name]})
+                    prefs.append(
+                        {'module': mod, 'name': p.getName(), 'value': data[name]}
+                    )
         user.preferences.all().delete()
         for p in prefs:
-            user.preferences.create(module=p['module'], name=p['name'], value=p['value'])
+            user.preferences.create(
+                module=p['module'], name=p['name'], value=p['value']
+            )
 
 
 class UserPreference(object):
@@ -190,7 +218,6 @@ class UserPreference(object):
         return None
 
 
-
 class CommonPrefs(object):
     SZ_PREF = 'screenSize'
     SZ_640x480 = '1'
@@ -219,7 +246,7 @@ class CommonPrefs(object):
             CommonPrefs.SZ_1024x768: (1024, 768),
             CommonPrefs.SZ_1366x768: (1366, 768),
             CommonPrefs.SZ_1920x1080: (1920, 1080),
-            CommonPrefs.SZ_FULLSCREEN: (-1, -1)
+            CommonPrefs.SZ_FULLSCREEN: (-1, -1),
         }.get(size, (1024, 768))
 
     @staticmethod
@@ -231,5 +258,5 @@ class CommonPrefs(object):
             CommonPrefs.DEPTH_8: 8,
             CommonPrefs.DEPTH_16: 16,
             CommonPrefs.DEPTH_24: 24,
-            CommonPrefs.DEPTH_32: 32
+            CommonPrefs.DEPTH_32: 32,
         }.get(depth, 24)

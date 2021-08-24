@@ -44,9 +44,11 @@ from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 
+
 class BaseThread(threading.Thread):
     def notifyTermination(self):
         raise NotImplementedError
+
 
 class SchedulerThread(BaseThread):
     def run(self):
@@ -109,7 +111,9 @@ class TaskManager:
         noSchedulers: int = GlobalConfig.SCHEDULER_THREADS.getInt()
         noDelayedTasks: int = GlobalConfig.DELAYED_TASKS_THREADS.getInt()
 
-        logger.info('Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks)
+        logger.info(
+            'Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks
+        )
 
         threads: typing.List[BaseThread] = []
         thread: BaseThread

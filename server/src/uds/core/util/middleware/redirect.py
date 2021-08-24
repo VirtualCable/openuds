@@ -40,6 +40,7 @@ class RedirectMiddleware:
 
     Some paths will not be redirected, to avoid problems, but they are advised to use SSL (this is for backwards compat)
     """
+
     NO_REDIRECT = [
         'rest',
         'pam',
@@ -51,7 +52,7 @@ class RedirectMiddleware:
         # Test client can be http
         'uds/rest/client/test',
         # And also the tunnel
-        'uds/rest/tunnel'
+        'uds/rest/tunnel',
     ]
 
     def __init__(self, get_response):
@@ -65,7 +66,11 @@ class RedirectMiddleware:
                 redirect = False
                 break
 
-        if redirect and not request.is_secure() and GlobalConfig.REDIRECT_TO_HTTPS.getBool():
+        if (
+            redirect
+            and not request.is_secure()
+            and GlobalConfig.REDIRECT_TO_HTTPS.getBool()
+        ):
             if request.method == 'POST':
                 # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
                 url = reverse('page.login')

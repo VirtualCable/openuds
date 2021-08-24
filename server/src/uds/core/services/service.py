@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.U.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -54,6 +54,7 @@ if typing.TYPE_CHECKING:
     from uds import models
 
 logger = logging.getLogger(__name__)
+
 
 class Service(Module):
     """
@@ -138,7 +139,9 @@ class Service(Module):
     usesCache = False
 
     # : Tooltip to be used if services uses cache at administration interface, indicated by :py:attr:.usesCache
-    cacheTooltip = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip = _(
+        'None'
+    )  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If user deployments can be cached (see :py:attr:.usesCache), may he also can provide a secondary cache,
     # : that is no more that user deployments that are "almost ready" to be used, but preperably consumes less
@@ -147,7 +150,9 @@ class Service(Module):
     usesCache_L2 = False  # : If we need to generate a "Level 2" cache for this service (i.e., L1 could be running machines and L2 suspended machines)
 
     # : Tooltip to be used if services uses L2 cache at administration interface, indicated by :py:attr:.usesCache_L2
-    cacheTooltip_L2 = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip_L2 = _(
+        'None'
+    )  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If the service needs a o.s. manager (see os managers section)
     needsManager: bool = False
@@ -196,7 +201,13 @@ class Service(Module):
 
     _provider: 'services.ServiceProvider'
 
-    def __init__(self, environment, parent: 'services.ServiceProvider', values: Module.ValuesType = None, uuid: typing.Optional[str] = None):
+    def __init__(
+        self,
+        environment,
+        parent: 'services.ServiceProvider',
+        values: Module.ValuesType = None,
+        uuid: typing.Optional[str] = None,
+    ):
         """
         Do not forget to invoke this in your derived class using "super().__init__(environment, parent, values)".
         We want to use the env, parent methods outside class. If not called, you must implement your own methods
@@ -232,7 +243,9 @@ class Service(Module):
         """
         return self._provider
 
-    def requestServicesForAssignation(self, **kwargs) -> typing.Iterable[UserDeployment]:
+    def requestServicesForAssignation(
+        self, **kwargs
+    ) -> typing.Iterable[UserDeployment]:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -240,7 +253,11 @@ class Service(Module):
         We will access the returned array in "name" basis. This means that the service will be assigned by "name", so be care that every single service
         returned are not repeated... :-)
         """
-        raise Exception('The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(self.__class__.__name__))
+        raise Exception(
+            'The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(
+                self.__class__.__name__
+            )
+        )
 
     def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
         """
@@ -268,7 +285,9 @@ class Service(Module):
         """
         return []
 
-    def assignFromAssignables(self, assignableId: str, user: 'models.User', userDeployment: UserDeployment) -> str:
+    def assignFromAssignables(
+        self, assignableId: str, user: 'models.User', userDeployment: UserDeployment
+    ) -> str:
         """
         Assigns from it internal assignable list to an user
 
@@ -296,7 +315,7 @@ class Service(Module):
         Looks for an "owned" id in the provided list. If found, returns it, else return None
 
         Args:
-            idsList (typing.Iterable[str]): List of IPs and MACs that acts as 
+            idsList (typing.Iterable[str]): List of IPs and MACs that acts as
 
         Returns:
             typing.Optional[str]: [description]
@@ -340,7 +359,7 @@ class Service(Module):
     def notifyInitialization(self, id: str) -> None:
         """
         In the case that the startup of a "tokenized" method is invoked (unmanaged method of actor_v3 rest api),
-        this method is forwarded, so the tokenized method could take proper actions on a "known-to-be-free service"      
+        this method is forwarded, so the tokenized method could take proper actions on a "known-to-be-free service"
 
         Args:
             id (str): Id validated through "getValidId"
@@ -356,21 +375,26 @@ class Service(Module):
             self.storage.delete('__nfo_' + id)
         return value
 
-
     def doLog(self, level: int, message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
         from uds.models import Service as DBService
+
         if self.getUuid():
-            log.doLog(DBService.objects.get(uuid=self.getUuid()), level, message, log.SERVICE)
+            log.doLog(
+                DBService.objects.get(uuid=self.getUuid()), level, message, log.SERVICE
+            )
 
     @classmethod
     def canAssign(cls) -> bool:
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.listAssignables is not Service.listAssignables  and cls.assignFromAssignables is not Service.assignFromAssignables
+        return (
+            cls.listAssignables is not Service.listAssignables
+            and cls.assignFromAssignables is not Service.assignFromAssignables
+        )
 
     def __str__(self):
         """

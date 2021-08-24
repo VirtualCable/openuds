@@ -179,7 +179,9 @@ class CalendarChecker:
 
         return bool(data[dtime.hour * 60 + dtime.minute])
 
-    def nextEvent(self, checkFrom=None, startEvent=True, offset=None) -> typing.Optional[datetime.datetime]:
+    def nextEvent(
+        self, checkFrom=None, startEvent=True, offset=None
+    ) -> typing.Optional[datetime.datetime]:
         """
         Returns next event for this interval
         """

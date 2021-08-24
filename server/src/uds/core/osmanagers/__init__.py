@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,4 +40,5 @@ def factory():
     Returns factory for register/access to authenticators
     """
     from .osmfactory import OSManagersFactory
+
     return OSManagersFactory.factory()

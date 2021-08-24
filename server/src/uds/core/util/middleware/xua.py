@@ -44,6 +44,7 @@ class XUACompatibleMiddleware:
     This header tells to Internet Explorer to render page with latest
     possible version or to use chrome frame if it is installed.
     """
+
     def __init__(self, get_response):
         self.get_response = get_response
 

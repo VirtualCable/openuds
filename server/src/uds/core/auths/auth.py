@@ -155,6 +155,7 @@ def webLoginRequired(
 
     return decorator
 
+
 # Helper for checking if requests is from trusted source
 def isTrustedSource(ip: str) -> bool:
     return net.ipInNetwork(ip, GlobalConfig.TRUSTED_SOURCES.get(True))
@@ -224,7 +225,7 @@ def __registerUser(
         # And add an login event
         events.addEvent(
             authenticator, events.ET_LOGIN, username=username, srcip=request.ip
-        ) 
+        )
         events.addEvent(
             authenticator,
             events.ET_PLATFORM,
@@ -345,7 +346,10 @@ def authInfoUrl(authenticator: typing.Union[str, bytes, Authenticator]) -> str:
 
 
 def webLogin(
-    request: 'ExtendedHttpRequest', response: typing.Optional[HttpResponse], user: User, password: str
+    request: 'ExtendedHttpRequest',
+    response: typing.Optional[HttpResponse],
+    user: User,
+    password: str,
 ) -> bool:
     """
     Helper function to, once the user is authenticated, store the information at the user session.
@@ -393,7 +397,9 @@ def webPassword(request: HttpRequest) -> str:
     so we can provide it to remote sessions.
     """
     if hasattr(request, 'session'):
-        return cryptoManager().symDecrpyt(request.session.get(PASS_KEY, ''), getUDSCookie(request))  # recover as original unicode string
+        return cryptoManager().symDecrpyt(
+            request.session.get(PASS_KEY, ''), getUDSCookie(request)
+        )  # recover as original unicode string
     else:  # No session, get from _session instead, this is an "client" REST request
         return cryptoManager().symDecrpyt(request._cryptedpass, request._scrambler)  # type: ignore
 
@@ -428,7 +434,6 @@ def webLogout(
 
     # Try to delete session
     request.session.flush()
-    
 
     response = HttpResponseRedirect(request.build_absolute_uri(exit_url))
     if authenticator:
@@ -437,7 +442,10 @@ def webLogout(
 
 
 def authLogLogin(
-    request: 'ExtendedHttpRequest', authenticator: Authenticator, userName: str, logStr: str = ''
+    request: 'ExtendedHttpRequest',
+    authenticator: Authenticator,
+    userName: str,
+    logStr: str = '',
 ) -> None:
     """
     Logs authentication

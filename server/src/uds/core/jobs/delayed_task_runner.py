@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -10,7 +10,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -54,13 +54,14 @@ class DelayedTaskThread(threading.Thread):
     """
     Class responsible of executing a delayed task in its own thread
     """
+
     _taskInstance: DelayedTask
 
     def __init__(self, taskInstance: DelayedTask) -> None:
         super().__init__()
         self._taskInstance = taskInstance
 
-    def run(self):
+    def run(self) -> None:
         try:
             self._taskInstance.execute()
         except Exception as e:
@@ -73,8 +74,8 @@ class DelayedTaskRunner:
     """
     Delayed task runner class
     """
-    # How often tasks are checked
-    granularity: int = 2
+
+    granularity: int = 2  # we check for delayed tasks every "granularity" seconds
 
     # to keep singleton DelayedTaskRunner
     _runner: typing.ClassVar[typing.Optional['DelayedTaskRunner']] = None
@@ -106,14 +107,22 @@ class DelayedTaskRunner:
 
     def executeOneDelayedTask(self) -> None:
         now = getSqlDatetime()
-        filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=30))
+        filt = Q(execution_time__lt=now) | Q(
+            insert_date__gt=now + timedelta(seconds=30)
+        )
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
         try:
             with transaction.atomic():  # Encloses
                 # Throws exception if no delayed task is avilable
-                task = DBDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
+                task = (
+                    DBDelayedTask.objects.select_for_update()
+                    .filter(filt)
+                    .order_by('execution_time')[0]
+                )  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
-                    logger.warning('Executed %s due to insert_date being in the future!', task.type)
+                    logger.warning(
+                        'Executed %s due to insert_date being in the future!', task.type
+                    )
                 taskInstanceDump = codecs.decode(task.instance.encode(), 'base64')
                 task.delete()
             taskInstance = pickle.loads(taskInstanceDump)
@@ -140,10 +149,21 @@ class DelayedTaskRunner:
         instanceDump = codecs.encode(pickle.dumps(instance), 'base64').decode()
         typeName = str(cls.__module__ + '.' + cls.__name__)
 
-        logger.debug('Inserting delayed task %s with %s bytes (%s)', typeName, len(instanceDump), exec_time)
+        logger.debug(
+            'Inserting delayed task %s with %s bytes (%s)',
+            typeName,
+            len(instanceDump),
+            exec_time,
+        )
 
-        DBDelayedTask.objects.create(type=typeName, instance=instanceDump,  # @UndefinedVariable
-                                     insert_date=now, execution_delay=delay, execution_time=exec_time, tag=tag)
+        DBDelayedTask.objects.create(
+            type=typeName,
+            instance=instanceDump,  # @UndefinedVariable
+            insert_date=now,
+            execution_delay=delay,
+            execution_time=exec_time,
+            tag=tag,
+        )
 
     def insert(self, instance: DelayedTask, delay: int, tag: str = '') -> bool:
         retries = 3
@@ -161,14 +181,18 @@ class DelayedTaskRunner:
                 time.sleep(1)  # Wait a bit before next try...
         # If retries == 0, this is a big error
         if retries == 0:
-            logger.error("Could not insert delayed task!!!! %s %s %s", instance, delay, tag)
+            logger.error(
+                "Could not insert delayed task!!!! %s %s %s", instance, delay, tag
+            )
             return False
         return True
 
     def remove(self, tag: str) -> None:
         try:
             with transaction.atomic():
-                DBDelayedTask.objects.select_for_update().filter(tag=tag).delete()  # @UndefinedVariable
+                DBDelayedTask.objects.select_for_update().filter(
+                    tag=tag
+                ).delete()  # @UndefinedVariable
         except Exception as e:
             logger.exception('Exception removing a delayed task %s: %s', e.__class__, e)
 

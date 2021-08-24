@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+
 class AuthenticatorException(Exception):
     """
     Generic authentication exception

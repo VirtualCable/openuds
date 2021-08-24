@@ -55,11 +55,11 @@ logger = logging.getLogger(__name__)
 # (None, NumericError) if errorview redirection
 # (User, password_string) if all is ok
 def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
-        request: 'ExtendedHttpRequest',
-        form: 'LoginForm',
-        tag: typing.Optional[str] = None
-    ) -> typing.Tuple[typing.Optional['User'], typing.Any]:
-    host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
+    request: 'ExtendedHttpRequest', form: 'LoginForm', tag: typing.Optional[str] = None
+) -> typing.Tuple[typing.Optional['User'], typing.Any]:
+    host = (
+        request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
+    )  # Last one is a placeholder in case we can't locate host name
 
     # Get Authenticators limitation
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
@@ -81,7 +81,9 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
     if form.is_valid():
         os = request.os
         try:
-            authenticator = Authenticator.objects.get(uuid=processUuid(form.cleaned_data['authenticator']))
+            authenticator = Authenticator.objects.get(
+                uuid=processUuid(form.cleaned_data['authenticator'])
+            )
         except Exception:
             authenticator = Authenticator()
         userName = form.cleaned_data['user']
@@ -91,11 +93,20 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         cache = Cache('auth')
         cacheKey = str(authenticator.id) + userName
         tries = cache.get(cacheKey) or 0
-        triesByIp = (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.getBool() else 0
+        triesByIp = (
+            (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.getBool() else 0
+        )
         maxTries = GlobalConfig.MAX_LOGIN_TRIES.getInt()
-        if (authenticator.getInstance().blockUserOnLoginFailures is True and (tries >= maxTries) or triesByIp >= maxTries):
+        if (
+            authenticator.getInstance().blockUserOnLoginFailures is True
+            and (tries >= maxTries)
+            or triesByIp >= maxTries
+        ):
             authLogLogin(request, authenticator, userName, 'Temporarily blocked')
-            return (None, _('Too many authentication errrors. User temporarily blocked'))
+            return (
+                None,
+                _('Too many authentication errrors. User temporarily blocked'),
+            )
 
         password = form.cleaned_data['password']
         user = None
@@ -106,9 +117,14 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
 
         if user is None:
             logger.debug("Invalid user %s (access denied)", userName)
-            cache.put(cacheKey, tries+1, GlobalConfig.LOGIN_BLOCK.getInt())
-            cache.put(request.ip, triesByIp+1, GlobalConfig.LOGIN_BLOCK.getInt())
-            authLogLogin(request, authenticator, userName, 'Access denied (user not allowed by UDS)')
+            cache.put(cacheKey, tries + 1, GlobalConfig.LOGIN_BLOCK.getInt())
+            cache.put(request.ip, triesByIp + 1, GlobalConfig.LOGIN_BLOCK.getInt())
+            authLogLogin(
+                request,
+                authenticator,
+                userName,
+                'Access denied (user not allowed by UDS)',
+            )
             return (None, _('Access denied'))
 
         request.session.cycle_key()

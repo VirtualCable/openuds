@@ -51,9 +51,17 @@ class StateUpdater:
     userService: UserService
     userServiceInstalce: UserDeployment
 
-    def __init__(self, userService: UserService, userServiceInstance: typing.Optional[UserDeployment] = None):
+    def __init__(
+        self,
+        userService: UserService,
+        userServiceInstance: typing.Optional[UserDeployment] = None,
+    ):
         self.userService = userService
-        self.userServiceInstance = userServiceInstance if userServiceInstance is not None else userService.getInstance()
+        self.userServiceInstance = (
+            userServiceInstance
+            if userServiceInstance is not None
+            else userService.getInstance()
+        )
 
     def setError(self, msg: typing.Optional[str] = None):
         logger.error('Got error on processor: %s', msg)
@@ -80,10 +88,15 @@ class StateUpdater:
         executor = {
             State.RUNNING: self.running,
             State.ERROR: self.error,
-            State.FINISHED: self.finish
+            State.FINISHED: self.finish,
         }.get(state, self.error)
 
-        logger.debug('Running Executor for %s with state %s and executor %s', self.userService.friendly_name, State.toString(state), executor)
+        logger.debug(
+            'Running Executor for %s with state %s and executor %s',
+            self.userService.friendly_name,
+            State.toString(state),
+            executor,
+        )
 
         try:
             executor()
@@ -104,7 +117,6 @@ class StateUpdater:
 
 
 class UpdateFromPreparing(StateUpdater):
-
     def checkOsManagerRelated(self) -> str:
         osManager = self.userServiceInstance.osmanager()
 
@@ -120,7 +132,12 @@ class UpdateFromPreparing(StateUpdater):
         else:
             stateOs = State.FINISHED
 
-        logger.debug('State %s, StateOS %s for %s', State.toString(state), State.toString(stateOs), self.userService.friendly_name)
+        logger.debug(
+            'State %s, StateOS %s for %s',
+            State.toString(state),
+            State.toString(stateOs),
+            self.userService.friendly_name,
+        )
         if stateOs == State.RUNNING:
             self.userService.setOsState(State.PREPARING)
         else:
@@ -130,7 +147,9 @@ class UpdateFromPreparing(StateUpdater):
             rs = self.userServiceInstance.notifyReadyFromOsManager('')
             if rs != State.FINISHED:
                 self.checkLater()
-                state = self.userService.state  # No not alter current state if after notifying os manager the user service keeps working
+                state = (
+                    self.userService.state
+                )  # No not alter current state if after notifying os manager the user service keeps working
             else:
                 self.logIp()
 
@@ -142,7 +161,9 @@ class UpdateFromPreparing(StateUpdater):
             self.save(State.REMOVABLE)  # And start removing it
             return
 
-        state = State.REMOVABLE  # By default, if not valid publication, service will be marked for removal on preparation finished
+        state = (
+            State.REMOVABLE
+        )  # By default, if not valid publication, service will be marked for removal on preparation finished
         if self.userService.isValidPublication():
             logger.debug('Publication is valid for %s', self.userService.friendly_name)
             state = self.checkOsManagerRelated()
@@ -153,6 +174,7 @@ class UpdateFromPreparing(StateUpdater):
 
         self.save(state)
 
+
 class UpdateFromRemoving(StateUpdater):
     def finish(self):
         osManager = self.userServiceInstance.osmanager()
@@ -160,6 +182,7 @@ class UpdateFromRemoving(StateUpdater):
             osManager.release(self.userService)
 
         self.save(State.REMOVED)
+
 
 class UpdateFromCanceling(StateUpdater):
     def finish(self):
@@ -169,50 +192,76 @@ class UpdateFromCanceling(StateUpdater):
 
         self.save(State.CANCELED)
 
+
 class UpdateFromOther(StateUpdater):
     def finish(self):
-        self.setError('Unknown running transition from {}'.format(State.toString(self.userService.state)))
+        self.setError(
+            'Unknown running transition from {}'.format(
+                State.toString(self.userService.state)
+            )
+        )
 
     def running(self):
-        self.setError('Unknown running transition from {}'.format(State.toString(self.userService.state)))
+        self.setError(
+            'Unknown running transition from {}'.format(
+                State.toString(self.userService.state)
+            )
+        )
 
 
 class UserServiceOpChecker(DelayedTask):
     """
     This is the delayed task responsible of executing the service tasks and the service state transitions
     """
+
     def __init__(self, service):
         super().__init__()
         self._svrId = service.id
         self._state = service.state
 
     @staticmethod
-    def makeUnique(userService: UserService, userServiceInstance: UserDeployment, state: str):
+    def makeUnique(
+        userService: UserService, userServiceInstance: UserDeployment, state: str
+    ):
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
         """
         DelayedTaskRunner.runner().remove(USERSERVICE_TAG + userService.uuid)
-        UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
+        UserServiceOpChecker.checkAndUpdateState(
+            userService, userServiceInstance, state
+        )
 
     @staticmethod
-    def checkAndUpdateState(userService: UserService, userServiceInstance: UserDeployment, state: str):
+    def checkAndUpdateState(
+        userService: UserService, userServiceInstance: UserDeployment, state: str
+    ):
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
         """
         try:
             # Fills up basic data
-            userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
-            userService.friendly_name = userServiceInstance.getName()  # And name, both methods can modify serviceInstance, so we save it later
+            userService.unique_id = (
+                userServiceInstance.getUniqueId()
+            )  # Updates uniqueId
+            userService.friendly_name = (
+                userServiceInstance.getName()
+            )  # And name, both methods can modify serviceInstance, so we save it later
             userService.save(update_fields=['unique_id', 'friendly_name'])
 
             updater = {
                 State.PREPARING: UpdateFromPreparing,
                 State.REMOVING: UpdateFromRemoving,
-                State.CANCELING: UpdateFromCanceling
+                State.CANCELING: UpdateFromCanceling,
             }.get(userService.state, UpdateFromOther)
 
-            logger.debug('Updating %s from %s with updater %s and state %s', userService.friendly_name, State.toString(userService.state), updater, state)
+            logger.debug(
+                'Updating %s from %s with updater %s and state %s',
+                userService.friendly_name,
+                State.toString(userService.state),
+                updater,
+                state,
+            )
 
             updater(userService, userServiceInstance).run(state)
 
@@ -232,7 +281,11 @@ class UserServiceOpChecker(DelayedTask):
         # Do not add task if already exists one that updates this service
         if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + userService.uuid):
             return
-        DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + userService.uuid)
+        DelayedTaskRunner.runner().insert(
+            UserServiceOpChecker(userService),
+            ci.suggestedTime,
+            USERSERVICE_TAG + userService.uuid,
+        )
 
     def run(self):
         logger.debug('Checking user service finished %s', self._svrId)
@@ -248,14 +301,16 @@ class UserServiceOpChecker(DelayedTask):
             state = ci.checkState()
             UserServiceOpChecker.checkAndUpdateState(uService, ci, state)
         except UserService.DoesNotExist as e:
-            logger.error('User service not found (erased from database?) %s : %s', e.__class__, e)
+            logger.error(
+                'User service not found (erased from database?) %s : %s', e.__class__, e
+            )
         except Exception as e:
             # Exception caught, mark service as errored
             logger.exception("Error %s, %s :", e.__class__, e)
-            if uService is not None:
+            if uService:
                 log.doLog(uService, log.ERROR, 'Exception: {}'.format(e), log.INTERNAL)
-            try:
-                uService.setState(State.ERROR)
-                uService.save(update_fields=['data', 'state', 'state_date'])
-            except Exception:
-                logger.error('Can\'t update state of uService object')
+                try:
+                    uService.setState(State.ERROR)
+                    uService.save(update_fields=['data', 'state', 'state_date'])
+                except Exception:
+                    logger.error('Can\'t update state of uService object')

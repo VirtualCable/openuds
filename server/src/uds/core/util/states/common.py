@@ -73,7 +73,7 @@ string = {
     FOR_EXECUTE: _('Waiting execution'),
     BALANCING: _('Balancing'),
     MAINTENANCE: _('In maintenance'),
-    WAITING_OS: _('Waiting OS')
+    WAITING_OS: _('Waiting OS'),
 }
 
 # States that are merely for "information" to the user. They don't contain any usable instance

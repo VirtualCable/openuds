@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -61,6 +61,7 @@ class Transport(Module):
     Server will iterate thought them and look for an identifier associated with the service. This list is a comma separated values (i.e. AA:BB:CC:DD:EE:FF,00:11:22:...)
     Remember also that we inherit the test and check methods from BaseModule
     """
+
     # Transport informational related data, inherited from BaseModule
     typeName = 'Base Transport Manager'
     typeType = 'Base Transport'
@@ -110,8 +111,16 @@ class Transport(Module):
         Invoked when Transport is deleted
         """
 
-    def testServer(self, userService: 'models.UserService', ip: str, port: typing.Union[str, int], timeout: int = 4) -> bool:
-        proxy: typing.Optional['models.Proxy'] = userService.deployed_service.service.proxy
+    def testServer(
+        self,
+        userService: 'models.UserService',
+        ip: str,
+        port: typing.Union[str, int],
+        timeout: int = 4,
+    ) -> bool:
+        proxy: typing.Optional[
+            'models.Proxy'
+        ] = userService.deployed_service.service.proxy
         if proxy:
             return proxy.doTestServer(ip, port, timeout)
         return connection.testServer(ip, str(port), timeout)
@@ -123,7 +132,9 @@ class Transport(Module):
         """
         return False
 
-    def getCustomAvailableErrorMsg(self, userService: 'models.UserService', ip: str) -> str:
+    def getCustomAvailableErrorMsg(
+        self, userService: 'models.UserService', ip: str
+    ) -> str:
         """
         Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
         Override this in yours transports if needed
@@ -156,11 +167,11 @@ class Transport(Module):
         return cls.getConnectionInfo is not Transport.getConnectionInfo
 
     def getConnectionInfo(
-            self,
-            userService: typing.Union['models.UserService', 'models.ServicePool'],
-            user: 'models.User',
-            password: str
-        ) -> typing.Mapping[str, str]:
+        self,
+        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        user: 'models.User',
+        password: str,
+    ) -> typing.Mapping[str, str]:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
@@ -186,7 +197,9 @@ class Transport(Module):
         """
         return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+    def processedUser(
+        self, userService: 'models.UserService', user: 'models.User'
+    ) -> str:
         """
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification
@@ -195,64 +208,75 @@ class Transport(Module):
         return user.name
 
     def getUDSTransportScript(
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
         """
-        return "raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))", \
-            'EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'\
-            '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'\
-            '4xlkwMjAIytp8jaMHKkzvcihiIAMtaicP786FZCwGMmFTH4Z'\
-            'A9i7YWaSzT95h84kirAG67J0GWKiyATxs6mtxBNaLgqU4juA'\
-            'Qn98hYp5ffWa5FQDSAmheiDyQbCXMRwtWcxVHVQCAoZbsvCe'\
-            'njKc+FaeKNmXsYOgmcj+pz8IViNOyTbueP9u7lTzuBlIyV+7'\
-            'OlBPTqb5yA5wOBicKIpplPd8V71Oh3pdpRvdlvVbbwNfsCl5'\
-            'v6s1X20MxaQOSwM5z02eY1lJSbLIp8d9WRkfVty0HP/4Z8JZ'\
-            'kavkWNaGiKXEZXqojx/ZdzvTfvBkYrREQ8lMCIvtawBTysus'\
-            'IV4vHnDRdSmRxpYdj+1SNfzB0s1VuY6F7bSdBvgzja4P3Zbo'\
-            'Z63yNGuBhIsqUDA2ARmiMHRx9jr6eilFBKhoyWgNi9izTkar'\
-            '3iMYtXfvcFnmz4jvuJHUccbpUo4O31K2G7OaqlLylQ5dCu62'\
-            'JuVuquKKSfiwOIdYcdPJ6gvpgkQQDPqt7wN+duyZA0FI5F4h'\
-            'O6acQZmbjBCqZoo9Qsg7k9cTcalNkc5flEYAk1mULnddgDM6'\
-            'YGmoJgVnDr0=', {'transport': transport.name}
+        return (
+            "raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))",
+            'EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'
+            '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'
+            '4xlkwMjAIytp8jaMHKkzvcihiIAMtaicP786FZCwGMmFTH4Z'
+            'A9i7YWaSzT95h84kirAG67J0GWKiyATxs6mtxBNaLgqU4juA'
+            'Qn98hYp5ffWa5FQDSAmheiDyQbCXMRwtWcxVHVQCAoZbsvCe'
+            'njKc+FaeKNmXsYOgmcj+pz8IViNOyTbueP9u7lTzuBlIyV+7'
+            'OlBPTqb5yA5wOBicKIpplPd8V71Oh3pdpRvdlvVbbwNfsCl5'
+            'v6s1X20MxaQOSwM5z02eY1lJSbLIp8d9WRkfVty0HP/4Z8JZ'
+            'kavkWNaGiKXEZXqojx/ZdzvTfvBkYrREQ8lMCIvtawBTysus'
+            'IV4vHnDRdSmRxpYdj+1SNfzB0s1VuY6F7bSdBvgzja4P3Zbo'
+            'Z63yNGuBhIsqUDA2ARmiMHRx9jr6eilFBKhoyWgNi9izTkar'
+            '3iMYtXfvcFnmz4jvuJHUccbpUo4O31K2G7OaqlLylQ5dCu62'
+            'JuVuquKKSfiwOIdYcdPJ6gvpgkQQDPqt7wN+duyZA0FI5F4h'
+            'O6acQZmbjBCqZoo9Qsg7k9cTcalNkc5flEYAk1mULnddgDM6'
+            'YGmoJgVnDr0=',
+            {'transport': transport.name},
+        )
 
     def getEncodedTransportScript(
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Mapping[str, str]]:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> typing.Tuple[str, str, typing.Mapping[str, str]]:
         """
         Encodes the script so the client can understand it
         """
-        script, signature, params = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
+        script, signature, params = self.getUDSTransportScript(
+            userService, transport, ip, os, user, password, request
+        )
         logger.debug('Transport script: %s', script)
-        
-        return codecs.encode(codecs.encode(script.encode(), 'bz2'), 'base64').decode().replace('\n', ''), signature, params
+
+        return (
+            codecs.encode(codecs.encode(script.encode(), 'bz2'), 'base64')
+            .decode()
+            .replace('\n', ''),
+            signature,
+            params,
+        )
 
     def getLink(
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> str:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> str:
         """
         Must override if transport does provides its own link
         If transport provides own link, this method provides the link itself

@@ -49,7 +49,7 @@ from uds.models import Authenticator, Image, Network, Transport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequest 
+    from uds.core.util.request import ExtendedHttpRequest
     from uds.models import User
 
 logger = logging.getLogger(__name__)
@@ -61,13 +61,21 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 
 @register.simple_tag(takes_context=True)
 def udsJs(request: 'ExtendedHttpRequest') -> str:
-    auth_host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
+    auth_host = (
+        request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
+    )  # Last one is a placeholder in case we can't locate host name
 
     role: str = 'user'
     user: typing.Optional['User'] = request.user
 
     if user:
-        role = 'staff' if user.isStaff() and not user.is_admin else 'admin' if user.is_admin else 'user'
+        role = (
+            'staff'
+            if user.isStaff() and not user.is_admin
+            else 'admin'
+            if user.is_admin
+            else 'user'
+        )
         if request.session.get('restricted', False):
             role = 'restricted'
 
@@ -87,7 +95,9 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         try:
             # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
             # tag, later will remove "auth_host"
-            authenticators = Authenticator.objects.filter(small_name__in=[auth_host, tag])[:]
+            authenticators = Authenticator.objects.filter(
+                small_name__in=[auth_host, tag]
+            )[:]
         except Exception as e:
             authenticators = []
     else:
@@ -95,8 +105,15 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
 
     # logger.debug('Authenticators PRE: %s', authenticators)
 
-    if tag and authenticators:  # Refilter authenticators, visible and with this tag if required
-        authenticators = [x for x in authenticators if x.small_name == tag or (tag == 'disabled' and x.getType().isCustom() is False)]
+    if (
+        tag and authenticators
+    ):  # Refilter authenticators, visible and with this tag if required
+        authenticators = [
+            x
+            for x in authenticators
+            if x.small_name == tag
+            or (tag == 'disabled' and x.getType().isCustom() is False)
+        ]
 
     if not authenticators:
         try:
@@ -117,15 +134,19 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'name': auth.name,
             'label': auth.small_name,
             'priority': auth.priority,
-            'is_custom': theType.isCustom()
+            'is_custom': theType.isCustom(),
         }
 
     config = {
         'version': VERSION,
         'version_stamp': VERSION_STAMP,
         'language': get_language(),
-        'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
-        'authenticators': [getAuthInfo(auth) for auth in authenticators if auth.getType()],
+        'available_languages': [
+            {'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES
+        ],
+        'authenticators': [
+            getAuthInfo(auth) for auth in authenticators if auth.getType()
+        ],
         'tag': tag,
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
@@ -142,7 +163,8 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         'launcher_wait_time': 5000,
         'messages': {
             # Calendar denied message
-            'calendarDenied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip() or gettext('Access limited by calendar')
+            'calendarDenied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip()
+            or gettext('Access limited by calendar')
         },
         'urls': {
             'changeLang': reverse('set_language'),
@@ -151,11 +173,23 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'user': reverse('page.index'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('webapi.services'),
-            'enabler': reverse('webapi.enabler', kwargs={'idService': 'param1', 'idTransport': 'param2'}),
-            'status': reverse('webapi.status', kwargs={'idService': 'param1', 'idTransport': 'param2'}),
-            'action': reverse('webapi.action', kwargs={'idService': 'param1', 'actionString': 'param2'}),
-            'galleryImage': reverse('webapi.galleryImage', kwargs={'idImage': 'param1'}),
-            'transportIcon': reverse('webapi.transportIcon', kwargs={'idTrans': 'param1'}),
+            'enabler': reverse(
+                'webapi.enabler',
+                kwargs={'idService': 'param1', 'idTransport': 'param2'},
+            ),
+            'status': reverse(
+                'webapi.status', kwargs={'idService': 'param1', 'idTransport': 'param2'}
+            ),
+            'action': reverse(
+                'webapi.action',
+                kwargs={'idService': 'param1', 'actionString': 'param2'},
+            ),
+            'galleryImage': reverse(
+                'webapi.galleryImage', kwargs={'idImage': 'param1'}
+            ),
+            'transportIcon': reverse(
+                'webapi.transportIcon', kwargs={'idTrans': 'param1'}
+            ),
             'static': static(''),
             'clientDownload': reverse('page.client-download'),
             # Launcher URL if exists
@@ -168,9 +202,11 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     if user and user.isStaff():
         info = {
             'networks': [n.name for n in Network.networksFor(request.ip)],
-            'transports': [t.name for t in Transport.objects.all() if t.validForIp(request.ip)],
+            'transports': [
+                t.name for t in Transport.objects.all() if t.validForIp(request.ip)
+            ],
             'ip': request.ip,
-            'ip_proxy': request.ip_proxy
+            'ip_proxy': request.ip_proxy,
         }
 
     # all plugins are under url clients...
@@ -180,17 +216,75 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'description': description,
             'name': name,
             'legacy': legacy,
-        } for url, description, name, legacy in (
-            ('UDSClientSetup-{version}.exe', gettext('Windows client'), 'Windows', False),
+        }
+        for url, description, name, legacy in (
+            (
+                'UDSClientSetup-{version}.exe',
+                gettext('Windows client'),
+                'Windows',
+                False,
+            ),
             ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS', False),
-            ('udsclient3_{version}_all.deb', gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
-            ('udsclient3-{version}-1.noarch.rpm', gettext('RPM based Linux client (Fedora, Suse, ...)') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
-            ('udsclient3-x86_64-{version}.tar.gz', gettext('Binary appimage X86_64 Linux client'), 'Linux', False),
-            ('udsclient3-armhf-{version}.tar.gz', gettext('Binary appimage Raspberry Linux client'), 'Linux', False),
-            ('udsclient3-{version}.tar.gz', gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'), 'Linux', False),
-            ('udsclient_{version}_all.deb', gettext('Legacy Debian based Python 2.7 Linux client') + ' ' + gettext('(requires outdated Python-2.7)'), 'Linux', True),
-            ('udsclient-{version}-1.noarch.rpm', gettext('Legacy RH based Linux client (Fedora, Centos, Suse, ...)') + ' ' + gettext('(requires outdated Python-2.7)'), 'Linux', True),
-            ('udsclient-opensuse-{version}-1.noarch.rpm', gettext('Legacy OpenSuse based Linux client)') + ' ' + gettext('(requires outdated Python-2.7)'), 'Linux', True),
+            (
+                'udsclient3_{version}_all.deb',
+                gettext('Debian based Linux client')
+                + ' '
+                + gettext('(requires Python-3.6 or newer)'),
+                'Linux',
+                False,
+            ),
+            (
+                'udsclient3-{version}-1.noarch.rpm',
+                gettext('RPM based Linux client (Fedora, Suse, ...)')
+                + ' '
+                + gettext('(requires Python-3.6 or newer)'),
+                'Linux',
+                False,
+            ),
+            (
+                'udsclient3-x86_64-{version}.tar.gz',
+                gettext('Binary appimage X86_64 Linux client'),
+                'Linux',
+                False,
+            ),
+            (
+                'udsclient3-armhf-{version}.tar.gz',
+                gettext('Binary appimage Raspberry Linux client'),
+                'Linux',
+                False,
+            ),
+            (
+                'udsclient3-{version}.tar.gz',
+                gettext('Generic .tar.gz Linux client')
+                + ' '
+                + gettext('(requires Python-3.6 or newer)'),
+                'Linux',
+                False,
+            ),
+            (
+                'udsclient_{version}_all.deb',
+                gettext('Legacy Debian based Python 2.7 Linux client')
+                + ' '
+                + gettext('(requires outdated Python-2.7)'),
+                'Linux',
+                True,
+            ),
+            (
+                'udsclient-{version}-1.noarch.rpm',
+                gettext('Legacy RH based Linux client (Fedora, Centos, Suse, ...)')
+                + ' '
+                + gettext('(requires outdated Python-2.7)'),
+                'Linux',
+                True,
+            ),
+            (
+                'udsclient-opensuse-{version}-1.noarch.rpm',
+                gettext('Legacy OpenSuse based Linux client)')
+                + ' '
+                + gettext('(requires outdated Python-2.7)'),
+                'Linux',
+                True,
+            ),
         )
     ]
 
@@ -200,8 +294,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     #     'description': 'Cliente SPICE for download',  # Text that appears on download
     #     'name': 'Linux', # Can be 'Linux', 'Windows', o 'MacOS'. Sets the icon.
     #     'legacy': False  # True = Gray, False = White
-    #})
-
+    # })
 
     actors: typing.List[typing.Dict[str, str]] = []
 
@@ -212,7 +305,14 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         config['auth_token'] = request.session.session_key
         config['auth_header'] = AUTH_TOKEN_HEADER
         # Actors
-        actors = [{'url': reverse('utility.downloader', kwargs={'idDownload': key}), 'name': val['name'], 'description': gettext(val['comment'])} for key, val in downloadsManager().getDownloadables().items()]
+        actors = [
+            {
+                'url': reverse('utility.downloader', kwargs={'idDownload': key}),
+                'name': val['name'],
+                'description': gettext(val['comment']),
+            }
+            for key, val in downloadsManager().getDownloadables().items()
+        ]
         # URLS
         config['urls']['admin'] = reverse('uds.admin.views.index')
         config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
@@ -239,7 +339,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         'plugins': plugins,
         'actors': actors,
         'errors': errors,
-        'data': request.session.get('data')
+        'data': request.session.get('data'),
     }
 
     # Reset some 1 time values...

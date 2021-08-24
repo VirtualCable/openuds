@@ -125,7 +125,9 @@ def getServicesData(
                 ):
                     yield t
             except Exception as e:
-                logger.warning('Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e)
+                logger.warning(
+                    'Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e
+                )
 
     def buildMetaTransports(
         transports: typing.Iterable[Transport],
@@ -167,8 +169,7 @@ def getServicesData(
                 inAll = tmpSet
             # tmpSet has ALL common transports
             metaTransports = buildMetaTransports(
-                Transport.objects.filter(uuid__in=inAll or []),
-                isLabel=False
+                Transport.objects.filter(uuid__in=inAll or []), isLabel=False
             )
         elif meta.transport_grouping == MetaPool.LABEL_TRANSPORT_SELECT:
             ltrans: typing.MutableMapping[str, Transport] = {}
@@ -188,8 +189,7 @@ def getServicesData(
                 inAll = tmpSet
             # tmpSet has ALL common transports
             metaTransports = buildMetaTransports(
-                (v for k, v in ltrans.items() if k in (inAll or set())),
-                isLabel=True
+                (v for k, v in ltrans.items() if k in (inAll or set())), isLabel=True
             )
         else:
             for member in meta.members.all():
@@ -382,10 +382,13 @@ def getServicesData(
         'ip': request.ip,
         'nets': nets,
         'transports': validTrans,
-        'autorun': autorun
+        'autorun': autorun,
     }
 
-def enableService(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> typing.Mapping[str, typing.Any]:
+
+def enableService(
+    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
+) -> typing.Mapping[str, typing.Any]:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''
@@ -394,13 +397,15 @@ def enableService(request: 'ExtendedHttpRequestWithUser', idService: str, idTran
     # If meta service, process and rebuild idService & idTransport
 
     try:
-        res = userServiceManager().getService(request.user, request.os, request.ip, idService, idTransport, doTest=False)
+        res = userServiceManager().getService(
+            request.user, request.os, request.ip, idService, idTransport, doTest=False
+        )
         scrambler = cryptoManager().randomString(32)
         password = cryptoManager().symCrypt(webPassword(request), scrambler)
 
         userService, trans = res[1], res[3]
 
-        userService.setProperty('accessedByClient', '0')  # Reset accesed property to 
+        userService.setProperty('accessedByClient', '0')  # Reset accesed property to
 
         typeTrans = trans.getType()
 
@@ -413,7 +418,7 @@ def enableService(request: 'ExtendedHttpRequestWithUser', idService: str, idTran
                 'service': 'A' + userService.uuid,
                 'transport': trans.uuid,
                 'user': request.user.uuid,
-                'password': password
+                'password': password,
             }
 
             ticket = TicketStore.create(data)
@@ -422,7 +427,9 @@ def enableService(request: 'ExtendedHttpRequestWithUser', idService: str, idTran
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while
         # error += ' (code {0:04X})'.format(e.code)
-        error = ugettext('Your service is being created, please, wait for a few seconds while we complete it.)') +  '({}%)'.format(int(e.code * 25))
+        error = ugettext(
+            'Your service is being created, please, wait for a few seconds while we complete it.)'
+        ) + '({}%)'.format(int(e.code * 25))
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)
         error = errors.errorString(errors.MAX_SERVICES_REACHED)
@@ -433,7 +440,4 @@ def enableService(request: 'ExtendedHttpRequestWithUser', idService: str, idTran
         logger.exception('Error')
         error = str(e)
 
-    return {
-        'url': str(url),
-        'error': str(error)
-    }
+    return {'url': str(url), 'error': str(error)}

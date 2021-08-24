@@ -80,16 +80,30 @@ class JobsFactory:
                     # We use database server datetime
                     now = getSqlDatetime()
                     next_ = now
-                    job = Scheduler.objects.create(name=name, frecuency=type_.frecuency, last_execution=now, next_execution=next_, state=State.FOR_EXECUTE)
+                    job = Scheduler.objects.create(
+                        name=name,
+                        frecuency=type_.frecuency,
+                        last_execution=now,
+                        next_execution=next_,
+                        state=State.FOR_EXECUTE,
+                    )
                 except Exception:  # already exists
                     logger.debug('Already added %s', name)
                     job = Scheduler.objects.get(name=name)
                     job.frecuency = type_.frecuency
-                    if job.next_execution > job.last_execution + datetime.timedelta(seconds=type_.frecuency):
-                        job.next_execution = job.last_execution + datetime.timedelta(seconds=type_.frecuency)
+                    if job.next_execution > job.last_execution + datetime.timedelta(
+                        seconds=type_.frecuency
+                    ):
+                        job.next_execution = job.last_execution + datetime.timedelta(
+                            seconds=type_.frecuency
+                        )
                     job.save()
         except Exception as e:
-            logger.debug('Exception at ensureJobsInDatabase in JobsFactory: %s, %s', e.__class__, e)
+            logger.debug(
+                'Exception at ensureJobsInDatabase in JobsFactory: %s, %s',
+                e.__class__,
+                e,
+            )
 
     def lookup(self, typeName: str) -> typing.Optional[typing.Type['Job']]:
         return self._jobs.get(typeName, None)

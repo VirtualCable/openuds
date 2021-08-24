@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -147,7 +147,12 @@ class ServiceProvider(Module):
                 return _type
         return None
 
-    def __init__(self, environment: Environment, values: 'Module.ValuesType' = None, uuid: typing.Optional[str] = None):
+    def __init__(
+        self,
+        environment: Environment,
+        values: 'Module.ValuesType' = None,
+        uuid: typing.Optional[str] = None,
+    ):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         if you override this method. Better is to provide an "__initialize__" method, that will be invoked
@@ -177,7 +182,11 @@ class ServiceProvider(Module):
     def getMaxPreparingServices(self) -> int:
         val = self.maxPreparingServices
         if val is None:
-            val = self.maxPreparingServices = GlobalConfig.MAX_PREPARING_SERVICES.getInt(force=True)  # Recover global an cache till restart
+            val = (
+                self.maxPreparingServices
+            ) = GlobalConfig.MAX_PREPARING_SERVICES.getInt(
+                force=True
+            )  # Recover global an cache till restart
 
         if isinstance(val, gui.InputField):
             retVal = int(val.value)
@@ -188,7 +197,9 @@ class ServiceProvider(Module):
     def getMaxRemovingServices(self) -> int:
         val = self.maxRemovingServices
         if val is None:
-            val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(force=True)  # Recover global an cache till restart
+            val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(
+                force=True
+            )  # Recover global an cache till restart
 
         if isinstance(val, gui.InputField):
             retVal = int(val.value)
@@ -199,7 +210,9 @@ class ServiceProvider(Module):
     def getIgnoreLimits(self) -> bool:
         val = self.ignoreLimits
         if val is None:
-            val = self.ignoreLimits = GlobalConfig.IGNORE_LIMITS.getBool(force=True)  # Recover global an cache till restart
+            val = self.ignoreLimits = GlobalConfig.IGNORE_LIMITS.getBool(
+                force=True
+            )  # Recover global an cache till restart
 
         val = getattr(val, 'value', val)
         return val is True or val == gui.TRUE
@@ -209,8 +222,11 @@ class ServiceProvider(Module):
         Logs a message with requested level associated with this service
         """
         from uds.models import Provider as DBProvider
+
         if self.getUuid():
-            log.doLog(DBProvider.objects.get(uuid=self.getUuid()), level, message, log.SERVICE)
+            log.doLog(
+                DBProvider.objects.get(uuid=self.getUuid()), level, message, log.SERVICE
+            )
 
     def __str__(self):
         """

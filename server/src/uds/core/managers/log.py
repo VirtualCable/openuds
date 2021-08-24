@@ -45,7 +45,19 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR, OT_METAPOOL = range(9)  # @UndefinedVariable
+(
+    OT_USERSERVICE,
+    OT_PUBLICATION,
+    OT_DEPLOYED_SERVICE,
+    OT_SERVICE,
+    OT_PROVIDER,
+    OT_USER,
+    OT_GROUP,
+    OT_AUTHENTICATOR,
+    OT_METAPOOL,
+) = range(
+    9
+)  # @UndefinedVariable
 
 # Dict for translations
 transDict: typing.Dict[typing.Type['Model'], int] = {
@@ -65,6 +77,7 @@ class LogManager:
     """
     Manager for logging (at database) events
     """
+
     _manager: typing.Optional['LogManager'] = None
 
     def __init__(self):
@@ -76,7 +89,15 @@ class LogManager:
             LogManager._manager = LogManager()
         return LogManager._manager
 
-    def __log(self, owner_type: int, owner_id: int, level: int, message: str, source: str, avoidDuplicates: bool):
+    def __log(
+        self,
+        owner_type: int,
+        owner_id: int,
+        level: int,
+        message: str,
+        source: str,
+        avoidDuplicates: bool,
+    ):
         """
         Logs a message associated to owner
         """
@@ -86,12 +107,16 @@ class LogManager:
         qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
         if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
-            for i in qs.order_by('-created',)[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1:]:
+            for i in qs.order_by(
+                '-created',
+            )[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1 :]:
                 i.delete()
 
         if avoidDuplicates:
             try:
-                lg = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type, level=level, source=source).order_by('-created', '-id')[0]
+                lg = models.Log.objects.filter(
+                    owner_id=owner_id, owner_type=owner_type, level=level, source=source
+                ).order_by('-created', '-id')[0]
                 if lg.data == message:
                     # Do not log again, already logged
                     return
@@ -100,17 +125,29 @@ class LogManager:
 
         # now, we add new log
         try:
-            models.Log.objects.create(owner_type=owner_type, owner_id=owner_id, created=models.getSqlDatetime(), source=source, level=level, data=message)
+            models.Log.objects.create(
+                owner_type=owner_type,
+                owner_id=owner_id,
+                created=models.getSqlDatetime(),
+                source=source,
+                level=level,
+                data=message,
+            )
         except Exception:
             # Some objects will not get logged, such as System administrator objects, but this is fine
             pass
 
-    def __getLogs(self, owner_type: int, owner_id: int, limit: int) -> typing.List[typing.Dict]:
+    def __getLogs(
+        self, owner_type: int, owner_id: int, limit: int
+    ) -> typing.List[typing.Dict]:
         """
         Get all logs associated with an user service, ordered by date
         """
         qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
-        return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in reversed(qs.order_by('-created', '-id')[:limit])]
+        return [
+            {'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data}
+            for x in reversed(qs.order_by('-created', '-id')[:limit])
+        ]
 
     def __clearLogs(self, owner_type: int, owner_id: int):
         """
@@ -118,7 +155,14 @@ class LogManager:
         """
         models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
-    def doLog(self, wichObject: 'Model', level: int, message: str, source: str, avoidDuplicates: bool = True):
+    def doLog(
+        self,
+        wichObject: 'Model',
+        level: int,
+        message: str,
+        source: str,
+        avoidDuplicates: bool = True,
+    ):
         """
         Do the logging for the requested object.
 
@@ -129,7 +173,9 @@ class LogManager:
         if owner_type is not None:
             self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)  # type: ignore
         else:
-            logger.debug('Requested doLog for a type of object not covered: %s', wichObject)
+            logger.debug(
+                'Requested doLog for a type of object not covered: %s', wichObject
+            )
 
     def getLogs(self, wichObject: 'Model', limit: int) -> typing.List[typing.Dict]:
         """
@@ -142,7 +188,9 @@ class LogManager:
         if owner_type is not None:  # 0 is valid owner type
             return self.__getLogs(owner_type, wichObject.id, limit)  # type: ignore
 
-        logger.debug('Requested getLogs for a type of object not covered: %s', wichObject)
+        logger.debug(
+            'Requested getLogs for a type of object not covered: %s', wichObject
+        )
         return []
 
     def clearLogs(self, wichObject: 'Model'):
@@ -156,4 +204,6 @@ class LogManager:
         if owner_type:
             self.__clearLogs(owner_type, wichObject.id)  # type: ignore
         else:
-            logger.debug('Requested clearLogs for a type of object not covered: %s', wichObject)
+            logger.debug(
+                'Requested clearLogs for a type of object not covered: %s', wichObject
+            )

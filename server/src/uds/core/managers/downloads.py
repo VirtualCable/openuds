@@ -55,6 +55,7 @@ class DownloadsManager:
                                                         os.path.join(os.path.dirname(sys.modules[__package__].__file__), 'files/test.exe'),
                                                         'application/x-msdos-program')
     """
+
     _manager: typing.Optional['DownloadsManager'] = None
     _downloadables: typing.Dict[str, typing.Dict[str, str]] = {}
 
@@ -67,7 +68,9 @@ class DownloadsManager:
             DownloadsManager._manager = DownloadsManager()
         return DownloadsManager._manager
 
-    def registerDownloadable(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'):
+    def registerDownloadable(
+        self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'
+    ):
         """
         Registers a downloadable file.
         @param name: name shown
@@ -75,16 +78,28 @@ class DownloadsManager:
         @params zip: If download as zip
         """
         _id = cryptoManager().uuid(name)
-        self._downloadables[_id] = {'name': name, 'comment': comment, 'path': path, 'mime': mime}
+        self._downloadables[_id] = {
+            'name': name,
+            'comment': comment,
+            'path': path,
+            'mime': mime,
+        }
 
     def getDownloadables(self) -> typing.Dict[str, typing.Dict[str, str]]:
         return self._downloadables
 
     def send(self, request, _id) -> HttpResponse:
         if _id not in self._downloadables:
-            logger.error('Downloadable id %s not found in %s!!!', _id, self._downloadables)
+            logger.error(
+                'Downloadable id %s not found in %s!!!', _id, self._downloadables
+            )
             raise Http404
-        return self._send_file(request, self._downloadables[_id]['name'], self._downloadables[_id]['path'], self._downloadables[_id]['mime'])
+        return self._send_file(
+            request,
+            self._downloadables[_id]['name'],
+            self._downloadables[_id]['path'],
+            self._downloadables[_id]['mime'],
+        )
 
     def _send_file(self, _, name, filename, mime) -> HttpResponse:
         """

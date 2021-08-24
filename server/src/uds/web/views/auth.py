@@ -39,7 +39,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 import uds.web.util.errors as errors
 from uds.core import auths
-from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
+from uds.core.auths.auth import (
+    webLogin,
+    webLogout,
+    authenticateViaCallback,
+    authLogLogin,
+    getUDSCookie,
+)
 from uds.core.managers import userServiceManager, cryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.util import os_detector as OsDetector
@@ -62,6 +68,7 @@ logger = logging.getLogger(__name__)
 #       * Recovers parameters from first stage
 #       * Process real callback
 
+
 @csrf_exempt
 def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
     """
@@ -77,7 +84,9 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         params.update(request.POST)
         params['_query'] = request.META.get('QUERY_STRING', '')
 
-        logger.debug('Auth callback for %s with params %s', authenticator, params.keys())
+        logger.debug(
+            'Auth callback for %s with params %s', authenticator, params.keys()
+        )
 
         ticket = TicketStore.create({'params': params, 'auth': authenticator.uuid})
         return HttpResponseRedirect(reverse('page.auth.callback_stage2', args=[ticket]))
@@ -86,7 +95,9 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         return errors.exceptionView(request, e)
 
 
-def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
+def authCallback_stage2(
+    request: 'ExtendedHttpRequestWithUser', ticketId: str
+) -> HttpResponse:
     try:
         ticket = TicketStore.get(ticketId)
         params: typing.Dict[str, typing.Any] = ticket['params']
@@ -95,14 +106,21 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
         params['_request'] = request
         # params['_session'] = request.session
         # params['_user'] = request.user
-        logger.debug('Request session:%s -> %s, %s', request.ip, request.session.keys(), request.session.session_key)
+        logger.debug(
+            'Request session:%s -> %s, %s',
+            request.ip,
+            request.session.keys(),
+            request.session.session_key,
+        )
 
         user = authenticateViaCallback(authenticator, params)
 
         os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
 
         if user is None:
-            authLogLogin(request, authenticator, '{0}'.format(params), 'Invalid at auth callback')
+            authLogLogin(
+                request, authenticator, '{0}'.format(params), 'Invalid at auth callback'
+            )
             raise auths.exceptions.InvalidUserException()
 
         response = HttpResponseRedirect(reverse('page.index'))
@@ -114,9 +132,14 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
 
         return response
     except auths.exceptions.Redirect as e:
-        return HttpResponseRedirect(request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/' )
+        return HttpResponseRedirect(
+            request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/'
+        )
     except auths.exceptions.Logout as e:
-        return webLogout(request, request.build_absolute_uri(str(e)) if e.args and e.args[0] else None)
+        return webLogout(
+            request,
+            request.build_absolute_uri(str(e)) if e.args and e.args[0] else None,
+        )
     except Exception as e:
         logger.exception('authCallback')
         return errors.exceptionView(request, e)
@@ -173,7 +196,9 @@ def customAuth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
 
 
 @never_cache
-def ticketAuth(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+def ticketAuth(
+    request: 'ExtendedHttpRequestWithUser', ticketId: str
+) -> HttpResponse:  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     """
     Used to authenticate an user via a ticket
     """
@@ -208,7 +233,9 @@ def ticketAuth(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpRes
             raise Exception('Invalid ticket authentication')
 
         usr = auth.getOrCreateUser(username, realname)
-        if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
+        if (
+            usr is None or State.isActive(usr.state) is False
+        ):  # If user is inactive, raise an exception
             raise auths.exceptions.InvalidUserException()
 
         # Add groups to user (replace existing groups)
@@ -228,14 +255,20 @@ def ticketAuth(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpRes
         # Check if servicePool is part of the ticket
         if poolUuid:
             # If service pool is in there, also is transport
-            res = userServiceManager().getService(request.user, request.os, request.ip, poolUuid, transport, False)
+            res = userServiceManager().getService(
+                request.user, request.os, request.ip, poolUuid, transport, False
+            )
             _, userService, _, transport, _ = res
 
             transportInstance = transport.getInstance()
             if transportInstance.ownLink is True:
-                link = reverse('TransportOwnLink', args=('A' + userService.uuid, transport.uuid))
+                link = reverse(
+                    'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)
+                )
             else:
-                link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
+                link = html.udsAccessLink(
+                    request, 'A' + userService.uuid, transport.uuid
+                )
 
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))

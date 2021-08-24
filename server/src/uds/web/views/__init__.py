@@ -33,7 +33,14 @@ import logging
 
 # from .login import login, logout
 from uds.web.util.errors import error
-from .service import transportOwnLink, transportIcon, userServiceEnabler, userServiceStatus, serviceImage, action
+from .service import (
+    transportOwnLink,
+    transportIcon,
+    userServiceEnabler,
+    userServiceStatus,
+    serviceImage,
+    action,
+)
 from .auth import authCallback, authCallback_stage2, authInfo, ticketAuth, customAuth
 from .download import download
 from .images import image

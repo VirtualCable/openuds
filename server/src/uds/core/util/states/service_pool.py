@@ -33,4 +33,3 @@
 
 # pylint: disable=unused-import
 from .common import ACTIVE, REMOVABLE, REMOVING, REMOVED  # @UnusedImport
-

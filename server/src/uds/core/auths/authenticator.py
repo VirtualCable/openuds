@@ -39,7 +39,10 @@ from uds.core import Module
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from django.http import (
+        HttpRequest,
+        HttpResponse,
+    )  # pylint: disable=ungrouped-imports
     from uds.core.environment import Environment
     from uds import models
     from .groups_manager import GroupsManager
@@ -161,7 +164,12 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
     _dbAuth: 'models.Authenticator'
 
-    def __init__(self, dbAuth: 'models.Authenticator', environment: 'Environment', values: typing.Optional[typing.Dict[str, str]]):
+    def __init__(
+        self,
+        dbAuth: 'models.Authenticator',
+        environment: 'Environment',
+        values: typing.Optional[typing.Dict[str, str]],
+    ):
         """
         Instantiathes the authenticator.
         @param dbAuth: Database object for the authenticator
@@ -202,13 +210,17 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
         user param is a database user object
         """
-        from uds.core.auths.groups_manager import GroupsManager  # pylint: disable=redefined-outer-name
+        from uds.core.auths.groups_manager import (
+            GroupsManager,
+        )  # pylint: disable=redefined-outer-name
 
         if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
             self.getGroups(user.name, groupsManager)
             # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there
-            typing.cast(typing.Any, user.groups).set([g.dbGroup() for g in groupsManager.getValidGroups()])
+            typing.cast(typing.Any, user.groups).set(
+                [g.dbGroup() for g in groupsManager.getValidGroups()]
+            )
 
     def callbackUrl(self) -> str:
         """
@@ -218,6 +230,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         we need to use callback for authentication
         """
         from .auth import authCallbackUrl
+
         return authCallbackUrl(self.dbAuthenticator())
 
     def infoUrl(self) -> str:
@@ -225,6 +238,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         Helper method to return info url for this authenticator
         """
         from .auth import authInfoUrl
+
         return authInfoUrl(self.dbAuthenticator())
 
     @classmethod
@@ -276,7 +290,9 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return []
 
-    def authenticate(self, username: str, credentials: str, groupsManager: 'GroupsManager') -> bool:
+    def authenticate(
+        self, username: str, credentials: str, groupsManager: 'GroupsManager'
+    ) -> bool:
         """
         This method must be overriden, and is responsible for authenticating
         users.
@@ -332,7 +348,9 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return username
 
-    def internalAuthenticate(self, username: str, credentials: str, groupsManager: 'GroupsManager') -> bool:
+    def internalAuthenticate(
+        self, username: str, credentials: str, groupsManager: 'GroupsManager'
+    ) -> bool:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
         the username/credentials in an alternative way.
@@ -396,7 +414,9 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def webLogoutHook(self, username: str, request: 'HttpRequest', response: 'HttpResponse') -> None:
+    def webLogoutHook(
+        self, username: str, request: 'HttpRequest', response: 'HttpResponse'
+    ) -> None:
         '''
         Invoked on web logout of an user
         Args:
@@ -455,7 +475,9 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def authCallback(self, parameters: typing.Dict[str, typing.Any], gm: 'GroupsManager') -> typing.Optional[str]:
+    def authCallback(
+        self, parameters: typing.Dict[str, typing.Any], gm: 'GroupsManager'
+    ) -> typing.Optional[str]:
         """
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.
@@ -491,7 +513,9 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return None
 
-    def getInfo(self, parameters: typing.Mapping[str, str]) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
+    def getInfo(
+        self, parameters: typing.Mapping[str, str]
+    ) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
         """
         This method is invoked whenever the authinfo url is invoked, with the name of the authenticator
         If this is implemented, information returned by this will be shown via web.

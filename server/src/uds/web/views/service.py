@@ -158,7 +158,9 @@ def userServiceStatus(
     userService = None
     status = 'running'
     # If service exists
-    userService = userServiceManager().locateUserService(user=request.user, idService=idService, create=False)
+    userService = userServiceManager().locateUserService(
+        user=request.user, idService=idService, create=False
+    )
     if userService:
         # Service exists...
         try:

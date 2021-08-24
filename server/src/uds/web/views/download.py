@@ -37,7 +37,10 @@ from .modern import index
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from django.http import (
+        HttpRequest,
+        HttpResponse,
+    )  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 

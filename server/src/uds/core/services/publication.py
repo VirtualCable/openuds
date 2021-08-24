@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -98,7 +98,9 @@ class Publication(Environmentable, Serializable):
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
         self._osManager = kwargs.get('osManager', None)
-        self._service = kwargs['service']  # Raises an exception if service is not included
+        self._service = kwargs[
+            'service'
+        ]  # Raises an exception if service is not included
         self._revision = kwargs.get('revision', -1)
         self._dbPublication = kwargs.get('dbPublication')
         self._dsName = kwargs.get('dsName', 'Unknown')
@@ -189,7 +191,11 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('publish method for class {0} not provided! '.format(self.__class__.__name__))
+        raise NotImplementedError(
+            'publish method for class {0} not provided! '.format(
+                self.__class__.__name__
+            )
+        )
 
     def checkState(self) -> str:
         """
@@ -215,7 +221,11 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('checkState method for class {0} not provided!!!'.format(self.__class__.__name__))
+        raise NotImplementedError(
+            'checkState method for class {0} not provided!!!'.format(
+                self.__class__.__name__
+            )
+        )
 
     def finish(self) -> None:
         """
@@ -259,7 +269,9 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('destroy method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError(
+            'destroy method for class {0} not provided!'.format(self.__class__.__name__)
+        )
 
     def cancel(self) -> str:
         """
@@ -279,7 +291,9 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError('cancel method for class {0} not provided!'.format(self.__class__.__name__))
+        raise NotImplementedError(
+            'cancel method for class {0} not provided!'.format(self.__class__.__name__)
+        )
 
     def __str__(self):
         """
