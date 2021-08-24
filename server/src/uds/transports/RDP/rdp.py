@@ -53,6 +53,7 @@ class RDPTransport(BaseRDPTransport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
+
     typeName = _('RDP')
     typeType = 'RDPTransport'
     typeDescription = _('RDP Protocol. Direct connection.')
@@ -91,15 +92,15 @@ class RDPTransport(BaseRDPTransport):
     customParametersMAC = BaseRDPTransport.customParametersMAC
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         # We use helper to keep this clean
         # prefs = user.prefs('rdp')
 
@@ -114,7 +115,9 @@ class RDPTransport(BaseRDPTransport):
         width, height = self.screenSize.value.split('x')
         depth = self.colorDepth.value
 
-        r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os['OS'])
+        r = RDPFile(
+            width == '-1' or height == '-1', width, height, depth, target=os['OS']
+        )
         r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
         r.address = '{}:{}'.format(ip, self.rdpPort.value)
         r.username = username
@@ -143,13 +146,17 @@ class RDPTransport(BaseRDPTransport):
         osName = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
-            OsDetector.Macintosh: 'macosx'
-
+            OsDetector.Macintosh: 'macosx',
         }.get(os['OS'])
 
         if osName is None:
-            logger.error('Os not detected for RDP Transport: %s', request.META.get('HTTP_USER_AGENT', 'Unknown'))
-            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            logger.error(
+                'Os not detected for RDP Transport: %s',
+                request.META.get('HTTP_USER_AGENT', 'Unknown'),
+            )
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )
 
         sp: typing.MutableMapping[str, typing.Any] = {
             'password': password,
@@ -162,21 +169,27 @@ class RDPTransport(BaseRDPTransport):
         if osName == 'windows':
             if password != '':
                 r.password = '{password}'
-            sp.update({
-                'as_file': r.as_file,
-            })
+            sp.update(
+                {
+                    'as_file': r.as_file,
+                }
+            )
         elif osName == 'linux':
-            sp.update({
-                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'address': r.address,
-            })
+            sp.update(
+                {
+                    'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
+                    'address': r.address,
+                }
+            )
         else:  # Mac
             r.linuxCustomParameters = self.customParametersMAC.value
-            sp.update({
-                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.isTrue() else '',
-                'as_file': r.as_file if self.allowMacMSRDC.isTrue() else '',
-                'address': r.address,
-            })
+            sp.update(
+                {
+                    'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
+                    'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.isTrue() else '',
+                    'as_file': r.as_file if self.allowMacMSRDC.isTrue() else '',
+                    'address': r.address,
+                }
+            )
 
         return self.getScript('scripts/{}/direct.py', osName, sp)

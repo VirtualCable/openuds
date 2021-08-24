@@ -67,15 +67,15 @@ class RemoteViewerFile:
     delete_file: bool = True
 
     def __init__(
-            self,
-            host: str,
-            port: str,
-            tls_port: str,
-            password: str,
-            ca: str,
-            host_subject: str,
-            fullscreen: bool = False
-        ):
+        self,
+        host: str,
+        port: str,
+        tls_port: str,
+        password: str,
+        ca: str,
+        host_subject: str,
+        fullscreen: bool = False,
+    ):
         self.host = host
         self.port = port
         self.tls_port = tls_port
@@ -102,7 +102,9 @@ class RemoteViewerFile:
         usb_auto_share = '01'[self.usb_auto_share]
         new_usb_auto_share = '01'[self.new_usb_auto_share]
 
-        ca = self.ca.strip().replace('\n', '\\n')  # So we get '\\n' and script works fine after replacement
+        ca = self.ca.strip().replace(
+            '\n', '\\n'
+        )  # So we get '\\n' and script works fine after replacement
 
         return TEMPLATE.format(
             type=self.connectionType,
@@ -118,5 +120,7 @@ class RemoteViewerFile:
             delete_file=delete_file,
             host_subject=self.host_subject if tls_port != '-1' else '',
             ca=ca if tls_port != '-1' else '',
-            secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard' if tls_port != '-1' else ''
+            secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard'
+            if tls_port != '-1'
+            else '',
         )

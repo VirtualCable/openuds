@@ -1,6 +1,6 @@
 # This is a template
 # Saved as .py for easier editing
-#from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
@@ -16,7 +16,9 @@ fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], ti
 
 # Check that tunnel works..
 if fs.check() is False:
-    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
+    raise Exception(
+        '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
+    )
 
 # Care, expanduser is encoding using "mcbs", so treat it as bytes on python 2.7
 home = expanduser('~').replace('\\', '\\\\') + '#1;'
@@ -27,7 +29,19 @@ filename = tools.saveTempFile(theFile)
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
 executable = tools.findApp('x2goclient.exe', [x2goPath])
 if executable is None:
-    raise Exception('''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
-<p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>''')
+    raise Exception(
+        '''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
+<p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>'''
+    )
 
-subprocess.Popen([executable, '--session-conf={}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
+subprocess.Popen(
+    [
+        executable,
+        '--session-conf={}'.format(filename),
+        '--session=UDS/connect',
+        '--close-disconnect',
+        '--hide',
+        '--no-menu',
+        '--add-to-known-hosts',
+    ]
+)

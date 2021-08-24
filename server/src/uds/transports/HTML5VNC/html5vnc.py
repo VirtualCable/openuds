@@ -60,6 +60,7 @@ class HTML5VNCTransport(transports.Transport):
     Provides access via VNC to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     typeName = _('HTML5 VNC Experimental')
     typeType = 'HTML5VNCTransport'
     typeDescription = _('VNC protocol using HTML5 client (EXPERIMENTAL)')
@@ -70,10 +71,30 @@ class HTML5VNCTransport(transports.Transport):
     protocol = transports.protocols.VNC
     group = transports.TUNNELED_GROUP
 
-    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order=1, tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue='https://', length=64, required=True, tab=gui.TUNNEL_TAB)
+    guacamoleServer = gui.TextField(
+        label=_('Tunnel Server'),
+        order=1,
+        tooltip=_(
+            'Host of the tunnel server (use http/https & port if needed) as accesible from users'
+        ),
+        defvalue='https://',
+        length=64,
+        required=True,
+        tab=gui.TUNNEL_TAB,
+    )
 
-    username = gui.TextField(label=_('Username'), order=20, tooltip=_('Username for VNC connection authentication.'), tab=gui.PARAMETERS_TAB)
-    password = gui.PasswordField(label=_('Password'), order=21, tooltip=_('Password for VNC connection authentication'), tab=gui.PARAMETERS_TAB)
+    username = gui.TextField(
+        label=_('Username'),
+        order=20,
+        tooltip=_('Username for VNC connection authentication.'),
+        tab=gui.PARAMETERS_TAB,
+    )
+    password = gui.PasswordField(
+        label=_('Password'),
+        order=21,
+        tooltip=_('Password for VNC connection authentication'),
+        tab=gui.PARAMETERS_TAB,
+    )
 
     vncPort = gui.NumericField(
         length=22,
@@ -82,7 +103,7 @@ class HTML5VNCTransport(transports.Transport):
         order=2,
         tooltip=_('Port of the VNC server.'),
         required=True,
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
 
     colorDepth = gui.ChoiceField(
@@ -98,21 +119,40 @@ class HTML5VNCTransport(transports.Transport):
             gui.choiceItem('32', '33 bits'),
         ],
         defvalue='-',
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
-    swapRedBlue = gui.CheckBoxField(label=_('Swap red/blue'), order=27, tooltip=_('Use this if your colours seems incorrect (blue appears red, ..) to swap them.'), tab=gui.PARAMETERS_TAB)
-    cursor = gui.CheckBoxField(label=_('Remote cursor'), order=28, tooltip=_('If set, force to show remote cursor'), tab=gui.PARAMETERS_TAB)
-    readOnly = gui.CheckBoxField(label=_('Read only'), order=29, tooltip=_('If set, the connection will be read only'), tab=gui.PARAMETERS_TAB)
-        
+    swapRedBlue = gui.CheckBoxField(
+        label=_('Swap red/blue'),
+        order=27,
+        tooltip=_(
+            'Use this if your colours seems incorrect (blue appears red, ..) to swap them.'
+        ),
+        tab=gui.PARAMETERS_TAB,
+    )
+    cursor = gui.CheckBoxField(
+        label=_('Remote cursor'),
+        order=28,
+        tooltip=_('If set, force to show remote cursor'),
+        tab=gui.PARAMETERS_TAB,
+    )
+    readOnly = gui.CheckBoxField(
+        label=_('Read only'),
+        order=29,
+        tooltip=_('If set, the connection will be read only'),
+        tab=gui.PARAMETERS_TAB,
+    )
+
     ticketValidity = gui.NumericField(
         length=3,
         label=_('Ticket Validity'),
         defvalue='60',
         order=90,
-        tooltip=_('Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'),
+        tooltip=_(
+            'Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'
+        ),
         required=True,
         minValue=60,
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
     forceNewWindow = gui.ChoiceField(
         order=91,
@@ -120,12 +160,20 @@ class HTML5VNCTransport(transports.Transport):
         tooltip=_('Select windows behavior for new connections on HTML5'),
         required=True,
         values=[
-            gui.choiceItem(gui.FALSE, _('Open every connection on the same window, but keeps UDS window.')),
-            gui.choiceItem(gui.TRUE, _('Force every connection to be opened on a new window.')),
-            gui.choiceItem('overwrite', _('Override UDS window and replace it with the connection.')),
+            gui.choiceItem(
+                gui.FALSE,
+                _('Open every connection on the same window, but keeps UDS window.'),
+            ),
+            gui.choiceItem(
+                gui.TRUE, _('Force every connection to be opened on a new window.')
+            ),
+            gui.choiceItem(
+                'overwrite',
+                _('Override UDS window and replace it with the connection.'),
+            ),
         ],
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -134,7 +182,9 @@ class HTML5VNCTransport(transports.Transport):
         # Strip spaces
         self.guacamoleServer.value = self.guacamoleServer.value.strip()
         if self.guacamoleServer.value[0:4] != 'http':
-            raise transports.Transport.ValidationException(_('The server must be http or https'))
+            raise transports.Transport.ValidationException(
+                _('The server must be http or https')
+            )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -152,15 +202,15 @@ class HTML5VNCTransport(transports.Transport):
         return ready == 'Y'
 
     def getLink(  # pylint: disable=too-many-locals
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> str:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> str:
         # Build params dict
         params = {
             'protocol': 'vnc',
@@ -200,9 +250,6 @@ class HTML5VNCTransport(transports.Transport):
 
         return str(
             "{}/guacamole/#/?data={}.{}{}".format(
-                self.guacamoleServer.value,
-                ticket,
-                scrambler,
-                onw
+                self.guacamoleServer.value, ticket, scrambler, onw
             )
         )

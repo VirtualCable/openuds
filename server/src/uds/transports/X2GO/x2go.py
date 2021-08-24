@@ -51,6 +51,7 @@ class X2GOTransport(BaseX2GOTransport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     typeName = _('X2Go')
     typeType = 'X2GOTransport'
     typeDescription = _('X2Go access (Experimental). Direct connection.')
@@ -69,15 +70,15 @@ class X2GOTransport(BaseX2GOTransport):
     quality = BaseX2GOTransport.quality
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         ci = self.getConnectionInfo(userService, user, password)
         username = ci['username']
 
@@ -101,7 +102,7 @@ class X2GOTransport(BaseX2GOTransport):
             rootless=rootless,
             width=width,
             height=height,
-            user=username
+            user=username,
         )
 
         osName = {
@@ -111,13 +112,10 @@ class X2GOTransport(BaseX2GOTransport):
         }.get(os['OS'])
 
         if osName is None:
-            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )
 
-        sp = {
-            'ip': ip,
-            'port': '22',
-            'key': priv,
-            'xf': xf
-        }
+        sp = {'ip': ip, 'port': '22', 'key': priv, 'xf': xf}
 
         return self.getScript('scripts/{}/direct.py', osName, sp)

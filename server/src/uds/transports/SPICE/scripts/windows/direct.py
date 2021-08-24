@@ -19,14 +19,16 @@ for env in ('PROGRAMFILES', 'PROGRAMW6432'):
 executable = tools.findApp('remote-viewer.exe', extraPaths)
 
 if executable is None:
-    raise Exception('''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
+    raise Exception(
+        '''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
 <p>
     Please, install appropriate package for your system.
 </p>
 <p>
     <a href="http://virt-manager.org/download/">Open download page</a>
 </p>
-''')
+'''
+    )
 
 theFile = sp['as_file']  # type: ignore
 

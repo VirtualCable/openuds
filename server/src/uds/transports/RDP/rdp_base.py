@@ -167,15 +167,15 @@ class BaseRDPTransport(transports.Transport):
         tab=gui.PARAMETERS_TAB,
         defvalue=gui.TRUE,
     )
-    rdpPort = gui.NumericField(order = 29,
-        length = 5, # That is, max allowed value is 65535
+    rdpPort = gui.NumericField(
+        order=29,
+        length=5,  # That is, max allowed value is 65535
         label=_('RDP Port'),
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
         tab=gui.PARAMETERS_TAB,
-        required = True, #: Numeric fields have always a value, so this not really needed
-        defvalue = '3389',
+        required=True,  #: Numeric fields have always a value, so this not really needed
+        defvalue='3389',
     )
-
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),
@@ -359,7 +359,7 @@ class BaseRDPTransport(transports.Transport):
 
         if self.fixedPassword.value:
             password = self.fixedPassword.value
-        
+
         azureAd = False
         if self.fixedDomain.value != '':
             if self.fixedDomain.value.lower() == 'azuread':
@@ -391,7 +391,7 @@ class BaseRDPTransport(transports.Transport):
             'protocol': self.protocol,
             'username': username,
             'password': password,
-            'domain': domain
+            'domain': domain,
         }
 
     def getConnectionInfo(
@@ -408,7 +408,10 @@ class BaseRDPTransport(transports.Transport):
                 _, username, password = cdata  # Host is unused
 
         return self.processUserPassword(
-            typing.cast('models.UserService', userService), user, password, altUsername=username
+            typing.cast('models.UserService', userService),
+            user,
+            password,
+            altUsername=username,
         )
 
     def getScript(

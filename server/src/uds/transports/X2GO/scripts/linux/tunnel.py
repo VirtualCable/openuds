@@ -15,7 +15,9 @@ fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], ti
 
 # Check that tunnel works..
 if fs.check() is False:
-    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
+    raise Exception(
+        '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
+    )
 
 home = expanduser('~') + ':1;/media:1;'
 keyFile = tools.saveTempFile(sp['key'])  # type: ignore
@@ -26,7 +28,19 @@ filename = tools.saveTempFile(theFile)
 
 executable = tools.findApp('x2goclient')
 if executable is None:
-    raise Exception('''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
-<p>Please, install the required packages for your platform</p>''')
+    raise Exception(
+        '''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
+<p>Please, install the required packages for your platform</p>'''
+    )
 
-subprocess.Popen([executable, '--session-conf={}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
+subprocess.Popen(
+    [
+        executable,
+        '--session-conf={}'.format(filename),
+        '--session=UDS/connect',
+        '--close-disconnect',
+        '--hide',
+        '--no-menu',
+        '--add-to-known-hosts',
+    ]
+)

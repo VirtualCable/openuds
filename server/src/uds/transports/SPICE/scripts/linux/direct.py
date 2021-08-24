@@ -10,11 +10,13 @@ from uds import tools  # type: ignore
 executable = tools.findApp('remote-viewer')
 
 if executable is None:
-    raise Exception('''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
+    raise Exception(
+        '''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
 <p>
     Please, install appropriate package for your Linux system. (probably named something like <b>remote-viewer</b>)
 </p>
-''')
+'''
+    )
 
 theFile = sp['as_file']  # type: ignore
 

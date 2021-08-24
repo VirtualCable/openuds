@@ -39,6 +39,7 @@ import typing
 
 from uds.core.util import os_detector as OsDetector
 
+
 class RDPFile:
     fullScreen = False
     width = '800'
@@ -71,13 +72,13 @@ class RDPFile:
     enforcedShares: typing.Optional[str] = None
 
     def __init__(
-            self,
-            fullScreen: bool,
-            width: typing.Union[str, int],
-            height: typing.Union[str, int],
-            bpp: str,
-            target: str = OsDetector.Windows
-        ):
+        self,
+        fullScreen: bool,
+        width: typing.Union[str, int],
+        height: typing.Union[str, int],
+        bpp: str,
+        target: str = OsDetector.Windows,
+    ):
         self.width = str(width)
         self.height = str(height)
         self.bpp = str(bpp)
@@ -95,7 +96,9 @@ class RDPFile:
         return self.get()
 
     @property
-    def as_new_xfreerdp_params(self):  # pylint: disable=too-many-statements,too-many-branches
+    def as_new_xfreerdp_params(
+        self,
+    ):  # pylint: disable=too-many-statements,too-many-branches
         """
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
@@ -188,7 +191,7 @@ class RDPFile:
     def getGeneric(self):  # pylint: disable=too-many-statements
         password = '{password}'
         screenMode = '2' if self.fullScreen else '1'
-        audioMode =  '0' if self.redirectAudio else '2'
+        audioMode = '0' if self.redirectAudio else '2'
         serials = '1' if self.redirectSerials else '0'
         scards = '1' if self.redirectSmartcards else '0'
         printers = '1' if self.redirectPrinters else '0'
@@ -250,7 +253,11 @@ class RDPFile:
         if self.redirectWebcam:
             res += 'camerastoredirect:s:*\n'
 
-        enforcedSharesStr = ';'.join(self.enforcedShares.replace(' ', '').upper().split(',')) + ';' if self.enforcedShares else ''
+        enforcedSharesStr = (
+            ';'.join(self.enforcedShares.replace(' ', '').upper().split(',')) + ';'
+            if self.enforcedShares
+            else ''
+        )
 
         if self.redirectDrives != 'false':
             if self.redirectDrives == 'true':
@@ -259,7 +266,9 @@ class RDPFile:
                 res += 'drivestoredirect:s:{}DynamicDrives\n'.format(enforcedSharesStr)
             res += 'devicestoredirect:s:*\n'
 
-        res += 'enablecredsspsupport:i:{}\n'.format(0 if self.enablecredsspsupport is False else 1)
+        res += 'enablecredsspsupport:i:{}\n'.format(
+            0 if self.enablecredsspsupport is False else 1
+        )
 
         # DirectX?
         res += 'redirectdirectx:i:1\n'
@@ -273,12 +282,11 @@ class RDPFile:
     def as_rdp_url(self) -> str:
         # Some parameters
         screenMode = '2' if self.fullScreen else '1'
-        audioMode =  '0' if self.redirectAudio else '2'
+        audioMode = '0' if self.redirectAudio else '2'
         useMultimon = '1' if self.multimon else '0'
         disableWallpaper = '0' if self.showWallpaper else '1'
         printers = '1' if self.redirectPrinters else '0'
         credsspsupport = '1' if self.enablecredsspsupport else '0'
-        
 
         parameters = [
             ('full address', f's:{self.address}'),
@@ -295,7 +303,7 @@ class RDPFile:
             ('disable full window drag', 'i:1'),
             ('authentication level', f'i:0'),
             # Not listed, but maybe usable?
-            ('enablecredsspsupport', f'i:{credsspsupport}')
+            ('enablecredsspsupport', f'i:{credsspsupport}'),
         ]
         if self.username:
             parameters.append(('username', f's:{urllib.parse.quote(self.username)}'))
@@ -311,5 +319,6 @@ class RDPFile:
         if self.redirectDrives != 'false':  # Only "all drives" is supported
             parameters.append(('drivestoredirect', 's:*'))
 
-        return 'rdp://' + '&'.join((urllib.parse.quote(i[0]) + '=' + i[1] for i in parameters))
-
+        return 'rdp://' + '&'.join(
+            (urllib.parse.quote(i[0]) + '=' + i[1] for i in parameters)
+        )

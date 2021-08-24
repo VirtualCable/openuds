@@ -60,6 +60,7 @@ class BaseX2GOTransport(transports.Transport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     iconFile = 'x2go.png'
     protocol = transports.protocols.X2GO
     supportedOss = (OsDetector.Linux, OsDetector.Windows)
@@ -68,7 +69,7 @@ class BaseX2GOTransport(transports.Transport):
         order=2,
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
-        tab=gui.CREDENTIALS_TAB
+        tab=gui.CREDENTIALS_TAB,
     )
 
     screenSize = gui.ChoiceField(
@@ -82,9 +83,9 @@ class BaseX2GOTransport(transports.Transport):
             {'id': CommonPrefs.SZ_1024x768, 'text': '1024x768'},
             {'id': CommonPrefs.SZ_1366x768, 'text': '1366x768'},
             {'id': CommonPrefs.SZ_1920x1080, 'text': '1920x1080'},
-            {'id': CommonPrefs.SZ_FULLSCREEN, 'text': ugettext_lazy('Full Screen')}
+            {'id': CommonPrefs.SZ_FULLSCREEN, 'text': ugettext_lazy('Full Screen')},
         ],
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
 
     desktopType = gui.ChoiceField(
@@ -102,14 +103,16 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'gnome-session-cinnamon2d', 'text': 'Cinnamon 2.2 (see docs)'},
             {'id': 'UDSVAPP', 'text': 'UDS vAPP'},
         ],
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
 
     customCmd = gui.TextField(
         order=12,
         label=_('vAPP'),
-        tooltip=_('If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'),
-        tab=gui.PARAMETERS_TAB
+        tooltip=_(
+            'If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'
+        ),
+        tab=gui.PARAMETERS_TAB,
     )
 
     sound = gui.CheckBoxField(
@@ -117,15 +120,17 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Enable sound'),
         tooltip=_('If checked, sound will be available'),
         defvalue=gui.TRUE,
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
 
     exports = gui.CheckBoxField(
         order=14,
         label=_('Redirect home folder'),
-        tooltip=_('If checked, user home folder will be redirected. (On linux, also redirects /media)'),
+        tooltip=_(
+            'If checked, user home folder will be redirected. (On linux, also redirects /media)'
+        ),
         defvalue=gui.FALSE,
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
 
     speed = gui.ChoiceField(
@@ -140,7 +145,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': '3', 'text': 'WAN'},
             {'id': '4', 'text': 'LAN'},
         ],
-        tab=gui.PARAMETERS_TAB
+        tab=gui.PARAMETERS_TAB,
     )
 
     soundType = gui.ChoiceField(
@@ -152,7 +157,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'pulse', 'text': 'Pulse'},
             {'id': 'esd', 'text': 'ESD'},
         ],
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
 
     keyboardLayout = gui.TextField(
@@ -160,7 +165,7 @@ class BaseX2GOTransport(transports.Transport):
         order=31,
         tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
         defvalue='',
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
     # 'nopack', '8', '64', '256', '512', '4k', '32k', '64k', '256k', '2m', '16m'
     # '256-rdp', '256-rdp-compressed', '32k-rdp', '32k-rdp-compressed', '64k-rdp'
@@ -180,7 +185,7 @@ class BaseX2GOTransport(transports.Transport):
         order=32,
         tooltip=_('Pack format. Change with care!'),
         defvalue='16m-jpeg',
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
 
     quality = gui.NumericField(
@@ -192,7 +197,7 @@ class BaseX2GOTransport(transports.Transport):
         minValue=1,
         maxValue=9,
         required=True,
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
@@ -213,11 +218,18 @@ class BaseX2GOTransport(transports.Transport):
     def getScreenSize(self) -> typing.Tuple[int, int]:
         return CommonPrefs.getWidthHeight(self.screenSize.value)
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+    def processedUser(
+        self, userService: 'models.UserService', user: 'models.User'
+    ) -> str:
         v = self.processUserPassword(userService, user, '')
         return v['username']
 
-    def processUserPassword(self, userService: 'models.UserService', user: 'models.User', password: str) -> typing.Dict[str, str]:
+    def processUserPassword(
+        self,
+        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        user: 'models.User',
+        password: str,
+    ) -> typing.Dict[str, str]:
         username = user.getUsernameForAuth()
 
         if self.fixedName.value != '':
@@ -229,11 +241,11 @@ class BaseX2GOTransport(transports.Transport):
         return {'protocol': self.protocol, 'username': username, 'password': ''}
 
     def getConnectionInfo(
-            self,
-            userService: typing.Union['models.UserService', 'models.ServicePool'],
-            user: 'models.User',
-            password: str
-        ) -> typing.Dict[str, str]:
+        self,
+        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        user: 'models.User',
+        password: str,
+    ) -> typing.Dict[str, str]:
         return self.processUserPassword(userService, user, password)
 
     def genKeyPairForSsh(self) -> typing.Tuple[str, str]:
@@ -264,18 +276,24 @@ class BaseX2GOTransport(transports.Transport):
 
         return data.replace('__USER__', user).replace('__KEY__', pubKey)
 
-    def getAndPushKey(self, userName: str, userService: 'models.UserService') -> typing.Tuple[str, str]:
+    def getAndPushKey(
+        self, userName: str, userService: 'models.UserService'
+    ) -> typing.Tuple[str, str]:
         priv, pub = self.genKeyPairForSsh()
         authScript = self.getAuthorizeScript(userName, pub)
         userServiceManager().sendScript(userService, authScript)
         return priv, pub
 
-    def getScript(self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+    def getScript(
+        self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]
+    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
         # Reads script
         scriptNameTemplate = scriptNameTemplate.format(osName)
         with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
             script = f.read()
         # Reads signature
-        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')) as f:
+        with open(
+            os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')
+        ) as f:
             signature = f.read()
         return script, signature, params

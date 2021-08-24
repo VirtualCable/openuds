@@ -96,7 +96,6 @@ class TX2GOTransport(BaseX2GOTransport):
         tab=gui.TUNNEL_TAB,
     )
 
-
     fixedName = BaseX2GOTransport.fixedName
     screenSize = BaseX2GOTransport.screenSize
     desktopType = BaseX2GOTransport.desktopType

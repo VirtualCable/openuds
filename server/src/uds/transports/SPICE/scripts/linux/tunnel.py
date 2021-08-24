@@ -11,14 +11,16 @@ from uds.tunnel import forward  # type: ignore
 executable = tools.findApp('remote-viewer')
 
 if executable is None:
-    raise Exception('''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
+    raise Exception(
+        '''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
 <p>
     Please, install appropriate package for your system.
 </p>
 <p>
     Please, install appropriate package for your Linux system. (probably named something like <b>virt-viewer</b>)
 </p>
-''')
+'''
+    )
 
 
 theFile = sp['as_file_ns']  # type: ignore
@@ -29,7 +31,9 @@ if sp['ticket']:  # type: ignore
 
     # Check that tunnel works..
     if fs.check() is False:
-        raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
+        raise Exception(
+            '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
+        )
 
 fss = None
 if sp['ticket_secure']:  # type: ignore
@@ -38,11 +42,13 @@ if sp['ticket_secure']:  # type: ignore
 
     # Check that tunnel works..
     if fss.check() is False:
-        raise Exception('<p>Could not connect to tunnel server 2.</p><p>Please, check your network settings.</p>')
+        raise Exception(
+            '<p>Could not connect to tunnel server 2.</p><p>Please, check your network settings.</p>'
+        )
 
 theFile = theFile.format(
     secure_port='-1' if not fss else fss.server_address[1],
-    port='-1' if not fs else fs.server_address[1]
+    port='-1' if not fs else fs.server_address[1],
 )
 
 filename = tools.saveTempFile(theFile)

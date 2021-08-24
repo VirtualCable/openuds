@@ -51,6 +51,7 @@ class SPICETransport(BaseSpiceTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     typeName = _('SPICE')
     typeType = 'SPICETransport'
     typeDescription = _('SPICE Protocol. Direct connection.')
@@ -65,15 +66,15 @@ class SPICETransport(BaseSpiceTransport):
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
-            self,
-            userService: 'models.UserService',
-            transport: 'models.Transport',
-            ip: str,
-            os: typing.Dict[str, str],
-            user: 'models.User',
-            password: str,
-            request: 'HttpRequest'
-        ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+        self,
+        userService: 'models.UserService',
+        transport: 'models.Transport',
+        ip: str,
+        os: typing.Dict[str, str],
+        user: 'models.User',
+        password: str,
+        request: 'HttpRequest',
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         userServiceInstance: typing.Any = userService.getInstance()
 
         con = userServiceInstance.getConsoleConnection()
@@ -85,7 +86,15 @@ class SPICETransport(BaseSpiceTransport):
         port: str = con['port'] or '-1'
         secure_port: str = con['secure_port'] or '-1'
 
-        r = RemoteViewerFile(con['address'], port, secure_port, con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=self.fullScreen.isTrue())
+        r = RemoteViewerFile(
+            con['address'],
+            port,
+            secure_port,
+            con['ticket']['value'],
+            self.serverCertificate.value,
+            con['cert_subject'],
+            fullscreen=self.fullScreen.isTrue(),
+        )
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
         r.smartcard = self.smartCardRedirect.isTrue()
@@ -93,11 +102,13 @@ class SPICETransport(BaseSpiceTransport):
         osName = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
-            OsDetector.Macintosh: 'macosx'
+            OsDetector.Macintosh: 'macosx',
         }.get(os['OS'])
 
         if osName is None:
-            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )
 
         # if sso:  # If SSO requested, and when supported by platform
         #     userServiceInstance.desktopLogin(user, password, '')

@@ -1,10 +1,10 @@
+# may be executed on old python version
 from __future__ import unicode_literals
 
 import sys
 import os
 import errno
 import pwd
-import six
 
 USER = '__USER__'
 KEY = '__KEY__'
