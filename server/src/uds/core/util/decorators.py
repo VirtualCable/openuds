@@ -124,9 +124,8 @@ def allowCache(
     ] = None,
     cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None,
 ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
-    """Decorator that give us a "quick& clean" caching feature on service providers.
-
-    Note: This decorator is intended ONLY for service providers
+    """Decorator that give us a "quick& clean" caching feature.
+    The "cached" element must provide a "cache" variable, which is a cache object
 
     :param cachePrefix: the cache key "prefix" (prepended on generated key from args)
     :param cacheTimeout: The cache timeout in seconds
@@ -163,12 +162,15 @@ def allowCache(
             data: typing.Any = None
             if kwargs.get('force', False) is False and args[0].cache:
                 data = args[0].cache.get(cacheKey)
+                if data:
+                    logger.debug('Cache hit for %s', cacheKey)
+                    return data
 
             if 'force' in kwargs:
                 # Remove force key
                 del kwargs['force']
 
-            if data is None and args[0].cache:  # Not in cache and object can cache it
+            if args[0].cache:  # Not in cache and object can cache it
                 data = fnc(*args, **kwargs)
                 try:
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this

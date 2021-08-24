@@ -501,7 +501,9 @@ class RegexLdap(auths.Authenticator):
             usr = self.__getUser(username)
 
             if usr is None:
-                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid user')
+                authLogLogin(
+                    getRequest(), self.dbAuthenticator(), username, 'Invalid user'
+                )
                 return False
 
             try:
@@ -510,7 +512,9 @@ class RegexLdap(auths.Authenticator):
                     usr['dn'], credentials
                 )  # Will raise an exception if it can't connect
             except:
-                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid password')
+                authLogLogin(
+                    getRequest(), self.dbAuthenticator(), username, 'Invalid password'
+                )
                 return False
 
             groupsManager.validate(self.__getGroups(usr))
