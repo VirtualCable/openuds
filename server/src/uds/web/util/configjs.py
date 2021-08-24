@@ -115,7 +115,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             or (tag == 'disabled' and x.getType().isCustom() is False)
         ]
 
-    if not authenticators:
+    if not authenticators and tag != 'disabled':
         try:
             authenticators = [Authenticator.objects.order_by('priority')[0]]
         except Exception:  # There is no authenticators yet...
