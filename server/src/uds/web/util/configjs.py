@@ -98,7 +98,7 @@ def udsJs(request: 'HttpRequest') -> str:
     if tag and authenticators:  # Refilter authenticators, visible and with this tag if required
         authenticators = [x for x in authenticators if x.small_name == tag or (tag == 'disabled' and x.getType().isCustom() is False)]
 
-    if not authenticators:
+    if not authenticators and tag != 'disabled':
         try:
             authenticators = [Authenticator.objects.order_by('priority')[0]]
         except Exception:  # There is no authenticators yet...
