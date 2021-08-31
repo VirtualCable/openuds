@@ -676,7 +676,7 @@ class gui:
                    fills = { 'target': 'choice2', 'callback': fncValues,
                        'parameters': ['choice1', 'name']}
                    )
-               choice2 = ghui.ChoiceField(label="Choice 2")
+               choice2 = gui.ChoiceField(label="Choice 2")
 
             Here is a more detailed explanation, using the VC service module as
             sample.
