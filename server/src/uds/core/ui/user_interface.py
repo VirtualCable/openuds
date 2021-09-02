@@ -863,7 +863,8 @@ class gui:
 class UserInterfaceType(type):
     """
     Metaclass definition for moving the user interface descriptions to a usable
-    better place
+    better place. This is done this way because we will "deepcopy" these fields
+    later, and update references on class 'self' to the new copy. (so everyone has a different copy)
     """
 
     def __new__(
@@ -875,6 +876,7 @@ class UserInterfaceType(type):
         newClassDict = {}
         _gui: typing.MutableMapping[str, gui.InputField] = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
+        # Later on init method to update the class 'self' with the new copy
         for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 _gui[attrName] = attr
