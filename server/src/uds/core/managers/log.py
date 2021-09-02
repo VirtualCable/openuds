@@ -153,7 +153,7 @@ class LogManager:
         """
 
         owner_type = transDict.get(type(wichObject), None)
-        if owner_type:
+        if owner_type is not None:
             self.__clearLogs(owner_type, wichObject.id)
         else:
             logger.debug('Requested clearLogs for a type of object not covered: %s', wichObject)
