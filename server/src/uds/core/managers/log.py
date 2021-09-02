@@ -29,12 +29,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import traceback
 import logging
 import typing
 
 from uds import models
-
-from uds.core.util import log
 
 from uds.core.util.config import GlobalConfig
 
@@ -201,9 +200,11 @@ class LogManager:
         """
 
         owner_type = transDict.get(type(wichObject), None)
-        if owner_type:
+        if owner_type is not None:
             self.__clearLogs(owner_type, wichObject.id)  # type: ignore
         else:
             logger.debug(
-                'Requested clearLogs for a type of object not covered: %s', wichObject
+                'Requested clearLogs for a type of object not covered: %s: %s', type(wichObject), wichObject
             )
+            for line in traceback.format_stack(limit=5):
+                logger.debug('>> %s', line)
