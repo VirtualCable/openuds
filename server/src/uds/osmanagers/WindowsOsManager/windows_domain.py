@@ -100,7 +100,7 @@ class WinDomainOsManager(WindowsOsManager):
         label=_('Machine Group'),
         order=7,
         tooltip=_(
-            'Group to which add machines on creation. If empty, no group will be used. (experimental)'
+            'Group to which add machines on creation. If empty, no group will be used.'
         ),
         tab=_('Advanced'),
     )

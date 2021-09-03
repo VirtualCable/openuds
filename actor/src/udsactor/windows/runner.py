@@ -41,6 +41,8 @@ from .service import UDSActorSvc
 def setupRecoverService():
     svc_name = UDSActorSvc._svc_name_  # pylint: disable=protected-access
 
+    hs = None
+    hscm = None
     try:
         hscm = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
 
@@ -57,9 +59,11 @@ def setupRecoverService():
             }
             win32service.ChangeServiceConfig2(hs, win32service.SERVICE_CONFIG_FAILURE_ACTIONS, service_failure_actions)
         finally:
-            win32service.CloseServiceHandle(hs)
+            if hs:
+                win32service.CloseServiceHandle(hs)
     finally:
-        win32service.CloseServiceHandle(hscm)
+        if hscm:
+            win32service.CloseServiceHandle(hscm)
 
 
 def run() -> None:
