@@ -36,6 +36,7 @@ import typing
 from uds import models
 
 from uds.core.util.config import GlobalConfig
+from uds.core.util import singleton
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -72,21 +73,17 @@ transDict: typing.Dict[typing.Type['Model'], int] = {
 }
 
 
-class LogManager:
+class LogManager(metaclass=singleton.Singleton):
     """
     Manager for logging (at database) events
     """
-
-    _manager: typing.Optional['LogManager'] = None
 
     def __init__(self):
         pass
 
     @staticmethod
     def manager() -> 'LogManager':
-        if not LogManager._manager:
-            LogManager._manager = LogManager()
-        return LogManager._manager
+        return LogManager()  # Singleton pattern will return always the same instance
 
     def __log(
         self,
@@ -204,7 +201,9 @@ class LogManager:
             self.__clearLogs(owner_type, wichObject.id)  # type: ignore
         else:
             logger.debug(
-                'Requested clearLogs for a type of object not covered: %s: %s', type(wichObject), wichObject
+                'Requested clearLogs for a type of object not covered: %s: %s',
+                type(wichObject),
+                wichObject,
             )
             for line in traceback.format_stack(limit=5):
                 logger.debug('>> %s', line)

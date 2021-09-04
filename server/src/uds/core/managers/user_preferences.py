@@ -38,6 +38,8 @@ import typing
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 
+from uds.core.util import singleton
+
 if typing.TYPE_CHECKING:
     from uds.models import User
 
@@ -45,8 +47,7 @@ logger = logging.getLogger(__name__)
 
 # UserPrefs is DEPRECATED
 # Currently not used anywhere
-class UserPrefsManager:
-    _manager: typing.Optional['UserPrefsManager'] = None
+class UserPrefsManager(metaclass=singleton.Singleton):
     _prefs: typing.Dict[str, typing.Dict]
 
     def __init__(self):
@@ -54,9 +55,7 @@ class UserPrefsManager:
 
     @staticmethod
     def manager() -> 'UserPrefsManager':
-        if UserPrefsManager._manager is None:
-            UserPrefsManager._manager = UserPrefsManager()
-        return UserPrefsManager._manager
+        return UserPrefsManager()
 
     def __nameFor(self, module, name):
         return module + "_" + name

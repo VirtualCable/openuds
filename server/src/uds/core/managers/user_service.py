@@ -58,6 +58,7 @@ from uds.models import (
 )
 from uds.models.meta_pool import MetaPoolMember
 from uds.core import services, transports
+from uds.core.util import singleton
 from uds.core.util.stats import events
 
 from .userservice import comms
@@ -67,17 +68,13 @@ logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
 
 
-class UserServiceManager:
-    _manager: typing.Optional['UserServiceManager'] = None
-
+class UserServiceManager(metaclass=singleton.Singleton):
     def __init__(self):
         pass
 
     @staticmethod
     def manager() -> 'UserServiceManager':
-        if not UserServiceManager._manager:
-            UserServiceManager._manager = UserServiceManager()
-        return UserServiceManager._manager
+        return UserServiceManager()  # Singleton pattern will return always the same instance
 
     @staticmethod
     def getCacheStateFilter(level: int) -> Q:

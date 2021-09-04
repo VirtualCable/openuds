@@ -49,6 +49,8 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 from django.conf import settings
 
+from uds.core.util import singleton
+
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
@@ -58,9 +60,7 @@ if typing.TYPE_CHECKING:
     from cryptography.hazmat.primitives.asymmetric.dh import DHPrivateKey
 
 
-class CryptoManager:
-    instance = None
-
+class CryptoManager(metaclass=singleton.Singleton):
     def __init__(self):
         self._rsa = serialization.load_pem_private_key(
             settings.RSA_KEY.encode(), password=None, backend=default_backend()
@@ -87,9 +87,7 @@ class CryptoManager:
 
     @staticmethod
     def manager() -> 'CryptoManager':
-        if CryptoManager.instance is None:
-            CryptoManager.instance = CryptoManager()
-        return CryptoManager.instance
+        return CryptoManager()  # Singleton pattern will return always the same instance
 
     def encrypt(self, value: str) -> str:
         return codecs.encode(
@@ -117,7 +115,7 @@ class CryptoManager:
                     label=None,
                 ),
             )
-        except Exception:  # If fails, try old method
+        except Exception:  # Old method is not supported
             logger.exception('Decripting: %s', value)
             return 'decript error'
         # logger.debug('Decripted: %s %s', data, decrypted)

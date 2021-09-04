@@ -35,6 +35,7 @@ import logging
 import typing
 
 from uds.core.util.config import GlobalConfig
+from uds.core.util import singleton
 from uds.models import StatsCounters
 from uds.models import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.models import StatsEvents
@@ -53,7 +54,7 @@ REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {
 }
 
 
-class StatsManager:
+class StatsManager(metaclass=singleton.Singleton):
     """
     Manager for statistics, so we can provide usefull info about platform usage
 
@@ -62,16 +63,12 @@ class StatsManager:
     are assigned, are in use, in cache, etc...
     """
 
-    _manager: typing.Optional['StatsManager'] = None
-
     def __init__(self):
         pass
 
     @staticmethod
-    def manager():
-        if not StatsManager._manager:
-            StatsManager._manager = StatsManager()
-        return StatsManager._manager
+    def manager() -> 'StatsManager':
+        return StatsManager()  # Singleton pattern will return always the same instance
 
     def __doCleanup(self, model):
         minTime = time.mktime(

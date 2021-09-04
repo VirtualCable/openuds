@@ -45,6 +45,8 @@ from uds.core.util import log
 
 from uds.models import ServicePoolPublication, getSqlDatetime, ServicePool
 
+from uds.core.util import singleton
+
 if typing.TYPE_CHECKING:
     from uds.core import services
 
@@ -255,12 +257,10 @@ class PublicationFinishChecker(DelayedTask):
             )
 
 
-class PublicationManager:
+class PublicationManager(metaclass=singleton.Singleton):
     """
     Manager responsible of controlling publications
     """
-
-    _manager: typing.Optional['PublicationManager'] = None
 
     def __init__(self):
         pass
@@ -270,9 +270,9 @@ class PublicationManager:
         """
         Returns the singleton to this manager
         """
-        if not PublicationManager._manager:
-            PublicationManager._manager = PublicationManager()
-        return PublicationManager._manager
+        return (
+            PublicationManager()
+        )  # Singleton pattern will return always the same instance
 
     def publish(
         self, servicePool: ServicePool, changeLog: typing.Optional[str] = None

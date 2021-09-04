@@ -45,36 +45,36 @@ if typing.TYPE_CHECKING:
 
 
 def cryptoManager() -> 'CryptoManager':
-    from .crypto import CryptoManager  # pylint: disable=redefined-outer-name
+    from .crypto import CryptoManager
 
     return CryptoManager.manager()
 
 
-def taskManager() -> typing.Type['TaskManager']:
-    from .task import TaskManager  # pylint: disable=redefined-outer-name
+def taskManager() -> 'TaskManager':
+    from .task import TaskManager
 
-    return TaskManager
+    return TaskManager.manager()
 
 
 def downloadsManager() -> 'DownloadsManager':
-    from .downloads import DownloadsManager  # pylint: disable=redefined-outer-name
+    from .downloads import DownloadsManager
 
     return DownloadsManager.manager()
 
 
 def logManager() -> 'LogManager':
-    from .log import LogManager  # pylint: disable=redefined-outer-name
+    from .log import LogManager
 
     return LogManager.manager()
 
 
 def userServiceManager() -> 'UserServiceManager':
-    from .user_service import UserServiceManager  # pylint: disable=redefined-outer-name
+    from .user_service import UserServiceManager
 
     return UserServiceManager.manager()
 
 
 def publicationManager() -> 'PublicationManager':
-    from .publication import PublicationManager  # pylint: disable=redefined-outer-name
+    from .publication import PublicationManager
 
     return PublicationManager.manager()

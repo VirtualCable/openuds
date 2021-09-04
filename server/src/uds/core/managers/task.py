@@ -41,6 +41,7 @@ from uds.core.jobs.scheduler import Scheduler
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core import jobs
 from uds.core.util.config import GlobalConfig
+from uds.core.util import singleton
 
 logger = logging.getLogger(__name__)
 
@@ -66,8 +67,15 @@ class DelayedTaskThread(BaseThread):
         DelayedTaskRunner.runner().notifyTermination()
 
 
-class TaskManager:
+class TaskManager(metaclass=singleton.Singleton):
     keepRunning: bool = True
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def manager() -> 'TaskManager':
+        return TaskManager()
 
     @staticmethod
     def sigTerm(sigNum, frame):
@@ -80,24 +88,20 @@ class TaskManager:
         Take a look at killTaskManager.sh :-)
         """
         logger.info("Caught term signal, finishing task manager")
-        TaskManager.keepRunning = False
+        TaskManager.manager().keepRunning = False
 
-    @staticmethod
-    def registerJob(jobType: typing.Type[jobs.Job]) -> None:
+    def registerJob(self, jobType: typing.Type[jobs.Job]) -> None:
         jobName = jobType.friendly_name
         jobs.factory().insert(jobName, jobType)
 
-    @staticmethod
-    def registerScheduledTasks() -> None:
-
+    def registerScheduledTasks(self) -> None:
         logger.info("Registering sheduled tasks")
 
         # Simply import this to make workers "auto import themself"
         from uds.core import workers  # @UnusedImport pylint: disable=unused-import
 
-    @staticmethod
-    def run() -> None:
-        TaskManager.keepRunning = True
+    def run(self) -> None:
+        self.keepRunning = True
 
         # Don't know why, but with django 1.8, must "reset" connections so them do not fail on first access...
         # Is simmilar to https://code.djangoproject.com/ticket/21597#comment:29
@@ -106,7 +110,7 @@ class TaskManager:
         # Releases owned schedules so anyone can access them...
         Scheduler.releaseOwnShedules()
 
-        TaskManager.registerScheduledTasks()
+        self.registerScheduledTasks()
 
         noSchedulers: int = GlobalConfig.SCHEDULER_THREADS.getInt()
         noDelayedTasks: int = GlobalConfig.DELAYED_TASKS_THREADS.getInt()

@@ -39,12 +39,12 @@ from wsgiref.util import FileWrapper
 from django.http import HttpResponse, Http404
 
 from uds.core.managers import cryptoManager
-
+from uds.core.util import singleton
 
 logger = logging.getLogger(__name__)
 
 
-class DownloadsManager:
+class DownloadsManager(metaclass=singleton.Singleton):
     """
     Manager so connectors can register their own downloadables
     For registering, use at __init__.py of the conecto something like this:
@@ -56,17 +56,16 @@ class DownloadsManager:
                                                         'application/x-msdos-program')
     """
 
-    _manager: typing.Optional['DownloadsManager'] = None
     _downloadables: typing.Dict[str, typing.Dict[str, str]] = {}
 
     def __init__(self):
         self._downloadables = {}
 
     @staticmethod
-    def manager():
-        if DownloadsManager._manager is None:
-            DownloadsManager._manager = DownloadsManager()
-        return DownloadsManager._manager
+    def manager() -> 'DownloadsManager':
+        return (
+            DownloadsManager()
+        )  # Singleton pattern will return always the same instance
 
     def registerDownloadable(
         self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'
