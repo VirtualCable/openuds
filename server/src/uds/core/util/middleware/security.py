@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2021 Virtual Cable S.L.U.
+# Copyright (c) 2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,37 +28,18 @@
 import logging
 import typing
 
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from uds.core.util.config import GlobalConfig
-
 logger = logging.getLogger(__name__)
+
+from django.http import HttpResponseForbidden
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
 
-class RedirectMiddleware:
-    """
-    This class is responsible of redirection, if checked, requests to HTTPS.
-
-    Some paths will not be redirected, to avoid problems, but they are advised to use SSL (this is for backwards compat)
-    """
-
-    NO_REDIRECT: typing.ClassVar[typing.List[str]] = [
-        'rest',
-        'pam',
-        'guacamole',
-        # For new paths
-        # 'uds/rest',  # REST must be HTTPS if redirect is enabled
-        'uds/pam',
-        'uds/guacamole',
-        # Test client can be http
-        'uds/rest/client/test',
-        # And also the tunnel
-        'uds/rest/tunnel',
-    ]
-
+class UDSSecurityMiddleware:
+    '''
+    This class contains all the security checks done by UDS in order to add some extra protection.
+    '''
     get_response: typing.Any  # typing.Callable[['HttpRequest'], 'HttpResponse']
 
     def __init__(
@@ -67,28 +48,10 @@ class RedirectMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
-        full_path = request.get_full_path()
-        redirect = True
-        for nr in RedirectMiddleware.NO_REDIRECT:
-            if full_path.startswith('/' + nr):
-                redirect = False
-                break
+        # Old browsers does not sends the sec-fetch* headers, count them as fine
+        # This is just only a layer on the top of the security headers
+        if request.headers.get('Sec-Fetch-Site', 'none') in ('same-origin', 'same-site', 'none'):
+            return self.get_response(request)
 
-        if (
-            redirect
-            and not request.is_secure()
-            and GlobalConfig.REDIRECT_TO_HTTPS.getBool()
-        ):
-            if request.method == 'POST':
-                # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
-                url = reverse('page.login')
-            else:
-                url = request.build_absolute_uri(full_path)
-            url = url.replace('http://', 'https://')
-
-            return HttpResponseRedirect(url)
-        return self.get_response(request)
-
-    @staticmethod
-    def registerException(path: str) -> None:
-        RedirectMiddleware.NO_REDIRECT.append(path)
+        # If Sec-Fetch-Site header is present, but not allowed (that is, not same origin), return 403
+        return HttpResponseForbidden('Forbidden Cross Origin request')
