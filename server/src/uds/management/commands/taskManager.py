@@ -156,7 +156,7 @@ class Command(BaseCommand):
 
                 open(getPidFile(), 'w+').write('{}\n'.format(pid))
 
-            manager = taskManager()()
+            manager = taskManager()
             manager.run()
 
         if not start and not stop:
