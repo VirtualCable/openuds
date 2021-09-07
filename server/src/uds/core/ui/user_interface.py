@@ -116,10 +116,9 @@ class gui:
         """
         Helper to convert from array of strings to the same dict used in choice,
         multichoice, ..
-        The id is set to values in the array (strings), while text is left empty.
         """
         if isinstance(vals, (list, tuple)):
-            return [{'id': v, 'text': ''} for v in vals]
+            return [{'id': v, 'text': v} for v in vals]
 
         # Dictionary
         return [{'id': k, 'text': v} for k, v in vals.items()]
@@ -234,6 +233,7 @@ class gui:
         """
 
         TEXT_TYPE: typing.ClassVar[str] = 'text'
+        TEXT_AUTOCOMPLETE_TYPE: typing.ClassVar[str] = 'text-autocomplete'
         TEXTBOX_TYPE: typing.ClassVar[str] = 'textbox'
         NUMERIC_TYPE: typing.ClassVar[str] = 'numeric'
         PASSWORD_TYPE: typing.ClassVar[str] = 'password'
@@ -403,6 +403,25 @@ class gui:
 
         def cleanStr(self):
             return str(self.value).strip()
+
+    class TextAutocompleteField(TextField):
+        """
+        This represents a text field that holds autocomplete values.
+        Values are a list of strings...
+        """
+
+        def __init__(self, **options) -> None:
+            super().__init__(**options)
+            # Change the type
+            self._type(gui.InputField.TEXT_AUTOCOMPLETE_TYPE)
+            # And store values in a list
+            self._data['values'] = gui.convertToChoices(options.get('values', []))
+
+        def setValues(self, values: typing.List[str]):
+            """
+            Set the values for this choice field
+            """
+            self._data['values'] = gui.convertToChoices(values)
 
     class NumericField(InputField):
         """
