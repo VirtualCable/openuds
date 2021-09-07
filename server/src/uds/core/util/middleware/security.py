@@ -48,10 +48,5 @@ class UDSSecurityMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
-        # Old browsers does not sends the sec-fetch* headers, count them as fine
-        # This is just only a layer on the top of the security headers
-        if request.headers.get('Sec-Fetch-Site', 'none') in ('same-origin', 'same-site', 'none'):
-            return self.get_response(request)
-
-        # If Sec-Fetch-Site header is present, but not allowed (that is, not same origin), return 403
-        return HttpResponseForbidden('Forbidden Cross Origin request')
+        # TODO: Implement security checks here
+        return self.get_response(request)
