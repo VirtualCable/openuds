@@ -135,6 +135,11 @@ CALENDAR_ACTION_DEL_TRANSPORT: typing.Dict[str, typing.Any] = {
         },
     ),
 }
+CALENDAR_ACTION_DEL_ALL_TRANSPORTS: typing.Dict[str, typing.Any] = {
+    'id': 'REMOVE_ALL_TRANSPORTS',
+    'description': _('Remove all transports'),
+    'params': (),
+}  
 CALENDAR_ACTION_ADD_GROUP: typing.Dict[str, typing.Any] = {
     'id': 'ADD_GROUP',
     'description': _('Add a group'),
@@ -149,6 +154,11 @@ CALENDAR_ACTION_DEL_GROUP: typing.Dict[str, typing.Any] = {
         {'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},
     ),
 }
+CALENDAR_ACTION_DEL_ALL_GROUPS: typing.Dict[str, typing.Any] = {
+    'id': 'REMOVE_ALL_GROUPS',
+    'description': _('Remove all transports'),
+    'params': (),
+}  
 CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {
     'id': 'IGNORE_UNUSED',
     'description': _('Sets the ignore unused'),
@@ -178,8 +188,10 @@ CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
         CALENDAR_ACTION_MAX,
         CALENDAR_ACTION_ADD_TRANSPORT,
         CALENDAR_ACTION_DEL_TRANSPORT,
+        CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
         CALENDAR_ACTION_ADD_GROUP,
         CALENDAR_ACTION_DEL_GROUP,
+        CALENDAR_ACTION_DEL_ALL_GROUPS,
         CALENDAR_ACTION_IGNORE_UNUSED,
         CALENDAR_ACTION_REMOVE_USERSERVICES,
     )
@@ -309,6 +321,12 @@ class CalendarAction(UUIDModel):
                 state=state.State.USABLE
             ):
                 userService.remove()
+        elif CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id'] == self.action:
+            # 2.- Remove all transports
+            self.service_pool.transports.all().delete()
+        elif CALENDAR_ACTION_DEL_ALL_GROUPS['id'] == self.action:
+            # 3.- Remove all groups
+            self.service_pool.assignedGroups.all().detete()
         else:
             caTransports = (
                 CALENDAR_ACTION_ADD_TRANSPORT['id'],
