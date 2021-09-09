@@ -128,7 +128,6 @@ class TunnelTicket(Handler):
                 log.doLog(user.manager, log.INFO, msg)
                 log.doLog(userService, log.INFO, msg)
                 # Generate new, notify only, ticket
-                rstr = managers.cryptoManager().randomString(length=8)
                 notifyTicket = models.TicketStore.create_for_tunnel(
                     userService=userService,
                     port=port,

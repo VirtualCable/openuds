@@ -236,6 +236,10 @@ class TicketStore(UUIDModel):
             # if not found any, will raise an execption
             user = User.objects.get(uuid=data['u'])
             userService = UserService.objects.get(uuid=data['s'], user=user)
+            # Ensure userservice is usable
+            if not userService.isUsable():
+                raise Exception('Service is not usable')  # Not usable, so we will not use it :)
+
             host = data['h']
 
             if not host:

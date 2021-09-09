@@ -54,13 +54,13 @@ def dict2resp(dct: typing.Mapping[typing.Any, typing.Any]) -> str:
     return '\r'.join((str(k) + '\t' + str(v) for k, v in dct.items()))
 
 
+@auth.trustedSourceRequired
 def guacamole(
     request: ExtendedHttpRequestWithUser, token: str, tunnelId: str
 ) -> HttpResponse:
     if not TunnelToken.validateToken(token):
         logger.error('Invalid token %s from %s', token, request.ip)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
-    # TODO: Check the authId validity
     logger.debug('Received credentials request for tunnel id %s', tunnelId)
 
     try:
@@ -73,11 +73,13 @@ def guacamole(
 
         # Extra check that the ticket data belongs to original requested user service/user
         if 'ticket-info' in val:
-            ti = typing.cast(typing.Mapping[str, str], val['ticket-info'])
+            ti = typing.cast(typing.Mapping[str, str], val['ticket-info'])  # recast to dict
             del val['ticket-info']  # Do not send this data to guacamole!! :)
 
             try:
                 userService = UserService.objects.get(uuid=ti['userService'])
+                if not userService.isUsable():
+                    raise Exception() # Not usable, so we will not use it :)
                 # Log message and event
                 protocol = 'RDS' if 'remote-app' in val else val['protocol'].upper()
                 host = val.get('hostname', '0.0.0.0')
@@ -99,12 +101,12 @@ def guacamole(
                 logger.error(
                     'The requested guacamole userservice does not exists anymore'
                 )
-                raise
+                raise  # Let it be handled by the upper layers
             if userService.user.uuid != ti['user']:
                 logger.error(
                     'The requested userservice has changed owner and is not accesible'
                 )
-                raise Exception()
+                raise Exception()  # Let it be handled by the upper layers
 
         if 'password' in val:
             val['password'] = cryptoManager().symDecrpyt(val['password'], scrambler)
