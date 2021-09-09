@@ -119,6 +119,9 @@ class TaskManager(metaclass=singleton.Singleton):
             'Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks
         )
 
+        signal.signal(signal.SIGTERM, TaskManager.sigTerm)
+        signal.signal(signal.SIGINT, TaskManager.sigTerm)
+
         threads: typing.List[BaseThread] = []
         thread: BaseThread
 
@@ -134,16 +137,13 @@ class TaskManager(metaclass=singleton.Singleton):
             threads.append(thread)
             time.sleep(0.5)  # Wait a bit before next delayed task runner is started
 
-        signal.signal(signal.SIGTERM, TaskManager.sigTerm)
-        signal.signal(signal.SIGINT, TaskManager.sigTerm)
-
         # Debugging stuff
         # import guppy
         # from guppy.heapy import Remote
         # Remote.on()
 
         # gc.set_debug(gc.DEBUG_LEAK)
-        while TaskManager.keepRunning:
+        while self.keepRunning:
             time.sleep(1)
 
         for thread in threads:
