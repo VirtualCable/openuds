@@ -175,6 +175,7 @@ class TRDPTransport(BaseRDPTransport):
         r.username = username
         r.password = password
         r.domain = domain
+
         r.redirectPrinters = self.allowPrinters.isTrue()
         r.redirectSmartcards = self.allowSmartcards.isTrue()
         r.redirectDrives = self.allowDrives.value
@@ -186,6 +187,7 @@ class TRDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
         r.smoothFonts = self.smooth.isTrue()
+        r.displayConnectionBar = self.showConnectionBar.isTrue()
         r.enablecredsspsupport = self.credssp.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()

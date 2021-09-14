@@ -156,7 +156,7 @@ CALENDAR_ACTION_DEL_GROUP: typing.Dict[str, typing.Any] = {
 }
 CALENDAR_ACTION_DEL_ALL_GROUPS: typing.Dict[str, typing.Any] = {
     'id': 'REMOVE_ALL_GROUPS',
-    'description': _('Remove all transports'),
+    'description': _('Remove all groups'),
     'params': (),
 }  
 CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {
