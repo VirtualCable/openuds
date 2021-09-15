@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 13:34+0200\n"
-"PO-Revision-Date: 2021-08-11 08:06+0000\n"
+"POT-Creation-Date: 2021-09-15 12:46+0200\n"
+"PO-Revision-Date: 2021-09-15 10:45+0000\n"
 "Last-Translator: Francisco Javier Gómez Seijo <jgomez@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -473,7 +473,7 @@ msgstr "Eliminar Autenticador"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:91
 msgid "Any"
-msgstr "Alguna"
+msgstr "Cualquiera"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:92
 msgid "All"
@@ -763,7 +763,7 @@ msgstr "Ejecutar acción programada"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:219
 msgid "Execute scheduled action right now?"
-msgstr "¿Ejecutar la acción programada en ahora?"
+msgstr "¿Ejecutar la acción programada ahora?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:220
 msgid "Scheduled action executed"
@@ -1025,9 +1025,8 @@ msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgstr "Eliminar token de actor - ¡USAR CON EXTREMA PRECAUCIÓN!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-#| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
-msgstr "Eliminar el token del túnel: ¡UTILÍCELO CON EXTREMA PRECAUCIÓN!"
+msgstr "Elimine el token del túnel: ¡UTILICE CON EXTREMA PRECAUCIÓN!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:24
 msgid "Cache flushed"
@@ -1129,7 +1128,7 @@ msgstr "Elementos seleccionados"
 
 #: static/admin/translations-fakejs.js:302
 msgid "Copy"
-msgstr "Dupdo"
+msgstr "Copiar"
 
 #: static/admin/translations-fakejs.js:303
 msgid "Detail"
@@ -1231,12 +1230,12 @@ msgid "Tunnel"
 msgstr "Túnel"
 
 #: static/admin/translations-fakejs.js:332
-msgid "Flush Cache"
-msgstr "Vaciar caché"
-
-#: static/admin/translations-fakejs.js:333
 msgid "Configuration"
 msgstr "Configuración"
+
+#: static/admin/translations-fakejs.js:333
+msgid "Flush Cache"
+msgstr "Vaciar caché"
 
 #: static/admin/translations-fakejs.js:334
 #: static/admin/translations-fakejs.js:366

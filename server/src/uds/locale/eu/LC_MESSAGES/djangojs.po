@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 13:34+0200\n"
-"PO-Revision-Date: 2021-07-08 10:59+0000\n"
+"POT-Creation-Date: 2021-09-15 12:46+0200\n"
+"PO-Revision-Date: 2021-09-15 10:45+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -1017,7 +1017,6 @@ msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgstr "Ezabatu aktoreen tokenak - ERABILI KONTUZ!!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-#| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
 msgstr "Ezabatu tunelaren token-a. ERABILI KONTUZ."
 
@@ -1223,12 +1222,12 @@ msgid "Tunnel"
 msgstr "Tunel"
 
 #: static/admin/translations-fakejs.js:332
-msgid "Flush Cache"
-msgstr "Cachea hustu"
-
-#: static/admin/translations-fakejs.js:333
 msgid "Configuration"
 msgstr "Konfigurazioa"
+
+#: static/admin/translations-fakejs.js:333
+msgid "Flush Cache"
+msgstr "Cachea hustu"
 
 #: static/admin/translations-fakejs.js:334
 #: static/admin/translations-fakejs.js:366

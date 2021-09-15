@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 13:34+0200\n"
-"PO-Revision-Date: 2021-07-08 10:59+0000\n"
+"POT-Creation-Date: 2021-09-15 12:46+0200\n"
+"PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -1018,7 +1018,6 @@ msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgstr "Actor-Token löschen - MIT EXTREMER VORSICHT VERWENDEN !!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-#| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
 msgstr "Tunnel-Token löschen - MIT EXTREM VORSICHT VERWENDEN!!!"
 
@@ -1217,19 +1216,19 @@ msgstr "Token"
 
 #: static/admin/translations-fakejs.js:330
 msgid "Actor"
-msgstr "Darsteller"
+msgstr "Schauspieler"
 
 #: static/admin/translations-fakejs.js:331
 msgid "Tunnel"
 msgstr "Tunnel"
 
 #: static/admin/translations-fakejs.js:332
-msgid "Flush Cache"
-msgstr "Cache leeren"
-
-#: static/admin/translations-fakejs.js:333
 msgid "Configuration"
 msgstr "Konfiguration"
+
+#: static/admin/translations-fakejs.js:333
+msgid "Flush Cache"
+msgstr "Cache leeren"
 
 #: static/admin/translations-fakejs.js:334
 #: static/admin/translations-fakejs.js:366

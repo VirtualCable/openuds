@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 13:34+0200\n"
-"PO-Revision-Date: 2021-07-08 10:59+0000\n"
+"POT-Creation-Date: 2021-09-15 12:46+0200\n"
+"PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -1019,7 +1019,6 @@ msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgstr "Elimina token Actor - UTILIZZARE CON ESTREMA ATTENZIONE!!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-#| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
 msgstr "Elimina token tunnel - UTILIZZARE CON ESTREMA CAUTELA!!!"
 
@@ -1225,12 +1224,12 @@ msgid "Tunnel"
 msgstr "Tunnel"
 
 #: static/admin/translations-fakejs.js:332
-msgid "Flush Cache"
-msgstr "Svuota Cache"
-
-#: static/admin/translations-fakejs.js:333
 msgid "Configuration"
 msgstr "Configurazione"
+
+#: static/admin/translations-fakejs.js:333
+msgid "Flush Cache"
+msgstr "Svuota Cache"
 
 #: static/admin/translations-fakejs.js:334
 #: static/admin/translations-fakejs.js:366

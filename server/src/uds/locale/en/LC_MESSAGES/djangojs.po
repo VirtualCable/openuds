@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 13:34+0200\n"
+"POT-Creation-Date: 2021-09-15 12:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1215,11 +1215,11 @@ msgid "Tunnel"
 msgstr ""
 
 #: static/admin/translations-fakejs.js:332
-msgid "Flush Cache"
+msgid "Configuration"
 msgstr ""
 
 #: static/admin/translations-fakejs.js:333
-msgid "Configuration"
+msgid "Flush Cache"
 msgstr ""
 
 #: static/admin/translations-fakejs.js:334
