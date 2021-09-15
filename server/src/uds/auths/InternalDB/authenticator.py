@@ -158,6 +158,14 @@ class InternalDBAuth(auths.Authenticator):
 
         groupsManager.validate([g.name for g in user.groups.all()])
 
+    def getRealName(self, username: str) -> str:
+        # Return the real name of the user, if it is set
+        try:
+            user = self.dbAuthenticator().users.get(name=username, state=State.ACTIVE)
+            return user.real_name or username
+        except Exception:
+            return super().getRealName(username)
+
     def createUser(self, usrData):
         pass
 
