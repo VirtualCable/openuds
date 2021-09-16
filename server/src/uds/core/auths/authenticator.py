@@ -333,6 +333,12 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return False
 
+    def isVisibleFrom(self, request: 'HttpRequest'):
+        """
+        Used by the login interface to determine if the authenticator is visible on the login page.
+        """
+        return True
+
     def transformUsername(self, username: str) -> str:
         """
         On login, this method get called so we can "transform" provided user name.

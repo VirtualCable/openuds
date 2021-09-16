@@ -103,6 +103,9 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     else:
         authenticators = Authenticator.objects.all().exclude(visible=False)
 
+    # Filter out non visible authenticators
+    authenticators = [a for a in authenticators if a.getInstance().isVisibleFrom(request)]
+
     # logger.debug('Authenticators PRE: %s', authenticators)
 
     if (

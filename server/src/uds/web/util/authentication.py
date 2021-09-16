@@ -97,8 +97,11 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
             (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.getBool() else 0
         )
         maxTries = GlobalConfig.MAX_LOGIN_TRIES.getInt()
+        # Get instance..
+        authInstance = authenticator.getInstance()
+        # Check if user is locked
         if (
-            authenticator.getInstance().blockUserOnLoginFailures is True
+            authInstance.blockUserOnLoginFailures is True
             and (tries >= maxTries)
             or triesByIp >= maxTries
         ):
@@ -107,6 +110,15 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
                 None,
                 _('Too many authentication errrors. User temporarily blocked'),
             )
+        # check if authenticator is visible for this requests
+        if authInstance.isVisibleFrom(request=request) is False:
+            authLogLogin(
+                request,
+                authenticator,
+                userName,
+                'Access tried from an unallowed source',
+            )
+            return (None, _('Access tried from an unallowed source'))
 
         password = form.cleaned_data['password']
         user = None

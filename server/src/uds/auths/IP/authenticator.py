@@ -38,11 +38,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core import auths
 from uds.core.util import net
 from uds.core.ui import gui
-from uds.core.util.request import getRequest
-
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+from uds.core.util.request import getRequest, ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +47,19 @@ class IPAuth(auths.Authenticator):
     acceptProxy = gui.CheckBoxField(
         label=_('Accept proxy'),
         defvalue=gui.FALSE,
-        order=3,
+        order=50,
         tooltip=_(
             'If checked, requests via proxy will get FORWARDED ip address'
             ' (take care with this bein checked, can take internal IP addresses from internet)'
         ),
+        tab=gui.ADVANCED_TAB
+    )
+
+    visibleFromNets = gui.TextField(
+        order=50,
+        label=_('Visible only from this networks'),
+        defvalue='',
+        tooltip=_('This authenticator will be visible only from these networks. Leave empty to allow all networks'),
         tab=gui.ADVANCED_TAB
     )
 
@@ -93,6 +97,15 @@ class IPAuth(auths.Authenticator):
             return True
         return False
 
+    def isVisibleFrom(self, request: 'ExtendedHttpRequest'):
+        """
+        Used by the login interface to determine if the authenticator is visible on the login page.
+        """
+        validNets = self.visibleFromNets.value.strip()
+        if not validNets or net.ipInNetwork(request.ip, validNets):
+            return True
+        return False
+
     def internalAuthenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
         # In fact, username does not matter, will get IP from request
         username = self.getIp()  # Override provided username and use source IP
@@ -108,7 +121,7 @@ class IPAuth(auths.Authenticator):
     def check(self):
         return _("All seems to be fine.")
 
-    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
+    def getJavascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password
         ip = self.getIp()
