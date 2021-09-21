@@ -44,7 +44,7 @@ ICA = 'ica'
 NX = 'nx'
 X11 = 'x11'
 X2GO = 'x2go'  # Based on NX
-NICE = 'nice'
+NICEDCV = 'nicedcv'
 OTHER = 'other'
 
-GENERIC = (RDP, RGS, VNC, NX, X11, X2GO, PCOIP, NICE, OTHER)
+GENERIC = (RDP, RGS, VNC, NX, X11, X2GO, PCOIP, NICEDCV, OTHER)

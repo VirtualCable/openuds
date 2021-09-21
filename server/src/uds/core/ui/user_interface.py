@@ -219,8 +219,8 @@ class gui:
             * order
             * label
             * tooltip
-            * defvalue
-            * rdonly if can't be modified once it's created
+            * defvalue  (if not required, this is optional). Alias for this field is defaultValue
+            * rdonly if can't be modified once it's created. Aliases for this field is readOnly
 
         Any other paremeter needed is indicated in the corresponding field class.
 
@@ -251,7 +251,8 @@ class gui:
         _data: typing.Dict[str, typing.Any]
 
         def __init__(self, **options) -> None:
-            defvalue = options.get('defvalue', '')
+            # Added defaultValue as alias for defvalue
+            defvalue = options.get('defvalue', options.get('defaultValue', ''))
             if callable(defvalue):
                 defvalue = defvalue()
             self._data = {
@@ -262,7 +263,7 @@ class gui:
                 'label': options.get('label', ''),
                 'defvalue': str(defvalue),
                 'rdonly': options.get(
-                    'rdonly', False
+                    'rdonly', options.get('readOnly', False)
                 ),  # This property only affects in "modify" operations
                 'order': options.get('order', 0),
                 'tooltip': options.get('tooltip', ''),
@@ -468,6 +469,10 @@ class gui:
             except Exception:
                 v = 0
             return v
+
+        @property
+        def int_value(self) -> int:
+            return self.num()
 
     class DateField(InputField):
         """
