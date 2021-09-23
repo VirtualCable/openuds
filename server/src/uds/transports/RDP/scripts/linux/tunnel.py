@@ -24,7 +24,7 @@ def execNewXFreeRdp(xfreerdp, port):
     tools.addTaskToWait(subprocess.Popen(params))
 
 
-# Try to locate a "valid" version of xfreerdp as first option (<1.1 does not allows drive redirections, so it will not be used if found)
+# Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.
 xfreerdp = tools.findApp('xfreerdp')
 udsrdp = tools.findApp('udsrdp')
 fnc, app = None, None
@@ -37,19 +37,18 @@ if udsrdp:
 
 if app is None or fnc is None:
     raise Exception(
-        '''<p>You need to have installed xfreerdp (>= 1.1) or rdesktop, and have them in your PATH in order to connect to this UDS service.</p>
-    <p>Please, install apropiate package for your system.</p>
-    <p>Also note that xfreerdp prior to version 1.1 will not be taken into consideration.</p>
+        '''<p>You need to have xfreerdp (>= 2.0) installed on your systeam, and have it your PATH in order to connect to this UDS service.</p>
+    <p>Please, install the proper package for your system.</p>
 '''
     )
-else:
-    # Open tunnel
-    fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
-    # Check that tunnel works..
-    if fs.check() is False:
-        raise Exception(
-            '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
-        )
+# Open tunnel and connect
+fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
-    fnc(app, fs.server_address[1])
+# Check that tunnel works..
+if fs.check() is False:
+    raise Exception(
+        '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
+    )
+
+fnc(app, fs.server_address[1])

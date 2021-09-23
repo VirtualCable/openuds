@@ -1,4 +1,3 @@
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
 import shutil
 import os

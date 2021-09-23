@@ -7,7 +7,7 @@ globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 
 def execUdsRdp(udsrdp):
-    import subprocess  # @Reimport
+    import subprocess
     import os.path
 
     params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
@@ -22,7 +22,7 @@ def execNewXFreeRdp(xfreerdp):
     tools.addTaskToWait(subprocess.Popen(params))
 
 
-# Try to locate a "valid" version of xfreerdp as first option (<1.1 does not allows drive redirections, so it will not be used if found)
+# Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.
 xfreerdp = tools.findApp('xfreerdp')
 udsrdp = tools.findApp('udsrdp')
 fnc, app = None, None
@@ -35,10 +35,9 @@ if udsrdp is not None:
 
 if app is None or fnc is None:
     raise Exception(
-        '''<p>You need to have installed xfreerdp (>= 1.1) or rdesktop, and have them in your PATH in order to connect to this UDS service.</p>
+        '''<p>You need to have xfreerdp (>= 2.0) installed on your systeam, and have it your PATH in order to connect to this UDS service.</p>
     <p>Please, install the proper package for your system.</p>
-    <p>Also note that xfreerdp prior to version 1.1 will not be taken into consideration.</p>
 '''
     )
-else:
-    fnc(app)  # @UndefinedVariable
+
+fnc(app)
