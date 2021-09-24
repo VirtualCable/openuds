@@ -76,7 +76,7 @@ class Proxy:
                 },
             )
             if not r.ok:
-                raise Exception(r.content)
+                raise Exception(r.content or 'Invalid Ticket (timed out)')
 
             return r.json()
         except Exception as e:
