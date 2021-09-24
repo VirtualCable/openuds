@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-15 12:46+0200\n"
+"POT-Creation-Date: 2021-09-24 13:50+0200\n"
 "PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -384,7 +384,7 @@ msgstr "池"
 
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:127
 #: REST/methods/tunnel_token.py:55 REST/methods/user_services.py:140
-#: REST/methods/user_services.py:274 auths/IP/authenticator.py:68
+#: REST/methods/user_services.py:274 auths/IP/authenticator.py:72
 msgid "IP"
 msgstr "IP"
 
@@ -575,6 +575,7 @@ msgstr "将充当代理的服务器（IP或FQDN）。"
 #: services/RDS_enterprise/provider.py:109
 #: services/VCloud_enterprise/provider.py:43
 #: services/Vmware_enterprise/provider.py:52
+#: transports/NICEDCV_enterprise/nicedcv_base.py:77
 msgid "Port"
 msgstr "港口"
 
@@ -983,6 +984,7 @@ msgstr "目前的用户"
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:87
+#: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
 #: transports/SPICE/spice_base.py:69 transports/X2GO/x2go_base.py:70
@@ -1072,7 +1074,7 @@ msgstr "在{}中找不到的方法：{}"
 msgid "Item not found"
 msgstr "物品未找到"
 
-#: REST/model.py:336 web/util/authentication.py:128 web/util/errors.py:79
+#: REST/model.py:336 web/util/authentication.py:140 web/util/errors.py:79
 msgid "Access denied"
 msgstr "拒绝访问"
 
@@ -1126,6 +1128,7 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:93
+#: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
 #: transports/SPICE/spice_base.py:75 web/forms/LoginForm.py:45
@@ -1390,11 +1393,11 @@ msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr "Ldap用户类或用户ID attr可能是错误的（Ldap是eDirectory？）"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:87
+#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:87
 msgid "Accept proxy"
 msgstr "接受代理"
 
-#: auths/IP/authenticator.py:56 auths/InternalDB/authenticator.py:90
+#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:90
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -1402,15 +1405,25 @@ msgstr ""
 "如果选中，通过代理的请求将获得FORWARDED IP地址（请注意这个bein检查，可以从"
 "Internet获取内部IP地址）"
 
-#: auths/IP/authenticator.py:62 auths/IP/authenticator.py:64
+#: auths/IP/authenticator.py:60
+msgid "Visible only from this networks"
+msgstr "仅从此网络可见"
+
+#: auths/IP/authenticator.py:62
+msgid ""
+"This authenticator will be visible only from these networks. Leave empty to "
+"allow all networks"
+msgstr "此身份验证器仅在这些网络中可见。留空以允许所有网络"
+
+#: auths/IP/authenticator.py:66 auths/IP/authenticator.py:68
 msgid "IP Authenticator"
 msgstr "IP身份验证器"
 
-#: auths/IP/authenticator.py:69
+#: auths/IP/authenticator.py:73
 msgid "IP Range"
 msgstr "IP范围"
 
-#: auths/IP/authenticator.py:106 auths/IP/authenticator.py:109
+#: auths/IP/authenticator.py:119 auths/IP/authenticator.py:122
 msgid "All seems to be fine."
 msgstr "一切似乎都很好。"
 
@@ -1438,11 +1451,11 @@ msgstr "反向DNS"
 msgid "If checked, the host will be reversed dns"
 msgstr "如果选中，则主机将被反转dns"
 
-#: auths/InternalDB/authenticator.py:166
+#: auths/InternalDB/authenticator.py:174
 msgid "Internal structures seems ok"
 msgstr "内部结构似乎没问题"
 
-#: auths/InternalDB/authenticator.py:169
+#: auths/InternalDB/authenticator.py:177
 msgid "All seems fine in the authenticator."
 msgstr "在验证器中一切似乎都很好。"
 
@@ -3568,6 +3581,7 @@ msgstr "远程WSman端口。默认保留为零。"
 
 #: services/HyperV_enterprise/provider.py:145
 #: services/VCloud_enterprise/provider.py:84
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:65
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
 #: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
@@ -5275,6 +5289,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:97
 #: transports/HTML5RDS_enterprise/html5rds.py:98
+#: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
 #: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
 msgid "Empty creds"
@@ -5282,6 +5297,7 @@ msgstr "空的信誉"
 
 #: transports/HTML5RDP/html5rdp.py:99
 #: transports/HTML5RDS_enterprise/html5rds.py:100
+#: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
 #: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
 #: transports/SPICE/spice_base.py:64
@@ -5289,6 +5305,7 @@ msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "如果选中，则用于连接的凭据将为emtpy"
 
 #: transports/HTML5RDP/html5rdp.py:105
+#: transports/NICEDCV_enterprise/nicedcv_base.py:48
 #: transports/NoMachine_enterprise/nomachine_base.py:65
 #: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:77
 #: transports/SPICE/spice_base.py:70 transports/X2GO/x2go_base.py:71
@@ -5296,6 +5313,7 @@ msgid "If not empty, this username will be always used as credential"
 msgstr "如果不为空，则此用户名将始终用作凭据"
 
 #: transports/HTML5RDP/html5rdp.py:111
+#: transports/NICEDCV_enterprise/nicedcv_base.py:54
 #: transports/NoMachine_enterprise/nomachine_base.py:71
 #: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:83
 #: transports/SPICE/spice_base.py:76
@@ -5677,6 +5695,79 @@ msgstr "只读"
 msgid "If set, the connection will be read only"
 msgstr "如果设置，则连接将是只读的"
 
+#: transports/NICEDCV_enterprise/nicedcv.py:35
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:39
+msgid "NICE DCV"
+msgstr "不错的DCV"
+
+#: transports/NICEDCV_enterprise/nicedcv.py:37
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:41
+#| msgid "SPICE Protocol. Direct connection."
+msgid "NICE DCV Protocol. Direct connection."
+msgstr "NICE DCV 协议。直接连接。"
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:59
+#| msgid "Full Screen"
+msgid "Full screen"
+msgstr "全屏"
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:61
+#| msgid "If checked, viewer will be shown on fullscreen mode-"
+msgid "If checked, the connection will be opened in full screen mode"
+msgstr "如果选中，将以全屏模式打开连接"
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:66
+#: transports/RDP/rdp_base.py:227
+msgid "Multiple monitors"
+msgstr "多个显示器"
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:69
+#: transports/RDP/rdp_base.py:230
+msgid ""
+"If checked, all client monitors will be used for displaying (only works on "
+"windows clients)"
+msgstr "如果选中，则将使用所有客户端监视器进行显示（仅适用于Windows客户端）"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:44
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
+#: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
+msgid "Tunnel server"
+msgstr "隧道服务器"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
+#: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
+msgid ""
+"IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
+"port. (use HOST:PORT format)"
+msgstr ""
+"发送到客户端设备（“public”ip）和端口的隧道服务器的IP或主机名。 （使用HOST："
+"PORT格式）"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:54
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
+#: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
+msgid "Tunnel wait time"
+msgstr "隧道等待时间"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:59
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
+#: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
+msgid "Maximum time to wait before closing the tunnel listener"
+msgstr "关闭隧道侦听器之前等待的最长时间"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
+#: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
+msgid ""
+"If enabled, the certificate of tunnel server will be verified (recommended)."
+msgstr "如果启用，将验证隧道服务器的证书（推荐）。"
+
 #: transports/NoMachine_enterprise/nomachine_base.py:75
 msgid "Listening port"
 msgstr "听力口"
@@ -5713,41 +5804,6 @@ msgstr "如果选中，多媒体将使用 UDP 流量而不是 RDP"
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:68
 msgid "NoMachine protocol Tunneled."
 msgstr "NoMachine 协议隧道。"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
-#: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
-msgid "Tunnel server"
-msgstr "隧道服务器"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
-#: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
-msgid ""
-"IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
-"port. (use HOST:PORT format)"
-msgstr ""
-"发送到客户端设备（“public”ip）和端口的隧道服务器的IP或主机名。 （使用HOST："
-"PORT格式）"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
-#: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
-msgid "Tunnel wait time"
-msgstr "隧道等待时间"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
-#: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
-msgid "Maximum time to wait before closing the tunnel listener"
-msgstr "关闭隧道侦听器之前等待的最长时间"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
-#: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
-msgid ""
-"If enabled, the certificate of tunnel server will be verified (recommended)."
-msgstr "如果启用，将验证隧道服务器的证书（推荐）。"
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
@@ -5872,16 +5928,6 @@ msgstr "此连接的颜色深度"
 #: transports/RDP/rdp_base.py:219
 msgid "Wallpaper/theme"
 msgstr "壁纸/主题"
-
-#: transports/RDP/rdp_base.py:227
-msgid "Multiple monitors"
-msgstr "多个显示器"
-
-#: transports/RDP/rdp_base.py:230
-msgid ""
-"If checked, all client monitors will be used for displaying (only works on "
-"windows clients)"
-msgstr "如果选中，则将使用所有客户端监视器进行显示（仅适用于Windows客户端）"
 
 #: transports/RDP/rdp_base.py:244
 msgid "If checked, fonts smoothing will be allowed"
@@ -6183,63 +6229,67 @@ msgstr "某些包格式使用的质量值。"
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go访问（实验）。隧道连接。"
 
-#: web/util/authentication.py:108
+#: web/util/authentication.py:111
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "身份验证错误太多。用户暂时被阻止"
 
-#: web/util/authentication.py:143
+#: web/util/authentication.py:121
+msgid "Access tried from an unallowed source"
+msgstr "从不允许的来源尝试访问"
+
+#: web/util/authentication.py:155
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:167
+#: web/util/configjs.py:170
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
-#: web/util/configjs.py:223
+#: web/util/configjs.py:226
 msgid "Windows client"
 msgstr "Windows客户端"
 
-#: web/util/configjs.py:227
+#: web/util/configjs.py:230
 msgid "Mac OS X client"
 msgstr "Mac OS X客户端"
 
-#: web/util/configjs.py:230
+#: web/util/configjs.py:233
 msgid "Debian based Linux client"
 msgstr "基于Debian的Linux客户端"
 
-#: web/util/configjs.py:232 web/util/configjs.py:240 web/util/configjs.py:260
+#: web/util/configjs.py:235 web/util/configjs.py:243 web/util/configjs.py:263
 msgid "(requires Python-3.6 or newer)"
 msgstr "（需要Python-3.6或更高版本）"
 
-#: web/util/configjs.py:238
+#: web/util/configjs.py:241
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "基于RPM的Linux客户端（Fedora，Suse等）"
 
-#: web/util/configjs.py:246
+#: web/util/configjs.py:249
 msgid "Binary appimage X86_64 Linux client"
 msgstr "二进制 appimage X86_64 Linux 客户端"
 
-#: web/util/configjs.py:252
+#: web/util/configjs.py:255
 msgid "Binary appimage Raspberry Linux client"
 msgstr "二进制 appimage Raspberry Linux 客户端"
 
-#: web/util/configjs.py:258
+#: web/util/configjs.py:261
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 
-#: web/util/configjs.py:266
+#: web/util/configjs.py:269
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "基于旧版Debian的Python 2.7 Linux客户端"
 
-#: web/util/configjs.py:268 web/util/configjs.py:276 web/util/configjs.py:284
+#: web/util/configjs.py:271 web/util/configjs.py:279 web/util/configjs.py:287
 msgid "(requires outdated Python-2.7)"
 msgstr "（要求使用过时的Python-2.7）"
 
-#: web/util/configjs.py:274
+#: web/util/configjs.py:277
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "基于旧式RH的Linux客户端（Fedora，Centos，Suse等）"
 
-#: web/util/configjs.py:282
+#: web/util/configjs.py:285
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "基于旧版OpenSuse的Linux客户端）"
 

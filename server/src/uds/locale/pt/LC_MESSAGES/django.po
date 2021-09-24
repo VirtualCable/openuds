@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-15 12:46+0200\n"
+"POT-Creation-Date: 2021-09-24 13:50+0200\n"
 "PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
@@ -387,7 +387,7 @@ msgstr "Piscina"
 
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:127
 #: REST/methods/tunnel_token.py:55 REST/methods/user_services.py:140
-#: REST/methods/user_services.py:274 auths/IP/authenticator.py:68
+#: REST/methods/user_services.py:274 auths/IP/authenticator.py:72
 msgid "IP"
 msgstr "IP"
 
@@ -581,6 +581,7 @@ msgstr "Servidor (IP ou FQDN) que servirá como proxy."
 #: services/RDS_enterprise/provider.py:109
 #: services/VCloud_enterprise/provider.py:43
 #: services/Vmware_enterprise/provider.py:52
+#: transports/NICEDCV_enterprise/nicedcv_base.py:77
 msgid "Port"
 msgstr "Porta"
 
@@ -1007,6 +1008,7 @@ msgstr "Usuários atuais"
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:87
+#: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
 #: transports/SPICE/spice_base.py:69 transports/X2GO/x2go_base.py:70
@@ -1098,7 +1100,7 @@ msgstr "Método não encontrado em {}: {}"
 msgid "Item not found"
 msgstr "Item não encontrado"
 
-#: REST/model.py:336 web/util/authentication.py:128 web/util/errors.py:79
+#: REST/model.py:336 web/util/authentication.py:140 web/util/errors.py:79
 msgid "Access denied"
 msgstr "Acesso negado"
 
@@ -1155,6 +1157,7 @@ msgstr ""
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:93
+#: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
 #: transports/SPICE/spice_base.py:75 web/forms/LoginForm.py:45
@@ -1434,11 +1437,11 @@ msgstr ""
 "A classe de usuário do Ldap ou o id do usuário attr estão provavelmente "
 "errados (o Ldap é um eDirectory?)"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:87
+#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:87
 msgid "Accept proxy"
 msgstr "Aceitar proxy"
 
-#: auths/IP/authenticator.py:56 auths/InternalDB/authenticator.py:90
+#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:90
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -1446,15 +1449,27 @@ msgstr ""
 "Se marcada, os pedidos via proxy receberão endereço IP FORWARDED (tome "
 "cuidado com isso, verifique endereços IP internos da Internet)"
 
-#: auths/IP/authenticator.py:62 auths/IP/authenticator.py:64
+#: auths/IP/authenticator.py:60
+msgid "Visible only from this networks"
+msgstr "Visível apenas nestas redes"
+
+#: auths/IP/authenticator.py:62
+msgid ""
+"This authenticator will be visible only from these networks. Leave empty to "
+"allow all networks"
+msgstr ""
+"Este autenticador ficará visível apenas nessas redes. Deixe em branco para "
+"permitir todas as redes"
+
+#: auths/IP/authenticator.py:66 auths/IP/authenticator.py:68
 msgid "IP Authenticator"
 msgstr "Autenticador de IP"
 
-#: auths/IP/authenticator.py:69
+#: auths/IP/authenticator.py:73
 msgid "IP Range"
 msgstr "Intervalo de IP"
 
-#: auths/IP/authenticator.py:106 auths/IP/authenticator.py:109
+#: auths/IP/authenticator.py:119 auths/IP/authenticator.py:122
 msgid "All seems to be fine."
 msgstr "Tudo parece estar bem."
 
@@ -1482,11 +1497,11 @@ msgstr "DNS reverso"
 msgid "If checked, the host will be reversed dns"
 msgstr "Se marcado, o host será invertido dns"
 
-#: auths/InternalDB/authenticator.py:166
+#: auths/InternalDB/authenticator.py:174
 msgid "Internal structures seems ok"
 msgstr "Estruturas internas parece ok"
 
-#: auths/InternalDB/authenticator.py:169
+#: auths/InternalDB/authenticator.py:177
 msgid "All seems fine in the authenticator."
 msgstr "Tudo parece bem no autenticador."
 
@@ -3694,6 +3709,7 @@ msgstr "Porta remota do WSman. Deixe para zero como padrão."
 
 #: services/HyperV_enterprise/provider.py:145
 #: services/VCloud_enterprise/provider.py:84
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:65
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
 #: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
@@ -5484,6 +5500,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:97
 #: transports/HTML5RDS_enterprise/html5rds.py:98
+#: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
 #: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
 msgid "Empty creds"
@@ -5491,6 +5508,7 @@ msgstr "Creds vazios"
 
 #: transports/HTML5RDP/html5rdp.py:99
 #: transports/HTML5RDS_enterprise/html5rds.py:100
+#: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
 #: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
 #: transports/SPICE/spice_base.py:64
@@ -5498,6 +5516,7 @@ msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "Se marcado, as credenciais usadas para conectar serão vazias"
 
 #: transports/HTML5RDP/html5rdp.py:105
+#: transports/NICEDCV_enterprise/nicedcv_base.py:48
 #: transports/NoMachine_enterprise/nomachine_base.py:65
 #: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:77
 #: transports/SPICE/spice_base.py:70 transports/X2GO/x2go_base.py:71
@@ -5506,6 +5525,7 @@ msgstr ""
 "Se não estiver vazio, esse nome de usuário será sempre usado como credencial"
 
 #: transports/HTML5RDP/html5rdp.py:111
+#: transports/NICEDCV_enterprise/nicedcv_base.py:54
 #: transports/NoMachine_enterprise/nomachine_base.py:71
 #: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:83
 #: transports/SPICE/spice_base.py:76
@@ -5912,6 +5932,83 @@ msgstr "Somente leitura"
 msgid "If set, the connection will be read only"
 msgstr "Se definido, a conexão será somente leitura"
 
+#: transports/NICEDCV_enterprise/nicedcv.py:35
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:39
+msgid "NICE DCV"
+msgstr "NICE DCV"
+
+#: transports/NICEDCV_enterprise/nicedcv.py:37
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:41
+#| msgid "SPICE Protocol. Direct connection."
+msgid "NICE DCV Protocol. Direct connection."
+msgstr "Protocolo NICE DCV. Conexão direta."
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:59
+#| msgid "Full Screen"
+msgid "Full screen"
+msgstr "Tela cheia"
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:61
+#| msgid "If checked, viewer will be shown on fullscreen mode-"
+msgid "If checked, the connection will be opened in full screen mode"
+msgstr "Se marcada, a conexão será aberta em modo de tela inteira"
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:66
+#: transports/RDP/rdp_base.py:227
+msgid "Multiple monitors"
+msgstr "Monitores múltiplos"
+
+#: transports/NICEDCV_enterprise/nicedcv_base.py:69
+#: transports/RDP/rdp_base.py:230
+msgid ""
+"If checked, all client monitors will be used for displaying (only works on "
+"windows clients)"
+msgstr ""
+"Se marcado, todos os monitores de clientes serão usados para exibição "
+"(funciona apenas em clientes Windows)"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:44
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
+#: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
+msgid "Tunnel server"
+msgstr "Servidor de túnel"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
+#: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
+msgid ""
+"IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
+"port. (use HOST:PORT format)"
+msgstr ""
+"IP ou nome do host do servidor de encapsulamento enviado para o dispositivo "
+"do cliente (ip \"público\") e porta. (use o formato HOST: PORT)"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:54
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
+#: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
+msgid "Tunnel wait time"
+msgstr "Tempo de espera do túnel"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:59
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
+#: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
+msgid "Maximum time to wait before closing the tunnel listener"
+msgstr "Tempo máximo de espera antes de fechar o ouvinte do túnel"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
+#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
+#: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
+msgid ""
+"If enabled, the certificate of tunnel server will be verified (recommended)."
+msgstr ""
+"Se habilitado, o certificado do servidor de túnel será verificado "
+"(recomendado)."
+
 #: transports/NoMachine_enterprise/nomachine_base.py:75
 msgid "Listening port"
 msgstr "Porto de escuta"
@@ -5948,43 +6045,6 @@ msgstr "Se marcada, a multimídia usará tráfego UDP em vez de RDP"
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:68
 msgid "NoMachine protocol Tunneled."
 msgstr "Protocolo NoMachine em túnel."
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
-#: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
-msgid "Tunnel server"
-msgstr "Servidor de túnel"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
-#: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
-msgid ""
-"IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
-"port. (use HOST:PORT format)"
-msgstr ""
-"IP ou nome do host do servidor de encapsulamento enviado para o dispositivo "
-"do cliente (ip \"público\") e porta. (use o formato HOST: PORT)"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
-#: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
-msgid "Tunnel wait time"
-msgstr "Tempo de espera do túnel"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
-#: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
-msgid "Maximum time to wait before closing the tunnel listener"
-msgstr "Tempo máximo de espera antes de fechar o ouvinte do túnel"
-
-#: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
-#: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
-msgid ""
-"If enabled, the certificate of tunnel server will be verified (recommended)."
-msgstr ""
-"Se habilitado, o certificado do servidor de túnel será verificado "
-"(recomendado)."
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
@@ -6115,18 +6175,6 @@ msgstr "Profundidade de cor para esta conexão"
 #: transports/RDP/rdp_base.py:219
 msgid "Wallpaper/theme"
 msgstr "Papel de parede / tema"
-
-#: transports/RDP/rdp_base.py:227
-msgid "Multiple monitors"
-msgstr "Monitores múltiplos"
-
-#: transports/RDP/rdp_base.py:230
-msgid ""
-"If checked, all client monitors will be used for displaying (only works on "
-"windows clients)"
-msgstr ""
-"Se marcado, todos os monitores de clientes serão usados para exibição "
-"(funciona apenas em clientes Windows)"
 
 #: transports/RDP/rdp_base.py:244
 msgid "If checked, fonts smoothing will be allowed"
@@ -6451,63 +6499,67 @@ msgstr "Valor de qualidade usado em alguns formatos de pacote."
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "Acesso X2Go (Experimental). Conexão em túnel."
 
-#: web/util/authentication.py:108
+#: web/util/authentication.py:111
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "Muitos erros de autenticação. Usuário temporariamente bloqueado"
 
-#: web/util/authentication.py:143
+#: web/util/authentication.py:121
+msgid "Access tried from an unallowed source"
+msgstr "Acesso tentado de uma fonte não permitida"
+
+#: web/util/authentication.py:155
 msgid "Invalid data"
 msgstr "Dados inválidos"
 
-#: web/util/configjs.py:167
+#: web/util/configjs.py:170
 msgid "Access limited by calendar"
 msgstr "Acesso limitado por calendário"
 
-#: web/util/configjs.py:223
+#: web/util/configjs.py:226
 msgid "Windows client"
 msgstr "Cliente do Windows"
 
-#: web/util/configjs.py:227
+#: web/util/configjs.py:230
 msgid "Mac OS X client"
 msgstr "Cliente Mac OS X"
 
-#: web/util/configjs.py:230
+#: web/util/configjs.py:233
 msgid "Debian based Linux client"
 msgstr "Cliente Linux baseado em Debian"
 
-#: web/util/configjs.py:232 web/util/configjs.py:240 web/util/configjs.py:260
+#: web/util/configjs.py:235 web/util/configjs.py:243 web/util/configjs.py:263
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requer Python-3.6 ou mais recente)"
 
-#: web/util/configjs.py:238
+#: web/util/configjs.py:241
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Cliente Linux baseado em RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:246
+#: web/util/configjs.py:249
 msgid "Binary appimage X86_64 Linux client"
 msgstr "Cliente binário appimage X86_64 Linux"
 
-#: web/util/configjs.py:252
+#: web/util/configjs.py:255
 msgid "Binary appimage Raspberry Linux client"
 msgstr "Cliente binário appimage Raspberry Linux"
 
-#: web/util/configjs.py:258
+#: web/util/configjs.py:261
 msgid "Generic .tar.gz Linux client"
 msgstr "Cliente Linux genérico .tar.gz"
 
-#: web/util/configjs.py:266
+#: web/util/configjs.py:269
 msgid "Legacy Debian based Python 2.7 Linux client"
 msgstr "Cliente Python 2.7 baseado em Debian herdado"
 
-#: web/util/configjs.py:268 web/util/configjs.py:276 web/util/configjs.py:284
+#: web/util/configjs.py:271 web/util/configjs.py:279 web/util/configjs.py:287
 msgid "(requires outdated Python-2.7)"
 msgstr "(requer Python-2.7 desatualizado)"
 
-#: web/util/configjs.py:274
+#: web/util/configjs.py:277
 msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
 msgstr "Cliente Linux herdado baseado em RH (Fedora, Centos, Suse, ...)"
 
-#: web/util/configjs.py:282
+#: web/util/configjs.py:285
 msgid "Legacy OpenSuse based Linux client)"
 msgstr "Cliente Linux legado baseado em OpenSuse)"
 
