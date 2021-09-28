@@ -138,7 +138,7 @@ class Tickets(Handler):
         if 'username' not in self._params or 'groups' not in self._params:
             raise RequestError('Invalid parameters')
 
-        force: bool = self._params.get('force', '0') in ('1', 'true', 'True')
+        force: bool = self._params.get('force', '0') in ('1', 'true', 'True', True)
 
         userIp: typing.Optional[str] = self._params.get('userIp', None)
 
