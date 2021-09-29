@@ -31,5 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-# pylint: disable=unused-import
-from .common import ACTIVE  # @UnusedImport
+from .common import (
+    ACTIVE,
+    INACTIVE,
+)
