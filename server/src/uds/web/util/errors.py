@@ -115,7 +115,7 @@ def errorView(request: 'HttpRequest', errorCode: int) -> HttpResponseRedirect:
     if code != 0:
         errStr += ' (code {0:04X})'.format(code)
 
-    errStr = codecs.encode(str(errStr), 'base64').decode().replace('\n', '')
+    errStr = codecs.encode(str(errStr).encode(), 'base64').decode().replace('\n', '')
 
     logger.debug('Redirection to error view with %s', errStr)
     return HttpResponseRedirect(reverse('page.error', kwargs={'err': errStr}))
