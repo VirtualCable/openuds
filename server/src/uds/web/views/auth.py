@@ -213,7 +213,6 @@ def ticketAuth(
             realname = data['realname']
             poolUuid = data['servicePool']
             password = cryptoManager().decrypt(data['password'])
-            transport = data['transport']
         except Exception:
             logger.error('Ticket stored is not valid')
             raise auths.exceptions.InvalidUserException()
@@ -247,16 +246,15 @@ def ticketAuth(
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
-        # Override and recalc transport based on current os
-        transport = None
+        # Transport must always be automatic for ticket authentication
 
-        logger.debug("Service & transport: %s, %s", poolUuid, transport)
+        logger.debug("Service & transport: %s", poolUuid)
 
         # Check if servicePool is part of the ticket
         if poolUuid:
-            # If service pool is in there, also is transport
+            # Request service, with transport = None so it is automatic
             res = userServiceManager().getService(
-                request.user, request.os, request.ip, poolUuid, transport, False
+                request.user, request.os, request.ip, poolUuid, None, False
             )
             _, userService, _, transport, _ = res
 

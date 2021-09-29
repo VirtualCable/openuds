@@ -44,6 +44,7 @@ from uds.core.util import tools
 
 logger = logging.getLogger(__name__)
 
+# Valid parameters accepted by ticket creation method
 VALID_PARAMS = (
     'authId',
     'authTag',
@@ -54,7 +55,7 @@ VALID_PARAMS = (
     'password',
     'groups',
     'servicePool',
-    'transport',
+    'transport',  # Admited to be backwards compatible, but not used. Will be removed on a future release.
     'force',
     'userIp',
 )
@@ -76,7 +77,7 @@ class Tickets(Handler):
        password:
        groups:
        servicePool:
-       transport:
+       transport:  Ignored. Transport must be auto-detected on ticket auth
        force:  If "1" or "true" will ensure that:
                  - Groups exists on authenticator
                  - servicePool has these groups in it's allowed list
@@ -144,7 +145,6 @@ class Tickets(Handler):
 
         try:
             servicePoolId = None
-            transportId = None
 
             authId = self._params.get('authId', None)
             authName = self._params.get('auth', None)
@@ -240,41 +240,7 @@ class Tickets(Handler):
                         ):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
-                    if 'transport' in self._params:
-                        transport: models.Transport = models.Transport.objects.get(
-                            uuid=processUuid(self._params['transport'])
-                        )
-                        try:
-                            pool.validateTransport(transport)
-                        except Exception:
-                            logger.error(
-                                'Transport %s is not valid for Service Pool %s',
-                                transport.name,
-                                pool.name,
-                            )
-                            raise Exception('Invalid transport for Service Pool')
-                    else:
-                        transport = models.Transport(uuid=None)
-                        if userIp:
-                            for v in pool.transports.order_by('priority'):
-                                if v.validForIp(userIp):
-                                    transport = v
-                                    break
-
-                            if transport.uuid is None:
-                                logger.error(
-                                    'Service pool %s does not has valid transports for ip %s',
-                                    pool.name,
-                                    userIp,
-                                )
-                                raise Exception(
-                                    'Service pool does not has any valid transports for ip {}'.format(
-                                        userIp
-                                    )
-                                )
-
                     servicePoolId = 'F' + pool.uuid
-                    transportId = transport.uuid
 
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
@@ -292,7 +258,6 @@ class Tickets(Handler):
             'groups': groupIds,
             'auth': auth.uuid,
             'servicePool': servicePoolId,
-            'transport': transportId,
         }
 
         ticket = models.TicketStore.create(data)
