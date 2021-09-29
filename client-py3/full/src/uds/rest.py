@@ -185,8 +185,8 @@ class RestApi:
     ) -> typing.Any:
         print('Open')
         ctx = ssl.create_default_context()
-        ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
+        ctx.check_hostname = False
         ctx.load_verify_locations(tools.getCaCertsFile())
         hostname = urllib.parse.urlparse(url)[1]
         serial = ''
@@ -212,8 +212,8 @@ class RestApi:
             serial = hex(cert.serial_number)[2:]
 
         response = None
-        ctx.check_hostname = True
         ctx.verify_mode = ssl.CERT_REQUIRED
+        ctx.check_hostname = True
 
         def urlopen(url: str):
             # Generate the request with the headers
@@ -232,8 +232,8 @@ class RestApi:
                 # Ask about invalid certificate
                 if certErrorCallback:
                     if certErrorCallback(hostname, serial):
-                        ctx.check_hostname = False
                         ctx.verify_mode = ssl.CERT_NONE
+                        ctx.check_hostname = False
                         response = urlopen(url)
                 else:
                     raise
