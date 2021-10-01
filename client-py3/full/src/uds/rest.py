@@ -185,8 +185,8 @@ class RestApi:
     ) -> typing.Any:
         print('Open')
         ctx = ssl.create_default_context()
-        ctx.verify_mode = ssl.CERT_NONE
         ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
         ctx.load_verify_locations(tools.getCaCertsFile())
         hostname = urllib.parse.urlparse(url)[1]
         serial = ''
