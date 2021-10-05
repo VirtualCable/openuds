@@ -281,7 +281,8 @@ def authenticate(
     # If do not have any valid group
     if gm.hasValidGroups() is False:
         logger.info(
-            'User {} has been authenticated, but he does not belongs to any UDS know group'
+            'User %s has been authenticated, but he does not belongs to any UDS known group',
+            username,
         )
         return None
 
