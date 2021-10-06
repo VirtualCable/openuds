@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 13:50+0200\n"
-"PO-Revision-Date: 2021-09-15 10:44+0000\n"
+"POT-Creation-Date: 2021-10-06 15:09+0200\n"
+"PO-Revision-Date: 2021-09-24 11:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -3581,7 +3581,7 @@ msgstr "远程WSman端口。默认保留为零。"
 
 #: services/HyperV_enterprise/provider.py:145
 #: services/VCloud_enterprise/provider.py:84
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:65
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:67
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
 #: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
@@ -5416,142 +5416,185 @@ msgid ""
 msgstr "如果选中，打印将被重定向到远程会话（如果客户端浏览器支持）"
 
 #: transports/HTML5RDP/html5rdp.py:176
+#: transports/HTML5RDS_enterprise/html5rds.py:165
 msgid "File Sharing"
 msgstr "文件共享"
 
 #: transports/HTML5RDP/html5rdp.py:178
+#: transports/HTML5RDS_enterprise/html5rds.py:167
 msgid "File upload/download redirection policy"
 msgstr "文件上传/下载重定向策略"
 
+#: transports/HTML5RDP/html5rdp.py:181
+#: transports/HTML5RDS_enterprise/html5rds.py:170
+#| msgid "Enable File Sharing"
+msgid "Disable file sharing"
+msgstr "禁用文件共享"
+
+#: transports/HTML5RDP/html5rdp.py:182
+#: transports/HTML5RDS_enterprise/html5rds.py:171
+msgid "Allow download only"
+msgstr "只允许下载"
+
+#: transports/HTML5RDP/html5rdp.py:183
+#: transports/HTML5RDS_enterprise/html5rds.py:172
+msgid "Allow upload only"
+msgstr "只允许上传"
+
+#: transports/HTML5RDP/html5rdp.py:184
+#: transports/HTML5RDS_enterprise/html5rds.py:173
+#| msgid "Enable File Sharing"
+msgid "Enable file sharing"
+msgstr "启用文件共享"
+
+#: transports/HTML5RDP/html5rdp.py:189
+#: transports/HTML5RDS_enterprise/html5rds.py:178
+#| msgid "Enable clipboard"
+msgid "Clipboard"
+msgstr "剪贴板"
+
 #: transports/HTML5RDP/html5rdp.py:191
-#: transports/HTML5RDS_enterprise/html5rds.py:174
+#: transports/HTML5RDS_enterprise/html5rds.py:180
+#| msgid "Local drives redirection policy"
+msgid "Clipboard redirection policy"
+msgstr "剪贴板重定向策略"
+
+#: transports/HTML5RDP/html5rdp.py:194
+#: transports/HTML5RDS_enterprise/html5rds.py:183
+#| msgid "Enable clipboard"
+msgid "Disable clipboard"
+msgstr "禁用剪贴板"
+
+#: transports/HTML5RDP/html5rdp.py:195
+#: transports/HTML5RDS_enterprise/html5rds.py:184
+msgid "Disable copy from remote"
+msgstr "禁用远程复制"
+
+#: transports/HTML5RDP/html5rdp.py:196
+#: transports/HTML5RDS_enterprise/html5rds.py:185
+msgid "Disable paste to remote"
+msgstr "禁用粘贴到远程"
+
+#: transports/HTML5RDP/html5rdp.py:197
+#: transports/HTML5RDS_enterprise/html5rds.py:186
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
+msgid "Enable clipboard"
+msgstr "启用剪贴板"
+
+#: transports/HTML5RDP/html5rdp.py:204
+#: transports/HTML5RDS_enterprise/html5rds.py:192
 msgid "Layout"
 msgstr "布局"
 
-#: transports/HTML5RDP/html5rdp.py:192
-#: transports/HTML5RDS_enterprise/html5rds.py:175
+#: transports/HTML5RDP/html5rdp.py:205
+#: transports/HTML5RDS_enterprise/html5rds.py:193
 msgid "Keyboards Layout of server"
 msgstr "键盘服务器的布局"
 
-#: transports/HTML5RDP/html5rdp.py:196
-#: transports/HTML5RDS_enterprise/html5rds.py:179
+#: transports/HTML5RDP/html5rdp.py:209
+#: transports/HTML5RDS_enterprise/html5rds.py:197
 msgid "English (US) keyboard"
 msgstr "英语（美国）键盘"
 
-#: transports/HTML5RDP/html5rdp.py:197
-#: transports/HTML5RDS_enterprise/html5rds.py:180
+#: transports/HTML5RDP/html5rdp.py:210
+#: transports/HTML5RDS_enterprise/html5rds.py:198
 msgid "English (GB) keyboard"
 msgstr "英文（GB）键盘"
 
-#: transports/HTML5RDP/html5rdp.py:198
-#: transports/HTML5RDS_enterprise/html5rds.py:181
+#: transports/HTML5RDP/html5rdp.py:211
+#: transports/HTML5RDS_enterprise/html5rds.py:199
 msgid "Spanish keyboard"
 msgstr "西班牙语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:199
-#: transports/HTML5RDS_enterprise/html5rds.py:182
+#: transports/HTML5RDP/html5rdp.py:212
+#: transports/HTML5RDS_enterprise/html5rds.py:200
 msgid "Latin American keyboard"
 msgstr "拉丁美洲键盘"
 
-#: transports/HTML5RDP/html5rdp.py:200
-#: transports/HTML5RDS_enterprise/html5rds.py:183
+#: transports/HTML5RDP/html5rdp.py:213
+#: transports/HTML5RDS_enterprise/html5rds.py:201
+#| msgid "Spanish keyboard"
+msgid "Danish keyboard"
+msgstr "丹麦语键盘"
+
+#: transports/HTML5RDP/html5rdp.py:214
+#: transports/HTML5RDS_enterprise/html5rds.py:202
 msgid "German keyboard (qwertz)"
 msgstr "德语键盘（qwertz）"
 
-#: transports/HTML5RDP/html5rdp.py:201
-#: transports/HTML5RDS_enterprise/html5rds.py:184
+#: transports/HTML5RDP/html5rdp.py:215
+#: transports/HTML5RDS_enterprise/html5rds.py:203
 msgid "French keyboard (azerty)"
 msgstr "法式键盘（azerty）"
 
-#: transports/HTML5RDP/html5rdp.py:202
-#: transports/HTML5RDS_enterprise/html5rds.py:185
-msgid "Swiss French keyboard (qwertz)"
-msgstr "瑞士法语键盘（qwertz）"
+#: transports/HTML5RDP/html5rdp.py:216
+#: transports/HTML5RDS_enterprise/html5rds.py:204
+#| msgid "French keyboard (azerty)"
+msgid "Belgian French keyboard (azerty)"
+msgstr "比利时法语键盘 (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:203
-#: transports/HTML5RDS_enterprise/html5rds.py:186
+#: transports/HTML5RDP/html5rdp.py:217
+#: transports/HTML5RDS_enterprise/html5rds.py:205
 msgid "Swiss German keyboard (qwertz)"
 msgstr "瑞士德语键盘（qwertz）"
 
-#: transports/HTML5RDP/html5rdp.py:204
-#: transports/HTML5RDS_enterprise/html5rds.py:187
+#: transports/HTML5RDP/html5rdp.py:218
+#: transports/HTML5RDS_enterprise/html5rds.py:206
+msgid "Swiss French keyboard (qwertz)"
+msgstr "瑞士法语键盘（qwertz）"
+
+#: transports/HTML5RDP/html5rdp.py:219
+#: transports/HTML5RDS_enterprise/html5rds.py:207
+#| msgid "Italian keyboard"
+msgid "Hungarian keyboard"
+msgstr "匈牙利语键盘"
+
+#: transports/HTML5RDP/html5rdp.py:220
+#: transports/HTML5RDS_enterprise/html5rds.py:208
 msgid "Italian keyboard"
 msgstr "意大利键盘"
 
-#: transports/HTML5RDP/html5rdp.py:205
-#: transports/HTML5RDS_enterprise/html5rds.py:188
-msgid "Swedish keyboard"
-msgstr "瑞典语键盘"
-
-#: transports/HTML5RDP/html5rdp.py:206
-#: transports/HTML5RDS_enterprise/html5rds.py:189
+#: transports/HTML5RDP/html5rdp.py:221
+#: transports/HTML5RDS_enterprise/html5rds.py:209
 msgid "Japanese keyboard"
 msgstr "日文键盘"
 
-#: transports/HTML5RDP/html5rdp.py:207
-#: transports/HTML5RDS_enterprise/html5rds.py:190
-msgid "Brazilian keyboard"
-msgstr "巴西键盘"
+#: transports/HTML5RDP/html5rdp.py:222
+#: transports/HTML5RDS_enterprise/html5rds.py:210
+#| msgid "Brazilian keyboard"
+msgid "Norwegian keyboard"
+msgstr "挪威语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:208
-#: transports/HTML5RDS_enterprise/html5rds.py:191
+#: transports/HTML5RDP/html5rdp.py:223
+#: transports/HTML5RDS_enterprise/html5rds.py:211
+#| msgid "Brazilian keyboard"
+msgid "Portuguese Brazilian keyboard"
+msgstr "葡萄牙语巴西键盘"
+
+#: transports/HTML5RDP/html5rdp.py:224
+#: transports/HTML5RDS_enterprise/html5rds.py:212
+msgid "Swedish keyboard"
+msgstr "瑞典语键盘"
+
+#: transports/HTML5RDP/html5rdp.py:225
+#: transports/HTML5RDS_enterprise/html5rds.py:213
+#| msgid "Spanish keyboard"
+msgid "Turkish keyboard"
+msgstr "土耳其语键盘"
+
+#: transports/HTML5RDP/html5rdp.py:226
+#: transports/HTML5RDS_enterprise/html5rds.py:214
 msgid "Failsafe"
 msgstr "故障安全"
 
-#: transports/HTML5RDP/html5rdp.py:215
-#: transports/HTML5RDS_enterprise/html5rds.py:198
-msgid "Security"
-msgstr "安全"
-
-#: transports/HTML5RDP/html5rdp.py:216
-#: transports/HTML5RDS_enterprise/html5rds.py:199
-msgid "Connection security mode for Guacamole RDP connection"
-msgstr "Guacamole RDP连接的连接安全模式"
-
-#: transports/HTML5RDP/html5rdp.py:220
-#: transports/HTML5RDS_enterprise/html5rds.py:203
-msgid "Any (Allow the server to choose the type of auth)"
-msgstr "任何（允许服务器选择身份验证的类型）"
-
-#: transports/HTML5RDP/html5rdp.py:224
-#: transports/HTML5RDS_enterprise/html5rds.py:207
-msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
-msgstr "RDP（标准RDP加密。所有服务器都应支持）"
-
-#: transports/HTML5RDP/html5rdp.py:229
-#: transports/HTML5RDS_enterprise/html5rds.py:212
-msgid ""
-"NLA (Network Layer authentication. Requires VALID username&password, or "
-"connection will fail)"
-msgstr "NLA（网络层身份验证。需要VALID用户名和密码，否则连接将失败）"
-
-#: transports/HTML5RDP/html5rdp.py:235
-msgid ""
-"NLA extended (Network Layer authentication. Requires VALID "
-"username&password, or connection will fail)"
-msgstr "NLA 扩展（网络层身份验证。需要有效的用户名和密码，否则连接将失败）"
-
-#: transports/HTML5RDP/html5rdp.py:238
-#: transports/HTML5RDS_enterprise/html5rds.py:215
-msgid "TLS (Transport Security Layer encryption)"
-msgstr "TLS（传输安全层加密）"
-
-#: transports/HTML5RDP/html5rdp.py:247 transports/RDP/rdp_base.py:173
-msgid "RDP Port"
-msgstr "RDP 端口"
-
-#: transports/HTML5RDP/html5rdp.py:248 transports/RDP/rdp_base.py:174
-msgid "Use this port as RDP port. Defaults to 3389."
-msgstr "将此端口用作 RDP 端口。默认为 3389。"
-
-#: transports/HTML5RDP/html5rdp.py:256
-#: transports/HTML5RDS_enterprise/html5rds.py:223
+#: transports/HTML5RDP/html5rdp.py:234
+#: transports/HTML5RDS_enterprise/html5rds.py:221
 #: transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "机票有效期"
 
-#: transports/HTML5RDP/html5rdp.py:260
-#: transports/HTML5RDS_enterprise/html5rds.py:227
+#: transports/HTML5RDP/html5rdp.py:238
+#: transports/HTML5RDS_enterprise/html5rds.py:225
 #: transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
@@ -5560,43 +5603,89 @@ msgstr ""
 "HTML5客户端从UDS Broker重新加载数据的允许时间（以秒为单位）。建议使用默认值"
 "60。"
 
-#: transports/HTML5RDP/html5rdp.py:269
-#: transports/HTML5RDS_enterprise/html5rds.py:236
+#: transports/HTML5RDP/html5rdp.py:247
+#: transports/HTML5RDS_enterprise/html5rds.py:234
 #: transports/HTML5VNC/html5vnc.py:159 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "强制新的HTML窗口"
 
-#: transports/HTML5RDP/html5rdp.py:270
-#: transports/HTML5RDS_enterprise/html5rds.py:237
+#: transports/HTML5RDP/html5rdp.py:248
+#: transports/HTML5RDS_enterprise/html5rds.py:235
 #: transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr "选择Windows行为以获取HTML5上的新连接"
 
-#: transports/HTML5RDP/html5rdp.py:275
-#: transports/HTML5RDS_enterprise/html5rds.py:242
+#: transports/HTML5RDP/html5rdp.py:253
+#: transports/HTML5RDS_enterprise/html5rds.py:240
 #: transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr "在同一窗口中打开每个连接，但保留UDS窗口。"
 
-#: transports/HTML5RDP/html5rdp.py:278
-#: transports/HTML5RDS_enterprise/html5rds.py:245
+#: transports/HTML5RDP/html5rdp.py:256
+#: transports/HTML5RDS_enterprise/html5rds.py:243
 #: transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "强制在新窗口中打开每个连接。"
 
-#: transports/HTML5RDP/html5rdp.py:282
-#: transports/HTML5RDS_enterprise/html5rds.py:249
+#: transports/HTML5RDP/html5rdp.py:260
+#: transports/HTML5RDS_enterprise/html5rds.py:247
 #: transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "覆盖UDS窗口并将其替换为连接。"
 
-#: transports/HTML5RDP/html5rdp.py:290
+#: transports/HTML5RDP/html5rdp.py:268
+#: transports/HTML5RDS_enterprise/html5rds.py:255
+msgid "Security"
+msgstr "安全"
+
+#: transports/HTML5RDP/html5rdp.py:269
 #: transports/HTML5RDS_enterprise/html5rds.py:256
+msgid "Connection security mode for Guacamole RDP connection"
+msgstr "Guacamole RDP连接的连接安全模式"
+
+#: transports/HTML5RDP/html5rdp.py:273
+#: transports/HTML5RDS_enterprise/html5rds.py:260
+msgid "Any (Allow the server to choose the type of auth)"
+msgstr "任何（允许服务器选择身份验证的类型）"
+
+#: transports/HTML5RDP/html5rdp.py:277
+#: transports/HTML5RDS_enterprise/html5rds.py:264
+msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
+msgstr "RDP（标准RDP加密。所有服务器都应支持）"
+
+#: transports/HTML5RDP/html5rdp.py:282
+#: transports/HTML5RDS_enterprise/html5rds.py:269
+msgid ""
+"NLA (Network Layer authentication. Requires VALID username&password, or "
+"connection will fail)"
+msgstr "NLA（网络层身份验证。需要VALID用户名和密码，否则连接将失败）"
+
+#: transports/HTML5RDP/html5rdp.py:288
+msgid ""
+"NLA extended (Network Layer authentication. Requires VALID "
+"username&password, or connection will fail)"
+msgstr "NLA 扩展（网络层身份验证。需要有效的用户名和密码，否则连接将失败）"
+
+#: transports/HTML5RDP/html5rdp.py:291
+#: transports/HTML5RDS_enterprise/html5rds.py:272
+msgid "TLS (Transport Security Layer encryption)"
+msgstr "TLS（传输安全层加密）"
+
+#: transports/HTML5RDP/html5rdp.py:300 transports/RDP/rdp_base.py:173
+msgid "RDP Port"
+msgstr "RDP 端口"
+
+#: transports/HTML5RDP/html5rdp.py:301 transports/RDP/rdp_base.py:174
+msgid "Use this port as RDP port. Defaults to 3389."
+msgstr "将此端口用作 RDP 端口。默认为 3389。"
+
+#: transports/HTML5RDP/html5rdp.py:308
+#: transports/HTML5RDS_enterprise/html5rds.py:279
 msgid "Glyptodon Enterprise context path"
 msgstr "Glyptodon 企业上下文路径"
 
-#: transports/HTML5RDP/html5rdp.py:293
-#: transports/HTML5RDS_enterprise/html5rds.py:259
+#: transports/HTML5RDP/html5rdp.py:311
+#: transports/HTML5RDS_enterprise/html5rds.py:282
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
 "Enterprise Tunnel)"
@@ -5604,14 +5693,14 @@ msgstr ""
 "Glyptodon Enterprise 隧道的自定义路径。 （仅对 Glyptodon Enterprise Tunnel 有"
 "效）"
 
-#: transports/HTML5RDP/html5rdp.py:308
-#: transports/HTML5RDS_enterprise/html5rds.py:273
+#: transports/HTML5RDP/html5rdp.py:327
+#: transports/HTML5RDS_enterprise/html5rds.py:296
 #: transports/HTML5VNC/html5vnc.py:186
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
-#: transports/HTML5RDP/html5rdp.py:313
-#: transports/HTML5RDS_enterprise/html5rds.py:278
+#: transports/HTML5RDP/html5rdp.py:332
+#: transports/HTML5RDS_enterprise/html5rds.py:301
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5626,16 +5715,6 @@ msgstr "适用于vApp的HTML5 RDS"
 #: transports/HTML5RDS_enterprise/html5rds.py:68
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "使用HTML5客户端进行vApp的RDS协议"
-
-#: transports/HTML5RDS_enterprise/html5rds.py:165
-msgid "Enable File Sharing"
-msgstr "启用文件共享"
-
-#: transports/HTML5RDS_enterprise/html5rds.py:168
-msgid ""
-"If checked, the user will be able to upload/download files (if client "
-"browser supports it)"
-msgstr "如果选中，则用户可以上传/下载文件（如果客户端浏览器支持）"
 
 #: transports/HTML5VNC/html5vnc.py:64
 msgid "HTML5 VNC Experimental"
@@ -5696,23 +5775,19 @@ msgid "If set, the connection will be read only"
 msgstr "如果设置，则连接将是只读的"
 
 #: transports/NICEDCV_enterprise/nicedcv.py:35
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:39
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:40
 msgid "NICE DCV"
 msgstr "不错的DCV"
 
 #: transports/NICEDCV_enterprise/nicedcv.py:37
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:41
-#| msgid "SPICE Protocol. Direct connection."
 msgid "NICE DCV Protocol. Direct connection."
 msgstr "NICE DCV 协议。直接连接。"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:59
-#| msgid "Full Screen"
 msgid "Full screen"
 msgstr "全屏"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:61
-#| msgid "If checked, viewer will be shown on fullscreen mode-"
 msgid "If checked, the connection will be opened in full screen mode"
 msgstr "如果选中，将以全屏模式打开连接"
 
@@ -5728,14 +5803,19 @@ msgid ""
 "windows clients)"
 msgstr "如果选中，则将使用所有客户端监视器进行显示（仅适用于Windows客户端）"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:44
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:42
+#| msgid "SPICE Protocol. Tunneled connection."
+msgid "NICE DCV Protocol. Tunneled connection."
+msgstr "NICE DCV 协议。隧道连接。"
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:46
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
 #: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
 #: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "隧道服务器"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:49
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
 #: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
 #: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
@@ -5746,21 +5826,21 @@ msgstr ""
 "发送到客户端设备（“public”ip）和端口的隧道服务器的IP或主机名。 （使用HOST："
 "PORT格式）"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:54
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:56
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
 #: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
 #: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "隧道等待时间"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:59
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:61
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
 #: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
 #: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "关闭隧道侦听器之前等待的最长时间"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:70
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
 #: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
 #: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
@@ -5879,10 +5959,6 @@ msgstr "允许序列号"
 #: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:103
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "如果选中，则此传输将允许使用用户串行端口"
-
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
-msgid "Enable clipboard"
-msgstr "启用剪贴板"
 
 #: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:109
 msgid "If checked, copy-paste functions will be allowed"

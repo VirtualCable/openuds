@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 13:50+0200\n"
-"PO-Revision-Date: 2021-09-15 10:44+0000\n"
+"POT-Creation-Date: 2021-10-06 15:09+0200\n"
+"PO-Revision-Date: 2021-09-24 11:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -3756,7 +3756,7 @@ msgstr "Port WSman distant.Laissez à zéro par défaut."
 
 #: services/HyperV_enterprise/provider.py:145
 #: services/VCloud_enterprise/provider.py:84
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:65
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:67
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
 #: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
@@ -5721,147 +5721,185 @@ msgstr ""
 "navigateur client le prend en charge)"
 
 #: transports/HTML5RDP/html5rdp.py:176
+#: transports/HTML5RDS_enterprise/html5rds.py:165
 msgid "File Sharing"
 msgstr "Partage de fichiers"
 
 #: transports/HTML5RDP/html5rdp.py:178
+#: transports/HTML5RDS_enterprise/html5rds.py:167
 msgid "File upload/download redirection policy"
 msgstr "Politique de redirection de chargement/téléchargement de fichiers"
 
+#: transports/HTML5RDP/html5rdp.py:181
+#: transports/HTML5RDS_enterprise/html5rds.py:170
+#| msgid "Enable File Sharing"
+msgid "Disable file sharing"
+msgstr "Désactiver le partage de fichiers"
+
+#: transports/HTML5RDP/html5rdp.py:182
+#: transports/HTML5RDS_enterprise/html5rds.py:171
+msgid "Allow download only"
+msgstr "Autoriser le téléchargement uniquement"
+
+#: transports/HTML5RDP/html5rdp.py:183
+#: transports/HTML5RDS_enterprise/html5rds.py:172
+msgid "Allow upload only"
+msgstr "Autoriser le téléchargement uniquement"
+
+#: transports/HTML5RDP/html5rdp.py:184
+#: transports/HTML5RDS_enterprise/html5rds.py:173
+#| msgid "Enable File Sharing"
+msgid "Enable file sharing"
+msgstr "Activer le partage de fichiers"
+
+#: transports/HTML5RDP/html5rdp.py:189
+#: transports/HTML5RDS_enterprise/html5rds.py:178
+#| msgid "Enable clipboard"
+msgid "Clipboard"
+msgstr "Presse-papiers"
+
 #: transports/HTML5RDP/html5rdp.py:191
-#: transports/HTML5RDS_enterprise/html5rds.py:174
+#: transports/HTML5RDS_enterprise/html5rds.py:180
+#| msgid "Local drives redirection policy"
+msgid "Clipboard redirection policy"
+msgstr "Politique de redirection du presse-papiers"
+
+#: transports/HTML5RDP/html5rdp.py:194
+#: transports/HTML5RDS_enterprise/html5rds.py:183
+#| msgid "Enable clipboard"
+msgid "Disable clipboard"
+msgstr "Désactiver le presse-papiers"
+
+#: transports/HTML5RDP/html5rdp.py:195
+#: transports/HTML5RDS_enterprise/html5rds.py:184
+msgid "Disable copy from remote"
+msgstr "Désactiver la copie à distance"
+
+#: transports/HTML5RDP/html5rdp.py:196
+#: transports/HTML5RDS_enterprise/html5rds.py:185
+msgid "Disable paste to remote"
+msgstr "Désactiver le collage à distance"
+
+#: transports/HTML5RDP/html5rdp.py:197
+#: transports/HTML5RDS_enterprise/html5rds.py:186
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
+msgid "Enable clipboard"
+msgstr "Activez le presse-papiers"
+
+#: transports/HTML5RDP/html5rdp.py:204
+#: transports/HTML5RDS_enterprise/html5rds.py:192
 msgid "Layout"
 msgstr "Mise en page"
 
-#: transports/HTML5RDP/html5rdp.py:192
-#: transports/HTML5RDS_enterprise/html5rds.py:175
+#: transports/HTML5RDP/html5rdp.py:205
+#: transports/HTML5RDS_enterprise/html5rds.py:193
 msgid "Keyboards Layout of server"
 msgstr "Disposition des claviers du serveur"
 
-#: transports/HTML5RDP/html5rdp.py:196
-#: transports/HTML5RDS_enterprise/html5rds.py:179
+#: transports/HTML5RDP/html5rdp.py:209
+#: transports/HTML5RDS_enterprise/html5rds.py:197
 msgid "English (US) keyboard"
 msgstr "Clavier anglais (États-Unis)"
 
-#: transports/HTML5RDP/html5rdp.py:197
-#: transports/HTML5RDS_enterprise/html5rds.py:180
+#: transports/HTML5RDP/html5rdp.py:210
+#: transports/HTML5RDS_enterprise/html5rds.py:198
 msgid "English (GB) keyboard"
 msgstr "Clavier anglais (GB)"
 
-#: transports/HTML5RDP/html5rdp.py:198
-#: transports/HTML5RDS_enterprise/html5rds.py:181
+#: transports/HTML5RDP/html5rdp.py:211
+#: transports/HTML5RDS_enterprise/html5rds.py:199
 msgid "Spanish keyboard"
 msgstr "Clavier espagnol"
 
-#: transports/HTML5RDP/html5rdp.py:199
-#: transports/HTML5RDS_enterprise/html5rds.py:182
+#: transports/HTML5RDP/html5rdp.py:212
+#: transports/HTML5RDS_enterprise/html5rds.py:200
 msgid "Latin American keyboard"
 msgstr "Clavier latino-américain"
 
-#: transports/HTML5RDP/html5rdp.py:200
-#: transports/HTML5RDS_enterprise/html5rds.py:183
+#: transports/HTML5RDP/html5rdp.py:213
+#: transports/HTML5RDS_enterprise/html5rds.py:201
+#| msgid "Spanish keyboard"
+msgid "Danish keyboard"
+msgstr "clavier danois"
+
+#: transports/HTML5RDP/html5rdp.py:214
+#: transports/HTML5RDS_enterprise/html5rds.py:202
 msgid "German keyboard (qwertz)"
 msgstr "Clavier allemand (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:201
-#: transports/HTML5RDS_enterprise/html5rds.py:184
+#: transports/HTML5RDP/html5rdp.py:215
+#: transports/HTML5RDS_enterprise/html5rds.py:203
 msgid "French keyboard (azerty)"
 msgstr "Clavier Français (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:202
-#: transports/HTML5RDS_enterprise/html5rds.py:185
-msgid "Swiss French keyboard (qwertz)"
-msgstr "Clavier Suisse Français (qwertz)"
+#: transports/HTML5RDP/html5rdp.py:216
+#: transports/HTML5RDS_enterprise/html5rds.py:204
+#| msgid "French keyboard (azerty)"
+msgid "Belgian French keyboard (azerty)"
+msgstr "Clavier belge français (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:203
-#: transports/HTML5RDS_enterprise/html5rds.py:186
+#: transports/HTML5RDP/html5rdp.py:217
+#: transports/HTML5RDS_enterprise/html5rds.py:205
 msgid "Swiss German keyboard (qwertz)"
 msgstr "Clavier suisse allemand (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:204
-#: transports/HTML5RDS_enterprise/html5rds.py:187
+#: transports/HTML5RDP/html5rdp.py:218
+#: transports/HTML5RDS_enterprise/html5rds.py:206
+msgid "Swiss French keyboard (qwertz)"
+msgstr "Clavier Suisse Français (qwertz)"
+
+#: transports/HTML5RDP/html5rdp.py:219
+#: transports/HTML5RDS_enterprise/html5rds.py:207
+#| msgid "Italian keyboard"
+msgid "Hungarian keyboard"
+msgstr "clavier hongrois"
+
+#: transports/HTML5RDP/html5rdp.py:220
+#: transports/HTML5RDS_enterprise/html5rds.py:208
 msgid "Italian keyboard"
 msgstr "Clavier italien"
 
-#: transports/HTML5RDP/html5rdp.py:205
-#: transports/HTML5RDS_enterprise/html5rds.py:188
-msgid "Swedish keyboard"
-msgstr "Clavier suédois"
-
-#: transports/HTML5RDP/html5rdp.py:206
-#: transports/HTML5RDS_enterprise/html5rds.py:189
+#: transports/HTML5RDP/html5rdp.py:221
+#: transports/HTML5RDS_enterprise/html5rds.py:209
 msgid "Japanese keyboard"
 msgstr "Clavier japonais"
 
-#: transports/HTML5RDP/html5rdp.py:207
-#: transports/HTML5RDS_enterprise/html5rds.py:190
-msgid "Brazilian keyboard"
-msgstr "Clavier brésilien"
+#: transports/HTML5RDP/html5rdp.py:222
+#: transports/HTML5RDS_enterprise/html5rds.py:210
+#| msgid "Brazilian keyboard"
+msgid "Norwegian keyboard"
+msgstr "clavier norvégien"
 
-#: transports/HTML5RDP/html5rdp.py:208
-#: transports/HTML5RDS_enterprise/html5rds.py:191
+#: transports/HTML5RDP/html5rdp.py:223
+#: transports/HTML5RDS_enterprise/html5rds.py:211
+#| msgid "Brazilian keyboard"
+msgid "Portuguese Brazilian keyboard"
+msgstr "Clavier brésilien portugais"
+
+#: transports/HTML5RDP/html5rdp.py:224
+#: transports/HTML5RDS_enterprise/html5rds.py:212
+msgid "Swedish keyboard"
+msgstr "Clavier suédois"
+
+#: transports/HTML5RDP/html5rdp.py:225
+#: transports/HTML5RDS_enterprise/html5rds.py:213
+#| msgid "Spanish keyboard"
+msgid "Turkish keyboard"
+msgstr "clavier turc"
+
+#: transports/HTML5RDP/html5rdp.py:226
+#: transports/HTML5RDS_enterprise/html5rds.py:214
 msgid "Failsafe"
 msgstr "Failsafe"
 
-#: transports/HTML5RDP/html5rdp.py:215
-#: transports/HTML5RDS_enterprise/html5rds.py:198
-msgid "Security"
-msgstr "Sécurité"
-
-#: transports/HTML5RDP/html5rdp.py:216
-#: transports/HTML5RDS_enterprise/html5rds.py:199
-msgid "Connection security mode for Guacamole RDP connection"
-msgstr "Mode de sécurité de connexion pour la connexion RDP de Guacamole"
-
-#: transports/HTML5RDP/html5rdp.py:220
-#: transports/HTML5RDS_enterprise/html5rds.py:203
-msgid "Any (Allow the server to choose the type of auth)"
-msgstr "Aucun (permettre au serveur de choisir le type d’authentification)"
-
-#: transports/HTML5RDP/html5rdp.py:224
-#: transports/HTML5RDS_enterprise/html5rds.py:207
-msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
-msgstr ""
-"RDP (cryptage RDP standard: doit être pris en charge par tous les serveurs)"
-
-#: transports/HTML5RDP/html5rdp.py:229
-#: transports/HTML5RDS_enterprise/html5rds.py:212
-msgid ""
-"NLA (Network Layer authentication. Requires VALID username&password, or "
-"connection will fail)"
-msgstr ""
-"NLA (Authentification par couche réseau) Nécessite un mot de passe et nom "
-"d'utilisateur VALIDE, ou la connexion échouera"
-
-#: transports/HTML5RDP/html5rdp.py:235
-msgid ""
-"NLA extended (Network Layer authentication. Requires VALID "
-"username&password, or connection will fail)"
-msgstr ""
-"NLA étendu (authentification de la couche réseau. Nécessite un nom d&#39;"
-"utilisateur et un mot de passe VALIDE, sinon la connexion échouera)"
-
-#: transports/HTML5RDP/html5rdp.py:238
-#: transports/HTML5RDS_enterprise/html5rds.py:215
-msgid "TLS (Transport Security Layer encryption)"
-msgstr "TLS (chiffrement de la couche de sécurité de transport)"
-
-#: transports/HTML5RDP/html5rdp.py:247 transports/RDP/rdp_base.py:173
-msgid "RDP Port"
-msgstr "Port RDP"
-
-#: transports/HTML5RDP/html5rdp.py:248 transports/RDP/rdp_base.py:174
-msgid "Use this port as RDP port. Defaults to 3389."
-msgstr "Utilisez ce port comme port RDP. La valeur par défaut est 3389."
-
-#: transports/HTML5RDP/html5rdp.py:256
-#: transports/HTML5RDS_enterprise/html5rds.py:223
+#: transports/HTML5RDP/html5rdp.py:234
+#: transports/HTML5RDS_enterprise/html5rds.py:221
 #: transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "Validité du ticket"
 
-#: transports/HTML5RDP/html5rdp.py:260
-#: transports/HTML5RDS_enterprise/html5rds.py:227
+#: transports/HTML5RDP/html5rdp.py:238
+#: transports/HTML5RDS_enterprise/html5rds.py:225
 #: transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
@@ -5870,46 +5908,97 @@ msgstr ""
 "Temps d'attente, en secondes, pour que le client HTML5 recharge les données "
 "d'UDS Broker. La valeur par défaut de 60 est recommandée."
 
-#: transports/HTML5RDP/html5rdp.py:269
-#: transports/HTML5RDS_enterprise/html5rds.py:236
+#: transports/HTML5RDP/html5rdp.py:247
+#: transports/HTML5RDS_enterprise/html5rds.py:234
 #: transports/HTML5VNC/html5vnc.py:159 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "Forcer une nouvelle fenêtre HTML"
 
-#: transports/HTML5RDP/html5rdp.py:270
-#: transports/HTML5RDS_enterprise/html5rds.py:237
+#: transports/HTML5RDP/html5rdp.py:248
+#: transports/HTML5RDS_enterprise/html5rds.py:235
 #: transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr ""
 "Sélectionnez le comportement de Windows pour les nouvelles connexions sur "
 "HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:275
-#: transports/HTML5RDS_enterprise/html5rds.py:242
+#: transports/HTML5RDP/html5rdp.py:253
+#: transports/HTML5RDS_enterprise/html5rds.py:240
 #: transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr ""
 "Ouvrez chaque connexion sur la même fenêtre, mais conserve la fenêtre UDS."
 
-#: transports/HTML5RDP/html5rdp.py:278
-#: transports/HTML5RDS_enterprise/html5rds.py:245
+#: transports/HTML5RDP/html5rdp.py:256
+#: transports/HTML5RDS_enterprise/html5rds.py:243
 #: transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "Forcer l&#39;ouverture de chaque connexion dans une nouvelle fenêtre."
 
-#: transports/HTML5RDP/html5rdp.py:282
-#: transports/HTML5RDS_enterprise/html5rds.py:249
+#: transports/HTML5RDP/html5rdp.py:260
+#: transports/HTML5RDS_enterprise/html5rds.py:247
 #: transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "Remplacez la fenêtre UDS et remplacez-la par la connexion."
 
-#: transports/HTML5RDP/html5rdp.py:290
+#: transports/HTML5RDP/html5rdp.py:268
+#: transports/HTML5RDS_enterprise/html5rds.py:255
+msgid "Security"
+msgstr "Sécurité"
+
+#: transports/HTML5RDP/html5rdp.py:269
 #: transports/HTML5RDS_enterprise/html5rds.py:256
+msgid "Connection security mode for Guacamole RDP connection"
+msgstr "Mode de sécurité de connexion pour la connexion RDP de Guacamole"
+
+#: transports/HTML5RDP/html5rdp.py:273
+#: transports/HTML5RDS_enterprise/html5rds.py:260
+msgid "Any (Allow the server to choose the type of auth)"
+msgstr "Aucun (permettre au serveur de choisir le type d’authentification)"
+
+#: transports/HTML5RDP/html5rdp.py:277
+#: transports/HTML5RDS_enterprise/html5rds.py:264
+msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
+msgstr ""
+"RDP (cryptage RDP standard: doit être pris en charge par tous les serveurs)"
+
+#: transports/HTML5RDP/html5rdp.py:282
+#: transports/HTML5RDS_enterprise/html5rds.py:269
+msgid ""
+"NLA (Network Layer authentication. Requires VALID username&password, or "
+"connection will fail)"
+msgstr ""
+"NLA (Authentification par couche réseau) Nécessite un mot de passe et nom "
+"d'utilisateur VALIDE, ou la connexion échouera"
+
+#: transports/HTML5RDP/html5rdp.py:288
+msgid ""
+"NLA extended (Network Layer authentication. Requires VALID "
+"username&password, or connection will fail)"
+msgstr ""
+"NLA étendu (authentification de la couche réseau. Nécessite un nom d&#39;"
+"utilisateur et un mot de passe VALIDE, sinon la connexion échouera)"
+
+#: transports/HTML5RDP/html5rdp.py:291
+#: transports/HTML5RDS_enterprise/html5rds.py:272
+msgid "TLS (Transport Security Layer encryption)"
+msgstr "TLS (chiffrement de la couche de sécurité de transport)"
+
+#: transports/HTML5RDP/html5rdp.py:300 transports/RDP/rdp_base.py:173
+msgid "RDP Port"
+msgstr "Port RDP"
+
+#: transports/HTML5RDP/html5rdp.py:301 transports/RDP/rdp_base.py:174
+msgid "Use this port as RDP port. Defaults to 3389."
+msgstr "Utilisez ce port comme port RDP. La valeur par défaut est 3389."
+
+#: transports/HTML5RDP/html5rdp.py:308
+#: transports/HTML5RDS_enterprise/html5rds.py:279
 msgid "Glyptodon Enterprise context path"
 msgstr "Chemin de contexte Glyptodon Enterprise"
 
-#: transports/HTML5RDP/html5rdp.py:293
-#: transports/HTML5RDS_enterprise/html5rds.py:259
+#: transports/HTML5RDP/html5rdp.py:311
+#: transports/HTML5RDS_enterprise/html5rds.py:282
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
 "Enterprise Tunnel)"
@@ -5917,14 +6006,14 @@ msgstr ""
 "Chemin personnalisé pour le tunnel Glyptodon Enterprise. (Valable uniquement "
 "pour Glyptodon Enterprise Tunnel)"
 
-#: transports/HTML5RDP/html5rdp.py:308
-#: transports/HTML5RDS_enterprise/html5rds.py:273
+#: transports/HTML5RDP/html5rdp.py:327
+#: transports/HTML5RDS_enterprise/html5rds.py:296
 #: transports/HTML5VNC/html5vnc.py:186
 msgid "The server must be http or https"
 msgstr "Le serveur doit être http ou https"
 
-#: transports/HTML5RDP/html5rdp.py:313
-#: transports/HTML5RDS_enterprise/html5rds.py:278
+#: transports/HTML5RDP/html5rdp.py:332
+#: transports/HTML5RDS_enterprise/html5rds.py:301
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5940,18 +6029,6 @@ msgstr "HTML5 RDS pour vApps"
 #: transports/HTML5RDS_enterprise/html5rds.py:68
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "Protocole RDS en utilisant HTML5 client pour vApps"
-
-#: transports/HTML5RDS_enterprise/html5rds.py:165
-msgid "Enable File Sharing"
-msgstr "Activez le partage de fichiers"
-
-#: transports/HTML5RDS_enterprise/html5rds.py:168
-msgid ""
-"If checked, the user will be able to upload/download files (if client "
-"browser supports it)"
-msgstr ""
-"Si coché, l'utilisateur pourra télécharger / télécharger des fichiers (si le "
-"navigateur client le supporte)"
 
 #: transports/HTML5VNC/html5vnc.py:64
 msgid "HTML5 VNC Experimental"
@@ -6016,23 +6093,19 @@ msgid "If set, the connection will be read only"
 msgstr "Si défini, la connexion sera en lecture seule"
 
 #: transports/NICEDCV_enterprise/nicedcv.py:35
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:39
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:40
 msgid "NICE DCV"
 msgstr "NICE DCV"
 
 #: transports/NICEDCV_enterprise/nicedcv.py:37
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:41
-#| msgid "SPICE Protocol. Direct connection."
 msgid "NICE DCV Protocol. Direct connection."
 msgstr "Protocole NICE DCV. Connexion directe."
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:59
-#| msgid "Full Screen"
 msgid "Full screen"
 msgstr "Plein écran"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:61
-#| msgid "If checked, viewer will be shown on fullscreen mode-"
 msgid "If checked, the connection will be opened in full screen mode"
 msgstr "Si coché, la connexion sera ouverte en mode plein écran"
 
@@ -6050,14 +6123,19 @@ msgstr ""
 "Si cette case est cochée, tous les moniteurs clients seront utilisés pour "
 "l'affichage (ne fonctionne que sur les clients Windows)"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:44
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:42
+#| msgid "SPICE Protocol. Tunneled connection."
+msgid "NICE DCV Protocol. Tunneled connection."
+msgstr "Protocole NICE DCV. Connexion en tunnel."
+
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:46
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
 #: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
 #: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "Serveur de tunnel"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:49
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
 #: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
 #: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
@@ -6068,21 +6146,21 @@ msgstr ""
 "Adresse IP ou nom d'hôte du serveur de tunnel envoyé au périphérique client "
 "(\"public\" ip) et au port. (utilisez le format HOST: PORT)"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:54
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:56
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
 #: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
 #: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "Délai d’attente de tunnel"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:59
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:61
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
 #: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
 #: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "Temps maximum d’attente avant la fermeture de l’auditeur de tunnel"
 
-#: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
+#: transports/NICEDCV_enterprise/nicedcvtunnel.py:70
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
 #: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
 #: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
@@ -6208,10 +6286,6 @@ msgstr "Autoriser les publications en série"
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Si coché, ce transport permettra l'utilisation de ports série utilisateur"
-
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
-msgid "Enable clipboard"
-msgstr "Activez le presse-papiers"
 
 #: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:109
 msgid "If checked, copy-paste functions will be allowed"
