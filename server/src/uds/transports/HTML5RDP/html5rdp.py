@@ -129,7 +129,7 @@ class HTML5RDPTransport(transports.Transport):
     )
     wallpaper = gui.CheckBoxField(
         label=_('Show wallpaper'),
-        order=20,
+        order=18,
         tooltip=_(
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
@@ -137,19 +137,19 @@ class HTML5RDPTransport(transports.Transport):
     )
     desktopComp = gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
-        order=22,
+        order=19,
         tooltip=_('If checked, desktop composition will be allowed'),
         tab=gui.PARAMETERS_TAB,
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
-        order=23,
+        order=20,
         tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'),
         tab=gui.PARAMETERS_TAB,
     )
     enableAudio = gui.CheckBoxField(
         label=_('Enable Audio'),
-        order=24,
+        order=21,
         tooltip=_(
             'If checked, the audio will be redirected to remote session (if client browser supports it)'
         ),
@@ -158,7 +158,7 @@ class HTML5RDPTransport(transports.Transport):
     )
     enableAudioInput = gui.CheckBoxField(
         label=_('Enable Microphone'),
-        order=24,
+        order=22,
         tooltip=_(
             'If checked, the microphone will be redirected to remote session (if client browser supports it)'
         ),
@@ -166,7 +166,7 @@ class HTML5RDPTransport(transports.Transport):
     )
     enablePrinting = gui.CheckBoxField(
         label=_('Enable Printing'),
-        order=25,
+        order=23,
         tooltip=_(
             'If checked, the printing will be redirected to remote session (if client browser supports it)'
         ),
@@ -174,14 +174,27 @@ class HTML5RDPTransport(transports.Transport):
     )
     enableFileSharing = gui.ChoiceField(
         label=_('File Sharing'),
-        order=22,
+        order=24,
         tooltip=_('File upload/download redirection policy'),
         defvalue='false',
         values=[
-            {'id': 'false', 'text': 'Disable file sharing'},
-            {'id': 'down', 'text': 'Allow download only'},
-            {'id': 'up', 'text': 'Allow upload only'},
-            {'id': 'true', 'text': 'Enable file sharing'},
+            {'id': 'false', 'text': _('Disable file sharing')},
+            {'id': 'down', 'text': _('Allow download only')},
+            {'id': 'up', 'text': _('Allow upload only')},
+            {'id': 'true', 'text': _('Enable file sharing')},
+        ],
+        tab=gui.PARAMETERS_TAB,
+    )
+    enableClipboard = gui.ChoiceField(
+        label=_('Clipboard'),
+        order=25,
+        tooltip=_('Clipboard redirection policy'),
+        defvalue='enabled',
+        values=[
+            {'id': 'disabled', 'text': _('Disable clipboard')},
+            {'id': 'dis-copy', 'text': _('Disable copy from remote')},
+            {'id': 'dis-paste', 'text': _('Disable paste to remote')},
+            {'id': 'enabled', 'text': _('Enable clipboard')}
         ],
         tab=gui.PARAMETERS_TAB,
     )
@@ -197,58 +210,23 @@ class HTML5RDPTransport(transports.Transport):
             gui.choiceItem('en-gb-qwerty', _('English (GB) keyboard')),
             gui.choiceItem('es-es-qwerty', _('Spanish keyboard')),
             gui.choiceItem('es-latam-qwerty', _('Latin American keyboard')),
+            gui.choiceItem('da-dk-querty', _('Danish keyboard')),
             gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
             gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
-            gui.choiceItem('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
+            gui.choiceItem('fr-be-azerty', _('Belgian French keyboard (azerty)')),
             gui.choiceItem('de-ch-qwertz', _('Swiss German keyboard (qwertz)')),
+            gui.choiceItem('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
+            gui.choiceItem('hu-hu-qwerty', _('Hungarian keyboard')),
             gui.choiceItem('it-it-qwerty', _('Italian keyboard')),
-            gui.choiceItem('sv-se-qwerty', _('Swedish keyboard')),
             gui.choiceItem('ja-jp-qwerty', _('Japanese keyboard')),
-            gui.choiceItem('pt-br-qwerty', _('Brazilian keyboard')),
+            gui.choiceItem('no-no-querty', _('Norwegian keyboard')),
+            gui.choiceItem('pt-br-qwerty', _('Portuguese Brazilian keyboard')),
+            gui.choiceItem('sv-se-qwerty', _('Swedish keyboard')),
+            gui.choiceItem('tr-tr-qwerty', _('Turkish keyboard')),
             gui.choiceItem('failsafe', _('Failsafe')),
         ],
         defvalue='-',
         tab=gui.PARAMETERS_TAB,
-    )
-    security = gui.ChoiceField(
-        order=27,
-        label=_('Security'),
-        tooltip=_('Connection security mode for Guacamole RDP connection'),
-        required=True,
-        values=[
-            gui.choiceItem(
-                'any', _('Any (Allow the server to choose the type of auth)')
-            ),
-            gui.choiceItem(
-                'rdp',
-                _('RDP (Standard RDP encryption. Should be supported by all servers)'),
-            ),
-            gui.choiceItem(
-                'nla',
-                _(
-                    'NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)'
-                ),
-            ),
-            gui.choiceItem(
-                'nla-ext',
-                _(
-                    'NLA extended (Network Layer authentication. Requires VALID username&password, or connection will fail)'
-                ),
-            ),
-            gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
-        ],
-        defvalue='any',
-        tab=gui.PARAMETERS_TAB,
-    )
-
-    rdpPort = gui.NumericField(
-        order=29,
-        length=5,  # That is, max allowed value is 65535
-        label=_('RDP Port'),
-        tooltip=_('Use this port as RDP port. Defaults to 3389.'),
-        tab=gui.PARAMETERS_TAB,
-        required=True,  #: Numeric fields have always a value, so this not really needed
-        defvalue='3389',
     )
 
     ticketValidity = gui.NumericField(
@@ -285,10 +263,50 @@ class HTML5RDPTransport(transports.Transport):
         defvalue=gui.FALSE,
         tab=gui.ADVANCED_TAB,
     )
+    security = gui.ChoiceField(
+        order=92,
+        label=_('Security'),
+        tooltip=_('Connection security mode for Guacamole RDP connection'),
+        required=True,
+        values=[
+            gui.choiceItem(
+                'any', _('Any (Allow the server to choose the type of auth)')
+            ),
+            gui.choiceItem(
+                'rdp',
+                _('RDP (Standard RDP encryption. Should be supported by all servers)'),
+            ),
+            gui.choiceItem(
+                'nla',
+                _(
+                    'NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)'
+                ),
+            ),
+            gui.choiceItem(
+                'nla-ext',
+                _(
+                    'NLA extended (Network Layer authentication. Requires VALID username&password, or connection will fail)'
+                ),
+            ),
+            gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
+        ],
+        defvalue='any',
+        tab=gui.ADVANCED_TAB,
+    )
+
+    rdpPort = gui.NumericField(
+        order=93,
+        length=5,  # That is, max allowed value is 65535
+        label=_('RDP Port'),
+        tooltip=_('Use this port as RDP port. Defaults to 3389.'),
+        required=True,  #: Numeric fields have always a value, so this not really needed
+        defvalue='3389',
+        tab=gui.ADVANCED_TAB,
+    )
 
     customGEPath = gui.TextField(
         label=_('Glyptodon Enterprise context path'),
-        order=92,
+        order=94,
         tooltip=_(
             'Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon Enterprise Tunnel)'
         ),
@@ -297,6 +315,7 @@ class HTML5RDPTransport(transports.Transport):
         required=False,
         tab=gui.ADVANCED_TAB,
     )
+
 
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
@@ -413,7 +432,11 @@ class HTML5RDPTransport(transports.Transport):
             'resize-method': 'display-update',
             'ignore-cert': 'true',
             'security': self.security.value,
+            'enable-drive': self.enableFileSharing.value in ('true', 'down', 'up'),
+            'disable-upload': self.enableFileSharing.value in ('true', 'up'),
             'drive-path': '/share/{}'.format(user.uuid),
+            'disable-copy': self.enableClipboard.value in ('dis-copy', 'disabled'),
+            'disable-paste': self.enableClipboard.value in ('dis-paste', 'disabled'),
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
@@ -435,15 +458,6 @@ class HTML5RDPTransport(transports.Transport):
 
         if domain:
             params['domain'] = domain
-
-        if self.enableFileSharing.value == 'true':
-            params['enable-drive'] = 'true'
-        elif self.enableFileSharing.value == 'down':
-            params['enable-drive'] = 'true'
-            params['disable-upload'] = 'true'
-        elif self.enableFileSharing.value == 'up':
-            params['enable-drive'] = 'true'
-            params['disable-download'] = 'true'
 
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
