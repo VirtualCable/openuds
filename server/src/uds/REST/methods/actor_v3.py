@@ -270,8 +270,8 @@ class Initialize(ActorV3Action):
                 )
 
                 # If no UserService exists,
-                # ist managed (service exists), then it's a "local login"
-                if dbFilter.exists() is False and service:
+                # is managed (service exists), then it's a "local login"
+                if not dbFilter.exists() and service:
                     # The userService does not exists, try to lock the id on the service
                     serviceInstance = service.getInstance()
                     lockedId = serviceInstance.lockId(idsList)
