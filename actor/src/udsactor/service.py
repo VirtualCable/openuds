@@ -447,7 +447,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     def logout(self, username: str) -> None:
         self._loggedIn = False
 
-        master_token = self._cfg.master_token if self.isManaged() else None
+        master_token = self._cfg.master_token
 
         # Own token will not be set if UDS did not assigned the initialized VM to an user
         # In that case, take master token (if machine is Unamanaged version)

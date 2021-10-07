@@ -648,6 +648,12 @@ class gui:
             """
             return self.value in (True, 'true', 'True', b'true', b'True')
 
+        def asBool(self) -> bool:
+            """
+            Returns the value as bool
+            """
+            return self.isTrue()
+
     class ChoiceField(InputField):
         """
         This represents a simple combo box with single selection.
