@@ -110,6 +110,13 @@ class IPMachinesService(IPServiceBase):
         required=True,
         tab=gui.ADVANCED_TAB,
     )
+    lockByExternalAccess = gui.CheckBoxField(
+        label=_('Lock machine by external access'),
+        tooltip=_('If checked, UDS will lock the machine if it is accesed from outside UDS.'),
+        defvalue=False,
+        order=4,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -135,6 +142,7 @@ class IPMachinesService(IPServiceBase):
     _port: int = 0
     _skipTimeOnFailure: int = 0
     _maxSessionForMachine: int = 0
+    _lockByExternalAccess: bool = False
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
@@ -171,6 +179,7 @@ class IPMachinesService(IPServiceBase):
         self._port = self.port.value
         self._skipTimeOnFailure = self.skipTimeOnFailure.num()
         self._maxSessionForMachine = self.maxSessionForMachine.num()
+        self._lockByExternalAccess = self.lockByExternalAccess.isTrue()
 
     def getToken(self):
         return self._token or None
@@ -184,17 +193,19 @@ class IPMachinesService(IPServiceBase):
             'port': str(self._port),
             'skipTimeOnFailure': str(self._skipTimeOnFailure),
             'maxSessionForMachine': str(self._maxSessionForMachine),
+            'lockByExternalAccess': gui.boolToStr(self._lockByExternalAccess),
         }
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
         return b'\0'.join(
             [
-                b'v5',
+                b'v6',
                 self._token.encode(),
                 str(self._port).encode(),
                 str(self._skipTimeOnFailure).encode(),
                 str(self._maxSessionForMachine).encode(),
+                gui.boolToStr(self._lockByExternalAccess).encode(),
             ]
         )
 
@@ -210,12 +221,14 @@ class IPMachinesService(IPServiceBase):
             self._ips = []
         if values[0] != b'v1':
             self._token = values[1].decode()
-            if values[0] in (b'v3', b'v4', b'v5'):
+            if values[0] in (b'v3', b'v4', b'v5', b'v6'):
                 self._port = int(values[2].decode())
-            if values[0] in (b'v4', b'v5'):
+            if values[0] in (b'v4', b'v5', b'v6'):
                 self._skipTimeOnFailure = int(values[3].decode())
-            if values[0] == b'v5':
+            if values[0] in (b'v5', b'v6'):
                 self._maxSessionForMachine = int(values[4].decode())
+            if values[0] in (b'v6',):
+                self._lockByExternalAccess = gui.strToBool(values[5].decode())
 
         # Sets maximum services for this
         self.maxDeployed = len(self._ips)
@@ -327,9 +340,26 @@ class IPMachinesService(IPServiceBase):
 
     def processLogin(self, id: str, remote_login: bool) -> None:
         logger.info('Processing login for %s', id)
+        # Locate the IP on the storage
+        theIP = IPServiceBase.getIp(id)
+        now = getSqlDatetimeAsUnix()
+        locked = self.storage.getPickle(theIP)
+        if self.canBeUsed(locked, now):
+            self.storage.putPickle(id, now)  # Lock it
 
     def processLogout(self, id: str) -> None:
         logger.info('Processing logout for %s', id)
+        self.unassignMachine(id)
 
     def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
-        return '192.168.15.13'
+        # If locking not allowed, return None
+        if self._lockByExternalAccess is False:
+            return None
+        # Look for the first valid id on our list       
+        for ip in self._ips:
+            theIP = IPServiceBase.getIp(ip)
+            theMAC = IPServiceBase.getMac(ip)
+            # If is managed by us
+            if theIP in idsList or theMAC in idsList:
+                return theIP + ';' + theMAC if theMAC else theIP
+        return None
