@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 15:09+0200\n"
+"POT-Creation-Date: 2021-10-08 00:55+0200\n"
 "PO-Revision-Date: 2021-09-24 11:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -4444,15 +4444,26 @@ msgstr ""
 "Durata massima della sessione prima che UDS ritenga che questa macchina sia "
 "stata bloccata e la rilasci (ore). 0 significa \"mai\"."
 
+#: services/PhysicalMachines/service_multi.py:114
+msgid "Lock machine by external access"
+msgstr "Bloccare la macchina tramite accesso esterno"
+
 #: services/PhysicalMachines/service_multi.py:115
+msgid ""
+"If checked, UDS will lock the machine if it is accesed from outside UDS."
+msgstr ""
+"Se selezionato, UDS bloccherà la macchina se vi si accede dall&#39;esterno "
+"di UDS."
+
+#: services/PhysicalMachines/service_multi.py:122
 msgid "Static Multiple IP"
 msgstr "IP statico multiplo"
 
-#: services/PhysicalMachines/service_multi.py:117
+#: services/PhysicalMachines/service_multi.py:124
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Questo servizio fornisce l'accesso ai computer POWERED-ON tramite IP"
 
-#: services/PhysicalMachines/service_multi.py:150
+#: services/PhysicalMachines/service_multi.py:158
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "Rilevato valore non valido nell&#39;elenco dei server: \"{}\""
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 15:09+0200\n"
+"POT-Creation-Date: 2021-10-08 00:55+0200\n"
 "PO-Revision-Date: 2021-09-24 11:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -4414,15 +4414,24 @@ msgstr ""
 "Saioaren gehieneko iraupena, UDSk makina hau blokeatu egin dela eta askatu "
 "(orduak) pentsatu aurretik. 0 \"inoiz\" esan nahi du."
 
+#: services/PhysicalMachines/service_multi.py:114
+msgid "Lock machine by external access"
+msgstr "Blokeatu makina kanpoko sarbidearen bidez"
+
 #: services/PhysicalMachines/service_multi.py:115
+msgid ""
+"If checked, UDS will lock the machine if it is accesed from outside UDS."
+msgstr "Markatuta badago, UDS blokeatuko du makina UDS kanpotik sartzen bada."
+
+#: services/PhysicalMachines/service_multi.py:122
 msgid "Static Multiple IP"
 msgstr "IP estatiko anitz"
 
-#: services/PhysicalMachines/service_multi.py:117
+#: services/PhysicalMachines/service_multi.py:124
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Zerbitzu honek POWERED-ON makinak IP bidez sarbidea eskaintzen du"
 
-#: services/PhysicalMachines/service_multi.py:150
+#: services/PhysicalMachines/service_multi.py:158
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "Zerbitzari zerrendan hautemandako balio baliogabea: \"{}\""
 

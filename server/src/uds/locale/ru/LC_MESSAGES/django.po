@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 15:09+0200\n"
+"POT-Creation-Date: 2021-10-08 00:55+0200\n"
 "PO-Revision-Date: 2021-09-24 11:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
@@ -4425,15 +4425,26 @@ msgstr ""
 "Максимальная продолжительность сеанса, прежде чем UDS решит, что эта машина "
 "заблокирована, и освободит ее (часы). 0 означает «никогда»."
 
+#: services/PhysicalMachines/service_multi.py:114
+msgid "Lock machine by external access"
+msgstr "Заблокируйте машину внешним доступом"
+
 #: services/PhysicalMachines/service_multi.py:115
+msgid ""
+"If checked, UDS will lock the machine if it is accesed from outside UDS."
+msgstr ""
+"Если этот флажок установлен, UDS заблокирует машину, если к ней будет "
+"получен доступ извне UDS."
+
+#: services/PhysicalMachines/service_multi.py:122
 msgid "Static Multiple IP"
 msgstr "Статический множественный IP-адрес"
 
-#: services/PhysicalMachines/service_multi.py:117
+#: services/PhysicalMachines/service_multi.py:124
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Эта услуга обеспечивает доступ к включенным машинам по IP"
 
-#: services/PhysicalMachines/service_multi.py:150
+#: services/PhysicalMachines/service_multi.py:158
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "В списке серверов обнаружено недопустимое значение: \"{}\""
 
@@ -5669,7 +5680,7 @@ msgstr "Политика перенаправления загрузки / ск�
 #: transports/HTML5RDS_enterprise/html5rds.py:170
 #| msgid "Enable File Sharing"
 msgid "Disable file sharing"
-msgstr "Отключить общий доступ к файлам"
+msgstr "Отключить обмен файлами"
 
 #: transports/HTML5RDP/html5rdp.py:182
 #: transports/HTML5RDS_enterprise/html5rds.py:171

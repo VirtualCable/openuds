@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 15:09+0200\n"
+"POT-Creation-Date: 2021-10-08 00:55+0200\n"
 "PO-Revision-Date: 2021-09-24 11:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -4349,15 +4349,24 @@ msgstr ""
 "المدة القصوى للجلسة قبل أن تعتقد UDS أن هذا الجهاز قد تم قفله وتحريره "
 "(ساعات). 0 يعني \"أبدًا\"."
 
+#: services/PhysicalMachines/service_multi.py:114
+msgid "Lock machine by external access"
+msgstr "قفل الجهاز عن طريق الوصول الخارجي"
+
 #: services/PhysicalMachines/service_multi.py:115
+msgid ""
+"If checked, UDS will lock the machine if it is accesed from outside UDS."
+msgstr "إذا تم تحديده ، فستقوم UDS بقفل الجهاز إذا تم الوصول إليه من خارج UDS."
+
+#: services/PhysicalMachines/service_multi.py:122
 msgid "Static Multiple IP"
 msgstr "IP ثابت متعدد."
 
-#: services/PhysicalMachines/service_multi.py:117
+#: services/PhysicalMachines/service_multi.py:124
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات مشتغلة ب IP"
 
-#: services/PhysicalMachines/service_multi.py:150
+#: services/PhysicalMachines/service_multi.py:158
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "تم اكتشاف قيمة غير صالحة في قائمة الخوادم: \"{}\""
 

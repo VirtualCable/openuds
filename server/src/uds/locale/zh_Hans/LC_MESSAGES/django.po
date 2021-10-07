@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 15:09+0200\n"
+"POT-Creation-Date: 2021-10-08 00:55+0200\n"
 "PO-Revision-Date: 2021-09-24 11:51+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -4254,15 +4254,24 @@ msgid ""
 msgstr ""
 "UDS 认为这台机器被锁定并释放它之前的最大会话持续时间（小时）。 0 表示“从不”。"
 
+#: services/PhysicalMachines/service_multi.py:114
+msgid "Lock machine by external access"
+msgstr "通过外部访问锁定机器"
+
 #: services/PhysicalMachines/service_multi.py:115
+msgid ""
+"If checked, UDS will lock the machine if it is accesed from outside UDS."
+msgstr "如果选中，如果从 UDS 外部访问，UDS 将锁定机器。"
+
+#: services/PhysicalMachines/service_multi.py:122
 msgid "Static Multiple IP"
 msgstr "静态多IP"
 
-#: services/PhysicalMachines/service_multi.py:117
+#: services/PhysicalMachines/service_multi.py:124
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
 
-#: services/PhysicalMachines/service_multi.py:150
+#: services/PhysicalMachines/service_multi.py:158
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "在服务器列表中检测到无效值：“{}”"
 
