@@ -324,3 +324,12 @@ class IPMachinesService(IPServiceBase):
             return userServiceInstance.assign(theIP)
 
         return userServiceInstance.error('IP already assigned')
+
+    def processLogin(self, id: str, remote_login: bool) -> None:
+        logger.info('Processing login for %s', id)
+
+    def processLogout(self, id: str) -> None:
+        logger.info('Processing logout for %s', id)
+
+    def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
+        return '192.168.15.13'

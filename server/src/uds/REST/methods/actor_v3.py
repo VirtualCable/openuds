@@ -448,7 +448,9 @@ class LoginLogout(ActorV3Action):
             service: 'services.Service' = Service.objects.get(
                 token=self._params['token']
             ).getInstance()
-            # Locate an userService that belongs to this service and which
+
+            # We have a valid service, now we can make notifications
+
             # Build the possible ids and make initial filter to match service
             idsList = [x['ip'] for x in self._params['id']] + [
                 x['mac'] for x in self._params['id']
@@ -460,18 +462,11 @@ class LoginLogout(ActorV3Action):
             if not validId:
                 raise Exception()
 
-            # Check secret if is stored
-            storedInfo: typing.Optional[
-                typing.MutableMapping[str, typing.Any]
-            ] = service.recoverIdInfo(validId)
-            # If no secret valid
-            if not storedInfo or self._params['secret'] != storedInfo['secret']:
-                raise Exception()
 
             # Notify Service that someone logged in/out
             if login:
                 # Try to guess if this is a remote session
-                is_remote = self._params.get('session_type', '')[:3] in ('xrdp', 'RDP-')
+                is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
                 service.processLogin(validId, remote_login=is_remote)
             else:
                 service.processLogout(validId)
