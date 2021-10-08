@@ -339,6 +339,9 @@ class IPMachinesService(IPServiceBase):
         return userServiceInstance.error('IP already assigned')
 
     def processLogin(self, id: str, remote_login: bool) -> None:
+        '''
+        Process login for a machine not assigned to any user.
+        '''
         logger.debug('Processing login for %s: %s', self, id)
         # Locate the IP on the storage
         theIP = IPServiceBase.getIp(id)
@@ -348,10 +351,17 @@ class IPMachinesService(IPServiceBase):
             self.storage.putPickle(id, now)  # Lock it
 
     def processLogout(self, id: str) -> None:
+        '''
+        Process logout for a machine not assigned to any user.
+        '''
         logger.debug('Processing logout for %s: %s', self, id)
         self.unassignMachine(id)
 
     def notifyInitialization(self, id: str) -> None:
+        '''
+        Notify that a machine has been initialized.
+        Normally, this means that 
+        '''
         logger.debug('Notify initialization for %s: %s', self, id)
         self.unassignMachine(id)
 
