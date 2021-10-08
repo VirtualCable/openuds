@@ -269,24 +269,6 @@ class Initialize(ActorV3Action):
                     state__in=[State.USABLE, State.PREPARING],
                 )
 
-                # If no UserService exists,
-                # is managed (service exists), then it's a "local login"
-                if not dbFilter.exists() and service:
-                    # The userService does not exists, try to lock the id on the service
-                    serviceInstance = service.getInstance()
-                    lockedId = serviceInstance.lockId(idsList)
-                    if lockedId:
-                        # Return an "generic" result allowing login/logout processing
-                        return ActorV3Action.actorResult(
-                            {
-                                'own_token': self._params['token'],
-                                'unique_id': lockedId,
-                                'os': None,
-                            }
-                        )
-                    else:  # if no lock, return empty result
-                        raise Exception()  # Unmanaged host
-
                 userService: UserService = next(
                     iter(
                         dbFilter.filter(
@@ -657,12 +639,35 @@ class Unmanaged(ActorV3Action):
         except Exception:
             return ActorV3Action.actorResult(error='Invalid token')
 
+
         # Build the possible ids and ask service if it recognizes any of it
         # If not recognized, will generate anyway the certificate, but will not be saved
         idsList = [x['ip'] for x in self._params['id']] + [
             x['mac'] for x in self._params['id']
         ][:10]
         validId: typing.Optional[str] = service.getValidId(idsList)
+
+        # Check if there is already an assigned user service
+        # To notify it logout
+        userService: typing.Optional[UserService]
+        try:
+            dbFilter = UserService.objects.filter(
+                unique_id__in=idsList,
+                state__in=[State.USABLE, State.PREPARING],
+            )
+
+            userService = next(
+                iter(
+                    dbFilter.filter(
+                        unique_id__in=idsList,
+                        state__in=[State.USABLE, State.PREPARING],
+                    )
+                )
+            )
+        except StopIteration:
+            userService = None
+
+        # Try to infer the ip from the valid id (that could be an IP or a MAC)
         ip: str
         try:
             ip = next(
@@ -681,8 +686,12 @@ class Unmanaged(ActorV3Action):
             'password': password,
         }
         if validId:
-            # Notify service of it "just start" action
-            service.notifyInitialization(validId)
+            # If id is assigned to an user service, notify "logout" to it
+            if userService:
+                Logout.process_logout(userService, 'init')
+            else:
+                # If it is not assgined to an user service, notify service
+                service.notifyInitialization(validId)
 
             # Store certificate, secret & port with service if validId
             service.storeIdInfo(
