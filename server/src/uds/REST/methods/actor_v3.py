@@ -424,7 +424,7 @@ class Version(ActorV3Action):
 class LoginLogout(ActorV3Action):
     name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
-    def notifyService(self, login: bool):
+    def notifyService(self, isLogin: bool):
         try:
             # If unmanaged, use Service locator
             service: 'services.Service' = Service.objects.get(
@@ -444,9 +444,11 @@ class LoginLogout(ActorV3Action):
             if not validId:
                 raise Exception()
 
+            # Recover Id Info from service and validId
+            # idInfo = service.recoverIdInfo(validId)
 
             # Notify Service that someone logged in/out
-            if login:
+            if isLogin:
                 # Try to guess if this is a remote session
                 is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
                 service.processLogin(validId, remote_login=is_remote)
@@ -518,7 +520,7 @@ class Login(LoginLogout):
         except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
-            self.notifyService(login=True)
+            self.notifyService(isLogin=True)
 
         return ActorV3Action.actorResult(
             {'ip': ip, 'hostname': hostname, 'dead_line': deadLine, 'max_idle': maxIdle}
@@ -561,7 +563,7 @@ class Logout(LoginLogout):
         except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
-            self.notifyService(login=False)  # Logout notification
+            self.notifyService(isLogin=False)  # Logout notification
 
         return ActorV3Action.actorResult('ok')
 
@@ -638,7 +640,6 @@ class Unmanaged(ActorV3Action):
             service: 'services.Service' = dbService.getInstance()
         except Exception:
             return ActorV3Action.actorResult(error='Invalid token')
-
 
         # Build the possible ids and ask service if it recognizes any of it
         # If not recognized, will generate anyway the certificate, but will not be saved
