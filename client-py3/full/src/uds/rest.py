@@ -183,7 +183,6 @@ class RestApi:
     def _open(
         url: str, certErrorCallback: typing.Optional[CertCallbackType] = None
     ) -> typing.Any:
-        print('Open')
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
@@ -246,7 +245,6 @@ class RestApi:
     def getUrl(
         url: str, certErrorCallback: typing.Optional[CertCallbackType] = None
     ) -> bytes:
-        print(url)
         with RestApi._open(url, certErrorCallback) as response:
             resp = response.read()
 
