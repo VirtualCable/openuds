@@ -269,24 +269,6 @@ class Initialize(ActorV3Action):
                     state__in=[State.USABLE, State.PREPARING],
                 )
 
-                # If no UserService exists,
-                # is managed (service exists), then it's a "local login"
-                if not dbFilter.exists() and service:
-                    # The userService does not exists, try to lock the id on the service
-                    serviceInstance = service.getInstance()
-                    lockedId = serviceInstance.lockId(idsList)
-                    if lockedId:
-                        # Return an "generic" result allowing login/logout processing
-                        return ActorV3Action.actorResult(
-                            {
-                                'own_token': self._params['token'],
-                                'unique_id': lockedId,
-                                'os': None,
-                            }
-                        )
-                    else:  # if no lock, return empty result
-                        raise Exception()  # Unmanaged host
-
                 userService: UserService = next(
                     iter(
                         dbFilter.filter(
@@ -442,7 +424,7 @@ class Version(ActorV3Action):
 class LoginLogout(ActorV3Action):
     name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
-    def notifyService(self, login: bool):
+    def notifyService(self, isLogin: bool):
         try:
             # If unmanaged, use Service locator
             service: 'services.Service' = Service.objects.get(
@@ -462,9 +444,11 @@ class LoginLogout(ActorV3Action):
             if not validId:
                 raise Exception()
 
+            # Recover Id Info from service and validId
+            # idInfo = service.recoverIdInfo(validId)
 
             # Notify Service that someone logged in/out
-            if login:
+            if isLogin:
                 # Try to guess if this is a remote session
                 is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
                 service.processLogin(validId, remote_login=is_remote)
@@ -536,7 +520,7 @@ class Login(LoginLogout):
         except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
-            self.notifyService(login=True)
+            self.notifyService(isLogin=True)
 
         return ActorV3Action.actorResult(
             {'ip': ip, 'hostname': hostname, 'dead_line': deadLine, 'max_idle': maxIdle}
@@ -579,7 +563,7 @@ class Logout(LoginLogout):
         except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
-            self.notifyService(login=False)  # Logout notification
+            self.notifyService(isLogin=False)  # Logout notification
 
         return ActorV3Action.actorResult('ok')
 
@@ -663,6 +647,28 @@ class Unmanaged(ActorV3Action):
             x['mac'] for x in self._params['id']
         ][:10]
         validId: typing.Optional[str] = service.getValidId(idsList)
+
+        # Check if there is already an assigned user service
+        # To notify it logout
+        userService: typing.Optional[UserService]
+        try:
+            dbFilter = UserService.objects.filter(
+                unique_id__in=idsList,
+                state__in=[State.USABLE, State.PREPARING],
+            )
+
+            userService = next(
+                iter(
+                    dbFilter.filter(
+                        unique_id__in=idsList,
+                        state__in=[State.USABLE, State.PREPARING],
+                    )
+                )
+            )
+        except StopIteration:
+            userService = None
+
+        # Try to infer the ip from the valid id (that could be an IP or a MAC)
         ip: str
         try:
             ip = next(
@@ -681,8 +687,12 @@ class Unmanaged(ActorV3Action):
             'password': password,
         }
         if validId:
-            # Notify service of it "just start" action
-            service.notifyInitialization(validId)
+            # If id is assigned to an user service, notify "logout" to it
+            if userService:
+                Logout.process_logout(userService, 'init')
+            else:
+                # If it is not assgined to an user service, notify service
+                service.notifyInitialization(validId)
 
             # Store certificate, secret & port with service if validId
             service.storeIdInfo(

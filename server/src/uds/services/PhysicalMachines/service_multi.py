@@ -339,7 +339,10 @@ class IPMachinesService(IPServiceBase):
         return userServiceInstance.error('IP already assigned')
 
     def processLogin(self, id: str, remote_login: bool) -> None:
-        logger.info('Processing login for %s', id)
+        '''
+        Process login for a machine not assigned to any user.
+        '''
+        logger.debug('Processing login for %s: %s', self, id)
         # Locate the IP on the storage
         theIP = IPServiceBase.getIp(id)
         now = getSqlDatetimeAsUnix()
@@ -348,7 +351,18 @@ class IPMachinesService(IPServiceBase):
             self.storage.putPickle(id, now)  # Lock it
 
     def processLogout(self, id: str) -> None:
-        logger.info('Processing logout for %s', id)
+        '''
+        Process logout for a machine not assigned to any user.
+        '''
+        logger.debug('Processing logout for %s: %s', self, id)
+        self.unassignMachine(id)
+
+    def notifyInitialization(self, id: str) -> None:
+        '''
+        Notify that a machine has been initialized.
+        Normally, this means that 
+        '''
+        logger.debug('Notify initialization for %s: %s', self, id)
         self.unassignMachine(id)
 
     def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
