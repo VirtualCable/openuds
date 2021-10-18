@@ -198,6 +198,9 @@ class Users(DetailHandler):
             'staff_member',
             'is_admin',
         ]
+        if self._params.get('name', '') == '':
+            raise RequestError(_('Username cannot be empty'))
+
         if 'password' in self._params:
             valid_fields.append('password')
             self._params['password'] = cryptoManager().hash(self._params['password'])
@@ -239,6 +242,8 @@ class Users(DetailHandler):
             raise RequestError(str(e))
         except ValidationError as e:
             raise RequestError(str(e.message))
+        except RequestError:
+            raise
         except Exception:
             logger.exception('Saving user')
             raise self.invalidRequestException()
@@ -421,6 +426,8 @@ class Groups(DetailHandler):
             logger.debug('Meta any %s', meta_if_any)
             logger.debug('Pools: %s', pools)
             valid_fields = ['name', 'comments', 'state']
+            if self._params.get('name', '') == '':
+                raise RequestError(_('Group name is required'))
             fields = self.readFieldsFromParams(valid_fields)
             is_pattern = fields.get('name', '').find('pat:') == 0
             auth = parent.getInstance()
@@ -463,6 +470,8 @@ class Groups(DetailHandler):
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
             raise RequestError(str(e))
+        except RequestError:
+            raise
         except Exception:
             logger.exception('Saving group')
             raise self.invalidRequestException()
