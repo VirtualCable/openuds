@@ -37,6 +37,7 @@ import typing
 class LocalLogger:  # pylint: disable=too-few-public-methods
     linux = False
     windows = True
+    serviceLogger = False
 
     logger: typing.Optional[logging.Logger]
 

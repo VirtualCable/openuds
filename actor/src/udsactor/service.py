@@ -366,17 +366,19 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         '''
         hostName = platform.operations.getComputerName()
 
-        if hostName.lower() == name.lower():
-            logger.info('Computer name is already {}'.format(hostName))
-            return
-
         # Check for password change request for an user
         if userName and newPassword:
+            changed = True
             logger.info('Setting password for configured user')
             try:
                 platform.operations.changeUserPassword(userName, oldPassword or '', newPassword)
             except Exception as e:
-                raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(userName, str(e)))
+                # Logs error, but continue renaming computer
+                logger.error('Could not change password for user {}: {}'.format(userName, e))
+
+        if hostName.lower() == name.lower():
+            logger.info('Computer name is already {}'.format(hostName))
+            return
 
         if platform.operations.renameComputer(name):
             self.reboot()
