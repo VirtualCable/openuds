@@ -368,7 +368,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         # Check for password change request for an user
         if userName and newPassword:
-            changed = True
             logger.info('Setting password for configured user')
             try:
                 platform.operations.changeUserPassword(userName, oldPassword or '', newPassword)
