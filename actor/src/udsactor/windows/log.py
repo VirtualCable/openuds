@@ -34,7 +34,8 @@ import os
 import tempfile
 import typing
 
-import servicemanager  # pylint: disable=import-error
+import servicemanager
+from udsactor import service  # pylint: disable=import-error
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log).
 from .. import loglevel
@@ -42,6 +43,7 @@ from .. import loglevel
 class LocalLogger:  # pylint: disable=too-few-public-methods
     linux = False
     windows = True
+    serviceLogger = False
 
     logger: typing.Optional[logging.Logger]
 
