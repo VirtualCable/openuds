@@ -538,16 +538,8 @@ class ServicesPools(ModelHandler):
                     for k, v in serviceType.cacheConstrains.items():
                         fields[k] = v
 
-                if serviceType.maxDeployed != -1:
-                    fields['max_srvs'] = min(
-                        (int(fields['max_srvs']), serviceType.maxDeployed)
-                    )
-                    fields['initial_srvs'] = min(
-                        int(fields['initial_srvs']), serviceType.maxDeployed
-                    )
-                    fields['cache_l1_srvs'] = min(
-                        int(fields['cache_l1_srvs']), serviceType.maxDeployed
-                    )
+                if serviceType.usesCache_L2 is False:
+                    fields['cache_l2_srvs'] = 0
 
                 if serviceType.usesCache is False:
                     for k in (
@@ -557,9 +549,22 @@ class ServicesPools(ModelHandler):
                         'max_srvs',
                     ):
                         fields[k] = 0
+                else:  # uses cache, adjust values
+                    fields['max_srvs'] = int(fields['max_srvs']) or 1  # ensure max_srvs is at least 1
+                    fields['initial_srvs'] = int(fields['initial_srvs'])
+                    fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
-                if serviceType.usesCache_L2 is False:
-                    fields['cache_l2_srvs'] = 0
+                    if serviceType.maxDeployed != -1:
+                        fields['max_srvs'] = min(
+                            (fields['max_srvs'], serviceType.maxDeployed)
+                        )
+                        fields['initial_srvs'] = min(
+                            fields['initial_srvs'], serviceType.maxDeployed
+                        )
+                        fields['cache_l1_srvs'] = min(
+                            fields['cache_l1_srvs'], serviceType.maxDeployed
+                        )
+
 
             except Exception:
                 raise RequestError(ugettext('This service requires an OS Manager'))
