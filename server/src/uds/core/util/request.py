@@ -29,6 +29,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import asyncio
+import contextvars
+import random
+import datetime
 import threading
 import datetime
 import weakref
@@ -56,21 +60,35 @@ class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
     user: User
 
 
+identity_context: contextvars.ContextVar[int] = contextvars.ContextVar('identity')
+
+# Return an unique id for the current running thread or the current running coroutine
 def getIdent() -> int:
-    ident = threading.current_thread().ident
-    return ident if ident else -1
+    # Defect if we are on a thread or on asyncio
+    try:
+        if asyncio.get_event_loop().is_running():
+            if identity_context.get(None) is None:
+                identity_context.set(
+                    # Generate a really unique random number for the asyncio task based on current time
+                    # lower 16 are random, upper bits are based on current time
+                    random.randint(0, 2 ** 16 - 1)
+                    + int(datetime.datetime.now().timestamp()) * 2 ** 16
+                )  # Every "task" has its own context
+            return identity_context.get()
+    except Exception:
+        pass
+    return threading.current_thread().ident or -1
 
 
 def getRequest() -> ExtendedHttpRequest:
     ident = getIdent()
-    if ident in _requests:
-        val = typing.cast(
-            typing.Optional[ExtendedHttpRequest], _requests[ident][0]()
-        )  # Return obj from weakref
-        if val:
-            return val
+    val = (
+        typing.cast(typing.Optional[ExtendedHttpRequest], _requests[ident][0]())
+        if ident in _requests
+        else None
+    )  # Return obj from weakref
 
-    return ExtendedHttpRequest()
+    return val or ExtendedHttpRequest()
 
 
 def delCurrentRequest() -> None:
@@ -87,9 +105,9 @@ def delCurrentRequest() -> None:
 
 def cleanOldRequests() -> None:
     logger.debug('Cleaning stuck requests from %s', _requests)
-    # No request lives 60 seconds, so 60 seconds is fine
+    # No request lives 3600 seconds, so 3600 seconds is fine
     cleanFrom: datetime.datetime = datetime.datetime.now() - datetime.timedelta(
-        seconds=60
+        seconds=3600
     )
     toDelete: typing.List[int] = []
     for ident, request in _requests.items():
