@@ -1,0 +1,7 @@
+[INFO]
+[PART]
+file="UDSClient-igel.tar.bz2"
+version="1.1_igel1"
+size="_SIZE_"
+name="UDSClient"
+minfw="11.05.120"

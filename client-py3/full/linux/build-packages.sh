@@ -43,5 +43,8 @@ make DESTDIR=appimage DISTRO=x86_64 VERSION=${VERSION} build-appimage
 make DESTDIR=appimage DISTRO=armhf VERSION=${VERSION} build-appimage
 make DESTDIR=appimage DISTRO=i686 VERSION=${VERSION} build-appimage
 
+# Now create igel version
+# we need first to create the Appimage for x86_64
+make DESTDIR=igelimage DISTRO=x86_64 VERSION=${VERSION} build-igel
 
 rpm --addsign ../*rpm
