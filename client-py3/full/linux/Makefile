@@ -14,6 +14,8 @@ APPSDIR := $(DESTDIR)/usr/share/applications
 PYC := $(shell find $(SOURCEDIR) -name '*.py[co]')
 CACHES := $(shell find $(SOURCEDIR) -name '__pycache__')
 
+
+
 clean:
 	rm -rf $(PYC) $(CACHES) $(DESTDIR)
 install:
@@ -78,3 +80,19 @@ endif
 
 # cleanup
 	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir
+
+build-igel:
+	rm -rf $(DESTDIR)
+	mkdir -p $(DESTDIR)
+# Calculate the size of the custom partition (15 megas more than the appimage size)
+	@$(eval APPIMAGE_SIZE=$(shell du -sm UDSClient-$(VERSION)-x86_64.AppImage | cut -f1))
+	@$(eval APPIMAGE_SIZE=$(shell expr $(APPIMAGE_SIZE) + 15))
+	cat igel/UDSClient-Profile-template.xml | sed -e s/"_SIZE_"/"$(APPIMAGE_SIZE)M"/g > $(DESTDIR)/UDSClient-Profile.xml
+	cat igel/UDSClient-template.inf | sed -e s/"_SIZE_"/"$(APPIMAGE_SIZE)M"/g > $(DESTDIR)/UDSClient.inf
+	cp UDSClient-$(VERSION)-x86_64.AppImage $(DESTDIR)/UDSClient
+	cp igel/UDSClient.desktop $(DESTDIR)/UDSClient.desktop
+	cp igel/init.sh $(DESTDIR)/init.sh
+	tar cjvf $(DESTDIR)/UDSClient.tar.bz2 -C $(DESTDIR) UDSClient UDSClient.desktop init.sh
+	zip -j ../udsclient3-$(VERSION)-igel.zip $(DESTDIR)/UDSClient-Profile.xml $(DESTDIR)/UDSClient.inf $(DESTDIR)/UDSClient.tar.bz2
+	cd ..
+	rm -rf $(DESTDIR)
