@@ -49,9 +49,6 @@ from uds.models import User
 
 logger = logging.getLogger(__name__)
 
-# Simple Bot detection
-bot = re.compile('bot|spider', re.IGNORECASE)
-
 # How often to check the requests cache for stuck objects
 CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
@@ -75,18 +72,13 @@ class GlobalRequestMiddleware:
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
 
-        # If bot, break now
-        ua = request.META.get('HTTP_USER_AGENT', 'Unknown')
-        if bot.search(ua):
-            # Return emty response if bot is detected
-            logger.info('Denied Bot %s from %s to %s', ua, request.ip, request.path)
-            return HttpResponse(content='Forbbiden', status=403)
-
         # Store request on cache
         setRequest(request=request)
 
         # Ensures request contains os
-        request.os = OsDetector.getOsFromUA(ua)
+        request.os = OsDetector.getOsFromUA(
+            request.META.get('HTTP_USER_AGENT', 'Unknown')
+        )
 
         # Ensures that requests contains the valid user
         GlobalRequestMiddleware.getUser(request)
