@@ -25,21 +25,26 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import re
 import logging
 import typing
 
 logger = logging.getLogger(__name__)
 
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse
 
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest, HttpResponse
+    from django.http import HttpRequest
+
+# Simple Bot detection
+bot = re.compile(r'bot|spider', re.IGNORECASE)
 
 
 class UDSSecurityMiddleware:
     '''
     This class contains all the security checks done by UDS in order to add some extra protection.
     '''
+
     get_response: typing.Any  # typing.Callable[['HttpRequest'], 'HttpResponse']
 
     def __init__(
@@ -48,5 +53,19 @@ class UDSSecurityMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
-        # TODO: Implement security checks here
+        # If bot, break now
+        ua = request.META.get('HTTP_USER_AGENT', 'Connection Maybe a bot. No user agent detected.')
+        if bot.search(ua):
+            # Return emty response if bot is detected
+            logger.info(
+                'Denied Bot %s from %s to %s',
+                ua,
+                request.META.get(
+                    'REMOTE_ADDR',
+                    request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")[-1],
+                ),
+                request.path,
+            )
+            return HttpResponse(content='Forbbiden', status=403)
+
         return self.get_response(request)
