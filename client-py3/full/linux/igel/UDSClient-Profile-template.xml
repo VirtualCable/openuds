@@ -35,8 +35,8 @@
             <ivalue classname="custom_partition.source%.final_action" variableExpression="" variableSubstitutionActive="false"></ivalue>
             <ivalue classname="custom_partition.source%.init_action" variableExpression="" variableSubstitutionActive="false">/UDSClient/init.sh</ivalue>
             <ivalue classname="custom_partition.source%.password" variableExpression="" variableSubstitutionActive="false"></ivalue>
-            <ivalue classname="custom_partition.source%.url" variableExpression="" variableSubstitutionActive="false">http://192.168.11.121:9080/ums_filetransfer/UDSClient-igel.inf</ivalue>
-            <ivalue classname="custom_partition.source%.username" variableExpression="" variableSubstitutionActive="false">vc</ivalue>
+            <ivalue classname="custom_partition.source%.url" variableExpression="" variableSubstitutionActive="false">https://[UMS_SERVER]/ums_filetransfer/UDSClient-igel.inf</ivalue>
+            <ivalue classname="custom_partition.source%.username" variableExpression="" variableSubstitutionActive="false">[UMS_USERNAME]</ivalue>
         </instance>
         <instance classprefix="sessions.chromium%" serialnumber="-6b5264e9:17ca6f65505:-8000127.0.1.1">
             <ivalue classname="sessions.chromium%.app.browser_startup_page" variableExpression="" variableSubstitutionActive="false">1</ivalue>
