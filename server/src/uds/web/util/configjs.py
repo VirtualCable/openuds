@@ -264,30 +264,6 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
                 'Linux',
                 False,
             ),
-            (
-                'udsclient_{version}_all.deb',
-                gettext('Legacy Debian based Python 2.7 Linux client')
-                + ' '
-                + gettext('(requires outdated Python-2.7)'),
-                'Linux',
-                True,
-            ),
-            (
-                'udsclient-{version}-1.noarch.rpm',
-                gettext('Legacy RH based Linux client (Fedora, Centos, Suse, ...)')
-                + ' '
-                + gettext('(requires outdated Python-2.7)'),
-                'Linux',
-                True,
-            ),
-            (
-                'udsclient-opensuse-{version}-1.noarch.rpm',
-                gettext('Legacy OpenSuse based Linux client)')
-                + ' '
-                + gettext('(requires outdated Python-2.7)'),
-                'Linux',
-                True,
-            ),
         )
     ]
 
