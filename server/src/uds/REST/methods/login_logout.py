@@ -176,7 +176,7 @@ class Login(Handler):
                 password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
 
             logger.debug('Auth obj: %s', auth)
-            user = authenticate(username, password, auth, True)
+            user = authenticate(username, password, auth, self._request, True)
             if user is None:  # invalid credentials
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"

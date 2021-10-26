@@ -39,12 +39,11 @@ from uds.core.ui import gui
 from uds.core import auths
 from uds.core.managers import cryptoManager
 from uds.core.auths.auth import authLogLogin
-from uds.core.util.request import getRequest
 
 from . import client
 
 if typing.TYPE_CHECKING:
-    pass
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -116,8 +115,8 @@ class RadiusAuth(auths.Authenticator):
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         pass
 
-    def radiusClient(self) -> client.RadiusClient: 
-        """ Return a new radius client . """
+    def radiusClient(self) -> client.RadiusClient:
+        """Return a new radius client ."""
         return client.RadiusClient(
             self.server.value,
             self.secret.value.encode(),
@@ -126,13 +125,22 @@ class RadiusAuth(auths.Authenticator):
         )
 
     def authenticate(
-        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'auths.GroupsManager',
+        request: 'ExtendedHttpRequest',
     ) -> bool:
         try:
             connection = self.radiusClient()
             groups = connection.authenticate(username=username, password=credentials)
         except Exception:
-            authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Access denied by Raiuds')
+            authLogLogin(
+                request,
+                self.dbAuthenticator(),
+                username,
+                'Access denied by Raiuds',
+            )
             return False
 
         if self.globalGroup.value.strip():
@@ -161,23 +169,23 @@ class RadiusAuth(auths.Authenticator):
         return super().removeUser(username)
 
     @staticmethod
-    def test(env, data): 
-        """ Test the connection to the server . """
+    def test(env, data):
+        """Test the connection to the server ."""
         try:
             auth = RadiusAuth(None, env, data)  # type: ignore
             return auth.testConnection()
         except Exception as e:
-            logger.error(
-                "Exception found testing Radius auth %s: %s", e.__class__, e
-            )
+            logger.error("Exception found testing Radius auth %s: %s", e.__class__, e)
             return [False, _('Error testing connection')]
 
-    def testConnection(self): 
-        """ Test connection to Radius Server """
+    def testConnection(self):
+        """Test connection to Radius Server"""
         try:
             connection = self.radiusClient()
             # Reply is not important...
-            connection.authenticate(cryptoManager().randomString(10), cryptoManager().randomString(10))
+            connection.authenticate(
+                cryptoManager().randomString(10), cryptoManager().randomString(10)
+            )
         except client.RadiusAuthenticationError as e:
             pass
         except Exception:

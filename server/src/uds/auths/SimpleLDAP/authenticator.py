@@ -42,11 +42,10 @@ from uds.core.ui import gui
 from uds.core import auths
 from uds.core.util import ldaputil
 from uds.core.auths.auth import authLogLogin
-from uds.core.util.request import getRequest
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -385,7 +384,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         ).strip()
 
     def authenticate(
-        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
+        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager', request: 'ExtendedHttpRequest'
     ) -> bool:
         '''
         Must authenticate the user.
@@ -402,7 +401,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             if user is None:
                 authLogLogin(
-                    getRequest(), self.dbAuthenticator(), username, 'Invalid user'
+                    request, self.dbAuthenticator(), username, 'Invalid user'
                 )
                 return False
 
@@ -413,7 +412,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 )  # Will raise an exception if it can't connect
             except:
                 authLogLogin(
-                    getRequest(), self.dbAuthenticator(), username, 'Invalid password'
+                    request, self.dbAuthenticator(), username, 'Invalid password'
                 )
                 return False
 

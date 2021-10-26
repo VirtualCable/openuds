@@ -124,7 +124,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         user = None
         if password == '':
             password = 'axd56adhg466jasd6q8sadñ€sáé--v'  # Random string, in fact, just a placeholder that will not be used :)
-        user = authenticate(userName, password, authenticator)
+        user = authenticate(userName, password, authenticator, request=request)
         logger.debug('User: %s', user)
 
         if user is None:

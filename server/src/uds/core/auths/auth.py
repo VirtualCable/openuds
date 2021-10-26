@@ -202,19 +202,18 @@ def denyNonAuthenticated(
 
 
 def __registerUser(
-    authenticator: Authenticator, authInstance: AuthenticatorInstance, username: str
+    authenticator: Authenticator,
+    authInstance: AuthenticatorInstance,
+    username: str,
+    request: 'ExtendedHttpRequest',
 ) -> typing.Optional[User]:
     """
     Check if this user already exists on database with this authenticator, if don't, create it with defaults
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
     authenticate will return false, if external and return true, will create a reference in database
     """
-    from uds.core.util.request import getRequest
-
-    username = authInstance.transformUsername(username)
+    username = authInstance.transformUsername(username, request)
     logger.debug('Transformed username: %s', username)
-
-    request = getRequest()
 
     usr = authenticator.getOrCreateUser(username, username)
     usr.real_name = authInstance.getRealName(username)
@@ -242,6 +241,7 @@ def authenticate(
     username: str,
     password: str,
     authenticator: Authenticator,
+    request: 'ExtendedHttpRequest',
     useInternalAuthenticate: bool = False,
 ) -> typing.Optional[User]:
     """
@@ -249,6 +249,7 @@ def authenticate(
     @param username: username to authenticate
     @param password: password to authenticate this user
     @param authenticator: Authenticator (database object) used to authenticate with provided credentials
+    @param request: Request object
     @param useInternalAuthenticate: If True, tries to authenticate user using "internalAuthenticate". If false, it uses "authenticate".
                                     This is so because in some situations we may want to use a "trusted" method (internalAuthenticate is never invoked directly from web)
     @return: None if authentication fails, User object (database object) if authentication is o.k.
@@ -269,9 +270,9 @@ def authenticate(
     gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
     if useInternalAuthenticate is False:
-        res = authInstance.authenticate(username, password, gm)
+        res = authInstance.authenticate(username, password, gm, request)
     else:
-        res = authInstance.internalAuthenticate(username, password, gm)
+        res = authInstance.internalAuthenticate(username, password, gm, request)
 
     if res is False:
         return None
@@ -286,11 +287,13 @@ def authenticate(
         )
         return None
 
-    return __registerUser(authenticator, authInstance, username)
+    return __registerUser(authenticator, authInstance, username, request)
 
 
 def authenticateViaCallback(
-    authenticator: Authenticator, params: typing.Any, request: 'ExtendedHttpRequestWithUser'
+    authenticator: Authenticator,
+    params: typing.Any,
+    request: 'ExtendedHttpRequestWithUser',
 ) -> typing.Optional[User]:
     """
     Given an username, this method will get invoked whenever the url for a callback
@@ -322,7 +325,7 @@ def authenticateViaCallback(
     if username is None or username == '' or gm.hasValidGroups() is False:
         raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
-    return __registerUser(authenticator, authInstance, username)
+    return __registerUser(authenticator, authInstance, username, request)
 
 
 def authCallbackUrl(authenticator: Authenticator) -> str:

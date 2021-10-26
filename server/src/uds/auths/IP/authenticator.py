@@ -38,9 +38,11 @@ from django.utils.translation import ugettext_noop as _
 from uds.core import auths
 from uds.core.util import net
 from uds.core.ui import gui
-from uds.core.util.request import getRequest, ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
+
+if typing.TYPE_CHECKING:
+    from uds.core.util.request import ExtendedHttpRequest
 
 
 class IPAuth(auths.Authenticator):
@@ -52,15 +54,17 @@ class IPAuth(auths.Authenticator):
             'If checked, requests via proxy will get FORWARDED ip address'
             ' (take care with this bein checked, can take internal IP addresses from internet)'
         ),
-        tab=gui.ADVANCED_TAB
+        tab=gui.ADVANCED_TAB,
     )
 
     visibleFromNets = gui.TextField(
         order=50,
         label=_('Visible only from this networks'),
         defvalue='',
-        tooltip=_('This authenticator will be visible only from these networks. Leave empty to allow all networks'),
-        tab=gui.ADVANCED_TAB
+        tooltip=_(
+            'This authenticator will be visible only from these networks. Leave empty to allow all networks'
+        ),
+        tab=gui.ADVANCED_TAB,
     )
 
     typeName = _('IP Authenticator')
@@ -75,8 +79,8 @@ class IPAuth(auths.Authenticator):
 
     blockUserOnLoginFailures = False
 
-    def getIp(self) -> str:
-        ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
+    def getIp(self, request: 'ExtendedHttpRequest') -> str:
+        ip = request.ip_proxy if self.acceptProxy.isTrue() else request.ip
         logger.debug('Client IP: %s', ip)
         return ip
 
@@ -90,9 +94,15 @@ class IPAuth(auths.Authenticator):
             except Exception as e:
                 logger.error('Invalid network for IP auth: %s', e)
 
-    def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
+    def authenticate(
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'auths.GroupsManager',
+        request: 'ExtendedHttpRequest',
+    ) -> bool:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
-        if username == self.getIp():
+        if username == self.getIp(request):
             self.getGroups(username, groupsManager)
             return True
         return False
@@ -106,11 +116,19 @@ class IPAuth(auths.Authenticator):
             return True
         return False
 
-    def internalAuthenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
+    def internalAuthenticate(
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'auths.GroupsManager',
+        request: 'ExtendedHttpRequest',
+    ) -> bool:
         # In fact, username does not matter, will get IP from request
-        username = self.getIp()  # Override provided username and use source IP
+        username = self.getIp(request)  # Override provided username and use source IP
         self.getGroups(username, groupsManager)
-        if groupsManager.hasValidGroups() and self.dbAuthenticator().isValidUser(username, True):
+        if groupsManager.hasValidGroups() and self.dbAuthenticator().isValidUser(
+            username, True
+        ):
             return True
         return False
 
@@ -124,7 +142,7 @@ class IPAuth(auths.Authenticator):
     def getJavascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password
-        ip = self.getIp()
+        ip = self.getIp(request)
         gm = auths.GroupsManager(self.dbAuthenticator())
         self.getGroups(ip, gm)
 
@@ -134,7 +152,9 @@ class IPAuth(auths.Authenticator):
                     }}
                     setVal("id_user", "{ip}");
                     setVal("id_password", "{passwd}");
-                    document.getElementById("loginform").submit();'''.format(ip=ip, passwd='')
+                    document.getElementById("loginform").submit();'''.format(
+                ip=ip, passwd=''
+            )
 
         return 'alert("invalid authhenticator"); window.location.reload();'
 

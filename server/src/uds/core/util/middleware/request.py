@@ -39,13 +39,11 @@ from django.utils import timezone
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import EXPIRY_KEY, ROOT_ID, USER_KEY, getRootUser, webLogout
-from uds.core.util.request import (
-    setRequest,
-    delCurrentRequest,
-    cleanOldRequests,
-    ExtendedHttpRequest,
-)
 from uds.models import User
+
+if typing.TYPE_CHECKING:
+    from uds.core.util.request import ExtendedHttpRequest
+
 
 logger = logging.getLogger(__name__)
 
@@ -59,21 +57,15 @@ class GlobalRequestMiddleware:
     def __init__(self, get_response: typing.Callable[[HttpRequest], HttpResponse]):
         self._get_response: typing.Callable[[HttpRequest], HttpResponse] = get_response
 
-    def _process_response(self, request: ExtendedHttpRequest, response: HttpResponse):
+    def _process_response(self, request: 'ExtendedHttpRequest', response: HttpResponse):
         # Remove IP from global cache (processing responses after this will make global request unavailable,
         # but can be got from request again)
-        delCurrentRequest()
-        # Clean old stored if needed
-        GlobalRequestMiddleware.cleanStuckRequests()
 
         return response
 
-    def __call__(self, request: ExtendedHttpRequest):
+    def __call__(self, request: 'ExtendedHttpRequest'):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
-
-        # Store request on cache
-        setRequest(request=request)
 
         # Ensures request contains os
         request.os = OsDetector.getOsFromUA(
@@ -105,17 +97,7 @@ class GlobalRequestMiddleware:
         return self._process_response(request, response)
 
     @staticmethod
-    def cleanStuckRequests() -> None:
-        # In case of some exception, keep clean very old request from time to time...
-        if (
-            GlobalRequestMiddleware.lastCheck
-            > datetime.datetime.now() - datetime.timedelta(seconds=CHECK_SECONDS)
-        ):
-            return
-        cleanOldRequests()
-
-    @staticmethod
-    def fillIps(request: ExtendedHttpRequest):
+    def fillIps(request: 'ExtendedHttpRequest'):
         """
         Obtains the IP of a Django Request, even behind a proxy
 
@@ -161,7 +143,7 @@ class GlobalRequestMiddleware:
         logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
 
     @staticmethod
-    def getUser(request: ExtendedHttpRequest) -> None:
+    def getUser(request: 'ExtendedHttpRequest') -> None:
         """
         Ensures request user is the correct user
         """

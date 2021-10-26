@@ -43,7 +43,6 @@ from uds.core import auths
 from uds.core.ui import gui
 from uds.core.util import ldaputil
 from uds.core.auths.auth import authLogLogin
-from uds.core.util.request import getRequest
 
 try:
     # pylint: disable=no-name-in-module
@@ -53,8 +52,8 @@ except Exception:
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
     from uds.core.environment import Environment
+    from uds.core.util.request import ExtendedHttpRequest
     from uds import models
 
 logger = logging.getLogger(__name__)
@@ -485,7 +484,11 @@ class RegexLdap(auths.Authenticator):
         return ' '.join(self.__processField(self._userNameAttr, user))
 
     def authenticate(
-        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'auths.GroupsManager',
+        request: 'ExtendedHttpRequest',
     ) -> bool:
         """
         Must authenticate the user.
@@ -502,7 +505,7 @@ class RegexLdap(auths.Authenticator):
 
             if usr is None:
                 authLogLogin(
-                    getRequest(), self.dbAuthenticator(), username, 'Invalid user'
+                    request, self.dbAuthenticator(), username, 'Invalid user'
                 )
                 return False
 
@@ -513,7 +516,7 @@ class RegexLdap(auths.Authenticator):
                 )  # Will raise an exception if it can't connect
             except:
                 authLogLogin(
-                    getRequest(), self.dbAuthenticator(), username, 'Invalid password'
+                    request, self.dbAuthenticator(), username, 'Invalid password'
                 )
                 return False
 

@@ -43,12 +43,12 @@ from uds.core import auths
 from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core.util.state import State
-from uds.core.util.request import getRequest
 from uds.core.auths.auth import authLogLogin
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -92,22 +92,13 @@ class InternalDBAuth(auths.Authenticator):
         tab=gui.ADVANCED_TAB,
     )
 
-    def getIp(self) -> str:
-        ip = (
-            getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
-        )  # pylint: disable=maybe-no-member
-        if self.reverseDns.isTrue():
-            try:
-                return str(
-                    dns.resolver.query(dns.reversename.from_address(ip), 'PTR')[0]
-                )
-            except Exception:
-                pass
-        return ip
-
-    def transformUsername(self, username: str) -> str:
+    def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
         if self.differentForEachHost.isTrue():
-            newUsername = self.getIp() + '-' + username
+            newUsername = (
+                (request.ip_proxy if self.acceptProxy.isTrue() else request.ip)
+                + '-'
+                + username
+            )
             # Duplicate basic user into username.
             auth = self.dbAuthenticator()
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user
@@ -129,14 +120,18 @@ class InternalDBAuth(auths.Authenticator):
         return username
 
     def authenticate(
-        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'auths.GroupsManager',
+        request: 'ExtendedHttpRequest',
     ) -> bool:
         logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbAuthenticator()
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
-            authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid user')
+            authLogLogin(request, self.dbAuthenticator(), username, 'Invalid user')
             return False
 
         if user.parent:  # Direct auth not allowed for "derived" users
@@ -146,7 +141,8 @@ class InternalDBAuth(auths.Authenticator):
         if cryptoManager().checkHash(credentials, user.password):
             groupsManager.validate([g.name for g in user.groups.all()])
             return True
-        authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid password')
+
+        authLogLogin(request, self.dbAuthenticator(), username, 'Invalid password')
         return False
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):

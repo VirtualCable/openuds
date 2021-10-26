@@ -44,7 +44,7 @@ if typing.TYPE_CHECKING:
         HttpResponse,
     )  # pylint: disable=ungrouped-imports
     from uds.core.environment import Environment
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.request import ExtendedHttpRequestWithUser, ExtendedHttpRequest
     from uds import models
     from .groups_manager import GroupsManager
 
@@ -292,7 +292,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         return []
 
     def authenticate(
-        self, username: str, credentials: str, groupsManager: 'GroupsManager'
+        self, username: str, credentials: str, groupsManager: 'GroupsManager', request: 'ExtendedHttpRequest'
     ) -> bool:
         """
         This method must be overriden, and is responsible for authenticating
@@ -340,7 +340,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return True
 
-    def transformUsername(self, username: str) -> str:
+    def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
         """
         On login, this method get called so we can "transform" provided user name.
 
@@ -356,7 +356,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         return username
 
     def internalAuthenticate(
-        self, username: str, credentials: str, groupsManager: 'GroupsManager'
+        self, username: str, credentials: str, groupsManager: 'GroupsManager', request: 'ExtendedHttpRequest'
     ) -> bool:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
@@ -391,7 +391,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
                This is done in this way, because UDS has only a subset of groups for this user, and
                we let the authenticator decide inside wich groups of UDS this users is included.
         """
-        return self.authenticate(username, credentials, groupsManager)
+        return self.authenticate(username, credentials, groupsManager, request)
 
     def logout(self, username: str) -> typing.Optional[str]:
         """
@@ -486,7 +486,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         self,
         parameters: typing.Dict[str, typing.Any],
         gm: 'GroupsManager',
-        request: 'ExtendedHttpRequestWithUser',
+        request: 'ExtendedHttpRequest',
     ) -> typing.Optional[str]:
         """
         There is a view inside UDS, an url, that will redirect the petition
