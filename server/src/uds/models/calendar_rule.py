@@ -124,7 +124,7 @@ class CalendarRule(UUIDModel):
         db_table = 'uds_calendar_rules'
         app_label = 'uds'
 
-    def as_rrule(self) -> rules.rrule:
+    def _rrule(self, atEnd: bool) -> rules.rrule:
         if self.interval == 0:  # Fix 0 intervals
             self.interval = 1
 
@@ -133,6 +133,9 @@ class CalendarRule(UUIDModel):
             datetime.datetime.max.time(),
         )
 
+        # If at end of interval is requested, displace dstart to match end of interval
+        dstart = self.start if not atEnd else self.start + datetime.timedelta(minutes=self.duration_as_minutes)
+
         if self.frequency == WEEKDAYS:
             dw = []
             l = self.interval
@@ -140,43 +143,19 @@ class CalendarRule(UUIDModel):
                 if l & 1 == 1:
                     dw.append(weekdays[i])
                 l >>= 1
-            return rules.rrule(rules.DAILY, byweekday=dw, dtstart=self.start, until=end)
+            return rules.rrule(rules.DAILY, byweekday=dw, dtstart=dstart, until=end)
         return rules.rrule(
             frq_to_rrl[self.frequency],
             interval=self.interval,
-            dtstart=self.start,
+            dtstart=dstart,
             until=end,
         )
+
+    def as_rrule(self) -> rules.rrule:
+        return self._rrule(False)
 
     def as_rrule_end(self) -> rules.rrule:
-        if self.interval == 0:  # Fix 0 intervals
-            self.interval = 1
-
-        end = datetime.datetime.combine(
-            self.end if self.end is not None else datetime.datetime.max.date(),
-            datetime.datetime.max.time(),
-        )
-
-        if self.frequency == WEEKDAYS:
-            dw = []
-            l = self.interval
-            for i in range(7):
-                if l & 1 == 1:
-                    dw.append(weekdays[i])
-                l >>= 1
-            return rules.rrule(
-                rules.DAILY,
-                byweekday=dw,
-                dtstart=self.start
-                + datetime.timedelta(minutes=self.duration_as_minutes),
-                until=end,
-            )
-        return rules.rrule(
-            frq_to_rrl[self.frequency],
-            interval=self.interval,
-            dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes),
-            until=end,
-        )
+        return self._rrule(True)
 
     @property
     def frequency_as_minutes(self) -> int:

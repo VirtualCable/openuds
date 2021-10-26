@@ -70,7 +70,7 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
-def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
+def authCallback(request: 'ExtendedHttpRequestWithUser', authName: str) -> HttpResponse:
     """
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
@@ -113,7 +113,7 @@ def authCallback_stage2(
             request.session.session_key,
         )
 
-        user = authenticateViaCallback(authenticator, params)
+        user = authenticateViaCallback(authenticator, params, request)
 
         os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
 

@@ -290,7 +290,7 @@ def authenticate(
 
 
 def authenticateViaCallback(
-    authenticator: Authenticator, params: typing.Any
+    authenticator: Authenticator, params: typing.Any, request: 'ExtendedHttpRequestWithUser'
 ) -> typing.Optional[User]:
     """
     Given an username, this method will get invoked whenever the url for a callback
@@ -317,7 +317,7 @@ def authenticateViaCallback(
     if authInstance.authCallback is auths.Authenticator.authCallback:
         raise auths.exceptions.InvalidAuthenticatorException()
 
-    username = authInstance.authCallback(params, gm)
+    username = authInstance.authCallback(params, gm, request)
 
     if username is None or username == '' or gm.hasValidGroups() is False:
         raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')

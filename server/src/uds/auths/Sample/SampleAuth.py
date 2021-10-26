@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
         HttpRequest,
         HttpResponse,
     )  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -271,7 +272,7 @@ class SampleAuth(auths.Authenticator):
         return res
 
     def authCallback(
-        self, parameters: typing.Dict[str, typing.Any], gm: 'auths.GroupsManager'
+        self, parameters: typing.Dict[str, typing.Any], gm: 'auths.GroupsManager', request: 'ExtendedHttpRequestWithUser'
     ) -> typing.Optional[str]:
         """
         We provide this as a sample of callback for an user.

@@ -123,7 +123,9 @@ class CalendarChecker:
 
         return data
 
-    def _updateEvents(self, checkFrom, startEvent=True):
+    def _updateEvents(
+        self, checkFrom: datetime.datetime, startEvent: bool = True
+    ) -> typing.Optional[datetime.datetime]:
         next_event = None
         for rule in self.calendar.rules.all():
             # logger.debug('RULE: start = {}, checkFrom = {}, end'.format(rule.start.date(), checkFrom.date()))
@@ -140,7 +142,7 @@ class CalendarChecker:
 
         return next_event
 
-    def check(self, dtime=None) -> bool:
+    def check(self, dtime: typing.Optional[datetime.datetime] = None) -> bool:
         """
         Checks if the given time is a valid event on calendar
         @param dtime: Datetime object to check
@@ -180,16 +182,19 @@ class CalendarChecker:
         return bool(data[dtime.hour * 60 + dtime.minute])
 
     def nextEvent(
-        self, checkFrom=None, startEvent=True, offset=None
+        self,
+        checkFrom: typing.Optional[datetime.datetime] = None,
+        startEvent: bool = True,
+        offset: typing.Optional[datetime.timedelta] = None,
     ) -> typing.Optional[datetime.datetime]:
         """
         Returns next event for this interval
         """
         logger.debug('Obtaining nextEvent')
-        if checkFrom is None:
+        if not checkFrom:
             checkFrom = getSqlDatetime()
 
-        if offset is None:
+        if not offset:
             offset = datetime.timedelta(minutes=0)
 
         cacheKey = (
@@ -200,13 +205,15 @@ class CalendarChecker:
             + 'event'
             + ('x' if startEvent else '_')
         )
-        next_event = CalendarChecker.cache.get(cacheKey, None)
-        if next_event is None:
+        next_event: typing.Optional[datetime.datetime] = CalendarChecker.cache.get(
+            cacheKey, None
+        )
+        if not next_event:
             logger.debug('Regenerating cached nextEvent')
             next_event = self._updateEvents(
                 checkFrom + offset, startEvent
             )  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
-            if next_event is not None:
+            if next_event:
                 next_event += offset
             CalendarChecker.cache.put(cacheKey, next_event, 3600)
         else:

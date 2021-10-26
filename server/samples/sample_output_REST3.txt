@@ -854,7 +854,7 @@ Listing supported auths and related info
  > name: Active Directory Authenticator
  > passwordLabel: Password
  > type: ActiveDirectoryAuthenticator
- > description: Authenticate against Active Directory
+ > description:  against Active Directory
  > userNameLabel: Username
  > canSearchUsers: True
  > canSearchGroups: True

@@ -44,6 +44,7 @@ if typing.TYPE_CHECKING:
         HttpResponse,
     )  # pylint: disable=ungrouped-imports
     from uds.core.environment import Environment
+    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds import models
     from .groups_manager import GroupsManager
 
@@ -482,7 +483,10 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         return None
 
     def authCallback(
-        self, parameters: typing.Dict[str, typing.Any], gm: 'GroupsManager'
+        self,
+        parameters: typing.Dict[str, typing.Any],
+        gm: 'GroupsManager',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> typing.Optional[str]:
         """
         There is a view inside UDS, an url, that will redirect the petition
