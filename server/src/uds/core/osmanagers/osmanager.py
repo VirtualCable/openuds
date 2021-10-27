@@ -323,6 +323,11 @@ class OSManager(Module):
             userService.deployed_service.name,
         )
 
+    def readyNotified(self, userService: 'UserService') -> None:
+        """
+        Invoked by actor when userService is ready
+        """
+
     def isPersistent(self) -> bool:
         """
         When a publication if finished, old assigned machines will be removed if this value is True.
