@@ -56,7 +56,7 @@ REMOVED = {
     'IPAUTH': ('autoLogin',),
     'VMWare': ('minUsableDatastoreGB', 'maxRetriesOnError'),
     'HyperV': ('minUsableDatastoreGB',),
-    'Security': ('adminIdleTime', 'userSessionLength'),
+    'Security': ('adminIdleTime', 'userSessionLength', 'Master Key'),
 }
 
 
