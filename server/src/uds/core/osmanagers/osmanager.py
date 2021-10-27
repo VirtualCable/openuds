@@ -205,6 +205,8 @@ class OSManager(Module):
         Resets login counter to 0
         '''
         userService.setProperty('loginsCounter', '0')
+        # And execute ready notification method
+        self.readyNotified(userService)
 
     @staticmethod
     def loggedIn(
