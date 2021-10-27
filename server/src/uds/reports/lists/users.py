@@ -52,11 +52,6 @@ logger = logging.getLogger(__name__)
 class ListReportUsers(ListReport):
     filename = 'users.pdf'
 
-    def initialize(self, values):
-        if values:
-            auth = Authenticator.objects.get(uuid=self.authenticator.value)
-            self.filename = auth.name + '.pdf'
-
     authenticator = gui.ChoiceField(
         label=_("Authenticator"),
         order=1,
@@ -67,6 +62,11 @@ class ListReportUsers(ListReport):
     name = _('Users list')  # Report name
     description = _('List users of platform')  # Report description
     uuid = '8cd1cfa6-ed48-11e4-83e5-10feed05884b'
+
+    def initialize(self, values):
+        if values:
+            auth = Authenticator.objects.get(uuid=self.authenticator.value)
+            self.filename = auth.name + '.pdf'
 
     def initGui(self) -> None:
         logger.debug('Initializing gui')
@@ -115,8 +115,6 @@ class ListReportsUsersCSV(ListReportUsers):
 
         for v in users:
             writer.writerow([v.name, v.real_name, v.last_access])
-
-        # writer.writerow(['ñoño', 'ádios', 'hola'])
 
         return output.getvalue().encode()
 

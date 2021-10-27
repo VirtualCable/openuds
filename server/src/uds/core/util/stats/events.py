@@ -151,10 +151,10 @@ def getEvents(
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    from uds.models import NEVER
+    from uds.models import NEVER_UNIX, getSqlDatetimeAsUnix
 
-    since = kwargs.get('since', NEVER)
-    to = kwargs.get('to', datetime.datetime.now())
+    since = kwargs.get('since', NEVER_UNIX)
+    to = kwargs.get('to', getSqlDatetimeAsUnix())
     type_ = type(obj)
 
     if kwargs.get('all', False):
@@ -165,7 +165,7 @@ def getEvents(
     for i in StatsManager.manager().getEvents(
         __transDict[type_], eventType, owner_id=owner_id, since=since, to=to
     ):
-        val = (
+        yield (
             datetime.datetime.fromtimestamp(i.stamp),
             i.fld1,
             i.fld2,
@@ -173,4 +173,3 @@ def getEvents(
             i.fld4,
             i.event_type,
         )
-        yield val
