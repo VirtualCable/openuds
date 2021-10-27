@@ -168,99 +168,10 @@ class LinuxOsManager(osmanagers.OSManager):
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
-    # default "ready received" does nothing
-    def readyReceived(self, userService, data):
-        pass
-
-    def loginNotified(self, userService, userName=None):
-        if '\\' not in userName:
-            osmanagers.OSManager.loggedIn(userService, userName)
-
-    def logoutNotified(self, userService, userName=None):
-        osmanagers.OSManager.loggedOut(userService, userName)
-        if self.isRemovableOnLogout(userService):
-            userService.release()
-
-    def readyNotified(self, userService):
-        return
-
     def actorData(
         self, userService: 'UserService'
     ) -> typing.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.getName()}
-
-    def process(
-        self,
-        userService: 'UserService',
-        message: str,
-        data: typing.Any,
-        options: typing.Optional[typing.Dict[str, typing.Any]] = None,
-    ) -> str:
-        """
-        We understand this messages:
-        * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), old method
-        * msg = information, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), new method
-        * msg = logon, data = Username, Informs that the username has logged in inside the machine
-        * msg = logoff, data = Username, Informs that the username has logged out of the machine
-        * msg = ready, data = None, Informs machine ready to be used
-        """
-        logger.info(
-            "Invoked LinuxOsManager for %s with params: %s, %s",
-            userService,
-            message,
-            data,
-        )
-        # We get from storage the name for this userService. If no name, we try to assign a new one
-        ret = "ok"
-        notifyReady = False
-        doRemove = False
-        state = userService.os_state
-        if message in ('ready', 'ip'):
-            if not isinstance(
-                data, dict
-            ):  # Older actors?, previous to 2.5, convert it information..
-                data = {
-                    'ips': [v.split('=') for v in typing.cast(str, data).split(',')],
-                    'hostname': userService.friendly_name,
-                }
-
-        # Old "info" state, will be removed in a near future
-        if message == "info":
-            ret = self.infoVal(userService)
-            state = State.PREPARING
-        elif message == "information":
-            ret = self.infoValue(userService)
-            state = State.PREPARING
-        elif message == "log":
-            self.doLog(userService, data, log.ACTOR)
-        elif message == "login":
-            osmanagers.OSManager.loggedIn(userService, typing.cast(str, data))
-            ip, hostname = userService.getConnectionSource()
-            deadLine = userService.deployed_service.getDeadline()
-            ret = "{}\t{}\t{}".format(ip, hostname, 0 if deadLine is None else deadLine)
-        elif message == "logout":
-            osmanagers.OSManager.loggedOut(userService, typing.cast(str, data))
-            doRemove = self.isRemovableOnLogout(userService)
-        elif message == "ip":
-            # This ocurss on main loop inside machine, so userService is usable
-            state = State.USABLE
-            self.notifyIp(userService.unique_id, userService, data)
-        elif message == "ready":
-            self.toReady(userService)
-            state = State.USABLE
-            notifyReady = True
-            self.notifyIp(userService.unique_id, userService, data)
-
-        userService.setOsState(state)
-
-        # If notifyReady is not true, save state, let UserServiceManager do it for us else
-        if doRemove is True:
-            userService.release()
-        else:
-            if notifyReady:
-                userServiceManager().notifyReadyFromOsManager(userService, '')
-        logger.debug('Returning %s', ret)
-        return ret
 
     def processUnused(self, userService):
         """

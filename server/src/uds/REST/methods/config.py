@@ -40,23 +40,15 @@ from uds.REST import Handler
 logger = logging.getLogger(__name__)
 
 # Pair of section/value removed from current UDS version
+# Note: As of version 4.0, all previous REMOVED values has been moved to migration script 0043
 REMOVED = {
     'UDS': (
-        'allowPreferencesAccess',
-        'customHtmlLogin',
-        'UDS Theme',
-        'UDS Theme Enhaced',
-        'css',
-        'allowPreferencesAccess',
-        'loginUrl',
-        'maxLoginTries',
-        'loginBlockTime',
     ),
-    'Cluster': ('Destination CPU Load', 'Migration CPU Load', 'Migration Free Memory'),
-    'IPAUTH': ('autoLogin',),
-    'VMWare': ('minUsableDatastoreGB', 'maxRetriesOnError'),
-    'HyperV': ('minUsableDatastoreGB',),
-    'Security': ('adminIdleTime', 'userSessionLength', 'Master Key'),
+    'Cluster': (),
+    'IPAUTH': (),
+    'VMWare': (),
+    'HyperV': (),
+    'Security': (),
 }
 
 

@@ -97,24 +97,6 @@ class OSManager(Module):
         @return nothing
         """
 
-    def process(
-        self,
-        userService: 'UserService',
-        message: str,
-        data: typing.Any,
-        options: typing.Optional[typing.Dict[str, typing.Any]] = None,
-    ) -> str:
-        """
-        @param userService: Service that sends the request (virtual machine or whatever)
-        @param message: message to process (os manager dependent)
-        @param data: Data for this message
-
-        Note: this method is deprecated and will be removed on a future release, when pre 3.0 actors support will be drop
-        For now, this method will be kept on exising os managers for compatibility with old actors, but is not required for
-        new os managers (that will only be available on actor 3.0) anymore
-        """
-        return ''
-
     # These methods must be overriden
     def actorData(
         self, userService: 'UserService'
@@ -152,7 +134,6 @@ class OSManager(Module):
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
           * After service creation has finished, with the service wanting to see if it has to wait for os manager process finalization
-          * After call to process method, to check if the state has changed
           * Before assigning a service to an user (maybe this is not needed)?
           Notice that the service could be in any state. In fact, what we want with this is return FINISHED if nothing is expected from os o RUNING else
           The state will be updated by actors inside oss, so no more direct checking is needed
@@ -341,21 +322,6 @@ class OSManager(Module):
             userService.friendly_name,
             userService.deployed_service.name,
         )
-
-    def loginNotified(
-        self, userService: 'UserService', userName: typing.Optional[str] = None
-    ) -> None:
-        OSManager.loggedIn(userService, userName)
-
-    def logoutNotified(
-        self, userService: 'UserService', userName: typing.Optional[str] = None
-    ) -> None:
-        OSManager.loggedOut(userService, userName)
-
-    def readyNotified(self, userService: 'UserService') -> None:
-        """
-        Invoked by actor v2 whenever a service is set as "ready"
-        """
 
     def isPersistent(self) -> bool:
         """
