@@ -40,6 +40,9 @@ from uds.models import StatsCounters
 from uds.models import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.models import StatsEvents
 
+if typing.TYPE_CHECKING:
+    from django.db import models
+
 logger = logging.getLogger(__name__)
 
 FLDS_EQUIV: typing.Mapping[str, typing.Iterable[str]] = {
@@ -245,7 +248,7 @@ class StatsManager(metaclass=singleton.Singleton):
         ownerType: typing.Union[int, typing.Iterable[int]],
         eventType: typing.Union[int, typing.Iterable[int]],
         **kwargs
-    ):
+    ) -> 'models.QuerySet[StatsEvents]':
         """
         Retrieves counters from item
 
@@ -261,6 +264,13 @@ class StatsManager(metaclass=singleton.Singleton):
             Iterator, containing (date, counter) each element
         """
         return StatsEvents.get_stats(ownerType, eventType, **kwargs)
+
+    def tailEvents(self, *, fromId: typing.Optional[str] = None, number: typing.Optional[int] = None) -> 'models.QuerySet[StatsEvents]':
+        # If number is not specified, we return five last events
+        number = number or 5
+        if fromId:
+            return StatsEvents.objects.filter(id__gt=fromId).order_by('-id')[:number]
+        return StatsEvents.objects.order_by('-id')[:number]
 
     def cleanupEvents(self):
         """
