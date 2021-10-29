@@ -58,7 +58,6 @@ gettext("Download UDS client for your platform");
 gettext("Legacy clients are only provided for old operating system support. Try to avoid them.");
 gettext("Downloads");
 gettext("Always download the UDS actor matching your platform");
-gettext("Legacy actors are only provided for old operating system support. Try to avoid them.");
 gettext("An error has occurred");
 gettext("Return");
 gettext("UDS Service launcher");
