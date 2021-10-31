@@ -64,7 +64,7 @@ if typing.TYPE_CHECKING:
     ET_OSMANAGER_INIT,
     ET_OSMANAGER_READY,
     ET_OSMANAGER_RELEASE
-) = range(8)
+) = range(11)
 
 # Events names
 EVENT_NAMES = {
@@ -87,7 +87,7 @@ EVENT_NAMES = {
     OT_DEPLOYED,
     OT_AUTHENTICATOR,
     OT_OSMANAGER
-) = range(4)
+) = range(5)
 
 __transDict: typing.Mapping[typing.Type['models.Model'], int] = {
     ServicePool: OT_DEPLOYED,
