@@ -146,6 +146,22 @@ __transDict: typing.Mapping[typing.Type['models.Model'], int] = {
 # OT_OSMANAGER_RELEASE: -> On OsManager
 #     (servicepool_uuid, '', userservice_uuid)
 
+# Helpers
+# get owner by type and id
+def getOwner(ownerType: int, ownerId: int) -> typing.Optional['models.Model']:
+    if ownerType == OT_PROVIDER:
+        return Provider.objects.get(pk=ownerId)
+    elif ownerType == OT_SERVICE:
+        return Service.objects.get(pk=ownerId)
+    elif ownerType == OT_DEPLOYED:
+        return ServicePool.objects.get(pk=ownerId)
+    elif ownerType == OT_AUTHENTICATOR:
+        return Authenticator.objects.get(pk=ownerId)
+    elif ownerType == OT_OSMANAGER:
+        return OSManager.objects.get(pk=ownerId)
+    else:
+        return None
+
 class EventTupleType(typing.NamedTuple):
     stamp: datetime.datetime
     fld1: str
