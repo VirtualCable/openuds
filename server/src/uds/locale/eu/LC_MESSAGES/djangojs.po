@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 00:55+0200\n"
+"POT-Creation-Date: 2021-11-02 11:04+0100\n"
 "PO-Revision-Date: 2021-09-15 10:45+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -320,7 +320,7 @@ msgstr "Taldea"
 #: static/admin/translations-fakejs.js:413
 #: static/admin/translations-fakejs.js:426
 #: static/admin/translations-fakejs.js:447
-#: static/modern/translations-fakejs.js:73
+#: static/modern/translations-fakejs.js:72
 msgid "Authenticator"
 msgstr "Autentikatzailea"
 
@@ -1748,38 +1748,30 @@ msgid "Always download the UDS actor matching your platform"
 msgstr "Deskargatu beti zure plataformarekin bat datorren UDS aktorea"
 
 #: static/modern/translations-fakejs.js:61
-msgid ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"Actor zaharrak sistema eragile zaharretarako laguntza moduan soilik "
-"eskaintzen dira. Saiatu saihesten."
-
-#: static/modern/translations-fakejs.js:62
 msgid "An error has occurred"
 msgstr "Akats bat gertatu da"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:62
 msgid "Return"
 msgstr "Itzuli"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:63
 msgid "UDS Service launcher"
 msgstr "UDS Zerbitzuaren abiarazlea"
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:64
 msgid "The service you have requested is being launched."
 msgstr "Eskatu duzun zerbitzua abian da."
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:65
 msgid "Please, note that reloading this page will not work."
 msgstr "Kontuan izan orri hau berriro kargatzeak ez duela funtzionatuko."
 
-#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:66
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "Zerbitzua berriro martxan jartzeko, jatorritik egin beharko duzu."
 
-#: static/modern/translations-fakejs.js:68
+#: static/modern/translations-fakejs.js:67
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
@@ -1787,22 +1779,22 @@ msgstr ""
 "Zerbitzua automatikoki abiarazten ez bada, seguruenik ez duzu UDS Bezeroa "
 "instalatuta"
 
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:68
 msgid "You can obtain it from the"
 msgstr "Hemendik lortu dezakezu:"
 
-#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:69
 msgid "UDS Client download page"
 msgstr "UDS Bezeroa deskargatzeko orria"
 
-#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:70
 msgid "Username"
 msgstr "Erabiltzaile izena"
 
-#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:71
 msgid "Password"
 msgstr "Pasahitza"
 
-#: static/modern/translations-fakejs.js:74
+#: static/modern/translations-fakejs.js:73
 msgid "Login"
 msgstr "Saioa hasi"

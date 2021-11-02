@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 00:55+0200\n"
-"PO-Revision-Date: 2021-09-24 11:51+0000\n"
+"POT-Creation-Date: 2021-11-02 11:04+0100\n"
+"PO-Revision-Date: 2021-10-07 22:56+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -40,7 +40,7 @@ msgstr "名称"
 #: REST/methods/providers.py:73 REST/methods/proxies.py:63
 #: REST/methods/services.py:241 REST/methods/services_pool_groups.py:72
 #: REST/methods/transports.py:68 REST/methods/user_services.py:402
-#: REST/methods/users_groups.py:168 REST/methods/users_groups.py:381
+#: REST/methods/users_groups.py:168 REST/methods/users_groups.py:386
 #: REST/model.py:173
 msgid "Comments"
 msgstr "评论"
@@ -610,13 +610,13 @@ msgstr "如果处于活动状态，将检查任何SSL证书（不允许代理上
 msgid "Available reports"
 msgstr "可用报告"
 
-#: REST/methods/reports.py:67 REST/methods/users_groups.py:372
-#: REST/methods/users_groups.py:393
+#: REST/methods/reports.py:67 REST/methods/users_groups.py:377
+#: REST/methods/users_groups.py:398
 #: auths/ActiveDirectory_enterprise/authenticator.py:143
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:105
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:191
-#: auths/SAML_enterprise/saml.py:120 auths/SimpleLDAP/authenticator.py:182
+#: auths/SAML_enterprise/saml.py:121 auths/SimpleLDAP/authenticator.py:182
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "组"
@@ -679,13 +679,13 @@ msgstr "防火墙后面的服务代理"
 msgid "Advanced"
 msgstr "高级"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:293
-#: REST/methods/users_groups.py:497
+#: REST/methods/services.py:365 REST/methods/users_groups.py:298
+#: REST/methods/users_groups.py:506
 msgid "With errors"
 msgstr "有错误"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:293
-#: REST/methods/users_groups.py:497
+#: REST/methods/services.py:365 REST/methods/users_groups.py:298
+#: REST/methods/users_groups.py:506
 msgid "Ok"
 msgstr "好"
 
@@ -820,7 +820,7 @@ msgstr "与此服务池关联的帐户"
 msgid "Base service does not exist anymore"
 msgstr "基本服务不再存在"
 
-#: REST/methods/services_pools.py:565
+#: REST/methods/services_pools.py:570
 msgid "This service requires an OS Manager"
 msgstr "此服务需要OS Manager"
 
@@ -954,7 +954,7 @@ msgstr "工作人员"
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:117 reports/stats/pool_users_summary.py:177
+#: auths/SAML_enterprise/saml.py:118 reports/stats/pool_users_summary.py:177
 #: reports/stats/usage_by_pool.py:171
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -996,7 +996,7 @@ msgstr "用户名"
 msgid "Role"
 msgstr "角色"
 
-#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:384
+#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:389
 msgid "state"
 msgstr "州"
 
@@ -1004,30 +1004,40 @@ msgstr "州"
 msgid "Last access"
 msgstr "上次访问"
 
-#: REST/methods/users_groups.py:237 REST/methods/users_groups.py:463
+#: REST/methods/users_groups.py:202
+#| msgid "Username not found"
+msgid "Username cannot be empty"
+msgstr "用户名不能为空"
+
+#: REST/methods/users_groups.py:240 REST/methods/users_groups.py:470
 msgid "User already exists (duplicate key error)"
 msgstr "用户已存在（重复键错误）"
 
-#: REST/methods/users_groups.py:360
+#: REST/methods/users_groups.py:365
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "{0}组"
 
-#: REST/methods/users_groups.py:366
+#: REST/methods/users_groups.py:371
 msgid "Current groups"
 msgstr "目前的团体"
 
-#: REST/methods/users_groups.py:393
+#: REST/methods/users_groups.py:398
 msgid "UDS Group"
 msgstr "UDS集团"
 
-#: REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:399
 msgid "Meta group"
 msgstr "元组"
 
-#: REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:399
 msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
+
+#: REST/methods/users_groups.py:430
+#| msgid "Group name attrs"
+msgid "Group name is required"
+msgstr "组名是必填项"
 
 #: REST/model.py:136
 msgid "Tags"
@@ -1314,7 +1324,7 @@ msgid ""
 "Enable only if you have Microsoft School Data Sync in your Environnment."
 msgstr "仅当您的环境中有 Microsoft School Data Sync 时才启用。"
 
-#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:216
+#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:217
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "SAML身份验证器不支持字段NAME上的空格"
 
@@ -1606,123 +1616,123 @@ msgid ""
 "attribute)"
 msgstr "Ldap组id属性似乎不正确（该属性找不到任何组）"
 
-#: auths/SAML_enterprise/saml.py:87
+#: auths/SAML_enterprise/saml.py:88
 msgid "SAML Authenticator"
 msgstr "SAML身份验证器"
 
-#: auths/SAML_enterprise/saml.py:99
+#: auths/SAML_enterprise/saml.py:100
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML（v2.0）身份验证器"
 
-#: auths/SAML_enterprise/saml.py:129
+#: auths/SAML_enterprise/saml.py:130
 msgid "Private key"
 msgstr "私钥"
 
-#: auths/SAML_enterprise/saml.py:132
+#: auths/SAML_enterprise/saml.py:133
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
 msgstr "用于签名和登记的私钥，由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:135 auths/SAML_enterprise/saml.py:146
+#: auths/SAML_enterprise/saml.py:136 auths/SAML_enterprise/saml.py:147
 msgid "Certificates"
 msgstr "证书"
 
-#: auths/SAML_enterprise/saml.py:140 transports/SPICE/spice_base.py:83
+#: auths/SAML_enterprise/saml.py:141 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "证书"
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:144
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
 msgstr "用于签名和登记的公钥（前一个私钥的公共部分），由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:151
+#: auths/SAML_enterprise/saml.py:152
 msgid "IDP Metadata"
 msgstr "IDP元数据"
 
-#: auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:155
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "您可以在此处输入URL或IDP元数据或元数据本身（xml）"
 
-#: auths/SAML_enterprise/saml.py:157 auths/SAML_enterprise/saml.py:166
+#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:167
 msgid "Metadata"
 msgstr "元数据"
 
-#: auths/SAML_enterprise/saml.py:161
+#: auths/SAML_enterprise/saml.py:162
 msgid "Entity ID"
 msgstr "实体ID"
 
-#: auths/SAML_enterprise/saml.py:164
+#: auths/SAML_enterprise/saml.py:165
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP的ID。如果留空，则会从服务器URL自动生成"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:173
 msgid "User name attrs"
 msgstr "用户名attrs"
 
-#: auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:175
 msgid "Fields from where to extract user name"
 msgstr "从哪里提取用户名的字段"
 
-#: auths/SAML_enterprise/saml.py:176 auths/SAML_enterprise/saml.py:186
-#: auths/SAML_enterprise/saml.py:196
+#: auths/SAML_enterprise/saml.py:177 auths/SAML_enterprise/saml.py:187
+#: auths/SAML_enterprise/saml.py:197
 msgid "Attributes"
 msgstr "属性"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:183
 msgid "Group name attrs"
 msgstr "集团名称attrs"
 
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:185
 msgid "Fields from where to extract the groups"
 msgstr "从哪里提取组的字段"
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:193
 msgid "Real name attrs"
 msgstr "真名牌"
 
-#: auths/SAML_enterprise/saml.py:194
+#: auths/SAML_enterprise/saml.py:195
 msgid "Fields from where to extract the real name"
 msgstr "字段从哪里提取真实姓名"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:231
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
 "服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
 
-#: auths/SAML_enterprise/saml.py:238
+#: auths/SAML_enterprise/saml.py:239
 msgid "Invalid server certificate. "
 msgstr "服务器证书无效。"
 
-#: auths/SAML_enterprise/saml.py:249
+#: auths/SAML_enterprise/saml.py:250
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr "私钥应该是有效的PEM（PEM私钥以----- BEGIN RSA私钥开头-----"
 
-#: auths/SAML_enterprise/saml.py:257
+#: auths/SAML_enterprise/saml.py:258
 msgid "Invalid private key. "
 msgstr "私钥无效。"
 
-#: auths/SAML_enterprise/saml.py:276
+#: auths/SAML_enterprise/saml.py:277
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "无法获取网址{0}：{1}"
 
-#: auths/SAML_enterprise/saml.py:287
+#: auths/SAML_enterprise/saml.py:288
 msgid " (obtained from URL)"
 msgstr "（从URL获得）"
 
-#: auths/SAML_enterprise/saml.py:289
+#: auths/SAML_enterprise/saml.py:290
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML似乎对IDP元数据无效"
 
-#: auths/SAML_enterprise/saml.py:311
+#: auths/SAML_enterprise/saml.py:312
 msgid "Can't access idp metadata"
 msgstr "无法访问idp元数据"
 
@@ -3421,12 +3431,14 @@ msgid "UDS pub for {0} at {1}"
 msgstr "{1}的{0}的UDS发布"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-msgid "HyperV Linked Clone (Experimental)"
-msgstr "HyperV链接克隆（实验性）"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Linked Clone (LEGACY))"
+msgstr "HyperV 链接克隆 (LEGACY))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-msgid "Hyper Services based on templates and differential disks (experimental)"
-msgstr "基于模板和差异磁盘的超级服务（实验性）"
+#| msgid "Hyper Services based on templates and differential disks"
+msgid "Hyper Services based on templates and differential disks (LEGACY)"
+msgstr "基于模板和差异磁盘的超级服务 (LEGACY)"
 
 #: services/HyperV_enterprise/legacy/service.py:70
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:85
@@ -3584,7 +3596,7 @@ msgstr "远程WSman端口。默认保留为零。"
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:67
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
-#: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
+#: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "强制SSL证书验证"
 
@@ -5436,7 +5448,6 @@ msgstr "文件上传/下载重定向策略"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:170
-#| msgid "Enable File Sharing"
 msgid "Disable file sharing"
 msgstr "禁用文件共享"
 
@@ -5452,25 +5463,21 @@ msgstr "只允许上传"
 
 #: transports/HTML5RDP/html5rdp.py:184
 #: transports/HTML5RDS_enterprise/html5rds.py:173
-#| msgid "Enable File Sharing"
 msgid "Enable file sharing"
 msgstr "启用文件共享"
 
 #: transports/HTML5RDP/html5rdp.py:189
 #: transports/HTML5RDS_enterprise/html5rds.py:178
-#| msgid "Enable clipboard"
 msgid "Clipboard"
 msgstr "剪贴板"
 
 #: transports/HTML5RDP/html5rdp.py:191
 #: transports/HTML5RDS_enterprise/html5rds.py:180
-#| msgid "Local drives redirection policy"
 msgid "Clipboard redirection policy"
 msgstr "剪贴板重定向策略"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:183
-#| msgid "Enable clipboard"
 msgid "Disable clipboard"
 msgstr "禁用剪贴板"
 
@@ -5522,7 +5529,6 @@ msgstr "拉丁美洲键盘"
 
 #: transports/HTML5RDP/html5rdp.py:213
 #: transports/HTML5RDS_enterprise/html5rds.py:201
-#| msgid "Spanish keyboard"
 msgid "Danish keyboard"
 msgstr "丹麦语键盘"
 
@@ -5538,7 +5544,6 @@ msgstr "法式键盘（azerty）"
 
 #: transports/HTML5RDP/html5rdp.py:216
 #: transports/HTML5RDS_enterprise/html5rds.py:204
-#| msgid "French keyboard (azerty)"
 msgid "Belgian French keyboard (azerty)"
 msgstr "比利时法语键盘 (azerty)"
 
@@ -5554,7 +5559,6 @@ msgstr "瑞士法语键盘（qwertz）"
 
 #: transports/HTML5RDP/html5rdp.py:219
 #: transports/HTML5RDS_enterprise/html5rds.py:207
-#| msgid "Italian keyboard"
 msgid "Hungarian keyboard"
 msgstr "匈牙利语键盘"
 
@@ -5570,13 +5574,11 @@ msgstr "日文键盘"
 
 #: transports/HTML5RDP/html5rdp.py:222
 #: transports/HTML5RDS_enterprise/html5rds.py:210
-#| msgid "Brazilian keyboard"
 msgid "Norwegian keyboard"
 msgstr "挪威语键盘"
 
 #: transports/HTML5RDP/html5rdp.py:223
 #: transports/HTML5RDS_enterprise/html5rds.py:211
-#| msgid "Brazilian keyboard"
 msgid "Portuguese Brazilian keyboard"
 msgstr "葡萄牙语巴西键盘"
 
@@ -5587,7 +5589,6 @@ msgstr "瑞典语键盘"
 
 #: transports/HTML5RDP/html5rdp.py:225
 #: transports/HTML5RDS_enterprise/html5rds.py:213
-#| msgid "Spanish keyboard"
 msgid "Turkish keyboard"
 msgstr "土耳其语键盘"
 
@@ -5813,21 +5814,20 @@ msgid ""
 msgstr "如果选中，则将使用所有客户端监视器进行显示（仅适用于Windows客户端）"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:42
-#| msgid "SPICE Protocol. Tunneled connection."
 msgid "NICE DCV Protocol. Tunneled connection."
 msgstr "NICE DCV 协议。隧道连接。"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:46
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
 #: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
-#: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
+#: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "隧道服务器"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:49
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
 #: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
-#: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
+#: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
@@ -5838,21 +5838,21 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:56
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
 #: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
-#: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
+#: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "隧道等待时间"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:61
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
 #: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
-#: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
+#: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "关闭隧道侦听器之前等待的最长时间"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:70
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
 #: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
-#: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
+#: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
 msgstr "如果启用，将验证隧道服务器的证书（推荐）。"
@@ -5896,7 +5896,7 @@ msgstr "NoMachine 协议隧道。"
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:106 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "必须在隧道服务器字段中使用HOST：PORT"
 
@@ -6138,7 +6138,7 @@ msgstr "如果选中，Linux 客户端将在会话而不是远程应用程序中
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "使用RDP为vApp进行RDS访问。隧道连接。"
 
-#: transports/SPICE/spice.py:55 transports/SPICE/spice_tunnel.py:59
+#: transports/SPICE/spice.py:55 transports/SPICE/spice_tunnel.py:60
 msgid "SPICE"
 msgstr "香料"
 
@@ -6190,7 +6190,7 @@ msgstr "新的USB自动共享"
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "插入时自动重定向USB设备。"
 
-#: transports/SPICE/spice_tunnel.py:61
+#: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "SPICE协议。隧道连接。"
 
@@ -6361,22 +6361,6 @@ msgstr "二进制 appimage Raspberry Linux 客户端"
 #: web/util/configjs.py:261
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
-
-#: web/util/configjs.py:269
-msgid "Legacy Debian based Python 2.7 Linux client"
-msgstr "基于旧版Debian的Python 2.7 Linux客户端"
-
-#: web/util/configjs.py:271 web/util/configjs.py:279 web/util/configjs.py:287
-msgid "(requires outdated Python-2.7)"
-msgstr "（要求使用过时的Python-2.7）"
-
-#: web/util/configjs.py:277
-msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
-msgstr "基于旧式RH的Linux客户端（Fedora，Centos，Suse等）"
-
-#: web/util/configjs.py:285
-msgid "Legacy OpenSuse based Linux client)"
-msgstr "基于旧版OpenSuse的Linux客户端）"
 
 #: web/util/errors.py:76
 msgid "Unknown error"

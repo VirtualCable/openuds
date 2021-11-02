@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 00:55+0200\n"
+"POT-Creation-Date: 2021-11-02 11:04+0100\n"
 "PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -318,7 +318,7 @@ msgstr "المجموعة"
 #: static/admin/translations-fakejs.js:413
 #: static/admin/translations-fakejs.js:426
 #: static/admin/translations-fakejs.js:447
-#: static/modern/translations-fakejs.js:73
+#: static/modern/translations-fakejs.js:72
 msgid "Authenticator"
 msgstr "الموثق"
 
@@ -1735,58 +1735,51 @@ msgid "Always download the UDS actor matching your platform"
 msgstr "قم دائمًا بتنزيل ممثل UDS المطابق للنظام الأساسي الخاص بك"
 
 #: static/modern/translations-fakejs.js:61
-msgid ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"يتم توفير الجهات الفاعلة القديمة فقط لدعم نظام التشغيل القديم. حاول تجنبها."
-
-#: static/modern/translations-fakejs.js:62
 msgid "An error has occurred"
 msgstr "حدث خطأ"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:62
 msgid "Return"
 msgstr "إرجاع"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:63
 msgid "UDS Service launcher"
 msgstr "قاذفة خدمة UDS"
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:64
 msgid "The service you have requested is being launched."
 msgstr "يتم تشغيل الخدمة التي طلبتها."
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:65
 msgid "Please, note that reloading this page will not work."
 msgstr "يرجى ملاحظة أن إعادة تحميل هذه الصفحة لن تعمل."
 
-#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:66
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "لإعادة تشغيل الخدمة ، سيكون عليك القيام بذلك من الأصل."
 
-#: static/modern/translations-fakejs.js:68
+#: static/modern/translations-fakejs.js:67
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
 msgstr "إذا لم يتم تشغيل الخدمة تلقائيًا ، فربما لا يكون لديك عميل UDS مثبتًا"
 
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:68
 msgid "You can obtain it from the"
 msgstr "يمكنك الحصول عليها من"
 
-#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:69
 msgid "UDS Client download page"
 msgstr "صفحة تنزيل عميل UDS"
 
-#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:70
 msgid "Username"
 msgstr "اسم المستخدم"
 
-#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:71
 msgid "Password"
 msgstr "كلمه السر"
 
-#: static/modern/translations-fakejs.js:74
+#: static/modern/translations-fakejs.js:73
 msgid "Login"
 msgstr "تسجيل الدخول"

@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 00:55+0200\n"
-"PO-Revision-Date: 2021-09-24 11:51+0000\n"
+"POT-Creation-Date: 2021-11-02 11:04+0100\n"
+"PO-Revision-Date: 2021-10-07 22:56+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -46,7 +46,7 @@ msgstr "Имя"
 #: REST/methods/providers.py:73 REST/methods/proxies.py:63
 #: REST/methods/services.py:241 REST/methods/services_pool_groups.py:72
 #: REST/methods/transports.py:68 REST/methods/user_services.py:402
-#: REST/methods/users_groups.py:168 REST/methods/users_groups.py:381
+#: REST/methods/users_groups.py:168 REST/methods/users_groups.py:386
 #: REST/model.py:173
 msgid "Comments"
 msgstr "Комментарии"
@@ -623,13 +623,13 @@ msgstr ""
 msgid "Available reports"
 msgstr "Доступные репорты"
 
-#: REST/methods/reports.py:67 REST/methods/users_groups.py:372
-#: REST/methods/users_groups.py:393
+#: REST/methods/reports.py:67 REST/methods/users_groups.py:377
+#: REST/methods/users_groups.py:398
 #: auths/ActiveDirectory_enterprise/authenticator.py:143
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:105
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:191
-#: auths/SAML_enterprise/saml.py:120 auths/SimpleLDAP/authenticator.py:182
+#: auths/SAML_enterprise/saml.py:121 auths/SimpleLDAP/authenticator.py:182
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "Группа"
@@ -693,13 +693,13 @@ msgstr "Прокси для служб за брандмауэром"
 msgid "Advanced"
 msgstr "Расширенный"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:293
-#: REST/methods/users_groups.py:497
+#: REST/methods/services.py:365 REST/methods/users_groups.py:298
+#: REST/methods/users_groups.py:506
 msgid "With errors"
 msgstr "С ошибками"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:293
-#: REST/methods/users_groups.py:497
+#: REST/methods/services.py:365 REST/methods/users_groups.py:298
+#: REST/methods/users_groups.py:506
 msgid "Ok"
 msgstr "ОК"
 
@@ -841,7 +841,7 @@ msgstr "Учетная запись, связанная с этим пулом �
 msgid "Base service does not exist anymore"
 msgstr "Базовый сервис больше не существует"
 
-#: REST/methods/services_pools.py:565
+#: REST/methods/services_pools.py:570
 msgid "This service requires an OS Manager"
 msgstr "Этот сервис требует наличия ОС менеджера"
 
@@ -983,7 +983,7 @@ msgstr "Штатный сотрудник"
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:117 reports/stats/pool_users_summary.py:177
+#: auths/SAML_enterprise/saml.py:118 reports/stats/pool_users_summary.py:177
 #: reports/stats/usage_by_pool.py:171
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1025,7 +1025,7 @@ msgstr "Имя пользователя"
 msgid "Role"
 msgstr "Роль"
 
-#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:384
+#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:389
 msgid "state"
 msgstr "состояние"
 
@@ -1033,30 +1033,40 @@ msgstr "состояние"
 msgid "Last access"
 msgstr "Последний вход"
 
-#: REST/methods/users_groups.py:237 REST/methods/users_groups.py:463
+#: REST/methods/users_groups.py:202
+#| msgid "Username not found"
+msgid "Username cannot be empty"
+msgstr "Имя пользователя не может быть пустым"
+
+#: REST/methods/users_groups.py:240 REST/methods/users_groups.py:470
 msgid "User already exists (duplicate key error)"
 msgstr "Пользователь уже существует (ошибка дублирования ключа)"
 
-#: REST/methods/users_groups.py:360
+#: REST/methods/users_groups.py:365
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Групп из {0}"
 
-#: REST/methods/users_groups.py:366
+#: REST/methods/users_groups.py:371
 msgid "Current groups"
 msgstr "Текущие группы"
 
-#: REST/methods/users_groups.py:393
+#: REST/methods/users_groups.py:398
 msgid "UDS Group"
 msgstr "UDS Группа"
 
-#: REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:399
 msgid "Meta group"
 msgstr "Метагруппа"
 
-#: REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:399
 msgid "UDS Meta Group"
 msgstr "UDS Метагруппа"
+
+#: REST/methods/users_groups.py:430
+#| msgid "Group name attrs"
+msgid "Group name is required"
+msgstr "Требуется название группы"
 
 #: REST/model.py:136
 msgid "Tags"
@@ -1362,7 +1372,7 @@ msgid ""
 msgstr ""
 "Включите, только если у вас есть Microsoft School Data Sync в вашей среде."
 
-#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:216
+#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:217
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "Аутентификатор SAML не поддерживает пробелы в поле NAME"
 
@@ -1676,19 +1686,19 @@ msgstr ""
 "Идентификатор аттрибута группы LDAP вероятно неверный (невозможно найти "
 "группу с такими аттрибутами)"
 
-#: auths/SAML_enterprise/saml.py:87
+#: auths/SAML_enterprise/saml.py:88
 msgid "SAML Authenticator"
 msgstr "Аутентификатор SAML"
 
-#: auths/SAML_enterprise/saml.py:99
+#: auths/SAML_enterprise/saml.py:100
 msgid "SAML (v2.0) Authenticator"
 msgstr "Аутентификатор SAML (v2.0)"
 
-#: auths/SAML_enterprise/saml.py:129
+#: auths/SAML_enterprise/saml.py:130
 msgid "Private key"
 msgstr "Приватный ключ"
 
-#: auths/SAML_enterprise/saml.py:132
+#: auths/SAML_enterprise/saml.py:133
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1696,15 +1706,15 @@ msgstr ""
 "Приватный ключ, используемый для подписи и шифрования, сгенерированный в "
 "base64 c помощью openssl"
 
-#: auths/SAML_enterprise/saml.py:135 auths/SAML_enterprise/saml.py:146
+#: auths/SAML_enterprise/saml.py:136 auths/SAML_enterprise/saml.py:147
 msgid "Certificates"
 msgstr "Сертификаты"
 
-#: auths/SAML_enterprise/saml.py:140 transports/SPICE/spice_base.py:83
+#: auths/SAML_enterprise/saml.py:141 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Сертификат"
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:144
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1712,60 +1722,60 @@ msgstr ""
 "Открытый ключ, используемый для подписывания и шифрования (общедоступная "
 "часть предыдущего частного), сгенерированный в base64 от openssl"
 
-#: auths/SAML_enterprise/saml.py:151
+#: auths/SAML_enterprise/saml.py:152
 msgid "IDP Metadata"
 msgstr "IDP метаданные"
 
-#: auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:155
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "Здесь вы можете указать URL-адрес, метаданные IDP или сами метаданные (xml)"
 
-#: auths/SAML_enterprise/saml.py:157 auths/SAML_enterprise/saml.py:166
+#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:167
 msgid "Metadata"
 msgstr "Метаданные"
 
-#: auths/SAML_enterprise/saml.py:161
+#: auths/SAML_enterprise/saml.py:162
 msgid "Entity ID"
 msgstr "ID объекта"
 
-#: auths/SAML_enterprise/saml.py:164
+#: auths/SAML_enterprise/saml.py:165
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "Идентификатор SP. Если оставить пустым, будет автоматически генерироваться с "
 "URL-адреса сервера"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:173
 msgid "User name attrs"
 msgstr "Аттрибут имени пользователя"
 
-#: auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:175
 msgid "Fields from where to extract user name"
 msgstr "Поля, откуда извлекается имя пользователя"
 
-#: auths/SAML_enterprise/saml.py:176 auths/SAML_enterprise/saml.py:186
-#: auths/SAML_enterprise/saml.py:196
+#: auths/SAML_enterprise/saml.py:177 auths/SAML_enterprise/saml.py:187
+#: auths/SAML_enterprise/saml.py:197
 msgid "Attributes"
 msgstr "Аттрибуты"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:183
 msgid "Group name attrs"
 msgstr "Аттрибуты имени группы"
 
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:185
 msgid "Fields from where to extract the groups"
 msgstr "Поля, откуда извлекается имя группы"
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:193
 msgid "Real name attrs"
 msgstr "Аттрибуты реального имени"
 
-#: auths/SAML_enterprise/saml.py:194
+#: auths/SAML_enterprise/saml.py:195
 msgid "Fields from where to extract the real name"
 msgstr "Поля, откуда извлекается реальное имя"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:231
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1773,11 +1783,11 @@ msgstr ""
 "Сертификат сервера должен быть действительным PEM (PEM сертификат начинается "
 "с -----BEGIN CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/saml.py:238
+#: auths/SAML_enterprise/saml.py:239
 msgid "Invalid server certificate. "
 msgstr "Недопустимый сертификат сервера"
 
-#: auths/SAML_enterprise/saml.py:249
+#: auths/SAML_enterprise/saml.py:250
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1785,24 +1795,24 @@ msgstr ""
 "Приватный ключ должен быть действительным PEM (PEM приватный ключ начинается "
 "с -----BEGIN RSA PRIVATE KEY-----)"
 
-#: auths/SAML_enterprise/saml.py:257
+#: auths/SAML_enterprise/saml.py:258
 msgid "Invalid private key. "
 msgstr "Недопустимый приватный ключ"
 
-#: auths/SAML_enterprise/saml.py:276
+#: auths/SAML_enterprise/saml.py:277
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Невозможно получить url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:287
+#: auths/SAML_enterprise/saml.py:288
 msgid " (obtained from URL)"
 msgstr "(полученный из URL)"
 
-#: auths/SAML_enterprise/saml.py:289
+#: auths/SAML_enterprise/saml.py:290
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML не подходит для метаданных IDP"
 
-#: auths/SAML_enterprise/saml.py:311
+#: auths/SAML_enterprise/saml.py:312
 msgid "Can't access idp metadata"
 msgstr "Нет доступа к IDP метаданным"
 
@@ -3549,14 +3559,14 @@ msgid "UDS pub for {0} at {1}"
 msgstr "Публикация UDS для {0} в {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-msgid "HyperV Linked Clone (Experimental)"
-msgstr "Линкованный клон HyperV (эксперимент)"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Linked Clone (LEGACY))"
+msgstr "Связанный клон HyperV (НАСЛЕДИЕ))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-msgid "Hyper Services based on templates and differential disks (experimental)"
-msgstr ""
-"Hyper Services на основе шаблонов и дифференциальных дисков "
-"(экспериментальный)"
+#| msgid "Hyper Services based on templates and differential disks"
+msgid "Hyper Services based on templates and differential disks (LEGACY)"
+msgstr "Гиперсервисы на основе шаблонов и дифференциальных дисков (НАСЛЕДИЕ)"
 
 #: services/HyperV_enterprise/legacy/service.py:70
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:85
@@ -3718,7 +3728,7 @@ msgstr "Удалённый порт WSman. Оставьте ноль по умо
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:67
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
-#: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
+#: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "Принудительная проверка SSL-сертификата"
 
@@ -5678,7 +5688,6 @@ msgstr "Политика перенаправления загрузки / ск�
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:170
-#| msgid "Enable File Sharing"
 msgid "Disable file sharing"
 msgstr "Отключить обмен файлами"
 
@@ -5694,25 +5703,21 @@ msgstr "Разрешить только загрузку"
 
 #: transports/HTML5RDP/html5rdp.py:184
 #: transports/HTML5RDS_enterprise/html5rds.py:173
-#| msgid "Enable File Sharing"
 msgid "Enable file sharing"
 msgstr "Разрешить общий доступ к файлам"
 
 #: transports/HTML5RDP/html5rdp.py:189
 #: transports/HTML5RDS_enterprise/html5rds.py:178
-#| msgid "Enable clipboard"
 msgid "Clipboard"
 msgstr "Буфер обмена"
 
 #: transports/HTML5RDP/html5rdp.py:191
 #: transports/HTML5RDS_enterprise/html5rds.py:180
-#| msgid "Local drives redirection policy"
 msgid "Clipboard redirection policy"
 msgstr "Политика перенаправления буфера обмена"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:183
-#| msgid "Enable clipboard"
 msgid "Disable clipboard"
 msgstr "Отключить буфер обмена"
 
@@ -5764,7 +5769,6 @@ msgstr "Латиноамериканская клавиатура"
 
 #: transports/HTML5RDP/html5rdp.py:213
 #: transports/HTML5RDS_enterprise/html5rds.py:201
-#| msgid "Spanish keyboard"
 msgid "Danish keyboard"
 msgstr "Датская раскладка"
 
@@ -5780,7 +5784,6 @@ msgstr "Французская клавиатура (azerty)"
 
 #: transports/HTML5RDP/html5rdp.py:216
 #: transports/HTML5RDS_enterprise/html5rds.py:204
-#| msgid "French keyboard (azerty)"
 msgid "Belgian French keyboard (azerty)"
 msgstr "Бельгийская французская клавиатура (азерты)"
 
@@ -5796,7 +5799,6 @@ msgstr "Швейцарская французская клавиатура (qwer
 
 #: transports/HTML5RDP/html5rdp.py:219
 #: transports/HTML5RDS_enterprise/html5rds.py:207
-#| msgid "Italian keyboard"
 msgid "Hungarian keyboard"
 msgstr "Венгерская раскладка"
 
@@ -5812,13 +5814,11 @@ msgstr "Японская клавиатура"
 
 #: transports/HTML5RDP/html5rdp.py:222
 #: transports/HTML5RDS_enterprise/html5rds.py:210
-#| msgid "Brazilian keyboard"
 msgid "Norwegian keyboard"
 msgstr "Норвежская раскладка"
 
 #: transports/HTML5RDP/html5rdp.py:223
 #: transports/HTML5RDS_enterprise/html5rds.py:211
-#| msgid "Brazilian keyboard"
 msgid "Portuguese Brazilian keyboard"
 msgstr "Португальская бразильская раскладка"
 
@@ -5829,7 +5829,6 @@ msgstr "Шведская клавиатура"
 
 #: transports/HTML5RDP/html5rdp.py:225
 #: transports/HTML5RDS_enterprise/html5rds.py:213
-#| msgid "Spanish keyboard"
 msgid "Turkish keyboard"
 msgstr "Турецкая клавиатура"
 
@@ -6067,21 +6066,20 @@ msgstr ""
 "для отображения (работает только на клиентах Windows)"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:42
-#| msgid "SPICE Protocol. Tunneled connection."
 msgid "NICE DCV Protocol. Tunneled connection."
 msgstr "Протокол NICE DCV. Туннельное соединение."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:46
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
 #: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
-#: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
+#: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "Туннельный сервер"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:49
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
 #: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
-#: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
+#: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
@@ -6092,21 +6090,21 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:56
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
 #: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
-#: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
+#: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "Время ожидания туннеля"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:61
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
 #: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
-#: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
+#: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "Максимальное время ожидания перед закрытием прослушивания туннеля"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:70
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
 #: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
-#: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
+#: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
 msgstr ""
@@ -6154,7 +6152,7 @@ msgstr "Протокол NoMachine Туннелирован."
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:106 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Нужно использовать HOST:PORT в поле туннельного сервера"
 
@@ -6419,7 +6417,7 @@ msgstr ""
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "RDS-доступ с использованием RDP для vApps. Туннельное подключение."
 
-#: transports/SPICE/spice.py:55 transports/SPICE/spice_tunnel.py:59
+#: transports/SPICE/spice.py:55 transports/SPICE/spice_tunnel.py:60
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -6474,7 +6472,7 @@ msgstr "Новый USB автообмен"
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Автоперенаправление USB устройств при подключении."
 
-#: transports/SPICE/spice_tunnel.py:61
+#: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "SPICE протокол. Туннельное подключение."
 
@@ -6651,22 +6649,6 @@ msgstr "Двоичный клиент appimage Raspberry Linux"
 #: web/util/configjs.py:261
 msgid "Generic .tar.gz Linux client"
 msgstr "Общий .tar.gz Linux-клиент"
-
-#: web/util/configjs.py:269
-msgid "Legacy Debian based Python 2.7 Linux client"
-msgstr "Legacy основанный на Debian Python 2.7 Linux клиент"
-
-#: web/util/configjs.py:271 web/util/configjs.py:279 web/util/configjs.py:287
-msgid "(requires outdated Python-2.7)"
-msgstr "(требуется устаревший Python-2.7)"
-
-#: web/util/configjs.py:277
-msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
-msgstr "Устаревший Linux-клиент на основе RH (Fedora, Centos, Suse, ...)"
-
-#: web/util/configjs.py:285
-msgid "Legacy OpenSuse based Linux client)"
-msgstr "Устаревший клиент на базе OpenSuse для Linux)"
 
 #: web/util/errors.py:76
 msgid "Unknown error"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 00:55+0200\n"
+"POT-Creation-Date: 2021-11-02 11:04+0100\n"
 "PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -318,7 +318,7 @@ msgstr "Gruppe"
 #: static/admin/translations-fakejs.js:413
 #: static/admin/translations-fakejs.js:426
 #: static/admin/translations-fakejs.js:447
-#: static/modern/translations-fakejs.js:73
+#: static/modern/translations-fakejs.js:72
 msgid "Authenticator"
 msgstr "Authenticator"
 
@@ -1753,38 +1753,30 @@ msgid "Always download the UDS actor matching your platform"
 msgstr "Laden Sie immer den UDS-Actor herunter, der zu Ihrer Plattform passt"
 
 #: static/modern/translations-fakejs.js:61
-msgid ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"Legacy-Actors werden nur für die Unterstützung alter Betriebssysteme "
-"bereitgestellt. Versuchen Sie diese zu vermeiden."
-
-#: static/modern/translations-fakejs.js:62
 msgid "An error has occurred"
 msgstr "Ein Fehler ist aufgetreten"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:62
 msgid "Return"
 msgstr "Zurück"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:63
 msgid "UDS Service launcher"
 msgstr "UDS Service Launcher"
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:64
 msgid "The service you have requested is being launched."
 msgstr "Der von Ihnen angeforderte Dienst wird gestartet."
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:65
 msgid "Please, note that reloading this page will not work."
 msgstr "Bitte beachten Sie, dass das Neuladen dieser Seite nicht funktioniert."
 
-#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:66
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "Um den Dienst neu zu starten, müssen Sie dies von Anfang an tun."
 
-#: static/modern/translations-fakejs.js:68
+#: static/modern/translations-fakejs.js:67
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
@@ -1792,22 +1784,22 @@ msgstr ""
 "Wenn der Dienst nicht automatisch gestartet wird, ist der UDS-Client "
 "wahrscheinlich nicht installiert"
 
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:68
 msgid "You can obtain it from the"
 msgstr "Sie erhalten es bei der"
 
-#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:69
 msgid "UDS Client download page"
 msgstr "UDS Client Download-Seite"
 
-#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:70
 msgid "Username"
 msgstr "Nutzername"
 
-#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:71
 msgid "Password"
 msgstr "Passwort"
 
-#: static/modern/translations-fakejs.js:74
+#: static/modern/translations-fakejs.js:73
 msgid "Login"
 msgstr "Anmeldung"
