@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 00:55+0200\n"
+"POT-Creation-Date: 2021-11-02 11:04+0100\n"
 "PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -314,7 +314,7 @@ msgstr "组"
 #: static/admin/translations-fakejs.js:413
 #: static/admin/translations-fakejs.js:426
 #: static/admin/translations-fakejs.js:447
-#: static/modern/translations-fakejs.js:73
+#: static/modern/translations-fakejs.js:72
 msgid "Authenticator"
 msgstr "认证"
 
@@ -1729,57 +1729,51 @@ msgid "Always download the UDS actor matching your platform"
 msgstr "始终下载与您的平台匹配的UDS actor"
 
 #: static/modern/translations-fakejs.js:61
-msgid ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-msgstr "传统参与者仅提供旧操作系统支持。尽量避免它们。"
-
-#: static/modern/translations-fakejs.js:62
 msgid "An error has occurred"
 msgstr "发生了错误"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:62
 msgid "Return"
 msgstr "返回"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:63
 msgid "UDS Service launcher"
 msgstr "UDS服务启动器"
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:64
 msgid "The service you have requested is being launched."
 msgstr "您请求的服务正在启动。"
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:65
 msgid "Please, note that reloading this page will not work."
 msgstr "请注意，重新加载此页面将不起作用。"
 
-#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:66
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "要重新启动服务，您必须从源头开始进行。"
 
-#: static/modern/translations-fakejs.js:68
+#: static/modern/translations-fakejs.js:67
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
 msgstr "如果该服务没有自动启动，则可能您没有安装UDS客户端"
 
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:68
 msgid "You can obtain it from the"
 msgstr "您可以从"
 
-#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:69
 msgid "UDS Client download page"
 msgstr "UDS客户端下载页面"
 
-#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:70
 msgid "Username"
 msgstr "用户名"
 
-#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:71
 msgid "Password"
 msgstr "密码"
 
-#: static/modern/translations-fakejs.js:74
+#: static/modern/translations-fakejs.js:73
 msgid "Login"
 msgstr "登录"

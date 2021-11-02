@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 00:55+0200\n"
-"PO-Revision-Date: 2021-09-24 11:51+0000\n"
+"POT-Creation-Date: 2021-11-02 11:04+0100\n"
+"PO-Revision-Date: 2021-10-07 22:56+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -42,7 +42,7 @@ msgstr "Izena"
 #: REST/methods/providers.py:73 REST/methods/proxies.py:63
 #: REST/methods/services.py:241 REST/methods/services_pool_groups.py:72
 #: REST/methods/transports.py:68 REST/methods/user_services.py:402
-#: REST/methods/users_groups.py:168 REST/methods/users_groups.py:381
+#: REST/methods/users_groups.py:168 REST/methods/users_groups.py:386
 #: REST/model.py:173
 msgid "Comments"
 msgstr "Iruzkinak"
@@ -621,13 +621,13 @@ msgstr ""
 msgid "Available reports"
 msgstr "Txosten erabilgarriak"
 
-#: REST/methods/reports.py:67 REST/methods/users_groups.py:372
-#: REST/methods/users_groups.py:393
+#: REST/methods/reports.py:67 REST/methods/users_groups.py:377
+#: REST/methods/users_groups.py:398
 #: auths/ActiveDirectory_enterprise/authenticator.py:143
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:105
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:191
-#: auths/SAML_enterprise/saml.py:120 auths/SimpleLDAP/authenticator.py:182
+#: auths/SAML_enterprise/saml.py:121 auths/SimpleLDAP/authenticator.py:182
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "Taldea"
@@ -692,13 +692,13 @@ msgstr "Suebaki baten atzean zerbitzuen proxya"
 msgid "Advanced"
 msgstr "Aurreratua"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:293
-#: REST/methods/users_groups.py:497
+#: REST/methods/services.py:365 REST/methods/users_groups.py:298
+#: REST/methods/users_groups.py:506
 msgid "With errors"
 msgstr "Erroreekin"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:293
-#: REST/methods/users_groups.py:497
+#: REST/methods/services.py:365 REST/methods/users_groups.py:298
+#: REST/methods/users_groups.py:506
 msgid "Ok"
 msgstr "Ondo"
 
@@ -839,7 +839,7 @@ msgstr "Zerbitzu-pool honi lotutako kontua"
 msgid "Base service does not exist anymore"
 msgstr "Zerbitzu-oinarria ez dago"
 
-#: REST/methods/services_pools.py:565
+#: REST/methods/services_pools.py:570
 msgid "This service requires an OS Manager"
 msgstr "Zerbitzu honek SE kudeatzailea behar du"
 
@@ -982,7 +982,7 @@ msgstr "Langile Kidea"
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:117 reports/stats/pool_users_summary.py:177
+#: auths/SAML_enterprise/saml.py:118 reports/stats/pool_users_summary.py:177
 #: reports/stats/usage_by_pool.py:171
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1024,7 +1024,7 @@ msgstr "Erabiltzaile izena"
 msgid "Role"
 msgstr "Rol"
 
-#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:384
+#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:389
 msgid "state"
 msgstr "Egoera"
 
@@ -1032,30 +1032,40 @@ msgstr "Egoera"
 msgid "Last access"
 msgstr "Azken sarrera"
 
-#: REST/methods/users_groups.py:237 REST/methods/users_groups.py:463
+#: REST/methods/users_groups.py:202
+#| msgid "Username not found"
+msgid "Username cannot be empty"
+msgstr "Erabiltzaile-izena ezin da hutsik egon"
+
+#: REST/methods/users_groups.py:240 REST/methods/users_groups.py:470
 msgid "User already exists (duplicate key error)"
 msgstr "Dagoeneko erabiltzailea existitzen da (Hutsa,gako bikoiztua)"
 
-#: REST/methods/users_groups.py:360
+#: REST/methods/users_groups.py:365
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "{0} talde"
 
-#: REST/methods/users_groups.py:366
+#: REST/methods/users_groups.py:371
 msgid "Current groups"
 msgstr "Momentuko taldeak"
 
-#: REST/methods/users_groups.py:393
+#: REST/methods/users_groups.py:398
 msgid "UDS Group"
 msgstr "UDS Taldea"
 
-#: REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:399
 msgid "Meta group"
 msgstr "Meta-taldea"
 
-#: REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:399
 msgid "UDS Meta Group"
 msgstr "UDS Meta-taldea"
+
+#: REST/methods/users_groups.py:430
+#| msgid "Group name attrs"
+msgid "Group name is required"
+msgstr "Taldearen izena beharrezkoa da"
 
 #: REST/model.py:136
 msgid "Tags"
@@ -1355,7 +1365,7 @@ msgid ""
 "Enable only if you have Microsoft School Data Sync in your Environnment."
 msgstr "Gaitu Microsoft School Data Sync zure ingurunean baldin baduzu."
 
-#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:216
+#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:217
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "SAML autetikatzaileak ez du NAME eremuan espaziorik onartzen"
 
@@ -1671,19 +1681,19 @@ msgstr ""
 "LDAP taldearen ID atributua txarto dagoela dirudi (ez da talderik aurkitu "
 "atributu horrekin )"
 
-#: auths/SAML_enterprise/saml.py:87
+#: auths/SAML_enterprise/saml.py:88
 msgid "SAML Authenticator"
 msgstr "SAML autentikatzailea"
 
-#: auths/SAML_enterprise/saml.py:99
+#: auths/SAML_enterprise/saml.py:100
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML (v2.0) autentikatzailea"
 
-#: auths/SAML_enterprise/saml.py:129
+#: auths/SAML_enterprise/saml.py:130
 msgid "Private key"
 msgstr "Gako pribatua"
 
-#: auths/SAML_enterprise/saml.py:132
+#: auths/SAML_enterprise/saml.py:133
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1691,15 +1701,15 @@ msgstr ""
 "Seinale eta enkripzioan erabilitako gako pribatua, oinarrian sortutako 64 "
 "ataka irekitik"
 
-#: auths/SAML_enterprise/saml.py:135 auths/SAML_enterprise/saml.py:146
+#: auths/SAML_enterprise/saml.py:136 auths/SAML_enterprise/saml.py:147
 msgid "Certificates"
 msgstr "Ziurtagiriak"
 
-#: auths/SAML_enterprise/saml.py:140 transports/SPICE/spice_base.py:83
+#: auths/SAML_enterprise/saml.py:141 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Ziurtagiria"
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:144
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1707,58 +1717,58 @@ msgstr ""
 "Sartu eta erregistratzeko (gako pribatuaren aurreko atal publikoa) "
 "erabilitako gako publikoa, oinarrian sortua 64 ataka irekitik"
 
-#: auths/SAML_enterprise/saml.py:151
+#: auths/SAML_enterprise/saml.py:152
 msgid "IDP Metadata"
 msgstr "IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:155
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "Hemen sar dezakezu URLa edo IDP metadatuak edo metadatu bera (xml)"
 
-#: auths/SAML_enterprise/saml.py:157 auths/SAML_enterprise/saml.py:166
+#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:167
 msgid "Metadata"
 msgstr "Metadata"
 
-#: auths/SAML_enterprise/saml.py:161
+#: auths/SAML_enterprise/saml.py:162
 msgid "Entity ID"
 msgstr "Erakunde IDa"
 
-#: auths/SAML_enterprise/saml.py:164
+#: auths/SAML_enterprise/saml.py:165
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "SP IDa. Utzi hutsik badaude, zerbitzariaren URLa automatikoki sortuko da"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:173
 msgid "User name attrs"
 msgstr "Erabiltzaile-izen atributuak"
 
-#: auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:175
 msgid "Fields from where to extract user name"
 msgstr "Erabiltzaile izena ateratzeko eremuak"
 
-#: auths/SAML_enterprise/saml.py:176 auths/SAML_enterprise/saml.py:186
-#: auths/SAML_enterprise/saml.py:196
+#: auths/SAML_enterprise/saml.py:177 auths/SAML_enterprise/saml.py:187
+#: auths/SAML_enterprise/saml.py:197
 msgid "Attributes"
 msgstr "Atributuak"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:183
 msgid "Group name attrs"
 msgstr "Talde-izen atributuak"
 
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:185
 msgid "Fields from where to extract the groups"
 msgstr "Taldeak ateratzeko eremuak"
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:193
 msgid "Real name attrs"
 msgstr "Benetazko izenaren atributuak"
 
-#: auths/SAML_enterprise/saml.py:194
+#: auths/SAML_enterprise/saml.py:195
 msgid "Fields from where to extract the real name"
 msgstr "Izen erreala ateratzeko eremuetatik"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:231
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1766,11 +1776,11 @@ msgstr ""
 "Zerbitzariaren ziurtagiria PEM baliagarria izan behar da (PEM ziurtagiriak "
 "hasi behar dira ----- ZIURTATUEI BEGIN -----)"
 
-#: auths/SAML_enterprise/saml.py:238
+#: auths/SAML_enterprise/saml.py:239
 msgid "Invalid server certificate. "
 msgstr "Baliogabeko zerbitzari ziiurtagiria"
 
-#: auths/SAML_enterprise/saml.py:249
+#: auths/SAML_enterprise/saml.py:250
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1778,24 +1788,24 @@ msgstr ""
 "Gako pribatua PEM baliagarria izan behar da (PEM gako pribatuak hasten dira "
 "----- BEGIN RSA PRIBATUA KEY -----"
 
-#: auths/SAML_enterprise/saml.py:257
+#: auths/SAML_enterprise/saml.py:258
 msgid "Invalid private key. "
 msgstr "Gako pribatua baliogabea da."
 
-#: auths/SAML_enterprise/saml.py:276
+#: auths/SAML_enterprise/saml.py:277
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Ezin da URL {0} eskuratu: {1}"
 
-#: auths/SAML_enterprise/saml.py:287
+#: auths/SAML_enterprise/saml.py:288
 msgid " (obtained from URL)"
 msgstr "(URLetik lortzen da)"
 
-#: auths/SAML_enterprise/saml.py:289
+#: auths/SAML_enterprise/saml.py:290
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML IDP Metadata ez da baliozkoa"
 
-#: auths/SAML_enterprise/saml.py:311
+#: auths/SAML_enterprise/saml.py:312
 msgid "Can't access idp metadata"
 msgstr "Ezin dira idp metadatuak atzitu"
 
@@ -3541,14 +3551,16 @@ msgid "UDS pub for {0} at {1}"
 msgstr "UDS pub {0} at {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-msgid "HyperV Linked Clone (Experimental)"
-msgstr "HyperV Linked Clone (esperimentala)"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Linked Clone (LEGACY))"
+msgstr "HyperV Lotutako Klona (LEGACY))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-msgid "Hyper Services based on templates and differential disks (experimental)"
+#| msgid "Hyper Services based on templates and differential disks"
+msgid "Hyper Services based on templates and differential disks (LEGACY)"
 msgstr ""
-"Hyper Zerbitzuak txantiloietan eta disko diferentetan oinarrituta "
-"(esperimentala)"
+"Txantiloietan eta disko diferentzialetan oinarritutako Hyper Zerbitzuak "
+"(LEGACY)"
 
 #: services/HyperV_enterprise/legacy/service.py:70
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:85
@@ -3710,7 +3722,7 @@ msgstr "Urruneko WSman port.Leve zero zero lehenetsita."
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:67
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
 #: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
-#: transports/SPICE/spice_tunnel.py:87 transports/X2GO/x2go_tunnel.py:90
+#: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "SSL ziurtagiria egiaztatzea"
 
@@ -5660,7 +5672,6 @@ msgstr "Fitxategiak kargatzeko / deskargatzeko birbideratze politika"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:170
-#| msgid "Enable File Sharing"
 msgid "Disable file sharing"
 msgstr "Desgaitu fitxategiak partekatzea"
 
@@ -5676,25 +5687,21 @@ msgstr "Baimendu kargatzea soilik"
 
 #: transports/HTML5RDP/html5rdp.py:184
 #: transports/HTML5RDS_enterprise/html5rds.py:173
-#| msgid "Enable File Sharing"
 msgid "Enable file sharing"
 msgstr "Gaitu fitxategiak partekatzea"
 
 #: transports/HTML5RDP/html5rdp.py:189
 #: transports/HTML5RDS_enterprise/html5rds.py:178
-#| msgid "Enable clipboard"
 msgid "Clipboard"
 msgstr "Arbela"
 
 #: transports/HTML5RDP/html5rdp.py:191
 #: transports/HTML5RDS_enterprise/html5rds.py:180
-#| msgid "Local drives redirection policy"
 msgid "Clipboard redirection policy"
 msgstr "Arbela birbideratzeko gidalerroak"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:183
-#| msgid "Enable clipboard"
 msgid "Disable clipboard"
 msgstr "Desgaitu arbela"
 
@@ -5746,7 +5753,6 @@ msgstr "Latinoamerikako teklatua"
 
 #: transports/HTML5RDP/html5rdp.py:213
 #: transports/HTML5RDS_enterprise/html5rds.py:201
-#| msgid "Spanish keyboard"
 msgid "Danish keyboard"
 msgstr "Daniar teklatua"
 
@@ -5762,7 +5768,6 @@ msgstr "Teklatu frantsesa (azerty)"
 
 #: transports/HTML5RDP/html5rdp.py:216
 #: transports/HTML5RDS_enterprise/html5rds.py:204
-#| msgid "French keyboard (azerty)"
 msgid "Belgian French keyboard (azerty)"
 msgstr "Belgikako teklatu frantsesa (azerty)"
 
@@ -5778,7 +5783,6 @@ msgstr "Suitzako teklatu frantsesa (qwertz)"
 
 #: transports/HTML5RDP/html5rdp.py:219
 #: transports/HTML5RDS_enterprise/html5rds.py:207
-#| msgid "Italian keyboard"
 msgid "Hungarian keyboard"
 msgstr "Teklatu hungariarra"
 
@@ -5794,13 +5798,11 @@ msgstr "Japoniar teklatua"
 
 #: transports/HTML5RDP/html5rdp.py:222
 #: transports/HTML5RDS_enterprise/html5rds.py:210
-#| msgid "Brazilian keyboard"
 msgid "Norwegian keyboard"
 msgstr "Teklatu norvegiarra"
 
 #: transports/HTML5RDP/html5rdp.py:223
 #: transports/HTML5RDS_enterprise/html5rds.py:211
-#| msgid "Brazilian keyboard"
 msgid "Portuguese Brazilian keyboard"
 msgstr "Brasilgo teklatu portugesa"
 
@@ -5811,7 +5813,6 @@ msgstr "Suediar Teklatua"
 
 #: transports/HTML5RDP/html5rdp.py:225
 #: transports/HTML5RDS_enterprise/html5rds.py:213
-#| msgid "Spanish keyboard"
 msgid "Turkish keyboard"
 msgstr "Teklatu turkiarra"
 
@@ -6046,21 +6047,20 @@ msgstr ""
 "(Windows bezeroetan bakarrik funtzionatzen du)."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:42
-#| msgid "SPICE Protocol. Tunneled connection."
 msgid "NICE DCV Protocol. Tunneled connection."
 msgstr "NICE DCV protokoloa. Tunelatutako konexioa."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:46
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
 #: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
-#: transports/SPICE/spice_tunnel.py:66 transports/X2GO/x2go_tunnel.py:69
+#: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "Tunel zerbitzaria"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:49
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
 #: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
-#: transports/SPICE/spice_tunnel.py:69 transports/X2GO/x2go_tunnel.py:72
+#: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
@@ -6071,21 +6071,21 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:56
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
 #: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
-#: transports/SPICE/spice_tunnel.py:76 transports/X2GO/x2go_tunnel.py:79
+#: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "Tunnel itxaron-denbora"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:61
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
 #: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
-#: transports/SPICE/spice_tunnel.py:81 transports/X2GO/x2go_tunnel.py:84
+#: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "Itxaroteko gehienezko denbora tunel entzulea itxi aurretik"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:70
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
 #: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
-#: transports/SPICE/spice_tunnel.py:90 transports/X2GO/x2go_tunnel.py:93
+#: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
 msgstr ""
@@ -6132,7 +6132,7 @@ msgstr "NoMachine protokoloa tunelatua."
 
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:106 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Tunnel zerbitzariaren eremuan HOSTALARI : PORTUA erabili behar da "
 
@@ -6396,7 +6396,7 @@ msgstr ""
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "RDS sarbidea vPps bidez RDP erabiliz. Tunelatutako konexioa."
 
-#: transports/SPICE/spice.py:55 transports/SPICE/spice_tunnel.py:59
+#: transports/SPICE/spice.py:55 transports/SPICE/spice_tunnel.py:60
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -6451,7 +6451,7 @@ msgstr "USB Auto partekatzea berria"
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Birbidali automatikoki USB gailuak konektatzean."
 
-#: transports/SPICE/spice_tunnel.py:61
+#: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "SPICE protokoloa. Tunel bidez egindako konexioa."
 
@@ -6626,22 +6626,6 @@ msgstr "Appimage bitarra Raspberry Linux bezeroa"
 #: web/util/configjs.py:261
 msgid "Generic .tar.gz Linux client"
 msgstr "Generic .tar.gz Linux bezeroa"
-
-#: web/util/configjs.py:269
-msgid "Legacy Debian based Python 2.7 Linux client"
-msgstr "Debian oinarritutako Python 2.7 Linux bezeroa"
-
-#: web/util/configjs.py:271 web/util/configjs.py:279 web/util/configjs.py:287
-msgid "(requires outdated Python-2.7)"
-msgstr "(zaharkituta dago Python-2.7)"
-
-#: web/util/configjs.py:277
-msgid "Legacy RH based Linux client (Fedora, Centos, Suse, ...)"
-msgstr "Legacy RH oinarritutako Linux bezeroa (Fedora, Centos, Suse, ...)"
-
-#: web/util/configjs.py:285
-msgid "Legacy OpenSuse based Linux client)"
-msgstr "Legacy OpenSuse oinarritutako Linux bezeroa)"
 
 #: web/util/errors.py:76
 msgid "Unknown error"
