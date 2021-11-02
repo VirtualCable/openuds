@@ -422,6 +422,8 @@ class HTML5RDPTransport(transports.Transport):
         scrambler = cryptoManager().randomString(32)
         passwordCrypted = cryptoManager().symCrypt(password, scrambler)
 
+        as_txt = lambda x: 'true' if x else 'false'
+
         # Build params dict
         params = {
             'protocol': 'rdp',
@@ -432,11 +434,12 @@ class HTML5RDPTransport(transports.Transport):
             'resize-method': 'display-update',
             'ignore-cert': 'true',
             'security': self.security.value,
-            'enable-drive': self.enableFileSharing.value in ('true', 'down', 'up'),
-            'disable-upload': self.enableFileSharing.value in ('true', 'up'),
+            'enable-drive': as_txt(self.enableFileSharing.value in ('true', 'down', 'up')),
+            'disable-upload': as_txt(self.enableFileSharing.value not in ('true', 'up')),
             'drive-path': '/share/{}'.format(user.uuid),
-            'disable-copy': self.enableClipboard.value in ('dis-copy', 'disabled'),
-            'disable-paste': self.enableClipboard.value in ('dis-paste', 'disabled'),
+            'drive-name': 'UDSfs',
+            'disable-copy': as_txt(self.enableClipboard.value in ('dis-copy', 'disabled')),
+            'disable-paste': as_txt(self.enableClipboard.value in ('dis-paste', 'disabled')),
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
