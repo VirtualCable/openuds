@@ -231,8 +231,8 @@ class RestApi:
                 # Ask about invalid certificate
                 if certErrorCallback:
                     if certErrorCallback(hostname, serial):
-                        ctx.verify_mode = ssl.CERT_NONE
                         ctx.check_hostname = False
+                        ctx.verify_mode = ssl.CERT_NONE
                         response = urlopen(url)
                 else:
                     raise
