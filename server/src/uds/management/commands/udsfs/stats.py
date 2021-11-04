@@ -4,10 +4,7 @@ import datetime
 import typing
 import logging
 
-from django.db.models import QuerySet
-from uds.management.commands.udsfs.events import EventFS
-
-from uds.models import StatsEvents
+from uds import models
 from uds.core.util.stats.events import EVENT_NAMES, getOwner
 
 from . import types
@@ -78,7 +75,13 @@ class StatsFS(types.UDSFSInterface):
     # Dispatchers for different stats files
     def _read_events(self, size: int, offset: int) -> bytes:
         logger.debug('Reading events. offset: %s, size: %s', offset, size)
-        return b'Events'
+        # Get stats events from last 24 hours (in UTC) stamp is unix timestamp
+        virtualFile = models.StatsEvents.getCSVHeader().encode() + b'\n'
+        for record in models.StatsEvents.objects.filter(
+            stamp__gte=calendar.timegm(datetime.datetime.utcnow().timetuple()) - 86400
+        ):
+            virtualFile += record.toCsv().encode() + b'\n'
+        return virtualFile
 
     def _read_pools(self, size: int, offset: int) -> bytes:
         logger.debug('Reading pools. offset: %s, size: %s', offset, size)

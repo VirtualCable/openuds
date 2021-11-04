@@ -89,6 +89,14 @@ EVENT_NAMES = {
     OT_OSMANAGER
 ) = range(5)
 
+TYPES_NAMES = {
+    OT_PROVIDER: 'Provider',
+    OT_SERVICE: 'Service',
+    OT_DEPLOYED: 'Deployed',
+    OT_AUTHENTICATOR: 'Authenticator',
+    OT_OSMANAGER: 'OS Manager'
+}
+
 __transDict: typing.Mapping[typing.Type['models.Model'], int] = {
     ServicePool: OT_DEPLOYED,
     Service: OT_SERVICE,

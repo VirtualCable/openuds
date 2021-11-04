@@ -30,6 +30,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 import types
@@ -39,9 +40,7 @@ from django.db import models
 from .util import NEVER_UNIX
 from .util import getSqlDatetimeAsUnix
 
-
 logger = logging.getLogger(__name__)
-
 
 class StatsEvents(models.Model):
     """
@@ -74,7 +73,7 @@ class StatsEvents(models.Model):
     def get_stats(
         owner_type: typing.Union[int, typing.Iterable[int]],
         event_type: typing.Union[int, typing.Iterable[int]],
-        **kwargs
+        **kwargs,
     ) -> 'models.QuerySet[StatsEvents]':
         """
         Returns a queryset with the average stats grouped by interval for owner_type and owner_id (optional)
@@ -125,6 +124,36 @@ class StatsEvents(models.Model):
     @property
     def uniqueId(self) -> str:
         return self.fld4
+
+    @property
+    def isostamp(self) -> str:
+        """
+        Returns the timestamp in ISO format (UTC)
+        """
+        stamp = datetime.datetime.utcfromtimestamp(self.stamp)
+        return stamp.isoformat()
+
+    # returns CSV header
+    @staticmethod
+    def getCSVHeader() -> str:
+        return 'owner_type,owner_id,event_type,stamp,field_1,field_2,field_3,field_4'
+
+    # Return record as csv line using separator (default: ',')
+    def toCsv(self, sep: str = ',') -> str:
+        from uds.core.util.stats.events import EVENT_NAMES, TYPES_NAMES
+
+        return sep.join(
+            [
+                TYPES_NAMES.get(self.owner_type, '?'),
+                str(self.owner_id),
+                EVENT_NAMES.get(self.event_type, '?'),
+                str(self.isostamp),
+                self.fld1,
+                self.fld2,
+                self.fld3,
+                self.fld4,
+            ]
+        )
 
     def __str__(self):
         return 'Log of {}({}): {} - {} - {}, {}, {}'.format(
