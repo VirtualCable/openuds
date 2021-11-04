@@ -29,7 +29,7 @@ from signal import signal, SIGINT, SIG_DFL
 from stat import S_IFDIR
 from functools import partial
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 _system = system()
 _machine = machine()
 
@@ -869,7 +869,7 @@ class FUSE:
 
                 except OSError as e:
                     if e.errno > 0:
-                        log.debug(
+                        logger.debug(
                             "FUSE operation %s raised a %s, returning errno %s.",
                             func.__name__,
                             type(e),
@@ -877,7 +877,7 @@ class FUSE:
                         )
                         return -e.errno
                     else:
-                        log.error(
+                        logger.error(
                             "FUSE operation %s raised an OSError with negative "
                             "errno %s, returning errno.EINVAL.",
                             func.__name__,
@@ -887,7 +887,7 @@ class FUSE:
                         return -errno.EINVAL
 
                 except Exception:
-                    log.error(
+                    logger.error(
                         "Uncaught exception from FUSE operation %s, "
                         "returning errno.EINVAL.",
                         func.__name__,
@@ -899,7 +899,7 @@ class FUSE:
             if len(args) > 0 and isinstance(args[0], FUSE):
                 self = args[0]
                 self.__critical_exception = e
-            log.critical(
+            logger.critical(
                 "Uncaught critical exception from FUSE operation %s, aborting.",
                 func.__name__,
                 exc_info=True,
@@ -991,17 +991,20 @@ class FUSE:
         else:
             fh = fip.contents.fh
 
+        logger.debug(
+            'Invoking read operation on %s(%s, %s, %s)', path, size, offset, fh
+        )
         ret = self.operations.read(self._decode_optional_path(path), size, offset, fh)
 
         if not ret:
             return 0
 
         retsize = len(ret)
+        logger.debug('Read operation on %s returned %d bytes', path, retsize)
+
         if retsize > size:
             raise RuntimeError(
-                "read too much data ({} bytes, expected {})".format(
-                    retsize, size
-                )
+                "read too much data ({} bytes, expected {})".format(retsize, size)
             )
 
         ctypes.memmove(buf, ret, retsize)
@@ -1152,11 +1155,15 @@ class FUSE:
 
     def releasedir(self, path: typing.Optional[bytes], fip: typing.Any):
         # Ignore raw_fi
-        return self.operations.releasedir(self._decode_optional_path(path), fip.contents.fh)
+        return self.operations.releasedir(
+            self._decode_optional_path(path), fip.contents.fh
+        )
 
     def fsyncdir(self, path: typing.Optional[bytes], datasync: bool, fip: typing.Any):
         # Ignore raw_fi
-        return self.operations.fsyncdir(self._decode_optional_path(path), datasync, fip.contents.fh)
+        return self.operations.fsyncdir(
+            self._decode_optional_path(path), datasync, fip.contents.fh
+        )
 
     def init(self, conn: typing.Any) -> None:
         return self.operations.init('/')
@@ -1164,7 +1171,7 @@ class FUSE:
     def destroy(self, private_data: typing.Any) -> None:
         return self.operations.destroy('/')
 
-    def access(self, path:bytes, amode: int) -> None:
+    def access(self, path: bytes, amode: int) -> None:
         return self.operations.access(path.decode(self.encoding), amode)
 
     def create(self, path: bytes, mode: int, fip: typing.Any) -> None:
