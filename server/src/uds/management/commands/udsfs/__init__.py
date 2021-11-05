@@ -106,4 +106,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.debug("Handling UDS FS")
 
-        fuse = FUSE(UDSFS(), options['mount_point'], foreground=True, allow_other=True, debug=options['debug'])
+        fuse = FUSE(
+            UDSFS(),
+            options['mount_point'],
+            foreground=True,
+            allow_other=True,
+            debug=options['debug'],
+        )
