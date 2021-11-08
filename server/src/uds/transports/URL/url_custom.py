@@ -120,7 +120,7 @@ class URLCustomTransport(transports.Transport):
         username: str = user.getUsernameForAuth()
         username, password = userService.processUserPassword(username, password)
 
-        url = self.urlPattern.value.replace('_IP_', ip).replace('_USERNAME_', username)
+        url = self.urlPattern.value.replace('_IP_', ip).replace('_USER_', username)
 
         onw = (
             '&o_n_w={}'.format(hash(transport.name))
