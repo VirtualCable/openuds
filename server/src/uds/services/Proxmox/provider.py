@@ -137,6 +137,7 @@ class ProxmoxProvider(
         order=91,
         tooltip=_('Starting machine id on proxmox'),
         required=True,
+        rdonly=True,
         tab=gui.ADVANCED_TAB,
     )
 

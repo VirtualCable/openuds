@@ -263,7 +263,7 @@ class gui:
                 'label': options.get('label', ''),
                 'defvalue': str(defvalue),
                 'rdonly': options.get(
-                    'rdonly', options.get('readOnly', False)
+                    'rdonly', options.get('readOnly', options.get('readonly', False))
                 ),  # This property only affects in "modify" operations
                 'order': options.get('order', 0),
                 'tooltip': options.get('tooltip', ''),
