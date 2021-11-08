@@ -502,9 +502,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             raise InvalidServiceException()
 
     def validateTransport(self, transport) -> None:
-        try:
-            self.transports.get(id=transport.id)
-        except:
+        if self.transports.filter(id=transport.id).count() == 0:
             raise InvalidServiceException()
 
     def validateUser(self, user: 'User') -> None:
@@ -659,6 +657,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         Returns the % used services, related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
+        cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
         """
         maxs = self.max_srvs
         if maxs == 0:
@@ -710,6 +709,35 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         # Clears related permissions
         clean(toDelete)
+
+    # returns CSV header
+    @staticmethod
+    def getCSVHeader(sep: str = ',') -> str:
+        return sep.join(
+            [
+                'name',
+                'initial',
+                'cache_l1',
+                'cache_l2',
+                'max',
+                'assigned_services',
+                'cached_services',
+            ]
+        )
+
+    # Return record as csv line using separator (default: ',')
+    def toCsv(self, sep: str = ',') -> str:
+        return sep.join(
+            [
+                self.name,
+                str(self.initial_srvs),
+                str(self.cache_l1_srvs),
+                str(self.cache_l2_srvs),
+                str(self.max_srvs),
+                str(self.assignedUserServices().count()),
+                str(self.cachedUserServices().count()),
+            ]
+        )
 
     def __str__(self):
         return 'Deployed service {}({}) with {} as initial, {} as L1 cache, {} as L2 cache, {} as max'.format(

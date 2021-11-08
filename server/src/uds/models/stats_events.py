@@ -42,6 +42,7 @@ from .util import getSqlDatetimeAsUnix
 
 logger = logging.getLogger(__name__)
 
+
 class StatsEvents(models.Model):
     """
     Statistics about events (login, logout, whatever...)
@@ -135,8 +136,21 @@ class StatsEvents(models.Model):
 
     # returns CSV header
     @staticmethod
-    def getCSVHeader() -> str:
-        return 'owner_type,owner_id,event_type,stamp,field_1,field_2,field_3,field_4'
+    def getCSVHeader(
+        sep: str = '',
+    ) -> str:
+        return sep.join(
+            [
+                'owner_type',
+                'owner_id',
+                'event_type',
+                'stamp',
+                'field_1',
+                'field_2',
+                'field_3',
+                'field_4',
+            ]
+        )
 
     # Return record as csv line using separator (default: ',')
     def toCsv(self, sep: str = ',') -> str:

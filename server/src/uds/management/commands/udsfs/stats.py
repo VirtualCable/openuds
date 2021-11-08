@@ -5,9 +5,11 @@ import typing
 import logging
 
 from uds import models
-from uds.core.util.stats.events import EVENT_NAMES, getOwner
+from uds.core.util.stats.events import EVENT_NAMES
+from uds.core.util.cache import Cache
 
 from . import types
+
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +70,7 @@ class StatsFS(types.UDSFSInterface):
     }
 
     _dispatchers: typing.Mapping[str, typing.Tuple[DispatcherType, bool]]
+    _cache: typing.ClassVar[Cache] = Cache('fsevents')
 
     def __init__(self) -> None:
         # Initialize _dispatchers, Second element of tuple is True if the dispatcher has "intervals"
@@ -105,7 +108,7 @@ class StatsFS(types.UDSFSInterface):
 
             range = self._interval[interval]
         else:
-            range = (StatsFS._interval['today'])  # Does not matter, it's just a placeholder
+            range = (StatsFS._interval['lastmonth'])  # Any value except "today" will do the trick
             extension = interval
 
         if extension != 'csv':
@@ -146,16 +149,32 @@ class StatsFS(types.UDSFSInterface):
 
         dispatcher, interval, extension = self.getFilenameComponents(path)
 
+        # if interval is today, cache time is 10 seconds, else cache time is 60 seconds
+        if interval == StatsFS._interval['today']:
+            cacheTime = 10
+        else:
+            cacheTime = 60
+
+        # Check if the file info is cached
+        cached = self._cache.get(path[0])
+        if cached is not None:
+            logger.debug('Cache hit for %s', path[0])
+            return cached
+
         # Calculate the size of the file
         size = len(dispatcher(interval, extension, 0, 0))
         logger.debug('Size of %s: %s', path[0], size)
 
-        return types.StatType(
+        data = types.StatType(
             st_mode=(stat.S_IFREG | 0o755),
             st_nlink=1,
             st_size=size,
             st_mtime=interval.start_poxix,
         )
+
+        # store in cache
+        self._cache.put(path[0], data, cacheTime)
+        return data
 
     def read(self, path: typing.List[str], size: int, offset: int) -> bytes:
         logger.debug('Reading data from %s: offset: %s, size: %s', path, offset, size)
@@ -192,5 +211,9 @@ class StatsFS(types.UDSFSInterface):
         self, interval: StatInterval, extension: str, size: int, offset: int
     ) -> bytes:
         logger.debug('Reading pools. Interval=%s, extension=%s, offset: %s, size: %s', interval, extension, offset, size)
-        return b'xxxx'
-        
+        # Compose the csv file from what we now of service pools
+        virtualFile = models.ServicePool.getCSVHeader().encode() + b'\n'
+        # First, get the list of service pools
+        for pool in models.ServicePool.objects.all().order_by('name'):
+            virtualFile += pool.toCsv().encode() + b'\n'
+        return virtualFile
