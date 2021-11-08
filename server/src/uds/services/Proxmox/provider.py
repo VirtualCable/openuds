@@ -137,6 +137,7 @@ class ProxmoxProvider(
         order=91,
         tooltip=_('Starting machine id on proxmox'),
         required=True,
+        rdonly=True,
         tab=gui.ADVANCED_TAB,
     )
 
@@ -169,12 +170,13 @@ class ProxmoxProvider(
 
         # Just reset _api connection variable
         self._api = None
-        # All proxmox use same UniqueId generator
-        self._vmid_generator = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
 
         if values is not None:
             self.timeout.value = validators.validateTimeout(self.timeout.value)
             logger.debug(self.host.value)
+
+        # All proxmox use same UniqueId generator
+        self._vmid_generator = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
 
     def testConnection(self) -> bool:
         """
