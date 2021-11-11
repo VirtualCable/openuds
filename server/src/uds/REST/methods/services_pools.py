@@ -60,6 +60,7 @@ from uds.models.calendar_action import (
     CALENDAR_ACTION_DEL_ALL_GROUPS,
     CALENDAR_ACTION_IGNORE_UNUSED,
     CALENDAR_ACTION_REMOVE_USERSERVICES,
+    CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
 )
 
 from uds.core.managers import userServiceManager
@@ -685,6 +686,7 @@ class ServicesPools(ModelHandler):
         validActions += (
             CALENDAR_ACTION_IGNORE_UNUSED,
             CALENDAR_ACTION_REMOVE_USERSERVICES,
+            CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
         )
         return validActions
 
