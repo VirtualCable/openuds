@@ -111,8 +111,8 @@ class LogManager(metaclass=singleton.Singleton):
         if avoidDuplicates:
             try:
                 lg = models.Log.objects.filter(
-                    owner_id=owner_id, owner_type=owner_type, level=level, source=source
-                ).order_by('-created', '-id')[0]
+                    owner_id=owner_id, owner_type=owner_type
+                ).order_by('-id')[0]
                 if lg.data == message:
                     # Do not log again, already logged
                     return

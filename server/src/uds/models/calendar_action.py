@@ -139,7 +139,7 @@ CALENDAR_ACTION_DEL_ALL_TRANSPORTS: typing.Dict[str, typing.Any] = {
     'id': 'REMOVE_ALL_TRANSPORTS',
     'description': _('Remove all transports'),
     'params': (),
-}  
+}
 CALENDAR_ACTION_ADD_GROUP: typing.Dict[str, typing.Any] = {
     'id': 'ADD_GROUP',
     'description': _('Add a group'),
@@ -158,7 +158,7 @@ CALENDAR_ACTION_DEL_ALL_GROUPS: typing.Dict[str, typing.Any] = {
     'id': 'REMOVE_ALL_GROUPS',
     'description': _('Remove all groups'),
     'params': (),
-}  
+}
 CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {
     'id': 'IGNORE_UNUSED',
     'description': _('Sets the ignore unused'),
@@ -175,6 +175,21 @@ CALENDAR_ACTION_REMOVE_USERSERVICES: typing.Dict[str, typing.Any] = {
     'id': 'REMOVE_USERSERVICES',
     'description': _('Remove ALL assigned user service. USE WITH CAUTION!'),
     'params': (),
+}
+
+CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES: typing.Dict[str, typing.Any] = {
+    'id': 'STUCK_USERSERVICES',
+    'description': _('Remove OLD assigned user services.'),
+    'params': (
+        {
+            'type': 'numeric',
+            'name': 'hours',
+            'description': _(
+                'Time in hours before considering the user service is OLD.'
+            ),
+            'default': '72',
+        },
+    ),
 }
 
 
@@ -194,6 +209,7 @@ CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
         CALENDAR_ACTION_DEL_ALL_GROUPS,
         CALENDAR_ACTION_IGNORE_UNUSED,
         CALENDAR_ACTION_REMOVE_USERSERVICES,
+        CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
     )
 }
 
@@ -292,22 +308,22 @@ class CalendarAction(UUIDModel):
 
         saveServicePool = save
 
-        def sizeVal() -> int:
-            v = int(params['size'])
+        def numVal(field: str) -> int:
+            v = int(params[field])
             return v if v >= 0 else 0
 
         executed = False
         if CALENDAR_ACTION_CACHE_L1['id'] == self.action:
-            self.service_pool.cache_l1_srvs = sizeVal()
+            self.service_pool.cache_l1_srvs = numVal('size')
             executed = True
         elif CALENDAR_ACTION_CACHE_L2['id'] == self.action:
-            self.service_pool.cache_l2_srvs = sizeVal()
+            self.service_pool.cache_l2_srvs = numVal('size')
             executed = True
         elif CALENDAR_ACTION_INITIAL['id'] == self.action:
-            self.service_pool.initial_srvs = sizeVal()
+            self.service_pool.initial_srvs = numVal('size')
             executed = True
         elif CALENDAR_ACTION_MAX['id'] == self.action:
-            self.service_pool.max_srvs = sizeVal()
+            self.service_pool.max_srvs = numVal('size')
             executed = True
         elif CALENDAR_ACTION_PUBLISH['id'] == self.action:
             self.service_pool.publish(changeLog='Scheduled publication action')
@@ -315,19 +331,36 @@ class CalendarAction(UUIDModel):
             executed = True
         elif CALENDAR_ACTION_IGNORE_UNUSED['id'] == self.action:
             self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
+            executed = True
         elif CALENDAR_ACTION_REMOVE_USERSERVICES['id'] == self.action:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
             for userService in self.service_pool.assignedUserServices().filter(
                 state=state.State.USABLE
             ):
                 userService.remove()
+            saveServicePool = False
+            executed = True
+        elif CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES['id'] == self.action:
+            # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
+            since = getSqlDatetime() - datetime.timedelta(hours=numVal('hours'))
+            for userService in self.service_pool.assignedUserServices().filter(
+                state_date__lt=since, state=state.State.USABLE
+            ):
+                userService.remove()
+            saveServicePool = False
+            executed = True
         elif CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id'] == self.action:
             # 2.- Remove all transports
             self.service_pool.transports.all().delete()
+            saveServicePool = False
+            executed = True
         elif CALENDAR_ACTION_DEL_ALL_GROUPS['id'] == self.action:
             # 3.- Remove all groups
             self.service_pool.assignedGroups.all().detete()
-        else:
+            saveServicePool = False
+            executed = True
+        else:  # Add/remove transport or group
+            saveServicePool = False
             caTransports = (
                 CALENDAR_ACTION_ADD_TRANSPORT['id'],
                 CALENDAR_ACTION_DEL_TRANSPORT['id'],
@@ -348,7 +381,6 @@ class CalendarAction(UUIDModel):
                     self.service_pool.log(
                         'Scheduled action not executed because transport is not available anymore'
                     )
-                saveServicePool = False
             elif self.action in caGroups:
                 try:
                     auth, grp = params['group'].split('@')
@@ -362,7 +394,6 @@ class CalendarAction(UUIDModel):
                     self.service_pool.log(
                         'Scheduled action not executed because group is not available anymore'
                     )
-                saveServicePool = False
 
         if executed:
             try:

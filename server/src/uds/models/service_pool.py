@@ -712,7 +712,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         clean(toDelete)
 
     def __str__(self):
-        return 'Deployed service {}({}) with {} as initial, {} as L1 cache, {} as L2 cache, {} as max'.format(
+        return 'Service pool {}({}) with {} as initial, {} as L1 cache, {} as L2 cache, {} as max'.format(
             self.name,
             self.id,
             self.initial_srvs,
