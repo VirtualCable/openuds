@@ -43,7 +43,7 @@ from .permissions import Permissions
 
 # Services
 from .provider import Provider
-from .service import Service
+from .service import Service, ServiceTokenAlias
 
 # Os managers
 from .os_manager import OSManager

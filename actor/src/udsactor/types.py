@@ -50,6 +50,7 @@ class InitializationResultType(typing.NamedTuple):
     own_token: typing.Optional[str] = None
     unique_id: typing.Optional[str] = None
     os: typing.Optional[ActorOsConfigurationType] = None
+    alias_token: typing.Optional[str] = None
 
 class LoginResultInfoType(typing.NamedTuple):
     ip: str

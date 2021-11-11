@@ -42,12 +42,13 @@ from uds.models import (
 )
 
 # from uds.core import VERSION
-from uds.core.managers import userServiceManager
+from uds.core.managers import userServiceManager, cryptoManager
 from uds.core import osmanagers
 from uds.core.util import log, certs
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
+from uds.models.service import ServiceTokenAlias
 
 from ..handlers import Handler, AccessDenied, RequestError
 
@@ -241,11 +242,23 @@ class Initialize(ActorV3Action):
         # First, validate token...
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         service: typing.Optional[Service] = None
+        alias_token: typing.Optional[str] = None
         try:
+            token = self._params['token']
             # First, try to locate an user service providing this token.
             if self._params['type'] == UNMANAGED:
-                # If unmanaged, use Service locator
-                service = Service.objects.get(token=self._params['token'])
+                alias_token = token  # Store token as possible alias
+                # First, try to locate on alias table
+                if ServiceTokenAlias.objects.get(alias=token).exists():
+                    # Retrieve real service from token alias
+                    service = ServiceTokenAlias.objects.get(alias=token).service
+                # If not found, try to locate on service table
+                if service is None: # Not on alias token, try to locate on Service table
+                    service = Service.objects.get(token=token)
+                    # And create a new alias for it, and save
+                    alias_token = cryptoManager().randomString()  # fix alias with new token
+                    service.aliases.create(alias=alias_token)
+
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service
                 idsList = [x['ip'] for x in self._params['id']] + [
@@ -255,7 +268,7 @@ class Initialize(ActorV3Action):
             else:
                 # If not service provided token, use actor tokens
                 ActorToken.objects.get(
-                    token=self._params['token']
+                    token=token
                 )  # Not assigned, because only needs check
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
@@ -280,7 +293,7 @@ class Initialize(ActorV3Action):
             except Exception as e:
                 logger.info('Unmanaged host request: %s, %s', self._params, e)
                 return ActorV3Action.actorResult(
-                    {'own_token': None, 'max_idle': None, 'unique_id': None, 'os': None}
+                    {'own_token': None, 'max_idle': None, 'unique_id': None, 'os': None, 'alias': None}
                 )
 
             # Managed by UDS, get initialization data from osmanager and return it
@@ -296,6 +309,9 @@ class Initialize(ActorV3Action):
                     'own_token': userService.uuid,
                     'unique_id': userService.unique_id,
                     'os': osData,
+                    # alias will contain a new master token (or same alias if not a token) to allow change on unmanaged machines.
+                    # Managed machines will not use this field (will return None)
+                    'alias_token': alias_token,
                 }
             )
         except (ActorToken.DoesNotExist, Service.DoesNotExist):

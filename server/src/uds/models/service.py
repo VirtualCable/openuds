@@ -54,6 +54,20 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+class ServiceTokenAlias(models.Model):
+    """
+    This model stores the alias for a service token.
+    """
+
+    service = models.ForeignKey(
+        'Service', on_delete=models.CASCADE, related_name='aliases'
+    )
+    alias = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.alias
+
+
 class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
     A Service represents an specidied type of service offered to final users,
@@ -79,6 +93,8 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     # "fake" declarations for type checking
     objects: 'models.BaseManager[Service]'
     deployedServices: 'models.QuerySet[ServicePool]'
+    aliases: 'models.QuerySet[ServiceTokenAlias]'
+
 
     class Meta(ManagedObjectModel.Meta):
         """

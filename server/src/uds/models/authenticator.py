@@ -245,6 +245,31 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         # Clears related permissions
         clean(toDelete)
 
+
+    # returns CSV header
+    @staticmethod
+    def getCSVHeader(sep: str = ',') -> str:
+        return sep.join(
+            [
+                'name',
+                'type',
+                'users',
+                'groups',
+            ]
+        )
+
+    # Return record as csv line using separator (default: ',')
+    def toCsv(self, sep: str = ',') -> str:
+        return sep.join(
+            [
+                self.name,
+                self.data_type,
+                str(self.users.count()),
+                str(self.groups.count()),
+            ]
+        )
+
+
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 

@@ -274,7 +274,8 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         return False
 
                     # Only removes master token for managed machines (will need it on next client execution)
-                    master_token = None if self.isManaged() else self._cfg.master_token
+                    # For unmanaged, if alias is present, replace master token with it
+                    master_token = None if self.isManaged() else (initResult.alias_token or self._cfg.master_token)
                     self._cfg = self._cfg._replace(
                         master_token=master_token,
                         own_token=initResult.own_token,
@@ -284,9 +285,10 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         )
                     )
 
-                # On first successfull initialization request, master token will dissapear for managed hosts so it will be no more available (not needed anyway)
-                if self.isManaged():
-                    platform.store.writeConfig(self._cfg)
+                # On first successfull initialization request, master token will dissapear for managed hosts
+                # so it will be no more available (not needed anyway). For unmanaged, the master token will
+                # be replaced with an alias token.
+                platform.store.writeConfig(self._cfg)
 
                 # Setup logger now
                 if self._cfg.own_token:

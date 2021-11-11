@@ -270,6 +270,7 @@ class UDSServerApi(UDSApi):
             )
             if r['os']
             else None,
+            alias_token=r.get('alias_token'),  # Possible alias for unmanaged
         )
 
     def ready(
