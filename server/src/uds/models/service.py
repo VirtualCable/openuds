@@ -62,7 +62,7 @@ class ServiceTokenAlias(models.Model):
     service = models.ForeignKey(
         'Service', on_delete=models.CASCADE, related_name='aliases'
     )
-    alias = models.CharField(max_length=128)
+    alias = models.CharField(max_length=64, unique=True)
 
     def __str__(self):
         return self.alias
@@ -85,7 +85,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     )
 
     token = models.CharField(
-        max_length=32, default=None, null=True, blank=True, unique=True
+        max_length=64, default=None, null=True, blank=True, unique=True
     )
 
     _cachedInstance: typing.Optional['services.Service'] = None
