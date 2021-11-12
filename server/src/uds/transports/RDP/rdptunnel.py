@@ -37,6 +37,7 @@ from uds.core.ui import gui
 from uds.core import transports
 from uds.models import TicketStore
 from uds.core.util import os_detector as OsDetector
+from uds.core.util import validators
 
 from .rdp_base import BaseRDPTransport
 from .rdp_file import RDPFile
@@ -58,6 +59,7 @@ class TRDPTransport(BaseRDPTransport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     iconFile = 'rdp-tunnel.png'
     typeName = _('RDP')
     typeType = 'TSRDPTransport'
@@ -130,10 +132,7 @@ class TRDPTransport(BaseRDPTransport):
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
-            if values['tunnelServer'].count(':') != 1:
-                raise transports.Transport.ValidationException(
-                    _('Must use HOST:PORT in Tunnel Server Field')
-                )
+            validators.validateHostPortPair(values.get('tunnelServer', ''))
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
         self,
