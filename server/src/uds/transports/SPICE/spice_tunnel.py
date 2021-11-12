@@ -37,6 +37,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports
 from uds.core.util import os_detector as OsDetector
+from uds.core.util import validators
 from uds.models import TicketStore
 
 from .spice_base import BaseSpiceTransport
@@ -102,10 +103,7 @@ class TSPICETransport(BaseSpiceTransport):
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
-            if values['tunnelServer'].count(':') != 1:
-                raise transports.Transport.ValidationException(
-                    _('Must use HOST:PORT in Tunnel Server Field')
-                )
+            validators.validateHostPortPair(values.get('tunnelServer', ''))
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
         self,

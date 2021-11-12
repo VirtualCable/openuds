@@ -38,7 +38,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui import gui
 from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.util import os_detector as OsDetector
-from uds.core.util import tools
+from uds.core.util import tools, validators
 from uds.core import transports
 from uds.models import TicketStore
 from .x2go_base import BaseX2GOTransport
@@ -111,10 +111,7 @@ class TX2GOTransport(BaseX2GOTransport):
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
-            if values['tunnelServer'].count(':') != 1:
-                raise BaseX2GOTransport.ValidationException(
-                    _('Must use HOST:PORT in Tunnel Server Field')
-                )
+            validators.validateHostPortPair(values.get('tunnelServer', ''))
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
         self,
