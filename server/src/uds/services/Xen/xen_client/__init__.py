@@ -172,7 +172,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         return self.pool.get_name_label(pool)
 
     # Login/Logout
-    def login(self, switchToMaster: bool = False) -> None:
+    def login(self, switchToMaster: bool = False, backupChecked: bool = False) -> None:
         try:
             # We recalculate here url, because we can "switch host" on any moment
             self._url = self._protocol + self._host + ':' + self._port
@@ -202,16 +202,16 @@ class XenServer:  # pylint: disable=too-many-public-methods
                     e.details[1],
                 )
                 self._host = e.details[1]
-                self.login()
+                self.login(backupChecked=backupChecked)
             else:
                 raise XenFailure(e.details)
         except Exception:
-            if self._host == self._host_backup or not self._host_backup:
-                logger.exception('Unrecognized xenapi exception')
+            if self._host == self._host_backup or not self._host_backup or backupChecked:
+                logger.exception('Connection to master server is broken and backup connection unavailable.')
                 raise
             # Retry connection to backup host
             self._host = self._host_backup
-            self.login()
+            self.login(backupChecked=True)
 
     def test(self) -> None:
         self.login(False)
