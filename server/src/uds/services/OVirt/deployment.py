@@ -204,16 +204,21 @@ class OVirtLinkedDeployment(services.UserDeployment):
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
-        state = self.service().getMachineState(self._vmid)
+        try:
+            state = self.service().getMachineState(self._vmid)
 
-        if state == 'unknown':
-            return self.__error('Machine is not available anymore')
+            if state == 'unknown':
+                return self.__error('Machine is not available anymore')
 
-        if state not in UP_STATES:
-            self._queue = [opStart, opFinish]
-            return self.__executeQueue()
+            if state not in UP_STATES:
+                self._queue = [opStart, opFinish]
+                return self.__executeQueue()
 
-        self.cache.put('ready', '1')
+            self.cache.put('ready', '1')
+        except Exception as e:
+            self.doLog(log.ERROR, 'Error on setReady: {}'.format(e))
+            # Treat as operation done, maybe the machine is ready and we can continue
+
         return State.FINISHED
 
     def reset(self) -> None:

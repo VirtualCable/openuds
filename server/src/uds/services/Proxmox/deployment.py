@@ -172,16 +172,18 @@ class ProxmoxDeployment(services.UserDeployment):
 
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
+            if vmInfo.status == 'stopped':
+                self._queue = [opStart, opFinish]
+                return self.__executeQueue()
+
+            self.cache.put('ready', '1')
         except client.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
-        except Exception:
-            return self.__error('Machine not found')
+        except Exception as e:
+            self.doLog(log.ERROR, 'Error on setReady: {}'.format(e))
+            # Treat as operation done, maybe the machine is ready and we can continue
+            # return self.__error('Machine not found')
 
-        if vmInfo.status == 'stopped':
-            self._queue = [opStart, opFinish]
-            return self.__executeQueue()
-
-        self.cache.put('ready', '1')
         return State.FINISHED
 
     def reset(self) -> None:
