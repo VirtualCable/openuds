@@ -53,9 +53,10 @@ if typing.TYPE_CHECKING:
 cache = Cache('StatsDispatcher')
 
 # Enclosed methods under /stats path
-POINTS = 300
+POINTS = 150
 SINCE = 30  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
 USE_MAX = True
+CACHE_TIME = SINCE * 24 * 3600 // POINTS
 
 
 def getServicesPoolsCounters(
@@ -93,7 +94,7 @@ def getServicesPoolsCounters(
                 val.append({'stamp': x[0], 'value': int(x[1])})
             logger.debug('val: %s', val)
             if len(val) >= 2:
-                cache.put(cacheKey, codecs.encode(pickle.dumps(val), 'zip'), 600)
+                cache.put(cacheKey, codecs.encode(pickle.dumps(val), 'zip'), CACHE_TIME*2)
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:

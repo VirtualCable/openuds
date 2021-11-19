@@ -142,19 +142,24 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
-        status = self.service().getMachineState(self._vmid)
+        try:
+            status = self.service().getMachineState(self._vmid)
 
-        if openstack.statusIsLost(status):
-            return self.__error('Machine is not available anymore')
+            if openstack.statusIsLost(status):
+                return self.__error('Machine is not available anymore')
 
-        if status == openstack.PAUSED:
-            self.service().resumeMachine(self._vmid)
-        elif status in (openstack.STOPPED, openstack.SHUTOFF):
-            self.service().startMachine(self._vmid)
+            if status == openstack.PAUSED:
+                self.service().resumeMachine(self._vmid)
+            elif status in (openstack.STOPPED, openstack.SHUTOFF):
+                self.service().startMachine(self._vmid)
 
-        # Right now, we suppose the machine is ready
+            # Right now, we suppose the machine is ready
 
-        self.cache.put('ready', '1')
+            self.cache.put('ready', '1')
+        except Exception as e:
+            self.doLog(log.ERROR, 'Error on setReady: {}'.format(e))
+            # Treat as operation done, maybe the machine is ready and we can continue
+
         return State.FINISHED
 
     def reset(self) -> None:

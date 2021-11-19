@@ -141,14 +141,21 @@ class XenLinkedDeployment(UserDeployment):
         return self._ip
 
     def setReady(self) -> str:
+        if self.cache.get('ready') == '1':
+            return State.FINISHED
+
         try:
             state = self.service().getVMPowerState(self._vmid)
 
             if state != XenPowerState.running:
                 self._queue = [opStart, opFinish]
                 return self.__executeQueue()
-        except Exception:
-            return self.__error('Machine is not available anymore')
+
+            self.cache.put('ready', '1', 30)                
+        except Exception as e:
+            # On case of exception, log an an error and return as if the operation was executed
+            self.doLog(log.ERROR, 'Error setting machine state: {}'.format(e))
+            # return self.__error('Machine is not available anymore')
 
         return State.FINISHED
 

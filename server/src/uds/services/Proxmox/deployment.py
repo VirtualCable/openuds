@@ -174,8 +174,8 @@ class ProxmoxDeployment(services.UserDeployment):
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except client.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
-        except Exception:
-            return self.__error('Machine not found')
+        except Exception as e:
+            return self.__error('Machine not found: {}'.format(e))
 
         if vmInfo.status == 'stopped':
             self._queue = [opStart, opFinish]

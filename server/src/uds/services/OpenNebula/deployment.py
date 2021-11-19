@@ -131,14 +131,19 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
-        state = self.service().getMachineState(self._vmid)
+        try:
+            state = self.service().getMachineState(self._vmid)
 
-        if state == on.types.VmState.UNKNOWN:  # @UndefinedVariable
-            return self.__error('Machine is not available anymore')
+            if state == on.types.VmState.UNKNOWN:  # @UndefinedVariable
+                return self.__error('Machine is not available anymore')
 
-        self.service().startMachine(self._vmid)
+            self.service().startMachine(self._vmid)
 
-        self.cache.put('ready', '1')
+            self.cache.put('ready', '1')
+        except Exception as e:
+            self.doLog(log.ERROR, 'Error on setReady: {}'.format(e))
+            # Treat as operation done, maybe the machine is ready and we can continue
+
         return State.FINISHED
 
     def reset(self) -> None:
