@@ -31,7 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
-import json
+try:
+    import orjson as json
+except ImportError:
+    import json as json  # type: ignore
+
 import logging
 import time
 import types
