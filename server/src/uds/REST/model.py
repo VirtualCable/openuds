@@ -46,7 +46,7 @@ from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
 
-from uds.models import Tag, TaggingMixin, ManagedObjectModel
+from uds.models import Tag, TaggingMixin, ManagedObjectModel, Network
 
 from .handlers import (
     Handler,
@@ -205,6 +205,49 @@ class BaseModelHandler(Handler):
                     'order': 0 - 80,
                 },
             )
+        if 'networks' in flds:
+            self.addField(
+                gui,
+                {
+                    'name': 'net_filtering',
+                    'value': 'x',
+                    'values': [
+                        {'id': 'x', 'text': _('Disabled')},
+                        {'id': 'a', 'text': _('Allow')},
+                        {'id': 'd', 'text': _('Deny')},
+                    ],
+                    'label': _('Network Filtering'),
+                    'tooltip': _(
+                        'Type of network filtering. Use "Disabled" to disable origin check, "Allow" to only enable for selected networks or "Deny" to deny from selected networks'
+                    ),
+                    'type': 'choice',
+                    'order': 100,  # At end
+                    'tab': uiGui.ADVANCED_TAB,
+
+                },
+            )
+            self.addField(
+                gui,
+                {
+                    'name': 'networks',
+                    'value': [],
+                    'values': sorted(
+                        [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
+                        key=lambda x: x['text'].lower(),
+                    ),
+                    'label': _('Networks'),
+                    'tooltip': _(
+                        'Networks associated. If No network selected, will mean "all networks"'
+                    ),
+                    'type': 'multichoice',
+                    'order': 101,
+                    'tab': uiGui.ADVANCED_TAB,
+
+                },
+            )
+
+
+
 
         return gui
 

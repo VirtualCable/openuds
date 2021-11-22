@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
+# Try to use orjson if available
 try:
     import orjson as json
 except ImportError:

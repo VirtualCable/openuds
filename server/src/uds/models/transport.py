@@ -56,10 +56,14 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
     Sample of transports are RDP, Spice, Web file uploader, etc...
     """
+    # Constants for net_filter
+    DISABLED = 'd'
+    ALLOW = 'a'
+    DENY = 'x'
 
     # pylint: disable=model-missing-unicode
     priority = models.IntegerField(default=0, db_index=True)
-    nets_positive = models.BooleanField(default=False)
+    net_filtering = models.CharField(max_length=1, default=DISABLED, db_index=True)
     # We store allowed oss as a comma-separated list
     allowed_oss = models.CharField(max_length=255, default='')
     # Label, to group transports on meta pools
@@ -112,23 +116,22 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
             False if the ip can't access this Transport.
 
-            The ip check is done this way:
-            * If The associated network is empty, the result is always True
-            * If the associated network is not empty, and nets_positive (field) is True, the result will be True if
-            the ip is contained in any subnet associated with this transport.
-            * If the associated network is empty, and nets_positive (field) is False, the result will be True if
-            the ip is NOT contained in ANY subnet associated with this transport.
-
+            The check is done using the net_filtering field.
+            if net_filtering is 'x' (disabled), then the result is always True
+            if net_filtering is 'a' (allow), then the result is True is the ip is in the networks
+            if net_filtering is 'd' (deny), then the result is True is the ip is not in the networks
         Raises:
 
         :note: Ip addresses has been only tested with IPv4 addresses
         """
-        if self.networks.count() == 0:
+        if self.net_filtering == 'x':
             return True
         ip = net.ipToLong(ipStr)
-        if self.nets_positive:
-            return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() > 0
-        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
+        # Allow
+        if self.net_filtering == 'a':
+            return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists()
+        # Deny, must not be in any network
+        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
 
     def validForOs(self, os: str) -> bool:
         if not self.allowed_oss or os in self.allowed_oss.split(','):

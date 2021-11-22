@@ -37,7 +37,7 @@ from django.db.models import signals
 
 from uds.core import auths
 from uds.core import environment
-from uds.core.util import log
+from uds.core.util import log, net
 from uds.core.util.state import State
 
 from .managed_object_model import ManagedObjectModel
@@ -46,7 +46,7 @@ from .util import NEVER
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import User, Group
+    from uds.models import User, Group, Network
 
 
 logger = logging.getLogger(__name__)
@@ -57,15 +57,29 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...
     """
+    # Constants for Visibility
+    VISIBLE = 'v'
+    HIDDEN = 'h'
+
+    # Visibility and net_filter
+    DISABLED = 'd'
+
+    # net_filter
+    ALLOW = 'a'
+    DENY = 'd'
 
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
-    visible = models.BooleanField(default=True)
+    state = models.CharField(max_length=1, default=VISIBLE, db_index=True)
+    # visible = models.BooleanField(default=True)
+    net_filtering = models.CharField(max_length=1, default=DISABLED, db_index=True)
 
     # "fake" relations declarations for type checking
     objects: 'models.BaseManager[Authenticator]'
     users: 'models.QuerySet[User]'
     groups: 'models.QuerySet[Group]'
+
+    networks: 'models.QuerySet[Network]'
 
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
@@ -184,6 +198,35 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             return State.isActive(usr.state)
         except Exception:
             return falseIfNotExists
+
+    def validForIp(self, ipStr: str) -> bool:
+        """
+        Checks if this transport is valid for the specified IP.
+
+        Args:
+           ip: Numeric ip address to check validity for. (xxx.xxx.xxx.xxx).
+
+        Returns:
+            True if the ip can access this Transport.
+
+            False if the ip can't access this Transport.
+
+            The check is done using the net_filtering field.
+            if net_filtering is 'x' (disabled), then the result is always True
+            if net_filtering is 'a' (allow), then the result is True is the ip is in the networks
+            if net_filtering is 'd' (deny), then the result is True is the ip is not in the networks
+        Raises:
+
+        :note: Ip addresses has been only tested with IPv4 addresses
+        """
+        if self.net_filtering == 'x':
+            return True
+        ip = net.ipToLong(ipStr)
+        # Allow
+        if self.net_filtering == 'a':
+            return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists()
+        # Deny, must not be in any network
+        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
 
     @staticmethod
     def all() -> 'models.QuerySet[Authenticator]':

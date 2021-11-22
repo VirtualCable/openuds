@@ -55,7 +55,7 @@ class Transports(ModelHandler):
         'comments',
         'tags',
         'priority',
-        'nets_positive',
+        'net_filtering',
         'allowed_oss',
         'label',
     ]
@@ -87,37 +87,7 @@ class Transports(ModelHandler):
             raise self.invalidItemException()
 
         field = self.addDefaultFields(
-            transport.guiDescription(), ['name', 'comments', 'tags', 'priority']
-        )
-        field = self.addField(
-            field,
-            {
-                'name': 'nets_positive',
-                'value': True,
-                'label': ugettext('Network access'),
-                'tooltip': ugettext(
-                    'If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'
-                ),
-                'type': 'checkbox',
-                'order': 100,  # At end
-            },
-        )
-        field = self.addField(
-            field,
-            {
-                'name': 'networks',
-                'value': [],
-                'values': sorted(
-                    [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
-                    key=lambda x: x['text'].lower(),
-                ),
-                'label': ugettext('Networks'),
-                'tooltip': ugettext(
-                    'Networks associated with this transport. If No network selected, will mean "all networks"'
-                ),
-                'type': 'multichoice',
-                'order': 101,
-            },
+            transport.guiDescription(), ['name', 'comments', 'tags', 'priority', 'networks']
         )
         field = self.addField(
             field,
@@ -136,6 +106,7 @@ class Transports(ModelHandler):
                     'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
                 ),
                 'type': 'multichoice',
+                'tab': gui.ADVANCED_TAB,
                 'order': 102,
             },
         )
@@ -182,8 +153,8 @@ class Transports(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'priority': item.priority,
-            'nets_positive': item.nets_positive,
             'label': item.label,
+            'net_filtering': item.net_filtering,
             'networks': [{'id': n.uuid} for n in item.networks.all()],
             'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')]
             if item.allowed_oss != ''
@@ -206,7 +177,7 @@ class Transports(ModelHandler):
         except Exception:  # No networks passed in, this is ok
             logger.debug('No networks')
             return
-        if networks is None:
+        if networks is None:  # None is not provided, empty list is ok and means no networks
             return
         logger.debug('Networks: %s', networks)
         item.networks.set(Network.objects.filter(uuid__in=networks))  # type: ignore  # set is not part of "queryset"

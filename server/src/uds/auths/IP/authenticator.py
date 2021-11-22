@@ -112,9 +112,10 @@ class IPAuth(auths.Authenticator):
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
         validNets = self.visibleFromNets.value.strip()
-        if not validNets or net.ipInNetwork(request.ip, validNets):
-            return True
-        return False
+        # If has networks and not in any of them, not visible
+        if validNets and not net.ipInNetwork(request.ip, validNets):
+            return False
+        return super().isVisibleFrom(request)
 
     def internalAuthenticate(
         self,

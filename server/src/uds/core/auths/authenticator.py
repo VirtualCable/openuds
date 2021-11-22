@@ -44,7 +44,7 @@ if typing.TYPE_CHECKING:
         HttpResponse,
     )  # pylint: disable=ungrouped-imports
     from uds.core.environment import Environment
-    from uds.core.util.request import ExtendedHttpRequestWithUser, ExtendedHttpRequest
+    from uds.core.util.request import ExtendedHttpRequest
     from uds import models
     from .groups_manager import GroupsManager
 
@@ -338,7 +338,12 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
-        return True
+        from uds.core.util.request import ExtendedHttpRequest
+        from uds.models import Authenticator as dbAuth
+
+        if isinstance(request, ExtendedHttpRequest):
+            return self._dbAuth.validForIp(request.ip)
+        return self._dbAuth.state == dbAuth.VISIBLE
 
     def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
         """

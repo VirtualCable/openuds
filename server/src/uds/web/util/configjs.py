@@ -91,19 +91,21 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
 
     tag = request.session.get('tag', None)
     logger.debug('Tag config: %s', tag)
+    auths = Authenticator.objects.exclude(state=Authenticator.DISABLED)
+    authenticators: typing.List[Authenticator] = []
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
         try:
             # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
             # tag, later will remove "auth_host"
-            authenticators = Authenticator.objects.filter(
+            authenticators = list(auths.filter(
                 small_name__in=[auth_host, tag]
-            )[:]
+            ))
         except Exception as e:
             authenticators = []
     else:
-        authenticators = Authenticator.objects.all().exclude(visible=False)
+        authenticators = list(auths)
 
-    # Filter out non visible authenticators
+    # Filter out non visible authenticators (using origin and visible field right now)
     authenticators = [a for a in authenticators if a.getInstance().isVisibleFrom(request)]
 
     # logger.debug('Authenticators PRE: %s', authenticators)

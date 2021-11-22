@@ -67,7 +67,8 @@ class Networks(ModelHandler):
             }
         },
         {'net_string': {'title': _('Range')}},
-        {'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
+        {'transports_count': {'title': _('Transports'), 'type': 'numeric', 'width': '8em'}},
+        {'authenticators_count': {'title': _('Authenticators'), 'type': 'numeric', 'width': '8em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -102,6 +103,7 @@ class Networks(ModelHandler):
             'name': item.name,
             'tags': [tag.tag for tag in item.tags.all()],
             'net_string': item.net_string,
-            'networks_count': item.transports.count(),
+            'transports_count': item.transports.count(),
+            'authenticators_count': item.authenticators.count(),
             'permission': permissions.getEffectivePermission(self._user, item),
         }

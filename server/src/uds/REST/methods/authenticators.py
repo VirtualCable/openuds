@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import Authenticator
+from uds.models import Authenticator, Network
 from uds.core import auths
 
 from uds.REST import NotFound
@@ -46,7 +46,6 @@ from .users_groups import Users, Groups
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.db import models
     from uds.core import Module
 
 logger = logging.getLogger(__name__)
@@ -58,7 +57,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'state']
 
     table_title = _('Authenticators')
     table_fields = [
@@ -67,7 +66,14 @@ class Authenticators(ModelHandler):
         {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
-        {'visible': {'title': _('Visible'), 'type': 'callback', 'width': '3em'}},
+        {
+            'state': {
+                'title': _('Access'),
+                'type': 'dict',
+                'dict': {'x': _('Visible'), 'h': _('Hidden'), 'd': 'Disabled'},
+                'width': '3em',
+            }
+        },
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
@@ -95,25 +101,30 @@ class Authenticators(ModelHandler):
         try:
             tgui = auths.factory().lookup(type_)
             if tgui:
-                g = self.addDefaultFields(
+                field = self.addDefaultFields(
                     tgui.guiDescription(),
-                    ['name', 'comments', 'tags', 'priority', 'small_name'],
+                    ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
                 )
                 self.addField(
-                    g,
+                    field,
                     {
-                        'name': 'visible',
-                        'value': True,
-                        'label': ugettext('Visible'),
+                        'name': 'state',
+                        'value': Authenticator.VISIBLE,
+                        'values': [
+                            {'id': Authenticator.VISIBLE, 'text': _('Visible')},
+                            {'id': Authenticator.HIDDEN, 'text': _('Hidden')},
+                            {'id': Authenticator.DISABLED, 'text': _('Disabled')},
+                        ],
+                        'label': ugettext('Access'),
                         'tooltip': ugettext(
-                            'If active, transport will be visible for users'
+                            'Access type for this transport. Disabled means not only hidden, but also not usable as login method.'
                         ),
-                        'type': gui.InputField.CHECKBOX_TYPE,
+                        'type': gui.InputField.CHOICE_TYPE,
                         'order': 107,
                         'tab': ugettext('Display'),
                     },
                 )
-                return g
+                return field
             raise Exception()  # Not found
         except Exception:
             raise NotFound('type not found')
@@ -127,7 +138,9 @@ class Authenticators(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'priority': item.priority,
-            'visible': item.visible,
+            'net_filtering': item.net_filtering,
+            'networks': [{'id': n.uuid} for n in item.networks.all()],
+            'state': item.state,
             'small_name': item.small_name,
             'users_count': item.users.count(),
             'type': type_.type(),
