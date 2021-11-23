@@ -60,11 +60,12 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     # Constants for Visibility
     VISIBLE = 'v'
     HIDDEN = 'h'
-
-    # Visibility and net_filter
     DISABLED = 'd'
 
     # net_filter
+    # Note: this are STANDARD values used on "default field" networks on RESP API
+    # Named them for better reading, but cannot be changed, since they are used on RESP API
+    NO_FILTERING = 'n'
     ALLOW = 'a'
     DENY = 'd'
 
@@ -72,7 +73,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     small_name = models.CharField(max_length=32, default='', db_index=True)
     state = models.CharField(max_length=1, default=VISIBLE, db_index=True)
     # visible = models.BooleanField(default=True)
-    net_filtering = models.CharField(max_length=1, default=DISABLED, db_index=True)
+    net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
 
     # "fake" relations declarations for type checking
     objects: 'models.BaseManager[Authenticator]'
@@ -212,18 +213,18 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             False if the ip can't access this Transport.
 
             The check is done using the net_filtering field.
-            if net_filtering is 'x' (disabled), then the result is always True
+            if net_filtering is 'd' (disabled), then the result is always True
             if net_filtering is 'a' (allow), then the result is True is the ip is in the networks
             if net_filtering is 'd' (deny), then the result is True is the ip is not in the networks
         Raises:
 
         :note: Ip addresses has been only tested with IPv4 addresses
         """
-        if self.net_filtering == 'x':
+        if self.net_filtering == Authenticator.NO_FILTERING:
             return True
         ip = net.ipToLong(ipStr)
         # Allow
-        if self.net_filtering == 'a':
+        if self.net_filtering == Authenticator.ALLOW:
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists()
         # Deny, must not be in any network
         return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False

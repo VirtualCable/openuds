@@ -57,7 +57,17 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'state']
+    # Networks is treated on "beforeSave", so it is not include on "save_fields" because it is not
+    # automatically included in the "save" method.
+    save_fields = [
+        'name',
+        'comments',
+        'tags',
+        'priority',
+        'small_name',
+        'net_filtering',
+        'state',
+    ]
 
     table_title = _('Authenticators')
     table_fields = [
@@ -70,7 +80,7 @@ class Authenticators(ModelHandler):
             'state': {
                 'title': _('Access'),
                 'type': 'dict',
-                'dict': {'x': _('Visible'), 'h': _('Hidden'), 'd': 'Disabled'},
+                'dict': {'v': _('Visible'), 'h': _('Hidden'), 'd': 'Disabled'},
                 'width': '3em',
             }
         },
@@ -148,6 +158,19 @@ class Authenticators(ModelHandler):
             'type_info': self.typeInfo(type_),
             'permission': permissions.getEffectivePermission(self._user, item),
         }
+
+    def afterSave(self, item: Authenticator) -> None:
+        try:
+            networks = self._params['networks']
+        except Exception:  # No networks passed in, this is ok
+            logger.debug('No networks')
+            return
+        if (
+            networks is None
+        ):  # None is not provided, empty list is ok and means no networks
+            return
+        logger.debug('Networks: %s', networks)
+        item.networks.set(Network.objects.filter(uuid__in=networks))  # type: ignore  # set is not part of "queryset"
 
     # Custom "search" method
     def search(self, item: Authenticator) -> typing.List[typing.Dict]:

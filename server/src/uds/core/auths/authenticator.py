@@ -292,7 +292,11 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         return []
 
     def authenticate(
-        self, username: str, credentials: str, groupsManager: 'GroupsManager', request: 'ExtendedHttpRequest'
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'GroupsManager',
+        request: 'ExtendedHttpRequest',
     ) -> bool:
         """
         This method must be overriden, and is responsible for authenticating
@@ -334,16 +338,16 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return False
 
-    def isVisibleFrom(self, request: 'HttpRequest'):
+    def isAccesibleFrom(self, request: 'HttpRequest'):
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
         from uds.core.util.request import ExtendedHttpRequest
         from uds.models import Authenticator as dbAuth
 
-        if isinstance(request, ExtendedHttpRequest):
-            return self._dbAuth.validForIp(request.ip)
-        return self._dbAuth.state == dbAuth.VISIBLE
+        return self._dbAuth.state != dbAuth.DISABLED and self._dbAuth.validForIp(
+            typing.cast('ExtendedHttpRequest', request).ip
+        )
 
     def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
         """
@@ -361,7 +365,11 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         return username
 
     def internalAuthenticate(
-        self, username: str, credentials: str, groupsManager: 'GroupsManager', request: 'ExtendedHttpRequest'
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'GroupsManager',
+        request: 'ExtendedHttpRequest',
     ) -> bool:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test

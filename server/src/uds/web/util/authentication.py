@@ -111,7 +111,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
                 _('Too many authentication errrors. User temporarily blocked'),
             )
         # check if authenticator is visible for this requests
-        if authInstance.isVisibleFrom(request=request) is False:
+        if authInstance.isAccesibleFrom(request=request) is False:
             authLogLogin(
                 request,
                 authenticator,

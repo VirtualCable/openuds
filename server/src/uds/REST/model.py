@@ -210,11 +210,11 @@ class BaseModelHandler(Handler):
                 gui,
                 {
                     'name': 'net_filtering',
-                    'value': 'x',
+                    'value': 'n',
                     'values': [
-                        {'id': 'x', 'text': _('Disabled')},
-                        {'id': 'a', 'text': _('Allow')},
-                        {'id': 'd', 'text': _('Deny')},
+                        {'id': 'n', 'text': _('No filtering')},
+                        {'id': 'a', 'text': _('Allow selected networks')},
+                        {'id': 'd', 'text': _('Deny selected networks')},
                     ],
                     'label': _('Network Filtering'),
                     'tooltip': _(

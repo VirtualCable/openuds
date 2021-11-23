@@ -59,7 +59,6 @@ register = template.Library()
 CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
-@register.simple_tag(takes_context=True)
 def udsJs(request: 'ExtendedHttpRequest') -> str:
     auth_host = (
         request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
@@ -91,28 +90,34 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
 
     tag = request.session.get('tag', None)
     logger.debug('Tag config: %s', tag)
+    # Initial list of authenticators (all except disabled ones)
     auths = Authenticator.objects.exclude(state=Authenticator.DISABLED)
     authenticators: typing.List[Authenticator] = []
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
         try:
             # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
+            # Tag will also include non visible authenticators
             # tag, later will remove "auth_host"
-            authenticators = list(auths.filter(
-                small_name__in=[auth_host, tag]
-            ))
+            authenticators = list(auths.filter(small_name__in=[auth_host, tag]))
         except Exception as e:
             authenticators = []
     else:
-        authenticators = list(auths)
+        if not tag:  # If no tag, remove hidden auths
+            auths = auths.filter(state=Authenticator.VISIBLE)
+        authenticators = list(
+            auths
+        )
 
-    # Filter out non visible authenticators (using origin and visible field right now)
-    authenticators = [a for a in authenticators if a.getInstance().isVisibleFrom(request)]
+    # Filter out non accesible authenticators (using origin)
+    authenticators = [
+        a for a in authenticators if a.getInstance().isAccesibleFrom(request)
+    ]
 
     # logger.debug('Authenticators PRE: %s', authenticators)
 
     if (
         tag and authenticators
-    ):  # Refilter authenticators, visible and with this tag if required
+    ):  # Refilter authenticators, not disabled and with this tag if required
         authenticators = [
             x
             for x in authenticators
@@ -120,12 +125,19 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             or (tag == 'disabled' and x.getType().isCustom() is False)
         ]
 
+    # No autenticator can reach the criteria, let's do a final try
+    # disabled mean "does not use any specific auth, just the root one"
     if not authenticators and tag != 'disabled':
         try:
-            authenticators = [Authenticator.objects.order_by('priority')[0]]
-        except Exception:  # There is no authenticators yet...
+            authenticators = []
+            for a in Authenticator.objects.exclude(state=Authenticator.DISABLED).order_by('priority'):
+                if a.getInstance().isAccesibleFrom(request):
+                    authenticators.append(a)
+                    break
+        except Exception:
             authenticators = []
 
+    # No tag, and there are authenticators, let's use the first one
     if not tag and authenticators:
         tag = authenticators[0].small_name
 

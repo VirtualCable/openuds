@@ -34,6 +34,7 @@ import typing
 
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
+from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth
@@ -47,7 +48,7 @@ from uds.web.util import configjs
 
 logger = logging.getLogger(__name__)
 
-
+@never_cache
 def index(request: HttpRequest) -> HttpResponse:
     # return errorView(request, 1)
     response = render(request, 'uds/modern/index.html', {})
@@ -59,12 +60,14 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 # Includes a request.session ticket, indicating that
+@never_cache
 def ticketLauncher(request: HttpRequest) -> HttpResponse:
     request.session['restricted'] = True  # Access is from ticket
     return index(request)
 
 
 # Basically, the original /login method, but fixed for modern interface
+@never_cache
 def login(
     request: ExtendedHttpRequest, tag: typing.Optional[str] = None
 ) -> HttpResponse:
@@ -97,6 +100,7 @@ def login(
     return response
 
 
+@never_cache
 @auth.webLoginRequired(admin=False)
 def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.authLogLogout(request)
@@ -106,13 +110,14 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
         logoutUrl = request.session.get('logouturl', None)
     return auth.webLogout(request, logoutUrl)
 
-
+@never_cache
 def js(request: ExtendedHttpRequest) -> HttpResponse:
     return HttpResponse(
         content=configjs.udsJs(request), content_type='application/javascript'
     )
 
 
+@never_cache
 @auth.denyNonAuthenticated
 def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))

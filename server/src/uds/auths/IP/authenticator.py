@@ -107,7 +107,7 @@ class IPAuth(auths.Authenticator):
             return True
         return False
 
-    def isVisibleFrom(self, request: 'ExtendedHttpRequest'):
+    def isAccesibleFrom(self, request: 'ExtendedHttpRequest'):
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
@@ -115,7 +115,7 @@ class IPAuth(auths.Authenticator):
         # If has networks and not in any of them, not visible
         if validNets and not net.ipInNetwork(request.ip, validNets):
             return False
-        return super().isVisibleFrom(request)
+        return super().isAccesibleFrom(request)
 
     def internalAuthenticate(
         self,

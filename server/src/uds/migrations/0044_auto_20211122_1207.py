@@ -7,11 +7,12 @@ from uds.models import Transport, Authenticator
 
 TRANS_ALLOW = Transport.ALLOW
 TRANS_DENY = Transport.DENY
-TRANS_DISABLED = Transport.DISABLED
+TRANS_NOFILTERING = Transport.NO_FILTERING
 
 # Auths
 AUTH_ALLOW = Authenticator.ALLOW
 AUTH_DENY = Authenticator.DENY
+AUTH_NOFILTERING = Authenticator.NO_FILTERING
 AUTH_DISABLED = Authenticator.DISABLED
 AUTH_VISIBLE = Authenticator.VISIBLE
 AUTH_HIDDEN = Authenticator.HIDDEN
@@ -19,7 +20,7 @@ AUTH_HIDDEN = Authenticator.HIDDEN
 def migrate_fwd(apps, schema_editor):
     Transport = apps.get_model('uds', 'Transport')
     for transport in Transport.objects.all():
-        value = TRANS_DISABLED  # Defaults to "not configured"
+        value = TRANS_NOFILTERING  # Defaults to "not configured"
         if transport.networks.count() > 0:
             if transport.nets_positive:
                 value = TRANS_ALLOW
@@ -66,7 +67,7 @@ class Migration(migrations.Migration):
             model_name='authenticator',
             name='net_filtering',
             field=models.CharField(
-                default=AUTH_DISABLED,
+                default=AUTH_NOFILTERING,
                 max_length=1,
                 db_index=True,
             ),
@@ -84,7 +85,7 @@ class Migration(migrations.Migration):
             model_name='transport',
             name='net_filtering',
             field=models.CharField(
-                default=TRANS_DISABLED,
+                default=TRANS_NOFILTERING,
                 max_length=1,
                 db_index=True,
             ),

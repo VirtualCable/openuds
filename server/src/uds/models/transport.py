@@ -57,13 +57,13 @@ class Transport(ManagedObjectModel, TaggingMixin):
     Sample of transports are RDP, Spice, Web file uploader, etc...
     """
     # Constants for net_filter
-    DISABLED = 'd'
+    NO_FILTERING = 'n'
     ALLOW = 'a'
-    DENY = 'x'
+    DENY = 'd'
 
     # pylint: disable=model-missing-unicode
     priority = models.IntegerField(default=0, db_index=True)
-    net_filtering = models.CharField(max_length=1, default=DISABLED, db_index=True)
+    net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
     # We store allowed oss as a comma-separated list
     allowed_oss = models.CharField(max_length=255, default='')
     # Label, to group transports on meta pools
@@ -124,11 +124,11 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
         :note: Ip addresses has been only tested with IPv4 addresses
         """
-        if self.net_filtering == 'x':
+        if self.net_filtering == Transport.NO_FILTERING:
             return True
         ip = net.ipToLong(ipStr)
         # Allow
-        if self.net_filtering == 'a':
+        if self.net_filtering == Transport.ALLOW:
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists()
         # Deny, must not be in any network
         return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
