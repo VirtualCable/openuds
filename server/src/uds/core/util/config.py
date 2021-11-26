@@ -111,12 +111,16 @@ class Config:
                         readed.field_type = self._type
                         readed.save(update_fields=['field_type'])
                     self._type = readed.field_type
-            except Exception:
-                # Not found
+            except DBConfig.DoesNotExist:
+                # Not found, so we create it
                 if self._default != '' and self._crypt:
                     self.set(cryptoManager().decrypt(self._default))
                 elif not self._crypt:
                     self.set(self._default)
+                self._data = self._default
+            except Exception as e:
+                logger.info('Error accessing db config {0}.{1}'.format(self._section.name(), self._key))
+                logger.exception(e)
                 self._data = self._default
 
             if self._crypt:
