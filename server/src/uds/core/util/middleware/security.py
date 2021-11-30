@@ -33,6 +33,8 @@ logger = logging.getLogger(__name__)
 
 from django.http import HttpResponse
 
+from uds.core.util.config import GlobalConfig
+
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
 
@@ -69,9 +71,10 @@ class UDSSecurityMiddleware:
             return HttpResponse(content='Forbbiden', status=403)
 
         response = self.get_response(request)
-        # Legacy browser support for X-XSS-Protection
-        response.headers.setdefault('X-XSS-Protection', '1; mode=block')
-        # Add Content-Security-Policy, allowing same origin and inline scripts, images from any https source and data:
-        response.headers.setdefault('Content-Security-Policy', "default-src 'self' 'unsafe-inline'; img-src 'self' https: data:;")
-
+        
+        if GlobalConfig.ENHANCED_SECURITY.getBool():
+            # Legacy browser support for X-XSS-Protection
+            response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+            # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
+            response.headers.setdefault('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;")
         return response
