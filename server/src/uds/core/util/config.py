@@ -341,6 +341,10 @@ class GlobalConfig:
     SUPER_USER_ALLOW_WEBACCESS: Config.Value = Config.section(SECURITY_SECTION).value(
         'allowRootWebAccess', '1', type=Config.BOOLEAN_FIELD
     )
+    # Enhaced security
+    ENHANCED_SECURITY: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Enable Enhanced Security', '1', type=Config.BOOLEAN_FIELD
+    )
     # Time an admi session can be idle before being "logged out"
     # ADMIN_IDLE_TIME: Config.Value = Config.section(SECURITY_SECTION).value('adminIdleTime', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hous
     # Time betwen checks of unused services by os managers
