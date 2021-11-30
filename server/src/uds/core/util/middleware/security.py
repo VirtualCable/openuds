@@ -68,4 +68,10 @@ class UDSSecurityMiddleware:
             )
             return HttpResponse(content='Forbbiden', status=403)
 
-        return self.get_response(request)
+        response = self.get_response(request)
+        # Legacy browser support for X-XSS-Protection
+        response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+        # Add Content-Security-Policy, allowing same origin and inline scripts, images from any https source and data:
+        response.headers.setdefault('Content-Security-Policy', "default-src 'self' 'unsafe-inline'; img-src 'self' https: data:;")
+
+        return response
