@@ -65,7 +65,7 @@ urlpatterns = [
 
     # Login/logout
     path(r'uds/page/login', uds.web.views.modern.login, name='page.login'),
-    re_path(r'^uds/page/login/(?P<tag>[a-zA-Z0-9-]+)$', uds.web.views.modern.login, name='page.login.tag'),
+    re_path(r'^uds/page/login/(?P<tag>[a-zA-Z0-9_-]+)$', uds.web.views.modern.login, name='page.login.tag'),
 
     path(r'uds/page/logout', uds.web.views.modern.logout, name='page.logout'),
 

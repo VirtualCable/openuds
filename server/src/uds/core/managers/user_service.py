@@ -669,6 +669,12 @@ class UserServiceManager:
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
         pools: typing.List[ServicePool] = [p[1] for p in sorted(sortPools, key=lambda x: x[0]) if p[1].usage() < 100 and p[1].isUsable()]
+        poolsFull: typing.List[ServicePool] = [
+            p[1]
+            for p in sorted(sortPools, key=lambda x: x[0])
+            if p[1].usage() == 100 and p[1].isUsable()
+        ]
+
 
         logger.debug('Pools: %s', pools)
 
@@ -687,7 +693,7 @@ class UserServiceManager:
 
         try:
             alreadyAssigned: UserService = UserService.objects.filter(
-                deployed_service__in=pools,
+                deployed_service__in=pools+poolsFull,
                 state__in=State.VALID_STATES,
                 user=user,
                 cache_level=0
