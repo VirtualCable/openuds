@@ -939,14 +939,21 @@ class UserServiceManager(metaclass=singleton.Singleton):
             ]  # Just shuffle them
 
         # Sort pools related to policy now, and xtract only pools, not sort keys
+        # split resuult in two lists, 100% full and not 100% full
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
+        sortedPools = sorted(sortPools, key=lambda x: x[0])
         pools: typing.List[ServicePool] = [
             p[1]
-            for p in sorted(sortPools, key=lambda x: x[0])
+            for p in sortedPools
             if p[1].usage() < 100 and p[1].isUsable()
         ]
+        poolsFull: typing.List[ServicePool] = [
+            p[1]
+            for p in sortedPools
+            if p[1].usage() == 100 and p[1].isUsable()
+        ]
 
-        logger.debug('Pools: %s', pools)
+        logger.debug('Pools: %s/%s', pools, poolsFull)
 
         usable: typing.Optional[typing.Tuple[ServicePool, Transport]] = None
         # Now, Lets find first if there is one assigned in ANY pool
@@ -975,8 +982,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return found
 
         try:
+            # Already assigned should look for in all usable pools, not only "non-full" ones
             alreadyAssigned: UserService = UserService.objects.filter(
-                deployed_service__in=pools,
+                deployed_service__in=pools+poolsFull,
                 state__in=State.VALID_STATES,
                 user=user,
                 cache_level=0,
