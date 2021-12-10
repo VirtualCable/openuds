@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from uds.models import MetaPool, Image, ServicePoolGroup
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.state import State
@@ -150,8 +150,8 @@ class MetaPools(ModelHandler):
                 'values': [
                     gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()
                 ],
-                'label': ugettext('Policy'),
-                'tooltip': ugettext('Service pool policy'),
+                'label': gettext('Policy'),
+                'tooltip': gettext('Service pool policy'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'order': 100,
             },
@@ -164,8 +164,8 @@ class MetaPools(ModelHandler):
                         for v in Image.objects.all()
                     ]
                 ),
-                'label': ugettext('Associated Image'),
-                'tooltip': ugettext('Image assocciated with this service'),
+                'label': gettext('Associated Image'),
+                'tooltip': gettext('Image assocciated with this service'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 120,
                 'tab': gui.DISPLAY_TAB,
@@ -179,8 +179,8 @@ class MetaPools(ModelHandler):
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),
-                'label': ugettext('Pool group'),
-                'tooltip': ugettext(
+                'label': gettext('Pool group'),
+                'tooltip': gettext(
                     'Pool group for this pool (for pool classify on display)'
                 ),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
@@ -190,8 +190,8 @@ class MetaPools(ModelHandler):
             {
                 'name': 'visible',
                 'value': True,
-                'label': ugettext('Visible'),
-                'tooltip': ugettext('If active, metapool will be visible for users'),
+                'label': gettext('Visible'),
+                'tooltip': gettext('If active, metapool will be visible for users'),
                 'type': gui.InputField.CHECKBOX_TYPE,
                 'order': 123,
                 'tab': gui.DISPLAY_TAB,
@@ -199,8 +199,8 @@ class MetaPools(ModelHandler):
             {
                 'name': 'calendar_message',
                 'value': '',
-                'label': ugettext('Calendar access denied text'),
-                'tooltip': ugettext(
+                'label': gettext('Calendar access denied text'),
+                'tooltip': gettext(
                     'Custom message to be shown to users if access is limited by calendar rules.'
                 ),
                 'type': gui.InputField.TEXT_TYPE,
@@ -213,8 +213,8 @@ class MetaPools(ModelHandler):
                     gui.choiceItem(k, str(v))
                     for k, v in MetaPool.TRANSPORT_SELECT.items()
                 ],
-                'label': ugettext('Transport Selection'),
-                'tooltip': ugettext('Transport selection policy'),
+                'label': gettext('Transport Selection'),
+                'tooltip': gettext('Transport selection policy'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'order': 125,
                 'tab': gui.DISPLAY_TAB,

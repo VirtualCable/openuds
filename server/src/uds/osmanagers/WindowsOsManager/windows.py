@@ -12,7 +12,7 @@ import codecs
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _, ugettext_lazy
+from django.utils.translation import gettext_noop as _, gettext_lazy
 from uds.core import osmanagers
 from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
@@ -54,11 +54,11 @@ class WindowsOsManager(osmanagers.OSManager):
         rdonly=True,
         tooltip=_('What to do when user logs out from service'),
         values=[
-            {'id': 'keep', 'text': ugettext_lazy('Keep service assigned')},
-            {'id': 'remove', 'text': ugettext_lazy('Remove service')},
+            {'id': 'keep', 'text': gettext_lazy('Keep service assigned')},
+            {'id': 'remove', 'text': gettext_lazy('Remove service')},
             {
                 'id': 'keep-always',
-                'text': ugettext_lazy('Keep service assigned even on new publication'),
+                'text': gettext_lazy('Keep service assigned even on new publication'),
             },
         ],
         defvalue='keep',

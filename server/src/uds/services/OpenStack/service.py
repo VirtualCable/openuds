@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
 from uds.core.util import tools
@@ -62,7 +62,7 @@ class LiveService(Service):
 
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     typeName = _('OpenStack Live Volume')
     # : Type used internally to identify this provider
     typeType = 'openStackLiveService'
@@ -70,7 +70,7 @@ class LiveService(Service):
     typeDescription = _('OpenStack live images based service')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     iconFile = 'openstack.png'
 
     # Functional related data

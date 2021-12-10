@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from uds.core.ui import gui
 
 from . import openstack

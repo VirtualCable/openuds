@@ -37,7 +37,7 @@ import typing
 
 from weasyprint import HTML, CSS, default_url_fetcher
 
-from django.utils.translation import ugettext, ugettext_noop as _
+from django.utils.translation import gettext, gettext_noop as _
 from django.template import loader
 
 from uds.core.ui import UserInterface, gui
@@ -62,21 +62,21 @@ class Report(UserInterface):
         """
         Helper to return translated report name
         """
-        return ugettext(cls.name)
+        return gettext(cls.name)
 
     @classmethod
     def translated_description(cls):
         """
         Helper to return translated report description
         """
-        return ugettext(cls.description)
+        return gettext(cls.description)
 
     @classmethod
     def translated_group(cls):
         """
         Helper to return translated report description
         """
-        return ugettext(cls.group)
+        return gettext(cls.group)
 
     @classmethod
     def getUuid(cls):

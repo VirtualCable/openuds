@@ -89,7 +89,7 @@ class ServiceProvider(Module):
     # : Name of type, used at administration interface to identify this
     # : provider (i.e. Xen server, oVirt Server, ...)
     # : This string will be translated when provided to admin interface
-    # : using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    # : using gettext, so you can mark it as "translatable" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
     typeName = 'Base Provider'
 
@@ -101,7 +101,7 @@ class ServiceProvider(Module):
 
     # : Description shown at administration level for this provider.
     # : This string will be translated when provided to admin interface
-    # : using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    # : using gettext, so you can mark it as "translatable" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
     typeDescription = 'Base Service Provider'
 

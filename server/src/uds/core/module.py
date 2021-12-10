@@ -37,7 +37,7 @@ import logging
 import typing
 
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from uds.core.ui import UserInterface
 
@@ -126,14 +126,14 @@ class Module(UserInterface, Environmentable, Serializable):
     @classmethod
     def name(cls: typing.Type['Module']) -> str:
         """
-        Returns "translated" typeName, using ugettext for transforming
+        Returns "translated" typeName, using gettext for transforming
         cls.typeName
 
         Args:
             cls: This is a class method, so cls is the class
 
         Returns:
-            Translated type name (using ugettext)
+            Translated type name (using gettext)
         """
         return _(cls.typeName)
 
@@ -154,13 +154,13 @@ class Module(UserInterface, Environmentable, Serializable):
     def description(cls: typing.Type['Module']) -> str:
         """
         This method returns the "translated" description, that is, using
-        ugettext for transforming cls.typeDescription.
+        gettext for transforming cls.typeDescription.
 
         Args:
             cls: This is a class method, so cls is the class
 
         Returns:
-            Translated description (using ugettext)
+            Translated description (using gettext)
 
         """
         return _(cls.typeDescription)
@@ -284,7 +284,7 @@ class Module(UserInterface, Environmentable, Serializable):
         preferable internacionalizated.
 
         Returns:
-            Internacionalized (using ugettext) string of result of the check.
+            Internacionalized (using gettext) string of result of the check.
         """
         return _("No check method provided.")
 

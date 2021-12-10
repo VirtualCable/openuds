@@ -32,7 +32,7 @@ import json
 import logging
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache

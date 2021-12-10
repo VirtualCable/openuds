@@ -32,7 +32,7 @@ import re
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
@@ -60,7 +60,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     typeName = _('Proxmox Linked Clone')
     # : Type used internally to identify this provider
     typeType = 'ProxmoxLinkedService'
@@ -68,7 +68,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     typeDescription = _('Proxmox Services based on templates and COW (experimental)')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     iconFile = 'service.png'
 
     # Functional related data

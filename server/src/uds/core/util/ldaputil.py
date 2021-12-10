@@ -35,7 +35,7 @@ import typing
 
 import ldap.filter
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from uds.core.util import tools
 
 logger = logging.getLogger(__name__)

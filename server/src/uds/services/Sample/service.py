@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core import services
 from uds.core.ui import gui
 
@@ -75,7 +75,7 @@ class ServiceOne(services.Service):
 
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     typeName = _('Sample Service One')
     # : Type used internally to identify this provider
     typeType = 'SampleService1'
@@ -83,7 +83,7 @@ class ServiceOne(services.Service):
     typeDescription = _('Sample (and dummy) service ONE')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     iconFile = 'service.png'
 
     # Functional related data

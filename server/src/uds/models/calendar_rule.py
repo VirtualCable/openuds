@@ -36,7 +36,7 @@ import logging
 import typing
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from dateutil import rrule as rules
 
 from .uuid_model import UUIDModel

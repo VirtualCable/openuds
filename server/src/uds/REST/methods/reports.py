@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from uds.REST import model
 from uds import reports

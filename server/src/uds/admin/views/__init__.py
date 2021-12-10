@@ -33,7 +33,7 @@ import logging
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import RequestContext, loader
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from uds.core.auths.auth import webLoginRequired
 from uds.core.util.decorators import denyBrowsers

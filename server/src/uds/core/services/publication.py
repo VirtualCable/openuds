@@ -246,7 +246,7 @@ class Publication(Environmentable, Serializable):
 
         The returned value, an string, will be used always by administration interface,
         meaning this that the translation environment will be ready, and that you
-        can use ugettext to return a version that can be translated to administration
+        can use gettext to return a version that can be translated to administration
         interface language.
         """
         return 'unknown'

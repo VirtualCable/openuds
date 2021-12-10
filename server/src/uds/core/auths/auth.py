@@ -45,7 +45,7 @@ from django.http import (
 from django.utils.translation import get_language
 from django.urls import reverse
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from uds.core import auths
 from uds.core.util import log

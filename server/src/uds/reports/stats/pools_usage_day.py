@@ -35,7 +35,7 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import counters
@@ -149,8 +149,8 @@ class CountersPoolAssigned(StatsReport):
                 ],
                 'beginning': self.startDate.date(),
             },
-            header=ugettext('Services usage report for a day'),
-            water=ugettext('Service usage report'),
+            header=gettext('Services usage report for a day'),
+            water=gettext('Service usage report'),
             images={'graph1': graph1.getvalue()},
         )
 
@@ -168,7 +168,7 @@ class CountersPoolAssignedCSV(CountersPoolAssigned):
     def generate(self):
         output = io.StringIO()
         writer = csv.writer(output)
-        writer.writerow([ugettext('Pool'), ugettext('Hour'), ugettext('Services')])
+        writer.writerow([gettext('Pool'), gettext('Hour'), gettext('Services')])
 
         items = self.getData()
 

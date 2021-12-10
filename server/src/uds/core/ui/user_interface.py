@@ -38,7 +38,7 @@ import copy
 import typing
 import logging
 
-from django.utils.translation import get_language, ugettext as _, ugettext_noop
+from django.utils.translation import get_language, gettext as _, gettext_noop
 
 from uds.core.managers import cryptoManager
 
@@ -96,11 +96,11 @@ class gui:
     FALSE: typing.ClassVar[str] = 'false'
 
     # : String for advanced tabs
-    ADVANCED_TAB: typing.ClassVar[str] = ugettext_noop('Advanced')
-    PARAMETERS_TAB: typing.ClassVar[str] = ugettext_noop('Parameters')
-    CREDENTIALS_TAB: typing.ClassVar[str] = ugettext_noop('Credentials')
-    TUNNEL_TAB: typing.ClassVar[str] = ugettext_noop('Tunnel')
-    DISPLAY_TAB: typing.ClassVar[str] = ugettext_noop('Display')
+    ADVANCED_TAB: typing.ClassVar[str] = gettext_noop('Advanced')
+    PARAMETERS_TAB: typing.ClassVar[str] = gettext_noop('Parameters')
+    CREDENTIALS_TAB: typing.ClassVar[str] = gettext_noop('Credentials')
+    TUNNEL_TAB: typing.ClassVar[str] = gettext_noop('Tunnel')
+    DISPLAY_TAB: typing.ClassVar[str] = gettext_noop('Display')
 
     # : Static Callbacks simple registry
     callbacks: typing.Dict[

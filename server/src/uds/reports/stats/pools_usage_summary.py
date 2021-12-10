@@ -35,7 +35,7 @@ import datetime
 import typing
 import logging
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from .usage_by_pool import UsageByPool
 
@@ -123,14 +123,14 @@ class PoolsUsageSummary(UsageByPool):
                 'start': start,
                 'end': end,
             },
-            header=ugettext('Summary of Pools usage')
+            header=gettext('Summary of Pools usage')
             + ' '
             + start
             + ' '
-            + ugettext('to')
+            + gettext('to')
             + ' '
             + end,
-            water=ugettext('UDS Report Summary of pools usage'),
+            water=gettext('UDS Report Summary of pools usage'),
         )
 
 
@@ -153,11 +153,11 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
 
         writer.writerow(
             [
-                ugettext('Pool'),
-                ugettext('Total Time (seconds)'),
-                ugettext('Total Accesses'),
-                ugettext('Unique users'),
-                ugettext('Mean time (seconds)'),
+                gettext('Pool'),
+                gettext('Total Time (seconds)'),
+                gettext('Total Accesses'),
+                gettext('Unique users'),
+                gettext('Mean time (seconds)'),
             ]
         )
 
@@ -168,7 +168,7 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
 
         writer.writerow(
             [
-                ugettext('Total'),
+                gettext('Total'),
                 totalTime,
                 totalCount,
                 totalUsers,

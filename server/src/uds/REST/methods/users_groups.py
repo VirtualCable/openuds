@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.forms.models import model_to_dict
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError

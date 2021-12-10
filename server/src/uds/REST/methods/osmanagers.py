@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core import osmanagers
 from uds.core.util import permissions
@@ -80,7 +80,7 @@ class OsManagers(ModelHandler):
         # Only can delete if no ServicePools attached
         if item.deployedServices.count() > 0:
             raise RequestError(
-                ugettext('Can\'t delete an OS Manager with services pools associated')
+                gettext('Can\'t delete an OS Manager with services pools associated')
             )
 
     # Types related

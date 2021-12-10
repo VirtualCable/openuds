@@ -34,7 +34,7 @@ import json
 import logging
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from uds.models import Calendar, CalendarAction
 from uds.models.calendar_action import CALENDAR_ACTION_DICT

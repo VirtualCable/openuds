@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -54,7 +54,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     offers = [LiveService]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     typeName = _('OpenNebula Platform Provider')
     # : Type used internally to identify this provider
     typeType = 'openNebulaPlatform'
@@ -62,7 +62,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     typeDescription = _('OpenNebula platform service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     iconFile = 'provider.png'
 
     # now comes the form fields

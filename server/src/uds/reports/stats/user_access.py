@@ -35,7 +35,7 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 import django.template.defaultfilters as filters
 
 from uds.core.ui import gui
@@ -264,8 +264,8 @@ class StatsReportLogin(StatsReport):
                 'ending': self.endDate.date(),
                 'intervals': self.samplingPoints.num(),
             },
-            header=ugettext('Users access to UDS'),
-            water=ugettext('UDS Report for users access'),
+            header=gettext('Users access to UDS'),
+            water=gettext('UDS Report for users access'),
             images={
                 'graph1': graph1.getvalue(),
                 'graph2': graph2.getvalue(),
@@ -294,7 +294,7 @@ class StatsReportLoginCSV(StatsReportLogin):
 
         reportData = self.getRangeData()[2]
 
-        writer.writerow([ugettext('Date range'), ugettext('Users')])
+        writer.writerow([gettext('Date range'), gettext('Users')])
 
         for v in reportData:
             writer.writerow([v['date'], v['users']])

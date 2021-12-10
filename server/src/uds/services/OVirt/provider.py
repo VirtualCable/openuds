@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 
 from uds.core import services
 from uds.core.ui import gui
@@ -64,7 +64,7 @@ class OVirtProvider(
        * The form fields needed by administrators to configure this provider
 
        :note: At class level, the translation must be simply marked as so
-       using ugettext_noop. This is so cause we will translate the string when
+       using gettext_noop. This is so cause we will translate the string when
        sent to the administration client.
 
     For this class to get visible at administration client as a provider type,
@@ -76,7 +76,7 @@ class OVirtProvider(
     offers = [OVirtLinkedService]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     typeName = _('oVirt/RHEV Platform Provider')
     # : Type used internally to identify this provider
     typeType = 'oVirtPlatform'
@@ -84,7 +84,7 @@ class OVirtProvider(
     typeDescription = _('oVirt platform service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     iconFile = 'provider.png'
 
     # now comes the form fields

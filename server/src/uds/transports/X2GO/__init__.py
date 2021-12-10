@@ -31,7 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core.managers.user_preferences import UserPrefsManager, CommonPrefs
 from .x2go import X2GOTransport
 from .x2go_tunnel import TX2GOTransport

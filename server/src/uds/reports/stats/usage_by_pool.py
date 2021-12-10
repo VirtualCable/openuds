@@ -35,7 +35,7 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import events
@@ -80,7 +80,7 @@ class UsageByPool(StatsReport):
 
     def initGui(self):
         logger.debug('Initializing gui')
-        vals = [gui.choiceItem('0-0-0-0', ugettext('ALL POOLS'))] + [
+        vals = [gui.choiceItem('0-0-0-0', gettext('ALL POOLS'))] + [
             gui.choiceItem(v.uuid, v.name)
             for v in ServicePool.objects.all().order_by('name')
         ]
@@ -143,8 +143,8 @@ class UsageByPool(StatsReport):
                 'data': items,
                 'pool': poolName,
             },
-            header=ugettext('Users usage list'),
-            water=ugettext('UDS Report of users usage'),
+            header=gettext('Users usage list'),
+            water=gettext('UDS Report of users usage'),
         )
 
 
@@ -167,11 +167,11 @@ class UsageByPoolCSV(UsageByPool):
 
         writer.writerow(
             [
-                ugettext('Date'),
-                ugettext('User'),
-                ugettext('Seconds'),
-                ugettext('Pool'),
-                ugettext('Origin'),
+                gettext('Date'),
+                gettext('User'),
+                gettext('Seconds'),
+                gettext('Pool'),
+                gettext('Origin'),
             ]
         )
 

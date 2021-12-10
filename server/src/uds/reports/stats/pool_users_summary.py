@@ -35,7 +35,7 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import events
@@ -150,8 +150,8 @@ class UsageSummaryByUsersPool(StatsReport):
                 'beginning': self.startDate.date(),
                 'ending': self.endDate.date(),
             },
-            header=ugettext('Users usage list for {}').format(poolName),
-            water=ugettext('UDS Report of users in {}').format(poolName),
+            header=gettext('Users usage list for {}').format(poolName),
+            water=gettext('UDS Report of users in {}').format(poolName),
         )
 
 
@@ -174,10 +174,10 @@ class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
 
         writer.writerow(
             [
-                ugettext('User'),
-                ugettext('Sessions'),
-                ugettext('Hours'),
-                ugettext('Average'),
+                gettext('User'),
+                gettext('Sessions'),
+                gettext('Hours'),
+                gettext('Average'),
             ]
         )
 

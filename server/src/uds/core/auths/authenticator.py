@@ -34,7 +34,7 @@ Base module for all authenticators
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core import Module
 
 # Not imported at runtime, just for type checking
@@ -99,14 +99,14 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
     :note: All attributes that are "_" here means that they will be
            translated when provided to administration interface, so remember
            to mark them in your own authenticators as "_" using
-           ugettext_noop. We have aliased it here to "_" so it's
+           gettext_noop. We have aliased it here to "_" so it's
            easier to understand.
     """
 
     # : Name of type, used at administration interface to identify this
     # : authenticator (i.e. LDAP, SAML, ...)
     # : This string will be translated when provided to admin interface
-    # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
+    # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
     typeName: typing.ClassVar[str] = _('Base Authenticator')
 
@@ -118,7 +118,7 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
 
     # : Description shown at administration level for this authenticator.
     # : This string will be translated when provided to admin interface
-    # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
+    # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
     typeDescription: typing.ClassVar[str] = _('Base Authenticator')
 

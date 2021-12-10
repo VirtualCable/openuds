@@ -34,7 +34,7 @@ import logging
 import datetime
 import typing
 
-from django.utils.translation import ugettext, ugettext_noop as _
+from django.utils.translation import gettext, gettext_noop as _
 
 from uds.core.ui import UserInterface, UserInterfaceType, gui
 from uds.core.reports import Report

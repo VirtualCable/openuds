@@ -34,7 +34,7 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from uds.core.managers.stats import StatsManager
 from uds.models import NEVER, Provider, Service, ServicePool, Authenticator

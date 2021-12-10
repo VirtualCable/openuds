@@ -34,7 +34,7 @@ import logging
 import random
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.db import transaction
 from uds.core.services.exceptions import OperationException
@@ -371,12 +371,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         existing = servicePool.assignedUserServices().filter(
             user=user, state__in=State.VALID_STATES
         )  # , deployed_service__visible=True
-        lenExisting = existing.count()
-        if lenExisting > 0:  # Already has 1 assigned
+        if existing.exists():
             logger.debug(
                 'Found assigned service from %s to user %s', servicePool, user.name
             )
-            return existing[0]
+            return existing.first()
         return None
 
     def getAssignationForUser(

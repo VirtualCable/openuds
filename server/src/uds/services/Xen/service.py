@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core.services import Service, types as serviceTypes
 from uds.core.util import tools
 from uds.core.ui import gui
@@ -57,7 +57,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
 
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     typeName = _('Xen Linked Clone')
     # : Type used internally to identify this provider
     typeType = 'XenLinkedService'
@@ -65,7 +65,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
     typeDescription = _('Xen Services based on templates')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using ugettext_noop)
+    # : mark it as _ (using gettext_noop)
     iconFile = 'service.png'
 
     # Functional related data

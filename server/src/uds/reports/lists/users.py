@@ -38,7 +38,7 @@ import logging
 # import openpyxl
 # import openpyxl.writer.excel
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.models import Authenticator
@@ -84,8 +84,8 @@ class ListReportUsers(ListReport):
                 'users': users,
                 'auth': auth.name,
             },
-            header=ugettext('Users List for {}').format(auth.name),
-            water=ugettext('UDS Report of users in {}').format(auth.name),
+            header=gettext('Users List for {}').format(auth.name),
+            water=gettext('UDS Report of users in {}').format(auth.name),
         )
 
 
@@ -110,7 +110,7 @@ class ListReportsUsersCSV(ListReportUsers):
         users = auth.users.order_by('name')
 
         writer.writerow(
-            [ugettext('User ID'), ugettext('Real Name'), ugettext('Last access')]
+            [gettext('User ID'), gettext('Real Name'), gettext('Last access')]
         )
 
         for v in users:
@@ -141,7 +141,7 @@ class ListReportsUsersCSV(ListReportUsers):
 
 #         auth = Authenticator.objects.get(uuid=self.authenticator.value)
 #         users = auth.users.order_by('name')
-#         ws.append([ugettext('User ID'), ugettext('Real Name'), ugettext('Last access')])
+#         ws.append([gettext('User ID'), gettext('Real Name'), gettext('Last access')])
 
 #         for v in users:
 #             ws.append([v.name, v.real_name, v.last_access])

@@ -32,7 +32,7 @@
 """
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core.services import types as serviceTypes
 from uds.core.util.state import State
 from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT

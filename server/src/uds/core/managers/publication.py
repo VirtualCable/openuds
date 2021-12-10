@@ -34,7 +34,7 @@ import datetime
 import pickle
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.db import transaction
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner

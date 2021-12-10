@@ -31,7 +31,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from django.utils import formats
 from django.urls import reverse
 
@@ -316,7 +316,7 @@ def getServicesData(
         # tbr = False
         if toBeReplaced:
             toBeReplaced = formats.date_format(toBeReplaced, 'SHORT_DATETIME_FORMAT')
-            toBeReplacedTxt = ugettext(
+            toBeReplacedTxt = gettext(
                 'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
             ).format(toBeReplaced)
         else:
@@ -392,7 +392,7 @@ def enableService(
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''
-    error = ugettext('Service not ready. Please, try again in a while.')
+    error = gettext('Service not ready. Please, try again in a while.')
 
     # If meta service, process and rebuild idService & idTransport
 
@@ -427,7 +427,7 @@ def enableService(
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while
         # error += ' (code {0:04X})'.format(e.code)
-        error = ugettext(
+        error = gettext(
             'Your service is being created, please, wait for a few seconds while we complete it.)'
         ) + '({}%)'.format(int(e.code * 25))
     except MaxServicesReachedError:

@@ -38,7 +38,7 @@ import requests
 
 # import dateutil.parser
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

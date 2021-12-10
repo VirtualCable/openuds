@@ -32,7 +32,7 @@
 """
 import logging
 
-from django.utils.translation import ugettext_noop as _, ugettext_lazy
+from django.utils.translation import gettext_noop as _, gettext_lazy
 
 logger = logging.getLogger(__name__)
 
@@ -150,4 +150,4 @@ def dictionary():
     """
     Returns a dictionary with current active locale translation of States to States String
     """
-    return {k: ugettext_lazy(v) for k, v in string.items()}
+    return {k: gettext_lazy(v) for k, v in string.items()}

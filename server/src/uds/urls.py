@@ -37,7 +37,10 @@ from django.views.generic.base import RedirectView
 
 from uds import REST
 import uds.web.views
+import uds.admin.views
+
 from uds.core.util.modfinder import loadModulesUrls
+
 
 urlpatterns = [
     # Root url placeholder
@@ -202,7 +205,7 @@ urlpatterns = [
     # REST API
     re_path(r'^uds/rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
     # Web admin GUI
-    re_path(r'^uds/adm', include('uds.admin.urls')),
+    re_path(r'^uds/adm/.*$', uds.admin.views.index, name='uds.admin.views.index'),
 ]
 
 # Append urls from special dispatchers

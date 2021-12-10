@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import counters
@@ -136,6 +136,6 @@ class AuthenticatorsStats(StatsReportAuto):
         return self.templateAsPDF(
             'uds/reports/stats/authenticator_stats.html',
             dct={'data': stats},
-            header=ugettext('Users usage list'),
-            water=ugettext('UDS Report of users usage'),
+            header=gettext('Users usage list'),
+            water=gettext('UDS Report of users usage'),
         )

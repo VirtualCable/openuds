@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 from uds.models import Network
 from uds.core.util import net
@@ -79,7 +79,7 @@ class Networks(ModelHandler):
             fields['net_start'] = nr[0]
             fields['net_end'] = nr[1]
         except Exception as e:
-            raise SaveException(ugettext('Invalid network: {}').format(e))
+            raise SaveException(gettext('Invalid network: {}').format(e))
         logger.debug('Processed %s', fields)
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
@@ -88,8 +88,8 @@ class Networks(ModelHandler):
             {
                 'name': 'net_string',
                 'value': '',
-                'label': ugettext('Network range'),
-                'tooltip': ugettext(
+                'label': gettext('Network range'),
+                'tooltip': gettext(
                     'Network range. Accepts most network definitions formats (range, subnet, host, etc...'
                 ),
                 'type': gui.InputField.TEXT_TYPE,

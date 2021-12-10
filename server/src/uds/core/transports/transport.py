@@ -34,7 +34,7 @@ import codecs
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 
 from uds.core.util import os_detector as OsDetector
 from uds.core import Module

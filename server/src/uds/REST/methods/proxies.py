@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import Proxy
 from uds.core.ui import gui
 from uds.core.util import permissions
@@ -85,8 +85,8 @@ class Proxies(ModelHandler):
             {
                 'name': 'host',
                 'value': '',
-                'label': ugettext('Host'),
-                'tooltip': ugettext('Server (IP or FQDN) that will serve as proxy.'),
+                'label': gettext('Host'),
+                'tooltip': gettext('Server (IP or FQDN) that will serve as proxy.'),
                 'type': gui.InputField.TEXT_TYPE,
                 'order': 110,
             },
@@ -94,16 +94,16 @@ class Proxies(ModelHandler):
                 'name': 'port',
                 'value': '9090',
                 'minValue': '0',
-                'label': ugettext('Port'),
-                'tooltip': ugettext('Port of proxy server'),
+                'label': gettext('Port'),
+                'tooltip': gettext('Port of proxy server'),
                 'type': gui.InputField.NUMERIC_TYPE,
                 'order': 111,
             },
             {
                 'name': 'ssl',
                 'value': True,
-                'label': ugettext('Use SSL'),
-                'tooltip': ugettext(
+                'label': gettext('Use SSL'),
+                'tooltip': gettext(
                     'If active, the proxied connections will be done using HTTPS'
                 ),
                 'type': gui.InputField.CHECKBOX_TYPE,
@@ -111,8 +111,8 @@ class Proxies(ModelHandler):
             {
                 'name': 'check_cert',
                 'value': True,
-                'label': ugettext('Check Certificate'),
-                'tooltip': ugettext(
+                'label': gettext('Check Certificate'),
+                'tooltip': gettext(
                     'If active, any SSL certificate will be checked (will not allow self signed certificates on proxy)'
                 ),
                 'type': gui.InputField.CHECKBOX_TYPE,

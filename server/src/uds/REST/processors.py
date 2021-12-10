@@ -32,10 +32,7 @@
 """
 import datetime
 # Try to use orjson if available
-try:
-    import orjson as json
-except ImportError:
-    import json as json  # type: ignore
+import json as json  # type: ignore
 
 import logging
 import time

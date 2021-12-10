@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from uds.models import Authenticator, Network
 from uds.core import auths
 
@@ -125,13 +125,13 @@ class Authenticators(ModelHandler):
                             {'id': Authenticator.HIDDEN, 'text': _('Hidden')},
                             {'id': Authenticator.DISABLED, 'text': _('Disabled')},
                         ],
-                        'label': ugettext('Access'),
-                        'tooltip': ugettext(
+                        'label': gettext('Access'),
+                        'tooltip': gettext(
                             'Access type for this transport. Disabled means not only hidden, but also not usable as login method.'
                         ),
                         'type': gui.InputField.CHOICE_TYPE,
                         'order': 107,
-                        'tab': ugettext('Display'),
+                        'tab': gettext('Display'),
                     },
                 )
                 return field

@@ -35,7 +35,7 @@ import typing
 
 from django.db import models
 from django.db.models import signals, QuerySet
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 
 from uds.core.util import log
 from uds.core.util import states

@@ -37,7 +37,7 @@ import logging
 import typing
 
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 from uds.core.util import calendar
@@ -51,7 +51,7 @@ from .service_pool import ServicePool
 from .transport import Transport
 from .authenticator import Authenticator
 
-# from django.utils.translation import ugettext_lazy as _, ugettext
+# from django.utils.translation import gettext_lazy as _, gettext
 
 
 logger = logging.getLogger(__name__)

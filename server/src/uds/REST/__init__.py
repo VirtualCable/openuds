@@ -40,7 +40,7 @@ from django import http
 from django.views.generic.base import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from uds.core import VERSION, VERSION_STAMP
 
 from .handlers import (

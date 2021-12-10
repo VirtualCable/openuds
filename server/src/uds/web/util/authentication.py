@@ -31,7 +31,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from uds.core.auths.auth import authenticate, authLogLogin
 from uds.models import Authenticator

@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import Transport, Network, ServicePool
 from uds.core import transports
 from uds.core.ui import gui
@@ -101,8 +101,8 @@ class Transports(ModelHandler):
                     ],
                     key=lambda x: x['text'].lower(),
                 ),
-                'label': ugettext('Allowed Devices'),
-                'tooltip': ugettext(
+                'label': gettext('Allowed Devices'),
+                'tooltip': gettext(
                     'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
                 ),
                 'type': 'multichoice',
@@ -120,8 +120,8 @@ class Transports(ModelHandler):
                     for x in ServicePool.objects.all().order_by('name')
                     if transport.protocol in x.service.getType().allowedProtocols
                 ],
-                'label': ugettext('Service Pools'),
-                'tooltip': ugettext('Currently assigned services pools'),
+                'label': gettext('Service Pools'),
+                'tooltip': gettext('Currently assigned services pools'),
                 'type': 'multichoice',
                 'order': 103,
             },
@@ -132,8 +132,8 @@ class Transports(ModelHandler):
                 'name': 'label',
                 'length': 32,
                 'value': '',
-                'label': ugettext('Label'),
-                'tooltip': ugettext(
+                'label': gettext('Label'),
+                'tooltip': gettext(
                     'Metapool transport label (only used on metapool transports grouping)'
                 ),
                 'type': 'text',

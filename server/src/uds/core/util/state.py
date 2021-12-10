@@ -30,7 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from django.utils.translation import ugettext_noop as _, ugettext_lazy
+from django.utils.translation import gettext_noop as _, gettext_lazy
 
 
 # States for different objects. Not all objects supports all States
@@ -162,5 +162,5 @@ class State:
         """
         res = {}
         for k, v in State.string.items():
-            res[k] = ugettext_lazy(v)
+            res[k] = gettext_lazy(v)
         return res

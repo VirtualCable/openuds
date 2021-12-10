@@ -32,7 +32,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from uds.models.meta_pool import MetaPool, MetaPoolMember
 from uds.models.service_pool import ServicePool

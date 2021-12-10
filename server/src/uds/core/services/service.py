@@ -34,7 +34,7 @@
 import typing
 import logging
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 from uds.core import Module
 from uds.core.transports import protocols
 from uds.core.util.state import State
@@ -100,7 +100,7 @@ class Service(Module):
     # : Name of type, used at administration interface to identify this
     # : service (i.e. Xen server, oVirt Server, ...)
     # : This string will be translated when provided to admin interface
-    # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
+    # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
     typeName = _('Base Service')
 
@@ -112,7 +112,7 @@ class Service(Module):
 
     # : Description shown at administration level for this service.
     # : This string will be translated when provided to admin interface
-    # : using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
+    # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
     typeDescription = _('Base Service')
 

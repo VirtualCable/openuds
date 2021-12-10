@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import ServicePoolGroup, Image
 from uds.core.util.model import processUuid
 from uds.core.ui import gui
@@ -97,8 +97,8 @@ class ServicesPoolGroups(ModelHandler):
                         for v in Image.objects.all()
                     ]
                 ),
-                'label': ugettext('Associated Image'),
-                'tooltip': ugettext('Image assocciated with this service'),
+                'label': gettext('Associated Image'),
+                'tooltip': gettext('Image assocciated with this service'),
                 'type': gui.InputField.IMAGECHOICE_TYPE,
                 'order': 102,
             }

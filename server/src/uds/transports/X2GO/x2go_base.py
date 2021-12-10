@@ -37,7 +37,7 @@ import typing
 
 import paramiko
 
-from django.utils.translation import ugettext_noop as _, ugettext_lazy
+from django.utils.translation import gettext_noop as _, gettext_lazy
 from uds.core.managers import userServiceManager
 from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.ui import gui
@@ -83,7 +83,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': CommonPrefs.SZ_1024x768, 'text': '1024x768'},
             {'id': CommonPrefs.SZ_1366x768, 'text': '1366x768'},
             {'id': CommonPrefs.SZ_1920x1080, 'text': '1920x1080'},
-            {'id': CommonPrefs.SZ_FULLSCREEN, 'text': ugettext_lazy('Full Screen')},
+            {'id': CommonPrefs.SZ_FULLSCREEN, 'text': gettext_lazy('Full Screen')},
         ],
         tab=gui.PARAMETERS_TAB,
     )

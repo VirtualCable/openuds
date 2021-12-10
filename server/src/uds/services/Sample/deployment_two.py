@@ -414,7 +414,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         for it, and it will be asked everytime it's needed to be shown to the
         user (when the administation asks for it).
 
-        :note: Remember that you can use ugettext to translate this error to
+        :note: Remember that you can use gettext to translate this error to
                user language whenever it is possible. (This one will get invoked
                directly from admin interface and, as so, will have translation
                environment correctly set up.

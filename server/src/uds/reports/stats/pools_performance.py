@@ -36,7 +36,7 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from django.db.models import Count
 import django.template.defaultfilters as filters
 
@@ -255,8 +255,8 @@ class PoolPerformanceReport(StatsReport):
                 'ending': self.endDate.date(),
                 'intervals': self.samplingPoints.num(),
             },
-            header=ugettext('UDS Pools Performance Report'),
-            water=ugettext('Pools Performance'),
+            header=gettext('UDS Pools Performance Report'),
+            water=gettext('Pools Performance'),
             images={'graph1': graph1.getvalue(), 'graph2': graph2.getvalue()},
         )
 
@@ -281,10 +281,10 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
 
         writer.writerow(
             [
-                ugettext('Pool'),
-                ugettext('Date range'),
-                ugettext('Users'),
-                ugettext('Accesses'),
+                gettext('Pool'),
+                gettext('Date range'),
+                gettext('Users'),
+                gettext('Accesses'),
             ]
         )
 

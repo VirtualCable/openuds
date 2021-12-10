@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.models import Provider, Service, UserService
 from uds.core import services
@@ -87,9 +87,9 @@ class Providers(ModelHandler):
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
         offers = [
             {
-                'name': ugettext(t.name()),
+                'name': gettext(t.name()),
                 'type': t.type(),
-                'description': ugettext(t.description()),
+                'description': gettext(t.description()),
                 'icon': t.icon64().replace('\n', ''),
             }
             for t in type_.getServicesTypes()
@@ -115,7 +115,7 @@ class Providers(ModelHandler):
 
     def checkDelete(self, item: Provider) -> None:
         if item.services.count() > 0:
-            raise RequestError(ugettext('Can\'t delete providers with services'))
+            raise RequestError(gettext('Can\'t delete providers with services'))
 
     # Types related
     def enum_types(self) -> typing.Iterable[typing.Type[services.ServiceProvider]]:
