@@ -186,7 +186,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             None if there is no valid publication for this deployed service.
         """
         try:
-            return self.publications.filter(state=states.publication.USABLE)[0]
+            return self.publications.filter(state=states.publication.USABLE)[0]    # type: ignore  # Slicing is not supported by pylance right now
         except Exception:
             return None
 
@@ -315,7 +315,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 'UserService',
                 self.assignedUserServices().filter(
                     user=forUser, state__in=states.userService.VALID_STATES
-                )[0],
+                )[0],  # type: ignore  # Slicing is not supported by pylance right now
             )
             if activePub and found.publication and activePub.id != found.publication.id:
                 ret = self.recoverValue('toBeReplacedIn')

@@ -261,9 +261,9 @@ class Config:
     def update(section, key, value, checkType=False) -> bool:
         # If cfg value does not exists, simply ignore request
         try:
-            cfg = DBConfig.objects.filter(section=section, key=key)[
-                0
-            ]  # @UndefinedVariable
+            cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[
+                0  # type: ignore  # Slicing is not supported by pylance right now
+            ]
             if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
                 return False  # Skip non writable elements
 

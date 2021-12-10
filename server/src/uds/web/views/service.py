@@ -100,7 +100,9 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
             # Get First label
             transport = Transport.objects.filter(label=idTrans[6:]).order_by(
                 'priority'
-            )[0]
+            )[
+                0  # type: ignore  # Slicing is not supported by pylance right now
+            ]
         else:
             transport = Transport.objects.get(uuid=processUuid(idTrans))
         return HttpResponse(transport.getInstance().icon(), content_type='image/png')

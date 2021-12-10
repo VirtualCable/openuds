@@ -62,7 +62,7 @@ ACCOUNT_TYPE = 16
 ACTOR_TOKEN_TYPE = 17
 TUNNEL_TOKEN_TYPE = 18
 
-objTypeDict: typing.Dict[typing.Type, int] = {
+objTypeDict: typing.Dict[typing.Type['Model'], int] = {
     models.Provider: PROVIDER_TYPE,
     models.Service: SERVICE_TYPE,
     models.OSManager: OSMANAGER_TYPE,

@@ -357,7 +357,7 @@ class ServiceCacheUpdater(Job):
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
-            cache = cacheItems[0]
+            cache: UserService = cacheItems[0]    # type: ignore  # Slicing is not supported by pylance right now
             cache.removeOrCancel()
 
     def run(self):

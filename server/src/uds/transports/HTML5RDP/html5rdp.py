@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import re
 import logging
 import typing

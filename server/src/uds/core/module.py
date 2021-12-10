@@ -181,7 +181,7 @@ class Module(UserInterface, Environmentable, Serializable):
             'iconFile' class attribute
         """
         file_ = open(
-            os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile,
+            os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile,
             'rb',
         )
         data = file_.read()

@@ -17,5 +17,4 @@ requests
 WeasyPrint
 webencodings
 xml-marshaller
-pycrypto>=2.6.1
 cryptography

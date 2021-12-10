@@ -114,10 +114,10 @@ class DelayedTaskRunner:
         try:
             with transaction.atomic():  # Encloses
                 # Throws exception if no delayed task is avilable
-                task = (
+                task: DBDelayedTask = (
                     DBDelayedTask.objects.select_for_update()
                     .filter(filt)
-                    .order_by('execution_time')[0]
+                    .order_by('execution_time')[0]  # type: ignore  # Slicing is not supported by pylance right now
                 )  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
                     logger.warning(

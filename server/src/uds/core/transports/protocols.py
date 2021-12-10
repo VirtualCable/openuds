@@ -34,7 +34,6 @@
 NONE = ''
 RDP = 'rdp'
 RDS = 'rds'  # In fact, RDS (Remote Desktop Services) is RDP, but have "more info" for connection that RDP
-RGS = 'rgs'
 SPICE = 'spice'
 VNC = 'vnc'
 PCOIP = 'pcoip'
@@ -47,4 +46,4 @@ X2GO = 'x2go'  # Based on NX
 NICEDCV = 'nicedcv'
 OTHER = 'other'
 
-GENERIC = (RDP, RGS, VNC, NX, X11, X2GO, PCOIP, NICEDCV, OTHER)
+GENERIC = (RDP, VNC, NX, X11, X2GO, PCOIP, NICEDCV, OTHER)

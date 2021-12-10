@@ -32,6 +32,7 @@ import pkgutil
 import sys
 import importlib
 import logging
+import typing
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ def loadPlugins():
     logger.debug('Initializing plugins...')
 
     # Dinamycally import children of this package. The __init__.py files must import classes
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         # __import__(name, globals(), locals(), [], 1)
         importlib.import_module('.' + name, __name__)  # Local import

@@ -129,7 +129,7 @@ def packageRelativeFile(moduleName: str, fileName: str) -> str:
     Helper to get image path from relative to a module.
     This allows to keep images alongside report
     """
-    pkgpath = os.path.dirname(sys.modules[moduleName].__file__)
+    pkgpath = os.path.dirname(typing.cast(str, sys.modules[moduleName].__file__))
     return os.path.join(pkgpath, fileName)
 
 

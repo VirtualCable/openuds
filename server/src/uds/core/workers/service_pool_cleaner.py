@@ -147,7 +147,9 @@ class DeployedServiceRemover(Job):
         # First check if there is someone in "removable" estate
         removableServicePools: typing.Iterable[
             ServicePool
-        ] = ServicePool.objects.filter(state=State.REMOVABLE)[:10]
+        ] = ServicePool.objects.filter(state=State.REMOVABLE)[
+            :10  # type: ignore  # Slicing is not supported by pylance right now
+        ]
         for servicePool in removableServicePools:
             try:
                 # Skips checking deployed services in maintenance mode
@@ -162,7 +164,9 @@ class DeployedServiceRemover(Job):
 
         removingServicePools: typing.Iterable[ServicePool] = ServicePool.objects.filter(
             state=State.REMOVING
-        )[:10]
+        )[
+            :10  # type: ignore  # Slicing is not supported by pylance right now
+        ]
         for servicePool in removingServicePools:
             try:
                 # Skips checking deployed services in maintenance mode

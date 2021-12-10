@@ -155,7 +155,9 @@ class MetaAssignedService(DetailHandler):
                 uuid=processUuid(userServiceId),
                 cache_level=0,
                 deployed_service__meta=metaPool,
-            )[0]
+            )[
+                0  # type: ignore  # Slicing is not supported by pylance right now
+            ]
         except Exception:
             pass
         raise self.invalidItemException()

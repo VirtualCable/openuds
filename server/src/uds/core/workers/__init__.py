@@ -34,6 +34,7 @@ import sys
 import os.path
 import pkgutil
 import importlib
+import typing
 import logging
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ def initialize() -> None:
     from uds.core.managers import taskManager
 
     # Dinamycally import children of this package.
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         logger.debug('Importing worker %s', name)
         # __import__(name, globals(), locals(), [], 1)

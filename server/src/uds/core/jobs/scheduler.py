@@ -156,7 +156,7 @@ class Scheduler:
                 job: DBScheduler = (
                     DBScheduler.objects.select_for_update()
                     .filter(fltr)
-                    .order_by('next_execution')[0]
+                    .order_by('next_execution')[0]# type: ignore  # Slicing is not supported by pylance right now
                 )
                 if job.last_execution > now:
                     logger.warning(

@@ -28,7 +28,6 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import re
 import datetime
 import logging
 import typing

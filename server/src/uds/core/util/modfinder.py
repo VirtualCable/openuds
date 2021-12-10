@@ -52,7 +52,7 @@ def loadModulesUrls() -> typing.List[typing.Any]:
         logger.debug('Looking for patterns')
         try:
             modName = 'uds.dispatchers'
-            pkgpath = os.path.dirname(sys.modules[modName].__file__)
+            pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
             for _, name, _ in pkgutil.iter_modules([pkgpath]):
                 fullModName = '{}.{}.urls'.format(modName, name)
                 try:

@@ -74,7 +74,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def manager() -> 'UserServiceManager':
-        return UserServiceManager()  # Singleton pattern will return always the same instance
+        return (
+            UserServiceManager()
+        )  # Singleton pattern will return always the same instance
 
     @staticmethod
     def getCacheStateFilter(level: int) -> Q:
@@ -404,7 +406,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     cache_level=services.UserDeployment.L1_CACHE,
                     state=State.USABLE,
                     os_state=State.USABLE,
-                )[:1],
+                )[
+                    :1  # type: ignore  # Slicing is not supported by pylance right now
+                ],
             )
             if caches:
                 cache = caches[0]
@@ -429,7 +433,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     .select_for_update()
                     .filter(
                         cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE
-                    )[:1],
+                    )[
+                        :1  # type: ignore  # Slicing is not supported by pylance right now
+                    ],
                 )
                 if cache:
                     cache = caches[0]
@@ -475,10 +481,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 .select_for_update()
                 .filter(
                     cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING
-                )[:1]
+                )[
+                    :1  # type: ignore  # Slicing is not supported by pylance right now
+                ]
             )
             if caches:
-                cache = caches[0]
+                cache = caches[0]  # type: ignore  # Slicing is not supported by pylance right now
                 if (
                     servicePool.cachedUserServices()
                     .select_for_update()
@@ -942,14 +950,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
         sortedPools = sorted(sortPools, key=lambda x: x[0])
         pools: typing.List[ServicePool] = [
-            p[1]
-            for p in sortedPools
-            if p[1].usage() < 100 and p[1].isUsable()
+            p[1] for p in sortedPools if p[1].usage() < 100 and p[1].isUsable()
         ]
         poolsFull: typing.List[ServicePool] = [
-            p[1]
-            for p in sortedPools
-            if p[1].usage() == 100 and p[1].isUsable()
+            p[1] for p in sortedPools if p[1].usage() == 100 and p[1].isUsable()
         ]
 
         logger.debug('Pools: %s/%s', pools, poolsFull)
@@ -983,11 +987,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
         try:
             # Already assigned should look for in all usable pools, not only "non-full" ones
             alreadyAssigned: UserService = UserService.objects.filter(
-                deployed_service__in=pools+poolsFull,
+                deployed_service__in=pools + poolsFull,
                 state__in=State.VALID_STATES,
                 user=user,
                 cache_level=0,
-            ).order_by('deployed_service__name')[0]
+            ).order_by('deployed_service__name')[
+                0  # type: ignore  # Slicing is not supported by pylance right now
+            ]
             logger.debug('Already assigned %s', alreadyAssigned)
 
             # Ensure transport is available for the OS, and store it

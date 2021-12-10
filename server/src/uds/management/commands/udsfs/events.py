@@ -120,7 +120,7 @@ class EventFS(types.UDSFSInterface):
         )
         events = EventFS.get_events(year, month, day, skip)
         # Compose lines, adjsting each line length to LINELEN
-        theLines = [pretty_print(x).encode('utf-8') for x in events[:lines]]
+        theLines = [pretty_print(x).encode('utf-8') for x in events[:lines]]  # type: ignore  # Slicing is not supported by pylance right now
         # Adjust each line length to LINELEN (after encoding from utf8)
         theLines = [x + b' ' * (LINELEN - len(x) - 1) + b'\n' for x in theLines]
         # Return lines
@@ -152,4 +152,6 @@ class EventFS(types.UDSFSInterface):
         )
         return StatsEvents.objects.filter(stamp__gte=start, stamp__lte=end).order_by(
             'stamp'
-        )[skip:]
+        )[
+            skip:  # type: ignore  # Slicing is not supported by pylance right now
+        ]

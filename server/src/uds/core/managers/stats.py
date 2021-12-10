@@ -265,12 +265,17 @@ class StatsManager(metaclass=singleton.Singleton):
         """
         return StatsEvents.get_stats(ownerType, eventType, **kwargs)
 
-    def tailEvents(self, *, fromId: typing.Optional[str] = None, number: typing.Optional[int] = None) -> 'models.QuerySet[StatsEvents]':
+    def tailEvents(
+        self,
+        *,
+        fromId: typing.Optional[str] = None,
+        number: typing.Optional[int] = None
+    ) -> 'models.QuerySet[StatsEvents]':
         # If number is not specified, we return five last events
         number = number or 5
         if fromId:
-            return StatsEvents.objects.filter(id__gt=fromId).order_by('-id')[:number]
-        return StatsEvents.objects.order_by('-id')[:number]
+            return StatsEvents.objects.filter(id__gt=fromId).order_by('-id')[:number]  # type: ignore  # Slicing is not supported by pylance right now
+        return StatsEvents.objects.order_by('-id')[:number]  # type: ignore  # Slicing is not supported by pylance right now
 
     def cleanupEvents(self):
         """

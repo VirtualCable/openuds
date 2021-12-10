@@ -91,15 +91,17 @@ class UniqueIDGenerator:
                 # logger.debug('Creating new seq in range {}-{}'.format(rangeStart, rangeEnd))
                 with transaction.atomic():
                     flt = self.__filter(rangeStart, rangeEnd, forUpdate=True)
+                    item: typing.Optional[UniqueId] = None
                     try:
-                        item = flt.filter(assigned=False).order_by('seq')[0]
-                        item.owner = self._owner
-                        item.assigned = True
-                        item.stamp = stamp
-                        item.save()
-                        # UniqueId.objects.filter(id=item.id).update(owner=self._owner, assigned=True, stamp=stamp)  # @UndefinedVariable
-                        seq = item.seq
-                        break
+                        item = flt.filter(assigned=False).order_by('seq')[0]  # type: ignore  # Slicing is not supported by pylance right now
+                        if item:
+                            item.owner = self._owner
+                            item.assigned = True
+                            item.stamp = stamp
+                            item.save()
+                            # UniqueId.objects.filter(id=item.id).update(owner=self._owner, assigned=True, stamp=stamp)  # @UndefinedVariable
+                            seq = item.seq
+                            break
                     except IndexError:  # No free element found
                         item = None
 
@@ -107,8 +109,8 @@ class UniqueIDGenerator:
                     if not item:
                         # logger.debug('No free found, creating new one')
                         try:
-                            last = flt.filter(assigned=True)[
-                                0
+                            last: UniqueId = flt.filter(assigned=True)[
+                                0  # type: ignore  # Slicing is not supported by pylance right now
                             ]  # DB Returns correct order so the 0 item is the last
                             seq = last.seq + 1
                         except IndexError:  # If there is no assigned at database
@@ -162,7 +164,7 @@ class UniqueIDGenerator:
     def __purge(self) -> None:
         logger.debug('Purging UniqueID database')
         try:
-            last = self.__filter(0, forUpdate=False).filter(assigned=True)[0]
+            last: UniqueId = self.__filter(0, forUpdate=False).filter(assigned=True)[0]  # type: ignore  # Slicing is not supported by pylance right now
             logger.debug('Last: %s', last)
             seq = last.seq + 1
         except Exception:

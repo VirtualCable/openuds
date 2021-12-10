@@ -103,16 +103,18 @@ class LogManager(metaclass=singleton.Singleton):
         qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
         if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
-            for i in qs.order_by(
-                '-created',
-            )[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1 :]:
+            for i in qs.order_by('-created',)[
+                GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1 :  # type: ignore  # Slicing is not supported by pylance right now
+            ]:
                 i.delete()
 
         if avoidDuplicates:
             try:
-                lg = models.Log.objects.filter(
+                lg: models.Log = models.Log.objects.filter(
                     owner_id=owner_id, owner_type=owner_type
-                ).order_by('-id')[0]
+                ).order_by('-id')[
+                    0  # type: ignore  # Slicing is not supported by pylance right now
+                ]
                 if lg.data == message:
                     # Do not log again, already logged
                     return
@@ -142,7 +144,7 @@ class LogManager(metaclass=singleton.Singleton):
         qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         return [
             {'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data}
-            for x in reversed(qs.order_by('-created', '-id')[:limit])
+            for x in reversed(qs.order_by('-created', '-id')[:limit])  # type: ignore  # Slicing is not supported by pylance right now
         ]
 
     def __clearLogs(self, owner_type: int, owner_id: int):

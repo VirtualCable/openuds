@@ -89,7 +89,7 @@ class UserServiceRemover(Job):
                 state_date__lt=removeFrom,
                 deployed_service__service__provider__maintenance_mode=False,
             )[
-                0:removeAtOnce
+                0:removeAtOnce  # type: ignore  # Slicing is not supported by pylance right now
             ].iterator()
 
         manager = managers.userServiceManager()

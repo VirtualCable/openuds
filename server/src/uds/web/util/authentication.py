@@ -69,7 +69,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
                 tag = host
             except Exception:
                 try:
-                    tag = Authenticator.objects.order_by('priority')[0].small_name
+                    tag = Authenticator.objects.order_by('priority')[0].small_name  # type: ignore  # Slicing is not supported by pylance right now
                 except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
                     tag = None
 

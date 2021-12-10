@@ -132,8 +132,8 @@ class StatsCounters(models.Model):
                 q = q.filter(owner_type=owner_type)
 
             if q.count() > max_intervals:
-                first = q.order_by('stamp')[0].stamp
-                last = q.order_by('stamp').reverse()[0].stamp
+                first = q.order_by('stamp')[0].stamp    # type: ignore  # Slicing is not supported by pylance right now
+                last = q.order_by('stamp').reverse()[0].stamp    # type: ignore  # Slicing is not supported by pylance right now
                 interval = int((last - first) / (max_intervals - 1))
 
         stampValue = '{ceil}(stamp/{interval})'.format(

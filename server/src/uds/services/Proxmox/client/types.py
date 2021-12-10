@@ -22,7 +22,7 @@ def convertFromDict(
             k: conversors.get(type.__annotations__.get(k, str), lambda x: x)(
                 dictionary.get(k, None)
             )
-            for k in type._fields
+            for k in typing.cast(typing.NamedTuple, type)._fields
         }
     )
 

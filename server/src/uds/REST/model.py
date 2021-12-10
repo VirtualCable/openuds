@@ -223,7 +223,6 @@ class BaseModelHandler(Handler):
                     'type': 'choice',
                     'order': 100,  # At end
                     'tab': uiGui.ADVANCED_TAB,
-
                 },
             )
             self.addField(
@@ -242,12 +241,8 @@ class BaseModelHandler(Handler):
                     'type': 'multichoice',
                     'order': 101,
                     'tab': uiGui.ADVANCED_TAB,
-
                 },
             )
-
-
-
 
         return gui
 
@@ -859,7 +854,7 @@ class ModelHandler(BaseModelHandler):
             'Processing detail %s for with params %s', self._path, self._params
         )
         try:
-            item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]
+            item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]  # type: ignore  # Slicing is not supported by pylance right now
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):

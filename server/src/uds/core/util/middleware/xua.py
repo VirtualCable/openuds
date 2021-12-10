@@ -31,10 +31,6 @@
 
 import logging
 
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from uds.core.util.config import GlobalConfig
-
 logger = logging.getLogger(__name__)
 
 

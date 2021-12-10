@@ -34,7 +34,6 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from django.urls import reverse
 from django.http import HttpResponseRedirect
 
 from uds.core.ui import gui
