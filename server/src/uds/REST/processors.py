@@ -31,7 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
-# Try to use orjson if available
 import json as json  # type: ignore
 
 import logging
@@ -140,9 +139,8 @@ class MarshallerProcessor(ContentProcessor):
             logger.exception('parsing %s: %s', self.mime_type, e)
             raise ParametersException(str(e))
 
-    def render(self, obj):
+    def render(self, obj: typing.Any):
         return self.marshaller.dumps(ContentProcessor.procesForRender(obj))
-        # return json.dumps(obj)
 
 
 # ---------------
