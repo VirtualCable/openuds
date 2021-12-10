@@ -36,7 +36,6 @@ import typing
 from django.utils.translation import ugettext as _
 from uds.core import services
 from uds.core.util.state import State
-from uds.core.util.auto_attributes import AutoAttributes
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

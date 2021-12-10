@@ -42,22 +42,22 @@ logger = logging.getLogger(__name__)
 
 class Attribute:
     _type: typing.Type
-    _value: typing.Optional[typing.Any]
+    _value: typing.Any
 
-    def __init__(self, theType: typing.Type, value: typing.Optional[typing.Any] = None):
+    def __init__(self, theType: typing.Type, value: typing.Any = None):
         self._type = theType
         self.setValue(value)
 
-    def getType(self):
+    def getType(self) -> typing.Type:
         return self._type
 
-    def getValue(self):
+    def getValue(self) -> typing.Any:
         return self._value
 
-    def getStrValue(self):
+    def getStrValue(self) -> str:
         return str(self._value)
 
-    def setValue(self, value: typing.Any):
+    def setValue(self, value: typing.Any) -> None:
         if value is None:
             self._value = self._type()
         else:
@@ -73,47 +73,41 @@ class AutoAttributes(Serializable):
     Access attrs as "self._attr1, self._attr2"
     """
 
-    attrs: typing.Dict
+    attrs: typing.MutableMapping[str, Attribute]
 
     def __init__(self, **kwargs):
         Serializable.__init__(self)
         self.attrs = {}
         self.declare(**kwargs)
 
-    def __getattribute__(self, name):
+    def __getattribute__(self, name) -> typing.Any:
         if name.startswith('_') and name[1:] in self.attrs:
             return self.attrs[name[1:]].getValue()
         return super().__getattribute__(name)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: typing.Any) -> None:
         if name.startswith('_') and name[1:] in self.attrs:
             self.attrs[name[1:]].setValue(value)
         else:
             super().__setattr__(name, value)
 
-    def declare(self, **kwargs):
-        d = {}
+    def declare(self, **kwargs) -> None:
+        d: typing.MutableMapping[str, Attribute] = {}
         for key, typ in kwargs.items():
             d[key] = Attribute(typ)
         self.attrs = d
 
     def marshal(self) -> bytes:
-        for k, v in self.attrs.items():
-            logger.debug('Marshall Autoattributes: %s=%s', k, v.getValue())
-        return codecs.encode(
-            b'\2'.join(
-                [
-                    b'%s\1%s' % (k.encode('utf8'), pickle.dumps(v, protocol=0))
-                    for k, v in self.attrs.items()
-                ]
-            ),
-            'bz2',
-        )
+        return b'v1' + pickle.dumps(self.attrs)
 
     def unmarshal(self, data: bytes) -> None:
         if not data:  # Can be empty
             return
         # We keep original data (maybe incomplete)
+        if data[:2] == b'v1':
+            self.attrs = pickle.loads(data[2:])
+            return
+        # We try to load as v0
         try:
             data = codecs.decode(data, 'bz2')
         except Exception:  # With old zip encoding
@@ -127,11 +121,21 @@ class AutoAttributes(Serializable):
             except Exception:  # Old encoding on python2, set encoding for loading
                 self.attrs[k.decode()] = pickle.loads(v, encoding='utf8')
 
-        for k2, v2 in self.attrs.items():
-            logger.debug('Marshall Autoattributes: %s=%s', k2, v2.getValue())
+    def __repr__(self) -> str:
+        return (
+            'AutoAttributes('
+            + ', '.join(
+                '{}={}'.format(k, v.getType().__name__) for k, v in self.attrs.items()
+            )
+            + ')'
+        )
 
     def __str__(self) -> str:
-        str_ = '<AutoAttribute '
-        for k, v in self.attrs.items():
-            str_ += "%s (%s) = %s" % (k, v.getType(), v.getStrValue())
-        return str_ + '>'
+        return (
+            '<AutoAttribute '
+            + ','.join(
+                '{} ({}) = {}'.format(k, v.getType(), v.getStrValue())
+                for k, v in self.attrs.items()
+            )
+            + '>'
+        )
