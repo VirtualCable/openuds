@@ -351,54 +351,64 @@ class HTML5RDPTransport(transports.Transport):
     def processedUser(
         self, userService: 'models.UserService', user: 'models.User'
     ) -> str:
-        v = self.processUserAndPassword(userService, user, '')
+        v = self.getConnectionInfo(userService, user, '')
         return v['username']
 
-    def processUserAndPassword(
-        self, userService: 'models.UserService', user: 'models.User', password: str
-    ) -> typing.Dict[str, str]:
-        username: str = user.getUsernameForAuth()
 
-        if self.fixedName.value != '':
-            username = self.fixedName.value
+    def getConnectionInfo(
+        self,
+        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        user: 'models.User',
+        password: str,
+    ) -> typing.Mapping[str, str]:
+        host: str = ''
+        username: str = ''
+        passwd: str = ''
+
+        # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
+        if isinstance(userService, models.UserService):
+            conDatta = userService.getInstance().getConnectionData()  # type: ignore   # available only for RDS services
+            if not conDatta:
+                raise Exception('Invalid connection data received!')
+
+            host, username, passwd = conDatta
+
+        # if no password is provided from service, use "user" one
+        if passwd is None:
+            passwd = password
+
+        if username is None:
+            username = user.getUsernameForAuth()
 
         proc = username.split('@')
-        domain = proc[1] if len(proc) > 1 else ''
+        if len(proc) > 1:
+            domain = proc[1]
+        else:
+            domain = ''
         username = proc[0]
 
-        if self.fixedPassword.value != '':
-            password = self.fixedPassword.value
-
-        azureAd = False
         if self.fixedDomain.value != '':
-            if self.fixedDomain.value.lower() == 'azuread':
-                azureAd = True
-            else:
-                domain = self.fixedDomain.value
+            domain = self.fixedDomain.value
 
         if self.useEmptyCreds.isTrue():
-            username, password, domain = '', '', ''
+            username, passwd, domain = '', '', ''
 
-        # If no domain to be transfered, set it to ''
         if self.withoutDomain.isTrue():
             domain = ''
 
-        if '.' in domain:  # Dotter domain form
+        if '.' in domain:  # FQDN domain form
             username = username + '@' + domain
             domain = ''
 
-        # If AzureAD, include it on username
-        if azureAd:
-            username = 'AzureAD\\' + username
-
         # Fix username/password acording to os manager
-        username, password = userService.processUserPassword(username, password)
+        username, passwd = userService.processUserPassword(username, passwd)
 
         return {
             'protocol': self.protocol,
             'username': username,
-            'password': password,
+            'password': passwd,
             'domain': domain,
+            'host': host,
         }
 
     def getLink(  # pylint: disable=too-many-locals
@@ -411,7 +421,7 @@ class HTML5RDPTransport(transports.Transport):
         password: str,
         request: 'HttpRequest',
     ) -> str:
-        credsInfo = self.processUserAndPassword(userService, user, password)
+        credsInfo = self.getConnectionInfo(userService, user, password)
         username, password, domain = (
             credsInfo['username'],
             credsInfo['password'],
