@@ -8,12 +8,17 @@ import django
 # calculated paths for django and the site
 # used as starting points for various other paths
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
-BASE_DIR = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])  # If used 'relpath' instead of abspath, returns path of "enterprise" instead of "openuds"
+BASE_DIR = '/'.join(
+    os.path.dirname(os.path.abspath(__file__)).split('/')[:-1]
+)  # If used 'relpath' instead of abspath, returns path of "enterprise" instead of "openuds"
 
 DEBUG = True
 
 # USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # For testing behind a reverse proxy
+SECURE_PROXY_SSL_HEADER = (
+    'HTTP_X_FORWARDED_PROTO',
+    'https',
+)  # For testing behind a reverse proxy
 
 DATABASES = {
     'default': {
@@ -29,12 +34,12 @@ DATABASES = {
         'PASSWORD': 'PASSWOR',  # Not used with sqlite3.
         'HOST': 'localhost',  # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '3306',  # Set to empty string for default. Not used with sqlite3.
-	    # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
+        # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
     }
 }
 ALLOWED_HOSTS = ['*']
 
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -54,17 +59,17 @@ LANGUAGE_CODE = 'en'
 ugettext = lambda s: s
 
 LANGUAGES = (
-  ('es', ugettext('Spanish')),
-  ('en', ugettext('English')),
-  ('fr', ugettext('French')),
-  ('de', ugettext('German')),
-  ('pt', ugettext('Portuguese')),
-  ('it', ugettext('Italian')),
-  ('ar', ugettext('Arabic')),
-  ('eu', ugettext('Basque')),
-  ('ar', ugettext('Arabian')),
-  ('ca', ugettext('Catalan')),
-  ('zh-hans', ugettext('Chinese')),
+    ('es', ugettext('Spanish')),
+    ('en', ugettext('English')),
+    ('fr', ugettext('French')),
+    ('de', ugettext('German')),
+    ('pt', ugettext('Portuguese')),
+    ('it', ugettext('Italian')),
+    ('ar', ugettext('Arabic')),
+    ('eu', ugettext('Basque')),
+    ('ar', ugettext('Arabian')),
+    ('ca', ugettext('Catalan')),
+    ('zh-hans', ugettext('Chinese')),
 )
 
 LANGUAGE_COOKIE_NAME = 'uds_lang'
@@ -123,15 +128,15 @@ CACHES = {
         'OPTIONS': {
             'MAX_ENTRIES': 5000,
             'CULL_FREQUENCY': 3,  #  0 = Entire cache will be erased once MAX_ENTRIES is reached, this is faster on DB. if other value, will remove 1/this number items fromm cache
-        }
+        },
     },
-#    'memory': {
-#        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-#    }
+    #    'memory': {
+    #        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    #    }
     'memory': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
-    }
+    },
 }
 
 # Related to file uploading
@@ -230,25 +235,16 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(asctime)s %(module)s %(funcName)s %(lineno)d %(message)s'
         },
-        'database': {
-            'format': '%(levelname)s %(asctime)s Database %(message)s'
-        },
-        'auth': {
-            'format': '%(asctime)s %(message)s'
-        },
-        'use': {
-            'format': '%(asctime)s %(message)s'
-        },
-        'trace': {
-            'format': '%(levelname)s %(asctime)s %(message)s'
-        }
+        'database': {'format': '%(levelname)s %(asctime)s Database %(message)s'},
+        'auth': {'format': '%(asctime)s %(message)s'},
+        'use': {'format': '%(asctime)s %(message)s'},
+        'trace': {'format': '%(levelname)s %(asctime)s %(message)s'},
     },
     'handlers': {
         'null': {
             'level': 'DEBUG',
             'class': 'logging.NullHandler',
         },
-
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -257,9 +253,8 @@ LOGGING = {
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
-            'encoding': 'utf-8'
+            'encoding': 'utf-8',
         },
-
         'database': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -268,9 +263,8 @@ LOGGING = {
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
-            'encoding': 'utf-8'
+            'encoding': 'utf-8',
         },
-
         'servicesFile': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -279,9 +273,8 @@ LOGGING = {
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
-            'encoding': 'utf-8'
+            'encoding': 'utf-8',
         },
-
         'workersFile': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -290,9 +283,8 @@ LOGGING = {
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
-            'encoding': 'utf-8'
+            'encoding': 'utf-8',
         },
-
         'authFile': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -301,9 +293,8 @@ LOGGING = {
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
-            'encoding': 'utf-8'
+            'encoding': 'utf-8',
         },
-
         'useFile': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -312,9 +303,8 @@ LOGGING = {
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
-            'encoding': 'utf-8'
+            'encoding': 'utf-8',
         },
-
         'traceFile': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -323,19 +313,18 @@ LOGGING = {
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
-            'encoding': 'utf-8'
+            'encoding': 'utf-8',
         },
-
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'simple',
         },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false']
-        }
+            'filters': ['require_debug_false'],
+        },
     },
     'loggers': {
         '': {
@@ -357,12 +346,16 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-
+        # Disable fonttools (used by reports) logging (too verbose)
+        'fontTools': {
+            'handlers': ['null'],
+            'propagate': True,
+            'level': 'ERROR',
+        },
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,
         },
-
         'uds.core.workers': {
             'handlers': ['workersFile'],
             'level': LOGLEVEL,
@@ -373,7 +366,6 @@ LOGGING = {
             'level': LOGLEVEL,
             'propagate': False,
         },
-
         'uds.services': {
             'handlers': ['servicesFile'],
             'level': LOGLEVEL,
@@ -396,7 +388,6 @@ LOGGING = {
             'handlers': ['traceFile'],
             'level': 'INFO',
             'propagate': False,
-        }
-
-    }
+        },
+    },
 }
