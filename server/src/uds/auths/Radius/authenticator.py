@@ -122,6 +122,7 @@ class RadiusAuth(auths.Authenticator):
             self.secret.value.encode(),
             authPort=self.port.num(),
             nasIdentifier=self.nasIdentifier.value,
+            appClassPrefix=self.appClassPrefix.value,
         )
 
     def authenticate(
