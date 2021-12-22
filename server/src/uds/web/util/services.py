@@ -139,7 +139,7 @@ def getServicesData(
                 'id': idd(i),
                 'name': i.name,
                 'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),
-                'priority': 0,
+                'priority': i.priority,
             }
             for i in transports
         ]

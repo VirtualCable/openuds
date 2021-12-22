@@ -79,6 +79,9 @@ class TunnelTicket(Handler):
         # Take token from url
         token = self._args[2][:48]
         if not models.TunnelToken.validateToken(token):
+            if self._args[1][:4] == 'stop':
+                # "Eat" invalid stop requests, because Applications does not like them
+                return {}
             logger.error('Invalid token %s from %s', token, self._request.ip)
             raise AccessDenied()
 
