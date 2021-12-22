@@ -361,24 +361,20 @@ class HTML5RDPTransport(transports.Transport):
         user: 'models.User',
         password: str,
     ) -> typing.Mapping[str, str]:
-        host: str = ''
-        username: str = ''
-        passwd: str = ''
+        username = user.getUsernameForAuth()
 
         # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
         if isinstance(userService, models.UserService):
-            conDatta = userService.getInstance().getConnectionData()  # type: ignore   # available only for RDS services
-            if not conDatta:
-                raise Exception('Invalid connection data received!')
+            cdata = userService.getInstance().getConnectionData()
+            if cdata:
+                _, username, password = cdata  # Host is unused
 
-            host, username, passwd = conDatta
+        if self.fixedPassword.value != '':
+            password = self.fixedPassword.value
 
-        # if no password is provided from service, use "user" one
-        if passwd is None:
-            passwd = password
+        if self.fixedName.value != '':
+            username = self.fixedName.value
 
-        if username is None:
-            username = user.getUsernameForAuth()
 
         proc = username.split('@')
         if len(proc) > 1:
@@ -386,6 +382,9 @@ class HTML5RDPTransport(transports.Transport):
         else:
             domain = ''
         username = proc[0]
+
+
+        azureAd = False        
 
         if self.fixedDomain.value != '':
             domain = self.fixedDomain.value
@@ -401,14 +400,13 @@ class HTML5RDPTransport(transports.Transport):
             domain = ''
 
         # Fix username/password acording to os manager
-        username, passwd = userService.processUserPassword(username, passwd)
+        username, password = userService.processUserPassword(username, password)
 
         return {
             'protocol': self.protocol,
             'username': username,
-            'password': passwd,
+            'password': password,
             'domain': domain,
-            'host': host,
         }
 
     def getLink(  # pylint: disable=too-many-locals
