@@ -81,7 +81,7 @@ if executable is None:
             </ul>
             '''
         )
-elif executable == msrdc:
+elif executable == msrdc or executable == msrdc_localized:
     theFile = sp['as_file']  # type: ignore
     filename = tools.saveTempFile(theFile)
     # Rename as .rdp, so open recognizes it

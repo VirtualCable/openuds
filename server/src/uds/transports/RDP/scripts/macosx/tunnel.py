@@ -96,7 +96,7 @@ if fs.check() is False:
         '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
     )
 
-if executable == msrdc:
+if executable == msrdc or executable == msrdc_localized:
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
     filename = tools.saveTempFile(theFile)
