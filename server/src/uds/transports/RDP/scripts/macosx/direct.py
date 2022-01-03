@@ -11,6 +11,9 @@ globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 msrdc = (
     '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
 )
+msrdc_localized = (
+    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
+)
 xfreerdp = tools.findApp('xfreerdp')
 executable = None
 
@@ -37,8 +40,10 @@ def fixResolution():
 # Check first xfreerdp, allow password redir
 if xfreerdp and os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif msrdc and os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
+elif os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
     executable = msrdc
+elif os.path.isfile(msrdc_localized) and sp['as_file']:  # type: ignore
+    executable = msrdc_localized
 
 if executable is None:
     if sp['as_file']:  # type: ignore
