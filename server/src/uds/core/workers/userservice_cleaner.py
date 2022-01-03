@@ -88,12 +88,16 @@ class UserServiceRemover(Job):
                 state=State.REMOVABLE,
                 state_date__lt=removeFrom,
                 deployed_service__service__provider__maintenance_mode=False,
-            )[
-                0:removeAtOnce  # type: ignore  # Slicing is not supported by pylance right now
-            ].iterator()
+            ).iterator(chunk_size=removeAtOnce)
 
         manager = managers.userServiceManager()
         for removableUserService in removableUserServices:
+            # if removal limit is reached, we stop
+            if removeAtOnce <= 0:
+                break
+            # decrease how many we can remove
+            removeAtOnce -= 1
+
             logger.debug('Checking removal of %s', removableUserService.name)
             try:
                 if manager.canRemoveServiceFromDeployedService(

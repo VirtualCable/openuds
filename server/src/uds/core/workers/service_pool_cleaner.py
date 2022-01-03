@@ -49,7 +49,7 @@ class DeployedServiceInfoItemsCleaner(Job):
     )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Info Cleaner'
 
-    def run(self):
+    def run(self) -> None:
         removeFrom = getSqlDatetime() - timedelta(
             seconds=GlobalConfig.KEEP_INFO_TIME.getInt()
         )
@@ -65,10 +65,10 @@ class DeployedServiceRemover(Job):
     )  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Cleaner'
 
-    def startRemovalOf(self, servicePool: ServicePool):
+    def startRemovalOf(self, servicePool: ServicePool) -> None:
         if (
             servicePool.service is None
-        ):  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone "touched.. ;)")
+        ):  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone hand-changed something.. ;)")
             logger.error('Found service pool %s without service', servicePool.name)
             servicePool.delete()  # Just remove it "a las bravas", the best we can do
             return
@@ -91,8 +91,11 @@ class DeployedServiceRemover(Job):
         servicePool.name += ' (removed)'
         servicePool.save()
 
-    def continueRemovalOf(self, servicePool: ServicePool):
-        # Recheck that there is no publication created in "bad moment"
+    def continueRemovalOf(self, servicePool: ServicePool) -> None:
+        # get current time
+        now = getSqlDatetime()
+
+        # Recheck that there is no publication created just after "startRemovalOf"
         try:
             for pub in servicePool.publications.filter(state=State.PREPARING):
                 pub.cancel()
@@ -116,9 +119,7 @@ class DeployedServiceRemover(Job):
                 state__in=State.INFO_STATES
             ).delete()
 
-        # Mark usable user services as removable
-        now = getSqlDatetime()
-
+        # Mark usable user services as removable, as batch
         with transaction.atomic():
             servicePool.userServices.select_for_update().filter(
                 state=State.USABLE
@@ -143,7 +144,7 @@ class DeployedServiceRemover(Job):
             except Exception:
                 logger.exception('Cought unexpected exception at continueRemovalOf: ')
 
-    def run(self):
+    def run(self) -> None:
         # First check if there is someone in "removable" estate
         removableServicePools: typing.Iterable[
             ServicePool

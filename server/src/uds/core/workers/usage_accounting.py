@@ -43,7 +43,7 @@ class UsageAccounting(Job):
     frecuency = 60
     friendly_name = 'Usage Accounting update'
 
-    def run(self):
+    def run(self) -> None:
         with transaction.atomic():
             AccountUsage.objects.select_for_update().filter(
                 user_service__in_use=True

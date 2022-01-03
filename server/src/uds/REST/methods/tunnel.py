@@ -80,7 +80,10 @@ class TunnelTicket(Handler):
         token = self._args[2][:48]
         if not models.TunnelToken.validateToken(token):
             if self._args[1][:4] == 'stop':
-                # "Eat" invalid stop requests, because Applications does not like them
+                # "Discard" invalid stop requests, because Applications does not like them.
+                # RDS connections keep alive for a while after the application is finished,
+                # Also, same tunnel can be used for multiple applications, so we need to
+                # discard invalid stop requests. (because the data provided is also for "several" applications)")
                 return {}
             logger.error('Invalid token %s from %s', token, self._request.ip)
             raise AccessDenied()

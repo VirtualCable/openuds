@@ -506,6 +506,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         else:
             self.cancel()
 
+    def releaseOrCancel(self) -> None:
+        """
+        A much more convenient method name that "removeOrCancel" (i think :) )
+        """
+        self.removeOrCancel()
+
     def moveToLevel(self, cacheLevel: int) -> None:
         """
         Moves cache items betwen levels, managed directly

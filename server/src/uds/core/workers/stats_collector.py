@@ -50,7 +50,7 @@ class DeployedServiceStatsCollector(Job):
     frecuency = 599  # Once every ten minutes, 601 is prime, 599 also is prime, i like primes... :)
     friendly_name = 'Deployed Service Stats'
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Starting Deployed service stats collector')
 
         servicePoolsToCheck: typing.Iterable[ServicePool] = ServicePool.objects.filter(

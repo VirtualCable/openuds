@@ -562,6 +562,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         serviceInstance = servicePool.service.getInstance()
         if (
+            serviceInstance.isAvailable() and
             removing >= serviceInstance.parent().getMaxRemovingServices()
             and serviceInstance.parent().getIgnoreLimits() is False
         ):

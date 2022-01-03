@@ -56,7 +56,7 @@ class StuckCleaner(Job):
     frecuency = 3601 * 8  # Executes Once a day
     friendly_name = 'Stuck States cleaner'
 
-    def run(self):
+    def run(self) -> None:
         since_state: datetime = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
         # Filter for locating machine stuck on removing, cancelling, etc..
         # Locate service pools with pending assigned service in use

@@ -93,4 +93,4 @@ class AssignedAndUnused(Job):
                     logger.debug(
                         'Found unused assigned service with no OS Manager %s', us
                     )
-                    us.remove()
+                    us.release()

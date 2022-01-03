@@ -243,6 +243,14 @@ class Service(Module):
         """
         return self._provider
 
+    def isAvailable(self) -> bool:
+        """
+        Returns if this service is reachable (that is, we can operate with it). This is used, for example, to check
+        if a service is "operable" before removing an user service (that is, pass from "waiting for remove" to "removing")
+        By default, this method returns True.
+        """
+        return True
+
     def requestServicesForAssignation(
         self, **kwargs
     ) -> typing.Iterable[UserDeployment]:

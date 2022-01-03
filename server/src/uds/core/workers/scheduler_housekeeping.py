@@ -52,7 +52,7 @@ class SchedulerHousekeeping(Job):
     frecuency = 301  # Frecuncy for this job
     friendly_name = 'Scheduler house keeping'
 
-    def run(self):
+    def run(self) -> None:
         """
         Look for "hanged" scheduler tasks and reschedule them
         """

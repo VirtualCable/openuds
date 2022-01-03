@@ -47,7 +47,7 @@ class HangedCleaner(Job):
     frecuency_cfg = GlobalConfig.MAX_INITIALIZING_TIME
     friendly_name = 'Hanged services checker'
 
-    def run(self):
+    def run(self) -> None:
         now = getSqlDatetime()
         since_state = now - timedelta(
             seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt()
@@ -111,7 +111,7 @@ class HangedCleaner(Job):
                             us.friendly_name
                         ),
                     )
-                    us.remove()  # Mark it again as removable, and let's see
+                    us.release()  # Mark it again as removable, and let's see
                 else:
                     log.doLog(
                         us,
@@ -126,4 +126,4 @@ class HangedCleaner(Job):
                             us.friendly_name
                         ),
                     )
-                    us.removeOrCancel()
+                    us.releaseOrCancel()

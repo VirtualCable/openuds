@@ -47,7 +47,7 @@ class CacheCleaner(Job):
     frecuency = 3600 * 24  # Once a day
     friendly_name = 'Utility Cache Cleaner'
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Starting cache cleanup')
         Cache.cleanUp()
         logger.debug('Done cache cleanup')
@@ -58,7 +58,7 @@ class TicketStoreCleaner(Job):
     frecuency = 60  # every minute (60 seconds)
     friendly_name = 'Ticket Storage Cleaner'
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Starting ticket storage cleanup')
         TicketStore.cleanup()
         logger.debug('Done ticket storage cleanup')
@@ -69,7 +69,7 @@ class SessionsCleaner(Job):
     frecuency = 3600 * 24 * 7  # Once a week will be enough
     friendly_name = 'User Sessions cleaner'
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Starting session cleanup')
         try:
             engine: typing.Any = import_module(settings.SESSION_ENGINE)

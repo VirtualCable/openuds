@@ -360,7 +360,7 @@ class ServiceCacheUpdater(Job):
             cache: UserService = cacheItems[0]    # type: ignore  # Slicing is not supported by pylance right now
             cache.removeOrCancel()
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Starting cache checking')
         # We need to get
         servicesThatNeedsUpdate = self.servicesPoolsNeedingCacheUpdate()

@@ -50,7 +50,7 @@ class PublicationInfoItemsCleaner(Job):
     )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publications Info Cleaner'
 
-    def run(self):
+    def run(self) -> None:
         removeFrom = getSqlDatetime() - timedelta(
             seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True)
         )
@@ -66,7 +66,7 @@ class PublicationCleaner(Job):
     )  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publication Cleaner'
 
-    def run(self):
+    def run(self) -> None:
         removables: typing.Iterable[
             ServicePoolPublication
         ] = ServicePoolPublication.objects.filter(
