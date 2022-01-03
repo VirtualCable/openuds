@@ -74,10 +74,11 @@ class UserServiceRemover(Job):
     friendly_name = 'User Service Cleaner'
 
     def run(self) -> None:
-        removeAtOnce: int = (
-            GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()
-        )  # Same, it will work at reload
-
+        # USER_SERVICE_REMOVAL_LIMIT is the maximum number of items to remove at once
+        # This configuration value is cached at startup, so it is not updated until next reload
+        removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()
+        manager = managers.userServiceManager()
+        
         with transaction.atomic():
             removeFrom = getSqlDatetime() - timedelta(
                 seconds=10
@@ -90,19 +91,18 @@ class UserServiceRemover(Job):
                 deployed_service__service__provider__maintenance_mode=False,
             ).iterator(chunk_size=removeAtOnce)
 
-        manager = managers.userServiceManager()
+        # We remove at once, but we limit the number of items to remove
+
         for removableUserService in removableUserServices:
             # if removal limit is reached, we stop
             if removeAtOnce <= 0:
                 break
-            # decrease how many we can remove
-            removeAtOnce -= 1
-
             logger.debug('Checking removal of %s', removableUserService.name)
             try:
                 if manager.canRemoveServiceFromDeployedService(
                     removableUserService.deployed_service
                 ):
                     manager.remove(removableUserService)
+                    removeAtOnce -= 1  # We promoted one removal
             except Exception:
                 logger.exception('Exception removing user service')
