@@ -31,11 +31,12 @@ def fixResolution():
     return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
 
+
 msrdc = (
-    '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
+    '/Applications/Microsoft Remote Desktop.app'
 )
 msrdc_localized = (
-    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
+    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app'
 )
 
 xfreerdp = tools.findApp('xfreerdp')
@@ -44,9 +45,9 @@ executable = None
 # Check first xfreerdp, allow password redir
 if xfreerdp and os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
+elif os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
     executable = msrdc
-elif os.path.isfile(msrdc_localized) and sp['as_file']:  # type: ignore
+elif os.path.isdir(msrdc_localized) and sp['as_file']:  # type: ignore
     executable = msrdc_localized
 
 if executable is None:
@@ -96,7 +97,7 @@ if fs.check() is False:
         '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
     )
 
-if executable == msrdc or executable == msrdc_localized:
+if executable in (msrdc, msrdc_localized):
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
     filename = tools.saveTempFile(theFile)
@@ -110,7 +111,7 @@ if executable == msrdc or executable == msrdc_localized:
             [
                 'open',
                 '-a',
-                '/Applications/Microsoft Remote Desktop.app',
+                executable,
                 filename + '.rdp',
             ]
         )
