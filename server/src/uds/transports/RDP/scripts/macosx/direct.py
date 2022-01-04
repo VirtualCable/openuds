@@ -9,11 +9,13 @@ from uds import tools  # type: ignore
 globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 msrdc = (
-    '/Applications/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
+    '/Applications/Microsoft Remote Desktop.app'
 )
 msrdc_localized = (
-    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app/Contents/MacOS/Microsoft Remote Desktop'
+    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app'
 )
+# msrdc_app = '/Contents/MacOS/Microsoft Remote Desktop'
+
 xfreerdp = tools.findApp('xfreerdp')
 executable = None
 
@@ -40,9 +42,9 @@ def fixResolution():
 # Check first xfreerdp, allow password redir
 if xfreerdp and os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isfile(msrdc) and sp['as_file']:  # type: ignore
+elif os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
     executable = msrdc
-elif os.path.isfile(msrdc_localized) and sp['as_file']:  # type: ignore
+elif os.path.isdir(msrdc_localized) and sp['as_file']:  # type: ignore
     executable = msrdc_localized
 
 if executable is None:
@@ -81,7 +83,7 @@ if executable is None:
             </ul>
             '''
         )
-elif executable == msrdc or executable == msrdc_localized:
+if executable in (msrdc, msrdc_localized):
     theFile = sp['as_file']  # type: ignore
     filename = tools.saveTempFile(theFile)
     # Rename as .rdp, so open recognizes it
@@ -94,7 +96,7 @@ elif executable == msrdc or executable == msrdc_localized:
             [
                 'open',
                 '-a',
-                '/Applications/Microsoft Remote Desktop.app',
+                executable,
                 filename + '.rdp',
             ]
         )
