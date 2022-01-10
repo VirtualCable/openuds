@@ -8,7 +8,7 @@
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
 # blafuente <blafuente@virtualcable.es>, 2014
 # blafuente <blafuente@virtualcable.es>, 2014-2015
-# Francisco Javier Gómez Seijo <jgomez@virtualcable.es>, 2021
+# Javier Gomez <jgomez@virtualcable.es>, 2021
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014,2020
 # Javier <jgonzalez@virtualcable.es>, 2014
@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 11:04+0100\n"
+"POT-Creation-Date: 2022-01-10 14:32+0100\n"
 "PO-Revision-Date: 2021-09-15 10:45+0000\n"
-"Last-Translator: Francisco Javier Gómez Seijo <jgomez@virtualcable.es>\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -1712,7 +1712,7 @@ msgid "UDS networks for this IP"
 msgstr "Redes UDS para esta IP"
 
 #: static/modern/translations-fakejs.js:47
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:58
 msgid "Downloads"
 msgstr "Descargas"
 
@@ -1743,17 +1743,17 @@ msgstr "Si encuentra que no hemos mencionado algún componente, háganoslo saber
 msgid "Download UDS client for your platform"
 msgstr "Descarga el UDS Client para su plataforma"
 
-#: static/modern/translations-fakejs.js:58
-msgid ""
-"Legacy clients are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"Los clientes \"Legacy\" solo se proporcionan para la compatibilidad con "
-"sistemas operativos antiguos. Trate de evitarlos."
-
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:59
 msgid "Always download the UDS actor matching your platform"
 msgstr "Descarga el actor UDS adecuado para su plataforma"
+
+#: static/modern/translations-fakejs.js:60
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+msgstr ""
+"Los actores \"Legacy\" solo se proporcionan para la compatibilidad con "
+"sistemas operativos antiguos. Trate de evitarlos."
 
 #: static/modern/translations-fakejs.js:61
 msgid "An error has occurred"

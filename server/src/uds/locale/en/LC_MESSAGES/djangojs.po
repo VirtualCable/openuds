@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 11:04+0100\n"
+"POT-Creation-Date: 2022-01-10 14:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1686,7 +1686,7 @@ msgid "UDS networks for this IP"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:47
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:58
 msgid "Downloads"
 msgstr ""
 
@@ -1717,14 +1717,14 @@ msgstr ""
 msgid "Download UDS client for your platform"
 msgstr ""
 
-#: static/modern/translations-fakejs.js:58
-msgid ""
-"Legacy clients are only provided for old operating system support. Try to "
-"avoid them."
+#: static/modern/translations-fakejs.js:59
+msgid "Always download the UDS actor matching your platform"
 msgstr ""
 
 #: static/modern/translations-fakejs.js:60
-msgid "Always download the UDS actor matching your platform"
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
 msgstr ""
 
 #: static/modern/translations-fakejs.js:61

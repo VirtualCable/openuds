@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 11:04+0100\n"
+"POT-Creation-Date: 2022-01-10 14:32+0100\n"
 "PO-Revision-Date: 2021-09-15 10:45+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -1703,7 +1703,7 @@ msgid "UDS networks for this IP"
 msgstr "UDS sareak IP honentzat"
 
 #: static/modern/translations-fakejs.js:47
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:58
 msgid "Downloads"
 msgstr "Deskargak"
 
@@ -1735,17 +1735,17 @@ msgstr ""
 msgid "Download UDS client for your platform"
 msgstr "Deskargatu UDS bezeroa zure plataformarako"
 
-#: static/modern/translations-fakejs.js:58
-msgid ""
-"Legacy clients are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"UDS Aktore zaharrak laguntza moduan daude, sistema erabiltze zaharretzat "
-"eskaintzen dira. Saiatu ez erabiltzen."
-
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:59
 msgid "Always download the UDS actor matching your platform"
 msgstr "Deskargatu beti zure plataformarekin bat datorren UDS aktorea"
+
+#: static/modern/translations-fakejs.js:60
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+msgstr ""
+"Actor zaharrak sistema eragile zaharretarako laguntza moduan soilik "
+"eskaintzen dira. Saiatu saihesten."
 
 #: static/modern/translations-fakejs.js:61
 msgid "An error has occurred"
