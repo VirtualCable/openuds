@@ -165,11 +165,12 @@ async def tunnel_proc_async(
 
     async with curio.TaskGroup() as tg:
         await tg.spawn(run_server, pipe, cfg, tg)
+        await tg.join()
         # Reap all of the children tasks as they complete
-        async for task in tg:
-            logger.debug(f'REMOVING async task {task!r}')
-            task.joined = True
-            del task
+        # async for task in tg:
+        #    logger.debug(f'REMOVING async task {task!r}')
+        #    task.joined = True
+        #    del task
 
 
 def tunnel_main():
