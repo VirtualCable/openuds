@@ -4,14 +4,14 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020
-# albert clar <albert.clar@uib.cat>, 2017-2018,2020
+# albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 11:04+0100\n"
-"PO-Revision-Date: 2021-09-15 10:44+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2022-01-10 14:32+0100\n"
+"PO-Revision-Date: 2021-12-20 10:18+0000\n"
+"Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -1015,7 +1015,7 @@ msgstr "Suprimir el token de l'actor - UTILITZEU-HO AMB PRECAUCIÓ MÀXIMA !!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
-msgstr "Suprimeix el testimoni de túnel: utilitzeu-lo amb extrema precaució."
+msgstr "Suprimir el token del Túnel - UTILITZEU-HO AMB PRECAUCIÓ MÀXIMA !!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:24
 msgid "Cache flushed"
@@ -1117,7 +1117,7 @@ msgstr "Elements seleccionats"
 
 #: static/admin/translations-fakejs.js:302
 msgid "Copy"
-msgstr "Copia"
+msgstr "Copiar"
 
 #: static/admin/translations-fakejs.js:303
 msgid "Detail"
@@ -1208,7 +1208,7 @@ msgstr "Informes"
 
 #: static/admin/translations-fakejs.js:329
 msgid "Tokens"
-msgstr "Fitxes"
+msgstr "Tokens"
 
 #: static/admin/translations-fakejs.js:330
 msgid "Actor"
@@ -1538,7 +1538,7 @@ msgstr "Error de comunicació amb el vostre servei. Torneu-ho a provar."
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
 msgid "Your session has expired. Please, login again"
-msgstr "La teva sessió ha caducat. Torneu a iniciar sessió"
+msgstr "La vostra sessió ha caducat. Torneu a iniciar sessió"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
 #: static/modern/translations-fakejs.js:20
@@ -1554,11 +1554,11 @@ msgstr ""
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
 msgid "Service ready"
-msgstr "Servei a punt"
+msgstr "Servei preparat"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
 msgid "UDS Client not launching"
-msgstr "El client UDS no s’inicia"
+msgstr "El client UDS no s'engega"
 
 #: static/modern/main-es5.js:1
 msgid ""
@@ -1573,7 +1573,7 @@ msgstr "Descàrrega del client UDS"
 
 #: static/modern/main-es5.js:1
 msgid "Launching UDS Client, almost done."
-msgstr "Llançament del client UDS, gairebé acabat."
+msgstr "Inici del client UDS, gairebé acabat."
 
 #: static/modern/main-es5.js:1
 msgid "Machine ready, waiting for UDS Client"
@@ -1698,7 +1698,7 @@ msgid "UDS networks for this IP"
 msgstr "Xarxes UDS per a aquesta IP"
 
 #: static/modern/translations-fakejs.js:47
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:58
 msgid "Downloads"
 msgstr "Descàrregues"
 
@@ -1729,17 +1729,17 @@ msgstr "Si creieu que hem oblidat algun component, si us plau feu-nos-ho saber"
 msgid "Download UDS client for your platform"
 msgstr "Descarregueu el client UDS per a la vostra plataforma"
 
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:59
+msgid "Always download the UDS actor matching your platform"
+msgstr "Baixeu sempre l';actor UDS que coincideixi amb la vostra plataforma"
+
+#: static/modern/translations-fakejs.js:60
 msgid ""
-"Legacy clients are only provided for old operating system support. Try to "
+"Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
 msgstr ""
 "Els clients \"legacy\" només es proporcionen per a suport de sistemes "
 "operatius antics. Intenteu evitar-los."
-
-#: static/modern/translations-fakejs.js:60
-msgid "Always download the UDS actor matching your platform"
-msgstr "Baixeu sempre l';actor UDS que coincideixi amb la vostra plataforma"
 
 #: static/modern/translations-fakejs.js:61
 msgid "An error has occurred"

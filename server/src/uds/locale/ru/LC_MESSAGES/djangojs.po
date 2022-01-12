@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 11:04+0100\n"
+"POT-Creation-Date: 2022-01-10 14:32+0100\n"
 "PO-Revision-Date: 2021-09-15 10:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
@@ -1700,7 +1700,7 @@ msgid "UDS networks for this IP"
 msgstr "Сети UDS для этого IP"
 
 #: static/modern/translations-fakejs.js:47
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:58
 msgid "Downloads"
 msgstr "Загрузки"
 
@@ -1733,17 +1733,17 @@ msgstr ""
 msgid "Download UDS client for your platform"
 msgstr "Загрузите клиент UDS для вашей платформы"
 
-#: static/modern/translations-fakejs.js:58
-msgid ""
-"Legacy clients are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"Устаревшие клиенты предоставляются только для поддержки старых операционных "
-"систем. Старайтесь их избегать."
-
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:59
 msgid "Always download the UDS actor matching your platform"
 msgstr "Всегда загружайте клиента UDS, соответствующего вашей платформе"
+
+#: static/modern/translations-fakejs.js:60
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+msgstr ""
+"Совместимые клиенты предоставляются только для поддержки старых операционных "
+"систем. Старайтесь их избегать."
 
 #: static/modern/translations-fakejs.js:61
 msgid "An error has occurred"
