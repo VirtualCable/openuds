@@ -102,6 +102,6 @@ build-thinpro:
 	mkdir -p $(DESTDIR)
 	cp -r thinpro/* $(DESTDIR)
 	cp UDSClient-$(VERSION)-x86_64.AppImage $(DESTDIR)/UDSClient
-	tar cjvf ../udsclient3-$(VERSION)-thinpro.tar.bz2 -C $(DESTDIR) .
+	tar czvf ../udsclient3-$(VERSION)-thinpro.tar.gz -C $(DESTDIR) .
 	rm -rf $(DESTDIR)
 
