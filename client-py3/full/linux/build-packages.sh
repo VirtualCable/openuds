@@ -47,4 +47,7 @@ make DESTDIR=appimage DISTRO=i686 VERSION=${VERSION} build-appimage
 # we need first to create the Appimage for x86_64
 make DESTDIR=igelimage DISTRO=x86_64 VERSION=${VERSION} build-igel
 
+# Create the thinpro version
+make DESTDIR=thinproimage DISTRO=x86_64 VERSION=${VERSION} build-thinpro
+
 rpm --addsign ../*rpm
