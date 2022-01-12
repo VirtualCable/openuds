@@ -1,0 +1,50 @@
+{
+  "defaultHandlersVersion":{
+    "en-US":4
+  },
+  "mimeTypes":{
+    "application/pdf":{
+      "action":3,
+      "extensions":["pdf"]
+    },
+    "application/x-ica":{
+      "action":2,
+      "handlers":[{
+        "name":"wfica",
+        "path":"/usr/bin/hptc-firefox-run-wfica.sh"
+      }],
+      "extensions":["ica"]
+    },
+    "application/x-rdp":{
+      "action":2,
+      "handlers":[{
+        "name":"HP xfreerdp",
+        "path":"/usr/bin/hptc-run-rdp-file-freerdp.sh"
+      }],
+      "extensions":["rdp"]
+    }
+  },
+  "schemes":{
+    "vmware-view":{
+      "action":2,
+      "handlers":[{
+        "name":"VMWare Horizon View",
+        "path":"/usr/bin/vmware-view"
+      }]
+    },
+    "udss":{
+      "action":2,
+      "handlers":[{
+          "name":"UDS Client",
+          "path":"/bin/udsclient"
+      }]
+    },
+    "uds":{
+      "action":2,
+      "handlers":[{
+          "name":"UDS Client",
+          "path":"/bin/udsclient"
+      }]
+    }
+  }
+}

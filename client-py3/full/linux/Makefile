@@ -96,3 +96,12 @@ build-igel:
 	zip -j ../udsclient3-$(VERSION)-igel.zip $(DESTDIR)/UDSClient-Profile.xml $(DESTDIR)/UDSClient.inf $(DESTDIR)/UDSClient.tar.bz2
 	cd ..
 	rm -rf $(DESTDIR)
+
+build-thinpro:
+	rm -rf $(DESTDIR)
+	mkdir -p $(DESTDIR)
+	cp -r thinpro/* $(DESTDIR)
+	cp UDSClient-$(VERSION)-x86_64.AppImage $(DESTDIR)/UDSClient
+	tar czvf ../udsclient3-$(VERSION)-thinpro.tar.gz -C $(DESTDIR) .
+	rm -rf $(DESTDIR)
+
