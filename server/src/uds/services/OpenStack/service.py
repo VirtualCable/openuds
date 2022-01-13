@@ -440,3 +440,6 @@ class LiveService(Service):
         Returns the length of numbers part
         """
         return int(self.lenName.value)
+
+    def isAvailable(self) -> bool:
+        return self.parent().isAvailable()

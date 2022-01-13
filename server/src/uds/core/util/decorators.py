@@ -36,6 +36,7 @@ import inspect
 import typing
 
 from uds.core.util.html import checkBrowser
+from uds.core.util.cache import Cache
 from uds.web.util import errors
 
 
@@ -115,7 +116,7 @@ def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 # Decorator that tries to get from cache before executing
 def allowCache(
     cachePrefix: str,
-    cacheTimeout: int,
+    cacheTimeout: typing.Union[typing.Callable[[], int], int] = Cache.DEFAULT_VALIDITY,
     cachingArgs: typing.Optional[
         typing.Union[typing.List[int], typing.Tuple[int], int]
     ] = None,
@@ -131,6 +132,8 @@ def allowCache(
     :param cacheTimeout: The cache timeout in seconds
     :param cachingArgs: The caching args. Can be a single integer or a list.
                         First arg (self) is 0, so normally cachingArgs are 1, or [1,2,..]
+    :param cachingKWArgs: The caching kwargs. Can be a single string or a list.
+    :param cachingKeyFnc: A function that receives the args and kwargs and returns the key
     """
     keyFnc = cachingKeyFnc or (lambda x: '')
 
@@ -169,12 +172,17 @@ def allowCache(
             if 'force' in kwargs:
                 # Remove force key
                 del kwargs['force']
+                
+            # ic cacheTimeout is a function, call it
+            timeout = cacheTimeout
+            if callable(timeout):
+                timeout = timeout()
 
             if args[0].cache:  # Not in cache and object can cache it
                 data = fnc(*args, **kwargs)
                 try:
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
-                    args[0].cache.put(cacheKey, data, cacheTimeout)
+                    args[0].cache.put(cacheKey, data, timeout)
                 except Exception as e:
                     logger.debug(
                         'Data for %s is not serializable on call to %s, not cached. %s (%s)',

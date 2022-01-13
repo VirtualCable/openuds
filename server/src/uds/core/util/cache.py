@@ -48,7 +48,10 @@ class Cache:
     hits = 0
     misses = 0
 
+    # Some aliases
     DEFAULT_VALIDITY = 60
+    SHORT_VALIDITY = 5
+    LONG_VALIDITY = 3600
 
     _owner: str
     _bowner: bytes
@@ -98,6 +101,12 @@ class Cache:
             # logger.debug('Cache inaccesible: %s:%s', skey, e)
             return defValue
 
+    def __getitem__(self, key: typing.Union[str, bytes]) -> typing.Any:
+        """
+        Returns the cached value for the given key using the [] operator
+        """
+        return self.get(key)
+
     def remove(self, skey: typing.Union[str, bytes]) -> bool:
         """
         Removes an stored cached item
@@ -111,6 +120,12 @@ class Cache:
         except DBCache.DoesNotExist:  # @UndefinedVariable
             logger.debug('key not found')
             return False
+
+    def __delitem__(self, key: typing.Union[str, bytes]) -> None:
+        """
+        Removes an stored cached item using the [] operator
+        """
+        self.remove(key)
 
     def clean(self) -> None:
         Cache.delete(self._owner)
@@ -147,6 +162,12 @@ class Cache:
                 c.save()
             except transaction.TransactionManagementError:
                 logger.debug('Transaction in course, cannot store value')
+
+    def __setitem__(self, key: typing.Union[str, bytes], value: typing.Any) -> None:
+        """
+        Stores a value in the cache using the [] operator with default validity
+        """
+        self.put(key, value)
 
     def refresh(self, skey: typing.Union[str, bytes]) -> None:
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))

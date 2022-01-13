@@ -320,3 +320,6 @@ class LiveService(Service):
         self, machineId: str, username: str, password: str, domain: str
     ) -> typing.Dict[str, typing.Any]:
         return self.parent().desktopLogin(machineId, username, password, domain)
+
+    def isAvailable(self) -> bool:
+        return self.parent().isAvailable()
