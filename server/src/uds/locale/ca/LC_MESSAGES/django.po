@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 14:32+0100\n"
-"PO-Revision-Date: 2021-12-21 12:17+0000\n"
-"Last-Translator: albert clar <albert.clar@uib.cat>\n"
+"POT-Creation-Date: 2022-01-14 12:31+0100\n"
+"PO-Revision-Date: 2022-01-10 13:33+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -1035,7 +1035,6 @@ msgid "Last access"
 msgstr "Darrer accés"
 
 #: REST/methods/users_groups.py:202
-#| msgid "Username not found"
 msgid "Username cannot be empty"
 msgstr "El nom d&#39;usuari no pot estar buit"
 
@@ -1065,7 +1064,6 @@ msgid "UDS Meta Group"
 msgstr "Metagrup UDS"
 
 #: REST/methods/users_groups.py:430
-#| msgid "Group name attrs"
 msgid "Group name is required"
 msgstr "El nom del grup és obligatori"
 
@@ -2353,7 +2351,6 @@ msgstr ""
 "Eliminar TOTS el serveis d'usuari assignats. UTILITZEU-HO AMB PRECAUCIÓ!"
 
 #: models/calendar_action.py:182
-#| msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgid "Remove OLD assigned user services."
 msgstr "Elimina els serveis d&#39;usuari assignats ANTIC."
 
@@ -2568,7 +2565,6 @@ msgid "Must provide an user account!!!"
 msgstr "Cal indicar un compte d'usuari!!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgid "RDS UDS Actor (for remote apps on Windows Server)"
 msgstr "RDS UDS Actor (per a aplicacions remotes a Windows Server)"
 
@@ -3575,12 +3571,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "Publicació d'UDS per a {0} a {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#| msgid "HyperV Linked Clone"
 msgid "HyperV Linked Clone (LEGACY))"
 msgstr "Clon enllaçat HyperV (LEGACY))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-#| msgid "Hyper Services based on templates and differential disks"
 msgid "Hyper Services based on templates and differential disks (LEGACY)"
 msgstr "Hiper serveis basats en plantilles i discs diferencials (LEGACY)"
 
@@ -5073,7 +5067,6 @@ msgid "Main Network"
 msgstr "Xarxa principal"
 
 #: services/VCloud_enterprise/service.py:100
-#: services/Vmware_enterprise/service_linked.py:152
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -5272,6 +5265,15 @@ msgstr "Pool de recursos que conté la màquina base"
 #: services/Vmware_enterprise/service_linked.py:132
 msgid "Base machine for this service"
 msgstr "Màquina base per a aquest servei"
+
+#: services/Vmware_enterprise/service_linked.py:152
+msgid ""
+"Main network used by the machine. The first interface found in base machine "
+"in this network, will be switched to publication network"
+msgstr ""
+"Xarxa principal utilitzada per la màquina. La primera interfície que es "
+"troba a la màquina base d&#39;aquesta xarxa es canviarà a la xarxa de "
+"publicació"
 
 #: services/Vmware_enterprise/service_linked.py:159
 msgid "Pub. Network"

@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 14:32+0100\n"
-"PO-Revision-Date: 2021-10-07 22:56+0000\n"
+"POT-Creation-Date: 2022-01-14 12:31+0100\n"
+"PO-Revision-Date: 2022-01-10 13:33+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -1034,7 +1034,6 @@ msgid "Last access"
 msgstr "Последний вход"
 
 #: REST/methods/users_groups.py:202
-#| msgid "Username not found"
 msgid "Username cannot be empty"
 msgstr "Имя пользователя не может быть пустым"
 
@@ -1064,7 +1063,6 @@ msgid "UDS Meta Group"
 msgstr "UDS Метагруппа"
 
 #: REST/methods/users_groups.py:430
-#| msgid "Group name attrs"
 msgid "Group name is required"
 msgstr "Требуется название группы"
 
@@ -2350,7 +2348,6 @@ msgstr ""
 "Удалить ВСЕ назначенные пользовательские сервисы. ИСПОЛЬЗОВАТЬ ОСТОРОЖНО!"
 
 #: models/calendar_action.py:182
-#| msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgid "Remove OLD assigned user services."
 msgstr "Удалите СТАРЫЕ назначенные пользовательские службы."
 
@@ -2566,7 +2563,6 @@ msgid "Must provide an user account!!!"
 msgstr "Нужно предоставить аккаунт пользователя!!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgid "RDS UDS Actor (for remote apps on Windows Server)"
 msgstr "RDS UDS Actor (для удаленных приложений на Windows Server)"
 
@@ -3569,12 +3565,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "Публикация UDS для {0} в {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#| msgid "HyperV Linked Clone"
 msgid "HyperV Linked Clone (LEGACY))"
 msgstr "Связанный клон HyperV (НАСЛЕДИЕ))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-#| msgid "Hyper Services based on templates and differential disks"
 msgid "Hyper Services based on templates and differential disks (LEGACY)"
 msgstr "Гиперсервисы на основе шаблонов и дифференциальных дисков (НАСЛЕДИЕ)"
 
@@ -5058,7 +5052,6 @@ msgid "Main Network"
 msgstr "Основная сеть"
 
 #: services/VCloud_enterprise/service.py:100
-#: services/Vmware_enterprise/service_linked.py:152
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -5255,6 +5248,14 @@ msgstr "Пул ресурсов, содержащий базовую машин�
 #: services/Vmware_enterprise/service_linked.py:132
 msgid "Base machine for this service"
 msgstr "Базовая машина для этой услуги"
+
+#: services/Vmware_enterprise/service_linked.py:152
+msgid ""
+"Main network used by the machine. The first interface found in base machine "
+"in this network, will be switched to publication network"
+msgstr ""
+"Основная сеть, используемая машиной. Первый интерфейс, обнаруженный на "
+"базовой машине в этой сети, будет переключен на сеть публикации."
 
 #: services/Vmware_enterprise/service_linked.py:159
 msgid "Pub. Network"

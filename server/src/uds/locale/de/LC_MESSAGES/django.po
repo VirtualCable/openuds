@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 14:32+0100\n"
-"PO-Revision-Date: 2021-10-07 22:56+0000\n"
+"POT-Creation-Date: 2022-01-14 12:31+0100\n"
+"PO-Revision-Date: 2022-01-10 13:33+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -1036,7 +1036,6 @@ msgid "Last access"
 msgstr "Letzter Zugriff"
 
 #: REST/methods/users_groups.py:202
-#| msgid "Username not found"
 msgid "Username cannot be empty"
 msgstr "Benutzername darf nicht leer sein"
 
@@ -1066,7 +1065,6 @@ msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
 #: REST/methods/users_groups.py:430
-#| msgid "Group name attrs"
 msgid "Group name is required"
 msgstr "Gruppenname ist erforderlich"
 
@@ -2369,7 +2367,6 @@ msgstr ""
 "Entfernen Sie ALLE zugewiesenen Benutzerdienste. MIT VORSICHT VERWENDEN!"
 
 #: models/calendar_action.py:182
-#| msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgid "Remove OLD assigned user services."
 msgstr "Entfernen Sie ALTE zugewiesene Benutzerdienste."
 
@@ -2587,7 +2584,6 @@ msgid "Must provide an user account!!!"
 msgstr "Muss ein Benutzerkonto bereitstellen !!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgid "RDS UDS Actor (for remote apps on Windows Server)"
 msgstr "RDS UDS Actor (für Remote-Apps auf Windows Server)"
 
@@ -3595,12 +3591,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "UDS-Pub für {0} um {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#| msgid "HyperV Linked Clone"
 msgid "HyperV Linked Clone (LEGACY))"
 msgstr "HyperV Linked Clone (LEGACY))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-#| msgid "Hyper Services based on templates and differential disks"
 msgid "Hyper Services based on templates and differential disks (LEGACY)"
 msgstr "Hyper Services basierend auf Templates und Differential Disks (LEGACY)"
 
@@ -5095,7 +5089,6 @@ msgid "Main Network"
 msgstr "Hauptnetzwerk"
 
 #: services/VCloud_enterprise/service.py:100
-#: services/Vmware_enterprise/service_linked.py:152
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -5295,6 +5288,15 @@ msgstr "Ressourcenpool, der die Basismaschine enthält"
 #: services/Vmware_enterprise/service_linked.py:132
 msgid "Base machine for this service"
 msgstr "Basisgerät für diesen Service"
+
+#: services/Vmware_enterprise/service_linked.py:152
+msgid ""
+"Main network used by the machine. The first interface found in base machine "
+"in this network, will be switched to publication network"
+msgstr ""
+"Hauptnetzwerk, das von der Maschine verwendet wird. Die erste Schnittstelle, "
+"die in diesem Netzwerk in der Basismaschine gefunden wird, wird auf das "
+"Publikationsnetzwerk umgeschaltet"
 
 #: services/Vmware_enterprise/service_linked.py:159
 msgid "Pub. Network"
