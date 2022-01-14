@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 14:32+0100\n"
-"PO-Revision-Date: 2021-10-07 22:56+0000\n"
+"POT-Creation-Date: 2022-01-14 12:31+0100\n"
+"PO-Revision-Date: 2022-01-10 13:33+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -1005,7 +1005,6 @@ msgid "Last access"
 msgstr "上次访问"
 
 #: REST/methods/users_groups.py:202
-#| msgid "Username not found"
 msgid "Username cannot be empty"
 msgstr "用户名不能为空"
 
@@ -1035,7 +1034,6 @@ msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
 #: REST/methods/users_groups.py:430
-#| msgid "Group name attrs"
 msgid "Group name is required"
 msgstr "组名是必填项"
 
@@ -2259,7 +2257,6 @@ msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr "删除所有分配的用户服务。小心使用！"
 
 #: models/calendar_action.py:182
-#| msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgid "Remove OLD assigned user services."
 msgstr "删除 OLD 分配的用户服务。"
 
@@ -2469,7 +2466,6 @@ msgid "Must provide an user account!!!"
 msgstr "必须提供用户帐号!!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgid "RDS UDS Actor (for remote apps on Windows Server)"
 msgstr "RDS UDS Actor（用于 Windows Server 上的远程应用程序）"
 
@@ -3441,12 +3437,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "{1}的{0}的UDS发布"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#| msgid "HyperV Linked Clone"
 msgid "HyperV Linked Clone (LEGACY))"
 msgstr "HyperV 链接克隆 (LEGACY))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-#| msgid "Hyper Services based on templates and differential disks"
 msgid "Hyper Services based on templates and differential disks (LEGACY)"
 msgstr "基于模板和差异磁盘的超级服务 (LEGACY)"
 
@@ -4859,7 +4853,6 @@ msgid "Main Network"
 msgstr "主网"
 
 #: services/VCloud_enterprise/service.py:100
-#: services/Vmware_enterprise/service_linked.py:152
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -5043,6 +5036,12 @@ msgstr "包含基本机器的资源池"
 #: services/Vmware_enterprise/service_linked.py:132
 msgid "Base machine for this service"
 msgstr "这项服务的基础机器"
+
+#: services/Vmware_enterprise/service_linked.py:152
+msgid ""
+"Main network used by the machine. The first interface found in base machine "
+"in this network, will be switched to publication network"
+msgstr "机器使用的主网络。在本网络的base机器中找到的第一个接口，将切换到发布网络"
 
 #: services/Vmware_enterprise/service_linked.py:159
 msgid "Pub. Network"

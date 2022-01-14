@@ -12,6 +12,7 @@
 # blafuente <blafuente@virtualcable.es>, 2014-2016
 # Javier Gomez <jgomez@virtualcable.es>, 2021
 # Javier <jgonzalez@virtualcable.es>, 2014
+# Javier Gomez <jgomez@virtualcable.es>, 2021
 # Javier <jgonzalez@virtualcable.es>, 2014,2018,2020
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Luis Fagundez <lframses@gmail.com>, 2018
@@ -21,9 +22,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 14:32+0100\n"
-"PO-Revision-Date: 2021-10-29 10:31+0000\n"
-"Last-Translator: Javier Gomez <jgomez@virtualcable.es>\n"
+"POT-Creation-Date: 2022-01-14 12:31+0100\n"
+"PO-Revision-Date: 2022-01-10 13:33+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -1046,7 +1047,6 @@ msgid "Last access"
 msgstr "Último acceso"
 
 #: REST/methods/users_groups.py:202
-#| msgid "Username not found"
 msgid "Username cannot be empty"
 msgstr "El nombre de usuario no puede estar vacío"
 
@@ -1076,7 +1076,6 @@ msgid "UDS Meta Group"
 msgstr "Metagrupo UDS "
 
 #: REST/methods/users_groups.py:430
-#| msgid "Group name attrs"
 msgid "Group name is required"
 msgstr "El nombre del grupo es obligatorio"
 
@@ -2367,13 +2366,13 @@ msgstr ""
 "Eliminar TODOS los servicios asignados a usuarios. UTILIZAR CON PRECAUCIÓN!"
 
 #: models/calendar_action.py:182
-#| msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgid "Remove OLD assigned user services."
 msgstr "Elimina los servicios de usuario ANTIGUOS asignados."
 
 #: models/calendar_action.py:188
 msgid "Time in hours before considering the user service is OLD."
-msgstr "El tiempo en horas antes de considerar el servicio al usuario es VIEJO."
+msgstr ""
+"El tiempo en horas antes de considerar el servicio al usuario es VIEJO."
 
 #: models/calendar_rule.py:53
 msgid "Yearly"
@@ -2581,7 +2580,6 @@ msgid "Must provide an user account!!!"
 msgstr "¡Debe indicar una cuenta de usuario!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgid "RDS UDS Actor (for remote apps on Windows Server)"
 msgstr "Actor RDS UDS (para aplicaciones remotas en Windows Server)"
 
@@ -3581,12 +3579,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "Publicación de UDS para {0} en {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#| msgid "HyperV Linked Clone"
 msgid "HyperV Linked Clone (LEGACY))"
 msgstr "Clon vinculado a HyperV (LEGACY))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-#| msgid "Hyper Services based on templates and differential disks"
 msgid "Hyper Services based on templates and differential disks (LEGACY)"
 msgstr "Hyper Services basados en plantillas y discos diferenciales (LEGACY)"
 
@@ -5073,7 +5069,6 @@ msgid "Main Network"
 msgstr "Red principal"
 
 #: services/VCloud_enterprise/service.py:100
-#: services/Vmware_enterprise/service_linked.py:152
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -5273,6 +5268,14 @@ msgstr "Pool de recursos que contiene la máquina base"
 #: services/Vmware_enterprise/service_linked.py:132
 msgid "Base machine for this service"
 msgstr "Máquina base para este servicio"
+
+#: services/Vmware_enterprise/service_linked.py:152
+msgid ""
+"Main network used by the machine. The first interface found in base machine "
+"in this network, will be switched to publication network"
+msgstr ""
+"Red principal utilizada por la máquina. La primera interfaz que se encuentre "
+"en la máquina base de esta red se cambiará a la red de publicación."
 
 #: services/Vmware_enterprise/service_linked.py:159
 msgid "Pub. Network"

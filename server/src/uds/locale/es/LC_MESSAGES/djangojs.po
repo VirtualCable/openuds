@@ -10,6 +10,7 @@
 # blafuente <blafuente@virtualcable.es>, 2014-2015
 # Javier Gomez <jgomez@virtualcable.es>, 2021
 # Javier <jgonzalez@virtualcable.es>, 2014
+# Javier Gomez <jgomez@virtualcable.es>, 2021
 # Javier <jgonzalez@virtualcable.es>, 2014,2020
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Luis Fagundez <lframses@gmail.com>, 2018
@@ -19,9 +20,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 14:32+0100\n"
-"PO-Revision-Date: 2021-09-15 10:45+0000\n"
-"Last-Translator: Javier Gomez <jgomez@virtualcable.es>\n"
+"POT-Creation-Date: 2022-01-14 12:31+0100\n"
+"PO-Revision-Date: 2022-01-10 13:33+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"

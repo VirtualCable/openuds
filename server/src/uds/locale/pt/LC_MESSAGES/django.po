@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 14:32+0100\n"
-"PO-Revision-Date: 2021-10-07 22:56+0000\n"
+"POT-Creation-Date: 2022-01-14 12:31+0100\n"
+"PO-Revision-Date: 2022-01-10 13:33+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -1029,7 +1029,6 @@ msgid "Last access"
 msgstr "Último acesso"
 
 #: REST/methods/users_groups.py:202
-#| msgid "Username not found"
 msgid "Username cannot be empty"
 msgstr "O nome de usuário não pode estar vazio"
 
@@ -1059,7 +1058,6 @@ msgid "UDS Meta Group"
 msgstr "Grupo Meta UDS"
 
 #: REST/methods/users_groups.py:430
-#| msgid "Group name attrs"
 msgid "Group name is required"
 msgstr "O nome do grupo é obrigatório"
 
@@ -2346,7 +2344,6 @@ msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgstr "Remova todo o serviço de usuário atribuído. USE COM CUIDADO!"
 
 #: models/calendar_action.py:182
-#| msgid "Remove ALL assigned user service. USE WITH CAUTION!"
 msgid "Remove OLD assigned user services."
 msgstr "Remova os serviços de usuário atribuídos ANTIGOS."
 
@@ -2562,7 +2559,6 @@ msgid "Must provide an user account!!!"
 msgstr "Deve fornecer uma conta de usuário !!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#| msgid "RDS UDS Actor (for remote apps on Windows Server 2012, 2016, 2019)"
 msgid "RDS UDS Actor (for remote apps on Windows Server)"
 msgstr "RDS UDS Actor (para aplicativos remotos no Windows Server)"
 
@@ -3562,12 +3558,10 @@ msgid "UDS pub for {0} at {1}"
 msgstr "Publicação de UDS para {0} em {1}"
 
 #: services/HyperV_enterprise/legacy/service.py:59
-#| msgid "HyperV Linked Clone"
 msgid "HyperV Linked Clone (LEGACY))"
 msgstr "HyperV Linked Clone (LEGACY))"
 
 #: services/HyperV_enterprise/legacy/service.py:62
-#| msgid "Hyper Services based on templates and differential disks"
 msgid "Hyper Services based on templates and differential disks (LEGACY)"
 msgstr "Hyper Services baseados em templates e discos diferenciais (LEGACY)"
 
@@ -5046,7 +5040,6 @@ msgid "Main Network"
 msgstr "Rede principal"
 
 #: services/VCloud_enterprise/service.py:100
-#: services/Vmware_enterprise/service_linked.py:152
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -5244,6 +5237,14 @@ msgstr "Pool de recursos contendo máquina base"
 #: services/Vmware_enterprise/service_linked.py:132
 msgid "Base machine for this service"
 msgstr "Máquina base para este serviço"
+
+#: services/Vmware_enterprise/service_linked.py:152
+msgid ""
+"Main network used by the machine. The first interface found in base machine "
+"in this network, will be switched to publication network"
+msgstr ""
+"Rede principal utilizada pela máquina. A primeira interface encontrada na "
+"máquina base nesta rede será comutada para a rede de publicação"
 
 #: services/Vmware_enterprise/service_linked.py:159
 msgid "Pub. Network"
