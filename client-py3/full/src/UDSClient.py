@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 -s
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2014-2021 Virtual Cable S.L.U.
