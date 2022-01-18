@@ -33,14 +33,14 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-
 from uds.core import services
 from uds.core.ui import gui
 from uds.core.util import validators
-
-from .service import OVirtLinkedService
+from uds.core.util.cache import Cache
+from uds.core.util.decorators import allowCache
 
 from . import client
+from .service import OVirtLinkedService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -507,6 +507,13 @@ class OVirtProvider(
         self, machineId: str
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.__getApi().getConsoleConnection(machineId)
+
+    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    def isAvailable(self) -> bool:
+        """
+        Check if aws provider is reachable
+        """
+        return self.testConnection()
 
     @staticmethod
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:

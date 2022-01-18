@@ -88,19 +88,19 @@ if not _libfuse_path:
         def Reg32GetValue(rootkey, keyname, valname):
             key, val = None, None
             try:
-                key = reg.OpenKey(
-                    rootkey, keyname, 0, reg.KEY_READ | reg.KEY_WOW64_32KEY
+                key = reg.OpenKey(  # type: ignore
+                    rootkey, keyname, 0, reg.KEY_READ | reg.KEY_WOW64_32KEY  # type: ignore
                 )
-                val = str(reg.QueryValueEx(key, valname)[0])
+                val = str(reg.QueryValueEx(key, valname)[0])  # type: ignore
             except WindowsError:  # type: ignore
                 pass
             finally:
                 if key is not None:
-                    reg.CloseKey(key)
+                    reg.CloseKey(key)  # type: ignore
             return val
 
         _libfuse_path = Reg32GetValue(
-            reg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WinFsp", r"InstallDir"
+            reg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WinFsp", r"InstallDir"  # type: ignore
         )
         if _libfuse_path:
             _libfuse_path += r"bin\winfsp-%s.dll" % (
@@ -713,7 +713,7 @@ class FuseOperations(ctypes.Structure):
 
 
 def time_of_timespec(ts: c_timespec, use_ns=False):
-    return ts.tv_sec * 10 ** 9 + ts.tv_nsec
+    return ts.tv_sec * 10 ** 9 + ts.tv_nsec  # type: ignore
 
 
 def set_st_attrs(st: c_stat, attrs: typing.Mapping[str, int]) -> None:

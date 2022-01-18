@@ -39,7 +39,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core.util import os_detector as OsDetector
 from uds.core import Module
 from uds.core.transports import protocols
-from uds.core.util import connection
+from uds.core.util import net
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -116,14 +116,14 @@ class Transport(Module):
         userService: 'models.UserService',
         ip: str,
         port: typing.Union[str, int],
-        timeout: int = 4,
+        timeout: float = 4,
     ) -> bool:
         proxy: typing.Optional[
             'models.Proxy'
         ] = userService.deployed_service.service.proxy
         if proxy:
             return proxy.doTestServer(ip, port, timeout)
-        return connection.testServer(ip, str(port), timeout)
+        return net.testConnection(ip, str(port), timeout)
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """

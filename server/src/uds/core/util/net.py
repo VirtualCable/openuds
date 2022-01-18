@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import re
+import socket
 import logging
 import typing
 
@@ -231,3 +232,18 @@ def isValidFQDN(value: str) -> bool:
 
 def isValidHost(value: str):
     return isValidIp(value) or isValidFQDN(value)
+
+
+def testConnection(host: str, port: typing.Union[int, str], timeOut: float = 4) -> bool:
+    try:
+        logger.debug(
+            'Checking connection to %s:%s with %s seconds timeout', host, port, timeOut
+        )
+        sock = socket.create_connection((host, int(port)), timeOut)
+        sock.close()
+    except Exception as e:
+        logger.debug(
+            'Exception checking %s:%s with %s timeout: %s', host, port, timeOut, e
+        )
+        return False
+    return True

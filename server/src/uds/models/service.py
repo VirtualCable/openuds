@@ -38,7 +38,7 @@ from django.db import models
 from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
-from uds.core.util import connection
+from uds.core.util import net
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
@@ -188,11 +188,11 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         return self.provider.isInMaintenance() if self.provider else True
 
     def testServer(
-        self, host: str, port: typing.Union[str, int], timeout: int = 4
+        self, host: str, port: typing.Union[str, int], timeout: float = 4
     ) -> bool:
         if self.proxy:
             return self.proxy.doTestServer(host, port, timeout)
-        return connection.testServer(host, port, timeout)
+        return net.testConnection(host, port, timeout)
 
     def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)

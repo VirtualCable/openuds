@@ -36,17 +36,5 @@ import socket
 
 logger = logging.getLogger(__name__)
 
-
-def testServer(host: str, port: typing.Union[int, str], timeOut: float = 4) -> bool:
-    try:
-        logger.debug(
-            'Checking connection to %s:%s with %s seconds timeout', host, port, timeOut
-        )
-        sock = socket.create_connection((host, int(port)), timeOut)
-        sock.close()
-    except Exception as e:
-        logger.debug(
-            'Exception checking %s:%s with %s timeout: %s', host, port, timeOut, e
-        )
-        return False
-    return True
+# import Alias
+from .net import testConnection as testServer

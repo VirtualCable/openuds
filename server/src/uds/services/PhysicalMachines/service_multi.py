@@ -40,8 +40,6 @@ from django.db import transaction
 from uds.models import getSqlDatetimeAsUnix
 from uds.core.ui import gui
 from uds.core.util import log
-from uds.core.util import connection
-from uds.core.util import config
 from uds.core.util import net
 from uds.core.services import types as serviceTypes
 
@@ -271,7 +269,7 @@ class IPMachinesService(IPServiceBase):
                         self._port > 0 and not wolENABLED
                     ):  # If configured WOL, check is a nonsense
                         if (
-                            connection.testServer(theIP, self._port, timeOut=0.5)
+                            net.testConnection(theIP, self._port, timeOut=0.5)
                             is False
                         ):
                             # Log into logs of provider, so it can be "shown" on services logs

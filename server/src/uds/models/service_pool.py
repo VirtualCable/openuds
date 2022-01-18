@@ -675,7 +675,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return 100 * cachedValue // maxs
 
-    def testServer(self, host, port, timeout=4) -> bool:
+    def testServer(self, host: str, port: typing.Union[str, int], timeout: float=4) -> bool:
         return self.service.testServer(host, port, timeout)
 
     # parent accessors

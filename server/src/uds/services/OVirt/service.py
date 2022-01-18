@@ -466,3 +466,6 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         self, machineId: str
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)
+
+    def isAvailable(self) -> bool:
+        return self.parent().isAvailable()
