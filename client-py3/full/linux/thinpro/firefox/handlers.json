@@ -1,0 +1,98 @@
+{
+    "defaultHandlersVersion": {
+        "en-US": 4
+    },
+    "mimeTypes": {
+        "application/pdf": {
+            "action": 3,
+            "extensions": [
+                "pdf"
+            ]
+        },
+        "application/x-ica": {
+            "action": 2,
+            "extensions": [
+                "ica"
+            ],
+            "handlers": [
+                {
+                    "name": "wfica",
+                    "path": "/usr/share/hptc-firefox-mgr/handlers/citrix"
+                }
+            ]
+        },
+        "application/x-rdp": {
+            "action": 2,
+            "extensions": [
+                "rdp"
+            ],
+            "handlers": [
+                {
+                    "name": "HP xfreerdp",
+                    "path": "/usr/share/hptc-firefox-mgr/handlers/rdp"
+                }
+            ]
+        },
+        "text/lic": {
+            "action": 2,
+            "extensions": [
+                "lic"
+            ],
+            "handlers": [
+                {
+                    "name": "Copy license to ThinPro",
+                    "path": "/usr/share/hptc-firefox-mgr/handlers/copy_lic"
+                }
+            ]
+        },
+        "text/xml": {
+            "action": 3,
+            "extensions": [
+                "xml"
+            ]
+        },
+        "image/svg+xml": {
+            "action": 3,
+            "extensions": [
+                "svg"
+            ]
+        },
+        "image/webp": {
+            "action": 3,
+            "extensions": [
+                "webp"
+            ]
+        }
+    },
+    "schemes": {
+        "vmware-view": {
+            "action": 2,
+            "handlers": [
+                {
+                    "name": "VMWare Horizon View",
+                    "path": "/usr/share/hptc-firefox-mgr/handlers/vmware"
+                }
+            ]
+        },
+        "uds": {
+            "action": 2,
+            "handlers": [
+                {
+                    "name": "UDS Client for ThinPro (SSL)",
+                    "path": "/usr/share/hptc-firefox-mgr/handlers/uds"
+                }
+            ]
+        },
+        "udss": {
+            "action": 2,
+            "handlers": [
+                {
+                    "name": "UDS Client for ThinPro",
+                    "path": "/usr/share/hptc-firefox-mgr/handlers/uds"
+                }
+            ]
+        }
+
+
+    }
+}

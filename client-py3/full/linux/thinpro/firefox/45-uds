@@ -1,0 +1,4 @@
+# UDS handlers.json
+cp "/lib/UDSClient/firefox/handlers.json" "$FIREFOX_PROFILE_HANDLERS"
+ffset "network.protocol-handler.external.uds" "true"
+ffset "network.protocol-handler.external.udss" "true"
