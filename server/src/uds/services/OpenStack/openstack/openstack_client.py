@@ -780,3 +780,13 @@ class Client:  # pylint: disable=too-many-public-methods
                 'Openstack does not support identity API 3.2 or newer. This OpenStack server is not compatible with UDS.'
             )
         )
+
+    def isAvailable(self) -> bool:
+        try:
+            # If we can connect, it is available
+            self._session.get(
+                self._authUrl, verify=VERIFY_SSL, headers=self._requestHeaders()
+            )
+            return True
+        except Exception:
+            return False

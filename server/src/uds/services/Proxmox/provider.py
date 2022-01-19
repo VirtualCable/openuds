@@ -287,6 +287,10 @@ class ProxmoxProvider(
                 return vmId
             # All assigned VMId will be left as unusable on UDS until released by time (3 months)
 
+    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    def isAvailable(self) -> bool:
+        return self.__getApi().test()
+
     @staticmethod
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
         """

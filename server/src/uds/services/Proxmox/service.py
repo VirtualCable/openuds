@@ -28,27 +28,29 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import re
 import logging
+import re
 import typing
 
 from django.utils.translation import gettext_noop as _
-
+from uds.core.services import Service
+from uds.core.services import types as serviceTypes
 from uds.core.transports import protocols
-from uds.core.services import Service, types as serviceTypes
-from uds.core.util import validators
-from uds.core.util import tools
 from uds.core.ui import gui
+from uds.core.util import validators
+from uds.core.util.cache import Cache
+from uds.core.util.decorators import allowCache
 
-from .publication import ProxmoxPublication
-from .deployment import ProxmoxDeployment
 from . import helpers
+from .deployment import ProxmoxDeployment
+from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .provider import ProxmoxProvider
-    from . import client
     from uds.core import Module
+
+    from . import client
+    from .provider import ProxmoxProvider
 
 logger = logging.getLogger(__name__)
 
@@ -311,3 +313,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         self, machineId: str
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)
+
+    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    def isAvailable(self) -> bool:
+        return self.parent().isAvailable()

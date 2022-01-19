@@ -52,6 +52,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+MIN_VERSION = '1.1.0'
 
 class OGProvider(ServiceProvider):
     """
@@ -227,7 +228,7 @@ class OGProvider(ServiceProvider):
             True if all went fine, false if id didn't
         """
         try:
-            if self.api.version[0:5] < '1.1.0':
+            if self.api.version[0:5] < MIN_VERSION:
                 return [
                     False,
                     'OpenGnsys version is not supported (required version 1.1.0 or newer and found {})'.format(
@@ -291,4 +292,9 @@ class OGProvider(ServiceProvider):
         """
         Check if aws provider is reachable
         """
-        return self.testConnection()[0]
+        try:
+            if self.api.version[0:5] < MIN_VERSION:
+                return False
+            return True
+        except Exception:
+            return False

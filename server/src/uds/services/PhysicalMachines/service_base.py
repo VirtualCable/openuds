@@ -81,3 +81,8 @@ class IPServiceBase(services.Service):
                     # logger.debug('Result: %s', result)
                 except Exception as e:
                     logger.error('Error on WOL: %s', e)
+
+    # Phisical machines does not have "real" providers, so
+    # always is available
+    def isAvailable(self) -> bool:
+        return True

@@ -298,5 +298,5 @@ class OpenStackProvider(ServiceProvider):
         """
         Check if aws provider is reachable
         """
-        return self.testConnection()[0]
+        return self.api().isAvailable()
 
