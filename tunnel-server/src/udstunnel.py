@@ -33,15 +33,14 @@ import os
 import pwd
 import sys
 import argparse
-import multiprocessing
 import signal
 import socket
 import logging
 import typing
 
 import curio
-import psutil
 import setproctitle
+
 
 from uds_tunnel import config
 from uds_tunnel import proxy
@@ -118,7 +117,7 @@ async def tunnel_proc_async(
                     except Exception:
                         if consts.DEBUG:
                             logger.exception('HANDSHAKE')
-                        logger.error('HANDSHAKE from %s', address)
+                        logger.error('HANDSHAKE invalid from %s', address)
                         # Close Source and continue
                         source.close()
                         continue
