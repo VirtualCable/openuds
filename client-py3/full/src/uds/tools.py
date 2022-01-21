@@ -34,12 +34,14 @@ import string
 import random
 import os
 import os.path
+import sys
 import socket
 import stat
 import sys
 import time
 import base64
 import typing
+
 import certifi
 
 try:
@@ -242,11 +244,22 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
     return True
 
 
-def getCaCertsFile() -> str:
+def getCaCertsFile() -> typing.Optional[str]:
+    # First, try certifi...
+
     try:
         if os.path.exists(certifi.where()):
             return certifi.where()
     except Exception:
-        logger.debug('Certifi file does not exists: %s', certifi.where())
+        pass
 
-    return ''  # Return empty path
+    logger.info('Certifi file does not exists: %s', certifi.where())
+
+    # Check if "standard" paths are valid for linux systems
+    if 'linux' in sys.platform:
+        for path in ('/etc/pki/tls/certs/ca-bundle.crt', '/etc/ssl/certs/ca-certificates.crt', '/etc/ssl/ca-bundle.pem'):
+            if os.path.exists(path):
+                logger.info('Found certifi path: %s', path)
+                return path
+
+    return None

@@ -40,7 +40,6 @@ import ssl
 import socket
 import typing
 
-import certifi
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
@@ -186,7 +185,9 @@ class RestApi:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
-        ctx.load_verify_locations(tools.getCaCertsFile())
+        # If we have the certificates file, we use it
+        if tools.getCaCertsFile() is not None:
+            ctx.load_verify_locations(tools.getCaCertsFile())
         hostname = urllib.parse.urlparse(url)[1]
         serial = ''
 

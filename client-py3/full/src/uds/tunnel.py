@@ -120,9 +120,10 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
             # Do not "recompress" data, use only "base protocol" compression
             context.options |= ssl.OP_NO_COMPRESSION
-            context.load_verify_locations(
-                tools.getCaCertsFile()
-            )  # Load certifi certificates
+            if tools.getCaCertsFile() is not None:
+                context.load_verify_locations(
+                    tools.getCaCertsFile()
+                )  # Load certifi certificates
 
             # If ignore remote certificate
             if self.check_certificate is False:
