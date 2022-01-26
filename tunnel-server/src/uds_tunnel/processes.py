@@ -39,8 +39,8 @@ class Processes:
     def add_child_pid(self):
         own_conn, child_conn = multiprocessing.Pipe()
         task = multiprocessing.Process(
-            target=asyncio.run,
-            args=(self.process(child_conn, self.cfg, self.ns),)
+            target=Processes.runner,
+            args=(self.process, child_conn, self.cfg, self.ns),
         )
         task.start()
         logger.debug('ADD CHILD PID: %s', task.pid)
@@ -99,3 +99,6 @@ class Processes:
             except Exception as e:
                 logger.info('KILLING child %s: %s', i[2], e)
     
+    @staticmethod
+    def runner(proc: ProcessType, conn: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace') -> None:
+        asyncio.run(proc(conn, cfg, ns))

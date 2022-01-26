@@ -98,20 +98,13 @@ async def tunnel_proc_async(
 ) -> None:
 
     loop = asyncio.get_event_loop()
-    # Create event for flagging when we have new data
-    event = asyncio.Event()
-    loop.add_reader(pipe.fileno(), event.set)
 
     tasks: typing.List[asyncio.Task] = []
 
-    async def get_socket() -> typing.Tuple[
-        typing.Optional[socket.socket], typing.Tuple[str, int]
-    ]:
+    def get_socket() -> typing.Optional[socket.socket]:
         try:
             while True:
-                await event.wait()
                 # Clear back event, for next data
-                event.clear()
                 msg: typing.Optional[
                     typing.Tuple[socket.socket, typing.Tuple[str, int]]
                 ] = pipe.recv()
@@ -121,9 +114,7 @@ async def tunnel_proc_async(
 
                     try:
                         # First, ensure handshake (simple handshake) and command
-                        data: bytes = await loop.sock_recv(
-                            source, len(consts.HANDSHAKE_V1)
-                        )
+                        data: bytes = source.recv(len(consts.HANDSHAKE_V1))
 
                         if data != consts.HANDSHAKE_V1:
                             raise Exception()  # Invalid handshake
@@ -135,12 +126,10 @@ async def tunnel_proc_async(
                         source.close()
                         continue
 
-                    return msg
-
-                # Process other messages, and retry
+                    return source
         except Exception:
             logger.exception('Receiving data from parent process')
-            return None, ('', 0)
+            return None
 
     async def run_server() -> None:
         # Instantiate a proxy redirector for this process (we only need one per process!!)
@@ -159,11 +148,11 @@ async def tunnel_proc_async(
         while True:
             address: typing.Tuple[str, int] = ('', 0)
             try:
-                sock, address = await get_socket()
+                sock = await loop.run_in_executor(None, get_socket)
                 if not sock:
                     break  # No more sockets, exit
                 logger.debug(f'CONNECTION from {address!r} (pid: {os.getpid()})')
-                tasks.append(asyncio.create_task(tunneler(sock, address, context)))
+                tasks.append(asyncio.create_task(tunneler(sock, context)))
             except Exception:
                 logger.error('NEGOTIATION ERROR from %s', address[0])
 
@@ -175,9 +164,6 @@ async def tunnel_proc_async(
         await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
         # Remove finished tasks from list
         del tasks[:tasks_number]
-
-    # Remove reader from event loop
-    loop.remove_reader(pipe.fileno())
 
 
 def tunnel_main():
