@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021 Virtual Cable S.L.U.
+# Copyright (c) 2021-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,22 +32,18 @@
 import os
 import pwd
 import sys
+import asyncio
 import argparse
 import signal
+import ssl
 import socket
 import logging
 import typing
 
-import curio
 import setproctitle
 
 
-from uds_tunnel import config
-from uds_tunnel import proxy
-from uds_tunnel import consts
-from uds_tunnel import message
-from uds_tunnel import stats
-from uds_tunnel import processes
+from uds_tunnel import config, proxy, consts, processes, stats
 
 if typing.TYPE_CHECKING:
     from multiprocessing.connection import Connection
@@ -100,17 +96,34 @@ def setup_log(cfg: config.ConfigurationType) -> None:
 async def tunnel_proc_async(
     pipe: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace'
 ) -> None:
-    def get_socket(pipe: 'Connection') -> typing.Tuple[typing.Optional[socket.SocketType], typing.Any]:
+
+    loop = asyncio.get_event_loop()
+    # Create event for flagging when we have new data
+    event = asyncio.Event()
+    loop.add_reader(pipe.fileno(), event.set)
+
+    tasks: typing.List[asyncio.Task] = []
+
+    async def get_socket() -> typing.Tuple[
+        typing.Optional[socket.socket], typing.Tuple[str, int]
+    ]:
         try:
             while True:
-                msg: message.Message = pipe.recv()
-                if msg.command == message.Command.TUNNEL and msg.connection:
+                await event.wait()
+                # Clear back event, for next data
+                event.clear()
+                msg: typing.Optional[
+                    typing.Tuple[socket.socket, typing.Tuple[str, int]]
+                ] = pipe.recv()
+                if msg:
                     # Connection done, check for handshake
-                    source, address = msg.connection
+                    source, address = msg
 
                     try:
                         # First, ensure handshake (simple handshake) and command
-                        data: bytes = source.recv(len(consts.HANDSHAKE_V1))
+                        data: bytes = await loop.sock_recv(
+                            source, len(consts.HANDSHAKE_V1)
+                        )
 
                         if data != consts.HANDSHAKE_V1:
                             raise Exception()  # Invalid handshake
@@ -122,21 +135,19 @@ async def tunnel_proc_async(
                         source.close()
                         continue
 
-                    return msg.connection
+                    return msg
 
                 # Process other messages, and retry
         except Exception:
             logger.exception('Receiving data from parent process')
-            return None, None
+            return None, ('', 0)
 
-    async def run_server(
-        pipe: 'Connection', cfg: config.ConfigurationType, group: curio.TaskGroup
-    ) -> None:
+    async def run_server() -> None:
         # Instantiate a proxy redirector for this process (we only need one per process!!)
         tunneler = proxy.Proxy(cfg, ns)
 
         # Generate SSL context
-        context = curio.ssl.SSLContext(curio.ssl.PROTOCOL_TLS_SERVER)  # type: ignore
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.load_cert_chain(cfg.ssl_certificate, cfg.ssl_certificate_key)
 
         if cfg.ssl_ciphers:
@@ -146,30 +157,27 @@ async def tunnel_proc_async(
             context.load_dh_params(cfg.ssl_dhparam)
 
         while True:
-            address = ('', '')
+            address: typing.Tuple[str, int] = ('', 0)
             try:
-                sock, address = await curio.run_in_thread(get_socket, pipe)
+                sock, address = await get_socket()
                 if not sock:
-                    break
-                logger.debug(
-                    f'CONNECTION from {address!r} (pid: {os.getpid()})'
-                )
-                sock = await context.wrap_socket(
-                    curio.io.Socket(sock), server_side=True  # type: ignore
-                )
-                await group.spawn(tunneler, sock, address)
-                del sock
+                    break  # No more sockets, exit
+                logger.debug(f'CONNECTION from {address!r} (pid: {os.getpid()})')
+                tasks.append(asyncio.create_task(tunneler(sock, address, context)))
             except Exception:
                 logger.error('NEGOTIATION ERROR from %s', address[0])
 
-    async with curio.TaskGroup() as tg:
-        await tg.spawn(run_server, pipe, cfg, tg)
-        await tg.join()
-        # Reap all of the children tasks as they complete
-        # async for task in tg:
-        #    logger.debug(f'REMOVING async task {task!r}')
-        #    task.joined = True
-        #    del task
+    # create task for server
+    tasks.append(asyncio.create_task(run_server()))
+
+    while tasks:
+        tasks_number = len(tasks)
+        await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+        # Remove finished tasks from list
+        del tasks[:tasks_number]
+
+    # Remove reader from event loop
+    loop.remove_reader(pipe.fileno())
 
 
 def tunnel_main():
@@ -200,7 +208,9 @@ def tunnel_main():
 
         setup_log(cfg)
 
-        logger.info('Starting tunnel server on %s:%s', cfg.listen_address, cfg.listen_port)
+        logger.info(
+            'Starting tunnel server on %s:%s', cfg.listen_address, cfg.listen_port
+        )
         setproctitle.setproctitle(f'UDSTunnel {cfg.listen_address}:{cfg.listen_port}')
 
         # Create pid file
@@ -212,7 +222,6 @@ def tunnel_main():
         sys.stderr.write(f'Tunnel startup error: {e}\n')
         logger.error('MAIN: %s', e)
         return
-
 
     # Setup signal handlers
     signal.signal(signal.SIGINT, stop_signal)
@@ -227,9 +236,7 @@ def tunnel_main():
             try:
                 client, addr = sock.accept()
                 # Select BEST process for sending this new connection
-                prcs.best_child().send(
-                    message.Message(message.Command.TUNNEL, (client, addr))
-                )
+                prcs.best_child().send((client, addr))
                 del client  # Ensure socket is controlled on child process
             except socket.timeout:
                 pass  # Continue and retry
@@ -259,9 +266,7 @@ def main() -> None:
     group.add_argument(
         '-t', '--tunnel', help='Starts the tunnel server', action='store_true'
     )
-    group.add_argument(
-        '-r', '--rdp', help='RDP Tunnel for traffic accounting'
-    )
+    group.add_argument('-r', '--rdp', help='RDP Tunnel for traffic accounting')
     group.add_argument(
         '-s',
         '--stats',
@@ -281,9 +286,9 @@ def main() -> None:
     elif args.rdp:
         pass
     elif args.detailed_stats:
-        curio.run(stats.getServerStats, True)
+        asyncio.run(stats.getServerStats(True))
     elif args.stats:
-        curio.run(stats.getServerStats, False)
+        asyncio.run(stats.getServerStats(False))
     else:
         parser.print_help()
 

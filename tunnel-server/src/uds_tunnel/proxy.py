@@ -28,10 +28,11 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import asyncio
+import socket
 import logging
 import typing
 
-import curio
 import requests
 
 from . import config
@@ -40,7 +41,7 @@ from . import consts
 
 if typing.TYPE_CHECKING:
     from multiprocessing.managers import Namespace
-    import curio.io
+    import ssl
 
 logger = logging.getLogger(__name__)
 
@@ -109,29 +110,29 @@ class Proxy:
             cfg, ticket, 'stop', {'sent': str(counter.sent), 'recv': str(counter.recv)}
         )  # Ignore results
 
-    @staticmethod
-    async def doProxy(
-        source: 'curio.io.Socket',
-        destination: 'curio.io.Socket',
-        counter: stats.StatsSingleCounter,
-    ) -> None:
-        try:
-            while True:
-                data = await source.recv(consts.BUFFER_SIZE)
-                if not data:
-                    break
-                await destination.sendall(data)
-                counter.add(len(data))
-        except Exception:
-            # Connection broken, same result as closed for us
-            # We must notice that i'ts easy that when closing one part of the tunnel,
-            # the other can break (due to some internal data), that's why even log is removed
-            # logger.info('CONNECTION LOST FROM %s to %s', source.getsockname(), destination.getpeername())
-            pass
+    # @staticmethod
+    # async def doProxy(
+    #     source: 'curio.io.Socket',
+    #     destination: 'curio.io.Socket',
+    #     counter: stats.StatsSingleCounter,
+    # ) -> None:
+    #     try:
+    #         while True:
+    #             data = await source.recv(consts.BUFFER_SIZE)
+    #             if not data:
+    #                 break
+    #             await destination.sendall(data)
+    #             counter.add(len(data))
+    #     except Exception:
+    #         # Connection broken, same result as closed for us
+    #         # We must notice that i'ts easy that when closing one part of the tunnel,
+    #         # the other can break (due to some internal data), that's why even log is removed
+    #         # logger.info('CONNECTION LOST FROM %s to %s', source.getsockname(), destination.getpeername())
+    #         pass
 
     # Method responsible of proxying requests
-    async def __call__(self, source, address: typing.Tuple[str, int]) -> None:
-        await self.proxy(source, address)
+    async def __call__(self, source: socket.socket, address: typing.Tuple[str, int], context: 'ssl.SSLContext') -> None:
+        await self.proxy(source, address, context)
 
     async def stats(self, full: bool, source, address: typing.Tuple[str, int]) -> None:
         # Check valid source ip
@@ -153,17 +154,19 @@ class Proxy:
             logger.debug('SENDING %s', v)
             await source.sendall(v.encode() + b'\n')
 
-    async def proxy(self, source, address: typing.Tuple[str, int]) -> None:
+    async def proxy(self, source: socket.socket, address: typing.Tuple[str, int], context: 'ssl.SSLContext') -> None:
         prettySource = address[0]  # Get only source IP
         prettyDest = ''
         logger.info('CONNECT FROM %s', prettySource)
 
+        loop = asyncio.get_event_loop()
+
         # Handshake correct in this point, start SSL connection
         try:
-            command: bytes = await source.recv(consts.COMMAND_LENGTH)
+            command: bytes = await loop.sock_recv(source, consts.COMMAND_LENGTH)
             if command == consts.COMMAND_TEST:
                 logger.info('COMMAND: TEST')
-                await source.sendall(b'OK')
+                await loop.sock_sendall(source, b'OK')
                 logger.info('TERMINATED %s', prettySource)
                 return
 

@@ -1,8 +1,8 @@
 import multiprocessing
+import asyncio
 import logging
 import typing
 
-import curio
 import psutil
 
 from . import config
@@ -13,6 +13,8 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+ProcessType = typing.Callable[['Connection', config.ConfigurationType, 'Namespace'],  typing.Coroutine[typing.Any, None, None]]
+
 class Processes:
     """
     This class is used to store the processes that are used by the tunnel.
@@ -21,11 +23,11 @@ class Processes:
     children: typing.List[
         typing.Tuple['Connection', multiprocessing.Process, psutil.Process]
     ]
-    process: typing.Callable
+    process: ProcessType
     cfg: config.ConfigurationType
     ns: 'Namespace'
 
-    def __init__(self, process: typing.Callable, cfg: config.ConfigurationType, ns: 'Namespace') -> None:
+    def __init__(self, process: ProcessType, cfg: config.ConfigurationType, ns: 'Namespace') -> None:
         self.children = []
         self.process = process  # type: ignore
         self.cfg = cfg
@@ -37,8 +39,8 @@ class Processes:
     def add_child_pid(self):
         own_conn, child_conn = multiprocessing.Pipe()
         task = multiprocessing.Process(
-            target=curio.run,
-            args=(self.process, child_conn, self.cfg, self.ns)
+            target=asyncio.run,
+            args=(self.process(child_conn, self.cfg, self.ns),)
         )
         task.start()
         logger.debug('ADD CHILD PID: %s', task.pid)
