@@ -369,6 +369,7 @@ def getServicesData(
 
     autorun = False
     if (
+        hasattr(request, 'session') and
         len(services) == 1
         and GlobalConfig.AUTORUN_SERVICE.getBool(False)
         and services[0]['transports']
