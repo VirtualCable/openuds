@@ -13,7 +13,12 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-ProcessType = typing.Callable[['Connection', config.ConfigurationType, 'Namespace'],  typing.Coroutine[typing.Any, None, None]]
+ProcessType = typing.Callable[
+    ['Connection', config.ConfigurationType, 'Namespace'],
+    typing.Coroutine[typing.Any, None, None],
+]
+
+NO_CPU_PERCENT = 100000.0
 
 class Processes:
     """
@@ -27,7 +32,9 @@ class Processes:
     cfg: config.ConfigurationType
     ns: 'Namespace'
 
-    def __init__(self, process: ProcessType, cfg: config.ConfigurationType, ns: 'Namespace') -> None:
+    def __init__(
+        self, process: ProcessType, cfg: config.ConfigurationType, ns: 'Namespace'
+    ) -> None:
         self.children = []
         self.process = process  # type: ignore
         self.cfg = cfg
@@ -47,7 +54,7 @@ class Processes:
         self.children.append((own_conn, task, psutil.Process(task.pid)))
 
     def best_child(self) -> 'Connection':
-        best: typing.Tuple[float, 'Connection'] = (1000.0, self.children[0][0])
+        best: typing.Tuple[float, 'Connection'] = (NO_CPU_PERCENT, self.children[0][0])
         missingProcesses: typing.List[int] = []
         for i, c in enumerate(self.children):
             try:
@@ -89,6 +96,10 @@ class Processes:
             for i in range(len(missingProcesses)):
                 self.add_child_pid()
 
+            # Recheck best if all child were missing
+            if best[0] == NO_CPU_PERCENT:
+                return self.best_child()
+
         return best[1]
 
     def stop(self):
@@ -98,7 +109,12 @@ class Processes:
                 i[2].kill()
             except Exception as e:
                 logger.info('KILLING child %s: %s', i[2], e)
-    
+
     @staticmethod
-    def runner(proc: ProcessType, conn: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace') -> None:
+    def runner(
+        proc: ProcessType,
+        conn: 'Connection',
+        cfg: config.ConfigurationType,
+        ns: 'Namespace',
+    ) -> None:
         asyncio.run(proc(conn, cfg, ns))
