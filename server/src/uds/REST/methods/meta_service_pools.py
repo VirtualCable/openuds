@@ -154,7 +154,7 @@ class MetaAssignedService(DetailHandler):
             return UserService.objects.filter(
                 uuid=processUuid(userServiceId),
                 cache_level=0,
-                eployed_service__in=[i.pool for i in metaPool.members.all()],
+                deployed_service__in=[i.pool for i in metaPool.members.all()],
             )[0]
         except Exception:
             pass
