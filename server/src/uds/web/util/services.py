@@ -59,9 +59,49 @@ from uds.core.auths.auth import webPassword
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.models import Image
 
 
 logger = logging.getLogger(__name__)
+
+def _serviceInfo(
+    uuid: str,
+    is_meta: bool,
+    name: str,
+    visual_name: str,
+    description: str,
+    group: typing.Mapping[str, typing.Any],
+    transports: typing.List[typing.Mapping[str, typing.Any]],
+    image: typing.Optional['Image'],
+    show_transports: bool,
+    allow_users_remove: bool,
+    allow_users_reset: bool,
+    maintenance: bool,
+    not_accessible: bool,
+    in_use: bool,
+    to_be_replaced: typing.Optional[str],
+    to_be_replaced_text: str,
+    custom_calendar_text: str,
+):
+    return {
+        'id': ('M' if is_meta else 'F') + uuid,
+        'is_meta': is_meta,
+        'name': name,
+        'visual_name': visual_name,
+        'description': description,
+        'group': group,
+        'transports': transports,
+        'imageId': image and image.uuid or 'x',
+        'show_transports': show_transports,
+        'allow_users_remove': allow_users_remove,
+        'allow_users_reset': allow_users_reset,
+        'maintenance': maintenance,
+        'not_accesible': not_accessible,
+        'in_use': in_use,
+        'to_be_replaced': to_be_replaced,
+        'to_be_replaced_text': to_be_replaced_text,
+        'custom_calendar_text': custom_calendar_text,
+    }
 
 
 def getServicesData(

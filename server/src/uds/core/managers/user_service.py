@@ -710,23 +710,27 @@ class UserServiceManager(metaclass=singleton.Singleton):
         logger.debug('Kind of service: %s, idService: %s', kind, uuidService)
         userService: typing.Optional[UserService] = None
 
-        if kind == 'A':  # This is an assigned service
+        if kind in 'A':  # This is an assigned service
             logger.debug('Getting A service %s', uuidService)
             userService = UserService.objects.get(uuid=uuidService, user=user)
             typing.cast(UserService, userService).deployed_service.validateUser(user)
         else:
-            servicePool: ServicePool = ServicePool.objects.get(uuid=uuidService)
-            # We first do a sanity check for this, if the user has access to this service
-            # If it fails, will raise an exception
-            servicePool.validateUser(user)
+            try:
+                servicePool: ServicePool = ServicePool.objects.get(uuid=uuidService)
+                # We first do a sanity check for this, if the user has access to this service
+                # If it fails, will raise an exception
+                servicePool.validateUser(user)
 
-            # Now we have to locate an instance of the service, so we can assign it to user.
-            if (
-                create
-            ):  # getAssignation, if no assignation is found, tries to create one
-                userService = self.getAssignationForUser(servicePool, user)
-            else:  # Sometimes maybe we only need to locate the existint user service
-                userService = self.getExistingAssignationForUser(servicePool, user)
+                # Now we have to locate an instance of the service, so we can assign it to user.
+                if (
+                    create
+                ):  # getAssignation, if no assignation is found, tries to create one
+                    userService = self.getAssignationForUser(servicePool, user)
+                else:  # Sometimes maybe we only need to locate the existint user service
+                    userService = self.getExistingAssignationForUser(servicePool, user)
+            except ServicePool.DoesNotExist:
+                logger.debug('Service pool does not exist')
+                return None
 
         logger.debug('Found service: %s', userService)
 
@@ -907,6 +911,33 @@ class UserServiceManager(metaclass=singleton.Singleton):
         raise ServiceNotReadyError(
             code=serviceNotReadyCode, userService=userService, transport=transport
         )
+
+    def isMetaService(self, metaId: str) -> bool:
+        return metaId[0] == 'M'
+
+    def locateMetaService(
+        self, user: User, idService: str, create: bool = False
+    ) -> typing.Optional[UserService]:
+        kind, uuidMetapool = idService[0], idService[1:]
+        if kind != 'M':
+            return None
+
+        meta: MetaPool = MetaPool.objects.get(uuid=uuidMetapool)
+        # Get pool members. Just pools "visible" and "usable"
+        pools = [
+            p.pool for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()
+        ]
+        # look for an existing user service in the pool
+        try:
+            return UserService.objects.filter(
+                    deployed_service__in=pools,
+                    state__in=State.VALID_STATES,
+                    user=user,
+                    cache_level=0,
+                ).order_by('deployed_service__name')[0]
+        except IndexError:
+            return None
+            
 
     def getMeta(
         self,

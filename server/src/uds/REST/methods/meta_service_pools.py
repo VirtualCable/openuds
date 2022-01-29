@@ -154,10 +154,8 @@ class MetaAssignedService(DetailHandler):
             return UserService.objects.filter(
                 uuid=processUuid(userServiceId),
                 cache_level=0,
-                deployed_service__meta=metaPool,
-            )[
-                0  # type: ignore  # Slicing is not supported by pylance right now
-            ]
+                deployed_service__in=[i.pool for i in metaPool.members.all()],
+            )[0]
         except Exception:
             pass
         raise self.invalidItemException()

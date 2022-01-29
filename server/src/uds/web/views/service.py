@@ -51,6 +51,7 @@ from uds.web.util import services
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
+    from uds.models import UserService
 
 logger = logging.getLogger(__name__)
 
@@ -157,12 +158,17 @@ def userServiceStatus(
     Note:
     '''
     ip: typing.Union[str, None, bool]
-    userService = None
+    userService: typing.Optional['UserService'] = None
     status = 'running'
-    # If service exists
-    userService = userServiceManager().locateUserService(
-        user=request.user, idService=idService, create=False
-    )
+    # If service exists (meta or not)
+    if userServiceManager().isMetaService(idService):
+        userService = userServiceManager().locateMetaService(
+            user=request.user, idService=idService
+        )
+    else:
+        userService = userServiceManager().locateUserService(
+            user=request.user, idService=idService, create=False
+        )
     if userService:
         # Service exists...
         try:
