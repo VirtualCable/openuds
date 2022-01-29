@@ -63,7 +63,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
 def getServicesData(
     request: 'ExtendedHttpRequestWithUser',
 ) -> typing.Dict[
@@ -226,7 +225,7 @@ def getServicesData(
 
         # If no usable pools, this is not visible
         if metaTransports:
-            group = (
+            group: typing.MutableMapping[str, typing.Any] = (
                 meta.servicesPoolGroup.as_dict
                 if meta.servicesPoolGroup
                 else ServicePoolGroup.default().as_dict
@@ -235,6 +234,7 @@ def getServicesData(
             services.append(
                 {
                     'id': 'M' + meta.uuid,
+                    'is_meta': True,
                     'name': meta.name,
                     'visual_name': meta.visual_name,
                     'description': meta.comments,
@@ -338,6 +338,7 @@ def getServicesData(
         services.append(
             {
                 'id': 'F' + sPool.uuid,
+                'is_meta': False,
                 'name': datator(sPool.name),
                 'visual_name': datator(
                     sPool.visual_name.replace('{use}', use_percent).replace(
@@ -369,8 +370,8 @@ def getServicesData(
 
     autorun = False
     if (
-        hasattr(request, 'session') and
-        len(services) == 1
+        hasattr(request, 'session')
+        and len(services) == 1
         and GlobalConfig.AUTORUN_SERVICE.getBool(False)
         and services[0]['transports']
     ):
