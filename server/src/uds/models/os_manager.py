@@ -82,11 +82,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
         # We only need to get info from this, not access specific data (class specific info)
         from uds.core import osmanagers
 
-        type_ = osmanagers.factory().lookup(self.data_type)
-        if type_:
-            return type_
-        # If invalid type, ensure at least we have "basic" model (that will fail if used, but not if referenced)
-        return osmanagers.OSManager
+        return osmanagers.factory().lookup(self.data_type) or osmanagers.OSManager
 
     def remove(self) -> bool:
         """

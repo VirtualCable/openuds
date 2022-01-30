@@ -88,7 +88,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     ) -> 'transports.Transport':
         return typing.cast('transports.Transport', super().getInstance(values=values))
 
-    def getType(self) -> 'typing.Type[transports.Transport]':
+    def getType(self) -> typing.Type['transports.Transport']:
         """
         Get the type of the object this record represents.
 
@@ -99,10 +99,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
         :note: We only need to get info from this, not access specific data (class specific info)
         """
-        v = transports.factory().lookup(self.data_type)
-        if not v:
-            raise Exception('transport not found')
-        return v
+        return transports.factory().lookup(self.data_type) or transports.Transport
 
     def validForIp(self, ipStr: str) -> bool:
         """

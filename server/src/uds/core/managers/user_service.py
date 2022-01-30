@@ -784,7 +784,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
             for t in userService.deployed_service.transports.order_by('priority'):
                 typeTrans = t.getType()
                 if (
-                    t.validForIp(srcIp)
+                    typeTrans
+                    and t.validForIp(srcIp)
                     and typeTrans.supportsOs(os['OS'])
                     and t.validForOs(os['OS'])
                 ):
@@ -1007,7 +1008,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
             for t in q:
                 typeTrans = t.getType()
                 if (
-                    t.getType()
+                    typeTrans
+                    and t.getType()
                     and t.validForIp(srcIp)
                     and typeTrans.supportsOs(os['OS'])
                     and t.validForOs(os['OS'])

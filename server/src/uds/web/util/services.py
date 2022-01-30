@@ -308,12 +308,10 @@ def getServicesData(
         for t in sorted(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
-            try:
-                typeTrans = t.getType()
-            except Exception:
-                continue
+            typeTrans = t.getType()
             if (
-                t.validForIp(request.ip)
+                typeTrans
+                and t.validForIp(request.ip)
                 and typeTrans.supportsOs(osName)
                 and t.validForOs(osName)
             ):
@@ -411,8 +409,8 @@ def getServicesData(
 
     autorun = False
     if (
-        hasattr(request, 'session') and
-        len(services) == 1
+        hasattr(request, 'session')
+        and len(services) == 1
         and GlobalConfig.AUTORUN_SERVICE.getBool(False)
         and services[0]['transports']
     ):

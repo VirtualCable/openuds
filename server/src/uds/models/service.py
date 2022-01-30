@@ -173,15 +173,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         :note: We only need to get info from this, not access specific data (class specific info)
         """
         prov: typing.Type['services.ServiceProvider'] = self.provider.getType()
-        type_ = prov.getServiceByType(self.data_type)
-        if type_:
-            return type_
-
-        raise Exception(
-            'Service type of {} is not recogniced by provider {}'.format(
-                self.data_type, prov
-            )
-        )
+        return prov.getServiceByType(self.data_type) or services.Service
 
     def isInMaintenance(self) -> bool:
         # orphaned services?
