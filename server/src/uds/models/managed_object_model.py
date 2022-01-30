@@ -102,6 +102,7 @@ class ManagedObjectModel(UUIDModel):
             return self._cachedInstance
 
         klass = self.getType()
+
         env = self.getEnvironment()
         obj = klass(env, values)
         self.deserialize(obj, values)

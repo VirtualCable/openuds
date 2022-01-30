@@ -63,6 +63,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def getServicesData(
     request: 'ExtendedHttpRequestWithUser',
 ) -> typing.Dict[
@@ -267,12 +268,10 @@ def getServicesData(
         for t in sorted(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
-            try:
-                typeTrans = t.getType()
-            except Exception:
-                continue
+            typeTrans = t.getType()
             if (
-                t.validForIp(request.ip)
+                typeTrans
+                and t.validForIp(request.ip)
                 and typeTrans.supportsOs(osName)
                 and t.validForOs(osName)
             ):
@@ -410,6 +409,8 @@ def enableService(
         userService.setProperty('accessedByClient', '0')  # Reset accesed property to
 
         typeTrans = trans.getType()
+        if not typeTrans:
+            raise Exception('Transport not found')
 
         error = ''  # No error
 

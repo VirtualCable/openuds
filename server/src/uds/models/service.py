@@ -39,6 +39,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
 from uds.core.util import connection
+from uds.core import services
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
@@ -47,7 +48,6 @@ from .provider import Provider
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import services
     from uds.models.service_pool import ServicePool
 
 
@@ -157,15 +157,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         :note: We only need to get info from this, not access specific data (class specific info)
         """
         prov: typing.Type['services.ServiceProvider'] = self.provider.getType()
-        type_ = prov.getServiceByType(self.data_type)
-        if type_:
-            return type_
-
-        raise Exception(
-            'Service type of {} is not recogniced by provider {}'.format(
-                self.data_type, prov
-            )
-        )
+        return prov.getServiceByType(self.data_type) or services.Service
 
     def isInMaintenance(self) -> bool:
         # orphaned services?

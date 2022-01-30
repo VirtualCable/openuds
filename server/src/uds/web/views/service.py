@@ -153,6 +153,7 @@ def userServiceStatus(
      'running' if not ready
      'ready' if is ready but not accesed by client
      'accessed' if ready and accesed by UDS client
+     'error' if error is found (for example, intancing user service)
     Note:
     '''
     ip: typing.Union[str, None, bool]

@@ -78,12 +78,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         from uds.core import services  # pylint: disable=redefined-outer-name
 
-        type_ = services.factory().lookup(self.data_type)
-        if type_:
-            return type_
-        return (
-            services.ServiceProvider
-        )  # Basic Service implementation. Will fail if we try to use it, but will be ok to reference it
+        return services.factory().lookup(self.data_type) or services.ServiceProvider
 
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
