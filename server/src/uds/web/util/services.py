@@ -77,7 +77,7 @@ def _serviceInfo(
     allow_users_remove: bool,
     allow_users_reset: bool,
     maintenance: bool,
-    not_accessible: bool,
+    not_accesible: bool,
     in_use: bool,
     to_be_replaced: typing.Optional[str],
     to_be_replaced_text: str,
@@ -96,7 +96,7 @@ def _serviceInfo(
         'allow_users_remove': allow_users_remove,
         'allow_users_reset': allow_users_reset,
         'maintenance': maintenance,
-        'not_accesible': not_accessible,
+        'not_accesible': not_accesible,
         'in_use': in_use,
         'to_be_replaced': to_be_replaced,
         'to_be_replaced_text': to_be_replaced_text,
@@ -273,25 +273,25 @@ def getServicesData(
             )
 
             services.append(
-                {
-                    'id': 'M' + meta.uuid,
-                    'is_meta': True,
-                    'name': meta.name,
-                    'visual_name': meta.visual_name,
-                    'description': meta.comments,
-                    'group': group,
-                    'transports': metaTransports,
-                    'imageId': meta.image and meta.image.uuid or 'x',
-                    'show_transports': len(metaTransports) > 1,
-                    'allow_users_remove': False,
-                    'allow_users_reset': False,
-                    'maintenance': meta.isInMaintenance(),
-                    'not_accesible': not meta.isAccessAllowed(now),
-                    'in_use': in_use,
-                    'to_be_replaced': None,
-                    'to_be_replaced_text': '',
-                    'custom_calendar_text': meta.calendar_message,
-                }
+                _serviceInfo(
+                    uuid=meta.uuid,
+                    is_meta=True,
+                    name=meta.name,
+                    visual_name= meta.visual_name,
+                    description= meta.comments,
+                    group= group,
+                    transports= metaTransports,
+                    image=meta.image,
+                    show_transports=len(metaTransports) > 1,
+                    allow_users_remove=False,
+                    allow_users_reset=False,
+                    maintenance=meta.isInMaintenance(),
+                    not_accesible=not meta.isAccessAllowed(now),
+                    in_use=in_use,
+                    to_be_replaced=None,
+                    to_be_replaced_text='',
+                    custom_calendar_text=meta.calendar_message,
+                )
             )
 
     # Now generic user service
@@ -304,7 +304,7 @@ def getServicesData(
         use_count = str(sPool.usage_count)  # type: ignore # anotated value
         left_count = str(sPool.max_srvs - sPool.usage_count)  # type: ignore # anotated value
 
-        trans: typing.List[typing.MutableMapping[str, typing.Any]] = []
+        trans: typing.List[typing.Mapping[str, typing.Any]] = []
         for t in sorted(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
@@ -327,11 +327,6 @@ def getServicesData(
         if not trans:
             continue
 
-        if sPool.image:
-            imageId = sPool.image.uuid
-        else:
-            imageId = 'x'
-
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
         in_use = typing.cast(typing.Any, sPool).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
@@ -346,19 +341,20 @@ def getServicesData(
         )
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
-        toBeReplaced = (
+        toBeReplacedDate = (
             sPool.toBeReplaced(request.user)
             if typing.cast(typing.Any, sPool).pubs_active > 0
             and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False)
             else None
         )
         # tbr = False
-        if toBeReplaced:
-            toBeReplaced = formats.date_format(toBeReplaced, 'SHORT_DATETIME_FORMAT')
+        if toBeReplacedDate:
+            toBeReplaced = formats.date_format(toBeReplacedDate, 'SHORT_DATETIME_FORMAT')
             toBeReplacedTxt = gettext(
                 'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
-            ).format(toBeReplaced)
+            ).format(toBeReplacedDate)
         else:
+            toBeReplaced = None
             toBeReplacedTxt = ''
 
         # Calculate max deployed
@@ -375,29 +371,29 @@ def getServicesData(
             )
 
         services.append(
-            {
-                'id': 'F' + sPool.uuid,
-                'is_meta': False,
-                'name': datator(sPool.name),
-                'visual_name': datator(
+                _serviceInfo(
+                uuid=sPool.uuid,
+                is_meta=False,
+                name=datator(sPool.name),
+                visual_name=datator(
                     sPool.visual_name.replace('{use}', use_percent).replace(
                         '{total}', maxDeployed
                     )
                 ),
-                'description': sPool.comments,
-                'group': group,
-                'transports': trans,
-                'imageId': imageId,
-                'show_transports': sPool.show_transports,
-                'allow_users_remove': sPool.allow_users_remove,
-                'allow_users_reset': sPool.allow_users_reset,
-                'maintenance': sPool.isInMaintenance(),
-                'not_accesible': not sPool.isAccessAllowed(now),
-                'in_use': in_use,
-                'to_be_replaced': toBeReplaced,
-                'to_be_replaced_text': toBeReplacedTxt,
-                'custom_calendar_text': sPool.calendar_message,
-            }
+                description=sPool.comments,
+                group=group,
+                transports=trans,
+                image=sPool.image,
+                show_transports=sPool.show_transports,
+                allow_users_remove=sPool.allow_users_remove,
+                allow_users_reset=sPool.allow_users_reset,
+                maintenance=sPool.isInMaintenance(),
+                not_accesible=not sPool.isAccessAllowed(now),
+                in_use=in_use,
+                to_be_replaced=toBeReplaced,
+                to_be_replaced_text=toBeReplacedTxt,
+                custom_calendar_text=sPool.calendar_message,
+                )
         )
 
     # logger.debug('Services: %s', services)

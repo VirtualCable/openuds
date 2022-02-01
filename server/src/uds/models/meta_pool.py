@@ -215,7 +215,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                     ),
                 )
             )
-        # TODO: Maybe we can exclude non "usable" metapools (all his pools are in maintenance mode?)
+        # TODO: May we can include some other filters?
 
         return meta
 
