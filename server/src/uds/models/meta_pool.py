@@ -84,6 +84,15 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         LABEL_TRANSPORT_SELECT: _('Group Transports by label'),
     }
 
+    # Type of HA policy
+    HA_DISABLED = 0
+    HA_ENABLED = 1
+
+    HA_SELECT: typing.Mapping[int, str] = {
+        HA_DISABLED: 'Disabled',
+        HA_ENABLED: 'Enabled',
+    }
+
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
@@ -112,9 +121,11 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
 
     # Pool selection policy
-    policy = models.SmallIntegerField(default=0)
+    policy = models.SmallIntegerField(default=ROUND_ROBIN_POOL)
     # If use common transports instead of auto select one
-    transport_grouping = models.IntegerField(default=0)
+    transport_grouping = models.IntegerField(default=AUTO_TRANSPORT_SELECT)
+    # HA policy
+    ha_policy = models.SmallIntegerField(default=HA_DISABLED)
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[MetaPool]'
