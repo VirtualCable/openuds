@@ -26,6 +26,8 @@ class TunnelProtocol(asyncio.Protocol):
     runner: typing.Any
     # Command buffer
     cmd: bytes
+    # Ticket
+    notify_ticket: bytes
     # owner Proxy class
     owner: 'proxy.Proxy'
     # source of connection
@@ -55,6 +57,7 @@ class TunnelProtocol(asyncio.Protocol):
         # transport is undefined until connection_made is called
         self.finished = asyncio.Future()
         self.cmd = b''
+        self.notify_ticket = b''
         self.owner = owner
         self.source = ('', 0)
         self.destination = ('', 0)
@@ -85,6 +88,7 @@ class TunnelProtocol(asyncio.Protocol):
 
             # store for future use
             self.destination = (result['host'], int(result['port']))
+            self.notify_ticket = result['notify'].encode()
 
             logger.info(
                 'OPEN TUNNEL FROM %s to %s',
@@ -193,6 +197,15 @@ class TunnelProtocol(asyncio.Protocol):
         logger.debug('Data received: %s', len(data))
         self.runner(data)  # send data to current runner (command or proxy)
 
+    def notifyEnd(self):
+        if self.notify_ticket:
+            asyncio.get_event_loop().create_task(
+                TunnelProtocol.notifyEndToUds(
+                    self.owner.cfg, self.notify_ticket, self.stats_manager
+                )
+            )
+            self.notify_ticket = b''  # Clean up so no more notifications
+
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
         logger.debug('Connection closed : %s', exc)
         self.finished.set_result(True)
@@ -200,6 +213,7 @@ class TunnelProtocol(asyncio.Protocol):
             self.other_side.transport.close()
         else:
             self.stats_manager.close()
+        self.notifyEnd()
 
     # helpers
     # source address, pretty format
@@ -221,6 +235,8 @@ class TunnelProtocol(asyncio.Protocol):
                 self.stats_manager.recv,
                 int(self.stats_manager.end - self.stats_manager.start),
             )
+            # Notify end to uds
+            self.notifyEnd()
         else:
             logger.info('TERMINATED %s', self.pretty_source())
 
