@@ -44,12 +44,12 @@ class TunnelProtocol(asyncio.Protocol):
         if other_side:
             self.other_side = other_side
             self.stats_manager = other_side.stats_manager
-            # self.counter = self.stats_manager.as_recv_counter()
+            self.counter = self.stats_manager.as_recv_counter()
             self.runner = self.do_proxy
         else:
             self.other_side = self
             self.stats_manager = stats.Stats(owner.ns)
-            # self.counter = self.stats_manager.as_sent_counter()
+            self.counter = self.stats_manager.as_sent_counter()
             self.runner = self.do_command
 
         # transport is undefined until connection_made is called
