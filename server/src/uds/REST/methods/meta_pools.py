@@ -72,6 +72,7 @@ class MetaPools(ModelHandler):
         'servicesPoolGroup_id',
         'visible',
         'policy',
+        'ha_policy',
         'calendar_message',
         'transport_grouping',
     ]
@@ -81,6 +82,7 @@ class MetaPools(ModelHandler):
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
         {'policy': {'title': _('Policy'), 'type': 'dict', 'dict': MetaPool.TYPES}},
+        {'ha_policy': {'title': _('HA Policy'), 'type': 'dict', 'dict': MetaPool.HA_SELECT}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},
@@ -136,6 +138,7 @@ class MetaPools(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
             'calendar_message': item.calendar_message,
             'transport_grouping': item.transport_grouping,
+            'ha_policy': item.ha_policy,
         }
 
         return val
@@ -154,6 +157,16 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext('Service pool policy'),
                 'type': gui.InputField.CHOICE_TYPE,
                 'order': 100,
+            },
+            {
+                'name': 'ha_policy',
+                'values': [
+                    gui.choiceItem(k, str(v)) for k, v in MetaPool.HA_SELECT.items()
+                ],
+                'label': gettext('HA Policy'),
+                'tooltip': gettext('Service pool HA policy. Enable with care!'),
+                'type': gui.InputField.CHOICE_TYPE,
+                'order': 101,
             },
             {
                 'name': 'image_id',

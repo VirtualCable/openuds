@@ -85,12 +85,12 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     }
 
     # Type of HA policy
-    HA_DISABLED = 0
-    HA_ENABLED = 1
+    HA_POLICY_DISABLED = 0
+    HA_POLICY_ENABLED = 1
 
     HA_SELECT: typing.Mapping[int, str] = {
-        HA_DISABLED: 'Disabled',
-        HA_ENABLED: 'Enabled',
+        HA_POLICY_DISABLED: 'Disabled',
+        HA_POLICY_ENABLED: 'Enabled',
     }
 
     name = models.CharField(max_length=128, default='')
@@ -125,7 +125,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     # If use common transports instead of auto select one
     transport_grouping = models.IntegerField(default=AUTO_TRANSPORT_SELECT)
     # HA policy
-    ha_policy = models.SmallIntegerField(default=HA_DISABLED)
+    ha_policy = models.SmallIntegerField(default=HA_POLICY_DISABLED)
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[MetaPool]'

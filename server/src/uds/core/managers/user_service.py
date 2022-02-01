@@ -1029,6 +1029,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
             logger.debug('Already assigned %s', alreadyAssigned)
+            # If already assigned, and HA is enabled, check if it is accessible
+            if meta.ha_policy == MetaPool.HA_POLICY_ENABLED:
+                # Check that servide is accessible
+                if not alreadyAssigned.deployed_service.service.getInstance().isAvailable():  # Not available, mark for removal
+                    alreadyAssigned.release()
+                raise Exception()  # And process a new access
 
             # Ensure transport is available for the OS, and store it
             usable = ensureTransport(alreadyAssigned.deployed_service)
@@ -1048,6 +1054,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
             for (
                 pool
             ) in pools:  # Pools are already sorted, and "full" pools are filtered out
+                if meta.ha_policy == MetaPool.HA_POLICY_ENABLED:
+                    # If not available, skip it
+                    if pool.service.getInstance().isAvailable() is False:
+                        continue
+
                 # Ensure transport is available for the OS
                 usable = ensureTransport(pool)
 
