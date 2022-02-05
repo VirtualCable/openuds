@@ -72,7 +72,7 @@ class Proxy:
                 url,
                 headers={
                     'content-type': 'application/json',
-                    'User-Agent': f'UDSTunnel-{consts.VERSION}',
+                    'User-Agent': f'UDSTunnel/{consts.VERSION}',
                 },
             )
             if not r.ok:

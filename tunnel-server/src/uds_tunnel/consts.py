@@ -51,7 +51,7 @@ BANDWIDTH_TIME = 10
 # Commands LENGTH (all same length)
 COMMAND_LENGTH = 4 
 
-VERSION = 'v1.0'
+VERSION = 'v1.0.0'
 
 # Valid commands
 COMMAND_OPEN = b'OPEN'
