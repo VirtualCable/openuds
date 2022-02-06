@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uds', '0038_auto_20200505_config'),
+        ('uds', '0026_auto_20180302_0525_squashed_0038_auto_20200505_config'),
     ]
 
     operations = [
