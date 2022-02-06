@@ -113,7 +113,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     )  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
 
     src_hostname = models.CharField(max_length=64, default='')
-    src_ip = models.CharField(max_length=15, default='')
+    src_ip = models.CharField(max_length=128, default='')
 
     cluster_node = models.CharField(
         max_length=128, default=None, blank=True, null=True, db_index=True

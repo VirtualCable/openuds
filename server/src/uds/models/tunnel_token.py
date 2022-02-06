@@ -40,8 +40,8 @@ class TunnelToken(models.Model):
     """
 
     username = models.CharField(max_length=128)
-    ip_from = models.CharField(max_length=16)
-    ip = models.CharField(max_length=16)
+    ip_from = models.CharField(max_length=128)
+    ip = models.CharField(max_length=128)
     hostname = models.CharField(max_length=128)
 
     token = models.CharField(max_length=48, db_index=True, unique=True)
