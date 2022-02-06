@@ -5,10 +5,30 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-# Functions from the following migrations need manual copying.
-# Move them and any dependencies into this file, then update the
-# RunPython operations to refer to the local versions:
-# uds.migrations.0038_auto_20200505_config
+MOVEABLES = (
+    'Site name',
+    'Site copyright info',
+    'Site copyright link',
+    'Site Logo name'
+)
+
+OLD_SECTION = 'UDS'
+NEW_SECTION = 'Custom'
+
+def move(apps, old_section: str, new_section: str) -> None:
+    model = apps.get_model('uds', 'Config')
+    # Ensure NEW section values does not exists
+    model.objects.filter(section=new_section, key__in=MOVEABLES).delete()
+    for v in model.objects.filter(section=old_section, key__in=MOVEABLES):
+        v.section = new_section
+        v.save()
+
+def updateConfig(apps, schema_editor) -> None:
+    move(apps, OLD_SECTION, NEW_SECTION)
+
+def reverseConfig(apps, schema_editor) -> None:
+    move(apps, NEW_SECTION, OLD_SECTION)
+
 
 class Migration(migrations.Migration):
 
@@ -249,4 +269,9 @@ class Migration(migrations.Migration):
             name='token',
             field=models.CharField(blank=True, default=None, max_length=32, null=True, unique=True),
         ),
+        migrations.RunPython(
+            updateConfig,
+            reverseConfig
+        )
+
     ]
