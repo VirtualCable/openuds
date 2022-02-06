@@ -5,13 +5,34 @@ from django.db import migrations, models
 import django.db.models.deletion
 import uds.models.util
 
+MOVEABLES = (
+    'Site name',
+    'Site copyright info',
+    'Site copyright link',
+    'Site Logo name'
+)
+
+OLD_SECTION = 'UDS'
+NEW_SECTION = 'Custom'
+
+def move(apps, old_section: str, new_section: str) -> None:
+    model = apps.get_model('uds', 'Config')
+    # Ensure NEW section values does not exists
+    model.objects.filter(section=new_section, key__in=MOVEABLES).delete()
+    for v in model.objects.filter(section=old_section, key__in=MOVEABLES):
+        v.section = new_section
+        v.save()
+
+def updateConfig(apps, schema_editor) -> None:
+    move(apps, OLD_SECTION, NEW_SECTION)
+
+def reverseConfig(apps, schema_editor) -> None:
+    move(apps, NEW_SECTION, OLD_SECTION)
+
 
 class Migration(migrations.Migration):
 
     initial = True
-
-    dependencies = [
-    ]
 
     operations = [
         migrations.CreateModel(
@@ -1133,4 +1154,8 @@ class Migration(migrations.Migration):
             model_name='tunneltoken',
             constraint=models.UniqueConstraint(fields=('ip', 'hostname'), name='tt_ip_hostname'),
         ),
+        migrations.RunPython(
+            updateConfig,
+            reverseConfig
+        )
     ]

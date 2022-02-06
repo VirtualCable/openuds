@@ -35,7 +35,7 @@ def clean_config(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uds', '0042_auto_20210628_1533'),
+        ('uds', '0001_squashed_0042_auto_20210628_1533'),
     ]
 
     operations = [
