@@ -214,11 +214,12 @@ class StatsManager(metaclass=singleton.Singleton):
         try:
 
             def getKwarg(fld: str) -> str:
-                val = None
-                for i in FLDS_EQUIV[fld]:
-                    val = kwargs.get(i)
-                    if val is not None:
-                        break
+                val = kwargs.get(fld)
+                if val is None:
+                    for i in FLDS_EQUIV[fld]:
+                        val = kwargs.get(i)
+                        if val is not None:
+                            break
                 return val or ''
 
             fld1 = getKwarg('fld1')
