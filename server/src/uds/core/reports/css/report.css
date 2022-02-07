@@ -17,13 +17,13 @@
     @bottom-right {
         content: '{printed}'
     }
-    @left-top {
+    /*@left-top {
         content: "{water}"; font: .5cm/1.5 Fontin Sans;
         background: #557891; color: #fff; text-align: right;
         padding-right: 2em; height: 1.5em; width: 10cm;
         transform-origin: 100% 0;
         transform: rotate(-90deg);
-    }
+    }*/
 }
 body { 
     text-align: justify;
