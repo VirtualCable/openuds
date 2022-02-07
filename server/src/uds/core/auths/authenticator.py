@@ -42,7 +42,7 @@ if typing.TYPE_CHECKING:
     from django.http import (
         HttpRequest,
         HttpResponse,
-    )  # pylint: disable=ungrouped-imports
+    )
     from uds.core.environment import Environment
     from uds.core.util.request import ExtendedHttpRequest
     from uds import models
@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class Authenticator(Module):  # pylint: disable=too-many-public-methods
+class Authenticator(Module):
     """
     This class represents the base interface to implement authenticators.
 

@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class OSManager(ManagedObjectModel, TaggingMixin):  # type: ignore
+class OSManager(ManagedObjectModel, TaggingMixin):
     """
     An OS Manager represents a manager for responding requests for agents inside services.
     """

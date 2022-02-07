@@ -114,4 +114,7 @@ from .dbfile import DBFile
 from .actor_token import ActorToken
 from .tunnel_token import TunnelToken
 
+# Notifications & Alerts
+from .notifier import Notifier
+
 logger = logging.getLogger(__name__)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
-# Copyright (c) 2016-2020 Virtual Cable S.L.U.
+#
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,66 +25,37 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+from re import I
 import typing
 
 from django.db import models
-from .uuid_model import UUIDModel
-from .tag import TaggingMixin
 
+from .managed_object_model import ManagedObjectModel
+from .tag import TaggingMixin
 
 logger = logging.getLogger(__name__)
 
-
-# Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import CalendarRule, CalendarAction
+    from uds.core.alerts import notifier
 
-
-class Calendar(UUIDModel, TaggingMixin):
-
+class Notifier(ManagedObjectModel, TaggingMixin):
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
-    modified = models.DateTimeField(auto_now=True)
-
-    # "fake" declarations for type checking
-    objects: 'models.BaseManager[Calendar]'
-    rules: 'models.QuerySet[CalendarRule]'
-    calendaraction_set: 'models.QuerySet[CalendarAction]'
+    enabled = models.BooleanField(default=True)
 
     class Meta:
         """
         Meta class to declare db table
         """
 
-        db_table = 'uds_calendar'
+        db_table = 'uds_notifier'
         app_label = 'uds'
 
-    def save(
-        self,
-        force_insert: bool = False,
-        force_update: bool = False,
-        using: bool = None,
-        update_fields: bool = None,
-    ):
-        logger.debug('Saving calendar')
-
-        res = UUIDModel.save(self, force_insert, force_update, using, update_fields)
-
-        # Basically, recalculates all related actions next execution time...
-        try:
-            for v in self.calendaraction_set.all():
-                v.save()
-        except Exception:
-            pass
-
-        return res
-
-    def __str__(self):
-        return 'Calendar "{}" modified on {} with {} rules'.format(
-            self.name, self.modified, self.rules.count()
-        )
+    def getInstance(
+        self, values: typing.Optional[typing.Dict[str, str]] = None
+    ) -> 'notifier.Notifier':
+        return typing.cast('notifier.Notifier', super().getInstance(values=values))

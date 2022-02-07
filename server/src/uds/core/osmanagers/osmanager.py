@@ -64,7 +64,7 @@ class OSManager(Module):
 
     # If true, this os manager  will be invoked with every user service assigned, but not used
     # The interval is defined as a global config
-    processUnusedMachines = False
+    processUnusedMachines: bool = False
 
     # : Type of services for which this OS Manager is designed
     # : Defaults to all. (list or tuple)

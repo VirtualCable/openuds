@@ -45,7 +45,7 @@ if typing.TYPE_CHECKING:
     from uds.models import UserService, AccountUsage
 
 
-class Account(UUIDModel, TaggingMixin):  # type: ignore
+class Account(UUIDModel, TaggingMixin):
     """
     Account storing on DB model
     """
