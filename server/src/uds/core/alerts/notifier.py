@@ -29,6 +29,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import enum
 
 from django.utils.translation import gettext_noop as _
 
@@ -36,6 +37,16 @@ from uds.core import Module
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
+
+class NotifierLevel(enum.IntEnum):
+    """
+    Notifier levels
+    """
+    INFO = 0
+    WARNING = 1
+    ERROR = 2
+    CRITICAL = 3
+
 
 class Notifier(Module):
     """
@@ -67,6 +78,7 @@ class Notifier(Module):
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile: typing.ClassVar[str] = 'notifier.png'
 
+    level: NotifierLevel = NotifierLevel.ERROR
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)
@@ -88,6 +100,17 @@ class Notifier(Module):
         Default implementation does nothing
         """
 
-    def notify(self, title: str, message: str) -> bool:
-        return False
+    def notify(self, level: NotifierLevel,  message: str, *args, **kwargs) -> None:
+        """
+        This method will be invoked from UDS to notify an event to this notifier.
+        This method will be invoked in real time, so ensure this method does not block or
+        do any long operations. (use threading if you need to do that)
+
+        :param level: Level of event
+        :param message: Message to be shown
+        :param args: Arguments to be used in message
+        :param kwargs: Keyword arguments to be used in message
+        :return: None
+        """ 
+        pass
 

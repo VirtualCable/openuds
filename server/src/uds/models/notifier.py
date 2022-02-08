@@ -34,36 +34,23 @@ import typing
 
 from django.db import models
 
+from uds.core.alerts import notifier
+from uds.core.util.singleton import Singleton
+from uds.core.workers import initialize
+
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
 
 logger = logging.getLogger(__name__)
 
-if typing.TYPE_CHECKING:
-    from uds.core.alerts import notifier
-
 
 class Notifier(ManagedObjectModel, TaggingMixin):
-
-    NOTIFIER_LEVEL_INFO = 'INFO'
-    NOTIFIER_LEVEL_WARNING = 'WARNING'
-    NOTIFIER_LEVEL_ERROR = 'ERROR'
-    NOTIFIER_LEVEL_CRITICAL = 'CRITICAL'
-
-    NOTIFIER_LEVEL_CHOICES = (
-        (NOTIFIER_LEVEL_INFO, 'Info'),
-        (NOTIFIER_LEVEL_WARNING, 'Warning'),
-        (NOTIFIER_LEVEL_ERROR, 'Error'),
-        (NOTIFIER_LEVEL_CRITICAL, 'Critical'),
-    )
 
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     enabled = models.BooleanField(default=True)
-    level = models.CharField(
-        max_length=16,
-        choices=NOTIFIER_LEVEL_CHOICES,
-        default=NOTIFIER_LEVEL_ERROR
+    level = models.PositiveSmallIntegerField(
+        default=notifier.NotifierLevel.ERROR,
     )
 
     class Meta:
@@ -78,3 +65,39 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         self, values: typing.Optional[typing.Dict[str, str]] = None
     ) -> 'notifier.Notifier':
         return typing.cast('notifier.Notifier', super().getInstance(values=values))
+
+
+class Notifiers(Singleton):
+    """
+    This class is a singleton that contains all notifiers, so we can
+    easily notify to all of them.
+    """
+    notifiers: typing.Dict[str, 'notifier.Notifier'] = {}
+    initialized: bool = False
+
+    def __init__(self):
+        super().__init__()
+        self.notifiers: typing.Dict[str, 'notifier.Notifier'] = {}
+    
+    def reload(self) -> None:
+        """
+        Loads all notifiers from db.
+        """
+        for n in Notifier.objects.filter(enabled=True):
+            self.notifiers[n.name] = n.getInstance()
+
+    def notify(self, level: 'notifier.NotifierLevel', message: str, *args, **kwargs) -> None:
+        """
+        Notifies all notifiers with level equal or higher than given level.
+
+        :param level: Level to notify
+        :param message: Message to notify
+        :return: None
+        """
+        # initialize notifiers if needed
+        if not self.initialized:
+            self.reload()
+            self.initialized = True
+
+        for n in (n for n in self.notifiers.values() if n.level >= level):
+            n.notify(level, message, *args, **kwargs)
