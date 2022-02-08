@@ -34,7 +34,7 @@ import typing
 
 from django.db import models
 
-from uds.core.alerts import notifier
+from uds.core.messaging import notifier
 from uds.core.util.singleton import Singleton
 from uds.core.workers import initialize
 
@@ -83,6 +83,7 @@ class Notifiers(Singleton):
         """
         Loads all notifiers from db.
         """
+        self.notifiers.clear()
         for n in Notifier.objects.filter(enabled=True):
             self.notifiers[n.name] = n.getInstance()
 
