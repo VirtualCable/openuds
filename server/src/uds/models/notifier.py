@@ -42,10 +42,29 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from uds.core.alerts import notifier
 
+
 class Notifier(ManagedObjectModel, TaggingMixin):
+
+    NOTIFIER_LEVEL_INFO = 'INFO'
+    NOTIFIER_LEVEL_WARNING = 'WARNING'
+    NOTIFIER_LEVEL_ERROR = 'ERROR'
+    NOTIFIER_LEVEL_CRITICAL = 'CRITICAL'
+
+    NOTIFIER_LEVEL_CHOICES = (
+        (NOTIFIER_LEVEL_INFO, 'Info'),
+        (NOTIFIER_LEVEL_WARNING, 'Warning'),
+        (NOTIFIER_LEVEL_ERROR, 'Error'),
+        (NOTIFIER_LEVEL_CRITICAL, 'Critical'),
+    )
+
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     enabled = models.BooleanField(default=True)
+    level = models.CharField(
+        max_length=16,
+        choices=NOTIFIER_LEVEL_CHOICES,
+        default=NOTIFIER_LEVEL_ERROR
+    )
 
     class Meta:
         """
