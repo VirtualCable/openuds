@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 12:31+0100\n"
-"PO-Revision-Date: 2022-01-10 13:33+0000\n"
+"POT-Creation-Date: 2022-02-10 14:45+0100\n"
+"PO-Revision-Date: 2022-01-14 11:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -1251,7 +1251,7 @@ msgstr "Deve especificar o nome de usuário no formulário USERNAME@DOMAIN.DOM"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:481
 #: auths/ActiveDirectory_enterprise/authenticator.py:532
-#: auths/AzureAD_enterprise/azure_ad.py:297
+#: auths/AzureAD_enterprise/azure_ad.py:313
 #: auths/EDirectory_enterprise/authenticator.py:269
 #: auths/EDirectory_enterprise/authenticator.py:300
 #: auths/RegexLdap/authenticator.py:538 auths/RegexLdap/authenticator.py:569
@@ -1360,21 +1360,43 @@ msgid ""
 msgstr ""
 "Habilite apenas se você tiver o Microsoft School Data Sync em seu ambiente."
 
-#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:217
+#: auths/AzureAD_enterprise/azure_ad.py:150
+msgid "Azure Logout method."
+msgstr "Método de logout do Azure."
+
+#: auths/AzureAD_enterprise/azure_ad.py:152
+msgid "UDS Redirection to Microsoft logout pages on UDS logout."
+msgstr ""
+"Redirecionamento do UDS para as páginas de logout da Microsoft no logout do "
+"UDS."
+
+#: auths/AzureAD_enterprise/azure_ad.py:156
+msgid "Do not redirect"
+msgstr "Não redirecione"
+
+#: auths/AzureAD_enterprise/azure_ad.py:157
+msgid "Microsoft logout"
+msgstr "Logout da Microsoft"
+
+#: auths/AzureAD_enterprise/azure_ad.py:158
+msgid "Office 365 logout"
+msgstr "Sair do Office 365"
+
+#: auths/AzureAD_enterprise/azure_ad.py:176 auths/SAML_enterprise/saml.py:217
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "O autenticador SAML não suporta espaços em branco no campo NAME"
 
-#: auths/AzureAD_enterprise/azure_ad.py:307
-#: auths/AzureAD_enterprise/azure_ad.py:333
-#: auths/AzureAD_enterprise/azure_ad.py:343
+#: auths/AzureAD_enterprise/azure_ad.py:323
+#: auths/AzureAD_enterprise/azure_ad.py:349
+#: auths/AzureAD_enterprise/azure_ad.py:359
 msgid "Authenticator exception:"
 msgstr "Exceção do autenticador:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:378 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:394 core/util/ldaputil.py:49
 msgid "Connection error: "
 msgstr "Erro de conexão:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:381
+#: auths/AzureAD_enterprise/azure_ad.py:397
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "Params de conexão parece correto, o teste foi executado com sucesso"
 
@@ -1953,7 +1975,7 @@ msgstr "Não é possível remover nem cancelar {} porque seu estado não permite
 msgid "The requested service is restrained"
 msgstr "O serviço solicitado é restrito"
 
-#: core/managers/user_service.py:757 web/util/errors.py:81
+#: core/managers/user_service.py:761 web/util/errors.py:81
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -1961,11 +1983,11 @@ msgstr ""
 "Serviço inválido. O serviço não está disponível neste momento. Por favor "
 "tente mais tarde"
 
-#: core/managers/user_service.py:793
+#: core/managers/user_service.py:798
 msgid "The requested transport {} is not valid for {}"
 msgstr "O transporte solicitado {} não é válido para {}"
 
-#: core/managers/user_service.py:1045
+#: core/managers/user_service.py:1078
 msgid "The service is not accessible from this device"
 msgstr "O serviço não está acessível a partir deste dispositivo"
 
@@ -2219,45 +2241,45 @@ msgstr "Credenciais inválidas"
 msgid "The domain {0} does not exists"
 msgstr "O domínio {0} não existe"
 
-#: dispatchers/wyse_enterprise/views.py:227
+#: dispatchers/wyse_enterprise/views.py:228
 msgid "No services available"
 msgstr "Nenhum serviço disponível"
 
-#: dispatchers/wyse_enterprise/views.py:243
-#: dispatchers/wyse_enterprise/views.py:343
+#: dispatchers/wyse_enterprise/views.py:244
+#: dispatchers/wyse_enterprise/views.py:344
 msgid "Invalid session"
 msgstr "Sessão inválida"
 
-#: dispatchers/wyse_enterprise/views.py:247
-#: dispatchers/wyse_enterprise/views.py:347
+#: dispatchers/wyse_enterprise/views.py:248
+#: dispatchers/wyse_enterprise/views.py:348
 msgid "Invalid authorization"
 msgstr "Autorização inválida"
 
-#: dispatchers/wyse_enterprise/views.py:258
-#: dispatchers/wyse_enterprise/views.py:353
+#: dispatchers/wyse_enterprise/views.py:259
+#: dispatchers/wyse_enterprise/views.py:354
 msgid "Invalid request"
 msgstr "Pedido inválido"
 
-#: dispatchers/wyse_enterprise/views.py:261
-#: dispatchers/wyse_enterprise/views.py:356
+#: dispatchers/wyse_enterprise/views.py:262
+#: dispatchers/wyse_enterprise/views.py:357
 msgid "Invalid credentials used"
 msgstr "Credenciais inválidas usadas"
 
-#: dispatchers/wyse_enterprise/views.py:276 web/util/errors.py:78
+#: dispatchers/wyse_enterprise/views.py:277 web/util/errors.py:78
 msgid "Service not found"
 msgstr "Serviço não encontrado"
 
-#: dispatchers/wyse_enterprise/views.py:280
+#: dispatchers/wyse_enterprise/views.py:281
 msgid "Invalid machine uuid."
 msgstr "Uuid de máquina inválido."
 
-#: dispatchers/wyse_enterprise/views.py:294 web/util/errors.py:77
+#: dispatchers/wyse_enterprise/views.py:295 web/util/errors.py:77
 msgid "Transport not found"
 msgstr "Transporte não encontrado"
 
-#: dispatchers/wyse_enterprise/views.py:299
-#: dispatchers/wyse_enterprise/views.py:307
-#: dispatchers/wyse_enterprise/views.py:314
+#: dispatchers/wyse_enterprise/views.py:300
+#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 "O serviço não está pronto neste momento. Por favor, tente novamente daqui a "
@@ -5945,7 +5967,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:327
 #: transports/HTML5RDS_enterprise/html5rds.py:296
-#: transports/HTML5VNC/html5vnc.py:186
+#: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "O servidor deve ser http ou https"
 
@@ -6709,7 +6731,7 @@ msgstr ""
 "Recarregar esta página não é suportado. Por favor, reabra o serviço de "
 "origem."
 
-#: web/util/services.py:320
+#: web/util/services.py:319
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -6717,11 +6739,11 @@ msgstr ""
 "Este serviço está prestes a ser substituído por uma nova versão. Por favor, "
 "feche a sessão antes de {} e salve todo o seu trabalho para evitar perdê-la."
 
-#: web/util/services.py:395
+#: web/util/services.py:396
 msgid "Service not ready. Please, try again in a while."
 msgstr "Serviço não está pronto. Por favor, tente novamente daqui a pouco."
 
-#: web/util/services.py:431
+#: web/util/services.py:434
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

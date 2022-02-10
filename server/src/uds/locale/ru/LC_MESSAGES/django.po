@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 12:31+0100\n"
-"PO-Revision-Date: 2022-01-10 13:33+0000\n"
+"POT-Creation-Date: 2022-02-10 14:45+0100\n"
+"PO-Revision-Date: 2022-01-14 11:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
@@ -1255,7 +1255,7 @@ msgstr "Нужно указать имя пользователя в форма�
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:481
 #: auths/ActiveDirectory_enterprise/authenticator.py:532
-#: auths/AzureAD_enterprise/azure_ad.py:297
+#: auths/AzureAD_enterprise/azure_ad.py:313
 #: auths/EDirectory_enterprise/authenticator.py:269
 #: auths/EDirectory_enterprise/authenticator.py:300
 #: auths/RegexLdap/authenticator.py:538 auths/RegexLdap/authenticator.py:569
@@ -1370,21 +1370,41 @@ msgid ""
 msgstr ""
 "Включите, только если у вас есть Microsoft School Data Sync в вашей среде."
 
-#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:217
+#: auths/AzureAD_enterprise/azure_ad.py:150
+msgid "Azure Logout method."
+msgstr "Метод выхода из Azure."
+
+#: auths/AzureAD_enterprise/azure_ad.py:152
+msgid "UDS Redirection to Microsoft logout pages on UDS logout."
+msgstr "Перенаправление UDS на страницы выхода Microsoft при выходе из UDS."
+
+#: auths/AzureAD_enterprise/azure_ad.py:156
+msgid "Do not redirect"
+msgstr "Не перенаправлять"
+
+#: auths/AzureAD_enterprise/azure_ad.py:157
+msgid "Microsoft logout"
+msgstr "Выход из Microsoft"
+
+#: auths/AzureAD_enterprise/azure_ad.py:158
+msgid "Office 365 logout"
+msgstr "Выход из Office 365"
+
+#: auths/AzureAD_enterprise/azure_ad.py:176 auths/SAML_enterprise/saml.py:217
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "Аутентификатор SAML не поддерживает пробелы в поле NAME"
 
-#: auths/AzureAD_enterprise/azure_ad.py:307
-#: auths/AzureAD_enterprise/azure_ad.py:333
-#: auths/AzureAD_enterprise/azure_ad.py:343
+#: auths/AzureAD_enterprise/azure_ad.py:323
+#: auths/AzureAD_enterprise/azure_ad.py:349
+#: auths/AzureAD_enterprise/azure_ad.py:359
 msgid "Authenticator exception:"
 msgstr "Исключение проверки подлинности:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:378 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:394 core/util/ldaputil.py:49
 msgid "Connection error: "
 msgstr "Ошибка подключения: "
 
-#: auths/AzureAD_enterprise/azure_ad.py:381
+#: auths/AzureAD_enterprise/azure_ad.py:397
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "Параметры подключения кажутся верными, тест выполнен успешно"
 
@@ -1959,7 +1979,7 @@ msgstr ""
 msgid "The requested service is restrained"
 msgstr "Запрашиваемая услуга ограничена"
 
-#: core/managers/user_service.py:757 web/util/errors.py:81
+#: core/managers/user_service.py:761 web/util/errors.py:81
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -1967,11 +1987,11 @@ msgstr ""
 "Недействительный сервис. В настоящий момент услуга недоступна. Пожалуйста, "
 "попробуйте позднее"
 
-#: core/managers/user_service.py:793
+#: core/managers/user_service.py:798
 msgid "The requested transport {} is not valid for {}"
 msgstr "Запрошенный транспорт {} недействителен для {}"
 
-#: core/managers/user_service.py:1045
+#: core/managers/user_service.py:1078
 msgid "The service is not accessible from this device"
 msgstr "Сервис недоступен с этого устройства"
 
@@ -2224,45 +2244,45 @@ msgstr "Недопустимые учётные данные"
 msgid "The domain {0} does not exists"
 msgstr "Домен {0} не существует"
 
-#: dispatchers/wyse_enterprise/views.py:227
+#: dispatchers/wyse_enterprise/views.py:228
 msgid "No services available"
 msgstr "Нет доступных сервисов"
 
-#: dispatchers/wyse_enterprise/views.py:243
-#: dispatchers/wyse_enterprise/views.py:343
+#: dispatchers/wyse_enterprise/views.py:244
+#: dispatchers/wyse_enterprise/views.py:344
 msgid "Invalid session"
 msgstr "Недействительная сессия"
 
-#: dispatchers/wyse_enterprise/views.py:247
-#: dispatchers/wyse_enterprise/views.py:347
+#: dispatchers/wyse_enterprise/views.py:248
+#: dispatchers/wyse_enterprise/views.py:348
 msgid "Invalid authorization"
 msgstr "Недействительная авторизация"
 
-#: dispatchers/wyse_enterprise/views.py:258
-#: dispatchers/wyse_enterprise/views.py:353
+#: dispatchers/wyse_enterprise/views.py:259
+#: dispatchers/wyse_enterprise/views.py:354
 msgid "Invalid request"
 msgstr "Недействительный запрос"
 
-#: dispatchers/wyse_enterprise/views.py:261
-#: dispatchers/wyse_enterprise/views.py:356
+#: dispatchers/wyse_enterprise/views.py:262
+#: dispatchers/wyse_enterprise/views.py:357
 msgid "Invalid credentials used"
 msgstr "Использованы недействительные учётные данные"
 
-#: dispatchers/wyse_enterprise/views.py:276 web/util/errors.py:78
+#: dispatchers/wyse_enterprise/views.py:277 web/util/errors.py:78
 msgid "Service not found"
 msgstr "Сервис не найден"
 
-#: dispatchers/wyse_enterprise/views.py:280
+#: dispatchers/wyse_enterprise/views.py:281
 msgid "Invalid machine uuid."
 msgstr "Неверный UUID машины."
 
-#: dispatchers/wyse_enterprise/views.py:294 web/util/errors.py:77
+#: dispatchers/wyse_enterprise/views.py:295 web/util/errors.py:77
 msgid "Transport not found"
 msgstr "Транспорт не найден"
 
-#: dispatchers/wyse_enterprise/views.py:299
-#: dispatchers/wyse_enterprise/views.py:307
-#: dispatchers/wyse_enterprise/views.py:314
+#: dispatchers/wyse_enterprise/views.py:300
+#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "Сервис не готов в данный момент. Пожалуйста попробуйте снова позднее."
 
@@ -5961,7 +5981,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:327
 #: transports/HTML5RDS_enterprise/html5rds.py:296
-#: transports/HTML5VNC/html5vnc.py:186
+#: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "Сервер должен быть http или https"
 
@@ -6729,7 +6749,7 @@ msgstr ""
 "Перезагрузка этой страницы не поддерживается. Пожалуйста, откройте службу "
 "заново."
 
-#: web/util/services.py:320
+#: web/util/services.py:319
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -6737,11 +6757,11 @@ msgstr ""
 "Эта услуга будет заменена новой версией. Закройте сеанс до {} и сохраните "
 "всю свою работу, чтобы не потерять ее."
 
-#: web/util/services.py:395
+#: web/util/services.py:396
 msgid "Service not ready. Please, try again in a while."
 msgstr "Сервис не готов. Повторите попытку через некоторое время."
 
-#: web/util/services.py:431
+#: web/util/services.py:434
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

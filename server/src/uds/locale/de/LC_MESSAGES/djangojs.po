@@ -6,14 +6,14 @@
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Thorsten Latka <thorsten.latka@aktobis.de>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
-# Víctor Alonso <valonso@virtualcable.net>, 2020
+# Víctor Alonso <valonso@virtualcable.net>, 2020,2022
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 12:31+0100\n"
-"PO-Revision-Date: 2022-01-10 13:33+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2022-02-10 14:45+0100\n"
+"PO-Revision-Date: 2022-02-03 08:33+0000\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
 "Language: de\n"
@@ -254,7 +254,7 @@ msgstr "noch nie"
 
 #: static/admin/main.js:1
 msgid "#USR_NUMBER# users, #GRP_NUMBER# groups"
-msgstr "#USR_NUMBER# Benutzer, #GRP_NUMBER# Gruppen"
+msgstr "#USR_NUMBER# benutzer, #GRP_NUMBER# Gruppen"
 
 #: static/admin/main.js:1
 msgid "#POOLS_NUMBER# service pools"
@@ -262,7 +262,7 @@ msgstr "#POOLS_NUMBER# Service-Pools"
 
 #: static/admin/main.js:1
 msgid "#SERVICES_NUMBER# user services"
-msgstr "#SERVICES_NUMBER# Benutzerservices"
+msgstr "#SERVICES_NUMBER# User Services"
 
 #: static/admin/main.js:1
 msgid "#RESTRAINED_NUMBER# restrained services!"
@@ -273,7 +273,7 @@ msgstr "#RESTRAINED_NUMBER# Zurückhaltende Services!"
 #: static/admin/translations-fakejs.js:402
 #: static/admin/translations-fakejs.js:454
 msgid "Assigned services"
-msgstr "Zugewiesene Dienste"
+msgstr "Zugewiesene Services"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:250
 msgid "Services in use"
@@ -398,7 +398,7 @@ msgstr "Zustand"
 #: static/admin/translations-fakejs.js:97
 #: static/admin/translations-fakejs.js:231
 msgid "User Services"
-msgstr "Benutzerdienste"
+msgstr "User Services"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:88
 #: static/admin/translations-fakejs.js:232
@@ -482,7 +482,7 @@ msgstr "Bemerkungen"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:98
 msgid "Unique ID"
-msgstr "Eindeutige ID"
+msgstr "Eindeutige ich würde"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:99
 msgid "Friendly Name"
@@ -517,7 +517,7 @@ msgstr "Gruppen"
 #: static/admin/translations-fakejs.js:335
 #: static/admin/translations-fakejs.js:368
 msgid "Services Pools"
-msgstr "Dienstleistungen Pools"
+msgstr "Service-Pools"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:79
 #: static/admin/translations-fakejs.js:378
@@ -865,7 +865,7 @@ msgstr "Wochentage"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:149
 msgid "Minutes"
-msgstr "Minuten"
+msgstr "Protokoll"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:150
 msgid "Hours"
@@ -938,7 +938,7 @@ msgstr "und jedes Event wird aktiv sein bis"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:174
 msgid "with no duration"
-msgstr "ohne Dauer"
+msgstr "ohne dauer"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:175
 msgid "Delete calendar rule"
@@ -966,7 +966,7 @@ msgstr "Zeitmarke"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:132
 msgid "Set time mark for $NAME to current date/time?"
-msgstr "Zeitmarke für $ NAME auf aktuelles Datum / Uhrzeit setzen?"
+msgstr "Zeitmarke für $ NAME auf aktuelles Datum/Uhrzeit setzen?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:133
 msgid "Time mark stablished"
@@ -1153,7 +1153,7 @@ msgstr "Zusammenfassung"
 #: static/admin/translations-fakejs.js:313
 #: static/admin/translations-fakejs.js:468
 msgid "Services"
-msgstr "Services"
+msgstr "Dienstleistungen"
 
 #: static/admin/translations-fakejs.js:314
 msgid "Authenticators"
@@ -1188,7 +1188,7 @@ msgstr "Pools"
 
 #: static/admin/translations-fakejs.js:322
 msgid "Meta pools"
-msgstr "Meta-Pools"
+msgstr "Metapools"
 
 #: static/admin/translations-fakejs.js:324
 msgid "Calendars"
@@ -1286,7 +1286,7 @@ msgstr "Mitarbeiter"
 
 #: static/admin/translations-fakejs.js:369
 msgid "Assigned Services"
-msgstr "Zugewiesene Dienste"
+msgstr "Zugewiesene Services"
 
 #: static/admin/translations-fakejs.js:375
 msgid "Account usage"
@@ -1314,7 +1314,7 @@ msgstr "Dauer"
 
 #: static/admin/translations-fakejs.js:383
 msgid "Duration units"
-msgstr "Dauer Einheiten"
+msgstr "Dauer einheiten"
 
 #: static/admin/translations-fakejs.js:384
 msgid "Start date"
@@ -1322,7 +1322,7 @@ msgstr "Anfangsdatum"
 
 #: static/admin/translations-fakejs.js:385
 msgid "Repeat until date"
-msgstr "Wiederholen bis zum Datum"
+msgstr "Wiederholen bis zum datum"
 
 #: static/admin/translations-fakejs.js:386
 msgid "Frequency"
@@ -1455,7 +1455,7 @@ msgstr "Diagramme"
 
 #: static/admin/translations-fakejs.js:464
 msgid "Services pools"
-msgstr "Dienstleistungen Pools"
+msgstr "Service-Pools"
 
 #: static/admin/translations-fakejs.js:469
 msgid "Usage"
@@ -1478,7 +1478,7 @@ msgstr "Service-Pools anzeigen"
 
 #: static/admin/translations-fakejs.js:476
 msgid "Assigned services chart"
-msgstr "Tabelle der zugewiesenen Dienste"
+msgstr "Tabelle der Zugewiesene Services"
 
 #: static/admin/translations-fakejs.js:477
 msgid "In use services chart"
@@ -1794,7 +1794,7 @@ msgstr "UDS Client Download-Seite"
 
 #: static/modern/translations-fakejs.js:70
 msgid "Username"
-msgstr "Nutzername"
+msgstr "Benutzername"
 
 #: static/modern/translations-fakejs.js:71
 msgid "Password"
