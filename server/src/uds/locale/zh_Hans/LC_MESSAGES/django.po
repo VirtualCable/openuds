@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 12:31+0100\n"
-"PO-Revision-Date: 2022-01-10 13:33+0000\n"
+"POT-Creation-Date: 2022-02-10 14:45+0100\n"
+"PO-Revision-Date: 2022-01-14 11:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
@@ -1217,7 +1217,7 @@ msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:481
 #: auths/ActiveDirectory_enterprise/authenticator.py:532
-#: auths/AzureAD_enterprise/azure_ad.py:297
+#: auths/AzureAD_enterprise/azure_ad.py:313
 #: auths/EDirectory_enterprise/authenticator.py:269
 #: auths/EDirectory_enterprise/authenticator.py:300
 #: auths/RegexLdap/authenticator.py:538 auths/RegexLdap/authenticator.py:569
@@ -1322,21 +1322,41 @@ msgid ""
 "Enable only if you have Microsoft School Data Sync in your Environnment."
 msgstr "仅当您的环境中有 Microsoft School Data Sync 时才启用。"
 
-#: auths/AzureAD_enterprise/azure_ad.py:163 auths/SAML_enterprise/saml.py:217
+#: auths/AzureAD_enterprise/azure_ad.py:150
+msgid "Azure Logout method."
+msgstr "Azure 注销方法。"
+
+#: auths/AzureAD_enterprise/azure_ad.py:152
+msgid "UDS Redirection to Microsoft logout pages on UDS logout."
+msgstr "UDS 注销时重定向到 Microsoft 注销页面。"
+
+#: auths/AzureAD_enterprise/azure_ad.py:156
+msgid "Do not redirect"
+msgstr "不要重定向"
+
+#: auths/AzureAD_enterprise/azure_ad.py:157
+msgid "Microsoft logout"
+msgstr "微软注销"
+
+#: auths/AzureAD_enterprise/azure_ad.py:158
+msgid "Office 365 logout"
+msgstr "Office 365 注销"
+
+#: auths/AzureAD_enterprise/azure_ad.py:176 auths/SAML_enterprise/saml.py:217
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "SAML身份验证器不支持字段NAME上的空格"
 
-#: auths/AzureAD_enterprise/azure_ad.py:307
-#: auths/AzureAD_enterprise/azure_ad.py:333
-#: auths/AzureAD_enterprise/azure_ad.py:343
+#: auths/AzureAD_enterprise/azure_ad.py:323
+#: auths/AzureAD_enterprise/azure_ad.py:349
+#: auths/AzureAD_enterprise/azure_ad.py:359
 msgid "Authenticator exception:"
 msgstr "验证者例外："
 
-#: auths/AzureAD_enterprise/azure_ad.py:378 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:394 core/util/ldaputil.py:49
 msgid "Connection error: "
 msgstr "连接错误："
 
-#: auths/AzureAD_enterprise/azure_ad.py:381
+#: auths/AzureAD_enterprise/azure_ad.py:397
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "连接参数似乎是正确的，测试成功执行"
 
@@ -1871,17 +1891,17 @@ msgstr "无法删除或取消{}，导致其状态不允许"
 msgid "The requested service is restrained"
 msgstr "请求的服务被限制"
 
-#: core/managers/user_service.py:757 web/util/errors.py:81
+#: core/managers/user_service.py:761 web/util/errors.py:81
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr "服务无效。目前无法使用该服务。请稍后再试"
 
-#: core/managers/user_service.py:793
+#: core/managers/user_service.py:798
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/user_service.py:1045
+#: core/managers/user_service.py:1078
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
@@ -2134,45 +2154,45 @@ msgstr "无效证件"
 msgid "The domain {0} does not exists"
 msgstr "域{0}不存在"
 
-#: dispatchers/wyse_enterprise/views.py:227
+#: dispatchers/wyse_enterprise/views.py:228
 msgid "No services available"
 msgstr "没有可用的服务"
 
-#: dispatchers/wyse_enterprise/views.py:243
-#: dispatchers/wyse_enterprise/views.py:343
+#: dispatchers/wyse_enterprise/views.py:244
+#: dispatchers/wyse_enterprise/views.py:344
 msgid "Invalid session"
 msgstr "无效会话"
 
-#: dispatchers/wyse_enterprise/views.py:247
-#: dispatchers/wyse_enterprise/views.py:347
+#: dispatchers/wyse_enterprise/views.py:248
+#: dispatchers/wyse_enterprise/views.py:348
 msgid "Invalid authorization"
 msgstr "授权无效"
 
-#: dispatchers/wyse_enterprise/views.py:258
-#: dispatchers/wyse_enterprise/views.py:353
+#: dispatchers/wyse_enterprise/views.py:259
+#: dispatchers/wyse_enterprise/views.py:354
 msgid "Invalid request"
 msgstr "非法请求"
 
-#: dispatchers/wyse_enterprise/views.py:261
-#: dispatchers/wyse_enterprise/views.py:356
+#: dispatchers/wyse_enterprise/views.py:262
+#: dispatchers/wyse_enterprise/views.py:357
 msgid "Invalid credentials used"
 msgstr "使用的凭据无效"
 
-#: dispatchers/wyse_enterprise/views.py:276 web/util/errors.py:78
+#: dispatchers/wyse_enterprise/views.py:277 web/util/errors.py:78
 msgid "Service not found"
 msgstr "无法提供服务"
 
-#: dispatchers/wyse_enterprise/views.py:280
+#: dispatchers/wyse_enterprise/views.py:281
 msgid "Invalid machine uuid."
 msgstr "无效的计算机uuid。"
 
-#: dispatchers/wyse_enterprise/views.py:294 web/util/errors.py:77
+#: dispatchers/wyse_enterprise/views.py:295 web/util/errors.py:77
 msgid "Transport not found"
 msgstr "未找到运输"
 
-#: dispatchers/wyse_enterprise/views.py:299
-#: dispatchers/wyse_enterprise/views.py:307
-#: dispatchers/wyse_enterprise/views.py:314
+#: dispatchers/wyse_enterprise/views.py:300
+#: dispatchers/wyse_enterprise/views.py:308
+#: dispatchers/wyse_enterprise/views.py:315
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "此时服务还没有准备好。请稍后再试一次。"
 
@@ -5041,7 +5061,8 @@ msgstr "这项服务的基础机器"
 msgid ""
 "Main network used by the machine. The first interface found in base machine "
 "in this network, will be switched to publication network"
-msgstr "机器使用的主网络。在本网络的base机器中找到的第一个接口，将切换到发布网络"
+msgstr ""
+"机器使用的主网络。在本网络的base机器中找到的第一个接口，将切换到发布网络"
 
 #: services/Vmware_enterprise/service_linked.py:159
 msgid "Pub. Network"
@@ -5714,7 +5735,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:327
 #: transports/HTML5RDS_enterprise/html5rds.py:296
-#: transports/HTML5VNC/html5vnc.py:186
+#: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
@@ -6433,17 +6454,17 @@ msgid ""
 "Reloading this page is not supported. Please, reopen service from origin."
 msgstr "不支持重新加载此页面。请从原点重新开始服务。"
 
-#: web/util/services.py:320
+#: web/util/services.py:319
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
 msgstr "该服务即将被新版本取代。请在{}之前关闭会话并保存所有工作以避免丢失。"
 
-#: web/util/services.py:395
+#: web/util/services.py:396
 msgid "Service not ready. Please, try again in a while."
 msgstr "服务没准备好。请稍后再试一次。"
 
-#: web/util/services.py:431
+#: web/util/services.py:434
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
