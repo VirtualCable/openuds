@@ -2,4 +2,4 @@
 /static/
 .coverage
 /uds/static/clients/
-/UDSdb.sqlite3
+/*.sqlite3

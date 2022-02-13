@@ -138,7 +138,7 @@ class Transports(ModelHandler):
                 ),
                 'type': 'text',
                 'order': 201,
-                'tab': ugettext(gui.ADVANCED_TAB),
+                'tab': gettext(gui.ADVANCED_TAB),
             },
         )
 

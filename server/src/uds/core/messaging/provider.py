@@ -38,7 +38,7 @@ from uds.core import Module
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
 
-class NotifierLevel(enum.IntEnum):
+class NotificationLevel(enum.IntEnum):
     """
     Notifier levels
     """
@@ -48,7 +48,7 @@ class NotifierLevel(enum.IntEnum):
     CRITICAL = 3
 
 
-class Notifier(Module):
+class NotificationProviderModule(Module):
     """
     this class provides an abstraction of a notifier system for administrator defined events
     This class will be responsible os sendig emails, messaging notifications, etc.. to administrators
@@ -78,7 +78,7 @@ class Notifier(Module):
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile: typing.ClassVar[str] = 'notifier.png'
 
-    level: NotifierLevel = NotifierLevel.ERROR
+    level: NotificationLevel = NotificationLevel.ERROR
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)
@@ -100,7 +100,7 @@ class Notifier(Module):
         Default implementation does nothing
         """
 
-    def notify(self, level: NotifierLevel,  message: str, *args, **kwargs) -> None:
+    def notify(self, group: str, identificator: str, level: NotificationLevel,  message: str) -> None:
         """
         This method will be invoked from UDS to notify an event to this notifier.
         This method will be invoked in real time, so ensure this method does not block or
@@ -108,8 +108,6 @@ class Notifier(Module):
 
         :param level: Level of event
         :param message: Message to be shown
-        :param args: Arguments to be used in message
-        :param kwargs: Keyword arguments to be used in message
         :return: None
         """ 
         pass

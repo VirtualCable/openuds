@@ -69,6 +69,7 @@ class DelayedTaskThread(BaseThread):
 
 class TaskManager(metaclass=singleton.Singleton):
     keepRunning: bool = True
+    threads: typing.List[BaseThread] = []
 
     def __init__(self):
         pass
@@ -100,9 +101,17 @@ class TaskManager(metaclass=singleton.Singleton):
         # Simply import this to make workers "auto import themself"
         from uds.core import workers  # @UnusedImport pylint: disable=unused-import
 
+    def addOtherTasks(self) -> None:
+        logger.info("Registering other tasks")
+
+        from uds.core.messaging.processor import MessageProcessorThread
+
+        thread = MessageProcessorThread()
+        thread.start()
+        self.threads.append(thread)
+
     def run(self) -> None:
         self.keepRunning = True
-
         # Don't know why, but with django 1.8, must "reset" connections so them do not fail on first access...
         # Is simmilar to https://code.djangoproject.com/ticket/21597#comment:29
         connection.close()
@@ -122,20 +131,21 @@ class TaskManager(metaclass=singleton.Singleton):
         signal.signal(signal.SIGTERM, TaskManager.sigTerm)
         signal.signal(signal.SIGINT, TaskManager.sigTerm)
 
-        threads: typing.List[BaseThread] = []
         thread: BaseThread
-
         for _ in range(noSchedulers):
             thread = SchedulerThread()
             thread.start()
-            threads.append(thread)
+            self.threads.append(thread)
             time.sleep(0.5)  # Wait a bit before next scheduler is started
 
         for _ in range(noDelayedTasks):
             thread = DelayedTaskThread()
             thread.start()
-            threads.append(thread)
+            self.threads.append(thread)
             time.sleep(0.5)  # Wait a bit before next delayed task runner is started
+
+        # Add other tasks
+        self.addOtherTasks()
 
         # Debugging stuff
         # import guppy
@@ -146,7 +156,7 @@ class TaskManager(metaclass=singleton.Singleton):
         while self.keepRunning:
             time.sleep(1)
 
-        for thread in threads:
+        for thread in self.threads:
             thread.notifyTermination()
 
         # The join of threads will happen before termination, so its fine to just return here

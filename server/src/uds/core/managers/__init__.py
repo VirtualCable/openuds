@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
     from .log import LogManager
     from .user_service import UserServiceManager
     from .publication import PublicationManager
+    from .notifications import NotificationsManager
 
 
 def cryptoManager() -> 'CryptoManager':
@@ -78,3 +79,8 @@ def publicationManager() -> 'PublicationManager':
     from .publication import PublicationManager
 
     return PublicationManager.manager()
+
+def notificationsManager() -> 'NotificationsManager':
+    from .notifications import NotificationsManager
+
+    return NotificationsManager.manager()

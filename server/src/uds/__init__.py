@@ -35,6 +35,7 @@
 import math
 import ssl
 import logging
+from django.db import connections
 
 from django.db.backends.signals import connection_created
 from django.dispatch import receiver
@@ -68,20 +69,30 @@ class UDSAppConfig(AppConfig):
         logger.debug('Initializing app (ready) ***************')
 
         # Now, ensures that all dynamic elements are loadad and present
-        # pylint: disable=unused-import
-        from . import services  # to make sure that the packages are initialized at this point
-        from . import auths  # To make sure that the packages are initialized at this point
-        from . import osmanagers  # To make sure that packages are initialized at this point
-        from . import transports  # To make sure that packages are initialized at this point
-        from . import dispatchers  # Ensure all dischatchers all also available
-        from . import plugins  # To make sure plugins are loaded on memory
-        from . import REST  # To make sure REST initializes all what it needs
+        # To make sure that the packages are initialized at this point
+        from . import services
+        from . import auths
+        from . import osmanagers
+        from . import transports
+        from . import dispatchers
+        from . import plugins
+        from . import REST
+
+        # Ensure notifications table exists on local sqlite db (called "persistent" on settings.py)
+        # Note: On Notification model change, we must ensure that the table is removed on the migration itself
+        try:
+            with connections['persistent'].schema_editor() as schema_editor:
+                schema_editor.create_model(self.get_model('Notification'))
+        except Exception:
+            # If it fails, it's ok, it just means that it already exists
+            pass
 
 
 default_app_config = 'uds.UDSAppConfig'
 
 
 # Sets up several sqlite non existing methods
+
 
 @receiver(connection_created)
 def extend_sqlite(connection=None, **kwargs):
