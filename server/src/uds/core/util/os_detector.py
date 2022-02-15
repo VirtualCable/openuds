@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import enum
 import re
 import logging
 import typing
@@ -38,36 +39,36 @@ from .tools import DictAsObj
 
 logger = logging.getLogger(__name__)
 
-# Knowns OSs
-Linux = 'Linux'
-ChromeOS = 'CrOS'
-WindowsPhone = 'Windows Phone'
-Windows = 'Windows'
-Macintosh = 'Mac'
-Android = 'Android'
-iPad = 'iPad'  #
-iPhone = 'iPhone'  # In fact, these are IOS both, but we can diferentiate it...
-WYSE = 'WYSE'
-Unknown = 'Unknown'
+class KnownOS(enum.Enum):
+    Linux = ('Linux', 'armv7l')
+    ChromeOS = ('CrOS',)
+    WindowsPhone = ('Windows Phone',)
+    Windows = ('Windows',)
+    Macintosh = ('Mac',)
+    Android = ('Android',)
+    iPad = ('iPad',)  #
+    iPhone = ('iPhone',)  # In fact, these are IOS both, but we can diferentiate it...
+    WYSE = ('WYSE',)
+    Unknown = ('Unknown',)
 
 knownOss = (
-    WindowsPhone,
-    Android,
-    Linux,
-    Windows,
-    iPad,
-    iPhone,
-    Macintosh,
-    ChromeOS,
-    WYSE,
+    KnownOS.WindowsPhone,
+    KnownOS.Android,
+    KnownOS.Linux,
+    KnownOS.Windows,
+    KnownOS.iPad,
+    KnownOS.iPhone,
+    KnownOS.Macintosh,
+    KnownOS.ChromeOS,
+    KnownOS.WYSE,
 )  # Android is linux also, so it is cheched on first place
 
-allOss = knownOss + (Unknown,)
-desktopOss = (Linux, Windows, Macintosh)
+allOss = knownOss + (KnownOS.Unknown,)
+desktopOss = (KnownOS.Linux, KnownOS.Windows, KnownOS.Macintosh)
 mobilesODD = list(set(allOss) - set(desktopOss))
 
 
-DEFAULT_OS = 'Windows'
+DEFAULT_OS = KnownOS.Windows
 
 # Known browsers
 Firefox = 'Firefox'
@@ -115,18 +116,18 @@ def getOsFromUA(
     Basic OS Client detector (very basic indeed :-))
     """
     if ua is None:
-        ua = Unknown
+        ua = KnownOS.Unknown.value[0]
 
-    os = Unknown
-
-    res = DictAsObj({'OS': os, 'Version': '0.0', 'Browser': 'unknown'})
+    res = DictAsObj({'OS': KnownOS.Unknown, 'Version': '0.0', 'Browser': 'unknown'})
+    found: bool = False
     for os in knownOss:
-        try:
-            ua.index(os)
-            res.OS = os  # type: ignore
+        if found:
             break
-        except Exception:
-            pass
+        for osName in os.value:
+            if osName in ua:
+                res.OS = os  # type: ignore
+                found = True
+                break
 
     match = None
 

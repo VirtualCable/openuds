@@ -228,7 +228,7 @@ def __registerUser(
         events.addEvent(
             authenticator,
             events.ET_PLATFORM,
-            platform=request.os['OS'],
+            platform=request.os['OS'].value[0],
             browser=request.os['Browser'],
             version=request.os['Version'],
         )
@@ -386,7 +386,7 @@ def webLogin(
         user.name,
         password,
         get_language() or '',
-        request.os['OS'],
+        request.os['OS'].value[0],
         user.is_admin,
         user.staff_member,
         cookie,
@@ -463,7 +463,7 @@ def authLogLogin(
                 authenticator.name,
                 userName,
                 request.ip,
-                request.os['OS'],
+                request.os['OS'].value[0],
                 logStr,
                 request.META.get('HTTP_USER_AGENT', 'Undefined'),
             ]
@@ -474,7 +474,7 @@ def authLogLogin(
         authenticator,
         level,
         'user {} has {} from {} where os is {}'.format(
-            userName, logStr, request.ip, request.os['OS']
+            userName, logStr, request.ip, request.os['OS'].value[0]
         ),
         log.WEB,
     )
@@ -484,7 +484,7 @@ def authLogLogin(
         log.doLog(
             user,
             level,
-            '{} from {} where OS is {}'.format(logStr, request.ip, request.os['OS']),
+            '{} from {} where OS is {}'.format(logStr, request.ip, request.os['OS'].value[0]),
             log.WEB,
         )
     except Exception:

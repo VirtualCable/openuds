@@ -118,7 +118,7 @@ class TX2GOTransport(BaseX2GOTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: typing.Dict[str, typing.Any],
         user: 'models.User',
         password: str,
         request: 'HttpRequest',
@@ -177,8 +177,8 @@ class TX2GOTransport(BaseX2GOTransport):
         m = tools.DictAsObj(data)
 
         osName = {
-            OsDetector.Windows: 'windows',
-            OsDetector.Linux: 'linux',
+            OsDetector.KnownOS.Windows: 'windows',
+            OsDetector.KnownOS.Linux: 'linux',
             # OsDetector.Macintosh: 'macosx'
         }.get(os['OS'])
 

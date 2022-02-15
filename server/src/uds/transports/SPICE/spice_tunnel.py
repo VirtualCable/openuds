@@ -110,7 +110,7 @@ class TSPICETransport(BaseSpiceTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: typing.Dict[str, typing.Any],
         user: 'models.User',
         password: str,
         request: 'HttpRequest',
@@ -153,9 +153,9 @@ class TSPICETransport(BaseSpiceTransport):
         r.smartcard = self.smartCardRedirect.isTrue()
 
         osName = {
-            OsDetector.Windows: 'windows',
-            OsDetector.Linux: 'linux',
-            OsDetector.Macintosh: 'macosx',
+            OsDetector.KnownOS.Windows: 'windows',
+            OsDetector.KnownOS.Linux: 'linux',
+            OsDetector.KnownOS.Macintosh: 'macosx',
         }.get(os['OS'])
 
         if osName is None:
