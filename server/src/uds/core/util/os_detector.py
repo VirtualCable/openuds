@@ -35,8 +35,6 @@ import re
 import logging
 import typing
 
-from sympy import Li
-
 from .tools import DictAsObj
 
 logger = logging.getLogger(__name__)
