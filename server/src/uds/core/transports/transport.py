@@ -152,12 +152,12 @@ class Transport(Module):
         return False
 
     @classmethod
-    def supportsOs(cls, osName: str) -> bool:
+    def supportsOs(cls, osType: OsDetector.KnownOS) -> bool:
         """
         Helper method to check if transport supports requested operating system.
         Class method
         """
-        return cls.supportedOss.count(osName) > 0
+        return cls.supportedOss.count(osType) > 0
 
     @classmethod
     def providesConnetionInfo(cls) -> bool:

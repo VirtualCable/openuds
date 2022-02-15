@@ -283,7 +283,7 @@ def ticketAuth(
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
         return errors.errorView(request, errors.ACCESS_DENIED)
-    except ServicePool.DoesNotExist:
+    except ServicePool.DoesNotExist:  # type: ignore  # DoesNotExist is different for each model
         logger.error('Ticket has an invalid Service Pool')
         return errors.errorView(request, errors.SERVICE_NOT_FOUND)
     except Exception as e:

@@ -151,7 +151,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             getAuthInfo(auth) for auth in authenticators if auth.getType()
         ],
         'tag': tag,
-        'os': request.os['OS'],
+        'os': request.os['OS'].value[0],
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
         'image_size': Image.MAX_IMAGE_SIZE,

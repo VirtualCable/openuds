@@ -126,7 +126,7 @@ class Transports(ModelHandler):
                 'value': [],
                 'values': sorted(
                     [
-                        {'id': x, 'text': x.replace('CrOS', 'Chrome OS')}
+                        {'id': x.value[0], 'text': x.value[0].replace('CrOS', 'Chrome OS')}
                         for x in OsDetector.knownOss
                     ],
                     key=lambda x: x['text'].lower(),

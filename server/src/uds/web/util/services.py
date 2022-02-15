@@ -97,8 +97,8 @@ def getServicesData(
     nets = ''
     validTrans = ''
 
-    osName = request.os['OS']
-    logger.debug('OS: %s', osName)
+    osType = request.os['OS']
+    logger.debug('OS: %s', osType)
 
     if request.user.isStaff():
         nets = ','.join([n.name for n in Network.networksFor(request.ip)])
@@ -120,8 +120,8 @@ def getServicesData(
                 if (
                     typeTrans
                     and t.validForIp(request.ip)
-                    and typeTrans.supportsOs(osName)
-                    and t.validForOs(osName)
+                    and typeTrans.supportsOs(osType)
+                    and t.validForOs(osType)
                 ):
                     yield t
             except Exception as e:
@@ -200,8 +200,8 @@ def getServicesData(
                     if (
                         typeTrans
                         and t.validForIp(request.ip)
-                        and typeTrans.supportsOs(osName)
-                        and t.validForOs(osName)
+                        and typeTrans.supportsOs(osType)
+                        and t.validForOs(osType)
                     ):
                         metaTransports = [
                             {
@@ -272,8 +272,8 @@ def getServicesData(
             if (
                 typeTrans
                 and t.validForIp(request.ip)
-                and typeTrans.supportsOs(osName)
-                and t.validForOs(osName)
+                and typeTrans.supportsOs(osType)
+                and t.validForOs(osType)
             ):
                 if typeTrans.ownLink:
                     link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))
