@@ -65,6 +65,7 @@ def connection(
     username: str,
     passwd: typing.Union[str, bytes],
     host: str,
+    *,
     port: int = -1,
     ssl: bool = False,
     timeout: int = 3,
@@ -125,7 +126,7 @@ def getAsDict(
     logger.debug('Filter: %s, attr list: %s', ldapFilter, attrList)
 
     if attrList:
-        attrList = [i for i in attrList]  # Ensures iterable is a dict
+        attrList = [i for i in attrList]  # Ensures iterable is a list
 
     res = None
     try:
