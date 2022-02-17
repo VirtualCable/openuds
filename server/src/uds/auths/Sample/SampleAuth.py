@@ -173,7 +173,7 @@ class SampleAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> auths.AuthenticationResult:
         """
         This method is invoked by UDS whenever it needs an user to be authenticated.
         It is used from web interface, but also from administration interface to
@@ -218,7 +218,7 @@ class SampleAuth(auths.Authenticator):
         if (
             username != credentials
         ):  # All users with same username and password are allowed
-            return False
+            return auths.FAILED_AUTH
 
         # Now the tricky part. We will make this user belong to groups that contains at leat
         # two letters equals to the groups names known by UDS
@@ -228,7 +228,7 @@ class SampleAuth(auths.Authenticator):
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
-        return True
+        return auths.SUCCESS_AUTH
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         """

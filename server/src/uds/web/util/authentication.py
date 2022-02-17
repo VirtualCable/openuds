@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+from django.http import HttpResponseRedirect
 
 from django.utils.translation import gettext as _
 
@@ -50,13 +51,21 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+class LoginResult(typing.NamedTuple):
+    user: typing.Optional[User] = None
+    password: str = ''
+    errstr: typing.Optional[str] = None
+    errid: int = 0
+    url: typing.Optional[str] = None
+
+
 # Returns:
 # (None, ErroString) if error
 # (None, NumericError) if errorview redirection
 # (User, password_string) if all is ok
 def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
     request: 'ExtendedHttpRequest', form: 'LoginForm', tag: typing.Optional[str] = None
-) -> typing.Tuple[typing.Optional['User'], typing.Any]:
+) -> LoginResult:
     host = (
         request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
     )  # Last one is a placeholder in case we can't locate host name
@@ -77,7 +86,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
 
     if 'uds' not in request.COOKIES:
         logger.debug('Request does not have uds cookie')
-        return (None, errors.COOKIES_NEEDED)
+        return LoginResult(errid=errors.COOKIES_NEEDED)
     if form.is_valid():
         os = request.os
         try:
@@ -106,9 +115,8 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
             or triesByIp >= maxTries
         ):
             authLogLogin(request, authenticator, userName, 'Temporarily blocked')
-            return (
-                None,
-                _('Too many authentication errrors. User temporarily blocked'),
+            return LoginResult(
+                errstr=_('Too many authentication errrors. User temporarily blocked')
             )
         # check if authenticator is visible for this requests
         if authInstance.isAccesibleFrom(request=request) is False:
@@ -118,16 +126,15 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
                 userName,
                 'Access tried from an unallowed source',
             )
-            return (None, _('Access tried from an unallowed source'))
+            return LoginResult(errstr=_('Access tried from an unallowed source'))
 
         password = form.cleaned_data['password']
-        user = None
         if password == '':
             password = 'axd56adhg466jasd6q8sadñ€sáé--v'  # Random string, in fact, just a placeholder that will not be used :)
-        user = authenticate(userName, password, authenticator, request=request)
-        logger.debug('User: %s', user)
+        authResult = authenticate(userName, password, authenticator, request=request)
+        logger.debug('User: %s', authResult.user)
 
-        if user is None:
+        if authResult.user is None:
             logger.debug("Invalid user %s (access denied)", userName)
             cache.put(cacheKey, tries + 1, GlobalConfig.LOGIN_BLOCK.getInt())
             cache.put(request.ip, triesByIp + 1, GlobalConfig.LOGIN_BLOCK.getInt())
@@ -137,7 +144,9 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
                 userName,
                 'Access denied (user not allowed by UDS)',
             )
-            return (None, _('Access denied'))
+            if authResult.url:  # Redirection
+                return LoginResult(url=authResult.url)
+            return LoginResult(errstr=_('Access denied'))
 
         request.session.cycle_key()
 
@@ -148,8 +157,8 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         if form.cleaned_data['logouturl'] != '':
             logger.debug('The logoout url will be %s', form.cleaned_data['logouturl'])
             request.session['logouturl'] = form.cleaned_data['logouturl']
-        authLogLogin(request, authenticator, user.name)
-        return (user, form.cleaned_data['password'])
+        authLogLogin(request, authenticator, authResult.user.name)
+        return LoginResult(user=authResult.user, password=form.cleaned_data['password'])
 
     logger.info('Invalid form received')
-    return (None, _('Invalid data'))
+    return LoginResult(errstr=_('Invalid data'))

@@ -31,6 +31,7 @@
 """
 
 import urllib3
+import urllib3.exceptions
 import urllib.parse
 import typing
 import logging
@@ -76,7 +77,7 @@ class ProxmoxNodeUnavailableError(ProxmoxConnectionError):
 
 # caching helper
 def cachingKeyHelper(obj: 'ProxmoxClient') -> str:
-    return obj._host  # pylint: disable=protected-access
+    return obj._host
 
 
 class ProxmoxClient:

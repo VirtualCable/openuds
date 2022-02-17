@@ -489,7 +489,7 @@ class RegexLdap(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> auths.AuthenticationResult:
         """
         Must authenticate the user.
         We can have to different situations here:
@@ -507,7 +507,7 @@ class RegexLdap(auths.Authenticator):
                 authLogLogin(
                     request, self.dbAuthenticator(), username, 'Invalid user'
                 )
-                return False
+                return auths.FAILED_AUTH
 
             try:
                 # Let's see first if it credentials are fine
@@ -518,14 +518,14 @@ class RegexLdap(auths.Authenticator):
                 authLogLogin(
                     request, self.dbAuthenticator(), username, 'Invalid password'
                 )
-                return False
+                return auths.FAILED_AUTH
 
             groupsManager.validate(self.__getGroups(usr))
 
-            return True
+            return auths.SUCCESS_AUTH
 
         except Exception:
-            return False
+            return auths.FAILED_AUTH
 
     def createUser(self, usrData: typing.Dict[str, str]) -> None:
         """

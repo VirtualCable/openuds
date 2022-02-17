@@ -125,25 +125,25 @@ class InternalDBAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> auths.AuthenticationResult:
         logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbAuthenticator()
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
             authLogLogin(request, self.dbAuthenticator(), username, 'Invalid user')
-            return False
+            return auths.FAILED_AUTH
 
         if user.parent:  # Direct auth not allowed for "derived" users
-            return False
+            return auths.FAILED_AUTH
 
         # Internal Db Auth has its own groups. (That is, no external source). If a group is active it is valid
         if cryptoManager().checkHash(credentials, user.password):
             groupsManager.validate([g.name for g in user.groups.all()])
-            return True
+            return auths.SUCCESS_AUTH
 
         authLogLogin(request, self.dbAuthenticator(), username, 'Invalid password')
-        return False
+        return auths.FAILED_AUTH
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         dbAuth = self.dbAuthenticator()

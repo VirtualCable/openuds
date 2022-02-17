@@ -176,8 +176,8 @@ class Login(Handler):
                 password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
 
             logger.debug('Auth obj: %s', auth)
-            user = authenticate(username, password, auth, self._request, True)
-            if user is None:  # invalid credentials
+            authResult = authenticate(username, password, auth, self._request, True)
+            if authResult.user is None:  # invalid credentials
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
                 # And store in cache for blocking for a while if fails
@@ -190,12 +190,12 @@ class Login(Handler):
                 result='ok',
                 token=self.genAuthToken(
                     auth.id,
-                    user.name,
+                    authResult.user.name,
                     password,
                     locale,
                     platform,
-                    user.is_admin,
-                    user.staff_member,
+                    authResult.user.is_admin,
+                    authResult.user.staff_member,
                     scrambler,
                 ),
                 scrambler=scrambler,

@@ -632,9 +632,9 @@ class SAMLAuthenticator(auths.Authenticator):
 
         return username
 
-    def logout(self, username: str) -> typing.Optional[str]:
+    def logout(self, username: str) -> auths.AuthenticationResult:
         if Config.section('SAML').value('Global logout on exit').getInt(True) == 0:
-            return None
+            return auths.AuthenticationResult(success=True)
 
         logout = self.cache.get('lasso-' + username)
 
@@ -669,7 +669,7 @@ class SAMLAuthenticator(auths.Authenticator):
                     e,
                 )
 
-        return url
+        return auths.AuthenticationResult(success=True, url=url)
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         data = self.storage.getPickle(username)

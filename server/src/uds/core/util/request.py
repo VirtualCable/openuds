@@ -50,7 +50,14 @@ class ExtendedHttpRequest(HttpRequest):
     os: DictAsObj
     user: typing.Optional[User]  # type: ignore
 
+    def __init__(self) -> None:
+        super().__init__()
+
 
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
     user: User
+
+    def __init__(self) -> None:
+        super().__init__()
+
 

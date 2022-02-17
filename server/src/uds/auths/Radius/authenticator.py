@@ -131,7 +131,7 @@ class RadiusAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> auths.AuthenticationResult:
         try:
             connection = self.radiusClient()
             groups = connection.authenticate(username=username, password=credentials)
@@ -142,7 +142,7 @@ class RadiusAuth(auths.Authenticator):
                 username,
                 'Access denied by Raiuds',
             )
-            return False
+            return auths.FAILED_AUTH
 
         if self.globalGroup.value.strip():
             groups.append(self.globalGroup.value.strip())
@@ -154,7 +154,7 @@ class RadiusAuth(auths.Authenticator):
         # Validate groups
         groupsManager.validate(groups)
 
-        return True
+        return auths.SUCCESS_AUTH
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
         with self.storage.map() as storage:

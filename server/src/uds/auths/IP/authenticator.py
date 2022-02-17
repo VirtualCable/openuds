@@ -100,12 +100,12 @@ class IPAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> auths.AuthenticationResult:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
         if username == self.getIp(request):
             self.getGroups(username, groupsManager)
-            return True
-        return False
+            return auths.SUCCESS_AUTH
+        return auths.FAILED_AUTH
 
     def isAccesibleFrom(self, request: 'ExtendedHttpRequest'):
         """
@@ -123,15 +123,15 @@ class IPAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> auths.AuthenticationResult:
         # In fact, username does not matter, will get IP from request
         username = self.getIp(request)  # Override provided username and use source IP
         self.getGroups(username, groupsManager)
         if groupsManager.hasValidGroups() and self.dbAuthenticator().isValidUser(
             username, True
         ):
-            return True
-        return False
+            return auths.SUCCESS_AUTH
+        return auths.FAILED_AUTH
 
     @staticmethod
     def test(env, data):

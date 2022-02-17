@@ -32,7 +32,12 @@ UDS authentication related interfaces and classes
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .authenticator import Authenticator
+from .authenticator import (
+    Authenticator,
+    AuthenticationResult,
+    SUCCESS_AUTH,
+    FAILED_AUTH,
+)
 from .authfactory import AuthsFactory
 from .user import User
 from .group import Group

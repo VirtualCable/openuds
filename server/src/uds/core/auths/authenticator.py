@@ -31,6 +31,7 @@ Base module for all authenticators
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import enum
 import logging
 import typing
 
@@ -50,6 +51,19 @@ if typing.TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
+
+
+class AuthenticationResult(typing.NamedTuple):
+    """
+    Enumeration of possible results of an authenticator
+    """
+
+    success: bool = False
+    url: typing.Optional[str] = None
+
+
+FAILED_AUTH = AuthenticationResult(success=False)
+SUCCESS_AUTH = AuthenticationResult(success=True)
 
 
 class Authenticator(Module):
@@ -297,7 +311,7 @@ class Authenticator(Module):
         credentials: str,
         groupsManager: 'GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> AuthenticationResult:
         """
         This method must be overriden, and is responsible for authenticating
         users.
@@ -322,7 +336,6 @@ class Authenticator(Module):
             groupsManager: Group manager to modify with groups to which this users belongs to.
 
         Returns:
-            True if authentication success, False if don't.
 
         See uds.core.auths.groups_manager
 
@@ -336,7 +349,7 @@ class Authenticator(Module):
                This is done in this way, because UDS has only a subset of groups for this user, and
                we let the authenticator decide inside wich groups of UDS this users is included.
         """
-        return False
+        return AuthenticationResult(success=False)
 
     def isAccesibleFrom(self, request: 'HttpRequest'):
         """
@@ -370,7 +383,7 @@ class Authenticator(Module):
         credentials: str,
         groupsManager: 'GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> bool:
+    ) -> AuthenticationResult:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
         the username/credentials in an alternative way.
@@ -406,7 +419,7 @@ class Authenticator(Module):
         """
         return self.authenticate(username, credentials, groupsManager, request)
 
-    def logout(self, username: str) -> typing.Optional[str]:
+    def logout(self, username: str) -> AuthenticationResult:
         """
         Invoked whenever an user logs out.
 
@@ -421,9 +434,9 @@ class Authenticator(Module):
             username: Name of the user that logged out
 
         Returns:
-
-            None if nothing has to be done by UDS. An URL (absolute or relative), if it has to redirect
-            the user to somewhere.
+                An authentication result indicating:
+                  * success on logout
+                  * Url to redirect on logout
 
         :note: This method will be invoked also for administration log out (it it's done), but return
                result will be passed to administration interface, that will invoke the URL but nothing
@@ -432,7 +445,7 @@ class Authenticator(Module):
                invoked if user requests "log out", but maybe it will never be invoked.
 
         """
-        return None
+        return AuthenticationResult(success=True)
 
     def webLogoutHook(
         self, username: str, request: 'HttpRequest', response: 'HttpResponse'

@@ -152,7 +152,7 @@ class User(UUIDModel):
         self.last_access = getSqlDatetime()
         self.save(update_fields=['last_access'])
 
-    def logout(self) -> typing.Optional[str]:
+    def logout(self) -> auths.AuthenticationResult:
         """
         Invoked to log out this user
         Returns the url where to redirect user, or None if default url will be used

@@ -75,6 +75,11 @@ UDS_COOKIE_LENGTH = 48
 RT = typing.TypeVar('RT')
 
 
+class AuthResult(typing.NamedTuple):
+    user: typing.Optional[User] = None
+    url: typing.Optional[str] = None
+
+
 def getUDSCookie(
     request: HttpRequest,
     response: typing.Optional[HttpResponse] = None,
@@ -97,7 +102,7 @@ def getUDSCookie(
     return cookie
 
 
-def getRootUser() -> User:
+def getRootUser() -> AuthResult:
     """
     Returns an user not in DB that is ROOT for the platform
 
@@ -117,7 +122,7 @@ def getRootUser() -> User:
     user.getGroups = lambda: []  # type: ignore
     user.updateLastAccess = lambda: None  # type: ignore
     user.logout = lambda: None  # type: ignore
-    return user
+    return AuthResult(user=user)
 
 
 # Decorator to make easier protect pages that needs to be logged in
@@ -206,7 +211,7 @@ def __registerUser(
     authInstance: AuthenticatorInstance,
     username: str,
     request: 'ExtendedHttpRequest',
-) -> typing.Optional[User]:
+) -> AuthResult:
     """
     Check if this user already exists on database with this authenticator, if don't, create it with defaults
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
@@ -232,9 +237,9 @@ def __registerUser(
             browser=request.os['Browser'],
             version=request.os['Version'],
         )
-        return usr
+        return AuthResult(user=usr)
 
-    return None
+    return AuthResult()
 
 
 def authenticate(
@@ -243,7 +248,7 @@ def authenticate(
     authenticator: Authenticator,
     request: 'ExtendedHttpRequest',
     useInternalAuthenticate: bool = False,
-) -> typing.Optional[User]:
+) -> AuthResult:
     """
     Given an username, password and authenticator, try to authenticate user
     @param username: username to authenticate
@@ -252,7 +257,12 @@ def authenticate(
     @param request: Request object
     @param useInternalAuthenticate: If True, tries to authenticate user using "internalAuthenticate". If false, it uses "authenticate".
                                     This is so because in some situations we may want to use a "trusted" method (internalAuthenticate is never invoked directly from web)
-    @return: None if authentication fails, User object (database object) if authentication is o.k.
+    @return:
+            An AuthResult indicating:
+            user if success in logging in field user or None if not
+            url if not success in logging in field url so instead of error UDS will redirect to this url
+
+
     """
     logger.debug(
         'Authenticating user %s with authenticator %s', username, authenticator
@@ -274,8 +284,12 @@ def authenticate(
     else:
         res = authInstance.internalAuthenticate(username, password, gm, request)
 
-    if res is False:
-        return None
+    if not res.success:
+        logger.debug('Authentication failed')
+        # Maybe it's an redirection on auth failed?
+        if res.url is not None:
+            return AuthResult(url=res.url)
+        return AuthResult()
 
     logger.debug('Groups manager: %s', gm)
 
@@ -285,7 +299,7 @@ def authenticate(
             'User %s has been authenticated, but he does not belongs to any UDS known group',
             username,
         )
-        return None
+        return AuthResult()
 
     return __registerUser(authenticator, authInstance, username, request)
 
@@ -294,7 +308,7 @@ def authenticateViaCallback(
     authenticator: Authenticator,
     params: typing.Any,
     request: 'ExtendedHttpRequestWithUser',
-) -> typing.Optional[User]:
+) -> AuthResult:
     """
     Given an username, this method will get invoked whenever the url for a callback
     for an authenticator is requested.
@@ -424,7 +438,8 @@ def webLogout(
     if request.user:
         authenticator = request.user.manager.getInstance()
         username = request.user.name
-        exit_url = authenticator.logout(username) or exit_url
+        # Success/fail result is now ignored
+        exit_url = authenticator.logout(username).url or exit_url
         if request.user.id != ROOT_ID:
             # Try yo invoke logout of auth
             events.addEvent(
@@ -484,7 +499,9 @@ def authLogLogin(
         log.doLog(
             user,
             level,
-            '{} from {} where OS is {}'.format(logStr, request.ip, request.os['OS'].value[0]),
+            '{} from {} where OS is {}'.format(
+                logStr, request.ip, request.os['OS'].value[0]
+            ),
             log.WEB,
         )
     except Exception:

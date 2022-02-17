@@ -48,6 +48,7 @@ from uds.web.util import configjs
 
 logger = logging.getLogger(__name__)
 
+
 @never_cache
 def index(request: HttpRequest) -> HttpResponse:
     # return errorView(request, 1)
@@ -76,22 +77,26 @@ def login(
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
         form = LoginForm(request.POST, tag=tag)
-        user, data = checkLogin(request, form, tag)
-        if user:
+        loginResult = checkLogin(request, form, tag)
+        if loginResult.user:
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
-            auth.webLogin(request, response, user, data)  # data is user password here
+            auth.webLogin(request, response, loginResult.user, loginResult.password)
             # And restore tag
             request.session['tag'] = tag
         else:
-            # If error is numeric, redirect...
-            # Error, set error on session for process for js
-            time.sleep(2)  # On failure, wait a bit...
-            if isinstance(data, int):
-                return errors.errorView(request, data)
+            # If redirection on login failure is found, honor it
+            if loginResult.url:  # Redirection
+                return HttpResponseRedirect(loginResult.url)
 
-            request.session['errors'] = [data]
+            time.sleep(2)  # On failure, wait a bit...
+            # If error is numeric, redirect...
+            if loginResult.errid:
+                return errors.errorView(request, loginResult.errid)
+
+            # Error, set error on session for process for js
+            request.session['errors'] = [loginResult.errstr]
             return index(request)
     else:
         request.session['tag'] = tag
@@ -105,10 +110,11 @@ def login(
 def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.authLogLogout(request)
     request.session['restricted'] = False  # Remove restricted
-    logoutUrl = request.user.logout()
-    if logoutUrl is None:
-        logoutUrl = request.session.get('logouturl', None)
-    return auth.webLogout(request, logoutUrl)
+    logoutResponse = request.user.logout()
+    return auth.webLogout(
+        request, logoutResponse.url or request.session.get('logouturl', None)
+    )
+
 
 @never_cache
 def js(request: ExtendedHttpRequest) -> HttpResponse:
