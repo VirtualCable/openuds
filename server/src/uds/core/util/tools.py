@@ -136,6 +136,7 @@ def packageRelativeFile(moduleName: str, fileName: str) -> str:
     # Not found, return fileName
     return fileName
 
+
 def timestampAsStr(stamp, format_='SHORT_DATETIME_FORMAT'):
     """
     Converts a timestamp to date string using specified format (DJANGO format such us SHORT_DATETIME_FORMAT..)

@@ -42,6 +42,13 @@ logger = logging.getLogger(__name__)
 
 LDAPResultType = typing.MutableMapping[str, typing.Any]
 
+from ldap import (
+    SCOPE_BASE,  # type: ignore
+    SCOPE_SUBTREE,  # type: ignore
+    SCOPE_ONELEVEL,  # type: ignore
+    SCOPE_SUBORDINATE,  # type: ignore
+)
+
 
 class LDAPError(Exception):
     @staticmethod
@@ -115,9 +122,9 @@ def getAsDict(
     con: typing.Any,
     base: str,
     ldapFilter: str,
-    attrList: typing.Optional[typing.Iterable[str]],
-    sizeLimit: int,
-    scope=ldap.SCOPE_SUBTREE,  # type: ignore
+    attrList: typing.Optional[typing.Iterable[str]]=None,
+    sizeLimit: int=100,
+    scope=SCOPE_SUBTREE,
 ) -> typing.Generator[LDAPResultType, None, None]:
     """
     Makes a search on LDAP, adjusting string to required type (ascii on python2, str on python3).
@@ -200,7 +207,7 @@ def getFirst(
 
 # Recursive delete
 def recursive_delete(con: typing.Any, base_dn: str) -> None:
-    search = con.search_s(base_dn, ldap.SCOPE_ONELEVEL)  # type: ignore
+    search = con.search_s(base_dn, SCOPE_ONELEVEL)  # type: ignore
 
     for dn, _ in search:
         # recursive_delete(conn, dn)
@@ -208,3 +215,17 @@ def recursive_delete(con: typing.Any, base_dn: str) -> None:
         con.delete_s(dn)
 
     con.delete_s(base_dn)
+
+
+def getRootDSE(con: typing.Any) -> typing.Optional[LDAPResultType]:
+    """
+    Gets the root DSE of the LDAP server
+    @param cont: Connection to LDAP server
+    @return: None if root DSE is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
+    """
+    return next(getAsDict(
+        con=con,
+        base='',
+        ldapFilter='(objectClass=*)',
+        scope=SCOPE_BASE,
+    ))
