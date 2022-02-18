@@ -68,6 +68,12 @@ class AssignedAndUnused(Job):
             # Skips checking deployed services in maintenance mode or ignores assigned and unused
             if ds.isInMaintenance() or ds.ignores_unused:
                 continue
+            unusedMachines = ds.assignedUserServices().filter(
+                in_use=False,
+                state_date__lt=since_state,
+                state=State.USABLE,
+                os_state=State.USABLE,
+            )
             # If do not needs os manager, this is
             if ds.osmanager:
                 osm = ds.osmanager.getInstance()
@@ -75,21 +81,11 @@ class AssignedAndUnused(Job):
                     logger.debug(
                         'Processing unused services for %s, %s', ds, ds.osmanager
                     )
-                    for us in ds.assignedUserServices().filter(
-                        in_use=False,
-                        state_date__lt=since_state,
-                        state=State.USABLE,
-                        os_state=State.USABLE,
-                    ):
+                    for us in unusedMachines:
                         logger.debug('Found unused assigned service %s', us)
                         osm.processUnused(us)
             else:  # No os manager, simply remove unused services in specified time
-                for us in ds.assignedUserServices().filter(
-                    in_use=False,
-                    state_date__lt=since_state,
-                    state=State.USABLE,
-                    os_state=State.USABLE,
-                ):
+                for us in unusedMachines:
                     logger.debug(
                         'Found unused assigned service with no OS Manager %s', us
                     )
