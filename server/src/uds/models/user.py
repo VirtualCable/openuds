@@ -34,19 +34,16 @@ import logging
 import typing
 
 from django.db import models
-from django.db.models import signals, Q, Count
-
+from django.db.models import Count, Q, signals
+from uds.core import auths
 from uds.core.util import log
 
 from .authenticator import Authenticator
-from .util import UnsavedForeignKey
-from .util import NEVER
-from .util import getSqlDatetime
+from .util import NEVER, UnsavedForeignKey, getSqlDatetime
 from .uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import auths
     from uds.models import Group, UserService
 
 

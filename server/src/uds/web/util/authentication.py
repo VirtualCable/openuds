@@ -35,7 +35,7 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import gettext as _
 
 from uds.core.auths.auth import authenticate, authLogLogin
-from uds.models import Authenticator
+from uds.models import Authenticator, User
 from uds.core.util.config import GlobalConfig
 from uds.core.util.cache import Cache
 from uds.core.util.model import processUuid
@@ -46,7 +46,6 @@ if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
     from uds.core.util.request import ExtendedHttpRequest
     from uds.web.forms.LoginForm import LoginForm
-    from uds.models import User
 
 logger = logging.getLogger(__name__)
 
