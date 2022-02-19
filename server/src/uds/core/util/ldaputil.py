@@ -47,6 +47,7 @@ from ldap import (
     SCOPE_SUBTREE,  # type: ignore
     SCOPE_ONELEVEL,  # type: ignore
     SCOPE_SUBORDINATE,  # type: ignore
+    INVALID_CREDENTIALS,  # type: ignore
 )
 
 
