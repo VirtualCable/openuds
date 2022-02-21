@@ -127,6 +127,9 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         user = authenticate(userName, password, authenticator)
         logger.debug('User: %s', user)
 
+        if isinstance(user, str):
+            return (user, user)
+
         if user is None:
             logger.debug("Invalid user %s (access denied)", userName)
             cache.put(cacheKey, tries + 1, GlobalConfig.LOGIN_BLOCK.getInt())

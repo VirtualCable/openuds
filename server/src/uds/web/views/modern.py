@@ -74,6 +74,8 @@ def login(
         request.session['restricted'] = False  # Access is from login
         form = LoginForm(request.POST, tag=tag)
         user, data = checkLogin(request, form, tag)
+        if isinstance(user, str):
+            return HttpResponseRedirect(user)
         if user:
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
