@@ -291,9 +291,6 @@ def authenticate(
             return AuthResult(url=res.url)
         return AuthResult()
 
-    if isinstance(res, str):
-        return res  # type: ignore  # note: temporal fix on 3.5 for possible redirect on failed login
-
     logger.debug('Groups manager: %s', gm)
 
     # If do not have any valid group

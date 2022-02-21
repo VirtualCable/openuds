@@ -127,9 +127,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
             )
             return LoginResult(errstr=_('Access tried from an unallowed source'))
 
-        password = form.cleaned_data['password']
-        if password == '':
-            password = 'axd56adhg466jasd6q8sadñ€sáé--v'  # Random string, in fact, just a placeholder that will not be used :)
+        password = form.cleaned_data['password'] or 'axd56adhg466jasd6q8sadñ€sáé--v'  # Random string, in fact, just a placeholder that will not be used :)
         authResult = authenticate(userName, password, authenticator, request=request)
         logger.debug('User: %s', authResult.user)
 
