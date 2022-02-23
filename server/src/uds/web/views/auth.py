@@ -113,15 +113,6 @@ def authCallback_stage2(
         params: typing.Dict[str, typing.Any] = ticket['params']
         auth_uuid: str = ticket['auth']
         authenticator = Authenticator.objects.get(uuid=auth_uuid)
-        params['_request'] = request
-        # params['_session'] = request.session
-        # params['_user'] = request.user
-        logger.debug(
-            'Request session:%s -> %s, %s',
-            request.ip,
-            request.session.keys(),
-            request.session.session_key,
-        )
 
         result = authenticateViaCallback(authenticator, params, request)
 

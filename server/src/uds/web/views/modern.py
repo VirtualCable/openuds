@@ -37,7 +37,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRed
 from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
-from uds.core.auths import auth
+from uds.core.auths import auth, exceptions
 
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm

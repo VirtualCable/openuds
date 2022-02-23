@@ -276,6 +276,8 @@ class Initialize(ActorV3Action):
 
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
+                # Enforce lowecase ids for sqlite
+                idsList = [i.lower() for i in idsList]
                 # Set full filter
                 dbFilter = dbFilter.filter(
                     unique_id__in=idsList,
@@ -453,6 +455,9 @@ class LoginLogout(ActorV3Action):
             idsList = [x['ip'] for x in self._params['id']] + [
                 x['mac'] for x in self._params['id']
             ][:10]
+
+            # Enforce lowercase for idList
+            idsList = [x.lower() for x in idsList]
 
             validId: typing.Optional[str] = service.getValidId(idsList)
 
@@ -663,6 +668,9 @@ class Unmanaged(ActorV3Action):
             x['mac'] for x in self._params['id']
         ][:10]
         validId: typing.Optional[str] = service.getValidId(idsList)
+
+        # enforce lowercase idsList
+        idsList = [i.lower() for i in idsList]
 
         # Check if there is already an assigned user service
         # To notify it logout
