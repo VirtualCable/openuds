@@ -85,11 +85,13 @@ def authCallback(request: 'ExtendedHttpRequestWithUser', authName: str) -> HttpR
             raise Exception('Authenticator not found')
 
         params = {
+            'https': request.is_secure(),
             'http_host': request.META['HTTP_HOST'],
-            'script_name': request.META['PATH_INFO'],
+            'path_info': request.META['PATH_INFO'],
             'server_port': request.META['SERVER_PORT'],
             'get_data': request.GET.copy(),
-            'post_data': request.POST.copy()
+            'post_data': request.POST.copy(),
+            'query_string': request.META['QUERY_STRING'],
         }
 
         logger.debug(

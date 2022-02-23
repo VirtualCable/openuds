@@ -36,7 +36,7 @@ from .authenticator import (
     Authenticator,
     AuthenticationResult,
     AuthenticationSuccess,
-    AuhenticationInternalUrl,
+    AuthenticationInternalUrl,
     SUCCESS_AUTH,
     FAILED_AUTH,
 )

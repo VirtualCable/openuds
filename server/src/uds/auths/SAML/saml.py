@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from cProfile import label
+from json import tool
 import re
 import xml.sax
 import requests
@@ -186,8 +187,18 @@ class SAMLAuthenticator(auths.Authenticator):
 
     globalLogout = gui.CheckBoxField(
         label=_('Global logout'),
-        order=8,
+        defvalue=False,
+        order=10,
         tooltip=_('If set, logout from UDS will trigger SAML logout'),
+        tab=gui.ADVANCED_TAB,
+    )
+
+    adFS = gui.CheckBoxField(
+        label=_('ADFS compatibility'),
+        defvalue=False,
+        order=11,
+        tooltip=_('If set, enable lowercase url encoding so ADFS can work correctly'),
+        tab=gui.ADVANCED_TAB,
     )
 
     manageUrl = gui.HiddenField(serializable=True)
@@ -287,6 +298,35 @@ class SAMLAuthenticator(auths.Authenticator):
         self.validateField(self.userNameAttr)
         self.validateField(self.groupNameAttr)
         self.validateField(self.realNameAttr)
+
+    def getReqFromRequest(
+        self,
+        request: 'ExtendedHttpRequest',
+        params: typing.Dict[str, typing.Any] = {},
+    ) -> typing.Dict[str, typing.Any]:
+        # If callback parameters are passed, we use them
+        if params:
+            return {
+                'https': ['off', 'on'][params.get('https', False)],
+                'http_host': params['http_host'],
+                'script_name': params['path_info'],
+                'server_port': params['server_port'],
+                'get_data': params['get_data'].copy(),
+                'post_data': params['post_data'].copy(),
+                'lowercase_urlencoding': self.adFS.isTrue(),
+                'query_string': params['query_string'],
+            }
+        # No callback parameters, we use the request
+        return {
+            'https': 'on' if request.is_secure() else 'off',
+            'http_host': request.META['HTTP_HOST'],
+            'script_name': request.META['PATH_INFO'],
+            'server_port': request.META['SERVER_PORT'],
+            'get_data': request.GET.copy(),
+            'post_data': request.POST.copy(),
+            'lowercase_urlencoding': self.adFS.isTrue(),
+            'query_string': request.META['QUERY_STRING'],
+        }
 
     @allowCache(
         cachePrefix='idpm',
@@ -442,9 +482,23 @@ class SAMLAuthenticator(auths.Authenticator):
         request: 'ExtendedHttpRequestWithUser',
     ) -> auths.AuthenticationResult:
 
+        settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
+        auth = OneLogin_Saml2_Auth(req, settings)
+
+        dscb = lambda: request.session.flush()
+
+        url = auth.process_slo(delete_session_cb=dscb)
+
+        errors = auth.get_errors()
+
+        if errors:
+            raise auths.exceptions.AuthenticatorException(
+                gettext('Error processing SLO: ') + str(errors)
+            )
+
         return auths.AuthenticationResult(
             success=auths.AuthenticationSuccess.REDIRECT,
-            url=auths.AuhenticationInternalUrl.LOGIN.value,
+            url=url or auths.AuthenticationInternalUrl.getUrl(auths.AuthenticationInternalUrl.LOGIN),
         )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
@@ -454,7 +508,7 @@ class SAMLAuthenticator(auths.Authenticator):
         gm: 'auths.GroupsManager',
         request: 'ExtendedHttpRequestWithUser',
     ) -> auths.AuthenticationResult:
-        req = parameters
+        req = self.getReqFromRequest(request, params=parameters)
 
         if 'logout' in parameters['get_data']:
             return self.logoutFromCallback(req, request)
@@ -478,7 +532,18 @@ class SAMLAuthenticator(auths.Authenticator):
                 gettext('SAML response not authenticated')
             )
 
-        # In our case, we ignore relay state, because we do not use itself.
+        # Store SAML attributes
+        request.session['SAML'] = {
+            'nameid': auth.get_nameid(),
+            'nameid_format': auth.get_nameid_format(),
+            'nameid_namequalifier': auth.get_nameid_nq(),
+            'nameid_spnamequalifier': auth.get_nameid_spnq(),
+            'session_index': auth.get_session_index(),
+            'session_expiration': auth.get_session_expiration(),
+            
+        }
+
+        # In our case, we ignore relay state, because we do not use it (we redirect ourselves).
         # It will contain the originating request to javascript
         # if (
         #     'RelayState' in req['post_data']
@@ -522,20 +587,22 @@ class SAMLAuthenticator(auths.Authenticator):
         if not self.globalLogout.isTrue():
             return auths.SUCCESS_AUTH
 
-        req = {
-            'http_host': request.META['HTTP_HOST'],
-            'script_name': request.META['PATH_INFO'],
-            'server_port': request.META['SERVER_PORT'],
-            'get_data': request.GET.copy(),
-            'post_data': request.POST.copy(),
-        }
+        req = self.getReqFromRequest(request)
 
         settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
 
         auth = OneLogin_Saml2_Auth(req, settings)
 
+        saml = request.session.get('SAML', {})
+
         return auths.AuthenticationResult(
-            success=auths.AuthenticationSuccess.REDIRECT, url=auth.logout()
+            success=auths.AuthenticationSuccess.REDIRECT, url=auth.logout(
+                name_id=saml.get('nameid'),
+                session_index=saml.get('session_index'),
+                nq=saml.get('nameid_namequalifier'),
+                name_id_format=saml.get('nameid_format'),
+                spnq=saml.get('nameid_spnamequalifier'),
+            )
         )
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
@@ -550,21 +617,12 @@ class SAMLAuthenticator(auths.Authenticator):
             return username
         return data[0]
 
-    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
+    def getJavascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
         """
         We will here compose the saml request and send it via http-redirect
         """
-        req = {
-            'http_host': request.META['HTTP_HOST'],
-            'script_name': request.META['PATH_INFO'],
-            'server_port': request.META['SERVER_PORT'],
-            'get_data': request.GET.copy(),
-            'post_data': request.POST.copy(),
-        }
-
+        req = self.getReqFromRequest(request)
         auth = OneLogin_Saml2_Auth(req, self.oneLoginSettings())
-
-        # logger.debug(login.dump())
 
         return 'window.location="{0}";'.format(auth.login())
 

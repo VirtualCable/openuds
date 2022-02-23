@@ -37,6 +37,7 @@ from re import A
 import typing
 
 from django.utils.translation import gettext_noop as _
+from django.urls import reverse
 from uds.core import Module
 
 # Not imported at runtime, just for type checking
@@ -63,12 +64,19 @@ class AuthenticationSuccess(enum.IntEnum):
     OK = 1
     REDIRECT = 2
 
-class AuhenticationInternalUrl(enum.Enum):
+class AuthenticationInternalUrl(enum.Enum):
     """
     Enumeration for authentication success
     """
 
     LOGIN = 'page.login'
+
+    @staticmethod
+    def getUrl(internalUrl: 'AuthenticationInternalUrl') -> str:
+        """
+        Returns the url for the given internal url
+        """
+        return reverse(internalUrl.value)
 
 class AuthenticationResult(typing.NamedTuple):
     success: AuthenticationSuccess
