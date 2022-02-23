@@ -32,6 +32,7 @@ import logging
 import typing
 
 from django.urls import reverse
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
@@ -79,10 +80,19 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
     an authenticator that has an authCallback
     """
     try:
-        authenticator = Authenticator.objects.get(name=authName)
-        params = request.GET.copy()
-        params.update(request.POST)
-        params['_query'] = request.META.get('QUERY_STRING', '')
+        authenticator = Authenticator.objects.filter(Q(name=authName) | Q(small_name=authName)).order_by('priority').first()
+        if not authenticator:
+            raise Exception('Authenticator not found')
+
+        params = {
+            'https': request.is_secure(),
+            'http_host': request.META['HTTP_HOST'],
+            'path_info': request.META['PATH_INFO'],
+            'server_port': request.META['SERVER_PORT'],
+            'get_data': request.GET.copy(),
+            'post_data': request.POST.copy(),
+            'query_string': request.META['QUERY_STRING'],
+        }
 
         logger.debug(
             'Auth callback for %s with params %s', authenticator, params.keys()
@@ -103,15 +113,6 @@ def authCallback_stage2(
         params: typing.Dict[str, typing.Any] = ticket['params']
         auth_uuid: str = ticket['auth']
         authenticator = Authenticator.objects.get(uuid=auth_uuid)
-        params['_request'] = request
-        # params['_session'] = request.session
-        # params['_user'] = request.user
-        logger.debug(
-            'Request session:%s -> %s, %s',
-            request.ip,
-            request.session.keys(),
-            request.session.session_key,
-        )
 
         user = authenticateViaCallback(authenticator, params)
 

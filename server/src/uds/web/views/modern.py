@@ -36,7 +36,7 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
-from uds.core.auths import auth
+from uds.core.auths import auth, exceptions
 
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
@@ -103,10 +103,18 @@ def login(
 def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.authLogLogout(request)
     request.session['restricted'] = False  # Remove restricted
-    logoutUrl = request.user.logout()
-    if logoutUrl is None:
-        logoutUrl = request.session.get('logouturl', None)
-    return auth.webLogout(request, logoutUrl)
+    try:
+        logoutUrl = request.user.logout()
+        if logoutUrl is None:
+            logoutUrl = request.session.get('logouturl', None)
+        return auth.webLogout(request, logoutUrl)
+    except exceptions.Redirect as e:
+        return HttpResponseRedirect(
+            request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/'
+        )
+    except Exception as e:
+        logger.exception('Error logging out user')
+        return auth.webLogout(request, None)
 
 
 def js(request: ExtendedHttpRequest) -> HttpResponse:
