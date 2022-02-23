@@ -33,6 +33,7 @@ Base module for all authenticators
 """
 import enum
 import logging
+from re import A
 import typing
 
 from django.utils.translation import gettext_noop as _
@@ -53,17 +54,30 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+class AuthenticationSuccess(enum.IntEnum):
+    """
+    Enumeration for authentication success
+    """
+
+    FAIL = 0
+    OK = 1
+    REDIRECT = 2
+
+class AuhenticationInternalUrl(enum.Enum):
+    """
+    Enumeration for authentication success
+    """
+
+    LOGIN = 'page.login'
+
 class AuthenticationResult(typing.NamedTuple):
-    """
-    Enumeration of possible results of an authenticator
-    """
-
-    success: bool = False
+    success: AuthenticationSuccess
     url: typing.Optional[str] = None
+    username: typing.Optional[str] = None
 
 
-FAILED_AUTH = AuthenticationResult(success=False)
-SUCCESS_AUTH = AuthenticationResult(success=True)
+FAILED_AUTH = AuthenticationResult(success=AuthenticationSuccess.FAIL)
+SUCCESS_AUTH = AuthenticationResult(success=AuthenticationSuccess.OK)
 
 
 class Authenticator(Module):
@@ -349,7 +363,7 @@ class Authenticator(Module):
                This is done in this way, because UDS has only a subset of groups for this user, and
                we let the authenticator decide inside wich groups of UDS this users is included.
         """
-        return AuthenticationResult(success=False)
+        return FAILED_AUTH
 
     def isAccesibleFrom(self, request: 'HttpRequest'):
         """
@@ -419,7 +433,7 @@ class Authenticator(Module):
         """
         return self.authenticate(username, credentials, groupsManager, request)
 
-    def logout(self, username: str) -> AuthenticationResult:
+    def logout(self, request: 'ExtendedHttpRequest', username: str) -> AuthenticationResult:
         """
         Invoked whenever an user logs out.
 
@@ -430,7 +444,7 @@ class Authenticator(Module):
         By default, this method does nothing.
 
         Args:
-
+            request: HttpRequest object
             username: Name of the user that logged out
 
         Returns:
@@ -445,7 +459,7 @@ class Authenticator(Module):
                invoked if user requests "log out", but maybe it will never be invoked.
 
         """
-        return AuthenticationResult(success=True)
+        return SUCCESS_AUTH
 
     def webLogoutHook(
         self, username: str, request: 'HttpRequest', response: 'HttpResponse'
@@ -513,7 +527,7 @@ class Authenticator(Module):
         parameters: typing.Dict[str, typing.Any],
         gm: 'GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> typing.Optional[str]:
+    ) -> AuthenticationResult:
         """
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.
@@ -536,7 +550,10 @@ class Authenticator(Module):
             gm: Groups manager, you MUST check group membership using this gm
 
         Return:
-            An username if validation check is successfull, None if not
+            An AuthResult object, with:
+                * success: True if authentication is valid, False otherwise
+                * username: Username of the user, if success is True
+                * url: Url to redirect to,
 
         You can also return an exception here and, if you don't wont to check the user login,
         you can raise :py:class:uds.core.auths.exceptions.Redirect to redirect user to somewhere.
@@ -547,7 +564,7 @@ class Authenticator(Module):
                There will be calls to getGroups one an again, and also to getRealName, not just
                at login, but at future (from admin interface, at user editing for example)
         """
-        return None
+        return FAILED_AUTH
 
     def getInfo(
         self, parameters: typing.Mapping[str, str]

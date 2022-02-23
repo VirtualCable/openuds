@@ -32,6 +32,7 @@ import logging
 import typing
 
 from django.urls import reverse
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
@@ -79,10 +80,17 @@ def authCallback(request: 'ExtendedHttpRequestWithUser', authName: str) -> HttpR
     an authenticator that has an authCallback
     """
     try:
-        authenticator = Authenticator.objects.get(name=authName)
-        params = request.GET.copy()
-        params.update(request.POST)
-        params['_query'] = request.META.get('QUERY_STRING', '')
+        authenticator = Authenticator.objects.filter(Q(name=authName) | Q(small_name=authName)).order_by('priority').first()
+        if not authenticator:
+            raise Exception('Authenticator not found')
+
+        params = {
+            'http_host': request.META['HTTP_HOST'],
+            'script_name': request.META['PATH_INFO'],
+            'server_port': request.META['SERVER_PORT'],
+            'get_data': request.GET.copy(),
+            'post_data': request.POST.copy()
+        }
 
         logger.debug(
             'Auth callback for %s with params %s', authenticator, params.keys()
@@ -113,11 +121,14 @@ def authCallback_stage2(
             request.session.session_key,
         )
 
-        user = authenticateViaCallback(authenticator, params, request)
+        result = authenticateViaCallback(authenticator, params, request)
 
         os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
 
-        if user is None:
+        if result.url:
+            raise auths.exceptions.Redirect(result.url)
+
+        if result.user is None:
             authLogLogin(
                 request, authenticator, '{0}'.format(params), 'Invalid at auth callback'
             )
@@ -125,7 +136,7 @@ def authCallback_stage2(
 
         response = HttpResponseRedirect(reverse('page.index'))
 
-        webLogin(request, response, user, '')  # Password is unavailable in this case
+        webLogin(request, response, result.user, '')  # Password is unavailable in this case
         request.session['OS'] = os
         # Now we render an intermediate page, so we get Java support from user
         # It will only detect java, and them redirect to Java

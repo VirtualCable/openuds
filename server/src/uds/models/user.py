@@ -45,6 +45,7 @@ from .uuid_model import UUIDModel
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Group, UserService
+    from uds.core.util.request import ExtendedHttpRequest
 
 
 logger = logging.getLogger(__name__)
@@ -149,12 +150,12 @@ class User(UUIDModel):
         self.last_access = getSqlDatetime()
         self.save(update_fields=['last_access'])
 
-    def logout(self) -> auths.AuthenticationResult:
+    def logout(self, request: 'ExtendedHttpRequest') -> auths.AuthenticationResult:
         """
         Invoked to log out this user
         Returns the url where to redirect user, or None if default url will be used
         """
-        return self.getManager().logout(self.name)
+        return self.getManager().logout(request, self.name)
 
     def getGroups(self) -> typing.Generator['Group', None, None]:
         """

@@ -284,12 +284,13 @@ def authenticate(
     else:
         res = authInstance.internalAuthenticate(username, password, gm, request)
 
-    if not res.success:
+    if res.success == auths.AuthenticationSuccess.FAIL:
         logger.debug('Authentication failed')
         # Maybe it's an redirection on auth failed?
-        if res.url is not None:
-            return AuthResult(url=res.url)
         return AuthResult()
+
+    if res.success == auths.AuthenticationSuccess.REDIRECT:
+        return AuthResult(url=res.url)
 
     logger.debug('Groups manager: %s', gm)
 
@@ -334,12 +335,25 @@ def authenticateViaCallback(
     if authInstance.authCallback is auths.Authenticator.authCallback:
         raise auths.exceptions.InvalidAuthenticatorException()
 
-    username = authInstance.authCallback(params, gm, request)
-
-    if username is None or username == '' or gm.hasValidGroups() is False:
+    result = authInstance.authCallback(params, gm, request)
+    if result.success == auths.AuthenticationSuccess.FAIL or (
+        result.success == auths.AuthenticationSuccess.OK
+        and not gm.hasValidGroups()
+    ):
         raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
-    return __registerUser(authenticator, authInstance, username, request)
+    if result.success == auths.AuthenticationSuccess.REDIRECT:
+        # Some STANDARD redirect URLS
+        if result.url == auths.AuhenticationInternalUrl.LOGIN.value:
+            return AuthResult(url=reverse('page.login'))
+        return AuthResult(url=result.url)
+
+    if result.username:
+        return __registerUser(
+            authenticator, authInstance, result.username or '', request
+        )
+
+    raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
 
 def authCallbackUrl(authenticator: Authenticator) -> str:
@@ -439,7 +453,7 @@ def webLogout(
         authenticator = request.user.manager.getInstance()
         username = request.user.name
         # Success/fail result is now ignored
-        exit_url = authenticator.logout(username).url or exit_url
+        exit_url = authenticator.logout(request, username).url or exit_url
         if request.user.id != ROOT_ID:
             # Try yo invoke logout of auth
             events.addEvent(

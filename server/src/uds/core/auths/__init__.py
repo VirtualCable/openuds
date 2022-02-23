@@ -35,6 +35,8 @@ UDS authentication related interfaces and classes
 from .authenticator import (
     Authenticator,
     AuthenticationResult,
+    AuthenticationSuccess,
+    AuhenticationInternalUrl,
     SUCCESS_AUTH,
     FAILED_AUTH,
 )

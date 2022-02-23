@@ -30,46 +30,36 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from cProfile import label
 import re
-import time
-import datetime
 import xml.sax
 import requests
 import logging
 import typing
 
-import lasso
+from onelogin.saml2.auth import OneLogin_Saml2_Auth
+from onelogin.saml2.utils import OneLogin_Saml2_Utils
+from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
+from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core.ui import gui
 from uds.core import auths
 from uds.core.util.config import Config
 from uds.core.managers import cryptoManager
+from uds.core.util.decorators import allowCache
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.request import ExtendedHttpRequestWithUser, ExtendedHttpRequest
 
 
 logger = logging.getLogger(__name__)
 
-SAML_REQUEST_ID = 'saml2RequestId'
 
-
-def iso8601_to_datetime(date_string: str) -> datetime.datetime:
-    """
-    Convert a string formatted as an ISO8601 date into a time_t value.
-       This function ignores the sub-second resolution
-    """
-    m = re.match(r'(\d+-\d+-\d+T\d+:\d+:\d+)(?:\.\d+)?Z$', date_string)
-
-    if not m:
-        raise ValueError('Invalid ISO8601 date')
-
-    tm = time.strptime(m.group(1) + 'Z', "%Y-%m-%dT%H:%M:%SZ")
-
-    return datetime.datetime.fromtimestamp(time.mktime(tm))
+def CACHING_KEY_FNC(auth: 'SAMLAuthenticator') -> str:
+    return str(hash(auth.idpMetadata.value))
 
 
 class SAMLAuthenticator(auths.Authenticator):
@@ -194,6 +184,12 @@ class SAMLAuthenticator(auths.Authenticator):
         tab=_('Attributes'),
     )
 
+    globalLogout = gui.CheckBoxField(
+        label=_('Global logout'),
+        order=8,
+        tooltip=_('If set, logout from UDS will trigger SAML logout'),
+    )
+
     manageUrl = gui.HiddenField(serializable=True)
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
@@ -288,95 +284,96 @@ class SAMLAuthenticator(auths.Authenticator):
             )
 
         # Now validate regular expressions, if they exists
-        self.__validateField(self.userNameAttr)
-        self.__validateField(self.groupNameAttr)
-        self.__validateField(self.realNameAttr)
+        self.validateField(self.userNameAttr)
+        self.validateField(self.groupNameAttr)
+        self.validateField(self.realNameAttr)
 
-    def __idpMetadata(self, force=False):
-        if self.idpMetadata.value.startswith(
-            'http://'
-        ) or self.idpMetadata.value.startswith('https://'):
-            val = self.cache.get('idpMetadata')
-            if val is None or force:
-                try:
-                    resp = requests.get(
-                        self.idpMetadata.value.split('\n')[0], verify=False
-                    )
-                    val = resp.content.decode()
-                except Exception as e:
-                    logger.error('Error fetching idp metadata: %s', e)
-                    raise auths.exceptions.AuthenticatorException(
-                        gettext('Can\'t access idp metadata')
-                    )
-                self.cache.put(
-                    'idpMetadata',
-                    val,
-                    Config.section('SAML').value('IDP Metadata cache').getInt(True),
+    @allowCache(
+        cachePrefix='idpm',
+        cachingKeyFnc=CACHING_KEY_FNC,
+        cacheTimeout=3600,  # 1 hour
+    )
+    def getIdpMetadataDict(self, **kwargs) -> typing.Dict[str, typing.Any]:
+        if self.idpMetadata.value.startswith('http'):
+            try:
+                resp = requests.get(self.idpMetadata.value.split('\n')[0], verify=False)
+                val = resp.content.decode()
+            except Exception as e:
+                logger.error('Error fetching idp metadata: %s', e)
+                raise auths.exceptions.AuthenticatorException(
+                    gettext('Can\'t access idp metadata')
                 )
+            self.cache.put(
+                'idpMetadata',
+                val,
+                Config.section('SAML').value('IDP Metadata cache').getInt(True),
+            )
         else:
             val = self.idpMetadata.value
-        return val
 
-    def __spMetadata(self):
-        return '''<?xml version="1.0"?>
-              <md:EntityDescriptor
-                xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
-                entityID="{0}">
-                <md:SPSSODescriptor
-                    AuthnRequestsSigned="true"
-                    protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
-                  <md:KeyDescriptor use="signing">
-                    <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-                      <ds:X509Data>
-                        <ds:X509Certificate>{1}</ds:X509Certificate>
-                      </ds:X509Data>
-                    </ds:KeyInfo>
-                  </md:KeyDescriptor>
-                  <md:KeyDescriptor use="encryption">
-                    <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-                      <ds:X509Data>
-                        <ds:X509Certificate>{1}</ds:X509Certificate>
-                      </ds:X509Data>
-                    </ds:KeyInfo>
-                  </md:KeyDescriptor>
-                  <md:SingleLogoutService
-                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-                    Location="{2}?logout=true"/>
-                  <md:AssertionConsumerService isDefault="true" index="0"
-                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                    Location="{2}" />
-                </md:SPSSODescriptor>
-                <md:Organization>
-                   <md:OrganizationName xml:lang="en">{3}</md:OrganizationName>
-                   <md:OrganizationDisplayName xml:lang="en">{4}</md:OrganizationDisplayName>
-                   <md:OrganizationURL xml:lang="en">{5}</md:OrganizationURL>
-                </md:Organization>
-              </md:EntityDescriptor>
-              '''.format(
-            self.entityID.value,
-            cryptoManager().certificateString(self.serverCertificate.value),
-            self.manageUrl.value,
-            Config.section('SAML').value('Organization Name').get(True),
-            Config.section('SAML').value('Org. Display Name').get(True),
-            Config.section('SAML').value('Organization URL').get(True),
-        )
+        return OneLogin_Saml2_IdPMetadataParser.parse(val)
 
-    def __createServer(self) -> lasso.Server:
-        # Create server for this SP
-        server: typing.Optional[lasso.Server] = lasso.Server.newFromBuffers(
-            self.__spMetadata(), self.privateKey.value
-        )
-        if not server:
-            raise auths.exceptions.AuthenticatorException('Can\'t create lasso server')
+    def oneLoginSettings(self) -> typing.Dict[str, typing.Any]:
+        return {
+            'strict': True,
+            'debug': True,
+            'sp': {
+                'entityId': self.entityID.value,
+                'assertionConsumerService': {
+                    'url': self.manageUrl.value,
+                    'binding': 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                },
+                'singleLogoutService': {
+                    'url': self.manageUrl.value + '?logout=true',
+                    'binding': 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                },
+                'x509cert': self.serverCertificate.value,
+                'privateKey': self.privateKey.value,
+                'NameIDFormat': 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
+            },
+            'idp': self.getIdpMetadataDict()['idp'],
+            'security': {
+                'nameIdEncrypted': False,
+                'authnRequestsSigned': True,
+                'logoutRequestSigned': False,
+                'logoutResponseSigned': False,
+                'signMetadata': False,
+                'wantMessagesSigned': False,
+                'wantAssertionsSigned': False,
+                'wantAssertionsEncrypted': False,
+                'wantNameIdEncrypted': False,
+                'requestedAuthnContext': False,
+            },
+            'organization': {
+                'en-US': {
+                    'name': Config.section('SAML').value('Organization Name').get(True),
+                    'displayname': Config.section('SAML')
+                    .value('Org. Display Name')
+                    .get(True),
+                    'url': Config.section('SAML').value('Organization URL').get(True),
+                },
+            },
+        }
 
-        # Now add provider
-        # logger.debug('Types: %s', self.__idpMetadata())
-        server.addProviderFromBuffer(lasso.PROVIDER_ROLE_IDP, self.__idpMetadata())
-        server.signatureMethod = lasso.SIGNATURE_METHOD_RSA_SHA256
+    @allowCache(
+        cachePrefix='spm',
+        cachingKeyFnc=CACHING_KEY_FNC,
+        cacheTimeout=3600,  # 1 hour
+    )
+    def getSpMetadata(self) -> str:
+        saml_settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
+        metadata = saml_settings.get_sp_metadata()
+        errors = saml_settings.validate_metadata(metadata)
+        if len(errors) > 0:
+            raise auths.exceptions.AuthenticatorException(
+                gettext('Error validating SP metadata: ') + str(errors)
+            )
+        if isinstance(metadata, str):
+            return metadata
+        else:
+            return typing.cast(bytes, metadata).decode()
 
-        return server
-
-    def __validateField(self, field: gui.TextField):
+    def validateField(self, field: gui.TextField):
         """
         Validates the multi line fields refering to attributes
         """
@@ -393,7 +390,7 @@ class SAMLAuthenticator(auths.Authenticator):
                         'Invalid pattern at {0}: {1}'.format(field.label, line)
                     )
 
-    def __processField(
+    def processField(
         self, field: str, attributes: typing.Dict[str, typing.List]
     ) -> typing.List[str]:
         res = []
@@ -428,14 +425,27 @@ class SAMLAuthenticator(auths.Authenticator):
         Althought this is mainly a get info callback, this can be used for any other purpuse we like.
         In this case, we use it to provide logout callback also
         """
-        info = self.__spMetadata()
+        info = self.getSpMetadata()
+        wantsHtml = parameters.get('format') == 'html'
 
-        content_type = (
-            'text/html'
-            if parameters.get('format', '') == 'html'
-            else 'application/samlmetadata+xml'
+        content_type = 'text/html' if wantsHtml else 'application/samlmetadata+xml'
+        info = (
+            '<br/>'.join(info.replace('<', '&lt;').splitlines())
+            if parameters.get('format') == 'html'
+            else info
         )
         return info, content_type  # 'application/samlmetadata+xml')
+
+    def logoutFromCallback(
+        self,
+        req: typing.Dict[str, typing.Any],
+        request: 'ExtendedHttpRequestWithUser',
+    ) -> auths.AuthenticationResult:
+
+        return auths.AuthenticationResult(
+            success=auths.AuthenticationSuccess.REDIRECT,
+            url=auths.AuhenticationInternalUrl.LOGIN.value,
+        )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     def authCallback(
@@ -443,233 +453,90 @@ class SAMLAuthenticator(auths.Authenticator):
         parameters: typing.Dict[str, typing.Any],
         gm: 'auths.GroupsManager',
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Optional[str]:
-        samlResponseMsg: typing.Optional[str] = parameters.get(
-            lasso.SAML2_FIELD_RESPONSE, None
-        )
+    ) -> auths.AuthenticationResult:
+        req = parameters
 
-        logout: typing.Optional[lasso.Logout] = None
-
-        if 'logout' in parameters:
-            if (
-                not request.user
-            ):  # This is a SAML Response, we can ignore it, because the user was already logged out
-                raise auths.exceptions.Logout(parameters.get('RelayState'))
-
-            server: typing.Optional[lasso.Server] = None
-            samlRequestMsg: typing.Optional[str] = parameters.get(
-                lasso.SAML2_FIELD_REQUEST, None
-            )
-            session = self.storage.get('lasso-' + request.user.name)
-            if session and samlRequestMsg:
-                # Process logout
-                try:
-                    server = self.__createServer()
-                    logout = lasso.Logout(server)
-                    logout.setSessionFromDump(session)
-
-                    query = parameters.get('_query', '')
-                    logger.debug('Query: %s', query)
-                    if samlRequestMsg is not None:
-                        logout.processRequestMsg(query)
-
-                    # Build logout request to idp
-                    logout.buildResponseMsg()
-
-                    logger.debug('Logout data: %s', logout.debug())
-
-                    # Return to logout message url, but also logout user from this platform
-                    raise auths.exceptions.Logout(logout.msgUrl)
-
-                except lasso.DsSignatureNotFoundError:
-                    logger.warning(
-                        'Logout message request from %s is not signed',
-                        server.providers.keys()[0] if server else None,
-                    )
-                except Exception:
-                    logger.exception(
-                        'SAML Logout %s', logout.debug() if logout else None
-                    )
-                    # Silently redirect to '/'
-                    raise auths.exceptions.Redirect('/')
-
-                raise auths.exceptions.Logout(parameters.get('RelayState'))
-
-        logger.debug("samlResponseMSG: %s", samlResponseMsg)
-
-        if not samlResponseMsg:
-            raise auths.exceptions.AuthenticatorException('Can\'t locate saml response')
-
-        server = self.__createServer()
-        login: lasso.Login = lasso.Login(server)
+        if 'logout' in parameters['get_data']:
+            return self.logoutFromCallback(req, request)
 
         try:
-            login.processAuthnResponseMsg(samlResponseMsg)
-        except (lasso.DsError, lasso.ProfileCannotVerifySignatureError) as e:
-            logger.exception('Got exception processing response')
+            settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
+            auth = OneLogin_Saml2_Auth(req, settings)
+            auth.process_response()
+        except Exception as e:
             raise auths.exceptions.AuthenticatorException(
-                'Invalid signature: {}'.format(e)
+                gettext('Error processing SAML response: ') + str(e)
             )
-        except lasso.Error as e:
+        errors = auth.get_errors()
+        if errors:
             raise auths.exceptions.AuthenticatorException(
-                'Misc error : {0}'.format(lasso.strError(e[0]))
-            )
-
-        assertion = login.assertion
-        # Check that authentication is in response to an sent request
-        # if request.session.get(SAML_REQUEST_ID, '') != assertion.subject.subjectConfirmation.subjectConfirmationData.inResponseTo:
-        #     logger.debug('Session id: {0}, inResponseTo; {1}'.format(request.session.get(SAML_REQUEST_ID, ''), assertion.subject.subjectConfirmation.subjectConfirmationData.inResponseTo ))
-        #     raise auths.exceptions.AuthenticatorException('Invalid response id')
-
-        if (
-            assertion.subject.subjectConfirmation.method
-            != 'urn:oasis:names:tc:SAML:2.0:cm:bearer'
-        ):
-            raise auths.exceptions.AuthenticatorException(
-                'Unknown subject confirmation method'
+                'SAML response error: ' + str(errors)
             )
 
-        # Audience restriction
-        try:
-            audienceOk = False
-            for audience_restriction in assertion.conditions.audienceRestriction:
-                if audience_restriction.audience != login.server.providerId:
-                    raise auths.exceptions.AuthenticatorException(
-                        'Incorrect audience restriction'
-                    )
-                audienceOk = True
-            if audienceOk is False:
-                raise auths.exceptions.AuthenticatorException(
-                    'Incorrect audience restriction'
-                )
-        except:
+        if not auth.is_authenticated():
             raise auths.exceptions.AuthenticatorException(
-                'Error checking AudienceResctriction'
+                gettext('SAML response not authenticated')
             )
 
-        # Check, not before, notOnAfter
-        notBefore = (
-            assertion.subject.subjectConfirmation.subjectConfirmationData.notBefore
-        )
-        notOnOrAfter = (
-            assertion.subject.subjectConfirmation.subjectConfirmationData.notOnOrAfter
-        )
+        # In our case, we ignore relay state, because we do not use itself.
+        # It will contain the originating request to javascript
+        # if (
+        #     'RelayState' in req['post_data']
+        #     and OneLogin_Saml2_Utils.get_self_url(req) != req['post_data']['RelayState']
+        # ):
+        #     return auths.AuthenticationResult(
+        #         success=auths.AuthenticationSuccess.REDIRECT,
+        #         url=auth.redirect_to(req['post_data']['RelayState'])
+        #     )
 
-        if notBefore:
+        attributes = auth.get_attributes()
+        if not attributes:
             raise auths.exceptions.AuthenticatorException(
-                'assertion in response to AuthnRequest, notBefore MUST not be in SubjectConfirmationData'
+                gettext('No attributes returned from IdP')
             )
-
-        if not notOnOrAfter or not notOnOrAfter.endswith('Z'):
-            raise auths.exceptions.AuthenticatorException('Invalid notOnOrAfter value')
-
-        # if models.getSqlDatetime() > iso8601_to_datetime(notOnOrAfter):
-        #     raise auths.exceptions.AuthenticatorException('Assertion has expired: {} > {}'.format(models.getSqlDatetime(), iso8601_to_datetime(notOnOrAfter)))
-
-        try:
-            login.acceptSso()
-        except lasso.Error:
-            raise auths.exceptions.AuthenticatorException('Invalid assertion')
-
-        logger.debug('Accepted SSO: %s', login.debug())
-
-        # Read attributes
-        attributes: typing.Dict[str, typing.Any] = {}
-        for attStatement in assertion.attributeStatement:
-            for attr in attStatement.attribute:
-                name = None
-                nickName = None
-                try:
-                    name = attr.name
-                except Exception:
-                    logger.warning('error decoding name of attribute %s', attr.dump())
-                    continue
-                if attr.friendlyName:
-                    nickName = attr.friendlyName
-
-                try:
-                    values = attr.attributeValue
-                    if not values:
-                        continue
-                    if name not in attributes:
-                        attributes[name] = []
-                    if nickName:
-                        if nickName not in attributes:
-                            attributes[nickName] = attributes[name]
-                    for value in values:
-                        content = ''.join(
-                            [anyValue.exportToXml() for anyValue in value.any]
-                        )
-                        logger.debug(content)
-                        attributes[name].append(content)
-                except Exception as e:
-                    logger.warning(
-                        "value of an attribute field failed to decode to ascii %s due to %s",
-                        attr.dump(),
-                        e,
-                    )
-
         logger.debug("Attributes: %s", attributes)
 
         # Now that we have attributes, we can extract values from this, map groups, etc...
-        username = ''.join(self.__processField(self.userNameAttr.value, attributes))
+        username = ''.join(self.processField(self.userNameAttr.value, attributes))
         logger.debug('Username: %s', username)
 
-        groups = self.__processField(self.groupNameAttr.value, attributes)
+        groups = self.processField(self.groupNameAttr.value, attributes)
         logger.debug('Groups: %s', groups)
 
-        realName = ' '.join(self.__processField(self.realNameAttr.value, attributes))
+        realName = ' '.join(self.processField(self.realNameAttr.value, attributes))
         logger.debug('Real name: %s', realName)
 
         # store groups for this username at storage, so we can check it at a later stage
         self.storage.putPickle(username, [realName, groups])
-        self.storage.put(
-            'lasso-' + username, login.session.dump()
-        )  # Also store session
 
         # Now we check validity of user
         gm.validate(groups)
 
-        return username
+        return auths.AuthenticationResult(
+            success=auths.AuthenticationSuccess.OK, username=username
+        )
 
-    def logout(self, username: str) -> auths.AuthenticationResult:
-        if Config.section('SAML').value('Global logout on exit').getInt(True) == 0:
-            return auths.AuthenticationResult(success=True)
+    def logout(
+        self, request: 'ExtendedHttpRequest', username: str
+    ) -> auths.AuthenticationResult:
+        if not self.globalLogout.isTrue():
+            return auths.SUCCESS_AUTH
 
-        logout = self.cache.get('lasso-' + username)
+        req = {
+            'http_host': request.META['HTTP_HOST'],
+            'script_name': request.META['PATH_INFO'],
+            'server_port': request.META['SERVER_PORT'],
+            'get_data': request.GET.copy(),
+            'post_data': request.POST.copy(),
+        }
 
-        if logout:
-            return logout
+        settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
 
-        server = self.__createServer()
-        logout = lasso.Logout(server)
+        auth = OneLogin_Saml2_Auth(req, settings)
 
-        idpEntityId = list(server.providers.keys())[0]
-
-        session = self.storage.get('lasso-' + username)
-
-        url: typing.Optional[str] = None
-        if session:
-            try:
-                logout.setSessionFromDump(session)
-                logout.initRequest(idpEntityId, lasso.HTTP_METHOD_REDIRECT)
-
-                logout.buildRequestMsg()
-
-                url = logout.msgUrl
-
-                # Cache for a while, just in case this repeats...
-                self.cache.put('lasso-' + username, logout.msgUrl, 10)
-
-                self.storage.remove(username)
-                self.storage.remove('lasso-' + username)
-            except Exception as e:
-                logger.warning(
-                    'SAML Global logout is enabled on configuration, but an error ocurred processing logout: %s',
-                    e,
-                )
-
-        return auths.AuthenticationResult(success=True, url=url)
+        return auths.AuthenticationResult(
+            success=auths.AuthenticationSuccess.REDIRECT, url=auth.logout()
+        )
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         data = self.storage.getPickle(username)
@@ -687,55 +554,19 @@ class SAMLAuthenticator(auths.Authenticator):
         """
         We will here compose the saml request and send it via http-redirect
         """
-        server = self.__createServer()
-        try:
-            login = lasso.Login(server)
-        except Exception:
-            raise auths.exceptions.InvalidAuthenticatorException(
-                'Can\'t create lasso login'
-            )
+        req = {
+            'http_host': request.META['HTTP_HOST'],
+            'script_name': request.META['PATH_INFO'],
+            'server_port': request.META['SERVER_PORT'],
+            'get_data': request.GET.copy(),
+            'post_data': request.POST.copy(),
+        }
 
-        idpEntityId = list(server.providers.keys())[0]
-        # logger.debug('IDP Entity ID: %s', idpEntityId)
-
-        # httpMethod = server.getFirstHttpMethod(server.providers[idpEntityId], lasso.MD_PROTOCOL_TYPE_SINGLE_SIGN_ON)
-
-        # logger.debug('Lasso httpMethod: {0}'.format(httpMethod))
-
-        # if httpMethod == lasso.HTTP_METHOD_NONE:
-        if (
-            server.acceptHttpMethod(
-                server.providers[idpEntityId],
-                lasso.MD_PROTOCOL_TYPE_SINGLE_SIGN_ON,
-                lasso.HTTP_METHOD_REDIRECT,
-                True,
-            )
-            is False
-        ):
-            raise auths.exceptions.InvalidAuthenticatorException(
-                'IDP do not have any supported SingleSignOn method'
-            )
-
-        try:
-            login.initAuthnRequest(idpEntityId, lasso.HTTP_METHOD_REDIRECT)
-        except lasso.Error as error:
-            raise auths.exceptions.InvalidAuthenticatorException(
-                'Error at initAuthnRequest: {0}'.format(lasso.strError(error[0]))
-            )
-
-        try:
-            login.buildAuthnRequestMsg()
-        except lasso.Error as error:
-            raise auths.exceptions.InvalidAuthenticatorException(
-                'Error at buildAuthnRequestMsg: {0}'.format(lasso.strError(error[0]))
-            )
-
-        request.session[SAML_REQUEST_ID] = login.request.iD
-        logger.debug('Request session ID: %s', login.request.iD)
+        auth = OneLogin_Saml2_Auth(req, self.oneLoginSettings())
 
         # logger.debug(login.dump())
 
-        return 'window.location="{0}";'.format(login.msgUrl)
+        return 'window.location="{0}";'.format(auth.login())
 
     def removeUser(self, username):
         """

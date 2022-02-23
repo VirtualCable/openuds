@@ -110,7 +110,7 @@ def login(
 def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.authLogLogout(request)
     request.session['restricted'] = False  # Remove restricted
-    logoutResponse = request.user.logout()
+    logoutResponse = request.user.logout(request)
     return auth.webLogout(
         request, logoutResponse.url or request.session.get('logouturl', None)
     )

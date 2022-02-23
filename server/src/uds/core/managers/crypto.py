@@ -34,6 +34,7 @@ import array
 import uuid
 import codecs
 import struct
+import re
 import random
 import string
 import logging
@@ -223,11 +224,8 @@ class CryptoManager(metaclass=singleton.Singleton):
             raise Exception('Invalid certificate')
 
     def certificateString(self, certificate: str) -> str:
-        return (
-            certificate.replace('-----BEGIN CERTIFICATE-----', '')
-            .replace('-----END CERTIFICATE-----', '')
-            .replace('\n', '')
-        )
+        # Remove -----.*-----\n strings using regex
+        return re.sub(r'(-----.*-----\n)', '', certificate)
 
     def hash(self, value: typing.Union[str, bytes]) -> str:
         if isinstance(value, str):
