@@ -95,7 +95,7 @@ default_app_config = 'uds.UDSAppConfig'
 
 
 @receiver(connection_created)
-def extend_sqlite(connection=None, **kwargs):
+def extend_sqlite(connection, **kwargs):
     if connection.vendor == "sqlite":
         logger.debug('Connection vendor is sqlite, extending methods')
         cursor = connection.cursor()

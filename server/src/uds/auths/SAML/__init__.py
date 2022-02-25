@@ -37,6 +37,4 @@ from .saml import SAMLAuthenticator  # import for registration on space,
 Config.section('SAML').value('Organization Name', 'UDS').get()
 Config.section('SAML').value('Org. Display Name', 'UDS Organization').get()
 Config.section('SAML').value('Organization URL', 'http://www.udsenterprise.com').get()
-Config.section('SAML').value('IDP Metadata cache', '86400', type=Config.NUMERIC_FIELD).get()
-Config.section('SAML').value('Global logout on exit', '0', type=Config.BOOLEAN_FIELD).get()
 

@@ -44,6 +44,7 @@ import os.path
 import pkgutil
 import importlib
 import sys
+import typing
 
 def __init__():
     """
@@ -53,7 +54,7 @@ def __init__():
     from uds.core import auths
 
     # Dinamycally import children of this package. The __init__.py files must declare authenticators as subclasses of auths.Authenticator
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         # __import__(name, globals(), locals(), [], 1)
         importlib.import_module('.' + name, __name__)  # import module
