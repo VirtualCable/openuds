@@ -361,7 +361,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 'entityId': self.entityID.value,
                 'assertionConsumerService': {
                     'url': self.manageUrl.value,
-                    'binding': 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                    'binding': 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
                 },
                 'singleLogoutService': {
                     'url': self.manageUrl.value + '?logout=true',
