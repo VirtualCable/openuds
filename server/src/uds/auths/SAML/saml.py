@@ -482,6 +482,10 @@ class SAMLAuthenticator(auths.Authenticator):
         request: 'ExtendedHttpRequestWithUser',
     ) -> auths.AuthenticationResult:
 
+        # Convert HTTP-POST to HTTP-REDIRECT on SAMLResponse, for just in case...
+        if 'SAMLResponse' in req['post_data']:
+            req['get_data']['SAMLResponse'] = req['post_data']['SAMLResponse']
+
         settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
         auth = OneLogin_Saml2_Auth(req, settings)
 
@@ -498,7 +502,10 @@ class SAMLAuthenticator(auths.Authenticator):
 
         return auths.AuthenticationResult(
             success=auths.AuthenticationSuccess.REDIRECT,
-            url=url or auths.AuthenticationInternalUrl.getUrl(auths.AuthenticationInternalUrl.LOGIN),
+            url=url
+            or auths.AuthenticationInternalUrl.getUrl(
+                auths.AuthenticationInternalUrl.LOGIN
+            ),
         )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
@@ -540,7 +547,6 @@ class SAMLAuthenticator(auths.Authenticator):
             'nameid_spnamequalifier': auth.get_nameid_spnq(),
             'session_index': auth.get_session_index(),
             'session_expiration': auth.get_session_expiration(),
-            
         }
 
         # In our case, we ignore relay state, because we do not use it (we redirect ourselves).
@@ -596,13 +602,14 @@ class SAMLAuthenticator(auths.Authenticator):
         saml = request.session.get('SAML', {})
 
         return auths.AuthenticationResult(
-            success=auths.AuthenticationSuccess.REDIRECT, url=auth.logout(
+            success=auths.AuthenticationSuccess.REDIRECT,
+            url=auth.logout(
                 name_id=saml.get('nameid'),
                 session_index=saml.get('session_index'),
                 nq=saml.get('nameid_namequalifier'),
                 name_id_format=saml.get('nameid_format'),
                 spnq=saml.get('nameid_spnamequalifier'),
-            )
+            ),
         )
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
