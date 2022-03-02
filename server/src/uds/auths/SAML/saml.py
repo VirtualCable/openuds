@@ -484,7 +484,10 @@ class SAMLAuthenticator(auths.Authenticator):
 
         # Convert HTTP-POST to HTTP-REDIRECT on SAMLResponse, for just in case...
         if 'SAMLResponse' in req['post_data']:
-            req['get_data']['SAMLResponse'] = req['post_data']['SAMLResponse']
+            if isinstance(req['post_data']['SAMLResponse'], list):
+                req['get_data']['SAMLResponse'] = req['post_data']['SAMLResponse'][0]
+            else:
+                req['get_data']['SAMLResponse'] = req['post_data']['SAMLResponse']
 
         settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
         auth = OneLogin_Saml2_Auth(req, settings)
