@@ -206,7 +206,7 @@ class CryptoManager(metaclass=singleton.Singleton):
     ]:
         try:
             return serialization.load_pem_private_key(
-                settings.RSA_KEY.encode(), password=None, backend=default_backend()
+                rsaKey.encode(), password=None, backend=default_backend()
             )
         except Exception as e:
             raise e
