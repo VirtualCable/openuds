@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import operator
 import typing
 
 from django.db import models
@@ -165,7 +166,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in sorted(self.calendarAccess.all(), key=lambda x: x.priority):
+        for ac in sorted(self.calendarAccess.all(), key=operator.attrgetter('priority')):
             if CalendarChecker(ac.calendar).check(chkDateTime):
                 access = ac.access
                 break  # Stops on first rule match found

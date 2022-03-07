@@ -32,6 +32,7 @@
 """
 import logging
 import random
+import operator
 import typing
 
 from django.utils.translation import gettext as _
@@ -968,6 +969,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         poolMembers = [
             p for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()
         ]
+        # Sort pools array. List of tuples with (priority, pool)
+        sortPools: typing.List[typing.Tuple[int, ServicePool]]
         # Sort pools based on meta selection
         if meta.policy == MetaPool.PRIORITY_POOL:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
@@ -981,7 +984,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # split resuult in two lists, 100% full and not 100% full
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
-        sortedPools = sorted(sortPools, key=lambda x: x[0])
+        sortedPools = sorted(sortPools, key=operator.itemgetter(0))  # sort by priority (first element)
         pools: typing.List[ServicePool] = [
             p[1] for p in sortedPools if p[1].usage() < 100 and p[1].isUsable()
         ]

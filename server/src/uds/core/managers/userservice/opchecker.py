@@ -49,7 +49,7 @@ USERSERVICE_TAG = 'cm-'
 # This will be executed on current service state for checking transitions to new state, task states, etc..
 class StateUpdater:
     userService: UserService
-    userServiceInstalce: UserDeployment
+    userServiceInstance: UserDeployment
 
     def __init__(
         self,

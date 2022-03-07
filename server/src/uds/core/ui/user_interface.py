@@ -39,12 +39,22 @@ import typing
 import logging
 
 from django.utils.translation import get_language, gettext as _, gettext_noop
+from django.conf import settings
 
 from uds.core.managers import cryptoManager
 
 logger = logging.getLogger(__name__)
 
+# Old encryption key
 UDSB = b'udsprotect'
+
+# Separators for fields
+MULTIVALUE_FIELD = b'\001'
+OLD_PASSWORD_FIELD = b'\004'
+PASSWORD_FIELD = b'\005'
+
+FIELD_SEPARATOR = b'\002'
+NAME_VALUE_SEPARATOR = b'\003'
 
 
 class gui:
@@ -905,8 +915,9 @@ class UserInterfaceType(type):
     ) -> 'UserInterfaceType':
         newClassDict = {}
         _gui: typing.MutableMapping[str, gui.InputField] = {}
-        # We will keep a reference to gui elements also at _gui so we can access them easily
-        # Later on init method to update the class 'self' with the new copy
+
+        # Make a copy of gui fields description
+        # (we will update references on class 'self' to the new copy)
         for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 _gui[attrName] = attr
@@ -939,10 +950,12 @@ class UserInterface(metaclass=UserInterfaceType):
         # has its own "field" set, and do not share the "fielset" with others, what
         # can be really dangerous. Till now, nothing bad happened cause there where
         # being used "serialized", but this do not have to be this way
-        self._gui = copy.deepcopy(
-            self._gui
-        )  # Ensure "gui" is our own instance, deep copied from base
-        for key, val in self._gui.items():  # And refresh references to them
+
+        # Ensure "gui" points to a copy of original gui, not the original one
+        # this is done to avoid modifying the original gui description
+
+        self._gui = copy.deepcopy(self._gui)
+        for key, val in self._gui.items():  # And refresh self references to them
             setattr(self, key, val)
 
         if values is not None:
@@ -1039,10 +1052,10 @@ class UserInterface(metaclass=UserInterfaceType):
                 gui.InputField.MULTI_CHOICE_TYPE
             ):
                 # logger.debug('Serializing value {0}'.format(v.value))
-                val = b'\001' + pickle.dumps(v.value, protocol=0)
+                val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
             elif v.isType(gui.InfoField.PASSWORD_TYPE):
-                val = b'\004' + cryptoManager().AESCrypt(
-                    v.value.encode('utf8'), UDSB, True
+                val = PASSWORD_FIELD + cryptoManager().AESCrypt(
+                    v.value.encode('utf8'), settings.SECRET_KEY.encode(), True
                 )
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = str(int(v.num())).encode('utf8')
@@ -1055,10 +1068,10 @@ class UserInterface(metaclass=UserInterfaceType):
             elif val is False:
                 val = gui.FALSE.encode('utf8')
 
-            arr.append(k.encode('utf8') + b'\003' + val)
+            arr.append(k.encode('utf8') + NAME_VALUE_SEPARATOR + val)
         logger.debug('Arr, >>%s<<', arr)
 
-        return codecs.encode(b'\002'.join(arr), 'zip')
+        return codecs.encode(FIELD_SEPARATOR.join(arr), 'zip')
 
     def unserializeForm(self, values: bytes) -> None:
         """
@@ -1084,20 +1097,26 @@ class UserInterface(metaclass=UserInterfaceType):
             if not values:  # Has nothing
                 return
 
-            for txt in values.split(b'\002'):
-                kb, v = txt.split(b'\003')
-                k = kb.decode('utf8')  # Convert name to unicode
+            for txt in values.split(FIELD_SEPARATOR):
+                kb, v = txt.split(NAME_VALUE_SEPARATOR)
+                k = kb.decode('utf8')  # Convert name to string
                 if k in self._gui:
                     try:
-                        if v and v[0] == 1:
+                        if v.startswith(MULTIVALUE_FIELD):
                             val = pickle.loads(v[1:])
-                        elif v and v[0] == 4:
+                        elif v.startswith(OLD_PASSWORD_FIELD):
                             val = cryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
+                        elif v.startswith(PASSWORD_FIELD):
+                            val = (
+                                cryptoManager()
+                                .AESDecrypt(v[1:], settings.SECRET_KEY.encode(), True)
+                                .decode()
+                            )
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode
                             if isinstance(val, bytes):
-                                val = val.decode('utf_8')
+                                val = val.decode('utf8')
                     except Exception:
                         logger.exception('Pickling {} from {}'.format(k, self))
                         val = ''
@@ -1127,11 +1146,9 @@ class UserInterface(metaclass=UserInterfaceType):
             obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
             theGui = obj
 
-        res: typing.List[typing.MutableMapping[str, typing.Any]] = []
-
-        for key, val in theGui._gui.items():
-            logger.debug('%s ### %s', key, val)
-            res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
-
-        logger.debug('>>>>>>>>>>>> Gui Description: %s -- %s', obj, res)
+        res: typing.List[typing.MutableMapping[str, typing.Any]] = [
+            {'name': key, 'gui': val.guiDescription(), 'value': ''}
+            for key, val in theGui._gui.items()
+        ]
+        logger.debug('theGui description: %s', res)
         return res

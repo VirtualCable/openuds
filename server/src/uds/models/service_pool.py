@@ -32,9 +32,10 @@
 """
 import typing
 import logging
+import operator
 import pickle
+
 from datetime import datetime, timedelta
-from uds.core.util.states import publication
 
 from django.db import models, transaction
 
@@ -336,7 +337,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in sorted(self.calendarAccess.all(), key=lambda x: x.priority):
+        for ac in sorted(self.calendarAccess.all(), key=operator.attrgetter('priority')):
             if CalendarChecker(ac.calendar).check(chkDateTime):
                 access = ac.access
                 break  # Stops on first rule match found
