@@ -44,10 +44,6 @@ from .windows import WindowsOsManager
 from .windows_domain import WinDomainOsManager
 from .windows_random import WinRandomPassManager
 
-osmanagers.factory().insert(WindowsOsManager)
-osmanagers.factory().insert(WinDomainOsManager)
-osmanagers.factory().insert(WinRandomPassManager)
-
 managers.downloadsManager().registerDownloadable(
     'UDSActorSetup-{version}.exe'.format(version=VERSION),
     _('UDS Actor for windows machines'),

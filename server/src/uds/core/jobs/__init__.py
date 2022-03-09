@@ -47,4 +47,4 @@ def factory() -> 'JobsFactory':
     """
     from .jobs_factory import JobsFactory  # pylint: disable=redefined-outer-name
 
-    return JobsFactory.factory()
+    return JobsFactory()

@@ -40,30 +40,17 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os.path
-import pkgutil
-import importlib
-import sys
-import typing
+from uds.core.util.modfinder import dynamicLoadAndRegisterModules
 
-def __init__():
+
+def __loadModules__():
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of authenticator as
     """
     from uds.core import auths
 
-    # Dinamycally import children of this package. The __init__.py files must declare authenticators as subclasses of auths.Authenticator
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        # __import__(name, globals(), locals(), [], 1)
-        importlib.import_module('.' + name, __name__)  # import module
-
-    importlib.invalidate_caches()
-
-    a = auths.Authenticator
-    for cls in a.__subclasses__():
-        auths.factory().insert(cls)
+    dynamicLoadAndRegisterModules(auths.factory(), auths.Authenticator, __name__)
 
 
-__init__()
+__loadModules__()

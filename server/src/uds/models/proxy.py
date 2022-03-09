@@ -96,7 +96,9 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
             timeout=timeout,
         )
 
-    def doTestServer(self, ip: str, port: typing.Union[str, int], timeout=5) -> bool:
+    def doTestServer(
+        self, ip: str, port: typing.Union[str, int], timeout: float = 5
+    ) -> bool:
         try:
             url = self.testServerUrl + '?host={}&port={}&timeout={}'.format(
                 ip, port, timeout

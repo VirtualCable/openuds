@@ -36,39 +36,18 @@ import logging
 from .provider import ServiceProvider
 from .service import Service
 
+from uds.core.util import factory
+
 logger = logging.getLogger(__name__)
 
 
-class ServiceProviderFactory:
+class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
     """
     This class holds the register of all known service provider modules
     inside UDS.
 
     It provides a way to register and recover providers providers.
     """
-
-    _factory: typing.Optional['ServiceProviderFactory'] = None
-
-    def __init__(self):
-        """
-        Initializes internal dictionary for service providers registration
-        """
-        self._providers: typing.Dict[str, typing.Type[ServiceProvider]] = {}
-
-    @staticmethod
-    def factory() -> 'ServiceProviderFactory':
-        """
-        Returns the factory that keeps the register of service providers.
-        """
-        if ServiceProviderFactory._factory is None:
-            ServiceProviderFactory._factory = ServiceProviderFactory()
-        return ServiceProviderFactory._factory
-
-    def providers(self) -> typing.Dict[str, typing.Type[ServiceProvider]]:
-        """
-        Returns the list of service providers already registered.
-        """
-        return self._providers
 
     def insert(self, type_: typing.Type[ServiceProvider]) -> None:
         """
@@ -81,10 +60,12 @@ class ServiceProviderFactory:
         # cache, but service do not provides publicationType,
         # that service will not be registered and it will be informed
         typeName = type_.type().lower()
-        if typeName in self._providers:
+
+        if typeName in self.providers():
             logger.debug('%s already registered as Service Provider', type_)
             return
 
+        # Fix offers by checking if they are valid
         offers = []
         for s in type_.offers:
             if s.usesCache_L2:
@@ -99,18 +80,11 @@ class ServiceProviderFactory:
                     continue
             offers.append(s)
 
-        # Only offers valid services
+        # Store fixed offers
         type_.offers = offers
-        logger.debug('Adding provider %s as %s', type_.type(), type_)
 
-        self._providers[typeName] = type_
+        super().insert(type_)
 
-    def lookup(self, typeName) -> typing.Optional[typing.Type[ServiceProvider]]:
-        """
-        Tries to locate a server provider and by its name, and, if
-        not found, returns None
-        """
-        return self._providers.get(typeName.lower(), None)
 
     def servicesThatDoNotNeedPublication(self) -> typing.Iterable[typing.Type[Service]]:
         """
@@ -118,7 +92,7 @@ class ServiceProviderFactory:
         to be published
         """
         res = []
-        for p in self._providers.values():
+        for p in self.providers().values():
             for s in p.offers:
                 if s.publicationType is None and s.mustAssignManually is False:
                     res.append(s)

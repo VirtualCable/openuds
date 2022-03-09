@@ -42,4 +42,4 @@ def factory() -> TransportsFactory:
     """
     Returns factory for register/access to service providers
     """
-    return TransportsFactory.factory()
+    return TransportsFactory()

@@ -35,11 +35,11 @@ import typing
 from uds.core.managers.task import BaseThread
 
 from uds.models import NotificationProvider, Notification
-from .provider import NotificationProviderModule
+from .provider import Notifier as NotificationProviderModule
 
 logger = logging.getLogger(__name__)
 
-WAIT_TIME = 8 # seconds
+WAIT_TIME = 8  # seconds
 
 
 class MessageProcessorThread(BaseThread):
@@ -48,17 +48,21 @@ class MessageProcessorThread(BaseThread):
     def __init__(self):
         super().__init__()
         self.setName('MessageProcessorThread')
-        
+
     def run(self):
         # Load providers at beginning
-        providers: typing.List[NotificationProviderModule] = [p.getInstance() for p in NotificationProvider.objects.all()]
+        providers: typing.List[NotificationProviderModule] = [
+            p.getInstance() for p in NotificationProvider.objects.all()
+        ]
 
         while self.keepRunning:
             # Locate all notifications from "persistent" and try to process them
             # In no notification can be fully resolved, it will be kept in the database
             for n in Notification.getPersistentQuerySet().all():
                 # Try to insert into Main DB
-                notify = not n.processed  # If it was already processed, the only thing left is to add to maind DB and remove it from persistent
+                notify = (
+                    not n.processed
+                )  # If it was already processed, the only thing left is to add to maind DB and remove it from persistent
                 pk = n.pk
                 n.processed = True
                 try:
@@ -73,11 +77,16 @@ class MessageProcessorThread(BaseThread):
                     # Restore pk, and save locally so we can try again
                     n.pk = pk
                     Notification.savePersistent(n)
-                    logger.warning('Could not save notification %s to main DB, trying notificators', n)
+                    logger.warning(
+                        'Could not save notification %s to main DB, trying notificators',
+                        n,
+                    )
 
                 if notify:
                     for p in providers:
-                        if not self.keepRunning:  # if we are asked to stop, we don't try to send anymore
+                        if (
+                            not self.keepRunning
+                        ):  # if we are asked to stop, we don't try to send anymore
                             break
                         p.notify(n.group, n.identificator, n.level, n.message)
 
@@ -88,4 +97,3 @@ class MessageProcessorThread(BaseThread):
 
     def notifyTermination(self):
         self.keepRunning = False
-

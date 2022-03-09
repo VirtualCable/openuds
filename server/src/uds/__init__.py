@@ -73,6 +73,7 @@ class UDSAppConfig(AppConfig):
         from . import services
         from . import auths
         from . import osmanagers
+        from . import notifiers
         from . import transports
         from . import dispatchers
         from . import plugins

@@ -38,12 +38,17 @@ import importlib
 import logging
 import typing
 
-# Forces dispatchers to be already present
-import uds.dispatchers  # pylint: disable=unused-import
+from uds.core import module
 
 logger = logging.getLogger(__name__)
 
+T = typing.TypeVar('T', bound=module.Module)
+
 patterns: typing.List[typing.Any] = []
+
+
+if typing.TYPE_CHECKING:
+    from uds.core.util.factory import ModuleFactory
 
 
 def loadModulesUrls() -> typing.List[typing.Any]:
@@ -70,3 +75,37 @@ def loadModulesUrls() -> typing.List[typing.Any]:
     importlib.invalidate_caches()
 
     return patterns
+
+
+def dynamicLoadAndRegisterModules(
+    factory: 'ModuleFactory',
+    type_: typing.Type[T],
+    modName: str,
+    *,
+    justLeafs: bool = False,
+) -> None:
+    '''
+    Loads all modules from a given package that are subclasses of the given type
+    param factory: Factory to use to create the objects, must support "insert" method
+    param type_: Type of the objects to load
+    param modName: Name of the package to load
+    param justLeafs: If true, only leafs will be registered on factory
+    '''
+    # Dinamycally import children of this package.
+    pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
+    for _, name, _ in pkgutil.iter_modules([pkgpath]):
+        importlib.import_module('.' + name, modName)  # import module
+
+    importlib.invalidate_caches()
+
+    def process(classes: typing.Iterable[typing.Type]) -> None:
+        for cls in classes:
+            clsSubCls = cls.__subclasses__()
+            if clsSubCls:
+                process(clsSubCls)
+                if justLeafs:
+                    continue
+
+            factory.insert(cls)
+
+    process(type_.__subclasses__())

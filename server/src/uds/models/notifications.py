@@ -28,20 +28,20 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from enum import Enum, IntEnum
+from enum import IntEnum
 import logging
-from os import stat
 import typing
 
 from django.db import models, transaction
 
-from uds.core.messaging import provider
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from uds.core.messaging import Notifier as NotificationProviderModule
 
 class NotificationLevel(IntEnum):
     """
@@ -113,7 +113,7 @@ class NotificationProvider(ManagedObjectModel, TaggingMixin):
 
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
-    ) -> 'provider.NotificationProviderModule':
-        return typing.cast('provider.NotificationProviderModule', super().getInstance(values=values))
+    ) -> 'NotificationProviderModule':
+        return typing.cast('NotificationProviderModule', super().getInstance(values=values))
 
 

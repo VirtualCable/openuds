@@ -42,9 +42,6 @@ from uds.core import VERSION
 from .linux_osmanager import LinuxOsManager
 from .linux_randompass_osmanager import LinuxRandomPassManager
 
-OSManagersFactory.factory().insert(LinuxOsManager)
-OSManagersFactory.factory().insert(LinuxRandomPassManager)
-
 downloadsManager().registerDownloadable(
     'udsactor_{version}_all.deb'.format(version=VERSION),
     _(

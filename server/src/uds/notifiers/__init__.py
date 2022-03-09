@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,22 +28,34 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-UDS Service modules interfaces and classes.
+Notifiers modules for uds are contained inside this package.
+To create a new notifier module, you will need to follow this steps:
+    1.- Create the notifier module.
+    2.- Insert the module package as child of this package
+    3.- Import the class of your service module at __init__. For example::
+        from Notifier import SimpleNotifier
+        This will allow to locate the class SimpleNotifier and register it
+    4.- Done. 
+
+The registration of modules is done locating subclases of :py:class:`uds.core.messaging.Notifier`
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import exceptions
-from . import types
+import logging
 
-from .user_deployment import UserDeployment
-from .publication import Publication
-from .service import Service
-from .provider import ServiceProvider
-from .provider_factory import ServiceProviderFactory
+from uds.core.util.modfinder import dynamicLoadAndRegisterModules
+
+logger = logging.getLogger(__name__)
 
 
-def factory() -> ServiceProviderFactory:
+def __loadModules():
     """
-    Returns factory for register/access to service providers
+    Loads all notifiers modules
     """
-    return ServiceProviderFactory()
+    from uds.core import messaging
+
+    # We need to import all modules that are descendant of this package
+    dynamicLoadAndRegisterModules(messaging.factory(), messaging.Notifier, __name__)
+
+
+__loadModules()

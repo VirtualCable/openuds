@@ -225,7 +225,7 @@ class WinDomainOsManager(WindowsOsManager):
                     account,
                     self._password,
                     server[0],
-                    port,
+                    port=port,
                     ssl=ssl,
                     timeout=10,
                     debug=False,

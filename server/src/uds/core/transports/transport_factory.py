@@ -31,35 +31,13 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import typing
 
-if typing.TYPE_CHECKING:
-    from .transport import Transport
+from uds.core.util import factory
+from .transport import Transport
 
 
 logger = logging.getLogger(__name__)
 
 
-class TransportsFactory:
-    _factory: typing.Optional['TransportsFactory'] = None
-    _transports: typing.Dict[str, typing.Type['Transport']]
-
-    def __init__(self):
-        self._transports = {}
-
-    @staticmethod
-    def factory() -> 'TransportsFactory':
-        if TransportsFactory._factory is None:
-            TransportsFactory._factory = TransportsFactory()
-        return TransportsFactory._factory
-
-    def providers(self) -> typing.Dict[str, typing.Type['Transport']]:
-        return self._transports
-
-    def insert(self, type_: typing.Type['Transport']) -> None:
-        logger.debug('Adding transport %s as %s', type_.type(), type_)
-        typeName = type_.type().lower()
-        self._transports[typeName] = type_
-
-    def lookup(self, typeName: str) -> typing.Optional[typing.Type['Transport']]:
-        return self._transports.get(typeName.lower(), None)
+class TransportsFactory(factory.ModuleFactory[Transport]):
+    pass

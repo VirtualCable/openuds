@@ -48,7 +48,7 @@ class NotificationLevel(enum.IntEnum):
     CRITICAL = 3
 
 
-class NotificationProviderModule(Module):
+class Notifier(Module):
     """
     this class provides an abstraction of a notifier system for administrator defined events
     This class will be responsible os sendig emails, messaging notifications, etc.. to administrators

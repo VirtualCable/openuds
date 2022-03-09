@@ -29,3 +29,11 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from .provider import Notifier
+from .factory import NotificationProviderFactory
+
+def factory() -> NotificationProviderFactory:
+    """
+    Returns the factory for Notification Providers
+    """
+    return NotificationProviderFactory()

@@ -51,4 +51,4 @@ def factory() -> AuthsFactory:
     """
     Returns factory for register/access to authenticators
     """
-    return AuthsFactory.factory()
+    return AuthsFactory()

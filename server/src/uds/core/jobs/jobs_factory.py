@@ -34,26 +34,21 @@ import datetime
 import logging
 import typing
 
+from uds.core.util import singleton
+
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from .job import Job
 
 
-class JobsFactory:
-    _factory: typing.Optional['JobsFactory'] = None
-    _jobs: typing.Dict[str, typing.Type['Job']]
+class JobsFactory(metaclass=singleton.Singleton):
+    _jobs: typing.MutableMapping[str, typing.Type['Job']]
 
     def __init__(self):
         self._jobs = {}
 
-    @staticmethod
-    def factory() -> 'JobsFactory':
-        if not JobsFactory._factory:
-            JobsFactory._factory = JobsFactory()
-        return JobsFactory._factory
-
-    def jobs(self) -> typing.Dict[str, typing.Type['Job']]:
+    def jobs(self) -> typing.Mapping[str, typing.Type['Job']]:
         return self._jobs
 
     def insert(self, name: str, type_: typing.Type['Job']):

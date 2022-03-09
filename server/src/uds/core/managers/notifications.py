@@ -59,9 +59,23 @@ class NotificationsManager(metaclass=singleton.Singleton):
         try:
             message = message % args
         except Exception:
-            message = message + ' ' + str(args)
+            message = message + ' ' + str(args) + ' (format error)'
         # Store the notification on local persistent storage
         # Will be processed by UDS backend
         with Notification.atomicPersistent():
             notify = Notification(group=group, identificator=identificator, level=level, message=message)
             Notification.savePersistent(notify)
+
+    def registerGroup(self, group: str) -> None:
+        """
+        Registers a new group.
+        This is used to group notifications, so that we can send them to a group of users.
+        """
+        pass
+
+    def registerIdentificator(self, group: str, identificator: str) -> None:
+        """
+        Registers a new identificator.
+        This is used to group notifications, so that we can send them to a group of users.
+        """
+        pass

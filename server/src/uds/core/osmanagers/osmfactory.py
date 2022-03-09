@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -30,35 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
+
+from uds.core.util import factory
 
 if typing.TYPE_CHECKING:
     from .osmanager import OSManager
 
-logger = logging.getLogger(__name__)
-
-
-class OSManagersFactory:
-    _factory: typing.Optional['OSManagersFactory'] = None
-    _osManagers: typing.Dict[str, typing.Type['OSManager']]
-
-    def __init__(self):
-        self._osManagers = {}
-
-    @staticmethod
-    def factory() -> 'OSManagersFactory':
-        if OSManagersFactory._factory is None:
-            OSManagersFactory._factory = OSManagersFactory()
-        return OSManagersFactory._factory
-
-    def providers(self) -> typing.Dict[str, typing.Type['OSManager']]:
-        return self._osManagers
-
-    def insert(self, type_: typing.Type['OSManager']) -> None:
-        logger.debug('Adding OS Manager %s as %s', type_.type(), type_)
-        typeName = type_.type().lower()
-        self._osManagers[typeName] = type_
-
-    def lookup(self, typeName: str) -> typing.Optional[typing.Type['OSManager']]:
-        return self._osManagers.get(typeName.lower(), None)
+class OSManagersFactory(factory.ModuleFactory['OSManager']):
+    pass

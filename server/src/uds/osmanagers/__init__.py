@@ -40,33 +40,16 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os.path
-import pkgutil
-import sys
-import importlib
-import typing
+from uds.core.util.modfinder import dynamicLoadAndRegisterModules
 
+def __loadModules():
+    """
+    Loads all osmanager modules
+    """
 
-def __init__():
-    """
-    This imports all packages that are descendant of this package, and, after that,
-    it register all subclases of service provider as
-    """
     from uds.core import osmanagers
 
-    # Dinamycally import children of this package. 
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
-
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        # __import__(name, globals(), locals(), [], 1)
-        importlib.import_module('.' + name, __name__)  # Local import
-
-    importlib.invalidate_caches()
-
-    p = osmanagers.OSManager
-
-    for cls in p.__subclasses__():
-        osmanagers.factory().insert(cls)
+    dynamicLoadAndRegisterModules(osmanagers.factory(), osmanagers.OSManager, __name__)
 
 
-__init__()
+__loadModules()
