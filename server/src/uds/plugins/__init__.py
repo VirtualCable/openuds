@@ -27,29 +27,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os.path
-import pkgutil
-import sys
-import importlib
 import logging
-import typing
+
+from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
 
-def loadPlugins():
+def __loadPlugins():
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
     logger.debug('Initializing plugins...')
 
-    # Dinamycally import children of this package. The __init__.py files must import classes
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        # __import__(name, globals(), locals(), [], 1)
-        importlib.import_module('.' + name, __name__)  # Local import
+    # Load all modules
+    modfinder.importModules(__name__)
 
-    importlib.invalidate_caches()
-
-loadPlugins()
+__loadPlugins()

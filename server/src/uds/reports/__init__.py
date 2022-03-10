@@ -38,10 +38,6 @@ The registration of modules is done locating subclases of :py:class:`uds.core.re
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os.path
-import pkgutil
-import importlib
-import sys
 import logging
 import typing
 
@@ -53,7 +49,7 @@ logger = logging.getLogger(__name__)
 availableReports: typing.List[typing.Type['reports.Report']] = []
 
 
-def __init__() -> None:
+def __loadModules() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     """
@@ -69,4 +65,4 @@ def __init__() -> None:
         checker=lambda x: x.uuid is not None and x.uuid not in alreadyAdded,
     )
 
-__init__()
+__loadModules()
