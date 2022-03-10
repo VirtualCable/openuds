@@ -30,7 +30,7 @@ class ModuleFactory(typing.Generic[T], metaclass=singleton.Singleton):
         '''
         Inserts an object into the factory.
         '''
-        logger.debug('Adding %s as %s', type_.type(), type_)
+        # logger.debug('Adding %s as %s', type_.type(), type_.__module__)
         typeName = type_.type().lower()
 
         if typeName in self.__objects:

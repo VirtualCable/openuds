@@ -53,6 +53,7 @@ class RDPTransport(BaseRDPTransport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
+    isBase = False
 
     typeName = _('RDP')
     typeType = 'RDPTransport'

@@ -51,6 +51,7 @@ class SPICETransport(BaseSpiceTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+    isBase = False
 
     typeName = _('SPICE')
     typeType = 'SPICETransport'

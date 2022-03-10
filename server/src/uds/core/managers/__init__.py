@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -54,33 +54,33 @@ def cryptoManager() -> 'CryptoManager':
 def taskManager() -> 'TaskManager':
     from .task import TaskManager
 
-    return TaskManager.manager()
+    return TaskManager()
 
 
 def downloadsManager() -> 'DownloadsManager':
     from .downloads import DownloadsManager
 
-    return DownloadsManager.manager()
+    return DownloadsManager()
 
 
 def logManager() -> 'LogManager':
     from .log import LogManager
 
-    return LogManager.manager()
+    return LogManager()
 
 
 def userServiceManager() -> 'UserServiceManager':
     from .user_service import UserServiceManager
 
-    return UserServiceManager.manager()
+    return UserServiceManager()
 
 
 def publicationManager() -> 'PublicationManager':
     from .publication import PublicationManager
 
-    return PublicationManager.manager()
+    return PublicationManager()
 
 def notificationsManager() -> 'NotificationsManager':
     from .notifications import NotificationsManager
 
-    return NotificationsManager.manager()
+    return NotificationsManager()

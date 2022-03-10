@@ -41,7 +41,8 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from uds.core.util.modfinder import dynamicLoadAndRegisterModules
+from uds.core.util import modfinder
+
 
 def __init__():
     """
@@ -50,6 +51,10 @@ def __init__():
     """
     from uds.core import transports
 
-    dynamicLoadAndRegisterModules(transports.factory(), transports.Transport, __name__)
+    # Transports ignores non leaf modules
+    modfinder.dynamicLoadAndRegisterModules(
+        transports.factory(), transports.Transport, __name__
+    )
+
 
 __init__()

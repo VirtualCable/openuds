@@ -60,6 +60,7 @@ class BaseX2GOTransport(transports.Transport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+    isBase = True
 
     iconFile = 'x2go.png'
     protocol = transports.protocols.X2GO

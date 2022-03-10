@@ -61,6 +61,7 @@ class BaseRDPTransport(transports.Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+    isBase = True
 
     iconFile = 'rdp.png'
     protocol = transports.protocols.RDP

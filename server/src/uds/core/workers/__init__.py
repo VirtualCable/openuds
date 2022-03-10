@@ -30,12 +30,10 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import sys
-import os.path
-import pkgutil
-import importlib
 import typing
 import logging
+
+from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
@@ -48,18 +46,13 @@ def initialize() -> None:
     from uds.core import jobs
     from uds.core.managers import taskManager
 
-    # Dinamycally import children of this package.
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        logger.debug('Importing worker %s', name)
-        # __import__(name, globals(), locals(), [], 1)
-        importlib.import_module('.' + name, __name__)  # import module
-
-    importlib.invalidate_caches()
-
-    for cls in jobs.Job.__subclasses__():
-        logger.debug('Examining worker %s', cls.__module__)
-        # Limit to autoregister just workers jobs inside this module
-        if cls.__module__[0:16] == 'uds.core.workers':
-            logger.debug('Added worker %s to list', cls.__module__)
+    def registerer(cls: typing.Type[jobs.Job]) -> None:
+        if cls.__module__.startswith('uds.core.workers'):
+            logger.debug('Registering job: %s', cls.__module__)
             taskManager().registerJob(cls)
+
+    modfinder.dynamicLoadAndRegisterPackages(
+        registerer,
+        jobs.Job,
+        __name__
+    )

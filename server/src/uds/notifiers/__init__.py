@@ -43,7 +43,7 @@ The registration of modules is done locating subclases of :py:class:`uds.core.me
 """
 import logging
 
-from uds.core.util.modfinder import dynamicLoadAndRegisterModules
+from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ def __loadModules():
     from uds.core import messaging
 
     # We need to import all modules that are descendant of this package
-    dynamicLoadAndRegisterModules(messaging.factory(), messaging.Notifier, __name__)
+    modfinder.dynamicLoadAndRegisterModules(messaging.factory(), messaging.Notifier, __name__)
 
 
 __loadModules()

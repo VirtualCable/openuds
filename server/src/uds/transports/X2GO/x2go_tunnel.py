@@ -29,8 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import random
-import string
 import logging
 import typing
 
@@ -59,6 +57,8 @@ class TX2GOTransport(BaseX2GOTransport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+    isBase = False
+
     iconFile = 'x2go-tunnel.png'
     typeName = _('X2Go')
     typeType = 'TX2GOTransport'

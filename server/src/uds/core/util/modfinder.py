@@ -43,6 +43,7 @@ from uds.core import module
 logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T', bound=module.Module)
+V = typing.TypeVar('V')
 
 patterns: typing.List[typing.Any] = []
 
@@ -77,35 +78,68 @@ def loadModulesUrls() -> typing.List[typing.Any]:
     return patterns
 
 
+def importModules(modName: str) -> None:
+    # Dinamycally import children of this package.
+    pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
+    logger.info('* Importing modules from %s', pkgpath)
+    for _, name, _ in pkgutil.iter_modules([pkgpath]):
+        logger.info('   - Importing module %s.%s ', modName, name)
+        importlib.import_module('.' + name, modName)  # import module
+    logger.info('* Done importing modules from %s', pkgpath)
+
+    importlib.invalidate_caches()
+
+
+def dynamicLoadAndRegisterPackages(
+    adder: typing.Callable[[typing.Type[V]], None],
+    type_: typing.Type[V],
+    modName: str,
+    *,
+    checker: typing.Optional[typing.Callable[[typing.Type[V]], bool]] = None,
+) -> None:
+    '''
+    Loads all packages from a given package that are subclasses of the given type
+    param adder: Function to use to add the objects, must support "insert" method
+    param type_: Type of the objects to load
+    param modName: Name of the package to load
+    param checker: Function to use to check if the class is registrable
+    '''
+    importModules(modName)
+
+    checkFnc = checker or (lambda x: True)
+
+    def process(classes: typing.Iterable[typing.Type]) -> None:
+        cls: typing.Type[V]
+        for cls in classes:
+            clsSubCls = cls.__subclasses__()
+            if clsSubCls:
+                process(clsSubCls)
+                if not checkFnc(cls):
+                    logger.debug('Node is a base, skipping: %s', cls.__module__)
+                    continue
+
+            logger.info('   - Registering %s', cls.__module__)
+            adder(cls)
+
+    logger.info('* Start registering %s', modName)
+    process(type_.__subclasses__())
+    logger.info('* Done Registering %s', modName)
+
+
 def dynamicLoadAndRegisterModules(
     factory: 'ModuleFactory',
     type_: typing.Type[T],
     modName: str,
-    *,
-    justLeafs: bool = False,
 ) -> None:
     '''
     Loads all modules from a given package that are subclasses of the given type
     param factory: Factory to use to create the objects, must support "insert" method
     param type_: Type of the objects to load
     param modName: Name of the package to load
-    param justLeafs: If true, only leafs will be registered on factory
     '''
-    # Dinamycally import children of this package.
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        importlib.import_module('.' + name, modName)  # import module
-
-    importlib.invalidate_caches()
-
-    def process(classes: typing.Iterable[typing.Type]) -> None:
-        for cls in classes:
-            clsSubCls = cls.__subclasses__()
-            if clsSubCls:
-                process(clsSubCls)
-                if justLeafs:
-                    continue
-
-            factory.insert(cls)
-
-    process(type_.__subclasses__())
+    dynamicLoadAndRegisterPackages(
+        factory.insert,
+        type_,
+        modName,
+        checker=lambda x: not x.isBase
+    )

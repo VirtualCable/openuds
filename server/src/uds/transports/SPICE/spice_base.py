@@ -54,6 +54,7 @@ class BaseSpiceTransport(transports.Transport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+    isBase = True
 
     iconFile = 'spice.png'
     protocol = protocols.SPICE

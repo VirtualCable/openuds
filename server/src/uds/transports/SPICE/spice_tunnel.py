@@ -56,6 +56,7 @@ class TSPICETransport(BaseSpiceTransport):
     """
     Provides access via SPICE to service.
     """
+    isBase = False
 
     iconFile = 'spice-tunnel.png'
     typeName = _('SPICE')
