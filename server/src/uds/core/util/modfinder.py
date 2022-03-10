@@ -36,6 +36,7 @@ import pkgutil
 import sys
 import importlib
 import logging
+from tkinter.messagebox import NO
 import typing
 
 from uds.core import module
@@ -78,9 +79,13 @@ def loadModulesUrls() -> typing.List[typing.Any]:
     return patterns
 
 
-def importModules(modName: str) -> None:
+def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> None:
     # Dinamycally import children of this package.
     pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
+    if packageName:
+        pkgpath = os.path.join(pkgpath, packageName)
+        modName = '{}.{}'.format(modName, packageName)
+
     logger.info('* Importing modules from %s', pkgpath)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         logger.info('   - Importing module %s.%s ', modName, name)
@@ -95,6 +100,7 @@ def dynamicLoadAndRegisterPackages(
     type_: typing.Type[V],
     modName: str,
     *,
+    packageName: typing.Optional[str] = None,
     checker: typing.Optional[typing.Callable[[typing.Type[V]], bool]] = None,
 ) -> None:
     '''
@@ -104,7 +110,7 @@ def dynamicLoadAndRegisterPackages(
     param modName: Name of the package to load
     param checker: Function to use to check if the class is registrable
     '''
-    importModules(modName)
+    importModules(modName, packageName=packageName)
 
     checkFnc = checker or (lambda x: True)
 
@@ -112,13 +118,15 @@ def dynamicLoadAndRegisterPackages(
         cls: typing.Type[V]
         for cls in classes:
             clsSubCls = cls.__subclasses__()
+            
             if clsSubCls:
                 process(clsSubCls)
-                if not checkFnc(cls):
-                    logger.debug('Node is a base, skipping: %s', cls.__module__)
-                    continue
 
-            logger.info('   - Registering %s', cls.__module__)
+            if not checkFnc(cls):
+                logger.debug('Node is a base, skipping: %s', cls.__module__)
+                continue
+
+            logger.info('   - Registering %s.%s', cls.__module__, cls.__name__)
             adder(cls)
 
     logger.info('* Start registering %s', modName)

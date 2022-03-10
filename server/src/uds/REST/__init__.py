@@ -29,31 +29,32 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import importlib
+import logging
 import os.path
 import pkgutil
 import sys
-import importlib
-import logging
 import typing
 
 from django import http
-from django.views.generic.base import View
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from uds.core import VERSION, VERSION_STAMP
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import View
 
-from .handlers import (
-    Handler,
-    HandlerError,
-    AccessDenied,
-    NotFound,
-    RequestError,
-    ResponseError,
-    NotSupportedError,
-)
+from uds.core import VERSION, VERSION_STAMP
+from uds.core.util import modfinder
 
 from . import processors
+from .handlers import (
+    AccessDenied,
+    Handler,
+    HandlerError,
+    NotFound,
+    NotSupportedError,
+    RequestError,
+    ResponseError,
+)
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -72,9 +73,9 @@ class Dispatcher(View):
     """
 
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    services: typing.ClassVar[typing.Dict[str, typing.Any]] = {
-        '': None
-    }  # Will include a default /rest handler, but rigth now this will be fine
+    services: typing.ClassVar[typing.MutableMapping[str, typing.Any]] = {
+        '': None  # Root node
+    }
 
     # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
     @method_decorator(csrf_exempt)
@@ -96,30 +97,25 @@ class Dispatcher(View):
         content_type: str = request.META.get('CONTENT_TYPE', 'json')
 
         while path:
-            # .json, .xml, .anything will break path recursion
-            if path[0].find('.') != -1:
-                content_type = path[0].split('.')[1]
-
-            clean_path = path[0].split('.')[0]
-            if (
-                not clean_path
-            ):  # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
+            clean_path = path[0]
+            # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
+            if not clean_path:
                 path = path[1:]
                 continue
 
-            if clean_path in service:
-                service = service[clean_path]
-                full_path_lst.append(path[0])
-                path = path[1:]
+            if clean_path in service:  # if we have a node for this path, walk down
+                service = service[clean_path]  # Update service pointer
+                full_path_lst.append(path[0])  # Add this path to full path
+                path = path[1:]  # Remove first part of path
             else:
-                break
+                break  # If we don't have a node for this path, we are done
 
         full_path = '/'.join(full_path_lst)
         logger.debug("REST request: %s (%s)", full_path, content_type)
 
-        # Here, service points to the path
+        # Here, service points to the path and the value of '' is the handler
         cls: typing.Optional[typing.Type[Handler]] = service['']
-        if cls is None:
+        if not cls:
             return http.HttpResponseNotFound(
                 'Method not found', content_type="text/plain"
             )
@@ -200,33 +196,32 @@ class Dispatcher(View):
             return http.HttpResponseServerError(str(e), content_type="text/plain")
 
     @staticmethod
-    def registerSubclasses(classes: typing.List[typing.Type[Handler]]):
+    def registerClass(type_: typing.Type[Handler]) -> None:
         """
-        Try to register Handler subclasses that have not been inherited
-        """
-        for cls in classes:
-            if (
-                not cls.__subclasses__()
-            ):  # Only classes that has not been inherited will be registered as Handlers
-                if not cls.name:
-                    name = cls.__name__.lower()
-                else:
-                    name = cls.name
-                logger.debug(
-                    'Adding handler %s for method %s in path %s', cls, name, cls.path
-                )
-                service_node = Dispatcher.services  # Root path
-                if cls.path:
-                    for k in cls.path.split('/'):
-                        if k not in service_node:
-                            service_node[k] = {'': None}
-                        service_node = service_node[k]
-                if name not in service_node:
-                    service_node[name] = {'': None}
+        Method to register a class as a REST service
+        param type_: Class to be registered
 
-                service_node[name][''] = cls
-            else:
-                Dispatcher.registerSubclasses(cls.__subclasses__())
+        """
+        if not type_.name:
+            name = type_.__name__.lower()
+        else:
+            name = type_.name
+
+        # Fill the service_node tree with the class
+        service_node = Dispatcher.services  # Root path
+        # If path, ensure that the path exists
+        if type_.path:
+            logger.info('Path: /%s/%s', type_.path, name)
+            for k in type_.path.split('/'):
+                if k not in service_node:
+                    service_node[k] = {'': None}
+                service_node = service_node[k]
+        else:
+            logger.info('Path: /%s', name)
+        if name not in service_node:
+            service_node[name] = {'': None}
+
+        service_node[name][''] = type_
 
     # Initializes the dispatchers
     @staticmethod
@@ -237,19 +232,16 @@ class Dispatcher(View):
         """
         logger.info('Initializing REST Handlers')
 
-        # Dinamycally import children of this package.
-        package = 'methods'
+        # Register all subclasses of Handler
+        modfinder.dynamicLoadAndRegisterPackages(
+            Dispatcher.registerClass,
+            Handler,
+            __name__,
+            checker=lambda x: not x.__subclasses__(),
+            packageName='methods',
+        )
 
-        pkgpath = os.path.join(os.path.dirname(typing.cast(str, sys.modules[__name__].__file__)), package)
-        for _, name, _ in pkgutil.iter_modules([pkgpath]):
-            # __import__(__name__ + '.' + package + '.' + name, globals(), locals(), [], 0)
-            importlib.import_module(
-                __name__ + '.' + package + '.' + name
-            )  # import module
-
-        importlib.invalidate_caches()
-
-        Dispatcher.registerSubclasses(Handler.__subclasses__())  # @UndefinedVariable
+        return
 
 
 Dispatcher.initialize()

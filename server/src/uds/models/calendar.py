@@ -66,14 +66,12 @@ class Calendar(UUIDModel, TaggingMixin):
 
     def save(
         self,
-        force_insert: bool = False,
-        force_update: bool = False,
-        using: bool = None,
-        update_fields: bool = None,
+        *args,
+        **kwargs
     ):
         logger.debug('Saving calendar')
 
-        res = UUIDModel.save(self, force_insert, force_update, using, update_fields)
+        res = UUIDModel.save(self, *args, **kwargs)
 
         # Basically, recalculates all related actions next execution time...
         try:

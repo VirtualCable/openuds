@@ -63,6 +63,14 @@ class Config:
     HIDDEN_FIELD: int = 6  # Not visible on "admin" config edition
 
     class Value:
+        _section: 'Config.Section'
+        _type: int
+        _key: str
+        _crypt: bool
+        _longText: bool
+        _default: str
+        _data: typing.Optional[str] = None
+
         def __init__(
             self,
             section: 'Config.Section',
@@ -72,22 +80,20 @@ class Config:
             longText: bool = False,
             **kwargs
         ):
-            logger.debug('Var: %s %s KWARGS: %s', section, key, kwargs)
-            self._type: int = kwargs.get('type', -1)
+            self._type = kwargs.get('type', -1)
 
-            self._section: 'Config.Section' = section
-            self._key: str = key
-            self._crypt: bool = crypt
-            self._longText: bool = longText
+            self._section = section
+            self._key = key
+            self._crypt = crypt
+            self._longText = longText
             if crypt is False or not default:
-                self._default: str = default
+                self._default = default
             else:
                 self._default = cryptoManager().encrypt(default)
-            self._data: typing.Optional[str] = None
+
+            logger.debug(self)
 
         def get(self, force: bool = False) -> str:
-            # Ensures DB contains configuration values
-            # From Django 1.7, DB can only be accessed AFTER all apps are initialized (and ofc, not migrating...)
             if apps.ready:
                 if not GlobalConfig.isInitialized():
                     logger.debug('Initializing configuration & updating db values')
@@ -101,7 +107,7 @@ class Config:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
                     readed = DBConfig.objects.get(
                         section=self._section.name(), key=self._key
-                    )  # @UndefinedVariable
+                    )
                     self._data = readed.value
                     self._crypt = [self._crypt, True][
                         readed.crypt
@@ -113,7 +119,7 @@ class Config:
                     self._type = readed.field_type
             except DBConfig.DoesNotExist:
                 # Not found, so we create it
-                if self._default != '' and self._crypt:
+                if self._default and self._crypt:
                     self.set(cryptoManager().decrypt(self._default))
                 elif not self._crypt:
                     self.set(self._default)
@@ -209,9 +215,14 @@ class Config:
                     self._key,
                 )
 
+        def __str__(self) -> str:
+            return '{}.{}'.format(self._section.name(), self._key)
+
     class Section:
-        def __init__(self, sectionName: str):
-            self._sectionName: str = sectionName
+        _sectionName: str
+
+        def __init__(self, sectionName: str) -> None:
+            self._sectionName = sectionName
 
         def value(self, key, default='', **kwargs) -> 'Config.Value':
             return Config.value(self, key, default, **kwargs)
@@ -223,6 +234,9 @@ class Config:
             return Config.value(self, key, default, False, True, **kwargs)
 
         def name(self) -> str:
+            return self._sectionName
+
+        def __str__(self) -> str:
             return self._sectionName
 
     @staticmethod

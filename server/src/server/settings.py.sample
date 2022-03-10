@@ -352,6 +352,12 @@ LOGGING = {
             'propagate': True,
             'level': 'ERROR',
         },
+        # Disable matplotlib (used by reports) logging (too verbose)
+        'matplotlib': {
+            'handlers': ['null'],
+            'propagate': True,
+            'level': 'ERROR',
+        },
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,

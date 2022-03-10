@@ -361,5 +361,8 @@ class Handler:
             and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
             and authId == -1
         ):
-            return getRootUser()
+            return typing.cast(
+                'User', getRootUser().user
+            )  # We are sure getRootUser() is always valid
+
         return Authenticator.objects.get(pk=authId).users.get(name=username)

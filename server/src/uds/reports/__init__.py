@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,14 +27,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-Transport modules for UDS are contained inside this package.
+Report modules for UDS are contained inside this package.
 To create a new rwpoer module, you will need to follow this steps:
     1.- Create the report module inside one of the existing (or new one) packages
     2.- Import the class of your report module at __init__. For example::
         from Report import SimpleReport
     3.- Done. At Server restart, the module will be recognized, loaded and treated
 
-The registration of modules is done locating subclases of :py:class:`uds.core.auths.Authentication`
+The registration of modules is done locating subclases of :py:class:`uds.core.reports.Report`
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
@@ -46,6 +46,7 @@ import logging
 import typing
 
 from uds.core import reports
+from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
@@ -59,32 +60,13 @@ def __init__() -> None:
     alreadyAdded: typing.Set[str] = set()
 
     def addReportCls(cls: typing.Type[reports.Report]) -> None:
-        logger.debug('Adding report %s', cls)
         availableReports.append(cls)
 
-    def recursiveAdd(reportClass: typing.Type[reports.Report]) -> None:
-        if reportClass.uuid and reportClass.uuid not in alreadyAdded:
-            alreadyAdded.add(reportClass.uuid)
-            addReportCls(reportClass)
-        else:
-            logger.debug(
-                'Report class %s not added because it lacks of uuid (it is probably a base class)',
-                reportClass,
-            )
-
-        subReport: typing.Type[reports.Report]
-        for subReport in reportClass.__subclasses__():
-            recursiveAdd(subReport)
-
-    # Dinamycally import children of this package. The __init__.py files must import classes
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        # __import__(name, globals(), locals(), [], 1)
-        importlib.import_module('.' + name, __name__)  # Local import
-
-    recursiveAdd(reports.Report)
-
-    importlib.invalidate_caches()
-
+    modfinder.dynamicLoadAndRegisterPackages(
+        addReportCls,
+        reports.Report,
+        __name__,
+        checker=lambda x: x.uuid is not None and x.uuid not in alreadyAdded,
+    )
 
 __init__()
