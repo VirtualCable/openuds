@@ -34,7 +34,7 @@ import datetime
 import logging
 import typing
 
-from uds.core.util import singleton
+from uds.core.util import factory
 
 logger = logging.getLogger(__name__)
 
@@ -42,22 +42,7 @@ if typing.TYPE_CHECKING:
     from .job import Job
 
 
-class JobsFactory(metaclass=singleton.Singleton):
-    _jobs: typing.MutableMapping[str, typing.Type['Job']]
-
-    def __init__(self):
-        self._jobs = {}
-
-    def jobs(self) -> typing.Mapping[str, typing.Type['Job']]:
-        return self._jobs
-
-    def insert(self, name: str, type_: typing.Type['Job']):
-        logger.debug('Inserting job %s of type_ %s', name, type_)
-        try:
-            self._jobs[name] = type_
-        except Exception as e:
-            logger.debug('Exception at insert in JobsFactory: %s, %s', e.__class__, e)
-
+class JobsFactory(factory.Factory['Job']):
     def ensureJobsInDatabase(self) -> None:
         """
         Ensures that uds core workers are correctly registered in database and in factory
@@ -69,7 +54,7 @@ class JobsFactory(metaclass=singleton.Singleton):
         try:
             logger.debug('Ensuring that jobs are registered inside database')
             workers.initialize()
-            for name, type_ in self._jobs.items():
+            for name, type_ in self.objects().items():
                 try:
                     type_.setup()
                     # We use database server datetime
@@ -99,6 +84,3 @@ class JobsFactory(metaclass=singleton.Singleton):
                 e.__class__,
                 e,
             )
-
-    def lookup(self, typeName: str) -> typing.Optional[typing.Type['Job']]:
-        return self._jobs.get(typeName, None)

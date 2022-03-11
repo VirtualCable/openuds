@@ -56,7 +56,7 @@ class Serializable:
 
         :note: This method must be overridden
         """
-        raise Exception('Base marshaler called!!!')
+        raise NotImplementedError('Base marshaler called!!!')
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -73,7 +73,7 @@ class Serializable:
 
         :note: This method must be overridden
         """
-        raise Exception('Base unmarshaler called!!!')
+        raise NotImplementedError('Base unmarshaler called!!!')
 
     def serialize(self) -> str:
         """

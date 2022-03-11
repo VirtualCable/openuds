@@ -218,7 +218,7 @@ class Scheduler:
         """
         # We ensure that the jobs are also in database so we can
         logger.debug('Run Scheduler thread')
-        JobsFactory.factory().ensureJobsInDatabase()
+        JobsFactory().ensureJobsInDatabase()
         logger.debug("At loop")
         while self._keepRunning:
             try:

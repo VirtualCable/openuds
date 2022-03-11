@@ -483,7 +483,7 @@ class Authenticator(Module):
         Returns:
             Nothing
 
-        :note: This method will be invoked whenever the webLogout is requested. It receibes request & response so auth cna
+        :note: This method will be invoked whenever the webLogout is requested. It receives request & response so auth cna
                make changes (for example, on cookies) to it.
 
         '''

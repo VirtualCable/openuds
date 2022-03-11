@@ -93,7 +93,7 @@ class TaskManager(metaclass=singleton.Singleton):
 
     def registerJob(self, jobType: typing.Type[jobs.Job]) -> None:
         jobName = jobType.friendly_name
-        jobs.factory().insert(jobName, jobType)
+        jobs.factory().put(jobName, jobType)
 
     def registerScheduledTasks(self) -> None:
         logger.info("Registering sheduled tasks")
