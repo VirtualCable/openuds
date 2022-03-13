@@ -102,7 +102,7 @@ def getUDSCookie(
     return cookie
 
 
-def getRootUser() -> AuthResult:
+def getRootUser() -> User:
     """
     Returns an user not in DB that is ROOT for the platform
 
@@ -122,7 +122,7 @@ def getRootUser() -> AuthResult:
     user.getGroups = lambda: []  # type: ignore
     user.updateLastAccess = lambda: None  # type: ignore
     user.logout = lambda: None  # type: ignore
-    return AuthResult(user=user)
+    return user
 
 
 # Decorator to make easier protect pages that needs to be logged in
@@ -275,7 +275,7 @@ def authenticate(
         and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
         and password == GlobalConfig.SUPER_USER_PASS.get(True)
     ):
-        return getRootUser()
+        return AuthResult(user=getRootUser())
 
     gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
