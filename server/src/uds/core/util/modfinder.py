@@ -36,7 +36,6 @@ import pkgutil
 import sys
 import importlib
 import logging
-from tkinter.messagebox import NO
 import typing
 
 from uds.core import module
@@ -118,7 +117,7 @@ def dynamicLoadAndRegisterPackages(
         cls: typing.Type[V]
         for cls in classes:
             clsSubCls = cls.__subclasses__()
-            
+
             if clsSubCls:
                 process(clsSubCls)
 
@@ -146,8 +145,5 @@ def dynamicLoadAndRegisterModules(
     param modName: Name of the package to load
     '''
     dynamicLoadAndRegisterPackages(
-        factory.insert,
-        type_,
-        modName,
-        checker=lambda x: not x.isBase
+        factory.insert, type_, modName, checker=lambda x: not x.isBase
     )
