@@ -64,11 +64,15 @@ class TunnelProtocol(asyncio.Protocol):
 
     def process_open(self):
         # Open Command has the ticket behind it
+        
         if len(self.cmd) < consts.TICKET_LENGTH + consts.COMMAND_LENGTH:
             return  # Wait for more data to complete OPEN command
 
         # Ticket received, now process it with UDS
         ticket = self.cmd[consts.COMMAND_LENGTH :]
+
+        # Stop reading from this side until open is done
+        self.transport.pause_reading()
 
         # clean up the command
         self.cmd = b''
@@ -104,6 +108,8 @@ class TunnelProtocol(asyncio.Protocol):
                 )
                 self.other_side = typing.cast('TunnelProtocol', protocol)
 
+                # Resume reading
+                self.transport.resume_reading()
                 # send OK to client
                 self.transport.write(b'OK')
             except Exception as e:
@@ -245,7 +251,7 @@ class TunnelProtocol(asyncio.Protocol):
         cfg: config.ConfigurationType,
         ticket: bytes,
         msg: str,
-        queryParams: typing.Mapping[str, str] = None,
+        queryParams: typing.Optional[typing.Mapping[str, str]] = None,
     ) -> typing.MutableMapping[str, typing.Any]:
         try:
             url = (
