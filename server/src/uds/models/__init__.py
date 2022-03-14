@@ -115,6 +115,6 @@ from .actor_token import ActorToken
 from .tunnel_token import TunnelToken
 
 # Notifications & Alerts
-from .notifications import Notification, NotificationProvider
+from .notifications import Notification, Notifier
 
 logger = logging.getLogger(__name__)

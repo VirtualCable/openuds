@@ -34,7 +34,7 @@ import typing
 
 from uds.core.managers.task import BaseThread
 
-from uds.models import NotificationProvider, Notification
+from uds.models import Notifier, Notification
 from .provider import Notifier as NotificationProviderModule
 
 logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ class MessageProcessorThread(BaseThread):
     def run(self):
         # Load providers at beginning
         providers: typing.List[NotificationProviderModule] = [
-            p.getInstance() for p in NotificationProvider.objects.all()
+            p.getInstance() for p in Notifier.objects.all()
         ]
 
         while self.keepRunning:

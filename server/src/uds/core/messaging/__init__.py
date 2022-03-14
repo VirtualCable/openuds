@@ -30,10 +30,10 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from .provider import Notifier
-from .factory import NotificationProviderFactory
+from .factory import NotifierFactory
 
-def factory() -> NotificationProviderFactory:
+def factory() -> NotifierFactory:
     """
     Returns the factory for Notification Providers
     """
-    return NotificationProviderFactory()
+    return NotifierFactory()

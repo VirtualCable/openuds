@@ -41,5 +41,5 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class NotificationProviderFactory(factory.ModuleFactory['Notifier']):
+class NotifierFactory(factory.ModuleFactory['Notifier']):
     pass

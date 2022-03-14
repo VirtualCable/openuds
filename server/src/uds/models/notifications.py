@@ -94,14 +94,14 @@ class Notification(models.Model):
         return transaction.atomic(using='persistent')
 
 
-class NotificationProvider(ManagedObjectModel, TaggingMixin):
+class Notifier(ManagedObjectModel, TaggingMixin):
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     enabled = models.BooleanField(default=True)
     level = models.PositiveSmallIntegerField(default=NotificationLevel.ERROR)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[NotificationProvider]'
+    objects: 'models.BaseManager[Notifier]'
 
     class Meta:
         """
