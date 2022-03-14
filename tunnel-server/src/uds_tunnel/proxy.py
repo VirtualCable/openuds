@@ -58,7 +58,7 @@ class Proxy:
         cfg: config.ConfigurationType,
         ticket: bytes,
         msg: str,
-        queryParams: typing.Mapping[str, str] = None,
+        queryParams: typing.Optional[typing.Mapping[str, str]] = None,
     ) -> typing.MutableMapping[str, typing.Any]:
         try:
             url = (
