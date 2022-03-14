@@ -76,7 +76,7 @@ class Notifiers(ModelHandler):
             raise self.invalidItemException()
 
         field = self.addDefaultFields(
-            notifier.guiDescription(), ['name', 'comments', 'tags', 'priority', 'networks']
+            notifier.guiDescription(), ['name', 'comments', 'tags']
         )
 
         return field

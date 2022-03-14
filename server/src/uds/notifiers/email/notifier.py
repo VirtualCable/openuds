@@ -35,8 +35,10 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+
 from uds.core.messaging import Notifier
 from uds.core.ui import gui
+from uds.core.util import validators
 
 
 # Not imported at runtime, just for type checking
@@ -50,11 +52,11 @@ class EmailNotifier(Notifier):
     Email notifier
     """
 
-    typeName = _('OpenStack Platform Provider')
+    typeName = _('Email notifications')
     # : Type used internally to identify this provider
-    typeType = 'openStackPlatformNew'
+    typeType = 'emailNotifications'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenStack platform service provider')
+    typeDescription = _('Email notifications')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
@@ -69,7 +71,7 @@ class EmailNotifier(Notifier):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(
+    hostname = gui.TextField(
         length=128,
         label=_('SMTP Host'),
         order=1,
@@ -79,6 +81,7 @@ class EmailNotifier(Notifier):
             'smtp.gmail.com:587'
         ),
         required=True,
+        tab=_('SMTP Server'),
     )
 
     security = gui.ChoiceField(
@@ -91,21 +94,25 @@ class EmailNotifier(Notifier):
         ],
         order=2,
         required=True,
+        tab=_('SMTP Server'),
     )
     username = gui.TextField(
         length=128,
         label=_('Username'),
         order=9,
-        tooltip=_('User with valid privileges on OpenStack'),
+        tooltip=_('User with access to SMTP server'),
         required=True,
-        defvalue='admin',
+        defvalue='',
+        tab=_('SMTP Server'),
     )
     password = gui.PasswordField(
         lenth=128,
         label=_('Password'),
         order=10,
-        tooltip=_('Password of the user of OpenStack'),
+        tooltip=_('Password of the user with access to SMTP server'),
         required=True,
+        defvalue='',
+        tab=_('SMTP Server'),
     )
 
     fromEmail = gui.TextField(
@@ -114,6 +121,7 @@ class EmailNotifier(Notifier):
         order=11,
         tooltip=_('Email address that will be used as sender'),
         required=True,
+        tab=_('Config'),
     )
 
     toEmail = gui.TextField(
@@ -122,6 +130,7 @@ class EmailNotifier(Notifier):
         order=12,
         tooltip=_('Email address that will be used as recipient'),
         required=True,
+        tab=_('Config'),
     )
 
     enableHTML = gui.CheckBoxField(
@@ -129,11 +138,34 @@ class EmailNotifier(Notifier):
         order=13,
         tooltip=_('Enable HTML in emails'),
         defvalue=True,
+        tab=_('Config'),
     )
 
     def initialize(self, values: 'Module.ValuesType' = None):
         """
         We will use the "autosave" feature for form fields
         """
-        pass
+        if not values:
+            return
+
+        # check hostname for stmp server si valid and is in the right format
+        # that is a hostname or ip address with optional port
+        # if hostname is not valid, we will raise an exception
+        hostname = self.hostname.cleanStr()
+        if not hostname:
+            raise Notifier.ValidationException(_('Invalid SMTP hostname'))
+
+        # Now check is valid format
+        if ':' in hostname:
+            host, port = validators.validateHostPortPair(hostname)
+            self.hostname.value = '{}:{}'.format(host, port)
+        else:
+            host = self.hostname.cleanStr()
+            self.hostname.value = validators.validateHostname(host, 128, asPattern=False)
+
+        # now check from email and to email
+        self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
+        self.toEmail.value = validators.validateEmail(self.toEmail.value)
+
+        # Done
 

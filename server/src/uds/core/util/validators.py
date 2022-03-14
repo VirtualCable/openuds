@@ -170,3 +170,21 @@ def validateMacRange(macRange: str) -> str:
         )
 
     return macRange
+
+def validateEmail(email: str) -> str:
+    """
+    Validates that an email is valid
+    :param email: email to validate
+    :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
+    """
+    if len(email) > 254:
+        raise Module.ValidationException(
+            _('Email address is too long')
+        )
+
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        raise Module.ValidationException(
+            _('Email address is not valid')
+        )
+
+    return email
