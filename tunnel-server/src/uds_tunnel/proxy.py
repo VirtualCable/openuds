@@ -53,7 +53,15 @@ class Proxy:
 
     # Method responsible of proxying requests
     async def __call__(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
-        await self.proxy(source, context)
+        try:
+            await self.proxy(source, context)
+        except Exception as e:
+            # get source ip address
+            try:
+                addr = source.getpeername()
+            except Exception:
+                addr = 'Unknown'
+            logger.error('Proxy error from %s: %s', addr, e)
 
     async def proxy(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
 
