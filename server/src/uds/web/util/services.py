@@ -59,6 +59,7 @@ from uds.core.auths.auth import webPassword
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.os_detector import KnownOS
     from uds.models import Image
 
 
@@ -137,7 +138,7 @@ def getServicesData(
     nets = ''
     validTrans = ''
 
-    osType = request.os['OS']
+    osType: 'KnownOS' = request.os['OS']
     logger.debug('OS: %s', osType)
 
     if request.user.isStaff():

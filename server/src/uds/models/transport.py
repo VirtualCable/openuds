@@ -45,6 +45,7 @@ from .tag import TaggingMixin
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Network, ServicePool
+    from uds.core.util.os_detector import KnownOS
 
 
 logger = logging.getLogger(__name__)
@@ -130,10 +131,8 @@ class Transport(ManagedObjectModel, TaggingMixin):
         # Deny, must not be in any network
         return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
 
-    def validForOs(self, os: str) -> bool:
-        if not self.allowed_oss or os in self.allowed_oss.split(','):
-            return True
-        return False
+    def validForOs(self, os: 'KnownOS') -> bool:
+        return not self.allowed_oss or os.name in self.allowed_oss.split(',')
 
     def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)

@@ -157,7 +157,7 @@ class Transport(Module):
         Helper method to check if transport supports requested operating system.
         Class method
         """
-        return cls.supportedOss.count(osType) > 0
+        return osType in cls.supportedOss
 
     @classmethod
     def providesConnetionInfo(cls) -> bool:
