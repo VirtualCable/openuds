@@ -221,6 +221,7 @@ def tunnel_main():
         while not do_stop:
             try:
                 client, addr = sock.accept()
+                logger.debug('ACCEPTED CONNECTION from %s (%s)', addr, client)
                 # Select BEST process for sending this new connection
                 prcs.best_child().send((client, addr))
                 del client  # Ensure socket is controlled on child process
