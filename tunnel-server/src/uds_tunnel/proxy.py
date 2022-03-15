@@ -131,7 +131,10 @@ class Proxy:
 
     # Method responsible of proxying requests
     async def __call__(self, source, address: typing.Tuple[str, int]) -> None:
-        await self.proxy(source, address)
+        try:
+            await self.proxy(source, address)
+        except Exception as e:
+            logger.error('Error procesing connection from %s: %s', address, e)
 
     async def stats(self, full: bool, source, address: typing.Tuple[str, int]) -> None:
         # Check valid source ip
