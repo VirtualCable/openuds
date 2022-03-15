@@ -129,7 +129,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
 
     def validForOs(self, os: 'KnownOS') -> bool:
-        return os.name in self.allowed_oss.split(',')
+        return not self.allowed_oss or os.name in self.allowed_oss.split(',')
 
     def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
