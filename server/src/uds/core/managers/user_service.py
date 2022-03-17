@@ -38,6 +38,7 @@ from django.utils.translation import ugettext as _
 from django.db.models import Q
 from django.db import transaction
 from uds.core.services.exceptions import OperationException
+from uds.core.util.config import GlobalConfig
 from uds.core.util.state import State
 from uds.core.util import log
 from uds.core.services.exceptions import (
@@ -82,7 +83,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def getStateFilter() -> Q:
-        return Q(state__in=[State.PREPARING, State.USABLE])
+        if GlobalConfig.MAX_SERVICES_COUNT_NEW.getBool() == False:
+            states = [State.PREPARING, State.USABLE]
+        else:
+            states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
+        return Q(state__in=states)
 
     def __checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
         """
@@ -515,13 +520,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
         serviceType = servicePool.service.getType()
         if serviceType.usesCache:
-            # inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
             inAssigned = (
                 servicePool.assignedUserServices()
                 .filter(UserServiceManager.getStateFilter())
                 .count()
             )
-            # totalL1Assigned = inCacheL1 + inAssigned
             if (
                 inAssigned >= servicePool.max_srvs
             ):  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1

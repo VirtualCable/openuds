@@ -414,6 +414,11 @@ class GlobalConfig:
         'Notify on new publication', '0', type=Config.BOOLEAN_FIELD
     )
 
+    # How "max services" is computed
+    MAX_SERVICES_COUNT_NEW: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'New Max restriction', '0', type=Config.BOOLEAN_FIELD
+    )
+
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES: Config.Value = Config.section(SECURITY_SECTION).value(
         'Trusted Hosts', '*', type=Config.TEXT_FIELD
