@@ -18,7 +18,7 @@ ProcessType = typing.Callable[
     typing.Coroutine[typing.Any, None, None],
 ]
 
-NO_CPU_PERCENT = 100000.0
+NO_CPU_PERCENT = 1000001.0
 
 class Processes:
     """
@@ -86,14 +86,14 @@ class Processes:
         if missingProcesses:
             logger.debug('Regenerating missing processes: %s', len(missingProcesses))
             # Regenerate childs and recreate new proceeses for requests...
-            tmpChilds = [
-                self.children[i]
-                for i in range(len(self.children))
+            # Remove missing processes
+            self.children[:] = [
+                child
+                for i, child in enumerate(self.children)
                 if i not in missingProcesses
             ]
-            self.children[:] = tmpChilds
             # Now add new children
-            for i in range(len(missingProcesses)):
+            for _ in missingProcesses:  #  wee need to add as many as we removed, that is the len of missingProcesses
                 self.add_child_pid()
 
             # Recheck best if all child were missing

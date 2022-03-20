@@ -469,7 +469,7 @@ class ServicesPools(ModelHandler):
             {
                 'name': 'max_srvs',
                 'value': '0',
-                'minValue': '1',
+                'minValue': '0',
                 'label': gettext('Maximum number of services to provide'),
                 'tooltip': gettext(
                     'Maximum number of service (assigned and L1 cache) that can be created for this service'
