@@ -103,22 +103,24 @@ async def tunnel_proc_async(
 ) -> None:
     def get_socket(pipe: 'Connection') -> typing.Tuple[typing.Optional[socket.SocketType], typing.Any]:
         try:
+            data: bytes = b''
             while True:
                 msg: message.Message = pipe.recv()
                 if msg.command == message.Command.TUNNEL and msg.connection:
                     # Connection done, check for handshake
                     source, address = msg.connection
+                    source.settimeout(3.0)
 
                     try:
                         # First, ensure handshake (simple handshake) and command
-                        data: bytes = source.recv(len(consts.HANDSHAKE_V1))
+                        data = source.recv(len(consts.HANDSHAKE_V1))
 
                         if data != consts.HANDSHAKE_V1:
                             raise Exception()  # Invalid handshake
                     except Exception:
                         if consts.DEBUG:
                             logger.exception('HANDSHAKE')
-                        logger.error('HANDSHAKE from %s', address)
+                        logger.error('HANDSHAKE from %s (%s)', address, data.hex())
                         # Close Source and continue
                         source.close()
                         continue
