@@ -103,6 +103,7 @@ async def tunnel_proc_async(
 
     def get_socket() -> typing.Optional[socket.socket]:
         try:
+            data: bytes = b''
             while True:
                 # Clear back event, for next data
                 msg: typing.Optional[
@@ -114,7 +115,7 @@ async def tunnel_proc_async(
 
                     try:
                         # First, ensure handshake (simple handshake) and command
-                        data: bytes = source.recv(len(consts.HANDSHAKE_V1))
+                        data = source.recv(len(consts.HANDSHAKE_V1))
 
                         if data != consts.HANDSHAKE_V1:
                             raise Exception()  # Invalid handshake
