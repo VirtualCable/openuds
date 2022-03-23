@@ -61,6 +61,7 @@ from uds.models.meta_pool import MetaPoolMember
 from uds.core import services, transports
 from uds.core.util import singleton
 from uds.core.util.stats import events
+from uds.web.util.errors import MAX_SERVICES_REACHED
 
 from .userservice import comms
 from .userservice.opchecker import UserServiceOpChecker
@@ -75,15 +76,20 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def manager() -> 'UserServiceManager':
-        return UserServiceManager()  # Singleton pattern will return always the same instance
+        return (
+            UserServiceManager()
+        )  # Singleton pattern will return always the same instance
 
     @staticmethod
-    def getCacheStateFilter(level: int) -> Q:
-        return Q(cache_level=level) & UserServiceManager.getStateFilter()
+    def getCacheStateFilter(servicePool: ServicePool, level: int) -> Q:
+        return Q(cache_level=level) & UserServiceManager.getStateFilter(servicePool)
 
     @staticmethod
-    def getStateFilter() -> Q:
-        if GlobalConfig.MAX_SERVICES_COUNT_NEW.getBool() == False:
+    def getStateFilter(servicePool: ServicePool) -> Q:
+        if (
+            servicePool.service.getInstance().maxDeployed == services.Service.UNLIMITED
+            and GlobalConfig.MAX_SERVICES_COUNT_NEW.getBool() is False
+        ):
             states = [State.PREPARING, State.USABLE]
         else:
             states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
@@ -522,7 +528,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if serviceType.usesCache:
             inAssigned = (
                 servicePool.assignedUserServices()
-                .filter(UserServiceManager.getStateFilter())
+                .filter(UserServiceManager.getStateFilter(servicePool))
                 .count()
             )
             if (
@@ -921,19 +927,20 @@ class UserServiceManager(metaclass=singleton.Singleton):
         meta: MetaPool = MetaPool.objects.get(uuid=uuidMetapool)
         # Get pool members. Just pools "visible" and "usable"
         pools = [
-            p.pool for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()
+            p.pool
+            for p in meta.members.all()
+            if p.pool.isVisible() and p.pool.isUsable()
         ]
         # look for an existing user service in the pool
         try:
             return UserService.objects.filter(
-                    deployed_service__in=pools,
-                    state__in=State.VALID_STATES,
-                    user=user,
-                    cache_level=0,
-                ).order_by('deployed_service__name')[0]
+                deployed_service__in=pools,
+                state__in=State.VALID_STATES,
+                user=user,
+                cache_level=0,
+            ).order_by('deployed_service__name')[0]
         except IndexError:
             return None
-            
 
     def getMeta(
         self,
@@ -978,14 +985,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
         sortedPools = sorted(sortPools, key=lambda x: x[0])
         pools: typing.List[ServicePool] = [
-            p[1]
-            for p in sortedPools
-            if p[1].usage() < 100 and p[1].isUsable()
+            p[1] for p in sortedPools if p[1].usage() < 100 and p[1].isUsable()
         ]
         poolsFull: typing.List[ServicePool] = [
-            p[1]
-            for p in sortedPools
-            if p[1].usage() == 100 and p[1].isUsable()
+            p[1] for p in sortedPools if p[1].usage() == 100 and p[1].isUsable()
         ]
 
         logger.debug('Pools: %s/%s', pools, poolsFull)
@@ -1020,7 +1023,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         try:
             # Already assigned should look for in all usable pools, not only "non-full" ones
             alreadyAssigned: UserService = UserService.objects.filter(
-                deployed_service__in=pools+poolsFull,
+                deployed_service__in=pools + poolsFull,
                 state__in=State.VALID_STATES,
                 user=user,
                 cache_level=0,

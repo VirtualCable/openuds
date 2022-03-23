@@ -127,6 +127,7 @@ class ServiceCacheUpdater(Job):
                 servicePool.cachedUserServices()
                 .filter(
                     userServiceManager().getCacheStateFilter(
+                        servicePool,
                         services.UserDeployment.L1_CACHE
                     )
                 )
@@ -137,6 +138,7 @@ class ServiceCacheUpdater(Job):
                 servicePool.cachedUserServices()
                 .filter(
                     userServiceManager().getCacheStateFilter(
+                        servicePool,
                         services.UserDeployment.L2_CACHE
                     )
                 )
@@ -144,7 +146,7 @@ class ServiceCacheUpdater(Job):
             )
             inAssigned: int = (
                 servicePool.assignedUserServices()
-                .filter(userServiceManager().getStateFilter())
+                .filter(userServiceManager().getStateFilter(servicePool))
                 .count()
             )
             # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
@@ -235,6 +237,7 @@ class ServiceCacheUpdater(Job):
                     .select_for_update()
                     .filter(
                         userServiceManager().getCacheStateFilter(
+                            servicePool,
                             services.UserDeployment.L2_CACHE
                         )
                     )
@@ -308,6 +311,7 @@ class ServiceCacheUpdater(Job):
             servicePool.cachedUserServices()
             .filter(
                 userServiceManager().getCacheStateFilter(
+                    servicePool,
                     services.UserDeployment.L1_CACHE
                 )
             )
@@ -351,6 +355,7 @@ class ServiceCacheUpdater(Job):
                 servicePool.cachedUserServices()
                 .filter(
                     userServiceManager().getCacheStateFilter(
+                        servicePool,
                         services.UserDeployment.L2_CACHE
                     )
                 )
