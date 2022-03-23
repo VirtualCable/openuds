@@ -41,9 +41,8 @@ from uds.models import getSqlDatetimeAsUnix
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util import connection
-from uds.core.util import config
 from uds.core.util import net
-from uds.core.services import types as serviceTypes
+from uds.core import services
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
@@ -52,7 +51,6 @@ from .service_base import IPServiceBase
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import Module
-    from uds.core import services
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +124,7 @@ class IPMachinesService(IPServiceBase):
 
     # Characteristics of service
     maxDeployed = (
-        -1
+        services.Service.UNLIMITED
     )  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
     usesCache = False  # Cache are running machine awaiting to be assigned
     usesCache_L2 = False  # L2 Cache are running machines in suspended state
@@ -135,7 +133,7 @@ class IPMachinesService(IPServiceBase):
 
     deployedType = IPMachineDeployed
 
-    servicesTypeProvided = (serviceTypes.VDI,)
+    servicesTypeProvided = (services.types.VDI,)
 
     _ips: typing.List[str] = []
     _token: str = ''
