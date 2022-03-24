@@ -110,10 +110,12 @@ def authCallback_stage2(
 ) -> HttpResponse:
     try:
         ticket = TicketStore.get(ticketId)
-        params: typing.Dict[str, typing.Any] = ticket['params']
+        params: typing.Dict[str, typing.Any] = ticket['params'].copy()
         auth_uuid: str = ticket['auth']
         authenticator = Authenticator.objects.get(uuid=auth_uuid)
 
+        # Add request data to params
+        params['_request'] = request
         user = authenticateViaCallback(authenticator, params)
 
         os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
