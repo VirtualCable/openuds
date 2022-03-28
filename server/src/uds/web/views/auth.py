@@ -71,7 +71,7 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
-def authCallback(request: 'ExtendedHttpRequestWithUser', authName: str) -> HttpResponse:
+def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
     """
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
@@ -110,7 +110,7 @@ def authCallback_stage2(
 ) -> HttpResponse:
     try:
         ticket = TicketStore.get(ticketId)
-        params: typing.Dict[str, typing.Any] = ticket['params']
+        params: typing.Dict[str, typing.Any] = ticket['params'].copy()
         auth_uuid: str = ticket['auth']
         authenticator = Authenticator.objects.get(uuid=auth_uuid)
 

@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
     from multiprocessing.connection import Connection
     from multiprocessing.managers import Namespace
 
-BACKLOG = 100
+BACKLOG = 1024
 
 logger = logging.getLogger(__name__)
 
