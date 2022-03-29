@@ -230,7 +230,6 @@ def tunnel_main():
             try:
                 client, addr = sock.accept()
                 logger.debug('ACCEPTED CONNECTION from %s (%s)', addr, client)
-                client.settimeout(3.0)
                 # Select BEST process for sending this new connection
                 prcs.best_child().send(
                     message.Message(message.Command.TUNNEL, (client, addr))
