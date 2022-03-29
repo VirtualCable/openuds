@@ -224,6 +224,7 @@ def tunnel_main():
                 client, addr = sock.accept()
                 client.settimeout(3.0)
                 logger.debug('ACCEPTED CONNECTION from %s (%s)', addr, client)
+                client.settimeout(3.0)
                 # Select BEST process for sending this new connection
                 prcs.best_child().send((client, addr))
                 del client  # Ensure socket is controlled on child process
