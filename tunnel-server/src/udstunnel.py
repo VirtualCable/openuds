@@ -113,7 +113,6 @@ async def tunnel_proc_async(
                     # Connection done, check for handshake
                     source: socket.socket
                     source, address = msg
-                    source.settimeout(3.0)  # So we don't block forever
 
                     try:
                         # First, ensure handshake (simple handshake) and command
@@ -224,6 +223,7 @@ def tunnel_main():
         while not do_stop:
             try:
                 client, addr = sock.accept()
+                client.settimeout(3.0)
                 logger.info('CONNECTION from %s', addr)
                 # Select BEST process for sending this new connection
                 prcs.best_child().send((client, addr))
