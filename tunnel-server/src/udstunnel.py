@@ -123,7 +123,7 @@ async def tunnel_proc_async(
                     except Exception:
                         if consts.DEBUG:
                             logger.exception('HANDSHAKE')
-                        logger.error('HANDSHAKE invalid from %s', address)
+                        logger.error('HANDSHAKE invalid from %s (%s)', address, data.hex())
                         # Close Source and continue
                         source.close()
                         continue
