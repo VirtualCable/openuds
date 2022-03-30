@@ -134,7 +134,7 @@ class Proxy:
         try:
             await self.proxy(source, address)
         except Exception as e:
-            logger.error('Error procesing connection from %s: %s', address, e)
+            logger.exception('Error procesing connection from %s: %s', address, e)
 
     async def stats(self, full: bool, source, address: typing.Tuple[str, int]) -> None:
         # Check valid source ip
@@ -162,8 +162,9 @@ class Proxy:
         logger.info('CONNECT FROM %s', prettySource)
 
         # Handshake correct in this point, start SSL connection
+        command: bytes = b''
         try:
-            command: bytes = await source.recv(consts.COMMAND_LENGTH)
+            command = await source.recv(consts.COMMAND_LENGTH)
             if command == consts.COMMAND_TEST:
                 logger.info('COMMAND: TEST')
                 await source.sendall(b'OK')
@@ -181,7 +182,7 @@ class Proxy:
 
             if command != consts.COMMAND_OPEN:
                 # Invalid command
-                raise Exception()
+                raise Exception(command)
 
             # Now, read a TICKET_LENGTH (64) bytes string, that must be [a-zA-Z0-9]{64}
             ticket: bytes = await source.recv(consts.TICKET_LENGTH)
@@ -193,27 +194,32 @@ class Proxy:
                 )
             except Exception as e:
                 logger.error('ERROR %s', e.args[0] if e.args else e)
-                await source.sendall(b'ERROR_TICKET')
+                try:
+                    await source.sendall(b'ERROR_TICKET')
+                except Exception:
+                    pass  # Ignore errors
                 return
 
             prettyDest = f"{result['host']}:{result['port']}"
             logger.info('OPEN TUNNEL FROM %s to %s', prettySource, prettyDest)
 
         except Exception:
-            if consts.DEBUG:
-                logger.exception('COMMAND')
-            logger.error('ERROR from %s', prettySource)
-            await source.sendall(b'ERROR_COMMAND')
+            logger.error('ERROR from %s: COMMAND %s', prettySource, command)
+            try:
+                await source.sendall(b'ERROR_COMMAND')
+            except Exception:
+                pass  # Ignore errors
             return
 
-        # Communicate source OPEN is ok
-        await source.sendall(b'OK')
 
         # Initialize own stats counter
         counter = stats.Stats(self.ns)
 
-        # Open remote server connection
         try:
+            # Communicate source OPEN is ok
+            await source.sendall(b'OK')
+
+            # Open remote server connection
             destination = await curio.open_connection(
                 result['host'], int(result['port'])
             )

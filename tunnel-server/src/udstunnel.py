@@ -40,7 +40,8 @@ import logging
 import typing
 
 import curio
-import psutil
+import curio.io
+import curio.errors
 import setproctitle
 
 from uds_tunnel import config
@@ -102,34 +103,16 @@ async def tunnel_proc_async(
     pipe: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace'
 ) -> None:
     def get_socket(pipe: 'Connection') -> typing.Tuple[typing.Optional[socket.SocketType], typing.Any]:
-        try:
-            data: bytes = b''
             while True:
-                msg: message.Message = pipe.recv()
-                if msg.command == message.Command.TUNNEL and msg.connection:
-                    # Connection done, check for handshake
-                    source, address = msg.connection
+                try:
+                    msg: message.Message = pipe.recv()
+                    if msg.command == message.Command.TUNNEL and msg.connection:
+                        return msg.connection
 
-                    try:
-                        # First, ensure handshake (simple handshake) and command
-                        data = source.recv(len(consts.HANDSHAKE_V1))
-
-                        if data != consts.HANDSHAKE_V1:
-                            raise Exception()  # Invalid handshake
-                    except Exception:
-                        if consts.DEBUG:
-                            logger.exception('HANDSHAKE')
-                        logger.error('HANDSHAKE from %s (%s)', address, data.hex())
-                        # Close Source and continue
-                        source.close()
-                        continue
-
-                    return msg.connection
-
-                # Process other messages, and retry
-        except Exception:
-            logger.exception('Receiving data from parent process')
-            return None, None
+                    # Process other messages, and retry
+                except Exception:
+                    logger.exception('Receiving data from parent process')
+                    return None, None
 
     async def run_server(
         pipe: 'Connection', cfg: config.ConfigurationType, group: curio.TaskGroup
@@ -147,20 +130,37 @@ async def tunnel_proc_async(
         if cfg.ssl_dhparam:
             context.load_dh_params(cfg.ssl_dhparam)
 
+        async def processSocket(ssock: socket.socket) -> None:
+            sock = curio.io.Socket(ssock)
+            try:
+                # First, ensure handshake (simple handshake) and command
+                async with curio.timeout_after(3):  # type: ignore
+                    data = await sock.recv(len(consts.HANDSHAKE_V1))
+
+                if data != consts.HANDSHAKE_V1:
+                    raise Exception(data)  # Invalid handshake
+            except (curio.errors.CancelledError, Exception) as e:
+                logger.error('HANDSHAKE from %s (%s)', address, 'timeout' if isinstance(e, curio.errors.CancelledError) else e)
+                # Close Source and continue
+                await sock.close()
+                return
+            sslsock = await context.wrap_socket(
+                sock, server_side=True  # type: ignore
+            )
+            await group.spawn(tunneler, sslsock, address)
+            del sslsock
+
+
         while True:
             address = ('', '')
             try:
-                sock, address = await curio.run_in_thread(get_socket, pipe)
-                if not sock:
+                ssock, address = await curio.run_in_thread(get_socket, pipe)
+                if not ssock:
                     break
                 logger.debug(
                     f'CONNECTION from {address!r} (pid: {os.getpid()})'
                 )
-                sock = await context.wrap_socket(
-                    curio.io.Socket(sock), server_side=True  # type: ignore
-                )
-                await group.spawn(tunneler, sock, address)
-                del sock
+                await group.spawn(processSocket, ssock)
             except Exception:
                 logger.error('NEGOTIATION ERROR from %s', address[0])
 
@@ -172,6 +172,8 @@ async def tunnel_proc_async(
         #    logger.debug(f'REMOVING async task {task!r}')
         #    task.joined = True
         #    del task
+
+    logger.info('PROCESS %s stopped', os.getpid())
 
 
 def tunnel_main():
@@ -230,7 +232,7 @@ def tunnel_main():
                 client, addr = sock.accept()
                 client.settimeout(3.0)
 
-                logger.debug('CONNECTION from %s', addr)
+                logger.info('CONNECTION from %s', addr[0])
                 # Select BEST process for sending this new connection
                 prcs.best_child().send(
                     message.Message(message.Command.TUNNEL, (client, addr))
