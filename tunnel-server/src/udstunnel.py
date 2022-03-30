@@ -129,6 +129,27 @@ async def tunnel_proc_async(
         if cfg.ssl_dhparam:
             context.load_dh_params(cfg.ssl_dhparam)
 
+        async def processSocket(ssock: socket.socket) -> None:
+            sock = curio.io.Socket(ssock)
+            try:
+                # First, ensure handshake (simple handshake) and command
+                async with curio.timeout_after(3):  # type: ignore
+                    data = await sock.recv(len(consts.HANDSHAKE_V1))
+
+                if data != consts.HANDSHAKE_V1:
+                    raise Exception(data)  # Invalid handshake
+            except (curio.errors.CancelledError, Exception) as e:
+                logger.error('HANDSHAKE from %s (%s)', address, 'timeout' if isinstance(e, curio.errors.CancelledError) else e)
+                # Close Source and continue
+                await sock.close()
+                return
+            sslsock = await context.wrap_socket(
+                sock, server_side=True  # type: ignore
+            )
+            await group.spawn(tunneler, sslsock, address)
+            del sslsock
+
+
         while True:
             address: typing.Tuple[str, int] = ('', 0)
             try:
@@ -166,6 +187,8 @@ def process_connection(
         logger.error('HANDSHAKE invalid from %s (%s)', addr, data.hex())
         # Close Source and continue
         client.close()
+
+    logger.info('PROCESS %s stopped', os.getpid())
 
 
 def tunnel_main():

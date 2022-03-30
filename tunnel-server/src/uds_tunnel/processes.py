@@ -59,11 +59,11 @@ class Processes:
         for i, c in enumerate(self.children):
             try:
                 if c[2].status() == 'zombie':  # Bad kill!!
-                    raise psutil.ZombieProcess(c[2].pid)
+                    raise psutil.ZombieProcess(c[2])
                 percent = c[2].cpu_percent()
             except (psutil.ZombieProcess, psutil.NoSuchProcess) as e:
                 # Process is missing...
-                logger.warning('Missing process found: %s', e.pid)
+                logger.warning('Missing process found: %s', e)
                 try:
                     c[0].close()  # Close pipe to missing process
                 except Exception:
