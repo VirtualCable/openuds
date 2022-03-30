@@ -175,8 +175,6 @@ class TunnelProtocol(asyncio.Protocol):
                 else:
                     raise Exception('Invalid command')
             except Exception:
-                if consts.DEBUG:
-                    logger.exception('COMMAND')
                 logger.error('ERROR from %s', self.pretty_source())
                 self.transport.write(b'ERROR_COMMAND')
                 self.close_connection()
