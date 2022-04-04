@@ -130,7 +130,7 @@ async def tunnel_proc_async(
         if cfg.ssl_dhparam:
             context.load_dh_params(cfg.ssl_dhparam)
 
-        async def processSocket(ssock: socket.socket) -> None:
+        async def processSocket(ssock: socket.socket, address: typing.Any) -> None:
             sock = curio.io.Socket(ssock)
             try:
                 # First, ensure handshake (simple handshake) and command
@@ -157,10 +157,7 @@ async def tunnel_proc_async(
                 ssock, address = await curio.run_in_thread(get_socket, pipe)
                 if not ssock:
                     break
-                logger.debug(
-                    f'CONNECTION from {address!r} (pid: {os.getpid()})'
-                )
-                await group.spawn(processSocket, ssock)
+                await group.spawn(processSocket, ssock, address)
             except Exception:
                 logger.error('NEGOTIATION ERROR from %s', address[0])
 
@@ -226,25 +223,20 @@ def tunnel_main():
 
     prcs = processes.Processes(tunnel_proc_async, cfg, stats_collector.ns)
 
-    try:
-        while not do_stop:
-            try:
-                client, addr = sock.accept()
-                client.settimeout(3.0)
+    while not do_stop:
+        try:
+            client, addr = sock.accept()
 
-                logger.info('CONNECTION from %s', addr[0])
-                # Select BEST process for sending this new connection
-                prcs.best_child().send(
-                    message.Message(message.Command.TUNNEL, (client, addr))
-                )
-                del client  # Ensure socket is controlled on child process
-            except socket.timeout:
-                pass  # Continue and retry
-            except Exception as e:
-                logger.error('LOOP: %s', e)
-    except Exception as e:
-        sys.stderr.write(f'Error: {e}\n')
-        logger.error('MAIN: %s', e)
+            logger.info('CONNECTION from %s', addr[0])
+            # Select BEST process for sending this new connection
+            prcs.best_child().send(
+                message.Message(message.Command.TUNNEL, (client, addr))
+            )
+            del client  # Ensure socket is controlled on child process
+        except socket.timeout:
+            pass  # Continue and retry
+        except Exception as e:
+            logger.error('LOOP: %s', e)
 
     if sock:
         sock.close()
