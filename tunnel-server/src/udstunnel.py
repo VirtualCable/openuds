@@ -102,7 +102,7 @@ async def tunnel_proc_async(
 
     tasks: typing.List[asyncio.Task] = []
 
-    def get_socket() -> typing.Optional[socket.socket]:
+    def get_socket() -> typing.Tuple[typing.Optional[socket.socket], typing.Optional[typing.Tuple[str, int]]]:
         try:
             while True:
                 # Clear back event, for next data
@@ -110,10 +110,10 @@ async def tunnel_proc_async(
                     typing.Tuple[socket.socket, typing.Tuple[str, int]]
                 ] = pipe.recv()
                 if msg:
-                    return msg[0]
+                    return msg
         except Exception:
             logger.exception('Receiving data from parent process')
-            return None
+            return None, None
 
     async def run_server() -> None:
         # Instantiate a proxy redirector for this process (we only need one per process!!)
@@ -130,15 +130,15 @@ async def tunnel_proc_async(
             context.load_dh_params(cfg.ssl_dhparam)
 
         while True:
-            address: typing.Tuple[str, int] = ('', 0)
+            address: typing.Optional[typing.Tuple[str, int]] = ('', 0)
             try:
-                sock = await loop.run_in_executor(None, get_socket)
+                (sock, address) = await loop.run_in_executor(None, get_socket)
                 if not sock:
                     break  # No more sockets, exit
                 logger.debug(f'CONNECTION from {address!r} (pid: {os.getpid()})')
                 tasks.append(asyncio.create_task(tunneler(sock, context)))
             except Exception:
-                logger.error('NEGOTIATION ERROR from %s', address[0])
+                logger.error('NEGOTIATION ERROR from %s', address[0] if address else 'unknown')
 
     # create task for server
     tasks.append(asyncio.create_task(run_server()))
