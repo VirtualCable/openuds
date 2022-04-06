@@ -161,15 +161,34 @@ class BaseRDPTransport(transports.Transport):
         tab=gui.PARAMETERS_TAB,
         defvalue=gui.FALSE,
     )
+    usbRedirection = gui.ChoiceField(
+        label=_('USB redirection'),
+        order=28,
+        tooltip=_('USB redirection policy'),
+        defvalue='false',
+        values=[
+            {'id': 'false', 'text': 'Allow none'},
+            {'id': 'true', 'text': 'Allow all'},
+            {'id': '{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}', 'text': 'Cameras'},
+            {'id': '{4d36e967-e325-11ce-bfc1-08002be10318}', 'text': 'Disk Drives'},
+            {'id': '{4d36e979-e325-11ce-bfc1-08002be10318}', 'text': 'Printers'},
+            {'id': '{50dd5230-ba8a-11d1-bf5d-0000f805f530}', 'text': 'Smartcards'},
+            {'id': '{745a17a0-74d3-11d0-b6fe-00a0c90f57da}', 'text': 'HIDs'},
+            
+        ],
+        tab=gui.PARAMETERS_TAB,
+    )
+
+
     credssp = gui.CheckBoxField(
         label=_('Credssp Support'),
-        order=28,
+        order=29,
         tooltip=_('If checked, will enable Credentials Provider Support)'),
         tab=gui.PARAMETERS_TAB,
         defvalue=gui.TRUE,
     )
     rdpPort = gui.NumericField(
-        order=29,
+        order=30,
         length=5,  # That is, max allowed value is 65535
         label=_('RDP Port'),
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
@@ -180,7 +199,7 @@ class BaseRDPTransport(transports.Transport):
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),
-        order=30,
+        order=31,
         tooltip=_('Screen size for this transport'),
         defvalue='-1x-1',
         values=[
@@ -204,7 +223,7 @@ class BaseRDPTransport(transports.Transport):
 
     colorDepth = gui.ChoiceField(
         label=_('Color depth'),
-        order=31,
+        order=32,
         tooltip=_('Color depth for this connection'),
         defvalue='24',
         values=[
@@ -218,7 +237,7 @@ class BaseRDPTransport(transports.Transport):
 
     wallpaper = gui.CheckBoxField(
         label=_('Wallpaper/theme'),
-        order=32,
+        order=33,
         tooltip=_(
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
@@ -226,7 +245,7 @@ class BaseRDPTransport(transports.Transport):
     )
     multimon = gui.CheckBoxField(
         label=_('Multiple monitors'),
-        order=33,
+        order=34,
         tooltip=_(
             'If checked, all client monitors will be used for displaying (only works on windows clients)'
         ),
@@ -234,20 +253,20 @@ class BaseRDPTransport(transports.Transport):
     )
     aero = gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
-        order=34,
+        order=35,
         tooltip=_('If checked, desktop composition will be allowed'),
         tab=gui.DISPLAY_TAB,
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
         defvalue=gui.TRUE,
-        order=35,
+        order=36,
         tooltip=_('If checked, fonts smoothing will be allowed'),
         tab=gui.DISPLAY_TAB,
     )
     showConnectionBar = gui.CheckBoxField(
         label=_('Connection Bar'),
-        order=36,
+        order=37,
         tooltip=_('If checked, connection bar will be shown (only on Windows clients)'),
         tab=gui.DISPLAY_TAB,
         defvalue=gui.TRUE,

@@ -72,6 +72,7 @@ class RDPTransport(BaseRDPTransport):
     allowClipboard = BaseRDPTransport.allowClipboard
     allowAudio = BaseRDPTransport.allowAudio
     allowWebcam = BaseRDPTransport.allowWebcam
+    usbRedirection = BaseRDPTransport.usbRedirection
 
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
@@ -143,6 +144,7 @@ class RDPTransport(BaseRDPTransport):
         r.printerString = self.printerString.value
         r.linuxCustomParameters = self.customParameters.value
         r.enforcedShares = self.enforceDrives.value
+        r.redirectUSB = self.usbRedirection.value
 
         osName = {
             OsDetector.KnownOS.Windows: 'windows',
