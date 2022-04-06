@@ -56,6 +56,7 @@ class RDPFile:
     redirectSmartcards = False
     redirectAudio = True
     redirectWebcam = False
+    redirectUSB = 'false'  # Can have, false, true, or a GUID
     compression = True
     multimedia = True
     alsa = True
@@ -265,6 +266,13 @@ class RDPFile:
             else:  # Dynamic
                 res += 'drivestoredirect:s:{}DynamicDrives\n'.format(enforcedSharesStr)
             res += 'devicestoredirect:s:*\n'
+
+        if self.redirectUSB != 'false':
+            if self.redirectUSB == 'true':
+                res += 'usbdevicestoredirect:s:*\n'
+            else:
+                # add the USB device to the list of devices to redirect
+                res += 'usbdevicestoredirect:s:{}\n'.format(self.redirectUSB)
 
         res += 'enablecredsspsupport:i:{}\n'.format(
             0 if self.enablecredsspsupport is False else 1
