@@ -356,7 +356,7 @@ class CalendarAction(UUIDModel):
             executed = True
         elif CALENDAR_ACTION_DEL_ALL_GROUPS['id'] == self.action:
             # 3.- Remove all groups
-            self.service_pool.assignedGroups.all().detete()
+            self.service_pool.assignedGroups.all().delete()
             saveServicePool = False
             executed = True
         else:  # Add/remove transport or group
