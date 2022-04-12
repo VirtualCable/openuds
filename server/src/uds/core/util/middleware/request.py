@@ -34,6 +34,7 @@ import typing
 
 from django.http import HttpRequest, HttpResponse
 from django.utils import timezone
+from sympy import EX
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
@@ -80,9 +81,12 @@ class GlobalRequestMiddleware:
             now = timezone.now()
             expiry = request.session.get(EXPIRY_KEY, now)
             if expiry < now:
-                webLogout(
-                    request=request
-                )  # Ignore the response, just processes usere session logout
+                try:
+                    webLogout(
+                        request=request
+                    )  # Ignore the response, just processes usere session logout
+                except Exception:
+                    pass
                 return HttpResponse(content='Session Expired', status=403)
             # Update session timeout..self.
             request.session[EXPIRY_KEY] = now + datetime.timedelta(
