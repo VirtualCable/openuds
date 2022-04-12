@@ -197,6 +197,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'clientDownload': reverse('page.client-download'),
             # Launcher URL if exists
             'launch': request.session.get('launch', ''),
+            'brand': settings.UDSBRAND if hasattr(settings, 'UDSBRAND') else ''
         },
         'min_for_filter': GlobalConfig.SITE_FILTER_MIN.getInt(True),
     }
