@@ -76,11 +76,11 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
 
     # "fake" relations declarations for type checking
-    objects: 'models.BaseManager[Authenticator]'
-    users: 'models.QuerySet[User]'
-    groups: 'models.QuerySet[Group]'
+    objects: 'models.manager.Manager[Authenticator]'
+    users: 'models.manager.RelatedManager[User]'
+    groups: 'models.manager.RelatedManager[Group]'
 
-    networks: 'models.QuerySet[Network]'
+    networks: 'models.manager.RelatedManager[Network]'
 
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """

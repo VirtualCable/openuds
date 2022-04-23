@@ -34,7 +34,6 @@ import typing
 
 from django.http import HttpRequest, HttpResponse
 from django.utils import timezone
-from sympy import EX
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig

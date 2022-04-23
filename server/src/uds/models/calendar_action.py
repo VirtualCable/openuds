@@ -236,7 +236,7 @@ class CalendarAction(UUIDModel):
     )
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[CalendarAction]'
+    objects: 'models.manager.Manager[CalendarAction]'
 
     class Meta:
         """

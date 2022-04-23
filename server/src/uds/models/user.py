@@ -75,9 +75,9 @@ class User(UUIDModel):
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[User]'
-    groups: 'models.QuerySet[Group]'
-    userServices: 'models.QuerySet[UserService]'
+    objects: 'models.manager.Manager[User]'
+    groups: 'models.manager.RelatedManager[Group]'
+    userServices: 'models.manager.RelatedManager[UserService]'
 
     class Meta(UUIDModel.Meta):
         """

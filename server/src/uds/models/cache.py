@@ -55,7 +55,7 @@ class Cache(models.Model):
     validity = models.IntegerField(default=60)  # Validity of this entry, in seconds
 
     # "fake" relations declarations for type checking
-    objects: 'models.BaseManager[Cache]'
+    objects: 'models.manager.Manager[Cache]'
 
     class Meta:
         """

@@ -54,7 +54,7 @@ class AccountUsage(UUIDModel):
     """
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[AccountUsage]'
+    objects: 'models.manager.Manager[AccountUsage]'
 
     user_name = models.CharField(max_length=128, db_index=True, default='')
     user_uuid = models.CharField(max_length=50, db_index=True, default='')

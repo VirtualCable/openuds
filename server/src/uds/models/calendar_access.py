@@ -57,7 +57,7 @@ class CalendarAccess(UUIDModel):
     priority = models.IntegerField(default=0, db_index=True)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[CalendarAccess]'
+    objects: 'models.manager.Manager[CalendarAccess]'
 
     class Meta:
         """
