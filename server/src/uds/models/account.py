@@ -56,7 +56,7 @@ class Account(UUIDModel, TaggingMixin):  # type: ignore
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[Account]'
-    usages: 'models.QuerySet[AccountUsage]'
+    usages: 'models.manager.RelatedManager[AccountUsage]'
 
     def startUsageAccounting(self, userService: 'UserService') -> None:
         if hasattr(userService, 'accounting'):  # Already has an account
