@@ -63,9 +63,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     visible = models.BooleanField(default=True)
 
     # "fake" relations declarations for type checking
-    objects: 'models.BaseManager[Authenticator]'
-    users: 'models.QuerySet[User]'
-    groups: 'models.QuerySet[Group]'
+    objects: 'models.manager.Manager[Authenticator]'
+    users: 'models.manager.RelatedManager[User]'
+    groups: 'models.manager.RelatedManager[Group]'
 
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """

@@ -78,8 +78,8 @@ class User(UUIDModel):
 
     # "fake" declarations for type checking
     objects: 'models.BaseManager[User]'
-    groups: 'models.QuerySet[Group]'
-    userServices: 'models.QuerySet[UserService]'
+    groups: 'models.manager.RelatedManager[Group]'
+    userServices: 'models.manager.RelatedManager[UserService]'
 
     class Meta(UUIDModel.Meta):
         """

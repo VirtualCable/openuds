@@ -87,7 +87,7 @@ class Users(DetailHandler):
             del v['uuid']
             yield v
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: Authenticator, item: typing.Optional[str]):
         logger.debug(item)
         # Extract authenticator
         try:
@@ -179,7 +179,7 @@ class Users(DetailHandler):
     def getRowStyle(self, parent):
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent, item):
+    def getLogs(self, parent: Authenticator, item):
         user = None
         try:
             user = parent.users.get(uuid=processUuid(item))
@@ -188,7 +188,7 @@ class Users(DetailHandler):
 
         return log.getLogs(user)
 
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: Authenticator, item: typing.Optional[str]) -> None:
         logger.debug('Saving user %s / %s', parent, item)
         valid_fields = [
             'name',
@@ -248,9 +248,7 @@ class Users(DetailHandler):
             logger.exception('Saving user')
             raise self.invalidRequestException()
 
-        return self.getItems(parent, user.uuid)
-
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent: Authenticator, item):
         try:
             user = parent.users.get(uuid=processUuid(item))
             if not self._user.is_admin and (user.is_admin or user.staff_member):
@@ -279,7 +277,7 @@ class Users(DetailHandler):
 
         return 'deleted'
 
-    def servicesPools(self, parent, item):
+    def servicesPools(self, parent: Authenticator, item):
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
         res = []
@@ -301,7 +299,7 @@ class Users(DetailHandler):
 
         return res
 
-    def userServices(self, parent, item):
+    def userServices(self, parent: Authenticator, item):
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
         res = []
@@ -319,7 +317,7 @@ class Groups(DetailHandler):
 
     custom_methods = ['servicesPools', 'users']
 
-    def getItems(self, parent, item):
+    def getItems(self, parent: Authenticator, item):
         try:
             multi = False
             if item is None:
@@ -346,16 +344,16 @@ class Groups(DetailHandler):
             if multi or not i:
                 return res
             # Add pools field if 1 item only
-            res = res[0]
+            result = res[0]
             if i.is_meta:
-                res[
+                result[
                     'pools'
                 ] = (
                     []
                 )  # Meta groups do not have "assigned "pools, they get it from groups interaction
             else:
-                res['pools'] = [v.uuid for v in i.deployedServices.all()]
-            return res
+                result['pools'] = [v.uuid for v in i.deployedServices.all()]
+            return result
         except Exception:
             logger.exception('REST groups')
             raise self.invalidItemException()
@@ -393,7 +391,7 @@ class Groups(DetailHandler):
             },
         ]
 
-    def getTypes(self, parent, forType):
+    def getTypes(self, parent: Authenticator, forType):
         tDct = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},
             'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
@@ -412,11 +410,11 @@ class Groups(DetailHandler):
             return types
 
         try:
-            return types[forType]
+            return next(filter(lambda x: x['type'] == forType, types))
         except Exception:
             raise self.invalidRequestException()
 
-    def saveItem(self, parent, item):
+    def saveItem(self, parent: Authenticator, item) -> None:
         group = None  # Avoid warning on reference before assignment
         try:
             is_meta = self._params['type'] == 'meta'
@@ -476,9 +474,7 @@ class Groups(DetailHandler):
             logger.exception('Saving group')
             raise self.invalidRequestException()
 
-        return self.getItems(parent, group.uuid)
-
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent: Authenticator, item: str) -> None:
         try:
             group = parent.groups.get(uuid=item)
 
@@ -486,12 +482,10 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalidItemException()
 
-        return 'deleted'
-
-    def servicesPools(self, parent, item):
+    def servicesPools(self, parent: Authenticator, item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
-        res = []
+        res: typing.List[typing.Mapping[str, typing.Any]] = []
         for i in getPoolsForGroups((group,)):
             res.append(
                 {
@@ -509,7 +503,7 @@ class Groups(DetailHandler):
 
         return res
 
-    def users(self, parent, item):
+    def users(self, parent: Authenticator, item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
 
@@ -522,7 +516,7 @@ class Groups(DetailHandler):
                 'last_access': user.last_access,
             }
 
-        res = []
+        res: typing.List[typing.Mapping[str, typing.Any]] = []
         if group.is_meta:
             # Get all users for everygroup and
             groups = getGroupsFromMeta((group,))

@@ -46,6 +46,7 @@ from .util import UnsavedForeignKey, getSqlDatetime
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import auths
+    from uds.models import ServicePool
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,8 @@ class Group(UUIDModel):
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Group]'
+    objects: 'models.manager.Manager[Group]'
+    deployedServices: 'models.manager.RelatedManager[ServicePool]'
 
     class Meta:
         """
