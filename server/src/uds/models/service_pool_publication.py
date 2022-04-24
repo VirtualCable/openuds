@@ -65,7 +65,7 @@ class ServicePoolPublicationChangelog(models.Model):
     log = models.TextField(default='')
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[ServicePoolPublicationChangelog]'
+    objects: 'models.manager.Manager[ServicePoolPublicationChangelog]'
 
     class Meta(UUIDModel.Meta):
         """
@@ -106,8 +106,8 @@ class ServicePoolPublication(UUIDModel):
     revision = models.PositiveIntegerField(default=1)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[ServicePoolPublication]'
-    userServices: 'models.QuerySet[UserService]'
+    objects: 'models.manager.Manager[ServicePoolPublication]'
+    userServices: 'models.manager.RelatedManager[UserService]'
 
     class Meta(UUIDModel.Meta):
         """

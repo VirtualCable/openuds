@@ -114,7 +114,7 @@ class CalendarRule(UUIDModel):
     )
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[CalendarRule]'
+    objects: 'models.manager.Manager[CalendarRule]'
 
     class Meta:
         """

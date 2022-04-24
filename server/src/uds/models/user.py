@@ -37,6 +37,7 @@ from django.db import models
 from django.db.models import Count, Q, signals
 from uds.core import auths
 from uds.core.util import log
+from uds.models import permissions
 
 from .authenticator import Authenticator
 from .util import NEVER, UnsavedForeignKey, getSqlDatetime
@@ -44,7 +45,7 @@ from .uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import Group, UserService
+    from uds.models import Group, UserService, Permissions
     from uds.core.util.request import ExtendedHttpRequest
 
 
@@ -78,6 +79,7 @@ class User(UUIDModel):
     objects: 'models.manager.Manager[User]'
     groups: 'models.manager.RelatedManager[Group]'
     userServices: 'models.manager.RelatedManager[UserService]'
+    permissions: 'models.manager.RelatedManager[Permissions]'
 
     class Meta(UUIDModel.Meta):
         """

@@ -70,7 +70,7 @@ class ManagedObjectModel(UUIDModel):
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
-    def deserialize(self, obj: Module, values: typing.Optional[typing.Dict[str, str]]):
+    def deserialize(self, obj: Module, values: typing.Optional[typing.Mapping[str, str]]):
         """
         Conditionally deserializes obj if not initialized via user interface and data holds something
         """

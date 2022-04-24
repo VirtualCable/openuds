@@ -56,7 +56,7 @@ class StatsCounters(models.Model):
     value = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[StatsCounters]'
+    objects: 'models.manager.Manager[StatsCounters]'
 
     class Meta:
         """

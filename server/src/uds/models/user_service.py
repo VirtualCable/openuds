@@ -120,8 +120,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     )
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[UserService]'
-    properties: 'models.QuerySet[UserServiceProperty]'
+    objects: 'models.manager.Manager[UserService]'
+    properties: 'models.manager.RelatedManager[UserServiceProperty]'
     accounting: 'AccountUsage'
 
     class Meta(UUIDModel.Meta):

@@ -57,7 +57,7 @@ class Proxy(UUIDModel, TaggingMixin):  # type: ignore
     check_cert = models.BooleanField(default=False)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Proxy]'
+    objects: 'models.manager.Manager[Proxy]'
 
     class Meta:
         """

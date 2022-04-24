@@ -63,7 +63,7 @@ class ServicePoolGroup(UUIDModel):
     )
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[ServicePoolGroup]'
+    objects: 'models.manager.Manager[ServicePoolGroup]'
 
     class Meta(UUIDModel.Meta):
         """

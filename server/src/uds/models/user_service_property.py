@@ -53,7 +53,7 @@ class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-meth
     )
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[UserServiceProperty]'
+    objects: 'models.manager.Manager[UserServiceProperty]'
 
     class Meta:
         """

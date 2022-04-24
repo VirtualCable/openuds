@@ -71,6 +71,7 @@ if typing.TYPE_CHECKING:
         Proxy,
         MetaPoolMember,
         CalendarAccess,
+        CalendarAction
     )
 
 logger = logging.getLogger(__name__)
@@ -154,14 +155,14 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     current_pub_revision = models.PositiveIntegerField(default=1)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[ServicePool]'
-    publications: 'models.QuerySet[ServicePoolPublication]'
-    memberOfMeta: 'models.QuerySet[MetaPoolMember]'
-    userServices: 'models.QuerySet[UserService]'
-    calendarAccess: 'models.QuerySet[CalendarAccess]'
-    changelog: 'models.QuerySet[ServicePoolPublicationChangelog]'
+    objects: 'models.manager.Manager[ServicePool]'
+    publications: 'models.manager.RelatedManager[ServicePoolPublication]'
+    memberOfMeta: 'models.manager.RelatedManager[MetaPoolMember]'
+    userServices: 'models.manager.RelatedManager[UserService]'
+    calendarAccess: 'models.manager.RelatedManager[CalendarAccess]'
+    calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
+    changelog: 'models.manager.RelatedManager[ServicePoolPublicationChangelog]'
 
-    calendaraction_set: typing.Any
 
     class Meta(UUIDModel.Meta):
         """

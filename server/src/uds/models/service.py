@@ -91,9 +91,9 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     _cachedInstance: typing.Optional['services.Service'] = None
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Service]'
-    deployedServices: 'models.QuerySet[ServicePool]'
-    aliases: 'models.QuerySet[ServiceTokenAlias]'
+    objects: 'models.manager.Manager[Service]'
+    deployedServices: 'models.manager.RelatedManager[ServicePool]'
+    aliases: 'models.manager.RelatedManager[ServiceTokenAlias]'
 
 
     class Meta(ManagedObjectModel.Meta):

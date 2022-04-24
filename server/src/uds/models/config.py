@@ -53,7 +53,7 @@ class Config(models.Model):
     field_type = models.IntegerField(default=-1)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Config]'
+    objects: 'models.manager.Manager[Config]'
 
     class Meta:
         """

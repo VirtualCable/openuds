@@ -71,7 +71,7 @@ class TicketStore(UUIDModel):
     )  # Associated validator for this ticket
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[TicketStore]'
+    objects: 'models.manager.Manager[TicketStore]'
 
     class InvalidTicket(Exception):
         pass

@@ -56,8 +56,8 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     maintenance_mode = models.BooleanField(default=False, db_index=True)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Provider]'
-    services: 'models.QuerySet[Service]'
+    objects: 'models.manager.Manager[Provider]'
+    services: 'models.manager.RelatedManager[Service]'
 
     class Meta(ManagedObjectModel.Meta):
         """

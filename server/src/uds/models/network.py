@@ -41,7 +41,6 @@ from .transport import Transport
 from .authenticator import Authenticator
 from .uuid_model import UUIDModel
 from .tag import TaggingMixin
-from uds.models import authenticator
 
 
 logger = logging.getLogger(__name__)
@@ -64,7 +63,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
     )
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Network]'
+    objects: 'models.manager.Manager[Network]'
 
     class Meta(UUIDModel.Meta):
         """

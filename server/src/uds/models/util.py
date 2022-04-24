@@ -31,11 +31,10 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+from datetime import datetime
 from time import mktime
 
-from datetime import datetime
-from django.db import models
-from django.db import connection
+from django.db import connection, models
 
 logger = logging.getLogger(__name__)
 

@@ -101,7 +101,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
     level = models.PositiveSmallIntegerField(default=NotificationLevel.ERROR)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Notifier]'
+    objects: 'models.manager.Manager[Notifier]'
 
     class Meta:
         """

@@ -46,6 +46,8 @@ from .util import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from uds.models import ServicePool, MetaPool, ServicePoolGroup
 
 class Image(UUIDModel):
     """
@@ -67,7 +69,11 @@ class Image(UUIDModel):
     height = models.IntegerField(default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Image]'
+    objects: 'models.manager.RelatedManager[Image]'
+
+    deployedServices: 'models.manager.RelatedManager[ServicePool]'
+    metaPools: 'models.manager.RelatedManager[MetaPool]'
+    servicesPoolsGroup: 'models.manager.RelatedManager[ServicePoolGroup]'
 
     class Meta:
         """

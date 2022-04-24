@@ -52,7 +52,7 @@ class DBFile(UUIDModel):
     modified = models.DateTimeField()
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[DBFile]'
+    objects: 'models.manager.Manager[DBFile]'
 
     @property
     def data(self) -> bytes:

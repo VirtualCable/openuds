@@ -48,6 +48,7 @@ class UUIDModel(models.Model):
     uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 
     # Automatic field from Model without a defined specific primary_key
+    # Just a fake declaration to allow type checking
     id: int
 
     class Meta:  # pylint: disable=too-few-public-methods
@@ -58,7 +59,7 @@ class UUIDModel(models.Model):
 
     # Override default save to add uuid
     def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
+        self, *args, **kwargs
     ):
         if not self.uuid:
             self.uuid = self.genUuid()
@@ -66,8 +67,11 @@ class UUIDModel(models.Model):
             self.uuid = (
                 self.uuid.lower()
             )  # If we modify uuid elsewhere, ensure that it's stored in lower case
+        
+        if 'update_fields' in kwargs:
+            kwargs['update_fields'] = list(kwargs['update_fields']) + ['uuid']
 
-        return models.Model.save(self, force_insert, force_update, using, update_fields)
+        return models.Model.save(self, *args, **kwargs)
 
     def __str__(self) -> str:
         return 'Object of class {} with uuid {}'.format(self.__class__, self.uuid)

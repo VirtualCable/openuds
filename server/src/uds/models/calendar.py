@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import CalendarRule, CalendarAction
+    from uds.models import CalendarRule, CalendarAction, CalendarAccess
 
 
 class Calendar(UUIDModel, TaggingMixin):
@@ -52,9 +52,10 @@ class Calendar(UUIDModel, TaggingMixin):
     modified = models.DateTimeField(auto_now=True)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Calendar]'
-    rules: 'models.QuerySet[CalendarRule]'
-    calendaraction_set: 'models.QuerySet[CalendarAction]'
+    objects: 'models.manager.Manager[Calendar]'
+    rules: 'models.manager.RelatedManager[CalendarRule]'
+    calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
+    calendaraccess_set: 'models.manager.RelatedManager[CalendarAccess]'
 
     class Meta:
         """
