@@ -644,7 +644,7 @@ class gui:
 
         @staticmethod
         def _checkTrue(val: typing.Union[str, bytes, bool]) -> bool:
-            return val in (True, 'true', 'True', b'true', b'True')
+            return val in (True, 'true', 'True', b'true', b'True', 1, '1', b'1')
 
         def _setValue(self, value: typing.Union[str, bytes, bool]):
             """

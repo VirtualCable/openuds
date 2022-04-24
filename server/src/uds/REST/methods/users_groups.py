@@ -518,7 +518,7 @@ class Groups(DetailHandler):
                 'last_access': user.last_access,
             }
 
-        res = []
+        res: typing.List[typing.Mapping[str, typing.Any]] = []
         if group.is_meta:
             # Get all users for everygroup and
             groups = getGroupsFromMeta((group,))
