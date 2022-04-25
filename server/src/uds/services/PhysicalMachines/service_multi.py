@@ -232,12 +232,13 @@ class IPMachinesService(IPServiceBase):
         self.maxDeployed = len(self._ips)
 
     def canBeUsed(self, locked: typing.Optional[int], now: int) -> int:
+        locked = locked or 0
         # If _maxSessionForMachine is 0, it can be used only if not locked
-        # (that is locked is None)
+        # (that is locked is not 0)
         if self._maxSessionForMachine <= 0:
             return not bool(locked)  # If locked is None, it can be used
 
-        if not isinstance(locked, int):  # May have "old" data, that was the IP repeated
+        if isinstance(locked, int):  # May have "old" data, that was the IP repeated
             return False
 
         if not locked or locked < now - self._maxSessionForMachine * 3600:
@@ -346,7 +347,7 @@ class IPMachinesService(IPServiceBase):
         now = getSqlDatetimeAsUnix()
         locked = self.storage.getPickle(theIP)
         if self.canBeUsed(locked, now):
-            self.storage.putPickle(id, now)  # Lock it
+            self.storage.putPickle(theIP, now)  # Lock it
 
     def processLogout(self, id: str) -> None:
         '''
