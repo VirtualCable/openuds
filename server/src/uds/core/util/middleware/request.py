@@ -91,12 +91,11 @@ class GlobalRequestMiddleware:
             expiry = request.session.get(EXPIRY_KEY, now)
             if expiry < now:
                 try:
-                    webLogout(
+                    return webLogout(
                         request=request
                     )  # Ignore the response, just processes usere session logout
                 except Exception:
-                    pass
-                return HttpResponse(content='Session Expired', status=403)
+                    return HttpResponse(content='Session Expired', status=403)
             # Update session timeout..self.
             request.session[EXPIRY_KEY] = now + datetime.timedelta(
                 seconds=GlobalConfig.SESSION_DURATION_ADMIN.getInt()
