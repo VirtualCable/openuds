@@ -232,13 +232,13 @@ class IPMachinesService(IPServiceBase):
         self.maxDeployed = len(self._ips)
 
     def canBeUsed(self, locked: typing.Optional[int], now: int) -> int:
-        locked = locked or 0
         # If _maxSessionForMachine is 0, it can be used only if not locked
-        # (that is locked is not 0)
+        # (that is locked is None)
+        locked = locked or 0
         if self._maxSessionForMachine <= 0:
             return not bool(locked)  # If locked is None, it can be used
 
-        if isinstance(locked, int):  # May have "old" data, that was the IP repeated
+        if not isinstance(locked, int):  # May have "old" data, that was the IP repeated
             return False
 
         if not locked or locked < now - self._maxSessionForMachine * 3600:
