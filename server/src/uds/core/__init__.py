@@ -40,5 +40,5 @@ from .serializable import Serializable
 from .module import Module
 
 
-VERSION = '3.x.x-DEVEL'
+VERSION = '4.x.x-DEVEL'
 VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))

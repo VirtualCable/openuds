@@ -103,9 +103,9 @@ class LogManager(metaclass=singleton.Singleton):
         qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
         if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
-            for i in qs.order_by('-created',)[
-                GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1 :  # type: ignore  # Slicing is not supported by pylance right now
-            ]:
+            for i in qs.order_by(
+                '-created',
+            )[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1 :]:
                 i.delete()
 
         if avoidDuplicates:
@@ -169,7 +169,10 @@ class LogManager(metaclass=singleton.Singleton):
         owner_type = transDict.get(type(wichObject), None)
 
         if owner_type is not None:
-            self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)  # type: ignore
+            try:
+                self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)  # type: ignore
+            except Exception:
+                logger.error('Error logging: %s:%s %s - %s %s', owner_type, wichObject.id, level, message, source) # type: ignore
         else:
             logger.debug(
                 'Requested doLog for a type of object not covered: %s', wichObject

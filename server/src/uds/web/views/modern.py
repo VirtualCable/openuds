@@ -37,7 +37,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRed
 from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
-from uds.core.auths import auth, exceptions
+from uds.core.auths import auth
 
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
@@ -74,6 +74,7 @@ def login(
 ) -> HttpResponse:
     # Default empty form
     logger.debug('Tag: %s', tag)
+    response: typing.Optional[HttpResponse] = None
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
         form = LoginForm(request.POST, tag=tag)
@@ -90,19 +91,18 @@ def login(
             if loginResult.url:  # Redirection
                 return HttpResponseRedirect(loginResult.url)
 
-            time.sleep(2)  # On failure, wait a bit...
+            if request.ip != '127.0.0.1':
+                time.sleep(2)  # On failure, wait a bit if not localhost
             # If error is numeric, redirect...
             if loginResult.errid:
                 return errors.errorView(request, loginResult.errid)
 
             # Error, set error on session for process for js
             request.session['errors'] = [loginResult.errstr]
-            return index(request)
     else:
         request.session['tag'] = tag
-        response = index(request)
 
-    return response
+    return response or index(request)
 
 
 @never_cache

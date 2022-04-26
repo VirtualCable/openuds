@@ -72,7 +72,7 @@ def _requestActor(
             'No notification urls for {}'.format(userService.friendly_name)
         )
 
-    minVersion = minVersion or '2.0.0'
+    minVersion = minVersion or '3.5.0'
     version = userService.getProperty('actor_version') or '0.0.0'
     if '-' in version or version < minVersion:
         logger.warning(

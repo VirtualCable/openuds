@@ -56,7 +56,7 @@ from uds.core.util.state import State
 from uds.core.managers import cryptoManager
 from uds.core.auths import Authenticator as AuthenticatorInstance
 
-from uds.models import User, Authenticator
+from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -76,7 +76,7 @@ RT = typing.TypeVar('RT')
 
 
 class AuthResult(typing.NamedTuple):
-    user: typing.Optional[User] = None
+    user: typing.Optional[models.User] = None
     url: typing.Optional[str] = None
 
 
@@ -102,14 +102,14 @@ def getUDSCookie(
     return cookie
 
 
-def getRootUser() -> User:
+def getRootUser() -> models.User:
     """
     Returns an user not in DB that is ROOT for the platform
 
     Returns:
         User: [description]
     """
-    user = User(
+    user = models.User(
         id=ROOT_ID,
         name=GlobalConfig.SUPER_USER_LOGIN.get(True),
         real_name=_('System Administrator'),
@@ -207,7 +207,7 @@ def denyNonAuthenticated(
 
 
 def __registerUser(
-    authenticator: Authenticator,
+    authenticator: models.Authenticator,
     authInstance: AuthenticatorInstance,
     username: str,
     request: 'ExtendedHttpRequest',
@@ -245,7 +245,7 @@ def __registerUser(
 def authenticate(
     username: str,
     password: str,
-    authenticator: Authenticator,
+    authenticator: models.Authenticator,
     request: 'ExtendedHttpRequest',
     useInternalAuthenticate: bool = False,
 ) -> AuthResult:
@@ -306,7 +306,7 @@ def authenticate(
 
 
 def authenticateViaCallback(
-    authenticator: Authenticator,
+    authenticator: models.Authenticator,
     params: typing.Any,
     request: 'ExtendedHttpRequestWithUser',
 ) -> AuthResult:
@@ -356,14 +356,14 @@ def authenticateViaCallback(
     raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
 
-def authCallbackUrl(authenticator: Authenticator) -> str:
+def authCallbackUrl(authenticator: models.Authenticator) -> str:
     """
     Helper method, so we can get the auth call back url for an authenticator
     """
     return reverse('page.auth.callback', kwargs={'authName': authenticator.name})
 
 
-def authInfoUrl(authenticator: typing.Union[str, bytes, Authenticator]) -> str:
+def authInfoUrl(authenticator: typing.Union[str, bytes, models.Authenticator]) -> str:
     """
     Helper method, so we can get the info url for an authenticator
     """
@@ -380,7 +380,7 @@ def authInfoUrl(authenticator: typing.Union[str, bytes, Authenticator]) -> str:
 def webLogin(
     request: 'ExtendedHttpRequest',
     response: typing.Optional[HttpResponse],
-    user: User,
+    user: models.User,
     password: str,
 ) -> bool:
     """
@@ -444,7 +444,7 @@ def webLogout(
     by django in regular basis.
     """
     if exit_url is None:
-        exit_url = request.build_absolute_uri(reverse('page.logout'))
+        exit_url = reverse('page.login')
         # exit_url = GlobalConfig.LOGIN_URL.get()
         # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
         #     exit_url = exit_url.replace('http://', 'https://')
@@ -476,7 +476,7 @@ def webLogout(
 
 def authLogLogin(
     request: 'ExtendedHttpRequest',
-    authenticator: Authenticator,
+    authenticator: models.Authenticator,
     userName: str,
     logStr: str = '',
 ) -> None:

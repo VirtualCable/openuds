@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.utils.translation import gettext_lazy as _
 from django import forms
@@ -69,4 +70,4 @@ class LoginForm(forms.Form):
                 continue
             choices.append((a.uuid, a.name))
 
-        self.fields['authenticator'].choices = choices
+        typing.cast(forms.ChoiceField, self.fields['authenticator']).choices = choices  
