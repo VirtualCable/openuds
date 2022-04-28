@@ -309,7 +309,7 @@ class SAMLAuthenticator(auths.Authenticator):
             return {
                 'https': ['off', 'on'][params.get('https', False)],
                 'http_host': params['http_host'],
-                'script_name': params['path_info'],
+                'script_name': self.manageUrl.value,  # params['path_info'],
                 'server_port': params['server_port'],
                 'get_data': params['get_data'].copy(),
                 'post_data': params['post_data'].copy(),
@@ -320,7 +320,7 @@ class SAMLAuthenticator(auths.Authenticator):
         return {
             'https': 'on' if request.is_secure() else 'off',
             'http_host': request.META['HTTP_HOST'],
-            'script_name': request.META['PATH_INFO'],
+            'script_name': self.manageUrl.value,  # request.META['PATH_INFO'],
             'server_port': request.META['SERVER_PORT'],
             'get_data': request.GET.copy(),
             'post_data': request.POST.copy(),
