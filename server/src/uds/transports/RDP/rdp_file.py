@@ -87,7 +87,11 @@ class RDPFile:
         self.target = target
 
     def get(self):
-        if self.target in (OsDetector.KnownOS.Windows, OsDetector.KnownOS.Linux, OsDetector.KnownOS.Macintosh):
+        if self.target in (
+            OsDetector.KnownOS.Windows,
+            OsDetector.KnownOS.Linux,
+            OsDetector.KnownOS.Macintosh,
+        ):
             return self.getGeneric()
         # Unknown target
         return ''
@@ -272,7 +276,10 @@ class RDPFile:
                 res += 'usbdevicestoredirect:s:*\n'
             else:
                 # add the USB device to the list of devices to redirect
-                res += 'usbdevicestoredirect:s:{}\n'.format(self.redirectUSB)
+                # escape { and } characters
+                res += 'usbdevicestoredirect:s:{}\n'.format(
+                    self.redirectUSB.replace('{', '{{').replace('}', '}}')
+                )
 
         res += 'enablecredsspsupport:i:{}\n'.format(
             0 if self.enablecredsspsupport is False else 1
