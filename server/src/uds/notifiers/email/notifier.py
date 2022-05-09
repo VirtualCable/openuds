@@ -30,13 +30,15 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from cProfile import label
 import logging
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core.messaging import Notifier
+from uds.core import messaging
 from uds.core.ui import gui
 from uds.core.util import validators
 
@@ -47,7 +49,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class EmailNotifier(Notifier):
+class EmailNotifier(messaging.Notifier):
     """
     Email notifier
     """
@@ -101,7 +103,7 @@ class EmailNotifier(Notifier):
         label=_('Username'),
         order=9,
         tooltip=_('User with access to SMTP server'),
-        required=True,
+        required=False,
         defvalue='',
         tab=_('SMTP Server'),
     )
@@ -110,7 +112,7 @@ class EmailNotifier(Notifier):
         label=_('Password'),
         order=10,
         tooltip=_('Password of the user with access to SMTP server'),
-        required=True,
+        required=False,
         defvalue='',
         tab=_('SMTP Server'),
     )
@@ -153,7 +155,7 @@ class EmailNotifier(Notifier):
         # if hostname is not valid, we will raise an exception
         hostname = self.hostname.cleanStr()
         if not hostname:
-            raise Notifier.ValidationException(_('Invalid SMTP hostname'))
+            raise messaging.Notifier.ValidationException(_('Invalid SMTP hostname'))
 
         # Now check is valid format
         if ':' in hostname:
@@ -169,3 +171,63 @@ class EmailNotifier(Notifier):
 
         # Done
 
+    def notify(self, group: str, identificator: str, level: messaging.NotificationLevel, message: str) -> None:
+        # Send and email with the notification
+        with self.login() as smtp:
+            try:
+                # Create message container
+                msg = MIMEMultipart('alternative')
+                msg['Subject'] = '{} - {}'.format(group, identificator)
+                msg['From'] = self.fromEmail.value
+                msg['To'] = self.toEmail.value
+
+                part1 = MIMEText(message, 'plain')
+                part2 = MIMEText(message, 'html')
+
+                msg.attach(part1)
+
+                if self.enableHTML.value:
+                    msg.attach(part2)
+                
+                smtp.sendmail(self.fromEmail.value, self.toEmail.value, msg.as_string())
+            except smtplib.SMTPException as e:
+                logger.error('Error sending email: {}'.format(e))
+
+
+
+    def login(self) -> smtplib.SMTP:
+        """
+        Login to SMTP server
+        """
+        host = self.hostname.cleanStr()
+        if ':' in host:
+            host, ports = host.split(':')
+            port = int(ports)
+        else:
+            port = None
+
+        if self.security.value in ('tls', 'ssl'):
+            context = ssl.create_default_context()
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            if self.security.value == 'tls':
+                if port:
+                    smtp = smtplib.SMTP(host, port,)
+                else:
+                    smtp = smtplib.SMTP(host)
+                smtp.starttls(context=context)
+            else:
+                if port:
+                    smtp = smtplib.SMTP_SSL(host, port, context=context)
+                else:
+                    smtp = smtplib.SMTP_SSL(host, context=context)
+        else:
+            if port:
+                smtp = smtplib.SMTP(host, port)
+            else:
+                smtp = smtplib.SMTP(host)
+
+        if self.username.value and self.password.value:
+            smtp.login(self.username.value, self.password.value)
+        
+        return smtp

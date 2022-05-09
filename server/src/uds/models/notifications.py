@@ -111,6 +111,22 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         db_table = 'uds_notify_prov'
         app_label = 'uds'
 
+    def getType(self) -> typing.Type['NotificationProviderModule']:
+        """
+        Get the type of the object this record represents.
+
+        The type is Python type, it obtains this type from ServiceProviderFactory and associated record field.
+
+        Returns:
+            The python type for this record object
+        """
+        from uds.core import messaging  # pylint: disable=redefined-outer-name
+
+        kind_ = messaging.factory().lookup(self.data_type) 
+        if kind_ is None:
+            raise Exception('Notifier type not found: {0}'.format(self.data_type))
+        return kind_
+
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
     ) -> 'NotificationProviderModule':

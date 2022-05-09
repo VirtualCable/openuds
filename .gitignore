@@ -64,8 +64,6 @@
 
 # /server/
 *_enterprise
-/server/openuds.sublime-project
-/server/openuds.sublime-workspace
 
 # /server/src/
 /server/src/taskmanager.pid
@@ -88,7 +86,6 @@
 # /server/src/uds/
 /server/src/uds/*_enterprise.py
 /server/src/uds/fixtures
-/server/src/uds/tests
 
 # /server/src/uds/auths/
 /server/src/uds/auths/*-enterprise

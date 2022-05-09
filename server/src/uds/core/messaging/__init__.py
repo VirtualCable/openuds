@@ -29,7 +29,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .provider import Notifier
+from .provider import Notifier, NotificationLevel
 from .factory import NotifierFactory
 
 def factory() -> NotifierFactory:

@@ -262,7 +262,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 gettext('Invalid private key. ') + str(e)
             )
 
-        request = values['_request']
+        request: 'ExtendedHttpRequest' = values['_request']
 
         if self.entityID.value == '':
             self.entityID.value = request.build_absolute_uri(self.infoUrl())

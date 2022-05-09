@@ -38,7 +38,7 @@ from uds.models import Notifier
 from uds.core import messaging
 from uds.core.ui import gui
 from uds.core.util import permissions
-from uds.core.util import os_detector as OsDetector
+from uds.core.managers import notifications
 
 from uds.REST.model import ModelHandler
 
@@ -55,7 +55,6 @@ class Notifiers(ModelHandler):
         'name',
         'comments',
         'tags',
-        'label',
     ]
 
     table_title = _('Notifiers')
@@ -92,4 +91,3 @@ class Notifiers(ModelHandler):
             'type_name': type_.name(),
             'permission': permissions.getEffectivePermission(self._user, item),
         }
-

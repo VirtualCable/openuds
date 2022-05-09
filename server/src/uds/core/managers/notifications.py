@@ -69,13 +69,13 @@ class NotificationsManager(metaclass=singleton.Singleton):
     def registerGroup(self, group: str) -> None:
         """
         Registers a new group.
-        This is used to group notifications, so that we can send them to a group of users.
+        This is used to group notifications
         """
         pass
 
     def registerIdentificator(self, group: str, identificator: str) -> None:
         """
         Registers a new identificator.
-        This is used to group notifications, so that we can send them to a group of users.
+        This is used to identify notifications
         """
         pass
