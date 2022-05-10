@@ -372,7 +372,6 @@ def webLogin(
     cookie = getUDSCookie(request, response)
 
     user.updateLastAccess()
-    request.session.clear()
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = cryptoManager().symCrypt(
         password, cookie
