@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _, gettext
-from uds.models import Notifier
+from uds.models import Notifier, NotificationLevel
 from uds.core import messaging
 from uds.core.ui import gui
 from uds.core.util import permissions
@@ -54,6 +54,7 @@ class Notifiers(ModelHandler):
     save_fields = [
         'name',
         'comments',
+        'level',
         'tags',
     ]
 
@@ -61,6 +62,7 @@ class Notifiers(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
+        {'level': {'title': _('Level')}},
         {'comments': {'title': _('Comments')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
@@ -74,17 +76,30 @@ class Notifiers(ModelHandler):
         if not notifier:
             raise self.invalidItemException()
 
-        field = self.addDefaultFields(
+        localGui = self.addDefaultFields(
             notifier.guiDescription(), ['name', 'comments', 'tags']
         )
 
-        return field
+        for field in [
+            {
+                'name': 'level',
+                'values': [gui.choiceItem(i[0], i[1]) for i in NotificationLevel.all()],
+                'label': gettext('Level'),
+                'tooltip': gettext('Level of notifications'),
+                'type': gui.InputField.CHOICE_TYPE,
+                'order': 102,
+            }
+        ]:
+            self.addField(localGui, field)
+
+        return localGui
 
     def item_as_dict(self, item: Notifier) -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
         return {
             'id': item.uuid,
             'name': item.name,
+            'level': item.level,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'type': type_.type(),

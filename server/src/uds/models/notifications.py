@@ -33,6 +33,7 @@ import logging
 import typing
 
 from django.db import models, transaction
+from django.utils.translation import gettext as _
 
 
 from .managed_object_model import ManagedObjectModel
@@ -52,6 +53,11 @@ class NotificationLevel(IntEnum):
     ERROR = 2
     CRITICAL = 3
 
+    # Return all notification levels as tuples of (level, name)
+    @classmethod
+    def all(cls):
+        return [(level.value, level.name) for level in (cls.INFO, cls.WARNING, cls.ERROR, cls.CRITICAL)]
+    
 
 # This model will be available on local "persistent" storage and also on configured database
 class Notification(models.Model):
