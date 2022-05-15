@@ -78,8 +78,6 @@ class Notifier(Module):
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile: typing.ClassVar[str] = 'notifier.png'
 
-    level: NotificationLevel = NotificationLevel.ERROR
-
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)
         self.initialize(values)

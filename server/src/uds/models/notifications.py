@@ -53,7 +53,7 @@ class NotificationLevel(IntEnum):
     ERROR = 2
     CRITICAL = 3
 
-    # Return all notification levels as tuples of (level, name)
+    # Return all notification levels as tuples of (level value, level name)
     @classmethod
     def all(cls):
         return [(level.value, level.name) for level in (cls.INFO, cls.WARNING, cls.ERROR, cls.CRITICAL)]

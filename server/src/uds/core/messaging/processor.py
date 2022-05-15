@@ -51,8 +51,8 @@ class MessageProcessorThread(BaseThread):
 
     def run(self):
         # Load providers at beginning
-        providers: typing.List[NotificationProviderModule] = [
-            p.getInstance() for p in Notifier.objects.all()
+        providers: typing.List[typing.Tuple[int, NotificationProviderModule]] = [
+            (p.level, p.getInstance()) for p in Notifier.objects.all()
         ]
 
         while self.keepRunning:
@@ -83,10 +83,9 @@ class MessageProcessorThread(BaseThread):
                     )
 
                 if notify:
-                    for p in providers:
-                        if (
-                            not self.keepRunning
-                        ):  # if we are asked to stop, we don't try to send anymore
+                    for p in (i[1] for i in providers if i[0] >= n.level):
+                        # if we are asked to stop, we don't try to send anymore
+                        if not self.keepRunning:
                             break
                         p.notify(n.group, n.identificator, n.level, n.message)
 
