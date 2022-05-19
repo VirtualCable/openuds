@@ -108,6 +108,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             )
             .exclude(state__in=State.INFO_STATES)
             .count(),
+            'max_services_count_type': item.max_services_count_type,
             'maintenance_mode': item.provider.maintenance_mode,
             'permission': perm,
         }
@@ -150,7 +151,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         # We need this fields for all
         logger.debug('Saving service for %s / %s', parent, item)
         fields = self.readFieldsFromParams(
-            ['name', 'comments', 'data_type', 'tags', 'proxy_id']
+            ['name', 'comments', 'data_type', 'tags', 'max_services_count_type']
         )
         tags = fields['tags']
         del fields['tags']
@@ -169,7 +170,6 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service.tags.set(
                 [models.Tag.objects.get_or_create(tag=val)[0] for val in tags]
             )
-            service.proxy = proxy  # type: ignore  # Valid asignation, but mypy complains :)
 
             serviceInstance = service.getInstance(self._params)
 
@@ -234,6 +234,13 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 }
             },
             {'user_services_count': {'title': _('User services'), 'type': 'numeric'}},
+            {
+                'max_services_count_type': {
+                    'title': _('Max services count type'),
+                    'type': 'dict',
+                    'dict': {'0': _('Standard'), '1': _('Conservative')}
+                },
+            },
             {'tags': {'title': _('tags'), 'visible': False}},
         ]
 
@@ -282,6 +289,23 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             )  # Instantiate it so it has the opportunity to alter gui description based on parent
             localGui = self.addDefaultFields(
                 service.guiDescription(service), ['name', 'comments', 'tags']
+            )
+            self.addField(
+                localGui,
+                {
+                    'name': 'max_services_count_type',
+                    'values': [
+                        gui.choiceItem('0', _('Standard')),
+                        gui.choiceItem('1', _('Conservative')),
+                    ],
+                    'label': _('Service counting method'),
+                    'tooltip': _(
+                        'Kind of service counting for calculating if MAX is reached'
+                    ),
+                    'type': gui.InputField.CHOICE_TYPE,
+                    'rdonly': False,
+                    'order': 101,
+                },
             )
 
             return localGui
