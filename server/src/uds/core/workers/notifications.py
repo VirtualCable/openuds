@@ -27,15 +27,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .provider import Notifier, NotificationLevel
-from .factory import NotifierFactory
+import logging
 
-from . import config
+from uds.core.jobs import Job
+from uds.core.util.config import GlobalConfig
+from uds.core.util.state import State
+from uds.models import ServicePool, getSqlDatetime
 
-def factory() -> NotifierFactory:
-    """
-    Returns the factory for Notification Providers
-    """
-    return NotifierFactory()
+logger = logging.getLogger(__name__)
+
+
+class Notifications(Job):
+    frecuency = 60  # Once every minute
+    frecuency_cfg = GlobalConfig.CHECK_UNUSED_DELAY
+    friendly_name = 'Notifications worker'
+
+    def run(self) -> None:
+        pass

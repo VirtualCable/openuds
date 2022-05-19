@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -80,6 +80,7 @@ class Config(Handler):
                 'longText': cfg.isLongText(),
                 'type': cfg.getType(),
                 'params': cfg.getParams(),
+                'help': cfg.getHelp(),
             }
         logger.debug('Configuration: %s', res)
         return res

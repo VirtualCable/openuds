@@ -101,9 +101,6 @@ from .calendar_action import CalendarAction
 from .account import Account
 from .account_usage import AccountUsage
 
-# Proxies
-from .proxy import Proxy
-
 # Tagging
 from .tag import Tag, TaggingMixin
 

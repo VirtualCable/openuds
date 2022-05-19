@@ -118,11 +118,6 @@ class Transport(Module):
         port: typing.Union[str, int],
         timeout: float = 4,
     ) -> bool:
-        proxy: typing.Optional[
-            'models.Proxy'
-        ] = userService.deployed_service.service.proxy
-        if proxy:
-            return proxy.doTestServer(ip, port, timeout)
         return net.testConnection(ip, str(port), timeout)
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:

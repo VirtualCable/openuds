@@ -30,11 +30,6 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from uds.core import managers
-from uds.core.util.config import Config
 from .saml import SAMLAuthenticator  # import for registration on space, 
 
-# Early declaration of config variables
-Config.section('SAML').value('Organization Name', 'UDS').get()
-Config.section('SAML').value('Org. Display Name', 'UDS Organization').get()
-Config.section('SAML').value('Organization URL', 'http://www.udsenterprise.com').get()
-
+from . import config

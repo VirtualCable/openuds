@@ -102,8 +102,6 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'comments': item.comments,
             'type': item.data_type,
             'type_name': _(itemType.name()),
-            'proxy_id': item.proxy.uuid if item.proxy is not None else '-1',
-            'proxy': item.proxy.name if item.proxy is not None else '',
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': models.UserService.objects.filter(
                 deployed_service__service=item
@@ -157,17 +155,6 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         tags = fields['tags']
         del fields['tags']
         service: typing.Optional[models.Service] = None
-
-        proxyId = fields['proxy_id']
-        fields['proxy_id'] = None
-        logger.debug('Proxy id: %s', proxyId)
-
-        proxy: typing.Optional[models.Proxy] = None
-        if proxyId != '-1':
-            try:
-                proxy = models.Proxy.objects.get(uuid=processUuid(proxyId))
-            except Exception:
-                logger.exception('Getting proxy ID')
 
         try:
             if not item:  # Create new
@@ -248,11 +235,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             },
             {'user_services_count': {'title': _('User services'), 'type': 'numeric'}},
             {'tags': {'title': _('tags'), 'visible': False}},
-        ] + (
-            [{'proxy': {'title': _('Proxy')}}]
-            if GlobalConfig.EXPERIMENTAL_FEATURES.getBool()
-            else []
-        )
+        ]
 
     def getTypes(
         self, parent: 'Provider', forType: typing.Optional[str]
@@ -300,34 +283,6 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             localGui = self.addDefaultFields(
                 service.guiDescription(service), ['name', 'comments', 'tags']
             )
-            if GlobalConfig.EXPERIMENTAL_FEATURES.getBool():
-                self.addField(
-                    localGui,
-                    {
-                        'name': 'proxy_id',
-                        'values': [gui.choiceItem(-1, '')]
-                        + gui.sortedChoices(
-                            [
-                                gui.choiceItem(v.uuid, v.name)
-                                for v in models.Proxy.objects.all()
-                            ]
-                        ),
-                        'label': _('Proxy'),
-                        'tooltip': _('Proxy for services behind a firewall'),
-                        'type': gui.InputField.CHOICE_TYPE,
-                        'tab': _('Advanced'),
-                        'order': 132,
-                    },
-                )
-            else:
-                self.addField(
-                    localGui,
-                    {
-                        'name': 'proxy_id',
-                        'value': '-1',
-                        'type': gui.InputField.HIDDEN_TYPE,
-                    },
-                )
 
             return localGui
 

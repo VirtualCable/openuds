@@ -42,7 +42,6 @@ from uds.core.util import net
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
-from .proxy import Proxy
 from .provider import Provider
 
 # Not imported at runtime, just for type checking
@@ -79,14 +78,13 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         Provider, related_name='services', on_delete=models.CASCADE
     )
 
-    # Proxy for this service
-    proxy: 'models.ForeignKey[Service, Proxy]' = models.ForeignKey(
-        Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE
-    )
-
     token = models.CharField(
         max_length=64, default=None, null=True, blank=True, unique=True
     )
+
+    # 0 -> Standard max count type, that is, count only "creating and running" instances
+    # 1 -> Count all instances, including "waint for delete" and "deleting" ones
+    max_services_count_type = models.PositiveIntegerField(default=0)
 
     _cachedInstance: typing.Optional['services.Service'] = None
 
@@ -182,12 +180,24 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     def testServer(
         self, host: str, port: typing.Union[str, int], timeout: float = 4
     ) -> bool:
-        if self.proxy:
-            return self.proxy.doTestServer(host, port, timeout)
         return net.testConnection(host, port, timeout)
+
+    @property
+    def oldMaxAccountingMethod(self) -> bool:
+        # Compatibility with old accounting method
+        # Counts only "creating and running" instances for max limit checking
+        return self.max_services_count_type == 0
+
+    @property
+    def newMaxAccountingMethod(self) -> bool:
+        # Compatibility with new accounting method,
+        # Counts EVERYTHING for max limit checking
+        return self.max_services_count_type == 1
+
 
     def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
+
 
     @staticmethod
     def beforeDelete(sender, **kwargs) -> None:

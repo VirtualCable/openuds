@@ -45,9 +45,10 @@ from onelogin.saml2.settings import OneLogin_Saml2_Settings
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core.ui import gui
 from uds.core import auths
-from uds.core.util.config import Config
 from uds.core.managers import cryptoManager
 from uds.core.util.decorators import allowCache
+
+from . import config
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -347,7 +348,7 @@ class SAMLAuthenticator(auths.Authenticator):
             self.cache.put(
                 'idpMetadata',
                 val,
-                Config.section('SAML').value('IDP Metadata cache').getInt(True),
+                config.IDP_METADATA_CACHE.getInt(True),
             )
         else:
             val = self.idpMetadata.value
@@ -387,11 +388,9 @@ class SAMLAuthenticator(auths.Authenticator):
             },
             'organization': {
                 'en-US': {
-                    'name': Config.section('SAML').value('Organization Name').get(True),
-                    'displayname': Config.section('SAML')
-                    .value('Org. Display Name')
-                    .get(True),
-                    'url': Config.section('SAML').value('Organization URL').get(True),
+                    'name': config.ORGANIZATION_NAME.get(),
+                    'displayname': config.ORGANIZATION_DISPLAY.get(),
+                    'url': config.ORGANIZATION_URL.get(),
                 },
             },
         }

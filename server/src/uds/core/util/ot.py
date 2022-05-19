@@ -77,7 +77,6 @@ objTypeDict: typing.Dict[typing.Type['Model'], int] = {
     models.StatsEvents: STATS_EVENTS_TYPE,
     models.Calendar: CALENDAR_TYPE,
     models.CalendarRule: CALENDAR_RULE_TYPE,
-    models.Proxy: PROXY_TYPE,
     models.MetaPool: METAPOOL_TYPE,
     models.Account: ACCOUNT_TYPE,
     models.ActorToken: ACTOR_TOKEN_TYPE,

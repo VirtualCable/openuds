@@ -68,7 +68,6 @@ if typing.TYPE_CHECKING:
         ServicePoolPublicationChangelog,
         User,
         Group,
-        Proxy,
         MetaPoolMember,
         CalendarAccess,
         CalendarAction
@@ -679,11 +678,6 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def testServer(self, host: str, port: typing.Union[str, int], timeout: float=4) -> bool:
         return self.service.testServer(host, port, timeout)
-
-    # parent accessors
-    @property
-    def proxy(self) -> typing.Optional['Proxy']:
-        return self.service.proxy
 
     # Utility for logging
     def log(self, message: str, level: int = log.INFO) -> None:

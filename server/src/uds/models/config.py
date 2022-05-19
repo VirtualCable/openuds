@@ -33,7 +33,6 @@
 import logging
 
 from django.db import models
-from django.db.models import constraints
 
 
 logger = logging.getLogger(__name__)
@@ -51,6 +50,7 @@ class Config(models.Model):
     crypt = models.BooleanField(default=False)
     long = models.BooleanField(default=False)
     field_type = models.IntegerField(default=-1)
+    help = models.CharField(max_length=256, default='')
 
     # "fake" declarations for type checking
     objects: 'models.manager.Manager[Config]'

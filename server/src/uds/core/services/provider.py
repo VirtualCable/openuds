@@ -182,11 +182,7 @@ class ServiceProvider(Module):
     def getMaxPreparingServices(self) -> int:
         val = self.maxPreparingServices
         if val is None:
-            val = (
-                self.maxPreparingServices
-            ) = GlobalConfig.MAX_PREPARING_SERVICES.getInt(
-                force=True
-            )  # Recover global an cache till restart
+            val = self.maxPreparingServices = 15
 
         if isinstance(val, gui.InputField):
             retVal = int(val.value)
@@ -197,9 +193,7 @@ class ServiceProvider(Module):
     def getMaxRemovingServices(self) -> int:
         val = self.maxRemovingServices
         if val is None:
-            val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(
-                force=True
-            )  # Recover global an cache till restart
+            val = self.maxRemovingServices = 15
 
         if isinstance(val, gui.InputField):
             retVal = int(val.value)
@@ -210,9 +204,7 @@ class ServiceProvider(Module):
     def getIgnoreLimits(self) -> bool:
         val = self.ignoreLimits
         if val is None:
-            val = self.ignoreLimits = GlobalConfig.IGNORE_LIMITS.getBool(
-                force=True
-            )  # Recover global an cache till restart
+            val = self.ignoreLimits = False
 
         val = getattr(val, 'value', val)
         return val is True or val == gui.TRUE

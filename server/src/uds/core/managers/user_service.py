@@ -87,12 +87,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def getStateFilter(servicePool: ServicePool) -> Q:
-        if (
-            servicePool.service.getInstance().maxDeployed == services.Service.UNLIMITED
-            and GlobalConfig.MAX_SERVICES_COUNT_NEW.getBool() is False
-        ):
-            states = [State.PREPARING, State.USABLE]
-        else:
+        if servicePool.service.oldMaxAccountingMethod:  # If no limits and accounting method is not old one
+            # Valid states are: PREPARING, USABLE
+            states = [State.PREPARING, State.USABLE] 
+        else:  # New accounting method selected
             states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
         return Q(state__in=states)
 
