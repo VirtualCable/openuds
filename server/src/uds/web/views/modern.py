@@ -32,6 +32,7 @@ import time
 import logging
 import typing
 
+from django.middleware import csrf
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.cache import never_cache
@@ -48,11 +49,16 @@ from uds.web.util import configjs
 
 logger = logging.getLogger(__name__)
 
+CSRF_FIELD = 'csrfmiddlewaretoken'
 
 @never_cache
 def index(request: HttpRequest) -> HttpResponse:
-    # return errorView(request, 1)
-    response = render(request, 'uds/modern/index.html', {})
+    # Gets csrf token
+    csrf_token = csrf.get_token(request)
+    if csrf_token is not None:
+        csrf_token = str(csrf_token)
+
+    response = render(request, 'uds/modern/index.html', {'csrf_field': CSRF_FIELD, 'csfr_token': csrf_token})
 
     # Ensure UDS cookie is present
     auth.getUDSCookie(request, response)

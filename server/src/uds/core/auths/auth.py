@@ -454,7 +454,7 @@ def webLogout(
         # Success/fail result is now ignored
         exit_url = authenticator.logout(request, username).url or exit_url
         if request.user.id != ROOT_ID:
-            # Try yo invoke logout of auth
+            # Log the event if not root user
             events.addEvent(
                 request.user.manager,
                 events.ET_LOGOUT,
