@@ -77,6 +77,7 @@
         return s;
       }
     };
+    var csrf = {  csrfToken: '{{ csrf_token }}',  csrfField: '{{ csrf_field }}' };
 
     if (window.top !== window.self) {
       window.location.href = 'https://www.udsenterprise.com';

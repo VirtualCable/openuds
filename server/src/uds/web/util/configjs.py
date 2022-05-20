@@ -35,7 +35,6 @@ import typing
 
 from django import template
 from django.conf import settings
-from django.middleware import csrf
 from django.utils.translation import gettext, get_language
 from django.urls import reverse
 from django.templatetags.static import static
@@ -83,11 +82,6 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         'user': user.name if user else None,
         'role': role,
     }
-
-    # Gets csrf token
-    csrf_token = csrf.get_token(request)
-    if csrf_token is not None:
-        csrf_token = str(csrf_token)
 
     tag = request.session.get('tag', None)
     logger.debug('Tag config: %s', tag)
@@ -152,8 +146,6 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         ],
         'tag': tag,
         'os': request.os['OS'].value[0],
-        'csrf_field': CSRF_FIELD,
-        'csrf': csrf_token,
         'image_size': Image.MAX_IMAGE_SIZE,
         'experimental_features': GlobalConfig.EXPERIMENTAL_FEATURES.getBool(),
         'reload_time': GlobalConfig.RELOAD_TIME.getInt(True),

@@ -415,7 +415,7 @@ def webLogout(
     by django in regular basis.
     """
     if exit_url is None:
-        exit_url = request.build_absolute_uri(reverse('page.logout'))
+        exit_url = request.build_absolute_uri(reverse('page.login'))
         # exit_url = GlobalConfig.LOGIN_URL.get()
         # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
         #     exit_url = exit_url.replace('http://', 'https://')
@@ -425,7 +425,7 @@ def webLogout(
         username = request.user.name
         exit_url = authenticator.logout(username) or exit_url
         if request.user.id != ROOT_ID:
-            # Try yo invoke logout of auth
+            # Log the event if not root user
             events.addEvent(
                 request.user.manager,
                 events.ET_LOGOUT,
