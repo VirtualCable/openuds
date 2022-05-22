@@ -33,3 +33,4 @@
 from .messaging import *
 from .REST import *
 from .web import *
+from .core import *

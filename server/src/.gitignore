@@ -3,3 +3,4 @@
 .coverage
 /uds/static/clients/
 /*.sqlite3*
+.hypothesis
