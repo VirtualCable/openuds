@@ -8,7 +8,7 @@ from uds.core.managers.crypto import CryptoManager
 
 
 def getClient() -> Client:
-    # Ensure enterprise middleware is not enabled if it exists...
+    # Ensure only basic middleware are enabled.
     settings.MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.locale.LocaleMiddleware',
