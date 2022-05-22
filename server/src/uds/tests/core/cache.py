@@ -31,9 +31,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from __future__ import unicode_literals
-
 # We use commit/rollback
 from django.test import TransactionTestCase as TestCase
 from uds.core.util.cache import Cache

@@ -18,3 +18,4 @@ WeasyPrint
 webencodings
 xml-marshaller
 cryptography
+hypothesis
