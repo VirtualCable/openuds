@@ -168,21 +168,21 @@ def isTrustedSource(ip: str) -> bool:
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
 def trustedSourceRequired(
-    view_func: typing.Callable[..., RT]
-) -> typing.Callable[..., RT]:
+    view_func: typing.Callable[..., HttpResponse]
+) -> typing.Callable[..., HttpResponse]:
     """
     Decorator to set protection to access page
     look for sample at uds.dispatchers.pam
     """
 
     @wraps(view_func)
-    def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
+    def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> HttpResponse:
         """
         Wrapped function for decorator
         """
         try:
             if not isTrustedSource(request.ip):
-                return HttpResponseForbidden()  # type: ignore
+                return HttpResponseForbidden()
         except Exception as e:
             logger.warning(
                 'Error checking trusted source: "%s" does not seems to be a valid network string. Using Unrestricted access.',
@@ -206,7 +206,7 @@ def denyNonAuthenticated(
     return _wrapped_view
 
 
-def __registerUser(
+def registerUser(
     authenticator: models.Authenticator,
     authInstance: AuthenticatorInstance,
     username: str,
@@ -302,7 +302,7 @@ def authenticate(
         )
         return AuthResult()
 
-    return __registerUser(authenticator, authInstance, username, request)
+    return registerUser(authenticator, authInstance, username, request)
 
 
 def authenticateViaCallback(
@@ -349,7 +349,7 @@ def authenticateViaCallback(
         return AuthResult(url=result.url)
 
     if result.username:
-        return __registerUser(
+        return registerUser(
             authenticator, authInstance, result.username or '', request
         )
 
@@ -443,10 +443,7 @@ def webLogout(
     by django in regular basis.
     """
     if exit_url is None:
-        exit_url = reverse('page.login')
-        # exit_url = GlobalConfig.LOGIN_URL.get()
-        # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
-        #     exit_url = exit_url.replace('http://', 'https://')
+        exit_url = GlobalConfig.LOGOUT_URL.get(force=True).strip() or reverse('page.login')
 
     if request.user:
         authenticator = request.user.manager.getInstance()

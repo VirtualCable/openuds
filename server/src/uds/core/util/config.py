@@ -550,6 +550,11 @@ class GlobalConfig:
         'Min. Services to show filter', '8', type=Config.NUMERIC_FIELD,
         help=_('Minimal User Services needed to show filter')
     )
+    LOGOUT_URL: Config.Value = Config.section(CUSTOM_SECTION).value(
+        'Logout URL', '', type=Config.TEXT_FIELD,
+        help=_('Redirect URL after logout. If empty, the user will be redirected to the login page.')
+    )
+
 
     EXPERIMENTAL_FEATURES: Config.Value = Config.section(GLOBAL_SECTION).value(
         'Experimental Features', '0', type=Config.BOOLEAN_FIELD,

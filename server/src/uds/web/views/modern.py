@@ -130,6 +130,6 @@ def js(request: ExtendedHttpRequest) -> HttpResponse:
 
 
 @never_cache
-@auth.denyNonAuthenticated
+@auth.denyNonAuthenticated  # webLoginRequired not used here because this is not a web page, but js
 def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))
