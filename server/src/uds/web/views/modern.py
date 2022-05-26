@@ -58,7 +58,7 @@ def index(request: HttpRequest) -> HttpResponse:
     if csrf_token is not None:
         csrf_token = str(csrf_token)
 
-    response = render(request, 'uds/modern/index.html', {'csrf_field': CSRF_FIELD, 'csfr_token': csrf_token})
+    response = render(request, 'uds/modern/index.html', {'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token})
 
     # Ensure UDS cookie is present
     auth.getUDSCookie(request, response)
