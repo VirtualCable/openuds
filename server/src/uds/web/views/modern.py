@@ -38,6 +38,8 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRed
 from django.urls import reverse
 
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
+from django.views.decorators.cache import never_cache
+
 from uds.core.auths import auth, exceptions
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
@@ -51,6 +53,7 @@ logger = logging.getLogger(__name__)
 CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
+@never_cache
 def index(request: HttpRequest) -> HttpResponse:
     # Gets csrf token
     csrf_token = csrf.get_token(request)
