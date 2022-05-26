@@ -32,7 +32,7 @@
 import logging
 
 # from .login import login, logout
-from uds.web.util.errors import error
+from uds.web.util.errors import error, errorMessage
 from .service import (
     transportOwnLink,
     transportIcon,

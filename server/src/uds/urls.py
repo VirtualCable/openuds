@@ -192,6 +192,12 @@ urlpatterns = [
         uds.web.views.customAuth,
         name='uds.web.views.customAuth',
     ),
+    # Error message
+    re_path(
+        r'^uds/webapi/error/(?P<err>[0-9]+)$',
+        uds.web.views.errorMessage,
+        name='webapi.error',
+    ),
     # END WEB API
     # Costumization of GUI
     re_path(
