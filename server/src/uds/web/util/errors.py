@@ -31,11 +31,13 @@
 """
 import traceback
 import codecs
+import json
 import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render
+from django.http import HttpResponse
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -46,7 +48,6 @@ from uds.models import ServicePool, Transport, UserService, Authenticator
 if typing.TYPE_CHECKING:
     from django.http import (
         HttpRequest,
-        HttpResponse,
     )  # pylint: disable=ungrouped-imports
 
 
@@ -101,24 +102,11 @@ strings = [
 
 def errorString(errorId: int) -> str:
     errorId = int(errorId)
-    if errorId < len(strings):
-        return strings[errorId]
-    return strings[0]
+    return str(strings[errorId]) if errorId < len(strings) else str(strings[0])
 
 
 def errorView(request: 'HttpRequest', errorCode: int) -> HttpResponseRedirect:
-    errorCode = int(errorCode)
-    code = (errorCode >> 8) & 0xFF
-    errorCode = errorCode & 0xFF
-
-    errStr = errorString(errorCode)
-    if code != 0:
-        errStr += ' (code {0:04X})'.format(code)
-
-    errStr = codecs.encode(str(errStr).encode(), 'base64').decode().replace('\n', '')
-
-    logger.debug('Redirection to error view with %s', errStr)
-    return HttpResponseRedirect(reverse('page.error', kwargs={'err': errStr}))
+    return HttpResponseRedirect(reverse('page.error', kwargs={'err': errorCode}))
 
 
 def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseRedirect:
@@ -142,11 +130,11 @@ def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseR
         raise exception  # Raise it so we can "catch" and redirect
     except UserService.DoesNotExist:
         return errorView(request, ERR_USER_SERVICE_NOT_FOUND)
-    except ServicePool.DoesNotExist:
+    except ServicePool.DoesNotExist:  # type: ignore
         return errorView(request, SERVICE_NOT_FOUND)
-    except Transport.DoesNotExist:
+    except Transport.DoesNotExist:  # type: ignore
         return errorView(request, TRANSPORT_NOT_FOUND)
-    except Authenticator.DoesNotExist:
+    except Authenticator.DoesNotExist:  # type: ignore
         return errorView(request, AUTHENTICATOR_NOT_FOUND)
     except InvalidUserException:
         return errorView(request, ACCESS_DENIED)
@@ -160,7 +148,7 @@ def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseR
         return errorView(request, SERVICE_IN_MAINTENANCE)
     except ServiceNotReadyError as e:
         # add code as high bits of idError
-        return errorView(request, e.code << 8 | SERVICE_NOT_READY)
+        return errorView(request, SERVICE_NOT_READY)
     except Exception as e:
         logger.exception('Exception cautgh at view!!!')
         return errorView(request, UNKNOWN_ERROR)
@@ -173,12 +161,12 @@ def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
     """
     return render(request, 'uds/modern/index.html', {})
 
-    # idError = int(idError)
-    # code = idError >> 8
-    # idError &= 0xFF
 
-    # errStr = errorString(idError)
-    # if code != 0:
-    #     errStr += ' (code {0:04X})'.format(code)
-
-    # return render(request, theme.template('error.html'), {'errorString': errStr})
+def errorMessage(request: 'HttpRequest', err: int) -> 'HttpResponse':
+    """
+    Error view, responsible of error display
+    """
+    return HttpResponse(
+        json.dumps({'error': errorString(err), 'code': str(err)}),
+        content_type='application/json',
+    )

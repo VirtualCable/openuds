@@ -182,6 +182,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'user': reverse('page.index'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('webapi.services'),
+            'error': reverse('webapi.error', kwargs={'err': '9999'}),
             'enabler': reverse(
                 'webapi.enabler',
                 kwargs={'idService': 'param1', 'idTransport': 'param2'},

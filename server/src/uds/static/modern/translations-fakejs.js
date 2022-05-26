@@ -19,7 +19,6 @@ gettext("UDS Client Download");
 gettext("Error launching service");
 gettext("Please wait until the service is launched.");
 gettext("Launching service");
-gettext("Invalid error string");
 gettext("Errors found");
 gettext("Warning");
 gettext("Service is in maintenance and cannot be executed");
