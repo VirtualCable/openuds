@@ -247,6 +247,10 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
 def getCaCertsFile() -> typing.Optional[str]:
     # First, try certifi...
 
+    # If environment contains CERTIFICATE_BUNDLE_PATH, use it
+    if 'CERTIFICATE_BUNDLE_PATH' in os.environ:
+        return os.environ['CERTIFICATE_BUNDLE_PATH']
+
     try:
         if os.path.exists(certifi.where()):
             return certifi.where()
