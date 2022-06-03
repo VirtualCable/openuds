@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2018-2019 Virtual Cable S.L.
+# Copyright (c) 2018-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -51,6 +51,7 @@ logger = logging.getLogger(__name__)
 
 CSRF_FIELD = 'csrfmiddlewaretoken'
 
+
 @never_cache
 def index(request: HttpRequest) -> HttpResponse:
     # Gets csrf token
@@ -58,7 +59,11 @@ def index(request: HttpRequest) -> HttpResponse:
     if csrf_token is not None:
         csrf_token = str(csrf_token)
 
-    response = render(request, 'uds/modern/index.html', {'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token})
+    response = render(
+        request,
+        'uds/modern/index.html',
+        {'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token},
+    )
 
     # Ensure UDS cookie is present
     auth.getUDSCookie(request, response)
