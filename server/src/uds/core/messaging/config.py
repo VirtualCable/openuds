@@ -9,13 +9,6 @@ DO_NOT_REPEAT = cfg.Config.section('Messaging').value(
     help=_('Number of seconds to ignore repeated messages'),
     type=cfg.Config.NUMERIC_FIELD,
 )
-MESSAGE_INTERVAL = cfg.Config.section('Messaging').value(
-    'Interval',
-    '60',
-    help=_('Number of seconds between message processing'),
-    type=cfg.Config.NUMERIC_FIELD,
-)
 
 # Ensure that we have a default value for this on startup
 DO_NOT_REPEAT.getInt()
-MESSAGE_INTERVAL.getInt()

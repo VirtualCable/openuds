@@ -28,37 +28,69 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import time
 import logging
 import typing
 
 from uds.core.managers.task import BaseThread
 
-from uds.models import Notifier, Notification
+from uds.models import Notifier, Notification, getSqlDatetime
 from .provider import Notifier as NotificationProviderModule
+from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
 
 WAIT_TIME = 8  # seconds
+CACHE_TIMEOUT = 64  # seconds
 
 
 class MessageProcessorThread(BaseThread):
     keepRunning: bool = True
 
+    _cached_providers: typing.Optional[
+        typing.List[typing.Tuple[int, NotificationProviderModule]]
+    ]
+    _cached_stamp: float
+
     def __init__(self):
         super().__init__()
         self.setName('MessageProcessorThread')
+        self._cached_providers = None
+        self._cached_stamp = 0.0
+
+    @property
+    def providers(self) -> typing.List[typing.Tuple[int, NotificationProviderModule]]:
+        # If _cached_providers is invalid or _cached_time is older than CACHE_TIMEOUT,
+        # we need to refresh it
+        if (
+            self._cached_providers is None
+            or time.time() - self._cached_stamp > CACHE_TIMEOUT
+        ):
+            self._cached_providers = [
+                (p.level, p.getInstance()) for p in Notifier.objects.all()
+            ]
+            self._cached_stamp = time.time()
+        return self._cached_providers
 
     def run(self):
-        # Load providers at beginning
-        providers: typing.List[typing.Tuple[int, NotificationProviderModule]] = [
-            (p.level, p.getInstance()) for p in Notifier.objects.all()
-        ]
-
         while self.keepRunning:
+
             # Locate all notifications from "persistent" and try to process them
-            # In no notification can be fully resolved, it will be kept in the database
+            # If no notification can be fully resolved, it will be kept in the database
             for n in Notification.getPersistentQuerySet().all():
+                # If there are any other notification simmilar to this on default db, skip it
+                # Simmilar means that group and identificator are present and it has less than DO_NOT_REPEAT seconds
+                # from last time
+                if Notification.objects.filter(
+                    group=n.group,
+                    identificator=n.identificator,
+                    stamp__gt=getSqlDatetime()
+                    - datetime.timedelta(DO_NOT_REPEAT.getInt()),
+                ).exists():
+                    # Remove it from the persistent db
+                    n.deletePersistent()
+                    continue
                 # Try to insert into Main DB
                 notify = (
                     not n.processed
@@ -70,20 +102,25 @@ class MessageProcessorThread(BaseThread):
                     n.save(using='default')
                     # Delete from Persistent DB, first restore PK
                     n.pk = pk
-                    Notification.deletePersistent(n)
+                    n.deletePersistent()
                     logger.debug('Saved notification %s to main DB', n)
                 except Exception:
                     # try notificators, but keep on db with error
                     # Restore pk, and save locally so we can try again
                     n.pk = pk
-                    Notification.savePersistent(n)
+                    try:
+                        Notification.savePersistent(n)
+                    except Exception:
+                        logger.error('Error saving notification %s to persistent DB', n)
+                        continue
+                    # Process notificators, but this is kept on db with processed flat as True
                     logger.warning(
                         'Could not save notification %s to main DB, trying notificators',
                         n,
                     )
 
                 if notify:
-                    for p in (i[1] for i in providers if i[0] >= n.level):
+                    for p in (i[1] for i in self.providers if i[0] >= n.level):
                         # if we are asked to stop, we don't try to send anymore
                         if not self.keepRunning:
                             break

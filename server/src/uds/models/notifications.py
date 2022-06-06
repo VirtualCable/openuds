@@ -87,13 +87,11 @@ class Notification(models.Model):
     def getPersistentQuerySet() -> 'models.QuerySet[Notification]':
         return Notification.objects.using('persistent')
 
-    @staticmethod
-    def savePersistent(record: 'Notification') -> None:
-        record.save(using='persistent')
+    def savePersistent(self) -> None:
+        self.save(using='persistent')
 
-    @staticmethod
-    def deletePersistent(record: 'Notification') -> None:
-        record.delete(using='persistent')
+    def deletePersistent(self) -> None:
+        self.delete(using='persistent')
 
     @staticmethod
     def atomicPersistent() -> 'transaction.Atomic':

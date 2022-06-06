@@ -31,6 +31,7 @@
 import logging
 
 from django.http import HttpResponse
+from django.middleware import csrf
 from django.shortcuts import render
 from django.template import RequestContext, loader
 from django.utils.translation import gettext as _
@@ -40,11 +41,22 @@ from uds.core.util.decorators import denyBrowsers
 
 logger = logging.getLogger(__name__)
 
+CSRF_FIELD = 'csrfmiddlewaretoken'
+
 
 @denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def index(request):
-    return render(request, 'uds/admin/index.html')
+    # Gets csrf token
+    csrf_token = csrf.get_token(request)
+    if csrf_token is not None:
+        csrf_token = str(csrf_token)
+
+    return render(
+        request,
+        'uds/admin/index.html',
+        {'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token},
+    )
 
 
 @denyBrowsers(browsers=['ie<10'])
