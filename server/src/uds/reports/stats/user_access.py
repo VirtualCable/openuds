@@ -114,7 +114,7 @@ class StatsReportLogin(StatsReport):
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
         samplingIntervals: typing.List[typing.Tuple[int, int]] = []
-        samplingIntervalSeconds = (end - start) // samplingPoints
+        samplingIntervalSeconds = (end - start) / samplingPoints
         for i in range(samplingPoints):
             samplingIntervals.append((int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds)))
 
