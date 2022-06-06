@@ -109,8 +109,7 @@ class CountersPoolAssigned(StatsReport):
             ):
                 hour = x[0].hour
                 val = int(x[1])
-                if hours[hour] < val:
-                    hours[hour] = val
+                hours[hour] = max(hours[hour], val)
 
             data.append({'uuid': pool.uuid, 'name': pool.name, 'hours': hours})
 

@@ -118,11 +118,12 @@ class StatsCounters(models.Model):
         # Max intervals, if present, will adjust interval (that are seconds)
         max_intervals = kwargs.get('max_intervals', 0)
         if max_intervals > 0:
-            interval = max(interval, int(to - since) / max_intervals)
+            count = q.count()
+            if max_intervals < count:
+                max_intervals = count
+            interval = int(to - since) / max_intervals
 
         floor = getSqlFnc('FLOOR')
-        ceil = getSqlFnc('CEIL')
-        avg = getSqlFnc('AVG')
         if interval > 0:
             q = q.extra(
                 select={
