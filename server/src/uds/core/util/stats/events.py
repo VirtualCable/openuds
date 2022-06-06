@@ -67,7 +67,7 @@ if typing.TYPE_CHECKING:
 ) = range(11)
 
 # Events names
-EVENT_NAMES = {
+EVENT_NAMES: typing.Mapping[int, str] = {
     ET_LOGIN: 'Login',
     ET_LOGOUT: 'Logout',
     ET_ACCESS: 'Access',
@@ -89,7 +89,7 @@ EVENT_NAMES = {
     OT_OSMANAGER
 ) = range(5)
 
-TYPES_NAMES = {
+TYPES_NAMES: typing.Mapping[int, str] = {
     OT_PROVIDER: 'Provider',
     OT_SERVICE: 'Service',
     OT_DEPLOYED: 'Deployed',
@@ -97,7 +97,7 @@ TYPES_NAMES = {
     OT_OSMANAGER: 'OS Manager'
 }
 
-__transDict: typing.Mapping[typing.Type['models.Model'], int] = {
+MODEL_TO_EVENT: typing.Mapping[typing.Type['models.Model'], int] = {
     ServicePool: OT_DEPLOYED,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
@@ -207,7 +207,7 @@ def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
     """
 
     return StatsManager.manager().addEvent(
-        __transDict[type(obj)], obj.id, eventType, **kwargs
+        MODEL_TO_EVENT[type(obj)], obj.id, eventType, **kwargs
     )
 
 
@@ -229,11 +229,7 @@ def getEvents(
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    from uds.models import NEVER_UNIX, getSqlDatetimeAsUnix
-
-    since = kwargs.get('since', NEVER_UNIX)
-    to = kwargs.get('to', getSqlDatetimeAsUnix())
-    type_ = type(obj)
+    objType = type(obj)
 
     if kwargs.get('all', False):
         owner_id = None
@@ -241,7 +237,7 @@ def getEvents(
         owner_id = obj.pk
 
     for i in StatsManager.manager().getEvents(
-        __transDict[type_], eventType, owner_id=owner_id, since=since, to=to
+        MODEL_TO_EVENT[objType], eventType, owner_id=owner_id, since=kwargs.get('since'), to=kwargs.get('to')
     ):
         yield EventTupleType(
             datetime.datetime.fromtimestamp(i.stamp),

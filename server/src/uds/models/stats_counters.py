@@ -113,7 +113,7 @@ class StatsCounters(models.Model):
         if q.count() == 0:
             return
 
-        interval = kwargs.get('interval', 600)
+        interval = kwargs.get('interval') or 600
 
         # Max intervals, if present, will adjust interval (that are seconds)
         max_intervals = kwargs.get('max_intervals', 0)

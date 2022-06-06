@@ -62,7 +62,7 @@ def __loadModules() -> None:
         addReportCls,
         reports.Report,
         __name__,
-        checker=lambda x: x.uuid is not None and x.uuid not in alreadyAdded,
+        checker=lambda x: x.uuid and x.uuid not in alreadyAdded,  # type: ignore
     )
 
 __loadModules()

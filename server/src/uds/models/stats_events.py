@@ -81,33 +81,39 @@ class StatsEvents(models.Model):
 
         Note: if someone cant get this more optimized, please, contribute it!
         """
-        if isinstance(event_type, (list, tuple, types.GeneratorType)):
-            fltr = StatsEvents.objects.filter(event_type__in=event_type)
-        else:
-            fltr = StatsEvents.objects.filter(event_type=event_type)
+        if isinstance(owner_type, int):
+            owner_type = [owner_type]
+        if isinstance(event_type, int):
+            event_type = [event_type]
+        q = StatsEvents.objects.filter(owner_type__in=owner_type, event_type__in=event_type)
 
-        if isinstance(owner_type, (list, tuple, types.GeneratorType)):
-            fltr = fltr.filter(owner_type__in=owner_type)
-        else:
-            fltr = fltr.filter(owner_type=owner_type)
+        if 'owner_id' in kwargs:
+            owner_id = kwargs['owner_id']
+            if isinstance(owner_id, int):
+                owner_id = [owner_id]
+            q = q.filter(owner_id__in=owner_id)
 
-        if kwargs.get('owner_id', None) is not None:
-            oid = kwargs.get('owner_id')
-            if isinstance(oid, (list, tuple)):
-                fltr = fltr.filter(owner_id__in=oid)
-            else:
-                fltr = fltr.filter(owner_id=oid)
+        since = kwargs.get('since')
+        if isinstance(since, datetime.datetime):
+            # Convert to unix timestamp
+            since = int(since.timestamp())
+        if not since:
+            # Get first timestamp from table, we knwo table has at least one record
+            since = StatsEvents.objects.order_by('stamp').first().stamp # type: ignore
+        to = kwargs.get('to')
+        if isinstance(to, datetime.datetime):
+            # Convert to unix timestamp
+            to = int(to.timestamp())
+        if not to:
+            # Get last timestamp from table, we know table has at least one record
+            to = StatsEvents.objects.order_by('-stamp').first().stamp # type: ignore
 
-        since = kwargs.get('since', None)
-        to = kwargs.get('to', None)
+        q = q.filter(stamp__gte=since, stamp__lte=to)
 
-        since = int(since) if since else NEVER_UNIX
-        to = int(to) if to else getSqlDatetimeAsUnix()
+        if kwargs.get('limit'):
+            q = q[:kwargs['limit']]
 
-        fltr = fltr.filter(stamp__gte=since, stamp__lt=to)
-
-        # We use result as an iterator
-        return fltr
+        return q
 
     # Utility aliases for reading
     @property
