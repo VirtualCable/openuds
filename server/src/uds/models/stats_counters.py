@@ -32,6 +32,7 @@
 """
 import typing
 import types
+import datetime
 import logging
 
 from django.db import models
@@ -56,7 +57,7 @@ class StatsCounters(models.Model):
     value = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[StatsCounters]'
+    objects: 'models.manager.Manager[StatsCounters]'
 
     class Meta:
         """
@@ -72,6 +73,77 @@ class StatsCounters(models.Model):
 
     @staticmethod
     def get_grouped(
+        owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs
+    ) -> typing.Generator['StatsCounters', None, None]:
+        """
+        Returns a QuerySet of counters grouped by owner_type and counter_type
+        """
+        if isinstance(owner_type, int):
+            owner_type = [owner_type]
+
+        q = StatsCounters.objects.filter(owner_type__in=owner_type, counter_type=counter_type)
+
+        if kwargs.get('owner_id'):
+            # If owner_id is a int, we add it to the list
+            if isinstance(kwargs['owner_id'], int):
+                kwargs['owner_id'] = [kwargs['owner_id']]
+
+            q = q.filter(owner_id__in=kwargs['owner_id'])
+
+        if q.count() == 0:
+            return
+
+        since = kwargs.get('since')
+        if isinstance(since, datetime.datetime):
+            # Convert to unix timestamp
+            since = int(since.timestamp())
+        if not since:
+            # Get first timestamp from table, we knwo table has at least one record
+            since = StatsCounters.objects.order_by('stamp').first().stamp # type: ignore
+        to = kwargs.get('to')
+        if isinstance(to, datetime.datetime):
+            # Convert to unix timestamp
+            to = int(to.timestamp())
+        if not to:
+            # Get last timestamp from table, we know table has at least one record
+            to = StatsCounters.objects.order_by('-stamp').first().stamp # type: ignore
+
+        q = q.filter(stamp__gte=since, stamp__lte=to)
+
+        if q.count() == 0:
+            return
+
+        interval = kwargs.get('interval') or 600
+
+        # Max intervals, if present, will adjust interval (that are seconds)
+        max_intervals = kwargs.get('max_intervals', 0)
+        if max_intervals > 0:
+            interval = max(interval, int(to - since) / max_intervals)
+
+        floor = getSqlFnc('FLOOR')
+        ceil = getSqlFnc('CEIL')
+        avg = getSqlFnc('AVG')
+        if interval > 0:
+            q = q.extra(
+                select={
+                    'group_by_stamp': f'{floor}(stamp / {interval}) * {interval}',
+                },
+            )
+
+
+        fnc = models.Avg('value') if not kwargs.get('use_max') else models.Max('value')
+
+        q = q.order_by('group_by_stamp').values('group_by_stamp').annotate(
+            value=fnc,
+        )
+        if kwargs.get('limit'):
+            q = q[:kwargs['limit']]
+
+        for i in q:
+            yield StatsCounters(id=-1, owner_type=-1, counter_type=-1, stamp=i['group_by_stamp'], value=i['value'])
+
+    @staticmethod
+    def get_grouped_old(
         owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs
     ) -> 'models.QuerySet[StatsCounters]':
         """
@@ -132,8 +204,8 @@ class StatsCounters(models.Model):
                 q = q.filter(owner_type=owner_type)
 
             if q.count() > max_intervals:
-                first = q.order_by('stamp')[0].stamp
-                last = q.order_by('stamp').reverse()[0].stamp
+                first = q.order_by('stamp')[0].stamp    # type: ignore  # Slicing is not supported by pylance right now
+                last = q.order_by('stamp').reverse()[0].stamp    # type: ignore  # Slicing is not supported by pylance right now
                 interval = int((last - first) / (max_intervals - 1))
 
         stampValue = '{ceil}(stamp/{interval})'.format(

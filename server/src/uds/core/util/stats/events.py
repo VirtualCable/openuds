@@ -31,19 +31,19 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
+import time
 import logging
 import typing
 
-from uds.core.managers.stats import StatsManager
-from uds.models import Provider, Service, ServicePool, Authenticator
+from uds.core.managers.stats import StatsManager, REVERSE_FLDS_EQUIV
+from uds.models import Provider, Service, ServicePool, Authenticator, OSManager
 
 logger = logging.getLogger(__name__)
 
-EventTupleType = typing.Tuple[datetime.datetime, str, str, str, str, int]
-EventClass = typing.Union[Provider, Service, ServicePool, Authenticator]
+# EventTupleType = typing.Tuple[datetime.datetime, str, str, str, str, int]
 
 if typing.TYPE_CHECKING:
-    from django.db.models import Model
+    from django.db import models
 
 # Posible events, note that not all are used by every possible owner type
 (
@@ -60,20 +60,49 @@ if typing.TYPE_CHECKING:
     # Tunnel
     ET_TUNNEL_OPEN,
     ET_TUNNEL_CLOSE,
-) = range(8)
+    # Os Manager
+    ET_OSMANAGER_INIT,
+    ET_OSMANAGER_READY,
+    ET_OSMANAGER_RELEASE
+) = range(11)
+
+# Events names
+EVENT_NAMES: typing.Mapping[int, str] = {
+    ET_LOGIN: 'Login',
+    ET_LOGOUT: 'Logout',
+    ET_ACCESS: 'Access',
+    ET_CACHE_HIT: 'Cache hit',
+    ET_CACHE_MISS: 'Cache miss',
+    ET_PLATFORM: 'Platform',
+    ET_TUNNEL_OPEN: 'Tunnel open',
+    ET_TUNNEL_CLOSE: 'Tunnel close',
+    ET_OSMANAGER_INIT: 'OS Manager init',
+    ET_OSMANAGER_READY: 'OS Manager ready',
+    ET_OSMANAGER_RELEASE: 'OS Manager release',
+}
 
 (
     OT_PROVIDER,
     OT_SERVICE,
     OT_DEPLOYED,
     OT_AUTHENTICATOR,
-) = range(4)
+    OT_OSMANAGER
+) = range(5)
 
-__transDict: typing.Mapping[typing.Type['Model'], int] = {
+TYPES_NAMES: typing.Mapping[int, str] = {
+    OT_PROVIDER: 'Provider',
+    OT_SERVICE: 'Service',
+    OT_DEPLOYED: 'Deployed',
+    OT_AUTHENTICATOR: 'Authenticator',
+    OT_OSMANAGER: 'OS Manager'
+}
+
+MODEL_TO_EVENT: typing.Mapping[typing.Type['models.Model'], int] = {
     ServicePool: OT_DEPLOYED,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
     Authenticator: OT_AUTHENTICATOR,
+    OSManager: OT_OSMANAGER
 }
 
 # Events data (fld1, fld2, fld3, fld4):
@@ -115,6 +144,55 @@ __transDict: typing.Mapping[typing.Type['Model'], int] = {
 #
 # OT_TUNNEL_CLOSE: -> On ServicePool
 #     (duration, sent, received, tunnel_id)
+#
+# OT_OSMANAGER_INIT: -> On OsManager
+#     (servicepool_uuid, srcip, userservice_uuid)
+#
+# OT_OSMANAGER_READY: -> On OsManager
+#     (servicepool_uuid, srcip, userservice_uuid)
+#
+# OT_OSMANAGER_RELEASE: -> On OsManager
+#     (servicepool_uuid, '', userservice_uuid)
+
+# Helpers
+# get owner by type and id
+def getOwner(ownerType: int, ownerId: int) -> typing.Optional['models.Model']:
+    if ownerType == OT_PROVIDER:
+        return Provider.objects.get(pk=ownerId)
+    elif ownerType == OT_SERVICE:
+        return Service.objects.get(pk=ownerId)
+    elif ownerType == OT_DEPLOYED:
+        return ServicePool.objects.get(pk=ownerId)
+    elif ownerType == OT_AUTHENTICATOR:
+        return Authenticator.objects.get(pk=ownerId)
+    elif ownerType == OT_OSMANAGER:
+        return OSManager.objects.get(pk=ownerId)
+    else:
+        return None
+
+class EventTupleType(typing.NamedTuple):
+    stamp: datetime.datetime
+    fld1: str
+    fld2: str
+    fld3: str
+    fld4: str
+    event_type: int
+
+    # aliases for fields
+    def __getitem__(self, item) -> typing.Any:
+        if item in REVERSE_FLDS_EQUIV:
+            item = REVERSE_FLDS_EQUIV[item]
+        return self.__getattribute__(item)
+
+    # Obtains the Event as a string
+    def __str__(self) -> str:
+        # Convert Event type to string first
+        eventName = EVENT_NAMES[self.event_type]
+        return '{} {} {} {} {} {}'.format(self.stamp, eventName, self.fld1, self.fld2, self.fld3, self.fld4 )
+
+
+EventClass = typing.Union[Provider, Service, ServicePool, Authenticator]
+
 
 
 def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
@@ -129,7 +207,7 @@ def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
     """
 
     return StatsManager.manager().addEvent(
-        __transDict[type(obj)], obj.id, eventType, **kwargs
+        MODEL_TO_EVENT[type(obj)], obj.id, eventType, **kwargs
     )
 
 
@@ -151,11 +229,7 @@ def getEvents(
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    from uds.models import NEVER
-
-    since = kwargs.get('since', NEVER)
-    to = kwargs.get('to', datetime.datetime.now())
-    type_ = type(obj)
+    objType = type(obj)
 
     if kwargs.get('all', False):
         owner_id = None
@@ -163,9 +237,9 @@ def getEvents(
         owner_id = obj.pk
 
     for i in StatsManager.manager().getEvents(
-        __transDict[type_], eventType, owner_id=owner_id, since=since, to=to
+        MODEL_TO_EVENT[objType], eventType, owner_id=owner_id, since=kwargs.get('since'), to=kwargs.get('to')
     ):
-        val = (
+        yield EventTupleType(
             datetime.datetime.fromtimestamp(i.stamp),
             i.fld1,
             i.fld2,
@@ -173,4 +247,20 @@ def getEvents(
             i.fld4,
             i.event_type,
         )
-        yield val
+ 
+ # tail the events table
+def tailEvents(sleepTime: int = 2) -> typing.Generator[EventTupleType, None, None]:
+    fromId = None
+    while True:
+        for i in StatsManager.manager().tailEvents(fromId=fromId):
+            yield EventTupleType(
+                datetime.datetime.fromtimestamp(i.stamp),
+                i.fld1,
+                i.fld2,
+                i.fld3,
+                i.fld4,
+                i.event_type,
+            )
+            fromId = i.pk if i.pk > (fromId or 0) else fromId
+        time.sleep(sleepTime)
+

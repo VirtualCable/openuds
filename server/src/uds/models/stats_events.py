@@ -30,6 +30,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 import types
@@ -38,7 +39,6 @@ from django.db import models
 
 from .util import NEVER_UNIX
 from .util import getSqlDatetimeAsUnix
-
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class StatsEvents(models.Model):
     fld4 = models.CharField(max_length=128, default='')
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[StatsEvents]'
+    objects: 'models.manager.Manager[StatsEvents]'
 
     class Meta:
         """
@@ -74,40 +74,46 @@ class StatsEvents(models.Model):
     def get_stats(
         owner_type: typing.Union[int, typing.Iterable[int]],
         event_type: typing.Union[int, typing.Iterable[int]],
-        **kwargs
+        **kwargs,
     ) -> 'models.QuerySet[StatsEvents]':
         """
         Returns a queryset with the average stats grouped by interval for owner_type and owner_id (optional)
 
         Note: if someone cant get this more optimized, please, contribute it!
         """
-        if isinstance(event_type, (list, tuple, types.GeneratorType)):
-            fltr = StatsEvents.objects.filter(event_type__in=event_type)
-        else:
-            fltr = StatsEvents.objects.filter(event_type=event_type)
+        if isinstance(owner_type, int):
+            owner_type = [owner_type]
+        if isinstance(event_type, int):
+            event_type = [event_type]
+        q = StatsEvents.objects.filter(owner_type__in=owner_type, event_type__in=event_type)
 
-        if isinstance(owner_type, (list, tuple, types.GeneratorType)):
-            fltr = fltr.filter(owner_type__in=owner_type)
-        else:
-            fltr = fltr.filter(owner_type=owner_type)
+        if 'owner_id' in kwargs:
+            owner_id = kwargs['owner_id']
+            if isinstance(owner_id, int):
+                owner_id = [owner_id]
+            q = q.filter(owner_id__in=owner_id)
 
-        if kwargs.get('owner_id', None) is not None:
-            oid = kwargs.get('owner_id')
-            if isinstance(oid, (list, tuple)):
-                fltr = fltr.filter(owner_id__in=oid)
-            else:
-                fltr = fltr.filter(owner_id=oid)
+        since = kwargs.get('since')
+        if isinstance(since, datetime.datetime):
+            # Convert to unix timestamp
+            since = int(since.timestamp())
+        if not since:
+            # Get first timestamp from table, we knwo table has at least one record
+            since = StatsEvents.objects.order_by('stamp').first().stamp # type: ignore
+        to = kwargs.get('to')
+        if isinstance(to, datetime.datetime):
+            # Convert to unix timestamp
+            to = int(to.timestamp())
+        if not to:
+            # Get last timestamp from table, we know table has at least one record
+            to = StatsEvents.objects.order_by('-stamp').first().stamp # type: ignore
 
-        since = kwargs.get('since', None)
-        to = kwargs.get('to', None)
+        q = q.filter(stamp__gte=since, stamp__lte=to)
 
-        since = int(since) if since else NEVER_UNIX
-        to = int(to) if to else getSqlDatetimeAsUnix()
+        if kwargs.get('limit'):
+            q = q[:kwargs['limit']]
 
-        fltr = fltr.filter(stamp__gte=since, stamp__lt=to)
-
-        # We use result as an iterator
-        return fltr
+        return q
 
     # Utility aliases for reading
     @property
@@ -125,6 +131,49 @@ class StatsEvents(models.Model):
     @property
     def uniqueId(self) -> str:
         return self.fld4
+
+    @property
+    def isostamp(self) -> str:
+        """
+        Returns the timestamp in ISO format (UTC)
+        """
+        stamp = datetime.datetime.utcfromtimestamp(self.stamp)
+        return stamp.isoformat()
+
+    # returns CSV header
+    @staticmethod
+    def getCSVHeader(
+        sep: str = '',
+    ) -> str:
+        return sep.join(
+            [
+                'owner_type',
+                'owner_id',
+                'event_type',
+                'stamp',
+                'field_1',
+                'field_2',
+                'field_3',
+                'field_4',
+            ]
+        )
+
+    # Return record as csv line using separator (default: ',')
+    def toCsv(self, sep: str = ',') -> str:
+        from uds.core.util.stats.events import EVENT_NAMES, TYPES_NAMES
+
+        return sep.join(
+            [
+                TYPES_NAMES.get(self.owner_type, '?'),
+                str(self.owner_id),
+                EVENT_NAMES.get(self.event_type, '?'),
+                str(self.isostamp),
+                self.fld1,
+                self.fld2,
+                self.fld3,
+                self.fld4,
+            ]
+        )
 
     def __str__(self):
         return 'Log of {}({}): {} - {} - {}, {}, {}'.format(

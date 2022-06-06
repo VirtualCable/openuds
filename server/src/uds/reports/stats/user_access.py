@@ -35,7 +35,7 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 import django.template.defaultfilters as filters
 
 from uds.core.ui import gui
@@ -96,10 +96,10 @@ class StatsReportLogin(StatsReport):
     def getRangeData(self) -> typing.Tuple[str, typing.List, typing.List]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
-        if self.samplingPoints.num() < 8:
-            self.samplingPoints.value = (
-                self.endDate.date() - self.startDate.date()
-            ).days
+        # if self.samplingPoints.num() < 8:
+        #    self.samplingPoints.value = (
+        #        self.endDate.date() - self.startDate.date()
+        #    ).days
         if self.samplingPoints.num() < 2:
             self.samplingPoints.value = 2
         if self.samplingPoints.num() > 128:
@@ -114,13 +114,9 @@ class StatsReportLogin(StatsReport):
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
         samplingIntervals: typing.List[typing.Tuple[int, int]] = []
-        prevVal = None
-        for val in range(start, end, int((end - start) / (samplingPoints + 1))):
-            if prevVal is None:
-                prevVal = val
-                continue
-            samplingIntervals.append((prevVal, val))
-            prevVal = val
+        samplingIntervalSeconds = (end - start) // samplingPoints
+        for i in range(samplingPoints):
+            samplingIntervals.append((int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds)))
 
         data = []
         reportData = []
@@ -264,8 +260,8 @@ class StatsReportLogin(StatsReport):
                 'ending': self.endDate.date(),
                 'intervals': self.samplingPoints.num(),
             },
-            header=ugettext('Users access to UDS'),
-            water=ugettext('UDS Report for users access'),
+            header=gettext('Users access to UDS'),
+            water=gettext('UDS Report for users access'),
             images={
                 'graph1': graph1.getvalue(),
                 'graph2': graph2.getvalue(),
@@ -294,7 +290,7 @@ class StatsReportLoginCSV(StatsReportLogin):
 
         reportData = self.getRangeData()[2]
 
-        writer.writerow([ugettext('Date range'), ugettext('Users')])
+        writer.writerow([gettext('Date range'), gettext('Users')])
 
         for v in reportData:
             writer.writerow([v['date'], v['users']])
