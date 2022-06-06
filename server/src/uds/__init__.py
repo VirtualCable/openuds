@@ -108,3 +108,5 @@ def extend_sqlite(connection, **kwargs):
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
         connection.connection.create_function("CEIL", 1, math.ceil)
+        connection.connection.create_function("FLOOR", 1, math.floor)
+

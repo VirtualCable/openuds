@@ -44,6 +44,9 @@ logger = logging.getLogger(__name__)
 CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
+CSRF_FIELD = 'csrfmiddlewaretoken'
+
+
 @denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def index(request):
