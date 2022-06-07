@@ -96,10 +96,6 @@ class StatsReportLogin(StatsReport):
     def getRangeData(self) -> typing.Tuple[str, typing.List, typing.List]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
-        # if self.samplingPoints.num() < 8:
-        #    self.samplingPoints.value = (
-        #        self.endDate.date() - self.startDate.date()
-        #    ).days
         if self.samplingPoints.num() < 2:
             self.samplingPoints.value = 2
         if self.samplingPoints.num() > 128:

@@ -131,7 +131,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
                 headers=headers,
                 verify=self._validateCert,
                 timeout=TIMEOUT,
-                proxies=NO_PROXY
+                proxies=NO_PROXY # type: ignore
                 if disableProxy
                 else None,  # if not proxies wanted, enforce it
             )
