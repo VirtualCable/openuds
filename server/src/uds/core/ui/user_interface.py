@@ -518,7 +518,7 @@ class gui:
 
         def date(self, min: bool = True) -> datetime.date:
             """
-            Returns the date tis objecct represents
+            Returns the date this object represents
 
             Args:
                 min (bool, optional): If true, in case of invalid date will return "min" date, else "max". Defaults to True.
@@ -532,6 +532,23 @@ class gui:
                 ).date()  # ISO Format
             except Exception:
                 return datetime.date.min if min else datetime.date.max
+
+        def datetime(self, min: bool) -> datetime.datetime:
+            """
+            Returns the date this object represents
+
+            Args:
+                min (bool, optional): If true, in case of invalid date will return "min" date, else "max". Defaults to True.
+
+            Returns:
+                datetime.date: the date that this object holds, or "min" | "max" on error
+            """
+            try:
+                return datetime.datetime.strptime(
+                    self.value, '%Y-%m-%d'
+                )  # ISO Format
+            except Exception:
+                return datetime.datetime.min if min else datetime.datetime.max
 
         def stamp(self) -> int:
             return int(

@@ -58,6 +58,7 @@ reportAutoModelDct: typing.Mapping[str, typing.Type[ReportAutoModel]] = {  # typ
     'Provider': models.Provider,
 }
 
+
 class ReportAutoType(UserInterfaceType):
     def __new__(cls, name, bases, attrs) -> 'ReportAutoType':
         # Add gui for elements...
@@ -115,7 +116,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
 
     def getModel(self) -> typing.Type[ReportAutoModel]:  # type: ignore
         data_source = self.data_source.split('.')[0]
-        
+
         return reportAutoModelDct[data_source]
 
     def initGui(self):
@@ -142,3 +143,56 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[
             self.interval.value
         ]
+
+    def getIntervalsList(self) -> typing.List[typing.Tuple[datetime.datetime, datetime.datetime]]:
+        intervals: typing.List[typing.Tuple[datetime.datetime, datetime.datetime]] = []
+        # Convert start and end dates to datetime objects from date objects
+        start = datetime.datetime.combine(self.startingDate(), datetime.time.min)
+        to = datetime.datetime.combine(self.endingDate(), datetime.time.max)
+        while start < to:
+            if self.interval.value == 'hour':
+                intervals.append((start, start + datetime.timedelta(hours=1)))
+                start += datetime.timedelta(hours=1)
+            elif self.interval.value == 'day':
+                intervals.append((start, start + datetime.timedelta(days=1)))
+                start += datetime.timedelta(days=1)
+            elif self.interval.value == 'week':
+                intervals.append((start, start + datetime.timedelta(days=7)))
+                start += datetime.timedelta(days=7)
+            elif self.interval.value == 'month':
+                next = (start + datetime.timedelta(days=32)).replace(day=1)
+                intervals.append((start, next))
+                start = next
+            
+        logger.info('Intervals: {0}'.format(intervals))
+        return intervals
+
+
+    def adjustDate(self, d: datetime.date, isEndingDate: bool) -> datetime.date:
+        if self.interval.value in ('hour', 'day'):
+            return d
+        elif self.interval.value == 'week':
+            return (d - datetime.timedelta(days=d.weekday())).replace()
+        elif self.interval.value == 'month':
+            if not isEndingDate:
+                return d.replace(day=1)
+            else:
+                return (d + datetime.timedelta(days=32)).replace(day=1) - datetime.timedelta(days=1)
+        else:
+            return d
+
+    def formatDatetimeAsString(self, d: datetime.date) -> str:
+        if self.interval.value in ('hour', 'day'):
+            return d.strftime('%Y-%b-%d %H:%M:%S')
+        elif self.interval.value == 'week':
+            return d.strftime('%Y-%b-%d')
+        elif self.interval.value == 'month':
+            return d.strftime('%Y-%b')
+        else:
+            return d.strftime('%Y-%b-%d %H:%M:%S')
+
+    def startingDate(self) -> datetime.date:
+        return self.adjustDate(self.date_start.date(), False)
+
+    def endingDate(self) -> datetime.date:
+        return self.adjustDate(self.date_end.date(), True)
