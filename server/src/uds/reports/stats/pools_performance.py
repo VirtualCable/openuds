@@ -110,24 +110,12 @@ class PoolPerformanceReport(StatsReport):
     ) -> typing.Tuple[str, typing.List, typing.List]:  # pylint: disable=too-many-locals
         start = self.startDate.stamp()
         end = self.endDate.stamp()
-
-        if self.samplingPoints.num() < 2:
-            self.samplingPoints.value = (
-                self.endDate.date() - self.startDate.date()
-            ).days
         if self.samplingPoints.num() < 2:
             self.samplingPoints.value = 2
-        if self.samplingPoints.num() > 32:
-            self.samplingPoints.value = 32
+        if self.samplingPoints.num() > 128:
+            self.samplingPoints.value = 128
 
         samplingPoints = self.samplingPoints.num()
-
-        pools = self.getPools()
-
-        if not pools:
-            raise Exception(_('Select at least a service pool for the report'))
-
-        logger.debug('Pools: %s', pools)
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -135,15 +123,10 @@ class PoolPerformanceReport(StatsReport):
         else:
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
-        # Generate samplings interval
         samplingIntervals: typing.List[typing.Tuple[int, int]] = []
-        prevVal = None
-        for val in range(start, end, int((end - start) / (samplingPoints + 1))):
-            if prevVal is None:
-                prevVal = val
-                continue
-            samplingIntervals.append((prevVal, val))
-            prevVal = val
+        samplingIntervalSeconds = (end - start) / samplingPoints
+        for i in range(samplingPoints):
+            samplingIntervals.append((int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds)))
 
         # Store dataUsers for all pools
         poolsData = []
@@ -151,11 +134,11 @@ class PoolPerformanceReport(StatsReport):
         fld = StatsManager.manager().getEventFldFor('username')
 
         reportData = []
-        for p in pools:
+        for p in self.getPools():
             dataUsers = []
             dataAccesses = []
             for interval in samplingIntervals:
-                key = (interval[0] + interval[1]) / 2
+                key = (interval[0] + interval[1]) // 2
                 q = (
                     StatsManager.manager()
                     .getEvents(
@@ -177,9 +160,9 @@ class PoolPerformanceReport(StatsReport):
                 reportData.append(
                     {
                         'name': p[1],
-                        'date': tools.timestampAsStr(interval[0], xLabelFormat)
+                        'date': tools.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
                         + ' - '
-                        + tools.timestampAsStr(interval[1], xLabelFormat),
+                        + tools.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
                         'users': len(q),
                         'accesses': accesses,
                     }

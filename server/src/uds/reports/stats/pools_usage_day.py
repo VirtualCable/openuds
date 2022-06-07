@@ -85,7 +85,6 @@ class CountersPoolAssigned(StatsReport):
     def getData(self) -> typing.List[typing.Dict[str, typing.Any]]:
         # Generate the sampling intervals and get dataUsers from db
         start = self.startDate.date()
-        end = self.startDate.date() + datetime.timedelta(days=1)
 
         data = []
 
@@ -102,15 +101,14 @@ class CountersPoolAssigned(StatsReport):
                 pool,
                 counters.CT_ASSIGNED,
                 since=start,
-                to=end,
-                max_intervals=24,
+                to=start+datetime.timedelta(days=1),
+                intervals=3600,
                 use_max=True,
                 all=False,
             ):
                 hour = x[0].hour
                 val = int(x[1])
-                if hours[hour] < val:
-                    hours[hour] = val
+                hours[hour] = max(hours[hour], val)
 
             data.append({'uuid': pool.uuid, 'name': pool.name, 'hours': hours})
 

@@ -96,10 +96,6 @@ class StatsReportLogin(StatsReport):
     def getRangeData(self) -> typing.Tuple[str, typing.List, typing.List]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
-        # if self.samplingPoints.num() < 8:
-        #    self.samplingPoints.value = (
-        #        self.endDate.date() - self.startDate.date()
-        #    ).days
         if self.samplingPoints.num() < 2:
             self.samplingPoints.value = 2
         if self.samplingPoints.num() > 128:
@@ -121,7 +117,7 @@ class StatsReportLogin(StatsReport):
         data = []
         reportData = []
         for interval in samplingIntervals:
-            key = (interval[0] + interval[1]) / 2
+            key = (interval[0] + interval[1]) // 2
             val = (
                 StatsManager.manager()
                 .getEvents(
@@ -132,12 +128,12 @@ class StatsReportLogin(StatsReport):
                 )
                 .count()
             )
-            data.append((key, val))  # @UndefinedVariable
+            data.append((key, val))
             reportData.append(
                 {
-                    'date': tools.timestampAsStr(interval[0], xLabelFormat)
+                    'date': tools.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
                     + ' - '
-                    + tools.timestampAsStr(interval[1], xLabelFormat),
+                    + tools.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
                     'users': val,
                 }
             )
@@ -163,13 +159,6 @@ class StatsReportLogin(StatsReport):
         return dataWeek, dataHour, dataWeekHour
 
     def generate(self):
-        # Sample query:
-        #   'SELECT *, count(*) as number, CEIL(stamp/(3600))*3600 as block'
-        #   ' FROM {table}'
-        #   ' WHERE event_type = 0 and stamp >= {start} and stamp <= {end}'
-        #   ' GROUP BY CEIL(stamp/(3600))'
-        #   ' ORDER BY block'
-
         xLabelFormat, data, reportData = self.getRangeData()
 
         #
