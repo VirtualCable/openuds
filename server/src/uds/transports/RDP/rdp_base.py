@@ -424,7 +424,8 @@ class BaseRDPTransport(transports.Transport):
         if isinstance(userService, UserService):
             cdata = userService.getInstance().getConnectionData()
             if cdata:
-                _, username, password = cdata  # Host is unused
+                username = cdata[1] or username
+                password = cdata[2] or password
 
         return self.processUserPassword(
             typing.cast('models.UserService', userService),

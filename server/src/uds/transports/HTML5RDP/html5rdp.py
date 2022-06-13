@@ -194,7 +194,7 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'disabled', 'text': _('Disable clipboard')},
             {'id': 'dis-copy', 'text': _('Disable copy from remote')},
             {'id': 'dis-paste', 'text': _('Disable paste to remote')},
-            {'id': 'enabled', 'text': _('Enable clipboard')}
+            {'id': 'enabled', 'text': _('Enable clipboard')},
         ],
         tab=gui.PARAMETERS_TAB,
     )
@@ -316,7 +316,6 @@ class HTML5RDPTransport(transports.Transport):
         tab=gui.ADVANCED_TAB,
     )
 
-
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
             return
@@ -355,7 +354,6 @@ class HTML5RDPTransport(transports.Transport):
         v = self.getConnectionInfo(userService, user, '')
         return v['username']
 
-
     def getConnectionInfo(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
@@ -368,14 +366,14 @@ class HTML5RDPTransport(transports.Transport):
         if isinstance(userService, models.UserService):
             cdata = userService.getInstance().getConnectionData()
             if cdata:
-                _, username, password = cdata  # Host is unused
+                username = cdata[1] or username
+                password = cdata[2] or password
 
-        if self.fixedPassword.value != '':
+        if self.fixedPassword.value:
             password = self.fixedPassword.value
 
-        if self.fixedName.value != '':
+        if self.fixedName.value:
             username = self.fixedName.value
-
 
         proc = username.split('@')
         if len(proc) > 1:
@@ -384,8 +382,7 @@ class HTML5RDPTransport(transports.Transport):
             domain = ''
         username = proc[0]
 
-
-        azureAd = False        
+        azureAd = False
 
         if self.fixedDomain.value != '':
             domain = self.fixedDomain.value
@@ -442,12 +439,20 @@ class HTML5RDPTransport(transports.Transport):
             'resize-method': 'display-update',
             'ignore-cert': 'true',
             'security': self.security.value,
-            'enable-drive': as_txt(self.enableFileSharing.value in ('true', 'down', 'up')),
-            'disable-upload': as_txt(self.enableFileSharing.value not in ('true', 'up')),
+            'enable-drive': as_txt(
+                self.enableFileSharing.value in ('true', 'down', 'up')
+            ),
+            'disable-upload': as_txt(
+                self.enableFileSharing.value not in ('true', 'up')
+            ),
             'drive-path': '/share/{}'.format(user.uuid),
             'drive-name': 'UDSfs',
-            'disable-copy': as_txt(self.enableClipboard.value in ('dis-copy', 'disabled')),
-            'disable-paste': as_txt(self.enableClipboard.value in ('dis-paste', 'disabled')),
+            'disable-copy': as_txt(
+                self.enableClipboard.value in ('dis-copy', 'disabled')
+            ),
+            'disable-paste': as_txt(
+                self.enableClipboard.value in ('dis-paste', 'disabled')
+            ),
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
