@@ -28,10 +28,16 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=invalid-name
+from re import I
 import threading
+import ipaddress
+import typing
 
 from udsactor.log import logger
+
+if typing.TYPE_CHECKING:
+    from udsactor.types import ActorConfigurationType, InterfaceInfoType
+
 
 class ScriptExecutorThread(threading.Thread):
     def __init__(self, script: str) -> None:
@@ -45,3 +51,36 @@ class ScriptExecutorThread(threading.Thread):
         except Exception as e:
             logger.error('Error executing script: {}'.format(e))
             logger.exception()
+
+
+# Convert "X.X.X.X/X" to ipaddress.IPv4Network
+def strToNoIPV4Network(net: typing.Optional[str]) -> typing.Optional[ipaddress.IPv4Network]:
+    if not net:  # Empty or None
+        return None
+    try:
+        return ipaddress.IPv4Interface(net).network
+    except Exception:
+        return None
+
+
+def validNetworkCards(
+    net: typing.Optional[str], cards: typing.Iterable[InterfaceInfoType]
+) -> typing.List[InterfaceInfoType]:
+    try:
+        subnet = strToNoIPV4Network(net)
+    except Exception as e:
+        logger.error('Invalid network: {}'.format(e))
+        subnet = None
+
+    if subnet is None:
+        return list(cards)
+
+    def isValid(ip: str, subnet: ipaddress.IPv4Network) -> bool:
+        if not ip:
+            return False
+        try:
+            return ipaddress.IPv4Address(ip) in subnet
+        except Exception:
+            return False
+
+    return [c for c in cards if isValid(c.ip, subnet)]

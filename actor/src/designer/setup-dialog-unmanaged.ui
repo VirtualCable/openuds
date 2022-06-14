@@ -10,8 +10,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>595</width>
-    <height>220</height>
+    <width>591</width>
+    <height>243</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,7 +55,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>180</y>
+     <y>210</y>
      <width>181</width>
      <height>23</height>
     </rect>
@@ -83,7 +83,7 @@
    <property name="geometry">
     <rect>
      <x>410</x>
-     <y>180</y>
+     <y>210</y>
      <width>171</width>
      <height>23</height>
     </rect>
@@ -117,7 +117,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>180</y>
+     <y>210</y>
      <width>181</width>
      <height>23</height>
     </rect>
@@ -144,7 +144,7 @@
      <x>10</x>
      <y>10</y>
      <width>571</width>
-     <height>161</height>
+     <height>228</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -221,14 +221,14 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
+    <item row="4" column="0">
      <widget class="QLabel" name="label_loglevel">
       <property name="text">
        <string>Log Level</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
+    <item row="4" column="1">
      <widget class="QComboBox" name="logLevelComboBox">
       <property name="currentIndex">
        <number>1</number>
@@ -258,6 +258,23 @@
       </item>
      </widget>
     </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_restrictNet">
+      <property name="text">
+       <string>Restrict Net</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="restrictNet">
+      <property name="toolTip">
+       <string>UDS user with administration rights (Will not be stored on template)</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Administrator user on UDS Server.&lt;/p&gt;&lt;p&gt;Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
    </layout>
    <zorder>label_host</zorder>
    <zorder>host</zorder>
@@ -267,6 +284,8 @@
    <zorder>label_security</zorder>
    <zorder>label_loglevel</zorder>
    <zorder>logLevelComboBox</zorder>
+   <zorder>label_restrictNet</zorder>
+   <zorder>restrictNet</zorder>
   </widget>
  </widget>
  <resources>
@@ -350,6 +369,22 @@
     <hint type="destinationlabel">
      <x>297</x>
      <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>restrictNet</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>configChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>295</x>
+     <y>121</y>
     </hint>
    </hints>
   </connection>

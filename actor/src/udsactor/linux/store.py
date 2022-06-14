@@ -56,6 +56,7 @@ def readConfig() -> types.ActorConfigurationType:
             validateCertificate=uds.getboolean('validate', fallback=False),
             master_token=uds.get('master_token', None),
             own_token=uds.get('own_token', None),
+            restrict_net=uds.get('restrict_net', None),
             pre_command=uds.get('pre_command', None),
             runonce_command=uds.get('runonce_command', None),
             post_command=uds.get('post_command', None),
@@ -78,6 +79,7 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     writeIfValue(config.actorType, 'type')
     writeIfValue(config.master_token, 'master_token')
     writeIfValue(config.own_token, 'own_token')
+    writeIfValue(config.restrict_net, 'restrict_net')
     writeIfValue(config.pre_command, 'pre_command')
     writeIfValue(config.post_command, 'post_command')
     writeIfValue(config.runonce_command, 'runonce_command')

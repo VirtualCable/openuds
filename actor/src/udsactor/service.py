@@ -39,6 +39,7 @@ import typing
 from . import platform
 from . import rest
 from . import types
+from . import tools
 
 from .log import logger, DEBUG, INFO, ERROR, FATAL
 from .http import clients_pool, server, cert
@@ -245,7 +246,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             return
 
         while self._isAlive:
-            self._interfaces = list(platform.operations.getNetworkInfo())
+            self._interfaces = tools.validNetworkCards(self._cfg.restrict_net, platform.operations.getNetworkInfo())
             if self._interfaces:
                 break
             self.doWait(5000)
