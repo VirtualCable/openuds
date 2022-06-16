@@ -489,13 +489,13 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         '''
         logger.info('Service stopped')
 
-    def preConnect(self, userName: str, protocol: str, ip: str, hostname: str) -> str:  # pylint: disable=unused-argument
+    def preConnect(self, userName: str, protocol: str, ip: str, hostname: str, udsUserName: str) -> str:
         '''
         Invoked when received a PRE Connection request via REST
         Base preconnect executes the preconnect command
         '''
         if self._cfg.pre_command:
-            self.execute(self._cfg.pre_command + ' {} {} {} {}'.format(userName.replace('"', '%22'), protocol, ip, hostname), 'preConnect')
+            self.execute(self._cfg.pre_command + ' {} {} {} {} {}'.format(userName.replace('"', '%22'), protocol, ip, hostname, udsUserName), 'preConnect')
 
         return 'ok'
 

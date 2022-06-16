@@ -140,7 +140,13 @@ def notifyPreconnect(userService: 'UserService', userName: str, protocol: str) -
         _requestActor(
             userService,
             'preConnect',
-            {'user': userName, 'protocol': protocol, 'ip': ip, 'hostname': hostname},
+            {
+                'user': userName,
+                'protocol': protocol,
+                'ip': ip,
+                'hostname': hostname,
+                'udsuser': userService.user.name if userService.user else '',
+            },
         )
     except NoActorComms:
         pass  # If no preconnect, warning will appear on UDS log
