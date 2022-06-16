@@ -136,6 +136,7 @@ def notifyPreconnect(userService: 'UserService', userName: str, protocol: str) -
     Notifies a preconnect to an user service
     """
     ip, hostname = userService.getConnectionSource()
+
     try:
         _requestActor(
             userService,
@@ -145,7 +146,7 @@ def notifyPreconnect(userService: 'UserService', userName: str, protocol: str) -
                 'protocol': protocol,
                 'ip': ip,
                 'hostname': hostname,
-                'udsuser': userService.user.name if userService.user else '',
+                'udsuser': userService.user.name + '@' + userService.user.manager.name if userService.user else '',
             },
         )
     except NoActorComms:
