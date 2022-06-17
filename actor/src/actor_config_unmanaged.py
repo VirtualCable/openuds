@@ -85,7 +85,7 @@ class UDSConfigDialog(QDialog):
         self.ui.testButton.setEnabled(
             self.ui.host.text() == self._config.host
             and self.ui.serviceToken.text() == self._config.master_token
-            and self._config.restrict_net == self.ui.restrictNet.text()
+            and self.ui.restrictNet.text() == self._config.restrict_net
         )
 
     def testUDSServer(self) -> None:
@@ -162,9 +162,9 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
-    if udsactor.platform.operations.checkPermissions() is False:
-        QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)  # type: ignore
-        sys.exit(1)
+    #if udsactor.platform.operations.checkPermissions() is False:
+    #    QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)  # type: ignore
+    #    sys.exit(1)
 
     if len(sys.argv) > 2:
         if sys.argv[1] == 'export':

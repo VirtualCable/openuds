@@ -15,7 +15,7 @@ class Ui_UdsActorSetupDialog(object):
     def setupUi(self, UdsActorSetupDialog):
         UdsActorSetupDialog.setObjectName("UdsActorSetupDialog")
         UdsActorSetupDialog.setWindowModality(QtCore.Qt.WindowModal)
-        UdsActorSetupDialog.resize(591, 243)
+        UdsActorSetupDialog.resize(601, 243)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -54,7 +54,7 @@ class Ui_UdsActorSetupDialog(object):
         self.testButton.setMinimumSize(QtCore.QSize(181, 0))
         self.testButton.setObjectName("testButton")
         self.layoutWidget = QtWidgets.QWidget(UdsActorSetupDialog)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 571, 228))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 571, 191))
         self.layoutWidget.setObjectName("layoutWidget")
         self.formLayout = QtWidgets.QFormLayout(self.layoutWidget)
         self.formLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
