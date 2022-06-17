@@ -36,7 +36,7 @@ import typing
 from udsactor.log import logger
 
 if typing.TYPE_CHECKING:
-    from udsactor.types import ActorConfigurationType, InterfaceInfoType
+    from udsactor.types import InterfaceInfoType
 
 
 class ScriptExecutorThread(threading.Thread):
@@ -64,8 +64,8 @@ def strToNoIPV4Network(net: typing.Optional[str]) -> typing.Optional[ipaddress.I
 
 
 def validNetworkCards(
-    net: typing.Optional[str], cards: typing.Iterable[InterfaceInfoType]
-) -> typing.List[InterfaceInfoType]:
+    net: typing.Optional[str], cards: typing.Iterable['InterfaceInfoType']
+) -> typing.List['InterfaceInfoType']:
     try:
         subnet = strToNoIPV4Network(net)
     except Exception as e:
