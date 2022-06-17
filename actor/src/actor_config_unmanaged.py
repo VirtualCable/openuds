@@ -40,6 +40,7 @@ import PyQt5  # pylint: disable=unused-import
 from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox
 
 import udsactor
+import udsactor.tools
 
 from ui.setup_dialog_unmanaged_ui import Ui_UdsActorSetupDialog
 

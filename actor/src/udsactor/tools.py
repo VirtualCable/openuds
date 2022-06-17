@@ -28,23 +28,23 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from re import I
 import threading
 import ipaddress
 import typing
-
-from udsactor.log import logger
 
 if typing.TYPE_CHECKING:
     from udsactor.types import InterfaceInfoType
 
 
 class ScriptExecutorThread(threading.Thread):
+   
     def __init__(self, script: str) -> None:
         super(ScriptExecutorThread, self).__init__()
         self.script = script
 
     def run(self) -> None:
+        from udsactor.log import logger
+
         try:
             logger.debug('Executing script: {}'.format(self.script))
             exec(self.script, globals(), None)  # pylint: disable=exec-used
@@ -69,7 +69,6 @@ def validNetworkCards(
     try:
         subnet = strToNoIPV4Network(net)
     except Exception as e:
-        logger.error('Invalid network: {}'.format(e))
         subnet = None
 
     if subnet is None:
