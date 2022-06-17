@@ -31,7 +31,6 @@
 from . import types
 from . import rest
 from . import platform
-from . import tools
 
 __title__ = 'udsactor'
 __author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
