@@ -124,18 +124,19 @@ class UDSConfigDialog(QDialog):
     def saveConfig(self) -> None:
         # Ensure restrict_net is empty or a valid subnet
         restrictNet = self.ui.restrictNet.text().strip()
-        try:
-            subnet = udsactor.tools.strToNoIPV4Network(restrictNet)
-            if not subnet:
-                raise Exception('Invalid subnet')
-        except Exception:
-            QMessageBox.information(
-                self,
-                'Invalid subnet',
-                'Invalid subnet {}. Please, check it.'.format(restrictNet),
-                QMessageBox.Ok,
-            )
-            return
+        if restrictNet:
+            try:
+                subnet = udsactor.tools.strToNoIPV4Network(restrictNet)
+                if not subnet:
+                    raise Exception('Invalid subnet')
+            except Exception:
+                QMessageBox.information(
+                    self,
+                    'Invalid subnet',
+                    'Invalid subnet {}. Please, check it.'.format(restrictNet),
+                    QMessageBox.Ok,
+                )
+                return
 
         # Store parameters on register for later use, notify user of registration
         self._config = udsactor.types.ActorConfigurationType(
@@ -163,9 +164,9 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
-    #if udsactor.platform.operations.checkPermissions() is False:
-    #    QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)  # type: ignore
-    #    sys.exit(1)
+    if udsactor.platform.operations.checkPermissions() is False:
+        QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)  # type: ignore
+        sys.exit(1)
 
     if len(sys.argv) > 2:
         if sys.argv[1] == 'export':

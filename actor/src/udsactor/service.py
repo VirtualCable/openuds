@@ -397,7 +397,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             ):
                 # Not enouth data do check
                 return
-            currentInterfaces = list(platform.operations.getNetworkInfo())
+            currentInterfaces = tools.validNetworkCards(
+                self._cfg.restrict_net, platform.operations.getNetworkInfo()
+            )
             old = self.serviceInterfaceInfo()
             new = self.serviceInterfaceInfo(currentInterfaces)
             if not new or not old:
