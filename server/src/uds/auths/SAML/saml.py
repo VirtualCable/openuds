@@ -476,11 +476,6 @@ class SAMLAuthenticator(auths.Authenticator):
             },
         }
 
-    @allowCache(
-        cachePrefix='spm',
-        cachingKeyFnc=CACHING_KEY_FNC,
-        cacheTimeout=3600,  # 1 hour
-    )
     def getSpMetadata(self) -> str:
         saml_settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
         metadata = saml_settings.get_sp_metadata()
