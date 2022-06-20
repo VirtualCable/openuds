@@ -201,6 +201,87 @@ class SAMLAuthenticator(auths.Authenticator):
         tab=gui.ADVANCED_TAB,
     )
 
+
+    nameIdEncrypted = gui.CheckBoxField(
+        label=_('Encripted nameID'),
+        defvalue=False,
+        order=12,
+        tooltip=_('If set, nameID will be encripted'),
+        tab=_('Security'),
+    )
+
+    authnRequestsSigned = gui.CheckBoxField(
+        label=_('Authn requests signed'),
+        defvalue=False,
+        order=13,
+        tooltip=_('If set, authn requests will be signed'),
+        tab=_('Security'),
+    )
+
+    logoutRequestSigned = gui.CheckBoxField(
+        label=_('Logout requests signed'),
+        defvalue=False,
+        order=14,
+        tooltip=_('If set, logout requests will be signed'),
+        tab=_('Security'),
+    )
+
+    logoutResponseSigned = gui.CheckBoxField(
+        label=_('Logout responses signed'),
+        defvalue=False,
+        order=15,
+        tooltip=_('If set, logout responses will be signed'),
+        tab=_('Security'),
+    )
+
+    signMetadata = gui.CheckBoxField(
+        label=_('Sign metadata'),
+        defvalue=False,
+        order=16,
+        tooltip=_('If set, metadata will be signed'),
+        tab=_('Security'),
+    )
+
+    wantMessagesSigned = gui.CheckBoxField(
+        label=_('Want messages signed'),
+        defvalue=False,
+        order=17,
+        tooltip=_('If set, messages will be signed'),
+        tab=_('Security'),
+    )
+
+    wantAssertionsSigned = gui.CheckBoxField(
+        label=_('Want assertions signed'),
+        defvalue=False,
+        order=18,
+        tooltip=_('If set, assertions will be signed'),
+        tab=_('Security'),
+    )
+
+    wantAssertionsEncrypted = gui.CheckBoxField(
+        label=_('Want assertions encrypted'),
+        defvalue=False,
+        order=19,
+        tooltip=_('If set, assertions will be encrypted'),
+        tab=_('Security'),
+    )
+
+    wantNameIdEncrypted = gui.CheckBoxField(
+        label=_('Want nameID encrypted'),
+        defvalue=False,
+        order=20,
+        tooltip=_('If set, nameID will be encrypted'),
+        tab=_('Security'),
+    )
+
+    requestedAuthnContext = gui.CheckBoxField(
+        label=_('Requested authn context'),
+        defvalue=False,
+        order=21,
+        tooltip=_('If set, requested authn context will be sent'),
+        tab=_('Security'),
+    )
+
     manageUrl = gui.HiddenField(serializable=True)
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
@@ -375,16 +456,16 @@ class SAMLAuthenticator(auths.Authenticator):
             },
             'idp': self.getIdpMetadataDict()['idp'],
             'security': {
-                'nameIdEncrypted': False,
-                'authnRequestsSigned': True,
-                'logoutRequestSigned': False,
-                'logoutResponseSigned': False,
-                'signMetadata': False,
-                'wantMessagesSigned': False,
-                'wantAssertionsSigned': False,
-                'wantAssertionsEncrypted': False,
-                'wantNameIdEncrypted': False,
-                'requestedAuthnContext': False,
+                'nameIdEncrypted': self.nameIdEncrypted.isTrue(),
+                'authnRequestsSigned': self.authnRequestsSigned.isTrue(),
+                'logoutRequestSigned': self.logoutRequestSigned.isTrue(),
+                'logoutResponseSigned': self.logoutResponseSigned.isTrue(),
+                'signMetadata': self.signMetadata.isTrue(),
+                'wantMessagesSigned': self.wantMessagesSigned.isTrue(),
+                'wantAssertionsSigned': self.wantAssertionsSigned.isTrue(),
+                'wantAssertionsEncrypted': self.wantAssertionsEncrypted.isTrue(),
+                'wantNameIdEncrypted': self.wantNameIdEncrypted.isTrue(),
+                'requestedAuthnContext': self.requestedAuthnContext.isTrue(),
             },
             'organization': {
                 'en-US': {
