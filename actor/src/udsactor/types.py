@@ -35,6 +35,7 @@ class ActorConfigurationType(typing.NamedTuple):
     actorType: typing.Optional[str] = None
     master_token: typing.Optional[str] = None
     own_token: typing.Optional[str] = None
+    restrict_net: typing.Optional[str] = None
 
     pre_command: typing.Optional[str] = None
     runonce_command: typing.Optional[str] = None

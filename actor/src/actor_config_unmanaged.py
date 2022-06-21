@@ -40,6 +40,7 @@ import PyQt5  # pylint: disable=unused-import
 from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox
 
 import udsactor
+import udsactor.tools
 
 from ui.setup_dialog_unmanaged_ui import Ui_UdsActorSetupDialog
 
@@ -48,6 +49,7 @@ if typing.TYPE_CHECKING:
     from PyQt5.QtWidgets import QLineEdit  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger('actor')
+
 
 class UDSConfigDialog(QDialog):
     _host: str = ''
@@ -60,65 +62,99 @@ class UDSConfigDialog(QDialog):
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
         self.ui.host.setText(self._config.host)
-        self.ui.validateCertificate.setCurrentIndex(1 if self._config.validateCertificate else 0)
+        self.ui.validateCertificate.setCurrentIndex(
+            1 if self._config.validateCertificate else 0
+        )
         self.ui.logLevelComboBox.setCurrentIndex(self._config.log_level)
         self.ui.serviceToken.setText(self._config.master_token or '')
+        self.ui.restrictNet.setText(self._config.restrict_net or '')
 
-        self.ui.testButton.setEnabled(bool(self._config.master_token and self._config.host))
+        self.ui.testButton.setEnabled(
+            bool(self._config.master_token and self._config.host)
+        )
 
     @property
     def api(self) -> udsactor.rest.UDSServerApi:
-        return udsactor.rest.UDSServerApi(self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1)
+        return udsactor.rest.UDSServerApi(
+            self.ui.host.text(), self.ui.validateCertificate.currentIndex() == 1
+        )
 
     def finish(self) -> None:
         self.close()
 
     def configChanged(self, text: str) -> None:
-        self.ui.testButton.setEnabled(self.ui.host.text() == self._config.host and self.ui.serviceToken.text() == self._config.master_token)
+        self.ui.testButton.setEnabled(
+            self.ui.host.text() == self._config.host
+            and self.ui.serviceToken.text() == self._config.master_token
+            and self.ui.restrictNet.text() == self._config.restrict_net
+        )
 
     def testUDSServer(self) -> None:
         if not self._config.master_token or not self._config.host:
             self.ui.testButton.setEnabled(False)
             return
         try:
-            api = udsactor.rest.UDSServerApi(self._config.host, self._config.validateCertificate)
+            api = udsactor.rest.UDSServerApi(
+                self._config.host, self._config.validateCertificate
+            )
             if not api.test(self._config.master_token, udsactor.types.UNMANAGED):
                 QMessageBox.information(
                     self,
                     'UDS Test',
                     'Service token seems to be invalid . Please, check token validity.',
-                    QMessageBox.Ok
+                    QMessageBox.Ok,
                 )
             else:
                 QMessageBox.information(
                     self,
                     'UDS Test',
-                    'Configuration for {} seems to be correct.'.format(self._config.host),
-                    QMessageBox.Ok
+                    'Configuration for {} seems to be correct.'.format(
+                        self._config.host
+                    ),
+                    QMessageBox.Ok,
                 )
         except Exception:
             QMessageBox.information(
                 self,
                 'UDS Test',
                 'Configured host {} seems to be inaccesible.'.format(self._config.host),
-                QMessageBox.Ok
+                QMessageBox.Ok,
             )
 
     def saveConfig(self) -> None:
+        # Ensure restrict_net is empty or a valid subnet
+        restrictNet = self.ui.restrictNet.text().strip()
+        if restrictNet:
+            try:
+                subnet = udsactor.tools.strToNoIPV4Network(restrictNet)
+                if not subnet:
+                    raise Exception('Invalid subnet')
+            except Exception:
+                QMessageBox.information(
+                    self,
+                    'Invalid subnet',
+                    'Invalid subnet {}. Please, check it.'.format(restrictNet),
+                    QMessageBox.Ok,
+                )
+                return
+
         # Store parameters on register for later use, notify user of registration
         self._config = udsactor.types.ActorConfigurationType(
             actorType=udsactor.types.UNMANAGED,
             host=self.ui.host.text(),
             validateCertificate=self.ui.validateCertificate.currentIndex() == 1,
-            master_token=self.ui.serviceToken.text(),
-            log_level=self.ui.logLevelComboBox.currentIndex()
+            master_token=self.ui.serviceToken.text().strip(),
+            restrict_net=restrictNet,
+            log_level=self.ui.logLevelComboBox.currentIndex(),
         )
 
         udsactor.platform.store.writeConfig(self._config)
         # Enables test button
         self.ui.testButton.setEnabled(True)
         # Informs the user
-        QMessageBox.information(self, 'UDS Configuration', 'Configuration saved.', QMessageBox.Ok)
+        QMessageBox.information(
+            self, 'UDS Configuration', 'Configuration saved.', QMessageBox.Ok
+        )
 
 
 if __name__ == "__main__":
@@ -127,9 +163,9 @@ if __name__ == "__main__":
         os.environ['QT_X11_NO_MITSHM'] = '1'
 
     app = QApplication(sys.argv)
-    
+
     if udsactor.platform.operations.checkPermissions() is False:
-        QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)
+        QMessageBox.critical(None, 'UDS Actor', 'This Program must be executed as administrator', QMessageBox.Ok)  # type: ignore
         sys.exit(1)
 
     if len(sys.argv) > 2:

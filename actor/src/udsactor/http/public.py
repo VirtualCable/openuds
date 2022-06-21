@@ -38,6 +38,7 @@ from ..log import logger
 if typing.TYPE_CHECKING:
     from ..service import CommonService
 
+
 class PublicProvider(handler.Handler):
     def post_logout(self) -> typing.Any:
         logger.debug('Sending LOGOFF to clients')
@@ -51,7 +52,9 @@ class PublicProvider(handler.Handler):
         logger.debug('Sending MESSAGE to clients')
         if 'message' not in self._params:
             raise Exception('Invalid message parameters')
-        self._service._clientsPool.message(self._params['message'])  # pylint: disable=protected-access
+        self._service._clientsPool.message(
+            self._params['message']
+        )  # pylint: disable=protected-access
         return 'ok'
 
     def post_script(self) -> typing.Any:
@@ -60,7 +63,9 @@ class PublicProvider(handler.Handler):
             raise Exception('Invalid script parameters')
         if self._params.get('user', False):
             logger.debug('Sending SCRIPT to client')
-            self._service._clientsPool.executeScript(self._params['script'])  # pylint: disable=protected-access
+            self._service._clientsPool.executeScript(
+                self._params['script']
+            )  # pylint: disable=protected-access
         else:
             # Execute script at server space, that is, here
             # as a parallel thread
@@ -72,14 +77,22 @@ class PublicProvider(handler.Handler):
         logger.debug('Received Pre connection')
         if 'user' not in self._params or 'protocol' not in self._params:
             raise Exception('Invalid preConnect parameters')
-        return self._service.preConnect(self._params['user'], self._params['protocol'], self._params.get('ip', 'unknown'), self._params.get('hostname', 'unknown'))
+        return self._service.preConnect(
+            self._params['user'],
+            self._params['protocol'],
+            self._params.get('ip', 'unknown'),
+            self._params.get('hostname', 'unknown'),
+            self._params.get('udsuser', 'unknown'),
+        )
 
     def get_information(self) -> typing.Any:
         # Return something useful? :)
         return 'UDS Actor Secure Server'
 
     def get_screenshot(self) -> typing.Any:
-        return self._service._clientsPool.screenshot()  # pylint: disable=protected-access
+        return (
+            self._service._clientsPool.screenshot()
+        )  # pylint: disable=protected-access
 
     def get_uuid(self) -> typing.Any:
         if self._service.isManaged():

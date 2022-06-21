@@ -234,8 +234,8 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
     )
 
     try:
-        public_key.verify(
-            base64.b64decode(signature), script, padding.PKCS1v15(), hashes.SHA256()
+        public_key.verify(  # type: ignore
+            base64.b64decode(signature), script, padding.PKCS1v15(), hashes.SHA256()  # type: ignore
         )
     except Exception:  # InvalidSignature
         return False

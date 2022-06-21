@@ -35,7 +35,6 @@ import tempfile
 import typing
 
 import servicemanager
-from udsactor import service  # pylint: disable=import-error
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log).
 from .. import loglevel

@@ -159,7 +159,7 @@ class HTTPServerThread(threading.Thread):
         # self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
 
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        context.options = ssl.CERT_NONE
+        # context.options = ssl.CERT_NONE
         context.load_cert_chain(certfile=self._certFile, password=password)
         self._server.socket = context.wrap_socket(self._server.socket, server_side=True)
 
