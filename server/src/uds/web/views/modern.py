@@ -43,14 +43,17 @@ from django.views.decorators.cache import never_cache
 from uds.core.auths import auth, exceptions
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
+from uds.web.forms.MFAForm import MFAForm
 from uds.web.util.authentication import checkLogin
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 
-
 logger = logging.getLogger(__name__)
 
 CSRF_FIELD = 'csrfmiddlewaretoken'
+
+if typing.TYPE_CHECKING:
+    from uds import models
 
 
 @never_cache
@@ -91,7 +94,8 @@ def login(
             return HttpResponseRedirect(user)
         if user:
             # TODO: Check if MFA to set authorize or redirect to MFA page
-            request.authorized = True  # For now, always True
+            request.authorized = True
+
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
@@ -141,3 +145,41 @@ def js(request: ExtendedHttpRequest) -> HttpResponse:
 @auth.denyNonAuthenticated
 def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))
+
+
+def mfa(request: ExtendedHttpRequest) -> HttpResponse:
+    if not request.user:
+        return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
+
+    mfaProvider: 'models.MFA' = request.user.manager.mfa
+    if not mfaProvider:
+        return HttpResponseRedirect(reverse('page.index'))
+
+    # Obtain MFA data
+    authInstance = request.user.manager.getInstance()
+    mfaIdentifier = authInstance.mfaIdentifier()
+    mfaFieldName = authInstance.mfaFieldName()
+
+    if request.method == 'POST':  # User has provided MFA code
+        form = MFAForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            try:
+                authInstance.mfaValidate(mfaIdentifier, code)
+                request.authorized = True
+                return HttpResponseRedirect(reverse('page.index'))
+            except exceptions.MFAError as e:
+                logger.error('MFA error: %s', e)
+                return errors.errorView(request, errors.INVALID_MFA_CODE)
+        else:
+            pass  # Will render again the page
+    else:
+        # First, make MFA send a code
+        authInstance.mfaSendCode()
+
+    # Redirect to index, but with MFA data
+    request.session['mfa'] = {
+        'identifier': mfaIdentifier,
+        'fieldName': mfaFieldName,
+    }
+    return HttpResponseRedirect(reverse('page.index'))

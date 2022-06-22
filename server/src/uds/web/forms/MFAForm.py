@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
@@ -28,62 +27,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+
+from django.utils.translation import ugettext_lazy as _
+from django import forms
+from uds.models import Authenticator
 
 
-class UDSException(Exception):
-    """
-    Base exception for all UDS exceptions
-    """
-
-    pass
+logger = logging.getLogger(__name__)
 
 
-class AuthenticatorException(UDSException):
-    """
-    Generic authentication exception
-    """
+class MFAForm(forms.Form):
+    code = forms.CharField(label=_('Authentication Code'), max_length=64, widget=forms.TextInput())
 
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-
-class InvalidUserException(AuthenticatorException):
-    """
-    Invalid user specified. The user cant access the requested service
-    """
-
-    pass
-
-
-class InvalidAuthenticatorException(AuthenticatorException):
-    """
-    Invalida authenticator has been specified
-    """
-
-    pass
-
-
-class Redirect(UDSException):
-    """
-    This exception indicates that a redirect is required.
-    Used in authUrlCallback to indicate that redirect is needed
-    """
-
-    pass
-
-
-class Logout(UDSException):
-    """
-    This exceptions redirects logouts an user and redirects to an url
-    """
-
-    pass
-
-
-class MFAError(UDSException):
-    """
-    This exceptions indicates than an MFA error has ocurred
-    """
-
-    pass
+        choices = []

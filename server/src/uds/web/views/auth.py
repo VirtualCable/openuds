@@ -126,12 +126,24 @@ def authCallback_stage2(
             )
             raise auths.exceptions.InvalidUserException()
 
+        # Default response
         response = HttpResponseRedirect(reverse('page.index'))
 
-        webLogin(request, response, user, '')  # Password is unavailable in this case
+        webLogin(request, response, user, '')  # Password is unavailable for federated auth
+
         request.session['OS'] = os
         # Now we render an intermediate page, so we get Java support from user
         # It will only detect java, and them redirect to Java
+
+        # If MFA is provided, we need to redirect to MFA page
+        request.authorized = True
+        if authenticator.getType().providesMfa() and authenticator.mfa:
+            authInstance = authenticator.getInstance()
+            if authInstance.mfaIdentifier():
+                request.authorized = False   # We can ask for MFA so first disauthorize user
+                response = HttpResponseRedirect(
+                    reverse('page.auth.mfa')
+                )
 
         return response
     except auths.exceptions.Redirect as e:

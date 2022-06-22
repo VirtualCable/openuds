@@ -69,6 +69,7 @@ authLogger = logging.getLogger('authLog')
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
 EXPIRY_KEY = 'ek'
+AUTHORIZED_KEY = 'ak'
 ROOT_ID = -20091204  # Any negative number will do the trick
 UDS_COOKIE_LENGTH = 48
 
@@ -291,6 +292,7 @@ def authenticate(
             username,
         )
         return None
+        
 
     return __registerUser(authenticator, authInstance, username)
 
@@ -375,6 +377,7 @@ def webLogin(
     cookie = getUDSCookie(request, response)
 
     user.updateLastAccess()
+    request.authorized = False  # For now, we don't know if the user is authorized until MFA is checked
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = cryptoManager().symCrypt(
         password, cookie

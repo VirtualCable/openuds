@@ -127,8 +127,8 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         user = authenticate(userName, password, authenticator)
         logger.debug('User: %s', user)
 
-        if isinstance(user, str):
-            return (user, user)
+        if isinstance(user, str):  # It's a redirection
+            return (user, '')  # Return redirection. In fact user i'ts the redirection
 
         if user is None:
             logger.debug("Invalid user %s (access denied)", userName)

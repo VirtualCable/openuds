@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import Authenticator
+from uds.models import Authenticator, MFA
 from uds.core import auths
 
 from uds.REST import NotFound
@@ -70,6 +70,7 @@ class Authenticators(ModelHandler):
         {'visible': {'title': _('Visible'), 'type': 'callback', 'width': '3em'}},
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
+        {'mfa': {'title': _('MFA'), 'type': 'callback', 'width': '3em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -87,16 +88,17 @@ class Authenticators(ModelHandler):
                 'passwordLabel': _(type_.passwordLabel),
                 'canCreateUsers': type_.createUser != auths.Authenticator.createUser,  # type: ignore
                 'isExternal': type_.isExternalSource,
+                'supportsMFA': type_.providesMfa(),
             }
         # Not of my type
         return {}
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
-            tgui = auths.factory().lookup(type_)
-            if tgui:
+            authType = auths.factory().lookup(type_)
+            if authType:
                 g = self.addDefaultFields(
-                    tgui.guiDescription(),
+                    authType.guiDescription(),
                     ['name', 'comments', 'tags', 'priority', 'small_name'],
                 )
                 self.addField(
@@ -110,9 +112,31 @@ class Authenticators(ModelHandler):
                         ),
                         'type': gui.InputField.CHECKBOX_TYPE,
                         'order': 107,
-                        'tab': ugettext('Display'),
+                        'tab': gui.DISPLAY_TAB,
                     },
                 )
+                # If supports mfa, add MFA provider selector field
+                if authType.providesMfa():
+                    self.addField(
+                        g,
+                        {
+                            'name': 'mfa',
+                            'values': [gui.choiceItem('', _('None'))]
+                            + gui.sortedChoices(
+                                [
+                                    gui.choiceItem(v.uuid, v.name)
+                                    for v in MFA.objects.all()
+                                ]
+                            ),
+                            'label': ugettext('MFA Provider'),
+                            'tooltip': ugettext(
+                                'MFA provider to use for this authenticator'
+                            ),
+                            'type': gui.InputField.CHOICE_TYPE,
+                            'order': 108,
+                            'tab': gui.MFA_TAB,
+                        },
+                    )
                 return g
             raise Exception()  # Not found
         except Exception:

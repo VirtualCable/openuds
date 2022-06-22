@@ -69,4 +69,4 @@ class LoginForm(forms.Form):
                 continue
             choices.append((a.uuid, a.name))
 
-        self.fields['authenticator'].choices = choices
+        self.fields['authenticator'].choices = choices  # type: ignore
