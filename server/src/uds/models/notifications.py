@@ -137,3 +137,28 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         return typing.cast('NotificationProviderModule', super().getInstance(values=values))
 
 
+    @staticmethod
+    def beforeDelete(sender, **kwargs) -> None:
+        """
+        Used to invoke the Service class "Destroy" before deleting it from database.
+
+        The main purpuse of this hook is to call the "destroy" method of the object to delete and
+        to clear related data of the object (environment data such as own storage, cache, etc...
+
+        :note: If destroy raises an exception, the deletion is not taken.
+        """
+        toDelete: 'Notifier' = kwargs['instance']
+        # Only tries to get instance if data is not empty
+        if toDelete.data:
+            try:
+                s = toDelete.getInstance()
+                s.destroy()
+                s.env.clearRelatedData()
+            except Exception as e:
+                logger.error('Error processing deletion of notifier %s: %s (forced deletion)', toDelete.name, e)
+
+        logger.debug('Before delete mfa provider %s', toDelete)
+
+
+# : Connects a pre deletion signal to OS Manager
+models.signals.pre_delete.connect(Notifier.beforeDelete, sender=Notifier)
