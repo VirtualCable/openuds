@@ -65,7 +65,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     )  # Last one is a placeholder in case we can't locate host name
 
     role: str = 'user'
-    user: typing.Optional['User'] = request.user
+    user: typing.Optional['User'] = request.user if request.authorized else None
 
     if user:
         role = (

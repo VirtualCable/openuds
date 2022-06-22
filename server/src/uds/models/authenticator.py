@@ -42,6 +42,7 @@ from uds.core.util.state import State
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
+from .mfa import MFA
 from .util import NEVER
 
 # Not imported at runtime, just for type checking
@@ -66,6 +67,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     objects: 'models.manager.Manager[Authenticator]'
     users: 'models.manager.RelatedManager[User]'
     groups: 'models.manager.RelatedManager[Group]'
+
+    # MFA associated to this authenticator. Can be null
+    mfa = models.ForeignKey(MFA, on_delete=models.SET_NULL, null=True, blank=True, related_name='authenticators')
 
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """

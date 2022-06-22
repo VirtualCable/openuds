@@ -114,4 +114,7 @@ from .dbfile import DBFile
 from .actor_token import ActorToken
 from .tunnel_token import TunnelToken
 
+# Multi factor authentication
+from .mfa import MFA
+
 logger = logging.getLogger(__name__)

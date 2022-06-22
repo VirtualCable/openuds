@@ -290,6 +290,16 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return []
 
+    def mfa_identifier(self) -> str:
+        """
+        If this method is provided by an authenticator, the user will be allowed to enter a MFA code
+        You must return the value used by a MFA provider to identify the user (i.e. email, phone number, etc)
+        If not provided, or the return value is '', the user will be allowed to access UDS without MFA
+
+        Note: Field capture will be responsible of provider. Put it on MFA tab of user form.
+        """
+        return ''
+
     def authenticate(
         self, username: str, credentials: str, groupsManager: 'GroupsManager'
     ) -> bool:

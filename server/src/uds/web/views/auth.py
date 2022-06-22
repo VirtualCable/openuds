@@ -147,9 +147,6 @@ def authCallback_stage2(
         logger.exception('authCallback')
         return errors.exceptionView(request, e)
 
-    # Will never reach this
-    raise RuntimeError('Unreachable point reached!!!')
-
 
 @csrf_exempt
 def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:

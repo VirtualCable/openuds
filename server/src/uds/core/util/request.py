@@ -49,7 +49,9 @@ class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_proxy: str
     os: DictAsObj
-    user: typing.Optional[User]  # type: ignore
+    user: typing.Optional[User]
+    authorized: bool
+    
 
 
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):

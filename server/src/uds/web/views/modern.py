@@ -80,13 +80,18 @@ def login(
 ) -> HttpResponse:
     # Default empty form
     logger.debug('Tag: %s', tag)
+    
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
+        request.authorized = False  # Ensure that on login page, user is unauthorized first
+
         form = LoginForm(request.POST, tag=tag)
         user, data = checkLogin(request, form, tag)
         if isinstance(user, str):
             return HttpResponseRedirect(user)
         if user:
+            # TODO: Check if MFA to set authorize or redirect to MFA page
+            request.authorized = True  # For now, always True
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
