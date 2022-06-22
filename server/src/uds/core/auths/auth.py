@@ -69,7 +69,6 @@ authLogger = logging.getLogger('authLog')
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
 EXPIRY_KEY = 'ek'
-AUTHORIZED_KEY = 'ak'
 ROOT_ID = -20091204  # Any negative number will do the trick
 UDS_COOKIE_LENGTH = 48
 
@@ -198,7 +197,7 @@ def denyNonAuthenticated(
 ) -> typing.Callable[..., RT]:
     @wraps(view_func)
     def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
-        if not request.user:
+        if not request.user or not request.authorized:
             return HttpResponseForbidden()  # type: ignore
         return view_func(request, *args, **kwargs)
 
