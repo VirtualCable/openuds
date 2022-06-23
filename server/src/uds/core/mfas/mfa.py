@@ -78,10 +78,10 @@ class MFA(Module):
     # : Cache time for the generated MFA code
     # : this means that the code will be valid for this time, and will not 
     # : be resent to the user until the time expires.
-    # : This value is in seconds
+    # : This value is in minutes
     # : Note: This value is used by default "process" methos, but you can
     # : override it in your own implementation.
-    cacheTime: typing.ClassVar[int] = 300
+    cacheTime: typing.ClassVar[int] = 5
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)
@@ -124,7 +124,7 @@ class MFA(Module):
         """
         raise NotImplementedError('sendCode method not implemented')
 
-    def process(self, userId: str, identifier: str) -> None:
+    def process(self, userId: str, identifier: str, validity: typing.Optional[int] = None) -> None:
         """
         This method will be invoked from the MFA form, to send the MFA code to the user.
         The identifier where to send the code, will be obtained from "mfaIdentifier" method.
@@ -132,10 +132,11 @@ class MFA(Module):
         """
         # try to get the stored code
         data: typing.Any = self.storage.getPickle(userId)
+        validity = validity if validity is not None else self.validity() * 60
         try:
-            if data:
+            if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=self.cacheTime) < getSqlDatetime():
+                if data[0] + datetime.timedelta(seconds=validity) < getSqlDatetime():
                     # if it's still valid, just return without sending a new one
                     return
         except Exception:
@@ -150,7 +151,7 @@ class MFA(Module):
         # Send the code to the user
         self.sendCode(code)
 
-    def validate(self, userId: str, identifier: str, code: str) -> None:
+    def validate(self, userId: str, identifier: str, code: str, validity: typing.Optional[int] = None) -> None:
         """
         If this method is provided by an authenticator, the user will be allowed to enter a MFA code
         You must raise an "exceptions.MFAError" if the code is not valid.
@@ -158,8 +159,14 @@ class MFA(Module):
         # Validate the code
         try:
             err = _('Invalid MFA code')
+            
             data = self.storage.getPickle(userId)
             if data and len(data) == 2:
+                validity = validity if validity is not None else self.validity() * 60
+                if validity and data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
+                    # if it is no more valid, raise an error
+                    raise exceptions.MFAError('MFA Code expired')
+
                 # Check if the code is valid
                 if data[1] == code:
                     # Code is valid, remove it from storage

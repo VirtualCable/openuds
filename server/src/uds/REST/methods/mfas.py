@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 class MFA(ModelHandler):
     model = models.MFA
-    save_fields = ['name', 'comments', 'tags', 'cache_device']
+    save_fields = ['name', 'comments', 'tags', 'remember_device']
 
     table_title = _('Multi Factor Authentication')
     table_fields = [
@@ -74,7 +74,7 @@ class MFA(ModelHandler):
         self.addField(
             localGui,
             {
-                'name': 'cache_device',
+                'name': 'remember_device',
                 'value': '0',
                 'minValue': '0',
                 'label': gettext('Device Caching'),
@@ -85,6 +85,21 @@ class MFA(ModelHandler):
                 'order': 111,
             },
         )
+        self.addField(
+            localGui,
+            {
+                'name': 'validity',
+                'value': '5',
+                'minValue': '0',
+                'label': gettext('MFA code validity'),
+                'tooltip': gettext(
+                    'Time in minutes to allow MFA code to be used.'
+                ),
+                'type': gui.InputField.NUMERIC_TYPE,
+                'order': 112,
+            },
+
+        )
 
         return localGui
 
@@ -93,7 +108,8 @@ class MFA(ModelHandler):
         return {
             'id': item.uuid,
             'name': item.name,
-            'cache_device': item.cache_device,
+            'remember_device': item.remember_device,
+            'validity': item.validity,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'type': type_.type(),

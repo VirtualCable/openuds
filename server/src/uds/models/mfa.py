@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -55,7 +55,8 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
     objects: 'models.BaseManager[MFA]'
     authenticators: 'models.manager.RelatedManager[Authenticator]'
 
-    cache_device = models.IntegerField(default=0)  # Time to cache the device MFA in hours
+    remember_device = models.IntegerField(default=0)  # Time to remember the device MFA in hours
+    validity = models.IntegerField(default=0)  # Limit of time for this MFA to be used, in seconds
 
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
@@ -77,7 +78,6 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
         from uds.core import mfas
 
         return mfas.factory().lookup(self.data_type) or mfas.MFA
-
 
     def __str__(self) -> str:
         return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)

@@ -72,4 +72,5 @@ gettext("Password");
 gettext("Authenticator");
 gettext("Login");
 gettext("Login Verification");
+gettext("Remember Me");
 gettext("Submit");

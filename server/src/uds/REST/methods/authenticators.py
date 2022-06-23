@@ -152,6 +152,7 @@ class Authenticators(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'priority': item.priority,
+            'mfa_id': item.mfa.uuid if item.mfa else '',
             'visible': item.visible,
             'small_name': item.small_name,
             'users_count': item.users.count(),

@@ -33,16 +33,14 @@ import logging
 
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from uds.models import Authenticator
 
 
 logger = logging.getLogger(__name__)
 
 
 class MFAForm(forms.Form):
-    code = forms.CharField(label=_('Authentication Code'), max_length=64, widget=forms.TextInput())
+    code = forms.CharField(max_length=64, widget=forms.TextInput())
+    remember = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        choices = []
