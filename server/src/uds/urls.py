@@ -128,7 +128,7 @@ urlpatterns = [
         name='page.ticket.launcher',
     ),
     # MFA authentication
-    path('uds/page/mfa/', uds.web.views.modern.mfa, name='page.mfa'),
+    path(r'uds/page/mfa/', uds.web.views.modern.mfa, name='page.mfa'),
     # This must be the last, so any patition will be managed by client in fact
     re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.placeholder'),
     # Utility

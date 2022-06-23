@@ -32,15 +32,7 @@
 """
 
 
-class UDSException(Exception):
-    """
-    Base exception for all UDS exceptions
-    """
-
-    pass
-
-
-class AuthenticatorException(UDSException):
+class AuthenticatorException(Exception):
     """
     Generic authentication exception
     """
@@ -64,7 +56,7 @@ class InvalidAuthenticatorException(AuthenticatorException):
     pass
 
 
-class Redirect(UDSException):
+class Redirect(AuthenticatorException):
     """
     This exception indicates that a redirect is required.
     Used in authUrlCallback to indicate that redirect is needed
@@ -73,7 +65,7 @@ class Redirect(UDSException):
     pass
 
 
-class Logout(UDSException):
+class Logout(AuthenticatorException):
     """
     This exceptions redirects logouts an user and redirects to an url
     """
@@ -81,7 +73,7 @@ class Logout(UDSException):
     pass
 
 
-class MFAError(UDSException):
+class MFAError(AuthenticatorException):
     """
     This exceptions indicates than an MFA error has ocurred
     """

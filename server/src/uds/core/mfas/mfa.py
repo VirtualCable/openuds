@@ -30,11 +30,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
+import random
 import typing
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.services import types as serviceTypes
+from uds.models import getSqlDatetime
 from uds.core import Module
+from uds.core.auths import exceptions
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
@@ -71,6 +74,14 @@ class MFA(Module):
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile: typing.ClassVar[str] = 'mfa.png'
 
+    # : Cache time for the generated MFA code
+    # : this means that the code will be valid for this time, and will not 
+    # : be resent to the user until the time expires.
+    # : This value is in seconds
+    # : Note: This value is used by default "process" methos, but you can
+    # : override it in your own implementation.
+    cacheTime: typing.ClassVar[int] = 300
+
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)
         self.initialize(values)
@@ -90,3 +101,68 @@ class MFA(Module):
 
         Default implementation does nothing
         """
+
+    def label(self) -> str:
+        """
+        This method will be invoked from the MFA form, to know the human name of the field
+        that will be used to enter the MFA code.
+        """
+        return 'MFA Code'
+
+    def validity(self) -> int:
+        """
+        This method will be invoked from the MFA form, to know the validity in secods
+        of the MFA code.
+        If value is 0 or less, means the code is always valid.
+        """
+        return self.cacheTime
+
+    def sendCode(self, code: str) -> None:
+        """
+        This method will be invoked from "process" method, to send the MFA code to the user.
+        """
+        raise NotImplementedError('sendCode method not implemented')
+
+    def process(self, userId: str, identifier: str) -> None:
+        """
+        This method will be invoked from the MFA form, to send the MFA code to the user.
+        The identifier where to send the code, will be obtained from "mfaIdentifier" method.
+        Default implementation generates a random code and sends invokes "sendCode" method.
+        """
+        # try to get the stored code
+        data: typing.Any = self.storage.getPickle(userId)
+        try:
+            if data:
+                # if we have a stored code, check if it's still valid
+                if data[0] + datetime.timedelta(seconds=self.cacheTime) < getSqlDatetime():
+                    # if it's still valid, just return without sending a new one
+                    return
+        except Exception:
+            # if we have a problem, just remove the stored code
+            self.storage.remove(userId)
+
+        # Generate a 6 digit code (0-9)
+        code = ''.join(random.SystemRandom().choices('0123456789', k=6))
+        # Store the code in the database, own storage space
+        self.storage.putPickle(userId, (getSqlDatetime(), code))
+        # Send the code to the user
+        self.sendCode(code)
+
+    def validate(self, userId: str, identifier: str, code: str) -> None:
+        """
+        If this method is provided by an authenticator, the user will be allowed to enter a MFA code
+        You must raise an "exceptions.MFAError" if the code is not valid.
+        """
+        # Validate the code
+        try:
+            data = self.storage.getPickle(userId)
+            if data and len(data) == 2:
+                # Check if the code is valid
+                if data[1] == code:
+                    # Code is valid, remove it from storage
+                    self.storage.remove(userId)
+                    return
+        except Exception as e:
+            # Any error means invalid code
+            raise exceptions.MFAError(e)
+                

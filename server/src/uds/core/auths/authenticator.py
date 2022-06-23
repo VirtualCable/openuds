@@ -300,27 +300,6 @@ class Authenticator(Module):  # pylint: disable=too-many-public-methods
         """
         return ''
 
-    def mfaFieldName(self) -> str:
-        """
-        This method will be invoked from the MFA form, to know the human name of the field
-        that will be used to enter the MFA code.
-        """
-        return 'MFA Code'
-
-    def mfaSendCode(self) -> None:
-        """
-        This method will be invoked from the MFA form, to send the MFA code to the user.
-        The identifier where to send the code, will be obtained from "mfaIdentifier" method.
-        """
-        raise NotImplementedError()
-
-    def mfaValidate(self, identifier: str, code: str) -> None:
-        """
-        If this method is provided by an authenticator, the user will be allowed to enter a MFA code
-        You must raise an "exceptions.MFAError" if the code is not valid.
-        """
-        pass
-
     @classmethod
     def providesMfa(cls) -> bool:
         """

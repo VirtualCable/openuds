@@ -157,15 +157,17 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
     # Obtain MFA data
     authInstance = request.user.manager.getInstance()
+    mfaInstance = mfaProvider.getInstance()
+
     mfaIdentifier = authInstance.mfaIdentifier()
-    mfaFieldName = authInstance.mfaFieldName()
+    label = mfaInstance.label()
 
     if request.method == 'POST':  # User has provided MFA code
         form = MFAForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data['code']
             try:
-                authInstance.mfaValidate(mfaIdentifier, code)
+                mfaInstance.validate(str(request.user.pk), mfaIdentifier, code)
                 request.authorized = True
                 return HttpResponseRedirect(reverse('page.index'))
             except exceptions.MFAError as e:
@@ -174,12 +176,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         else:
             pass  # Will render again the page
     else:
-        # First, make MFA send a code
-        authInstance.mfaSendCode()
+        # Make MFA send a code
+        mfaInstance.process(str(request.user.pk), mfaIdentifier)
 
     # Redirect to index, but with MFA data
     request.session['mfa'] = {
-        'identifier': mfaIdentifier,
-        'fieldName': mfaFieldName,
+        'label': label,
+        'validity': mfaInstance.validity(),
     }
     return HttpResponseRedirect(reverse('page.index'))
