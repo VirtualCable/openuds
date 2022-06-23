@@ -55,6 +55,8 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
     objects: 'models.BaseManager[MFA]'
     authenticators: 'models.manager.RelatedManager[Authenticator]'
 
+    cache_device = models.IntegerField(default=0)  # Time to cache the device MFA in hours
+
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
     ) -> 'mfas.MFA':

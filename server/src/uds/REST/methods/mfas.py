@@ -50,11 +50,7 @@ logger = logging.getLogger(__name__)
 class Notifiers(ModelHandler):
     path = 'mfa'
     model = models.MFA
-    save_fields = [
-        'name',
-        'comments',
-        'tags',
-    ]
+    save_fields = ['name', 'comments', 'tags', 'cache_device']
 
     table_title = _('Notifiers')
     table_fields = [
@@ -75,6 +71,20 @@ class Notifiers(ModelHandler):
 
         localGui = self.addDefaultFields(
             mfa.guiDescription(), ['name', 'comments', 'tags']
+        )
+        self.addField(
+            localGui,
+            {
+                'name': 'cache_device',
+                'value': '0',
+                'minValue': '0',
+                'label': gettext('Device Caching'),
+                'tooltip': gettext(
+                    'Time in hours to cache device so MFA is not required again. User based.'
+                ),
+                'type': gui.InputField.NUMERIC_TYPE,
+                'order': 111,
+            },
         )
 
         return localGui
