@@ -47,12 +47,11 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class Notifiers(ModelHandler):
-    path = 'mfa'
+class MFA(ModelHandler):
     model = models.MFA
     save_fields = ['name', 'comments', 'tags', 'cache_device']
 
-    table_title = _('Notifiers')
+    table_title = _('Multi Factor Authentication')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
@@ -94,6 +93,7 @@ class Notifiers(ModelHandler):
         return {
             'id': item.uuid,
             'name': item.name,
+            'cache_device': item.cache_device,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'type': type_.type(),
