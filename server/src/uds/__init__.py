@@ -85,7 +85,7 @@ default_app_config = 'uds.UDSAppConfig'
 
 @receiver(connection_created)
 def extend_sqlite(connection=None, **kwargs):
-    if connection.vendor == "sqlite":
+    if connection and connection.vendor == "sqlite":
         logger.debug('Connection vendor is sqlite, extending methods')
         cursor = connection.cursor()
         cursor.execute('PRAGMA synchronous=OFF')
@@ -95,5 +95,4 @@ def extend_sqlite(connection=None, **kwargs):
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
         connection.connection.create_function("CEIL", 1, math.ceil)
-        connection.connection.create_function("FLOOR", 1, math.floor)
 
