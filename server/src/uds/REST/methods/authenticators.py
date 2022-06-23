@@ -40,6 +40,7 @@ from uds.core import auths
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
 from uds.core.util import permissions
+from uds.core.util.model import processUuid
 from uds.core.ui import gui
 
 from .users_groups import Users, Groups
@@ -58,7 +59,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible', 'mfa_id']
 
     table_title = _('Authenticators')
     table_fields = [
@@ -120,7 +121,7 @@ class Authenticators(ModelHandler):
                     self.addField(
                         g,
                         {
-                            'name': 'mfa',
+                            'name': 'mfa_id',
                             'values': [gui.choiceItem('', _('None'))]
                             + gui.sortedChoices(
                                 [
@@ -205,6 +206,20 @@ class Authenticators(ModelHandler):
         if res[0]:
             return self.success()
         return res[1]
+
+    def beforeSave(
+        self, fields: typing.Dict[str, typing.Any]
+    ) -> None:  # pylint: disable=too-many-branches,too-many-statements
+        logger.debug(self._params)
+        try:
+            mfa = MFA.objects.get(
+                uuid=processUuid(fields['mfa_id'])
+            )
+            fields['mfa_id'] = mfa.id
+        except Exception:  # not found
+            del fields['mfa_id']
+
+
 
     def deleteItem(self, item: Authenticator):
         # For every user, remove assigned services (mark them for removal)

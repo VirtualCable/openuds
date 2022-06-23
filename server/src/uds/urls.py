@@ -88,6 +88,8 @@ urlpatterns = [
         name='page.login.tag',
     ),
     path(r'uds/page/logout', uds.web.views.modern.logout, name='page.logout'),
+    # MFA authentication
+    path(r'uds/page/mfa/', uds.web.views.modern.mfa, name='page.mfa'),
     # Error URL (just a placeholder, calls index with data on url for angular)
     re_path(
         r'^uds/page/error/(?P<err>[a-zA-Z0-9=-]+)$',
@@ -127,8 +129,6 @@ urlpatterns = [
         uds.web.views.modern.ticketLauncher,
         name='page.ticket.launcher',
     ),
-    # MFA authentication
-    path(r'uds/page/mfa/', uds.web.views.modern.mfa, name='page.mfa'),
     # This must be the last, so any patition will be managed by client in fact
     re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.placeholder'),
     # Utility

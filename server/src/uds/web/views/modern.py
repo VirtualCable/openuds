@@ -34,6 +34,7 @@ import typing
 
 from django.middleware import csrf
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 
@@ -92,16 +93,26 @@ def login(
         user, data = checkLogin(request, form, tag)
         if isinstance(user, str):
             return HttpResponseRedirect(user)
-        if user:
-            # TODO: Check if MFA to set authorize or redirect to MFA page
-            request.authorized = True
 
+        if user:
+            # Initial redirect page
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
             auth.webLogin(request, response, user, data)  # data is user password here
             # And restore tag
             request.session['tag'] = tag
+
+            # If MFA is provided, we need to redirect to MFA page
+            request.authorized = True
+            if user.manager.getType().providesMfa() and user.manager.mfa:
+                authInstance = user.manager.getInstance()
+                if authInstance.mfaIdentifier():
+                    request.authorized = False   # We can ask for MFA so first disauthorize user
+                    response = HttpResponseRedirect(
+                        reverse('page.mfa')
+                    )
+
         else:
             # If error is numeric, redirect...
             # Error, set error on session for process for js
@@ -146,7 +157,8 @@ def js(request: ExtendedHttpRequest) -> HttpResponse:
 def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))
 
-
+# The MFA page does not needs CRF token, so we disable it
+@csrf_exempt
 def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     if not request.user:
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
@@ -184,4 +196,4 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         'label': label,
         'validity': mfaInstance.validity(),
     }
-    return HttpResponseRedirect(reverse('page.index'))
+    return index(request)  # Render index with MFA data

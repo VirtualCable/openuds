@@ -32,6 +32,7 @@
 """
 import datetime
 import random
+import logging
 import typing
 
 from django.utils.translation import ugettext_noop as _
@@ -42,11 +43,11 @@ from uds.core.auths import exceptions
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
 
+logger = logging.getLogger(__name__)
 
 class MFA(Module):
     """
-    this class provides an abstraction of a notifier system for administrator defined events
-    This class will be responsible os sendig emails, messaging notifications, etc.. to administrators
+    this class provides an abstraction of a Multi Factor Authentication
     """
 
     # informational related data
@@ -86,7 +87,7 @@ class MFA(Module):
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType):
+    def initialize(self, values: Module.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -143,6 +144,7 @@ class MFA(Module):
 
         # Generate a 6 digit code (0-9)
         code = ''.join(random.SystemRandom().choices('0123456789', k=6))
+        logger.debug('Generated OTP is %s', code)
         # Store the code in the database, own storage space
         self.storage.putPickle(userId, (getSqlDatetime(), code))
         # Send the code to the user
@@ -155,6 +157,7 @@ class MFA(Module):
         """
         # Validate the code
         try:
+            err = _('Invalid MFA code')
             data = self.storage.getPickle(userId)
             if data and len(data) == 2:
                 # Check if the code is valid
@@ -164,5 +167,7 @@ class MFA(Module):
                     return
         except Exception as e:
             # Any error means invalid code
-            raise exceptions.MFAError(e)
+            err = str(e)
+
+        raise exceptions.MFAError(err)
                 

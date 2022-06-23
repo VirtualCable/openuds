@@ -71,6 +71,7 @@ class UDSAppConfig(AppConfig):
         # pylint: disable=unused-import
         from . import services  # to make sure that the packages are initialized at this point
         from . import auths  # To make sure that the packages are initialized at this point
+        from . import mfas  # To make sure mfas are loaded on memory
         from . import osmanagers  # To make sure that packages are initialized at this point
         from . import transports  # To make sure that packages are initialized at this point
         from . import dispatchers  # Ensure all dischatchers all also available
