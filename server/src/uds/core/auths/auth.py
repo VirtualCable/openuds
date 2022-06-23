@@ -420,23 +420,26 @@ def webLogout(
         # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
         #     exit_url = exit_url.replace('http://', 'https://')
 
-    if request.user:
-        authenticator = request.user.manager.getInstance()
-        username = request.user.name
-        exit_url = authenticator.logout(username) or exit_url
-        if request.user.id != ROOT_ID:
-            # Log the event if not root user
-            events.addEvent(
-                request.user.manager,
-                events.ET_LOGOUT,
-                username=request.user.name,
-                srcip=request.ip,
-            )
-    else:  # No user, redirect to /
-        return HttpResponseRedirect(reverse('page.login'))
-
-    # Try to delete session
-    request.session.flush()
+    try:
+        if request.user:
+            authenticator = request.user.manager.getInstance()
+            username = request.user.name
+            exit_url = authenticator.logout(username) or exit_url
+            if request.user.id != ROOT_ID:
+                # Log the event if not root user
+                events.addEvent(
+                    request.user.manager,
+                    events.ET_LOGOUT,
+                    username=request.user.name,
+                    srcip=request.ip,
+                )
+        else:  # No user, redirect to /
+            return HttpResponseRedirect(reverse('page.login'))
+    except Exception:
+        raise
+    finally:
+        # Try to delete session
+        request.session.flush()
 
     response = HttpResponseRedirect(request.build_absolute_uri(exit_url))
     if authenticator:
