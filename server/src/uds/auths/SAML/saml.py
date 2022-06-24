@@ -33,6 +33,7 @@
 import re
 from urllib.parse import urlparse
 import xml.sax
+import datetime
 import requests
 import logging
 import typing
@@ -43,6 +44,8 @@ from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 from django.utils.translation import gettext_noop as _, gettext
+
+from uds.models import getSqlDatetime
 from uds.core.ui import gui
 from uds.core import auths
 from uds.core.managers import cryptoManager
@@ -282,6 +285,23 @@ class SAMLAuthenticator(auths.Authenticator):
         tab=_('Security'),
     )
 
+    metadataCacheDuration = gui.NumericField(
+        label=_('Metadata cache duration'),
+        defvalue=0,
+        order=22,
+        tooltip=_('Duration of metadata cache in seconds'),
+        tab=_('Metadata'),
+    )
+
+    metadataValidityDuration = gui.NumericField(
+        label=_('Metadata validity duration'),
+        defvalue=0,
+        order=22,
+        tooltip=_('Duration of metadata validity in seconds'),
+        tab=_('Metadata'),
+    )
+
+
     manageUrl = gui.HiddenField(serializable=True)
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
@@ -456,6 +476,8 @@ class SAMLAuthenticator(auths.Authenticator):
             },
             'idp': self.getIdpMetadataDict()['idp'],
             'security': {
+                'metadataCacheDuration': self.metadataCacheDuration.int_value if self.metadataCacheDuration.int_value > 0 else None,
+                'metadataValidUntil': getSqlDatetime() + datetime.timedelta(seconds=self.metadataValidityDuration.int_value) if self.metadataCacheDuration.int_value > 0 else None,
                 'nameIdEncrypted': self.nameIdEncrypted.isTrue(),
                 'authnRequestsSigned': self.authnRequestsSigned.isTrue(),
                 'logoutRequestSigned': self.logoutRequestSigned.isTrue(),
