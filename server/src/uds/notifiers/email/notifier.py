@@ -31,7 +31,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import smtplib, ssl
+import smtplib
+import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import typing
@@ -64,15 +65,6 @@ class EmailNotifier(messaging.Notifier):
     # : mark it as _ (using gettext_noop)
     iconFile = 'email.png'
 
-    # now comes the form fields
-    # There is always two fields that are requested to the admin, that are:
-    # Service Name, that is a name that the admin uses to name this provider
-    # Description, that is a short description that the admin gives to this provider
-    # Now we are going to add a few fields that we need to use this provider
-    # Remember that these are "dummy" fields, that in fact are not required
-    # but used for sample purposes
-    # If we don't indicate an order, the output order of fields will be
-    # "random"
     hostname = gui.TextField(
         length=128,
         label=_('SMTP Host'),
