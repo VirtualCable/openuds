@@ -34,6 +34,7 @@ from functools import wraps
 import logging
 import inspect
 import typing
+import threading
 
 from uds.core.util.html import checkBrowser
 from uds.web.util import errors
@@ -188,3 +189,14 @@ def allowCache(
         return wrapper
 
     return allowCacheDecorator
+
+# Decorator to execute method in a thread
+def threaded(func: typing.Callable[..., None]) -> typing.Callable[..., None]:
+    """Decorator to execute method in a thread"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> None:
+        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
+        thread.start()
+
+    return wrapper

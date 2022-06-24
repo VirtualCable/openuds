@@ -118,7 +118,7 @@ class MFA(Module):
         """
         return self.cacheTime
 
-    def sendCode(self, code: str) -> None:
+    def sendCode(self, userId: str, identifier: str, code: str) -> None:
         """
         This method will be invoked from "process" method, to send the MFA code to the user.
         """
@@ -149,7 +149,7 @@ class MFA(Module):
         # Store the code in the database, own storage space
         self.storage.putPickle(userId, (getSqlDatetime(), code))
         # Send the code to the user
-        self.sendCode(code)
+        self.sendCode(userId, identifier, code)
 
     def validate(self, userId: str, identifier: str, code: str, validity: typing.Optional[int] = None) -> None:
         """

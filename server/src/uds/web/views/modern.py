@@ -170,9 +170,10 @@ def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
 # The MFA page does not needs CRF token, so we disable it
 @csrf_exempt
 def mfa(request: ExtendedHttpRequest) -> HttpResponse:
-    if not request.user or request.authorized:  # If no user, or user is already authorized, redirect to index
+    if (
+        not request.user or request.authorized
+    ):  # If no user, or user is already authorized, redirect to index
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
-
 
     mfaProvider: 'models.MFA' = request.user.manager.mfa
     if not mfaProvider:
@@ -238,10 +239,14 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             pass  # Will render again the page
     else:
         # Make MFA send a code
-        mfaInstance.process(userHashValue, mfaIdentifier, validity=validity)
-        # store on session the start time of the MFA process if not already stored
-        if 'mfa_start_time' not in request.session:
-            request.session['mfa_start_time'] = time.time()
+        try:
+            mfaInstance.process(userHashValue, mfaIdentifier, validity=validity)
+            # store on session the start time of the MFA process if not already stored
+            if 'mfa_start_time' not in request.session:
+                request.session['mfa_start_time'] = time.time()
+        except Exception:
+            logger.exception('Error processing MFA')
+            return errors.errorView(request, errors.UNKNOWN_ERROR)
 
     # Compose a nice "XX years, XX months, XX days, XX hours, XX minutes" string from mfaProvider.remember_device
     remember_device = ''

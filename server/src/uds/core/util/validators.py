@@ -116,6 +116,22 @@ def validatePort(portStr: str) -> int:
     return validateNumeric(portStr, minValue=0, maxValue=65535, fieldName='Port')
 
 
+def validateHostPortPair(hostPortPair: str) -> typing.Tuple[str, int]:
+    """
+    Validates that a host:port pair is valid
+    :param hostPortPair: host:port pair to validate
+    :param returnAsInteger: if True, returns value as integer, if not, as string
+    :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
+    """
+    try:
+        host, port = hostPortPair.split(':')
+        return validateHostname(host, 255, False), validatePort(port)
+    except Exception:
+        raise Module.ValidationException(
+            _('{} is not a valid host:port pair').format(hostPortPair)
+        )
+
+
 def validateTimeout(timeOutStr: str) -> int:
     """
     Validates that a timeout value is valid
@@ -154,3 +170,21 @@ def validateMacRange(macRange: str) -> str:
         )
 
     return macRange
+
+def validateEmail(email: str) -> str:
+    """
+    Validates that an email is valid
+    :param email: email to validate
+    :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
+    """
+    if len(email) > 254:
+        raise Module.ValidationException(
+            _('Email address is too long')
+        )
+
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        raise Module.ValidationException(
+            _('Email address is not valid')
+        )
+
+    return email
