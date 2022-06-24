@@ -170,8 +170,9 @@ def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
 # The MFA page does not needs CRF token, so we disable it
 @csrf_exempt
 def mfa(request: ExtendedHttpRequest) -> HttpResponse:
-    if not request.user:
+    if not request.user or request.authorized:  # If no user, or user is already authorized, redirect to index
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
+
 
     mfaProvider: 'models.MFA' = request.user.manager.mfa
     if not mfaProvider:

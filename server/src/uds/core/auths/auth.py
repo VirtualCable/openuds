@@ -137,6 +137,7 @@ def webLoginRequired(
     def decorator(
         view_func: typing.Callable[..., HttpResponse]
     ) -> typing.Callable[..., HttpResponse]:
+        @wraps(view_func)
         def _wrapped_view(
             request: 'ExtendedHttpRequest', *args, **kwargs
         ) -> HttpResponse:
@@ -292,7 +293,6 @@ def authenticate(
             username,
         )
         return None
-        
 
     return __registerUser(authenticator, authInstance, username)
 
@@ -377,7 +377,9 @@ def webLogin(
     cookie = getUDSCookie(request, response)
 
     user.updateLastAccess()
-    request.authorized = False  # For now, we don't know if the user is authorized until MFA is checked
+    request.authorized = (
+        False  # For now, we don't know if the user is authorized until MFA is checked
+    )
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = cryptoManager().symCrypt(
         password, cookie
