@@ -72,6 +72,7 @@ class UDSAppConfig(AppConfig):
         # To make sure that the packages are initialized at this point
         from . import services
         from . import auths
+        from . import mfas  # To make sure mfas are loaded on memory
         from . import osmanagers
         from . import notifiers
         from . import transports
@@ -94,7 +95,6 @@ default_app_config = 'uds.UDSAppConfig'
 
 
 # Sets up several sqlite non existing methods
-
 
 @receiver(connection_created)
 def extend_sqlite(connection=None, **kwargs):

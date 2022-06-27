@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
-from uds.models import Authenticator, Network
+from uds.models import Authenticator, Network, MFA
 from uds.core import auths
 
 from uds.REST import NotFound
@@ -46,6 +46,7 @@ from .users_groups import Users, Groups
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from django.db import models
     from uds.core import Module
 
 logger = logging.getLogger(__name__)
@@ -76,16 +77,10 @@ class Authenticators(ModelHandler):
         {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
-        {
-            'state': {
-                'title': _('Access'),
-                'type': 'dict',
-                'dict': {'v': _('Visible'), 'h': _('Hidden'), 'd': 'Disabled'},
-                'width': '3em',
-            }
-        },
+        {'visible': {'title': _('Visible'), 'type': 'callback', 'width': '3em'}},
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
+        {'mfa': {'title': _('MFA'), 'type': 'callback', 'width': '3em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -134,6 +129,28 @@ class Authenticators(ModelHandler):
                         'tab': gettext('Display'),
                     },
                 )
+                # If supports mfa, add MFA provider selector field
+                if authType.providesMfa():
+                    self.addField(
+                        field,
+                        {
+                            'name': 'mfa_id',
+                            'values': [gui.choiceItem('', _('None'))]
+                            + gui.sortedChoices(
+                                [
+                                    gui.choiceItem(v.uuid, v.name)
+                                    for v in MFA.objects.all()
+                                ]
+                            ),
+                            'label': ugettext('MFA Provider'),
+                            'tooltip': ugettext(
+                                'MFA provider to use for this authenticator'
+                            ),
+                            'type': gui.InputField.CHOICE_TYPE,
+                            'order': 108,
+                            'tab': gui.MFA_TAB,
+                        },
+                    )
                 return field
             raise Exception()  # Not found
         except Exception:
@@ -151,6 +168,7 @@ class Authenticators(ModelHandler):
             'net_filtering': item.net_filtering,
             'networks': [{'id': n.uuid} for n in item.networks.all()],
             'state': item.state,
+            'mfa_id': item.mfa.uuid if item.mfa else '',
             'small_name': item.small_name,
             'users_count': item.users.count(),
             'type': type_.type(),
@@ -217,6 +235,20 @@ class Authenticators(ModelHandler):
         if res[0]:
             return self.success()
         return res[1]
+
+    def beforeSave(
+        self, fields: typing.Dict[str, typing.Any]
+    ) -> None:  # pylint: disable=too-many-branches,too-many-statements
+        logger.debug(self._params)
+        try:
+            mfa = MFA.objects.get(
+                uuid=processUuid(fields['mfa_id'])
+            )
+            fields['mfa_id'] = mfa.id
+        except Exception:  # not found
+            del fields['mfa_id']
+
+
 
     def deleteItem(self, item: Authenticator):
         # For every user, remove assigned services (mark them for removal)

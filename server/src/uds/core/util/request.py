@@ -48,7 +48,9 @@ class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_proxy: str
     os: DictAsObj
-    user: typing.Optional[User]  # type: ignore
+    user: typing.Optional[User]
+    authorized: bool
+    
 
     def __init__(self) -> None:
         super().__init__()

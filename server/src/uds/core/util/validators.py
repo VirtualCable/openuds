@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.U.
+# Copyright (c) 2014-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -170,21 +170,3 @@ def validateMacRange(macRange: str) -> str:
         )
 
     return macRange
-
-def validateEmail(email: str) -> str:
-    """
-    Validates that an email is valid
-    :param email: email to validate
-    :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
-    """
-    if len(email) > 254:
-        raise Module.ValidationException(
-            _('Email address is too long')
-        )
-
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        raise Module.ValidationException(
-            _('Email address is not valid')
-        )
-
-    return email

@@ -91,6 +91,8 @@ urlpatterns = [
         name='page.login.tag',
     ),
     path(r'uds/page/logout', uds.web.views.modern.logout, name='page.logout'),
+    # MFA authentication
+    path(r'uds/page/mfa/', uds.web.views.modern.mfa, name='page.mfa'),
     # Error URL (just a placeholder, calls index with data on url for angular)
     re_path(
         r'^uds/page/error/(?P<err>[a-zA-Z0-9=-]+)$',

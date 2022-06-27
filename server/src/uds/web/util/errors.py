@@ -72,6 +72,7 @@ SERVICE_CALENDAR_DENIED = 15
 PAGE_NOT_FOUND = 16
 INTERNAL_SERVER_ERROR = 17
 RELOAD_NOT_SUPPORTED = 18
+INVALID_MFA_CODE = 19
 
 strings = [
     _('Unknown error'),
@@ -97,6 +98,7 @@ strings = [
     _('Page not found'),
     _('Unexpected error'),
     _('Reloading this page is not supported. Please, reopen service from origin.'),
+    _('Invalid Multi-Factor Authentication code'),
 ]
 
 

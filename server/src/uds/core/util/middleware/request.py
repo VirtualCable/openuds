@@ -56,7 +56,7 @@ class GlobalRequestMiddleware:
     def __init__(self, get_response: typing.Callable[[HttpRequest], HttpResponse]):
         self._get_response: typing.Callable[[HttpRequest], HttpResponse] = get_response
 
-    def _process_response(self, request: 'ExtendedHttpRequest', response: HttpResponse):
+    def _process_response(self, request: ExtendedHttpRequest, response: HttpResponse):
         # Remove IP from global cache (processing responses after this will make global request unavailable,
         # but can be got from request again)
 

@@ -190,6 +190,14 @@ def checkValidBasename(baseName: str, length: int = -1) -> None:
             gettext('The machine name can\'t be only numbers')
         )
 
-
 def removeControlCharacters(s: str) -> str:
+    """
+    Removes control characters from an unicode string
+
+    Arguments:
+        s {str} -- string to remove control characters from
+
+    Returns:
+        str -- string without control characters
+    """
     return ''.join(ch for ch in s if unicodedata.category(ch)[0] != "C")

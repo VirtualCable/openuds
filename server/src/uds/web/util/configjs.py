@@ -64,7 +64,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     )  # Last one is a placeholder in case we can't locate host name
 
     role: str = 'user'
-    user: typing.Optional['User'] = request.user
+    user: typing.Optional['User'] = request.user if request.authorized else None
 
     if user:
         role = (
@@ -158,6 +158,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         'authenticators': [
             getAuthInfo(auth) for auth in authenticators if auth.getType()
         ],
+        'mfa': request.session.get('mfa', None),
         'tag': tag,
         'os': request.os['OS'].value[0],
         'image_size': Image.MAX_IMAGE_SIZE,
@@ -178,6 +179,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         'urls': {
             'changeLang': reverse('set_language'),
             'login': reverse('page.login'),
+            'mfa': reverse('page.mfa'),
             'logout': reverse('page.logout'),
             'user': reverse('page.index'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),

@@ -113,5 +113,7 @@ from .tunnel_token import TunnelToken
 
 # Notifications & Alerts
 from .notifications import Notification, Notifier, NotificationLevel
+# Multi factor authentication
+from .mfa import MFA
 
 logger = logging.getLogger(__name__)

@@ -37,11 +37,15 @@ class AuthenticatorException(Exception):
     Generic authentication exception
     """
 
+    pass
+
 
 class InvalidUserException(AuthenticatorException):
     """
     Invalid user specified. The user cant access the requested service
     """
+
+    pass
 
 
 class InvalidAuthenticatorException(AuthenticatorException):
@@ -49,15 +53,29 @@ class InvalidAuthenticatorException(AuthenticatorException):
     Invalida authenticator has been specified
     """
 
+    pass
 
-class Redirect(Exception):
+
+class Redirect(AuthenticatorException):
     """
     This exception indicates that a redirect is required.
     Used in authUrlCallback to indicate that redirect is needed
     """
 
+    pass
 
-class Logout(Exception):
+
+class Logout(AuthenticatorException):
     """
     This exceptions redirects logouts an user and redirects to an url
     """
+
+    pass
+
+
+class MFAError(AuthenticatorException):
+    """
+    This exceptions indicates than an MFA error has ocurred
+    """
+
+    pass

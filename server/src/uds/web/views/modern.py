@@ -28,8 +28,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import time
 import logging
+import hashlib
 import typing
 
 from django.middleware import csrf
@@ -37,9 +39,11 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 from django.urls import reverse
-from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
-from uds.core.auths import auth
 
+from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
+from django.views.decorators.cache import never_cache
+
+from uds.core.auths import auth, exceptions
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.util.authentication import checkLogin
@@ -88,6 +92,10 @@ def login(
     response: typing.Optional[HttpResponse] = None
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
+        request.authorized = (
+            False  # Ensure that on login page, user is unauthorized first
+        )
+
         form = LoginForm(request.POST, tag=tag)
         loginResult = checkLogin(request, form, tag)
         if loginResult.user:
@@ -97,6 +105,17 @@ def login(
             auth.webLogin(request, response, loginResult.user, loginResult.password)
             # And restore tag
             request.session['tag'] = tag
+
+            # If MFA is provided, we need to redirect to MFA page
+            request.authorized = True
+            if user.manager.getType().providesMfa() and user.manager.mfa:
+                authInstance = user.manager.getInstance()
+                if authInstance.mfaIdentifier():
+                    request.authorized = (
+                        False  # We can ask for MFA so first disauthorize user
+                    )
+                    response = HttpResponseRedirect(reverse('page.mfa'))
+
         else:
             # If redirection on login failure is found, honor it
             if loginResult.url:  # Redirection
@@ -121,6 +140,7 @@ def login(
 def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.authLogLogout(request)
     request.session['restricted'] = False  # Remove restricted
+    request.authorized = False
     logoutResponse = request.user.logout(request)
     return auth.webLogout(
         request, logoutResponse.url or request.session.get('logouturl', None)

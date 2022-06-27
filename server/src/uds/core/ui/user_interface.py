@@ -111,6 +111,7 @@ class gui:
     CREDENTIALS_TAB: typing.ClassVar[str] = gettext_noop('Credentials')
     TUNNEL_TAB: typing.ClassVar[str] = gettext_noop('Tunnel')
     DISPLAY_TAB: typing.ClassVar[str] = gettext_noop('Display')
+    MFA_TAB: typing.ClassVar[str] = ugettext_noop('MFA')
 
     # : Static Callbacks simple registry
     callbacks: typing.Dict[

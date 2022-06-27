@@ -134,6 +134,16 @@ def authCallback_stage2(
         # Now we render an intermediate page, so we get Java support from user
         # It will only detect java, and them redirect to Java
 
+        # If MFA is provided, we need to redirect to MFA page
+        request.authorized = True
+        if authenticator.getType().providesMfa() and authenticator.mfa:
+            authInstance = authenticator.getInstance()
+            if authInstance.mfaIdentifier(user.name):
+                request.authorized = False   # We can ask for MFA so first disauthorize user
+                response = HttpResponseRedirect(
+                    reverse('page.mfa')
+                )
+
         return response
     except auths.exceptions.Redirect as e:
         return HttpResponseRedirect(
@@ -147,9 +157,6 @@ def authCallback_stage2(
     except Exception as e:
         logger.exception('authCallback')
         return errors.exceptionView(request, e)
-
-    # Will never reach this
-    raise RuntimeError('Unreachable point reached!!!')
 
 
 @csrf_exempt
@@ -248,6 +255,7 @@ def ticketAuth(
         webLogin(request, None, usr, password)
 
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
+        request.authorized = True  # User is authorized
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
         # Transport must always be automatic for ticket authentication

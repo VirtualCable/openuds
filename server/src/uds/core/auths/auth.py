@@ -69,6 +69,7 @@ authLogger = logging.getLogger('authLog')
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
 EXPIRY_KEY = 'ek'
+AUTHORIZED_KEY = 'ak'
 ROOT_ID = -20091204  # Any negative number will do the trick
 UDS_COOKIE_LENGTH = 48
 
@@ -128,7 +129,9 @@ def getRootUser() -> models.User:
 # Decorator to make easier protect pages that needs to be logged in
 def webLoginRequired(
     admin: typing.Union[bool, str] = False
-) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+) -> typing.Callable[
+    [typing.Callable[..., HttpResponse]], typing.Callable[..., HttpResponse]
+]:
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
@@ -136,23 +139,25 @@ def webLoginRequired(
     if admin == 'admin', needs admin
     """
 
-    def decorator(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-        def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
+    def decorator(
+        view_func: typing.Callable[..., HttpResponse]
+    ) -> typing.Callable[..., HttpResponse]:
+        @wraps(view_func)
+        def _wrapped_view(
+            request: 'ExtendedHttpRequest', *args, **kwargs
+        ) -> HttpResponse:
             """
             Wrapped function for decorator
             """
-            if not request.user:
-                # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
-                # if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
-                #     url = url.replace('http://', 'https://')
-                # logger.debug('No user found, redirecting to %s', url)
-                return HttpResponseRedirect(reverse('page.login'))  # type: ignore
+            # If no user or user authorization is not completed...
+            if not request.user or not request.authorized:
+                return HttpResponseRedirect(reverse('page.login'))
 
             if admin is True or admin == 'admin':  # bool or string "admin"
                 if request.user.isStaff() is False or (
                     admin == 'admin' and not request.user.is_admin
                 ):
-                    return HttpResponseForbidden(_('Forbidden'))  # type: ignore
+                    return HttpResponseForbidden(_('Forbidden'))
 
             return view_func(request, *args, **kwargs)
 
@@ -199,7 +204,7 @@ def denyNonAuthenticated(
 ) -> typing.Callable[..., RT]:
     @wraps(view_func)
     def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
-        if not request.user:
+        if not request.user or not request.authorized:
             return HttpResponseForbidden()  # type: ignore
         return view_func(request, *args, **kwargs)
 
@@ -400,6 +405,9 @@ def webLogin(
     cookie = getUDSCookie(request, response)
 
     user.updateLastAccess()
+    request.authorized = (
+        False  # For now, we don't know if the user is authorized until MFA is checked
+    )
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = cryptoManager().symCrypt(
         password, cookie
@@ -443,26 +451,28 @@ def webLogout(
     by django in regular basis.
     """
     if exit_url is None:
-        exit_url = GlobalConfig.LOGOUT_URL.get(force=True).strip() or reverse('page.login')
-
-    if request.user:
-        authenticator = request.user.manager.getInstance()
-        username = request.user.name
-        # Success/fail result is now ignored
-        exit_url = authenticator.logout(request, username).url or exit_url
-        if request.user.id != ROOT_ID:
-            # Log the event if not root user
-            events.addEvent(
-                request.user.manager,
-                events.ET_LOGOUT,
-                username=request.user.name,
-                srcip=request.ip,
-            )
-    else:  # No user, redirect to /
-        return HttpResponseRedirect(reverse('page.login'))
-
-    # Try to delete session
-    request.session.flush()
+        exit_url = request.build_absolute_uri(reverse('page.login'))
+    try:
+        if request.user:
+            authenticator = request.user.manager.getInstance()
+            username = request.user.name
+            exit_url = authenticator.logout(username) or exit_url
+            if request.user.id != ROOT_ID:
+                # Log the event if not root user
+                events.addEvent(
+                    request.user.manager,
+                    events.ET_LOGOUT,
+                    username=request.user.name,
+                    srcip=request.ip,
+                )
+        else:  # No user, redirect to /
+            return HttpResponseRedirect(reverse('page.login'))
+    except Exception:
+        raise
+    finally:
+        # Try to delete session
+        request.session.flush()
+        request.authorized = False
 
     response = HttpResponseRedirect(request.build_absolute_uri(exit_url))
     if authenticator:

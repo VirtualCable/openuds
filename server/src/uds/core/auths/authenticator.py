@@ -327,6 +327,25 @@ class Authenticator(Module):
         """
         return []
 
+    def mfaIdentifier(self, username: str) -> str:
+        """
+        If this method is provided by an authenticator, the user will be allowed to enter a MFA code
+        You must return the value used by a MFA provider to identify the user (i.e. email, phone number, etc)
+        If not provided, or the return value is '', the user will be allowed to access UDS without MFA
+
+        Note: Field capture will be responsible of provider. Put it on MFA tab of user form.
+              Take into consideration that mfaIdentifier will never be invoked if the user has not been
+              previously authenticated. (that is, authenticate method has already been called)
+        """
+        return ''
+
+    @classmethod
+    def providesMfa(cls) -> bool:
+        """
+        Returns if this authenticator provides a MFA identifier
+        """
+        return cls.mfaIdentifier is not Authenticator.mfaIdentifier
+
     def authenticate(
         self,
         username: str,
