@@ -139,7 +139,7 @@ def authCallback_stage2(
         request.authorized = True
         if authenticator.getType().providesMfa() and authenticator.mfa:
             authInstance = authenticator.getInstance()
-            if authInstance.mfaIdentifier():
+            if authInstance.mfaIdentifier(user.name):
                 request.authorized = False   # We can ask for MFA so first disauthorize user
                 response = HttpResponseRedirect(
                     reverse('page.mfa')
@@ -256,6 +256,7 @@ def ticketAuth(
         webLogin(request, None, usr, password)
 
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
+        request.authorized = True  # User is authorized
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
         # Transport must always be automatic for ticket authentication
