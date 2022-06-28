@@ -55,6 +55,8 @@ from uds.web.util import configjs
 logger = logging.getLogger(__name__)
 
 CSRF_FIELD = 'csrfmiddlewaretoken'
+MFA_COOKIE_NAME = 'mfa_status'
+
 
 if typing.TYPE_CHECKING:
     from uds import models
@@ -116,10 +118,9 @@ def login(
             request.authorized = True
             if user.manager.getType().providesMfa() and user.manager.mfa:
                 authInstance = user.manager.getInstance()
-                if authInstance.mfaIdentifier():
-                    request.authorized = (
-                        False  # We can ask for MFA so first disauthorize user
-                    )
+                if authInstance.mfaIdentifier(user.name):
+                    # We can ask for MFA so first disauthorize user
+                    request.authorized = False
                     response = HttpResponseRedirect(reverse('page.mfa'))
 
         else:
@@ -182,11 +183,10 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     userHashValue: str = hashlib.sha3_256(
         (request.user.name + request.user.uuid + mfaProvider.uuid).encode()
     ).hexdigest()
-    cookieName = 'bgd' + userHashValue
 
     # Try to get cookie anc check it
-    mfaCookie = request.COOKIES.get(cookieName, None)
-    if mfaCookie:  # Cookie is valid, skip MFA setting authorization
+    mfaCookie = request.COOKIES.get(MFA_COOKIE_NAME, None)
+    if mfaCookie == userHashValue:  # Cookie is valid, skip MFA setting authorization
         request.authorized = True
         return HttpResponseRedirect(reverse('page.index'))
 
@@ -203,7 +203,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         request.session.flush()  # Clear session, and redirect to login
         return HttpResponseRedirect(reverse('page.login'))
 
-    mfaIdentifier = authInstance.mfaIdentifier()
+    mfaIdentifier = authInstance.mfaIdentifier(request.user.name)
     label = mfaInstance.label()
 
     if request.method == 'POST':  # User has provided MFA code
@@ -226,8 +226,8 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                     and form.cleaned_data['remember'] is True
                 ):
                     response.set_cookie(
-                        cookieName,
-                        'true',
+                        MFA_COOKIE_NAME,
+                        userHashValue,
                         max_age=mfaProvider.remember_device * 60 * 60,
                     )
 

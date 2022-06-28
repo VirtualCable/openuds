@@ -768,7 +768,7 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
-            if options.get('values') and isinstance(options.get('values'), dict):
+            if options.get('values') and isinstance(options.get('values'), (dict, list, tuple)):
                 options['values'] = gui.convertToChoices(options['values'])
             self._data['values'] = options.get('values', [])
             if 'fills' in options:

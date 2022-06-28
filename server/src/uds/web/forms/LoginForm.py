@@ -30,8 +30,9 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from uds.models import Authenticator
 
@@ -69,4 +70,5 @@ class LoginForm(forms.Form):
                 continue
             choices.append((a.uuid, a.name))
 
-        self.fields['authenticator'].choices = choices  # type: ignore
+        typing.cast(forms.ChoiceField, self.fields['authenticator']).choices = choices  
+
