@@ -46,7 +46,7 @@ from .util import NEVER
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import User, Group, Network, MFA
+    from uds.models import User, Group, Network
 
 
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     networks: 'models.manager.RelatedManager[Network]'
     # MFA associated to this authenticator. Can be null
-    mfa = models.ForeignKey(MFA, on_delete=models.SET_NULL, null=True, blank=True, related_name='authenticators')
+    mfa = models.ForeignKey('MFA', on_delete=models.SET_NULL, null=True, blank=True, related_name='authenticators')
 
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
