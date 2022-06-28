@@ -57,6 +57,7 @@ from uds.web.util import configjs
 logger = logging.getLogger(__name__)
 
 CSRF_FIELD = 'csrfmiddlewaretoken'
+MFA_COOKIE_NAME = 'mfa_status'
 
 if typing.TYPE_CHECKING:
     from uds import models
@@ -114,9 +115,9 @@ def login(
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
-            if user.manager.getType().providesMfa() and user.manager.mfa:
-                authInstance = user.manager.getInstance()
-                if authInstance.mfaIdentifier():
+            if loginResult.user.manager.getType().providesMfa() and loginResult.user.manager.mfa:
+                authInstance = loginResult.user.manager.getInstance()
+                if authInstance.mfaIdentifier(loginResult.user.name):
                     request.authorized = (
                         False  # We can ask for MFA so first disauthorize user
                     )

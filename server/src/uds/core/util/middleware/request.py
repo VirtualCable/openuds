@@ -37,7 +37,7 @@ from django.utils import timezone
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import EXPIRY_KEY, ROOT_ID, USER_KEY, getRootUser, webLogout
+from uds.core.auths.auth import AUTHORIZED_KEY, EXPIRY_KEY, ROOT_ID, USER_KEY, getRootUser, webLogout
 from uds.models import User
 
 if typing.TYPE_CHECKING:
@@ -65,6 +65,7 @@ class GlobalRequestMiddleware:
     def __call__(self, request: 'ExtendedHttpRequest'):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
+        request.authorized = request.session.get(AUTHORIZED_KEY, False)
 
         # Ensures request contains os
         request.os = OsDetector.getOsFromUA(
@@ -95,6 +96,10 @@ class GlobalRequestMiddleware:
             )
 
         response = self._get_response(request)
+
+        # Update authorized on session
+        if hasattr(request, 'session'):
+            request.session[AUTHORIZED_KEY] = request.authorized
 
         return self._process_response(request, response)
 
