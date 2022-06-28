@@ -122,7 +122,7 @@ class gui:
             return [{'id': v, 'text': v} for v in vals]
 
         # Dictionary
-        return [{'id': k, 'text': v} for k, v in vals.items()]
+        return [{'id': str(k), 'text': v} for k, v in vals.items()]
 
     @staticmethod
     def convertToList(vals: typing.Iterable[str]) -> typing.List[str]:

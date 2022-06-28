@@ -26,11 +26,9 @@ class SMSMFA(mfas.MFA):
         order=1,
         tooltip=_(
             'URL pattern for SMS sending. It can contain the following '
-            'variables:<br>'
-            '<ul>'
-            '<li>{code} - the code to send</li>'
-            '<li>{phone} - the phone number</li>'
-            '</ul>'
+            'variables:\n'
+            '* {code} - the code to send\n'
+            '* {phone/+phone} - the phone number\n'
         ),
         required=True,
         tab=_('HTTP Server'),
@@ -49,24 +47,39 @@ class SMSMFA(mfas.MFA):
 
     smsSendingMethod = gui.ChoiceField(
         label=_('SMS sending method'),
-        order=2,
+        order=3,
         tooltip=_('Method for sending SMS'),
         required=True,
         tab=_('HTTP Server'),
         values=('GET', 'POST', 'PUT'),
     )
 
+    smsHeadersParameters = gui.TextField(
+        length=4096,
+        multiline=4,
+        label=_('Headers for SMS requests'),
+        order=4,
+        tooltip=_(
+            'Headers for SMS requests. It can contain the following '
+            'variables:\n'
+            '* {code} - the code to send\n'
+            '* {phone/+phone} - the phone number\n'
+            'Headers are in the form of "Header: Value". (without the quotes)'
+        ),
+        required=False,
+        tab=_('HTTP Server'),
+    )
+
     smsSendingParameters = gui.TextField(
-        length=128,
+        length=4096,
+        multiline=5,
         label=_('Parameters for SMS POST/PUT sending'),
-        order=3,
+        order=4,
         tooltip=_(
             'Parameters for SMS sending via POST/PUT. It can contain the following '
-            'variables:<br>'
-            '<ul>'
-            '<li>{code} - the code to send</li>'
-            '<li>{phone} - the phone number</li>'
-            '</ul>'
+            'variables:\n'
+            '* {code} - the code to send\n'
+            '* {phone/+phone} - the phone number\n'
         ),
         required=False,
         tab=_('HTTP Server'),
@@ -74,31 +87,30 @@ class SMSMFA(mfas.MFA):
 
     smsAuthenticationMethod = gui.ChoiceField(
         label=_('SMS authentication method'),
-        order=3,
+        order=6,
         tooltip=_('Method for sending SMS'),
         required=True,
         tab=_('HTTP Server'),
-        values=[
-            {'id': 0, 'text': _('None')},
-            {'id': 1, 'text': _('HTTP Basic Auth')},
-            {'id': 2, 'text': _('HTTP Digest Auth')},
-            {'id': 3, 'text': _('HTTP Token Auth')},
-        ],
+        values={
+            '0': _('None'),
+            '1': _('HTTP Basic Auth'),
+            '2': _('HTTP Digest Auth'),
+        },
     )
 
     smsAuthenticationUserOrToken = gui.TextField(
-        length=128,
+        length=256,
         label=_('SMS authentication user or token'),
-        order=4,
+        order=7,
         tooltip=_('User or token for SMS authentication'),
         required=False,
         tab=_('HTTP Server'),
     )
 
     smsAuthenticationPassword = gui.TextField(
-        length=128,
+        length=256,
         label=_('SMS authentication password'),
-        order=5,
+        order=8,
         tooltip=_('Password for SMS authentication'),
         required=False,
         tab=_('HTTP Server'),
@@ -110,27 +122,31 @@ class SMSMFA(mfas.MFA):
     def composeSmsUrl(self, code: str, phone: str) -> str:
         url = self.smsSendingUrl.value
         url = url.replace('{code}', code)
-        url = url.replace('{phone}', phone)
+        url = url.replace('{phone}', phone.replace('+', ''))
+        url = url.replace('{+phone}', phone)
         return url
 
     def getSession(self) -> requests.Session:
         session = requests.Session()
         # 0 means no authentication
-        if self.smsAuthenticationMethod.value == 1:
+        if self.smsAuthenticationMethod.value == '1':
             session.auth = requests.auth.HTTPBasicAuth(
                 username=self.smsAuthenticationUserOrToken.value,
                 password=self.smsAuthenticationPassword.value,
             )
-        elif self.smsAuthenticationMethod.value == 2:
+        elif self.smsAuthenticationMethod.value == '2':
             session.auth = requests.auth.HTTPDigestAuth(
                 self.smsAuthenticationUserOrToken.value,
                 self.smsAuthenticationPassword.value,
             )
-        elif self.smsAuthenticationMethod.value == 3:
-            session.headers['Authorization'] = (
-                'Token ' + self.smsAuthenticationUserOrToken.value
-            )
         # Any other value means no authentication
+
+        # Add headers. Headers are in the form of "Header: Value". (without the quotes)
+        if self.smsHeadersParameters.value.strip():
+            for header in self.smsHeadersParameters.value.split('\n'):
+                if header.strip():
+                    headerName, headerValue = header.split(':', 1)
+                    session.headers[headerName.strip()] = headerValue.strip()
         return session
 
     def sendSMS_GET(self, url: str) -> None:
@@ -143,7 +159,7 @@ class SMSMFA(mfas.MFA):
         data = ''
         if self.smsSendingParameters.value:
             data = self.smsSendingParameters.value.replace('{code}', code).replace(
-                '{phone}', phone
+                '{phone}', phone.replace('+', '').replace('{+phone}', phone)
             )
         response = self.getSession().post(url, data=data.encode())
         if response.status_code != 200:
