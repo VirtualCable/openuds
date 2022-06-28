@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2018-2022 Virtual Cable S.L.U.
+# Copyright (c) 2018-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -36,9 +36,11 @@ import typing
 
 from django.middleware import csrf
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from django.views.decorators.cache import never_cache
@@ -46,6 +48,7 @@ from django.views.decorators.cache import never_cache
 from uds.core.auths import auth, exceptions
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
+from uds.web.forms.MFAForm import MFAForm
 from uds.web.util.authentication import checkLogin
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
@@ -54,6 +57,9 @@ from uds.web.util import configjs
 logger = logging.getLogger(__name__)
 
 CSRF_FIELD = 'csrfmiddlewaretoken'
+
+if typing.TYPE_CHECKING:
+    from uds import models
 
 
 @never_cache
@@ -158,3 +164,102 @@ def js(request: ExtendedHttpRequest) -> HttpResponse:
 @auth.denyNonAuthenticated  # webLoginRequired not used here because this is not a web page, but js
 def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))
+
+
+# The MFA page does not needs CRF token, so we disable it
+@csrf_exempt
+def mfa(request: ExtendedHttpRequest) -> HttpResponse:
+    if (
+        not request.user or request.authorized
+    ):  # If no user, or user is already authorized, redirect to index
+        return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
+
+    mfaProvider: 'models.MFA' = request.user.manager.mfa
+    if not mfaProvider:
+        return HttpResponseRedirect(reverse('page.index'))
+
+    userHashValue: str = hashlib.sha3_256(
+        (request.user.name + request.user.uuid + mfaProvider.uuid).encode()
+    ).hexdigest()
+
+    # Try to get cookie anc check it
+    mfaCookie = request.COOKIES.get(MFA_COOKIE_NAME, None)
+    if mfaCookie == userHashValue:  # Cookie is valid, skip MFA setting authorization
+        request.authorized = True
+        return HttpResponseRedirect(reverse('page.index'))
+
+    # Obtain MFA data
+    authInstance = request.user.manager.getInstance()
+    mfaInstance = mfaProvider.getInstance()
+
+    # Get validity duration
+    validity = min(mfaInstance.validity(), mfaProvider.validity * 60)
+    start_time = request.session.get('mfa_start_time', time.time())
+
+    # If mfa process timed out, we need to start login again
+    if validity > 0 and time.time() - start_time > validity:
+        request.session.flush()  # Clear session, and redirect to login
+        return HttpResponseRedirect(reverse('page.login'))
+
+    mfaIdentifier = authInstance.mfaIdentifier(request.user.name)
+    label = mfaInstance.label()
+
+    if request.method == 'POST':  # User has provided MFA code
+        form = MFAForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            try:
+                mfaInstance.validate(
+                    userHashValue, mfaIdentifier, code, validity=validity
+                )
+                request.authorized = True
+                # Remove mfa_start_time from session
+                if 'mfa_start_time' in request.session:
+                    del request.session['mfa_start_time']
+
+                response = HttpResponseRedirect(reverse('page.index'))
+                # If mfaProvider requests to keep MFA code on client, create a mfacookie for this user
+                if (
+                    mfaProvider.remember_device > 0
+                    and form.cleaned_data['remember'] is True
+                ):
+                    response.set_cookie(
+                        MFA_COOKIE_NAME,
+                        userHashValue,
+                        max_age=mfaProvider.remember_device * 60 * 60,
+                    )
+
+                return response
+            except exceptions.MFAError as e:
+                logger.error('MFA error: %s', e)
+                return errors.errorView(request, errors.INVALID_MFA_CODE)
+        else:
+            pass  # Will render again the page
+    else:
+        # Make MFA send a code
+        try:
+            mfaInstance.process(userHashValue, mfaIdentifier, validity=validity)
+            # store on session the start time of the MFA process if not already stored
+            if 'mfa_start_time' not in request.session:
+                request.session['mfa_start_time'] = time.time()
+        except Exception:
+            logger.exception('Error processing MFA')
+            return errors.errorView(request, errors.UNKNOWN_ERROR)
+
+    # Compose a nice "XX years, XX months, XX days, XX hours, XX minutes" string from mfaProvider.remember_device
+    remember_device = ''
+    # Remember_device is in hours
+    if mfaProvider.remember_device > 0:
+        # if more than a day, we show days only
+        if mfaProvider.remember_device >= 24:
+            remember_device = _('{} days').format(mfaProvider.remember_device // 24)
+        else:
+            remember_device = _('{} hours').format(mfaProvider.remember_device)
+
+    # Redirect to index, but with MFA data
+    request.session['mfa'] = {
+        'label': label or _('MFA Code'),
+        'validity': validity if validity >= 0 else 0,
+        'remember_device': remember_device,
+    }
+    return index(request)  # Render index with MFA data

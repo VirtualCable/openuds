@@ -70,8 +70,4 @@ class LoginForm(forms.Form):
                 continue
             choices.append((a.uuid, a.name))
 
-<<<<<<< HEAD
         typing.cast(forms.ChoiceField, self.fields['authenticator']).choices = choices  
-=======
-        self.fields['authenticator'].choices = choices  # type: ignore
->>>>>>> origin/v3.5-mfa
