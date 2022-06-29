@@ -67,6 +67,7 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
+            '* {justUsername} - the username without @....\n'
             'Headers are in the form of "Header: Value". (without the quotes)'
         ),
         required=False,
@@ -84,6 +85,7 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
+            '* {justUsername} - the username without @....\n'
         ),
         required=False,
         tab=_('HTTP Server'),
@@ -121,7 +123,7 @@ class SMSMFA(mfas.MFA):
         tab=_('HTTP Authentication'),
     )
 
-    smsAuthenticationPassword = gui.TextField(
+    smsAuthenticationPassword = gui.PasswordField(
         length=256,
         label=_('SMS authentication password'),
         order=22,
@@ -163,6 +165,7 @@ class SMSMFA(mfas.MFA):
         url = url.replace('{phone}', phone.replace('+', ''))
         url = url.replace('{+phone}', phone)
         url = url.replace('{username}', userName)
+        url = url.replace('{justUsername}', userName.split('@')[0])
         return url
 
     def getSession(self) -> requests.Session:
@@ -188,59 +191,62 @@ class SMSMFA(mfas.MFA):
                     session.headers[headerName.strip()] = headerValue.strip()
         return session
 
-    def processResponse(self, response: requests.Response) -> None:
+    def processResponse(self, response: requests.Response) -> mfas.MFA.RESULT:
+        logger.debug('Response: %s', response)
         if not response.ok:
             if self.smsResponseErrorAction.value == '1':
                 raise Exception(_('SMS sending failed'))
-            else:
-                return
-
-        if self.smsResponseOkRegex.value.strip():
-            if not re.search(self.smsResponseOkRegex.value, response.text):
+        elif self.smsResponseOkRegex.value.strip():
+            logger.debug('Checking response OK regex: %s: (%s)', self.smsResponseOkRegex.value, re.search(self.smsResponseOkRegex.value, response.text))
+            if not re.search(self.smsResponseOkRegex.value, response.text or ''):
                 logger.error(
                     'SMS response error: %s',
                     response.text,
                 )
                 if self.smsResponseErrorAction.value == '1':
                     raise Exception('SMS response error')
+            return mfas.MFA.RESULT.ALLOWED
+        return mfas.MFA.RESULT.OK
 
-    def sendSMS_GET(self, userId: str, username: str, url: str) -> None:
-        self.processResponse(self.getSession().get(url))
+    def sendSMS_GET(self, userId: str, username: str, url: str) -> mfas.MFA.RESULT:
+        return self.processResponse(self.getSession().get(url))
 
-    def sendSMS_POST(
+    def getData(
         self, userId: str, username: str, url: str, code: str, phone: str
-    ) -> None:
-        # Compose POST data
-        data = ''
-        if self.smsSendingParameters.value:
-            data = self.smsSendingParameters.value.replace('{code}', code).replace(
-                '{phone}',
-                phone.replace('+', '')
-                .replace('{+phone}', phone)
-                .replace('{username}', username),
-            )
-        bdata = data.encode(self.smsEncoding.value)
-        session = self.getSession()
-        # Add content-length header
-        session.headers['Content-Length'] = str(len(bdata))
-
-        self.processResponse(session.post(url, data=bdata))
-
-    def sendSMS_PUT(
-        self, userId: str, username: str, url: str, code: str, phone: str
-    ) -> None:
-        # Compose POST data
+    ) -> bytes:
         data = ''
         if self.smsSendingParameters.value:
             data = (
                 self.smsSendingParameters.value.replace('{code}', code)
-                .replace('{phone}', phone)
+                .replace('{phone}', phone.replace('+', ''))
                 .replace('{+phone}', phone)
                 .replace('{username}', username)
+                .replace('{justUsername}', username.split('@')[0])
             )
-        self.processResponse(self.getSession().put(url, data=data.encode()))
+        return data.encode(self.smsEncoding.value)
 
-    def sendSMS(self, userId: str, username: str, code: str, phone: str) -> None:
+    def sendSMS_POST(
+        self, userId: str, username: str, url: str, code: str, phone: str
+    ) -> mfas.MFA.RESULT:
+        # Compose POST data
+        session = self.getSession()
+        bdata = self.getData(userId, username, url, code, phone)
+        # Add content-length header
+        session.headers['Content-Length'] = str(len(bdata))
+
+        return self.processResponse(session.post(url, data=bdata))
+
+    def sendSMS_PUT(
+        self, userId: str, username: str, url: str, code: str, phone: str
+    ) -> mfas.MFA.RESULT:
+        # Compose POST data
+        data = ''
+        bdata = self.getData(userId, username, url, code, phone)
+        return self.processResponse(self.getSession().put(url, data=bdata))
+
+    def sendSMS(
+        self, userId: str, username: str, code: str, phone: str
+    ) -> mfas.MFA.RESULT:
         url = self.composeSmsUrl(userId, username, code, phone)
         if self.smsSendingMethod.value == 'GET':
             return self.sendSMS_GET(userId, username, url)
@@ -254,6 +260,14 @@ class SMSMFA(mfas.MFA):
     def label(self) -> str:
         return gettext('MFA Code')
 
-    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> bool:
-        logger.debug('Sending code: %s', code)
-        return True
+    def sendCode(
+        self, userId: str, username: str, identifier: str, code: str
+    ) -> mfas.MFA.RESULT:
+        logger.debug(
+            'Sending SMS code "%s" for user %s (userId="%s", identifier="%s")',
+            code,
+            username,
+            userId,
+            identifier,
+        )
+        return self.sendSMS(userId, username, code, identifier)

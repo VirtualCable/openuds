@@ -28,7 +28,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import time
 import logging
 import hashlib
@@ -44,6 +43,7 @@ from django.utils.translation import gettext as _
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from django.views.decorators.cache import never_cache
 
+from uds.core import mfas
 from uds.core.auths import auth, exceptions
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
@@ -118,10 +118,8 @@ def login(
             request.authorized = True
             if user.manager.getType().providesMfa() and user.manager.mfa:
                 authInstance = user.manager.getInstance()
-                if authInstance.mfaIdentifier(user.name):
-                    # We can ask for MFA so first disauthorize user
-                    request.authorized = False
-                    response = HttpResponseRedirect(reverse('page.mfa'))
+                request.authorized = False
+                response = HttpResponseRedirect(reverse('page.mfa'))
 
         else:
             # If error is numeric, redirect...
@@ -206,6 +204,15 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     mfaIdentifier = authInstance.mfaIdentifier(request.user.name)
     label = mfaInstance.label()
 
+    if not mfaIdentifier:
+        if mfaInstance.emptyIndentifierAllowedToLogin():
+            # Allow login
+            request.authorized = True
+            return HttpResponseRedirect(reverse('page.index'))
+        # Not allowed to login, redirect to login error page
+        logger.warning('MFA identifier not found for user %s on authenticator %s. It is required by MFA %s', request.user.name, request.user.manager.name, mfaProvider.name)
+        return errors.errorView(request, errors.ACCESS_DENIED)
+    
     if request.method == 'POST':  # User has provided MFA code
         form = MFAForm(request.POST)
         if form.is_valid():
@@ -241,7 +248,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         # Make MFA send a code
         try:
             result = mfaInstance.process(userHashValue, request.user.name, mfaIdentifier, validity=validity)
-            if not result:
+            if result == mfas.MFA.RESULT.ALLOWED:
                 # MFA not needed, redirect to index after authorization of the user
                 request.authorized = True
                 return HttpResponseRedirect(reverse('page.index'))
@@ -249,8 +256,8 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             # store on session the start time of the MFA process if not already stored
             if 'mfa_start_time' not in request.session:
                 request.session['mfa_start_time'] = time.time()
-        except Exception:
-            logger.exception('Error processing MFA')
+        except Exception as e:
+            logger.error('Error processing MFA: %s', e)
             return errors.errorView(request, errors.UNKNOWN_ERROR)
 
     # Compose a nice "XX years, XX months, XX days, XX hours, XX minutes" string from mfaProvider.remember_device

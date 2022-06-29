@@ -34,7 +34,7 @@ class SampleMFA(mfas.MFA):
     def label(self) -> str:
         return 'Code is in log'
     
-    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> bool:
+    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
         logger.debug('Sending code: %s', code)
-        return True
+        return mfas.MFA.RESULT.OK
 

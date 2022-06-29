@@ -148,9 +148,9 @@ class EmailMFA(mfas.MFA):
                 logger.error('Error sending email: {}'.format(e))
                 raise
 
-    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> bool:
+    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
         self.doSendCode(identifier, code)
-        return True
+        return mfas.MFA.RESULT.OK
 
     def login(self) -> smtplib.SMTP:
         """

@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 class MFA(ModelHandler):
     model = models.MFA
-    save_fields = ['name', 'comments', 'tags', 'remember_device']
+    save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
     table_title = _('Multi Factor Authentication')
     table_fields = [
