@@ -1,5 +1,6 @@
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from re import T
 import smtplib
 import ssl
 import typing
@@ -127,7 +128,7 @@ class EmailMFA(mfas.MFA):
         return 'OTP received via email'
 
     @decorators.threaded
-    def sendCode(self, userId: str, identifier: str, code: str) -> None:
+    def doSendCode(self, identifier: str, code: str) -> None:
         # Send and email with the notification
         with self.login() as smtp:
             try:
@@ -146,6 +147,10 @@ class EmailMFA(mfas.MFA):
             except smtplib.SMTPException as e:
                 logger.error('Error sending email: {}'.format(e))
                 raise
+
+    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
+        self.doSendCode(identifier, code)
+        return mfas.MFA.RESULT.OK
 
     def login(self) -> smtplib.SMTP:
         """

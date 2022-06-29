@@ -32,6 +32,7 @@
 """
 import datetime
 import random
+import enum
 import logging
 import typing
 
@@ -83,6 +84,13 @@ class MFA(Module):
     # : override it in your own implementation.
     cacheTime: typing.ClassVar[int] = 5
 
+    class RESULT(enum.Enum):
+        """
+        This enum is used to know if the MFA code was sent or not.
+        """
+        OK = 1
+        ALLOWED = 2
+
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)
         self.initialize(values)
@@ -118,17 +126,31 @@ class MFA(Module):
         """
         return self.cacheTime
 
-    def sendCode(self, userId: str, identifier: str, code: str) -> None:
+    def emptyIndentifierAllowedToLogin(self) -> bool:
+        """
+        If this method returns True, an user that has no "identifier" is allowed to login without MFA
+        """
+        return True
+
+    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> 'MFA.RESULT':
         """
         This method will be invoked from "process" method, to send the MFA code to the user.
+        If returns MFA.RESULT.VALID, the MFA code was sent.
+        If returns MFA.RESULT.ALLOW, the MFA code was not sent, the user does not need to enter the MFA code.
+        If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """
+        
         raise NotImplementedError('sendCode method not implemented')
 
-    def process(self, userId: str, identifier: str, validity: typing.Optional[int] = None) -> None:
+    def process(self, userId: str, username: str, identifier: str, validity: typing.Optional[int] = None) -> 'MFA.RESULT':
         """
         This method will be invoked from the MFA form, to send the MFA code to the user.
         The identifier where to send the code, will be obtained from "mfaIdentifier" method.
         Default implementation generates a random code and sends invokes "sendCode" method.
+
+        If returns MFA.RESULT.VALID, the MFA code was sent.
+        If returns MFA.RESULT.ALLOW, the MFA code was not sent, the user does not need to enter the MFA code.
+        If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """
         # try to get the stored code
         data: typing.Any = self.storage.getPickle(userId)
@@ -138,7 +160,7 @@ class MFA(Module):
                 # if we have a stored code, check if it's still valid
                 if data[0] + datetime.timedelta(seconds=validity) < getSqlDatetime():
                     # if it's still valid, just return without sending a new one
-                    return
+                    return MFA.RESULT.OK
         except Exception:
             # if we have a problem, just remove the stored code
             self.storage.remove(userId)
@@ -149,9 +171,10 @@ class MFA(Module):
         # Store the code in the database, own storage space
         self.storage.putPickle(userId, (getSqlDatetime(), code))
         # Send the code to the user
-        self.sendCode(userId, identifier, code)
+        return self.sendCode(userId, username, identifier, code)
+        
 
-    def validate(self, userId: str, identifier: str, code: str, validity: typing.Optional[int] = None) -> None:
+    def validate(self, userId: str, username: str, identifier: str, code: str, validity: typing.Optional[int] = None) -> None:
         """
         If this method is provided by an authenticator, the user will be allowed to enter a MFA code
         You must raise an "exceptions.MFAError" if the code is not valid.
