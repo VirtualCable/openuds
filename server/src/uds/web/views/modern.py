@@ -212,7 +212,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             code = form.cleaned_data['code']
             try:
                 mfaInstance.validate(
-                    userHashValue, mfaIdentifier, code, validity=validity
+                    userHashValue, request.user.name, mfaIdentifier, code, validity=validity
                 )
                 request.authorized = True
                 # Remove mfa_start_time from session
@@ -240,7 +240,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     else:
         # Make MFA send a code
         try:
-            mfaInstance.process(userHashValue, mfaIdentifier, validity=validity)
+            result = mfaInstance.process(userHashValue, request.user.name, mfaIdentifier, validity=validity)
+            if not result:
+                # MFA not needed, redirect to index after authorization of the user
+                request.authorized = True
+                return HttpResponseRedirect(reverse('page.index'))
+
             # store on session the start time of the MFA process if not already stored
             if 'mfa_start_time' not in request.session:
                 request.session['mfa_start_time'] = time.time()
