@@ -109,7 +109,7 @@ class Authenticators(ModelHandler):
                         'value': True,
                         'label': ugettext('Visible'),
                         'tooltip': ugettext(
-                            'If active, transport will be visible for users'
+                            'If active, authenticator will be visible for users'
                         ),
                         'type': gui.InputField.CHECKBOX_TYPE,
                         'order': 107,

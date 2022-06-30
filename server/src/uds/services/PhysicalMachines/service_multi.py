@@ -60,7 +60,7 @@ class IPMachinesService(IPServiceBase):
     token = gui.TextField(
         order=1,
         label=_('Service Token'),
-        length=16,
+        length=64,
         tooltip=_(
             'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
         ),

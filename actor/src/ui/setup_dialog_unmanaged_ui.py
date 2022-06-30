@@ -146,7 +146,7 @@ class Ui_UdsActorSetupDialog(object):
         self.host.setToolTip(_translate("UdsActorSetupDialog", "Uds Broker Server Addres. Use IP or FQDN"))
         self.host.setWhatsThis(_translate("UdsActorSetupDialog", "Enter here the UDS Broker Addres using either its IP address or its FQDN address"))
         self.label_serviceToken.setText(_translate("UdsActorSetupDialog", "Service Token"))
-        self.serviceToken.setToolTip(_translate("UdsActorSetupDialog", "UDS user with administration rights (Will not be stored on template)"))
+        self.serviceToken.setToolTip(_translate("UdsActorSetupDialog", "UDS Service Token"))
         self.serviceToken.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Administrator user on UDS Server.</p><p>Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.</p></body></html>"))
         self.label_loglevel.setText(_translate("UdsActorSetupDialog", "Log Level"))
         self.label_restrictNet.setText(_translate("UdsActorSetupDialog", "Restrict Net"))
