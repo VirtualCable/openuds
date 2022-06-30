@@ -41,9 +41,9 @@ from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from django.views.decorators.cache import never_cache
 
+from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth, exceptions
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
@@ -51,6 +51,7 @@ from uds.web.forms.MFAForm import MFAForm
 from uds.web.util.authentication import checkLogin
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
+from uds.core import mfas
 
 
 logger = logging.getLogger(__name__)
@@ -108,14 +109,14 @@ def login(
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
-            auth.webLogin(request, response, user, data)  # data is user password here
+            auth.webLogin(request, response, loginResult.user, loginResult.password)  # data is user password here
             # And restore tag
             request.session['tag'] = tag
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
-            if user.manager.getType().providesMfa() and user.manager.mfa:
-                authInstance = user.manager.getInstance()
+            if loginResult.user.manager.getType().providesMfa() and loginResult.user.manager.mfa:
+                authInstance = loginResult.user.manager.getInstance()
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
