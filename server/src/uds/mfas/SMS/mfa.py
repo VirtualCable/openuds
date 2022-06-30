@@ -31,6 +31,7 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
+            '* {justUsername} - the username without @....'
         ),
         required=True,
         tab=_('HTTP Server'),
@@ -85,7 +86,7 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
-            '* {justUsername} - the username without @....\n'
+            '* {justUsername} - the username without @....'
         ),
         required=False,
         tab=_('HTTP Server'),
@@ -205,7 +206,8 @@ class SMSMFA(mfas.MFA):
                 )
                 if self.smsResponseErrorAction.value == '1':
                     raise Exception('SMS response error')
-            return mfas.MFA.RESULT.ALLOWED
+                else:
+                    return mfas.MFA.RESULT.ALLOWED
         return mfas.MFA.RESULT.OK
 
     def sendSMS_GET(self, userId: str, username: str, url: str) -> mfas.MFA.RESULT:

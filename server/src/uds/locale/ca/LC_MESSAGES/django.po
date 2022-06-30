@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 14:45+0100\n"
-"PO-Revision-Date: 2022-01-14 11:34+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2022-06-30 16:32+0200\n"
+"PO-Revision-Date: 2014-03-26 02:14+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -25,26 +25,26 @@ msgstr ""
 msgid "Accounts"
 msgstr "Comptes"
 
-#: REST/methods/accounts.py:63 REST/methods/authenticators.py:66
+#: REST/methods/accounts.py:63 REST/methods/authenticators.py:67
 #: REST/methods/calendars.py:63 REST/methods/images.py:67
-#: REST/methods/meta_pools.py:81 REST/methods/networks.py:63
-#: REST/methods/osmanagers.py:55 REST/methods/providers.py:71
-#: REST/methods/proxies.py:60 REST/methods/reports.py:69
-#: REST/methods/services_pool_groups.py:71 REST/methods/services_pools.py:136
-#: REST/methods/transports.py:66 REST/methods/user_services.py:325
-#: REST/methods/user_services.py:400 REST/methods/users_groups.py:167
-#: REST/model.py:149
+#: REST/methods/meta_pools.py:81 REST/methods/mfas.py:56
+#: REST/methods/networks.py:63 REST/methods/osmanagers.py:55
+#: REST/methods/providers.py:71 REST/methods/proxies.py:60
+#: REST/methods/reports.py:69 REST/methods/services_pool_groups.py:71
+#: REST/methods/services_pools.py:136 REST/methods/transports.py:66
+#: REST/methods/user_services.py:325 REST/methods/user_services.py:400
+#: REST/methods/users_groups.py:167 REST/model.py:149
 msgid "Name"
 msgstr "Nom"
 
-#: REST/methods/accounts.py:64 REST/methods/authenticators.py:68
+#: REST/methods/accounts.py:64 REST/methods/authenticators.py:69
 #: REST/methods/calendarrules.py:110 REST/methods/calendars.py:69
-#: REST/methods/meta_pools.py:82 REST/methods/osmanagers.py:57
-#: REST/methods/providers.py:73 REST/methods/proxies.py:63
-#: REST/methods/services.py:241 REST/methods/services_pool_groups.py:72
-#: REST/methods/transports.py:68 REST/methods/user_services.py:402
-#: REST/methods/users_groups.py:168 REST/methods/users_groups.py:386
-#: REST/model.py:173
+#: REST/methods/meta_pools.py:82 REST/methods/mfas.py:58
+#: REST/methods/osmanagers.py:57 REST/methods/providers.py:73
+#: REST/methods/proxies.py:63 REST/methods/services.py:241
+#: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:68
+#: REST/methods/user_services.py:402 REST/methods/users_groups.py:168
+#: REST/methods/users_groups.py:384 REST/model.py:173
 msgid "Comments"
 msgstr "Comentaris"
 
@@ -52,12 +52,12 @@ msgstr "Comentaris"
 msgid "Time mark"
 msgstr "Marca de temps"
 
-#: REST/methods/accounts.py:66 REST/methods/authenticators.py:73
+#: REST/methods/accounts.py:66 REST/methods/authenticators.py:75
 #: REST/methods/calendars.py:71 REST/methods/meta_pools.py:89
-#: REST/methods/networks.py:71 REST/methods/osmanagers.py:59
-#: REST/methods/providers.py:79 REST/methods/proxies.py:64
-#: REST/methods/services.py:250 REST/methods/services_pools.py:145
-#: REST/methods/transports.py:77
+#: REST/methods/mfas.py:59 REST/methods/networks.py:71
+#: REST/methods/osmanagers.py:59 REST/methods/providers.py:79
+#: REST/methods/proxies.py:64 REST/methods/services.py:250
+#: REST/methods/services_pools.py:145 REST/methods/transports.py:77
 msgid "tags"
 msgstr "etiquetes"
 
@@ -112,7 +112,7 @@ msgstr "Clau incorrecta"
 msgid "Unmanaged host"
 msgstr "Host no administrat"
 
-#: REST/methods/actor.py:207 web/util/errors.py:85
+#: REST/methods/actor.py:207 web/util/errors.py:87
 msgid "User service not found"
 msgstr "Servei d'usuari no trobat"
 
@@ -121,9 +121,9 @@ msgid "Actor tokens"
 msgstr "Tokens de l'actor"
 
 #: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:52
-#: reports/auto/fields.py:58 reports/stats/pools_performance.py:218
-#: reports/stats/pools_performance.py:237 reports/stats/pools_usage_day.py:64
-#: reports/stats/usage_by_pool.py:170 reports/stats/user_access.py:191
+#: reports/auto/fields.py:58 reports/stats/pools_performance.py:201
+#: reports/stats/pools_performance.py:220 reports/stats/pools_usage_day.py:64
+#: reports/stats/usage_by_pool.py:170 reports/stats/user_access.py:176
 #: templates/uds/reports/stats/authenticator_stats.html:14
 msgid "Date"
 msgstr "Data"
@@ -162,64 +162,79 @@ msgstr "Nivell de registre"
 msgid "Token isued by {} from {}"
 msgstr "El token es mostra per {} de {}"
 
-#: REST/methods/authenticators.py:63
+#: REST/methods/authenticators.py:64
 msgid "Authenticators"
 msgstr "Autenticadors"
 
-#: REST/methods/authenticators.py:65
+#: REST/methods/authenticators.py:66
 msgid "Id"
 msgstr "ID"
 
-#: REST/methods/authenticators.py:67 REST/methods/osmanagers.py:56
-#: REST/methods/providers.py:72 REST/methods/services.py:242
-#: REST/methods/transports.py:67 REST/methods/user_services.py:401
+#: REST/methods/authenticators.py:68 REST/methods/mfas.py:57
+#: REST/methods/osmanagers.py:56 REST/methods/providers.py:72
+#: REST/methods/services.py:242 REST/methods/transports.py:67
+#: REST/methods/user_services.py:401
 msgid "Type"
 msgstr "Tipus"
 
-#: REST/methods/authenticators.py:69 REST/methods/meta_service_pools.py:88
+#: REST/methods/authenticators.py:70 REST/methods/meta_service_pools.py:88
 #: REST/methods/op_calendars.py:83 REST/methods/services_pool_groups.py:62
 #: REST/methods/transports.py:65 REST/methods/user_services.py:399
 #: REST/model.py:185 models/meta_pool.py:73
 msgid "Priority"
 msgstr "Prioritat"
 
-#: REST/methods/authenticators.py:70 REST/methods/authenticators.py:107
+#: REST/methods/authenticators.py:71 REST/methods/authenticators.py:110
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:193
 #: REST/methods/services_pools.py:141 REST/methods/services_pools.py:386
 msgid "Visible"
 msgstr "Visible"
 
-#: REST/methods/authenticators.py:71 REST/methods/meta_pools.py:88
+#: REST/methods/authenticators.py:72 REST/methods/meta_pools.py:88
 #: REST/methods/transports.py:164 REST/model.py:201
 msgid "Label"
 msgstr "Etiqueta"
 
-#: REST/methods/authenticators.py:72 core/util/stats/counters.py:252
-#: reports/stats/pools_performance.py:223
-#: reports/stats/pools_performance.py:286 reports/stats/user_access.py:254
-#: reports/stats/user_access.py:297 services/RDS_enterprise/provider.py:74
+#: REST/methods/authenticators.py:73 core/util/stats/counters.py:252
+#: reports/stats/pools_performance.py:206
+#: reports/stats/pools_performance.py:269 reports/stats/user_access.py:239
+#: reports/stats/user_access.py:282 services/RDS_enterprise/provider.py:74
 #: templates/uds/reports/stats/authenticator_stats.html:15
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
 msgstr "Usuaris"
 
-#: REST/methods/authenticators.py:109 REST/methods/services_pools.py:387
-msgid "If active, transport will be visible for users"
-msgstr "Si està activat, el transport serà visible per als usuaris"
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:104
+msgid "MFA"
+msgstr "MFA"
 
-#: REST/methods/authenticators.py:113 REST/methods/services_pools.py:390
-#: REST/methods/services_pools.py:405 REST/methods/services_pools.py:422
-#: REST/methods/services_pools.py:433 core/ui/user_interface.py:103
-#: services/OVirt/service.py:188
-msgid "Display"
-msgstr "Pantalla"
+#: REST/methods/authenticators.py:112
+msgid "If active, authenticator will be visible for users"
+msgstr "Si està actiu, l&#39;autenticador serà visible per als usuaris"
 
-#: REST/methods/authenticators.py:167
+#: REST/methods/authenticators.py:125 core/services/service.py:143
+#: core/services/service.py:154 mfas/Email/mfa.py:46 mfas/SMS/mfa.py:112
+#: models/permissions.py:92 models/permissions.py:96
+#: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
+#: services/Proxmox/service.py:208 services/Sample/service.py:100
+#: services/Sample/service.py:106 services/TestService_enterprise/service.py:29
+msgid "None"
+msgstr "Cap"
+
+#: REST/methods/authenticators.py:132
+msgid "MFA Provider"
+msgstr "Proveïdor de MFA"
+
+#: REST/methods/authenticators.py:134
+msgid "MFA provider to use for this authenticator"
+msgstr "Proveïdor de MFA que cal utilitzar per a aquest autenticador"
+
+#: REST/methods/authenticators.py:193
 msgid "Too many results..."
 msgstr "Hi ha massa resultats ..."
 
-#: REST/methods/authenticators.py:167
+#: REST/methods/authenticators.py:193
 msgid "Refine your query"
 msgstr "Refineu la vostra consulta"
 
@@ -378,7 +393,7 @@ msgstr "Data de creació"
 
 #: REST/methods/meta_service_pools.py:195 REST/methods/services_usage.py:125
 #: reports/stats/pool_users_summary.py:60
-#: reports/stats/pools_performance.py:284 reports/stats/pools_usage_day.py:171
+#: reports/stats/pools_performance.py:267 reports/stats/pools_usage_day.py:169
 #: reports/stats/pools_usage_summary.py:156 reports/stats/usage_by_pool.py:59
 #: reports/stats/usage_by_pool.py:173 services/Proxmox/service.py:111
 #: templates/uds/reports/stats/pools-performance.html:33
@@ -436,6 +451,28 @@ msgstr "Element ja eliminat"
 #: REST/methods/user_services.py:198
 msgid "Item is not removable"
 msgstr "Element que no pot eliminar-se"
+
+#: REST/methods/mfas.py:54
+msgid "Multi Factor Authentication"
+msgstr "Autenticació de múltiples factors"
+
+#: REST/methods/mfas.py:80
+msgid "Device Caching"
+msgstr "Emmagatzematge en memòria cau del dispositiu"
+
+#: REST/methods/mfas.py:82
+msgid "Time in hours to cache device so MFA is not required again. User based."
+msgstr ""
+"Temps en hores per emmagatzemar el dispositiu a la memòria cau, de manera "
+"que no es requereix MFA de nou. Basat en l&#39;usuari."
+
+#: REST/methods/mfas.py:94
+msgid "MFA code validity"
+msgstr "Validesa del codi MFA"
+
+#: REST/methods/mfas.py:96
+msgid "Time in minutes to allow MFA code to be used."
+msgstr "Temps en minuts per permetre l&#39;ús del codi MFA."
 
 #: REST/methods/networks.py:59 REST/methods/transports.py:114
 msgid "Networks"
@@ -525,7 +562,7 @@ msgstr "Proveïdors de servei"
 msgid "Status"
 msgstr "Estat"
 
-#: REST/methods/providers.py:75 reports/stats/pools_usage_day.py:171
+#: REST/methods/providers.py:75 reports/stats/pools_usage_day.py:169
 #: templates/uds/reports/stats/authenticator_stats.html:16
 #: templates/uds/reports/stats/pools-usage-day.html:29
 msgid "Services"
@@ -620,13 +657,13 @@ msgstr ""
 msgid "Available reports"
 msgstr "Informes disponibles"
 
-#: REST/methods/reports.py:67 REST/methods/users_groups.py:377
-#: REST/methods/users_groups.py:398
-#: auths/ActiveDirectory_enterprise/authenticator.py:143
+#: REST/methods/reports.py:67 REST/methods/users_groups.py:375
+#: REST/methods/users_groups.py:396
+#: auths/ActiveDirectory_enterprise/authenticator.py:153
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:105
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:191
-#: auths/SAML_enterprise/saml.py:121 auths/SimpleLDAP/authenticator.py:182
+#: auths/SAML_enterprise/saml.py:109 auths/SimpleLDAP/authenticator.py:182
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "Grup"
@@ -691,13 +728,13 @@ msgstr "Proxy per a serveis darrere d'un tallafoc"
 msgid "Advanced"
 msgstr "Avançat"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:298
-#: REST/methods/users_groups.py:506
+#: REST/methods/services.py:365 REST/methods/users_groups.py:296
+#: REST/methods/users_groups.py:500
 msgid "With errors"
 msgstr "Amb errors"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:298
-#: REST/methods/users_groups.py:506
+#: REST/methods/services.py:365 REST/methods/users_groups.py:296
+#: REST/methods/users_groups.py:500
 msgid "Ok"
 msgstr "D'acord"
 
@@ -774,6 +811,16 @@ msgid ""
 msgstr ""
 "Si l'opció està habilitada, UDS no intentarà detectar ni eliminar els "
 "serveis d'usuari assignats que no s'utilitzin."
+
+#: REST/methods/services_pools.py:387
+msgid "If active, transport will be visible for users"
+msgstr "Si està activat, el transport serà visible per als usuaris"
+
+#: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
+#: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
+#: core/ui/user_interface.py:103 services/OVirt/service.py:188
+msgid "Display"
+msgstr "Pantalla"
 
 #: REST/methods/services_pools.py:439
 msgid "Initial available services"
@@ -984,7 +1031,7 @@ msgstr "Membre del personal"
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:118 reports/stats/pool_users_summary.py:177
+#: auths/SAML_enterprise/saml.py:106 reports/stats/pool_users_summary.py:177
 #: reports/stats/usage_by_pool.py:171
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1001,10 +1048,10 @@ msgid "Current users"
 msgstr "Usuaris actuals"
 
 #: REST/methods/users_groups.py:160
-#: auths/ActiveDirectory_enterprise/authenticator.py:141
+#: auths/ActiveDirectory_enterprise/authenticator.py:151
 #: auths/EDirectory_enterprise/authenticator.py:103
 #: auths/RegexLdap/authenticator.py:189 auths/SimpleLDAP/authenticator.py:180
-#: services/HyperV_enterprise/legacy/provider.py:103
+#: mfas/Email/mfa.py:54 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
 #: services/Nutanix_enterprise/provider.py:54 services/OVirt/provider.py:121
@@ -1018,7 +1065,7 @@ msgstr "Usuaris actuals"
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
 #: transports/SPICE/spice_base.py:69 transports/X2GO/x2go_base.py:70
-#: web/forms/LoginForm.py:43
+#: web/forms/LoginForm.py:44
 msgid "Username"
 msgstr "Nom d'usuari"
 
@@ -1026,7 +1073,7 @@ msgstr "Nom d'usuari"
 msgid "Role"
 msgstr "Paper"
 
-#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:389
+#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:387
 msgid "state"
 msgstr "estat"
 
@@ -1038,32 +1085,32 @@ msgstr "Darrer accés"
 msgid "Username cannot be empty"
 msgstr "El nom d&#39;usuari no pot estar buit"
 
-#: REST/methods/users_groups.py:240 REST/methods/users_groups.py:470
+#: REST/methods/users_groups.py:240 REST/methods/users_groups.py:468
 msgid "User already exists (duplicate key error)"
 msgstr "Aquest usuari ja existeix (error de clau duplicada)"
 
-#: REST/methods/users_groups.py:365
+#: REST/methods/users_groups.py:363
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Grups de {0}"
 
-#: REST/methods/users_groups.py:371
+#: REST/methods/users_groups.py:369
 msgid "Current groups"
 msgstr "Grups actuals"
 
-#: REST/methods/users_groups.py:398
+#: REST/methods/users_groups.py:396
 msgid "UDS Group"
 msgstr "Grup UDS"
 
-#: REST/methods/users_groups.py:399
+#: REST/methods/users_groups.py:397
 msgid "Meta group"
 msgstr "Metagrup"
 
-#: REST/methods/users_groups.py:399
+#: REST/methods/users_groups.py:397
 msgid "UDS Meta Group"
 msgstr "Metagrup UDS"
 
-#: REST/methods/users_groups.py:430
+#: REST/methods/users_groups.py:428
 msgid "Group name is required"
 msgstr "El nom del grup és obligatori"
 
@@ -1114,7 +1161,7 @@ msgstr "Mètode no trobat a {}: {}"
 msgid "Item not found"
 msgstr "Element no trobat"
 
-#: REST/model.py:336 web/util/authentication.py:140 web/util/errors.py:79
+#: REST/model.py:336 web/util/authentication.py:143 web/util/errors.py:81
 msgid "Access denied"
 msgstr "Accés denegat"
 
@@ -1122,7 +1169,7 @@ msgstr "Accés denegat"
 msgid "Operation not supported"
 msgstr "Operació no suportada"
 
-#: admin/views/__init__.py:59
+#: admin/views/__init__.py:72
 msgid "requested a template that do not exist"
 msgstr "heu sol·licitat una plantilla que no existeix"
 
@@ -1156,11 +1203,11 @@ msgstr ""
 "format USUARI@DOMINI)"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
-#: auths/ActiveDirectory_enterprise/authenticator.py:145
+#: auths/ActiveDirectory_enterprise/authenticator.py:155
 #: auths/EDirectory_enterprise/authenticator.py:77
 #: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:193
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
-#: core/auths/authenticator.py:147
+#: core/auths/authenticator.py:147 mfas/Email/mfa.py:63
 #: osmanagers/WindowsOsManager/windows_domain.py:85
 #: osmanagers/WindowsOsManager/windows_random.py:76
 #: services/HyperV_enterprise/legacy/provider.py:110
@@ -1176,8 +1223,8 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
-#: transports/SPICE/spice_base.py:75 web/forms/LoginForm.py:45
-#: web/forms/LoginForm.py:46
+#: transports/SPICE/spice_base.py:75 web/forms/LoginForm.py:46
+#: web/forms/LoginForm.py:47
 msgid "Password"
 msgstr "Contrasenya"
 
@@ -1244,22 +1291,32 @@ msgstr ""
 "Si no està buit, aquest amfitrió s'utilitzarà en cas que no es pugui accedir "
 "al servidor principal"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:130
+#: auths/ActiveDirectory_enterprise/authenticator.py:133
+#: auths/SAML_enterprise/saml.py:207
+msgid "MFA attribute"
+msgstr "Atribut MFA"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:135
+#: auths/SAML_enterprise/saml.py:209
+msgid "Attribute from where to extract the MFA code"
+msgstr "Atribut d&#39;on extreure el codi MFA"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:140
 msgid "Active Directory Authenticator"
 msgstr "Autenticador del Directori Actiu"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: auths/ActiveDirectory_enterprise/authenticator.py:142
 msgid "Authenticate against Active Directory"
 msgstr "Autenticar sobre Directori Actiu"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:175
-#: auths/ActiveDirectory_enterprise/authenticator.py:602
+#: auths/ActiveDirectory_enterprise/authenticator.py:187
+#: auths/ActiveDirectory_enterprise/authenticator.py:648
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Cal especificar el nom d'usuari en format USUARI@DOMINI.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:481
-#: auths/ActiveDirectory_enterprise/authenticator.py:532
-#: auths/AzureAD_enterprise/azure_ad.py:313
+#: auths/ActiveDirectory_enterprise/authenticator.py:521
+#: auths/ActiveDirectory_enterprise/authenticator.py:578
+#: auths/AzureAD_enterprise/azure_ad.py:315
 #: auths/EDirectory_enterprise/authenticator.py:269
 #: auths/EDirectory_enterprise/authenticator.py:300
 #: auths/RegexLdap/authenticator.py:538 auths/RegexLdap/authenticator.py:569
@@ -1267,34 +1324,34 @@ msgstr "Cal especificar el nom d'usuari en format USUARI@DOMINI.DOM"
 msgid "Username not found"
 msgstr "Nom d'usuari no trobat"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:514
+#: auths/ActiveDirectory_enterprise/authenticator.py:560
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "Grup no trobat"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:559
-#: auths/ActiveDirectory_enterprise/authenticator.py:581
+#: auths/ActiveDirectory_enterprise/authenticator.py:605
+#: auths/ActiveDirectory_enterprise/authenticator.py:627
 #: auths/EDirectory_enterprise/authenticator.py:322
 #: auths/RegexLdap/authenticator.py:597 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "Massa resultats, cal especificar més"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:613
+#: auths/ActiveDirectory_enterprise/authenticator.py:659
 msgid "Domain seems to be incorrect, please check it"
 msgstr "El Domini sembla ser incorrecte, si us plau verifiqueu-ho"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:632
+#: auths/ActiveDirectory_enterprise/authenticator.py:678
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "El servidor sembla no ser un Directori Actiu (no té objectes d'usuari)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:655
+#: auths/ActiveDirectory_enterprise/authenticator.py:701
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "El servidor sembla no ser un Directori Actiu (no té objectes de grup)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:664
+#: auths/ActiveDirectory_enterprise/authenticator.py:710
 #: auths/EDirectory_enterprise/authenticator.py:445
 #: auths/RegexLdap/authenticator.py:707 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1389,21 +1446,21 @@ msgstr "Tancament de sessió de Microsoft"
 msgid "Office 365 logout"
 msgstr "Tancament de sessió d&#39;Office 365"
 
-#: auths/AzureAD_enterprise/azure_ad.py:176 auths/SAML_enterprise/saml.py:217
+#: auths/AzureAD_enterprise/azure_ad.py:176
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "L'Autenticador SAML no admet espais blancs al camp NAME"
 
-#: auths/AzureAD_enterprise/azure_ad.py:323
-#: auths/AzureAD_enterprise/azure_ad.py:349
-#: auths/AzureAD_enterprise/azure_ad.py:359
+#: auths/AzureAD_enterprise/azure_ad.py:325
+#: auths/AzureAD_enterprise/azure_ad.py:351
+#: auths/AzureAD_enterprise/azure_ad.py:361
 msgid "Authenticator exception:"
 msgstr "Excepció d'autenticador:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:394 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:49
 msgid "Connection error: "
 msgstr "Error de connexió:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:397
+#: auths/AzureAD_enterprise/azure_ad.py:399
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr ""
 "Els paràmetres de connexió semblen correctes, la prova s'ha executat "
@@ -1512,7 +1569,7 @@ msgstr "Autenticador IP"
 msgid "IP Range"
 msgstr "Rang IP"
 
-#: auths/IP/authenticator.py:119 auths/IP/authenticator.py:122
+#: auths/IP/authenticator.py:122 auths/IP/authenticator.py:125
 msgid "All seems to be fine."
 msgstr "Tot sembla ser correcte"
 
@@ -1707,19 +1764,19 @@ msgstr ""
 "L'atribut d'ID de grup de LDAP sembla incorrecte (no s'ha trobat cap grup "
 "amb aquest atribut)"
 
-#: auths/SAML_enterprise/saml.py:88
+#: auths/SAML_enterprise/saml.py:76
 msgid "SAML Authenticator"
 msgstr "Autenticador SAML"
 
-#: auths/SAML_enterprise/saml.py:100
+#: auths/SAML_enterprise/saml.py:88
 msgid "SAML (v2.0) Authenticator"
 msgstr "Autenticador SAML (v2.0)"
 
-#: auths/SAML_enterprise/saml.py:130
+#: auths/SAML_enterprise/saml.py:118
 msgid "Private key"
 msgstr "Clau privada"
 
-#: auths/SAML_enterprise/saml.py:133
+#: auths/SAML_enterprise/saml.py:121
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1727,15 +1784,15 @@ msgstr ""
 "Clau privada utilitzada per a signar i encriptar, generada en base 64 des "
 "d'OPENSSL"
 
-#: auths/SAML_enterprise/saml.py:136 auths/SAML_enterprise/saml.py:147
+#: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
 msgid "Certificates"
 msgstr "Certificats"
 
-#: auths/SAML_enterprise/saml.py:141 transports/SPICE/spice_base.py:83
+#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Certificat"
 
-#: auths/SAML_enterprise/saml.py:144
+#: auths/SAML_enterprise/saml.py:132
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1743,60 +1800,82 @@ msgstr ""
 "Clau pública utilitzada per a signar i encriptar (part pública de la clau "
 "privada anterior), generada en base 64 des d'OPENSSL"
 
-#: auths/SAML_enterprise/saml.py:152
+#: auths/SAML_enterprise/saml.py:140
 msgid "IDP Metadata"
 msgstr "Metadades IDP"
 
-#: auths/SAML_enterprise/saml.py:155
+#: auths/SAML_enterprise/saml.py:143
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "Podeu posar aquí l'URL o les metadades IDP o les mateixes metadades (xml)"
 
-#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:167
+#: auths/SAML_enterprise/saml.py:146 auths/SAML_enterprise/saml.py:155
 msgid "Metadata"
 msgstr "Metadades"
 
-#: auths/SAML_enterprise/saml.py:162
+#: auths/SAML_enterprise/saml.py:150
 msgid "Entity ID"
 msgstr "ID de l'entitat"
 
-#: auths/SAML_enterprise/saml.py:165
+#: auths/SAML_enterprise/saml.py:153
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "ID del SP. Si es deixa en blanc, es generarà automàticament des del servidor "
 "URL"
 
-#: auths/SAML_enterprise/saml.py:173
+#: auths/SAML_enterprise/saml.py:161
 msgid "User name attrs"
 msgstr "Atributs de nom d'usuari"
 
-#: auths/SAML_enterprise/saml.py:175
+#: auths/SAML_enterprise/saml.py:163
 msgid "Fields from where to extract user name"
 msgstr "Camps d'on obtenir el nom d'usuari"
 
-#: auths/SAML_enterprise/saml.py:177 auths/SAML_enterprise/saml.py:187
-#: auths/SAML_enterprise/saml.py:197
+#: auths/SAML_enterprise/saml.py:165 auths/SAML_enterprise/saml.py:175
+#: auths/SAML_enterprise/saml.py:185
 msgid "Attributes"
 msgstr "Atributs"
 
-#: auths/SAML_enterprise/saml.py:183
+#: auths/SAML_enterprise/saml.py:171
 msgid "Group name attrs"
 msgstr "Atributs de Nom de grup"
 
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:173
 msgid "Fields from where to extract the groups"
 msgstr "Camps d'on obtenir els grups"
 
-#: auths/SAML_enterprise/saml.py:193
+#: auths/SAML_enterprise/saml.py:181
 msgid "Real name attrs"
 msgstr "Atributs de Nom real"
 
-#: auths/SAML_enterprise/saml.py:195
+#: auths/SAML_enterprise/saml.py:183
 msgid "Fields from where to extract the real name"
 msgstr "Camps d'on obtenir el nom real"
 
+#: auths/SAML_enterprise/saml.py:189
+msgid "Global logout"
+msgstr "Tancament de sessió global"
+
+#: auths/SAML_enterprise/saml.py:192
+msgid "If set, logout from UDS will trigger SAML logout"
+msgstr "Si s&#39;estableix, la sessió d&#39;UDS activarà la sortida de SAML"
+
+#: auths/SAML_enterprise/saml.py:197
+msgid "ADFS compatibility"
+msgstr "Compatibilitat ADFS"
+
+#: auths/SAML_enterprise/saml.py:200
+msgid "If set, enable lowercase url encoding so ADFS can work correctly"
+msgstr ""
+"Si s&#39;estableix, activeu la codificació d&#39;URL en minúscules perquè "
+"ADFS pugui funcionar correctament"
+
 #: auths/SAML_enterprise/saml.py:231
+msgid "This kind of Authenticator does not support white spaces on field NAME"
+msgstr "Aquest tipus d&#39;autenticador no admet espais en blanc al camp NOM"
+
+#: auths/SAML_enterprise/saml.py:245
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1804,11 +1883,11 @@ msgstr ""
 "El certificat del servidor ha de ser PEM vàlid (els certificats PEM comencen "
 "amb -----BEGIN CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/saml.py:239
+#: auths/SAML_enterprise/saml.py:253
 msgid "Invalid server certificate. "
 msgstr "Certificat de servidor no vàlid"
 
-#: auths/SAML_enterprise/saml.py:250
+#: auths/SAML_enterprise/saml.py:264
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1816,26 +1895,46 @@ msgstr ""
 "La clau privada ha de ser PEM vàlida (les claus privades PEM comencen amb "
 "-----BEGIN RSA PRIVATE KEY-----)"
 
-#: auths/SAML_enterprise/saml.py:258
+#: auths/SAML_enterprise/saml.py:272
 msgid "Invalid private key. "
 msgstr "Clau privada incorrecta."
 
-#: auths/SAML_enterprise/saml.py:277
+#: auths/SAML_enterprise/saml.py:291
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "No es por extreure URL {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:288
+#: auths/SAML_enterprise/saml.py:302
 msgid " (obtained from URL)"
 msgstr " (obtingut de l'URL)"
 
-#: auths/SAML_enterprise/saml.py:290
+#: auths/SAML_enterprise/saml.py:304
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "El XML no sembla vàlid per a metadades IDP"
 
-#: auths/SAML_enterprise/saml.py:312
+#: auths/SAML_enterprise/saml.py:357
 msgid "Can't access idp metadata"
 msgstr "No es pot accedir a les metadades IDP"
+
+#: auths/SAML_enterprise/saml.py:424
+msgid "Error validating SP metadata: "
+msgstr "Error en validar les metadades de SP:"
+
+#: auths/SAML_enterprise/saml.py:528
+msgid "Error processing SLO: "
+msgstr "Error en processar SLO:"
+
+#: auths/SAML_enterprise/saml.py:558
+msgid "Error processing SAML response: "
+msgstr "Error en processar la resposta SAML:"
+
+#: auths/SAML_enterprise/saml.py:571
+msgid "SAML response not authenticated"
+msgstr "La resposta SAML no s&#39;ha autenticat"
+
+#: auths/SAML_enterprise/saml.py:598
+msgid "No attributes returned from IdP"
+msgstr "No s&#39;ha retornat cap atribut d&#39;IdP"
 
 #: auths/Sample/SampleAuth.py:79
 msgid "Sample Authenticator"
@@ -1932,11 +2031,11 @@ msgstr ""
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "No es pot localitzar cap grup amb l’atribut de membres especificat"
 
-#: core/auths/auth.py:110
+#: core/auths/auth.py:111
 msgid "System Administrator"
 msgstr "Administrador del sistema"
 
-#: core/auths/auth.py:150
+#: core/auths/auth.py:155
 msgid "Forbidden"
 msgstr "Prohibit"
 
@@ -1971,19 +2070,19 @@ msgstr "No es pot anul·lar una publicació que no es pot utilitzar"
 msgid "Can't unpublish publications with services in process"
 msgstr "No es poden anul·lar publicacions amb serveis en procés"
 
-#: core/managers/user_service.py:337
+#: core/managers/user_service.py:348
 msgid "Can't remove a non active element"
 msgstr "No es pot eliminar un element no actiu"
 
-#: core/managers/user_service.py:363
+#: core/managers/user_service.py:374
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "No es pot eliminar ni cancel·lar {} perquè el seu estat no ho permet"
 
-#: core/managers/user_service.py:395
+#: core/managers/user_service.py:406
 msgid "The requested service is restrained"
 msgstr "El servei sol·licitat està restringit"
 
-#: core/managers/user_service.py:761 web/util/errors.py:81
+#: core/managers/user_service.py:770 web/util/errors.py:83
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -1991,13 +2090,21 @@ msgstr ""
 "Servei no vàlid. El servei no està disponible ara mateix. Si us plau, "
 "intenteu-ho més tard"
 
-#: core/managers/user_service.py:798
+#: core/managers/user_service.py:807
 msgid "The requested transport {} is not valid for {}"
 msgstr "El transport sol·licitat {} no és vàlid per a {}"
 
-#: core/managers/user_service.py:1078
+#: core/managers/user_service.py:1084
 msgid "The service is not accessible from this device"
 msgstr "El servei no és accessible des d'aquest dispositiu"
+
+#: core/mfas/mfa.py:60 core/mfas/mfa.py:72
+msgid "Base MFA"
+msgstr "Base MFA"
+
+#: core/mfas/mfa.py:184
+msgid "Invalid MFA code"
+msgstr "Codi MFA no vàlid"
 
 #: core/module.py:215
 msgid "No connection checking method is implemented."
@@ -2042,14 +2149,6 @@ msgstr "S'ha imprès el {now:%Y,% b%, %d} a les {now:%H:%M}"
 #: core/services/service.py:105 core/services/service.py:117
 msgid "Base Service"
 msgstr "Servei base"
-
-#: core/services/service.py:143 core/services/service.py:154
-#: models/permissions.py:92 models/permissions.py:96
-#: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
-#: services/Proxmox/service.py:208 services/Sample/service.py:100
-#: services/Sample/service.py:106 services/TestService_enterprise/service.py:29
-msgid "None"
-msgstr "Cap"
 
 #: core/transports/transport.py:52
 msgid "Direct"
@@ -2175,23 +2274,23 @@ msgstr "Usuaris amb serveis"
 msgid "Cached"
 msgstr "A la memòria cau"
 
-#: core/util/tools.py:152
+#: core/util/tools.py:155
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{} dies {: d}: {: 02d}: {: 02d}"
 
-#: core/util/tools.py:171
+#: core/util/tools.py:174
 msgid "The basename is not a valid for a hostname"
 msgstr "El nom base no és vàlid per a un nom de host"
 
-#: core/util/tools.py:176
+#: core/util/tools.py:179
 msgid "The length of basename plus length must be greater than 0"
 msgstr "La llargada del nom base més la llargada ha de ser superior a 0"
 
-#: core/util/tools.py:181
+#: core/util/tools.py:184
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "La llargada del nom base més la llargada no pot ser superior a 15"
 
-#: core/util/tools.py:186
+#: core/util/tools.py:189
 msgid "The machine name can't be only numbers"
 msgstr "El nom de màquina no pot contenir només valors numèrics"
 
@@ -2222,7 +2321,11 @@ msgstr "{} supera la llargada màxima del nom de host."
 msgid "{} is not a valid hostname"
 msgstr "{} no és un nom de host vàlid"
 
-#: core/util/validators.py:152
+#: core/util/validators.py:131
+msgid "{} is not a valid host:port pair"
+msgstr "{} no és un parell host:port vàlid"
+
+#: core/util/validators.py:168
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
@@ -2230,66 +2333,352 @@ msgstr ""
 "Rang mac no vàlid. El format del rang mac ha de ser XX:XX:XX:XX:XX:XX-XX:XX:"
 "XX:XX:XX:XX"
 
-#: dispatchers/wyse_enterprise/views.py:118
+#: core/util/validators.py:182
+msgid "Email address is too long"
+msgstr "L&#39;adreça electrònica és massa llarga"
+
+#: core/util/validators.py:187
+msgid "Email address is not valid"
+msgstr "L&#39;adreça de correu electrònic no és vàlida"
+
+#: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
 msgstr "No hi ha autenticadors disponibles per a iniciar sessió"
 
-#: dispatchers/wyse_enterprise/views.py:138
+#: dispatchers/wyse_enterprise/views.py:139
 #, python-brace-format
 msgid "The authenticator {0} is not usable"
 msgstr "L'autenticador {0} no es pot utilitzar"
 
-#: dispatchers/wyse_enterprise/views.py:145
+#: dispatchers/wyse_enterprise/views.py:146
 msgid "Invalid credentials"
 msgstr "Credencials no vàlides"
 
-#: dispatchers/wyse_enterprise/views.py:152
+#: dispatchers/wyse_enterprise/views.py:153
 #, python-brace-format
 msgid "The domain {0} does not exists"
 msgstr "El domini {0} no existeix"
 
-#: dispatchers/wyse_enterprise/views.py:228
+#: dispatchers/wyse_enterprise/views.py:229
 msgid "No services available"
 msgstr "No hi ha serveis disponibles"
 
-#: dispatchers/wyse_enterprise/views.py:244
-#: dispatchers/wyse_enterprise/views.py:344
+#: dispatchers/wyse_enterprise/views.py:245
+#: dispatchers/wyse_enterprise/views.py:345
 msgid "Invalid session"
 msgstr "Sessió no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:248
-#: dispatchers/wyse_enterprise/views.py:348
+#: dispatchers/wyse_enterprise/views.py:249
+#: dispatchers/wyse_enterprise/views.py:349
 msgid "Invalid authorization"
 msgstr "Autorització no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:259
-#: dispatchers/wyse_enterprise/views.py:354
+#: dispatchers/wyse_enterprise/views.py:260
+#: dispatchers/wyse_enterprise/views.py:355
 msgid "Invalid request"
 msgstr "Petició no vàlida"
 
-#: dispatchers/wyse_enterprise/views.py:262
-#: dispatchers/wyse_enterprise/views.py:357
+#: dispatchers/wyse_enterprise/views.py:263
+#: dispatchers/wyse_enterprise/views.py:358
 msgid "Invalid credentials used"
 msgstr "Credencials utilitzades no vàlides"
 
-#: dispatchers/wyse_enterprise/views.py:277 web/util/errors.py:78
+#: dispatchers/wyse_enterprise/views.py:278 web/util/errors.py:80
 msgid "Service not found"
 msgstr "Servei no trobat"
 
-#: dispatchers/wyse_enterprise/views.py:281
+#: dispatchers/wyse_enterprise/views.py:282
 msgid "Invalid machine uuid."
 msgstr "Uuid de màquina no vàlid."
 
-#: dispatchers/wyse_enterprise/views.py:295 web/util/errors.py:77
+#: dispatchers/wyse_enterprise/views.py:296 web/util/errors.py:79
 msgid "Transport not found"
 msgstr "Transport no trobat"
 
-#: dispatchers/wyse_enterprise/views.py:300
-#: dispatchers/wyse_enterprise/views.py:308
-#: dispatchers/wyse_enterprise/views.py:315
+#: dispatchers/wyse_enterprise/views.py:301
+#: dispatchers/wyse_enterprise/views.py:309
+#: dispatchers/wyse_enterprise/views.py:316
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 "Servei no disponible en aquest moment. Si us plau, intenteu-ho més tard."
+
+#: mfas/Email/mfa.py:22
+msgid "Email Multi Factor"
+msgstr "Correu electrònic multifactor"
+
+#: mfas/Email/mfa.py:24
+msgid "Email Multi Factor Authenticator"
+msgstr "Correu electrònic Multifactor Authenticator"
+
+#: mfas/Email/mfa.py:29
+msgid "SMTP Host"
+msgstr "Amfitrió SMTP"
+
+#: mfas/Email/mfa.py:32
+msgid ""
+"SMTP Server hostname or IP address. If you are using a  non-standard port, "
+"add it after a colon, for example: smtp.gmail.com:587"
+msgstr ""
+"Nom d&#39;amfitrió del servidor SMTP o adreça IP. Si utilitzeu un port no "
+"estàndard, afegiu-lo després de dos punts, per exemple: smtp.gmail.com:587"
+
+#: mfas/Email/mfa.py:37 mfas/Email/mfa.py:50 mfas/Email/mfa.py:59
+#: mfas/Email/mfa.py:68
+msgid "SMTP Server"
+msgstr "Servidor SMTP"
+
+#: mfas/Email/mfa.py:41 transports/HTML5RDP/html5rdp.py:268
+#: transports/HTML5RDS_enterprise/html5rds.py:255
+msgid "Security"
+msgstr "Seguretat"
+
+#: mfas/Email/mfa.py:42
+msgid "Security protocol to use"
+msgstr "Protocol de seguretat a utilitzar"
+
+#: mfas/Email/mfa.py:44
+msgid "TLS"
+msgstr "TLS"
+
+#: mfas/Email/mfa.py:45
+msgid "SSL"
+msgstr "SSL"
+
+#: mfas/Email/mfa.py:56
+msgid "User with access to SMTP server"
+msgstr "Usuari amb accés al servidor SMTP"
+
+#: mfas/Email/mfa.py:65
+msgid "Password of the user with access to SMTP server"
+msgstr "Contrasenya de l&#39;usuari amb accés al servidor SMTP"
+
+#: mfas/Email/mfa.py:74
+msgid "Subject"
+msgstr "Assignatura"
+
+#: mfas/Email/mfa.py:76
+msgid "Subject of the email"
+msgstr "Assumpte del correu electrònic"
+
+#: mfas/Email/mfa.py:78 mfas/Email/mfa.py:87 mfas/Email/mfa.py:95
+msgid "Config"
+msgstr "Config"
+
+#: mfas/Email/mfa.py:83
+msgid "From Email"
+msgstr "Des del correu electrònic"
+
+#: mfas/Email/mfa.py:85
+msgid "Email address that will be used as sender"
+msgstr "Adreça de correu electrònic que s&#39;utilitzarà com a remitent"
+
+#: mfas/Email/mfa.py:91
+msgid "Enable HTML"
+msgstr "Activa HTML"
+
+#: mfas/Email/mfa.py:93
+msgid "Enable HTML in emails"
+msgstr "Activa l&#39;HTML als correus electrònics"
+
+#: mfas/Email/mfa.py:110
+msgid "Invalid SMTP hostname"
+msgstr "Nom d&#39;amfitrió SMTP no vàlid"
+
+#: mfas/SMS/mfa.py:19
+msgid "SMS Thought HTTP"
+msgstr "SMS Pensat HTTP"
+
+#: mfas/SMS/mfa.py:21
+msgid "Simple SMS sending MFA using HTTP"
+msgstr "SMS senzill que envia MFA mitjançant HTTP"
+
+#: mfas/SMS/mfa.py:26
+msgid "URL pattern for SMS sending"
+msgstr "Patró d&#39;URL per enviar SMS"
+
+#: mfas/SMS/mfa.py:29
+#| msgid ""
+#| "Parameters for SMS sending via POST/PUT. It can contain the following "
+#| "variables:\n"
+#| "* {code} - the code to send\n"
+#| "* {phone/+phone} - the phone number\n"
+#| "* {username} - the username\n"
+#| "* {justUsername} - the username without @....\n"
+msgid ""
+"URL pattern for SMS sending. It can contain the following variables:\n"
+"* {code} - the code to send\n"
+"* {phone/+phone} - the phone number\n"
+"* {username} - the username\n"
+"* {justUsername} - the username without @...."
+msgstr ""
+"Patró d&#39;URL per enviar SMS. Pot contenir les variables següents: * {code}"
+" - el codi a enviar * {telèfon/+telèfon} - el número de telèfon * {username} "
+"- el nom d&#39;usuari * {justUsername} - el nom d&#39;usuari sense @...."
+
+#: mfas/SMS/mfa.py:37 mfas/SMS/mfa.py:43 mfas/SMS/mfa.py:56 mfas/SMS/mfa.py:75
+#: mfas/SMS/mfa.py:92 mfas/SMS/mfa.py:101
+msgid "HTTP Server"
+msgstr "Servidor HTTP"
+
+#: mfas/SMS/mfa.py:41
+msgid "Ignore certificate errors"
+msgstr "Ignora els errors del certificat"
+
+#: mfas/SMS/mfa.py:46
+msgid ""
+"If checked, the server certificate will be ignored. This is useful if the "
+"server uses a self-signed certificate."
+msgstr ""
+"Si està marcat, el certificat del servidor s&#39;ignorarà. Això és útil si "
+"el servidor utilitza un certificat autofirmat."
+
+#: mfas/SMS/mfa.py:52
+msgid "SMS sending method"
+msgstr "Mètode d&#39;enviament de SMS"
+
+#: mfas/SMS/mfa.py:54 mfas/SMS/mfa.py:108
+msgid "Method for sending SMS"
+msgstr "Mètode per enviar SMS"
+
+#: mfas/SMS/mfa.py:63
+msgid "Headers for SMS requests"
+msgstr "Capçaleres per a sol·licituds d&#39;SMS"
+
+#: mfas/SMS/mfa.py:66
+msgid ""
+"Headers for SMS requests. It can contain the following variables:\n"
+"* {code} - the code to send\n"
+"* {phone/+phone} - the phone number\n"
+"* {username} - the username\n"
+"* {justUsername} - the username without @....\n"
+"Headers are in the form of \"Header: Value\". (without the quotes)"
+msgstr ""
+"Capçaleres per a sol·licituds d&#39;SMS. Pot contenir les variables "
+"següents: * {codi} - el codi a enviar * {telèfon/+telèfon} - el número de "
+"telèfon * {username} - el nom d&#39;usuari * {justUsername} - el nom d&#39;"
+"usuari sense @.... Les capçaleres estan a la forma de \"Encapçalament: valor"
+"\". (sense cometes)"
+
+#: mfas/SMS/mfa.py:81
+msgid "Parameters for SMS POST/PUT sending"
+msgstr "Paràmetres per a l&#39;enviament de SMS POST/PUT"
+
+#: mfas/SMS/mfa.py:84
+#| msgid ""
+#| "Parameters for SMS sending via POST/PUT. It can contain the following "
+#| "variables:\n"
+#| "* {code} - the code to send\n"
+#| "* {phone/+phone} - the phone number\n"
+#| "* {username} - the username\n"
+#| "* {justUsername} - the username without @....\n"
+msgid ""
+"Parameters for SMS sending via POST/PUT. It can contain the following "
+"variables:\n"
+"* {code} - the code to send\n"
+"* {phone/+phone} - the phone number\n"
+"* {username} - the username\n"
+"* {justUsername} - the username without @...."
+msgstr ""
+"Paràmetres per a l&#39;enviament de SMS via POST/PUT. Pot contenir les "
+"variables següents: * {code} - el codi a enviar * {telèfon/+telèfon} - el "
+"número de telèfon * {username} - el nom d&#39;usuari * {justUsername} - el "
+"nom d&#39;usuari sense @...."
+
+#: mfas/SMS/mfa.py:96
+msgid "SMS encoding"
+msgstr "Codificació de SMS"
+
+#: mfas/SMS/mfa.py:99
+msgid "Encoding for SMS"
+msgstr "Codificació per a SMS"
+
+#: mfas/SMS/mfa.py:106
+msgid "SMS authentication method"
+msgstr "Mètode d&#39;autenticació per SMS"
+
+#: mfas/SMS/mfa.py:110 mfas/SMS/mfa.py:124 mfas/SMS/mfa.py:133
+msgid "HTTP Authentication"
+msgstr "Autenticació HTTP"
+
+#: mfas/SMS/mfa.py:113
+msgid "HTTP Basic Auth"
+msgstr "Autenticació bàsica HTTP"
+
+#: mfas/SMS/mfa.py:114
+msgid "HTTP Digest Auth"
+msgstr "HTTP Digest Auth"
+
+#: mfas/SMS/mfa.py:120
+msgid "SMS authentication user or token"
+msgstr "Usuari o testimoni d&#39;autenticació per SMS"
+
+#: mfas/SMS/mfa.py:122
+msgid "User or token for SMS authentication"
+msgstr "Usuari o testimoni per a l&#39;autenticació per SMS"
+
+#: mfas/SMS/mfa.py:129
+msgid "SMS authentication password"
+msgstr "Contrasenya d&#39;autenticació per SMS"
+
+#: mfas/SMS/mfa.py:131
+msgid "Password for SMS authentication"
+msgstr "Contrasenya per a l&#39;autenticació per SMS"
+
+#: mfas/SMS/mfa.py:138
+msgid "SMS response OK regex"
+msgstr "Resposta d&#39;SMS OK regex"
+
+#: mfas/SMS/mfa.py:141
+msgid ""
+"Regex for SMS response OK. If emty, the response is considered OK if status "
+"code is 200."
+msgstr ""
+"Regex per a la resposta d&#39;SMS OK. Si està buida, la resposta es "
+"considera correcta si el codi d&#39;estat és 200."
+
+#: mfas/SMS/mfa.py:144 mfas/SMS/mfa.py:153
+msgid "HTTP Response"
+msgstr "Resposta HTTP"
+
+#: mfas/SMS/mfa.py:148
+msgid "SMS response error action"
+msgstr "Acció d&#39;error de resposta SMS"
+
+#: mfas/SMS/mfa.py:151
+msgid "Action for SMS response error"
+msgstr "Acció per error de resposta SMS"
+
+#: mfas/SMS/mfa.py:155
+msgid "Allow user log in without MFA"
+msgstr "Permet que l&#39;usuari iniciï sessió sense MFA"
+
+#: mfas/SMS/mfa.py:156
+msgid "Deny user log in"
+msgstr "Denegueu l&#39;inici de sessió de l&#39;usuari"
+
+#: mfas/SMS/mfa.py:199
+msgid "SMS sending failed"
+msgstr "S&#39;ha produït un error en l&#39;enviament de SMS"
+
+#: mfas/SMS/mfa.py:263 web/views/modern.py:275
+msgid "MFA Code"
+msgstr "Codi MFA"
+
+#: mfas/Sample/mfa.py:16
+msgid "Sample Multi Factor"
+msgstr "Mostra de múltiples factors"
+
+#: mfas/Sample/mfa.py:18
+msgid "Sample Multi Factor Authenticator"
+msgstr "Exemple d&#39;autenticador de múltiples factors"
+
+#: mfas/Sample/mfa.py:22
+msgid "Sample useless field"
+msgstr "Camp inútil de mostra"
+
+#: mfas/Sample/mfa.py:25
+msgid "This is a useless field, for sample and testing pourposes"
+msgstr "Aquest és un camp inútil, per a mostres i proves"
 
 #: models/calendar_action.py:63
 msgid "Publish"
@@ -2848,7 +3237,7 @@ msgid "Service pool for report"
 msgstr "Pool de servei per a l'informe"
 
 #: reports/auto/fields.py:104 reports/lists/users.py:61
-#: web/forms/LoginForm.py:50
+#: web/forms/LoginForm.py:51
 msgid "Authenticator"
 msgstr "Autenticador"
 
@@ -2900,11 +3289,11 @@ msgstr "ID d'usuari"
 msgid "Real Name"
 msgstr "Nom real"
 
-#: reports/stats/auth_stats.py:58
+#: reports/stats/auth_stats.py:59
 msgid "Statistics by authenticator"
 msgstr "Estadístiques per autenticador"
 
-#: reports/stats/auth_stats.py:60
+#: reports/stats/auth_stats.py:61
 msgid ""
 "Generates a report with the statistics of an authenticator for a desired "
 "period"
@@ -2912,14 +3301,14 @@ msgstr ""
 "Generar un informe amb les estadístiques d’un autenticador del període "
 "desitjat"
 
-#: reports/stats/auth_stats.py:136 reports/stats/usage_by_pool.py:146
+#: reports/stats/auth_stats.py:123 reports/stats/usage_by_pool.py:146
 #: templates/uds/reports/stats/authenticator_stats.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:6
 msgid "Users usage list"
 msgstr "Llista d’ús d’usuaris"
 
-#: reports/stats/auth_stats.py:137 reports/stats/usage_by_pool.py:147
+#: reports/stats/auth_stats.py:124 reports/stats/usage_by_pool.py:147
 msgid "UDS Report of users usage"
 msgstr "Informe UDS d’ús d’usuaris"
 
@@ -2992,30 +3381,26 @@ msgstr "Nombre d’intervals"
 msgid "Number of sampling points used in charts"
 msgstr "Nombre de punts de mostra utilitzats a les gràfiques"
 
-#: reports/stats/pools_performance.py:128
-msgid "Select at least a service pool for the report"
-msgstr "Seleccioneu al menys un pool de servei per a l'informe"
-
-#: reports/stats/pools_performance.py:211
+#: reports/stats/pools_performance.py:194
 msgid "Distinct Users"
 msgstr "Usuaris distints"
 
-#: reports/stats/pools_performance.py:230
-#: reports/stats/pools_performance.py:242
-#: reports/stats/pools_performance.py:287
+#: reports/stats/pools_performance.py:213
+#: reports/stats/pools_performance.py:225
+#: reports/stats/pools_performance.py:270
 #: templates/uds/reports/stats/pools-performance.html:36
 msgid "Accesses"
 msgstr "Accessos"
 
-#: reports/stats/pools_performance.py:258
+#: reports/stats/pools_performance.py:241
 msgid "UDS Pools Performance Report"
 msgstr "Informe de rendiment de pools UDS"
 
-#: reports/stats/pools_performance.py:259
+#: reports/stats/pools_performance.py:242
 msgid "Pools Performance"
 msgstr "Rendiment dels pools"
 
-#: reports/stats/pools_performance.py:285 reports/stats/user_access.py:297
+#: reports/stats/pools_performance.py:268 reports/stats/user_access.py:282
 #: templates/uds/reports/stats/pools-performance.html:34
 #: templates/uds/reports/stats/user-access.html:34
 msgid "Date range"
@@ -3029,21 +3414,21 @@ msgstr "Ús de pools en un dia"
 msgid "Pools usage counters for an specific day"
 msgstr "Comptadors d'ús de pools un dia específic"
 
-#: reports/stats/pools_usage_day.py:128
+#: reports/stats/pools_usage_day.py:126
 msgid "Services by hour"
 msgstr "Serveis per hora"
 
-#: reports/stats/pools_usage_day.py:133 reports/stats/pools_usage_day.py:171
-#: reports/stats/user_access.py:228 reports/stats/user_access.py:240
+#: reports/stats/pools_usage_day.py:131 reports/stats/pools_usage_day.py:169
+#: reports/stats/user_access.py:213 reports/stats/user_access.py:225
 #: templates/uds/reports/stats/pools-usage-day.html:28
 msgid "Hour"
 msgstr "Hora"
 
-#: reports/stats/pools_usage_day.py:152
+#: reports/stats/pools_usage_day.py:150
 msgid "Services usage report for a day"
 msgstr "Informe d'ús dels serveis durant un dia"
 
-#: reports/stats/pools_usage_day.py:153
+#: reports/stats/pools_usage_day.py:151
 msgid "Service usage report"
 msgstr "Informe d'ús del servei"
 
@@ -3111,63 +3496,63 @@ msgstr "TOTS ELS POOLS"
 msgid "Seconds"
 msgstr "Segons"
 
-#: reports/stats/user_access.py:59 reports/stats/user_access.py:281
+#: reports/stats/user_access.py:59 reports/stats/user_access.py:266
 msgid "Users access report by date"
 msgstr "Informe d'accés d'usuaris per data"
 
-#: reports/stats/user_access.py:60 reports/stats/user_access.py:282
+#: reports/stats/user_access.py:60 reports/stats/user_access.py:267
 msgid "Report of user access to platform by date"
 msgstr "Informe d'accés d'usuari a la plataforma per data"
 
-#: reports/stats/user_access.py:186
+#: reports/stats/user_access.py:171
 msgid "Users Access (global)"
 msgstr "Accés d'usuaris (global)"
 
-#: reports/stats/user_access.py:206
+#: reports/stats/user_access.py:191
 msgid "Users Access (by week)"
 msgstr "Accés d'usuaris (setmanal)"
 
-#: reports/stats/user_access.py:209 reports/stats/user_access.py:245
+#: reports/stats/user_access.py:194 reports/stats/user_access.py:230
 msgid "Monday"
 msgstr "Dilluns"
 
-#: reports/stats/user_access.py:210 reports/stats/user_access.py:246
+#: reports/stats/user_access.py:195 reports/stats/user_access.py:231
 msgid "Tuesday"
 msgstr "Dimarts"
 
-#: reports/stats/user_access.py:211 reports/stats/user_access.py:247
+#: reports/stats/user_access.py:196 reports/stats/user_access.py:232
 msgid "Wednesday"
 msgstr "Dimecres"
 
-#: reports/stats/user_access.py:212 reports/stats/user_access.py:248
+#: reports/stats/user_access.py:197 reports/stats/user_access.py:233
 msgid "Thursday"
 msgstr "Dijous"
 
-#: reports/stats/user_access.py:213 reports/stats/user_access.py:249
+#: reports/stats/user_access.py:198 reports/stats/user_access.py:234
 msgid "Friday"
 msgstr "Divendres"
 
-#: reports/stats/user_access.py:214 reports/stats/user_access.py:250
+#: reports/stats/user_access.py:199 reports/stats/user_access.py:235
 msgid "Saturday"
 msgstr "Dissabte"
 
-#: reports/stats/user_access.py:215 reports/stats/user_access.py:251
+#: reports/stats/user_access.py:200 reports/stats/user_access.py:236
 msgid "Sunday"
 msgstr "Diumenge"
 
-#: reports/stats/user_access.py:217 reports/stats/user_access.py:243
+#: reports/stats/user_access.py:202 reports/stats/user_access.py:228
 msgid "Day of week"
 msgstr "Dia de la setmana"
 
-#: reports/stats/user_access.py:226 reports/stats/user_access.py:238
+#: reports/stats/user_access.py:211 reports/stats/user_access.py:223
 msgid "Users Access (by hour)"
 msgstr "Accés d'usuaris (per hora)"
 
-#: reports/stats/user_access.py:267
+#: reports/stats/user_access.py:252
 msgid "Users access to UDS"
 msgstr "Accés d'usuaris a UDS"
 
-#: reports/stats/user_access.py:268
+#: reports/stats/user_access.py:253
 msgid "UDS Report for users access"
 msgstr "Informe UDS d'accés d'usuaris"
 
@@ -4422,12 +4807,12 @@ msgstr "Proveïdor de màquines amb IP estàtica"
 msgid "Provides connection to machines by IP"
 msgstr "Proporciona connexió a màquines mitjançant IP"
 
-#: services/PhysicalMachines/service_multi.py:64
+#: services/PhysicalMachines/service_multi.py:62
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Token de servei"
 
-#: services/PhysicalMachines/service_multi.py:67
+#: services/PhysicalMachines/service_multi.py:65
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -4436,40 +4821,40 @@ msgstr ""
 "Token de servei que faran servir els actors per comunicar-se amb el servei. "
 "Deixeu-lo buit per a una assignació persistent."
 
-#: services/PhysicalMachines/service_multi.py:75
+#: services/PhysicalMachines/service_multi.py:73
 #: services/RDS_enterprise/provider.py:51
 msgid "List of servers"
 msgstr "Llistat de servidors"
 
-#: services/PhysicalMachines/service_multi.py:76
+#: services/PhysicalMachines/service_multi.py:74
 msgid "List of servers available for this service"
 msgstr "Llistat de servidors disponibles per a aquest servei"
 
-#: services/PhysicalMachines/service_multi.py:81
+#: services/PhysicalMachines/service_multi.py:79
 msgid "Check Port"
 msgstr "Consultar Port"
 
-#: services/PhysicalMachines/service_multi.py:85
+#: services/PhysicalMachines/service_multi.py:83
 msgid ""
 "If non zero, only hosts responding to connection on that port will be served."
 msgstr ""
 "Si no és zero, només es donarà servei als hostes que responguin a la "
 "connexió en aquest port."
 
-#: services/PhysicalMachines/service_multi.py:92
+#: services/PhysicalMachines/service_multi.py:90
 msgid "Skip time"
 msgstr "Pasar el temps"
 
-#: services/PhysicalMachines/service_multi.py:95
+#: services/PhysicalMachines/service_multi.py:93
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr ""
 "Si falla la comprovació d'un host, ometeu-la durant aquest temps (en minuts)."
 
-#: services/PhysicalMachines/service_multi.py:103
+#: services/PhysicalMachines/service_multi.py:101
 msgid "Max session per machine"
 msgstr "Màxim de sessió per màquina"
 
-#: services/PhysicalMachines/service_multi.py:107
+#: services/PhysicalMachines/service_multi.py:105
 msgid ""
 "Maximum session duration before UDS thinks this machine got locked and "
 "releases it (hours). 0 means \"never\"."
@@ -4477,25 +4862,25 @@ msgstr ""
 "Durada màxima de la sessió abans que UDS cregui que aquesta màquina està "
 "bloquejada i l'alliberi (en hores). 0 significa \"mai\"."
 
-#: services/PhysicalMachines/service_multi.py:114
+#: services/PhysicalMachines/service_multi.py:112
 msgid "Lock machine by external access"
 msgstr "Bloquejar la màquina per a accés extern"
 
-#: services/PhysicalMachines/service_multi.py:115
+#: services/PhysicalMachines/service_multi.py:113
 msgid ""
 "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgstr ""
 "Si està marcat, UDS bloquejarà la màquina si s’hi accedeix des de fora d'UDS."
 
-#: services/PhysicalMachines/service_multi.py:122
+#: services/PhysicalMachines/service_multi.py:120
 msgid "Static Multiple IP"
 msgstr "IP múltiple estàtica"
 
-#: services/PhysicalMachines/service_multi.py:124
+#: services/PhysicalMachines/service_multi.py:122
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Aquest servei proporciona accés  per IP a màquines engegades"
 
-#: services/PhysicalMachines/service_multi.py:158
+#: services/PhysicalMachines/service_multi.py:156
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "S'ha detectat un valor no vàlid a la llista de servidors: \"{}\""
 
@@ -5400,47 +5785,47 @@ msgstr "Shadow"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Multiplicador de memòria \"shadow\"  (utilitzeu amb compte)"
 
-#: temp_for_locales.py:96
+#: temp_for_locales.py:99
 msgid "Spanish"
 msgstr "Espanyol"
 
-#: temp_for_locales.py:97
+#: temp_for_locales.py:100
 msgid "English"
 msgstr "Anglès"
 
-#: temp_for_locales.py:98
+#: temp_for_locales.py:101
 msgid "French"
 msgstr "Francès"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:102
 msgid "German"
 msgstr "Alemany"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:103
 msgid "Portuguese"
 msgstr "Portuguès"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:104
 msgid "Italian"
 msgstr "Italià"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:105
 msgid "Basque"
 msgstr "Basc"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:106
 msgid "Arabic"
 msgstr "Àrab"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:107
 msgid "Russian"
 msgstr "Rus"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:108
 msgid "Catalan"
 msgstr "Català"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:109
 msgid "Chinese"
 msgstr "Xinès"
 
@@ -5649,7 +6034,7 @@ msgstr "Mostrar el fons de pantalla"
 
 #: transports/HTML5RDP/html5rdp.py:134
 #: transports/HTML5RDS_enterprise/html5rds.py:123
-#: transports/RDP/rdp_base.py:222
+#: transports/RDP/rdp_base.py:241
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -5659,19 +6044,19 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:139
 #: transports/HTML5RDS_enterprise/html5rds.py:128
-#: transports/RDP/rdp_base.py:235
+#: transports/RDP/rdp_base.py:254
 msgid "Allow Desk.Comp."
 msgstr "Permetre composició d'escriptori"
 
 #: transports/HTML5RDP/html5rdp.py:141
 #: transports/HTML5RDS_enterprise/html5rds.py:130
-#: transports/RDP/rdp_base.py:237
+#: transports/RDP/rdp_base.py:256
 msgid "If checked, desktop composition will be allowed"
 msgstr "Si està seleccionat, es permet la composició d'escriptori"
 
 #: transports/HTML5RDP/html5rdp.py:145
 #: transports/HTML5RDS_enterprise/html5rds.py:134
-#: transports/RDP/rdp_base.py:241 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
 msgid "Font Smoothing"
 msgstr "Suavització de fonts"
 
@@ -5935,11 +6320,6 @@ msgstr "Forçar l'obertura de totes les connexions en una finestra nova."
 msgid "Override UDS window and replace it with the connection."
 msgstr "Substitueix la finestra d'UDS per la connexió."
 
-#: transports/HTML5RDP/html5rdp.py:268
-#: transports/HTML5RDS_enterprise/html5rds.py:255
-msgid "Security"
-msgstr "Seguretat"
-
 #: transports/HTML5RDP/html5rdp.py:269
 #: transports/HTML5RDS_enterprise/html5rds.py:256
 msgid "Connection security mode for Guacamole RDP connection"
@@ -5977,11 +6357,11 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (xifrat de capa de seguretat de transport)"
 
-#: transports/HTML5RDP/html5rdp.py:300 transports/RDP/rdp_base.py:173
+#: transports/HTML5RDP/html5rdp.py:300 transports/RDP/rdp_base.py:192
 msgid "RDP Port"
 msgstr "Port RDP"
 
-#: transports/HTML5RDP/html5rdp.py:301 transports/RDP/rdp_base.py:174
+#: transports/HTML5RDP/html5rdp.py:301 transports/RDP/rdp_base.py:193
 msgid "Use this port as RDP port. Defaults to 3389."
 msgstr "Utilitzeu aquest port com a port RDP. Per defecte és el 3389."
 
@@ -5999,13 +6379,13 @@ msgstr ""
 "Ruta personalitzada per al túnel Glyptodon Enterprise. (Vàlida només per al "
 "túnel Glyptodon Enterprise)"
 
-#: transports/HTML5RDP/html5rdp.py:327
+#: transports/HTML5RDP/html5rdp.py:326
 #: transports/HTML5RDS_enterprise/html5rds.py:296
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
 
-#: transports/HTML5RDP/html5rdp.py:332
+#: transports/HTML5RDP/html5rdp.py:331
 #: transports/HTML5RDS_enterprise/html5rds.py:301
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
@@ -6046,7 +6426,7 @@ msgstr "Port del servidor VNC"
 msgid "Port of the VNC server."
 msgstr "Port del servidor VNC."
 
-#: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:205
+#: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:224
 #: transports/RDS_enterprise/rds_base.py:136
 msgid "Color depth"
 msgstr "Profunditat de color"
@@ -6102,12 +6482,12 @@ msgid "If checked, the connection will be opened in full screen mode"
 msgstr "Si està seleccionat, la connexió s'obrirà en mode de pantalla completa"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:66
-#: transports/RDP/rdp_base.py:227
+#: transports/RDP/rdp_base.py:246
 msgid "Multiple monitors"
 msgstr "Monitors múltiples"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:69
-#: transports/RDP/rdp_base.py:230
+#: transports/RDP/rdp_base.py:249
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -6163,7 +6543,7 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:135 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:136 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Cal utilitzar HOST:PORT al camp Servidor de túnel"
@@ -6306,92 +6686,100 @@ msgstr "Activar la càmera web"
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "Si està seleccionat, la càmera web es redirigirà (NOMÉS a Windows)."
 
-#: transports/RDP/rdp_base.py:164 transports/RDS_enterprise/rds_base.py:128
+#: transports/RDP/rdp_base.py:164
+msgid "USB redirection"
+msgstr "Redirecció USB"
+
+#: transports/RDP/rdp_base.py:166
+msgid "USB redirection policy"
+msgstr "Política de redirecció USB"
+
+#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:128
 msgid "Credssp Support"
 msgstr "Support Credssp"
 
-#: transports/RDP/rdp_base.py:166 transports/RDS_enterprise/rds_base.py:130
+#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:130
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr ""
 "Si està seleccionat, s'habilitarà el suport de proveïdor de credencials"
 
-#: transports/RDP/rdp_base.py:181
+#: transports/RDP/rdp_base.py:200
 msgid "Screen Size"
 msgstr "Mida de pantalla"
 
-#: transports/RDP/rdp_base.py:183
+#: transports/RDP/rdp_base.py:202
 msgid "Screen size for this transport"
 msgstr "Mida de pantalla per a aquest transport"
 
-#: transports/RDP/rdp_base.py:207 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:138
 msgid "Color depth for this connection"
 msgstr "Profunditat de color per a aquesta connexió"
 
-#: transports/RDP/rdp_base.py:219
+#: transports/RDP/rdp_base.py:238
 msgid "Wallpaper/theme"
 msgstr "Fons de pantalla/tema"
 
-#: transports/RDP/rdp_base.py:244
+#: transports/RDP/rdp_base.py:263
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Si està seleccionat, es permet la suavització de fonts."
 
-#: transports/RDP/rdp_base.py:248
+#: transports/RDP/rdp_base.py:267
 msgid "Connection Bar"
 msgstr "Barra de connexió"
 
-#: transports/RDP/rdp_base.py:250
+#: transports/RDP/rdp_base.py:269
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Si està seleccionat, es mostrarà la barra de connexió (només a clients "
 "Windows)"
 
-#: transports/RDP/rdp_base.py:256 transports/RDS_enterprise/rds_base.py:181
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:181
 msgid "Multimedia sync"
 msgstr "Sincronització multimèdia"
 
-#: transports/RDP/rdp_base.py:259 transports/RDS_enterprise/rds_base.py:184
+#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:184
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Si està seleccionat, el client Linux utilitzarà el paràmetre multimèdia per "
 "a xfreerdp"
 
-#: transports/RDP/rdp_base.py:264 transports/RDS_enterprise/rds_base.py:189
+#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:189
 msgid "Use Alsa"
 msgstr "Utilitzar ALSA"
 
-#: transports/RDP/rdp_base.py:267 transports/RDS_enterprise/rds_base.py:192
+#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:192
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Si està seleccionat, el client Linux intentarà utilitzar ALSA, d'altra "
 "manera s'utilitzarà PULSE"
 
-#: transports/RDP/rdp_base.py:272 transports/RDS_enterprise/rds_base.py:197
+#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:197
 msgid "Printer string"
 msgstr "Cadena d'impressora"
 
-#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:200
+#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:200
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si Impressora està seleccionat, la cadena d'impressora utilitzada amb el "
 "client xfreerdp"
 
-#: transports/RDP/rdp_base.py:281 transports/RDS_enterprise/rds_base.py:206
+#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:206
 msgid "Smartcard string"
 msgstr "Cadena de targeta intel·ligent"
 
-#: transports/RDP/rdp_base.py:284 transports/RDS_enterprise/rds_base.py:209
+#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:209
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si Targeta intel·ligent està seleccionat, la cadena de targeta intel·ligent "
 "utilitzada amb el client xfreerdp"
 
-#: transports/RDP/rdp_base.py:290 transports/RDP/rdp_base.py:310
+#: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
 #: transports/RDS_enterprise/rds_base.py:215
 msgid "Custom parameters"
 msgstr "Paràmetres personalitzats"
 
-#: transports/RDP/rdp_base.py:293 transports/RDS_enterprise/rds_base.py:218
+#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:218
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6400,11 +6788,11 @@ msgstr ""
 "exemple /usb:id,dev:054c:0268, o alguna cosa compatible amb el vostre client "
 "xfreerdp)"
 
-#: transports/RDP/rdp_base.py:300
+#: transports/RDP/rdp_base.py:319
 msgid "Allow Microsoft Rdp Client"
 msgstr "Permetre el client Microsoft RDP"
 
-#: transports/RDP/rdp_base.py:303
+#: transports/RDP/rdp_base.py:322
 msgid ""
 "If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE "
 "PROMPTED!"
@@ -6412,7 +6800,7 @@ msgstr ""
 "Si està seleccionat, permetre l'ús del client d'escriptori remot de "
 "Microsoft. ES MOSTRARÀ LA CONTRASENYA!!"
 
-#: transports/RDP/rdp_base.py:313
+#: transports/RDP/rdp_base.py:332
 msgid ""
 "If not empty, extra parameter to include for Mac OS X Freerdp Client (for "
 "example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp "
@@ -6664,75 +7052,75 @@ msgstr "Excés d'errors d'autenticació. Usuari bloquejat temporalment"
 msgid "Access tried from an unallowed source"
 msgstr "Accés intentat des d'un origen no permès"
 
-#: web/util/authentication.py:155
+#: web/util/authentication.py:158
 msgid "Invalid data"
 msgstr "Dades no vàlides"
 
-#: web/util/configjs.py:170
+#: web/util/configjs.py:163
 msgid "Access limited by calendar"
 msgstr "Accés limitat per calendari"
 
-#: web/util/configjs.py:226
+#: web/util/configjs.py:222
 msgid "Windows client"
 msgstr "Client Windows"
 
-#: web/util/configjs.py:230
+#: web/util/configjs.py:226
 msgid "Mac OS X client"
 msgstr "Client MacOS X"
 
-#: web/util/configjs.py:233
+#: web/util/configjs.py:229
 msgid "Debian based Linux client"
 msgstr "Client Linux basat en Debian"
 
-#: web/util/configjs.py:235 web/util/configjs.py:243 web/util/configjs.py:263
+#: web/util/configjs.py:231 web/util/configjs.py:239 web/util/configjs.py:259
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requereix Python-3.6 o més recent)"
 
-#: web/util/configjs.py:241
+#: web/util/configjs.py:237
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Client de Linux basat en RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:249
+#: web/util/configjs.py:245
 msgid "Binary appimage X86_64 Linux client"
 msgstr "Client de Linux en Binari appimage X86_64"
 
-#: web/util/configjs.py:255
+#: web/util/configjs.py:251
 msgid "Binary appimage Raspberry Linux client"
 msgstr "Client de Raspberry Linux en Binari appimage"
 
-#: web/util/configjs.py:261
+#: web/util/configjs.py:257
 msgid "Generic .tar.gz Linux client"
 msgstr " Client Linux genèric .tar.gz"
 
-#: web/util/errors.py:76
+#: web/util/errors.py:78
 msgid "Unknown error"
 msgstr "Error desconegut"
 
-#: web/util/errors.py:83
+#: web/util/errors.py:85
 msgid "Maximum services limit reached. Please, contact administrator"
 msgstr ""
 "S'ha assolit el límit màxim de serveis. Si us plau, contacteu amb "
 "l'administrador"
 
-#: web/util/errors.py:84
+#: web/util/errors.py:86
 msgid "You need to enable cookies to let this application work"
 msgstr ""
 "Necessiteu habilitar les cookies per a permetre que aquesta aplicació "
 "funcioni"
 
-#: web/util/errors.py:86
+#: web/util/errors.py:88
 msgid "Authenticator not found"
 msgstr "No s'ha trobat l'autenticador"
 
-#: web/util/errors.py:87
+#: web/util/errors.py:89
 msgid "Invalid authenticator"
 msgstr "Autenticador no vàlid"
 
-#: web/util/errors.py:88
+#: web/util/errors.py:90
 msgid "Invalid request received"
 msgstr "S'ha rebut una petició no vàlida"
 
-#: web/util/errors.py:90
+#: web/util/errors.py:92
 msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
@@ -6740,11 +7128,11 @@ msgstr ""
 "El vostre navegador no està suportat. Si us plau actualitzeu-lo a una versió "
 "que suporti HTML5, com Firefox o Chrome"
 
-#: web/util/errors.py:92
+#: web/util/errors.py:94
 msgid "The requested service is in maintenance mode"
 msgstr "El servei sol·licitat està en mode manteniment"
 
-#: web/util/errors.py:93
+#: web/util/errors.py:95
 msgid ""
 "The service is not ready.\n"
 "Please, try again in a few moments."
@@ -6752,28 +7140,32 @@ msgstr ""
 "El servei no està preparat.\n"
 "Si us plau, intenteu-ho en uns moments."
 
-#: web/util/errors.py:94
+#: web/util/errors.py:96
 msgid "Preparing service"
 msgstr "Preparant el servei"
 
-#: web/util/errors.py:95
+#: web/util/errors.py:97
 msgid "Service access denied by calendars"
 msgstr "Accés al servei denegat per calendaris"
 
-#: web/util/errors.py:96
+#: web/util/errors.py:98
 msgid "Page not found"
 msgstr "Pàgina no trobada"
 
-#: web/util/errors.py:97
+#: web/util/errors.py:99
 msgid "Unexpected error"
 msgstr "Error inesperat"
 
-#: web/util/errors.py:98
+#: web/util/errors.py:100
 msgid ""
 "Reloading this page is not supported. Please, reopen service from origin."
 msgstr ""
 "No es pot recarregar aquesta pàgina. Si us plau, torneu a obrir el servei "
 "des de l'origen."
+
+#: web/util/errors.py:101
+msgid "Invalid Multi-Factor Authentication code"
+msgstr "Codi d&#39;autenticació multifactor no vàlid"
 
 #: web/util/services.py:319
 msgid ""
@@ -6795,6 +7187,14 @@ msgstr ""
 "El vostre servei s'està creant, si us plau, espereu uns segons mentre es "
 "completa.)"
 
-#: web/views/auth.py:177
+#: web/views/auth.py:189
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
+
+#: web/views/modern.py:269
+msgid "{} days"
+msgstr "{} dies"
+
+#: web/views/modern.py:271
+msgid "{} hours"
+msgstr "{} hores"

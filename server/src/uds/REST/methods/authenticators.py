@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,6 +40,7 @@ from uds.core import auths
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
 from uds.core.util import permissions
+from uds.core.util.model import processUuid
 from uds.core.ui import gui
 
 from .users_groups import Users, Groups
@@ -58,17 +59,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    # Networks is treated on "beforeSave", so it is not include on "save_fields" because it is not
-    # automatically included in the "save" method.
-    save_fields = [
-        'name',
-        'comments',
-        'tags',
-        'priority',
-        'small_name',
-        'net_filtering',
-        'state',
-    ]
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible', 'mfa_id']
 
     table_title = _('Authenticators')
     table_fields = [
@@ -98,6 +89,7 @@ class Authenticators(ModelHandler):
                 'passwordLabel': _(type_.passwordLabel),
                 'canCreateUsers': type_.createUser != auths.Authenticator.createUser,  # type: ignore
                 'isExternal': type_.isExternalSource,
+                'supportsMFA': type_.providesMfa(),
             }
         # Not of my type
         return {}
