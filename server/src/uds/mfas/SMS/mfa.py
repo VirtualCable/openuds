@@ -31,6 +31,7 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
+            '* {justUsername} - the username without @....'
         ),
         required=True,
         tab=_('HTTP Server'),
@@ -85,7 +86,7 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
-            '* {justUsername} - the username without @....\n'
+            '* {justUsername} - the username without @....'
         ),
         required=False,
         tab=_('HTTP Server'),
