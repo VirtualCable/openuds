@@ -14,6 +14,7 @@ from uds.core.util import validators, decorators
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,7 @@ class EmailMFA(mfas.MFA):
         return 'OTP received via email'
 
     @decorators.threaded
-    def doSendCode(self, identifier: str, code: str) -> None:
+    def doSendCode(self, request: 'ExtendedHttpRequest', identifier: str, code: str) -> None:
         # Send and email with the notification
         with self.login() as smtp:
             try:
@@ -138,18 +139,18 @@ class EmailMFA(mfas.MFA):
                 msg['From'] = self.fromEmail.cleanStr()
                 msg['To'] = identifier
 
-                msg.attach(MIMEText(f'Your verification code is {code}', 'plain'))
+                msg.attach(MIMEText(f'A login attemt has been made from {request.ip}.\nTo continue, provide the verification code {code}', 'plain'))
 
                 if self.enableHTML.value:
-                    msg.attach(MIMEText(f'<p>Your OTP code is <b>{code}</b></p>', 'html'))
+                    msg.attach(MIMEText(f'<p>A login attemt has been made from <b>{request.ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p>', 'html'))
 
                 smtp.sendmail(self.fromEmail.value, identifier, msg.as_string())
             except smtplib.SMTPException as e:
                 logger.error('Error sending email: {}'.format(e))
                 raise
 
-    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
-        self.doSendCode(identifier, code)
+    def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
+        self.doSendCode(request, identifier, code,)
         return mfas.MFA.RESULT.OK
 
     def login(self) -> smtplib.SMTP:
