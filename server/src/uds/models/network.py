@@ -112,6 +112,12 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         """
         return net.longToIp(self.net_end)
 
+    def ipInNetwork(self, ip: str) -> bool:
+        """
+        Returns true if the specified ip is in this network
+        """
+        return net.ipToLong(ip) >= self.net_start and net.ipToLong(ip) <= self.net_end
+
     def update(self, name: str, netRange: str):
         """
         Updated this network with provided values

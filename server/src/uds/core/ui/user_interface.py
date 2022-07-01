@@ -118,6 +118,8 @@ class gui:
         Helper to convert from array of strings to the same dict used in choice,
         multichoice, ..
         """
+        if not vals:
+            return []
         if isinstance(vals, (list, tuple)):
             return [{'id': v, 'text': v} for v in vals]
 
@@ -990,6 +992,12 @@ class UserInterface(metaclass=UserInterfaceType):
                of this posibility in a near version...
         """
 
+    @classmethod
+    def initClassGui(cls) -> None:
+        """
+        This method is used to initialize the gui fields of the class.
+        """
+
     def valuesDict(self) -> gui.ValuesDictType:
         """
         Returns own data needed for user interaction as a dict of key-names ->
@@ -1144,6 +1152,8 @@ class UserInterface(metaclass=UserInterfaceType):
         if obj:
             obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
             theGui = obj
+        else:
+            cls.initClassGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
 
