@@ -208,16 +208,26 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             request.authorized = True
             return HttpResponseRedirect(reverse('page.index'))
         # Not allowed to login, redirect to login error page
-        logger.warning('MFA identifier not found for user %s on authenticator %s. It is required by MFA %s', request.user.name, request.user.manager.name, mfaProvider.name)
+        logger.warning(
+            'MFA identifier not found for user %s on authenticator %s. It is required by MFA %s',
+            request.user.name,
+            request.user.manager.name,
+            mfaProvider.name,
+        )
         return errors.errorView(request, errors.ACCESS_DENIED)
-    
+
     if request.method == 'POST':  # User has provided MFA code
         form = MFAForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data['code']
             try:
                 mfaInstance.validate(
-                    userHashValue, request.user.name, mfaIdentifier, code, validity=validity
+                    request,
+                    userHashValue,
+                    request.user.name,
+                    mfaIdentifier,
+                    code,
+                    validity=validity,
                 )
                 request.authorized = True
                 # Remove mfa_start_time from session
@@ -245,7 +255,13 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     else:
         # Make MFA send a code
         try:
-            result = mfaInstance.process(userHashValue, request.user.name, mfaIdentifier, validity=validity)
+            result = mfaInstance.process(
+                request,
+                userHashValue,
+                request.user.name,
+                mfaIdentifier,
+                validity=validity,
+            )
             if result == mfas.MFA.RESULT.ALLOWED:
                 # MFA not needed, redirect to index after authorization of the user
                 request.authorized = True

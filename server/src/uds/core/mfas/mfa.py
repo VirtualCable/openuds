@@ -154,7 +154,8 @@ class MFA(Module):
         If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """
         # try to get the stored code
-        data: typing.Any = self.storage.getPickle(userId)
+        storageKey = request.ip + userId
+        data: typing.Any = self.storage.getPickle(storageKey)
         validity = validity if validity is not None else self.validity() * 60
         try:
             if data and validity:
@@ -164,18 +165,18 @@ class MFA(Module):
                     return MFA.RESULT.OK
         except Exception:
             # if we have a problem, just remove the stored code
-            self.storage.remove(userId)
+            self.storage.remove(storageKey)
 
         # Generate a 6 digit code (0-9)
         code = ''.join(random.SystemRandom().choices('0123456789', k=6))
         logger.debug('Generated OTP is %s', code)
         # Store the code in the database, own storage space
-        self.storage.putPickle(userId, (getSqlDatetime(), code))
+        self.storage.putPickle(storageKey, (getSqlDatetime(), code))
         # Send the code to the user
         return self.sendCode(request, userId, username, identifier, code)
         
 
-    def validate(self, userId: str, username: str, identifier: str, code: str, validity: typing.Optional[int] = None) -> None:
+    def validate(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str, validity: typing.Optional[int] = None) -> None:
         """
         If this method is provided by an authenticator, the user will be allowed to enter a MFA code
         You must raise an "exceptions.MFAError" if the code is not valid.
@@ -184,7 +185,8 @@ class MFA(Module):
         try:
             err = _('Invalid MFA code')
             
-            data = self.storage.getPickle(userId)
+            storageKey = request.ip + userId
+            data = self.storage.getPickle(storageKey)
             if data and len(data) == 2:
                 validity = validity if validity is not None else self.validity() * 60
                 if validity and data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
@@ -194,7 +196,7 @@ class MFA(Module):
                 # Check if the code is valid
                 if data[1] == code:
                     # Code is valid, remove it from storage
-                    self.storage.remove(userId)
+                    self.storage.remove(storageKey)
                     return
         except Exception as e:
             # Any error means invalid code

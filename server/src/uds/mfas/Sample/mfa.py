@@ -9,6 +9,7 @@ from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,8 @@ class SampleMFA(mfas.MFA):
 
     def label(self) -> str:
         return 'Code is in log'
-    
-    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
-        logger.debug('Sending code: %s', code)
+
+    def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
+        logger.debug('Sending code: %s (from %s)', code, request.ip)
         return mfas.MFA.RESULT.OK
 
