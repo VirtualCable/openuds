@@ -43,6 +43,7 @@ from uds.core.auths import exceptions
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +133,7 @@ class MFA(Module):
         """
         return True
 
-    def sendCode(self, userId: str, username: str, identifier: str, code: str) -> 'MFA.RESULT':
+    def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> 'MFA.RESULT':
         """
         This method will be invoked from "process" method, to send the MFA code to the user.
         If returns MFA.RESULT.VALID, the MFA code was sent.
@@ -142,7 +143,7 @@ class MFA(Module):
         
         raise NotImplementedError('sendCode method not implemented')
 
-    def process(self, userId: str, username: str, identifier: str, validity: typing.Optional[int] = None) -> 'MFA.RESULT':
+    def process(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, validity: typing.Optional[int] = None) -> 'MFA.RESULT':
         """
         This method will be invoked from the MFA form, to send the MFA code to the user.
         The identifier where to send the code, will be obtained from "mfaIdentifier" method.
@@ -171,7 +172,7 @@ class MFA(Module):
         # Store the code in the database, own storage space
         self.storage.putPickle(userId, (getSqlDatetime(), code))
         # Send the code to the user
-        return self.sendCode(userId, username, identifier, code)
+        return self.sendCode(request, userId, username, identifier, code)
         
 
     def validate(self, userId: str, username: str, identifier: str, code: str, validity: typing.Optional[int] = None) -> None:
