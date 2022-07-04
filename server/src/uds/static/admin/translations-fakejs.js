@@ -487,6 +487,7 @@ gettext("Role");
 gettext("Admin");
 gettext("Staff member");
 gettext("User");
+gettext("MFA");
 gettext("Groups");
 gettext("Cancel");
 gettext("Ok");

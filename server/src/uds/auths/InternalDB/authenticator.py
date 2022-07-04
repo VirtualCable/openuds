@@ -99,7 +99,7 @@ class InternalDBAuth(auths.Authenticator):
         if self.reverseDns.isTrue():
             try:
                 return str(
-                    dns.resolver.query(dns.reversename.from_address(ip), 'PTR')[0]
+                    dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0]
                 )
             except Exception:
                 pass

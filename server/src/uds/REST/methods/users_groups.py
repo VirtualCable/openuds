@@ -80,21 +80,21 @@ class Users(DetailHandler):
 
     custom_methods = ['servicesPools', 'userServices']
 
-    @staticmethod
-    def uuid_to_id(iterator):
-        for v in iterator:
-            v['id'] = v['uuid']
-            del v['uuid']
-            yield v
-
     def getItems(self, parent: Authenticator, item: typing.Optional[str]):
+        # processes item to change uuid key for id
+        def uuid_to_id(iterable: typing.Iterable[typing.MutableMapping[str, typing.Any]]):
+            for v in iterable:
+                v['id'] = v['uuid']
+                del v['uuid']
+                yield v
+
         logger.debug(item)
         # Extract authenticator
         try:
             if item is None:
                 values = list(
-                    Users.uuid_to_id(
-                        parent.users.all().values(
+                    uuid_to_id(
+                        (i for i in parent.users.all().values(
                             'uuid',
                             'name',
                             'real_name',
@@ -104,7 +104,8 @@ class Users(DetailHandler):
                             'is_admin',
                             'last_access',
                             'parent',
-                        )
+                            'mfaData',
+                        ))
                     )
                 )
                 for res in values:
@@ -127,6 +128,7 @@ class Users(DetailHandler):
                         'is_admin',
                         'last_access',
                         'parent',
+                        'mfaData',
                     ),
                 )
                 res['id'] = u.uuid
@@ -153,7 +155,7 @@ class Users(DetailHandler):
         except Exception:
             return _('Current users')
 
-    def getFields(self, parent):
+    def getFields(self, parent: Authenticator):
         return [
             {
                 'name': {
@@ -198,12 +200,16 @@ class Users(DetailHandler):
             'staff_member',
             'is_admin',
         ]
-        if self._params.get('name', '') == '':
+        if self._params.get('name', '').strip() == '':
             raise RequestError(_('Username cannot be empty'))
 
         if 'password' in self._params:
             valid_fields.append('password')
             self._params['password'] = cryptoManager().hash(self._params['password'])
+        
+        if 'mfaData' in self._params:
+            valid_fields.append('mfaData')
+            self._params['mfaData'] = self._params['mfaData'].strip()
 
         fields = self.readFieldsFromParams(valid_fields)
         if not self._user.is_admin:
@@ -224,9 +230,8 @@ class Users(DetailHandler):
                 user.__dict__.update(fields)
 
             logger.debug('User parent: %s', user.parent)
-            if auth.isExternalSource is False and (
-                user.parent is None or user.parent == ''
-            ):
+            # If internal auth, threat it "special"
+            if auth.isExternalSource is False and not user.parent:
                 groups = self.readFieldsFromParams(['groups'])['groups']
                 logger.debug('Groups: %s', groups)
                 logger.debug('Got Groups %s', parent.groups.filter(uuid__in=groups))
@@ -414,7 +419,7 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalidRequestException()
 
-    def saveItem(self, parent: Authenticator, item) -> None:
+    def saveItem(self, parent: Authenticator, item: typing.Optional[str]) -> None:
         group = None  # Avoid warning on reference before assignment
         try:
             is_meta = self._params['type'] == 'meta'
@@ -429,7 +434,7 @@ class Groups(DetailHandler):
             fields = self.readFieldsFromParams(valid_fields)
             is_pattern = fields.get('name', '').find('pat:') == 0
             auth = parent.getInstance()
-            if item is None:  # Create new
+            if not item:  # Create new
                 if not is_meta and not is_pattern:
                     auth.createGroup(
                         fields
@@ -482,7 +487,9 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalidItemException()
 
-    def servicesPools(self, parent: Authenticator, item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
+    def servicesPools(
+        self, parent: Authenticator, item: str
+    ) -> typing.List[typing.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
         res: typing.List[typing.Mapping[str, typing.Any]] = []
@@ -503,7 +510,9 @@ class Groups(DetailHandler):
 
         return res
 
-    def users(self, parent: Authenticator, item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
+    def users(
+        self, parent: Authenticator, item: str
+    ) -> typing.List[typing.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
 

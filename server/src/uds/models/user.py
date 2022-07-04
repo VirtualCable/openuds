@@ -37,6 +37,7 @@ from django.db import models
 from django.db.models import signals, Q, Count
 
 from uds.core.util import log
+from uds.core.util import storage
 
 from .authenticator import Authenticator
 from .util import UnsavedForeignKey
@@ -66,6 +67,9 @@ class User(UUIDModel):
     comments = models.CharField(max_length=256)
     state = models.CharField(max_length=1, db_index=True)
     password = models.CharField(
+        max_length=128, default=''
+    )  # Only used on "internal" sources or sources that "needs password"
+    mfaData = models.CharField(
         max_length=128, default=''
     )  # Only used on "internal" sources
     staff_member = models.BooleanField(
@@ -202,6 +206,26 @@ class User(UUIDModel):
                 # This group matches
                 yield g
 
+    # Get custom data
+    def getCustomData(self, key: str) -> typing.Optional[str]:
+        """
+        Returns the custom data for this user for the provided key.
+
+        Usually custom data will be associated with transports, but can be custom data registered by ANY module.
+
+        Args:
+            key: key of the custom data to get
+
+        Returns:
+
+            The custom data for the key specified as a string (can be empty if key is not found).
+
+            If the key exists, the custom data will always contain something, but may be the values are the default ones.
+
+        """
+        with storage.StorageAccess('manager' + self.manager.uuid) as store:
+            return store[self.uuid + '_' + key]
+
     def __str__(self):
         return 'User {} (id:{}) from auth {}'.format(
             self.name, self.id, self.manager.name
@@ -217,11 +241,15 @@ class User(UUIDModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete = kwargs['instance']
+        toDelete: User = kwargs['instance']
 
         # first, we invoke removeUser. If this raises an exception, user will not
         # be removed
         toDelete.getManager().removeUser(toDelete.name)
+        # Remove related stored values
+        with storage.StorageAccess('manager' + toDelete.manager.uuid) as store:
+            for key in store.keys():
+                store.delete(key)
 
         # now removes all "child" of this user, if it has children
         User.objects.filter(parent=toDelete.id).delete()
