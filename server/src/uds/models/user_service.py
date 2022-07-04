@@ -98,7 +98,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     state_date = models.DateTimeField(db_index=True)
     creation_date = models.DateTimeField(db_index=True)
     data = models.TextField(default='')
-    user: 'models.ForeignKey[UserService, User]' = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='userServices',
@@ -394,7 +394,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             self.os_state = state
             self.save(update_fields=['os_state', 'state_date'])
 
-    def assignToUser(self, user: User) -> None:
+    def assignToUser(self, user: typing.Optional[User]) -> None:
         """
         Assigns this user deployed service to an user.
 
@@ -403,7 +403,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         self.cache_level = 0
         self.state_date = getSqlDatetime()
-        self.user = user  # type: ignore
+        self.user = user
         self.save(update_fields=['cache_level', 'state_date', 'user'])
 
     def setInUse(self, inUse: bool) -> None:

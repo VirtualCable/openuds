@@ -111,6 +111,15 @@ class RadiusAuth(auths.Authenticator):
         tooltip=_('If set, this value will be added as group for all radius users'),
         tab=gui.ADVANCED_TAB,
     )
+    mfaAttr = gui.TextField(
+        length=2048,
+        multiline=2,
+        label=_('MFA attribute'),
+        order=13,
+        tooltip=_('Attribute from where to extract the MFA code'),
+        required=False,
+        tab=gui.MFA_TAB,
+    )
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         pass
@@ -125,6 +134,12 @@ class RadiusAuth(auths.Authenticator):
             appClassPrefix=self.appClassPrefix.value,
         )
 
+    def mfaStorageKey(self, username: str) -> str:
+        return 'mfa_' + self.dbAuthenticator().uuid + username
+
+    def mfaIdentifier(self, username: str) -> str:
+        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
+
     def authenticate(
         self,
         username: str,
@@ -134,7 +149,14 @@ class RadiusAuth(auths.Authenticator):
     ) -> auths.AuthenticationResult:
         try:
             connection = self.radiusClient()
-            groups = connection.authenticate(username=username, password=credentials)
+            groups, mfaCode = connection.authenticate(username=username, password=credentials, mfaField=self.mfaAttr.value.strip())
+            # store the user mfa attribute if it is set
+            if mfaCode:
+                self.storage.putPickle(
+                    self.mfaStorageKey(username),
+                    mfaCode,
+                )
+
         except Exception:
             authLogLogin(
                 request,

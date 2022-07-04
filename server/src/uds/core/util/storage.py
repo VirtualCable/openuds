@@ -178,6 +178,9 @@ class StorageAsDict(MutableMapping):
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
         return self[key] or default
 
+    def delete(self, key: str) -> None:
+        self.__delitem__(key)
+
     # Custom utility methods
     @property
     def group(self) -> str:
