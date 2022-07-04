@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -176,6 +176,16 @@ class RegexLdap(auths.Authenticator):
         tab=_('Advanced'),
     )
 
+    mfaAttr = gui.TextField(
+        length=2048,
+        multiline=2,
+        label=_('MFA attribute'),
+        order=13,
+        tooltip=_('Attribute from where to extract the MFA code'),
+        required=False,
+        tab=gui.MFA_TAB,
+    )
+
     typeName = _('Regex LDAP Authenticator')
     typeType = 'RegexLdapAuthenticator'
     typeDescription = _('Regular Expressions LDAP authenticator')
@@ -205,6 +215,7 @@ class RegexLdap(auths.Authenticator):
     _groupNameAttr: str = ''
     _userNameAttr: str = ''
     _altClass: str = ''
+    _mfaAttr: str = ''
 
     def __init__(
         self,
@@ -231,6 +242,7 @@ class RegexLdap(auths.Authenticator):
             # self._regex = values['regex']
             self._userNameAttr = values['userNameAttr']
             self._altClass = values['altClass']
+            self._mfaAttr = values['mfaAttr']
 
     def __validateField(self, field: str, fieldLabel: str) -> None:
         """
@@ -296,6 +308,12 @@ class RegexLdap(auths.Authenticator):
         logger.debug('Res: %s', res)
         return res
 
+    def mfaStorageKey(self, username: str) -> str:
+        return 'mfa_' + self.dbAuthenticator().uuid + username
+
+    def mfaIdentifier(self, username: str) -> str:
+        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
+
     def valuesDict(self) -> gui.ValuesDictType:
         return {
             'host': self._host,
@@ -310,12 +328,13 @@ class RegexLdap(auths.Authenticator):
             'groupNameAttr': self._groupNameAttr,
             'userNameAttr': self._userNameAttr,
             'altClass': self._altClass,
+            'mfaAttr': self._mfaAttr,
         }
 
     def marshal(self) -> bytes:
         return '\t'.join(
             [
-                'v3',
+                'v4',
                 self._host,
                 self._port,
                 gui.boolToStr(self._ssl),
@@ -328,6 +347,7 @@ class RegexLdap(auths.Authenticator):
                 self._groupNameAttr,
                 self._userNameAttr,
                 self._altClass,
+                self._mfaAttr,
             ]
         ).encode('utf8')
 
@@ -385,6 +405,24 @@ class RegexLdap(auths.Authenticator):
                 self._altClass,
             ) = vals[1:]
             self._ssl = gui.strToBool(ssl)
+        elif vals[0] == 'v4':
+            logger.debug("Data v4: %s", vals[1:])
+            (
+                self._host,
+                self._port,
+                ssl,
+                self._username,
+                self._password,
+                self._timeout,
+                self._ldapBase,
+                self._userClass,
+                self._userIdAttr,
+                self._groupNameAttr,
+                self._userNameAttr,
+                self._altClass,
+                self._mfaAttr,
+            ) = vals[1:]
+            self._ssl = gui.strToBool(ssl)
 
     def __connection(self) -> typing.Any:
         """
@@ -428,6 +466,9 @@ class RegexLdap(auths.Authenticator):
             + self.__getAttrsFromField(self._userNameAttr)
             + self.__getAttrsFromField(self._groupNameAttr)
         )
+        if self._mfaAttr:
+            attributes = attributes + self.__getAttrsFromField(self._mfaAttr)
+
         user = ldaputil.getFirst(
             con=self.__connection(),
             base=self._ldapBase,
@@ -516,6 +557,13 @@ class RegexLdap(auths.Authenticator):
                     getRequest(), self.dbAuthenticator(), username, 'Invalid password'
                 )
                 return False
+
+            # store the user mfa attribute if it is set
+            if self._mfaAttr:
+                self.storage.putPickle(
+                    self.mfaStorageKey(username),
+                    usr[self._mfaAttr][0],
+                )
 
             groupsManager.validate(self.__getGroups(usr))
 

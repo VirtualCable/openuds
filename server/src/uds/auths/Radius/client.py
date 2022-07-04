@@ -73,7 +73,8 @@ class RadiusClient:
         self.nasIdentifier = nasIdentifier
         self.appClassPrefix = appClassPrefix
 
-    def authenticate(self, username: str, password: str) -> typing.List[str]:
+    # Second element of return value is the mfa code from field
+    def authenticate(self, username: str, password: str, mfaField: str) -> typing.Tuple[typing.List[str], str]:
         req: pyrad.packet.AuthPacket = self.radiusServer.CreateAuthPacket(
             code=pyrad.packet.AccessRequest,
             User_Name=username,
@@ -95,7 +96,11 @@ class RadiusClient:
             groups = [i[groupClassPrefixLen:].decode() for i in typing.cast(typing.Iterable[bytes], reply['Class']) if i.startswith(groupClassPrefix)]
         else:
             logger.info('No "Class (25)" attribute found')
-            return []
+            return ([], '')
 
-        return groups
+        # ...and mfa code
+        mfaCode = ''
+        if mfaField and mfaField in reply:
+            mfaCode = ''.join(i[groupClassPrefixLen:].decode() for i in typing.cast(typing.Iterable[bytes], reply['Class']) if i.startswith(groupClassPrefix))
+        return (groups, mfaCode)
 

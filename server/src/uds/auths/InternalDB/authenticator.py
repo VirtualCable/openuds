@@ -105,6 +105,13 @@ class InternalDBAuth(auths.Authenticator):
                 pass
         return ip
 
+    def mfaIdentifier(self, username: str) -> str:
+        try:
+            self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfaData
+        except Exception:
+            pass
+        return ''
+
     def transformUsername(self, username: str) -> str:
         if self.differentForEachHost.isTrue():
             newUsername = self.getIp() + '-' + username
