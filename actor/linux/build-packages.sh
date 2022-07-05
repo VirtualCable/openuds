@@ -11,6 +11,9 @@ dpkg-buildpackage -b
 cat udsactor-template.spec | 
   sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
   sed -e s/"release 1"/"release ${RELEASE}"/g > udsactor-$VERSION.spec
+cat udsactor-unmanaged-template.spec | 
+  sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
+  sed -e s/"release 1"/"release ${RELEASE}"/g > udsactor-unmanaged-$VERSION.spec
   
 # Now fix dependencies for opensuse
 # Note that, although on opensuse the library is "libXss1" on newer,
@@ -22,7 +25,7 @@ cat udsactor-template.spec |
 #   sed -e s/"libXScrnSaver"/"libXss1"/g > udsactor-opensuse-$VERSION.spec
 
 #for pkg in udsactor-$VERSION.spec udsactor-opensuse-$VERSION.spec; do
-for pkg in udsactor-$VERSION.spec; do
+for pkg in udsactor-*$VERSION.spec; do
     
     rm -rf rpm
     for folder in SOURCES BUILD RPMS SPECS SRPMS; do
