@@ -29,13 +29,11 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
-VERSION = '3.5.0'
+VERSION = '3.6.0'
 
 __title__ = 'udclient'
 __version__ = VERSION
-__build__ = 0x010760
-__author__ = 'Adolfo Gómez'
+__build__ = 0x010712
+__author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
 __license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014-2017 VirtualCable S.L.U."
+__copyright__ = "Copyright 2014-2022 VirtualCable S.L.U."
