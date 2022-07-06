@@ -43,12 +43,12 @@ class SMSMFA(mfas.MFA):
     ignoreCertificateErrors = gui.CheckBoxField(
         label=_('Ignore certificate errors'),
         order=2,
-        tab=_('HTTP Server'),
         defvalue=False,
         tooltip=_(
             'If checked, the server certificate will be ignored. This is '
             'useful if the server uses a self-signed certificate.'
         ),
+        tab=_('HTTP Server'),
     )
 
     sendingMethod = gui.ChoiceField(
@@ -56,8 +56,8 @@ class SMSMFA(mfas.MFA):
         order=3,
         tooltip=_('Method for sending SMS'),
         required=True,
-        tab=_('HTTP Server'),
         values=('GET', 'POST', 'PUT'),
+        tab=_('HTTP Server'),
     )
 
     headersParameters = gui.TextField(
@@ -101,8 +101,8 @@ class SMSMFA(mfas.MFA):
         order=5,
         tooltip=_('Encoding for SMS'),
         required=True,
-        tab=_('HTTP Server'),
         values=('utf-8', 'iso-8859-1'),
+        tab=_('HTTP Server'),
     )
 
     authenticationMethod = gui.ChoiceField(
@@ -110,12 +110,12 @@ class SMSMFA(mfas.MFA):
         order=20,
         tooltip=_('Method for sending SMS'),
         required=True,
-        tab=_('HTTP Authentication'),
         values={
             '0': _('None'),
             '1': _('HTTP Basic Auth'),
             '2': _('HTTP Digest Auth'),
         },
+        tab=_('HTTP Authentication'),
     )
 
     authenticationUserOrToken = gui.TextField(
@@ -153,13 +153,28 @@ class SMSMFA(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for SMS response error'),
         required=True,
-        tab=_('HTTP Response'),
         values={
-            '0': _('Allow user log in without MFA'),
-            '1': _('Deny user log in'),
-            '2': _('Allow user to log in if it IP is in the networks list'),
-            '3': _('Deny user to log in if it IP is in the networks list'),
+            '0': _('Allow user login'),
+            '1': _('Deny user login'),
+            '2': _('Allow user to login if it IP is in the networks list'),
+            '3': _('Deny user to login if it IP is in the networks list'),
         },
+        tab=_('Config'),
+    )
+
+    allowLoginWithoutMFA = gui.ChoiceField(
+        label=_('User without MFA policy'),
+        order=33,
+        defaultValue='0',
+        tooltip=_('Action for SMS response error'),
+        required=True,
+        values={
+            '0': _('Allow user login'),
+            '1': _('Deny user login'),
+            '2': _('Allow user to login if it IP is in the networks list'),
+            '3': _('Deny user to login if it IP is in the networks list'),
+        },
+        tab=_('Config'),
     )
 
     networks = gui.MultiChoiceField(
@@ -169,7 +184,7 @@ class SMSMFA(mfas.MFA):
         order=32,
         tooltip=_('Networks for SMS authentication'),
         required=True,
-        tab=_('HTTP Response'),
+        tab=_('Config'),
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
@@ -215,6 +230,25 @@ class SMSMFA(mfas.MFA):
                     session.headers[headerName.strip()] = headerValue.strip()
         return session
 
+
+    def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
+        def checkIp() -> bool:
+            return any(i.ipInNetwork(request.ip) for i in models.Network.objects.filter(uuid__in = self.networks.value))
+
+        if action == '0':
+            return True
+        elif action == '1':
+            return False
+        elif action == '2':
+            return checkIp()
+        elif action == '3':
+            return not checkIp()
+        else:
+            return False
+
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+        return self.checkAction(self.allowLoginWithoutMFA.value, request)
+
     def processResponse(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
         if not response.ok:
@@ -227,20 +261,9 @@ class SMSMFA(mfas.MFA):
                     'SMS response error: %s',
                     response.text,
                 )
-                if self.responseErrorAction.value == '0':
-                    return mfas.MFA.RESULT.ALLOWED
-                elif self.responseErrorAction.value == '1':
-                    raise Exception('SMS response error')
-                else:
-                    isInNetwork = any(i.ipInNetwork(request.ip) for i in models.Network.objects.filter(uuid__in = self.networks.value))
-                    if self.responseErrorAction.value == '2':
-                        # Allow user to log in if it IP is in the networks list
-                        if isInNetwork:
-                            return mfas.MFA.RESULT.ALLOWED
-                    elif self.responseErrorAction.value == '3':
-                        if isInNetwork:
-                            raise Exception('SMS response error')
-                    return mfas.MFA.RESULT.ALLOWED
+                if not self.checkAction(self.responseErrorAction.value, request):
+                    raise Exception(_('SMS response error'))
+                return mfas.MFA.RESULT.ALLOWED
         return mfas.MFA.RESULT.OK
 
     def getData(

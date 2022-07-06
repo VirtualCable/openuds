@@ -205,7 +205,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     label = mfaInstance.label()
 
     if not mfaIdentifier:
-        if mfaInstance.emptyIndentifierAllowedToLogin():
+        if mfaInstance.emptyIndentifierAllowedToLogin(request):
             # Allow login
             request.authorized = True
             return HttpResponseRedirect(reverse('page.index'))

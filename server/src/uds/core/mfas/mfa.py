@@ -127,7 +127,7 @@ class MFA(Module):
         """
         return self.cacheTime
 
-    def emptyIndentifierAllowedToLogin(self) -> bool:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
         """
         If this method returns True, an user that has no "identifier" is allowed to login without MFA
         """

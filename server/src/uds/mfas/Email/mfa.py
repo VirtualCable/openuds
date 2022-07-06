@@ -8,6 +8,7 @@ import logging
 
 from django.utils.translation import gettext_noop as _
 
+from uds import models
 from uds.core import mfas
 from uds.core.ui import gui
 from uds.core.util import validators, decorators
@@ -96,6 +97,32 @@ class EmailMFA(mfas.MFA):
         tab=_('Config'),
     )
 
+
+    allowLoginWithoutMFA = gui.ChoiceField(
+        label=_('User without MFA policy'),
+        order=31,
+        defaultValue='0',
+        tooltip=_('Action for SMS response error'),
+        required=True,
+        values={
+            '0': _('Allow user login'),
+            '1': _('Deny user login'),
+            '2': _('Allow user to login if it IP is in the networks list'),
+            '3': _('Deny user to login if it IP is in the networks list'),
+        },
+        tab=_('Config'),
+    )
+
+    networks = gui.MultiChoiceField(
+        label=_('SMS networks'),
+        rdonly=False,
+        rows=5,
+        order=32,
+        tooltip=_('Networks for SMS authentication'),
+        required=True,
+        tab=_('Config'),
+    )
+
     def initialize(self, values: 'Module.ValuesType' = None):
         """
         We will use the "autosave" feature for form fields
@@ -123,7 +150,32 @@ class EmailMFA(mfas.MFA):
         # now check from email and to email
         self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
 
-        # Done
+    @classmethod
+    def initClassGui(cls) -> None:
+        # Populate the networks list
+        cls.networks.setValues([
+            gui.choiceItem(v.uuid, v.name)
+            for v in models.Network.objects.all().order_by('name')
+        ])
+
+
+    def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
+        def checkIp() -> bool:
+            return any(i.ipInNetwork(request.ip) for i in models.Network.objects.filter(uuid__in = self.networks.value))
+
+        if action == '0':
+            return True
+        elif action == '1':
+            return False
+        elif action == '2':
+            return checkIp()
+        elif action == '3':
+            return not checkIp()
+        else:
+            return False
+
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+        return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
     def label(self) -> str:
         return 'OTP received via email'
