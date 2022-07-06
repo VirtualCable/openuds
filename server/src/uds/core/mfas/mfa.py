@@ -160,7 +160,7 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=validity) < getSqlDatetime():
+                if data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -189,8 +189,10 @@ class MFA(Module):
             data = self.storage.getPickle(storageKey)
             if data and len(data) == 2:
                 validity = validity if validity is not None else self.validity() * 60
-                if validity and data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
+                if validity > 0 and data[0] + datetime.timedelta(seconds=validity) < getSqlDatetime():
                     # if it is no more valid, raise an error
+                    # Remove stored code and raise error
+                    self.storage.remove(storageKey)
                     raise exceptions.MFAError('MFA Code expired')
 
                 # Check if the code is valid

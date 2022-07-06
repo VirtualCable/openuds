@@ -455,7 +455,7 @@ class HTML5RDPTransport(transports.Transport):
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
-                'user': userService.user.uuid,
+                'user': userService.user.uuid if userService.user else '',
             },
         }
 
@@ -499,12 +499,11 @@ class HTML5RDPTransport(transports.Transport):
 
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
-        onw = ''
+        onw = '&o_n_w={}'.format(transport.uuid)
         if self.forceNewWindow.value == gui.TRUE:
-            onw = '&o_n_w={}'
+            onw = '&o_n_w={}'.format(userService.deployed_service.uuid)
         elif self.forceNewWindow.value == 'overwrite':
             onw = '&o_s_w=yes'
-        onw = onw.format(hash(transport.name))
         path = (
             self.customGEPath.value
             if self.useGlyptodonTunnel.isTrue()

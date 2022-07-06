@@ -191,7 +191,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     mfaInstance = mfaProvider.getInstance()
 
     # Get validity duration
-    validity = min(mfaInstance.validity(), mfaProvider.validity * 60)
+    validity = min(mfaInstance.validity(), mfaProvider.validity) * 60
     start_time = request.session.get('mfa_start_time', time.time())
 
     # If mfa process timed out, we need to start login again

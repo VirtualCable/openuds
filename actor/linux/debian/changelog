@@ -2,7 +2,13 @@ udsactor (4.0.0) stable; urgency=medium
 
   * Upgraded to 4.0.0 release
 
- -- Adolfo Gómez García <agomez@virtualcable.es>  Mon, 5 Oct 2021 12:54:18 +0200
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Fri, 1 Jul 2022 15:00:00 +0200
+
+udsactor (3.6.0) stable; urgency=medium
+
+  * Upgraded to 3.6.0 release
+
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Fri, 1 Jul 2022 14:00:00 +0200
 
 udsactor (3.5.0) stable; urgency=medium
 
