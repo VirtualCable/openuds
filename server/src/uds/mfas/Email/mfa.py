@@ -6,7 +6,7 @@ import ssl
 import typing
 import logging
 
-from django.utils.translation import gettext_noop as _
+from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
 from uds.core import mfas
@@ -149,6 +149,9 @@ class EmailMFA(mfas.MFA):
 
         # now check from email and to email
         self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
+
+    def html(self, request: 'ExtendedHttpRequest') -> str:
+        return gettext('Check your mail. You will receive an email with the verification code')
 
     @classmethod
     def initClassGui(cls) -> None:

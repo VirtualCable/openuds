@@ -119,6 +119,13 @@ class MFA(Module):
         """
         return 'MFA Code'
 
+    def html(self, request: 'ExtendedHttpRequest') -> str:
+        """
+        This method will be invoked from the MFA form, to know the HTML that will be presented
+        to the user below the MFA code form.
+        """
+        return ''
+
     def validity(self) -> int:
         """
         This method will be invoked from the MFA form, to know the validity in secods

@@ -286,10 +286,14 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         else:
             remember_device = _('{} hours').format(mfaProvider.remember_device)
 
+    # Html from MFA provider
+    mfaHtml = mfaInstance.html(request)
+
     # Redirect to index, but with MFA data
     request.session['mfa'] = {
         'label': label or _('MFA Code'),
         'validity': validity if validity >= 0 else 0,
         'remember_device': remember_device,
+        'html': mfaHtml,
     }
     return index(request)  # Render index with MFA data
