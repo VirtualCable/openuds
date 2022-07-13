@@ -78,8 +78,9 @@ def guacamole(
 
             try:
                 userService = UserService.objects.get(uuid=ti['userService'])
-                if not userService.isUsable():
-                    raise Exception() # Not usable, so we will not use it :)
+                if not userService.isUsable() or not userService.user:
+                    # Not usable, or not assigned to a user, we will not use it
+                    raise Exception() 
                 # Log message and event
                 protocol = 'RDS' if 'remote-app' in val else val['protocol'].upper()
                 host = val.get('hostname', '0.0.0.0')

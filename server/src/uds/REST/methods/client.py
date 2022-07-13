@@ -44,13 +44,13 @@ from uds.web.util import errors
 from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.core import VERSION as UDS_VERSION
+from uds.core import VERSION as UDS_VERSION, REQUIRED_CLIENT_VERSION
 
 
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '3.5.0'
+
 
 
 # Enclosed methods under /client path

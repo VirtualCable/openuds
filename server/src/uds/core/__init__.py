@@ -42,3 +42,5 @@ from .module import Module
 
 VERSION = '4.x.x-DEVEL'
 VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))
+# Minimal uds client version required to connect to this server
+REQUIRED_CLIENT_VERSION = '3.5.0'
