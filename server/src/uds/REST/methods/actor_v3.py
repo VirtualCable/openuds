@@ -284,14 +284,7 @@ class Initialize(ActorV3Action):
                     state__in=[State.USABLE, State.PREPARING],
                 )
 
-                userService: UserService = next(
-                    iter(
-                        dbFilter.filter(
-                            unique_id__in=idsList,
-                            state__in=[State.USABLE, State.PREPARING],
-                        )
-                    )
-                )
+                userService: UserService = next(iter(dbFilter))
             except Exception as e:
                 logger.info('Unmanaged host request: %s, %s', self._params, e)
                 return ActorV3Action.actorResult(
