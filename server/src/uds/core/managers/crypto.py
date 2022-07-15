@@ -61,6 +61,10 @@ if typing.TYPE_CHECKING:
 
 
 class CryptoManager(metaclass=singleton.Singleton):
+    _rsa: 'RSAPrivateKey'
+    _namespace: uuid.UUID
+    _counter: int
+
     def __init__(self):
         self._rsa = serialization.load_pem_private_key(
             settings.RSA_KEY.encode(), password=None, backend=default_backend()
@@ -91,7 +95,7 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def encrypt(self, value: str) -> str:
         return codecs.encode(
-            self._rsa.public_key().encrypt(  # type: ignore
+            self._rsa.public_key().encrypt(
                 value.encode(),
                 padding.OAEP(
                     mgf=padding.MGF1(algorithm=hashes.SHA256()),
@@ -107,7 +111,7 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         try:
             # First, try new "cryptografy" decrpypting
-            decrypted: bytes = self._rsa.decrypt(  # type: ignore
+            decrypted: bytes = self._rsa.decrypt(
                 data,
                 padding.OAEP(
                     mgf=padding.MGF1(algorithm=hashes.SHA256()),
@@ -157,19 +161,19 @@ class CryptoManager(metaclass=singleton.Singleton):
         toDecode = decryptor.update(text) + decryptor.finalize()
         return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
 
-    def xor(self, s1: typing.Union[str, bytes], s2: typing.Union[str, bytes]) -> bytes:
-        if not s2:
+    def xor(self, value: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
+        if not key:
             return b''  # Protect against division by cero
 
-        if isinstance(s1, str):
-            s1 = s1.encode('utf-8')
-        if isinstance(s2, str):
-            s2 = s2.encode('utf-8')
-        mult = len(s1) // len(s2) + 1
-        s1a = array.array('B', s1)
-        s2a = array.array('B', s2 * mult)
-        # We must return bynary in xor, because result is in fact binary
-        return array.array('B', (s1a[i] ^ s2a[i] for i in range(len(s1a)))).tobytes()
+        if isinstance(value, str):
+            value = value.encode('utf-8')
+        if isinstance(key, str):
+            key = key.encode('utf-8')
+        mult = len(value) // len(key) + 1
+        value_array = array.array('B', value)
+        key_array = array.array('B', key * mult)  # Ensure key array is at least as long as value_array
+        # We must return binary in xor, because result is in fact binary
+        return array.array('B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))).tobytes()
 
     def symCrypt(
         self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]
