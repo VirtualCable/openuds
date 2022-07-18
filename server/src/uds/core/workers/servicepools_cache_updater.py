@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -59,10 +59,6 @@ class ServiceCacheUpdater(Job):
         GlobalConfig.CACHE_CHECK_DELAY
     )  # Request run cache manager every configured seconds (defaults to 20 seconds).
     friendly_name = 'Service Cache Updater'
-
-    @staticmethod
-    def calcProportion(max_, actual) -> int:
-        return actual * 10000 // (max_ or 1)
 
     @staticmethod
     def __notifyRestrain(servicePool) -> None:
@@ -127,8 +123,7 @@ class ServiceCacheUpdater(Job):
                 servicePool.cachedUserServices()
                 .filter(
                     userServiceManager().getCacheStateFilter(
-                        servicePool,
-                        services.UserDeployment.L1_CACHE
+                        servicePool, services.UserDeployment.L1_CACHE
                     )
                 )
                 .exclude(Q(properties__name='destroy_after') & Q(properties__value='y'))
@@ -138,8 +133,7 @@ class ServiceCacheUpdater(Job):
                 servicePool.cachedUserServices()
                 .filter(
                     userServiceManager().getCacheStateFilter(
-                        servicePool,
-                        services.UserDeployment.L2_CACHE
+                        servicePool, services.UserDeployment.L2_CACHE
                     )
                 )
                 .count()
@@ -237,8 +231,7 @@ class ServiceCacheUpdater(Job):
                     .select_for_update()
                     .filter(
                         userServiceManager().getCacheStateFilter(
-                            servicePool,
-                            services.UserDeployment.L2_CACHE
+                            servicePool, services.UserDeployment.L2_CACHE
                         )
                     )
                     .order_by('creation_date')
@@ -311,8 +304,7 @@ class ServiceCacheUpdater(Job):
             servicePool.cachedUserServices()
             .filter(
                 userServiceManager().getCacheStateFilter(
-                    servicePool,
-                    services.UserDeployment.L1_CACHE
+                    servicePool, services.UserDeployment.L1_CACHE
                 )
             )
             .exclude(Q(properties__name='destroy_after') & Q(properties__value='y'))
@@ -355,14 +347,13 @@ class ServiceCacheUpdater(Job):
                 servicePool.cachedUserServices()
                 .filter(
                     userServiceManager().getCacheStateFilter(
-                        servicePool,
-                        services.UserDeployment.L2_CACHE
+                        servicePool, services.UserDeployment.L2_CACHE
                     )
                 )
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
-            cache: UserService = cacheItems[0]    # type: ignore  # Slicing is not supported by pylance right now
+            cache: UserService = cacheItems[0]  # type: ignore  # Slicing is not supported by pylance right now
             cache.removeOrCancel()
 
     def run(self) -> None:

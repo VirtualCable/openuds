@@ -43,6 +43,8 @@ from django.db import models
 from uds.core.util import calendar
 from uds.core.util import log
 from uds.core.util import state
+from uds.core import managers
+from uds.core import services
 
 from .calendar import Calendar
 from .uuid_model import UUIDModel
@@ -192,6 +194,18 @@ CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES: typing.Dict[str, typing.Any] = {
     ),
 }
 
+CALENDAR_ACTION_CLEAN_CACHE_L1: typing.Dict[str, typing.Any] = {
+    'id': 'CLEAN_CACHE_L1',
+    'description': _('Clean L1 cache'),
+    'params': (),
+}
+
+CALENDAR_ACTION_CLEAN_CACHE_L2: typing.Dict[str, typing.Any] = {
+    'id': 'CLEAN_CACHE_L2',
+    'description': _('Clean L2 cache'),
+    'params': (),
+}
+
 
 CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
     c['id']: c
@@ -210,6 +224,8 @@ CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
         CALENDAR_ACTION_IGNORE_UNUSED,
         CALENDAR_ACTION_REMOVE_USERSERVICES,
         CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
+        CALENDAR_ACTION_CLEAN_CACHE_L1,
+        CALENDAR_ACTION_CLEAN_CACHE_L2,
     )
 }
 
@@ -359,7 +375,38 @@ class CalendarAction(UUIDModel):
             self.service_pool.assignedGroups.clear()
             saveServicePool = False
             executed = True
-        else:  # Add/remove transport or group
+        elif self.action in [
+            CALENDAR_ACTION_CLEAN_CACHE_L1['id'],
+            CALENDAR_ACTION_CLEAN_CACHE_L2['id'],
+        ]:
+            # 4.- Remove all cache_l1_srvs
+            for i in self.service_pool.cachedUserServices().filter(
+                managers.userServiceManager().getCacheStateFilter(
+                    self.service_pool,
+                    services.UserDeployment.L1_CACHE
+                    if self.action == CALENDAR_ACTION_CLEAN_CACHE_L1['id']
+                    else services.UserDeployment.L2_CACHE,
+                )
+            ):
+                i.remove()
+            saveServicePool = False
+            executed = True
+        elif CALENDAR_ACTION_CLEAN_CACHE_L2['id'] == self.action:
+            # 5.- Remove all cache_l2_srvs
+            for i in self.service_pool.cachedUserServices().filter(
+                managers.userServiceManager().getCacheStateFilter(
+                    self.service_pool, services.UserDeployment.L2_CACHE
+                )
+            ):
+                i.remove()
+            saveServicePool = False
+            executed = True
+        elif self.action in [
+            CALENDAR_ACTION_ADD_TRANSPORT['id'],
+            CALENDAR_ACTION_DEL_TRANSPORT['id'],
+            CALENDAR_ACTION_ADD_GROUP['id'],
+            CALENDAR_ACTION_DEL_GROUP['id'],
+        ]:  # Add/remove transport or group
             saveServicePool = False
             caTransports = (
                 CALENDAR_ACTION_ADD_TRANSPORT['id'],
@@ -394,6 +441,12 @@ class CalendarAction(UUIDModel):
                     self.service_pool.log(
                         'Scheduled action not executed because group is not available anymore'
                     )
+        else:
+            self.service_pool.log(
+                'Scheduled action not executed because is not supported: {}'.format(
+                    self.action
+                )
+            )
 
         if executed:
             try:
