@@ -64,9 +64,7 @@ class Proxy:
             logger.error('Proxy error from %s: %s', addr, e)
 
     async def proxy(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
-
         loop = asyncio.get_event_loop()
-
         # Handshake correct in this point, upgrade the connection to TSL and let
         # the protocol controller do the rest
 

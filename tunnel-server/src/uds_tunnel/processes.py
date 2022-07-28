@@ -18,7 +18,8 @@ ProcessType = typing.Callable[
     typing.Coroutine[typing.Any, None, None],
 ]
 
-NO_CPU_PERCENT = 1000001.0
+NO_CPU_PERCENT: float = 1000001.0
+
 
 class Processes:
     """
@@ -51,7 +52,9 @@ class Processes:
         )
         task.start()
         logger.debug('ADD CHILD PID: %s', task.pid)
-        self.children.append((own_conn, task, psutil.Process(task.pid)))
+        self.children.append(
+            (typing.cast('Connection', own_conn), task, psutil.Process(task.pid))
+        )
 
     def best_child(self) -> 'Connection':
         best: typing.Tuple[float, 'Connection'] = (NO_CPU_PERCENT, self.children[0][0])
@@ -93,7 +96,11 @@ class Processes:
                 if i not in missingProcesses
             ]
             # Now add new children
-            for _ in missingProcesses:  #  wee need to add as many as we removed, that is the len of missingProcesses
+            for (
+                _
+            ) in (
+                missingProcesses
+            ):  #  wee need to add as many as we removed, that is the len of missingProcesses
                 self.add_child_pid()
 
             # Recheck best if all child were missing
@@ -102,7 +109,7 @@ class Processes:
 
         return best[1]
 
-    def stop(self):
+    def stop(self) -> None:
         # Try to stop running childs
         for i in self.children:
             try:

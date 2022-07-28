@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 do_stop = False
 
 
-def stop_signal(signum, frame):
+def stop_signal(signum: int, frame: typing.Any) -> None:
     global do_stop
     do_stop = True
     logger.debug('SIGNAL %s, frame: %s', signum, frame)
@@ -85,7 +85,7 @@ def setup_log(cfg: config.ConfigurationType) -> None:
         # Setup basic logging
         log = logging.getLogger()
         log.setLevel(cfg.log_level)
-        handler = logging.StreamHandler(sys.stdout)
+        handler = logging.StreamHandler(sys.stderr)
         handler.setLevel(cfg.log_level)
         formatter = logging.Formatter(
             '%(levelname)s - %(message)s'
@@ -169,7 +169,7 @@ def process_connection(
         client.close()
 
 
-def tunnel_main():
+def tunnel_main() -> None:
     cfg = config.read()
 
     # Try to bind to port as running user

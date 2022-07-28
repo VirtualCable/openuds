@@ -143,7 +143,7 @@ async def getServerStats(detailed: bool = False) -> None:
     # Context for local connection (ignores cert hostname)
     context = ssl.create_default_context()
     context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE  # For ServerStats, do not checks certificate
+    context.verify_mode = ssl.CERT_NONE  # For ServerStats, does not checks certificate
 
     try:
         host = cfg.listen_address if cfg.listen_address != '0.0.0.0' else 'localhost'

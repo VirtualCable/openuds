@@ -23,7 +23,7 @@ class TunnelProtocol(asyncio.Protocol):
     transport: 'asyncio.transports.Transport'
     other_side: 'TunnelProtocol'
     # Current state
-    runner: typing.Any
+    runner: typing.Any  # In fact, typing.Callable[[bytes], None], but mypy complains on its check
     # Command buffer
     cmd: bytes
     # Ticket
@@ -117,6 +117,7 @@ class TunnelProtocol(asyncio.Protocol):
                 self.close_connection()
 
         loop.create_task(open_other_side())
+        # From now, proxy connection
         self.runner = self.do_proxy
 
     def process_stats(self, full: bool) -> None:

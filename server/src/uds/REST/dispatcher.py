@@ -30,7 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-from re import M
+import sys
 import typing
 
 from django import http
@@ -200,7 +200,7 @@ class Dispatcher(View):
 
         """
         if not type_.name:
-            name = type_.__name__.lower()
+            name = sys.intern(type_.__name__.lower())
         else:
             name = type_.name
 
@@ -210,15 +210,16 @@ class Dispatcher(View):
         if type_.path:
             logger.info('Path: /%s/%s', type_.path, name)
             for k in type_.path.split('/'):
+                intern_k = sys.intern(k)
                 if k not in service_node:
-                    service_node[k] = {'': None}
-                service_node = service_node[k]
+                    service_node[intern_k] = {'': None}
+                service_node = service_node[intern_k]
         else:
             logger.info('Path: /%s', name)
         if name not in service_node:
             service_node[name] = {'': None}
 
-        service_node[name][''] = type_
+        service_node[name][sys.intern('')] = type_
 
     # Initializes the dispatchers
     @staticmethod
@@ -237,7 +238,7 @@ class Dispatcher(View):
             Dispatcher.registerClass,
             Handler,
             modName=modName,
-            checker=lambda x: not x.__subclasses__(),
+            checker=lambda x: not x.__subclasses__(),  # only register if final class, no inherited classes
             packageName='methods',
         )
 
