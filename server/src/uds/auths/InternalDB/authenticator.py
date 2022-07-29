@@ -93,6 +93,26 @@ class InternalDBAuth(auths.Authenticator):
         tab=gui.ADVANCED_TAB,
     )
 
+    def getIp(self) -> str:
+        ip = (
+            getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
+        )  # pylint: disable=maybe-no-member
+        if self.reverseDns.isTrue():
+            try:
+                return str(
+                    dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0]
+                )
+            except Exception:
+                pass
+        return ip
+
+    def mfaIdentifier(self, username: str) -> str:
+        try:
+            self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfaData
+        except Exception:
+            pass
+        return ''
+
     def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
         if self.differentForEachHost.isTrue():
             newUsername = (

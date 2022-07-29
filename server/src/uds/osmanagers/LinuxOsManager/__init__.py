@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -70,6 +70,16 @@ downloadsManager().registerDownloadable(
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
     + '/files/udsactor-unmanaged_{version}_all.deb'.format(version=VERSION),
     'application/x-debian-package',
+)
+
+downloadsManager().registerDownloadable(
+    'udsactor-unmanaged-{version}-1.noarch.rpm'.format(version=VERSION),
+    _(
+        'UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'
+    ),
+    os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
+    + '/files/udsactor-unmanaged-{version}-1.noarch.rpm'.format(version=VERSION),
+    'application/x-redhat-package-manager',
 )
 
 downloadsManager().registerDownloadable(

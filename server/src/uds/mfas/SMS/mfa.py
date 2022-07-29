@@ -141,7 +141,7 @@ class SMSMFA(mfas.MFA):
         label=_('SMS response OK regex'),
         order=30,
         tooltip=_(
-            'Regex for SMS response OK. If emty, the response is considered OK if status code is 200.'
+            'Regex for SMS response OK. If empty, the response is considered OK if status code is 200.'
         ),
         required=False,
         tab=_('HTTP Response'),
@@ -183,7 +183,7 @@ class SMSMFA(mfas.MFA):
         rows=5,
         order=32,
         tooltip=_('Networks for SMS authentication'),
-        required=True,
+        required=False,
         tab=_('Config'),
     )
 
@@ -222,6 +222,10 @@ class SMSMFA(mfas.MFA):
             )
         # Any other value means no authentication
 
+        # If set ignoreCertificateErrors, do it
+        if self.ignoreCertificateErrors.isTrue():
+            session.verify = False
+        
         # Add headers. Headers are in the form of "Header: Value". (without the quotes)
         if self.headersParameters.value.strip():
             for header in self.headersParameters.value.split('\n'):

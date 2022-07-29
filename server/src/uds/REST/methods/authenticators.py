@@ -232,13 +232,17 @@ class Authenticators(ModelHandler):
         self, fields: typing.Dict[str, typing.Any]
     ) -> None:  # pylint: disable=too-many-branches,too-many-statements
         logger.debug(self._params)
-        try:
-            mfa = MFA.objects.get(
-                uuid=processUuid(fields['mfa_id'])
-            )
-            fields['mfa_id'] = mfa.id
-        except Exception:  # not found
-            del fields['mfa_id']
+        if fields['mfa_id']:
+            try:
+                mfa = MFA.objects.get(
+                    uuid=processUuid(fields['mfa_id'])
+                )
+                fields['mfa_id'] = mfa.id
+                return
+            except MFA.DoesNotExist:
+                pass  # will set field to null
+
+        fields['mfa_id'] = None
 
 
 
