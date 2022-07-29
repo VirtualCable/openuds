@@ -71,7 +71,7 @@ class Authenticators(ModelHandler):
         {'visible': {'title': _('Visible'), 'type': 'callback', 'width': '3em'}},
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
-        {'mfa': {'title': _('MFA'), 'type': 'callback', 'width': '3em'}},
+        {'mfa_name': {'title': _('MFA'),}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
