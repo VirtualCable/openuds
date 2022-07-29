@@ -96,10 +96,10 @@ class Authenticators(ModelHandler):
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
-            tgui = auths.factory().lookup(type_)
-            if tgui:
+            authType = auths.factory().lookup(type_)
+            if authType:
                 field = self.addDefaultFields(
-                    tgui.guiDescription(),
+                    authType.guiDescription(),
                     ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
                 )
                 self.addField(
@@ -134,8 +134,8 @@ class Authenticators(ModelHandler):
                                     for v in MFA.objects.all()
                                 ]
                             ),
-                            'label': ugettext('MFA Provider'),
-                            'tooltip': ugettext(
+                            'label': gettext('MFA Provider'),
+                            'tooltip': gettext(
                                 'MFA provider to use for this authenticator'
                             ),
                             'type': gui.InputField.CHOICE_TYPE,

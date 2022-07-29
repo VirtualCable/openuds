@@ -38,12 +38,14 @@ import time
 import types
 import typing
 
-from django import http
+from django.http import HttpResponse
 
 # from xml_marshaller import xml_marshaller
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest
 
 class ParametersException(Exception):
     pass
@@ -57,9 +59,9 @@ class ContentProcessor:
     mime_type: typing.ClassVar[str] = ''
     extensions: typing.ClassVar[typing.Iterable[str]] = []
 
-    _request: http.HttpRequest
+    _request: 'HttpRequest'
 
-    def __init__(self, request: http.HttpRequest):
+    def __init__(self, request: 'HttpRequest'):
         self._request = request
 
     def processGetParameters(self) -> typing.MutableMapping[str, typing.Any]:
@@ -83,7 +85,7 @@ class ContentProcessor:
         Converts an obj to a response of specific type (json, XML, ...)
         This is done using "render" method of specific type
         """
-        return http.HttpResponse(
+        return HttpResponse(
             content=self.render(obj), content_type=self.mime_type + "; charset=utf-8"
         )
 
