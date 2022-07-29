@@ -71,7 +71,7 @@ class Authenticators(ModelHandler):
         {'visible': {'title': _('Visible'), 'type': 'callback', 'width': '3em'}},
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
-        {'mfa': {'title': _('MFA'), 'type': 'callback', 'width': '3em'}},
+        {'mfa_name': {'title': _('MFA'),}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -153,6 +153,7 @@ class Authenticators(ModelHandler):
             'comments': item.comments,
             'priority': item.priority,
             'mfa_id': item.mfa.uuid if item.mfa else '',
+            'mfa_name': item.mfa.name if item.mfa else '',  # For overview
             'visible': item.visible,
             'small_name': item.small_name,
             'users_count': item.users.count(),
