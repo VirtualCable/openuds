@@ -107,10 +107,9 @@ class InternalDBAuth(auths.Authenticator):
 
     def mfaIdentifier(self, username: str) -> str:
         try:
-            self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfaData
-        except Exception:
-            pass
-        return ''
+            return self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfaData
+        finally:
+            return ''
 
     def transformUsername(self, username: str) -> str:
         if self.differentForEachHost.isTrue():
