@@ -45,7 +45,7 @@ class UdsApplication(QtWidgets.QApplication):
                 tunnel.kill()
 
     def event(self, evnt: QtCore.QEvent) -> bool:
-        if evnt.type() == QtCore.QEvent.FileOpen:
+        if evnt.type() == QtCore.QEvent.FileOpen:  # type: ignore
             fe = typing.cast(QtGui.QFileOpenEvent, evnt)
             logger.debug('Got url: %s', fe.url().url())
             fe.accept()
