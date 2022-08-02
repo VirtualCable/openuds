@@ -42,6 +42,7 @@ class DelayedTask(Environmentable):
     This class represents a single delayed task object.
     This is an object that represents an execution to be done "later"
     """
+    __slots__ = ()
 
     def __init__(self):
         """

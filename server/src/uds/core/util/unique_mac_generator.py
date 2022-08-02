@@ -39,6 +39,8 @@ logger = logging.getLogger(__name__)
 
 
 class UniqueMacGenerator(UniqueIDGenerator):
+    __slots__ = ('_macRange',)
+
     def __init__(self, owner: str) -> None:
         super().__init__('mac', owner, '\tmac')
 

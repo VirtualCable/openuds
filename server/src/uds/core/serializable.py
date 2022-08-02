@@ -43,6 +43,7 @@ class Serializable:
     - Initialize the object with default values
     - Read values from seralized data
     """
+    __slots__ = ()
 
     def __init__(self):
         pass

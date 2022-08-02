@@ -8,14 +8,14 @@ class Singleton(type):
     class MyClass(metaclass=Singleton):
         ...
     '''
-    __instance: typing.Optional[typing.Any]
+    _instance: typing.Optional[typing.Any]
 
     # We use __init__ so we customise the created class from this metaclass    
     def __init__(self, *args, **kwargs) -> None:
-        self.__instance = None
+        self._instance = None
         super().__init__(*args, **kwargs)
 
     def __call__(self, *args, **kwargs) -> typing.Any:
-        if self.__instance is None:
-            self.__instance = super().__call__(*args, **kwargs)
-        return self.__instance
+        if self._instance is None:
+            self._instance = super().__call__(*args, **kwargs)
+        return self._instance

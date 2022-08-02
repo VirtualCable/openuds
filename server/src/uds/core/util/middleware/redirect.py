@@ -44,6 +44,7 @@ class RedirectMiddleware:
 
     Some paths will not be redirected, to avoid problems, but they are advised to use SSL (this is for backwards compat)
     """
+    __slots__ = ('get_response',)
 
     NO_REDIRECT: typing.ClassVar[typing.List[str]] = [
         'rest',

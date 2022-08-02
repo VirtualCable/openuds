@@ -44,6 +44,7 @@ from django.db.models import Q
 from uds.models import DelayedTask as DBDelayedTask
 from uds.models import getSqlDatetime
 from uds.core.environment import Environment
+from uds.core.util import singleton
 
 from .delayed_task import DelayedTask
 
@@ -54,6 +55,7 @@ class DelayedTaskThread(threading.Thread):
     """
     Class responsible of executing a delayed task in its own thread
     """
+    __slots__ = ('_taskInstance',)
 
     _taskInstance: DelayedTask
 
@@ -70,29 +72,27 @@ class DelayedTaskThread(threading.Thread):
             connections['default'].close()
 
 
-class DelayedTaskRunner:
+class DelayedTaskRunner(metaclass=singleton.Singleton):
     """
     Delayed task runner class
     """
+    __slots__ = ()
 
-    granularity: int = 2  # we check for delayed tasks every "granularity" seconds
-
-    # to keep singleton DelayedTaskRunner
-    _runner: typing.ClassVar[typing.Optional['DelayedTaskRunner']] = None
-    _hostname: str
-    _keepRunning: bool
+    granularity: typing.ClassVar[int] = 2  # we check for delayed tasks every "granularity" seconds
+    _hostname: typing.ClassVar[str]  # "Our" hostname
+    _keepRunning: typing.ClassVar[bool]  # If we should keep it running
 
     def __init__(self):
-        self._hostname = gethostname()
-        self._keepRunning = True
         logger.debug("Initializing delayed task runner for host %s", self._hostname)
+        DelayedTaskRunner._hostname = gethostname()
+        DelayedTaskRunner._keepRunning = True
 
     def notifyTermination(self) -> None:
         """
         Invoke this whenever you want to terminate the delayed task runner thread
         It will mark the thread to "stop" ASAP
         """
-        self._keepRunning = False
+        DelayedTaskRunner._keepRunning = False
 
     @staticmethod
     def runner() -> 'DelayedTaskRunner':
@@ -101,9 +101,7 @@ class DelayedTaskRunner:
         There is only one instance of DelayedTaksRunner, but its "run" method is executed on
         many thread (depending on configuration). They all share common Instance data
         """
-        if DelayedTaskRunner._runner is None:
-            DelayedTaskRunner._runner = DelayedTaskRunner()
-        return DelayedTaskRunner._runner
+        return DelayedTaskRunner()
 
     def executeOneDelayedTask(self) -> None:
         now = getSqlDatetime()
@@ -142,7 +140,7 @@ class DelayedTaskRunner:
             taskInstance.env = Environment.getEnvForType(taskInstance.__class__)
             DelayedTaskThread(taskInstance).start()
 
-    def __insert(self, instance: DelayedTask, delay: int, tag: str) -> None:
+    def _insert(self, instance: DelayedTask, delay: int, tag: str) -> None:
         now = getSqlDatetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
@@ -170,7 +168,7 @@ class DelayedTaskRunner:
         while retries > 0:
             retries -= 1
             try:
-                self.__insert(instance, delay, tag)
+                self._insert(instance, delay, tag)
                 break
             except Exception as e:
                 logger.info('Exception inserting a delayed task %s: %s', e.__class__, e)
@@ -210,7 +208,7 @@ class DelayedTaskRunner:
 
     def run(self) -> None:
         logger.debug("At loop")
-        while self._keepRunning:
+        while DelayedTaskRunner._keepRunning:
             try:
                 time.sleep(self.granularity)
                 self.executeOneDelayedTask()

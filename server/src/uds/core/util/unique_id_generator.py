@@ -53,7 +53,11 @@ class CreateNewIdException(Exception):
 
 
 class UniqueIDGenerator:
+    __slots__ = ('_owner', '_baseName')
+
+    # owner is the owner of the UniqueID
     _owner: str
+    # base name for filtering unique ids. (I.e. "mac", "ip", "ipv6" ....)
     _baseName: str
 
     def __init__(

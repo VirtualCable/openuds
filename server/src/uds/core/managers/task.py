@@ -68,10 +68,15 @@ class DelayedTaskThread(BaseThread):
 
 
 class TaskManager(metaclass=singleton.Singleton):
-    keepRunning: bool = True
-    threads: typing.List[BaseThread] = []
+
+    __slots__ = ('threads', 'keepRunning')
+
+    keepRunning: bool
+    threads: typing.List[BaseThread]
 
     def __init__(self):
+        self.keepRunning = True
+        self.threads = []
         pass
 
     @staticmethod

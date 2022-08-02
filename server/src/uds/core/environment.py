@@ -47,6 +47,7 @@ class Environment:
     not stored with main module data.
     The environment is composed of a "cache" and a "storage". First are volatile data, while second are persistent data.
     """
+    __slots__ = ['_key', '_cache', '_storage', '_idGenerators']
 
     _key: str
     _cache: Cache
@@ -173,6 +174,9 @@ class Environmentable:
     """
     This is a base class provided for all objects that have an environment associated. These are mainly modules
     """
+    __slots__ = ['_env']
+
+    _env: Environment
 
     def __init__(self, environment: Environment):
         """

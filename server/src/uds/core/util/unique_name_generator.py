@@ -39,6 +39,8 @@ logger = logging.getLogger(__name__)
 
 # noinspection PyMethodOverriding
 class UniqueNameGenerator(UniqueIDGenerator):
+    __slots__ = ()
+
     def __init__(self, owner):
         super().__init__('name', owner)
 
@@ -53,7 +55,7 @@ class UniqueNameGenerator(UniqueIDGenerator):
         maxVal = 10 ** length - 1
         return self.__toName(super().get(minVal, maxVal), length)
 
-    def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator'):  # type: ignore # pylint: disable=arguments-differ
+    def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:  # type: ignore
         self.setBaseName(baseName)
         super().transfer(int(name[len(self._baseName) :]), toUNGen)
 

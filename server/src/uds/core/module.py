@@ -97,6 +97,7 @@ class Module(UserInterface, Environmentable, Serializable):
     Environmentable is a base class that provides utility method to access a separate Environment for every single
     module.
     """
+    __slots__ = ['_uuid']
     # Import variable indicating this module is a base class not a real module
     # Note that Module is not a real module, but a base class for all modules so isBase is not used on this class
     isBase: typing.ClassVar[bool] = False

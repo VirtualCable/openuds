@@ -53,14 +53,16 @@ ONE_DAY = 3600 * 24
 
 
 class CalendarChecker:
+    __slots__ = ('calendar',)
+    
     calendar: Calendar
 
     # For performance checking
-    updates: int = 0
-    cache_hit: int = 0
-    hits: int = 0
+    updates: typing.ClassVar[int] = 0
+    cache_hit: typing.ClassVar[int] = 0
+    hits: typing.ClassVar[int] = 0
 
-    cache = Cache('calChecker')
+    cache: typing.ClassVar[Cache] = Cache('calChecker')
 
     def __init__(self, calendar: Calendar) -> None:
         self.calendar = calendar

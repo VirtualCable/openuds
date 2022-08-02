@@ -46,6 +46,7 @@ class UDSSecurityMiddleware:
     '''
     This class contains all the security checks done by UDS in order to add some extra protection.
     '''
+    __slots__ = ('get_response',)
 
     get_response: typing.Any  # typing.Callable[['HttpRequest'], 'HttpResponse']
 

@@ -51,6 +51,8 @@ CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
 
 class GlobalRequestMiddleware:
+    __slots__ = ('_get_response',)
+
     lastCheck: typing.ClassVar[datetime.datetime] = datetime.datetime.now()
 
     def __init__(self, get_response: typing.Callable[[HttpRequest], HttpResponse]):
