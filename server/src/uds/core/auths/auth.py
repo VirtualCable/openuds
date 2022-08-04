@@ -423,7 +423,7 @@ def webLogout(
     by django in regular basis.
     """
     if exit_url is None:
-        exit_url = request.build_absolute_uri(reverse('page.login'))
+        exit_url = reverse('page.login')
     try:
         if request.user:
             authenticator = request.user.manager.getInstance()
