@@ -335,7 +335,7 @@ class Service(Module):
         """
         return
 
-    def processLogout(self, id: str) -> None:
+    def processLogout(self, id: str, remote_login: bool) -> None:
         """
         In the case that a logout is invoked directly on an actor controlled machine with
         an service token, this method will be called with provided info by uds actor (parameters)

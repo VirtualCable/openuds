@@ -231,10 +231,13 @@ class IPMachinesService(IPServiceBase):
         # Sets maximum services for this
         self.maxDeployed = len(self._ips)
 
-    def canBeUsed(self, locked: typing.Optional[int], now: int) -> int:
+    def canBeUsed(self, locked: typing.Optional[typing.Union[str, int]], now: int) -> int:
         # If _maxSessionForMachine is 0, it can be used only if not locked
         # (that is locked is None)
         locked = locked or 0
+        if isinstance(locked, str) and not '.' in locked:  # Convert to int and treat it as a "locked" element
+            locked = int(locked)
+
         if self._maxSessionForMachine <= 0:
             return not bool(locked)  # If locked is None, it can be used
 
@@ -342,19 +345,26 @@ class IPMachinesService(IPServiceBase):
         Process login for a machine not assigned to any user.
         '''
         logger.debug('Processing login for %s: %s', self, id)
+
         # Locate the IP on the storage
         theIP = IPServiceBase.getIp(id)
         now = getSqlDatetimeAsUnix()
-        locked = self.storage.getPickle(theIP)
+        locked: typing.Union[None, str, int] = self.storage.getPickle(theIP)
         if self.canBeUsed(locked, now):
-            self.storage.putPickle(theIP, now)  # Lock it
+            self.storage.putPickle(theIP, str(now))  # Lock it
 
-    def processLogout(self, id: str) -> None:
+    def processLogout(self, id: str, remote_login: bool) -> None:
         '''
         Process logout for a machine not assigned to any user.
         '''
         logger.debug('Processing logout for %s: %s', self, id)
-        self.unassignMachine(id)
+        # Locate the IP on the storage
+        theIP = IPServiceBase.getIp(id)
+        locked: typing.Union[None, str, int] = self.storage.getPickle(theIP)
+        # If locked is str, has been locked by processLogin so we can unlock it
+        if isinstance(locked, str):
+            self.unassignMachine(id)
+        # If not proccesed by login, we cannot release it
 
     def notifyInitialization(self, id: str) -> None:
         '''
