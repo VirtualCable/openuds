@@ -131,7 +131,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
                 headers=headers,
                 verify=self._validateCert,
                 timeout=TIMEOUT,
-                proxies=NO_PROXY # type: ignore
+                proxies=NO_PROXY  # type: ignore
                 if disableProxy
                 else None,  # if not proxies wanted, enforce it
             )
@@ -351,19 +351,21 @@ class UDSServerApi(UDSApi):
         actor_type: typing.Optional[str],
         token: str,
         username: str,
+        sessionType: str,
         interfaces: typing.Iterable[types.InterfaceInfoType],
         secret: typing.Optional[str],
-    ) -> None:
+    ) -> typing.Optional[str]:
         if not token:
-            return
+            return None
         payload = {
             'type': actor_type or types.MANAGED,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
             'token': token,
             'username': username,
+            'session_type': sessionType,
             'secret': secret or '',
         }
-        self._doPost('logout', payload)
+        return self._doPost('logout', payload)  # Can be 'ok' or 'notified'
 
     def log(self, own_token: str, level: int, message: str) -> None:
         if not own_token:
@@ -418,8 +420,11 @@ class UDSClientApi(UDSApi):
             max_idle=result['max_idle'],
         )
 
-    def logout(self, username: str) -> None:
-        payLoad = {'username': username}
+    def logout(self, username: str, sessionType: typing.Optional[str]) -> None:
+        payLoad = {
+            'username': username,
+            'session_type': sessionType or UNKNOWN
+        }
         self.post('logout', payLoad)
 
     def ping(self) -> bool:
