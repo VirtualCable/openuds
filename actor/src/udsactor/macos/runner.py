@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2019 Virtual Cable S.L.
+# Copyright (c) 2014-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,58 +28,43 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import threading
-import ipaddress
-import typing
+import sys
 
-if typing.TYPE_CHECKING:
-    from udsactor.types import InterfaceInfoType
+from .. import rest
+from .. import platform
+from ..log import logger
+from .service import UDSActorSvc
 
+def usage():
+    sys.stderr.write('usage: udsactor start|login "username"|logout "username"\n')
+    sys.exit(2)
 
-class ScriptExecutorThread(threading.Thread):
-   
-    def __init__(self, script: str) -> None:
-        super(ScriptExecutorThread, self).__init__()
-        self.script = script
+def run() -> None:
+    logger.setLevel(20000)
 
-    def run(self) -> None:
-        from udsactor.log import logger
-
+    if len(sys.argv) == 3 and sys.argv[1] in ('login', 'logout'):
+        logger.debug('Running client udsactor')
         try:
-            logger.debug('Executing script: {}'.format(self.script))
-            exec(self.script, globals(), None)  # nosec: exec is fine, it's a "trusted" script
+            client: rest.UDSClientApi = rest.UDSClientApi()
+            if sys.argv[1] == 'login':
+                r = client.login(sys.argv[2], platform.operations.getSessionType())
+                print('{},{},{},{}\n'.format(r.ip, r.hostname, r.max_idle, r.dead_line or ''))
+            elif sys.argv[1] == 'logout':
+                client.logout(sys.argv[2])
         except Exception as e:
-            logger.error('Error executing script: {}'.format(e))
             logger.exception()
+            logger.error('Got exception while processing command: %s', e)
+        sys.exit(0)
+    elif len(sys.argv) != 2:
+        usage()
 
-
-# Convert "X.X.X.X/X" to ipaddress.IPv4Network
-def strToNoIPV4Network(net: typing.Optional[str]) -> typing.Optional[ipaddress.IPv4Network]:
-    if not net:  # Empty or None
-        return None
-    try:
-        return ipaddress.IPv4Interface(net).network
-    except Exception:
-        return None
-
-
-def validNetworkCards(
-    net: typing.Optional[str], cards: typing.Iterable['InterfaceInfoType']
-) -> typing.List['InterfaceInfoType']:
-    try:
-        subnet = strToNoIPV4Network(net)
-    except Exception as e:
-        subnet = None
-
-    if subnet is None:
-        return list(cards)
-
-    def isValid(ip: str, subnet: ipaddress.IPv4Network) -> bool:
-        if not ip:
-            return False
-        try:
-            return ipaddress.IPv4Address(ip) in subnet
-        except Exception:
-            return False
-
-    return [c for c in cards if isValid(c.ip, subnet)]
+    daemonSvr = UDSActorSvc()
+    if len(sys.argv) == 2:
+        # Daemon mode...
+        if sys.argv[1] in ('start', 'start-foreground'):
+            daemonSvr.run()  # execute in foreground
+        else:
+            usage()
+        sys.exit(0)
+    else:
+        usage()

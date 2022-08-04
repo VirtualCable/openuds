@@ -101,7 +101,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         # 0 = OTHER, 10000 = DEBUG, 20000 = WARN, 30000 = INFO, 40000 = ERROR, 50000 = FATAL
         # So this comes:
         logger.setLevel([DEBUG, INFO, ERROR, FATAL][self._cfg.log_level])
-        # If windows, enable service logger
+        # If windows, enable service logger FOR SERVICE only
         logger.enableServiceLogger()
 
         socket.setdefaulttimeout(20)
@@ -538,9 +538,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         if not self.isManaged():
             self.uninitialize()
 
-    # ****************************************
-    # Methods that CAN BE overriden by actors
-    # ****************************************
+    # ******************************************************
+    # Methods that CAN BE overriden by specific OS Actor
+    # ******************************************************
     def doWait(self, miliseconds: int) -> None:
         '''
         Invoked to wait a bit

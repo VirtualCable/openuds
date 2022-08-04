@@ -28,7 +28,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=invalid-name
 import os
 import configparser
 import base64
@@ -38,7 +37,6 @@ from .. import types
 
 CONFIGFILE = '/etc/udsactor/udsactor.cfg'
 
-
 def readConfig() -> types.ActorConfigurationType:
     try:
         cfg = configparser.ConfigParser()
@@ -46,22 +44,10 @@ def readConfig() -> types.ActorConfigurationType:
         uds: configparser.SectionProxy = cfg['uds']
         # Extract data:
         base64Config = uds.get('config', None)
-        config = (
-            pickle.loads(  # nosec: file is restricted
-                base64.b64decode(base64Config.encode())
-            )
-            if base64Config
-            else None
-        )
+        config = pickle.loads(base64.b64decode(base64Config.encode())) if base64Config else None  # nosec: Read from root controled file, secure
 
         base64Data = uds.get('data', None)
-        data = (
-            pickle.loads(  # nosec: file is restricted
-                base64.b64decode(base64Data.encode())
-            )
-            if base64Data
-            else None
-        )
+        data = pickle.loads(base64.b64decode(base64Data.encode())) if base64Data else None  # nosec: Read from root controled file, secure
 
         return types.ActorConfigurationType(
             actorType=uds.get('type', types.MANAGED),
@@ -75,11 +61,10 @@ def readConfig() -> types.ActorConfigurationType:
             post_command=uds.get('post_command', None),
             log_level=int(uds.get('log_level', '2')),
             config=config,
-            data=data,
+            data=data
         )
     except Exception:
         return types.ActorConfigurationType('', False)
-
 
 def writeConfig(config: types.ActorConfigurationType) -> None:
     cfg = configparser.ConfigParser()
@@ -87,11 +72,9 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     uds: configparser.SectionProxy = cfg['uds']
     uds['host'] = config.host
     uds['validate'] = 'yes' if config.validateCertificate else 'no'
-
     def writeIfValue(val, name):
         if val:
             uds[name] = val
-
     writeIfValue(config.actorType, 'type')
     writeIfValue(config.master_token, 'master_token')
     writeIfValue(config.own_token, 'own_token')
@@ -109,19 +92,15 @@ def writeConfig(config: types.ActorConfigurationType) -> None:
     # Ensures exists destination folder
     dirname = os.path.dirname(CONFIGFILE)
     if not os.path.exists(dirname):
-        os.mkdir(
-            dirname, mode=0o700
-        )  # Will create only if route to path already exists, for example, /etc (that must... :-))
+        os.mkdir(dirname, mode=0o700)  # Will create only if route to path already exists, for example, /etc (that must... :-))
 
     with open(CONFIGFILE, 'w') as f:
         cfg.write(f)
 
     os.chmod(CONFIGFILE, 0o0600)  # Ensure only readable by root
 
-
 def useOldJoinSystem() -> bool:
     return False
-
 
 def invokeScriptOnLogin() -> str:
     return ''

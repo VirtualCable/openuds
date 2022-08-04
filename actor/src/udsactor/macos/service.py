@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -29,22 +29,15 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import typing
 import signal
-
-from . import daemon
 
 from ..log import logger
 from ..service import CommonService
 
-try:
-    from prctl import set_proctitle  # type: ignore
-except ImportError:  # Platform may not include prctl, so in case it's not available, we let the "name" as is
-    def set_proctitle(_):
-        pass
 
-class UDSActorSvc(daemon.Daemon, CommonService):
+class UDSActorSvc(CommonService):
     def __init__(self) -> None:
-        daemon.Daemon.__init__(self, '/run/udsactor.pid')
         CommonService.__init__(self)
 
         # Captures signals so we can stop gracefully
@@ -62,25 +55,35 @@ class UDSActorSvc(daemon.Daemon, CommonService):
             account: str,
             password: str
         ) -> None:
-        logger.info('Join domain is not supported on linux platforms right now. Just renaming.')
-        self.rename(name)
+        pass  # Not implemented for unmanaged machines
+
+    def rename(
+        self,
+        name: str,
+        userName: typing.Optional[str] = None,
+        oldPassword: typing.Optional[str] = None,
+        newPassword: typing.Optional[str] = None,
+    ) -> None:
+        pass  # Not implemented for unmanaged machines
 
     def run(self) -> None:
         logger.debug('Running Daemon: {}'.format(self._isAlive))
-        set_proctitle('UDSActorDaemon')
 
         # Linux daemon will continue running unless something is requested to
         # Unmanaged services does not initializes "on start", but rather when user logs in (because userservice does not exists "as such" before that)
-        if self.isManaged():
-            if not self.initialize():
-                self.finish()
-                return # Stop daemon if initializes told to do so
+        if self.isManaged():  # Currently, managed is not implemented for UDS on M
+            logger.error('Managed machines not supported on MacOS')
+            # Wait a bit, this is mac os and will be run by launchd
+            # If the daemon shuts down too quickly, launchd may think it is a crash.
+            self.doWait(10000)
 
-            # logger.debug('Initialized, setting ready')
-            # Initialization is done, set machine to ready for UDS, communicate urls, etc...
-            self.setReady()
+            self.finish()
+            return # Stop daemon if initializes told to do so
         else:
             if not self.initializeUnmanaged():
+                # Wait a bit, this is mac os and will be run by launchd
+                # If the daemon shuts down too quickly, launchd may think it is a crash.
+                self.doWait(10000)
                 self.finish()
                 return
 

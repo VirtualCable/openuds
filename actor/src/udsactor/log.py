@@ -35,6 +35,8 @@ import typing
 
 if sys.platform == 'win32':
     from .windows.log import LocalLogger
+elif sys.platform == 'darwin':
+    from .macos.log import LocalLogger
 else:
     from .linux.log import LocalLogger
 
@@ -55,7 +57,7 @@ class Logger:
         self.logLevel = INFO
         self.localLogger = LocalLogger()
         self.remoteLogger = None
-        self.own_token = ''
+        self.own_token = ''  # nosec: This is no password at all
 
     def setLevel(self, level: typing.Union[str, int]) -> None:
         '''

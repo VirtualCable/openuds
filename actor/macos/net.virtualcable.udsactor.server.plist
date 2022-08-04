@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>net.virtualcable.udsactor.server</string>
+
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Applications/UDSActor.app/Contents/MacOS/udsactor</string>
+    <string>start</string>
+  </array>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardErrorPath</key>
+  <string>/var/log/udsactor.log</string>
+
+  <key>StandardOutPath</key>
+  <string>/var/log/nxserver.log</string>
+
+  <key>WorkingDirectory</key>
+  <string>/Applications/UDSActor.app/Contents/Resources/</string>
+
+</dict>
+</plist>

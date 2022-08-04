@@ -34,7 +34,7 @@ import platform
 import socket
 import fcntl  # Only available on Linux. Expect complains if edited from windows
 import os
-import subprocess
+import subprocess  # nosec
 import struct
 import array
 import typing
@@ -53,7 +53,9 @@ def _getMacAddr(ifname: str) -> typing.Optional[str]:
     ifnameBytes = ifname.encode('utf-8')
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifnameBytes[:15])))
+        info = bytearray(
+            fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifnameBytes[:15]))
+        )
         return str(''.join(['%02x:' % char for char in info[18:24]])[:-1]).upper()
     except Exception:
         return None
@@ -67,11 +69,15 @@ def _getIpAddr(ifname: str) -> typing.Optional[str]:
     ifnameBytes = ifname.encode('utf-8')
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        return str(socket.inet_ntoa(fcntl.ioctl(
-            s.fileno(),
-            0x8915,  # SIOCGIFADDR
-            struct.pack(str('256s'), ifnameBytes[:15])
-        )[20:24]))
+        return str(
+            socket.inet_ntoa(
+                fcntl.ioctl(
+                    s.fileno(),
+                    0x8915,  # SIOCGIFADDR
+                    struct.pack(str('256s'), ifnameBytes[:15]),
+                )[20:24]
+            )
+        )
     except Exception:
         return None
 
@@ -91,22 +97,32 @@ def _getInterfaces() -> typing.List[str]:
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     names = array.array(str('B'), b'\0' * space)
-    outbytes = struct.unpack('iL', fcntl.ioctl(
-        s.fileno(),
-        0x8912,  # SIOCGIFCONF
-        struct.pack('iL', space, names.buffer_info()[0])
-    ))[0]
+    outbytes = struct.unpack(
+        'iL',
+        fcntl.ioctl(
+            s.fileno(),
+            0x8912,  # SIOCGIFCONF
+            struct.pack('iL', space, names.buffer_info()[0]),
+        ),
+    )[0]
     namestr = names.tobytes()
     # return namestr, outbytes
-    return [namestr[i:i + offset].split(b'\0', 1)[0].decode('utf-8') for i in range(0, outbytes, length)]
+    return [
+        namestr[i : i + offset].split(b'\0', 1)[0].decode('utf-8')
+        for i in range(0, outbytes, length)
+    ]
 
 
-def _getIpAndMac(ifname: str) -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
+def _getIpAndMac(
+    ifname: str,
+) -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
     ip, mac = _getIpAddr(ifname), _getMacAddr(ifname)
     return (ip, mac)
 
+
 def checkPermissions() -> bool:
-    return os.getuid() == 0  # getuid only available on linux. Expect "complaioins" if edited from Windows
+    return os.getuid() == 0
+
 
 def getComputerName() -> str:
     '''
@@ -114,14 +130,22 @@ def getComputerName() -> str:
     '''
     return socket.gethostname().split('.')[0]
 
+
 def getNetworkInfo() -> typing.Iterator[types.InterfaceInfoType]:
     for ifname in _getInterfaces():
         ip, mac = _getIpAndMac(ifname)
-        if mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs
+        if (
+            mac != '00:00:00:00:00:00'
+            and mac
+            and ip
+            and ip.startswith('169.254') is False
+        ):  # Skips local interfaces & interfaces with no dhcp IPs
             yield types.InterfaceInfoType(name=ifname, mac=mac, ip=ip)
+
 
 def getDomainName() -> str:
     return ''
+
 
 def getLinuxOs() -> str:
     try:
@@ -133,18 +157,19 @@ def getLinuxOs() -> str:
     except Exception:
         return 'unknown'
 
+
 def reboot(flags: int = 0):
     '''
     Simple reboot using os command
     '''
-    subprocess.call(['/sbin/shutdown', 'now', '-r'])
+    subprocess.call(['/sbin/shutdown', 'now', '-r']) # nosec: Fine, all under control
 
 
 def loggoff() -> None:
     '''
     Right now restarts the machine...
     '''
-    subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])
+    subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']]) # nosec: Fine, all under control
     # subprocess.call(['/sbin/shutdown', 'now', '-r'])
     # subprocess.call(['/usr/bin/systemctl', 'reboot', '-i'])
 
@@ -158,7 +183,9 @@ def renameComputer(newName: str) -> bool:
     return True  # Always reboot right now. Not much slower but much more convenient
 
 
-def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False):
+def joinDomain(
+    domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False
+):
     pass
 
 
@@ -166,7 +193,11 @@ def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
     '''
     Simple password change for user using command line
     '''
-    os.system('echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(user, newPassword))
+
+    subprocess.run(  # nosec: Fine, all under control
+        'echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(user, newPassword),
+        shell=True,
+    )  
 
 
 def initIdleDuration(atLeastSeconds: int) -> None:
@@ -183,14 +214,20 @@ def getCurrentUser() -> str:
     '''
     return os.environ['USER']
 
+
 def getSessionType() -> str:
     '''
-      Known values:
-        * Unknown -> No XDG_SESSION_TYPE environment variable
-        * xrdp --> xrdp session
-        * other types
+    Known values:
+      * Unknown -> No XDG_SESSION_TYPE environment variable
+      * xrdp --> xrdp session
+      * other types
     '''
-    return 'xrdp' if 'XRDP_SESSION' in os.environ else os.environ.get('XDG_SESSION_TYPE', 'unknown')
+    return (
+        'xrdp'
+        if 'XRDP_SESSION' in os.environ
+        else os.environ.get('XDG_SESSION_TYPE', 'unknown')
+    )
+
 
 def forceTimeSync() -> None:
     return

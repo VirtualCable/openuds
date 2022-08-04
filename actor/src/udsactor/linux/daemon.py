@@ -101,7 +101,7 @@ class Daemon:
     def removePidFile(self) -> None:
         try:
             os.remove(self.pidfile)
-        except Exception:
+        except Exception:  # nosec: Not interested in exception
             # Not found/not permissions or whatever, ignore it
             pass
 

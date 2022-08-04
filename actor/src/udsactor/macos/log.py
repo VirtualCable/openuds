@@ -34,8 +34,9 @@ import tempfile
 import logging
 import typing
 
-class LocalLogger:  # pylint: disable=too-few-public-methods
-    linux = True
+# Basically, same logger as in linux, 
+class LocalLogger:  
+    linux = False
     windows = False
     serviceLogger = False
 
@@ -60,7 +61,7 @@ class LocalLogger:  # pylint: disable=too-few-public-methods
                 os.chmod(fname, 0o0600)
                 return
             except Exception:  # nosec: B110: we don't care about exceptions here
-                # Ignore and try next
+                # ignore and try next one
                 pass
 
         # Logger can't be set

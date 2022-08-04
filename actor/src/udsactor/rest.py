@@ -103,7 +103,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         logging.getLogger('urllib3').setLevel(logging.ERROR)
         try:
             warnings.simplefilter('ignore')  # Disables all warnings
-        except Exception:
+        except Exception:  # nosec: not interested in exceptions
             pass
 
     @property
@@ -178,7 +178,7 @@ class UDSServerApi(UDSApi):
                         priority=v['priority'],
                         isCustom=v['isCustom'],
                     )
-        except Exception:
+        except Exception:  # nosec: not interested in exceptions
             pass
 
     def register(  # pylint: disable=too-many-arguments, too-many-locals
@@ -329,7 +329,7 @@ class UDSServerApi(UDSApi):
     ) -> types.LoginResultInfoType:
         if not token:
             return types.LoginResultInfoType(
-                ip='0.0.0.0', hostname=UNKNOWN, dead_line=None, max_idle=None
+                ip='0.0.0.0', hostname=UNKNOWN, dead_line=None, max_idle=None  # nosec: this is not a binding
             )
         payload = {
             'type': actor_type or types.MANAGED,

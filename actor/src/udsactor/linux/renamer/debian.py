@@ -29,7 +29,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import os
+import subprocess  # nosec
 
 from .common import renamers
 from ...log import logger
@@ -45,8 +45,8 @@ def rename(newName: str) -> bool:
         hostname.write(newName)
 
     # Force system new name
-    os.system('/bin/hostname {}'.format(newName))
-    os.system('/usr/bin/hostnamectl set-hostname {}'.format(newName))
+    subprocess.run(['hostnamectl', 'set-hostname', newName])  # nosec: ok, we are root
+    subprocess.run(['/bin/hostname', newName])  # nosec: ok, we are root
 
     # add name to "hosts"
     with open('/etc/hosts', 'r') as hosts:

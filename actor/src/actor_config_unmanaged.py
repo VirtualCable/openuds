@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2020 Virtual Cable S.L.
+# Copyright (c) 2020-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -32,7 +32,7 @@
 # pylint: disable=invalid-name
 import sys
 import os
-import pickle
+import pickle  # nosec: B403
 import logging
 import typing
 
@@ -102,7 +102,7 @@ class UDSConfigDialog(QDialog):
                     self,
                     'UDS Test',
                     'Service token seems to be invalid . Please, check token validity.',
-                    QMessageBox.Ok,
+                    QMessageBox.Ok,  # type: ignore
                 )
             else:
                 QMessageBox.information(
@@ -111,14 +111,14 @@ class UDSConfigDialog(QDialog):
                     'Configuration for {} seems to be correct.'.format(
                         self._config.host
                     ),
-                    QMessageBox.Ok,
+                    QMessageBox.Ok,  # type: ignore
                 )
         except Exception:
             QMessageBox.information(
                 self,
                 'UDS Test',
                 'Configured host {} seems to be inaccesible.'.format(self._config.host),
-                QMessageBox.Ok,
+                QMessageBox.Ok,  # type: ignore
             )
 
     def saveConfig(self) -> None:
@@ -134,7 +134,7 @@ class UDSConfigDialog(QDialog):
                     self,
                     'Invalid subnet',
                     'Invalid subnet {}. Please, check it.'.format(restrictNet),
-                    QMessageBox.Ok,
+                    QMessageBox.Ok,  # type: ignore
                 )
                 return
 
@@ -153,12 +153,15 @@ class UDSConfigDialog(QDialog):
         self.ui.testButton.setEnabled(True)
         # Informs the user
         QMessageBox.information(
-            self, 'UDS Configuration', 'Configuration saved.', QMessageBox.Ok
+            self,
+            'UDS Configuration',
+            'Configuration saved.',
+            QMessageBox.Ok,  # type: ignore
         )
 
 
 if __name__ == "__main__":
-    # If to be run as "sudo" on linux, we will need this to avoid problems
+    # If run as "sudo" on linux, we will need this to avoid problems
     if 'linux' in sys.platform:
         os.environ['QT_X11_NO_MITSHM'] = '1'
 
@@ -171,16 +174,18 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         if sys.argv[1] == 'export':
             try:
-                with open(sys.argv[2], 'wb') as f:
-                    pickle.dump(udsactor.platform.store.readConfig(), f, protocol=3)
+                with open(sys.argv[2], 'wb') as export_:
+                    pickle.dump(
+                        udsactor.platform.store.readConfig(), export_, protocol=3
+                    )
             except Exception as e:
                 print('Error exporting configuration file: {}'.format(e))
                 sys.exit(1)
             sys.exit(0)
-        if sys.argv[1] == 'import':
+        elif sys.argv[1] == 'import':
             try:
-                with open(sys.argv[2], 'rb') as f:
-                    config = pickle.load(f)
+                with open(sys.argv[2], 'rb') as import_:
+                    config = pickle.load(import_)  # nosec: B301: the file is provided by user, so it's not a security issue
                 udsactor.platform.store.writeConfig(config)
             except Exception as e:
                 print('Error importing configuration file: {}'.format(e))

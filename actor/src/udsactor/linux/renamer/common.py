@@ -29,9 +29,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import os
-import sys
-import pkgutil
 import typing
 
 from .. import operations

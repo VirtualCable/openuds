@@ -31,7 +31,7 @@
 # pylint: disable=invalid-name
 import ctypes
 import ctypes.util
-import subprocess
+import subprocess  # nosec
 
 xlib = None
 xss = None
@@ -39,16 +39,21 @@ display = None
 xssInfo = None
 initialized = False
 
+
 class XScreenSaverInfo(ctypes.Structure):  # pylint: disable=too-few-public-methods
-    _fields_ = [('window', ctypes.c_long),
-                ('state', ctypes.c_int),
-                ('kind', ctypes.c_int),
-                ('til_or_since', ctypes.c_ulong),
-                ('idle', ctypes.c_ulong),
-                ('eventMask', ctypes.c_ulong)]
+    _fields_ = [
+        ('window', ctypes.c_long),
+        ('state', ctypes.c_int),
+        ('kind', ctypes.c_int),
+        ('til_or_since', ctypes.c_ulong),
+        ('idle', ctypes.c_ulong),
+        ('eventMask', ctypes.c_ulong),
+    ]
+
 
 class c_ptr(ctypes.c_void_p):
     pass
+
 
 def _ensureInitialized():
     global xlib, xss, xssInfo, display, initialized  # pylint: disable=global-statement
@@ -73,13 +78,15 @@ def _ensureInitialized():
         xss.XScreenSaverQueryExtension.argtypes = [
             ctypes.c_void_p,
             ctypes.POINTER(ctypes.c_int),
-            ctypes.POINTER(ctypes.c_int)
+            ctypes.POINTER(ctypes.c_int),
         ]
-        xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
+        xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(
+            XScreenSaverInfo
+        )  # Result in a XScreenSaverInfo structure
         xss.XScreenSaverQueryInfo.argtypes = [
             ctypes.c_void_p,
             ctypes.c_void_p,
-            ctypes.POINTER(XScreenSaverInfo)
+            ctypes.POINTER(XScreenSaverInfo),
         ]
         xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
         xlib.XOpenDisplay.restype = c_ptr
@@ -95,7 +102,9 @@ def _ensureInitialized():
         event_base = ctypes.c_int()
         error_base = ctypes.c_int()
 
-        available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
+        available = xss.XScreenSaverQueryExtension(
+            display, ctypes.byref(event_base), ctypes.byref(error_base)
+        )
 
         if available != 1:
             raise Exception('ScreenSaver not available')
@@ -107,9 +116,11 @@ def _ensureInitialized():
 def initIdleDuration(atLeastSeconds: int) -> None:
     _ensureInitialized()
     if atLeastSeconds:
-        subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
+        subprocess.call(  # nosec, controlled params
+            ['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)]
+        )
         # And now reset it
-        subprocess.call(['/usr/bin/xset', 's', 'reset'])
+        subprocess.call(['/usr/bin/xset', 's', 'reset'])  # nosec: fixed command
 
 
 def getIdleDuration() -> float:
@@ -122,7 +133,11 @@ def getIdleDuration() -> float:
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), xssInfo)
 
     # States: 0 = off, 1 = On, 2 = Cycle, 3 = Disabled, ...?
-    if xssInfo.contents.state == 1:  # state = 1 means "active", so idle is not a valid state
-        return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
+    if (
+        xssInfo.contents.state == 1
+    ):  # state = 1 means "active", so idle is not a valid state
+        return (
+            3600 * 100 * 1000
+        )  # If screen saver is active, return a high enough value
 
     return xssInfo.contents.idle / 1000.0
