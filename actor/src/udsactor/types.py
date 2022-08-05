@@ -58,6 +58,10 @@ class LoginResultInfoType(typing.NamedTuple):
     dead_line: typing.Optional[int]
     max_idle: typing.Optional[int]  # Not provided by broker
 
+    @property
+    def logged_in(self) -> bool:
+        return self.dead_line is not None or self.max_idle is not None or self.hostname != '' or self.ip != ''
+
 class CertificateInfoType(typing.NamedTuple):
     private_key: str
     server_certificate: str
