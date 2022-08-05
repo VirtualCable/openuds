@@ -60,7 +60,7 @@ class LoginResultInfoType(typing.NamedTuple):
 
     @property
     def logged_in(self) -> bool:
-        return self.dead_line is not None or self.max_idle is not None or self.hostname != '' or self.ip != ''
+        return self.hostname != '' or self.ip != ''
 
 class CertificateInfoType(typing.NamedTuple):
     private_key: str
