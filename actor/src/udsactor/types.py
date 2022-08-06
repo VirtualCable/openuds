@@ -60,6 +60,10 @@ class LoginResultInfoType(typing.NamedTuple):
     max_idle: typing.Optional[int]
     session_id: typing.Optional[str]
 
+    @property
+    def logged_in(self) -> bool:
+        return self.hostname != '' or self.ip != ''
+
 class CertificateInfoType(typing.NamedTuple):
     private_key: str
     server_certificate: str
