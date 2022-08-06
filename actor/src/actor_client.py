@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     qApp = UDSClientQApp(sys.argv)
 
-    if 'linux' not in sys.platform:
+    if 'win' in sys.platform:
         # The "hidden window" is only needed to process events on Windows
         # Not needed on Linux
         mw = QMainWindow()

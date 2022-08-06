@@ -131,7 +131,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
                 headers=headers,
                 verify=self._validateCert,
                 timeout=TIMEOUT,
-                proxies=NO_PROXY # type: ignore
+                proxies=NO_PROXY  # type: ignore
                 if disableProxy
                 else None,  # if not proxies wanted, enforce it
             )
@@ -329,7 +329,11 @@ class UDSServerApi(UDSApi):
     ) -> types.LoginResultInfoType:
         if not token:
             return types.LoginResultInfoType(
-                ip='0.0.0.0', hostname=UNKNOWN, dead_line=None, max_idle=None  # nosec: this is not a binding
+                ip='0.0.0.0',  # nosec: this is not a binding
+                hostname=UNKNOWN,
+                dead_line=None,
+                max_idle=None,
+                session_id=None,
             )
         payload = {
             'type': actor_type or types.MANAGED,
@@ -340,11 +344,12 @@ class UDSServerApi(UDSApi):
             'secret': secret or '',
         }
         result = self._doPost('login', payload)
-        return types.LoginResultInfoType(
+        return types.LoginResultInfoType(  # nosec: this is not a binding
             ip=result['ip'],
             hostname=result['hostname'],
             dead_line=result['dead_line'],
             max_idle=result['max_idle'],
+            session_id=result['session_id'],
         )
 
     def logout(
@@ -352,6 +357,7 @@ class UDSServerApi(UDSApi):
         actor_type: typing.Optional[str],
         token: str,
         username: str,
+        session_id: typing.Optional[str],
         interfaces: typing.Iterable[types.InterfaceInfoType],
         secret: typing.Optional[str],
     ) -> None:
@@ -362,6 +368,7 @@ class UDSServerApi(UDSApi):
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
             'token': token,
             'username': username,
+            'session_id': session_id or '',
             'secret': secret or '',
         }
         self._doPost('logout', payload)
@@ -417,6 +424,7 @@ class UDSClientApi(UDSApi):
             hostname=result['hostname'],
             dead_line=result['dead_line'],
             max_idle=result['max_idle'],
+            session_id=result['session_id'],
         )
 
     def logout(self, username: str) -> None:
