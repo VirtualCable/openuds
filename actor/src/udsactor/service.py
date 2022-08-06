@@ -379,6 +379,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     self._cfg.actorType,
                     self._cfg.own_token,
                     '',
+                    '',
                     self._interfaces,
                     self._secret,
                 )
@@ -496,9 +497,12 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         # If unmanaged, do initialization now, because we don't know before this
         # Also, even if not initialized, get a "login" notification token
         if not self.isManaged():
-            self.initialize()
-            master_token = self._cfg.master_token
-            secret = self._secret
+            self._initialized = (
+                self.initialize()
+            )  # Maybe it's a local login by an unmanaged host.... On real login, will execute initilize again
+            if self._initialized:
+                master_token = self._cfg.master_token
+                secret = self._secret
 
         # Own token will not be set if UDS did not assigned the initialized VM to an user
         # In that case, take master token (if machine is Unamanaged version)
@@ -520,7 +524,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         return result
 
-    def logout(self, username: str) -> None:
+    def logout(self, username: str, sessionType: typing.Optional[str] = None) -> None:
         self._loggedIn = False
 
         master_token = self._cfg.master_token
@@ -529,9 +533,20 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         # In that case, take master token (if machine is Unamanaged version)
         token = self._cfg.own_token or master_token
         if token:
-            self._api.logout(
-                self._cfg.actorType, token, username, self._interfaces, self._secret
-            )
+            # If logout is not processed (that is, not ok result), the logout has not been processed
+            if (
+                self._api.logout(
+                    self._cfg.actorType,
+                    token,
+                    username,
+                    sessionType or '',
+                    self._interfaces,
+                    self._secret,
+                )
+                != 'ok'
+            ):
+                logger.info('Logout from %s ignored as required by uds broker', username)
+                return
 
         self.onLogout(username)
 

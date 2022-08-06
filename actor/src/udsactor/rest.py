@@ -329,11 +329,7 @@ class UDSServerApi(UDSApi):
     ) -> types.LoginResultInfoType:
         if not token:
             return types.LoginResultInfoType(
-                ip='0.0.0.0',  # nosec: this is not a binding
-                hostname=UNKNOWN,
-                dead_line=None,
-                max_idle=None,
-                session_id=None,
+                ip='0.0.0.0', hostname=UNKNOWN, dead_line=None, max_idle=None, session_id=None
             )
         payload = {
             'type': actor_type or types.MANAGED,
@@ -344,7 +340,7 @@ class UDSServerApi(UDSApi):
             'secret': secret or '',
         }
         result = self._doPost('login', payload)
-        return types.LoginResultInfoType(  # nosec: this is not a binding
+        return types.LoginResultInfoType(
             ip=result['ip'],
             hostname=result['hostname'],
             dead_line=result['dead_line'],
@@ -358,20 +354,22 @@ class UDSServerApi(UDSApi):
         token: str,
         username: str,
         session_id: typing.Optional[str],
+        session_type: str,
         interfaces: typing.Iterable[types.InterfaceInfoType],
         secret: typing.Optional[str],
-    ) -> None:
+    ) -> typing.Optional[str]:
         if not token:
-            return
+            return None
         payload = {
             'type': actor_type or types.MANAGED,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
             'token': token,
             'username': username,
+            'session_type': session_type,
             'session_id': session_id or '',
             'secret': secret or '',
         }
-        self._doPost('logout', payload)
+        return self._doPost('logout', payload)  # Can be 'ok' or 'notified'
 
     def log(self, own_token: str, level: int, message: str) -> None:
         if not own_token:
@@ -427,8 +425,11 @@ class UDSClientApi(UDSApi):
             session_id=result['session_id'],
         )
 
-    def logout(self, username: str) -> None:
-        payLoad = {'username': username}
+    def logout(self, username: str, sessionType: typing.Optional[str]) -> None:
+        payLoad = {
+            'username': username,
+            'session_type': sessionType or UNKNOWN
+        }
         self.post('logout', payLoad)
 
     def ping(self) -> bool:

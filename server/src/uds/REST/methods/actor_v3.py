@@ -435,7 +435,7 @@ class Version(ActorV3Action):
 class LoginLogout(ActorV3Action):
     name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
-    def notifyService(self, isLogin: bool):
+    def notifyService(self, isLogin: bool) -> None:
         try:
             # If unmanaged, use Service locator
             service: 'services.Service' = Service.objects.get(
@@ -462,12 +462,12 @@ class LoginLogout(ActorV3Action):
             # idInfo = service.recoverIdInfo(validId)
 
             # Notify Service that someone logged in/out
+            is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
             if isLogin:
                 # Try to guess if this is a remote session
-                is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
                 service.processLogin(validId, remote_login=is_remote)
             else:
-                service.processLogout(validId)
+                service.processLogout(validId, remote_login=is_remote)
 
             # All right, service notified...
         except Exception:
@@ -578,6 +578,7 @@ class Logout(LoginLogout):
             if isManaged:
                 raise
             self.notifyService(isLogin=False)  # Logout notification
+            return ActorV3Action.actorResult('notified')  # Result is that we have not processed the logout in fact, but notified the service
 
         return ActorV3Action.actorResult('ok')
 

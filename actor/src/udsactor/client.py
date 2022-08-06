@@ -198,7 +198,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
                 time.sleep(1.3)  # Sleeps between loop iterations
 
             self._loginInfo = None
-            self.api.logout(platform.operations.getCurrentUser() + self._extraLogoff)
+            self.api.logout(platform.operations.getCurrentUser() + self._extraLogoff, platform.operations.getSessionType())
         except Exception as e:
             logger.error('Error on client loop: %s', e)
 
