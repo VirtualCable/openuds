@@ -42,7 +42,7 @@ class LocalProvider(handler.Handler):
         return result._asdict()
 
     def post_logout(self) -> typing.Any:
-        self._service.logout(self._params['username'])
+        self._service.logout(self._params['username'], self._params['session_type'])
         return 'ok'
 
     def post_ping(self) -> typing.Any:

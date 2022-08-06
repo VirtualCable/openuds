@@ -465,7 +465,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
             # Now check if every registered client is already there (if logged in OFC)
             if self._loggedIn and not self._clientsPool.ping():
-                self.logout('client_unavailable')
+                self.logout('client_unavailable', '')
         except Exception as e:
             logger.error('Exception on main service loop: %s', e)
 
@@ -488,8 +488,6 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         result = types.LoginResultInfoType(
             ip='', hostname='', dead_line=None, max_idle=None
         )
-        self._loggedIn = True
-
         master_token = None
         secret = None
         # If unmanaged, do initialization now, because we don't know before this
@@ -515,16 +513,16 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 secret,
             )
 
-        script = platform.store.invokeScriptOnLogin()
-        if script:
-            script += f'{username} {sessionType or "unknown"} {self._cfg.actorType}'
-            self.execute(script, 'Logon')
+        if result.logged_in:
+            self._loggedIn = True
+            script = platform.store.invokeScriptOnLogin()
+            if script:
+                script += f'{username} {sessionType or "unknown"} {self._cfg.actorType}'
+                self.execute(script, 'Logon')
 
         return result
 
-    def logout(self, username: str, sessionType: typing.Optional[str] = None) -> None:
-        self._loggedIn = False
-
+    def logout(self, username: str, sessionType: typing.Optional[str]) -> None:
         master_token = self._cfg.master_token
 
         # Own token will not be set if UDS did not assigned the initialized VM to an user
@@ -546,6 +544,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 logger.info('Logout from %s ignored as required by uds broker', username)
                 return
 
+        self._loggedIn = False
         self.onLogout(username)
 
         if not self.isManaged():
