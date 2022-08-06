@@ -185,7 +185,8 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
 
         try:
             # Notify loging and mark it
-            self._loginInfo = self.api.login(platform.operations.getCurrentUser(), platform.operations.getSessionType())
+            user, sessionType = platform.operations.getCurrentUser(), platform.operations.getSessionType()
+            self._loginInfo = self.api.login(user, sessionType)
 
             if self._loginInfo.max_idle:
                 platform.operations.initIdleDuration(self._loginInfo.max_idle)
@@ -197,8 +198,15 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
 
                 time.sleep(1.3)  # Sleeps between loop iterations
 
+            # If login was recognized...
+            if self._loginInfo.logged_in:
+                self.api.logout(user + self._extraLogoff, sessionType)
+                logger.info('Notified logout for %s (%s)', user, sessionType)  # Log logout
+            else:
+                logger.info('Logout not notified for %s (%s)', user, sessionType)  # Log logout
+
+            # Clean up login info
             self._loginInfo = None
-            self.api.logout(platform.operations.getCurrentUser() + self._extraLogoff, platform.operations.getSessionType())
         except Exception as e:
             logger.error('Error on client loop: %s', e)
 

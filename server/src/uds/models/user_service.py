@@ -71,10 +71,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service: 'models.ForeignKey[UserService, ServicePool]' = models.ForeignKey(
+    deployed_service: 'models.ForeignKey["UserService", ServicePool]' = models.ForeignKey(
         ServicePool, on_delete=models.CASCADE, related_name='userServices'
     )
-    publication: 'models.ForeignKey[UserService, ServicePoolPublication]' = (
+    publication: 'models.ForeignKey["UserService", ServicePoolPublication]' = (
         models.ForeignKey(
             ServicePoolPublication,
             on_delete=models.CASCADE,
@@ -120,7 +120,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     )
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[UserService]'
+    objects: 'models.BaseManager["UserService"]'
     properties: 'models.QuerySet[UserServiceProperty]'
     accounting: 'AccountUsage'
 
@@ -311,7 +311,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If the transport did not notified this data, this may be "empty"
         """
-        return (self.src_ip, self.src_hostname)
+        return (self.src_ip or '0.0.0.0', self.src_hostname or 'unknown')
 
     def getOsManager(self) -> typing.Optional['OSManager']:
         return self.deployed_service.osmanager
