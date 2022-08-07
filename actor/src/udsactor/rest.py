@@ -36,8 +36,8 @@ import typing
 
 import requests
 
-from . import types
-from .version import VERSION
+from udsactor import types, tools
+from udsactor.version import VERSION
 
 # Default public listen port
 LISTEN_PORT = 43910
@@ -90,9 +90,9 @@ class UDSApi:  # pylint: disable=too-few-public-methods
     Base for remote api accesses
     """
 
-    _host: str
-    _validateCert: bool
-    _url: str
+    _host: str = ''
+    _validateCert: bool = True
+    _url: str = ''
 
     def __init__(self, host: str, validateCert: bool) -> None:
         self._host = host
@@ -113,7 +113,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
             'User-Agent': 'UDS Actor v{}'.format(VERSION),
         }
 
-    def _apiURL(self, method: str) -> str:
+    def _api_url(self, method: str) -> str:
         raise NotImplementedError
 
     def _doPost(
@@ -126,7 +126,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         headers = headers or self._headers
         try:
             result = requests.post(
-                self._apiURL(method),
+                self._api_url(method),
                 data=json.dumps(payLoad),
                 headers=headers,
                 verify=self._validateCert,
@@ -157,7 +157,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
 # UDS Broker API access
 #
 class UDSServerApi(UDSApi):
-    def _apiURL(self, method: str) -> str:
+    def _api_url(self, method: str) -> str:
         return self._url + 'actor/v3/' + method
 
     def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
@@ -225,7 +225,7 @@ class UDSServerApi(UDSApi):
             headers['X-Auth-Token'] = result.json()['token']
 
             result = requests.post(
-                self._apiURL('register'),
+                self._api_url('register'),
                 data=json.dumps(data),
                 headers=headers,
                 verify=self._validateCert,
@@ -323,7 +323,7 @@ class UDSServerApi(UDSApi):
         actor_type: typing.Optional[str],
         token: str,
         username: str,
-        sessionType: str,
+        session_type: str,
         interfaces: typing.Iterable[types.InterfaceInfoType],
         secret: typing.Optional[str],
     ) -> types.LoginResultInfoType:
@@ -336,7 +336,7 @@ class UDSServerApi(UDSApi):
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
             'token': token,
             'username': username,
-            'session_type': sessionType,
+            'session_type': session_type,
             'secret': secret or '',
         }
         result = self._doPost('login', payload)
@@ -345,7 +345,7 @@ class UDSServerApi(UDSApi):
             hostname=result['hostname'],
             dead_line=result['dead_line'],
             max_idle=result['max_idle'],
-            session_id=result['session_id'],
+            session_id=result.get('session_id', ''),
         )
 
     def logout(
@@ -353,7 +353,7 @@ class UDSServerApi(UDSApi):
         actor_type: typing.Optional[str],
         token: str,
         username: str,
-        session_id: typing.Optional[str],
+        session_id: str,
         session_type: str,
         interfaces: typing.Iterable[types.InterfaceInfoType],
         secret: typing.Optional[str],
@@ -366,7 +366,7 @@ class UDSServerApi(UDSApi):
             'token': token,
             'username': username,
             'session_type': session_type,
-            'session_id': session_id or '',
+            'session_id': session_id,
             'secret': secret or '',
         }
         return self._doPost('logout', payload)  # Can be 'ok' or 'notified'
@@ -385,13 +385,17 @@ class UDSServerApi(UDSApi):
         return self._doPost('test', payLoad) == 'ok'
 
 
-class UDSClientApi(UDSApi):
+class UDSClientApi(UDSApi, metaclass=tools.Singleton):
+    _session_id: str = ''
+    _callback_url: str = ''
+
     def __init__(self) -> None:
         super().__init__('127.0.0.1:{}'.format(LISTEN_PORT), False)
-        # Override base url
+
+        # Replace base url
         self._url = "https://{}/ui/".format(self._host)
 
-    def _apiURL(self, method: str) -> str:
+    def _api_url(self, method: str) -> str:
         return self._url + method
 
     def post(
@@ -401,13 +405,15 @@ class UDSClientApi(UDSApi):
     ) -> typing.Any:
         return self._doPost(method=method, payLoad=payLoad, disableProxy=True)
 
-    def register(self, callbackUrl: str) -> None:
-        payLoad = {'callback_url': callbackUrl}
+    def register(self, callback_url: str) -> None:
+        self._callback_url = callback_url
+        payLoad = {'callback_url': callback_url}
         self.post('register', payLoad)
 
-    def unregister(self, callbackUrl: str) -> None:
-        payLoad = {'callback_url': callbackUrl}
+    def unregister(self, callback_url: str) -> None:
+        payLoad = {'callback_url': callback_url}
         self.post('unregister', payLoad)
+        self._callback_url = ''
 
     def login(
         self, username: str, sessionType: typing.Optional[str] = None
@@ -415,20 +421,26 @@ class UDSClientApi(UDSApi):
         payLoad = {
             'username': username,
             'session_type': sessionType or UNKNOWN,
+            'callback_url': self._callback_url,  # So we identify ourselves
         }
         result = self.post('login', payLoad)
-        return types.LoginResultInfoType(
+        res = types.LoginResultInfoType(
             ip=result['ip'],
             hostname=result['hostname'],
             dead_line=result['dead_line'],
             max_idle=result['max_idle'],
             session_id=result['session_id'],
         )
+        # Store session id for future use
+        self._session_id = res.session_id or ''
+        return res
 
     def logout(self, username: str, sessionType: typing.Optional[str]) -> None:
         payLoad = {
             'username': username,
-            'session_type': sessionType or UNKNOWN
+            'session_type': sessionType or UNKNOWN,
+            'callback_url': self._callback_url,  # So we identify ourselves
+            'session_id': self._session_id,  # We now know the session id, provided on login
         }
         self.post('logout', payLoad)
 

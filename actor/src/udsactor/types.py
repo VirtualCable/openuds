@@ -62,7 +62,11 @@ class LoginResultInfoType(typing.NamedTuple):
 
     @property
     def logged_in(self) -> bool:
-        return self.hostname != '' or self.ip != ''
+        return bool(self.session_id)
+
+class ClientInfo(typing.NamedTuple):
+    url: str
+    session_id: str
 
 class CertificateInfoType(typing.NamedTuple):
     private_key: str

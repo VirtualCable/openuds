@@ -196,7 +196,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
                 self.checkIdle()
                 self.checkDeadLine()
 
-                time.sleep(1.3)  # Sleeps between loop iterations
+                time.sleep(1.22)  # Sleeps between loop iterations
 
             # If login was recognized...
             if self._loginInfo.logged_in:

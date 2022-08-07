@@ -33,6 +33,7 @@ import hashlib
 import array
 import uuid
 import codecs
+import datetime
 import struct
 import re
 import random
@@ -162,7 +163,9 @@ class CryptoManager(metaclass=singleton.Singleton):
         toDecode = decryptor.update(text) + decryptor.finalize()
         return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
 
-    def xor(self, value: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
+    def xor(
+        self, value: typing.Union[str, bytes], key: typing.Union[str, bytes]
+    ) -> bytes:
         if not key:
             return b''  # Protect against division by cero
 
@@ -172,9 +175,13 @@ class CryptoManager(metaclass=singleton.Singleton):
             key = key.encode('utf-8')
         mult = len(value) // len(key) + 1
         value_array = array.array('B', value)
-        key_array = array.array('B', key * mult)  # Ensure key array is at least as long as value_array
+        key_array = array.array(
+            'B', key * mult
+        )  # Ensure key array is at least as long as value_array
         # We must return binary in xor, because result is in fact binary
-        return array.array('B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))).tobytes()
+        return array.array(
+            'B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))
+        ).tobytes()
 
     def symCrypt(
         self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]
@@ -248,7 +255,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             return not hash
 
         if hash[:8] == '{SHA256}':
-            return str(hashlib.sha3_256(value).hexdigest()) == hash[8:]
+            return hashlib.sha3_256(value).hexdigest() == hash[8:]
         else:  # Old sha1
             return hash == str(hashlib.sha1(value).hexdigest())
 
@@ -272,3 +279,11 @@ class CryptoManager(metaclass=singleton.Singleton):
     def randomString(self, length: int = 40, digits: bool = True) -> str:
         base = string.ascii_letters + (string.digits if digits else '')
         return ''.join(random.SystemRandom().choices(base, k=length))
+
+    def unique(self) -> str:
+        return hashlib.sha3_256(
+                (
+                    self.randomString(24, True)
+                    + datetime.datetime.now().strftime('%H%M%S%f')
+                ).encode()
+            ).hexdigest()

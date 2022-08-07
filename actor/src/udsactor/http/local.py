@@ -30,19 +30,23 @@
 '''
 import typing
 
-from . import handler
+from udsactor.http import handler, clients_pool
 
 if typing.TYPE_CHECKING:
-    from ..service import CommonService
+    from udsactor.service import CommonService
 
 class LocalProvider(handler.Handler):
 
     def post_login(self) -> typing.Any:
         result = self._service.login(self._params['username'], self._params['session_type'])
+        # if callback_url is provided, record it in the clients pool
+        if 'callback_url' in self._params and result.session_id:
+            # If no session id is returned, then no login is acounted for
+            clients_pool.UDSActorClientPool().set_session_id(self._params['callback_url'], result.session_id)
         return result._asdict()
 
     def post_logout(self) -> typing.Any:
-        self._service.logout(self._params['username'])
+        self._service.logout(self._params['username'], self._params['session_type'], self._params['session_id'])
         return 'ok'
 
     def post_ping(self) -> typing.Any:

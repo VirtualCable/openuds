@@ -132,7 +132,7 @@ class HTTPServerThread(threading.Thread):
         self._app = app
 
         self.port = -1
-        self.id = secrets.token_urlsafe(16)
+        self.id = secrets.token_urlsafe(24)
 
     @property
     def url(self) -> str:

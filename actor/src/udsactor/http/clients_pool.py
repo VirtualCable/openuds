@@ -33,8 +33,8 @@ import json
 import typing
 
 import requests
-
-from ..log import logger
+from udsactor import tools, types
+from udsactor.log import logger
 
 # For avoid proxy on localhost connections
 NO_PROXY = {
@@ -42,55 +42,108 @@ NO_PROXY = {
     'https': None,
 }
 
-class UDSActorClientPool:
-    _clientUrl: typing.List[str]
+
+class UDSActorClientPool(metaclass=tools.Singleton):
+    _clients: typing.List[types.ClientInfo]
 
     def __init__(self) -> None:
-        self._clientUrl = []
+        self._clients = []
 
-    def _post(self, method: str, data: typing.MutableMapping[str, str], timeout=2) -> typing.List[requests.Response]:
-        removables: typing.List[str] = []
-        result: typing.List[typing.Any] = []
-        for clientUrl in self._clientUrl:
+    def _post(
+        self,
+        session_id: typing.Optional[str],
+        method: str,
+        data: typing.MutableMapping[str, str],
+        timeout: int = 2,
+    ) -> typing.List[
+        typing.Tuple[types.ClientInfo, typing.Optional[requests.Response]]
+    ]:
+        result: typing.List[
+            typing.Tuple[types.ClientInfo, typing.Optional[requests.Response]]
+        ] = []
+        for client in self._clients:
+            # Skip if session id is provided but does not match
+            if session_id and client.session_id != session_id:
+                continue
+            clientUrl = client.url
             try:
-                result.append(requests.post(clientUrl + '/' + method, data=json.dumps(data), verify=False, timeout=timeout, proxies=NO_PROXY))
+                result.append(
+                    (
+                        client,
+                        requests.post(
+                            clientUrl + '/' + method,
+                            data=json.dumps(data),
+                            verify=False,
+                            timeout=timeout,
+                            proxies=NO_PROXY,  # type: ignore
+                        ),
+                    )
+                )
             except Exception as e:
-                # If cannot request to a clientUrl, remove it from list
-                logger.info('Could not connect with client %s: %s. Removed from registry.', e, clientUrl)
-                removables.append(clientUrl)
-
-        # Remove failed connections
-        for clientUrl in removables:
-            self.unregister(clientUrl)
+                logger.info(
+                    'Could not connect with client %s: %s. ',
+                    e,
+                    clientUrl,
+                )
+                result.append((client, None))
 
         return result
 
-    def register(self, clientUrl: str) -> None:
+    @property
+    def clients(self) -> typing.List[types.ClientInfo]:
+        return self._clients
+
+    def register(self, client_url: str) -> None:
         # Remove first if exists, to avoid duplicates
-        self.unregister(clientUrl)
+        self.unregister(client_url)
         # And add it again
-        self._clientUrl.append(clientUrl)
+        self._clients.append(types.ClientInfo(client_url, ''))
 
-    def unregister(self, clientUrl: str) -> None:
-        self._clientUrl = list((i for i in self._clientUrl if i != clientUrl))
+    def set_session_id(self, client_url: str, session_id: typing.Optional[str]) -> None:
+        """Set the session id for a client
 
-    def executeScript(self, script: str) -> None:
-        self._post('script', {'script': script}, timeout=30)
+        Args:
+            clientUrl (str): _description_
+            session_id (str): _description_
+        """
+        for client in self._clients:
+            if client.url == client_url:
+                # remove existing client from list, create a new one and insert it
+                self._clients.remove(client)
+                self._clients.append(types.ClientInfo(client_url, session_id or ''))
+                break
 
-    def logout(self) -> None:
-        self._post('logout', {})
+    def unregister(self, client_url: str) -> None:
+        # remove client url from array if found
+        for i, client in enumerate(self._clients):
+            if client.url == client_url:
+                self._clients.pop(i)
+                return
 
-    def message(self, message: str) -> None:
-        self._post('message', {'message': message})
+    def executeScript(self, session_id: typing.Optional[str], script: str) -> None:
+        self._post(session_id, 'script', {'script': script}, timeout=30)
 
-    def ping(self) -> bool:
-        if not self._clientUrl:
-            return True                  # No clients, ping ok
-        self._post('ping', {}, timeout=1)
-        return bool(self._clientUrl)     # There was clients, but they are now lost!!!
+    def logout(self, session_id: typing.Optional[str]) -> None:
+        self._post(session_id, 'logout', {})
 
-    def screenshot(self) -> typing.Optional[str]:  # Screenshot are returned as base64
-        for r in self._post('screenshot', {}, timeout=3):
+    def message(self, session_id: typing.Optional[str], message: str) -> None:
+        self._post(session_id, 'message', {'message': message})
+
+    def lost_clients(
+        self,
+        session_id: typing.Optional[str] = None,
+    ) -> typing.Iterable[types.ClientInfo]:  # returns the list of "lost" clients
+        # Port ping to every client
+        for i in self._post(session_id, 'ping', {}, timeout=1):
+            if i[1] is None:
+                yield i[0]
+
+    def screenshot(
+        self, session_id: typing.Optional[str]
+    ) -> typing.Optional[str]:  # Screenshot are returned as base64
+        for client, r in self._post(session_id, 'screenshot', {}, timeout=3):
+            if not r:
+                continue  # Missing client, so we ignore it
             try:
                 return r.json()['result']
             except Exception:

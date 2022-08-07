@@ -36,13 +36,13 @@ import secrets
 import subprocess
 import typing
 
-from . import platform
-from . import rest
-from . import types
-from . import tools
+from udsactor import platform
+from udsactor import rest
+from udsactor import types
+from udsactor import tools
 
-from .log import logger, DEBUG, INFO, ERROR, FATAL
-from .http import clients_pool, server, cert
+from udsactor.log import logger, DEBUG, INFO, ERROR, FATAL
+from udsactor.http import clients_pool, server, cert
 
 # def setup() -> None:
 #     cfg = platform.store.readConfig()
@@ -60,15 +60,12 @@ from .http import clients_pool, server, cert
 class CommonService:  # pylint: disable=too-many-instance-attributes
     _isAlive: bool = True
     _rebootRequested: bool = False
-    _loggedIn: bool = False
     _initialized: bool = False
-
     _cfg: types.ActorConfigurationType
     _api: rest.UDSServerApi
     _interfaces: typing.List[types.InterfaceInfoType]
     _secret: str
     _certificate: types.CertificateInfoType
-    _clientsPool: clients_pool.UDSActorClientPool
     _http: typing.Optional[server.HTTPServerThread]
 
     @staticmethod
@@ -324,7 +321,11 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
                     # Only removes master token for managed machines (will need it on next client execution)
                     # For unmanaged, if alias is present, replace master token with it
-                    master_token = None if self.isManaged() else (initResult.alias_token or self._cfg.master_token)
+                    master_token = (
+                        None
+                        if self.isManaged()
+                        else (initResult.alias_token or self._cfg.master_token)
+                    )
                     self._cfg = self._cfg._replace(
                         master_token=master_token,
                         own_token=initResult.own_token,
@@ -372,19 +373,23 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             self._http.stop()
 
         # If logged in, notify UDS of logout (daemon stoped = no control = logout)
-        if self._loggedIn and self._cfg.own_token:
-            self._loggedIn = False
-            try:
-                self._api.logout(
-                    self._cfg.actorType,
-                    self._cfg.own_token,
-                    '',
-                    '',
-                    self._interfaces,
-                    self._secret,
-                )
-            except Exception as e:
-                logger.error('Error notifying final logout to UDS: %s', e)
+        # For every connected client...
+        if self._cfg.own_token:
+            for client in clients_pool.UDSActorClientPool().clients:
+                if client.session_id:
+                    try:
+                        self._api.logout(
+                            self._cfg.actorType,
+                            self._cfg.own_token,
+                            '',
+                            client.session_id
+                            or 'stop',  # If no session id, pass "stop"
+                            '',
+                            self._interfaces,
+                            self._secret,
+                        )
+                    except Exception as e:
+                        logger.error('Error notifying final logout to UDS: %s', e)
 
         self.notifyStop()
 
@@ -466,8 +471,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             self.checkIpsChanged()
 
             # Now check if every registered client is already there (if logged in OFC)
-            if self._loggedIn and not self._clientsPool.ping():
-                self.logout('client_unavailable')
+            for lost_client in clients_pool.UDSActorClientPool().lost_clients():
+                logger.info('Lost client: {}'.format(lost_client))
+                self.logout('client_unavailable', '', lost_client.session_id or '')
         except Exception as e:
             logger.error('Exception on main service loop: %s', e)
 
@@ -488,10 +494,8 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self, username: str, sessionType: typing.Optional[str] = None
     ) -> types.LoginResultInfoType:
         result = types.LoginResultInfoType(
-            ip='', hostname='', dead_line=None, max_idle=None
+            ip='', hostname='', dead_line=None, max_idle=None, session_id=None
         )
-        self._loggedIn = True
-
         master_token = None
         secret = None
         # If unmanaged, do initialization now, because we don't know before this
@@ -517,16 +521,22 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 secret,
             )
 
-        script = platform.store.invokeScriptOnLogin()
-        if script:
-            script += f'{username} {sessionType or "unknown"} {self._cfg.actorType}'
-            self.execute(script, 'Logon')
+        if (
+            result.session_id
+        ):  # If logged in, process it. client_pool will take account of login response to client and session
+            script = platform.store.invokeScriptOnLogin()
+            if script:
+                script += f'{username} {sessionType or "unknown"} {self._cfg.actorType}'
+                self.execute(script, 'Logon')
 
         return result
 
-    def logout(self, username: str, sessionType: typing.Optional[str] = None) -> None:
-        self._loggedIn = False
-
+    def logout(
+        self,
+        username: str,
+        session_type: typing.Optional[str],
+        session_id: typing.Optional[str],
+    ) -> None:
         master_token = self._cfg.master_token
 
         # Own token will not be set if UDS did not assigned the initialized VM to an user
@@ -539,13 +549,16 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     self._cfg.actorType,
                     token,
                     username,
-                    sessionType or '',
+                    session_id or '',
+                    session_type or '',
                     self._interfaces,
                     self._secret,
                 )
                 != 'ok'
             ):
-                logger.info('Logout from %s ignored as required by uds broker', username)
+                logger.info(
+                    'Logout from %s ignored as required by uds broker', username
+                )
                 return
 
         self.onLogout(username)

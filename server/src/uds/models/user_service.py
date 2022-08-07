@@ -36,17 +36,17 @@ import typing
 from django.db import models
 from django.db.models import signals
 
+from uds.core.managers import cryptoManager
 from uds.core.environment import Environment
-from uds.core.util import log
-from uds.core.util import unique
+from uds.core.util import log, unique
 from uds.core.util.state import State
 
-from .uuid_model import UUIDModel
-from .service_pool import ServicePool
-from .service_pool_publication import ServicePoolPublication
-from .user import User
-from .util import NEVER
-from .util import getSqlDatetime
+from uds.models.uuid_model import UUIDModel
+from uds.models.service_pool import ServicePool
+from uds.models.service_pool_publication import ServicePoolPublication
+from uds.models.user import User
+from uds.models.util import NEVER
+from uds.models.util import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -57,11 +57,11 @@ if typing.TYPE_CHECKING:
         ServicePool,
         ServicePoolPublication,
         UserServiceProperty,
+        UserServiceSession,
         AccountUsage,
     )
 
 logger = logging.getLogger(__name__)
-
 
 class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     """
@@ -115,13 +115,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     src_hostname = models.CharField(max_length=64, default='')
     src_ip = models.CharField(max_length=128, default='')
 
-    cluster_node = models.CharField(
-        max_length=128, default=None, blank=True, null=True, db_index=True
-    )
-
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[UserService]'
+    objects: 'models.manager.Manager["UserService"]'
     properties: 'models.manager.RelatedManager[UserServiceProperty]'
+    sessions: 'models.manager.RelatedManager[UserServiceSession]'
     accounting: 'AccountUsage'
 
     class Meta(UUIDModel.Meta):
@@ -453,6 +450,30 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         self.deployed_service.account.stopUsageAccounting(self)
 
+    def initSession(self) -> str:
+        """
+        Starts a new session for this user deployed service.
+        Returns the session id
+        """
+        session = self.sessions.create()
+        return session.session_id
+
+    def closeSession(self, sessionId: str) -> None:
+        if sessionId == '':
+            # Close all sessions
+            for session in self.sessions.all():
+                session.close()
+        else:
+            # Close a specific session
+            try:
+                session = self.sessions.get(session_id=sessionId)
+                session.close()
+            except Exception:  # Does not exists, log it and ignore it
+                logger.warning(
+                    'Session %s does not exists for user deployed service %s'
+                    % (sessionId, self.id)
+                )
+
     def isUsable(self) -> bool:
         """
         Returns if this service is usable
@@ -599,8 +620,13 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete = kwargs['instance']
+        toDelete: 'UserService' = kwargs['instance']
+        # Clear environment
         toDelete.getEnvironment().clearRelatedData()
+        # Ensure all sessions are closed (invoke with '' to close all sessions)
+        # In fact, sessions are going to be deleted also, but we give then
+        # the oportunity to execute some code before deleting them
+        toDelete.closeSession('')
 
         # Clear related logs to this user service
         log.clearLogs(toDelete)

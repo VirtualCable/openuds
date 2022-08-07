@@ -253,10 +253,14 @@ class Initialize(ActorV3Action):
                     # Retrieve real service from token alias
                     service = ServiceTokenAlias.objects.get(alias=token).service
                 # If not found, try to locate on service table
-                if service is None: # Not on alias token, try to locate on Service table
+                if (
+                    service is None
+                ):  # Not on alias token, try to locate on Service table
                     service = Service.objects.get(token=token)
                     # And create a new alias for it, and save
-                    alias_token = cryptoManager().randomString()  # fix alias with new token
+                    alias_token = (
+                        cryptoManager().randomString()
+                    )  # fix alias with new token
                     service.aliases.create(alias=alias_token)
 
                 # Locate an userService that belongs to this service and which
@@ -288,7 +292,13 @@ class Initialize(ActorV3Action):
             except Exception as e:
                 logger.info('Unmanaged host request: %s, %s', self._params, e)
                 return ActorV3Action.actorResult(
-                    {'own_token': None, 'max_idle': None, 'unique_id': None, 'os': None, 'alias': None}
+                    {
+                        'own_token': None,
+                        'max_idle': None,
+                        'unique_id': None,
+                        'os': None,
+                        'alias': None,
+                    }
                 )
 
             # Managed by UDS, get initialization data from osmanager and return it
@@ -508,6 +518,7 @@ class Login(LoginLogout):
         isManaged = self._params.get('type') != UNMANAGED
         ip = hostname = ''
         deadLine = maxIdle = None
+        session_id = ''
 
         logger.debug('Login Args: %s,  Params: %s', self._args, self._params)
 
@@ -522,6 +533,9 @@ class Login(LoginLogout):
             logger.debug('Max idle: %s', maxIdle)
 
             ip, hostname = userService.getConnectionSource()
+            session_id = (
+                userService.initSession()
+            )  # creates a session for every login requested
 
             if osManager:  # For os managed services, let's check if we honor deadline
                 if osManager.ignoreDeadLine():
@@ -537,7 +551,13 @@ class Login(LoginLogout):
             self.notifyService(isLogin=True)
 
         return ActorV3Action.actorResult(
-            {'ip': ip, 'hostname': hostname, 'dead_line': deadLine, 'max_idle': maxIdle}
+            {
+                'ip': ip,
+                'hostname': hostname,
+                'dead_line': deadLine,
+                'max_idle': maxIdle,
+                'session_id': session_id,
+            }
         )
 
 
@@ -549,13 +569,20 @@ class Logout(LoginLogout):
     name = 'logout'
 
     @staticmethod
-    def process_logout(userService: UserService, username: str) -> None:
+    def process_logout(
+        userService: UserService, username: str, session_id: str
+    ) -> None:
         """
         This method is static so can be invoked from elsewhere
         """
         osManager: typing.Optional[
             osmanagers.OSManager
         ] = userService.getOsManagerInstance()
+
+        # Close session
+        # For compat, we have taken '' as "all sessions"
+        userService.closeSession(session_id)
+
         if (
             userService.in_use
         ):  # If already logged out, do not add a second logout (windows does this i.e.)
@@ -572,13 +599,21 @@ class Logout(LoginLogout):
 
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
-            userService: UserService = self.getUserService()
-            Logout.process_logout(userService, self._params.get('username') or '')
+            userService: UserService = (
+                self.getUserService()
+            )  # if not exists, will raise an error
+            Logout.process_logout(
+                userService,
+                self._params.get('username') or '',
+                self._params.get('session_id') or '',
+            )
         except Exception:  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
             self.notifyService(isLogin=False)  # Logout notification
-            return ActorV3Action.actorResult('notified')  # Result is that we have not processed the logout in fact, but notified the service
+            return ActorV3Action.actorResult(
+                'notified'
+            )  # Result is that we have not processed the logout in fact, but notified the service
 
         return ActorV3Action.actorResult('ok')
 
@@ -707,7 +742,7 @@ class Unmanaged(ActorV3Action):
         if validId:
             # If id is assigned to an user service, notify "logout" to it
             if userService:
-                Logout.process_logout(userService, 'init')
+                Logout.process_logout(userService, 'init', '')
             else:
                 # If it is not assgined to an user service, notify service
                 service.notifyInitialization(validId)

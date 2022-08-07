@@ -63,8 +63,10 @@ from .service_pool import ServicePool  # New name
 from .meta_pool import MetaPool, MetaPoolMember
 from .service_pool_group import ServicePoolGroup
 from .service_pool_publication import ServicePoolPublication, ServicePoolPublicationChangelog
+
 from .user_service import UserService
 from .user_service_property import UserServiceProperty
+from .user_service_session import UserServiceSession
 
 # Especific log information for an user service
 from .log import Log
