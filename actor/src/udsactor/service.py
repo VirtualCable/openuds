@@ -473,7 +473,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             # Now check if every registered client is already there (if logged in OFC)
             for lost_client in clients_pool.UDSActorClientPool().lost_clients():
                 logger.info('Lost client: {}'.format(lost_client))
-                self.logout('client_unavailable', '', lost_client.session_id or '')
+                self.logout('client_unavailable', '', lost_client.session_id or '')  # '' means "all clients"
         except Exception as e:
             logger.error('Exception on main service loop: %s', e)
 
@@ -554,14 +554,14 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     self._interfaces,
                     self._secret,
                 )
-                != 'ok'
+                != 'ok'  # Can return also "notified", that means the logout has not been processed by UDS
             ):
                 logger.info(
                     'Logout from %s ignored as required by uds broker', username
                 )
                 return
 
-        self.onLogout(username)
+        self.onLogout(username, session_id or '')
 
         if not self.isManaged():
             self.uninitialize()
@@ -609,5 +609,5 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         return 'ok'
 
-    def onLogout(self, userName: str) -> None:
+    def onLogout(self, userName: str, session_id: str) -> None:
         logger.debug('On logout invoked for {}'.format(userName))

@@ -183,7 +183,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         return 'done'
 
-    def onLogout(self, userName) -> None:
+    def onLogout(self, userName: str, session_id: str) -> None:
         logger.debug('Windows onLogout invoked: {}, {}'.format(userName, self._user))
         try:
             p = win32security.GetBinarySid(REMOTE_USERS_SID)
