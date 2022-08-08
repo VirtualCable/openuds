@@ -31,6 +31,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import base64
+import pickle
+import gzip
 import typing
 
 
@@ -45,6 +47,11 @@ class Serializable:
     """
     __slots__ = ()
 
+    # Note:
+    #   We can include a "data" member variable in the class
+    #   If found, and has __dict__, then we will use it
+    #   on marshal and unmarshal methods
+
     def __init__(self):
         pass
 
@@ -55,9 +62,17 @@ class Serializable:
         The system will use in fact 'seralize' and 'deserialize' methods, but theese are
         only suitable methods to "codify" serialized values
 
-        :note: This method must be overridden
+        :note: This method can be overriden.
+        :note: if you provide a "data" member variable, and it has __dict__, then it will be used
+               to marshal that data variable
         """
-        raise NotImplementedError('Base marshaler called!!!')
+        # Default implementation will look for a member variable called "data"
+        # This is an struct, and will be pickled by default
+
+        if hasattr(self, 'data') and hasattr(getattr(self, 'data'), '__dict__'):
+            return pickle.dumps(getattr(self, 'data'), protocol=pickle.HIGHEST_PROTOCOL)   # type: ignore
+
+        raise NotImplementedError('You must override the marshal method or provide a data member')
 
     def unmarshal(self, data: bytes) -> None:
         """
@@ -72,9 +87,15 @@ class Serializable:
         Args:
             data : String readed from persistent storage to deseralilize
 
-        :note: This method must be overridden
+        :note: This method can be overriden.
+        :note: if you provide a "data" member variable, and it has __dict__, then it will be used
+               to unmarshal that data variable
         """
-        raise NotImplementedError('Base unmarshaler called!!!')
+        if hasattr(self, 'data') and hasattr(getattr(self, 'data'), '__dict__'):
+            setattr(self, 'data', pickle.loads(data))
+            return
+
+        raise NotImplementedError('You must override the unmarshal method or provide a data member')
 
     def serialize(self) -> str:
         """

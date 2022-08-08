@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,9 +47,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
 
 
-class UserDeployment(
-    Environmentable, Serializable
-):  # pylint: disable=too-many-public-methods
+class UserDeployment(Environmentable, Serializable):
     """
     Interface for deployed services.
 
