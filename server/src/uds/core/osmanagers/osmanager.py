@@ -171,7 +171,7 @@ class OSManager(Module):
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from ServicePool
         """
-        return hash(cls.processUserPassword) != hash(OSManager.processUserPassword)
+        return cls.processUserPassword != OSManager.processUserPassword
 
     def processUserPassword(
         self, userService: 'UserService', username: str, password: str
