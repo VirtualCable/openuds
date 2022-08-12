@@ -29,13 +29,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import sys
+import typing
 
 from .. import rest
 from .. import platform
 from ..log import logger
 from .service import UDSActorSvc
 
-def usage():
+def usage() -> typing.NoReturn:
     sys.stderr.write('usage: udsactor start|login "username"|logout "username"\n')
     sys.exit(2)
 
@@ -50,7 +51,7 @@ def run() -> None:
                 r = client.login(sys.argv[2], platform.operations.getSessionType())
                 print('{},{},{},{}\n'.format(r.ip, r.hostname, r.max_idle, r.dead_line or ''))
             elif sys.argv[1] == 'logout':
-                client.logout(sys.argv[2])
+                client.logout(sys.argv[2], platform.operations.getSessionType())
         except Exception as e:
             logger.exception()
             logger.error('Got exception while processing command: %s', e)

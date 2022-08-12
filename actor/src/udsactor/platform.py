@@ -31,9 +31,15 @@
 import sys
 
 name = sys.platform
+is_windows = is_linux = is_mac = False
 if sys.platform == 'win32':
-    from .windows import operations, store
+    from .windows import operations, store, runner
+    is_windows = True
 elif sys.platform == 'darwin':
-    from .macos import operations, store
+    from .macos import operations, store, runner
+    is_mac = True
+elif sys.platform == 'linux':
+    from .linux import operations, store, runner
+    is_linux = True
 else:
-    from .linux import operations, store
+    raise Exception('Unsupported platform: {0}'.format(sys.platform))

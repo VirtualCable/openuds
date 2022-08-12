@@ -29,33 +29,32 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=invalid-name
 import sys
 import os
 
-import PyQt5  # pylint: disable=unused-import
+import PyQt5  # noqa
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMainWindow
 
 from udsactor.log import logger, INFO
 from udsactor.client import UDSClientQApp
-from udsactor.platform import operations
+from udsactor import platform
 
 if __name__ == "__main__":
     logger.setLevel(INFO)
 
     # Ensure idle operations is initialized on start
-    operations.initIdleDuration(0)
+    platform.operations.initIdleDuration(0)
 
-    if 'linux' in sys.platform:
+    if platform.is_linux:
         os.environ['QT_X11_NO_MITSHM'] = '1'
 
     UDSClientQApp.setQuitOnLastWindowClosed(False)
 
     qApp = UDSClientQApp(sys.argv)
 
-    if 'win' in sys.platform:
-        # The "hidden window" is only needed to process events on Windows
+    if platform.is_windows or platform.is_mac:
+        # The "hidden window" is not needed on linux
         # Not needed on Linux
         mw = QMainWindow()
         mw.showMinimized()  # Start minimized, will be hidden (not destroyed) as soon as qApp.init is invoked

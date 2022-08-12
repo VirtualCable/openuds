@@ -40,19 +40,24 @@ import typing
 
 import psutil
 
-from .. import types
+from udsactor import types, tools
 
-MACVER_RE = re.compile(r"<key>ProductVersion</key>\s*<string>(.*)</string>", re.MULTILINE)
+MACVER_RE = re.compile(
+    r"<key>ProductVersion</key>\s*<string>(.*)</string>", re.MULTILINE
+)
 MACVER_FILE = '/System/Library/CoreServices/SystemVersion.plist'
 
+
 def checkPermissions() -> bool:
-    return os.getuid() == 0 
+    return os.getuid() == 0
+
 
 def getComputerName() -> str:
     '''
     Returns computer name, with no domain
     '''
     return socket.gethostname().split('.')[0]
+
 
 def getNetworkInfo() -> typing.Iterator[types.InterfaceInfoType]:
     ifdata: typing.List['psutil._common.snicaddr']
@@ -65,16 +70,22 @@ def getNetworkInfo() -> typing.Iterator[types.InterfaceInfoType]:
                 name = ifname
             elif row.family == socket.AF_LINK:
                 mac = row.address
-        
+
             # if all data is available, stop iterating
             if ip and name and mac:
-                if mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs
+                if (
+                    mac != '00:00:00:00:00:00'
+                    and mac
+                    and ip
+                    and ip.startswith('169.254') is False
+                ):  # Skips local interfaces & interfaces with no dhcp IPs
                     yield types.InterfaceInfoType(name=name, ip=ip, mac=mac)
                     break
-        
-            
+
+
 def getDomainName() -> str:
     return ''
+
 
 def getMacOs() -> str:
     try:
@@ -85,10 +96,11 @@ def getMacOs() -> str:
             return m.group(1)
     except Exception:  # nosec: B110: ignore exception because we are not interested in it
         pass
-    
+
     return 'unknown'
 
-def reboot(flags: int = 0):
+
+def reboot(flags: int = 0) -> None:
     '''
     Simple reboot using os command
     '''
@@ -99,7 +111,9 @@ def loggoff() -> None:
     '''
     Right now restarts the machine...
     '''
-    subprocess.run("/bin/launchctl bootout gui/$(id -u $USER)", shell=True)  # nosec: Command line is fixed
+    subprocess.run(
+        "/bin/launchctl bootout gui/$(id -u $USER)", shell=True
+    )  # nosec: Command line is fixed
     # Ignores output, as it may fail if user is not logged in
 
 
@@ -107,11 +121,14 @@ def renameComputer(newName: str) -> bool:
     '''
     Changes the computer name
     Returns True if reboot needed
+    Note: For macOS, no configuration is supported, only "unmanaged" actor
     '''
     return False
 
 
-def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False):
+def joinDomain(
+    domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False
+):
     pass
 
 
@@ -122,11 +139,25 @@ def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
 def initIdleDuration(atLeastSeconds: int) -> None:
     pass
 
-
+# se we cache for 20 seconds the result, that is enough for our needs
+# and we avoid calling a system command every time we need it
+@tools.cache(20)   
 def getIdleDuration() -> float:
     # Execute:
     try:
-        return int(next(filter(lambda x: b"HIDIdleTime" in x, subprocess.check_output(["ioreg", "-c", "IOHIDSystem"]).split(b"\n"))).split(b"=")[1]) / 1000000000
+        return (
+            int(
+                next(
+                    filter(
+                        lambda x: b"HIDIdleTime" in x,
+                        subprocess.check_output(
+                            ["/usr/sbin/ioreg", "-c", "IOHIDSystem"]
+                        ).split(b"\n"),
+                    )
+                ).split(b"=")[1]
+            )
+            / 1000000000
+        )  # nosec: Command line is fixed
     except Exception:  # nosec: B110: ignore exception because we are not interested in it
         return 0
 
@@ -137,14 +168,13 @@ def getCurrentUser() -> str:
     '''
     return os.getlogin()
 
+
 def getSessionType() -> str:
     '''
-      Known values:
-        * Unknown -> No XDG_SESSION_TYPE environment variable
-        * xrdp --> xrdp session
-        * other types
+    Returns the session type. Currently, only "macos" (console) is supported
     '''
     return 'macos'
+
 
 def forceTimeSync() -> None:
     return

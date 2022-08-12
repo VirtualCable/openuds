@@ -30,14 +30,43 @@
 '''
 import threading
 import ipaddress
+import time
 import typing
+import functools
 
 if typing.TYPE_CHECKING:
     from udsactor.types import InterfaceInfoType
 
+# Simple cache for n seconds (default = 30) decorator
+def cache(seconds: int = 30) -> typing.Callable:
+    '''
+    Simple cache for n seconds (default = 30) decorator
+    '''
+    def decorator(func) -> typing.Callable:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> typing.Any:
+            if not hasattr(wrapper, 'cache'):
+                wrapper.cache = {}  # type: ignore
+            cache = wrapper.cache  # type: ignore
 
+            # Compose a key for the cache
+            key = '{}:{}'.format(args, kwargs)
+            if key in cache:
+                if time.time() - cache[key][0] < seconds:
+                    return cache[key][1]
+            
+            # Call the function
+            result = func(*args, **kwargs)
+            cache[key] = (time.time(), result)
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+# Simple sub-script exectution thread
 class ScriptExecutorThread(threading.Thread):
-   
     def __init__(self, script: str) -> None:
         super(ScriptExecutorThread, self).__init__()
         self.script = script
@@ -47,22 +76,26 @@ class ScriptExecutorThread(threading.Thread):
 
         try:
             logger.debug('Executing script: {}'.format(self.script))
-            exec(self.script, globals(), None)  # nosec: exec is fine, it's a "trusted" script
+            exec(
+                self.script, globals(), None
+            )  # nosec: exec is fine, it's a "trusted" script
         except Exception as e:
             logger.error('Error executing script: {}'.format(e))
             logger.exception()
+
 
 class Singleton(type):
     '''
     Metaclass for singleton pattern
     Usage:
-    
+
     class MyClass(metaclass=Singleton):
         ...
     '''
+
     _instance: typing.Optional[typing.Any]
 
-    # We use __init__ so we customise the created class from this metaclass    
+    # We use __init__ so we customise the created class from this metaclass
     def __init__(self, *args, **kwargs) -> None:
         self._instance = None
         super().__init__(*args, **kwargs)
@@ -74,7 +107,9 @@ class Singleton(type):
 
 
 # Convert "X.X.X.X/X" to ipaddress.IPv4Network
-def strToNoIPV4Network(net: typing.Optional[str]) -> typing.Optional[ipaddress.IPv4Network]:
+def strToNoIPV4Network(
+    net: typing.Optional[str],
+) -> typing.Optional[ipaddress.IPv4Network]:
     if not net:  # Empty or None
         return None
     try:
