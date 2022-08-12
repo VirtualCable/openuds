@@ -124,14 +124,18 @@ def initIdleDuration(atLeastSeconds: int) -> None:
 
 
 def getIdleDuration() -> float:
-    return 0
+    # Execute:
+    try:
+        return int(next(filter(lambda x: b"HIDIdleTime" in x, subprocess.check_output(["ioreg", "-c", "IOHIDSystem"]).split(b"\n"))).split(b"=")[1]) / 1000000000
+    except Exception:  # nosec: B110: ignore exception because we are not interested in it
+        return 0
 
 
 def getCurrentUser() -> str:
     '''
     Returns current logged in user
     '''
-    return os.environ['USER']
+    return os.getlogin()
 
 def getSessionType() -> str:
     '''

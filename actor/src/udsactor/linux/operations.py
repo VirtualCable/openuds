@@ -212,7 +212,7 @@ def getCurrentUser() -> str:
     '''
     Returns current logged in user
     '''
-    return os.environ['USER']
+    return os.getlogin()
 
 
 def getSessionType() -> str:
