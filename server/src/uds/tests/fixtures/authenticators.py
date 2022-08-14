@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2022 Virtual Cable S.L.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -44,7 +44,7 @@ def createAuthenticator(
     authenticator: typing.Optional[models.Authenticator] = None,
 ) -> models.Authenticator:
     """
-    Creates a sample authenticator
+    Creates a testing authenticator
     """
     if authenticator is None:
         from uds.auths.InternalDB.authenticator import InternalDBAuth
@@ -91,7 +91,7 @@ def createGroups(
     authenticator: models.Authenticator, number_of_groups: int = 1
 ) -> typing.List[models.Group]:
     """
-    Creates a sample authenticator
+    Creates a testing authenticator
     """
     groups = [
         authenticator.groups.create(
@@ -111,7 +111,7 @@ def createMetaGroups(
     authenticator: models.Authenticator, number_of_meta: int = 1
 ) -> typing.List[models.Group]:
     """
-    Creates a sample authenticator
+    Creates a testing authenticator
     """
     meta_groups = [
         authenticator.groups.create(

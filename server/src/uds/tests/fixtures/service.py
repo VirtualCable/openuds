@@ -29,44 +29,42 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import datetime
-import random
 
-from uds.core.util.stats import counters
 from uds import models
+from uds.core.util import states
+from uds.core.managers.crypto import CryptoManager
+
+# Counters so we can reinvoke the same method and generate new data
+glob = {
+    'service_id': 0,
+}
+
+def createProvider(
+    provider: typing.Optional[models.Provider] = None,
+) -> models.Provider:
+    """
+    Creates a testing provider
+    """
+    if provider is None:
+        from uds.services.Test.provider import Provider
+
+        provider = models.Provider()
+        provider.name = 'Testing provider'
+        provider.comments = 'Tesging provider'
+        provider.data_type = Provider.typeType
+        provider.data = provider.getInstance().serialize()
+        provider.save()
+
+    return provider
 
 
-def create_stats_counters(
-    owner_type: int,
-    owner_id: int,
-    counter_type: int,
-    since: datetime.datetime,
-    to: datetime.datetime,
-    number: int,
-) -> typing.List[models.StatsCounters]:
-    '''
-    Create a list of counters with the given type, counter_type, since and to, save it in the database
-    and return it
-    '''
-    # Convert datetime to unix timestamp
-    since_stamp = int(since.timestamp())
-    to_stamp = int(to.timestamp())
-
-    # Calculate the time interval between each counter
-    interval = (to_stamp - since_stamp) / number
-    
-    counters = []
-    for i in range(number):
-        counter = models.StatsCounters()
-        counter.owner_id = owner_id
-        counter.owner_type = owner_type
-        counter.counter_type = counter_type
-        counter.stamp = since_stamp + interval * i
-        counter.value = i * 10
-        # And add it to the list
-        counters.append(counter)
-
-    # Bulk create the counters
-    models.StatsCounters.objects.bulk_create(counters)
-    return counters
+def createServices(
+    provider: models.Provider,
+    number_of_services: int = 1,
+    type_of_service: typing.Union[typing.Literal[1], typing.Literal[2]] = 1,
+) -> typing.List[models.Service]:
+    """
+    Creates some ramdon services
+    """
+    return []
 

@@ -35,11 +35,13 @@ Created on Jun 22, 2012
 import logging
 import random
 import string
+import dataclasses
 import typing
 
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services
+from uds.core import module
 from .service import ServiceTestNoCache, ServiceTestCache
 
 # Not imported at runtime, just for type checking
@@ -47,7 +49,6 @@ if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
-
 
 class Provider(services.ServiceProvider):
     """
@@ -82,7 +83,21 @@ class Provider(services.ServiceProvider):
     # If we don't indicate an order, the output order of fields will be
     # "random"
 
-    # No fields
+    # Simple data for testing pourposes
+    @dataclasses.dataclass
+    class Data:
+        """
+        This is the data we will store in the storage
+        """
+        name: str = ''
+        integer: int = 0
+
+    data: Data = dataclasses.field(default_factory=Data)
+
+    def initialize(self, values: 'module.Module.ValuesType') -> None:
+        if values:
+            name = random.SystemRandom().choices(string.ascii_letters, k=10)
+            return super().initialize(values)
 
     @staticmethod
     def test(
@@ -94,5 +109,5 @@ class Provider(services.ServiceProvider):
         """
         returns a random name for testing pourposes
         """
-        return '-'.join(random.choices(string.ascii_letters, k=10))
+        return self.data.name
     
