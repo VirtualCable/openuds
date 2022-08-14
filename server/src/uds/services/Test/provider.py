@@ -57,7 +57,6 @@ class Provider(services.ServiceProvider):
     a provider.
 
     """
-
     # : What kind of services we offer, this are classes inherited from Service
     offers = [ServiceTestNoCache, ServiceTestCache]
     # : Name to show the administrator. This string will be translated BEFORE

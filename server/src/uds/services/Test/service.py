@@ -38,8 +38,7 @@ from uds.core import services
 from uds.core.ui import gui
 
 from .publication import TestPublication
-from .deployment_one import TestUserDeploymentNoCache
-from .deployment_two import TestUserDeploymentCache
+from .deployment import TestUserDeployment
 
 
 # Not imported at runtime, just for type checking
@@ -60,7 +59,7 @@ class ServiceTestNoCache(services.Service):
     # : mark it as _ (using gettext_noop)
     typeName = _('Testing Service no cache')
     # : Type used internally to identify this provider
-    typeType = 'TestServiceNoCache'
+    typeType = 'TestService1'
     # : Description shown at administration interface for this provider
     typeDescription = _('Testing (and dummy) service with no cache')
     # : Icon file used as icon for this provider. This string will be translated
@@ -98,7 +97,7 @@ class ServiceTestNoCache(services.Service):
     # : In our case, we do no need a publication, so this is None
     publicationType = None
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = TestUserDeploymentNoCache
+    deployedType = TestUserDeployment
 
     def parent(self) -> 'Provider':
         return typing.cast('Provider', super().parent())
@@ -115,7 +114,7 @@ class ServiceTestCache(services.Service):
     """
 
     typeName = _('Testing Service WITH cache')
-    typeType = 'TestingServiceCache'
+    typeType = 'TestService2'
     typeDescription = _('Testing (and dummy) service with CACHE and PUBLICATION')
     iconFile = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
 
@@ -134,7 +133,7 @@ class ServiceTestCache(services.Service):
     # : Note that this is a MUST if you indicate that needPublication
     publicationType = TestPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = TestUserDeploymentCache
+    deployedType = TestUserDeployment
 
     def parent(self) -> 'Provider':
         return typing.cast('Provider', super().parent())

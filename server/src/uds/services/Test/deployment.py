@@ -42,13 +42,13 @@ from . import service
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import ServiceTestNoCache
+    from .service import ServiceTestNoCache, ServiceTestCache
     from .publication import TestPublication
 
 logger = logging.getLogger(__name__)
 
 
-class TestUserDeploymentNoCache(services.UserDeployment):
+class TestUserDeployment(services.UserDeployment):
     """
     Simple testing deployment, no cache
     """
@@ -58,7 +58,6 @@ class TestUserDeploymentNoCache(services.UserDeployment):
         """
         This is the data we will store in the storage
         """
-
         count: int = -1
         ready: bool = False
         name: str = ''
@@ -70,7 +69,7 @@ class TestUserDeploymentNoCache(services.UserDeployment):
     # : Recheck every five seconds by default (for task methods)
     suggestedTime = 5
 
-    def service(self) -> 'ServiceTestNoCache':
+    def service(self) -> typing.Union['ServiceTestNoCache', 'ServiceTestCache']:
         return typing.cast('ServiceTestNoCache', super().service())
 
     def getName(self) -> str:
@@ -107,7 +106,7 @@ class TestUserDeploymentNoCache(services.UserDeployment):
 
     def deployForUser(self, user: 'models.User') -> str:
         logger.info('Deploying for user %s %s', user, self.data)
-        self.data.count = 10
+        self.data.count = 3
         return State.RUNNING
 
     def checkState(self) -> str:
