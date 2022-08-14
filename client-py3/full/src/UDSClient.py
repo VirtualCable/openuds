@@ -38,7 +38,7 @@ import webbrowser
 import threading
 import typing
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QSettings
 
 from uds.rest import RestApi, RetryException, InvalidVersion, UDSException
@@ -79,10 +79,10 @@ class UDSClient(QtWidgets.QMainWindow):
 
         self.ui.info.setText('Initializing...')
 
-        screen = QtWidgets.QDesktopWidget().screenGeometry()
+        screen_geometry = QtGui.QGuiApplication.primaryScreen().geometry()
         mysize = self.geometry()
-        hpos = (screen.width() - mysize.width()) // 2
-        vpos = (screen.height() - mysize.height() - mysize.height()) // 2
+        hpos = (screen_geometry.width() - mysize.width()) // 2
+        vpos = (screen_geometry.height() - mysize.height() - mysize.height()) // 2
         self.move(hpos, vpos)
 
         self.animTimer = QtCore.QTimer()
