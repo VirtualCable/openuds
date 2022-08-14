@@ -67,7 +67,8 @@ class BlockAccess(Exception):
 
 
 # Helpers
-
+def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
+    return [i.upper() for i in idsList] + [i.lower() for i in idsList]
 
 def checkBlockedIp(ip: str) -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
@@ -85,7 +86,7 @@ def checkBlockedIp(ip: str) -> None:
 
 def incFailedIp(ip: str) -> None:
     cache = Cache('actorv3')
-    fails = (cache.get(ip) or 0) + 1
+    fails = cache.get(ip, 0) + 1
     cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
 
 
@@ -114,6 +115,7 @@ class ActorV3Action(Handler):
         try:
             return UserService.objects.get(uuid=self._params['token'])
         except UserService.DoesNotExist:
+            logger.error('User service not found (params: %s)', self._params)
             raise BlockAccess()
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
@@ -121,13 +123,13 @@ class ActorV3Action(Handler):
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         try:
-            checkBlockedIp(self._request.ip)  # pylint: disable=protected-access
+            checkBlockedIp(self._request.ip)
             result = self.action()
             logger.debug('Action result: %s', result)
             return result
         except (BlockAccess, KeyError):
             # For blocking attacks
-            incFailedIp(self._request.ip)  # pylint: disable=protected-access
+            incFailedIp(self._request.ip)
         except Exception as e:
             logger.exception('Posting %s: %s', self.__class__, e)
 
@@ -182,6 +184,7 @@ class Register(ActorV3Action):
             actorToken.log_level = self._params['log_level']
             actorToken.stamp = getSqlDatetime()
             actorToken.save()
+            logger.info('Registered actor %s', self._params)
         except Exception:
             actorToken = ActorToken.objects.create(
                 username=self._user.pretty_name,
@@ -280,8 +283,8 @@ class Initialize(ActorV3Action):
 
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
-                # Enforce lowecase ids for sqlite
-                idsList = [i.lower() for i in idsList]
+                # ensure idsLists has upper and lower versions for case sensitive databases
+                idsList = fixIdsList(idsList)
                 # Set full filter
                 dbFilter = dbFilter.filter(
                     unique_id__in=idsList,
@@ -459,8 +462,8 @@ class LoginLogout(ActorV3Action):
                 x['mac'] for x in self._params['id']
             ][:10]
 
-            # Enforce lowercase for idList
-            idsList = [x.lower() for x in idsList]
+            # ensure idsLists has upper and lower versions for case sensitive databases
+            idsList = fixIdsList(idsList)
 
             validId: typing.Optional[str] = service.getValidId(idsList)
 
@@ -479,8 +482,10 @@ class LoginLogout(ActorV3Action):
             else:
                 service.processLogout(validId, remote_login=is_remote)
 
-            # All right, service notified...
-        except Exception:
+            # All right, service notified..
+        except Exception as e :
+            # Log error and continue
+            logger.error('Error notifying service: %s (%s)', e, self._params)
             raise BlockAccess()
 
 
@@ -698,8 +703,8 @@ class Unmanaged(ActorV3Action):
         ][:10]
         validId: typing.Optional[str] = service.getValidId(idsList)
 
-        # enforce lowercase idsList
-        idsList = [i.lower() for i in idsList]
+        # ensure idsLists has upper and lower versions for case sensitive databases
+        idsList = fixIdsList(idsList)
 
         # Check if there is already an assigned user service
         # To notify it logout
