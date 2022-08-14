@@ -66,7 +66,8 @@ class BlockAccess(Exception):
 
 
 # Helpers
-
+def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
+    return [i.upper() for i in idsList] + [i.lower() for i in idsList]
 
 def checkBlockedIp(ip: str) -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
@@ -265,8 +266,8 @@ class Initialize(ActorV3Action):
 
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
-                # Enforce lowecase ids for sqlite
-                idsList = [i.lower() for i in idsList]
+                # ensure idsLists has upper and lower versions for case sensitive databases
+                idsList = fixIdsList(idsList)
                 # Set full filter
                 dbFilter = dbFilter.filter(
                     unique_id__in=idsList,
@@ -435,8 +436,8 @@ class LoginLogout(ActorV3Action):
                 x['mac'] for x in self._params['id']
             ][:10]
 
-            # Enforce lowercase for idList
-            idsList = [x.lower() for x in idsList]
+            # ensure idsLists has upper and lower versions for case sensitive databases
+            idsList = fixIdsList(idsList)
 
             validId: typing.Optional[str] = service.getValidId(idsList)
 
@@ -651,8 +652,8 @@ class Unmanaged(ActorV3Action):
         ][:10]
         validId: typing.Optional[str] = service.getValidId(idsList)
 
-        # enforce lowercase idsList
-        idsList = [i.lower() for i in idsList]
+        # ensure idsLists has upper and lower versions for case sensitive databases
+        idsList = fixIdsList(idsList)
 
         # Check if there is already an assigned user service
         # To notify it logout
