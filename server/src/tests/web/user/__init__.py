@@ -28,4 +28,4 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .user import *
+from . import test_login_logout

@@ -37,6 +37,16 @@ DATABASES = {
         # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
     }
 }
+# If testing, with test or with pytest, use the local test database
+if any(arg.endswith('test') for arg in sys.argv):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'OPTIONS': {
+            'timeout': 20,
+        },
+        'NAME': ':memory:',
+    }
+
 ALLOWED_HOSTS = ['*']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

@@ -35,7 +35,7 @@ import typing
 from django.test import TestCase, TransactionTestCase
 from django.db import transaction
 
-from uds.tests import fixtures, tools
+from ... import fixtures, tools
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
@@ -89,7 +89,7 @@ class WebLoginLogoutCase(TransactionTestCase):
 
         # Add users to some groups, ramdomly
         for user in users + admins + stafs:
-            for group in random.sample(groups, random.randint(1, len(groups))):
+            for group in random.sample(groups, random.randint(1, len(groups))):  # nosec: Simple test, not strong cryptograde needed
                 user.groups.add(group)
 
         # All users, admin and staff must be able to login

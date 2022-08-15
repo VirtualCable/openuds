@@ -1,6 +1,7 @@
+
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2022 Virtual Cable S.L.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -28,52 +29,4 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import random
-import typing
-
-
-from django.test import TestCase
-from django.test.client import Client
-from django.conf import settings
-
-from uds.tests import fixtures, tools
-from uds.core import messaging
-
-class TestEmailNotifier(TestCase):
-    """
-    Test Email Notifier
-    """
-
-    def setUp(self):
-        # Setup smtp server
-        from aiosmtpd.controller import Controller
-        from aiosmtpd.handlers import Debugging
-
-        self.smtp_server = Controller(
-            handler=Debugging(),
-            hostname='localhost',
-            port=1025,
-        )
-        self.smtp_server.start()
-        
-    def tearDown(self):
-        # Stop smtp debug server
-        self.smtp_server.stop()
-
-    def test_email_notifier(self):
-        """
-        Test email notifier
-        """
-        notifier = fixtures.notifiers.createEmailNotifier(
-            host='localhost',
-            port=self.smtp_server.port,
-            enableHtml=False
-        )
-
-        notifier.getInstance().notify(
-            'Group',
-            'Identificator',
-            messaging.NotificationLevel.CRITICAL,
-            'Test message cañón',
-        )
-
+from . import test_login_logout

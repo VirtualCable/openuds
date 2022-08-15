@@ -28,4 +28,4 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .notifier import *
+from . import test_notifier

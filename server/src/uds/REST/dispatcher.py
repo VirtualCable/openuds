@@ -61,7 +61,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['Handler', 'Dispatcher']
 
-AUTH_TOKEN_HEADER = 'X-Auth-Token'
+AUTH_TOKEN_HEADER = 'X-Auth-Token'  # nosec: this is not a password, but a header name
 
 
 class Dispatcher(View):
