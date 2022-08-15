@@ -29,10 +29,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from django.test import TestCase
-from django.test.client import Client
-from django.conf import settings
 
-from .. import fixtures, tools
+from .. import fixtures
 from uds.core import messaging
 
 class TestEmailNotifier(TestCase):
