@@ -4,3 +4,4 @@
 /uds/static/clients/
 /*.sqlite3*
 .hypothesis
+htmlcov
