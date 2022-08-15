@@ -74,7 +74,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     Server configuration).
     """
 
-    provider: 'models.ForeignKey[Service, Provider]' = models.ForeignKey(
+    provider: 'models.ForeignKey["Service", Provider]' = models.ForeignKey(
         Provider, related_name='services', on_delete=models.CASCADE
     )
 
@@ -89,7 +89,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     _cachedInstance: typing.Optional['services.Service'] = None
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Service]'
+    objects: 'models.manager.Manager["Service"]'
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     aliases: 'models.manager.RelatedManager[ServiceTokenAlias]'
 
