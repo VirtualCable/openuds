@@ -32,9 +32,12 @@
 """
 import typing
 
-from uds.core.util.cache import Cache
-from uds.core.util.storage import Storage
-from uds.core.util.unique_id_generator import UniqueIDGenerator
+
+if typing.TYPE_CHECKING:
+    from uds.core.util.cache import Cache
+    from uds.core.util.storage import Storage
+    from uds.core.util.unique_id_generator import UniqueIDGenerator
+
 
 TEMP_ENV = 'temporary'
 GLOBAL_ENV = 'global'
@@ -50,14 +53,14 @@ class Environment:
     __slots__ = ['_key', '_cache', '_storage', '_idGenerators']
 
     _key: str
-    _cache: Cache
-    _storage: Storage
-    _idGenerators: typing.Dict[str, UniqueIDGenerator]
+    _cache: 'Cache'
+    _storage: 'Storage'
+    _idGenerators: typing.Dict[str, 'UniqueIDGenerator']
 
     def __init__(
         self,
         uniqueKey: str,
-        idGenerators: typing.Optional[typing.Dict[str, UniqueIDGenerator]] = None,
+        idGenerators: typing.Optional[typing.Dict[str, 'UniqueIDGenerator']] = None,
     ):
         """
         Initialized the Environment for the specified id
@@ -66,6 +69,10 @@ class Environment:
             is used basically at User Services to auto-create ids for macs or names, using
             {'mac' : UniqueMacGenerator, 'name' : UniqueNameGenerator } as argument.
         """
+        # Avoid circular imports
+        from uds.core.util.cache import Cache
+        from uds.core.util.storage import Storage
+
         if idGenerators is None:
             idGenerators = dict()
         self._key = uniqueKey
@@ -74,7 +81,7 @@ class Environment:
         self._idGenerators = idGenerators
 
     @property
-    def cache(self) -> Cache:
+    def cache(self) -> 'Cache':
         """
         Method to acces the cache of the environment.
         @return: a referente to a Cache instance
@@ -82,14 +89,14 @@ class Environment:
         return self._cache
 
     @property
-    def storage(self) -> Storage:
+    def storage(self) -> 'Storage':
         """
         Method to acces the cache of the environment.
         @return: a referente to an Storage Instance
         """
         return self._storage
 
-    def idGenerators(self, generatorId: str) -> UniqueIDGenerator:
+    def idGenerators(self, generatorId: str) -> 'UniqueIDGenerator':
         """
         The idea of generator of id is to obtain at some moment Ids with a proper generator.
         If the environment do not contains generators of id, this method will return None.
@@ -112,8 +119,8 @@ class Environment:
         """
         Removes all related information from database for this environment.
         """
-        Cache.delete(self._key)
-        Storage.delete(self._key)
+        self._cache.clear()
+        self._storage.clear()
         for _, v in self._idGenerators.items():
             v.release()
 
@@ -156,8 +163,8 @@ class Environment:
         It will not make environment persistent
         """
         env = Environment(TEMP_ENV)
-        env.storage.clean()
-        env.cache.clean()
+        env.storage.clear()
+        env.cache.clear()
         return env
 
     @staticmethod
@@ -178,7 +185,7 @@ class Environmentable:
 
     _env: Environment
 
-    def __init__(self, environment: Environment):
+    def __init__(self, environment: 'Environment'):
         """
         Initialized the element
 
@@ -188,7 +195,7 @@ class Environmentable:
         self._env = environment
 
     @property
-    def env(self) -> Environment:
+    def env(self) -> 'Environment':
         """
         Utility method to access the envionment contained by this object
 
@@ -198,7 +205,7 @@ class Environmentable:
         return self._env
 
     @env.setter
-    def env(self, environment: Environment):
+    def env(self, environment: 'Environment'):
         """
         Assigns a new environment
 
@@ -208,7 +215,7 @@ class Environmentable:
         self._env = environment
 
     @property
-    def cache(self) -> Cache:
+    def cache(self) -> 'Cache':
         """
         Utility method to access the cache of the environment containe by this object
 
@@ -219,7 +226,7 @@ class Environmentable:
         return self._env.cache
 
     @property
-    def storage(self) -> Storage:
+    def storage(self) -> 'Storage':
         """
         Utility method to access the storage of the environment containe by this object
 
@@ -230,7 +237,7 @@ class Environmentable:
         """
         return self._env.storage
 
-    def idGenerators(self, generatorId: str) -> UniqueIDGenerator:
+    def idGenerators(self, generatorId: str) -> 'UniqueIDGenerator':
         """
         Utility method to access the id generator of the environment containe by this object
 

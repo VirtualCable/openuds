@@ -32,7 +32,7 @@
 """
 import re
 from urllib.parse import urlparse
-import xml.sax
+import xml.sax  # nosec: used to parse trusted xml provided only by administrators
 import datetime
 import requests
 import logging
@@ -204,6 +204,13 @@ class SAMLAuthenticator(auths.Authenticator):
         tab=gui.ADVANCED_TAB,
     )
 
+    checkSSLCertificate = gui.CheckBoxField(
+        label=_('Check SSL certificate'),
+        defvalue=False,  # For compatibility with previous versions
+        order=23,
+        tooltip=_('If set, check SSL certificate on requests for IDP Metadata'),
+        tab=_('Security'),
+    )
 
     nameIdEncrypted = gui.CheckBoxField(
         label=_('Encripted nameID'),
@@ -375,7 +382,7 @@ class SAMLAuthenticator(auths.Authenticator):
         if idpMetadata.startswith('http://') or idpMetadata.startswith('https://'):
             logger.debug('idp Metadata is an URL: %s', idpMetadata)
             try:
-                resp = requests.get(idpMetadata.split('\n')[0], verify=False)
+                resp = requests.get(idpMetadata.split('\n')[0], verify=self.checkSSLCertificate.isTrue())
                 idpMetadata = resp.content.decode()
             except Exception as e:
                 raise auths.Authenticator.ValidationException(
@@ -388,7 +395,7 @@ class SAMLAuthenticator(auths.Authenticator):
         # Try to parse it so we can check it is valid. Right now, it checks just that this is XML, will
         # correct it to check that is is valid idp metadata
         try:
-            xml.sax.parseString(idpMetadata, xml.sax.ContentHandler())  # type: ignore
+            xml.sax.parseString(idpMetadata, xml.sax.ContentHandler())  # type: ignore  # nosec: url provided by admin
         except Exception as e:
             msg = (gettext(' (obtained from URL)') if fromUrl else '') + str(e)
             raise auths.Authenticator.ValidationException(
@@ -439,7 +446,7 @@ class SAMLAuthenticator(auths.Authenticator):
     def getIdpMetadataDict(self, **kwargs) -> typing.Dict[str, typing.Any]:
         if self.idpMetadata.value.startswith('http'):
             try:
-                resp = requests.get(self.idpMetadata.value.split('\n')[0], verify=False)
+                resp = requests.get(self.idpMetadata.value.split('\n')[0], verify=self.checkSSLCertificate.isTrue())
                 val = resp.content.decode()
             except Exception as e:
                 logger.error('Error fetching idp metadata: %s', e)

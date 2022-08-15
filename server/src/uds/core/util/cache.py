@@ -32,7 +32,7 @@
 import datetime
 import hashlib
 import codecs
-import pickle
+import pickle  # nosec: This is e controled pickle loading
 import typing
 import logging
 
@@ -61,7 +61,7 @@ class Cache:
         self._bowner = self._owner.encode('utf8')
 
     def __getKey(self, key: typing.Union[str, bytes]) -> str:
-        h = hashlib.md5()
+        h = hashlib.md5()  # nosec: not used for cryptography, just for hashing
         if isinstance(key, str):
             key = key.encode('utf8')
         h.update(self._bowner + key)
@@ -82,7 +82,7 @@ class Cache:
 
             try:
                 # logger.debug('value: %s', c.value)
-                val = pickle.loads(
+                val = pickle.loads(  # nosec: This is e controled pickle loading
                     typing.cast(bytes, codecs.decode(c.value.encode(), 'base64'))
                 )
             except Exception:  # If invalid, simple do no tuse it
@@ -127,7 +127,7 @@ class Cache:
         """
         self.remove(key)
 
-    def clean(self) -> None:
+    def clear(self) -> None:
         Cache.delete(self._owner)
 
     def put(

@@ -93,23 +93,23 @@ class InternalDBAuth(auths.Authenticator):
         tab=gui.ADVANCED_TAB,
     )
 
-    def getIp(self) -> str:
+    def getIp(self, request: 'ExtendedHttpRequest') -> str:
         ip = (
-            getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
+            request.ip_proxy if self.acceptProxy.isTrue() else request.ip
         )  # pylint: disable=maybe-no-member
         if self.reverseDns.isTrue():
             try:
                 return str(
                     dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0]
                 )
-            except Exception:
+            except Exception:  # nosec: intentionally
                 pass
         return ip
 
     def mfaIdentifier(self, username: str) -> str:
         try:
             self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfaData
-        except Exception:
+        except Exception:  # nosec: This is e controled pickle loading
             pass
         return ''
 
@@ -134,7 +134,7 @@ class InternalDBAuth(auths.Authenticator):
                 usr.name = newUsername
                 usr.parent = parent
                 usr.save()
-            except Exception:
+            except Exception:  # nosec: intentionally
                 pass  # User already exists
             username = newUsername
 

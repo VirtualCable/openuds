@@ -67,7 +67,7 @@ logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
 
 USER_KEY = 'uk'
-PASS_KEY = 'pk'
+PASS_KEY = 'pk'  # nosec: this is not a password but a cookie to store encrypted data
 EXPIRY_KEY = 'ek'
 AUTHORIZED_KEY = 'ak'
 ROOT_ID = -20091204  # Any negative number will do the trick
@@ -456,7 +456,9 @@ def webLogout(
         if request.user:
             authenticator = request.user.manager.getInstance()
             username = request.user.name
-            exit_url = authenticator.logout(username) or exit_url
+            logout = authenticator.logout(request, username)
+            if logout and logout.success == auths.AuthenticationSuccess.REDIRECT:
+                exit_url = logout.url
             if request.user.id != ROOT_ID:
                 # Log the event if not root user
                 events.addEvent(
@@ -524,7 +526,7 @@ def authLogLogin(
             ),
             log.WEB,
         )
-    except Exception:
+    except Exception:  # nosec: intentionally ignore exception
         pass
 
 

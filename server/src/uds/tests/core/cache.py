@@ -69,7 +69,7 @@ class CacheTests(TestCase):
 
         # Checks cache clean
         cache.put('key', VALUE_1)
-        cache.clean()
+        cache.clear()
         self.assertEqual(cache.get('key'), None, 'Get key from cleaned cache')
 
         # Checks cache purge

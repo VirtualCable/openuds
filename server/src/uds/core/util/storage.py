@@ -29,7 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle    # nosec: This is e controled pickle use
 import base64
 import hashlib
 import codecs
@@ -46,7 +46,7 @@ MARK = '_mgb_'
 
 
 def _calcKey(owner: bytes, key: bytes, extra: typing.Optional[bytes] = None) -> str:
-    h = hashlib.md5()
+    h = hashlib.md5()  # nosec: not used for cryptography, just for hashing
     h.update(owner)
     h.update(key)
     if extra:
@@ -66,7 +66,7 @@ def _decodeValue(
 ) -> typing.Tuple[str, typing.Any]:
     if value:
         try:
-            v = pickle.loads(base64.b64decode(value.encode()))
+            v = pickle.loads(base64.b64decode(value.encode()))  # nosec: This is e controled pickle loading
             if isinstance(v, tuple) and v[0] == MARK:
                 return typing.cast(typing.Tuple[str, typing.Any], v[1:])
             # Fix value so it contains also the "key" (in this case, the original key is lost, we have only the hash value...)
@@ -312,7 +312,7 @@ class Storage:
     def getPickle(self, skey: typing.Union[str, bytes]) -> typing.Any:
         v = self.readData(skey, True)
         if v:
-            return pickle.loads(typing.cast(bytes, v))
+            return pickle.loads(typing.cast(bytes, v))  # nosec: This is e controled pickle loading
         return None
 
     def getPickleByAttr1(self, attr1: str, forUpdate: bool = False):
@@ -320,7 +320,7 @@ class Storage:
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)
             if forUpdate:
                 query = query.select_for_update()
-            return pickle.loads(
+            return pickle.loads(  # nosec: This is e controled pickle loading
                 codecs.decode(query[0].data.encode(), 'base64')
             )  # @UndefinedVariable
         except Exception:
@@ -335,7 +335,7 @@ class Storage:
         try:
             # Process several keys at once
             DBStorage.objects.filter(key__in=[self.getKey(k) for k in keys]).delete()
-        except Exception:
+        except Exception:  # nosec: Not interested in processing exceptions, just ignores it
             pass
 
     def lock(self):
@@ -393,10 +393,10 @@ class Storage:
         self, attr1: typing.Optional[str] = None, forUpdate: bool = False
     ) -> typing.Iterable[typing.Tuple[str, typing.Any, str]]:
         for v in self.filter(attr1, forUpdate):
-            yield (v[0], pickle.loads(v[1]), v[2])
+            yield (v[0], pickle.loads(v[1]), v[2])  # nosec: secure pickle load
 
-    def clean(self):
-        self.delete(self._owner)
+    def clear(self):
+        Storage.delete(self._owner)
 
     @staticmethod
     def delete(owner: str) -> None:
