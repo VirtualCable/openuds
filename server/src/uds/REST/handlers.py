@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'
+AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'  # nosec: this is not a password
 
 
 class HandlerError(Exception):

@@ -161,6 +161,16 @@ class Test(ActorV3Action):
 class Register(ActorV3Action):
     """
     Registers an actor
+    parameters:
+        - mac: mac address of the registering machine
+        - ip: ip address of the registering machine
+        - hostname: hostname of the registering machine
+        - pre_command: command to be executed before the connection of the user is established
+        - post_command: command to be executed after the actor is initialized and before set ready
+        - run_once_command: comand to run just once after the actor is started. The actor will stop after this. 
+          The command is responsible to restart the actor.
+        - log_level: log level for the actor
+
     """
 
     authenticated = True
@@ -185,7 +195,7 @@ class Register(ActorV3Action):
             actorToken.stamp = getSqlDatetime()
             actorToken.save()
             logger.info('Registered actor %s', self._params)
-        except Exception:
+        except Exception:  # Not found, create a new token
             actorToken = ActorToken.objects.create(
                 username=self._user.pretty_name,
                 ip_from=self._request.ip,

@@ -30,12 +30,24 @@
 """
 
 import logging
+import string
+import random
 import typing
 
+from django.test import SimpleTestCase
 from django.test.client import Client
 from django.conf import settings
 
 from uds.core.managers.crypto import CryptoManager
+from uds.REST.handlers import AUTH_TOKEN_HEADER
+
+# constants
+# String chars to use in random strings
+STRING_CHARS = string.ascii_letters + string.digits + '_'
+# Invalid string chars
+STRING_CHARS_INVALID = '!@#$%^&*()_+=-[]{}|;\':",./<>? '
+# String chars with invalid chars to use in random strings
+STRING_CHARS_WITH_INVALID = STRING_CHARS + STRING_CHARS_INVALID
 
 
 def getClient() -> Client:
@@ -49,19 +61,72 @@ def getClient() -> Client:
         'uds.core.util.middleware.request.GlobalRequestMiddleware',
     ]
 
-    client = Client()
+    # Instantiate the client and add basic user agent
+    client = Client(HTTP_USER_AGENT='Testing user agent')
+    # and required UDS cookie
     client.cookies['uds'] = CryptoManager().randomString(48)
 
-    # Patch the client to include 
-    #             HTTP_USER_AGENT='Testing user agent', 
-    # GET, POST, PUT, DELETE methods
-    _oldRequest = client.request
-
-    def _request(**kwargs):
-        if 'HTTP_USER_AGENT' not in kwargs:
-            kwargs['HTTP_USER_AGENT'] = 'Testing user agent'
-        return _oldRequest(**kwargs)  # type: ignore
-
-    client.request = _request
-    
     return client
+
+
+# Calls REST login
+def rest_login(
+    caller: SimpleTestCase,
+    client: Client,
+    auth_id: str,
+    username: str,
+    password: str,
+    expectedResponseCode: int = 200,
+    errorMessage: typing.Optional[str] = None,
+) -> typing.Mapping[str, typing.Any]:
+    response = client.post(
+        '/uds/rest/auth/login',
+        {
+            'auth_id': auth_id,
+            'username': username,
+            'password': password,
+        },
+        content_type='application/json',
+    )
+
+    caller.assertEqual(
+        response.status_code,
+        expectedResponseCode,
+        'Login from {}'.format(errorMessage or caller.__class__.__name__),
+    )
+
+    if response.status_code == 200:
+        return response.json()
+
+    return {}
+
+
+def rest_logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
+    response = client.get(
+        '/uds/rest/auth/logout',
+        content_type='application/json',
+        **{AUTH_TOKEN_HEADER: auth_token}
+    )
+    caller.assertEqual(response.status_code, 200, 'Logout')
+    caller.assertEqual(response.json(), {'result': 'ok'}, 'Logout')
+
+
+def random_string_generator(size: int = 6, chars: typing.Optional[str] = None) -> str:
+    chars = chars or STRING_CHARS
+    return ''.join(
+        random.choice(chars)  # nosec: Not used for cryptography, just for testing
+        for _ in range(size)
+    )
+
+
+def random_ip_generator() -> str:
+    return '.'.join(
+        str(
+            random.randint(0, 255)  # nosec: Not used for cryptography, just for testing
+        )  
+        for _ in range(4)
+    )
+
+
+def random_mac_generator() -> str:
+    return ':'.join(random_string_generator(2, '0123456789ABCDEF') for _ in range(6))

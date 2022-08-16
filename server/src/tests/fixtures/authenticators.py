@@ -65,6 +65,7 @@ def createUsers(
     is_staff: bool = False,
     is_admin: bool = False,
     enabled: bool = True,
+    groups: typing.Optional[typing.List[models.Group]] = None,
 ) -> typing.List[models.User]:
     """
     Creates some ramdon users
@@ -83,6 +84,12 @@ def createUsers(
         for i in range(glob['user_id'], glob['user_id'] + number_of_users)
     ]
     glob['user_id'] += number_of_users
+
+    # If groups are given, add them to the users
+    if groups:
+        for user in users:
+            for group in groups:
+                user.groups.add(group)
 
     return users
 

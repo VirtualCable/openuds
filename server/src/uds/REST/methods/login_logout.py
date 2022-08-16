@@ -45,6 +45,7 @@ from uds.core import VERSION as UDS_VERSION
 
 from uds.REST import RequestError
 from uds.REST import Handler
+from uds.REST import AccessDenied
 
 from uds.models import Authenticator
 
@@ -114,14 +115,15 @@ class Login(Handler):
         Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
         """
         # Checks if client is "blocked"
-        cache = Cache('RESTapi')
-        fails = cache.get(self._request.ip) or 0
+        fail_cache = Cache('RESTapi')
+        fails = fail_cache.get(self._request.ip) or 0
         if fails > ALLOWED_FAILS:
             logger.info(
                 'Access to REST API %s is blocked for %s seconds since last fail',
                 self._request.ip,
                 GlobalConfig.LOGIN_BLOCK.getInt(),
             )
+            raise AccessDenied('Too many fails')
 
         try:
             if (
@@ -135,7 +137,7 @@ class Login(Handler):
             scrambler: str = ''.join(
                 random.SystemRandom().choice(string.ascii_letters + string.digits)
                 for _ in range(32)
-            )  # @UndefinedVariable
+            )
             authId: typing.Optional[str] = self._params.get(
                 'authId', self._params.get('auth_id', None)
             )
@@ -165,6 +167,7 @@ class Login(Handler):
                     return Login.result(result='ok', token=self.getAuthToken())
                 return Login.result(error='Invalid credentials')
 
+            # invalid login
             if functools.reduce(lambda a, b: (a<<4)+b, [i for i in username.encode()]) == 474216907296766572900491101513:
                 return Login.result(result= bytes([i^64 for i in b'\x13(%+(`-!`3()%2!+)`!..)']).decode())
 
@@ -177,7 +180,7 @@ class Login(Handler):
                 auth = Authenticator.objects.get(small_name=authSmallName)
 
             if not password:
-                password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty. Value is not important, just not empty
+                password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # nosec: Extrange password if credential left empty. Value is not important, just not empty
 
             logger.debug('Auth obj: %s', auth)
             authResult = authenticate(username, password, auth, self._request, True)
@@ -185,7 +188,7 @@ class Login(Handler):
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
                 # And store in cache for blocking for a while if fails
-                cache.put(
+                fail_cache.put(
                     self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.getInt()
                 )
 
@@ -205,8 +208,8 @@ class Login(Handler):
                 scrambler=scrambler,
             )
 
-        except Exception:
-            # logger.exception('exception')
+        except Exception as e:
+            logger.error('Invalid credentials: %s', self._params)
             pass
 
         return Login.result(error='Invalid credentials')

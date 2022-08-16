@@ -257,7 +257,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         if hash[:8] == '{SHA256}':
             return hashlib.sha3_256(value).hexdigest() == hash[8:]
         else:  # Old sha1
-            return hash == str(hashlib.sha1(value).hexdigest())
+            return hash == str(hashlib.sha1(value).hexdigest())  # nosec: Old compatibility, not used anymore but need to be supported
 
     def uuid(self, obj: typing.Any = None) -> str:
         """
