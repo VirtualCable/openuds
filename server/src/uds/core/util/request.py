@@ -29,8 +29,6 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
-import weakref
 import logging
 import typing
 
