@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2018 Virtual Cable S.L.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -38,6 +38,7 @@ import logging
 from django.db import connections
 
 from django.db.backends.signals import connection_created
+# from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 
 
@@ -72,7 +73,7 @@ class UDSAppConfig(AppConfig):
         # To make sure that the packages are initialized at this point
         from . import services
         from . import auths
-        from . import mfas  # To make sure mfas are loaded on memory
+        from . import mfas
         from . import osmanagers
         from . import notifiers
         from . import transports
@@ -86,7 +87,7 @@ class UDSAppConfig(AppConfig):
         try:
             with connections['persistent'].schema_editor() as schema_editor:
                 schema_editor.create_model(self.get_model('Notification'))
-        except Exception:
+        except Exception:  # nosec: intentionally catching all exceptions
             # If it fails, it's ok, it just means that it already exists
             pass
 
@@ -95,7 +96,6 @@ default_app_config = 'uds.UDSAppConfig'
 
 
 # Sets up several sqlite non existing methods
-
 @receiver(connection_created)
 def extend_sqlite(connection=None, **kwargs):
     if connection and connection.vendor == "sqlite":
@@ -108,4 +108,3 @@ def extend_sqlite(connection=None, **kwargs):
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
         connection.connection.create_function("CEIL", 1, math.ceil)
-

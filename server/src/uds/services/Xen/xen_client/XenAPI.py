@@ -164,13 +164,13 @@ class Session(xmlrpclib.ServerProxy):
             )
             and ignore_ssl
         ):
-            ctx = ssl._create_unverified_context()
+            ctx = ssl._create_unverified_context()  # nosec: Xen Server will not have a valid cert
             xmlrpclib.ServerProxy.__init__(
-                self, uri, transport, encoding, verbose, allow_none, context=ctx
+                self, uri, transport, encoding, bool(verbose), bool(allow_none), context=ctx
             )
         else:
             xmlrpclib.ServerProxy.__init__(
-                self, uri, transport, encoding, verbose, allow_none
+                self, uri, transport, encoding, bool(verbose), bool(allow_none)
             )
         self.transport = transport
         self._session = None
@@ -229,10 +229,10 @@ class Session(xmlrpclib.ServerProxy):
             self.API_version = API_VERSION_1_1
 
     def _get_api_version(self):
-        pool = self.xenapi.pool.get_all()[0]
-        host = self.xenapi.pool.get_master(pool)
-        major = self.xenapi.host.get_API_version_major(host)
-        minor = self.xenapi.host.get_API_version_minor(host)
+        pool = self.xenapi.pool.get_all()[0]  # type: ignore
+        host = self.xenapi.pool.get_master(pool)  # type: ignore
+        major = self.xenapi.host.get_API_version_major(host)  # type: ignore
+        minor = self.xenapi.host.get_API_version_minor(host)  # type: ignore
         return "%s.%s" % (major, minor)
 
     def __getattr__(self, name):

@@ -31,24 +31,25 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import json
+
 
 from django.contrib.sessions.serializers import JSONSerializer
-
-class SessionSerializer(JSONSerializer):
+class SessionSerializer:
     """
     Serializer for django sessions.
     """
-    def dumps(self, data):
+    def dumps(self, data) -> bytes:
         """
         Serialize data for storage in a session.
         """
-        return JSONSerializer.dumps(self, data)
+        return json.dumps(data).encode()
 
-    def loads(self, data):
+    def loads(self, data: bytes) -> typing.Dict[str, typing.Any]:
         """
         Deserialize data from a session.
         """
         try:
-            return JSONSerializer.loads(self, data)
+            return json.loads(data)
         except Exception:
             return {}  # If pickle session was used, we get an exception, so we return an empty dict

@@ -41,9 +41,6 @@ from uds.models import User
 
 logger = logging.getLogger(__name__)
 
-_requests: typing.Dict[int, typing.Tuple[weakref.ref, datetime.datetime]] = {}
-
-
 class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_proxy: str
