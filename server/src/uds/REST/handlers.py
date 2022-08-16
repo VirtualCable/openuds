@@ -32,6 +32,7 @@
 """
 import typing
 import logging
+import codecs
 
 from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
@@ -206,7 +207,7 @@ class Handler:
         """
         try:
             del self._headers[header]
-        except Exception:
+        except Exception:  # nosec: intentionally ingoring exception
             pass  # If not found, just ignore it
 
     # Auth related
@@ -240,10 +241,13 @@ class Handler:
         if is_admin:
             staff_member = True  # Make admins also staff members :-)
 
+        # crypt password and convert to base64
+        passwd = codecs.encode(cryptoManager().symCrypt(password, scrambler), 'base64').decode()
+
         session['REST'] = {
             'auth': id_auth,
             'username': username,
-            'password': cryptoManager().symCrypt(password, scrambler),  # Stores "bytes"
+            'password': passwd,
             'locale': locale,
             'platform': platform,
             'is_admin': is_admin,
@@ -304,6 +308,9 @@ class Handler:
         """
         try:
             if self._session:
+                # if key is password, its in base64, so decode it and return as bytes
+                if key == 'password':
+                    return codecs.decode(self._session['REST'][key], 'base64')
                 return self._session['REST'].get(key)
             return None
         except Exception:
@@ -315,7 +322,11 @@ class Handler:
         """
         try:
             if self._session:
-                self._session['REST'][key] = value
+                # if key is password, its in base64, so encode it and store as str
+                if key == 'password':
+                    self._session['REST'][key] = codecs.encode(value, 'base64').decode()
+                else:
+                    self._session['REST'][key] = value
                 self._session.accessed = True
                 self._session.save()
         except Exception:

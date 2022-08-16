@@ -37,7 +37,14 @@ from django.utils import timezone
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import AUTHORIZED_KEY, EXPIRY_KEY, ROOT_ID, USER_KEY, getRootUser, webLogout
+from uds.core.auths.auth import (
+    AUTHORIZED_KEY,
+    EXPIRY_KEY,
+    ROOT_ID,
+    USER_KEY,
+    getRootUser,
+    webLogout,
+)
 from uds.models import User
 
 if typing.TYPE_CHECKING:
@@ -81,21 +88,27 @@ class GlobalRequestMiddleware:
         if request.user:
             # return HttpResponse(content='Session Expired', status=403, content_type='text/plain')
             now = timezone.now()
-            expiry = request.session.get(EXPIRY_KEY, now)
+            try:
+                expiry = datetime.datetime.fromisoformat(
+                    request.session.get(EXPIRY_KEY, '')
+                )
+            except ValueError:
+                expiry = now
             if expiry < now:
                 try:
-                    return webLogout(
-                        request=request
-                    ) 
-                except Exception:
+                    return webLogout(request=request)
+                except Exception:  # nosec: intentionaly catching all exceptions and ignoring them
                     pass  # If fails, we don't care, we just want to logout
                 return HttpResponse(content='Session Expired', status=403)
             # Update session timeout..self.
-            request.session[EXPIRY_KEY] = now + datetime.timedelta(
-                seconds=GlobalConfig.SESSION_DURATION_ADMIN.getInt()
-                if request.user.isStaff()
-                else GlobalConfig.SESSION_DURATION_USER.getInt()
-            )
+            request.session[EXPIRY_KEY] = (
+                now
+                + datetime.timedelta(
+                    seconds=GlobalConfig.SESSION_DURATION_ADMIN.getInt()
+                    if request.user.isStaff()
+                    else GlobalConfig.SESSION_DURATION_USER.getInt()
+                )
+            ).isoformat()  # store as ISO format, str, json serilizable
 
         response = self._get_response(request)
 

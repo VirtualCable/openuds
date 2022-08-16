@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,36 +26,29 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import random
 import typing
 
+from django.contrib.sessions.serializers import JSONSerializer
 
-from django.test import TestCase
-from django.test.client import Client
-from django.conf import settings
-
-from .. import fixtures, tools
-
-
-class RESTLoginLogoutCase(TestCase):
+class SessionSerializer(JSONSerializer):
     """
-    Test login and logout
+    Serializer for django sessions.
     """
-
-    def setUp(self):
-        self.client = tools.getClient()
-
-    def test_register_actor(self):
+    def dumps(self, data):
         """
-        Test actor rest api registration
+        Serialize data for storage in a session.
         """
-        provider = fixtures.services.createProvider()
-        # Create some random services of all kinds
-        services = fixtures.services.createServices(provider, number_of_services=2, type_of_service=1)
-        services = services + fixtures.services.createServices(provider, number_of_services=2, type_of_service=2)
+        return JSONSerializer.dumps(self, data)
 
-        print(provider)
-        print(services)
+    def loads(self, data):
+        """
+        Deserialize data from a session.
+        """
+        try:
+            return JSONSerializer.loads(self, data)
+        except Exception:
+            return {}  # If pickle session was used, we get an exception, so we return an empty dict

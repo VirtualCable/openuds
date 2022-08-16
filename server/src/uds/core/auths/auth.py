@@ -34,6 +34,7 @@ Provides useful functions for authenticating, used by web interface.
 '''
 import logging
 import typing
+import codecs
 
 from functools import wraps
 from django.http import (
@@ -342,8 +343,7 @@ def authenticateViaCallback(
 
     result = authInstance.authCallback(params, gm, request)
     if result.success == auths.AuthenticationSuccess.FAIL or (
-        result.success == auths.AuthenticationSuccess.OK
-        and not gm.hasValidGroups()
+        result.success == auths.AuthenticationSuccess.OK and not gm.hasValidGroups()
     ):
         raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
@@ -354,9 +354,7 @@ def authenticateViaCallback(
         return AuthResult(url=result.url)
 
     if result.username:
-        return registerUser(
-            authenticator, authInstance, result.username or '', request
-        )
+        return registerUser(authenticator, authInstance, result.username or '', request)
 
     raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
@@ -409,9 +407,7 @@ def webLogin(
         False  # For now, we don't know if the user is authorized until MFA is checked
     )
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = cryptoManager().symCrypt(
-        password, cookie
-    )  # Stores "bytes"
+    request.session[PASS_KEY] = codecs.encode(cryptoManager().symCrypt(password, cookie), "base64").decode()  # as str
 
     # Ensures that this user will have access through REST api if logged in through web interface
     # Note that REST api will set the session expiry to selected value if user is an administrator
@@ -436,8 +432,9 @@ def webPassword(request: HttpRequest) -> str:
     so we can provide it to remote sessions.
     """
     if hasattr(request, 'session'):
+        passkey = codecs.decode(request.session.get(PASS_KEY, '').encode(), 'base64')
         return cryptoManager().symDecrpyt(
-            request.session.get(PASS_KEY, ''), getUDSCookie(request)
+            passkey, getUDSCookie(request)
         )  # recover as original unicode string
     else:  # No session, get from _session instead, this is an "client" REST request
         return cryptoManager().symDecrpyt(request._cryptedpass, request._scrambler)  # type: ignore

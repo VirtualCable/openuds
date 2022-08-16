@@ -199,7 +199,7 @@ MIDDLEWARE = [
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_AGE = 3600
 SESSION_COOKIE_HTTPONLY = False
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+SESSION_SERIALIZER = 'uds.core.util.session_serializer.SessionSerializer'
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 ROOT_URLCONF = 'server.urls'
