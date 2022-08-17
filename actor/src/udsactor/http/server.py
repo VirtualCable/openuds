@@ -71,7 +71,7 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         # Very simple path & params splitter
         path = self.path.split('?')[0][1:].split('/')
 
-        logger.debug('Path: %s, params: %s', path, params)
+        logger.debug('Path: %s, ip: %s, params: %s', path, self.client_address, params)
 
         handlerType: typing.Optional[typing.Type['Handler']] = None
 
