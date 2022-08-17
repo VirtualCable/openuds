@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -47,7 +47,7 @@ from .rdp_file import RDPFile
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import Module
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +144,7 @@ class TRDPTransport(BaseRDPTransport):
         os: typing.Dict[str, typing.Any],
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         # We use helper to keep this clean
         # prefs = user.prefs('rdp')
@@ -220,8 +220,8 @@ class TRDPTransport(BaseRDPTransport):
         }
 
         if osName == 'windows':
-            if password != '':
-                r.password = '{password}'
+            if password:
+                r.password = '{password}'  # nosec: no hardcoded password
             sp.update(
                 {
                     'as_file': r.as_file,

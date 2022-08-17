@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016-2021 Virtual Cable S.L.U.
+# Copyright (c) 2016-2022 Virtual Cable S.L.U.
 # All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -41,7 +41,7 @@ from . import x2go_file
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ class X2GOTransport(BaseX2GOTransport):
         os: typing.Dict[str, typing.Any],
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         ci = self.getConnectionInfo(userService, user, password)
         username = ci['username']

@@ -47,7 +47,7 @@ from uds import models
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import Module
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -201,7 +201,7 @@ class HTML5VNCTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def getLink(  # pylint: disable=too-many-locals
+    def getLink(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -209,7 +209,7 @@ class HTML5VNCTransport(transports.Transport):
         os: typing.Dict[str, str],
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> str:
         # Build params dict
         params = {

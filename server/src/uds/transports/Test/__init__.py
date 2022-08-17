@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2022 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,5 +31,4 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from .spice import SPICETransport
-from .spicetunnel import TSPICETransport
+from .transport import TestTransport

@@ -141,28 +141,6 @@ class WindowsOsManager(osmanagers.OSManager):
     def getName(self, userService: 'UserService') -> str:
         return userService.getName()
 
-    def infoVal(self, userService: 'UserService') -> str:
-        return 'rename:' + self.getName(userService)
-
-    def infoValue(self, userService: 'UserService') -> str:
-        return 'rename\r' + self.getName(userService)
-
-    def notifyIp(
-        self, uid: str, userService, data: typing.Dict[str, typing.Any]
-    ) -> None:
-        userServiceInstance = userService.getInstance()
-
-        ip = ''
-        # Notifies IP to deployed
-        for p in data['ips']:
-            if p[0].lower() == uid.lower():
-                userServiceInstance.setIp(p[1])
-                ip = p[1]
-                break
-
-        self.logKnownIp(userService, ip)
-        userService.updateData(userServiceInstance)
-
     def doLog(self, userService: 'UserService', data: str, origin=log.OSMANAGER):
         # Stores a log associated with this service
         try:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2016-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,38 +32,38 @@
 import logging
 import typing
 
-
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core import transports
+from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.util import os_detector as OsDetector
-from uds.core.util import validators
+from uds.core.util import tools, validators
+from uds.core import transports
 from uds.models import TicketStore
-
-from .spice_base import BaseSpiceTransport
-from .remote_viewer_file import RemoteViewerFile
+from .x2go_base import BaseX2GOTransport
+from . import x2go_file
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import Module
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequestWithUser
+
 
 logger = logging.getLogger(__name__)
 
 
-class TSPICETransport(BaseSpiceTransport):
+class TX2GOTransport(BaseX2GOTransport):
     """
-    Provides access via SPICE to service.
+    Provides access via X2GO to service.
+    This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
     isBase = False
 
-    iconFile = 'spice-tunnel.png'
-    typeName = _('SPICE')
-    typeType = 'TSSPICETransport'
-    typeDescription = _('SPICE Protocol. Tunneled connection.')
-    protocol = transports.protocols.SPICE
-    group: typing.ClassVar[str] = transports.TUNNELED_GROUP
+    iconFile = 'x2go-tunnel.png'
+    typeName = _('X2Go')
+    typeType = 'TX2GOTransport'
+    typeDescription = _('X2Go access (Experimental). Tunneled connection.')
+    group = transports.TUNNELED_GROUP
 
     tunnelServer = gui.TextField(
         label=_('Tunnel server'),
@@ -96,11 +96,18 @@ class TSPICETransport(BaseSpiceTransport):
         tab=gui.TUNNEL_TAB,
     )
 
-    serverCertificate = BaseSpiceTransport.serverCertificate
-    fullScreen = BaseSpiceTransport.fullScreen
-    usbShare = BaseSpiceTransport.usbShare
-    autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
-    smartCardRedirect = BaseSpiceTransport.smartCardRedirect
+    fixedName = BaseX2GOTransport.fixedName
+    screenSize = BaseX2GOTransport.screenSize
+    desktopType = BaseX2GOTransport.desktopType
+    customCmd = BaseX2GOTransport.customCmd
+    sound = BaseX2GOTransport.sound
+    exports = BaseX2GOTransport.exports
+    speed = BaseX2GOTransport.speed
+
+    soundType = BaseX2GOTransport.soundType
+    keyboardLayout = BaseX2GOTransport.keyboardLayout
+    pack = BaseX2GOTransport.pack
+    quality = BaseX2GOTransport.quality
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -114,49 +121,65 @@ class TSPICETransport(BaseSpiceTransport):
         os: typing.Dict[str, typing.Any],
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
-        userServiceInstance: typing.Any = userService.getInstance()
 
-        # Spice connection
-        con = userServiceInstance.getConsoleConnection()
+        ci = self.getConnectionInfo(userService, user, password)
+        username = ci['username']
 
-        # We MAY need two tickets, one for 'insecure' port an one for secure
-        ticket = ''
-        if con['port']:
-            ticket = TicketStore.create_for_tunnel(
-                userService=userService,
-                port=int(con['port']),
-                validity=self.tunnelWait.num() + 60,  # Ticket overtime
-            )
+        priv, pub = self.getAndPushKey(username, userService)
 
-        ticket_secure = ''
-        if con['secure_port']:
-            ticket_secure = TicketStore.create_for_tunnel(
-                userService=userService,
-                port=int(con['secure_port']),
-                validity=self.tunnelWait.num() + 60,  # Ticket overtime
-            )
+        width, height = self.getScreenSize()
+
+        rootless = False
+        desktop = self.desktopType.value
+        if desktop == "UDSVAPP":
+            desktop = "/usr/bin/udsvapp " + self.customCmd.value
+            rootless = True
+
+        xf = x2go_file.getTemplate(
+            speed=self.speed.value,
+            pack=self.pack.value,
+            quality=self.quality.value,
+            sound=self.sound.isTrue(),
+            soundSystem=self.sound.value,
+            windowManager=desktop,
+            exports=self.exports.isTrue(),
+            rootless=rootless,
+            width=width,
+            height=height,
+            user=username,
+        )
+
+        ticket = TicketStore.create_for_tunnel(
+            userService=userService,
+            port=22,
+            validity=self.tunnelWait.num() + 60,  # Ticket overtime
+        )
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
-        r = RemoteViewerFile(
-            '127.0.0.1',
-            '{port}',
-            '{secure_port}',
-            con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
-            self.serverCertificate.value.strip(),
-            con['cert_subject'],
-            fullscreen=self.fullScreen.isTrue(),
-        )
-        r.usb_auto_share = self.usbShare.isTrue()
-        r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
-        r.smartcard = self.smartCardRedirect.isTrue()
+        # data
+        data = {
+            'os': os['OS'],
+            'ip': ip,
+            'port': 22,
+            'key': priv,
+            'width': width,
+            'height': height,
+            'printers': True,
+            'drives': self.exports.isTrue(),
+            'fullScreen': width == -1 or height == -1,
+            'this_server': request.build_absolute_uri('/'),
+            'xf': xf,
+        }
+
+        m = tools.DictAsObj(data)
 
         osName = {
             OsDetector.KnownOS.Windows: 'windows',
             OsDetector.KnownOS.Linux: 'linux',
-            OsDetector.KnownOS.Macintosh: 'macosx',
+            # OsDetector.Macintosh: 'macosx'
         }.get(os['OS'])
 
         if osName is None:
@@ -164,18 +187,14 @@ class TSPICETransport(BaseSpiceTransport):
                 userService, transport, ip, os, user, password, request
             )
 
-        # if sso:  # If SSO requested, and when supported by platform
-        #     userServiceInstance.desktopLogin(user, password, '')
-
         sp = {
-            'as_file': r.as_file,
-            'as_file_ns': r.as_file_ns,
             'tunHost': tunHost,
             'tunPort': tunPort,
             'tunWait': self.tunnelWait.num(),
             'tunChk': self.verifyCertificate.isTrue(),
             'ticket': ticket,
-            'ticket_secure': ticket_secure,
+            'key': priv,
+            'xf': xf,
         }
 
         return self.getScript('scripts/{}/tunnel.py', osName, sp)

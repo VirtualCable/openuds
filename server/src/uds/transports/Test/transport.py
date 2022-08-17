@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,6 +40,7 @@ from uds.core.ui import gui
 from uds.core import transports
 
 from uds.core.util import os_detector as OsDetector
+from uds.core.managers import cryptoManager
 from uds import models
 
 # Not imported at runtime, just for type checking
@@ -50,7 +51,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class URLCustomTransport(transports.Transport):
+class TestTransport(transports.Transport):
     """
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
@@ -66,7 +67,7 @@ class URLCustomTransport(transports.Transport):
     protocol = transports.protocols.OTHER
     group = transports.DIRECT_GROUP
 
-    urlPattern = gui.TextField(
+    testURL = gui.TextField(
         label=_('URL Pattern'),
         order=1,
         tooltip=_('URL Pattern to open (i.e. https://_IP_/test?user=_USER_'),
@@ -90,8 +91,8 @@ class URLCustomTransport(transports.Transport):
             return
         # Strip spaces
         if not (
-            self.urlPattern.value.startswith('http://')
-            or self.urlPattern.value.startswith('https://')
+            self.testURL.value.startswith('http://')
+            or self.testURL.value.startswith('https://')
         ):
             raise transports.Transport.ValidationException(
                 _('The url must be http or https')
@@ -117,7 +118,7 @@ class URLCustomTransport(transports.Transport):
         username: str = user.getUsernameForAuth()
         username, password = userService.processUserPassword(username, password)
 
-        url = self.urlPattern.value.replace('_IP_', ip).replace('_USER_', username)
+        url = self.testURL.value.replace('_IP_', ip).replace('_USER_', username)
 
         onw = (
             '&o_n_w={}'.format(hash(transport.name))

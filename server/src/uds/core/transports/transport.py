@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -43,7 +43,7 @@ from uds.core.util import net
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.environment import Environment
     from uds import models
 
@@ -210,7 +210,7 @@ class Transport(Module):
         os: typing.Dict[str, str],
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
         """
         If this is an uds transport, this will return the tranport script needed for executing
@@ -244,7 +244,7 @@ class Transport(Module):
         os: typing.Dict[str, str],
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> typing.Tuple[str, str, typing.Mapping[str, str]]:
         """
         Encodes the script so the client can understand it
@@ -270,7 +270,7 @@ class Transport(Module):
         os: typing.Dict[str, str],
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> str:
         """
         Must override if transport does provides its own link
