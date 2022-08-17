@@ -198,12 +198,8 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
 
                 time.sleep(1.3)  # Sleeps between loop iterations
 
-            # If login was recognized...
-            if self._loginInfo.logged_in:
-                self.api.logout(user + self._extraLogoff, sessionType)
-                logger.info('Notified logout for %s (%s)', user, sessionType)  # Log logout
-            else:
-                logger.info('Logout not notified for %s (%s)', user, sessionType)  # Log logout
+            self.api.logout(user + self._extraLogoff, sessionType)
+            logger.info('Notified logout for %s (%s)', user, sessionType)  # Log logout
 
             # Clean up login info
             self._loginInfo = None
