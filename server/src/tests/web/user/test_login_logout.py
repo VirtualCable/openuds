@@ -35,20 +35,18 @@ import typing
 from django.test import TestCase, TransactionTestCase
 from django.db import transaction
 
-from ... import fixtures, tools
+from ...utils import test
+from ... import fixtures
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
 
 from uds import models
 
-class WebLoginLogoutCase(TransactionTestCase):
+class WebLoginLogoutCase(test.UDSTransactionTestCasse):
     """
-    Test login and logout
+    Test WEB login and logout
     """
-
-    def setUp(self):
-        self.client = tools.getClient()
 
     def assertInvalidLogin(self, response: 'HttpResponse') -> None:
         # Returns login page with a message on uds.js

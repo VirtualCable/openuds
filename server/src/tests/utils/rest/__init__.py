@@ -30,47 +30,17 @@
 """
 
 import logging
-import string
-import random
 import typing
 
 from django.test import SimpleTestCase
 from django.test.client import Client
-from django.conf import settings
 
-from uds.core.managers.crypto import CryptoManager
+from . import test
+
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 
-# constants
-# String chars to use in random strings
-STRING_CHARS = string.ascii_letters + string.digits + '_'
-# Invalid string chars
-STRING_CHARS_INVALID = '!@#$%^&*()_+=-[]{}|;\':",./<>? '
-# String chars with invalid chars to use in random strings
-STRING_CHARS_WITH_INVALID = STRING_CHARS + STRING_CHARS_INVALID
-
-
-def getClient() -> Client:
-    # Ensure only basic middleware are enabled.
-    settings.MIDDLEWARE = [
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.locale.LocaleMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-        'uds.core.util.middleware.request.GlobalRequestMiddleware',
-    ]
-
-    # Instantiate the client and add basic user agent
-    client = Client(HTTP_USER_AGENT='Testing user agent')
-    # and required UDS cookie
-    client.cookies['uds'] = CryptoManager().randomString(48)
-
-    return client
-
-
 # Calls REST login
-def rest_login(
+def login(
     caller: SimpleTestCase,
     client: Client,
     auth_id: str,
@@ -101,7 +71,7 @@ def rest_login(
     return {}
 
 
-def rest_logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
+def logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
     response = client.get(
         '/uds/rest/auth/logout',
         content_type='application/json',
@@ -111,22 +81,3 @@ def rest_logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None
     caller.assertEqual(response.json(), {'result': 'ok'}, 'Logout')
 
 
-def random_string_generator(size: int = 6, chars: typing.Optional[str] = None) -> str:
-    chars = chars or STRING_CHARS
-    return ''.join(
-        random.choice(chars)  # nosec: Not used for cryptography, just for testing
-        for _ in range(size)
-    )
-
-
-def random_ip_generator() -> str:
-    return '.'.join(
-        str(
-            random.randint(0, 255)  # nosec: Not used for cryptography, just for testing
-        )  
-        for _ in range(4)
-    )
-
-
-def random_mac_generator() -> str:
-    return ':'.join(random_string_generator(2, '0123456789ABCDEF') for _ in range(6))

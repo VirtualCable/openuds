@@ -35,88 +35,59 @@ from django.test import TestCase
 from django.test.client import Client
 from django.conf import settings
 
+from uds import models
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 
-from .. import fixtures, tools
+from .. import fixtures
+from ..utils import rest, constants
 
 
 logger = logging.getLogger(__name__)
 
-class RESTActorCase(TestCase):
+
+class RESTActorRegister(rest.test.RESTTestCase):
     """
     Test actor functionality
     """
 
-    def setUp(self) -> None:
-        self.client = tools.getClient()
 
-    def test_register_actor(self) -> None:
+    def test_register(self) -> None:
         """
         Test actor rest api registration
         """
-
-        def data(chars: typing.Optional[str] = None) -> typing.Dict[str, str]:
-            # Data for registration
-            return {
-                'username': tools.random_string_generator(size=12, chars=chars)
-                + '@AUTH'
-                + tools.random_string_generator(size=12, chars=chars),
-                'hostname': tools.random_string_generator(size=48, chars=chars),
-                'ip': tools.random_ip_generator(),
-                'mac': tools.random_mac_generator(),
-                'pre_command': tools.random_string_generator(size=64, chars=chars),
-                'run_once_command': tools.random_string_generator(size=64, chars=chars),
-                'post_command': tools.random_string_generator(size=64, chars=chars),
-                'log_level': '0',
-            }
-
-        # Create three users, one admin, one staff and one user
-        auth = fixtures.authenticators.createAuthenticator()
-        groups = fixtures.authenticators.createGroups(auth, 1)
-        admin = fixtures.authenticators.createUsers(auth, number_of_users=2, is_admin=True, groups=groups)
-        staff = fixtures.authenticators.createUsers(auth, number_of_users=2, is_staff=True, groups=groups)
-        plain_user = fixtures.authenticators.createUsers(auth, number_of_users=2, groups=groups)
-
-    
         response: typing.Any
-        for i, usr in enumerate(admin + staff + plain_user):
-            response = tools.rest_login(
-                self,
-                self.client,
-                auth_id=auth.uuid,
-                username=usr.name,
-                password=usr.name
-            )
-            self.assertEqual(
-                response['result'], 'ok', 'Login user {}'.format(usr.name)
-            )
-            token = response['token']
+        for i, usr in enumerate(self.admins + self.staffs + self.plain_users):
+            token = self.login(usr)
 
             # Try to register. Plain users will fail
-            will_fail = usr in plain_user
+            will_fail = usr in self.plain_users
             response = self.client.post(
                 '/uds/rest/actor/v3/register',
-                data=data(tools.STRING_CHARS if i%2 == 0 else tools.STRING_CHARS_INVALID),
+                data=self.register_data(
+                    constants.STRING_CHARS if i % 2 == 0 else constants.STRING_CHARS_INVALID
+                ),
                 content_type='application/json',
                 **{AUTH_TOKEN_HEADER: token}
             )
             if will_fail:
                 self.assertEqual(response.status_code, 403)
-            logger.debug('Response: %s', response)
+                continue  # Try next user, this one will fail
 
+            self.assertEqual(response.status_code, 200)
+            token = response.json()['result']
+
+            # Ensure database contains the registered token
+            self.assertEqual(models.ActorToken.objects.filter(token=token).count(), 1)
+
+    def x_log(self) -> None:
+        auth_token, actor_token = self.login_and_register()
+        response = self.client.post(
+            '/uds/rest/actor/v3/log',
+            data={'token': actor_token, 'level': 10000, 'message': 'Test message'},
+            content_type='application/json',
+        )
 
     def initialize_actor(self):
         """
         Test actor rest api registration
         """
-        provider = fixtures.services.createProvider()
-        # Create some random services of all kinds
-        services = fixtures.services.createServices(
-            provider, number_of_services=2, type_of_service=1
-        )
-        services = services + fixtures.services.createServices(
-            provider, number_of_services=2, type_of_service=2
-        )
-
-        print(provider)
-        print(services)

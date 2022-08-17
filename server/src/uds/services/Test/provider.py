@@ -50,7 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class Provider(services.ServiceProvider):
+class TestProvider(services.ServiceProvider):
     """
     This class represents the simple Test provider.
 

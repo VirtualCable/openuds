@@ -33,7 +33,7 @@ class Factory(typing.Generic[V], metaclass=singleton.Singleton):
             logger.debug('%s already registered as %s', type_, self._objects[typeName])
             return
 
-        self._objects[typeName] = type_
+        self._objects[typeName.lower()] = type_
 
     def get(self, typeName: str) -> typing.Optional[typing.Type[V]]:
         '''

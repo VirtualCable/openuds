@@ -32,21 +32,14 @@ import random
 import typing
 
 
-from django.test import TestCase
-from django.test.client import Client
-
-from .. import fixtures, tools
+from .. import fixtures
+from ..utils import rest, test
 
 
-class RESTLoginLogoutCase(TestCase):
+class RESTLoginLogoutCase(test.UDSTestCase):
     """
     Test login and logout
     """
-
-    client: Client
-
-    def setUp(self):
-        self.client = tools.getClient()
 
     def test_login_logout(self):
         """
@@ -68,14 +61,19 @@ class RESTLoginLogoutCase(TestCase):
         # Add users to some groups, ramdomly
         for user in users + admins + staffs:
             for group in random.sample(
-                groups, random.randint(1, len(groups))  # nosec: not used with cryptographic pourposes just for testing
+                groups,
+                random.randint(  # nosec: not used with cryptographic pourposes just for testing
+                    1, len(groups)
+                ),
             ):  # nosec: Simple test, not strong cryptograde needed
                 user.groups.add(group)
 
         # All users, admin and staff must be able to login
         for user in users + admins + staffs:
             # Valid
-            response = tools.rest_login(self, self.client, auth.uuid, user.name, user.name, 200, 'user')
+            response = rest.login(
+                self, self.client, auth.uuid, user.name, user.name, 200, 'user'
+            )
             self.assertEqual(
                 response['result'], 'ok', 'Login user {}'.format(user.name)
             )
@@ -84,10 +82,10 @@ class RESTLoginLogoutCase(TestCase):
             self.assertIsNotNone(
                 response['scrambler'], 'Login user {}'.format(user.name)
             )
-            tools.rest_logout(self, self.client, response['token'])
+            rest.logout(self, self.client, response['token'])
 
         # Login with invalid creds just for a single user, because server will "block" us for a while
-        response = tools.rest_login(self, self.client, auth.uuid, 'invalid', 'invalid', 200, 'user')
-        self.assertEqual(
-            response['result'], 'error', 'Login user invalid'
+        response = rest.login(
+            self, self.client, auth.uuid, 'invalid', 'invalid', 200, 'user'
         )
+        self.assertEqual(response['result'], 'error', 'Login user invalid')

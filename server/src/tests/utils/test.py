@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
@@ -26,11 +25,45 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-Simple "testing" provider.
-
-This package provides a simple test provider, suitable for automated tests.
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+import logging
 
-from .provider import TestProvider
+from django.test import TestCase, TransactionTestCase
+from django.test.client import Client
+from django.conf import settings
+
+from uds import models
+from uds.REST.handlers import AUTH_TOKEN_HEADER
+from uds.core.managers.crypto import CryptoManager
+
+
+logger = logging.getLogger(__name__)
+
+class UDSClient(Client):
+    def __init__(
+        self, enforce_csrf_checks: bool =False, raise_request_exception: bool=True, **defaults: typing.Any
+    ):
+        # Ensure only basic middleware are enabled.
+        settings.MIDDLEWARE = [
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.middleware.locale.LocaleMiddleware',
+            'django.middleware.common.CommonMiddleware',
+            'django.middleware.csrf.CsrfViewMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
+            'uds.core.util.middleware.request.GlobalRequestMiddleware',
+        ]
+
+        # Instantiate the client and add basic user agent
+        super().__init__(enforce_csrf_checks, raise_request_exception, HTTP_USER_AGENT='Testing user agent')
+        # and required UDS cookie
+        self.cookies['uds'] = CryptoManager().randomString(48)
+        
+
+class UDSTestCase(TestCase):
+    client_class: typing.Type = UDSClient
+
+class UDSTransactionTestCasse(TransactionTestCase):
+    client_class: typing.Type = UDSClient

@@ -43,7 +43,7 @@ from .deployment import TestUserDeployment
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .provider import Provider
+    from .provider import TestProvider
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +99,7 @@ class ServiceTestNoCache(services.Service):
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = TestUserDeployment
 
-    def parent(self) -> 'Provider':
+    def parent(self) -> 'TestProvider':
         return typing.cast('Provider', super().parent())
 
     def getName(self) -> str:
@@ -135,7 +135,7 @@ class ServiceTestCache(services.Service):
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = TestUserDeployment
 
-    def parent(self) -> 'Provider':
+    def parent(self) -> 'TestProvider':
         return typing.cast('Provider', super().parent())
 
     def getName(self) -> str:

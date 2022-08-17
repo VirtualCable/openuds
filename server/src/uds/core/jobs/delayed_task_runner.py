@@ -30,7 +30,7 @@
 """
 import time
 import codecs
-import pickle
+import pickle  # nosec: pickle is safe here
 import threading
 from socket import gethostname
 from datetime import timedelta
@@ -83,9 +83,9 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
     _keepRunning: typing.ClassVar[bool]  # If we should keep it running
 
     def __init__(self):
-        logger.debug("Initializing delayed task runner for host %s", self._hostname)
         DelayedTaskRunner._hostname = gethostname()
         DelayedTaskRunner._keepRunning = True
+        logger.debug("Initialized delayed task runner for host %s", DelayedTaskRunner._hostname)
 
     def notifyTermination(self) -> None:
         """
@@ -123,7 +123,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
                     )
                 taskInstanceDump = codecs.decode(task.instance.encode(), 'base64')
                 task.delete()
-            taskInstance = pickle.loads(taskInstanceDump)
+            taskInstance = pickle.loads(taskInstanceDump)  # nosec: controlled pickle
         except IndexError:
             return  # No problem, there is no waiting delayed task
         except OperationalError:

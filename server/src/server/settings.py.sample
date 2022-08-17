@@ -215,6 +215,10 @@ INSTALLED_APPS = (
     'uds.UDSAppConfig',
 )
 
+# Tests runner is default tests runner
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
 LOGDIR = BASE_DIR + '/' + 'log'
@@ -226,9 +230,6 @@ USEFILE = 'use.log'
 TRACEFILE = 'trace.log'
 LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
 ROTATINGSIZE = 32 * 1024 * 1024  # 32 Megabytes before rotating files
-
-# Tests runner is default tests runner
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 LOGGING = {
     'version': 1,
@@ -268,7 +269,7 @@ LOGGING = {
         'database': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'simple',
+            'formatter': 'verbose',
             'filename': LOGDIR + '/' + 'sql.log',
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
@@ -356,14 +357,13 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
+        # Disallow loggin "invalid hostname logging"
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
         # Disable fonttools (used by reports) logging (too verbose)
         'fontTools': {
-            'handlers': ['null'],
-            'propagate': True,
-            'level': 'ERROR',
-        },
-        # Disable matplotlib (used by reports) logging (too verbose)
-        'matplotlib': {
             'handlers': ['null'],
             'propagate': True,
             'level': 'ERROR',
@@ -371,6 +371,7 @@ LOGGING = {
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,
+            'propagate': False,
         },
         'uds.core.workers': {
             'handlers': ['workersFile'],
