@@ -108,16 +108,6 @@ class LinuxRandomPassManager(LinuxOsManager):
 
         return randomPass
 
-    def infoVal(self, service):
-        return 'rename:{0}\t{1}\t\t{2}'.format(
-            self.getName(service), self._userAccount, self.genPassword(service)
-        )
-
-    def infoValue(self, service):
-        return 'rename\r{0}\t{1}\t\t{2}'.format(
-            self.getName(service), self._userAccount, self.genPassword(service)
-        )
-
     def actorData(
         self, userService: 'UserService'
     ) -> typing.MutableMapping[str, typing.Any]:

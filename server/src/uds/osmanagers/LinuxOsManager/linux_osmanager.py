@@ -135,26 +135,6 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         return service.getName()
 
-    def infoVal(self, service):
-        return 'rename:' + self.getName(service)
-
-    def infoValue(self, service):
-        return 'rename\r' + self.getName(service)
-
-    def notifyIp(self, uid, service, data):
-        si = service.getInstance()
-
-        ip = ''
-        # Notifies IP to deployed
-        for p in data['ips']:
-            if p[0].lower() == uid.lower():
-                si.setIp(p[1])
-                ip = p[1]
-                break
-
-        self.logKnownIp(service, ip)
-        service.updateData(si)
-
     def doLog(self, service, data, origin=log.OSMANAGER):
         # Stores a log associated with this service
         try:

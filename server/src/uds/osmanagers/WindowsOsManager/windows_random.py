@@ -145,22 +145,6 @@ class WinRandomPassManager(WindowsOsManager):
             'new_password': self.genPassword(userService),
         }
 
-    def infoVal(self, userService: 'UserService') -> str:
-        return 'rename:{0}\t{1}\t{2}\t{3}'.format(
-            self.getName(userService),
-            self._userAccount,
-            self._password,
-            self.genPassword(userService),
-        )
-
-    def infoValue(self, userService: 'UserService') -> str:
-        return 'rename\r{0}\t{1}\t{2}\t{3}'.format(
-            self.getName(userService),
-            self._userAccount,
-            self._password,
-            self.genPassword(userService),
-        )
-
     def marshal(self) -> bytes:
         '''
         Serializes the os manager data so we can store it in database

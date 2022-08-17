@@ -483,24 +483,6 @@ class WinDomainOsManager(WindowsOsManager):
             'password': self._password,
         }
 
-    def infoVal(self, userService: 'UserService') -> str:
-        return 'domain:{0}\t{1}\t{2}\t{3}\t{4}'.format(
-            self.getName(userService),
-            self._domain,
-            self._ou,
-            self._account,
-            self._password,
-        )
-
-    def infoValue(self, userService: 'UserService') -> str:
-        return 'domain\r{0}\t{1}\t{2}\t{3}\t{4}'.format(
-            self.getName(userService),
-            self._domain,
-            self._ou,
-            self._account,
-            self._password,
-        )
-
     def marshal(self) -> bytes:
         """
         Serializes the os manager data so we can store it in database
