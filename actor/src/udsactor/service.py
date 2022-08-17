@@ -496,9 +496,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             self._initialized = (
                 self.initialize()
             )  # Maybe it's a local login by an unmanaged host.... On real login, will execute initilize again
-            if self._initialized:
-                master_token = self._cfg.master_token
-                secret = self._secret
+            # Unamanaged, need the master token
+            master_token = self._cfg.master_token
+            secret = self._secret
 
         # Own token will not be set if UDS did not assigned the initialized VM to an user
         # In that case, take master token (if machine is Unamanaged version)
@@ -514,9 +514,11 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             )
 
         if result.logged_in:
+            logger.debug('Login successful')
             self._loggedIn = True
             script = platform.store.invokeScriptOnLogin()
             if script:
+                logger.info('Executing script on login: {}'.format(script))
                 script += f'{username} {sessionType or "unknown"} {self._cfg.actorType}'
                 self.execute(script, 'Logon')
 
