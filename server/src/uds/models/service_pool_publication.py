@@ -86,7 +86,7 @@ class ServicePoolPublication(UUIDModel):
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
 
-    deployed_service: 'models.ForeignKey[ServicePoolPublication, ServicePool]' = (
+    deployed_service: 'models.ForeignKey["ServicePoolPublication", ServicePool]' = (
         models.ForeignKey(
             ServicePool, on_delete=models.CASCADE, related_name='publications'
         )
@@ -106,7 +106,7 @@ class ServicePoolPublication(UUIDModel):
     revision = models.PositiveIntegerField(default=1)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[ServicePoolPublication]'
+    objects: 'models.manager.Manager["ServicePoolPublication"]'
     userServices: 'models.manager.RelatedManager[UserService]'
 
     class Meta(UUIDModel.Meta):

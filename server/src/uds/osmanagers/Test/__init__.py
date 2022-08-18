@@ -31,5 +31,5 @@
 """
 from django.utils.translation import gettext_noop as _
 
-from .testing_osmanager import TestOsManager
+from .testing_osmanager import TestOSManager
 

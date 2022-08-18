@@ -50,7 +50,6 @@ class RESTActorRegister(rest.test.RESTTestCase):
     Test actor functionality
     """
 
-
     def test_register(self) -> None:
         """
         Test actor rest api registration
@@ -78,16 +77,3 @@ class RESTActorRegister(rest.test.RESTTestCase):
 
             # Ensure database contains the registered token
             self.assertEqual(models.ActorToken.objects.filter(token=token).count(), 1)
-
-    def x_log(self) -> None:
-        auth_token, actor_token = self.login_and_register()
-        response = self.client.post(
-            '/uds/rest/actor/v3/log',
-            data={'token': actor_token, 'level': 10000, 'message': 'Test message'},
-            content_type='application/json',
-        )
-
-    def initialize_actor(self):
-        """
-        Test actor rest api registration
-        """

@@ -308,7 +308,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If the transport did not notified this data, this may be "empty"
         """
-        return (self.src_ip or '0.0.0.0', self.src_hostname or 'unknown')
+        return (self.src_ip or '0.0.0.0', self.src_hostname or 'unknown')  # nosec: no binding address
 
     def getOsManager(self) -> typing.Optional['OSManager']:
         return self.deployed_service.osmanager
@@ -581,7 +581,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         self.setProperty('ip', ip)
 
     def getLoggedIP(self) -> str:
-        return self.getProperty('ip') or '0.0.0.0'
+        return self.getProperty('ip') or '0.0.0.0'  # nosec: no binding address
 
     def isValidPublication(self) -> bool:
         """

@@ -32,90 +32,35 @@ import typing
 
 from uds import models
 from uds.core import environment
-from uds.core.util import states
 from uds.core.managers.crypto import CryptoManager
 
 # Counters so we can reinvoke the same method and generate new data
 glob = {
-    'service_id': 0,
-    'service_pool_id': 0,
-    'user_service_id': 0,
+    'transport_id': 0,
 }
 
-def createProvider(
-    provider: typing.Optional[models.Provider] = None,
-) -> models.Provider:
-    """
-    Creates a testing provider
-    """
-    if provider is None:
-        from uds.services.Test.provider import TestProvider
 
-        provider = models.Provider()
-        provider.name = 'Testing provider'
-        provider.comments = 'Tesging provider'
-        provider.data_type = TestProvider.typeType
-        provider.data = provider.getInstance().serialize()
-        provider.save()
-
-    return provider
-
-
-def createServices(
-    provider: 'models.Provider',
-    number_of_services: int = 1,
-    type_of_service: typing.Union[typing.Literal['cache'], typing.Literal['nocache']] = 'cache',
-) -> typing.List[models.Service]:
+def createTransport(
+    action_on_logout: str = 'https://www.osdn.net',
+    force_new_window: bool = False,
+) -> models.Transport:
     """
-    Creates a number of services
+    Creates a Testing Transport
     """
-    from uds.services.Test.service import ServiceTestCache, ServiceTestNoCache
-    service_type = ServiceTestCache if type_of_service == 'cache' else ServiceTestNoCache
+    from uds.transports.Test import TestTransport
 
-    services = []
-    for i in range(number_of_services):
-        service: 'models.Service' = provider.services.create(
-            name='Service %d' % (glob['service_id']),
-            data_type=service_type.typeType,
-            data=service_type(environment.Environment(str(glob['service_id'])), provider.getInstance()).serialize(),
-            token='token%d' % (glob['service_id']),
-        )
-        glob['service_id'] += 1
-        services.append(service)
-    return services
+    values = {
+        'testURL': action_on_logout,
+        'forceNewWindow': force_new_window,
+    }
+    transport: 'models.Transport' = models.Transport.objects.create(
+        name='Transport %d' % (glob['transport_id']),
+        comments='Comment for Trnasport %d' % (glob['transport_id']),
+        data_type=TestTransport.typeType,
+        data=TestTransport(
+            environment.Environment(str(glob['transport_id'])), values
+        ).serialize(),
+    )
+    glob['transport_id'] += 1
 
-def createServicePools(
-    service: 'models.Service',
-    os_manager: typing.Optional['models.OSManager'] = None,
-    transports: typing.Optional[typing.List['models.Transport']] = None,
-    groups: typing.Optional[typing.List['models.Group']] = None,
-    number_of_pool_services: int = 1,
-) -> typing.List[models.ServicePool]:
-    """
-    Creates a number of service pools
-    """
-    service_pools = []
-    for i in range(number_of_pool_services):
-        service_pool: 'models.ServicePool' = service.deployedServices.create(
-            name='Service pool %d' % (glob['service_pool_id']),
-            short_name='pool%d' % (glob['service_pool_id']),
-            comments='Comment for service pool %d' % (glob['service_pool_id']),
-            osmanager=os_manager,
-            transports=transports,
-            assignedGroups=groups,
-            # Rest of fields are left as default
-        )
-        glob['service_pool_id'] += 1
-        service_pools.append(service_pool)
-    return service_pools
-
-def createUserServices(
-    service: 'models.Service',
-    in_cache: bool = False,
-    user: typing.Optional[models.User] = None,
-    number_of_user_services: int = 1,
-) -> typing.List[models.UserService]:
-    """
-    Creates a number of user services
-    """
-    return []
+    return transport

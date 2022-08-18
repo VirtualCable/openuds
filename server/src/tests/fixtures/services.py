@@ -28,94 +28,112 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import typing
 
 from uds import models
-from uds.core import environment
+from uds.core import environment, transports
 from uds.core.util import states
 from uds.core.managers.crypto import CryptoManager
 
 # Counters so we can reinvoke the same method and generate new data
 glob = {
-    'service_id': 0,
-    'service_pool_id': 0,
-    'user_service_id': 0,
+    'service_id': 1,
+    'osmanager_id': 1,
+    'transport_id': 1,
+    'service_pool_id': 1,
+    'user_service_id': 1,
 }
 
-def createProvider(
-    provider: typing.Optional[models.Provider] = None,
-) -> models.Provider:
-    """
-    Creates a testing provider
-    """
-    if provider is None:
-        from uds.services.Test.provider import TestProvider
 
-        provider = models.Provider()
-        provider.name = 'Testing provider'
-        provider.comments = 'Tesging provider'
-        provider.data_type = TestProvider.typeType
-        provider.data = provider.getInstance().serialize()
-        provider.save()
+def createSingleTestingUserServiceStructure(
+    user: 'models.User', groups: typing.List['models.Group']
+) -> 'models.UserService':
+    from uds.services.Test.provider import TestProvider
 
-    return provider
+    provider = models.Provider()
+    provider.name = 'Testing provider'
+    provider.comments = 'Tesging provider'
+    provider.data_type = TestProvider.typeType
+    provider.data = provider.getInstance().serialize()
+    provider.save()
 
-
-def createServices(
-    provider: 'models.Provider',
-    number_of_services: int = 1,
-    type_of_service: typing.Union[typing.Literal['cache'], typing.Literal['nocache']] = 'cache',
-) -> typing.List[models.Service]:
-    """
-    Creates a number of services
-    """
     from uds.services.Test.service import ServiceTestCache, ServiceTestNoCache
-    service_type = ServiceTestCache if type_of_service == 'cache' else ServiceTestNoCache
+    from uds.osmanagers.Test import TestOSManager
+    from uds.transports.Test import TestTransport
 
-    services = []
-    for i in range(number_of_services):
-        service: 'models.Service' = provider.services.create(
-            name='Service %d' % (glob['service_id']),
-            data_type=service_type.typeType,
-            data=service_type(environment.Environment(str(glob['service_id'])), provider.getInstance()).serialize(),
-            token='token%d' % (glob['service_id']),
-        )
-        glob['service_id'] += 1
-        services.append(service)
-    return services
+    service: 'models.Service' = provider.services.create(
+        name='Service %d' % (glob['service_id']),
+        data_type=ServiceTestCache.typeType,
+        data=ServiceTestCache(
+            environment.Environment(str(glob['service_id'])), provider.getInstance()
+        ).serialize(),
+        token='token%d' % (glob['service_id']),
+    )
+    glob['service_id'] += 1  # In case we generate a some more services elsewhere
 
-def createServicePools(
-    service: 'models.Service',
-    os_manager: typing.Optional['models.OSManager'] = None,
-    transports: typing.Optional[typing.List['models.Transport']] = None,
-    groups: typing.Optional[typing.List['models.Group']] = None,
-    number_of_pool_services: int = 1,
-) -> typing.List[models.ServicePool]:
     """
-    Creates a number of service pools
+    Creates several testing OS Managers
     """
-    service_pools = []
-    for i in range(number_of_pool_services):
-        service_pool: 'models.ServicePool' = service.deployedServices.create(
-            name='Service pool %d' % (glob['service_pool_id']),
-            short_name='pool%d' % (glob['service_pool_id']),
-            comments='Comment for service pool %d' % (glob['service_pool_id']),
-            osmanager=os_manager,
-            transports=transports,
-            assignedGroups=groups,
-            # Rest of fields are left as default
-        )
-        glob['service_pool_id'] += 1
-        service_pools.append(service_pool)
-    return service_pools
 
-def createUserServices(
-    service: 'models.Service',
-    in_cache: bool = False,
-    user: typing.Optional[models.User] = None,
-    number_of_user_services: int = 1,
-) -> typing.List[models.UserService]:
-    """
-    Creates a number of user services
-    """
-    return []
+    values: typing.Dict[str, typing.Any] = {
+        'onLogout': 'remove',
+        'idle': 300,
+    }
+    osmanager: 'models.OSManager' = models.OSManager.objects.create(
+        name='OS Manager %d' % (glob['osmanager_id']),
+        comments='Comment for OS Manager %d' % (glob['osmanager_id']),
+        data_type=TestOSManager.typeType,
+        data=TestOSManager(
+            environment.Environment(str(glob['osmanager_id'])), values
+        ).serialize(),
+    )
+    glob['osmanager_id'] += 1
+
+    values = {
+        'testURL': 'http://www.udsenterprise.com',
+        'forceNewWindow': True,
+    }
+    transport: 'models.Transport' = models.Transport.objects.create(
+        name='Transport %d' % (glob['transport_id']),
+        comments='Comment for Trnasport %d' % (glob['transport_id']),
+        data_type=TestTransport.typeType,
+        data=TestTransport(
+            environment.Environment(str(glob['transport_id'])), values
+        ).serialize(),
+    )
+    glob['transport_id'] += 1
+
+    service_pool: 'models.ServicePool' = service.deployedServices.create(
+        name='Service pool %d' % (glob['service_pool_id']),
+        short_name='pool%d' % (glob['service_pool_id']),
+        comments='Comment for service pool %d' % (glob['service_pool_id']),
+        osmanager=osmanager,
+    )
+
+    publication: 'models.ServicePoolPublication' = service_pool.publications.create(
+        name='Publication %d' % (glob['service_pool_id']),
+        comments='Comment for publication %d' % (glob['service_pool_id']),
+        # Rest of fields are left as default
+    )
+    glob['service_pool_id'] += 1
+
+    service_pool.publications.add(publication)
+    service_pool.assignedGroups.add(*groups)
+    service_pool.transports.add(transport)
+
+    user_service: 'models.UserService' = service_pool.userServices.create(
+        name='user-service-{}'.format(glob['user_service_id']),
+        publication=publication,
+        unique_id='00:11:22:33:44:55',
+        friendly_name='Friendly name {}'.format(glob['user_service_id']),
+        state=states.userService.USABLE,
+        os_state=states.userService.USABLE,
+        state_date=datetime.datetime.now(),
+        creation_date=datetime.datetime.now() - datetime.timedelta(minutes=30),
+        user=user,
+        src_hostname='testhost',
+        scr_ip='0.0.0.1',
+    )
+
+    return user_service

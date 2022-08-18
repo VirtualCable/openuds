@@ -113,7 +113,7 @@ class TX2GOTransport(BaseX2GOTransport):
         if values:
             validators.validateHostPortPair(values.get('tunnelServer', ''))
 
-    def getUDSTransportScript(  # pylint: disable=too-many-locals
+    def getUDSTransportScript(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',

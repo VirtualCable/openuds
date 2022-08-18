@@ -39,6 +39,7 @@ from ... import fixtures
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 
+NUMBER_OF_ITEMS_TO_CREATE = 4
 
 class RESTTestCase(test.UDSTestCase):
     # Authenticators related
@@ -48,41 +49,27 @@ class RESTTestCase(test.UDSTestCase):
     staffs: typing.ClassVar[typing.List[models.User]]
     plain_users: typing.ClassVar[typing.List[models.User]]
 
-    # Provider related
-    provider: typing.ClassVar[models.Provider]
-    services: typing.ClassVar[typing.List[models.Service]]
-
-    service_pools: typing.ClassVar[typing.List[models.ServicePool]]
-
-    user_services: typing.ClassVar[typing.List[models.UserService]]
-
-    # OS Manager & transport
-
-
     @classmethod
     def setUpTestData(cls: typing.Type['RESTTestCase']) -> None:
         # Set up data for REST Test cases
         # First, the authenticator related
         cls.auth = fixtures.authenticators.createAuthenticator()
-        cls.groups = fixtures.authenticators.createGroups(cls.auth, 1)
+        cls.groups = fixtures.authenticators.createGroups(
+            cls.auth, NUMBER_OF_ITEMS_TO_CREATE
+        )
         # Create some users, one admin, one staff and one user
         cls.admins = fixtures.authenticators.createUsers(
-            cls.auth, number_of_users=2, is_admin=True, groups=cls.groups
+            cls.auth,
+            number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
+            is_admin=True,
+            groups=cls.groups,
         )
         cls.staffs = fixtures.authenticators.createUsers(
-            cls.auth, number_of_users=2, is_staff=True, groups=cls.groups
+            cls.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, is_staff=True, groups=cls.groups
         )
         cls.plain_users = fixtures.authenticators.createUsers(
-            cls.auth, number_of_users=2, groups=cls.groups
+            cls.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=cls.groups
         )
-        # Now the provider related
-        cls.provider = fixtures.services.createProvider()  # Simple empty testing provider
-        cls.services = fixtures.services.createServices(cls.provider, 1, 'cache')
-        cls.service_pools = []
-        for i in cls.services:
-            # Create pools for each service
-            cls.service_pools +=  fixtures.services.createServicePools(i, number_of_pool_services=1)
-
 
     @staticmethod
     def register_data(chars: typing.Optional[str] = None) -> typing.Dict[str, str]:
@@ -116,7 +103,7 @@ class RESTTestCase(test.UDSTestCase):
         return response['token']
 
     # Login as admin or staff and register an actor
-    # Returns:
+    # Returns as a tuple the auth token and the actor registration result token:
     #   - The login auth token
     #   - The actor token
     def login_and_register(self, as_admin: bool = True) -> typing.Tuple[str, str]:

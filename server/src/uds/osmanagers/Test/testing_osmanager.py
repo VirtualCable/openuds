@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TestOsManager(osmanagers.OSManager):
+class TestOSManager(osmanagers.OSManager):
     typeName = _('Test OS Manager')
     typeType = 'TestOsManager'
     typeDescription = _('Os Manager for testing pourposes')

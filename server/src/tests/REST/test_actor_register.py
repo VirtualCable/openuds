@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
@@ -29,5 +28,49 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import test_login_logout
-from . import test_actor_register
+import typing
+import logging
+
+from django.conf import settings
+
+from uds import models
+from uds.REST.handlers import AUTH_TOKEN_HEADER
+
+from ..utils import rest, constants
+
+
+logger = logging.getLogger(__name__)
+
+
+class RESTActorRegister(rest.test.RESTTestCase):
+    """
+    Test actor functionality
+    """
+
+    def test_register(self) -> None:
+        """
+        Test actor rest api registration
+        """
+        response: typing.Any
+        for i, usr in enumerate(self.admins + self.staffs + self.plain_users):
+            token = self.login(usr)
+
+            # Try to register. Plain users will fail
+            will_fail = usr in self.plain_users
+            response = self.client.post(
+                '/uds/rest/actor/v3/register',
+                data=self.register_data(
+                    constants.STRING_CHARS if i % 2 == 0 else constants.STRING_CHARS_INVALID
+                ),
+                content_type='application/json',
+                **{AUTH_TOKEN_HEADER: token}
+            )
+            if will_fail:
+                self.assertEqual(response.status_code, 403)
+                continue  # Try next user, this one will fail
+
+            self.assertEqual(response.status_code, 200)
+            token = response.json()['result']
+
+            # Ensure database contains the registered token
+            self.assertEqual(models.ActorToken.objects.filter(token=token).count(), 1)
