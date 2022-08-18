@@ -369,11 +369,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='deployedservice',
-            name='assignedGroups',
-            field=models.ManyToManyField(db_table='uds__ds_grps', related_name='deployedServices', to='uds.Group'),
-        ),
-        migrations.AddField(
-            model_name='deployedservice',
             name='osmanager',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='deployedServices', to='uds.osmanager'),
         ),
@@ -381,11 +376,6 @@ class Migration(migrations.Migration):
             model_name='deployedservice',
             name='service',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='deployedServices', to='uds.service'),
-        ),
-        migrations.AddField(
-            model_name='deployedservice',
-            name='transports',
-            field=models.ManyToManyField(db_table='uds__ds_trans', related_name='deployedServices', to='uds.Transport'),
         ),
         migrations.AlterUniqueTogether(
             name='config',
@@ -984,6 +974,16 @@ class Migration(migrations.Migration):
         migrations.RenameModel(
             old_name='DeployedService',
             new_name='ServicePool',
+        ),
+        migrations.AddField(
+            model_name='servicepool',
+            name='assignedGroups',
+            field=models.ManyToManyField(db_table='uds__ds_grps', related_name='deployedServices', to='uds.Group'),
+        ),
+        migrations.AddField(
+            model_name='servicepool',
+            name='transports',
+            field=models.ManyToManyField(db_table='uds__ds_trans', related_name='deployedServices', to='uds.Transport'),
         ),
         migrations.RenameModel(
             old_name='DeployedServicePublication',
