@@ -31,16 +31,10 @@
 import typing
 import logging
 
-from django.test import TestCase
-from django.test.client import Client
-from django.conf import settings
-
-from uds import models
 from uds.REST.handlers import AUTH_TOKEN_HEADER
+from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED, ALLOWED_FAILS
 
-from .. import fixtures
-from ..utils import rest, constants
-
+from ..utils import rest
 
 logger = logging.getLogger(__name__)
 
@@ -50,30 +44,41 @@ class TestActorV3(rest.test.RESTTestCase):
     Test actor functionality
     """
 
-    def test_register(self) -> None:
+    def test_test_managed(self) -> None:
         """
-        Test actor rest api registration
+        Test actorv3 initialization
         """
-        response: typing.Any
-        for i, usr in enumerate(self.admins + self.staffs + self.plain_users):
-            token = self.login(usr)
+        rest_token, actor_token = self.login_and_register()
+        # Auth token already set in client headers
 
-            # Try to register. Plain users will fail
-            will_fail = usr in self.plain_users
-            response = self.client.post(
-                '/uds/rest/actor/v3/register',
-                data=self.register_data(
-                    constants.STRING_CHARS if i % 2 == 0 else constants.STRING_CHARS_INVALID
-                ),
-                content_type='application/json',
-                **{AUTH_TOKEN_HEADER: token}
-            )
-            if will_fail:
-                self.assertEqual(response.status_code, 403)
-                continue  # Try next user, this one will fail
+        # No actor token, will fail
+        response = self.client.post(
+            '/uds/rest/actor/v3/test',
+            data={'type': MANAGED},
+            content_type='application/json',
+        )
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['result'], 'invalid token')
+        
+        # Invalid actor token also fails
+        response = self.client.post(
+            '/uds/rest/actor/v3/test',
+            data={'type': MANAGED, 'token': 'invalid'},
+            content_type='application/json',
+        )
 
-            self.assertEqual(response.status_code, 200)
-            token = response.json()['result']
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['result'], 'invalid token')
 
-            # Ensure database contains the registered token
-            self.assertEqual(models.ActorToken.objects.filter(token=token).count(), 1)
+        # Without header, test will success because its not authenticated
+        self.client.add_header(AUTH_TOKEN_HEADER, 'invalid')
+        response = self.client.post(
+            '/uds/rest/actor/v3/test',
+            data={'type': MANAGED, 'token': actor_token},
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # We have 2 attempts failed

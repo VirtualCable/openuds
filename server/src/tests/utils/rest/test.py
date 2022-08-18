@@ -97,10 +97,13 @@ class RESTTestCase(test.UDSTestCase):
             'log_level': '0',
         }
 
-    # Login as specified and returns the auth token
     def login(
         self, user: typing.Optional[models.User] = None, as_admin: bool = True
     ) -> str:
+        '''
+        Login as specified and returns the auth token
+        The token is inserted on the header of the client, so it can be used in the rest of the tests
+        '''
         user = user or (self.admins[0] if as_admin else self.staffs[0])
         response = rest.login(
             self,
@@ -110,6 +113,8 @@ class RESTTestCase(test.UDSTestCase):
             password=user.name,
         )
         self.assertEqual(response['result'], 'ok', 'Login failed')
+        # Insert token into headers
+        self.client.add_header(AUTH_TOKEN_HEADER, response['token'])
         return response['token']
 
     # Login as admin or staff and register an actor
@@ -117,12 +122,11 @@ class RESTTestCase(test.UDSTestCase):
     #   - The login auth token
     #   - The actor token
     def login_and_register(self, as_admin: bool = True) -> typing.Tuple[str, str]:
-        token = self.login(as_admin=as_admin)
+        token = self.login(as_admin=as_admin)  # Token not used, alreade inserted on login
         response = self.client.post(
             '/uds/rest/actor/v3/register',
             data=self.register_data(constants.STRING_CHARS),
             content_type='application/json',
-            **{AUTH_TOKEN_HEADER: token}
         )
         self.assertEqual(response.status_code, 200, 'Actor registration failed')
         return token, response.json()['result']

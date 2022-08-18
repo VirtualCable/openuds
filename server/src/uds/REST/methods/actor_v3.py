@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import secrets
+import time
 import logging
 import typing
 
@@ -58,8 +59,12 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-ALLOWED_FAILS = 5
+ALLOWED_FAILS = 8  # More than enough for now
+MANAGED = 'managed'
 UNMANAGED = 'unmanaged'  # matches the definition of UDS Actors OFC
+
+# Cache the "failed login attempts" for a given IP
+cache = Cache('actorv3')
 
 
 class BlockAccess(Exception):
@@ -69,6 +74,7 @@ class BlockAccess(Exception):
 # Helpers
 def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
     return [i.upper() for i in idsList] + [i.lower() for i in idsList]
+
 
 def checkBlockedIp(ip: str) -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
@@ -81,13 +87,18 @@ def checkBlockedIp(ip: str) -> None:
             ip,
             GlobalConfig.LOGIN_BLOCK.getInt(),
         )
+        # Sleep a while to try to minimize brute force attacks somehow
+        time.sleep(3)  # 3 seconds should be enough
         raise BlockAccess()
 
 
 def incFailedIp(ip: str) -> None:
-    cache = Cache('actorv3')
     fails = cache.get(ip, 0) + 1
     cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
+
+
+def clearFailedIp(ip: str) -> None:
+    cache.remove(ip)
 
 
 class ActorV3Action(Handler):
@@ -126,6 +137,8 @@ class ActorV3Action(Handler):
             checkBlockedIp(self._request.ip)
             result = self.action()
             logger.debug('Action result: %s', result)
+            # Result was ok, clear the failed requests for this ip
+            clearFailedIp(self._request.ip)
             return result
         except (BlockAccess, KeyError):
             # For blocking attacks
@@ -153,8 +166,12 @@ class Test(ActorV3Action):
                     token=self._params['token']
                 )  # Not assigned, because only needs check
         except Exception:
+            # Increase failed attempts
+            incFailedIp(self._request.ip)
+            # And return error
             return ActorV3Action.actorResult('invalid token')
 
+        clearFailedIp(self._request.ip)
         return ActorV3Action.actorResult('ok')
 
 
@@ -167,7 +184,7 @@ class Register(ActorV3Action):
         - hostname: hostname of the registering machine
         - pre_command: command to be executed before the connection of the user is established
         - post_command: command to be executed after the actor is initialized and before set ready
-        - run_once_command: comand to run just once after the actor is started. The actor will stop after this. 
+        - run_once_command: comand to run just once after the actor is started. The actor will stop after this.
           The command is responsible to restart the actor.
         - log_level: log level for the actor
 
@@ -493,7 +510,7 @@ class LoginLogout(ActorV3Action):
                 service.processLogout(validId, remote_login=is_remote)
 
             # All right, service notified..
-        except Exception as e :
+        except Exception as e:
             # Log error and continue
             logger.error('Error notifying service: %s (%s)', e, self._params)
             raise BlockAccess()

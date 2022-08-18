@@ -43,6 +43,10 @@ from uds.core.managers.crypto import CryptoManager
 logger = logging.getLogger(__name__)
 
 class UDSClient(Client):
+    headers: typing.Dict[str, str] = {
+        'HTTP_USER_AGENT': 'Testing user agent',
+    }
+
     def __init__(
         self, enforce_csrf_checks: bool =False, raise_request_exception: bool=True, **defaults: typing.Any
     ):
@@ -57,13 +61,27 @@ class UDSClient(Client):
         ]
 
         # Instantiate the client and add basic user agent
-        super().__init__(enforce_csrf_checks, raise_request_exception, HTTP_USER_AGENT='Testing user agent')
+        super().__init__(enforce_csrf_checks, raise_request_exception)
         # and required UDS cookie
         self.cookies['uds'] = CryptoManager().randomString(48)
-        
+
+    def add_header(self, name: str, value: str):
+        self.headers[name] = value
+
+    def request(self, **request: typing.Any):
+        # Copy request dict
+        request = request.copy()
+        # Add headers
+        request.update(self.headers)
+        return super().request(**request)
+
 
 class UDSTestCase(TestCase):
     client_class: typing.Type = UDSClient
 
+    client: UDSClient
+
 class UDSTransactionTestCasse(TransactionTestCase):
     client_class: typing.Type = UDSClient
+
+    client: UDSClient
