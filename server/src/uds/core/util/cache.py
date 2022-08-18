@@ -30,15 +30,17 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
-import hashlib
 import codecs
 import pickle  # nosec: This is e controled pickle loading
 import typing
 import logging
 
+
 from django.db import transaction
 from uds.models.cache import Cache as DBCache
 from uds.models.util import getSqlDatetime
+
+from .hash import hash_key
 
 logger = logging.getLogger(__name__)
 
@@ -61,11 +63,9 @@ class Cache:
         self._bowner = self._owner.encode('utf8')
 
     def __getKey(self, key: typing.Union[str, bytes]) -> str:
-        h = hashlib.md5()  # nosec: not used for cryptography, just for hashing
         if isinstance(key, str):
             key = key.encode('utf8')
-        h.update(self._bowner + key)
-        return h.hexdigest()
+        return hash_key(self._bowner + key)
 
     def get(
         self, skey: typing.Union[str, bytes], defValue: typing.Any = None

@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -25,55 +25,26 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import logging
 
-from django.test import TestCase
-from django.test.client import Client
-from django.conf import settings
-
-from uds import models
-from uds.REST.handlers import AUTH_TOKEN_HEADER
-
-from .. import fixtures
-from ..utils import rest, constants
+try:
+    # Try to use fast hashlib (if available)
+    import xxhash
+    hasher = xxhash.xxh3_64
+except ImportError:
+    import hashlib
+    hasher = hashlib.md5  
 
 
-logger = logging.getLogger(__name__)
-
-
-class TestActorV3(rest.test.RESTTestCase):
+def hash_key(key: typing.Union[str, bytes]) -> str:
     """
-    Test actor functionality
+    Returns a hash of the given key
     """
+    if isinstance(key, str):
+        return hasher(key.encode('utf-8')).hexdigest()
 
-    def test_register(self) -> None:
-        """
-        Test actor rest api registration
-        """
-        response: typing.Any
-        for i, usr in enumerate(self.admins + self.staffs + self.plain_users):
-            token = self.login(usr)
-
-            # Try to register. Plain users will fail
-            will_fail = usr in self.plain_users
-            response = self.client.post(
-                '/uds/rest/actor/v3/register',
-                data=self.register_data(
-                    constants.STRING_CHARS if i % 2 == 0 else constants.STRING_CHARS_INVALID
-                ),
-                content_type='application/json',
-                **{AUTH_TOKEN_HEADER: token}
-            )
-            if will_fail:
-                self.assertEqual(response.status_code, 403)
-                continue  # Try next user, this one will fail
-
-            self.assertEqual(response.status_code, 200)
-            token = response.json()['result']
-
-            # Ensure database contains the registered token
-            self.assertEqual(models.ActorToken.objects.filter(token=token).count(), 1)
+    return hasher(key).hexdigest()
