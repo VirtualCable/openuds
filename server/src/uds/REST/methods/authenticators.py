@@ -59,7 +59,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible', 'mfa_id']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id']
 
     table_title = _('Authenticators')
     table_fields = [
@@ -68,7 +68,6 @@ class Authenticators(ModelHandler):
         {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
-        {'visible': {'title': _('Visible'), 'type': 'callback', 'width': '3em'}},
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
         {'mfa_name': {'title': _('MFA'),}},

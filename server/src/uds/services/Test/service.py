@@ -100,7 +100,7 @@ class ServiceTestNoCache(services.Service):
     deployedType = TestUserDeployment
 
     def parent(self) -> 'TestProvider':
-        return typing.cast('Provider', super().parent())
+        return typing.cast('TestProvider', super().parent())
 
     def getName(self) -> str:
         return self.parent().getName() + '{' + self.typeName + '}'
@@ -136,7 +136,7 @@ class ServiceTestCache(services.Service):
     deployedType = TestUserDeployment
 
     def parent(self) -> 'TestProvider':
-        return typing.cast('Provider', super().parent())
+        return typing.cast('TestProvider', super().parent())
 
     def getName(self) -> str:
         return self.parent().getName() + '{' + self.typeName + '}'

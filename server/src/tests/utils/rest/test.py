@@ -41,6 +41,7 @@ from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 NUMBER_OF_ITEMS_TO_CREATE = 4
 
+
 class RESTTestCase(test.UDSTestCase):
     # Authenticators related
     auth: typing.ClassVar[models.Authenticator]
@@ -48,6 +49,8 @@ class RESTTestCase(test.UDSTestCase):
     admins: typing.ClassVar[typing.List[models.User]]
     staffs: typing.ClassVar[typing.List[models.User]]
     plain_users: typing.ClassVar[typing.List[models.User]]
+
+    user_service: typing.ClassVar[models.UserService]
 
     @classmethod
     def setUpTestData(cls: typing.Type['RESTTestCase']) -> None:
@@ -65,10 +68,17 @@ class RESTTestCase(test.UDSTestCase):
             groups=cls.groups,
         )
         cls.staffs = fixtures.authenticators.createUsers(
-            cls.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, is_staff=True, groups=cls.groups
+            cls.auth,
+            number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
+            is_staff=True,
+            groups=cls.groups,
         )
         cls.plain_users = fixtures.authenticators.createUsers(
             cls.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=cls.groups
+        )
+
+        cls.user_service = fixtures.services.createSingleTestingUserServiceStructure(
+            cls.admins[0], cls.groups
         )
 
     @staticmethod

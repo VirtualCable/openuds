@@ -112,28 +112,29 @@ def createSingleTestingUserServiceStructure(
     )
 
     publication: 'models.ServicePoolPublication' = service_pool.publications.create(
-        name='Publication %d' % (glob['service_pool_id']),
-        comments='Comment for publication %d' % (glob['service_pool_id']),
+        publish_date=datetime.datetime.now(),
+        state=states.publication.USABLE,
+        state_date=datetime.datetime.now(),
         # Rest of fields are left as default
     )
     glob['service_pool_id'] += 1
 
     service_pool.publications.add(publication)
-    service_pool.assignedGroups.add(*groups)
+    for g in groups:
+        service_pool.assignedGroups.add(g)
     service_pool.transports.add(transport)
 
     user_service: 'models.UserService' = service_pool.userServices.create(
-        name='user-service-{}'.format(glob['user_service_id']),
+        friendly_name='user-service-{}'.format(glob['user_service_id']),
         publication=publication,
         unique_id='00:11:22:33:44:55',
-        friendly_name='Friendly name {}'.format(glob['user_service_id']),
         state=states.userService.USABLE,
         os_state=states.userService.USABLE,
         state_date=datetime.datetime.now(),
         creation_date=datetime.datetime.now() - datetime.timedelta(minutes=30),
         user=user,
         src_hostname='testhost',
-        scr_ip='0.0.0.1',
+        src_ip='0.0.0.1',
     )
 
     return user_service

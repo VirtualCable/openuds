@@ -57,16 +57,15 @@ if typing.TYPE_CHECKING:
 
 class Tag(UUIDModel):
     """
-    Log model associated with an object.
+    Tag model associated with an object.
 
-    This log is mainly used to keep track of log relative to objects
-    (such as when a user access a machine, or information related to user logins/logout, errors, ...)
+    Tags are used to group objects in the system for REST api mainly and search on admin interface.
     """
 
     tag = models.CharField(max_length=32, db_index=True, unique=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Tag]'
+    objects: 'models.manager.Manager["Tag"]'
 
     # Every single related class has a relation with this
     # Its inverse is "xxx_set" class

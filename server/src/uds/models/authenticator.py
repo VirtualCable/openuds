@@ -72,11 +72,11 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
     state = models.CharField(max_length=1, default=VISIBLE, db_index=True)
-    # visible = models.BooleanField(default=True)
+    # "visible" is removed from 4.0, state will do this functionality, but is more flexible
     net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
 
     # "fake" relations declarations for type checking
-    objects: 'models.manager.Manager[Authenticator]'
+    objects: 'models.manager.Manager["Authenticator"]'
     users: 'models.manager.RelatedManager[User]'
     groups: 'models.manager.RelatedManager[Group]'
 

@@ -75,15 +75,16 @@ class GroupsManager:
         self._groups = (
             {}
         )  # We just get active groups, inactive aren't visible to this class
-        for g in dbAuthenticator.groups.filter(state=State.ACTIVE, is_meta=False):
-            name = g.name.lower()
-            isPattern = name.find('pat:') == 0  # Is a pattern?
-            self._groups[name] = {
-                'name': g.name,
-                'group': Group(g),
-                'valid': False,
-                'pattern': isPattern,
-            }
+        if dbAuthenticator.id:  # If "fake" authenticator (that is, root user with no authenticator in fact)
+            for g in dbAuthenticator.groups.filter(state=State.ACTIVE, is_meta=False):
+                name = g.name.lower()
+                isPattern = name.find('pat:') == 0  # Is a pattern?
+                self._groups[name] = {
+                    'name': g.name,
+                    'group': Group(g),
+                    'valid': False,
+                    'pattern': isPattern,
+                }
 
     def checkAllGroups(self, groupName: str):
         """

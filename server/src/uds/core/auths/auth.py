@@ -55,7 +55,7 @@ from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
 from uds.core.util.state import State
 from uds.core.managers import cryptoManager
-from uds.core.auths import Authenticator as AuthenticatorInstance
+from uds.core.auths import Authenticator as AuthenticatorInstance, SUCCESS_AUTH
 
 from uds import models
 
@@ -119,11 +119,11 @@ def getRootUser() -> models.User:
         staff_member=True,
         is_admin=True,
     )
-    user.manager = Authenticator()  # type: ignore
+    user.manager = models.Authenticator()  # type: ignore
     # Fake overwrite some methods, a bit cheating? maybe? :)
     user.getGroups = lambda: []  # type: ignore
     user.updateLastAccess = lambda: None  # type: ignore
-    user.logout = lambda: None  # type: ignore
+    user.logout = lambda x: SUCCESS_AUTH  # type: ignore
     return user
 
 

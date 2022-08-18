@@ -654,11 +654,6 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(to='uds.Tag'),
         ),
         migrations.AddField(
-            model_name='deployedservice',
-            name='tags',
-            field=models.ManyToManyField(to='uds.Tag'),
-        ),
-        migrations.AddField(
             model_name='network',
             name='tags',
             field=models.ManyToManyField(to='uds.Tag'),
@@ -984,6 +979,11 @@ class Migration(migrations.Migration):
             model_name='servicepool',
             name='transports',
             field=models.ManyToManyField(db_table='uds__ds_trans', related_name='deployedServices', to='uds.Transport'),
+        ),
+        migrations.AddField(
+            model_name='servicepool',
+            name='tags',
+            field=models.ManyToManyField(to='uds.Tag'),
         ),
         migrations.RenameModel(
             old_name='DeployedServicePublication',
