@@ -514,6 +514,7 @@ def authLogLogin(
     )
 
     try:
+        # Root user is not on any authenticator, so we cannot attach log to an db user
         user = authenticator.users.get(name=userName)
         log.doLog(
             user,
@@ -523,7 +524,7 @@ def authLogLogin(
             ),
             log.WEB,
         )
-    except Exception:  # nosec: intentionally ignore exception
+    except models.User.DoesNotExist:
         pass
 
 

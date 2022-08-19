@@ -189,10 +189,13 @@ class Config:
         def getHelp(self) -> str:
             return gettext(self._help)
 
-        def set(self, value: str) -> None:
+        def set(self, value: typing.Union[str, bool]) -> None:
             if GlobalConfig.isInitialized() is False:
                 _saveLater.append((self, value))
                 return
+
+            if isinstance(value, bool):
+                value = ['0', '1'][value]
 
             if self._crypt:
                 value = cryptoManager().encrypt(value)

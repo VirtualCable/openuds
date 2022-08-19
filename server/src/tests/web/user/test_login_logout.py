@@ -31,9 +31,7 @@
 import random
 import typing
 
-
-from django.test import TestCase, TransactionTestCase
-from django.db import transaction
+from uds.core.util.config import GlobalConfig
 
 from ...utils import test
 from ... import fixtures
@@ -43,7 +41,9 @@ if typing.TYPE_CHECKING:
 
 from uds import models
 
-class WebLoginLogoutCase(test.UDSTransactionTestCasse):
+
+
+class WebLoginLogout(test.UDSTransactionTestCasse):
     """
     Test WEB login and logout
     """
@@ -87,12 +87,18 @@ class WebLoginLogoutCase(test.UDSTransactionTestCasse):
 
         # Add users to some groups, ramdomly
         for user in users + admins + stafs:
-            for group in random.sample(groups, random.randint(1, len(groups))):  # nosec: Simple test, not strong cryptograde needed
+            for group in random.sample(
+                groups, random.randint(1, len(groups))# nosec: Simple test, not strong cryptograde needed
+            ):  
                 user.groups.add(group)
 
         # All users, admin and staff must be able to login
-        for num, user in enumerate(users + admins + stafs, start=1):
-            response = self.do_login(user.name, user.name, auth.uuid)
+        root = GlobalConfig.SUPER_USER_LOGIN.get(True)
+        rootpass = GlobalConfig.SUPER_USER_PASS.get(True)
+        users_pass = [(user.name, user.name) for user in users + admins + stafs]
+        users_pass.append((root, rootpass))
+        for num, up in enumerate(users_pass, start=1):
+            response = self.do_login(up[0], up[1], auth.uuid)
             self.assertRedirects(response, '/uds/page/services', status_code=302)
             # Now invoke logout
             response = typing.cast('HttpResponse', self.client.get('/uds/page/logout'))
@@ -100,8 +106,9 @@ class WebLoginLogoutCase(test.UDSTransactionTestCasse):
                 response, 'http://testserver/uds/page/login', status_code=302
             )
             # Ensures a couple of logs are created for every operation
-            self.assertEqual(models.Log.objects.count(), num*4)
-
+            # Except for root, that has no user associated on db
+            if up[0] is not root and up[1] is not rootpass:  # root user is last one
+                self.assertEqual(models.Log.objects.count(), num * 4)
 
     def test_login_valid_user_no_group(self):
         user = fixtures.authenticators.createUsers(
@@ -132,7 +139,6 @@ class WebLoginLogoutCase(test.UDSTransactionTestCasse):
         self.assertInvalidLogin(response)
 
         self.assertEqual(models.Log.objects.count(), 6)
-
 
     def test_login_invalid_user(self):
         user = fixtures.authenticators.createUsers(
