@@ -63,12 +63,12 @@ def createSingleTestingUserServiceStructure(
     from uds.transports.Test import TestTransport
 
     service: 'models.Service' = provider.services.create(
-        name='Service %d' % (glob['service_id']),
+        name='Service {}'.format(glob['service_id']),
         data_type=ServiceTestCache.typeType,
         data=ServiceTestCache(
             environment.Environment(str(glob['service_id'])), provider.getInstance()
         ).serialize(),
-        token='token%d' % (glob['service_id']),
+        token='token{}'.format(glob['service_id']),
     )
     glob['service_id'] += 1  # In case we generate a some more services elsewhere
 

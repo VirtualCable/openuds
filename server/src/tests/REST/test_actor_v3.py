@@ -44,41 +44,71 @@ class TestActorV3(rest.test.RESTTestCase):
     Test actor functionality
     """
 
-    def test_test_managed(self) -> None:
+    def do_test(self, type_: str, token: str) -> None:
         """
-        Test actorv3 initialization
+        Test actorv3 test managed
         """
-        rest_token, actor_token = self.login_and_register()
-        # Auth token already set in client headers
-
         # No actor token, will fail
         response = self.client.post(
             '/uds/rest/actor/v3/test',
-            data={'type': MANAGED},
+            data={'type': type_},
             content_type='application/json',
         )
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['result'], 'invalid token')
+
+        # Helpers
+        success = lambda: self.client.post(
+            '/uds/rest/actor/v3/test',
+            data={'type': type_, 'token': token},
+            content_type='application/json',
+        )
+        invalid = lambda: self.client.post(
+            '/uds/rest/actor/v3/test',
+            data={'type': type_, 'token': 'invalid'},
+            content_type='application/json',
+        )
         
         # Invalid actor token also fails
-        response = self.client.post(
-            '/uds/rest/actor/v3/test',
-            data={'type': MANAGED, 'token': 'invalid'},
-            content_type='application/json',
-        )
+        response = invalid()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['result'], 'invalid token')
 
-        # Without header, test will success because its not authenticated
-        self.client.add_header(AUTH_TOKEN_HEADER, 'invalid')
-        response = self.client.post(
-            '/uds/rest/actor/v3/test',
-            data={'type': MANAGED, 'token': actor_token},
-            content_type='application/json',
-        )
+        # This one works
+        response = success()
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['result'], 'ok')
 
-        # We have 2 attempts failed
+        # And this one too, without authentication token
+        # Without header, test will success because its not authenticated
+        self.client.add_header(AUTH_TOKEN_HEADER, 'invalid')
+        response = success()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['result'], 'ok')
+
+        # We have ALLOWED_FAILS until we get blocked for a while
+        # Next one will give 403
+        for a in range(ALLOWED_FAILS):
+            response = invalid()
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()['result'], 'invalid token')
+
+        # And this one will give 403
+        response = invalid()
+        self.assertEqual(response.status_code, 403)
+    
+    def test_test_managed(self) -> None:
+        rest_token, actor_token = self.login_and_register()
+        self.do_test(MANAGED, actor_token)
+
+    def test_test_unmanaged(self) -> None:
+        # try for a first few services
+        service = self.user_service.deployed_service.service
+        rest_token, actor_token = self.login_and_register()
+        # Get service token
+        self.do_test(UNMANAGED, service.token)
+

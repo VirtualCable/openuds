@@ -96,7 +96,8 @@ class Cache:
             Cache.misses += 1
             # logger.debug('key not found: %s', skey)
             return defValue
-        except Exception:
+        except Exception as e:
+            logger.exception('Error getting cache key: %s', skey)
             Cache.misses += 1
             # logger.debug('Cache inaccesible: %s:%s', skey, e)
             return defValue

@@ -32,6 +32,7 @@ import secrets
 import time
 import logging
 import typing
+import functools
 
 from uds.models import (
     getSqlDatetimeAsUnix,
@@ -79,9 +80,8 @@ def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
 def checkBlockedIp(ip: str) -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
         return
-    cache = Cache('actorv3')
     fails = cache.get(ip) or 0
-    if fails > ALLOWED_FAILS:
+    if fails >= ALLOWED_FAILS:
         logger.info(
             'Access to actor from %s is blocked for %s seconds since last fail',
             ip,
@@ -95,6 +95,18 @@ def checkBlockedIp(ip: str) -> None:
 def incFailedIp(ip: str) -> None:
     fails = cache.get(ip, 0) + 1
     cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
+
+
+# Decorator that clears failed counter for the IP if succeeds
+def clearIfSuccess(func: typing.Callable) -> typing.Callable:
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        _self = typing.cast('ActorV3Action', args[0])
+        result = func(*args, **kwargs)  # If raises any exception, it will be raised and we will not clear the counter
+        clearFailedIp(_self._request.ip)
+        return result
+
+    return wrapper
 
 
 def clearFailedIp(ip: str) -> None:
@@ -137,8 +149,6 @@ class ActorV3Action(Handler):
             checkBlockedIp(self._request.ip)
             result = self.action()
             logger.debug('Action result: %s', result)
-            # Result was ok, clear the failed requests for this ip
-            clearFailedIp(self._request.ip)
             return result
         except (BlockAccess, KeyError):
             # For blocking attacks
@@ -156,7 +166,7 @@ class Test(ActorV3Action):
 
     name = 'test'
 
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
+    def action(self) -> typing.MutableMapping[str, typing.Any]:
         # First, try to locate an user service providing this token.
         try:
             if self._params.get('type') == UNMANAGED:
@@ -165,13 +175,13 @@ class Test(ActorV3Action):
                 ActorToken.objects.get(
                     token=self._params['token']
                 )  # Not assigned, because only needs check
+            clearFailedIp(self._request.ip)
         except Exception:
             # Increase failed attempts
             incFailedIp(self._request.ip)
-            # And return error
+            # And return test failed
             return ActorV3Action.actorResult('invalid token')
 
-        clearFailedIp(self._request.ip)
         return ActorV3Action.actorResult('ok')
 
 

@@ -42,43 +42,42 @@ from uds.REST.handlers import AUTH_TOKEN_HEADER
 NUMBER_OF_ITEMS_TO_CREATE = 4
 
 
-class RESTTestCase(test.UDSTestCase):
+class RESTTestCase(test.UDSTransactionTestCasse):
     # Authenticators related
-    auth: typing.ClassVar[models.Authenticator]
-    groups: typing.ClassVar[typing.List[models.Group]]
-    admins: typing.ClassVar[typing.List[models.User]]
-    staffs: typing.ClassVar[typing.List[models.User]]
-    plain_users: typing.ClassVar[typing.List[models.User]]
+    auth: models.Authenticator
+    groups: typing.List[models.Group]
+    admins: typing.List[models.User]
+    staffs: typing.List[models.User]
+    plain_users: typing.List[models.User]
 
-    user_service: typing.ClassVar[models.UserService]
+    user_service: models.UserService
 
-    @classmethod
-    def setUpTestData(cls: typing.Type['RESTTestCase']) -> None:
+    def setUp(self) -> None:
         # Set up data for REST Test cases
         # First, the authenticator related
-        cls.auth = fixtures.authenticators.createAuthenticator()
-        cls.groups = fixtures.authenticators.createGroups(
-            cls.auth, NUMBER_OF_ITEMS_TO_CREATE
+        self.auth = fixtures.authenticators.createAuthenticator()
+        self.groups = fixtures.authenticators.createGroups(
+            self.auth, NUMBER_OF_ITEMS_TO_CREATE
         )
         # Create some users, one admin, one staff and one user
-        cls.admins = fixtures.authenticators.createUsers(
-            cls.auth,
+        self.admins = fixtures.authenticators.createUsers(
+            self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_admin=True,
-            groups=cls.groups,
+            groups=self.groups,
         )
-        cls.staffs = fixtures.authenticators.createUsers(
-            cls.auth,
+        self.staffs = fixtures.authenticators.createUsers(
+            self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_staff=True,
-            groups=cls.groups,
+            groups=self.groups,
         )
-        cls.plain_users = fixtures.authenticators.createUsers(
-            cls.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=cls.groups
+        self.plain_users = fixtures.authenticators.createUsers(
+            self.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=self.groups
         )
 
-        cls.user_service = fixtures.services.createSingleTestingUserServiceStructure(
-            cls.admins[0], cls.groups
+        self.user_service = fixtures.services.createSingleTestingUserServiceStructure(
+            self.admins[0], self.groups
         )
 
     @staticmethod
