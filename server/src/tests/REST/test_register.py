@@ -53,7 +53,7 @@ class ActorRegisterV3(rest.test.RESTTestCase):
         """
         response: typing.Any
         for i, usr in enumerate(self.admins + self.staffs + self.plain_users):
-            token = self.login(usr)
+            self.login(usr)  # User auth token will be set on headers on login
 
             # Try to register. Plain users will fail
             will_fail = usr in self.plain_users
@@ -63,13 +63,13 @@ class ActorRegisterV3(rest.test.RESTTestCase):
                     constants.STRING_CHARS if i % 2 == 0 else constants.STRING_CHARS_INVALID
                 ),
                 content_type='application/json',
-                **{AUTH_TOKEN_HEADER: token}
             )
             if will_fail:
                 self.assertEqual(response.status_code, 403)
                 continue  # Try next user, this one will fail
 
             self.assertEqual(response.status_code, 200)
+            # This is the actor token
             token = response.json()['result']
 
             # Ensure database contains the registered token

@@ -95,6 +95,8 @@ class WebLoginLogout(test.UDSTransactionTestCasse):
         # All users, admin and staff must be able to login
         root = GlobalConfig.SUPER_USER_LOGIN.get(True)
         rootpass = GlobalConfig.SUPER_USER_PASS.get(True)
+        # Ensure web login for super user is enabled
+        GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.set(True)
         users_pass = [(user.name, user.name) for user in users + admins + stafs]
         users_pass.append((root, rootpass))
         for num, up in enumerate(users_pass, start=1):
@@ -109,6 +111,20 @@ class WebLoginLogout(test.UDSTransactionTestCasse):
             # Except for root, that has no user associated on db
             if up[0] is not root and up[1] is not rootpass:  # root user is last one
                 self.assertEqual(models.Log.objects.count(), num * 4)
+
+        # Ensure web login for super user is disabled and that the root login fails
+        GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.set(False)
+        response = self.do_login(root, rootpass, auth.uuid)
+        self.assertInvalidLogin(response)
+
+        # Esure invalid password for root user is not allowed
+        GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.set(True)
+        response = self.do_login(root, 'invalid', auth.uuid)
+        self.assertInvalidLogin(response)
+
+        # And also, taht invalid user is not allowed
+        response = self.do_login('invalid', rootpass, auth.uuid)
+        self.assertInvalidLogin(response)
 
     def test_login_valid_user_no_group(self):
         user = fixtures.authenticators.createUsers(

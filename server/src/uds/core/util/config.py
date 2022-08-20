@@ -200,15 +200,13 @@ class Config:
             if self._crypt:
                 value = cryptoManager().encrypt(value)
 
-            # Editable here means that this configuration value can be edited by admin directly (generally, that this is a "clean text" value)
-
             logger.debug(
                 'Saving config %s.%s as %s', self._section.name(), self._key, value
             )
             try:
                 obj, _ = DBConfig.objects.get_or_create(
                     section=self._section.name(), key=self._key
-                )  # @UndefinedVariable
+                )
                 obj.value, obj.crypt, obj.long, obj.field_type, obj.help = (
                     value,
                     self._crypt,
