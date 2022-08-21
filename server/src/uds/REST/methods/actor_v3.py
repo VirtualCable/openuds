@@ -102,7 +102,9 @@ def clearIfSuccess(func: typing.Callable) -> typing.Callable:
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         _self = typing.cast('ActorV3Action', args[0])
-        result = func(*args, **kwargs)  # If raises any exception, it will be raised and we will not clear the counter
+        result = func(
+            *args, **kwargs
+        )  # If raises any exception, it will be raised and we will not clear the counter
         clearFailedIp(_self._request.ip)
         return result
 
@@ -282,7 +284,20 @@ class Initialize(ActorV3Action):
         # First, validate token...
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         service: typing.Optional[Service] = None
+        # alias_token will contain a new master token (or same alias if not a token) to allow change on unmanaged machines.
+        # Managed machines will not use this field (will return None)
         alias_token: typing.Optional[str] = None
+
+        initialization_result = (
+            lambda own_token, unique_id, os, alias_token: ActorV3Action.actorResult(
+                {
+                    'own_token': own_token,
+                    'unique_id': unique_id,
+                    'os': os,
+                    'alias_token': alias_token,
+                }
+            )
+        )
         try:
             token = self._params['token']
             # First, try to locate an user service providing this token.
@@ -331,15 +346,7 @@ class Initialize(ActorV3Action):
                 userService: UserService = next(iter(dbFilter))
             except Exception as e:
                 logger.info('Unmanaged host request: %s, %s', self._params, e)
-                return ActorV3Action.actorResult(
-                    {
-                        'own_token': None,
-                        'max_idle': None,
-                        'unique_id': None,
-                        'os': None,
-                        'alias': None,
-                    }
-                )
+                return initialization_result(None, None, None, None)
 
             # Managed by UDS, get initialization data from osmanager and return it
             # Set last seen actor version
@@ -349,15 +356,8 @@ class Initialize(ActorV3Action):
             if osManager:
                 osData = osManager.actorData(userService)
 
-            return ActorV3Action.actorResult(
-                {
-                    'own_token': userService.uuid,
-                    'unique_id': userService.unique_id,
-                    'os': osData,
-                    # alias will contain a new master token (or same alias if not a token) to allow change on unmanaged machines.
-                    # Managed machines will not use this field (will return None)
-                    'alias_token': alias_token,
-                }
+            return initialization_result(
+                userService.uuid, userService.unique_id, osData, alias_token
             )
         except (ActorToken.DoesNotExist, Service.DoesNotExist):
             raise BlockAccess()

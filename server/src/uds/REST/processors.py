@@ -138,7 +138,7 @@ class MarshallerProcessor(ContentProcessor):
             logger.debug('Unmarshalled content: %s', res)
             return res
         except Exception as e:
-            logger.exception('parsing %s: %s', self.mime_type, e)
+            logger.exception('parsing %s: %s', self.mime_type, self._request.body.decode('utf8'))
             raise ParametersException(str(e))
 
     def render(self, obj: typing.Any):

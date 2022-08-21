@@ -48,52 +48,62 @@ class ActorInitializeV3(rest.test.RESTTestCase):
     Test actor functionality
     """
 
+    def invoke_success(self, token: str, mac: str) -> typing.Dict[str, typing.Any]:
+        response = self.client.post(
+            '/uds/rest/actor/v3/initialize',
+            data={
+                'type': 'managed',
+                'version': VERSION,
+                'token': token,
+                'id': [{'mac': mac, 'ip': '1.2.3.4'}]
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIsInstance(data['result'], dict)
+        return data['result']
+
+    
+    def invoke_failure(self, token: str, mac: str, expectForbbiden: bool) -> typing.Dict[str, typing.Any]:
+        response = self.client.post(
+            '/uds/rest/actor/v3/initialize',
+            data={
+                'type': 'managed',
+                'version': VERSION,
+                'token': token,
+                'id': [{'mac': mac, 'ip': '4.3.2.1'}]
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 200 if not expectForbbiden else 403)
+        if expectForbbiden:
+            return {}
+
+        data = response.json()
+        self.assertIsInstance(data['result'], dict)
+        return data['result']
+
     def test_initialize_managed(self) -> None:
         """
         Test actor initialize v3
         """
-        rest_token, actor_token = self.login_and_register()
+        _, actor_token = self.login_and_register()
 
         # Get the user service unique_id
         unique_id = self.user_service.getUniqueId()
 
 
-        # IP Will not be "recorded" by uds on initialization, but on "ready" stage
-        # So these ips are in fact not used
-        success = lambda: self.client.post(
-            '/uds/rest/actor/v3/initialize',
-            data={
-                'type': 'managed',
-                'version': VERSION,
-                'token': actor_token,
-                'id': [{'mac': unique_id, 'ip': '1.2.3.4'}],
-            },
-            content_type='application/json',
-        )
-        fail = lambda: self.client.post(
-            '/uds/rest/actor/v3/initialize',
-            data={
-                'type': 'managed',
-                'version': VERSION,
-                'token': 'invalid',
-                'id': [{'mac': unique_id, 'ip': '1.2.3.4'}],
-            }
-        )
-
-        response = success()
-        self.assertEqual(response.status_code, 200)
-
-        # Ensure result is fine
-        data = response.json()
-        self.assertIsInstance(data['result'], dict)
-        result = data['result']
+        result = self.invoke_success(actor_token, unique_id)
 
         # Ensure own token is assigned
         self.assertEqual(result['own_token'], self.user_service.uuid)
-        logger.info('Response: %s', response.json())
 
         # Ensure no alias token is provided
         self.assertIsNone(result['alias_token'])
+
+        # Ensure unique_id detected is ours
+        self.assertEqual(result['unique_id'], unique_id)
 
         # Ensure os is set and it is a dict
         self.assertIsInstance(result['os'], dict)
@@ -104,5 +114,14 @@ class ActorInitializeV3(rest.test.RESTTestCase):
         # And name is userservice name
         self.assertEqual(os['name'], self.user_service.friendly_name)
 
+        # Now invoke failure
+        self.invoke_failure('invalid token', unique_id, True)
 
-        #
+
+        # Now invoke failure with valid token but invalid mac
+        result = self.invoke_failure(actor_token, 'invalid mac', False)
+
+        self.assertIsNone(result['own_token'], None)
+        self.assertIsNone(result['alias_token'])
+        self.assertIsNone(result['os'])
+        self.assertIsNone(result['unique_id'])
