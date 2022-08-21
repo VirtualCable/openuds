@@ -47,7 +47,8 @@ glob = {
 
 
 def createSingleTestingUserServiceStructure(
-    user: 'models.User', groups: typing.List['models.Group']
+    user: 'models.User', groups: typing.List['models.Group'],
+    type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
 ) -> 'models.UserService':
     from uds.services.Test.provider import TestProvider
 
@@ -80,15 +81,17 @@ def createSingleTestingUserServiceStructure(
         'onLogout': 'remove',
         'idle': 300,
     }
-    osmanager: 'models.OSManager' = models.OSManager.objects.create(
-        name='OS Manager %d' % (glob['osmanager_id']),
-        comments='Comment for OS Manager %d' % (glob['osmanager_id']),
-        data_type=TestOSManager.typeType,
-        data=TestOSManager(
-            environment.Environment(str(glob['osmanager_id'])), values
-        ).serialize(),
-    )
-    glob['osmanager_id'] += 1
+    osmanager: typing.Optional['models.OSManager'] = None
+    if type_ == 'managed':
+        osmanager = models.OSManager.objects.create(
+            name='OS Manager %d' % (glob['osmanager_id']),
+            comments='Comment for OS Manager %d' % (glob['osmanager_id']),
+            data_type=TestOSManager.typeType,
+            data=TestOSManager(
+                environment.Environment(str(glob['osmanager_id'])), values
+            ).serialize(),
+        )
+        glob['osmanager_id'] += 1
 
     values = {
         'testURL': 'http://www.udsenterprise.com',

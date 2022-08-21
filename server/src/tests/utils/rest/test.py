@@ -50,7 +50,8 @@ class RESTTestCase(test.UDSTransactionTestCasse):
     staffs: typing.List[models.User]
     plain_users: typing.List[models.User]
 
-    user_service: models.UserService
+    user_service_managed: models.UserService
+    user_service_unamanaged: models.UserService
 
     def setUp(self) -> None:
         # Set up data for REST Test cases
@@ -76,8 +77,19 @@ class RESTTestCase(test.UDSTransactionTestCasse):
             self.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=self.groups
         )
 
-        self.user_service = fixtures.services.createSingleTestingUserServiceStructure(
-            self.admins[0], self.groups
+        self.user_service_managed = (
+            fixtures.services.createSingleTestingUserServiceStructure(
+                self.admins[0],
+                self.groups,
+                'managed',
+            )
+        )
+        self.user_service_unamanaged = (
+            fixtures.services.createSingleTestingUserServiceStructure(
+                self.admins[0],
+                self.groups,
+                'unmanaged',
+            )
         )
 
     @staticmethod
@@ -121,7 +133,9 @@ class RESTTestCase(test.UDSTransactionTestCasse):
     #   - The login auth token
     #   - The actor token
     def login_and_register(self, as_admin: bool = True) -> typing.Tuple[str, str]:
-        token = self.login(as_admin=as_admin)  # Token not used, alreade inserted on login
+        token = self.login(
+            as_admin=as_admin
+        )  # Token not used, alreade inserted on login
         response = self.client.post(
             '/uds/rest/actor/v3/register',
             data=self.register_data(constants.STRING_CHARS),

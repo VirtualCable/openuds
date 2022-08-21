@@ -74,7 +74,7 @@ class BlockAccess(Exception):
 
 # Helpers
 def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
-    return [i.upper() for i in idsList] + [i.lower() for i in idsList]
+    return list(set([i.upper() for i in idsList] + [i.lower() for i in idsList]))
 
 
 def checkBlockedIp(ip: str) -> None:
@@ -304,14 +304,13 @@ class Initialize(ActorV3Action):
             if self._params['type'] == UNMANAGED:
                 alias_token = token  # Store token as possible alias
                 # First, try to locate on alias table
-                if ServiceTokenAlias.objects.get(alias=token).exists():
+                if ServiceTokenAlias.objects.filter(alias=token).exists():
                     # Retrieve real service from token alias
                     service = ServiceTokenAlias.objects.get(alias=token).service
-                # If not found, try to locate on service table
-                if (
-                    service is None
-                ):  # Not on alias token, try to locate on Service table
-                    service = Service.objects.get(token=token)
+                # If not found an alias, try to locate on service table
+                # Not on alias token, try to locate on Service table
+                if not service: 
+                    service = typing.cast('Service', Service.objects.get(token=token))
                     # And create a new alias for it, and save
                     alias_token = (
                         cryptoManager().randomString()

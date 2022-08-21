@@ -107,7 +107,7 @@ class TestActorV3(rest.test.RESTTestCase):
 
     def test_test_unmanaged(self) -> None:
         # try for a first few services
-        service = self.user_service.deployed_service.service
+        service = self.user_service_managed.deployed_service.service
         rest_token, actor_token = self.login_and_register()
         # Get service token
         self.do_test(UNMANAGED, service.token)
