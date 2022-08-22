@@ -51,7 +51,7 @@ class RESTTestCase(test.UDSTransactionTestCasse):
     plain_users: typing.List[models.User]
 
     user_service_managed: models.UserService
-    user_service_unamanaged: models.UserService
+    user_service_unmanaged: models.UserService
 
     def setUp(self) -> None:
         # Set up data for REST Test cases
@@ -77,15 +77,19 @@ class RESTTestCase(test.UDSTransactionTestCasse):
             self.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=self.groups
         )
 
+        self.provider = fixtures.services.createProvider()
+
         self.user_service_managed = (
             fixtures.services.createSingleTestingUserServiceStructure(
+                self.provider,
                 self.admins[0],
                 self.groups,
                 'managed',
             )
         )
-        self.user_service_unamanaged = (
+        self.user_service_unmanaged = (
             fixtures.services.createSingleTestingUserServiceStructure(
+                self.provider,
                 self.admins[0],
                 self.groups,
                 'unmanaged',

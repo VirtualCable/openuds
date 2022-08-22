@@ -32,12 +32,14 @@ import datetime
 import typing
 
 from uds import models
-from uds.core import environment, transports
+from uds.core import environment
 from uds.core.util import states
-from uds.core.managers.crypto import CryptoManager
+
+from ..utils import generators
 
 # Counters so we can reinvoke the same method and generate new data
 glob = {
+    'provider_id': 1,
     'service_id': 1,
     'osmanager_id': 1,
     'transport_id': 1,
@@ -45,19 +47,24 @@ glob = {
     'user_service_id': 1,
 }
 
-
-def createSingleTestingUserServiceStructure(
-    user: 'models.User', groups: typing.List['models.Group'],
-    type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
-) -> 'models.UserService':
+def createProvider() -> models.Provider:
     from uds.services.Test.provider import TestProvider
-
     provider = models.Provider()
-    provider.name = 'Testing provider'
-    provider.comments = 'Tesging provider'
+    provider.name = 'Testing provider {}'.format(glob['provider_id'])
+    provider.comments = 'Tesging provider comment {}'.format(glob['provider_id'])
     provider.data_type = TestProvider.typeType
     provider.data = provider.getInstance().serialize()
     provider.save()
+    glob['provider_id'] += 1
+
+    return provider
+
+
+def createSingleTestingUserServiceStructure(
+    provider: 'models.Provider',
+    user: 'models.User', groups: typing.List['models.Group'],
+    type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
+) -> 'models.UserService':
 
     from uds.services.Test.service import ServiceTestCache, ServiceTestNoCache
     from uds.osmanagers.Test import TestOSManager
@@ -69,7 +76,7 @@ def createSingleTestingUserServiceStructure(
         data=ServiceTestCache(
             environment.Environment(str(glob['service_id'])), provider.getInstance()
         ).serialize(),
-        token='token{}'.format(glob['service_id']),
+        token=generators.random_string(16) + str(glob['service_id']),
     )
     glob['service_id'] += 1  # In case we generate a some more services elsewhere
 
@@ -130,14 +137,14 @@ def createSingleTestingUserServiceStructure(
     user_service: 'models.UserService' = service_pool.userServices.create(
         friendly_name='user-service-{}'.format(glob['user_service_id']),
         publication=publication,
-        unique_id='00:11:22:33:44:55',
+        unique_id=generators.random_mac(),
         state=states.userService.USABLE,
         os_state=states.userService.USABLE,
         state_date=datetime.datetime.now(),
         creation_date=datetime.datetime.now() - datetime.timedelta(minutes=30),
         user=user,
-        src_hostname='testhost',
-        src_ip='0.0.0.1',
+        src_hostname=generators.random_string(32),
+        src_ip=generators.random_ip(),
     )
 
     return user_service

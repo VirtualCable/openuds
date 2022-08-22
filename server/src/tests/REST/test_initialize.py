@@ -37,6 +37,7 @@ from django.conf import settings
 from uds import models
 from uds.core import VERSION
 from uds.REST.handlers import AUTH_TOKEN_HEADER
+from uds.models import user_service
 
 from ..utils import rest, constants
 
@@ -49,14 +50,19 @@ class ActorInitializeV3(rest.test.RESTTestCase):
     Test actor functionality
     """
 
-    def invoke_success(self, type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']], token: str, mac: str) -> typing.Dict[str, typing.Any]:
+    def invoke_success(
+        self,
+        type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
+        token: str,
+        mac: str,
+    ) -> typing.Dict[str, typing.Any]:
         response = self.client.post(
             '/uds/rest/actor/v3/initialize',
             data={
                 'type': type_,
                 'version': VERSION,
                 'token': token,
-                'id': [{'mac': mac, 'ip': '1.2.3.4'}]
+                'id': [{'mac': mac, 'ip': '1.2.3.4'}],
             },
             content_type='application/json',
         )
@@ -65,15 +71,20 @@ class ActorInitializeV3(rest.test.RESTTestCase):
         self.assertIsInstance(data['result'], dict)
         return data['result']
 
-    
-    def invoke_failure(self, type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']], token: str, mac: str, expectForbbiden: bool) -> typing.Dict[str, typing.Any]:
+    def invoke_failure(
+        self,
+        type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
+        token: str,
+        mac: str,
+        expectForbbiden: bool,
+    ) -> typing.Dict[str, typing.Any]:
         response = self.client.post(
             '/uds/rest/actor/v3/initialize',
             data={
                 'type': type_,
                 'version': VERSION,
                 'token': token,
-                'id': [{'mac': mac, 'ip': '4.3.2.1'}]
+                'id': [{'mac': mac, 'ip': '4.3.2.1'}],
             },
             content_type='application/json',
         )
@@ -89,6 +100,8 @@ class ActorInitializeV3(rest.test.RESTTestCase):
         """
         Test actor initialize v3 for managed actor
         """
+        user_service = self.user_service_managed
+
         _, actor_token = self.login_and_register()
 
         # Get the user service unique_id
@@ -100,7 +113,7 @@ class ActorInitializeV3(rest.test.RESTTestCase):
         result = success(unique_id)
 
         # Ensure own token is assigned
-        self.assertEqual(result['own_token'], self.user_service_managed.uuid)
+        self.assertEqual(result['own_token'], user_service.uuid)
 
         # Ensure no alias token is provided
         self.assertIsNone(result['alias_token'])
@@ -115,11 +128,10 @@ class ActorInitializeV3(rest.test.RESTTestCase):
         # Ensure requested action is rename
         self.assertEqual(os['action'], 'rename')
         # And name is userservice name
-        self.assertEqual(os['name'], self.user_service_managed.friendly_name)
+        self.assertEqual(os['name'], user_service.friendly_name)
 
         # Now invoke failure
         failure('invalid token', unique_id, True)
-
 
         # Now invoke failure with valid token but invalid mac
         result = failure(actor_token, 'invalid mac', False)
@@ -129,20 +141,47 @@ class ActorInitializeV3(rest.test.RESTTestCase):
         self.assertIsNone(result['os'])
         self.assertIsNone(result['unique_id'])
 
-
     def test_initialize_unmanaged(self):
         """
         Test actor initialize v3 for unmanaged actor
         """
-        actor_token = self.user_service_managed.deployed_service.service.token
+        user_service = self.user_service_unmanaged
+        actor_token = user_service.deployed_service.service.token
 
-        unique_id = self.user_service_managed.getUniqueId()
+        unique_id = user_service.getUniqueId()
 
-        success = functools.partial(self.invoke_success, 'unmanaged', actor_token)
+        success = functools.partial(self.invoke_success, 'unmanaged')
         failure = functools.partial(self.invoke_failure, 'unmanaged')
 
-        # This will succeed
-        result = success(unique_id)
+        # This will succeed, but only alias token is provided
+        result = success(
+            actor_token,
+            mac='00:00:00:00:00:00',
+        )
 
-        logger.info('Result is %s', result)
+        alias_token = result['alias_token']
 
+        # Unmanaged host is the response for initialization of unmanaged actor ALWAYS
+        self.assertIsNone(result['own_token'])
+        self.assertIsInstance(alias_token, str)
+        self.assertIsNone(result['unique_id'])
+        self.assertIsNone(result['os'])
+
+        # Ensure that the alias returned is on alias db, and it points to the same service as the one we belong to
+        alias = models.ServiceTokenAlias.objects.get(alias=result['alias_token'])
+        self.assertEqual(alias.service, user_service.deployed_service.service)
+
+        # Now, we should be able to "initialize" with valid mac and with original and alias tokens
+        # If we call initialize and we get "own-token" means that we have already logged in with this data
+        result = success(
+            alias_token,
+            mac=unique_id
+        )
+
+        self.assertEqual(result['own_token'], user_service.uuid)
+        self.assertEqual(result['alias_token'], alias_token)
+        self.assertEqual(result['unique_id'], unique_id)
+
+
+
+        logger.info('Result: %s', result)

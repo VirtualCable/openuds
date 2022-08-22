@@ -313,7 +313,7 @@ class Initialize(ActorV3Action):
                     service = typing.cast('Service', Service.objects.get(token=token))
                     # And create a new alias for it, and save
                     alias_token = (
-                        cryptoManager().randomString()
+                        cryptoManager().randomString(40)
                     )  # fix alias with new token
                     service.aliases.create(alias=alias_token)
 
@@ -345,7 +345,7 @@ class Initialize(ActorV3Action):
                 userService: UserService = next(iter(dbFilter))
             except Exception as e:
                 logger.info('Unmanaged host request: %s, %s', self._params, e)
-                return initialization_result(None, None, None, None)
+                return initialization_result(None, None, None, alias_token)
 
             # Managed by UDS, get initialization data from osmanager and return it
             # Set last seen actor version
