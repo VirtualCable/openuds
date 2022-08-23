@@ -85,7 +85,7 @@ class MFA(Module):
     # : override it in your own implementation.
     cacheTime: typing.ClassVar[int] = 5
 
-    class RESULT(enum.Enum):
+    class RESULT(enum.IntEnum):
         """
         This enum is used to know if the MFA code was sent or not.
         """
@@ -143,7 +143,7 @@ class MFA(Module):
     def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> 'MFA.RESULT':
         """
         This method will be invoked from "process" method, to send the MFA code to the user.
-        If returns MFA.RESULT.VALID, the MFA code was sent.
+        If returns MFA.RESULT.OK, the MFA code was sent.
         If returns MFA.RESULT.ALLOW, the MFA code was not sent, the user does not need to enter the MFA code.
         If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """
@@ -156,7 +156,7 @@ class MFA(Module):
         The identifier where to send the code, will be obtained from "mfaIdentifier" method.
         Default implementation generates a random code and sends invokes "sendCode" method.
 
-        If returns MFA.RESULT.VALID, the MFA code was sent.
+        If returns MFA.RESULT.OK, the MFA code was sent.
         If returns MFA.RESULT.ALLOW, the MFA code was not sent, the user does not need to enter the MFA code.
         If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """

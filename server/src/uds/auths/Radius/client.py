@@ -1,15 +1,11 @@
 import io
 import logging
+import enum
 import typing
 
 from pyrad.client import Client
 from pyrad.dictionary import Dictionary
 import pyrad.packet
-
-__all__ = ['RadiusClient', 'RadiusAuthenticationError', 'RADDICT']
-
-class RadiusAuthenticationError(Exception):
-    pass
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +47,36 @@ ATTRIBUTE   Framed-AppleTalk-Link   37  integer
 ATTRIBUTE   Framed-AppleTalk-Network 38 integer
 ATTRIBUTE   Framed-AppleTalk-Zone   39  string"""
 
+# For AccessChallenge return values
+NOT_CHECKED, INCORRECT, CORRECT = -1, 0, 1  # for pwd and otp
+NOT_NEEDED, NEEDED = INCORRECT, CORRECT  # for otp_needed
+
+
+class RadiusAuthenticationError(Exception):
+    pass
+
+
+class RadiusStates(enum.IntEnum):
+    NOT_CHECKED = -1
+    INCORRECT = 0
+    CORRECT = 1
+
+    # Aliases
+    NOT_NEEDED = INCORRECT
+    NEEDED = CORRECT
+
+
+class RadiusResult(typing.NamedTuple):
+    """
+    Result of an AccessChallenge request.
+    """
+
+    pwd: RadiusStates = RadiusStates.INCORRECT
+    replyMessage: typing.Optional[bytes] = None
+    state: typing.Optional[bytes] = None
+    otp: RadiusStates = RadiusStates.NOT_CHECKED
+    otp_needed: RadiusStates = RadiusStates.NOT_CHECKED
+
 
 class RadiusClient:
     radiusServer: Client
@@ -68,13 +94,27 @@ class RadiusClient:
         dictionary: str = RADDICT,
     ) -> None:
         self.radiusServer = Client(
-            server=server, authport=authPort, secret=secret, dict=Dictionary(io.StringIO(dictionary))
+            server=server,
+            authport=authPort,
+            secret=secret,
+            dict=Dictionary(io.StringIO(dictionary)),
         )
         self.nasIdentifier = nasIdentifier
         self.appClassPrefix = appClassPrefix
 
-    # Second element of return value is the mfa code from field
-    def authenticate(self, username: str, password: str, mfaField: str) -> typing.Tuple[typing.List[str], str]:
+    def extractAccessChallenge(self, reply: pyrad.packet.AuthPacket) -> RadiusResult:
+        return RadiusResult(
+            pwd=RadiusStates.CORRECT,
+            replyMessage=typing.cast(
+                typing.List[bytes], reply.get('Reply-Message') or ['']
+            )[0],
+            state=typing.cast(typing.List[bytes], reply.get('State') or [b''])[0],
+            otp_needed=RadiusStates.NEEDED,
+        )
+
+    def sendAccessRequest(
+        self, username: str, password: str, **kwargs
+    ) -> pyrad.packet.AuthPacket:
         req: pyrad.packet.AuthPacket = self.radiusServer.CreateAuthPacket(
             code=pyrad.packet.AccessRequest,
             User_Name=username,
@@ -83,9 +123,19 @@ class RadiusClient:
 
         req["User-Password"] = req.PwCrypt(password)
 
-        reply = typing.cast(pyrad.packet.AuthPacket, self.radiusServer.SendPacket(req))
+        # Fill in extra fields
+        for k, v in kwargs.items():
+            req[k] = v
 
-        if reply.code != pyrad.packet.AccessAccept:
+        return typing.cast(pyrad.packet.AuthPacket, self.radiusServer.SendPacket(req))
+
+    # Second element of return value is the mfa code from field
+    def authenticate(
+        self, username: str, password: str, mfaField: str
+    ) -> typing.Tuple[typing.List[str], str]:
+        reply = self.sendAccessRequest(username, password)
+
+        if reply.code not in  (pyrad.packet.AccessAccept, pyrad.packet.AccessChallenge):
             raise RadiusAuthenticationError('Access denied')
 
         # User accepted, extract groups...
@@ -93,7 +143,11 @@ class RadiusClient:
         groupClassPrefix = (self.appClassPrefix + 'group=').encode()
         groupClassPrefixLen = len(groupClassPrefix)
         if 'Class' in reply:
-            groups = [i[groupClassPrefixLen:].decode() for i in typing.cast(typing.Iterable[bytes], reply['Class']) if i.startswith(groupClassPrefix)]
+            groups = [
+                i[groupClassPrefixLen:].decode()
+                for i in typing.cast(typing.Iterable[bytes], reply['Class'])
+                if i.startswith(groupClassPrefix)
+            ]
         else:
             logger.info('No "Class (25)" attribute found')
             return ([], '')
@@ -101,6 +155,99 @@ class RadiusClient:
         # ...and mfa code
         mfaCode = ''
         if mfaField and mfaField in reply:
-            mfaCode = ''.join(i[groupClassPrefixLen:].decode() for i in typing.cast(typing.Iterable[bytes], reply['Class']) if i.startswith(groupClassPrefix))
+            mfaCode = ''.join(
+                i[groupClassPrefixLen:].decode()
+                for i in typing.cast(typing.Iterable[bytes], reply['Class'])
+                if i.startswith(groupClassPrefix)
+            )
         return (groups, mfaCode)
 
+    def authenticate_only(self, username: str, password: str) -> RadiusResult:
+        reply = self.sendAccessRequest(username, password)
+
+        if reply.code == pyrad.packet.AccessChallenge:
+            return self.extractAccessChallenge(reply)
+
+        # user/pwd accepted: this user does not have challenge data
+        if reply.code == pyrad.packet.AccessAccept:
+            return RadiusResult(
+                pwd=RadiusStates.CORRECT,
+                otp_needed=RadiusStates.NOT_CHECKED,
+            )
+
+        # user/pwd rejected
+        return RadiusResult(
+            pwd=RadiusStates.INCORRECT,
+        )
+
+    def challenge_only(
+        self, username: str, otp: str, state: bytes = b'0000000000000000'
+    ) -> RadiusResult:
+
+        # clean otp code
+        otp = ''.join([x for x in otp if x in '0123456789'])
+
+        reply = self.sendAccessRequest(username, otp, State=state)
+
+        # correct OTP challenge
+        if reply.code == pyrad.packet.AccessAccept:
+            return RadiusResult(
+                otp=RadiusStates.CORRECT,
+            )
+
+        # incorrect OTP challenge
+        return RadiusResult(
+            otp=RadiusStates.INCORRECT,
+        )
+
+    def authenticate_and_challenge(
+        self, username: str, password: str, otp: str
+    ) -> RadiusResult:
+        reply = self.sendAccessRequest(username, password)
+
+        if reply.code == pyrad.packet.AccessChallenge:
+            state = typing.cast(typing.List[bytes], reply.get('State') or [b''])[0]
+            replyMessage = typing.cast(
+                typing.List[bytes], reply.get('Reply-Message') or ['']
+            )[0]
+            return self.challenge_only(username, otp, state=state)
+
+        # user/pwd accepted: but this user does not have challenge data
+        # we should not be here...
+        if reply.code == pyrad.packet.AccessAccept:
+            logger.warning(
+                "Radius OTP error: cheking for OTP for not needed user [%s]", username
+            )
+            return RadiusResult(
+                pwd=RadiusStates.CORRECT,
+                otp_needed=RadiusStates.NOT_NEEDED,
+            )
+
+        # TODO: accept more AccessChallenge authentications (as RFC says)
+
+        # incorrect user/pwd
+        return RadiusResult()
+
+    def authenticate_challenge(
+        self, username: str, password: str = '', otp: str = '', state: bytes = b''
+    ) -> RadiusResult:
+        '''
+        wrapper for above 3 functions: authenticate_only, challenge_only, authenticate_and_challenge
+        calls wrapped functions based on passed input values: (pwd/otp/state)
+        '''
+        # clean input data
+        otp = ''.join([x for x in otp if x in '0123456789'])
+        username = username.strip()
+        password = password.strip()
+        state = state.strip()
+
+        if not username or (not password and not otp):
+            return RadiusResult()  # no user/pwd provided
+
+        if not otp:
+            return self.authenticate_only(username, password)
+        if otp and not password:
+            # check only otp with static/invented state. allow this ?
+            return self.challenge_only(username, otp, state=b'0000000000000000')
+        # otp and password
+        return self.authenticate_and_challenge(username, password, otp)
