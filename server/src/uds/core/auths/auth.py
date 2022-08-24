@@ -454,7 +454,7 @@ def webLogout(
             username = request.user.name
             logout = authenticator.logout(request, username)
             if logout and logout.success == auths.AuthenticationSuccess.REDIRECT:
-                exit_url = logout.url
+                exit_url = logout.url or exit_url
             if request.user.id != ROOT_ID:
                 # Log the event if not root user
                 events.addEvent(
@@ -472,7 +472,7 @@ def webLogout(
         request.session.flush()
         request.authorized = False
 
-    response = HttpResponseRedirect(exit_url)  # type: ignore
+    response = HttpResponseRedirect(exit_url)
     if authenticator:
         authenticator.webLogoutHook(username, request, response)
     return response

@@ -31,12 +31,10 @@
 import typing
 import logging
 
-from django.conf import settings
-
 from uds import models
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 
-from ..utils import rest, constants
+from ...utils import rest, constants
 
 
 logger = logging.getLogger(__name__)

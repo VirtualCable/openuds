@@ -34,7 +34,7 @@ import logging
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED, ALLOWED_FAILS
 
-from ..utils import rest
+from ...utils import rest
 
 logger = logging.getLogger(__name__)
 

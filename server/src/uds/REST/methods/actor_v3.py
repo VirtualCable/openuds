@@ -302,20 +302,16 @@ class Initialize(ActorV3Action):
             token = self._params['token']
             # First, try to locate an user service providing this token.
             if self._params['type'] == UNMANAGED:
-                alias_token = token  # Store token as possible alias
                 # First, try to locate on alias table
                 if ServiceTokenAlias.objects.filter(alias=token).exists():
                     # Retrieve real service from token alias
                     service = ServiceTokenAlias.objects.get(alias=token).service
+                    alias_token = token  # Store token as possible alias
+
                 # If not found an alias, try to locate on service table
                 # Not on alias token, try to locate on Service table
                 if not service: 
                     service = typing.cast('Service', Service.objects.get(token=token))
-                    # And create a new alias for it, and save
-                    alias_token = (
-                        cryptoManager().randomString(40)
-                    )  # fix alias with new token
-                    service.aliases.create(alias=alias_token)
 
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service
@@ -354,6 +350,14 @@ class Initialize(ActorV3Action):
             osManager = userService.getOsManagerInstance()
             if osManager:
                 osData = osManager.actorData(userService)
+
+            if service and not alias_token:  # Is a service managed by UDS
+                # Create a new alias for it, and save
+                alias_token = (
+                    cryptoManager().randomString(40)
+                )  # fix alias with new token
+                service.aliases.create(alias=alias_token)
+
 
             return initialization_result(
                 userService.uuid, userService.unique_id, osData, alias_token

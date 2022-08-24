@@ -32,7 +32,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # We use commit/rollback
-from django.test import TransactionTestCase as TestCase
+from ...utils.test import UDSTransactionTestCase
 from uds.core.util.cache import Cache
 import time
 
@@ -41,7 +41,7 @@ UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 VALUE_1 = [u'únîcödè€', b'string', {'a': 1, 'b': 2.0}]
 
 
-class CacheTests(TestCase):
+class CacheTests(UDSTransactionTestCase):
 
     def test_cache(self):
         cache = Cache(UNICODE_CHARS)
@@ -60,7 +60,7 @@ class CacheTests(TestCase):
 
         # Add new "str" key, with 1 second life, wait 2 seconds and recover
         cache.put(b'key', VALUE_1, 1)
-        time.sleep(2)
+        time.sleep(1.1)
         self.assertEqual(cache.get(b'key'), None, 'Put an "str" key and recover it once it has expired')
 
         # Refresh previous key and will be again available
@@ -79,7 +79,7 @@ class CacheTests(TestCase):
 
         # Checks cache cleanup (remove expired keys)
         cache.put('key', 'test', 0)
-        time.sleep(1)
+        time.sleep(0.1)
         Cache.cleanUp()
         cache.refresh('key')
         self.assertEqual(cache.get('key'), None, 'Put a key and recover it once it has expired and has been cleaned')

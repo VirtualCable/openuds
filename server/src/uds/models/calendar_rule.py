@@ -109,12 +109,12 @@ class CalendarRule(UUIDModel):
     duration = models.IntegerField(default=0)  # Duration in minutes
     duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
 
-    calendar: 'models.ForeignKey[CalendarRule, Calendar]' = models.ForeignKey(
+    calendar: 'models.ForeignKey["CalendarRule", Calendar]' = models.ForeignKey(
         Calendar, related_name='rules', on_delete=models.CASCADE
     )
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[CalendarRule]'
+    objects: 'models.manager.Manager["CalendarRule"]'
 
     class Meta:
         """

@@ -326,6 +326,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                         if self.isManaged()
                         else (initResult.alias_token or self._cfg.master_token)
                     )
+                    # Replace master token with alias token if present
                     self._cfg = self._cfg._replace(
                         master_token=master_token,
                         own_token=initResult.own_token,

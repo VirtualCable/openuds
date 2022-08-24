@@ -33,6 +33,7 @@ import logging
 
 from django.test import TestCase, TransactionTestCase
 from django.test.client import Client
+from django.http import HttpResponse
 from django.conf import settings
 
 from uds import models
@@ -76,12 +77,19 @@ class UDSClient(Client):
         return super().request(**request)
 
 
+    def get(self, *args, **kwargs) -> 'HttpResponse':
+        return typing.cast('HttpResponse', super().get(*args, **kwargs))
+
+    def post(self, *args, **kwargs) -> 'HttpResponse':
+        return typing.cast('HttpResponse', super().post(*args, **kwargs))
+
+
 class UDSTestCase(TestCase):
     client_class: typing.Type = UDSClient
 
     client: UDSClient
 
-class UDSTransactionTestCasse(TransactionTestCase):
+class UDSTransactionTestCase(TransactionTestCase):
     client_class: typing.Type = UDSClient
 
     client: UDSClient

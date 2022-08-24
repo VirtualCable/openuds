@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2020 Virtual Cable S.L.
+# Copyright (c) 2020-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -35,7 +35,7 @@ import os
 import logging
 import typing
 
-import PyQt5  # pylint: disable=unused-import
+import PyQt5  # Ensures PyQt is included in the package
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
 
 import udsactor

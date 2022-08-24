@@ -32,8 +32,8 @@ import random
 import typing
 
 
-from .. import fixtures
-from ..utils import rest, test
+from ... import fixtures
+from ...utils import rest, test
 
 
 class RESTLoginLogoutCase(test.UDSTestCase):
@@ -41,7 +41,7 @@ class RESTLoginLogoutCase(test.UDSTestCase):
     Test login and logout
     """
 
-    def test_login_logout(self):
+    def test_login_logout(self) -> None:
         """
         Test login and logout
         """

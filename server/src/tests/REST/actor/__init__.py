@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
@@ -28,5 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from . import actor
+from . import test_login_logout
+from . import test_register
+from . import test_initialize

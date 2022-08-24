@@ -37,9 +37,8 @@ from django.conf import settings
 from uds import models
 from uds.core import VERSION
 from uds.REST.handlers import AUTH_TOKEN_HEADER
-from uds.models import user_service
 
-from ..utils import rest, constants
+from ...utils import rest
 
 
 logger = logging.getLogger(__name__)
@@ -153,19 +152,30 @@ class ActorInitializeV3(rest.test.RESTTestCase):
         success = functools.partial(self.invoke_success, 'unmanaged')
         failure = functools.partial(self.invoke_failure, 'unmanaged')
 
-        # This will succeed, but only alias token is provided
+        # This will succeed, but only alias token is returned because MAC is not registered by UDS
         result = success(
             actor_token,
             mac='00:00:00:00:00:00',
         )
 
-        alias_token = result['alias_token']
-
         # Unmanaged host is the response for initialization of unmanaged actor ALWAYS
+        self.assertIsNone(result['alias_token'])
         self.assertIsNone(result['own_token'])
-        self.assertIsInstance(alias_token, str)
         self.assertIsNone(result['unique_id'])
         self.assertIsNone(result['os'])
+
+        # Now, invoke a "nice" initialize
+        result = success(
+            actor_token,
+            mac=unique_id,
+        )
+
+        alias_token = result['alias_token']
+
+        self.assertIsInstance(alias_token, str)
+        self.assertEqual(result['own_token'], user_service.uuid)
+        self.assertEqual(result['alias_token'], alias_token)
+        self.assertEqual(result['unique_id'], unique_id)
 
         # Ensure that the alias returned is on alias db, and it points to the same service as the one we belong to
         alias = models.ServiceTokenAlias.objects.get(alias=result['alias_token'])
@@ -173,15 +183,11 @@ class ActorInitializeV3(rest.test.RESTTestCase):
 
         # Now, we should be able to "initialize" with valid mac and with original and alias tokens
         # If we call initialize and we get "own-token" means that we have already logged in with this data
-        result = success(
-            alias_token,
-            mac=unique_id
-        )
+        result = success(alias_token, mac=unique_id)
 
         self.assertEqual(result['own_token'], user_service.uuid)
         self.assertEqual(result['alias_token'], alias_token)
         self.assertEqual(result['unique_id'], unique_id)
 
-
-
-        logger.info('Result: %s', result)
+        #
+        failure('invalid token', unique_id, True)

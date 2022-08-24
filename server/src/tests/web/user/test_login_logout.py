@@ -31,6 +31,8 @@
 import random
 import typing
 
+from django.urls import reverse
+
 from uds.core.util.config import GlobalConfig
 
 from ...utils import test
@@ -43,7 +45,7 @@ from uds import models
 
 
 
-class WebLoginLogout(test.UDSTransactionTestCasse):
+class WebLoginLogout(test.UDSTransactionTestCase):
     """
     Test WEB login and logout
     """
@@ -105,7 +107,7 @@ class WebLoginLogout(test.UDSTransactionTestCasse):
             # Now invoke logout
             response = typing.cast('HttpResponse', self.client.get('/uds/page/logout'))
             self.assertRedirects(
-                response, 'http://testserver/uds/page/login', status_code=302
+                response, reverse('page.login'), status_code=302
             )
             # Ensures a couple of logs are created for every operation
             # Except for root, that has no user associated on db
