@@ -76,7 +76,7 @@ class WEBTestCase(test.UDSTransactionTestCase):
 
         self.provider = fixtures.services.createProvider()
 
-    def do_login(self, username: str, password: str, authid: str) -> 'test.UDSHttpResponse':
+    def do_login(self, username: str, password: str, authid: str, check: bool = False) -> 'test.UDSHttpResponse':
         response = typing.cast(
             'test.UDSHttpResponse',
             self.client.post(
@@ -88,7 +88,8 @@ class WEBTestCase(test.UDSTransactionTestCase):
                 },
             ),
         )
-        self.assertRedirects(response, '/uds/page/services', status_code=302, target_status_code=200)
+        if check:
+            self.assertRedirects(response, '/uds/page/services', status_code=302, target_status_code=200)
         return response
 
     def login(

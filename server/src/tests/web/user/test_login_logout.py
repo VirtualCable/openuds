@@ -102,7 +102,7 @@ class WebLoginLogout(test.WEBTestCase):
 
         # Ensure web login for super user is disabled and that the root login fails
         GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.set(False)
-        response = self.do_login(root, rootpass, auth.uuid)
+        response = self.do_login(root, rootpass, auth.uuid, False)
         self.assertInvalidLogin(response)
 
         # Esure invalid password for root user is not allowed
@@ -129,7 +129,7 @@ class WebLoginLogout(test.WEBTestCase):
             is_staff=True,
         )[0]
 
-        response = self.do_login(user.name, user.name, user.manager.uuid)
+        response = self.do_login(user.name, user.name, user.manager.uuid, False)
         self.assertInvalidLogin(response)
 
         self.assertEqual(models.Log.objects.count(), 4)

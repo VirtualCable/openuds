@@ -1,0 +1,122 @@
+# -*- coding: utf-8 -*-
+
+#
+# Copyright (c) 2022 Virtual Cable S.L.U.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+import typing
+import datetime
+
+from django.conf import settings
+
+from uds.core.managers.crypto import CryptoManager
+from ...utils.test import UDSTestCase
+
+class CryptoManagerTests(UDSTestCase):
+    manager: CryptoManager = CryptoManager()
+
+
+    def test_RSA(self):
+        testStr = 'Test string'
+        cryptStr = self.manager.encrypt(testStr)
+
+        self.assertIsInstance(cryptStr, str, 'Crypted string is not unicode')
+
+        decryptStr = self.manager.decrypt(cryptStr)
+
+        self.assertIsInstance(decryptStr, str, 'Decrypted string is not unicode')
+        self.assertEqual(
+            decryptStr,
+            testStr,
+            'Decrypted test string failed!: {} vs {}'.format(decryptStr, testStr),
+        )
+
+    def test_Xor(self):
+        testStr1a = 'Test String more or less with strange chars €@"áéöüìùòàäñÑ@æßðđŋħ←↓→þøŧ¶€ł@łĸµn”“«»“”nµłĸŋđðßææ@ł€¶ŧ←↓→øþ'
+        testStr1b = 'Test String 2 with some ł€¶ŧ←↓→øþ'
+
+        testStr2a = 'xor string chasquera'
+        testStr2b = 'xor string chasquera #~½¬æßð'
+
+        for s1 in (testStr1a, testStr1b):
+            for s2 in (testStr2a, testStr2b):
+                xor = self.manager.xor(s1, s2)
+                self.assertIsInstance(xor, bytes, 'Returned xor string is not bytes')
+                xorxor = self.manager.xor(xor, s2)
+                self.assertEqual(xorxor.decode('utf-8'), s1)
+
+    def test_Symcrypt(self):
+        testStr1a = 'Test String more or less with strange chars €@"áéöüìùòàäñÑ@æßðđŋħ←↓→þøŧ¶€ł@łĸµn”“«»“”nµłĸŋđðßææ@ł€¶ŧ←↓→øþ'
+        testStr1b = 'Test String 2 with some ł€¶ŧ←↓→øþ'
+
+        testStr2a = 'xor string chasquera'
+        testStr2b = 'xor string chasquera #~½¬æßð'
+
+        for s1 in (testStr1a, testStr1b):
+            for s2 in (testStr2a, testStr2b):
+                sym = self.manager.symCrypt(s1, s2)
+                self.assertIsInstance(sym, bytes, 'Returned xor string is not bytes')
+                symd = self.manager.symDecrpyt(sym, s2)
+                self.assertEqual(symd, s1)
+
+
+    def test_Certs(self):
+        # Right now, only tests that these methods do not fails
+        self.manager.loadPrivateKey(settings.RSA_KEY)
+
+        self.manager.loadCertificate(settings.CERTIFICATE)
+        self.manager.loadCertificate(settings.CERTIFICATE.encode('utf8'))
+
+    def test_Hash(self):
+        testStr = 'Test String for hash'
+        # knownHashValue = '4e1311c1378993b34430988f4836b8e6b8beb219'
+
+        for _ in (testStr, testStr.encode('utf-8')):
+            hashValue = self.manager.hash(testStr)
+            self.assertIsInstance(hashValue, str, 'Returned hash must be an string')
+
+    def test_Uuid(self):
+        self.manager._counter = 0
+        self.assertIsInstance(self.manager.uuid(), str)
+        self.assertEqual(1, self.manager._counter, 'Counter has note been incremented!')
+
+        for o in (
+            (1, '47c69004-5f4c-5266-b93d-747b318e2d3f'),
+            (1.1, 'dfdae060-00a9-5e8d-9a28-3b77b8af18eb'),
+            ('Test String', 'dce56818-2231-5d0f-abd3-73b3b8c1c7ee'),
+            (
+                datetime.datetime(2014, 9, 15, 17, 2, 12),
+                'a42521d7-2b2f-5767-992c-482aef05b25c',
+            ),
+        ):
+            uuid = self.manager.uuid(o[0])
+            self.assertIsInstance(uuid, str, 'Returned uuid must be an string')
+            self.assertEqual(uuid, o[1])
+
+        self.assertEqual(1, self.manager._counter, 'Counter has note been incremented!')
