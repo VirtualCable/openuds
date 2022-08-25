@@ -65,7 +65,7 @@ class ActorInitializeV3(rest.test.RESTTestCase):
             },
             content_type='application/json',
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)        
         data = response.json()
         self.assertIsInstance(data['result'], dict)
         return data['result']

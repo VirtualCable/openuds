@@ -63,6 +63,28 @@ class Config:
     READ_FIELD: int = 5  # Only can viewed, but not changed (can be changed througn API, it's just read only to avoid "mistakes")
     HIDDEN_FIELD: int = 6  # Not visible on "admin" config edition
 
+    class Section:
+        _sectionName: str
+
+        def __init__(self, sectionName: str) -> None:
+            self._sectionName = sectionName
+
+        def value(self, key, default='', **kwargs) -> 'Config.Value':
+            return Config.value(self, key, default, **kwargs)
+
+        def valueCrypt(self, key, default='', **kwargs) -> 'Config.Value':
+            return Config.value(self, key, default, True, **kwargs)
+
+        def valueLong(self, key, default='', **kwargs) -> 'Config.Value':
+            return Config.value(self, key, default, False, True, **kwargs)
+
+        def name(self) -> str:
+            return self._sectionName
+
+        def __str__(self) -> str:
+            return self._sectionName
+
+
     class Value:
         _section: 'Config.Section'
         _type: int
@@ -230,27 +252,6 @@ class Config:
 
         def __str__(self) -> str:
             return '{}.{}'.format(self._section.name(), self._key)
-
-    class Section:
-        _sectionName: str
-
-        def __init__(self, sectionName: str) -> None:
-            self._sectionName = sectionName
-
-        def value(self, key, default='', **kwargs) -> 'Config.Value':
-            return Config.value(self, key, default, **kwargs)
-
-        def valueCrypt(self, key, default='', **kwargs) -> 'Config.Value':
-            return Config.value(self, key, default, True, **kwargs)
-
-        def valueLong(self, key, default='', **kwargs) -> 'Config.Value':
-            return Config.value(self, key, default, False, True, **kwargs)
-
-        def name(self) -> str:
-            return self._sectionName
-
-        def __str__(self) -> str:
-            return self._sectionName
 
     @staticmethod
     def section(sectionName):

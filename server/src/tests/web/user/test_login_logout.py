@@ -35,7 +35,7 @@ from django.urls import reverse
 
 from uds.core.util.config import GlobalConfig
 
-from ...utils import test
+from ...utils.web import test
 from ... import fixtures
 
 if typing.TYPE_CHECKING:
@@ -45,7 +45,7 @@ from uds import models
 
 
 
-class WebLoginLogout(test.UDSTransactionTestCase):
+class WebLoginLogout(test.WEBTestCase):
     """
     Test WEB login and logout
     """
@@ -56,19 +56,6 @@ class WebLoginLogout(test.UDSTransactionTestCase):
         # Fetch uds.js
         response = typing.cast('HttpResponse', self.client.get('/uds/utility/uds.js'))
         self.assertContains(response, '"errors": ["Access denied"]', status_code=200)
-
-    def do_login(self, username: str, password: str, authid: str) -> 'HttpResponse':
-        return typing.cast(
-            'HttpResponse',
-            self.client.post(
-                '/uds/page/login',
-                {
-                    'user': username,
-                    'password': password,
-                    'authenticator': authid,
-                },
-            ),
-        )
 
     def test_login_logout_success(self):
         """
@@ -103,7 +90,6 @@ class WebLoginLogout(test.UDSTransactionTestCase):
         users_pass.append((root, rootpass))
         for num, up in enumerate(users_pass, start=1):
             response = self.do_login(up[0], up[1], auth.uuid)
-            self.assertRedirects(response, '/uds/page/services', status_code=302)
             # Now invoke logout
             response = typing.cast('HttpResponse', self.client.get('/uds/page/logout'))
             self.assertRedirects(

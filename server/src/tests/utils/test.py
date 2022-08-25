@@ -33,7 +33,7 @@ import logging
 
 from django.test import TestCase, TransactionTestCase
 from django.test.client import Client
-from django.http import HttpResponse
+from django.http.response import HttpResponse
 from django.conf import settings
 
 from uds import models
@@ -42,6 +42,18 @@ from uds.core.managers.crypto import CryptoManager
 
 
 logger = logging.getLogger(__name__)
+
+class UDSHttpResponse(HttpResponse):
+    """
+    Custom response class to be able to access the response content
+    """
+    def __init__(self, content, *args, **kwargs):
+        super().__init__(content, *args, **kwargs)
+        self.content = content
+
+
+    def json(self) -> typing.Any:
+        return super().json()  # type: ignore
 
 class UDSClient(Client):
     headers: typing.Dict[str, str] = {
@@ -77,11 +89,11 @@ class UDSClient(Client):
         return super().request(**request)
 
 
-    def get(self, *args, **kwargs) -> 'HttpResponse':
-        return typing.cast('HttpResponse', super().get(*args, **kwargs))
+    def get(self, *args, **kwargs) -> 'UDSHttpResponse':
+        return typing.cast('UDSHttpResponse', super().get(*args, **kwargs))
 
-    def post(self, *args, **kwargs) -> 'HttpResponse':
-        return typing.cast('HttpResponse', super().post(*args, **kwargs))
+    def post(self, *args, **kwargs) -> 'UDSHttpResponse':
+        return typing.cast('UDSHttpResponse', super().post(*args, **kwargs))
 
 
 class UDSTestCase(TestCase):

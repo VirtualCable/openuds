@@ -35,7 +35,7 @@ import os.path
 import sys
 
 # We use commit/rollback
-from ...utils.test import UDSTransactionTestCase
+from ...utils.web.test import WEBTestCase
 from django.urls import reverse
 from uds.core.managers.downloads import DownloadsManager
 
@@ -44,7 +44,7 @@ from uds.core.util.config import GlobalConfig
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
 
-class DownloadsManagerTests(UDSTransactionTestCase):
+class DownloadsManagerTests(WEBTestCase):
     filePath: str = ''
     manager: DownloadsManager
 
@@ -83,6 +83,9 @@ class DownloadsManagerTests(UDSTransactionTestCase):
                 downloadables,
                 'The File {} was not found in downloadables!'.format(fileName),
             )
+
+            # Downloadables are allowed by admin or staff
+            self.login(as_admin=True)
 
             # This will fail, no user has logged in
             self.client.get(
