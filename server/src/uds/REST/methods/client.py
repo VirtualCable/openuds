@@ -81,7 +81,7 @@ class Client(Handler):
         if error:
             if isinstance(error, int):
                 error = errors.errorString(error)
-            error = str(error)  # Ensure error is an string
+            error = str(error)  # Ensures error is an string
             if errorCode != 0:
                 # Reformat error so it is better understood by users
                 # error += ' (code {0:04X})'.format(errorCode)
@@ -102,7 +102,7 @@ class Client(Handler):
         """
         return Client.result(_('Correct'))
 
-    def get(self):  # pylint: disable=too-many-locals
+    def get(self):
         """
         Processes get requests
         """
@@ -128,7 +128,7 @@ class Client(Handler):
                 scrambler,
             ) = (
                 self._args
-            )  # If more than 2 args, got an error.  pylint: disable=unbalanced-tuple-unpacking
+            )  # If more than 2 args, raise an error
             hostname = self._params['hostname']  # Or if hostname is not included...
             srcIp = self._request.ip
 
@@ -191,11 +191,7 @@ class Client(Handler):
             if not transportInstance:
                 raise Exception('No transport instance!!!')
 
-            (
-                transportScript,
-                signature,
-                params,
-            ) = transportInstance.getEncodedTransportScript(
+            transport_script =transportInstance.getEncodedTransportScript(
                 userService,
                 transport,
                 ip,
@@ -205,16 +201,14 @@ class Client(Handler):
                 self._request,
             )
 
-            logger.debug('Signature: %s', signature)
-            logger.debug('Data:#######\n%s\n###########', params)
+            logger.debug('Script: %s', transport_script)
 
             return Client.result(
                 result={
-                    'script': transportScript,
-                    'signature': signature,  # It is already on base64
-                    'params': codecs.encode(
-                        codecs.encode(json.dumps(params).encode(), 'bz2'), 'base64'
-                    ).decode(),
+                    'script': transport_script.script,
+                    'type': transport_script.script_type,
+                    'signature': transport_script.signature_b64,  # It is already on base64
+                    'params': transport_script.encoded_parameters,
                 }
             )
         except ServiceNotReadyError as e:

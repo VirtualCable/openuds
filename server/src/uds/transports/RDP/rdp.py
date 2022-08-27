@@ -41,6 +41,7 @@ from .rdp_file import RDPFile
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
+    from uds.core import transports
     from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -102,7 +103,7 @@ class RDPTransport(BaseRDPTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> 'transports.TransportScript':
         # We use helper to keep this clean
         # prefs = user.prefs('rdp')
 

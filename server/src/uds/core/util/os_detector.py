@@ -39,6 +39,7 @@ from .tools import DictAsObj
 
 logger = logging.getLogger(__name__)
 
+
 class KnownOS(enum.Enum):
     Linux = ('Linux', 'armv7l')
     ChromeOS = ('CrOS',)
@@ -50,6 +51,7 @@ class KnownOS(enum.Enum):
     iPhone = ('iPhone',)  # In fact, these are IOS both, but we can diferentiate it...
     WYSE = ('WYSE',)
     Unknown = ('Unknown',)
+
 
 knownOss = (
     KnownOS.WindowsPhone,
@@ -111,12 +113,11 @@ browserRules: typing.Dict[str, typing.Tuple] = {
 
 def getOsFromUA(
     ua: typing.Optional[str],
-) -> DictAsObj:  # pylint: disable=too-many-branches
+) -> DictAsObj:
     """
     Basic OS Client detector (very basic indeed :-))
     """
-    if ua is None:
-        ua = KnownOS.Unknown.value[0]
+    ua = ua or KnownOS.Unknown.value[0]
 
     res = DictAsObj({'OS': KnownOS.Unknown, 'Version': '0.0', 'Browser': 'unknown'})
     found: bool = False
@@ -142,7 +143,7 @@ def getOsFromUA(
             # Check against no machin rules
             for mustNotREs in mustNot:
                 for cre in browsersREs[mustNotREs]:
-                    if cre.search(ua) is not None:
+                    if cre.search(typing.cast(str, ua)) is not None:
                         match = None
                         break
                 if match is None:

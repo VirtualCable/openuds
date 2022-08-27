@@ -61,6 +61,7 @@ class BaseRDPTransport(transports.Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     isBase = True
 
     iconFile = 'rdp.png'
@@ -174,11 +175,9 @@ class BaseRDPTransport(transports.Transport):
             {'id': '{4d36e979-e325-11ce-bfc1-08002be10318}', 'text': 'Printers'},
             {'id': '{50dd5230-ba8a-11d1-bf5d-0000f805f530}', 'text': 'Smartcards'},
             {'id': '{745a17a0-74d3-11d0-b6fe-00a0c90f57da}', 'text': 'HIDs'},
-            
         ],
         tab=gui.PARAMETERS_TAB,
     )
-
 
     credssp = gui.CheckBoxField(
         label=_('Credssp Support'),
@@ -440,7 +439,7 @@ class BaseRDPTransport(transports.Transport):
         scriptNameTemplate: str,
         osName: str,
         params: typing.Mapping[str, typing.Any],
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> transports.TransportScript:
         # Reads script
         scriptNameTemplate = scriptNameTemplate.format(osName)
         with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
@@ -450,4 +449,9 @@ class BaseRDPTransport(transports.Transport):
             os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')
         ) as f:
             signature = f.read()
-        return script, signature, params
+        return transports.TransportScript(
+            script=script,
+            script_type='python',
+            signature_b64=signature,
+            parameters=params,
+        )

@@ -60,6 +60,7 @@ class BaseX2GOTransport(transports.Transport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     isBase = True
 
     iconFile = 'x2go.png'
@@ -287,7 +288,7 @@ class BaseX2GOTransport(transports.Transport):
 
     def getScript(
         self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]
-    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
+    ) -> 'transports.TransportScript':
         # Reads script
         scriptNameTemplate = scriptNameTemplate.format(osName)
         with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
@@ -297,4 +298,9 @@ class BaseX2GOTransport(transports.Transport):
             os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')
         ) as f:
             signature = f.read()
-        return script, signature, params
+        return transports.TransportScript(
+            script=script,
+            script_type='python',
+            signature_b64=signature,
+            parameters=params,
+        )

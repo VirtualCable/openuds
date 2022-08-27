@@ -122,7 +122,7 @@ class TX2GOTransport(BaseX2GOTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> 'transports.TransportScript':
 
         ci = self.getConnectionInfo(userService, user, password)
         username = ci['username']

@@ -145,7 +145,7 @@ class TRDPTransport(BaseRDPTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> 'transports.TransportScript':
         # We use helper to keep this clean
         # prefs = user.prefs('rdp')
 

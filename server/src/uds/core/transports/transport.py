@@ -32,6 +32,7 @@
 """
 import codecs
 import logging
+import json
 import typing
 
 from django.utils.translation import gettext_noop as _
@@ -52,6 +53,18 @@ logger = logging.getLogger(__name__)
 DIRECT_GROUP = _('Direct')
 TUNNELED_GROUP = _('Tunneled')
 
+class TransportScript(typing.NamedTuple):
+    script: str = ''
+    script_type: typing.Union[typing.Literal['python'], typing.Literal['lua']] = 'python' # currently only python is supported
+    signature_b64: str = ''  # Signature of the script in base64
+    parameters: typing.Mapping[str, typing.Any] = {}
+
+    @property
+    def encoded_parameters(self) -> str:
+        """
+        Returns encoded parameters for transport script
+        """
+        return codecs.encode(codecs.encode(json.dumps(self.parameters).encode(), 'bz2'), 'base64').decode()
 
 class Transport(Module):
     """
@@ -211,14 +224,14 @@ class Transport(Module):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> TransportScript:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
         """
-        return (
-            "raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))",
-            'EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'
+        return TransportScript(
+            script="raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))",
+            signature_b64='EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'
             '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'
             '4xlkwMjAIytp8jaMHKkzvcihiIAMtaicP786FZCwGMmFTH4Z'
             'A9i7YWaSzT95h84kirAG67J0GWKiyATxs6mtxBNaLgqU4juA'
@@ -233,7 +246,7 @@ class Transport(Module):
             'JuVuquKKSfiwOIdYcdPJ6gvpgkQQDPqt7wN+duyZA0FI5F4h'
             'O6acQZmbjBCqZoo9Qsg7k9cTcalNkc5flEYAk1mULnddgDM6'
             'YGmoJgVnDr0=',
-            {'transport': transport.name},
+            parameters={'transport': transport.name},
         )
 
     def getEncodedTransportScript(
@@ -245,21 +258,21 @@ class Transport(Module):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Tuple[str, str, typing.Mapping[str, str]]:
+    ) -> TransportScript:
         """
         Encodes the script so the client can understand it
         """
-        script, signature, params = self.getUDSTransportScript(
+        transport_script = self.getUDSTransportScript(
             userService, transport, ip, os, user, password, request
         )
-        logger.debug('Transport script: %s', script)
+        logger.debug('Transport script: %s', transport_script)
 
-        return (
-            codecs.encode(codecs.encode(script.encode(), 'bz2'), 'base64')
+        return TransportScript(
+            script=codecs.encode(codecs.encode(transport_script.script.encode(), 'bz2'), 'base64')
             .decode()
             .replace('\n', ''),
-            signature,
-            params,
+            signature_b64=transport_script.signature_b64,
+            parameters=transport_script.parameters,
         )
 
     def getLink(

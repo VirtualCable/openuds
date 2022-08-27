@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,8 +32,7 @@ UDS Service modules interfaces and classes.
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .transport import Transport
-from .transport import DIRECT_GROUP, TUNNELED_GROUP
+from .transport import Transport, TransportScript, DIRECT_GROUP, TUNNELED_GROUP
 from .transport_factory import TransportsFactory
 from . import protocols
 

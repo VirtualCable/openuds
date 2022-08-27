@@ -41,6 +41,7 @@ from .remote_viewer_file import RemoteViewerFile
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
+    from uds.core import transports
     from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -75,7 +76,7 @@ class SPICETransport(BaseSpiceTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> 'transports.TransportScript':
         userServiceInstance: typing.Any = userService.getInstance()
 
         con = userServiceInstance.getConsoleConnection()

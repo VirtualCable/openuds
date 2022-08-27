@@ -115,7 +115,7 @@ class TSPICETransport(BaseSpiceTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> transports.TransportScript:
         userServiceInstance: typing.Any = userService.getInstance()
 
         # Spice connection
